@@ -326,7 +326,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     else
         ASSERT_NOT_REACHED();
 
-    OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, videoGravity.UTF8String);
+    OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, videoGravity);
 
     if (auto model = _fullscreenModel.get())
         model->setVideoLayerGravity(gravity);

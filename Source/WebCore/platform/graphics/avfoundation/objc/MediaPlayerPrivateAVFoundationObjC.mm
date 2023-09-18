@@ -1017,14 +1017,14 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     @try {
         m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw an exception: ", exception.name, ", reason : ", exception.reason);
         cocoaURL = canonicalURL(conformFragmentIdentifierForURL(url));
 
         @try {
             m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
         } @catch(NSException *exception) {
             ASSERT_NOT_REACHED();
-            ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw a second exception, bailing: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+            ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw a second exception, bailing: ", exception.name, ", reason : ", exception.reason);
             setNetworkState(MediaPlayer::NetworkState::FormatError);
             return;
         }
@@ -1929,7 +1929,7 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
             AVKeyValueStatus keyStatus = [m_avAsset statusOfValueForKey:keyName error:&error];
 
             if (error)
-                ERROR_LOG(LOGIDENTIFIER, "failed for ", [keyName UTF8String], ", error = ", [[error localizedDescription] UTF8String]);
+                ERROR_LOG(LOGIDENTIFIER, "failed for ", keyName, ", error = ", error);
 
             if (keyStatus < AVKeyValueStatusLoaded)
                 return MediaPlayerAVAssetStatusLoading; // At least one key is not loaded yet.
@@ -2264,7 +2264,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity(ShouldAnimate s
         return;
 
     bool shouldDisableActions = shouldAnimate == ShouldAnimate::No;
-    ALWAYS_LOG(LOGIDENTIFIER, "Setting gravity to \"", String { videoGravity }, "\", animated: ", !shouldDisableActions);
+    ALWAYS_LOG(LOGIDENTIFIER, "Setting gravity to \"", videoGravity, "\", animated: ", !shouldDisableActions);
 
     [CATransaction begin];
     [CATransaction setDisableActions:shouldDisableActions];

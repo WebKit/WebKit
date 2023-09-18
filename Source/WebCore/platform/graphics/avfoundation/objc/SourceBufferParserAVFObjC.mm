@@ -303,7 +303,7 @@ void SourceBufferParserAVFObjC::setLogger(const Logger& newLogger, const void* n
 
 void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
-    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, [[asset description] UTF8String]);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, asset);
     m_callOnClientThreadCallback([this, strongThis = Ref { *this }, asset = retainPtr(asset)] {
         if (!m_didParseInitializationDataCallback)
             return;
@@ -343,7 +343,7 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 
 void SourceBufferParserAVFObjC::didFailToParseStreamDataWithError(NSError* error)
 {
-    ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, [[error description] UTF8String]);
+    ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, error);
     m_callOnClientThreadCallback([this, strongThis = Ref { *this }, error = retainPtr(error)] {
         if (m_didEncounterErrorDuringParsingCallback)
             m_didEncounterErrorDuringParsingCallback(error.get().code);

@@ -143,7 +143,7 @@ bool ReplayKitCaptureSource::start()
         if (bufferType != RPSampleBufferTypeVideo)
             return;
 
-        ERROR_LOG_IF(error && loggerPtr(), identifier, "startCaptureWithHandler failed ", [error localizedDescription].UTF8String);
+        ERROR_LOG_IF(error && loggerPtr(), identifier, "startCaptureWithHandler failed ", error);
 
         ++m_frameCount;
 
@@ -161,7 +161,7 @@ bool ReplayKitCaptureSource::start()
             if (!weakThis || !error)
                 return;
 
-            ERROR_LOG_IF(loggerPtr(), identifier, "completionHandler failed ", [error localizedDescription].UTF8String);
+            ERROR_LOG_IF(loggerPtr(), identifier, "completionHandler failed ", error.get());
             weakThis->stop();
         });
     });
@@ -204,7 +204,7 @@ void ReplayKitCaptureSource::stop()
     auto *screenRecorder = [PAL::getRPScreenRecorderClass() sharedRecorder];
     if (screenRecorder.recording) {
         [screenRecorder stopCaptureWithHandler:^(NSError * _Nullable error) {
-            ERROR_LOG_IF(error && loggerPtr(), identifier, "startCaptureWithHandler failed ", [error localizedDescription].UTF8String);
+            ERROR_LOG_IF(error && loggerPtr(), identifier, "startCaptureWithHandler failed ", error);
         }];
     }
 }

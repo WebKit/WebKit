@@ -1180,7 +1180,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
             });
         }];
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", exception.name, ", reason : ", exception.reason);
         if (m_updateLicenseCallback)
             m_updateLicenseCallback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
         ASSERT(!m_updateLicenseCallback);
@@ -1283,7 +1283,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
             }];
         }
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", exception.name, ", reason : ", exception.reason);
         if (m_requestLicenseCallback)
             m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
         ASSERT(!m_requestLicenseCallback);
@@ -1333,7 +1333,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
             });
         }];
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", exception.name, ", reason : ", exception.reason);
         if (m_updateLicenseCallback)
             m_updateLicenseCallback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
         ASSERT(!m_updateLicenseCallback);
@@ -1350,7 +1350,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest(AVConte
     // the key requires a higher level of security than it is currently able
     // to provide, signal this state by "succeeding", but set the key status
     // to "output-restricted".
-    ERROR_LOG(LOGIDENTIFIER, "- error: ", String { error.localizedDescription });
+    ERROR_LOG(LOGIDENTIFIER, "- error: ", error);
 
     if (error.code == SecurityLevelError) {
         requestDidSucceed(request);

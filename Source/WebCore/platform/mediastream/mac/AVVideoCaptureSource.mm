@@ -468,13 +468,13 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
             m_appliedPreset = m_currentPreset;
         }
     } @catch(NSException *exception) {
-        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error configuring device ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error configuring device ", exception.name, ", reason : ", exception.reason);
         [device() unlockForConfiguration];
         ASSERT_NOT_REACHED();
     }
     [m_session commitConfiguration];
 
-    ERROR_LOG_IF(error && loggerPtr(), LOGIDENTIFIER, [[error localizedDescription] UTF8String]);
+    ERROR_LOG_IF(error && loggerPtr(), LOGIDENTIFIER, error);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -581,7 +581,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     NSError *error = nil;
     RetainPtr<AVCaptureDeviceInput> videoIn = adoptNS([PAL::allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
     if (error) {
-        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "failed to allocate AVCaptureDeviceInput ", [[error localizedDescription] UTF8String]);
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "failed to allocate AVCaptureDeviceInput ", error);
         return false;
     }
 
@@ -749,7 +749,7 @@ void AVVideoCaptureSource::generatePresets()
 void AVVideoCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
 {
     auto identifier = LOGIDENTIFIER;
-    ERROR_LOG_IF(loggerPtr(), identifier, [error code], ", ", [[error localizedDescription] UTF8String]);
+    ERROR_LOG_IF(loggerPtr(), identifier, [error code], ", ", error.get());
 
     if (!m_isRunning || error.get().code != AVErrorMediaServicesWereReset)
         return;
@@ -764,7 +764,7 @@ void AVVideoCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
 
 void AVVideoCaptureSource::captureSessionBeginInterruption(RetainPtr<NSNotification> notification)
 {
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, [notification.get().userInfo[AVCaptureSessionInterruptionReasonKey] integerValue]);
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, [notification userInfo][AVCaptureSessionInterruptionReasonKey]);
     m_interrupted = true;
 }
 

@@ -1016,7 +1016,7 @@ void SourceBufferPrivateAVFObjC::unregisterForErrorNotifications(SourceBufferPri
 
 void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *layer, NSError *error)
 {
-    ERROR_LOG(LOGIDENTIFIER, [[error description] UTF8String]);
+    ERROR_LOG(LOGIDENTIFIER, error);
 
 #if PLATFORM(IOS_FAMILY)
     if ([layer status] == AVQueuedSampleBufferRenderingStatusFailed && [[error domain] isEqualToString:@"AVFoundationErrorDomain"] && [error code] == AVErrorOperationInterrupted) {
@@ -1080,7 +1080,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
-    ERROR_LOG(LOGIDENTIFIER, [[error description] UTF8String]);
+    ERROR_LOG(LOGIDENTIFIER, error);
 
     if ([error code] == 'HDCP')
         m_hdcpError = error;
