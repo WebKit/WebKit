@@ -308,7 +308,8 @@ enum class WebCore::AutofillFieldName : uint8_t {
     TelExtension,
     Email,
     Impp,
-    WebAuthn
+    WebAuthn,
+    OneTimeCode
 };
 
 enum class WebCore::NonAutofillCredentialType : bool;
