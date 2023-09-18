@@ -1,8 +1,10 @@
+CONSOLE MESSAGE: Not allowed to download due to sandboxing
+CONSOLE MESSAGE: Not allowed to download due to sandboxing
 CONSOLE MESSAGE: Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 
 
-FAIL <a download> triggered download in sandbox is blocked. assert_equals: Expect no download to happen, but got one. expected "TOKEN_NOT_SET" but got "TOKEN_SET"
-FAIL <a download> triggered download in sandbox is blocked before a request is made. assert_equals: Expect no download to happen, but got one. expected "TOKEN_NOT_SET" but got "TOKEN_SET"
+PASS <a download> triggered download in sandbox is blocked.
+PASS <a download> triggered download in sandbox is blocked before a request is made.
 FAIL <a > triggered download in sandbox is blocked. Sandbox access violation: Blocked a frame at "http://localhost:8800" from accessing a cross-origin frame.  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
 FAIL <a target="_blank" > triggered download in sandbox is blocked. assert_equals: Expect no download to happen, but got one. expected "TOKEN_NOT_SET" but got "TOKEN_SET"
 FAIL <a target="_blank" rel="noopener" > triggered download in sandbox is blocked. assert_equals: Expect no download to happen, but got one. expected "TOKEN_NOT_SET" but got "TOKEN_SET"
