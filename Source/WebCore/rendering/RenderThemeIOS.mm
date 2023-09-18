@@ -2140,6 +2140,7 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
     GraphicsContextStateSaver stateSaver(context);
 
     auto styleColorOptions = renderer.styleColorOptions();
+    auto isHorizontalWritingMode = renderer.style().isHorizontalWritingMode();
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
     FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
@@ -2151,10 +2152,17 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
     context.clipRoundedRect(roundedFillRect);
 
     FloatRect fillRect(roundedFillRect.rect());
-    if (renderMeter.style().isLeftToRightDirection())
-        fillRect.move(fillRect.width() * (element->valueRatio() - 1), 0);
-    else
-        fillRect.move(fillRect.width() * (1 - element->valueRatio()), 0);
+
+    auto fillRectInlineSize = isHorizontalWritingMode ? fillRect.width() : fillRect.height();
+    FloatSize gaugeRegionPosition(fillRectInlineSize * (element->valueRatio() - 1), 0);
+
+    if (!isHorizontalWritingMode)
+        gaugeRegionPosition = gaugeRegionPosition.transposedSize();
+
+    if (!renderer.style().isLeftToRightDirection())
+        gaugeRegionPosition = -gaugeRegionPosition;
+
+    fillRect.move(gaugeRegionPosition);
     roundedFillRect.setRect(fillRect);
 
     switch (element->gaugeRegion()) {

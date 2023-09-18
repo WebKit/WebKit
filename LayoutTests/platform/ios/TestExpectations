@@ -1179,8 +1179,6 @@ css3/color-filters/color-filter-caret-color.html [ Skip ]
 # Not relevant for iOS.
 css3/color-filters/color-filter-ignore-semantic.html [ Skip ]
 
-webkit.org/b/261593 fast/forms/vertical-writing-mode/meter.html [ ImageOnlyFailure ]
-
 # WebCryptoAPI features that enabled only for iOS 11/High Sierra+
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
