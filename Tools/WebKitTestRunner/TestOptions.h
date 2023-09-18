@@ -93,6 +93,7 @@ public:
     std::string dragInteractionPolicy() const { return stringTestRunnerFeatureValue("dragInteractionPolicy"); }
     std::string focusStartsInputSessionPolicy() const { return stringTestRunnerFeatureValue("focusStartsInputSessionPolicy"); }
     std::string jscOptions() const { return stringTestRunnerFeatureValue("jscOptions"); }
+    std::string captionDisplayMode() const { return stringTestRunnerFeatureValue("captionDisplayMode"); }
     std::string standaloneWebApplicationURL() const { return stringTestRunnerFeatureValue("standaloneWebApplicationURL"); }
     std::vector<std::string> overrideLanguages() const { return stringVectorTestRunnerFeatureValue("language"); }
 

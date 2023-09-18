@@ -214,6 +214,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
 
         { "additionalSupportedImageTypes", TestHeaderKeyType::StringTestRunner },
         { "jscOptions", TestHeaderKeyType::StringTestRunner },
+        { "captionDisplayMode", TestHeaderKeyType::StringTestRunner },
     };
 
     return map;

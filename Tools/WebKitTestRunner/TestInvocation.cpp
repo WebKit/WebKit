@@ -145,6 +145,9 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     for (auto& host : TestController::singleton().allowedHosts())
         WKArrayAppendItem(allowedHostsValue.get(), toWK(host.c_str()).get());
     setValue(beginTestMessageBody, "AllowedHosts", allowedHostsValue);
+#if ENABLE(VIDEO)
+    setValue(beginTestMessageBody, "CaptionDisplayMode", options().captionDisplayMode().c_str());
+#endif
     return beginTestMessageBody;
 }
 

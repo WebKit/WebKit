@@ -208,6 +208,7 @@ const TestFeatures& TestOptions::defaults()
             { "dragInteractionPolicy", { } },
             { "focusStartsInputSessionPolicy", { } },
             { "jscOptions", { } },
+            { "captionDisplayMode", { } },
             { "standaloneWebApplicationURL", { } },
         };
         features.stringVectorTestRunnerFeatures = {
@@ -267,6 +268,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "dragInteractionPolicy", TestHeaderKeyType::StringTestRunner },
         { "focusStartsInputSessionPolicy", TestHeaderKeyType::StringTestRunner },
         { "jscOptions", TestHeaderKeyType::StringTestRunner },
+        { "captionDisplayMode", TestHeaderKeyType::StringTestRunner },
         { "standaloneWebApplicationURL", TestHeaderKeyType::StringURLTestRunner },
 
         { "language", TestHeaderKeyType::StringVectorTestRunner },

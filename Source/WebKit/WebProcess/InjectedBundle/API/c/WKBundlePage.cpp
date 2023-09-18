@@ -63,10 +63,12 @@
 #include <WebCore/AccessibilityObjectInterface.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CSSParser.h>
+#include <WebCore/CaptionUserPreferences.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageGroup.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/RenderLayerCompositor.h>
@@ -845,6 +847,19 @@ WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef pageRef)
 void WKBundlePageClearApplicationCache(WKBundlePageRef page)
 {
     WebKit::toImpl(page)->corePage()->applicationCacheStorage().deleteAllEntries();
+}
+
+void WKBundleSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
+{
+#if ENABLE(VIDEO)
+    auto& captionPreferences = WebKit::toImpl(page)->corePage()->group().ensureCaptionPreferences();
+    auto displayMode = WTF::EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode>::fromString(WebKit::toWTFString(mode));
+    if (displayMode.has_value())
+        captionPreferences.setCaptionDisplayMode(displayMode.value());
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(modeString);
+#endif
 }
 
 void WKBundlePageClearApplicationCacheForOrigin(WKBundlePageRef page, WKStringRef origin)

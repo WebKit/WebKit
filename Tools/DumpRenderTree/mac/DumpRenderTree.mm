@@ -1827,6 +1827,13 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
 
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
 
+#if ENABLE(VIDEO)
+    if (!options.captionDisplayMode().empty())
+        [mainFrame _setCaptionDisplayMode:[NSString stringWithUTF8String:options.captionDisplayMode().c_str()]];
+    else
+        [mainFrame _setCaptionDisplayMode:@"forcedonly"];
+#endif
+
     [mainFrame _clearOpener];
 
 #if PLATFORM(MAC)
@@ -1928,6 +1935,10 @@ static void runTest(const std::string& inputLine)
     gTestRunner->setLocalhostAliases(localhostAliases);
     gTestRunner->setCustomTimeout(command.timeout.milliseconds());
     gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
+
+#if ENABLE(VIDEO)
+    [mainFrame _createCaptionPreferencesTestingModeToken];
+#endif
 
     resetWebViewToConsistentState(options, ResetTime::BeforeTest);
 
