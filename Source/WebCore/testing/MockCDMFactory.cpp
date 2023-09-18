@@ -402,7 +402,7 @@ void MockCDMInstanceSession::removeSessionData(const String& id, LicenseType, Re
     }
 
     auto keys = factory->removeKeysFromSessionWithID(id);
-    auto keyStatusVector = WTF::map(WTFMove(keys), [](auto&& key) {
+    auto keyStatusVector = WTF::map(WTFMove(keys), [](Ref<SharedBuffer>&& key) {
         return std::pair { WTFMove(key), KeyStatus::Released };
     });
 

@@ -132,7 +132,7 @@ private:
 template<typename T>
 Error StreamServerConnection::send(T&& message, const ObjectIdentifierGenericBase& destinationID)
 {
-    return m_connection->send(WTFMove(message), destinationID);
+    return m_connection->send(std::forward<T>(message), destinationID);
 }
 
 template<typename T, typename... Arguments>

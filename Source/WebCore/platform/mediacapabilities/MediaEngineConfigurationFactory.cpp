@@ -97,26 +97,26 @@ bool MediaEngineConfigurationFactory::hasEncodingConfigurationFactory()
     return mockEnabled() || WTF::anyOf(factories(), [] (auto& factory) { return (bool)factory.createEncodingConfiguration; });
 }
 
-void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& config, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)
+void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& config, DecodingConfigurationCallback&& callback)
 {
     if (mockEnabled()) {
         MediaEngineConfigurationFactoryMock::createDecodingConfiguration(WTFMove(config), WTFMove(callback));
         return;
     }
 
-    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto&& config, auto&& callback) mutable {
+    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, MediaDecodingConfiguration&& config, DecodingConfigurationCallback&& callback) mutable {
         if (nextFactory == factories().end()) {
-            callback({{ }, WTFMove(config)});
+            callback({ { }, WTFMove(config) });
             return;
         }
 
         auto& factory = *nextFactory;
         if (!factory.createDecodingConfiguration) {
-            callback({{ }, WTFMove(config)});
+            callback({ { }, WTFMove(config) });
             return;
         }
 
-        factory.createDecodingConfiguration(WTFMove(config), [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (auto&& info) mutable {
+        factory.createDecodingConfiguration(WTFMove(config), [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (MediaCapabilitiesDecodingInfo&& info) mutable {
             if (info.supported) {
                 callback(WTFMove(info));
                 return;
@@ -125,17 +125,17 @@ void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingC
             factoryCallback(factoryCallback, ++nextFactory, WTFMove(info.supportedConfiguration), WTFMove(callback));
         });
     };
-    factoryCallback(factoryCallback, factories().begin(), config, WTFMove(callback));
+    factoryCallback(factoryCallback, factories().begin(), WTFMove(config), WTFMove(callback));
 }
 
-void MediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingConfiguration&& config, MediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback)
+void MediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingConfiguration&& config, EncodingConfigurationCallback&& callback)
 {
     if (mockEnabled()) {
         MediaEngineConfigurationFactoryMock::createEncodingConfiguration(WTFMove(config), WTFMove(callback));
         return;
     }
 
-    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto&& config, auto&& callback) mutable {
+    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, MediaEncodingConfiguration&& config, EncodingConfigurationCallback&& callback) mutable {
         if (nextFactory == factories().end()) {
             callback({ });
             return;

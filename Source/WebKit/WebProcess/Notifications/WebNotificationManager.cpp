@@ -83,14 +83,14 @@ static bool sendMessage(WebPage* page, const Function<bool(IPC::Connection&, uin
 template<typename U> static bool sendNotificationMessage(U&& message, WebPage* page)
 {
     return sendMessage(page, [&] (auto& connection, auto destinationIdentifier) {
-        return connection.send(WTFMove(message), destinationIdentifier) == IPC::Error::NoError;
+        return connection.send(std::forward<U>(message), destinationIdentifier) == IPC::Error::NoError;
     });
 }
 
 template<typename U> static bool sendNotificationMessageWithAsyncReply(U&& message, WebPage* page, CompletionHandler<void()>&& callback)
 {
     return sendMessage(page, [&] (auto& connection, auto destinationIdentifier) {
-        return !!connection.sendWithAsyncReply(WTFMove(message), WTFMove(callback), destinationIdentifier);
+        return !!connection.sendWithAsyncReply(std::forward<U>(message), WTFMove(callback), destinationIdentifier);
     });
 }
 #endif // ENABLE(NOTIFICATIONS)

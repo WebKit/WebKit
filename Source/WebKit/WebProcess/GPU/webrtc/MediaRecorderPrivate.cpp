@@ -104,7 +104,7 @@ void MediaRecorderPrivate::videoFrameAvailable(VideoFrame& videoFrame, VideoFram
     m_blackFrameSize = { };
     auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame,
         [this](auto& semaphore) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
-        [this](auto&& handle) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameMemory { WTFMove(handle) }, m_identifier); }
+        [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameMemory { WTFMove(handle) }, m_identifier); }
     );
     if (sharedVideoFrame)
         m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { WTFMove(*sharedVideoFrame) }, m_identifier);

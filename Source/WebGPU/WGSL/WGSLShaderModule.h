@@ -77,7 +77,7 @@ public:
     {
         RELEASE_ASSERT(current->kind() == replacement.kind());
         std::swap(*current, replacement);
-        m_replacements.append([current, replacement = WTFMove(replacement)]() mutable {
+        m_replacements.append([current, replacement = std::forward<T>(replacement)]() mutable {
             std::exchange(*current, WTFMove(replacement));
         });
     }

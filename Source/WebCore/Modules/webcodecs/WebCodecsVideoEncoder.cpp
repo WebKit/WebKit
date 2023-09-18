@@ -171,7 +171,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
             setInternalEncoder(WTFMove(result.value()));
             m_hasNewActiveConfiguration = true;
             processControlMessageQueue();
-        }, [this](auto&& configuration) {
+        }, [this](VideoEncoder::ActiveConfiguration&& configuration) {
             m_activeConfiguration = WTFMove(configuration);
             m_hasNewActiveConfiguration = true;
         }, [this](auto&& result) {
@@ -244,7 +244,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
         ++m_beingEncodedQueueSize;
         --m_encodeQueueSize;
         scheduleDequeueEvent();
-        m_internalEncoder->encode({ WTFMove(internalFrame), timestamp, duration }, options.keyFrame, [this, weakedThis = WeakPtr { *this }](auto&& result) {
+        m_internalEncoder->encode({ WTFMove(internalFrame), timestamp, duration }, options.keyFrame, [this, weakedThis = WeakPtr { *this }](String&& result) {
             if (!weakedThis)
                 return;
 

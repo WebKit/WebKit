@@ -136,7 +136,7 @@ void BackgroundFetchStoreImpl::initializeFetchesInternal(const WebCore::ClientOr
             return;
         }
         backgroundFetchManager->initializeFetches([internalCallback = WTFMove(internalCallback)](auto&& fetches) mutable {
-            callOnMainRunLoop([fetches = WTFMove(fetches), internalCallback = WTFMove(internalCallback)]() mutable {
+            callOnMainRunLoop([fetches = std::forward<decltype(fetches)>(fetches), internalCallback = WTFMove(internalCallback)]() mutable {
                 internalCallback(WTFMove(fetches));
             });
         });

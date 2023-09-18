@@ -102,7 +102,7 @@ void WorkerStorageConnection::getEstimate(ClientOrigin&& origin, StorageConnecti
 
         auto& document = downcast<Document>(context);
         auto mainThreadConnection = document.storageConnection();
-        auto mainThreadCallback = [callbackIdentifier, contextIdentifier](auto&& result) mutable {
+        auto mainThreadCallback = [callbackIdentifier, contextIdentifier](ExceptionOr<StorageEstimate>&& result) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [callbackIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).storageConnection().didGetEstimate(callbackIdentifier, WTFMove(result));
             });

@@ -141,7 +141,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> de
             return Error::NoError;
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    return m_connection->send(WTFMove(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    return m_connection->send(std::forward<T>(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 template<typename T, typename C, typename U, typename V>
@@ -156,7 +156,7 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
     if (!span)
         return { }; // FIXME: Propagate errors.
 
-    auto handler = Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
+    auto handler = Connection::makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
     auto replyID = handler.replyID;
     m_connection->addAsyncReplyHandler(WTFMove(handler));
     if constexpr(T::isStreamEncodable) {
@@ -215,7 +215,7 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
             return WTFMove(*maybeSendResult);
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    return m_connection->sendSync(WTFMove(message), destinationID.toUInt64(), timeout);
+    return m_connection->sendSync(std::forward<T>(message), destinationID.toUInt64(), timeout);
 }
 
 template<typename T, typename U, typename V>

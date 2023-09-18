@@ -1905,7 +1905,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return createNSArray(self.axBackingObject->flowToObjects(), [] (auto& child) -> id {
+    return createNSArray(self.axBackingObject->flowToObjects(), [] (auto&& child) -> id {
         auto wrapper = child->wrapper();
         ASSERT(wrapper);
 

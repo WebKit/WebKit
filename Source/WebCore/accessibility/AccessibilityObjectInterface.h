@@ -1961,14 +1961,14 @@ void enumerateDescendants(T& object, bool includeSelf, const F& lambda)
 
 template<typename U> inline void performFunctionOnMainThreadAndWait(U&& lambda)
 {
-    callOnMainThreadAndWait([lambda = WTFMove(lambda)] () {
+    callOnMainThreadAndWait([lambda = std::forward<U>(lambda)] () {
         lambda();
     });
 }
 
 template<typename U> inline void performFunctionOnMainThread(U&& lambda)
 {
-    ensureOnMainThread([lambda = WTFMove(lambda)] () mutable {
+    ensureOnMainThread([lambda = std::forward<U>(lambda)] () mutable {
         lambda();
     });
 }

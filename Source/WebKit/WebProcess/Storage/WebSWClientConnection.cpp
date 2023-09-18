@@ -267,7 +267,7 @@ template<typename C, typename U> void callExceptionOrResultCallback(C&& callback
 void WebSWClientConnection::subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&& callback)
 {
     sendWithAsyncReply(Messages::WebSWServerConnection::SubscribeToPushService { registrationIdentifier, applicationServerKey }, [callback = WTFMove(callback)](auto&& result) mutable {
-        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
+        callExceptionOrResultCallback(WTFMove(callback), std::forward<decltype(result)>(result));
     });
 }
 

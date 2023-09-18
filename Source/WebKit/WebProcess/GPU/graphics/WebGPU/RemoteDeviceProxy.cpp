@@ -136,7 +136,7 @@ Ref<WebCore::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(c
         auto sharedVideoFrameBuffer = sharedVideoFrameWriter.writeBuffer(pixelBuffer.get(), [&](auto& semaphore) {
             auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameSemaphore { semaphore });
             UNUSED_VARIABLE(sendResult);
-        }, [&](auto&& handle) {
+        }, [&](SharedMemory::Handle&& handle) {
             auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameMemory { WTFMove(handle) });
             UNUSED_VARIABLE(sendResult);
         }, canSendIOSurface);

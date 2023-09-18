@@ -1352,7 +1352,7 @@ TEST(WTF_Vector, MapMinimalCopy)
     EXPECT_EQ(5, CopyCountingObject::copyCount);
 
     CopyCountingObject::copyCount = 0;
-    auto allMoved = WTF::map(WTFMove(array), [](auto&& object) -> CopyCountingObject {
+    auto allMoved = WTF::map(WTFMove(array), [](CopyCountingObject&& object) -> CopyCountingObject {
         return WTFMove(object);
     });
     EXPECT_EQ(5U, allMoved.size());

@@ -143,7 +143,7 @@ ALWAYS_INLINE void RemoteImageBufferProxy::send(T&& message)
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return;
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().send(WTFMove(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = m_remoteRenderingBackendProxy->streamConnection().send(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(result != IPC::Error::NoError)) {
         auto& parameters = m_remoteRenderingBackendProxy->parameters();
@@ -161,7 +161,7 @@ ALWAYS_INLINE void RemoteImageBufferProxy::sendSync(T&& message)
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return;
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(WTFMove(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(!result.succeeded())) {
         auto& parameters = m_remoteRenderingBackendProxy->parameters();

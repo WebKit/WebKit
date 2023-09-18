@@ -394,21 +394,21 @@ public:
     template<typename T, typename C>
     AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase& destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        return sendWithAsyncReply<T, C>(WTFMove(message), WTFMove(completionHandler), destinationID.toUInt64(), sendOptions);
+        return sendWithAsyncReply<T, C>(std::forward<T>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), sendOptions);
     }
 
     // Thread-safe.
     template<typename T>
     Error send(T&& message, const ObjectIdentifierGenericBase& destinationID, OptionSet<SendOption> sendOptions = { }, std::optional<Thread::QOS> qos = std::nullopt)
     {
-        return send<T>(WTFMove(message), destinationID.toUInt64(), sendOptions, qos);
+        return send<T>(std::forward<T>(message), destinationID.toUInt64(), sendOptions, qos);
     }
 
     // Main thread only.
     template<typename T>
     SendSyncResult<T> sendSync(T&& message, const ObjectIdentifierGenericBase& destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
-        return sendSync<T>(WTFMove(message), destinationID.toUInt64(), timeout, sendSyncOptions);
+        return sendSync<T>(std::forward<T>(message), destinationID.toUInt64(), timeout, sendSyncOptions);
     }
 
     // Main thread only.
@@ -687,14 +687,14 @@ Error Connection::send(UniqueID connectionID, T&& message, uint64_t destinationI
     RefPtr connection = connectionMap().get(connectionID);
     if (!connection)
         return Error::NoConnectionForIdentifier;
-    return connection->send(WTFMove(message), destinationID, sendOptions, qos);
+    return connection->send(std::forward<T>(message), destinationID, sendOptions, qos);
 }
 
 template<typename T, typename C>
 Connection::AsyncReplyID Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
-    auto handler = makeAsyncReplyHandler<T>(WTFMove(completionHandler));
+    auto handler = makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
     auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     encoder.get() << message.arguments();
@@ -799,12 +799,12 @@ void Connection::callReply(Decoder& decoder, C&& completionHandler)
         completionHandler();
     } else {
         if (auto arguments = decoder.decode<typename T::ReplyArguments>()) {
-            std::apply(WTFMove(completionHandler), WTFMove(*arguments));
+            std::apply(std::forward<C>(completionHandler), WTFMove(*arguments));
             return;
         }
 
         ASSERT_NOT_REACHED();
-        cancelReply<T>(WTFMove(completionHandler));
+        cancelReply<T>(std::forward<C>(completionHandler));
     }
 }
 

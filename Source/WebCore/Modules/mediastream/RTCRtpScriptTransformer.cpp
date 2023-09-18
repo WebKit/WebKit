@@ -142,7 +142,7 @@ void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
     m_backend = WTFMove(backend);
 
     auto& context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
-    m_backend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, thread = Ref { context.thread() }](auto&& frame) mutable {
+    m_backend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, thread = Ref { context.thread() }](Ref<RTCRtpTransformableFrame>&& frame) mutable {
         thread->runLoop().postTaskForMode([weakThis, frame = WTFMove(frame)](auto& context) mutable {
             if (weakThis)
                 weakThis->enqueueFrame(context, WTFMove(frame));

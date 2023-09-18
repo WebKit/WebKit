@@ -55,7 +55,7 @@ private:
 
     void consume(std::span<const uint8_t>);
     void read();
-    void didFail(auto &&exception);
+    void didFail(Exception&&);
     bool isCancelled() { return !m_context; }
 
     Ref<FormData> m_formData;

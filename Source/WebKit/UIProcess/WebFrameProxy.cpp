@@ -451,8 +451,8 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
         {
             // FIXME: We currently have to drop child frames that are currently not subframes of this frame
             // (e.g. they are in the back/forward cache). They really should not be part of m_childFrames.
-            auto nonEmptyChildFrameData = WTF::compactMap(WTFMove(m_childFrameData), [](auto&& data) {
-                return WTFMove(data);
+            auto nonEmptyChildFrameData = WTF::compactMap(WTFMove(m_childFrameData), [](std::optional<FrameTreeNodeData>&& data) {
+                return std::forward<decltype(data)>(data);
             });
             m_completionHandler(FrameTreeNodeData {
                 WTFMove(m_currentFrameData),

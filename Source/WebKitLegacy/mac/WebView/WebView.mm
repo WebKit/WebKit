@@ -9790,7 +9790,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     auto* page = core(self);
     if (!page)
         return @[];
-    return createNSArray(page->editableElementsInRect(rect), [] (auto& coreElement) {
+    return createNSArray(page->editableElementsInRect(rect), [] (auto&& coreElement) {
         return kit(coreElement.ptr());
     }).autorelease();
 }

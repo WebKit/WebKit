@@ -493,7 +493,7 @@ void WebSWContextManagerConnection::navigate(ScriptExecutionContextIdentifier cl
             callback(WTFMove(result).error().toException());
             return;
         }
-        callback(WTFMove(result).value());
+        callback(std::forward<decltype(result)>(result).value());
     });
 }
 

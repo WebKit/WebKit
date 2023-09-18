@@ -126,7 +126,7 @@ void FormDataConsumer::consume(std::span<const uint8_t> content)
     read();
 }
 
-void FormDataConsumer::didFail(auto&& exception)
+void FormDataConsumer::didFail(Exception&& exception)
 {
     auto callback = std::exchange(m_callback, nullptr);
     cancel();

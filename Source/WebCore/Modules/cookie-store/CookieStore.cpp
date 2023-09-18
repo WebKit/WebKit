@@ -320,7 +320,7 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
         }
 
         auto cookies = result.releaseReturnValue();
-        promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(WTF::map(WTFMove(cookies), [](auto&& cookie) {
+        promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(WTF::map(WTFMove(cookies), [](Cookie&& cookie) {
             return CookieListItem { WTFMove(cookie) };
         }));
     };
