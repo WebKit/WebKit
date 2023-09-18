@@ -1,63 +1,67 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true WebGPUEnabled=true ] -->
-<title>Test that instantiating a remoteGPU is allowed if WebGPUEnabled</title>
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false WebGPUEnabled=true runSingly=true ] -->
+<title>Test that instantiating a remoteGPU is allowed if WebGPUEnabled=true</title>
 <script src="../../resources/ipc.js"></script>
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
 <body>
 <script>
-    if (window.IPC) {
-        function randomID() {
-            return Math.floor(Math.random() * 10000) + 1;
-        }
+testRunner.dumpAsText();
+if (window.IPC)
+    runTest();
 
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        let renderingBackendID = randomID();
-        let webgpuID = randomID();
-        let semaphore = IPC.createSemaphore();
-
-        let connectionIdentifier = IPC.createSharedMemory(0x1000);
-
-        let connectionPair = IPC.createConnectionPair();
-        let streamConnection = IPC.createStreamClientConnection(16);
-        let webgpuStreamConnection = IPC.createStreamClientConnection(16);
-
+function runTest() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    let rrbStreamConnection;
+    let rrbStreamConnectionHandle;
+    let webGPUStreamConnection;
+    let webGPUStreamConnectionHandle;
+    try {
+        [rrbStreamConnection, rrbStreamConnectionHandle] = IPC.createStreamClientConnection(16);
+        let renderingBackendID = randomIPCID();
         IPC.sendMessage(
-        'GPU',
-        IPC.webPageProxyID,
-        IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
-        [
-            { // creationParameters
-            type: 'RemoteRenderingBackendCreationParameters',
-            identifier: renderingBackendID,
-            pageProxyID: IPC.webPageProxyID,
-            pageID: IPC.pageID,
-            },
-            { // connectionIdentifier
-            type: 'StreamServerConnectionHandle',
-            value: streamConnection[1],
-            }
-        ]
-        );
+            'GPU',
+            IPC.webPageProxyID,
+            IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
+            [
+                { // creationParameters
+                    type: 'RemoteRenderingBackendCreationParameters',
+                    identifier: renderingBackendID,
+                    pageProxyID: IPC.webPageProxyID,
+                    pageID: IPC.pageID,
+                },
+                {
+                    type: 'StreamServerConnectionHandle',
+                    value: rrbStreamConnectionHandle,
+                }
+            ]);
 
+        let webGPUID = randomIPCID();
+        [webGPUStreamConnection, webGPUStreamConnectionHandle] = IPC.createStreamClientConnection(16);
         var result = IPC.sendMessage(
-        'GPU',
-        IPC.webPageProxyID,
-        IPC.messages.GPUConnectionToWebProcess_CreateRemoteGPU.name,
-        [
-            { type: 'uint64_t', value: webgpuID }, // identifier
-            { type: 'uint64_t', value: renderingBackendID }, // renderingBackendIdentifier
-            { type: 'StreamServerConnectionHandle', value: streamConnection[1] }, // stream
-        ]
-        );
+            'GPU',
+            IPC.webPageProxyID,
+            IPC.messages.GPUConnectionToWebProcess_CreateRemoteGPU.name,
+            [
+                { type: 'uint64_t', value: webGPUID }, // identifier
+                { type: 'uint64_t', value: renderingBackendID }, // renderingBackendIdentifier
+                { type: 'StreamServerConnectionHandle', value: webGPUStreamConnectionHandle }, // stream
+            ]);
 
-        asyncFlush('GPU').then(() => {
-            testRunner.notifyDone();
-        });
-    } else {
-        testRunner.notifyDone();
+        const success = syncFlush('GPU');
+        if (!success)
+            console.log("FAIL: Failed to flush GPU process commands");
+        // FIXME: currently we cannot detect that GPUP crashes and test runner doesn't
+        // let the test continue if the subprocesses crash.
+        setTimeout(() => {
+            console.log("PASS: Test runner did not detect GPUP crash.");
+            if (window.testRunner)
+                testRunner.notifyDone()
+        }, 300);
+    } finally {
+        if (rrbStreamConnection)
+            rrbStreamConnection.invalidate();
+        if (webGPUStreamConnection)
+            webGPUStreamConnection.invalidate();
     }
+}
 </script>
 </body>

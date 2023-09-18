@@ -1740,6 +1740,7 @@ webkit.org/b/258142 fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnly
 webgl/webgl-via-metal-flag-on.html [ Skip ]
 webgl/webgl-via-metal-flag-off.html [ Skip ]
 webgl/webgl-backend-type.html [ Skip ]
+ipc/restrictedendpoints/allow-access-webGPU.html  [ Skip ]
 
 # Failing with ANGLE backend
 fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html [ Failure ]
@@ -3328,7 +3329,6 @@ webkit.org/b/236298 fast/text/simple-lines-text-transform.html [ ImageOnlyFailur
 webkit.org/b/236298 fast/text/strikethrough-int.html [ ImageOnlyFailure ]
 
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
-
 
 # NetworkStorageSession::deleteCookies() doesn't obey partitioning for glib ports.
 http/wpt/clear-site-data/partitioning.html [ Skip ]

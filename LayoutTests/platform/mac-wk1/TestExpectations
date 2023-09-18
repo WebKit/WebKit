@@ -2530,7 +2530,7 @@ imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ WontFix 
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
 
 # IPC is for WK2
-ipc/shared-video-frame-size.html [ Skip ]
+ipc [ WontFix ]
 
 # Displays blank on WK1
 fullscreen/fullscreen-iframe-navigation.html [ Skip ]

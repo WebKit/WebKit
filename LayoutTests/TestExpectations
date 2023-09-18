@@ -5285,6 +5285,9 @@ imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-003.html [ Ima
 # mac-only IPC test
 ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]
 
+# WebGPU settings need to be exposed through the test runner.
+ipc/restrictedendpoints/allow-access-webGPU.html [ Pass Failure ]
+
 # Restarted GPUP seems to crash.
 webkit.org/b/239959 ipc/stream-sync-crash-no-timeout.html [ Skip ]
 
