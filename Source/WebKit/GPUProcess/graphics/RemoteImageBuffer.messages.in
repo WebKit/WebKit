@@ -31,7 +31,8 @@ messages -> RemoteImageBuffer NotRefCounted Stream {
     GetFilteredImage(Ref<WebCore::Filter> filter) -> (std::optional<WebKit::ShareableBitmap::Handle> handle) Synchronous NotStreamEncodableReply
     ConvertToLuminanceMask()
     TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
-    FlushContext(IPC::Semaphore semaphore) NotStreamEncodable
+    SetFlushSignal(IPC::Signal signal) NotStreamEncodable
+    FlushContext()
     FlushContextSync() -> () Synchronous
 }
 

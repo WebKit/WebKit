@@ -637,4 +637,5 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     return ConnectionIdentifierPair { Identifier { listeningPort, nullptr }, MachSendRight::adopt(listeningPort) };
 }
+
 } // namespace IPC

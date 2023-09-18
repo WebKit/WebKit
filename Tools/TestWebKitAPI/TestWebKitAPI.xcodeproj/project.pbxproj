@@ -936,6 +936,7 @@
 		A57D54F91F3397B400A97AA7 /* LifecycleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D54F71F3397B400A97AA7 /* LifecycleLogger.cpp */; };
 		A5B149DE1F5A19EA00C6DAFF /* MIMETypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B149DD1F5A19DC00C6DAFF /* MIMETypeRegistry.cpp */; };
 		A5E2027515B21F6E00C13E14 /* WindowlessWebViewWithMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */; };
+		A73E66C42AB29574005FC327 /* EventTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73E66C32AB29574005FC327 /* EventTests.cpp */; };
 		AA96CAB621C7DB5000FD2F97 /* ParsedContentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA96CAB421C7DB4200FD2F97 /* ParsedContentType.cpp */; };
 		AD57AC201DA7465000FF1BDE /* DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD57AC1E1DA7464D00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp */; };
 		AD57AC211DA7465B00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD57AC1F1DA7464D00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp */; };
@@ -3104,6 +3105,7 @@
 		A5B149DD1F5A19DC00C6DAFF /* MIMETypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIMETypeRegistry.cpp; sourceTree = "<group>"; };
 		A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WindowlessWebViewWithMedia.html; sourceTree = "<group>"; };
 		A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowlessWebViewWithMedia.mm; sourceTree = "<group>"; };
+		A73E66C32AB29574005FC327 /* EventTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTests.cpp; sourceTree = "<group>"; };
 		A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckedArithmeticOperations.cpp; sourceTree = "<group>"; };
 		AA96CAB421C7DB4200FD2F97 /* ParsedContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentType.cpp; sourceTree = "<group>"; };
 		ABF510632A19B8AC7EC40E17 /* AbortableTaskQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbortableTaskQueue.cpp; sourceTree = "<group>"; };
@@ -4544,6 +4546,7 @@
 			children = (
 				2D83D08A29194B0100C5C051 /* ArgumentCoderTests.cpp */,
 				7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */,
+				A73E66C32AB29574005FC327 /* EventTests.cpp */,
 				7B7392EB28F84BD2007297FC /* IPCTestUtilities.cpp */,
 				7B7392EA28F849F3007297FC /* IPCTestUtilities.h */,
 				7B7392E128F849EC007297FC /* MessageSenderTests.cpp */,
@@ -6147,6 +6150,7 @@
 			files = (
 				2D83D08B29194B0100C5C051 /* ArgumentCoderTests.cpp in Sources */,
 				7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */,
+				A73E66C42AB29574005FC327 /* EventTests.cpp in Sources */,
 				7B7392EC28F84BD3007297FC /* IPCTestUtilities.cpp in Sources */,
 				7B9FC39F28A26137007570E7 /* mainIOS.mm in Sources */,
 				7B9FC3A028A26137007570E7 /* mainMac.mm in Sources */,

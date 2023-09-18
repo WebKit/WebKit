@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcessMessages.h"
+#include "IPCEvent.h"
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteImageBufferMessages.h"
@@ -48,9 +49,9 @@ class RemoteImageBufferProxyFlushFence : public ThreadSafeRefCounted<RemoteImage
     WTF_MAKE_NONCOPYABLE(RemoteImageBufferProxyFlushFence);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteImageBufferProxyFlushFence> create(IPC::Semaphore semaphore)
+    static Ref<RemoteImageBufferProxyFlushFence> create(IPC::Event event)
     {
-        return adoptRef(*new RemoteImageBufferProxyFlushFence { WTFMove(semaphore) });
+        return adoptRef(*new RemoteImageBufferProxyFlushFence { WTFMove(event) });
     }
 
     ~RemoteImageBufferProxyFlushFence()
@@ -64,29 +65,29 @@ public:
         Locker locker { m_lock };
         if (m_signaled)
             return true;
-        m_signaled = m_semaphore.waitFor(timeout);
+        m_signaled = m_event.waitFor(timeout);
         if (m_signaled)
             tracePoint(FlushRemoteImageBufferEnd, reinterpret_cast<uintptr_t>(this), 0u);
         return m_signaled;
     }
 
-    std::optional<IPC::Semaphore> tryTakeSemaphore()
+    std::optional<IPC::Event> tryTakeEvent()
     {
         if (!m_signaled)
             return std::nullopt;
         Locker locker { m_lock };
-        return WTFMove(m_semaphore);
+        return WTFMove(m_event);
     }
 
 private:
-    RemoteImageBufferProxyFlushFence(IPC::Semaphore semaphore)
-        : m_semaphore(WTFMove(semaphore))
+    RemoteImageBufferProxyFlushFence(IPC::Event event)
+        : m_event(WTFMove(event))
     {
         tracePoint(FlushRemoteImageBufferStart, reinterpret_cast<uintptr_t>(this));
     }
     Lock m_lock;
     std::atomic<bool> m_signaled { false };
-    IPC::Semaphore WTF_GUARDED_BY_LOCK(m_lock) m_semaphore;
+    IPC::Event WTF_GUARDED_BY_LOCK(m_lock) m_event;
 };
 
 namespace {
@@ -373,13 +374,26 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
         return m_pendingFlush;
 
     LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync");
-    std::optional<IPC::Semaphore> flushSemaphore;
+    std::optional<IPC::Event> event;
+    // FIXME: This only recycles the event if the previous flush has been
+    // waited on successfully. It should be possible to have the same semaphore
+    // being used in multiple still-pending flushes, though if one times out,
+    // then the others will be waiting on the wrong signal.
     if (m_pendingFlush)
-        flushSemaphore = m_pendingFlush->tryTakeSemaphore();
-    if (!flushSemaphore)
-        flushSemaphore.emplace();
-    send(Messages::RemoteImageBuffer::FlushContext(*flushSemaphore));
-    m_pendingFlush = RemoteImageBufferProxyFlushFence::create(WTFMove(*flushSemaphore));
+        event = m_pendingFlush->tryTakeEvent();
+    if (!event) {
+        auto pair = IPC::createEventSignalPair();
+        if (!pair) {
+            flushDrawingContext();
+            return false;
+        }
+
+        event = WTFMove(pair->event);
+        send(Messages::RemoteImageBuffer::SetFlushSignal(WTFMove(pair->signal)));
+    }
+
+    send(Messages::RemoteImageBuffer::FlushContext());
+    m_pendingFlush = RemoteImageBufferProxyFlushFence::create(WTFMove(*event));
     m_needsFlush = false;
     return true;
 }

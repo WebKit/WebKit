@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Timeout.h"
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 
@@ -42,7 +43,16 @@ namespace IPC {
 
 class Decoder;
 class Encoder;
+struct EventSignalPair;
 
+std::optional<EventSignalPair> createEventSignalPair();
+
+// A semaphore implementation that can be duplicated across IPC.
+// The cocoa implementation of this only interrupts wait calls upon the
+// remote process terminating if the Semaphore was created by the remote
+// process.
+// It is generally preferred to start using IPC::Event/Signal instead
+// to avoid this.
 class Semaphore {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Semaphore);
@@ -74,6 +84,7 @@ public:
 #endif
 
 private:
+    friend std::optional<EventSignalPair> createEventSignalPair();
     void destroy();
 #if PLATFORM(COCOA)
     MachSendRight m_sendRight;

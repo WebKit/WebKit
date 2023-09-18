@@ -138,6 +138,7 @@ def surround_in_condition(string, condition):
 def types_that_must_be_moved():
     return [
         'IPC::Connection::Handle',
+        'IPC::Signal',
         'IPC::StreamServerConnection::Handle',
         'MachSendRight',
         'Vector<WebKit::SharedMemory::Handle>',
@@ -365,6 +366,7 @@ def types_that_cannot_be_forward_declared():
         'CVPixelBufferRef',
         'GCGLint',
         'IPC::AsyncReplyID',
+        'IPC::Signal',
         'IPC::DataReference',
         'IPC::FontReference',
         'IPC::Semaphore',
@@ -651,6 +653,7 @@ def argument_coder_headers_for_type(type):
 
     special_cases = {
         'IPC::Connection::Handle': '"Connection.h"',
+        'IPC::Signal': '"IPCEvent.h"',
         'String': '"ArgumentCoders.h"',
         'MachSendRight': '"ArgumentCodersDarwin.h"',
         'WebKit::ScriptMessageHandlerHandle': '"WebScriptMessageHandler.h"',
@@ -684,6 +687,7 @@ def headers_for_type(type):
         'Inspector::FrontendChannel::ConnectionType': ['<JavaScriptCore/InspectorFrontendChannel.h>'],
         'Inspector::InspectorTargetType': ['<JavaScriptCore/InspectorTarget.h>'],
         'IPC::AsyncReplyID': ['"Connection.h"'],
+        'IPC::Signal': ['"IPCEvent.h"'],
         'IPC::Semaphore': ['"IPCSemaphore.h"'],
         'JSC::MessageLevel': ['<JavaScriptCore/ConsoleTypes.h>'],
         'JSC::MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],

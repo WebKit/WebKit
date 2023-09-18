@@ -33,6 +33,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
+class Signal;
 class Semaphore;
 class StreamClientConnection;
 }
