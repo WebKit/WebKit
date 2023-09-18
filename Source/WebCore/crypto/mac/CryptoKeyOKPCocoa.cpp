@@ -44,13 +44,13 @@ bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve namedCurve)
 
 std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (namedCurve != NamedCurve::Ed25519 && namedCurve != NamedCurve::X25519)
+    if (!isPlatformSupportedCurve(namedCurve))
         return { };
 
     ccec25519pubkey ccPublicKey;
     ccec25519secretkey ccPrivateKey;
-
-    if (identifier == CryptoAlgorithmIdentifier::Ed25519) {
+    switch (identifier) {
+    case CryptoAlgorithmIdentifier::Ed25519: {
         int ccerror = 0;
         const struct ccdigest_info* di = ccsha512_di();
         cced25519_make_key_pair(di, ccrng(&ccerror),  ccPublicKey, ccPrivateKey);
@@ -58,14 +58,22 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
             RELEASE_LOG_ERROR(Crypto, "Cannot generate Ed25519 key pair, error is %d", ccerror);
             return { };
         }
-    } else {
+        break;
+    }
+    case CryptoAlgorithmIdentifier::X25519: {
         int ccerror = 0;
         cccurve25519_make_key_pair(ccrng(&ccerror), ccPublicKey, ccPrivateKey);
         if (ccerror) {
             RELEASE_LOG_ERROR(Crypto, "Cannot generate curve 25519 key pair, error is %d", ccerror);
             return { };
         }
+        break;
     }
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     bool isPublicKeyExtractable = true;
     auto publicKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Public, Vector<uint8_t>(ccPublicKey), isPublicKeyExtractable, usages);
     ASSERT(publicKey);
@@ -76,7 +84,7 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
 
 bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
 {
-    if (namedCurve != NamedCurve::Ed25519 && namedCurve != NamedCurve::X25519)
+    if (!isPlatformSupportedCurve(namedCurve))
         return false;
 
     if (privateKey.size() != 32 || publicKey.size() != 32)
@@ -113,6 +121,9 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier,
 // For all of the OIDs, the parameters MUST be absent.
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
+    if (!isPlatformSupportedCurve(namedCurve))
+        return nullptr;
+
     // FIXME: We should use the underlying crypto library to import PKCS8 OKP keys.
 
     // Read SEQUENCE
@@ -146,6 +157,9 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
             if (keyData[index++] != 112)
                 return nullptr;
             break;
+        default:
+            ASSERT_NOT_REACHED();
+            return nullptr;
     };
 
     // Read BIT STRING
@@ -190,6 +204,9 @@ static void writeOID(CryptoKeyOKP::NamedCurve namedCurve, Vector<uint8_t>& resul
     case CryptoKeyOKP::NamedCurve::Ed25519:
         result.append(OKPOIDEd25519Byte);
         break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
     };
 }
 
@@ -232,6 +249,9 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
 // For all of the OIDs, the parameters MUST be absent.
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
+    if (!isPlatformSupportedCurve(namedCurve))
+        return nullptr;
+
     // FIXME: We should use the underlying crypto library to import PKCS8 OKP keys.
 
     // Read SEQUENCE
@@ -272,6 +292,9 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
             if (keyData[index++] != OKPOIDEd25519Byte)
                 return nullptr;
             break;
+        default:
+            ASSERT_NOT_REACHED();
+            return nullptr;
     };
 
     // Read OCTET STRING

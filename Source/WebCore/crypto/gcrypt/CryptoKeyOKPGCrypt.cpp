@@ -122,6 +122,9 @@ static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerate
 
 std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
 {
+    if (!isPlatformSupportedCurve(namedCurve))
+        return std::nullopt;
+
     std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> keyPair;
     switch (namedCurve) {
     case NamedCurve::Ed25519:
@@ -131,6 +134,7 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
         keyPair = gcryptGenerateX25519Keys();
         break;
     default:
+        ASSERT_NOT_REACHED();
         return std::nullopt;
     }
 
@@ -152,6 +156,9 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
 
 bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve namedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
 {
+    if (!isPlatformSupportedCurve(namedCurve))
+        return false;
+
     switch (namedCurve) {
     case NamedCurve::X25519: {
         // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
@@ -177,6 +184,9 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve
 // For all of the OIDs, the parameters MUST be absent.
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
+    if (!isPlatformSupportedCurve(curve))
+        return nullptr;
+
     // Decode the `SubjectPublicKeyInfo` structure using the provided key data.
     PAL::TASN1::Structure spki;
     if (!PAL::TASN1::decodeStructure(&spki, "WebCrypto.SubjectPublicKeyInfo", keyData))
@@ -205,7 +215,18 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
             return nullptr;
 
         // Construct the `public-key` expression to be used for generating the MPI structure.
-        gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, curve == CryptoKeyOKP::NamedCurve::Ed25519 ? "(public-key(ecc(curve Ed25519)(q %b)))" : "(public-key(ecc(curve Curve25519)(q %b)))", subjectPublicKey->size(), subjectPublicKey->data());
+        gcry_error_t error = GPG_ERR_NO_ERROR;
+        switch (curve) {
+        case CryptoKeyOKP::NamedCurve::Ed25519:
+            error = gcry_sexp_build(&platformKey, nullptr, "(public-key(ecc(curve Ed25519)(q %b)))", subjectPublicKey->size(), subjectPublicKey->data());
+            break;
+        case CryptoKeyOKP::NamedCurve::X25519:
+            error = gcry_sexp_build(&platformKey, nullptr, "(public-key(ecc(curve Curve25519)(q %b)))", subjectPublicKey->size(), subjectPublicKey->data());
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return nullptr;
@@ -227,6 +248,19 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
     return create(identifier, curve, CryptoKeyType::Public, Vector<uint8_t>(*rawKey), extractable, usages);
 }
 
+static const std::array<uint8_t, 12> algorithmId(WebCore::CryptoKeyOKP::NamedCurve curve)
+{
+    switch (curve) {
+    case CryptoKeyOKP::NamedCurve::Ed25519:
+        return CryptoConstants::s_ed25519Identifier;
+    case CryptoKeyOKP::NamedCurve::X25519:
+        return CryptoConstants::s_x25519Identifier;
+    default:
+        ASSERT_NOT_REACHED();
+        return { { "" } };
+    }
+}
+
 ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
 {
     if (type() != CryptoKeyType::Public)
@@ -239,7 +273,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
             return Exception { OperationError };
 
         // Write out the id-edPublicKey identifier under `algorithm.algorithm`.
-        if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", m_curve == CryptoKeyOKP::NamedCurve::Ed25519 ? CryptoConstants::s_ed25519Identifier.data() : CryptoConstants::s_x25519Identifier.data(), 1))
+        if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", algorithmId(m_curve).data(), 1))
             return Exception { OperationError };
 
         // The 'paramaters' element should not be present
@@ -271,6 +305,9 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
 // For all of the OIDs, the parameters MUST be absent.
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
+    if (!isPlatformSupportedCurve(curve))
+        return nullptr;
+
     // Decode the `PrivateKeyInfo` structure using the provided key data.
     PAL::TASN1::Structure pkcs8;
     if (!PAL::TASN1::decodeStructure(&pkcs8, "WebCrypto.PrivateKeyInfo", keyData))
@@ -324,7 +361,18 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
             return nullptr;
 
         // Construct the `private-key` expression that will also be used for the EC context.
-        gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, curve == CryptoKeyOKP::NamedCurve::Ed25519 ? "(private-key(ecc(curve Ed25519)(flags eddsa)(d %b)))" : "(private-key(ecc(curve Curve25519)(d %b)))", privateKey->size(), privateKey->data());
+        gcry_error_t error = GPG_ERR_NO_ERROR;
+        switch (curve) {
+        case CryptoKeyOKP::NamedCurve::Ed25519:
+            error = gcry_sexp_build(&platformKey, nullptr, "(private-key(ecc(curve Ed25519)(flags eddsa)(d %b)))", privateKey->size(), privateKey->data());
+            break;
+        case CryptoKeyOKP::NamedCurve::X25519:
+            error = gcry_sexp_build(&platformKey, nullptr, "(private-key(ecc(curve Curve25519)(d %b)))", privateKey->size(), privateKey->data());
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return nullptr;
@@ -391,7 +439,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
             return Exception { OperationError };
 
         // Write out the id-Ed25519 identifier under `privateKeyAlgorithm.algorithm`.
-        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.algorithm", m_curve == CryptoKeyOKP::NamedCurve::Ed25519 ? CryptoConstants::s_ed25519Identifier.data() : CryptoConstants::s_x25519Identifier.data(), 1))
+        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.algorithm", algorithmId(m_curve).data(), 1))
             return Exception { OperationError };
 
         // The 'paramaters' element should not be present
