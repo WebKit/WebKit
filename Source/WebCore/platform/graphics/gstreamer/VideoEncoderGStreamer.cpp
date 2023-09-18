@@ -141,7 +141,13 @@ void GStreamerVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame
             encoder->harness()->processOutputBuffers();
         else
             resultString = "Encoding failed"_s;
-        callback(WTFMove(resultString));
+
+        encoder->postTask([weakEncoder = WeakPtr { encoder.get() }, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
+            if (!weakEncoder || weakEncoder->isClosed())
+                return;
+
+            callback(WTFMove(result));
+        });
     });
 }
 
