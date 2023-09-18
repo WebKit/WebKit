@@ -27,6 +27,7 @@ video track capabilities:
   capabilities.frameRate = { max: 120, min: 1 }
   capabilities.groupId = <UUID>
   capabilities.height = { max: 2160, min: 1 }
+  capabilities.whiteBalanceMode = [ manual, single-shot, continuous ]
   capabilities.width = { max: 3840, min: 1 }
   capabilities.zoom = { max: 4, min: 1 }
 
@@ -36,6 +37,18 @@ audio track capabilities:
   capabilities.groupId = <UUID>
   capabilities.sampleRate = { max: 96000, min: 44100 }
   capabilities.volume = { max: 1, min: 0 }
+
+video track capabilities:
+  capabilities.aspectRatio = { max: 3840, min: 0.000 }
+  capabilities.deviceId = <UUID>
+  capabilities.facingMode = [ environment ]
+  capabilities.focusDistance = { min: 0.200 }
+  capabilities.frameRate = { max: 120, min: 1 }
+  capabilities.groupId = <UUID>
+  capabilities.height = { max: 2160, min: 1 }
+  capabilities.whiteBalanceMode = [ manual, single-shot, continuous ]
+  capabilities.width = { max: 3840, min: 1 }
+  capabilities.zoom = { max: 4, min: 1 }
 
 PASS successfullyParsed is true
 

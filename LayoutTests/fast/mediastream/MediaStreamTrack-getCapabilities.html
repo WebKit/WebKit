@@ -98,6 +98,9 @@
                 listTrackProperties(mediaStream.getVideoTracks()[0]);
                 listTrackProperties(mediaStream.getAudioTracks()[0]);
 
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video:{ whiteBalanceMode: 'manual' } });
+                listTrackProperties(mediaStream.getVideoTracks()[0]);
+
                 finishJSTest();
             }
 

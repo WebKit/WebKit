@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -180,6 +180,9 @@ public:
     VideoFacingMode facingMode() const { return m_facingMode; }
     void setFacingMode(VideoFacingMode);
 
+    MeteringMode whiteBalanceMode() const { return m_whiteBalanceMode; }
+    void setWhiteBalanceMode(MeteringMode);
+
     double volume() const { return m_volume; }
     void setVolume(double);
 
@@ -345,6 +348,7 @@ private:
     double m_sampleSize { 0 };
     double m_fitnessScore { 0 };
     VideoFacingMode m_facingMode { VideoFacingMode::User };
+    MeteringMode m_whiteBalanceMode { MeteringMode::None };
 
     bool m_muted { false };
     bool m_pendingSettingsDidChangeNotification { false };

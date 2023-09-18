@@ -446,6 +446,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/MediaTrackCapabilities.idl \
     $(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
     $(WebCore)/Modules/mediastream/MediaTrackSupportedConstraints.idl \
+    $(WebCore)/Modules/mediastream/MeteringMode.idl \
     $(WebCore)/Modules/mediastream/Navigator+MediaDevices.idl \
     $(WebCore)/Modules/mediastream/OverconstrainedError.idl \
     $(WebCore)/Modules/mediastream/OverconstrainedErrorEvent.idl \

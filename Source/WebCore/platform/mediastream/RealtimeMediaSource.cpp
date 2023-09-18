@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
  *
@@ -36,6 +36,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSource.h"
 
+#include "JSMeteringMode.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
 #include "NotImplemented.h"
@@ -637,7 +638,19 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
             return 0;
 
         auto supportedModes = capabilities.facingMode().map([](auto& mode) {
-            return RealtimeMediaSourceSettings::facingMode(mode);
+            return convertEnumerationToString(mode);
+        });
+        return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
+        break;
+    }
+
+    case MediaConstraintType::WhiteBalanceMode: {
+        ASSERT(constraint.isString());
+        if (!capabilities.supportsWhiteBalanceMode())
+            return 0;
+
+        auto supportedModes = capabilities.whiteBalanceModes().map([](auto& mode) {
+            return convertEnumerationToString(mode);
         });
         return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
         break;
@@ -803,6 +816,33 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
         auto modeString = downcast<StringConstraint>(constraint).find(WTFMove(filter));
         if (!modeString.isEmpty())
             setFacingMode(RealtimeMediaSourceSettings::videoFacingModeEnum(modeString));
+        break;
+    }
+
+    case MediaConstraintType::WhiteBalanceMode: {
+        ASSERT(constraint.isString());
+        if (!capabilities.supportsWhiteBalanceMode())
+            return;
+
+        auto& supportedModes = capabilities.whiteBalanceModes();
+        std::optional<MeteringMode> whiteBalanceMode;
+        downcast<StringConstraint>(constraint).find([supportedModes, &whiteBalanceMode](const String& modeString) mutable {
+            auto mode = parseEnumerationFromString<MeteringMode>(modeString);
+            if (!mode)
+                return false;
+
+            for (auto& supportedMode : supportedModes) {
+                if (mode.value() == supportedMode) {
+                    whiteBalanceMode = mode.value();
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        if (whiteBalanceMode)
+            setWhiteBalanceMode(whiteBalanceMode.value());
         break;
     }
 
@@ -1006,6 +1046,11 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
         return capabilities.supportsDeviceId();
         break;
 
+    case MediaConstraintType::WhiteBalanceMode:
+        ASSERT(constraint.isString());
+        return capabilities.supportsWhiteBalanceMode();
+        break;
+
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
         // https://www.w3.org/TR/screen-capture/#new-constraints-for-captured-display-surfaces
@@ -1058,6 +1103,7 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
         case MediaConstraintType::LogicalSurface:
         case MediaConstraintType::FocusDistance:
         case MediaConstraintType::Zoom:
+        case MediaConstraintType::WhiteBalanceMode:
         case MediaConstraintType::Unknown:
             m_fitnessScore += distance ? 1 : 2;
             break;
@@ -1255,6 +1301,17 @@ void RealtimeMediaSource::setFacingMode(VideoFacingMode mode)
 
     m_facingMode = mode;
     notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::FacingMode);
+}
+
+void RealtimeMediaSource::setWhiteBalanceMode(MeteringMode mode)
+{
+    if (m_whiteBalanceMode == mode)
+        return;
+
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, mode);
+
+    m_whiteBalanceMode = mode;
+    notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode);
 }
 
 void RealtimeMediaSource::setVolume(double volume)

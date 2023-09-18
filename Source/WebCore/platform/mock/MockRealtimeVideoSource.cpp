@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,34 +139,40 @@ void MockRealtimeVideoSource::generatePresets()
 
 const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
 {
-    if (!m_capabilities) {
-        RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
+    if (m_capabilities)
+        return m_capabilities.value();
 
-        if (mockCamera()) {
-            auto facingMode = std::get<MockCameraProperties>(m_device.properties).facingMode;
-            if (facingMode != VideoFacingMode::Unknown)
-                capabilities.addFacingMode(facingMode);
-            capabilities.setDeviceId(hashedId());
-            updateCapabilities(capabilities);
+    auto supportedConstraints = settings().supportedConstraints();
+    RealtimeMediaSourceCapabilities capabilities(supportedConstraints);
+    if (mockCamera()) {
+        auto facingMode = std::get<MockCameraProperties>(m_device.properties).facingMode;
+        if (facingMode != VideoFacingMode::Unknown)
+            capabilities.addFacingMode(facingMode);
+        capabilities.setDeviceId(hashedId());
+        updateCapabilities(capabilities);
 
-            if (facingMode == VideoFacingMode::Environment) {
-                capabilities.setFocusDistance(CapabilityValueOrRange(0.2, std::numeric_limits<double>::max()));
-                auto supportedConstraints = settings().supportedConstraints();
-                supportedConstraints.setSupportsFocusDistance(true);
-                capabilities.setSupportedConstraints(supportedConstraints);
-            }
-        } else if (mockDisplay()) {
-            capabilities.setWidth(CapabilityValueOrRange(72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
-            capabilities.setHeight(CapabilityValueOrRange(45, std::get<MockDisplayProperties>(m_device.properties).defaultSize.height()));
-            capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
-        } else {
-            capabilities.setWidth(CapabilityValueOrRange(72, 2880));
-            capabilities.setHeight(CapabilityValueOrRange(45, 1800));
-            capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
+        if (facingMode == VideoFacingMode::Environment) {
+            capabilities.setFocusDistance(CapabilityValueOrRange(0.2, std::numeric_limits<double>::max()));
+            supportedConstraints.setSupportsFocusDistance(true);
         }
 
-        m_capabilities = WTFMove(capabilities);
+        auto whiteBalanceModes = std::get<MockCameraProperties>(m_device.properties).whiteBalanceMode;
+        if (!whiteBalanceModes.isEmpty()) {
+            capabilities.setWhiteBalanceModes(WTFMove(whiteBalanceModes));
+            supportedConstraints.setSupportsWhiteBalanceMode(true);
+        }
+        capabilities.setSupportedConstraints(supportedConstraints);
+    } else if (mockDisplay()) {
+        capabilities.setWidth(CapabilityValueOrRange(72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
+        capabilities.setHeight(CapabilityValueOrRange(45, std::get<MockDisplayProperties>(m_device.properties).defaultSize.height()));
+        capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
+    } else {
+        capabilities.setWidth(CapabilityValueOrRange(72, 2880));
+        capabilities.setHeight(CapabilityValueOrRange(45, 1800));
+        capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
     }
+
+    m_capabilities = WTFMove(capabilities);
 
     return m_capabilities.value();
 }
@@ -217,6 +223,11 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
         if (isZoomSupported(presets())) {
             supportedConstraints.setSupportsZoom(true);
             settings.setZoom(zoom());
+        }
+
+        if (std::get<MockCameraProperties>(m_device.properties).whiteBalanceMode.size()) {
+            supportedConstraints.setSupportsWhiteBalanceMode(true);
+            settings.setWhiteBalanceMode(whiteBalanceMode());
         }
     } else {
         supportedConstraints.setSupportsDisplaySurface(true);

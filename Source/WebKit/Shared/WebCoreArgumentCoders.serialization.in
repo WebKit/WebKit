@@ -1975,6 +1975,7 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::BooleanConstraint> m_displaySurface;
     std::optional<WebCore::BooleanConstraint> m_logicalSurface;
     std::optional<WebCore::StringConstraint> m_facingMode;
+    std::optional<WebCore::StringConstraint> m_whiteBalanceMode;
     std::optional<WebCore::StringConstraint> m_deviceId;
     std::optional<WebCore::StringConstraint> m_groupId;
 }
@@ -4632,6 +4633,7 @@ enum class WebCore::MediaConstraintType : uint8_t {
     DisplaySurface,
     LogicalSurface,
     Zoom,
+    WhiteBalanceMode,
 };
 
 header: <WebCore/MediaConstraints.h>
@@ -4684,6 +4686,7 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsAspectRatio();
     bool supportsFrameRate();
     bool supportsFacingMode();
+    bool supportsWhiteBalanceMode();
     bool supportsVolume();
     bool supportsSampleRate();
     bool supportsSampleSize();
@@ -4712,11 +4715,20 @@ enum class WebCore::DisplaySurfaceType : uint8_t {
     Invalid,
 };
 
+header: <WebCore/MeteringMode.h>
+[CustomHeader] enum class WebCore::MeteringMode : uint8_t {
+    None,
+    Manual,
+    SingleShot,
+    Continuous,
+};
+
 class WebCore::RealtimeMediaSourceSettings {
     uint32_t width();
     uint32_t height();
     float frameRate();
     WebCore::VideoFacingMode facingMode();
+    WebCore::MeteringMode whiteBalanceMode();
     double volume();
     uint32_t sampleRate();
     uint32_t sampleSize();
@@ -4764,6 +4776,7 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::CapabilityValueOrRange aspectRatio();
     WebCore::CapabilityValueOrRange frameRate();
     Vector<WebCore::VideoFacingMode> facingMode();
+    Vector<WebCore::MeteringMode> whiteBalanceModes();
     WebCore::CapabilityValueOrRange volume();
     WebCore::CapabilityValueOrRange sampleRate();
     WebCore::CapabilityValueOrRange sampleSize();

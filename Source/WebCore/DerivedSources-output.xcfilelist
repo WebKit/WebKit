@@ -1863,6 +1863,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMessageEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMessageEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMessagePort.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMessagePort.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMeteringMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMeteringMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCDMFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCDMFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockContentFilterSettings.cpp

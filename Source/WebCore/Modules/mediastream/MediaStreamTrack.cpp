@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSMeteringMode.h"
 #include "JSOverconstrainedError.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -272,7 +273,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
     if (settings.supportsFrameRate())
         result.frameRate = settings.frameRate();
     if (settings.supportsFacingMode())
-        result.facingMode = RealtimeMediaSourceSettings::facingMode(settings.facingMode());
+        result.facingMode = convertEnumerationToString(settings.facingMode());
+    if (settings.supportsWhiteBalanceMode())
+        result.whiteBalanceMode = convertEnumerationToString(settings.whiteBalanceMode());
     if (settings.supportsVolume())
         result.volume = settings.volume();
     if (settings.supportsSampleRate())

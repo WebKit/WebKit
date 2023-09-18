@@ -41,6 +41,7 @@ struct MediaTrackCapabilities {
     std::optional<DoubleRange> aspectRatio;
     std::optional<DoubleRange> frameRate;
     std::optional<Vector<String>> facingMode;
+    std::optional<Vector<String>> whiteBalanceMode;
     std::optional<DoubleRange> volume;
     std::optional<LongRange> sampleRate;
     std::optional<LongRange> sampleSize;

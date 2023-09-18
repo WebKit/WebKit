@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,6 +91,7 @@ struct MockCameraProperties {
         encoder << facingMode;
         encoder << presets;
         encoder << fillColor;
+        encoder << whiteBalanceMode;
     }
 
     template <class Decoder>
@@ -116,13 +117,19 @@ struct MockCameraProperties {
         if (!fillColor)
             return std::nullopt;
 
-        return MockCameraProperties { *defaultFrameRate, *facingMode, WTFMove(*presets), *fillColor };
+        std::optional<Vector<MeteringMode>> whiteBalanceModes;
+        decoder >> whiteBalanceModes;
+        if (!whiteBalanceModes)
+            return std::nullopt;
+
+        return MockCameraProperties { *defaultFrameRate, *facingMode, WTFMove(*presets), *fillColor, WTFMove(*whiteBalanceModes) };
     }
 
     double defaultFrameRate { 30 };
     VideoFacingMode facingMode { VideoFacingMode::User };
     Vector<VideoPresetData> presets { { { 640, 480 }, { { 30, 30}, { 15, 15 } }, 1, 2 } };
     Color fillColor { Color::black };
+    Vector<MeteringMode> whiteBalanceMode { MeteringMode::None };
 };
 
 struct MockDisplayProperties {

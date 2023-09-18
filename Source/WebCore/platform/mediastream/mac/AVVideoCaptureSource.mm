@@ -92,6 +92,42 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
     return globalQueue;
 }
 
+static AVCaptureWhiteBalanceMode whiteBalanceModeFromMeteringMode(MeteringMode mode)
+{
+    switch (mode) {
+    case MeteringMode::Manual:
+        return AVCaptureWhiteBalanceModeLocked;
+        break;
+    case MeteringMode::SingleShot:
+    case MeteringMode::None:
+        return AVCaptureWhiteBalanceModeAutoWhiteBalance;
+        break;
+    case MeteringMode::Continuous:
+        return AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance;
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return AVCaptureWhiteBalanceModeAutoWhiteBalance;
+}
+
+static MeteringMode meteringModeFromAVCaptureWhiteBalanceMode(AVCaptureWhiteBalanceMode mode)
+{
+    switch (mode) {
+    case AVCaptureWhiteBalanceModeLocked:
+        return MeteringMode::Manual;
+        break;
+    case AVCaptureWhiteBalanceModeAutoWhiteBalance:
+        return MeteringMode::SingleShot;
+        break;
+    case AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance:
+        return MeteringMode::Continuous;
+        break;
+    }
+
+    return MeteringMode::None;
+}
+
 std::optional<double> AVVideoCaptureSource::computeMinZoom() const
 {
 #if PLATFORM(IOS_FAMILY)
@@ -235,19 +271,31 @@ void AVVideoCaptureSource::stopProducingData()
 
 void AVVideoCaptureSource::beginConfiguration()
 {
+    if (++m_beginConfigurationCount > 1)
+        return;
+
     if (m_session)
         [m_session beginConfiguration];
 }
 
 void AVVideoCaptureSource::commitConfiguration()
 {
-    if (m_session)
-        [m_session commitConfiguration];
+    ASSERT(m_beginConfigurationCount);
+    if (!m_beginConfigurationCount || --m_beginConfigurationCount > 0)
+        return;
+
+    if (!m_session)
+        return;
+
+    [m_session commitConfiguration];
 }
 
-void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>)
+void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     m_currentSettings = std::nullopt;
+
+    if (settings.contains(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode))
+        updateWhiteBalanceMode();
 }
 
 static bool isZoomSupported(const Vector<VideoPreset>& presets)
@@ -255,6 +303,21 @@ static bool isZoomSupported(const Vector<VideoPreset>& presets)
     return anyOf(presets, [](auto& preset) {
         return preset.isZoomSupported();
     });
+}
+
+static Vector<MeteringMode> supportedWhiteBalanceModes(AVCaptureDevice* device)
+{
+    Vector<MeteringMode> whiteBalanceModes;
+    whiteBalanceModes.reserveInitialCapacity(3);
+
+    if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeLocked])
+        whiteBalanceModes.uncheckedAppend(MeteringMode::Manual);
+    if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeAutoWhiteBalance])
+        whiteBalanceModes.uncheckedAppend(MeteringMode::SingleShot);
+    if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance])
+        whiteBalanceModes.uncheckedAppend(MeteringMode::Continuous);
+
+    return whiteBalanceModes;
 }
 
 const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
@@ -296,6 +359,11 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
         settings.setZoom(zoom());
     }
 
+    if (!supportedWhiteBalanceModes(device()).isEmpty()) {
+        supportedConstraints.setSupportsWhiteBalanceMode(true);
+        settings.setWhiteBalanceMode(meteringModeFromAVCaptureWhiteBalanceMode([device() whiteBalanceMode]));
+    }
+
     settings.setSupportedConstraints(supportedConstraints);
 
     m_currentSettings = WTFMove(settings);
@@ -327,6 +395,14 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
         capabilities.setSupportedConstraints(supportedConstraints);
     }
 #endif // HAVE(AVCAPTUREDEVICE_MINFOCUSLENGTH)
+
+    auto whiteBalanceModes = supportedWhiteBalanceModes(videoDevice);
+    if (!whiteBalanceModes.isEmpty()) {
+        auto supportedConstraints = settings().supportedConstraints();
+        supportedConstraints.setSupportsWhiteBalanceMode(true);
+        capabilities.setWhiteBalanceModes(WTFMove(whiteBalanceModes));
+        capabilities.setSupportedConstraints(supportedConstraints);
+    }
 
     updateCapabilities(capabilities);
 
@@ -424,7 +500,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
     ASSERT(m_currentPreset->format());
 
     NSError *error = nil;
-    [m_session beginConfiguration];
+    beginConfiguration();
     @try {
         if ([device() lockForConfiguration:&error]) {
             [device() setActiveFormat:m_currentPreset->format()];
@@ -472,7 +548,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
         [device() unlockForConfiguration];
         ASSERT_NOT_REACHED();
     }
-    [m_session commitConfiguration];
+    commitConfiguration();
 
     ERROR_LOG_IF(error && loggerPtr(), LOGIDENTIFIER, error);
 }
@@ -505,6 +581,28 @@ static inline IntDegrees sensorOrientation(AVCaptureVideoOrientation videoOrient
 #endif
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
+
+void AVVideoCaptureSource::updateWhiteBalanceMode()
+{
+    beginConfiguration();
+
+    auto mode = whiteBalanceModeFromMeteringMode(whiteBalanceMode());
+    NSError *error = nil;
+    auto* device = this->device();
+    @try {
+        if ([device lockForConfiguration:&error]) {
+            if (!error)
+                device.whiteBalanceMode = mode;
+            else
+                ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error locking configuration ", error);
+        }
+    } @catch(NSException *exception) {
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error setting white balance mode ", [[exception name] UTF8String], ", reason : ", exception.reason);
+    }
+
+    [device unlockForConfiguration];
+    commitConfiguration();
+}
 
 IntDegrees AVVideoCaptureSource::sensorOrientationFromVideoOutput()
 {
@@ -546,9 +644,9 @@ bool AVVideoCaptureSource::setupSession()
 #endif
     [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
-    [m_session beginConfiguration];
+    beginConfiguration();
     bool success = setupCaptureSession();
-    [m_session commitConfiguration];
+    commitConfiguration();
 
     if (!success)
         captureFailed();

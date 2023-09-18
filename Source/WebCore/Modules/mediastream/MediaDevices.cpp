@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -229,6 +229,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         case MediaConstraintType::EchoCancellation:
         case MediaConstraintType::FocusDistance:
         case MediaConstraintType::Zoom:
+        case MediaConstraintType::WhiteBalanceMode:
             // Ignored.
             break;
 
@@ -367,6 +368,7 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
     result.aspectRatio = supported.supportsAspectRatio();
     result.frameRate = supported.supportsFrameRate();
     result.facingMode = supported.supportsFacingMode();
+    result.whiteBalanceMode = supported.supportsWhiteBalanceMode();
     result.volume = supported.supportsVolume();
     result.sampleRate = supported.supportsSampleRate();
     result.sampleSize = supported.supportsSampleSize();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,8 @@ private:
     std::optional<double> computeMinZoom() const;
     std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
 
+    void updateWhiteBalanceMode();
+
     RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
@@ -149,6 +151,7 @@ private:
     double m_currentFrameRate;
     double m_currentZoom { 1 };
     double m_zoomScaleFactor { 1 };
+    uint64_t m_beginConfigurationCount { 0 };
     bool m_interrupted { false };
     bool m_isRunning { false };
 

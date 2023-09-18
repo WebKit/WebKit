@@ -571,6 +571,7 @@ $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackCapabilities.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackConstraints.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackSupportedConstraints.idl
+$(PROJECT_DIR)/Modules/mediastream/MeteringMode.idl
 $(PROJECT_DIR)/Modules/mediastream/Navigator+MediaDevices.idl
 $(PROJECT_DIR)/Modules/mediastream/OverconstrainedError.idl
 $(PROJECT_DIR)/Modules/mediastream/OverconstrainedErrorEvent.idl

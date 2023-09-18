@@ -3847,6 +3847,7 @@ JSMerchantValidationEvent.cpp
 JSMessageChannel.cpp
 JSMessageEvent.cpp
 JSMessagePort.cpp
+JSMeteringMode.cpp
 JSMouseEvent.cpp
 JSMouseEventInit.cpp
 JSMultiCacheQueryOptions.cpp

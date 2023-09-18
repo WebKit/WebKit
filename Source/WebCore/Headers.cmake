@@ -476,6 +476,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/MediaStreamTrack.h
     Modules/mediastream/MediaTrackCapabilities.h
     Modules/mediastream/MediaTrackConstraints.h
+    Modules/mediastream/MeteringMode.h
     Modules/mediastream/RTCController.h
     Modules/mediastream/RTCDataChannel.h
     Modules/mediastream/RTCDataChannelRemoteHandler.h
