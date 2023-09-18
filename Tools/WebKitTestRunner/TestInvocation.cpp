@@ -563,6 +563,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetShouldDownloadContentDispositionAttachments")) {
+        TestController::singleton().setShouldDownloadContentDispositionAttachments(booleanValue(messageBody));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetShouldLogDownloadSize")) {
         TestController::singleton().setShouldLogDownloadSize(booleanValue(messageBody));
         return;
