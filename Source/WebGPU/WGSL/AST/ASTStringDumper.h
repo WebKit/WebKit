@@ -77,6 +77,7 @@ public:
 
     // Statement
     void visit(AssignmentStatement&) override;
+    void visit(CallStatement&) override;
     void visit(CompoundAssignmentStatement&) override;
     void visit(CompoundStatement&) override;
     void visit(AST::DecrementIncrementStatement&) override;

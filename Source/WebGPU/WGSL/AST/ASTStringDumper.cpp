@@ -309,6 +309,12 @@ void StringDumper::visit(AssignmentStatement& statement)
     m_out.print(";");
 }
 
+void StringDumper::visit(CallStatement& statement)
+{
+    visit(statement.call());
+    m_out.print(";");
+}
+
 void StringDumper::visit(CompoundAssignmentStatement& statement)
 {
     m_out.print(m_indent);

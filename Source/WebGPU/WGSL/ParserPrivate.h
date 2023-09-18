@@ -83,6 +83,7 @@ public:
     Result<AST::Statement::Ref> parseForStatement();
     Result<AST::Statement::Ref> parseReturnStatement();
     Result<AST::Statement::Ref> parseVariableUpdatingStatement();
+    Result<AST::Statement::Ref> parseVariableUpdatingStatement(AST::Expression::Ref&&);
     Result<AST::Expression::Ref> parseShortCircuitExpression(AST::Expression::Ref&&, TokenType, AST::BinaryOperation);
     Result<AST::Expression::Ref> parseRelationalExpression();
     Result<AST::Expression::Ref> parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs);

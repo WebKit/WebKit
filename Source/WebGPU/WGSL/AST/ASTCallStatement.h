@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +25,26 @@
 
 #pragma once
 
-#include "ASTExpression.h"
+#include "ASTCallExpression.h"
+#include "ASTStatement.h"
 
 namespace WGSL::AST {
 
-// A CallExpression expresses a "function" call, which consists of a target to be called,
-// and a list of arguments. The target does not necesserily have to be a function identifier,
-// but can also be a type, in which the whole call is a type conversion expression. The exact
-// kind of expression can only be resolved during semantic analysis.
-class CallExpression final : public Expression {
-    WGSL_AST_BUILDER_NODE(CallExpression);
+class CallStatement final : public Statement {
+    WGSL_AST_BUILDER_NODE(CallStatement);
 public:
-    using Ref = std::reference_wrapper<CallExpression>;
-
     NodeKind kind() const override;
-    Expression& target() { return m_target.get(); }
-    Expression::List& arguments() { return m_arguments; }
+    CallExpression& call() { return m_call.get(); }
 
 private:
-    CallExpression(SourceSpan span, Expression::Ref&& target, Expression::List&& arguments)
-        : Expression(span)
-        , m_target(WTFMove(target))
-        , m_arguments(WTFMove(arguments))
+    CallStatement(SourceSpan span, CallExpression::Ref&& call)
+        : Statement(span)
+        , m_call(WTFMove(call))
     { }
 
-    // If m_target is a NamedType, it could either be a:
-    //   * Type that does not accept parameters (bool, i32, u32, ...)
-    //   * Identifier that refers to a type alias.
-    //   * Identifier that refers to a function.
-    Expression::Ref m_target;
-    Expression::List m_arguments;
+    CallExpression::Ref m_call;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(CallExpression)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(CallStatement)

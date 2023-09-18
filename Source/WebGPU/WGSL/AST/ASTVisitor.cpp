@@ -333,6 +333,9 @@ void Visitor::visit(Statement& statement)
     case AST::NodeKind::BreakStatement:
         checkErrorAndVisit(downcast<AST::BreakStatement>(statement));
         break;
+    case AST::NodeKind::CallStatement:
+        checkErrorAndVisit(downcast<AST::CallStatement>(statement));
+        break;
     case AST::NodeKind::CompoundAssignmentStatement:
         checkErrorAndVisit(downcast<AST::CompoundAssignmentStatement>(statement));
         break;
@@ -388,6 +391,11 @@ void Visitor::visit(AST::AssignmentStatement& assignmentStatement)
 
 void Visitor::visit(AST::BreakStatement&)
 {
+}
+
+void Visitor::visit(AST::CallStatement& callStatement)
+{
+    checkErrorAndVisit(callStatement.call());
 }
 
 void Visitor::visit(AST::CompoundAssignmentStatement& compoundAssignmentStatement)

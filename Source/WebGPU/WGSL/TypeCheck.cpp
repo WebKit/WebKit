@@ -74,6 +74,7 @@ public:
 
     // Statements
     void visit(AST::AssignmentStatement&) override;
+    void visit(AST::CallStatement&) override;
     void visit(AST::CompoundAssignmentStatement&) override;
     void visit(AST::DecrementIncrementStatement&) override;
     void visit(AST::IfStatement&) override;
@@ -426,6 +427,13 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
     }
     if (!unify(reference->element, rhs))
         typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *reference->element, "'");
+}
+
+void TypeChecker::visit(AST::CallStatement& statement)
+{
+    auto* result = infer(statement.call());
+    // FIXME: this should check if the function has a must_use attribute
+    UNUSED_PARAM(result);
 }
 
 void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)

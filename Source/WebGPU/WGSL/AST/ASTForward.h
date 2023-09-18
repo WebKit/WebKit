@@ -68,6 +68,7 @@ class Identifier;
 class Statement;
 class AssignmentStatement;
 class BreakStatement;
+class CallStatement;
 class CompoundAssignmentStatement;
 class CompoundStatement;
 class ContinueStatement;

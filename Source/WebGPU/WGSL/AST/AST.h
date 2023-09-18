@@ -38,6 +38,7 @@
 #include "ASTBreakStatement.h"
 #include "ASTBuiltinAttribute.h"
 #include "ASTCallExpression.h"
+#include "ASTCallStatement.h"
 #include "ASTCompoundAssignmentStatement.h"
 #include "ASTCompoundStatement.h"
 #include "ASTConstAttribute.h"

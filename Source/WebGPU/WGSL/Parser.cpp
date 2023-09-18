@@ -966,8 +966,19 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         RETURN_ARENA_NODE(VariableStatement, WTFMove(variable));
     }
     case TokenType::Identifier: {
-        // FIXME: there will be other cases here eventually for function calls
-        PARSE(variableUpdatingStatement, VariableUpdatingStatement);
+        PARSE(ident, Identifier);
+
+        if (current().type == TokenType::TemplateArgsLeft || current().type == TokenType::ParenLeft) {
+            PARSE(type, TypeNameAfterIdentifier, WTFMove(ident), _startOfElementPosition);
+            PARSE(arguments, ArgumentExpressionList);
+            auto& call = MAKE_ARENA_NODE(CallExpression, WTFMove(type), WTFMove(arguments));
+            CONSUME_TYPE(Semicolon);
+            RETURN_ARENA_NODE(CallStatement, call);
+        }
+
+        AST::Expression::Ref identifierExpression = MAKE_ARENA_NODE(IdentifierExpression, WTFMove(ident));
+        PARSE(lhs, PostfixExpression, WTFMove(identifierExpression), _startOfElementPosition);
+        PARSE(variableUpdatingStatement, VariableUpdatingStatement, WTFMove(lhs));
         CONSUME_TYPE(Semicolon);
         return { variableUpdatingStatement };
     }
@@ -1123,8 +1134,14 @@ template<typename Lexer>
 Result<AST::Statement::Ref> Parser<Lexer>::parseVariableUpdatingStatement()
 {
     // https://www.w3.org/TR/WGSL/#recursive-descent-syntax-variable_updating_statement
-    START_PARSE();
     PARSE(lhs, LHSExpression);
+    return parseVariableUpdatingStatement(WTFMove(lhs));
+}
+
+template<typename Lexer>
+Result<AST::Statement::Ref> Parser<Lexer>::parseVariableUpdatingStatement(AST::Expression::Ref&& lhs)
+{
+    START_PARSE();
 
     std::optional<AST::DecrementIncrementStatement::Operation> operation;
     if (current().type == TokenType::PlusPlus)

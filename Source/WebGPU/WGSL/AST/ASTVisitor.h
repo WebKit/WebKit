@@ -86,6 +86,7 @@ public:
     virtual void visit(AST::Statement&);
     virtual void visit(AST::AssignmentStatement&);
     virtual void visit(AST::BreakStatement&);
+    virtual void visit(AST::CallStatement&);
     virtual void visit(AST::CompoundAssignmentStatement&);
     virtual void visit(AST::CompoundStatement&);
     virtual void visit(AST::ContinueStatement&);
