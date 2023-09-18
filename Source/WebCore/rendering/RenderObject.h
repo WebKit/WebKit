@@ -73,7 +73,7 @@ class RenderLayerModelObject;
 class RenderFragmentContainer;
 class RenderTheme;
 class RenderTreeBuilder;
-class HighlightData;
+class RenderHighlight;
 class TransformState;
 class VisiblePosition;
 

@@ -31,9 +31,9 @@
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "ElementRuleCollector.h"
-#include "HighlightData.h"
 #include "HighlightRegister.h"
 #include "RenderBoxModelObject.h"
+#include "RenderHighlight.h"
 #include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
@@ -108,7 +108,7 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
 Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, const TextBoxSelectableRange& selectableRange, PaintPhase phase)
 {
     Vector<MarkedText> markedTexts;
-    HighlightData highlightData;
+    RenderHighlight renderHighlight;
     if (DeprecatedGlobalSettings::highlightAPIEnabled()) {
         auto& parentRenderer = *renderer.parent();
         auto& parentStyle = parentRenderer.style();
@@ -120,7 +120,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                 if (renderStyle->textDecorationsInEffect().isEmpty() && phase == PaintPhase::Decoration)
                     continue;
                 for (auto& highlightRange : highlightRegister->map().get(highlightName)->highlightRanges()) {
-                    if (!highlightData.setRenderRange(highlightRange))
+                    if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
                     if (auto* staticRange = dynamicDowncast<StaticRange>(highlightRange->range()); staticRange
                         && (!staticRange->computeValidity() || staticRange->collapsed()))
@@ -137,7 +137,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                     if (!hasRenderer)
                         continue;
 
-                    auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
+                    auto [highlightStart, highlightEnd] = renderHighlight.rangeForTextBox(renderer, selectableRange);
 
                     if (highlightStart < highlightEnd) {
                         int currentPriority = highlightRegister->map().get(highlightName)->priority();
@@ -164,10 +164,10 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
         if (auto fragmentHighlightRegister = renderer.document().fragmentHighlightRegisterIfExists()) {
             for (auto& highlight : fragmentHighlightRegister->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
-                    if (!highlightData.setRenderRange(highlightRange))
+                    if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
 
-                    auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
+                    auto [highlightStart, highlightEnd] = renderHighlight.rangeForTextBox(renderer, selectableRange);
                     if (highlightStart < highlightEnd)
                         markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::FragmentHighlight });
                 }
@@ -180,10 +180,10 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
         if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
             for (auto& highlight : appHighlightRegister->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
-                    if (!highlightData.setRenderRange(highlightRange))
+                    if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
 
-                    auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
+                    auto [highlightStart, highlightEnd] = renderHighlight.rangeForTextBox(renderer, selectableRange);
                     if (highlightStart < highlightEnd)
                         markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::AppHighlight });
                 }
