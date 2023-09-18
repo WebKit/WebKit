@@ -140,8 +140,6 @@ def types_that_must_be_moved():
         'IPC::Connection::Handle',
         'IPC::StreamServerConnection::Handle',
         'MachSendRight',
-        'std::optional<MachSendRight>',
-        'std::optional<WebKit::SharedVideoFrame::Buffer>',
         'Vector<WebKit::SharedMemory::Handle>',
         'WebCore::GraphicsContextGL::EGLImageSource',
         'WebKit::ConsumerSharedCARingBuffer::Handle',
@@ -155,6 +153,9 @@ def types_that_must_be_moved():
         'WebKit::UpdateInfo',
         'WebKit::WebProcessCreationParameters',
         'Win32Handle',
+        'std::optional<MachSendRight>',
+        'std::optional<WebKit::ShareableResource::Handle>',
+        'std::optional<WebKit::SharedVideoFrame::Buffer>',
         'std::optional<Win32Handle>'
     ]
 

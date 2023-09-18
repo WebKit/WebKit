@@ -1524,10 +1524,10 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     LOADER_RELEASE_LOG("tryStoreAsCacheEntry: Storing entry in HTTP disk cache");
     m_cache->store(m_networkLoad->currentRequest(), m_response, m_privateRelayed, m_bufferedDataForCache.take(), [loader = Ref { *this }](auto&& mappedBody) mutable {
 #if ENABLE(SHAREABLE_RESOURCE)
-        if (mappedBody.shareableResourceHandle.isNull())
+        if (!mappedBody.shareableResourceHandle)
             return;
         LOG(NetworkCache, "(NetworkProcess) sending DidCacheResource");
-        loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), WTFMove(mappedBody.shareableResourceHandle)));
+        loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), WTFMove(*mappedBody.shareableResourceHandle)));
 #endif
     });
 }
@@ -1632,7 +1632,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
 
     LOADER_RELEASE_LOG("sendResultForCacheEntry:");
 #if ENABLE(SHAREABLE_RESOURCE)
-    if (!entry->shareableResourceHandle().isNull()) {
+    if (auto handle = entry->shareableResourceHandle()) {
 #if ENABLE(CONTENT_FILTERING)
         if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(entry->buffer()->makeContiguous(), entry->buffer()->size())) {
             m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
@@ -1641,7 +1641,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
             return;
         }
 #endif
-        send(Messages::WebResourceLoader::DidReceiveResource(WTFMove(entry->shareableResourceHandle())));
+        send(Messages::WebResourceLoader::DidReceiveResource(WTFMove(*handle)));
         return;
     }
 #endif

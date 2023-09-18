@@ -35,13 +35,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-ShareableResourceHandle::ShareableResourceHandle() = default;
-
 ShareableResourceHandle::ShareableResourceHandle(SharedMemory::Handle&& handle, unsigned offset, unsigned size)
     : m_handle(WTFMove(handle))
     , m_offset(offset)
     , m_size(size)
 {
+    ASSERT(!m_handle.isNull());
 }
 
 RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
