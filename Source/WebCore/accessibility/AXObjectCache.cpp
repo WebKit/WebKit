@@ -2455,8 +2455,19 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXControlledObjectsChanged);
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
         postNotification(element, AXObjectCache::AXValueChanged);
-    else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr)
-        handleTextChanged(getOrCreate(element));
+    else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr) {
+        RefPtr axObject = get(element);
+        if (!axObject)
+            return;
+
+        if (nodeHasRole(element, "form"_s) || nodeHasRole(element, "region"_s)) {
+            // https://w3c.github.io/aria/#document-handling_author-errors_roles
+            // The computed role of ARIA forms and regions is dependent on whether they have a label.
+            if (oldValue.isEmpty() || newValue.isEmpty())
+                axObject->updateRole();
+        }
+        handleTextChanged(axObject.get());
+    }
     else if (attrName == aria_checkedAttr)
         checkedStateChanged(element);
     else if (attrName == aria_colcountAttr) {
