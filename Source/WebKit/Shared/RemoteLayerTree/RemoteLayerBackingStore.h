@@ -204,6 +204,8 @@ private:
     void ensureFrontBuffer();
     void dirtyRepaintCounterIfNecessary();
 
+    WebCore::IntRect layerBounds() const;
+
     PlatformCALayerRemote* m_layer;
 
     Parameters m_parameters;

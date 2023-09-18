@@ -303,12 +303,17 @@ bool RemoteLayerBackingStore::layerWillBeDisplayed()
 
 void RemoteLayerBackingStore::setNeedsDisplay(const IntRect rect)
 {
-    m_dirtyRegion.unite(rect);
+    m_dirtyRegion.unite(intersection(layerBounds(), rect));
 }
 
 void RemoteLayerBackingStore::setNeedsDisplay()
 {
-    setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_parameters.size)));
+    m_dirtyRegion.unite(layerBounds());
+}
+
+WebCore::IntRect RemoteLayerBackingStore::layerBounds() const
+{
+    return IntRect { { }, expandedIntSize(m_parameters.size) };
 }
 
 bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
@@ -607,7 +612,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
         m_paintingRects.append(scaledRect);
     }
 
-    IntRect layerBounds(IntPoint(), expandedIntSize(m_parameters.size));
+    IntRect layerBounds = this->layerBounds();
     if (RefPtr imageBuffer = m_backBuffer.imageBuffer; !m_dirtyRegion.contains(layerBounds) && imageBuffer) {
         if (!m_previouslyPaintedRect)
             context.drawImageBuffer(*imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
