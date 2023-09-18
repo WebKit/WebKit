@@ -32,8 +32,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebMouseEvent::WebMouseEvent() = default;
-
 #if PLATFORM(MAC)
 WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, int eventNumber, int menuType, GestureWasCancelled gestureWasCancelled)
 #elif PLATFORM(GTK)

@@ -27,7 +27,7 @@ messages -> EventDispatcher NotRefCounted {
     TouchEventWithoutCallback(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event)
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    GestureEvent(WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event) -> (enum:int8_t WebKit::WebEventType eventType, bool handled) MainThreadCallback
+    GestureEvent(WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event) -> (std::optional<WebKit::WebEventType> eventType, bool handled) MainThreadCallback
 #endif
 #if HAVE(CVDISPLAYLINK)
     DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update, bool sendToMainThread)

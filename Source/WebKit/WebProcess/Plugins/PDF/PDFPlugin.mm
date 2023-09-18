@@ -2356,12 +2356,8 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
     
     NSEvent *fakeEvent = [NSEvent keyEventWithType:eventType location:NSZeroPoint modifierFlags:modifierFlags timestamp:0 windowNumber:0 context:0 characters:event.text() charactersIgnoringModifiers:event.unmodifiedText() isARepeat:event.isAutoRepeat() keyCode:event.nativeVirtualKeyCode()];
     
-    switch (event.type()) {
-    case WebEventType::KeyDown:
+    if (event.type() == WebEventType::KeyDown)
         return [m_pdfLayerController keyDown:fakeEvent];
-    default:
-        return false;
-    }
     
     return false;
 }
@@ -2446,8 +2442,8 @@ void PDFPlugin::clickedLink(NSURL *url)
         return;
 
     RefPtr<Event> coreEvent;
-    if (m_lastMouseEvent.type() != WebEventType::NoType)
-        coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(m_lastMouseEvent), 0, 0);
+    if (m_lastMouseEvent)
+        coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(*m_lastMouseEvent), 0, 0);
 
     frame->loader().changeLocation(coreURL, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }

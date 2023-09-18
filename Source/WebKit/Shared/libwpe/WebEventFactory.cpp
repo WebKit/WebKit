@@ -186,7 +186,7 @@ static inline unsigned clickCount(struct wpe_input_pointer_event* event)
 
 WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
 {
-    auto type = WebEventType::NoType;
+    auto type = WebEventType::MouseMove;
     switch (event->type) {
     case wpe_input_pointer_event_type_motion:
         type = WebEventType::MouseMove;
@@ -244,7 +244,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
             hasPreciseScrollingDeltas = true;
             break;
         default:
-            return WebWheelEvent();
+            ASSERT_NOT_REACHED();
         }
 
         return WebWheelEvent({ WebEventType::Wheel, OptionSet<WebEventModifier> { }, wallTimeForEventTime(event->time) }, position, position,
@@ -277,7 +277,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
         hasPreciseScrollingDeltas = true;
         break;
     default:
-        return WebWheelEvent();
+        ASSERT_NOT_REACHED();
     };
 
     return WebWheelEvent({ WebEventType::Wheel, OptionSet<WebEventModifier> { }, wallTimeForEventTime(event->time) }, position, position,
@@ -308,7 +308,7 @@ static WebKit::WebPlatformTouchPoint::State stateForTouchPoint(int mainEventId, 
 
 WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event* event, float deviceScaleFactor)
 {
-    auto type = WebEventType::NoType;
+    auto type = WebEventType::TouchMove;
     static NeverDestroyed<HashMap<int32_t, int32_t>> activeTrackingTouchPoints;
     static int32_t uniqueTouchPointId = WebCore::mousePointerID + 1;
     int32_t pointId;

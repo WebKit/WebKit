@@ -194,7 +194,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, const 
     GdkModifierType state = static_cast<GdkModifierType>(0);
     gdk_event_get_state(event, &state);
 
-    WebEventType type = static_cast<WebEventType>(0); // FIXME: Why not WebEventType::NoType?
+    auto type = WebEventType::MouseMove;
     FloatSize movementDelta;
 
     switch (gdk_event_get_event_type(const_cast<GdkEvent*>(event))) {
@@ -275,7 +275,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
 #if ENABLE(TOUCH_EVENTS)
 WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
-    auto type = WebEventType::NoType;
+    auto type = WebEventType::TouchMove;
     GdkEventType eventType = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
     switch (eventType) {
     case GDK_TOUCH_BEGIN:

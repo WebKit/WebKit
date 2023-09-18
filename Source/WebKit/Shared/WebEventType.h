@@ -27,9 +27,7 @@
 
 namespace WebKit {
 
-enum class WebEventType : int8_t {
-    NoType = -1,
-
+enum class WebEventType : uint8_t {
     // WebMouseEvent
     MouseDown,
     MouseUp,

@@ -60,9 +60,6 @@ WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationActi
 
 class WebMouseEvent : public WebEvent {
 public:
-
-    WebMouseEvent();
-
 #if PLATFORM(MAC)
     WebMouseEvent(WebEvent&&, WebMouseEventButton, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap, int eventNumber = -1, int menuType = 0, GestureWasCancelled = GestureWasCancelled::No);
 #elif PLATFORM(GTK)

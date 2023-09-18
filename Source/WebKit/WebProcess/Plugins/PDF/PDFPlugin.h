@@ -290,7 +290,7 @@ private:
     RefPtr<WebCore::Element> m_annotationContainer;
 
     WebCore::AffineTransform m_rootViewToPluginTransform;
-    WebMouseEvent m_lastMouseEvent;
+    std::optional<WebMouseEvent> m_lastMouseEvent;
     WebCore::IntPoint m_lastMousePositionInPluginCoordinates;
 
     String m_temporaryPDFUUID;

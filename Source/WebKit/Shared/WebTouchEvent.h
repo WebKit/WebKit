@@ -114,7 +114,6 @@ private:
 
 class WebTouchEvent : public WebEvent {
 public:
-    WebTouchEvent() = default;
     WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
         : WebEvent(WTFMove(event))
         , m_touchPoints(touchPoints)
@@ -202,7 +201,6 @@ private:
 
 class WebTouchEvent : public WebEvent {
 public:
-    WebTouchEvent() { }
     WebTouchEvent(WebEvent&&, Vector<WebPlatformTouchPoint>&&);
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }

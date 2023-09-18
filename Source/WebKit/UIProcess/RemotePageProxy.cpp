@@ -187,10 +187,12 @@ bool RemotePageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::De
 
 void RemotePageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const NativeWebMouseEvent& event, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
 {
-    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, sandboxExtensions), [this, protectedThis = Ref { *this }, sandboxExtensions = WTFMove(sandboxExtensions)] (WebEventType eventType, bool handled, std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData) mutable {
+    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, sandboxExtensions), [this, protectedThis = Ref { *this }, sandboxExtensions = WTFMove(sandboxExtensions)] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData) mutable {
         if (!m_page)
             return;
-        m_page->handleMouseEventReply(eventType, handled, remoteMouseEventData, WTFMove(sandboxExtensions));
+        if (!eventType)
+            return;
+        m_page->handleMouseEventReply(*eventType, handled, remoteMouseEventData, WTFMove(sandboxExtensions));
     });
 }
 

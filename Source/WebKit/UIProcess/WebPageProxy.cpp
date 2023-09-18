@@ -127,6 +127,7 @@
 #include "WebEditCommandProxy.h"
 #include "WebErrors.h"
 #include "WebEventConversion.h"
+#include "WebEventType.h"
 #include "WebFoundTextRange.h"
 #include "WebFrame.h"
 #include "WebFramePolicyListenerProxy.h"
@@ -2710,7 +2711,7 @@ IntSize WebPageProxy::viewSize() const
     return pageClient().viewSize();
 }
 
-void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& keyboardEvent, CompletionHandler<void()>&& callbackFunction)
+void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, const std::optional<WebKeyboardEvent>& keyboardEvent, CompletionHandler<void()>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
         callbackFunction();
@@ -3230,10 +3231,12 @@ void WebPageProxy::handleMouseEventReply(WebEventType eventType, bool handled, c
 
 void WebPageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const NativeWebMouseEvent& event, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
 {
-    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, sandboxExtensions), [this, protectedThis = Ref { *this }, sandboxExtensions = WTFMove(sandboxExtensions)] (WebEventType eventType, bool handled, std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData) mutable {
+    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, sandboxExtensions), [this, protectedThis = Ref { *this }, sandboxExtensions = WTFMove(sandboxExtensions)] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData) mutable {
         if (!m_pageClient)
             return;
-        handleMouseEventReply(eventType, handled, remoteMouseEventData, WTFMove(sandboxExtensions));
+        if (!eventType)
+            return;
+        handleMouseEventReply(*eventType, handled, remoteMouseEventData, WTFMove(sandboxExtensions));
     });
 }
 
@@ -3294,7 +3297,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
     if (pageClient().windowIsFrontWindowUnderMouse(event))
         setToolTip(String());
 
-    WebEventType eventType = event.type();
+    auto eventType = event.type();
     if (eventType == WebEventType::MouseDown || eventType == WebEventType::MouseForceChanged || eventType == WebEventType::MouseForceDown)
         m_process->startResponsivenessTimer(WebProcessProxy::UseLazyStop::Yes);
     else if (eventType != WebEventType::MouseMove) {
@@ -3578,10 +3581,12 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     if (internals().keyEventQueue.size() == 1) {
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
         m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
-        sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), event), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+        sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), event), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
             if (!m_pageClient)
                 return;
-            didReceiveEvent(eventType, handled);
+            if (!eventType)
+                return;
+            didReceiveEvent(*eventType, handled);
         });
     }
 
@@ -3686,10 +3691,12 @@ void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
 
     m_process->startResponsivenessTimer((event.type() == WebEventType::GestureStart || event.type() == WebEventType::GestureChange) ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
 
-    sendWithAsyncReply(Messages::EventDispatcher::GestureEvent(internals().webPageID, event), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+    sendWithAsyncReply(Messages::EventDispatcher::GestureEvent(internals().webPageID, event), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
         if (!m_pageClient)
             return;
-        didReceiveEvent(eventType, handled);
+        if (!eventType)
+            return;
+        didReceiveEvent(*eventType, handled);
     }, 0);
 }
 #endif
@@ -3838,10 +3845,12 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     if (!m_areActiveDOMObjectsAndAnimationsSuspended) {
         internals().touchEventQueue.append(event);
         m_process->startResponsivenessTimer();
-        sendWithAsyncReply(Messages::WebPage::TouchEvent(event), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+        sendWithAsyncReply(Messages::WebPage::TouchEvent(event), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
             if (!m_pageClient)
                 return;
-            didReceiveEvent(eventType, handled);
+            if (!eventType)
+                return;
+            didReceiveEvent(*eventType, handled);
         });
     } else {
         if (internals().touchEventQueue.isEmpty()) {
@@ -8528,7 +8537,6 @@ void WebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
 {
     switch (eventType) {
-    case WebEventType::NoType:
     case WebEventType::MouseMove:
     case WebEventType::Wheel:
         break;
@@ -8558,8 +8566,6 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
     }
 
     switch (eventType) {
-    case WebEventType::NoType:
-        break;
     case WebEventType::MouseForceChanged:
     case WebEventType::MouseForceDown:
     case WebEventType::MouseForceUp:
@@ -8624,10 +8630,12 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
             auto nextEvent = internals().keyEventQueue.first();
             LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
             m_process->recordUserGestureAuthorizationToken(nextEvent.authorizationToken());
-            sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), nextEvent), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+            sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), nextEvent), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
                 if (!m_pageClient)
                     return;
-                didReceiveEvent(eventType, handled);
+                if (!eventType)
+                    return;
+                didReceiveEvent(*eventType, handled);
             });
         }
 

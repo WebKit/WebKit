@@ -31,7 +31,7 @@ messages -> WebPageProxy {
     MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::UserData userData)
 
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
-    DidReceiveEvent(enum:int8_t WebKit::WebEventType eventType, bool handled)
+    DidReceiveEvent(enum:uint8_t WebKit::WebEventType eventType, bool handled)
     SetCursor(WebCore::Cursor cursor)
     SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     SetStatusText(String statusText)

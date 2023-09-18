@@ -4594,8 +4594,8 @@ void WebViewImpl::magnifyWithEvent(NSEvent *event)
 {
     if (!m_allowsMagnification) {
 #if ENABLE(MAC_GESTURE_EVENTS)
-        NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view.getAutoreleased());
-        m_page->handleGestureEvent(webEvent);
+        if (auto webEvent = NativeWebGestureEvent::create(event, m_view.getAutoreleased()))
+            m_page->handleGestureEvent(*webEvent);
 #endif
         [m_view _web_superMagnifyWithEvent:event];
         return;
@@ -4611,8 +4611,8 @@ void WebViewImpl::magnifyWithEvent(NSEvent *event)
         return;
     }
 
-    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view.getAutoreleased());
-    m_page->handleGestureEvent(webEvent);
+    if (auto webEvent = NativeWebGestureEvent::create(event, m_view.getAutoreleased()))
+        m_page->handleGestureEvent(*webEvent);
 #else
     gestureController.handleMagnificationGestureEvent(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
 #endif
@@ -4640,8 +4640,8 @@ RetainPtr<NSEvent> WebViewImpl::setLastMouseDownEvent(NSEvent *event)
 #if ENABLE(MAC_GESTURE_EVENTS)
 void WebViewImpl::rotateWithEvent(NSEvent *event)
 {
-    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view.getAutoreleased());
-    m_page->handleGestureEvent(webEvent);
+    if (auto webEvent = NativeWebGestureEvent::create(event, m_view.getAutoreleased()))
+        m_page->handleGestureEvent(*webEvent);
 }
 #endif
 
