@@ -2869,7 +2869,7 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     // In situations where an author has not specified names for the form and
     // region landmarks, it is considered an authoring error. The user agent
     // MUST treat such element as if no role had been provided.
-    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && !hasAttribute(aria_labelAttr) && !hasAttribute(aria_labelledbyAttr))
+    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && getAttribute(aria_labelAttr).isEmpty() && getAttribute(aria_labelledbyAttr).isEmpty() && getAttribute(aria_labeledbyAttr).isEmpty())
         role = AccessibilityRole::Unknown;
 
     if (static_cast<int>(role))
