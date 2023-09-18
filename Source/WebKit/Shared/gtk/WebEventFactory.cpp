@@ -58,7 +58,7 @@ static inline OptionSet<WebEventModifier> modifiersForEvent(const GdkEvent* even
     GdkModifierType state;
 
     // Check for a valid state in GdkEvent.
-    if (!gdk_event_get_state(event, &state))
+    if (!event || !gdk_event_get_state(event, &state))
         return modifiers;
 
     if (state & GDK_CONTROL_MASK)
