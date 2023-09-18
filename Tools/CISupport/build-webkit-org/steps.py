@@ -1134,53 +1134,39 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
     jsonFileName = "webdriver_tests.json"
     command = ["python3", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def start(self):
         additionalArguments = self.getProperty('additionalArguments')
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
 
+        self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+        self.addLogObserver('stdio', self.log_observer)
+
         self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
-        logText = cmd.logs['stdio'].getText()
+    def getResultSummary(self):
+        # TODO: Parse logs to count number of failures and unexpected passes. https://webkit.org/b/261698
+        if self.results == FAILURE:
+            return {'step': f'Failed {self.name}'}
+        if self.results == CANCELLED and self.cancelled_due_to_huge_logs:
+            return {'step': 'Cancelled step due to huge logs', 'build': 'Cancelled build due to huge logs'}
+        return super().getResultSummary()
 
-        self.failuresCount = 0
-        self.newPassesCount = 0
-        foundItems = re.findall(r"^Unexpected .+ \((\d+)\)", logText, re.MULTILINE)
-        if foundItems:
-            self.failuresCount = int(foundItems[0])
-        foundItems = re.findall(r"^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
-        if foundItems:
-            self.newPassesCount = int(foundItems[0])
+    def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
 
-    def evaluateCommand(self, cmd):
-        if self.failuresCount:
-            return FAILURE
-
-        if self.newPassesCount:
-            return WARNINGS
-
-        if cmd.rc != 0:
-            return FAILURE
-
-        return SUCCESS
-
-    def getText(self, cmd, results):
-        return self.getText2(cmd, results)
-
-    def getText2(self, cmd, results):
-        if results != SUCCESS and (self.failuresCount or self.newPassesCount):
-            lines = []
-            if self.failuresCount:
-                lines.append("%d failures" % self.failuresCount)
-            if self.newPassesCount:
-                lines.append("%d new passes" % self.newPassesCount)
-            return ["%s %s" % (self.name, ", ".join(lines))]
-
-        return [self.name]
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'Stopping build due to excessive logging: {build_url}\n\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=f'Stopped due to excessive logging. Log limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}', results=FAILURE)
 
 
 class RunWebKit1Tests(RunWebKitTests):
