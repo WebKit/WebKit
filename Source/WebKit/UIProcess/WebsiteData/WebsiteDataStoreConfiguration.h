@@ -78,6 +78,11 @@ public:
     std::optional<uint64_t> volumeCapacityOverride() const { return m_volumeCapacityOverride; }
     void setVolumeCapacityOverride(std::optional<uint64_t> capacity) { m_volumeCapacityOverride = capacity; }
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    bool isDeclarativeWebPushEnabled() const { return m_isDeclarativeWebPushEnabled; }
+    void setIsDeclarativeWebPushEnabled(bool enabled) { m_isDeclarativeWebPushEnabled = enabled; }
+#endif
+
     const String& applicationCacheDirectory() const { return m_applicationCacheDirectory; }
     void setApplicationCacheDirectory(String&& directory) { m_applicationCacheDirectory = WTFMove(directory); }
     
@@ -313,6 +318,9 @@ private:
     bool m_enableInAppBrowserPrivacyForTesting { false };
     bool m_allowsHSTSWithUntrustedRootCertificate { false };
     bool m_trackingPreventionDebugModeEnabled { false };
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    bool m_isDeclarativeWebPushEnabled { false };
+#endif
     String m_pcmMachServiceName;
     String m_webPushMachServiceName;
     String m_webPushPartitionString;

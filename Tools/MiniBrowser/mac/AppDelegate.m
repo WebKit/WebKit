@@ -82,6 +82,13 @@ enum {
     return self;
 }
 
+static BOOL enabledForFeature(_WKFeature *feature)
+{
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
+        return [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+    return [feature defaultValue];
+}
+
 - (WKWebsiteDataStore *)persistentDataStore
 {
     static WKWebsiteDataStore *dataStore;
@@ -92,6 +99,19 @@ enum {
 
         // Push will only function if someone has taken the step to install the test daemon service, or otherwise host it manually.
         [configuration setWebPushMachServiceName:@"org.webkit.webpushtestdaemon.service"];
+
+        if ([configuration respondsToSelector:@selector(setIsDeclarativeWebPushEnabled:)]) {
+            _WKFeature *declarativeWebPushFeature = nil;
+            NSArray<_WKFeature *> *features = [WKPreferences _features];
+            for (_WKFeature *feature in features) {
+                if ([feature.key isEqualToString:@"DeclarativeWebPush"]) {
+                    declarativeWebPushFeature = feature;
+                    break;
+                }
+            }
+
+            [configuration setIsDeclarativeWebPushEnabled:enabledForFeature(declarativeWebPushFeature)];
+        }
 
         dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:configuration];
         dataStore._delegate = self;
@@ -227,12 +247,7 @@ static NSNumber *_currentBadge;
             if ([feature.key isEqualToString:@"MediaDevicesEnabled"])
                 continue;
 
-            BOOL enabled;
-            if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
-                enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
-            else
-                enabled = [feature defaultValue];
-            [configuration.preferences _setEnabled:enabled forFeature:feature];
+            [configuration.preferences _setEnabled:enabledForFeature(feature) forFeature:feature];
         }
 
         configuration.preferences.elementFullscreenEnabled = YES;

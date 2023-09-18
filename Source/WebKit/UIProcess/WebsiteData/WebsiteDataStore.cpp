@@ -1953,6 +1953,10 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
     networkSessionParameters.inspectionForServiceWorkersAllowed = m_inspectionForServiceWorkersAllowed;
 #endif
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    networkSessionParameters.isDeclarativeWebPushEnabled = m_configuration->isDeclarativeWebPushEnabled();
+#endif
+
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 #if ENABLE(TRACKING_PREVENTION)
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = m_trackingPreventionEnabled;
@@ -2315,12 +2319,12 @@ bool WebsiteDataStore::shouldMakeNextNetworkProcessLaunchFailForTesting()
     return std::exchange(nextNetworkProcessLaunchShouldFailForTesting, false);
 }
 
-void WebsiteDataStore::showServiceWorkerNotification(IPC::Connection& connection, const WebCore::NotificationData& notificationData)
+bool WebsiteDataStore::showPersistentNotification(IPC::Connection* connection, const WebCore::NotificationData& notificationData)
 {
     if (m_client->showNotification(notificationData))
-        return;
+        return true;
 
-    WebNotificationManagerProxy::sharedServiceWorkerManager().show(*this, connection, notificationData, nullptr);
+    return WebNotificationManagerProxy::sharedServiceWorkerManager().showPersistent(*this, connection, notificationData, nullptr);
 }
 
 void WebsiteDataStore::cancelServiceWorkerNotification(const WTF::UUID& notificationID)
@@ -2504,4 +2508,24 @@ void WebsiteDataStore::removePage(WebPageProxy& page)
 #endif
 }
 
+void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    if (pushMessage.notificationPayload && !pushMessage.notificationPayload->isMutable && m_configuration->isDeclarativeWebPushEnabled()) {
+        RELEASE_LOG(Push, "Handling immutable declarative web push message for scope %" SENSITIVE_LOG_STRING, pushMessage.registrationURL.string().utf8().data());
+
+        bool handled = showPersistentNotification(nullptr, pushMessage.notificationPayloadToCoreData());
+
+        if (pushMessage.notificationPayload->appBadge)
+            m_client->workerUpdatedAppBadge(WebCore::SecurityOriginData::fromURL(pushMessage.registrationURL), *pushMessage.notificationPayload->appBadge);
+
+        completionHandler(handled);
+        return;
+    }
+#endif
+
+    RELEASE_LOG(Push, "Sending push message for scope %" SENSITIVE_LOG_STRING " to network process to handle", pushMessage.registrationURL.string().utf8().data());
+    networkProcess().processPushMessage(sessionID(), WTFMove(pushMessage), WTFMove(completionHandler));
 }
+
+} // namespace WebKit

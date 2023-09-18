@@ -5108,6 +5108,7 @@
 		51F7BB7E274564A100C45A72 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		51F886A31F2C214A00C193EF /* WKTestingSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKTestingSupport.cpp; sourceTree = "<group>"; };
 		51F886A41F2C214A00C193EF /* WKTestingSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTestingSupport.h; sourceTree = "<group>"; };
+		51F8FA3A2AB7549C00C8413B /* WebPushMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPushMessage.cpp; sourceTree = "<group>"; };
 		51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleDOMWindowExtension.h; sourceTree = "<group>"; };
 		51FA2D5A15211A1E00C1BA0B /* InjectedBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleDOMWindowExtension.h; sourceTree = "<group>"; };
 		51FA2D5C15211A5000C1BA0B /* InjectedBundleDOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleDOMWindowExtension.cpp; sourceTree = "<group>"; };
@@ -8228,6 +8229,7 @@
 				517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */,
 				5CA133EE28F61C4100541DAE /* WebPushDaemonConnectionConfiguration.serialization.in */,
 				512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */,
+				51F8FA3A2AB7549C00C8413B /* WebPushMessage.cpp */,
 				517B5F96275EC5E5002DC22D /* WebPushMessage.h */,
 				5CABE07A28F60E8A00D83FD9 /* WebPushMessage.serialization.in */,
 				5C8DD37F1FE4519200F2A556 /* WebsiteAutoplayPolicy.h */,

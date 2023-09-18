@@ -408,6 +408,7 @@ NotificationData Notification::data() const
     RELEASE_ASSERT(sessionID);
 
     return {
+        { },
         m_title,
         m_body,
         m_icon.string(),

@@ -47,8 +47,10 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebPushDaemonConstants.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <mach/mach_init.h>
 #import <mach/task.h>
 #import <wtf/BlockPtr.h>
@@ -62,10 +64,15 @@
 #if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && PLATFORM(MAC)
 
 static bool alertReceived = false;
-@interface NotificationPermissionDelegate : NSObject<WKUIDelegatePrivate>
+@interface PushNotificationDelegate : NSObject<WKUIDelegatePrivate, _WKWebsiteDataStoreDelegate> {
+    RetainPtr<_WKNotificationData> _mostRecentNotification;
+    std::optional<uint64_t> _mostRecentAppBadge;
+}
+@property (nonatomic, readonly) RetainPtr<_WKNotificationData> mostRecentNotification;
+@property (nonatomic, readonly) std::optional<uint64_t> mostRecentAppBadge;
 @end
 
-@implementation NotificationPermissionDelegate
+@implementation PushNotificationDelegate
 
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler
 {
@@ -76,6 +83,19 @@ static bool alertReceived = false;
 {
     alertReceived = true;
     completionHandler();
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore showNotification:(_WKNotificationData *)notificationData
+{
+    _mostRecentNotification = notificationData;
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore workerOrigin:(WKSecurityOrigin *)workerOrigin updatedAppBadge:(NSNumber *)badge
+{
+    if (badge)
+        _mostRecentAppBadge = [badge unsignedLongLongValue];
+    else
+        _mostRecentAppBadge = std::nullopt;
 }
 
 @end
@@ -514,7 +534,7 @@ public:
 
         m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-        auto uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
+        auto uiDelegate = adoptNS([[PushNotificationDelegate alloc] init]);
         [m_webView setUIDelegate:uiDelegate.get()];
 
         auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -1599,6 +1619,52 @@ TEST(WebPushD, DeclarativeParsing)
         }
 
         done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+// Verifies that handling a declarative web push message - with no service worker even registered - calls
+// back into the client for showing the notification, etc.
+TEST(WebPushD, DeclarativeWebPushHandling)
+{
+    setUpTestWebPushD();
+
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
+    dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    clearWebsiteDataStore(dataStore.get());
+
+    auto delegate = adoptNS([[PushNotificationDelegate alloc] init]);
+    dataStore.get()._delegate = delegate.get();
+
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    static bool done = false;
+
+    WebKit::WebPushD::PushMessageForTesting message;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
+    message.registrationURL = URL("https://example.com"_s);
+    message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
+    message.payload = json33;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](const String& error) {
+        EXPECT_TRUE(error.isEmpty());
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
+        EXPECT_EQ(messages.count, 1u);
+
+        [dataStore _processPushMessage:messages.firstObject completionHandler:^(bool handled) {
+            EXPECT_TRUE(handled);
+            EXPECT_TRUE([delegate.get().mostRecentNotification.get().userInfo[@"WebNotificationDefaultActionURLKey"] isEqualToString:@"https://example.com/"]);
+            EXPECT_EQ(delegate.get().mostRecentAppBadge, 18446744073709551615ULL);
+            done = true;
+        }];
     }];
     TestWebKitAPI::Util::run(&done);
 }

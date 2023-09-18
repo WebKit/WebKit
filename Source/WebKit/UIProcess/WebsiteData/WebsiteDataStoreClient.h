@@ -40,6 +40,7 @@ class SecurityOriginData;
 namespace WebKit {
 
 class WebPageProxy;
+class WebsiteDataStore;
 
 class WebsiteDataStoreClient {
     WTF_MAKE_FAST_ALLOCATED;

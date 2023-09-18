@@ -1045,8 +1045,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-    RELEASE_LOG(Push, "Sending push message for scope %" SENSITIVE_LOG_STRING " to network process to handle", pushMessage->registrationURL.string().utf8().data());
-    _websiteDataStore->networkProcess().processPushMessage(_websiteDataStore->sessionID(), *pushMessage, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+    _websiteDataStore->processPushMessage(WTFMove(*pushMessage), [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
         RELEASE_LOG(Push, "Push message processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });

@@ -35,6 +35,10 @@
 
 OBJC_CLASS NSDictionary;
 
+namespace WebCore {
+struct NotificationData;
+}
+
 namespace WebKit {
 
 struct WebPushMessage {
@@ -43,6 +47,8 @@ struct WebPushMessage {
     URL registrationURL;
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     std::optional<WebCore::NotificationPayload> notificationPayload;
+
+    WebCore::NotificationData notificationPayloadToCoreData() const;
 #endif
 
 #if PLATFORM(COCOA)
