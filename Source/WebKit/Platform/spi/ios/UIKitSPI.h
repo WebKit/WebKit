@@ -93,7 +93,6 @@
 #import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
-#import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
 #import <UIKit/_UISheetPresentationController.h>
@@ -813,17 +812,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @end
 
 @interface _UILookupGestureRecognizer : UIGestureRecognizer
-@end
-
-@interface _UIHighlightView : UIView
-@end
-
-@interface _UIHighlightView ()
-- (void)setColor:(UIColor *)aColor;
-- (void)setCornerRadii:(NSArray *)cornerRadii;
-- (void)setCornerRadius:(CGFloat)aCornerRadius;
-- (void)setFrames:(NSArray *)frames boundaryRect:(CGRect)aBoundarRect;
-- (void)setQuads:(NSArray *)quads boundaryRect:(CGRect)aBoundaryRect;
 @end
 
 @interface _UINavigationParallaxTransition : NSObject <UIViewControllerAnimatedTransitioningEx>

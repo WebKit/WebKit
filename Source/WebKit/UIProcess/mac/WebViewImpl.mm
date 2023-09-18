@@ -87,6 +87,7 @@
 #import <WebCore/ActivityState.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/CaretRectComputation.h>
+#import <WebCore/CharacterRange.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/CompositionHighlight.h>
@@ -104,6 +105,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <WebCore/PlatformPlaybackSessionInterface.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/PromisedAttachmentInfo.h>
@@ -2352,12 +2354,12 @@ void WebViewImpl::setUnderlayColor(NSColor *underlayColor)
 
 RetainPtr<NSColor> WebViewImpl::underlayColor() const
 {
-    return cocoaColorOrNil(m_page->underlayColor()).autorelease();
+    return WebCore::cocoaColorOrNil(m_page->underlayColor()).autorelease();
 }
 
 RetainPtr<NSColor> WebViewImpl::pageExtendedBackgroundColor() const
 {
-    return cocoaColorOrNil(m_page->pageExtendedBackgroundColor()).autorelease();
+    return WebCore::cocoaColorOrNil(m_page->pageExtendedBackgroundColor()).autorelease();
 }
 
 void WebViewImpl::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle)
@@ -5002,11 +5004,11 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     Vector<WebCore::CompositionHighlight> highlights;
     [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&highlights](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
         std::optional<WebCore::Color> backgroundHighlightColor;
-        if (CocoaColor *backgroundColor = attributes[NSBackgroundColorAttributeName])
+        if (WebCore::CocoaColor *backgroundColor = attributes[NSBackgroundColorAttributeName])
             backgroundHighlightColor = WebCore::colorFromCocoaColor(backgroundColor);
 
         std::optional<WebCore::Color> foregroundHighlightColor;
-        if (CocoaColor *foregroundColor = attributes[NSForegroundColorAttributeName])
+        if (WebCore::CocoaColor *foregroundColor = attributes[NSForegroundColorAttributeName])
             foregroundHighlightColor = WebCore::colorFromCocoaColor(foregroundColor);
 
         highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
@@ -5098,7 +5100,7 @@ static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedS
     return mergedUnderlines;
 }
 
-static HashMap<String, Vector<CharacterRange>> compositionAnnotations(NSAttributedString *string)
+static HashMap<String, Vector<WebCore::CharacterRange>> compositionAnnotations(NSAttributedString *string)
 {
     if (!string.length)
         return { };
@@ -5111,7 +5113,7 @@ static HashMap<String, Vector<CharacterRange>> compositionAnnotations(NSAttribut
     });
 #endif
 
-    HashMap<String, Vector<CharacterRange>> annotations;
+    HashMap<String, Vector<WebCore::CharacterRange>> annotations;
     [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&annotations](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
         [attributes enumerateKeysAndObjectsUsingBlock:[&annotations, &range](NSAttributedStringKey key, id value, BOOL *) {
 
@@ -5120,7 +5122,7 @@ static HashMap<String, Vector<CharacterRange>> compositionAnnotations(NSAttribut
 
             auto it = annotations.find(key);
             if (it == annotations.end())
-                it = annotations.add(key, Vector<CharacterRange> { }).iterator;
+                it = annotations.add(key, Vector<WebCore::CharacterRange> { }).iterator;
             auto& vector = it->value;
 
             // Coalesce this range into the previous one if possible
@@ -5147,7 +5149,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
 
     Vector<WebCore::CompositionUnderline> underlines;
     Vector<WebCore::CompositionHighlight> highlights;
-    HashMap<String, Vector<CharacterRange>> annotations;
+    HashMap<String, Vector<WebCore::CharacterRange>> annotations;
     NSString *text;
 
     if (isAttributedString) {
@@ -6011,7 +6013,7 @@ void WebViewImpl::updateMediaPlaybackControlsManager()
         [m_playbackControlsManager setCanTogglePictureInPicture:NO];
     }
 
-    if (PlatformPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface()) {
+    if (WebCore::PlatformPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface()) {
         [m_playbackControlsManager setPlaybackSessionInterfaceMac:interface];
         interface->updatePlaybackControlsManagerCanTogglePictureInPicture();
     }
@@ -6155,7 +6157,7 @@ void WebViewImpl::updateCursorAccessoryPlacement()
 #if HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
 static RetainPtr<_WKWebViewTextInputNotifications> subscribeToTextInputNotifications(WebViewImpl* webView)
 {
-    if (!redesignedTextCursorEnabled())
+    if (!WebCore::redesignedTextCursorEnabled())
         return nullptr;
 
     auto textInputNotifications = adoptNS([[_WKWebViewTextInputNotifications alloc] initWithWebView:webView]);
