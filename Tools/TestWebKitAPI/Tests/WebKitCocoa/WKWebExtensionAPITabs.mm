@@ -36,6 +36,10 @@ namespace TestWebKitAPI {
 static auto *tabsManifest = @{
     @"manifest_version": @3,
 
+    @"name": @"Tabs Test",
+    @"description": @"Tabs Test",
+    @"version": @"1",
+
     @"background": @{
         @"scripts": @[ @"background.js" ],
         @"type": @"module",
@@ -85,10 +89,7 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPITabs, Create)
@@ -109,17 +110,13 @@ TEST(WKWebExtensionAPITabs, Create)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto *window = manager.get().defaultWindow;
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    delegate.get().openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredWindow, windowOne.get());
-        EXPECT_EQ(options.desiredIndex, windowOne.get().tabs.count);
+    manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(options.desiredWindow, window);
+        EXPECT_EQ(options.desiredIndex, window.tabs.count);
 
         EXPECT_NULL(options.desiredParentTab);
         EXPECT_NULL(options.desiredURL);
@@ -130,17 +127,7 @@ TEST(WKWebExtensionAPITabs, Create)
         EXPECT_FALSE(options.shouldMute);
         EXPECT_FALSE(options.shouldShowReaderMode);
 
-        auto newTab = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:context.webExtensionController]);
-
-        windowOne.get().tabs = [windowOne.get().tabs arrayByAddingObject:newTab.get()];
-
-        [context.webExtensionController didOpenTab:newTab.get()];
-
-        completionHandler(newTab.get(), nil);
-    };
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
+        originalOpenNewTab(options, context, completionHandler);
     };
 
     [manager loadAndRun];
@@ -160,7 +147,7 @@ TEST(WKWebExtensionAPITabs, CreateWithSpecifiedOptions)
         @"  muted: true,",
         @"  openInReaderMode: true,",
         @"  index: 1",
-        @"});",
+        @"})",
 
         @"const updatedWindows = await browser.windows.getAll({ populate: true })",
         @"const updatedTabs = updatedWindows[0].tabs",
@@ -173,19 +160,16 @@ TEST(WKWebExtensionAPITabs, CreateWithSpecifiedOptions)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto *window = manager.get().defaultWindow;
+    auto *tab = manager.get().defaultTab;
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    delegate.get().openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredWindow, windowOne.get());
+    manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(options.desiredWindow, window);
         EXPECT_EQ(options.desiredIndex, 1lu);
 
-        EXPECT_NS_EQUAL(options.desiredParentTab, tabOne.get());
+        EXPECT_NS_EQUAL(options.desiredParentTab, tab);
         EXPECT_NS_EQUAL(options.desiredURL, [NSURL URLWithString:@"https://example.com/"]);
 
         EXPECT_FALSE(options.shouldActivate);
@@ -194,17 +178,7 @@ TEST(WKWebExtensionAPITabs, CreateWithSpecifiedOptions)
         EXPECT_TRUE(options.shouldMute);
         EXPECT_TRUE(options.shouldShowReaderMode);
 
-        auto newTab = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:context.webExtensionController]);
-
-        windowOne.get().tabs = [windowOne.get().tabs arrayByAddingObject:newTab.get()];
-
-        [context.webExtensionController didOpenTab:newTab.get()];
-
-        completionHandler(newTab.get(), nil);
-    };
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
+        originalOpenNewTab(options, context, completionHandler);
     };
 
     [manager loadAndRun];
@@ -228,17 +202,14 @@ TEST(WKWebExtensionAPITabs, Duplicate)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto *window = manager.get().defaultWindow;
+    auto *tab = manager.get().defaultTab;
+    auto originalDuplicate = tab.duplicate;
 
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    tabOne.get().duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredWindow, windowOne.get());
-        EXPECT_EQ(options.desiredIndex, windowOne.get().tabs.count);
+    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(options.desiredWindow, window);
+        EXPECT_EQ(options.desiredIndex, window.tabs.count);
 
         EXPECT_NULL(options.desiredParentTab);
         EXPECT_NULL(options.desiredURL);
@@ -249,17 +220,7 @@ TEST(WKWebExtensionAPITabs, Duplicate)
         EXPECT_FALSE(options.shouldMute);
         EXPECT_FALSE(options.shouldShowReaderMode);
 
-        auto duplicatedTab = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-
-        windowOne.get().tabs = [windowOne.get().tabs arrayByAddingObject:duplicatedTab.get()];
-
-        [manager.get().controller didOpenTab:duplicatedTab.get()];
-
-        completionHandler(duplicatedTab.get(), nil);
-    };
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
+        originalDuplicate(options, completionHandler);
     };
 
     [manager loadAndRun];
@@ -274,7 +235,7 @@ TEST(WKWebExtensionAPITabs, DuplicateWithOptions)
         @"const duplicatedTab = await browser.tabs.duplicate(allWindows[0].tabs[0].id, {",
         @"  active: false,",
         @"  index: 1",
-        @"});",
+        @"})",
 
         @"const updatedWindows = await browser.windows.getAll({ populate: true })",
         @"const updatedTabs = updatedWindows[0].tabs",
@@ -287,16 +248,13 @@ TEST(WKWebExtensionAPITabs, DuplicateWithOptions)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto *window = manager.get().defaultWindow;
+    auto *tab = manager.get().defaultTab;
+    auto originalDuplicate = tab.duplicate;
 
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    tabOne.get().duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredWindow, windowOne.get());
+    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(options.desiredWindow, window);
         EXPECT_EQ(options.desiredIndex, 1lu);
 
         EXPECT_NULL(options.desiredParentTab);
@@ -308,17 +266,7 @@ TEST(WKWebExtensionAPITabs, DuplicateWithOptions)
         EXPECT_FALSE(options.shouldMute);
         EXPECT_FALSE(options.shouldShowReaderMode);
 
-        auto duplicatedTab = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-
-        windowOne.get().tabs = [windowOne.get().tabs arrayByAddingObject:duplicatedTab.get()];
-
-        [manager.get().controller didOpenTab:duplicatedTab.get()];
-
-        completionHandler(duplicatedTab.get(), nil);
-    };
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
+        originalDuplicate(options, completionHandler);
     };
 
     [manager loadAndRun];
@@ -342,7 +290,7 @@ TEST(WKWebExtensionAPITabs, Update)
         @"  pinned: true,",
         @"  muted: true,",
         @"  openerTabId: allWindows[0].tabs[0].id",
-        @"});",
+        @"})",
 
         @"browser.test.assertTrue(updatedTab.active, 'The tab should be active after update')",
         @"browser.test.assertTrue(updatedTab.highlighted, 'The tab should be highlighted after update')",
@@ -355,18 +303,10 @@ TEST(WKWebExtensionAPITabs, Update)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    [manager.get().defaultWindow openNewTab];
 
-    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
-    };
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
 
     [manager loadAndRun];
 }
@@ -400,23 +340,9 @@ TEST(WKWebExtensionAPITabs, Get)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
+    [manager.get().defaultWindow openNewTab];
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-
-    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
-    };
-
-    delegate.get().focusedWindow = ^id<_WKWebExtensionWindow>(_WKWebExtensionContext *) {
-        return windowOne.get();
-    };
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
 
     [manager loadAndRun];
 }
@@ -434,23 +360,9 @@ TEST(WKWebExtensionAPITabs, GetCurrent)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
+    [manager.get().defaultWindow openNewTab];
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-
-    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
-    };
-
-    delegate.get().focusedWindow = ^id<_WKWebExtensionWindow>(_WKWebExtensionContext *) {
-        return windowOne.get();
-    };
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
 
     [manager loadAndRun];
 }
@@ -500,28 +412,16 @@ TEST(WKWebExtensionAPITabs, Query)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
+    [manager openNewWindow];
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto windowTwo = adoptNS([[TestWebExtensionWindow alloc] init]);
+    EXPECT_EQ(manager.get().windows.count, 2lu);
 
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-    auto tabThree = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowTwo.get() extensionController:manager.get().controller]);
-    auto tabFour = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowTwo.get() extensionController:manager.get().controller]);
-    auto tabFive = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowTwo.get() extensionController:manager.get().controller]);
+    [manager.get().defaultWindow openNewTab];
+    [manager.get().windows.lastObject openNewTab];
+    [manager.get().windows.lastObject openNewTab];
 
-    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
-    windowTwo.get().tabs = @[ tabThree.get(), tabFour.get(), tabFive.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get(), windowTwo.get() ];
-    };
-
-    delegate.get().focusedWindow = ^id<_WKWebExtensionWindow>(_WKWebExtensionContext *) {
-        return windowOne.get();
-    };
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
+    EXPECT_EQ(manager.get().windows.lastObject.tabs.count, 3lu);
 
     [manager loadAndRun];
 }
@@ -543,22 +443,7 @@ TEST(WKWebExtensionAPITabs, Zoom)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
-
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
-    };
-
-    [manager loadAndRun];
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPITabs, ToggleReaderMode)
@@ -583,21 +468,10 @@ TEST(WKWebExtensionAPITabs, ToggleReaderMode)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
-
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-
     __block size_t toggleReaderModeCounter = 0;
-    tabOne.get().toggleReaderMode = ^{
+
+    manager.get().defaultTab.toggleReaderMode = ^{
         ++toggleReaderModeCounter;
-    };
-
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
     };
 
     [manager loadAndRun];
@@ -621,22 +495,11 @@ TEST(WKWebExtensionAPITabs, DetectLanguage)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
-
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-
     __block bool detectWebpageLocaleCalled = false;
-    tabOne.get().detectWebpageLocale = ^{
+
+    manager.get().defaultTab.detectWebpageLocale = ^{
         detectWebpageLocaleCalled = true;
         return [NSLocale localeWithLocaleIdentifier:@"en-US"];
-    };
-
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
     };
 
     [manager loadAndRun];
@@ -659,27 +522,15 @@ TEST(WKWebExtensionAPITabs, Reload)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
-
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-
     __block bool reloadCalled = false;
     __block bool reloadFromOriginCalled = false;
 
-    tabOne.get().reload = ^{
+    manager.get().defaultTab.reload = ^{
         reloadCalled = true;
     };
 
-    tabOne.get().reloadFromOrigin = ^{
+    manager.get().defaultTab.reloadFromOrigin = ^{
         reloadFromOriginCalled = true;
-    };
-
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
     };
 
     [manager loadAndRun];
@@ -701,22 +552,11 @@ TEST(WKWebExtensionAPITabs, GoBack)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
-
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
 
     __block bool goBackCalled = false;
 
-    tabOne.get().goBack = ^{
+    manager.get().defaultTab.goBack = ^{
         goBackCalled = true;
-    };
-
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
     };
 
     [manager loadAndRun];
@@ -737,22 +577,11 @@ TEST(WKWebExtensionAPITabs, GoForward)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
-
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
 
     __block bool goForwardCalled = false;
 
-    tabOne.get().goForward = ^{
+    manager.get().defaultTab.goForward = ^{
         goForwardCalled = true;
-    };
-
-    windowOne.get().tabs = @[ tabOne.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
     };
 
     [manager loadAndRun];
@@ -779,18 +608,10 @@ TEST(WKWebExtensionAPITabs, Remove)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    [manager.get().defaultWindow openNewTab];
 
-    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
-    };
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
 
     [manager loadAndRun];
 }
@@ -815,21 +636,274 @@ TEST(WKWebExtensionAPITabs, RemoveMultipleTabs)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
-    manager.get().controllerDelegate = delegate.get();
 
-    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
-    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
-    auto tabThree = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    [manager.get().defaultWindow openNewTab];
+    [manager.get().defaultWindow openNewTab];
 
-    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get(), tabThree.get() ];
-
-    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
-        return @[ windowOne.get() ];
-    };
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 3lu);
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, CreatedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.onCreated.addListener((newTab) => {",
+        @"  browser.test.assertFalse(newTab.active, 'The new tab should not be active')",
+        @"  browser.test.assertFalse(newTab.pinned, 'The new tab should not be pinned')",
+        @"  browser.test.assertEq(newTab.index, 1, 'The new tab index should be 1')",
+        @"  browser.test.assertEq(newTab.openerTabId, undefined, 'The new tab should not have an openerTabId by default')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.tabs.create({})",
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPITabs, UpdatedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const newTab = await browser.tabs.create({ active: false, muted: false, pinned: false })",
+
+        @"let mutedUpdated = false",
+        @"let pinnedUpdated = false",
+
+        @"const verifyUpdates = () => {",
+        @"  if (mutedUpdated && pinnedUpdated)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {",
+        @"  if (changeInfo.hasOwnProperty('mutedInfo')) {",
+        @"    browser.test.assertEq(tabId, newTab.id, 'The updated tab should have the correct id for muted change')",
+        @"    browser.test.assertTrue(changeInfo.mutedInfo.muted, 'The tab should be muted')",
+        @"    browser.test.assertDeepEq(changeInfo.mutedInfo, tab.mutedInfo, 'The mutedInfo in changeInfo should match the mutedInfo of the tab')",
+        @"    mutedUpdated = true",
+        @"  }",
+
+        @"  if (changeInfo.hasOwnProperty('pinned')) {",
+        @"    browser.test.assertEq(tabId, newTab.id, 'The updated tab should have the correct id for pinned change')",
+        @"    browser.test.assertTrue(changeInfo.pinned, 'The tab should be pinned')",
+        @"    browser.test.assertEq(changeInfo.pinned, tab.pinned, 'The pinned status in changeInfo should match the pinned status of the tab')",
+        @"    pinnedUpdated = true",
+        @"  }",
+
+        @"  verifyUpdates()",
+        @"})",
+
+        @"browser.tabs.update(newTab.id, { muted: true, pinned: true })"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPITabs, RemovedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const newTab = await browser.tabs.create({})",
+
+        @"browser.tabs.onRemoved.addListener((tabId, removeInfo) => {",
+        @"  browser.test.assertEq(tabId, newTab.id, 'The removed tab should have the correct id')",
+        @"  browser.test.assertFalse(removeInfo.isWindowClosing, 'The window should not be closing')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.tabs.remove(newTab.id)"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPITabs, ReplacedEvent)
+{
+    auto backgroundScript = Util::constructScript(@[
+        @"browser.tabs.onReplaced.addListener((addedTabId, removedTabId) => {",
+        @"  browser.test.assertTrue(addedTabId !== removedTabId, 'The addedTabId should not match the removedTabId')",
+        @"  browser.test.assertEq(removedTabId, initialTabId, 'The initial tab id should match the removedTabId')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"const allTabs = await browser.tabs.query({windowId: browser.windows.WINDOW_ID_CURRENT})",
+        @"const initialTabId = allTabs[0].id",
+
+        @"browser.test.yield('Replace Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager load];
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Replace Tab");
+
+    auto initialTab = manager.get().defaultWindow.tabs.firstObject;
+    auto newTab = adoptNS([[TestWebExtensionTab alloc] initWithWindow:manager.get().defaultWindow extensionController:manager.get().controller]);
+
+    [manager.get().defaultWindow replaceTab:initialTab withTab:newTab.get()];
+    [manager run];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 1lu);
+}
+
+TEST(WKWebExtensionAPITabs, MovedEvent)
+{
+    auto backgroundScript = Util::constructScript(@[
+        @"browser.tabs.onMoved.addListener((tabId, moveInfo) => {",
+        @"  browser.test.assertEq(tabId, movedTabId, 'Moved tab id should match the provided tab id')",
+        @"  browser.test.assertEq(moveInfo.fromIndex, 1, 'Tab should have been moved from index 1')",
+        @"  browser.test.assertEq(moveInfo.toIndex, 2, 'Tab should have been moved to index 2')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"const allTabs = await browser.tabs.query({ currentWindow: true })",
+        @"const movedTabId = allTabs[1].id",
+
+        @"browser.test.yield('Move Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *tabToMove = [manager.get().defaultWindow openNewTab];
+    [manager.get().defaultWindow openNewTab];
+
+    [manager load];
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Move Tab");
+
+    [manager.get().defaultWindow moveTab:tabToMove toIndex:2];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, DetachedAndAttachedEvent)
+{
+    auto backgroundScript = Util::constructScript(@[
+        @"let detachedTabId",
+
+        @"const currentWindow = await browser.windows.getCurrent()",
+        @"const currentWindowId = currentWindow.id",
+
+        @"const allWindows = await browser.windows.getAll()",
+        @"const newWindow = allWindows.find(window => window.id !== currentWindowId)",
+        @"const newWindowId = newWindow.id",
+
+        @"browser.tabs.onDetached.addListener((tabId, detachInfo) => {",
+        @"  detachedTabId = tabId",
+        @"  browser.test.assertEq(detachInfo.oldWindowId, currentWindowId, 'Tab should have been detached from the current window')",
+        @"  browser.test.assertEq(detachInfo.oldPosition, 1, 'Tab should have been detached from index 1')",
+        @"})",
+
+        @"browser.tabs.onAttached.addListener((tabId, attachInfo) => {",
+        @"  browser.test.assertEq(detachedTabId, tabId, 'The detached and attached tab ids should match')",
+        @"  browser.test.assertEq(attachInfo.newWindowId, newWindowId, 'Tab should have been attached to the new window')",
+        @"  browser.test.assertEq(attachInfo.newPosition, 0, 'Tab should have been attached at index 0')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Move Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *tabToMove = [manager.get().defaultWindow openNewTab];
+    auto *secondWindow = [manager openNewWindow];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2ul);
+    EXPECT_EQ(secondWindow.tabs.count, 1ul);
+
+    [manager load];
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Move Tab");
+
+    [secondWindow moveTab:tabToMove toIndex:0];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 1ul);
+    EXPECT_EQ(secondWindow.tabs.count, 2ul);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, ActivatedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const newTab = await browser.tabs.create({ active: false })",
+
+        @"browser.tabs.onActivated.addListener((activeInfo) => {",
+        @"  browser.test.assertEq(activeInfo.tabId, newTab.id, 'The activated tab should have the correct id')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.tabs.update(newTab.id, { active: true })"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPITabs, HighlightedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const initialTabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const newTab = await browser.tabs.create({ active: false })",
+
+        @"browser.tabs.onActivated.addListener((activeInfo) => {",
+        @"  browser.test.notifyFail('The tab should be highlighted but not activated')",
+        @"})",
+
+        @"browser.tabs.onHighlighted.addListener((highlightInfo) => {",
+        @"  browser.test.assertTrue(highlightInfo.tabIds.includes(newTab.id), 'The highlighted tabs should contain the new tab id')",
+        @"  browser.test.assertTrue(highlightInfo.tabIds.includes(initialTabs[0].id), 'The initial tab should still be highlighted')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.tabs.update(newTab.id, { active: false, highlighted: true })"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPITabs, HighlightedAlsoActivatesTab)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const newTab = await browser.tabs.create({ active: false })",
+
+        @"let tabActivated = false",
+        @"let tabHighlighted = false",
+
+        @"let checkCompletion = () => {",
+        @"  if (tabActivated && tabHighlighted)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"browser.tabs.onActivated.addListener((activeInfo) => {",
+        @"  tabActivated = true",
+        @"  browser.test.assertEq(activeInfo.tabId, newTab.id, 'The activated tab should have the correct id')",
+        @"  checkCompletion()",
+        @"})",
+
+        @"browser.tabs.onHighlighted.addListener((highlightInfo) => {",
+        @"  tabHighlighted = true",
+        @"  browser.test.assertTrue(highlightInfo.tabIds.includes(newTab.id), 'The highlighted tabs should contain the new tab id')",
+        @"  checkCompletion()",
+        @"})",
+
+        @"browser.tabs.update(newTab.id, { highlighted: true })"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
 }
 
 } // namespace TestWebKitAPI

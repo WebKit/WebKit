@@ -28,6 +28,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WebExtensionUtilities.h"
 #import <WebKit/_WKWebExtensionController.h>
 #import <WebKit/_WKWebExtensionMatchPattern.h>
 #import <WebKit/_WKWebExtensionPermission.h>
@@ -63,7 +64,20 @@
     if (_openNewTab)
         return _openNewTab(options, extensionContext, completionHandler);
 
-    completionHandler(nil, nil);
+    auto *openWindows = [self webExtensionController:controller openWindowsForExtensionContext:extensionContext];
+    if (!openWindows.count) {
+        completionHandler(nil, nil);
+        return;
+    }
+
+    TestWebExtensionWindow *window = openWindows.firstObject;
+    auto newTab = adoptNS([[TestWebExtensionTab alloc] initWithWindow:window extensionController:controller]);
+
+    window.tabs = [window.tabs arrayByAddingObject:newTab.get()];
+
+    [controller didOpenTab:newTab.get()];
+
+    completionHandler(newTab.get(), nil);
 }
 
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(id<_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions))completionHandler

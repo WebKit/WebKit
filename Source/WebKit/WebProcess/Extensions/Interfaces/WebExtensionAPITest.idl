@@ -53,10 +53,10 @@
     [NeedsScriptContext] void assertFalse(boolean actualValue, [Optional] DOMString message);
 
     // Asserts the test value is deeply equal to the expected value.
-    [NeedsScriptContext] void assertDeepEq([ValuesAllowed] any expectedValue, [ValuesAllowed] any actualValue, [Optional] DOMString message);
+    [NeedsScriptContext] void assertDeepEq([ValuesAllowed] any actualValue, [ValuesAllowed] any expectedValue, [Optional] DOMString message);
 
     // Asserts the test value is equal to the expected value.
-    [NeedsScriptContext] void assertEq([ValuesAllowed] any expectedValue, [ValuesAllowed] any actualValue, [Optional] DOMString message);
+    [NeedsScriptContext] void assertEq([ValuesAllowed] any actualValue, [ValuesAllowed] any expectedValue, [Optional] DOMString message);
 
     // Asserts the promise is rejected.
     [NeedsScriptContext, ProcessArgumentsLeftToRight] any assertRejects(any promise, [Optional, ValuesAllowed] any expectedError, [Optional] DOMString message);

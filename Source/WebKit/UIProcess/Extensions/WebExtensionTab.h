@@ -72,12 +72,13 @@ public:
     };
 
     enum class AssumeWindowMatches : bool { No, Yes };
+    enum class SkipContainsCheck : bool { No, Yes };
 
     using Error = std::optional<String>;
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionTabParameters parameters() const;
-    WebExtensionTabParameters minimalParameters() const;
+    WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties>) const;
 
     WebExtensionContext* extensionContext() const;
 
@@ -87,7 +88,7 @@ public:
 
     bool extensionHasAccess() const;
 
-    RefPtr<WebExtensionWindow> window() const;
+    RefPtr<WebExtensionWindow> window(SkipContainsCheck = SkipContainsCheck::No) const;
     size_t index() const;
 
     RefPtr<WebExtensionTab> parentTab() const;

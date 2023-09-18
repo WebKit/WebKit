@@ -531,20 +531,28 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 
 /*!
  @abstract Should be called by the app when a tab is activated to notify only this specific extension.
- @param activatedTab The activated tab.
+ @param activatedTab The tab that has become active.
+ @param previousTab The tab that was active before. This parameter can be \c nil if there was no previously active tab.
  @discussion This method informs only the specific extension of the tab activation. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
-- (void)didActivateTab:(id <_WKWebExtensionTab>)activatedTab;
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<_WKWebExtensionTab>)previousTab;
 
 /*!
  @abstract Should be called by the app when tabs are selected to fire appropriate events with only this extension.
- @param selectedTabs The set of tabs that were selected. An empty set indicates that no tabs are currently selected or that the
- selected tabs are not visible to this extension.
+ @param selectedTabs The set of tabs that were selected.
  @discussion This method informs only the specific extension that tabs have been selected. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
 - (void)didSelectTabs:(NSSet<id <_WKWebExtensionTab>> *)selectedTabs;
+
+/*!
+ @abstract Should be called by the app when tabs are deselected to fire appropriate events with only this extension.
+ @param deselectedTabs The set of tabs that were deselected.
+ @discussion This method informs only the specific extension that tabs have been deselected. If the intention is to inform all loaded
+ extensions consistently, you should use the respective method on the extension controller instead.
+ */
+- (void)didDeselectTabs:(NSSet<id <_WKWebExtensionTab>> *)deselectedTabs;
 
 /*!
  @abstract Should be called by the app when a tab is moved to fire appropriate events with only this extension.

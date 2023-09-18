@@ -56,8 +56,8 @@ public:
     void assertTrue(JSContextRef, bool testValue, NSString *message);
     void assertFalse(JSContextRef, bool testValue, NSString *message);
 
-    void assertDeepEq(JSContextRef, JSValue *expectedValue, JSValue *actualValue, NSString *message);
-    void assertEq(JSContextRef, JSValue *expectedValue, JSValue *actualValue, NSString *message);
+    void assertDeepEq(JSContextRef, JSValue *actualValue, JSValue *expectedValue, NSString *message);
+    void assertEq(JSContextRef, JSValue *actualValue, JSValue *expectedValue, NSString *message);
 
     JSValue *assertRejects(JSContextRef, JSValue *promise, JSValue *expectedError, NSString *message);
     JSValue *assertResolves(JSContextRef, JSValue *promise, NSString *message);

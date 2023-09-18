@@ -432,6 +432,78 @@ void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdenti
     }
 }
 
+void WebExtensionContext::fireTabsCreatedEventIfNeeded(const WebExtensionTabParameters& parameters)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnCreated;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsCreatedEvent(parameters));
+    });
+}
+
+void WebExtensionContext::fireTabsUpdatedEventIfNeeded(const WebExtensionTabParameters& parameters, const WebExtensionTabParameters& changedParameters)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnUpdated;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsUpdatedEvent(parameters, changedParameters));
+    });
+}
+
+void WebExtensionContext::fireTabsReplacedEventIfNeeded(WebExtensionTabIdentifier replacedTabIdentifier, WebExtensionTabIdentifier newTabIdentifier)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnReplaced;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsReplacedEvent(replacedTabIdentifier, newTabIdentifier));
+    });
+}
+
+void WebExtensionContext::fireTabsDetachedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier oldWindowIdentifier, size_t oldIndex)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnDetached;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsDetachedEvent(tabIdentifier, oldWindowIdentifier, oldIndex));
+    });
+}
+
+void WebExtensionContext::fireTabsMovedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, size_t oldIndex, size_t newIndex)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnMoved;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsMovedEvent(tabIdentifier, windowIdentifier, oldIndex, newIndex));
+    });
+}
+
+void WebExtensionContext::fireTabsAttachedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier newWindowIdentifier, size_t newIndex)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnAttached;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsAttachedEvent(tabIdentifier, newWindowIdentifier, newIndex));
+    });
+}
+
+void WebExtensionContext::fireTabsActivatedEventIfNeeded(WebExtensionTabIdentifier previousActiveTabIdentifier, WebExtensionTabIdentifier newActiveTabIdentifier, WebExtensionWindowIdentifier windowIdentifier)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnActivated;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsActivatedEvent(previousActiveTabIdentifier, newActiveTabIdentifier, windowIdentifier));
+    });
+}
+
+void WebExtensionContext::fireTabsHighlightedEventIfNeeded(Vector<WebExtensionTabIdentifier> tabIdentifiers, WebExtensionWindowIdentifier windowIdentifier)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnHighlighted;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsHighlightedEvent(tabIdentifiers, windowIdentifier));
+    });
+}
+
+void WebExtensionContext::fireTabsRemovedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, WindowIsClosing windowIsClosing)
+{
+    constexpr auto type = WebExtensionEventListenerType::TabsOnRemoved;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsRemovedEvent(tabIdentifier, windowIdentifier, windowIsClosing));
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
