@@ -540,14 +540,6 @@ fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Failure ] # [ Skip
 # resizeTO, resizeBy
 fast/images/animated-gif-window-resizing.html [ Skip ] # Timeout
 
-http/wpt/css/css-images-4/conic-gradient-parsing.html [ Pass ]
-fast/gradients/conic-repeating.html [ Pass ]
-fast/gradients/conic.html [ Pass ]
-fast/gradients/conic-off-center.html [ Pass ]
-fast/gradients/conic-center-outside-box.html [ Pass ]
-fast/gradients/conic-extended-stops.html [ Pass ]
-fast/gradients/conic-from-angle.html [ Pass ]
-fast/gradients/conic-two-hints.html [ Pass ]
 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 
 fast/forms/vertical-writing-mode/meter.html [ ImageOnlyFailure ]
@@ -808,12 +800,17 @@ http/tests/misc/acid3.html [ Failure ]
 
 http/tests/model [ Skip ]
 
-http/tests/navigation [ Skip ]
-http/tests/navigation/post-301-response.html [ Pass ]
-http/tests/navigation/post-302-response.html [ Pass ]
-http/tests/navigation/post-303-response.html [ Pass ]
-http/tests/navigation/post-307-response.html [ Pass ]
-http/tests/navigation/post-308-response.html [ Pass ]
+http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ] # Failure
+http/tests/navigation/page-cache-mediakeysession.html [ Skip ] # Failure
+http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Skip ] # Failure
+http/tests/navigation/post-frames-goback1-uncached.html [ Skip ] # Failure
+http/tests/navigation/redirect-to-fragment2.html [ Skip ] # Failure
+http/tests/navigation/error404-basic.html [ Skip ] # Missing
+http/tests/navigation/error404-goback.html [ Skip ] # Missing
+http/tests/navigation/javascriptlink-frames.html [ Skip ] # Missing
+http/tests/navigation/postredirect-basic.html [ Skip ] # Missing
+http/tests/navigation/postredirect-goback1.html [ Skip ] # Missing
+http/tests/navigation/page-cache-mediastream.html [ Skip ] # Timeout
 
 http/tests/notifications [ Skip ]
 http/tests/paymentrequest [ Skip ]
@@ -2727,3 +2724,5 @@ http/tests/inspector/network/resource-timing.html [ Pass Failure ]
 
 webkit.org/b/261297 webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
 webkit.org/b/261297 webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ]
+
+fast/canvas/image-buffer-backend-variants.html [ Skip ]
