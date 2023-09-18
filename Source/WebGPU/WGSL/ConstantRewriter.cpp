@@ -54,6 +54,7 @@ public:
 
     // Statements
     void visit(AST::CompoundStatement&) override;
+    void visit(AST::ForStatement&) override;
 
     // Expressions
     void visit(AST::IdentifierExpression&) override;
@@ -145,6 +146,12 @@ void ConstantRewriter::visit(AST::Function& function)
 void ConstantRewriter::visit(AST::CompoundStatement& statement)
 {
     ContextScope blockScope(this);
+    AST::Visitor::visit(statement);
+}
+
+void ConstantRewriter::visit(AST::ForStatement& statement)
+{
+    ContextScope forScope(this);
     AST::Visitor::visit(statement);
 }
 

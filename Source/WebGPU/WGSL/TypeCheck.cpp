@@ -509,6 +509,7 @@ void TypeChecker::visit(AST::CompoundStatement& statement)
 
 void TypeChecker::visit(AST::ForStatement& statement)
 {
+    ContextScope forScope(this);
     if (auto* initializer = statement.maybeInitializer())
         AST::Visitor::visit(*initializer);
 
