@@ -95,7 +95,7 @@ public:
         >;
 
         WebCore::PlatformLayerIdentifier layerID;
-        WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerTypeLayer };
+        WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerType::LayerTypeLayer };
         std::optional<VideoElementData> videoElementData;
         AdditionalData additionalData;
 

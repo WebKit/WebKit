@@ -199,9 +199,9 @@ void PlatformCALayerCocoa::setOwner(PlatformCALayerClient* owner)
 static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 {
     switch (type) {
-    case PlatformCALayer::Linear: return kCAFilterLinear;
-    case PlatformCALayer::Nearest: return kCAFilterNearest;
-    case PlatformCALayer::Trilinear: return kCAFilterTrilinear;
+    case PlatformCALayer::FilterType::Linear: return kCAFilterLinear;
+    case PlatformCALayer::FilterType::Nearest: return kCAFilterNearest;
+    case PlatformCALayer::FilterType::Trilinear: return kCAFilterTrilinear;
     default: return 0;
     }
 }
@@ -209,13 +209,13 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(PlatformLayer* layer)
 {
     if (PAL::isAVFoundationFrameworkAvailable() && [layer isKindOfClass:PAL::getAVPlayerLayerClass()])
-        return LayerTypeAVPlayerLayer;
+        return LayerType::LayerTypeAVPlayerLayer;
 
     if ([layer isKindOfClass:WebVideoContainerLayer.class]
         && [(WebVideoContainerLayer*)layer playerLayer])
-        return LayerTypeAVPlayerLayer;
+        return LayerType::LayerTypeAVPlayerLayer;
 
-    return LayerTypeCustom;
+    return LayerType::LayerTypeCustom;
 }
 
 PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerClient* owner)
@@ -223,55 +223,55 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
 {
     Class layerClass = Nil;
     switch (layerType) {
-    case LayerTypeLayer:
-    case LayerTypeRootLayer:
+    case LayerType::LayerTypeLayer:
+    case LayerType::LayerTypeRootLayer:
         layerClass = [CALayer class];
         break;
-    case LayerTypeScrollContainerLayer:
+    case LayerType::LayerTypeScrollContainerLayer:
         // Scroll container layers only have special behavior with PlatformCALayerRemote.
         // fallthrough
-    case LayerTypeWebLayer:
+    case LayerType::LayerTypeWebLayer:
         layerClass = [WebLayer class];
         break;
-    case LayerTypeSimpleLayer:
-    case LayerTypeTiledBackingTileLayer:
-    case LayerTypeContentsProvidedLayer:
+    case LayerType::LayerTypeSimpleLayer:
+    case LayerType::LayerTypeTiledBackingTileLayer:
+    case LayerType::LayerTypeContentsProvidedLayer:
         layerClass = [WebSimpleLayer class];
         break;
-    case LayerTypeTransformLayer:
+    case LayerType::LayerTypeTransformLayer:
         layerClass = [CATransformLayer class];
         break;
 #if ENABLE(FILTERS_LEVEL_2)
-    case LayerTypeBackdropLayer:
+    case LayerType::LayerTypeBackdropLayer:
         layerClass = [CABackdropLayer class];
         break;
 #else
-    case LayerTypeBackdropLayer:
+    case LayerType::LayerTypeBackdropLayer:
         ASSERT_NOT_REACHED();
         layerClass = [CALayer class];
         break;
 #endif
-    case LayerTypeTiledBackingLayer:
-    case LayerTypePageTiledBackingLayer:
+    case LayerType::LayerTypeTiledBackingLayer:
+    case LayerType::LayerTypePageTiledBackingLayer:
         layerClass = [WebTiledBackingLayer class];
         break;
-    case LayerTypeAVPlayerLayer:
+    case LayerType::LayerTypeAVPlayerLayer:
         if (PAL::isAVFoundationFrameworkAvailable())
             layerClass = PAL::getAVPlayerLayerClass();
         break;
 #if ENABLE(MODEL_ELEMENT)
-    case LayerTypeModelLayer:
+    case LayerType::LayerTypeModelLayer:
         layerClass = [CALayer class];
         break;
 #endif
-    case LayerTypeHost:
+    case LayerType::LayerTypeHost:
         layerClass = CALayer.class;
         break;
-    case LayerTypeShapeLayer:
+    case LayerType::LayerTypeShapeLayer:
         layerClass = [CAShapeLayer class];
         // fillColor defaults to opaque black.
         break;
-    case LayerTypeCustom:
+    case LayerType::LayerTypeCustom:
         break;
     }
 
@@ -279,7 +279,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         m_layer = adoptNS([(CALayer *)[layerClass alloc] init]);
 
 #if ENABLE(FILTERS_LEVEL_2) && PLATFORM(MAC)
-    if (layerType == LayerTypeBackdropLayer)
+    if (layerType == LayerType::LayerTypeBackdropLayer)
         [(CABackdropLayer*)m_layer.get() setWindowServerAware:NO];
 #endif
 
@@ -303,13 +303,13 @@ void PlatformCALayerCocoa::commonInit()
     }
     
     // Clear all the implicit animations on the CALayer
-    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeScrollContainerLayer || m_layerType == LayerTypeCustom)
+    if (m_layerType == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer || m_layerType == PlatformCALayer::LayerType::LayerTypeScrollContainerLayer || m_layerType == PlatformCALayer::LayerType::LayerTypeCustom)
         [m_layer web_disableAllActions];
     else
         [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
     // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
-    if (m_layerType == LayerTypeTiledBackingTileLayer)
+    if (m_layerType == PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer)
         [m_layer setValue:@YES forKey:@"isTile"];
 
     if (usesTiledBackingLayer()) {
@@ -321,7 +321,7 @@ void PlatformCALayerCocoa::commonInit()
 
     if (m_owner && m_owner->platformCALayerUseCSS3DTransformInteroperability() && [m_layer respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
         [m_layer setUsesWebKitBehavior:YES];
-        if (m_layerType == LayerTypeTransformLayer) {
+        if (m_layerType == PlatformCALayer::LayerType::LayerTypeTransformLayer) {
             [m_layer setSortsSublayers:YES];
         } else
             [m_layer setSortsSublayers:NO];
@@ -334,21 +334,21 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
 {
     LayerType type;
     switch (layerType()) {
-    case LayerTypeTransformLayer:
-        type = LayerTypeTransformLayer;
+    case PlatformCALayer::LayerType::LayerTypeTransformLayer:
+        type = PlatformCALayer::LayerType::LayerTypeTransformLayer;
         break;
-    case LayerTypeAVPlayerLayer:
-        type = LayerTypeAVPlayerLayer;
+    case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
+        type = PlatformCALayer::LayerType::LayerTypeAVPlayerLayer;
         break;
-    case LayerTypeShapeLayer:
-        type = LayerTypeShapeLayer;
+    case PlatformCALayer::LayerType::LayerTypeShapeLayer:
+        type = PlatformCALayer::LayerType::LayerTypeShapeLayer;
         break;
-    case LayerTypeBackdropLayer:
-        type = LayerTypeBackdropLayer;
+    case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
+        type = PlatformCALayer::LayerType::LayerTypeBackdropLayer;
         break;
-    case LayerTypeLayer:
+    case PlatformCALayer::LayerType::LayerTypeLayer:
     default:
-        type = LayerTypeLayer;
+        type = PlatformCALayer::LayerType::LayerTypeLayer;
         break;
     };
     auto newLayer = PlatformCALayerCocoa::create(type, owner);
@@ -368,7 +368,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
     newLayer->copyFiltersFrom(*this);
     newLayer->updateCustomAppearance(customAppearance());
 
-    if (type == LayerTypeAVPlayerLayer) {
+    if (type == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer) {
         ASSERT(PAL::isAVFoundationFrameworkAvailable() && [newLayer->platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()]);
 
         AVPlayerLayer *destinationPlayerLayer = newLayer->avPlayerLayer();
@@ -380,7 +380,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
         });
     }
     
-    if (type == LayerTypeShapeLayer)
+    if (type == PlatformCALayer::LayerType::LayerTypeShapeLayer)
         newLayer->setShapeRoundedRect(shapeRoundedRect());
 
     return newLayer;
@@ -938,7 +938,7 @@ float PlatformCALayerCocoa::contentsScale() const
 
 void PlatformCALayerCocoa::setContentsScale(float value)
 {
-    if (m_layerType == LayerTypeTransformLayer)
+    if (m_layerType == PlatformCALayer::LayerType::LayerTypeTransformLayer)
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -985,7 +985,7 @@ void PlatformCALayerCocoa::setVideoGravity(MediaPlayerVideoGravity gravity)
 
 FloatRoundedRect PlatformCALayerCocoa::shapeRoundedRect() const
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
     if (m_shapeRoundedRect)
         return *m_shapeRoundedRect;
 
@@ -994,7 +994,7 @@ FloatRoundedRect PlatformCALayerCocoa::shapeRoundedRect() const
 
 void PlatformCALayerCocoa::setShapeRoundedRect(const FloatRoundedRect& roundedRect)
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
     m_shapeRoundedRect = makeUnique<FloatRoundedRect>(roundedRect);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -1006,7 +1006,7 @@ void PlatformCALayerCocoa::setShapeRoundedRect(const FloatRoundedRect& roundedRe
 
 WindRule PlatformCALayerCocoa::shapeWindRule() const
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
 
     NSString *fillRule = [(CAShapeLayer *)m_layer fillRule];
     if ([fillRule isEqualToString:kCAFillRuleEvenOdd])
@@ -1017,7 +1017,7 @@ WindRule PlatformCALayerCocoa::shapeWindRule() const
 
 void PlatformCALayerCocoa::setShapeWindRule(WindRule windRule)
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
 
     switch (windRule) {
     case WindRule::NonZero:
@@ -1031,7 +1031,7 @@ void PlatformCALayerCocoa::setShapeWindRule(WindRule windRule)
 
 Path PlatformCALayerCocoa::shapePath() const
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     return { PathCG::create(adoptCF(CGPathCreateMutableCopy([(CAShapeLayer *)m_layer path]))) };
@@ -1040,7 +1040,7 @@ Path PlatformCALayerCocoa::shapePath() const
 
 void PlatformCALayerCocoa::setShapePath(const Path& path)
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [(CAShapeLayer *)m_layer setPath:path.platformPath()];
@@ -1128,7 +1128,7 @@ static NSString *layerContentsFormat(bool wantsDeepColor)
 
 void PlatformCALayerCocoa::updateContentsFormat()
 {
-    if (m_layerType == LayerTypeWebLayer || m_layerType == LayerTypeTiledBackingTileLayer) {
+    if (m_layerType == PlatformCALayer::LayerType::LayerTypeWebLayer || m_layerType == PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         if (NSString *formatString = layerContentsFormat(wantsDeepColorBackingStore()))
             [m_layer setContentsFormat:formatString];
@@ -1320,7 +1320,7 @@ AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
     if (!PAL::isAVFoundationFrameworkAvailable())
         return nil;
 
-    if (layerType() != LayerTypeAVPlayerLayer)
+    if (layerType() != PlatformCALayer::LayerType::LayerTypeAVPlayerLayer)
         return nil;
 
     if ([platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()])

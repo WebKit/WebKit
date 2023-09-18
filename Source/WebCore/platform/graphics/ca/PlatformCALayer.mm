@@ -227,50 +227,50 @@ void PlatformCALayer::dumpAdditionalProperties(TextStream&, OptionSet<PlatformLa
 TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
 {
     switch (layerType) {
-    case PlatformCALayer::LayerTypeLayer:
-    case PlatformCALayer::LayerTypeWebLayer:
-    case PlatformCALayer::LayerTypeSimpleLayer:
+    case PlatformCALayer::LayerType::LayerTypeLayer:
+    case PlatformCALayer::LayerType::LayerTypeWebLayer:
+    case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
         ts << "layer";
         break;
-    case PlatformCALayer::LayerTypeTransformLayer:
+    case PlatformCALayer::LayerType::LayerTypeTransformLayer:
         ts << "transform-layer";
         break;
-    case PlatformCALayer::LayerTypeTiledBackingLayer:
+    case PlatformCALayer::LayerType::LayerTypeTiledBackingLayer:
         ts << "tiled-backing-layer";
         break;
-    case PlatformCALayer::LayerTypePageTiledBackingLayer:
+    case PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer:
         ts << "page-tiled-backing-layer";
         break;
-    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+    case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
         ts << "tiled-backing-tile";
         break;
-    case PlatformCALayer::LayerTypeRootLayer:
+    case PlatformCALayer::LayerType::LayerTypeRootLayer:
         ts << "root-layer";
         break;
-    case PlatformCALayer::LayerTypeBackdropLayer:
+    case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
         ts << "backdrop-layer";
         break;
-    case PlatformCALayer::LayerTypeAVPlayerLayer:
+    case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
         ts << "av-player-layer";
         break;
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
+    case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer:
         ts << "contents-provided-layer";
         break;
-    case PlatformCALayer::LayerTypeShapeLayer:
+    case PlatformCALayer::LayerType::LayerTypeShapeLayer:
         ts << "shape-layer";
         break;
-    case PlatformCALayer::LayerTypeScrollContainerLayer:
+    case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
         ts << "scroll-container-layer";
         break;
-    case PlatformCALayer::LayerTypeCustom:
+    case PlatformCALayer::LayerType::LayerTypeCustom:
         ts << "custom-layer";
         break;
 #if ENABLE(MODEL_ELEMENT)
-    case PlatformCALayer::LayerTypeModelLayer:
+    case PlatformCALayer::LayerType::LayerTypeModelLayer:
         ts << "model-layer";
         break;
 #endif
-    case PlatformCALayer::LayerTypeHost:
+    case PlatformCALayer::LayerType::LayerTypeHost:
         ts << "host";
         break;
     }
@@ -280,13 +280,13 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
 TextStream& operator<<(TextStream& ts, PlatformCALayer::FilterType filterType)
 {
     switch (filterType) {
-    case PlatformCALayer::Linear:
+    case PlatformCALayer::FilterType::Linear:
         ts << "linear";
         break;
-    case PlatformCALayer::Nearest:
+    case PlatformCALayer::FilterType::Nearest:
         ts << "nearest";
         break;
-    case PlatformCALayer::Trilinear:
+    case PlatformCALayer::FilterType::Trilinear:
         ts << "trilinear";
         break;
     default:

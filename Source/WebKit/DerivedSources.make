@@ -641,10 +641,12 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 	ActivityState.serialization.in \
 	DragActions.serialization.in \
 	InbandTextTrackPrivate.serialization.in \
+	IndexedDB.serialization.in \
 	LayoutMilestones.serialization.in \
 	MediaPlaybackTargetContext.serialization.in \
 	MediaProducer.serialization.in \
 	MDNSRegisterError.serialization.in \
+	PlatformCALayer.messages.in \
 	PlatformEvent.serialization.in \
 	PlatformMediaSession.serialization.in \
 	PlatformScreen.serialization.in \

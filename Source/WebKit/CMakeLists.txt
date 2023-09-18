@@ -512,6 +512,7 @@ set(WebCore_SERIALIZATION_IN_FILES
     ActivityState.serialization.in
     DragActions.serialization.in
     InbandTextTrackPrivate.serialization.in
+    IndexedDB.serialization.in
     LayoutMilestones.serialization.in
     MDNSRegisterError.serialization.in
     MediaPlaybackTargetContext.serialization.in

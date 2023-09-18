@@ -44,7 +44,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteModelHosting::create(Ref<WebCore
 }
 
 PlatformCALayerRemoteModelHosting::PlatformCALayerRemoteModelHosting(Ref<WebCore::Model> model, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemote(WebCore::PlatformCALayer::LayerTypeModelLayer, owner, context)
+    : PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType::LayerTypeModelLayer, owner, context)
     , m_model(model)
 {
 }

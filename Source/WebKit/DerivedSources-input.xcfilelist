@@ -487,10 +487,12 @@ $(WEBCORE_PRIVATE_HEADERS_DIR)/HTTPHeaderNames.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/HTTPHeaderNames.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/IDLParser.pm
 $(WEBCORE_PRIVATE_HEADERS_DIR)/InbandTextTrackPrivate.serialization.in
+$(WEBCORE_PRIVATE_HEADERS_DIR)/IndexedDB.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/LayoutMilestones.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/MDNSRegisterError.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/MediaPlaybackTargetContext.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/MediaProducer.serialization.in
+$(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformCALayer.messages.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformEvent.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformMediaSession.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformScreen.serialization.in

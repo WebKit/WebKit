@@ -2763,10 +2763,14 @@ target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPU.serialization.in
 
+    Modules/indexeddb/IndexedDB.serialization.in
+
     page/ActivityState.serialization.in
     page/DragActions.serialization.in
     page/LayoutMilestones.serialization.in
     page/MediaProducer.serialization.in
+
+    platform/graphics/ca/PlatformCALayer.messages.in
 
     platform/PlatformEvent.serialization.in
     platform/PlatformScreen.serialization.in

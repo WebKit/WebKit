@@ -51,27 +51,27 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     };
 
     switch (properties.type) {
-    case PlatformCALayer::LayerTypeLayer:
-    case PlatformCALayer::LayerTypeWebLayer:
-    case PlatformCALayer::LayerTypeRootLayer:
-    case PlatformCALayer::LayerTypeSimpleLayer:
-    case PlatformCALayer::LayerTypeTiledBackingLayer:
-    case PlatformCALayer::LayerTypePageTiledBackingLayer:
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
-    case PlatformCALayer::LayerTypeHost:
+    case PlatformCALayer::LayerType::LayerTypeLayer:
+    case PlatformCALayer::LayerType::LayerTypeWebLayer:
+    case PlatformCALayer::LayerType::LayerTypeRootLayer:
+    case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
+    case PlatformCALayer::LayerType::LayerTypeTiledBackingLayer:
+    case PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer:
+    case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer:
+    case PlatformCALayer::LayerType::LayerTypeHost:
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
-    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+    case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
-    case PlatformCALayer::LayerTypeBackdropLayer:
+    case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
         return makeWithView(adoptNS([[WKBackdropView alloc] init]));
 
-    case PlatformCALayer::LayerTypeTransformLayer:
+    case PlatformCALayer::LayerType::LayerTypeTransformLayer:
         return makeWithView(adoptNS([[WKTransformView alloc] init]));
 
-    case PlatformCALayer::LayerTypeCustom:
-    case PlatformCALayer::LayerTypeAVPlayerLayer: {
+    case PlatformCALayer::LayerType::LayerTypeCustom:
+    case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer: {
         if (m_isDebugLayerTreeHost)
             return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
@@ -87,17 +87,17 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:m_drawingArea->page().processID() contextID:properties.hostingContextID()]);
         return makeWithView(WTFMove(view));
     }
-    case PlatformCALayer::LayerTypeShapeLayer:
+    case PlatformCALayer::LayerType::LayerTypeShapeLayer:
         return makeWithView(adoptNS([[WKShapeView alloc] init]));
 
-    case PlatformCALayer::LayerTypeScrollContainerLayer:
+    case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
         if (!m_isDebugLayerTreeHost)
             return makeWithView(adoptNS([[WKChildScrollView alloc] init]));
         // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
         return makeWithView(adoptNS([[UIView alloc] init]));
 
 #if ENABLE(MODEL_ELEMENT)
-    case PlatformCALayer::LayerTypeModelLayer:
+    case PlatformCALayer::LayerType::LayerTypeModelLayer:
         if (m_drawingArea->page().preferences().modelElementEnabled()) {
             if (auto* model = std::get_if<Ref<Model>>(&properties.additionalData)) {
 #if ENABLE(SEPARATED_MODEL)

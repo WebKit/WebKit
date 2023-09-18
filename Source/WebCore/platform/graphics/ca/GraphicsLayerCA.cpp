@@ -280,14 +280,14 @@ static PlatformCALayer::FilterType toPlatformCALayerFilterType(GraphicsLayer::Sc
 {
     switch (filter) {
     case GraphicsLayer::ScalingFilter::Linear:
-        return PlatformCALayer::Linear;
+        return PlatformCALayer::FilterType::Linear;
     case GraphicsLayer::ScalingFilter::Nearest:
-        return PlatformCALayer::Nearest;
+        return PlatformCALayer::FilterType::Nearest;
     case GraphicsLayer::ScalingFilter::Trilinear:
-        return PlatformCALayer::Trilinear;
+        return PlatformCALayer::FilterType::Trilinear;
     }
     ASSERT_NOT_REACHED();
-    return PlatformCALayer::Linear;
+    return PlatformCALayer::FilterType::Linear;
 }
 
 bool GraphicsLayer::supportsLayerType(Type type)
@@ -344,20 +344,20 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platf
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<WebCore::Model>, PlatformCALayerClient* owner)
 {
     // By default, just make a plain layer; subclasses can override to provide a custom PlatformCALayer for Model.
-    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerTypeLayer, owner);
+    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, owner);
 }
 #endif
 
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayerHost(LayerHostingContextIdentifier, PlatformCALayerClient* owner)
 {
     ASSERT_NOT_REACHED_WITH_MESSAGE("GraphicsLayerCARemote::createPlatformCALayerHost should always be called instead of this, but this symbol is needed to compile WebKitLegacy.");
-    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerTypeLayer, owner);
+    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, owner);
 }
 
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformVideoLayer(HTMLVideoElement&, PlatformCALayerClient* owner)
 {
     // By default, just make a plain layer; subclasses can override to provide a custom PlatformCALayer for hosting context id.
-    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerTypeLayer, owner);
+    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, owner);
 }
 
 Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
@@ -1186,7 +1186,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
     if (m_contentsSolidColor.isVisible()) {
         if (!m_contentsLayer || m_contentsLayerPurpose != ContentsLayerPurpose::BackgroundColor) {
             m_contentsLayerPurpose = ContentsLayerPurpose::BackgroundColor;
-            m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
+            m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
             m_contentsLayer->setName(makeString("contents color ", m_contentsLayer->layerID().object()));
 #else
@@ -1349,7 +1349,7 @@ void GraphicsLayerCA::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDis
     m_contentsDisplayDelegate = nullptr;
     m_contentsLayerPurpose = ContentsLayerPurpose::None;
     if (delegate) {
-        m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeContentsProvidedLayer, this);
+        m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer, this);
         m_contentsDisplayDelegate = WTFMove(delegate);
         m_contentsLayerPurpose = purpose;
         // Currently delegated display is only useful when delegatee calls setContents, so set the
@@ -1866,7 +1866,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     bool hadDirtyRects = m_uncommittedChanges & DirtyRectsChanged;
     commitLayerChangesAfterSublayers(childCommitState);
 
-    if (affectedByTransformAnimation && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
+    if (affectedByTransformAnimation && m_layer->layerType() == PlatformCALayer::LayerType::LayerTypeTiledBackingLayer)
         client().notifySubsequentFlushRequired(this);
 
     if (layerTypeChanged)
@@ -1986,9 +1986,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     PlatformCALayer::LayerType neededLayerType = currentLayerType;
 
     if (needTiledLayer)
-        neededLayerType = PlatformCALayer::LayerTypeTiledBackingLayer;
-    else if (currentLayerType == PlatformCALayer::LayerTypeTiledBackingLayer)
-        neededLayerType = PlatformCALayer::LayerTypeWebLayer;
+        neededLayerType = PlatformCALayer::LayerType::LayerTypeTiledBackingLayer;
+    else if (currentLayerType == PlatformCALayer::LayerType::LayerTypeTiledBackingLayer)
+        neededLayerType = PlatformCALayer::LayerType::LayerTypeWebLayer;
 
     if (neededLayerType != m_layer->layerType()) {
         changeLayerTypeTo(neededLayerType);
@@ -2490,7 +2490,7 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
 
     bool madeLayer = !m_backdropLayer;
     if (!m_backdropLayer) {
-        m_backdropLayer = createPlatformCALayer(PlatformCALayer::LayerTypeBackdropLayer, this);
+        m_backdropLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeBackdropLayer, this);
         m_backdropLayer->setAnchorPoint(FloatPoint3D());
         m_backdropLayer->setMasksToBounds(true);
         m_backdropLayer->setName(MAKE_STATIC_STRING_IMPL("backdrop"));
@@ -2651,19 +2651,19 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     }
 
     if (purpose == StructuralLayerForPreserves3D) {
-        if (m_structuralLayer && m_structuralLayer->layerType() != PlatformCALayer::LayerTypeTransformLayer)
+        if (m_structuralLayer && m_structuralLayer->layerType() != PlatformCALayer::LayerType::LayerTypeTransformLayer)
             m_structuralLayer = nullptr;
         
         if (!m_structuralLayer) {
-            m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerTypeTransformLayer, this);
+            m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeTransformLayer, this);
             structuralLayerChanged = true;
         }
     } else {
-        if (m_structuralLayer && m_structuralLayer->layerType() != PlatformCALayer::LayerTypeLayer)
+        if (m_structuralLayer && m_structuralLayer->layerType() != PlatformCALayer::LayerType::LayerTypeLayer)
             m_structuralLayer = nullptr;
 
         if (!m_structuralLayer) {
-            m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
+            m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
             structuralLayerChanged = true;
         }
     }
@@ -2840,7 +2840,7 @@ void GraphicsLayerCA::updateContentsImage()
 {
     if (m_pendingContentsImage) {
         if (!m_contentsLayer.get()) {
-            m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
+            m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
             m_contentsLayer->setName(makeString("contents image ", m_contentsLayer->layerID().object()));
 #else
@@ -2852,7 +2852,7 @@ void GraphicsLayerCA::updateContentsImage()
 
         // FIXME: maybe only do trilinear if the image is being scaled down,
         // but then what if the layer size changes?
-        m_contentsLayer->setMinificationFilter(PlatformCALayer::Trilinear);
+        m_contentsLayer->setMinificationFilter(PlatformCALayer::FilterType::Trilinear);
         m_contentsLayer->setContents(m_pendingContentsImage->platformImage().get());
         m_pendingContentsImage = nullptr;
 
@@ -2919,7 +2919,7 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
     }
 
     if (!shapeMaskLayer) {
-        shapeMaskLayer = createPlatformCALayer(PlatformCALayer::LayerTypeShapeLayer, this);
+        shapeMaskLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeShapeLayer, this);
         shapeMaskLayer->setAnchorPoint({ });
         shapeMaskLayer->setName(MAKE_STATIC_STRING_IMPL("shape mask"));
     }
@@ -2951,7 +2951,7 @@ void GraphicsLayerCA::updateContentsRects()
     bool gainedOrLostClippingLayer = false;
     if (m_contentsClippingRect.isRounded() || !m_contentsClippingRect.rect().contains(m_contentsRect)) {
         if (!m_contentsClippingLayer) {
-            m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
+            m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
             m_contentsClippingLayer->setAnchorPoint({ });
 #if ENABLE(TREE_DEBUGGING)
             m_contentsClippingLayer->setName(makeString("contents clipping ", m_contentsClippingLayer->layerID().object()));
@@ -4500,8 +4500,8 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
     if (newLayerType == oldLayerType)
         return;
 
-    bool wasTiledLayer = oldLayerType == PlatformCALayer::LayerTypeTiledBackingLayer;
-    bool isTiledLayer = newLayerType == PlatformCALayer::LayerTypeTiledBackingLayer;
+    bool wasTiledLayer = oldLayerType == PlatformCALayer::LayerType::LayerTypeTiledBackingLayer;
+    bool isTiledLayer = newLayerType == PlatformCALayer::LayerType::LayerTypeTiledBackingLayer;
 
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     m_layer = createPlatformCALayer(newLayerType, this);

@@ -36,7 +36,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteHost::create(WebCore::LayerHosti
 }
 
 PlatformCALayerRemoteHost::PlatformCALayerRemoteHost(WebCore::LayerHostingContextIdentifier identifier, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemote(WebCore::PlatformCALayer::LayerTypeHost, owner, context)
+    : PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType::LayerTypeHost, owner, context)
     , m_identifier(identifier)
 {
 }

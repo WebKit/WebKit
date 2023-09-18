@@ -62,7 +62,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(WebCore::HTMLVide
 #endif
 
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemote(LayerTypeAVPlayerLayer, owner, context)
+    : PlatformCALayerRemote(PlatformCALayer::LayerType::LayerTypeAVPlayerLayer, owner, context)
 {
     m_layerHostingContext = LayerHostingContext::createTransportLayerForRemoteHosting(videoElement.layerHostingContextID());
     m_hasVideo = true;
@@ -124,7 +124,7 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayer
     RetainPtr<CALayer> clonedLayer;
     bool copyContents = true;
 
-    if (layerType() == LayerTypeAVPlayerLayer) {
+    if (layerType() == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer) {
         
         if (PAL::isAVFoundationFrameworkAvailable() && [platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()]) {
             clonedLayer = adoptNS([PAL::allocAVPlayerLayerInstance() init]);

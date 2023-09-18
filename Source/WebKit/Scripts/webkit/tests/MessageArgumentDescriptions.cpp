@@ -28,6 +28,7 @@
 #if ENABLE(IPC_TESTING_API) || !LOG_DISABLED
 
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
+#include "Connection.h"
 #include "ContentWorldShared.h"
 #include "DataTaskIdentifier.h"
 #include "DownloadID.h"
@@ -434,6 +435,7 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
 
 Vector<ASCIILiteral> serializedIdentifiers()
 {
+    static_assert(sizeof(uint64_t) == sizeof(IPC::AsyncReplyID));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BackgroundFetchRecordIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BroadcastChannelIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DOMCacheIdentifier));
@@ -533,6 +535,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebPageProxyIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
+        "IPC::AsyncReplyID"_s,
         "WebCore::BackgroundFetchRecordIdentifier"_s,
         "WebCore::BroadcastChannelIdentifier"_s,
         "WebCore::DOMCacheIdentifier"_s,
