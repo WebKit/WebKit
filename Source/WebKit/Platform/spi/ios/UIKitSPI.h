@@ -1098,10 +1098,6 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 @property (readonly) BOOL isLowConfidence;
 @end
 
-@interface UIPointerInteraction ()
-@property (nonatomic, assign, getter=_pausesPointerUpdatesWhilePanning, setter=_setPausesPointerUpdatesWhilePanning:) BOOL pausesPointerUpdatesWhilePanning;
-@end
-
 #if PLATFORM(WATCHOS)
 @interface UIStatusBar : UIView
 @end

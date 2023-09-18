@@ -10474,8 +10474,6 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 - (void)setUpPointerInteraction
 {
     _pointerInteraction = adoptNS([[UIPointerInteraction alloc] initWithDelegate:self]);
-    [_pointerInteraction _setPausesPointerUpdatesWhilePanning:NO];
-
     [self addInteraction:_pointerInteraction.get()];
 }
 
