@@ -474,8 +474,8 @@ inline void JSObject::didBecomePrototype()
 {
     setPerCellBit(true);
 
-    if (UNLIKELY(type() == GlobalProxyType))
-        jsCast<JSGlobalProxy*>(this)->target()->didBecomePrototype(vm);
+     if (UNLIKELY(type() == PureForwardingProxyType))
+             jsCast<JSProxy*>(this)->target()->didBecomePrototype();
 }
 
 inline bool JSObject::canGetIndexQuicklyForTypedArray(unsigned i) const
