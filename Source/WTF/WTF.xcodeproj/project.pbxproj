@@ -80,7 +80,10 @@
 		46E93049271F1205005BA6E5 /* SafeStrerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E43647271F10AA00C88C90 /* SafeStrerror.cpp */; };
 		50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */; };
 		515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */; };
+		5164042D2AB1D46B0042B1C3 /* NativePromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164042C2AB1D46B0042B1C3 /* NativePromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5164042F2AB1D4DD0042B1C3 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164042E2AB1D4DD0042B1C3 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517F82D71FD22F3000DA3DEA /* CrossThreadTaskHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */; };
+		51B07F542AB8797300E14EE9 /* NativePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B07F532AB8797300E14EE9 /* NativePromise.cpp */; };
 		51F1752B1F3D486000C74950 /* PersistentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175261F3D486000C74950 /* PersistentCoders.cpp */; };
 		51F1752C1F3D486000C74950 /* PersistentDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175271F3D486000C74950 /* PersistentDecoder.cpp */; };
 		51F1752D1F3D486000C74950 /* PersistentEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175291F3D486000C74950 /* PersistentEncoder.cpp */; };
@@ -1146,10 +1149,13 @@
 		515F794C1CFC9F4A00CCED93 /* CrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadCopier.h; sourceTree = "<group>"; };
 		515F794D1CFC9F4A00CCED93 /* CrossThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadTask.h; sourceTree = "<group>"; };
 		515F79551CFD3A6900CCED93 /* CrossThreadQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadQueue.h; sourceTree = "<group>"; };
+		5164042C2AB1D46B0042B1C3 /* NativePromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativePromise.h; sourceTree = "<group>"; };
+		5164042E2AB1D4DD0042B1C3 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
 		517A53571F5734B700DCDC0A /* Identified.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Identified.h; sourceTree = "<group>"; };
 		517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadTaskHandler.cpp; sourceTree = "<group>"; };
 		517F82D61FD22F2F00DA3DEA /* CrossThreadTaskHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadTaskHandler.h; sourceTree = "<group>"; };
 		5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstanceCounted.h; sourceTree = "<group>"; };
+		51B07F532AB8797300E14EE9 /* NativePromise.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NativePromise.cpp; sourceTree = "<group>"; };
 		51F175251F3D486000C74950 /* PersistentCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentCoders.h; sourceTree = "<group>"; };
 		51F175261F3D486000C74950 /* PersistentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistentCoders.cpp; sourceTree = "<group>"; };
 		51F175271F3D486000C74950 /* PersistentDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistentDecoder.cpp; sourceTree = "<group>"; };
@@ -2191,6 +2197,8 @@
 				0F66B2831DC97BAB004A1D3F /* MonotonicTime.h */,
 				FE8225301B2A1E5B00BA68FD /* NakedPtr.h */,
 				E32A207323C5902D0034A092 /* NakedRef.h */,
+				51B07F532AB8797300E14EE9 /* NativePromise.cpp */,
+				5164042C2AB1D46B0042B1C3 /* NativePromise.h */,
 				0F5BF1651F2317830029D91D /* NaturalLoops.h */,
 				1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */,
 				0F0D85B317234CB100338210 /* NoLock.h */,
@@ -2370,6 +2378,7 @@
 				2D1F2F462498F73300C63A83 /* TranslatedProcess.h */,
 				149EF16216BBFE0D000A4331 /* TriState.h */,
 				83FBA93119DF459700F30ADB /* TypeCasts.h */,
+				5164042E2AB1D4DD0042B1C3 /* TypeTraits.h */,
 				E360C7642127B85B00C90F0E /* UnalignedAccess.h */,
 				E360C7652127B85C00C90F0E /* Unexpected.h */,
 				A8A4735C151A825B004123FF /* UnionFind.h */,
@@ -3159,6 +3168,7 @@
 				DD3DC96827A4BF8E007E5B61 /* MonotonicTime.h in Headers */,
 				DD3DC96227A4BF8E007E5B61 /* NakedPtr.h in Headers */,
 				DD3DC98A27A4BF8E007E5B61 /* NakedRef.h in Headers */,
+				5164042D2AB1D46B0042B1C3 /* NativePromise.h in Headers */,
 				DD3DC8D827A4BF8E007E5B61 /* NaturalLoops.h in Headers */,
 				DD3DC8AC27A4BF8E007E5B61 /* NeverDestroyed.h in Headers */,
 				DD3DC98C27A4BF8E007E5B61 /* NoLock.h in Headers */,
@@ -3353,6 +3363,7 @@
 				DD3DC87427A4BF8E007E5B61 /* TypeCasts.h in Headers */,
 				DDF3070C27C086CC006A526F /* TypeCastsCF.h in Headers */,
 				DDF306FD27C086CC006A526F /* TypeCastsCocoa.h in Headers */,
+				5164042F2AB1D4DD0042B1C3 /* TypeTraits.h in Headers */,
 				DD3DC8C927A4BF8E007E5B61 /* UnalignedAccess.h in Headers */,
 				DD3DC86A27A4BF8E007E5B61 /* Unexpected.h in Headers */,
 				DD28468829248DDA0009A61D /* UnifiedWebPreferences.yaml in Headers */,
@@ -3821,6 +3832,7 @@
 				AD89B6BA1E64150F0090707F /* MemoryPressureHandlerCocoa.mm in Sources */,
 				A8A473EC151A825B004123FF /* MetaAllocator.cpp in Sources */,
 				0F66B28C1DC97BAB004A1D3F /* MonotonicTime.cpp in Sources */,
+				51B07F542AB8797300E14EE9 /* NativePromise.cpp in Sources */,
 				5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */,
 				A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */,
 				8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */,

@@ -92,6 +92,7 @@ namespace WebCore {
     M(MemoryPressure) \
     M(MessagePorts) \
     M(ModelElement) \
+    M(NativePromise) \
     M(Network) \
     M(NotYetImplemented) \
     M(OverlayScrollbars) \
