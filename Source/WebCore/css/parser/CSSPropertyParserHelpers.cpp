@@ -4877,7 +4877,8 @@ AtomString concatenateFamilyName(CSSParserTokenRange& range)
         }
         builder.append(range.consumeIncludingWhitespace().value());
     }
-    if (!addedSpace && !isValidCustomIdentifier(firstToken.id()))
+    // <family-name> can't contain unquoted generic families
+    if (!addedSpace && (!isValidCustomIdentifier(firstToken.id()) || !genericFontFamily(firstToken.id()).isEmpty()))
         return nullAtom();
     return builder.toAtomString();
 }
