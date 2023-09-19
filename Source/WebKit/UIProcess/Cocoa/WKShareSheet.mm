@@ -336,11 +336,10 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 #endif // PLATFORM(VISION)
     {
         UIPopoverPresentationController *popoverController = [_shareSheetViewController popoverPresentationController];
-        if (rect) {
-            popoverController.sourceView = webView;
-            popoverController.sourceRect = *rect;
-        } else
-            popoverController._centersPopoverIfSourceViewNotSet = YES;
+        popoverController.sourceView = webView;
+        popoverController.sourceRect = rect.value_or(webView.bounds);
+        if (!rect)
+            popoverController.permittedArrowDirections = 0;
     }
 
     if ([_delegate respondsToSelector:@selector(shareSheet:willShowActivityItems:)])

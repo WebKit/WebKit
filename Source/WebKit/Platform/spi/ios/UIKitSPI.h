@@ -1025,10 +1025,6 @@ WTF_EXTERN_C_END
 @interface _UIVisualEffectLayerConfig : NSObject
 @end
 
-@interface UIPopoverPresentationController ()
-@property (assign, nonatomic, setter=_setCentersPopoverIfSourceViewNotSet:, getter=_centersPopoverIfSourceViewNotSet) BOOL _centersPopoverIfSourceViewNotSet;
-@end
-
 @interface UIWKDocumentContext : NSObject
 
 @property (nonatomic, copy) NSObject *contextBefore;
