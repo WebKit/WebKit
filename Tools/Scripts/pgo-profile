@@ -7,7 +7,8 @@ import subprocess
 import os
 
 PROFILED_DYLIBS = ["JavaScriptCore", "WebCore", "WebKit"]
-BENCHMARK_GROUP_WEIGHTS = [("speedometer", 0.6), ("jetstream", 0.2), ("motionmark", 0.2)]
+BENCHMARK_GROUP_WEIGHTS = [("speedometer2", 0.4), ("speedometer3", 0.2), ("jetstream", 0.2), ("motionmark", 0.2)]
+
 
 def pad(string, max_length):
     if len(string) > max_length:
