@@ -60,13 +60,13 @@ bool WillChangeData::containsProperty(CSSPropertyID property) const
     return false;
 }
 
-bool WillChangeData::createsContainingBlockForAbsolutelyPositioned() const
+bool WillChangeData::createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const
 {
-    return createsContainingBlockForOutOfFlowPositioned()
+    return createsContainingBlockForOutOfFlowPositioned(isRootElement)
         || containsProperty(CSSPropertyPosition);
 }
 
-bool WillChangeData::createsContainingBlockForOutOfFlowPositioned() const
+bool WillChangeData::createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const
 {
     return containsProperty(CSSPropertyPerspective)
         // CSS transforms
@@ -79,7 +79,7 @@ bool WillChangeData::createsContainingBlockForOutOfFlowPositioned() const
         // CSS filter & backdrop-filter
         // FIXME: exclude root element for those properties (bug 225034)
 #if ENABLE(FILTERS_LEVEL_2)
-        || containsProperty(CSSPropertyWebkitBackdropFilter)
+        || (containsProperty(CSSPropertyWebkitBackdropFilter) && !isRootElement)
 #endif
         || containsProperty(CSSPropertyFilter);
 }

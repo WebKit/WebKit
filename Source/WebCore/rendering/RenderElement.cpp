@@ -1972,6 +1972,7 @@ void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(con
     auto mayNotBeContainingBlockForDescendantsAnymore = oldStyle.position() != m_style.position()
         || oldStyle.hasTransformRelatedProperty() != m_style.hasTransformRelatedProperty()
         || oldStyle.willChange() != newStyle.willChange()
+        || oldStyle.hasBackdropFilter() != newStyle.hasBackdropFilter()
         || oldStyle.containsLayout() != newStyle.containsLayout()
         || oldStyle.containsSize() != newStyle.containsSize();
     if (!mayNotBeContainingBlockForDescendantsAnymore)

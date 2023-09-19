@@ -5151,7 +5151,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-tex
 
 
 # css/filter-effects
-imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-containing-block.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-fixed-clip.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-isolation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
