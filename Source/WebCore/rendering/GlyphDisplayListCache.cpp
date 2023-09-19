@@ -47,8 +47,9 @@ struct GlyphDisplayListCacheKeyTranslator {
         return computeHash(key);
     }
 
-    static bool equal(GlyphDisplayListCacheEntry* entry, const GlyphDisplayListCacheKey& key)
+    static bool equal(const CheckedPtr<GlyphDisplayListCacheEntry>& entryPtr, const GlyphDisplayListCacheKey& key)
     {
+        auto* entry = entryPtr.get();
         return entry->m_textRun == key.textRun
             && entry->m_scaleFactor == key.context.scaleFactor()
             && entry->m_fontCascadeGeneration == key.font.generation()
