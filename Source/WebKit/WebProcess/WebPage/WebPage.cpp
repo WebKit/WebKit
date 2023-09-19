@@ -4903,6 +4903,11 @@ void WebPage::videoControlsManagerDidChange()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+void WebPage::setSceneIdentifier(String&& sceneIdentifier)
+{
+    m_page->setSceneIdentifier(WTFMove(sceneIdentifier));
+}
+
 void WebPage::setAllowsMediaDocumentInlinePlayback(bool allows)
 {
     m_page->setAllowsMediaDocumentInlinePlayback(allows);

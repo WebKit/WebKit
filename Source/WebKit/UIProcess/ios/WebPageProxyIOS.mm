@@ -304,6 +304,12 @@ void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSi
         m_process->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth), webPageID());
 }
 
+void WebPageProxy::setSceneIdentifier(String&& sceneIdentifier)
+{
+    if (hasRunningProcess())
+        m_process->send(Messages::WebPage::SetSceneIdentifier(WTFMove(sceneIdentifier)), webPageID());
+}
+
 void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
 {
     if (m_forceAlwaysUserScalable == userScalable)

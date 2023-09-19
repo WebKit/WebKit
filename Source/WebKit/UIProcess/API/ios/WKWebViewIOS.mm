@@ -333,6 +333,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)becomeFirstResponder
 {
+#if PLATFORM(VISION)
+    if (_page)
+        _page->setSceneIdentifier(self.window.windowScene.session.persistentIdentifier);
+#endif
     UIView *currentContentView = self._currentContentView;
     if (currentContentView == _contentView && [_contentView superview])
         return [_contentView becomeFirstResponderForWebView] || [super becomeFirstResponder];

@@ -55,6 +55,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    SetSceneIdentifier(String sceneIdentifier)
     SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size, double scaleFactor, double minimumEffectiveDeviceWidth)
     SetDeviceOrientation(WebCore::IntDegrees deviceOrientation)
     SetOverrideViewportArguments(std::optional<WebCore::ViewportArguments> arguments)

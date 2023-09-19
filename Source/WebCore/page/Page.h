@@ -1060,6 +1060,11 @@ public:
 
     bool isWaitingForLoadToFinish() const { return m_isWaitingForLoadToFinish; }
 
+#if PLATFORM(IOS_FAMILY)
+    WEBCORE_EXPORT void setSceneIdentifier(String&&);
+#endif
+    WEBCORE_EXPORT String sceneIdentifier() const;
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1434,6 +1439,10 @@ private:
     Ref<HistoryItemClient> m_historyItemClient;
 
     HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
+
+#if PLATFORM(IOS_FAMILY)
+    String m_sceneIdentifier;
+#endif
 };
 
 inline PageGroup& Page::group()

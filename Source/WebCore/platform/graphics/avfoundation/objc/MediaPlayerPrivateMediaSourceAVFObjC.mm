@@ -418,7 +418,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::hasAudio() const
     return m_mediaSourcePrivate->hasAudio();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
+void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible, String&& sceneIdentifier)
 {
     if (m_visible == visible)
         return;
@@ -429,11 +429,31 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
         acceleratedRenderingStateChanged();
 
 #if PLATFORM(VISION)
+    NSError *error = nil;
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (!visible) {
-        AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+        if (NSString *sceneId = sceneIdentifier; sceneId.length) {
+            [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
+                @"AVAudioSessionSpatialExperienceOptionSoundStageSize" : @(AVAudioSessionSoundStageSizeAutomatic),
+                @"AVAudioSessionSpatialExperienceOptionAnchoringStrategy" : @(AVAudioSessionAnchoringStrategyScene),
+                @"AVAudioSessionSpatialExperienceOptionSceneIdentifier" : sceneId
+            } error:&error];
+        }
+
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
-    } else
+    } else {
+        [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
+            @"AVAudioSessionSpatialExperienceOptionSoundStageSize" : @(AVAudioSessionSoundStageSizeAutomatic),
+            @"AVAudioSessionSpatialExperienceOptionAnchoringStrategy" : @(AVAudioSessionAnchoringStrategyAutomatic)
+        } error:&error];
+
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = nil;
+    }
+
+    if (error)
+        ALWAYS_LOG(error.localizedDescription.UTF8String);
+#else
+    UNUSED_PARAM(sceneIdentifier);
 #endif
 }
 

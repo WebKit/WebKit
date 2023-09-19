@@ -126,7 +126,7 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
 
-    void setPageIsVisible(bool) final;
+    void setPageIsVisible(bool, String&& sceneIdentifier) final;
     void setVisibleForCanvas(bool) final;
     void setVisibleInViewport(bool) final;
 

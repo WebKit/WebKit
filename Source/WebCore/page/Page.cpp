@@ -4553,4 +4553,20 @@ void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
     commonVM().performOpportunisticallyScheduledTasks(deadline, options);
 }
 
+String Page::sceneIdentifier() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return m_sceneIdentifier;
+#else
+    return emptyString();
+#endif
+}
+
+#if PLATFORM(IOS_FAMILY)
+void Page::setSceneIdentifier(String&& sceneIdentifier)
+{
+    m_sceneIdentifier = WTFMove(sceneIdentifier);
+}
+#endif
+
 } // namespace WebCore

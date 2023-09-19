@@ -895,6 +895,7 @@ public:
     void dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate&);
 
     void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor, double minimumEffectiveDeviceWidth);
+    void setSceneIdentifier(String&&);
     void setDeviceOrientation(WebCore::IntDegrees);
     WebCore::IntDegrees deviceOrientation() const { return m_deviceOrientation; }
     void setOverrideViewportArguments(const std::optional<WebCore::ViewportArguments>&);

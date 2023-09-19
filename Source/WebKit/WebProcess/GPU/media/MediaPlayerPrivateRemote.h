@@ -256,7 +256,7 @@ private:
     bool hasVideo() const final;
     bool hasAudio() const final;
 
-    void setPageIsVisible(bool) final;
+    void setPageIsVisible(bool, String&& sceneIdentifier) final;
 
     MediaTime durationMediaTime() const final;
     MediaTime currentMediaTime() const final;
