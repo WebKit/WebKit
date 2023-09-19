@@ -58,7 +58,7 @@ public:
     template <class Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WCBackingStore& result)
     {
-        auto handle = decoder.decode<std::optional<ImageBufferBackendHandle>>();
+        auto handle = decoder.template decode<std::optional<ImageBufferBackendHandle>>();
         if (UNLIKELY(!decoder.isValid()))
             return false;
 
