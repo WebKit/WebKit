@@ -3486,12 +3486,9 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredRecomputeTableIsExposedList.clear();
 
     AXLOGDeferredCollection("NodeAddedOrRemovedList"_s, m_deferredNodeAddedOrRemovedList);
-    auto nodeAddedOrRemovedList = copyToVector(m_deferredNodeAddedOrRemovedList);
-    for (auto& weakNode : nodeAddedOrRemovedList) {
-        if (RefPtr node = weakNode.get()) {
-            handleMenuOpened(node.get());
-            handleLiveRegionCreated(node.get());
-        }
+    for (auto& nodeChild : m_deferredNodeAddedOrRemovedList) {
+        handleMenuOpened(&nodeChild);
+        handleLiveRegionCreated(&nodeChild);
     }
     m_deferredNodeAddedOrRemovedList.clear();
 
@@ -3501,11 +3498,8 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredChildrenChangedList.clear();
 
     AXLOGDeferredCollection("TextChangedList"_s, m_deferredTextChangedList);
-    auto textChangedList = copyToVector(m_deferredTextChangedList);
-    for (auto& weakNode : textChangedList) {
-        if (RefPtr node = weakNode.get())
-            handleTextChanged(getOrCreate(node.get()));
-    }
+    for (auto* node : m_deferredTextChangedList)
+        handleTextChanged(getOrCreate(node));
     m_deferredTextChangedList.clear();
 
     AXLOGDeferredCollection("RecomputeIsIgnoredList"_s, m_deferredRecomputeIsIgnoredList);
