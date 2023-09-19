@@ -925,7 +925,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     if (darkMode)
         g_object_set(gtk_widget_get_settings(GTK_WIDGET(mainWindow)), "gtk-application-prefer-dark-theme", TRUE, NULL);
     if (fullScreen)
-        gtk_window_fullscreen(GTK_WINDOW(mainWindow));
+        browser_window_fullscreen(mainWindow);
 
     if (backgroundColor)
         browser_window_set_background_color(mainWindow, backgroundColor);
