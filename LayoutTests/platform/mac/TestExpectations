@@ -2896,6 +2896,3 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sam
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-021.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-022.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-023.html [ ImageOnlyFailure ]
-
-# rdar://115746676 (REGRESSION (267943@main): [ Sonoma ] compositing/geometry/fixed-position-flipped-writing-mode.html is a consistent crash)
-[ Sonoma+ ] compositing/geometry/fixed-position-flipped-writing-mode.html [ Skip ]
