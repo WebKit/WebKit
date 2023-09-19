@@ -8372,12 +8372,12 @@ void WebPageProxy::registerEditCommand(Ref<WebEditCommandProxy>&& commandProxy, 
 
 void WebPageProxy::addEditCommand(WebEditCommandProxy& command)
 {
-    m_editCommandSet.add(&command);
+    m_editCommandSet.add(command);
 }
 
 void WebPageProxy::removeEditCommand(WebEditCommandProxy& command)
 {
-    m_editCommandSet.remove(&command);
+    m_editCommandSet.remove(command);
 
     if (!hasRunningProcess())
         return;
@@ -9174,7 +9174,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_webDeviceOrientationUpdateProviderProxy = nullptr;
 #endif
 
-    for (auto& editCommand : std::exchange(m_editCommandSet, { }))
+    for (Ref editCommand : std::exchange(m_editCommandSet, { }))
         editCommand->invalidate();
 
     m_activePopupMenu = nullptr;

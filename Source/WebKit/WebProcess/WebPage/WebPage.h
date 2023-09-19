@@ -699,8 +699,8 @@ public:
     void exitAcceleratedCompositingMode(WebCore::Frame&);
 
 #if ENABLE(PDFKIT_PLUGIN)
-    void addPluginView(PluginView*);
-    void removePluginView(PluginView*);
+    void addPluginView(PluginView&);
+    void removePluginView(PluginView&);
 #endif
 
     inline bool isVisible() const;
@@ -2136,7 +2136,7 @@ private:
     DrawingAreaType m_drawingAreaType;
 
 #if ENABLE(PDFKIT_PLUGIN)
-    HashSet<PluginView*> m_pluginViews;
+    WeakHashSet<PluginView> m_pluginViews;
 #endif
 
     HashMap<TextCheckerRequestID, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;

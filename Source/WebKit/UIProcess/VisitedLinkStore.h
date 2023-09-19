@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebProcessProxy;
     
-class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, private IPC::MessageReceiver, public Identified<VisitedLinkStore>, private SharedStringHashStore::Client {
+class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, public IPC::MessageReceiver, public Identified<VisitedLinkStore>, private SharedStringHashStore::Client {
 public:
     static Ref<VisitedLinkStore> create();
     VisitedLinkStore();

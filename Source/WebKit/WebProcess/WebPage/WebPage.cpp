@@ -1259,8 +1259,8 @@ WebPage::~WebPage()
     m_sandboxExtensionTracker.invalidate();
 
 #if ENABLE(PDFKIT_PLUGIN)
-    for (auto* pluginView : m_pluginViews)
-        pluginView->webPageDestroyed();
+    for (auto& pluginView : m_pluginViews)
+        pluginView.webPageDestroyed();
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -2449,8 +2449,8 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
         // Otherwise, we can end up with an immutable but non-1 page scale applied by WebCore on top of whatever the plugin does.
         if (m_page->pageScaleFactor() != 1) {
             m_page->setPageScaleFactor(1, origin);
-            for (auto* pluginView : m_pluginViews)
-                pluginView->pageScaleFactorDidChange();
+            for (auto& pluginView : m_pluginViews)
+                pluginView.pageScaleFactorDidChange();
         }
         pluginView->setPageScaleFactor(totalScale);
         return;
@@ -2464,8 +2464,8 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
         return;
 
 #if ENABLE(PDFKIT_PLUGIN)
-    for (auto* pluginView : m_pluginViews)
-        pluginView->pageScaleFactorDidChange();
+    for (auto& pluginView : m_pluginViews)
+        pluginView.pageScaleFactorDidChange();
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
@@ -2547,8 +2547,8 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
 
     // Tell all our plug-in views that the device scale factor changed.
 #if PLATFORM(MAC)
-    for (auto* pluginView : m_pluginViews)
-        pluginView->setDeviceScaleFactor(scaleFactor);
+    for (auto& pluginView : m_pluginViews)
+        pluginView.setDeviceScaleFactor(scaleFactor);
 
     updateHeaderAndFooterLayersForDeviceScaleChange(scaleFactor);
 #endif
@@ -3810,8 +3810,8 @@ void WebPage::setTopContentInset(float contentInset)
     m_page->setTopContentInset(contentInset);
 
 #if ENABLE(PDFKIT_PLUGIN)
-    for (auto* pluginView : m_pluginViews)
-        pluginView->topContentInsetDidChange();
+    for (auto& pluginView : m_pluginViews)
+        pluginView.topContentInsetDidChange();
 #endif
 }
 
@@ -5677,13 +5677,13 @@ void WebPage::mainFrameDidLayout()
 
 #if ENABLE(PDFKIT_PLUGIN)
 
-void WebPage::addPluginView(PluginView* pluginView)
+void WebPage::addPluginView(PluginView& pluginView)
 {
     ASSERT(!m_pluginViews.contains(pluginView));
     m_pluginViews.add(pluginView);
 }
 
-void WebPage::removePluginView(PluginView* pluginView)
+void WebPage::removePluginView(PluginView& pluginView)
 {
     ASSERT(m_pluginViews.contains(pluginView));
     m_pluginViews.remove(pluginView);
@@ -7686,11 +7686,11 @@ WebURLSchemeHandlerProxy* WebPage::urlSchemeHandlerForScheme(StringView scheme)
 
 void WebPage::stopAllURLSchemeTasks()
 {
-    HashSet<WebURLSchemeHandlerProxy*> handlers;
+    HashSet<RefPtr<WebURLSchemeHandlerProxy>> handlers;
     for (auto& handler : m_schemeToURLSchemeHandlerProxyMap.values())
         handlers.add(handler.get());
 
-    for (auto* handler : handlers)
+    for (auto& handler : handlers)
         handler->stopAllTasks();
 }
 

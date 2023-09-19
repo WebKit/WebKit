@@ -429,7 +429,7 @@ private:
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
+    WeakHashSet<WebUserContentControllerProxy> m_webUserContentControllerProxies;
 #endif
 
     struct UploadActivity {

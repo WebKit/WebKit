@@ -47,6 +47,7 @@
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Scope.h>
+#include <wtf/WeakHashSet.h>
 
 #if ENABLE(GPU_PROCESS)
 #include "GPUProcessMessages.h"
@@ -65,16 +66,16 @@ static const MediaProducerMediaStateFlags activeCaptureMask { MediaProducerMedia
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-static HashSet<UserMediaPermissionRequestManagerProxy*>& proxies()
+static WeakHashSet<UserMediaPermissionRequestManagerProxy>& proxies()
 {
-    static NeverDestroyed<HashSet<UserMediaPermissionRequestManagerProxy*>> set;
+    static NeverDestroyed<WeakHashSet<UserMediaPermissionRequestManagerProxy>> set;
     return set;
 }
 
 void UserMediaPermissionRequestManagerProxy::forEach(const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>& function)
 {
-    for (auto* proxy : proxies())
-        function(*proxy);
+    for (auto& proxy : proxies())
+        function(proxy);
 }
 #endif
 
@@ -100,7 +101,7 @@ UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(W
 #endif
 {
 #if ENABLE(MEDIA_STREAM)
-    proxies().add(this);
+    proxies().add(*this);
 #endif
     syncWithWebCorePrefs();
 }
@@ -110,7 +111,7 @@ UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy(
     m_page.sendWithAsyncReply(Messages::WebPage::StopMediaCapture { MediaProducerMediaCaptureKind::EveryKind }, [] { });
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().protectedProcess());
-    proxies().remove(this);
+    proxies().remove(*this);
 #endif
     invalidatePendingRequests();
 }

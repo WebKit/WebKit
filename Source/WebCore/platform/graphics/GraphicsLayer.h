@@ -47,6 +47,7 @@
 #include "TimingFunction.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Function.h>
 #include <wtf/TypeCasts.h>
@@ -264,7 +265,7 @@ protected:
 // GraphicsLayer is an abstraction for a rendering surface with backing store,
 // which may have associated transformation and animations.
 
-class GraphicsLayer : public RefCounted<GraphicsLayer> {
+class GraphicsLayer : public RefCounted<GraphicsLayer>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type : uint8_t {

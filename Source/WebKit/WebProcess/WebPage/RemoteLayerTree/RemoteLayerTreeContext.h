@@ -34,6 +34,7 @@
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/LayerPool.h>
 #include <WebCore/PlatformCALayer.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -109,13 +110,13 @@ private:
     HashMap<WebCore::PlatformLayerIdentifier, RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayers;
 
-    HashMap<WebCore::PlatformLayerIdentifier, PlatformCALayerRemote*> m_livePlatformLayers;
-    HashMap<WebCore::PlatformLayerIdentifier, PlatformCALayerRemote*> m_layersWithAnimations;
+    HashMap<WebCore::PlatformLayerIdentifier, CheckedPtr<PlatformCALayerRemote>> m_livePlatformLayers;
+    HashMap<WebCore::PlatformLayerIdentifier, CheckedPtr<PlatformCALayerRemote>> m_layersWithAnimations;
 #if HAVE(AVKIT)
     HashMap<WebCore::PlatformLayerIdentifier, PlaybackSessionContextIdentifier> m_videoLayers;
 #endif
 
-    HashSet<GraphicsLayerCARemote*> m_liveGraphicsLayers;
+    HashSet<CheckedPtr<GraphicsLayerCARemote>> m_liveGraphicsLayers;
 
     std::unique_ptr<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
 

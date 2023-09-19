@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebEditCommandProxy : public API::ObjectImpl<API::Object::Type::EditCommandProxy> {
+class WebEditCommandProxy : public API::ObjectImpl<API::Object::Type::EditCommandProxy>, public CanMakeWeakPtr<WebEditCommandProxy> {
 public:
     static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, const String& label, WebPageProxy& page)
     {

@@ -221,13 +221,13 @@ PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, c
     , m_shouldUseManualLoader(shouldUseManualLoader)
     , m_pendingResourceRequestTimer(RunLoop::main(), this, &PluginView::pendingResourceRequestTimerFired)
 {
-    m_webPage->addPluginView(this);
+    m_webPage->addPluginView(*this);
 }
 
 PluginView::~PluginView()
 {
     if (m_webPage)
-        m_webPage->removePluginView(this);
+        m_webPage->removePluginView(*this);
     if (m_stream)
         m_stream->cancel();
     m_plugin->destroy();

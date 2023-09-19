@@ -75,6 +75,7 @@
 #include <WebCore/ResourceError.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/WeakHashSet.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShimProxy.h"
@@ -109,17 +110,17 @@ using namespace WebCore;
 
 static constexpr Seconds networkProcessResponsivenessTimeout = 6_s;
 
-static HashSet<NetworkProcessProxy*>& networkProcessesSet()
+static WeakHashSet<NetworkProcessProxy>& networkProcessesSet()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashSet<NetworkProcessProxy*>> set;
+    static NeverDestroyed<WeakHashSet<NetworkProcessProxy>> set;
     return set;
 }
 
 Vector<Ref<NetworkProcessProxy>> NetworkProcessProxy::allNetworkProcesses()
 {
-    return WTF::map(networkProcessesSet(), [](auto* networkProcess) {
-        return Ref { *networkProcess };
+    return WTF::map(networkProcessesSet(), [](auto& networkProcess) {
+        return Ref { networkProcess };
     });
 }
 
@@ -239,7 +240,7 @@ NetworkProcessProxy::NetworkProcessProxy()
     connect();
     sendCreationParametersToNewProcess();
     updateProcessAssertion();
-    networkProcessesSet().add(this);
+    networkProcessesSet().add(*this);
 #if PLATFORM(IOS_FAMILY)
     addBackgroundStateObservers();
 #endif
@@ -248,13 +249,13 @@ NetworkProcessProxy::NetworkProcessProxy()
 NetworkProcessProxy::~NetworkProcessProxy()
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    for (auto* proxy : m_webUserContentControllerProxies)
+    for (Ref proxy : m_webUserContentControllerProxies)
         proxy->removeNetworkProcess(*this);
 #endif
 
     if (m_downloadProxyMap)
         m_downloadProxyMap->invalidate();
-    networkProcessesSet().remove(this);
+    networkProcessesSet().remove(*this);
 #if PLATFORM(IOS_FAMILY)
     removeBackgroundStateObservers();
 #endif
@@ -1447,7 +1448,7 @@ WebsiteDataStore* NetworkProcessProxy::websiteDataStoreFromSessionID(PAL::Sessio
 void NetworkProcessProxy::contentExtensionRules(UserContentControllerIdentifier identifier)
 {
     if (auto* webUserContentControllerProxy = WebUserContentControllerProxy::get(identifier)) {
-        m_webUserContentControllerProxies.add(webUserContentControllerProxy);
+        m_webUserContentControllerProxies.add(*webUserContentControllerProxy);
         webUserContentControllerProxy->addNetworkProcess(*this);
 
         auto rules = WTF::map(webUserContentControllerProxy->contentExtensionRules(), [](auto&& keyValue) -> std::pair<WebCompiledContentRuleListData, URL> {
@@ -1462,7 +1463,7 @@ void NetworkProcessProxy::contentExtensionRules(UserContentControllerIdentifier 
 void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)
 {
     send(Messages::NetworkContentRuleListManager::Remove { proxy.identifier() }, 0);
-    m_webUserContentControllerProxies.remove(&proxy);
+    m_webUserContentControllerProxies.remove(proxy);
 }
 #endif
 

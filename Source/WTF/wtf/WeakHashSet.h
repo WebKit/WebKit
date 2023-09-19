@@ -223,7 +223,7 @@ private:
 };
 
 template<typename MapFunction, typename T, typename WeakMapImpl>
-struct Mapper<MapFunction, const WeakHashSet<T, WeakMapImpl> &, void> {
+struct Mapper<MapFunction, const WeakHashSet<T, WeakMapImpl>&, void> {
     using SourceItemType = T&;
     using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
 
@@ -235,6 +235,10 @@ struct Mapper<MapFunction, const WeakHashSet<T, WeakMapImpl> &, void> {
             result.uncheckedAppend(mapFunction(item));
         return result;
     }
+};
+
+template<typename MapFunction, typename T, typename WeakMapImpl>
+struct Mapper<MapFunction, WeakHashSet<T, WeakMapImpl>&, void> : Mapper<MapFunction, const WeakHashSet<T, WeakMapImpl> &, void> {
 };
 
 template<typename T, typename WeakMapImpl>

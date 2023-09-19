@@ -33,6 +33,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessID.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 
 namespace API {
 class Attachment;
@@ -2962,7 +2963,7 @@ private:
     RetainPtr<NSArray> m_dataDetectionResults;
 #endif
 
-    HashSet<WebEditCommandProxy*> m_editCommandSet;
+    WeakHashSet<WebEditCommandProxy> m_editCommandSet;
 
 #if PLATFORM(COCOA)
     HashSet<String> m_knownKeypressCommandNames;
