@@ -1,15 +1,20 @@
 # FIXME: add all the missing type declarations here
 
 suffixes = {
-  f: F32,
-  i: I32,
-  u: U32,
+    f: F32,
+    i: I32,
+    u: U32,
 }
 
 [2, 3, 4].each do |n|
-  suffixes.each do |suffix, type|
-    type_alias :"vec#{n}#{suffix}", Vector[type, n]
-  end
+    suffixes.each do |suffix, type|
+        type_alias :"vec#{n}#{suffix}", Vector[type, n]
+    end
+
+    [2, 3, 4].each do |m|
+        # FIXME: add alias for F16 once we support it
+        type_alias :"mat#{n}x#{m}f", Matrix[F32, n, m]
+    end
 end
 
 operator :+, {

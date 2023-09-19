@@ -695,6 +695,11 @@ void TypeChecker::visit(AST::CallExpression& call)
                         RELEASE_ASSERT_NOT_REACHED();
                     }
                 }
+
+                if (auto* matrixType = std::get_if<Types::Matrix>(targetBinding->type)) {
+                    typeArguments.append(matrixType->element);
+                    targetName = makeString("mat", String::number(matrixType->columns), "x", String::number(matrixType->rows));
+                }
             }
 
             if (targetBinding->kind == Binding::Value) {
