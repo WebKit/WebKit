@@ -634,7 +634,7 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::hasAudio() const
     return !m_audioTrackMap.isEmpty();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setPageIsVisible(bool isVisible)
+void MediaPlayerPrivateMediaStreamAVFObjC::setPageIsVisible(bool isVisible, String&&)
 {
     if (m_isPageVisible == isVisible)
         return;

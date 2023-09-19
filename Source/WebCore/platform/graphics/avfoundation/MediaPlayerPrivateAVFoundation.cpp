@@ -597,7 +597,7 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         setUpVideoRendering();
 }
 
-void MediaPlayerPrivateAVFoundation::setPageIsVisible(bool visible)
+void MediaPlayerPrivateAVFoundation::setPageIsVisible(bool visible, String&&)
 {
     if (m_visible == visible)
         return;

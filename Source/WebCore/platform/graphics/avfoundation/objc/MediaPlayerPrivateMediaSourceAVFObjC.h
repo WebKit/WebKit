@@ -200,7 +200,7 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
 
-    void setPageIsVisible(bool) final;
+    void setPageIsVisible(bool, String&& sceneIdentifier) final;
 
     MediaTime durationMediaTime() const override;
     MediaTime startTime() const override;

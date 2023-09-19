@@ -1491,6 +1491,7 @@ public:
 
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
 
+    void setSceneIdentifier(String&&);
 #endif // PLATFORM(IOS_FAMILY)
 
 #if USE(QUICK_LOOK)

@@ -255,7 +255,7 @@ bool MediaPlayerPrivateWebM::paused() const
     return ![m_synchronizer rate];
 }
 
-void MediaPlayerPrivateWebM::setPageIsVisible(bool visible)
+void MediaPlayerPrivateWebM::setPageIsVisible(bool visible, String&&)
 {
     if (m_visible == visible)
         return;

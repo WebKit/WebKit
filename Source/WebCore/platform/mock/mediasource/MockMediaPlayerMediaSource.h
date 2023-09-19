@@ -76,7 +76,7 @@ private:
     FloatSize naturalSize() const override;
     bool hasVideo() const override;
     bool hasAudio() const override;
-    void setPageIsVisible(bool) final;
+    void setPageIsVisible(bool, String&& sceneIdentifier) final;
     void seekToTarget(const SeekTarget&) final;
     bool seeking() const final;
     bool paused() const override;

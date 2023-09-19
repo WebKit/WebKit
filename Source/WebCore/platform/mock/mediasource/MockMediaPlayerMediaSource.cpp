@@ -146,7 +146,7 @@ bool MockMediaPlayerMediaSource::hasAudio() const
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->hasAudio() : false;
 }
 
-void MockMediaPlayerMediaSource::setPageIsVisible(bool)
+void MockMediaPlayerMediaSource::setPageIsVisible(bool, String&&)
 {
 }
 

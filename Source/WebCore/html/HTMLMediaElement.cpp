@@ -6439,8 +6439,10 @@ void HTMLMediaElement::visibilityStateChanged()
 
     updateSleepDisabling();
     mediaSession().visibilityChanged();
-    if (m_player)
-        m_player->setPageIsVisible(!m_elementIsHidden);
+    if (m_player) {
+        auto page = document().page();
+        m_player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
+    }
 }
 
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
@@ -7399,7 +7401,8 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_player->setPreferredDynamicRangeMode(m_overrideDynamicRangeMode.value_or(preferredDynamicRangeMode(document().view())));
     m_player->setShouldDisableHDR(shouldDisableHDR());
     m_player->setMuted(effectiveMuted());
-    m_player->setPageIsVisible(!m_elementIsHidden);
+    auto page = document().page();
+    m_player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
     m_player->setVisibleInViewport(isVisibleInViewport());
     schedulePlaybackControlsManagerUpdate();
 

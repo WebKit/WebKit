@@ -1058,6 +1058,11 @@ public:
 
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
 
+#if PLATFORM(IOS_FAMILY)
+    WEBCORE_EXPORT void setSceneIdentifier(String&&);
+#endif
+    WEBCORE_EXPORT String sceneIdentifier() const;
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1432,6 +1437,10 @@ private:
     Ref<BadgeClient> m_badgeClient;
 
     HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
+
+#if PLATFORM(IOS_FAMILY)
+    String m_sceneIdentifier;
+#endif
 };
 
 inline PageGroup& Page::group()
