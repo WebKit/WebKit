@@ -31,13 +31,12 @@
 namespace WebCore {
 namespace Layout {
 
-RubyFormattingContext::RubyFormattingContext(const InlineFormattingContext& parentFormattingContext, const InlineItems& inlineItems)
+RubyFormattingContext::RubyFormattingContext(const InlineFormattingContext& parentFormattingContext)
     : m_parentFormattingContext(parentFormattingContext)
-    , m_inlineItems(inlineItems)
 {
 }
 
-void RubyFormattingContext::layoutInlineAxis(const InlineItemRange& rubyRange, Line& line, InlineLayoutUnit availableWidth)
+void RubyFormattingContext::layoutInlineAxis(const InlineItemRange& rubyRange, const InlineItems& inlineItems, Line& line, InlineLayoutUnit availableWidth)
 {
     UNUSED_PARAM(availableWidth);
 
@@ -45,7 +44,7 @@ void RubyFormattingContext::layoutInlineAxis(const InlineItemRange& rubyRange, L
     // Ruby container inline item list is as follows:
     // [ruby container start][ruby base start][ruby base content][ruby base end][...][ruby container end]
 
-    auto& rubyContainerStart = m_inlineItems[rubyRange.startIndex()];
+    auto& rubyContainerStart = inlineItems[rubyRange.startIndex()];
     auto rubyContainerEndIndex = rubyRange.endIndex() - 1;
     ASSERT(rubyContainerStart.layoutBox().isRuby());
     line.append(rubyContainerStart, rubyContainerStart.style(), { });
@@ -55,35 +54,34 @@ void RubyFormattingContext::layoutInlineAxis(const InlineItemRange& rubyRange, L
         auto handleRubyColumn = [&] {
             // ruby column: represented by a single ruby base and one ruby annotation
             // from each interlinear annotation level in its ruby segment.
-            auto& rubyBaseStart = m_inlineItems[baseContentIndex++];
-            ASSERT(rubyBaseStart.style().display() == DisplayType::RubyBase);
+            auto& rubyBaseStart = inlineItems[baseContentIndex++];
+            ASSERT(rubyBaseStart.layoutBox().isRubyBase());
             line.append(rubyBaseStart, rubyBaseStart.style(), { });
 
-            baseContentIndex += layoutRubyBaseInlineAxis(line, rubyBaseStart.layoutBox(), baseContentIndex);
+            baseContentIndex += layoutRubyBaseInlineAxis(line, rubyBaseStart.layoutBox(), baseContentIndex, inlineItems);
 
-            auto& rubyBaseEnd = m_inlineItems[baseContentIndex++];
-            ASSERT(rubyBaseEnd.layoutBox().style().display() == DisplayType::RubyBase);
+            auto& rubyBaseEnd = inlineItems[baseContentIndex++];
+            ASSERT(rubyBaseEnd.layoutBox().isRubyBase());
             line.append(rubyBaseEnd, rubyBaseEnd.layoutBox().style(), { });
         };
         handleRubyColumn();
     }
 
-    auto& rubyContainerEnd = m_inlineItems[rubyContainerEndIndex];
+    auto& rubyContainerEnd = inlineItems[rubyContainerEndIndex];
     ASSERT(rubyContainerEnd.layoutBox().isRuby());
     line.append(rubyContainerEnd, rubyContainerEnd.style(), { });
 }
 
-size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart)
+size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineItems& inlineItems)
 {
     // Append ruby base content (including start/end inline box) to the line and apply "ruby-align: space-between" on the ruby subrange.
     auto& formattingGeometry = parentFormattingContext().formattingGeometry();
-    auto annotationBoxLogicalWidth = InlineLayoutUnit { rubyBaseLayoutBox.associatedRubyAnnotationBox() ? InlineLayoutUnit(parentFormattingContext().geometryForBox(*rubyBaseLayoutBox.associatedRubyAnnotationBox()).marginBoxWidth()) : 0.f };
     auto lineLogicalRight = line.contentLogicalRight();
     auto baseContentLogicalWidth = InlineLayoutUnit { };
     auto baseRunStart = line.runs().size();
 
-    for (size_t index = rubyBaseContentStart; index < m_inlineItems.size(); ++index) {
-        auto& rubyBaseInlineItem = m_inlineItems[index];
+    for (size_t index = rubyBaseContentStartIndex; index < inlineItems.size(); ++index) {
+        auto& rubyBaseInlineItem = inlineItems[index];
         if (&rubyBaseInlineItem.layoutBox() == &rubyBaseLayoutBox) {
             auto baseRunCount = line.runs().size() - baseRunStart;
             if (!baseRunCount) {
@@ -94,7 +92,13 @@ size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& ru
             // https://drafts.csswg.org/css-ruby/#interlinear-inline
             // Within each base and annotation box, how the extra space is distributed when its content is narrower than
             // the measure of the box is specified by its ruby-align property.
-            if (annotationBoxLogicalWidth > baseContentLogicalWidth) {
+            auto applyRubyAlign = [&] {
+                auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
+                if (!annotationBox)
+                    return;
+                auto annotationBoxLogicalWidth = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxWidth() };
+                if (annotationBoxLogicalWidth <= baseContentLogicalWidth)
+                    return;
                 auto baseRunRange = WTF::Range<size_t> { baseRunStart, baseRunStart + baseRunCount };
                 auto expansion = ExpansionInfo { };
                 // ruby-align: space-between
@@ -107,15 +111,16 @@ size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& ru
                     auto centerOffset = (annotationBoxLogicalWidth - baseContentLogicalWidth) / 2;
                     line.moveRunsBy(centerOffset, baseRunRange.begin());
                 }
-                return index - rubyBaseContentStart;
-            }
+            };
+            applyRubyAlign();
+            return index - rubyBaseContentStartIndex;
         }
         auto logicalWidth = formattingGeometry.inlineItemWidth(rubyBaseInlineItem, lineLogicalRight + baseContentLogicalWidth, { });
         line.append(rubyBaseInlineItem, rubyBaseInlineItem.style(), logicalWidth);
         baseContentLogicalWidth += logicalWidth;
     }
     ASSERT_NOT_REACHED();
-    return m_inlineItems.size() - rubyBaseContentStart;
+    return inlineItems.size() - rubyBaseContentStartIndex;
 }
 
 }

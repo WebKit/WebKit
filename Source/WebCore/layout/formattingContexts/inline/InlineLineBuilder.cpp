@@ -1115,7 +1115,7 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(const LineCandidate& 
 LineBuilder::Result LineBuilder::handleRubyContent(const InlineItemRange& rubyContainerRange, InlineLayoutUnit availableWidthForCandidateContent)
 {
     ASSERT(m_inlineItems[rubyContainerRange.startIndex()].layoutBox().isRuby());
-    RubyFormattingContext { formattingContext(), m_inlineItems }.layoutInlineAxis(rubyContainerRange, m_line, availableWidthForCandidateContent);
+    RubyFormattingContext { formattingContext() }.layoutInlineAxis(rubyContainerRange, m_inlineItems, m_line, availableWidthForCandidateContent);
     return { InlineContentBreaker::IsEndOfLine::No, { rubyContainerRange.endIndex() - rubyContainerRange.startIndex(), false } };
 }
 
