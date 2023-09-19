@@ -729,7 +729,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
         switch (variable.flavor()) {
         case AST::VariableFlavor::Override:
             usesOverride(variable);
-            break;
+            continue;
         case AST::VariableFlavor::Var:
         case AST::VariableFlavor::Let:
         case AST::VariableFlavor::Const:
