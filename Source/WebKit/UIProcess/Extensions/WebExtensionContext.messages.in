@@ -62,6 +62,7 @@ messages -> WebExtensionContext {
     TabsGoForward(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (WebKit::WebExtensionTab::Error error);
     TabsDetectLanguage(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<String> language, WebKit::WebExtensionTab::Error error);
     TabsToggleReaderMode(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (WebKit::WebExtensionTab::Error error);
+    TabsCaptureVisibleTab(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, WebKit::WebExtensionTab::ImageFormat imageFormat, uint8_t imageQuality) -> (std::optional<URL> imageDataURL, WebKit::WebExtensionTab::Error error);
     TabsGetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<double> zoomFactor, WebKit::WebExtensionTab::Error error);
     TabsSetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, double zoomFactor) -> (WebKit::WebExtensionTab::Error error);
     TabsRemove(Vector<WebKit::WebExtensionTabIdentifier> tabIdentifiers) -> (WebKit::WebExtensionWindow::Error error);

@@ -86,6 +86,25 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.query({ index: 'five' }), /'index' is expected to be a number, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.query({ audible: 'yes' }), /'audible' is expected to be a boolean, but a string was provided/i)",
 
+        @"browser.test.assertThrows(() => browser.tabs.captureVisibleTab('bad', { format: 'png' }), /an unknown argument was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.captureVisibleTab(undefined, { format: 'bad' }), /'format' value is invalid, because it must specify either 'png' or 'jpeg'/i)",
+        @"browser.test.assertThrows(() => browser.tabs.captureVisibleTab(undefined, 'bad'), /an unknown argument was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.captureVisibleTab(undefined, { format: 'jpeg', quality: 'high' }), /'quality' is expected to be a number, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.captureVisibleTab(undefined, { format: 'jpeg', quality: 200 }), /'quality' value is invalid, because it must specify a value between 0 and 100/i)",
+
+        @"await browser.test.assertRejects(browser.tabs.captureVisibleTab(9999), /window not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.captureVisibleTab(), /'activeTab' permission or granted host permissions for the current website are required/i)",
+
+        @"await browser.test.assertRejects(browser.tabs.get(9999), /tab not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.duplicate(9999), /tab not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.remove(9999), /tab '9999' was not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.reload(9999), /tab not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.goBack(9999), /tab not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.goForward(9999), /tab not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.setZoom(9999, 1.5), /tab not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.detectLanguage(9999), /tab not found/i)",
+        @"await browser.test.assertRejects(browser.tabs.toggleReaderMode(9999), /tab not found/i)",
+
         @"browser.test.notifyPass()"
     ]);
 
@@ -505,6 +524,28 @@ TEST(WKWebExtensionAPITabs, DetectLanguage)
     [manager loadAndRun];
 
     ASSERT_TRUE(detectWebpageLocaleCalled);
+}
+
+TEST(WKWebExtensionAPITabs, CaptureVisibleTab)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const newTab = await browser.tabs.create({ url: 'http://example.com' })",
+
+        @"let dataURLPNG = await browser.tabs.captureVisibleTab(newTab.windowId, { format: 'png' })",
+        @"browser.test.assertTrue(dataURLPNG.startsWith('data:image/png;'), 'The data URL should start with the PNG mime type for PNG capture')",
+
+        @"let dataURLJPEG = await browser.tabs.captureVisibleTab(newTab.windowId, { format: 'jpeg', quality: 90 })",
+        @"browser.test.assertTrue(dataURLJPEG.startsWith('data:image/jpeg;'), 'The data URL should start with the JPEG mime type for JPEG capture')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    [manager loadAndRun];
 }
 
 TEST(WKWebExtensionAPITabs, Reload)

@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "CocoaImage.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
@@ -69,6 +70,11 @@ public:
         URL        = 1 << 8,
         ZoomFactor = 1 << 9,
         All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
+    };
+
+    enum class ImageFormat : uint8_t {
+        PNG,
+        JPEG,
     };
 
     enum class AssumeWindowMatches : bool { No, Yes };
@@ -130,6 +136,7 @@ public:
     bool isLoadingComplete() const;
 
     void detectWebpageLocale(CompletionHandler<void(NSLocale *, Error)>&&);
+    void captureVisibleWebpage(CompletionHandler<void(CocoaImage *, Error)>&&);
 
     void loadURL(URL, CompletionHandler<void(Error)>&&);
 
@@ -181,6 +188,7 @@ private:
     bool m_respondsToPendingURL : 1 { false };
     bool m_respondsToIsLoadingComplete : 1 { false };
     bool m_respondsToDetectWebpageLocale : 1 { false };
+    bool m_respondsToCaptureVisibleWebpage : 1 { false };
     bool m_respondsToLoadURL : 1 { false };
     bool m_respondsToReload : 1 { false };
     bool m_respondsToReloadFromOrigin : 1 { false };
@@ -194,5 +202,17 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebExtensionTab::ImageFormat> {
+    using values = EnumValues<
+        WebKit::WebExtensionTab::ImageFormat,
+        WebKit::WebExtensionTab::ImageFormat::PNG,
+        WebKit::WebExtensionTab::ImageFormat::JPEG
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

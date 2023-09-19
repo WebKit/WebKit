@@ -70,6 +70,8 @@ public:
 
     void toggleReaderMode(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
+    void captureVisibleTab(WebPage*, double windowID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+
     double tabIdentifierNone() const { return -1; }
 
     WebExtensionAPIEvent& onActivated();
@@ -87,6 +89,7 @@ private:
     static bool parseTabUpdateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabDuplicateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabQueryOptions(NSDictionary *, WebExtensionTabQueryParameters&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseCaptureVisibleTabOptions(NSDictionary *, WebExtensionTab::ImageFormat&, uint8_t& imageQuality, NSString *sourceKey, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onActivated;
     RefPtr<WebExtensionAPIEvent> m_onAttached;

@@ -22,7 +22,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-headers: "WebExtensionContext.h"
+headers: "WebExtensionContext.h" "WebExtensionTab.h"
 
 struct WebKit::WebExtensionTabParameters {
     std::optional<WebKit::WebExtensionTabIdentifier> identifier;
@@ -64,6 +64,11 @@ struct WebKit::WebExtensionTabQueryParameters {
     std::optional<bool> muted;
     std::optional<bool> pinned;
     std::optional<bool> selected;
+}
+
+[Nested, CustomHeader] enum class WebKit::WebExtensionTab::ImageFormat : uint8_t {
+    PNG,
+    JPEG,
 }
 
 [Nested] enum class WebKit::WebExtensionContext::ReloadFromOrigin : bool;

@@ -42,6 +42,7 @@
 #import "WebPageProxy.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
+#import <WebCore/ImageBufferUtilitiesCG.h>
 
 namespace WebKit {
 
@@ -353,6 +354,60 @@ void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxy
         }
 
         completionHandler(toWebAPI(locale), std::nullopt);
+    });
+}
+
+static inline String toMIMEType(WebExtensionTab::ImageFormat format)
+{
+    switch (format) {
+    case WebExtensionTab::ImageFormat::PNG:
+        return "image/png"_s;
+    case WebExtensionTab::ImageFormat::JPEG:
+        return "image/jpeg"_s;
+    }
+}
+
+void WebExtensionContext::tabsCaptureVisibleTab(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier, WebExtensionTab::ImageFormat imageFormat, uint8_t imageQuality, CompletionHandler<void(std::optional<URL>, WebExtensionTab::Error)>&& completionHandler)
+{
+    auto window = getWindow(windowIdentifier.value_or(WebExtensionWindowConstants::CurrentIdentifier), webPageProxyIdentifier);
+    if (!window) {
+        completionHandler({ }, toErrorString(@"tabs.captureVisibleTab()", nil, @"window not found"));
+        return;
+    }
+
+    auto activeTab = window->activeTab();
+    if (!activeTab) {
+        completionHandler({ }, toErrorString(@"tabs.captureVisibleTab()", nil, @"active tab not found"));
+        return;
+    }
+
+    if (!activeTab->extensionHasAccess()) {
+        completionHandler({ }, toErrorString(@"tabs.captureVisibleTab()", nil, @"either the 'activeTab' permission or granted host permissions for the current website are required"));
+        return;
+    }
+
+    activeTab->captureVisibleWebpage([completionHandler = WTFMove(completionHandler), imageFormat, imageQuality](CocoaImage *image, WebExtensionTab::Error error) mutable {
+        if (error) {
+            completionHandler({ }, error);
+            return;
+        }
+
+        if (!image) {
+            completionHandler(std::nullopt, std::nullopt);
+            return;
+        }
+
+#if USE(APPKIT)
+        auto cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+#else
+        auto cgImage = image.CGImage;
+#endif
+        if (!cgImage) {
+            completionHandler(std::nullopt, std::nullopt);
+            return;
+        }
+
+        completionHandler(URL { WebCore::dataURL(cgImage, toMIMEType(imageFormat), imageQuality) }, std::nullopt);
     });
 }
 

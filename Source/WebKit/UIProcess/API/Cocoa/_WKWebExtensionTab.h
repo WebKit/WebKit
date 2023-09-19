@@ -32,6 +32,12 @@
 @class _WKWebExtensionTabCreationOptions;
 @protocol _WKWebExtensionWindow;
 
+#if TARGET_OS_IPHONE
+@class UIImage;
+#else
+@class NSImage;
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
@@ -280,6 +286,19 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @discussion No action is performed if not implemented.
  */
 - (void)detectWebpageLocaleForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale * _Nullable locale, NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called to capture the visible area of the current webpage as an image.
+ @param context The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. The block takes two arguments:
+ the captured image the webpage (or \c nil if capturing failed) and an error, which should be provided if any errors occurred.
+ @discussion Defaults to capturing the visible area for the main web view if not implemented.
+ */
+#if TARGET_OS_IPHONE
+- (void)captureVisibleWebpageForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(UIImage * _Nullable visibleWebpageImage, NSError * _Nullable error))completionHandler;
+#else
+- (void)captureVisibleWebpageForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSImage * _Nullable visibleWebpageImage, NSError * _Nullable error))completionHandler;
+#endif
 
 /*!
  @abstract Called to load a URL in the tab.

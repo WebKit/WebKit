@@ -52,7 +52,7 @@
 
     [RaisesException, NeedsPage] void toggleReaderMode([Optional] double tabID, [Optional, CallbackHandler] function callback);
 
-    // [RaisesException] void captureVisibleTab([Optional] double windowID, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void captureVisibleTab([Optional] double windowID, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
 
     // [RaisesException, Dynamic] void executeScript([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
     // [RaisesException, Dynamic] void insertCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);

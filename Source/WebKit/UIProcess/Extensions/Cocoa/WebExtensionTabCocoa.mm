@@ -34,8 +34,10 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
+#import "WKSnapshotConfiguration.h"
 #import "WKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import "WKWebViewPrivate.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionTabParameters.h"
 #import "WebExtensionTabQueryParameters.h"
@@ -43,6 +45,7 @@
 #import "WebExtensionWindowIdentifier.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -74,6 +77,7 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_respondsToPendingURL([delegate respondsToSelector:@selector(pendingURLForWebExtensionContext:)])
     , m_respondsToIsLoadingComplete([delegate respondsToSelector:@selector(isLoadingCompleteForWebExtensionContext:)])
     , m_respondsToDetectWebpageLocale([delegate respondsToSelector:@selector(detectWebpageLocaleForWebExtensionContext:completionHandler:)])
+    , m_respondsToCaptureVisibleWebpage([delegate respondsToSelector:@selector(captureVisibleWebpageForWebExtensionContext:completionHandler:)])
     , m_respondsToLoadURL([delegate respondsToSelector:@selector(loadURL:forWebExtensionContext:completionHandler:)])
     , m_respondsToReload([delegate respondsToSelector:@selector(reloadForWebExtensionContext:completionHandler:)])
     , m_respondsToReloadFromOrigin([delegate respondsToSelector:@selector(reloadFromOriginForWebExtensionContext:completionHandler:)])
@@ -593,6 +597,41 @@ void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(NSLocale *, Err
         THROW_UNLESS(!locale || [locale isKindOfClass:NSLocale.class], @"Object passed to completionHandler of detectWebpageLocaleForWebExtensionContext:completionHandler: is not an NSLocale");
         completionHandler(locale, std::nullopt);
     }];
+}
+
+void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(CocoaImage *, Error)>&& completionHandler)
+{
+    auto internalCompletionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](CocoaImage *image, NSError *error) mutable {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for captureVisibleWebpage: %{private}@", error);
+            completionHandler(nil, error.localizedDescription);
+            return;
+        }
+
+        THROW_UNLESS(!image || [image isKindOfClass:[CocoaImage class]], @"Object passed to completionHandler of captureVisibleWebpageForWebExtensionContext:completionHandler: is not an image");
+        completionHandler(image, std::nullopt);
+    });
+
+    if (!isValid() || !m_respondsToCaptureVisibleWebpage) {
+        auto *mainWebView = this->mainWebView();
+        if (!mainWebView) {
+            completionHandler(nil, toErrorString(@"tabs.captureVisibleTab()", nil, @"capture is unavailable for this tab"));
+            return;
+        }
+
+        NSRect snapshotRect = mainWebView.bounds;
+#if PLATFORM(MAC)
+        snapshotRect.size.height -= mainWebView._topContentInset;
+#endif
+
+        WKSnapshotConfiguration *snapshotConfiguration = [[WKSnapshotConfiguration alloc] init];
+        snapshotConfiguration.rect = snapshotRect;
+
+        [mainWebView takeSnapshotWithConfiguration:snapshotConfiguration completionHandler:internalCompletionHandler.get()];
+        return;
+    }
+
+    [m_delegate captureVisibleWebpageForWebExtensionContext:m_extensionContext->wrapper() completionHandler:internalCompletionHandler.get()];
 }
 
 void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Error)>&& completionHandler)

@@ -45,6 +45,7 @@
 #import "WebExtensionWindowIdentifier.h"
 #import "WebProcess.h"
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/Base64.h>
 
 static NSString * const idKey = @"id";
 static NSString * const urlKey = @"url";
@@ -98,8 +99,15 @@ static NSString * const isWindowClosingKey = @"isWindowClosing";
 
 static NSString * const tabIdsKey = @"tabIds";
 
+static NSString * const formatKey = @"format";
+static NSString * const pngValue = @"png";
+static NSString * const jpegValue = @"jpeg";
+
+static NSString * const qualityKey = @"quality";
+
 static NSString * const emptyURLValue = @"";
 static NSString * const emptyTitleValue = @"";
+static NSString * const emptyDataURLValue = @"data:,";
 static NSString * const unknownLanguageValue = @"und";
 
 namespace WebKit {
@@ -375,6 +383,47 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
 
     if (NSNumber *muted = objectForKey<NSNumber>(options, mutedKey))
         parameters.muted = muted.boolValue;
+
+    return true;
+}
+
+bool WebExtensionAPITabs::parseCaptureVisibleTabOptions(NSDictionary *options, WebExtensionTab::ImageFormat& imageFormat, uint8_t& imageQuality, NSString *sourceKey, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extensionTypes/ImageDetails
+
+    // Default to PNG image format.
+    imageFormat = WebExtensionTab::ImageFormat::PNG;
+
+    // Default to 92 for JPEG.
+    imageQuality = 92;
+
+    static NSDictionary<NSString *, id> *types = @{
+        formatKey: NSString.class,
+        qualityKey: NSNumber.class,
+    };
+
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
+        return false;
+
+    if (NSString *format = objectForKey<NSString>(options, formatKey)) {
+        if ([format isEqualToString:pngValue])
+            imageFormat = WebExtensionTab::ImageFormat::PNG;
+        else if ([format isEqualToString:jpegValue])
+            imageFormat = WebExtensionTab::ImageFormat::JPEG;
+        else {
+            *outExceptionString = toErrorString(nil, formatKey, @"it must specify either 'png' or 'jpeg'");
+            return false;
+        }
+    }
+
+    if (NSNumber *quality = objectForKey<NSNumber>(options, qualityKey)) {
+        if (quality.integerValue < 0 || quality.integerValue > 100) {
+            *outExceptionString = toErrorString(nil, qualityKey, @"it must specify a value between 0 and 100");
+            return false;
+        }
+
+        imageQuality = quality.unsignedCharValue;
+    }
 
     return true;
 }
@@ -757,6 +806,35 @@ void WebExtensionAPITabs::toggleReaderMode(WebPage* page, double tabID, Ref<WebE
         }
 
         callback->call();
+    }, extensionContext().identifier().toUInt64());
+}
+
+void WebExtensionAPITabs::captureVisibleTab(WebPage* page, double windowID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/captureVisibleTab
+
+    auto windowIdentifier = toWebExtensionWindowIdentifier(windowID);
+    if (windowIdentifier && !isValid(windowIdentifier, outExceptionString))
+        return;
+
+    WebExtensionTab::ImageFormat imageFormat;
+    uint8_t imageQuality;
+
+    if (!parseCaptureVisibleTabOptions(options, imageFormat, imageQuality, @"options", outExceptionString))
+        return;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsCaptureVisibleTab(page->webPageProxyIdentifier(), windowIdentifier, imageFormat, imageQuality), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<URL> imageDataURL, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!imageDataURL) {
+            callback->call(emptyDataURLValue);
+            return;
+        }
+
+        callback->call((NSString *)imageDataURL.value().string());
     }, extensionContext().identifier().toUInt64());
 }
 
