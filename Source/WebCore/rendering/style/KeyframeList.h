@@ -50,8 +50,8 @@ public:
     {
     }
 
-    void addProperty(AnimatableProperty);
-    bool containsProperty(AnimatableProperty) const;
+    void addProperty(const AnimatableProperty&);
+    bool containsProperty(const AnimatableProperty&) const;
     const HashSet<AnimatableProperty>& properties() const { return m_properties; }
 
     double key() const { return m_key; }
@@ -93,8 +93,8 @@ public:
     
     void insert(KeyframeValue&&);
     
-    void addProperty(AnimatableProperty);
-    bool containsProperty(AnimatableProperty) const;
+    void addProperty(const AnimatableProperty&);
+    bool containsProperty(const AnimatableProperty&) const;
     const HashSet<AnimatableProperty>& properties() const { return m_properties; }
 
     bool containsAnimatableProperty() const;

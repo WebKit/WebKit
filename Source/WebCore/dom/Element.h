@@ -563,8 +563,8 @@ public:
     bool hasKeyframeEffects(PseudoId) const;
 
     const AnimationCollection* animations(PseudoId) const;
-    bool hasCompletedTransitionForProperty(PseudoId, AnimatableProperty) const;
-    bool hasRunningTransitionForProperty(PseudoId, AnimatableProperty) const;
+    bool hasCompletedTransitionForProperty(PseudoId, const AnimatableProperty&) const;
+    bool hasRunningTransitionForProperty(PseudoId, const AnimatableProperty&) const;
     bool hasRunningTransitions(PseudoId) const;
     AnimationCollection& ensureAnimations(PseudoId);
 

@@ -4510,14 +4510,14 @@ const AnimationCollection* Element::animations(PseudoId pseudoId) const
     return nullptr;
 }
 
-bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, AnimatableProperty property) const
+bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, const AnimatableProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return animationData->completedTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, AnimatableProperty property) const
+bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, const AnimatableProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return animationData->runningTransitionsByProperty().contains(property);

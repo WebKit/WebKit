@@ -43,17 +43,17 @@ class Settings;
 
 class CSSPropertyAnimation {
 public:
-    static bool isPropertyAnimatable(AnimatableProperty);
-    static bool isPropertyAdditiveOrCumulative(AnimatableProperty);
-    static bool propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, AnimatableProperty, const RenderStyle& a, const RenderStyle& b);
-    static bool animationOfPropertyIsAccelerated(AnimatableProperty, const Settings&);
-    static bool propertiesEqual(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
-    static bool canPropertyBeInterpolated(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
+    static bool isPropertyAnimatable(const AnimatableProperty&);
+    static bool isPropertyAdditiveOrCumulative(const AnimatableProperty&);
+    static bool propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, const AnimatableProperty&, const RenderStyle& a, const RenderStyle& b);
+    static bool animationOfPropertyIsAccelerated(const AnimatableProperty&, const Settings&);
+    static bool propertiesEqual(const AnimatableProperty&, const RenderStyle& a, const RenderStyle& b, const Document&);
+    static bool canPropertyBeInterpolated(const AnimatableProperty&, const RenderStyle& a, const RenderStyle& b, const Document&);
     static CSSPropertyID getPropertyAtIndex(int, std::optional<bool>& isShorthand);
     static std::optional<CSSPropertyID> getAcceleratedPropertyAtIndex(int, const Settings&);
     static int getNumProperties();
 
-    static void blendProperty(const CSSPropertyBlendingClient&, AnimatableProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
+    static void blendProperty(const CSSPropertyBlendingClient&, const AnimatableProperty&, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
 };
 
 } // namespace WebCore

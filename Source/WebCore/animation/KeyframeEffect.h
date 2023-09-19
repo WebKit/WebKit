@@ -151,7 +151,7 @@ public:
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<AnimatableProperty>& animatedProperties();
-    bool animatesProperty(AnimatableProperty) const;
+    bool animatesProperty(const AnimatableProperty&) const;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
     bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;
