@@ -2722,7 +2722,4 @@ fast/canvas/imageData-consistency.html [ Timeout Failure ]
 
 http/tests/inspector/network/resource-timing.html [ Pass Failure ]
 
-webkit.org/b/261297 webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
-webkit.org/b/261297 webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ]
-
 fast/canvas/image-buffer-backend-variants.html [ Skip ]

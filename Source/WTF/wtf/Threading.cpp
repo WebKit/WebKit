@@ -109,6 +109,14 @@ static std::optional<size_t> stackSize(ThreadType threadType)
 #elif OS(DARWIN) && ASAN_ENABLED
     if (threadType == ThreadType::Compiler)
         return 1 * MB; // ASan needs more stack space (especially on Debug builds).
+#elif OS(WINDOWS)
+    // WebGL conformance tests need more stack space <https://webkit.org/b/261297>
+    if (threadType == ThreadType::Graphics)
+#if defined(NDEBUG)
+        return 2 * MB;
+#else
+        return 4 * MB;
+#endif
 #else
     UNUSED_PARAM(threadType);
 #endif
