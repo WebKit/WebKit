@@ -29,13 +29,13 @@
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
 
 #import "CDMKeyGroupingStrategy.h"
-#import "WebContentKeyGroup.h"
+#import "WebAVContentKeyGroup.h"
 #import <pal/graphics/cocoa/WebAVContentKeyReportGroupExtras.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-RetainPtr<WebContentKeyGrouping> ContentKeyGroupFactoryAVFObjC::createContentKeyGroup(CDMKeyGroupingStrategy keyGroupingStrategy, AVContentKeySession *session)
+RetainPtr<WebAVContentKeyGrouping> ContentKeyGroupFactoryAVFObjC::createContentKeyGroup(CDMKeyGroupingStrategy keyGroupingStrategy, AVContentKeySession *session, ContentKeyGroupDataSource& dataSource)
 {
     switch (keyGroupingStrategy) {
     case CDMKeyGroupingStrategy::Platform:
@@ -45,7 +45,7 @@ RetainPtr<WebContentKeyGrouping> ContentKeyGroupFactoryAVFObjC::createContentKey
         return nil;
 #endif
     case CDMKeyGroupingStrategy::BuiltIn:
-        return adoptNS([[WebContentKeyGroup alloc] initWithContentKeySession:session]);
+        return adoptNS([[WebAVContentKeyGroup alloc] initWithContentKeySession:session dataSource:dataSource]);
     }
 }
 

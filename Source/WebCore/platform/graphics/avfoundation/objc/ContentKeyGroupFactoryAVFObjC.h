@@ -31,14 +31,16 @@
 
 OBJC_CLASS AVContentKeySession;
 
-OBJC_PROTOCOL(WebContentKeyGrouping);
+OBJC_PROTOCOL(WebAVContentKeyGrouping);
 
 namespace WebCore {
+
+class ContentKeyGroupDataSource;
 
 enum class CDMKeyGroupingStrategy : bool;
 
 struct ContentKeyGroupFactoryAVFObjC {
-    static RetainPtr<WebContentKeyGrouping> createContentKeyGroup(CDMKeyGroupingStrategy, AVContentKeySession *);
+    static RetainPtr<WebAVContentKeyGrouping> createContentKeyGroup(CDMKeyGroupingStrategy, AVContentKeySession *, ContentKeyGroupDataSource&);
 };
 
 } // namespace WebCore

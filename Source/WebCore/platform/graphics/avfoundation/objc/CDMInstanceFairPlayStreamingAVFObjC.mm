@@ -38,6 +38,7 @@
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
 #import "TextDecoder.h"
+#import "WebAVContentKeyGroup.h"
 #import <AVFoundation/AVContentKeySession.h>
 #import <objc/runtime.h>
 #import <pal/graphics/cocoa/WebAVContentKeyReportGroupExtras.h>
@@ -52,31 +53,24 @@
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
+static NSString * const ContentKeyReportGroupKey = @"ContentKeyReportGroup";
 static NSString * const InitializationDataTypeKey = @"InitializationDataType";
 static const NSInteger SecurityLevelError = -42811;
 
-#if HAVE(AVCONTENTKEYREPORTGROUP)
-static NSString * const ContentKeyReportGroupKey = @"ContentKeyReportGroup";
-#endif
-
-@interface WebCoreFPSContentKeySessionDelegate : NSObject<AVContentKeySessionDelegate> {
-    WebCore::AVContentKeySessionDelegateClient* _parent;
-}
+@interface WebCoreFPSContentKeySessionDelegate : NSObject <AVContentKeySessionDelegate>
 @end
 
-@implementation WebCoreFPSContentKeySessionDelegate
-- (id)initWithParent:(WebCore::AVContentKeySessionDelegateClient *)parent
+@implementation WebCoreFPSContentKeySessionDelegate {
+    WeakPtr<WebCore::AVContentKeySessionDelegateClient> _parent;
+}
+
+- (id)initWithParent:(WebCore::AVContentKeySessionDelegateClient&)parent
 {
     if (!(self = [super init]))
         return nil;
 
     _parent = parent;
     return self;
-}
-
-- (void)invalidate
-{
-    _parent = nil;
 }
 
 - (void)contentKeySession:(AVContentKeySession *)session didProvideContentKeyRequest:(AVContentKeyRequest *)keyRequest
@@ -244,11 +238,6 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
     if (!PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming())
         return nullptr;
 
-#if HAVE(AVCONTENTKEYREPORTGROUP)
-    if (!PAL::getAVContentKeyReportGroupClass())
-        return nullptr;
-#endif
-
     auto storageURL = this->storageURL();
 #if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
     if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()) {
@@ -269,7 +258,7 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
         return nullptr;
 
     if (!m_delegate)
-        m_delegate = adoptNS([[WebCoreFPSContentKeySessionDelegate alloc] initWithParent:this]);
+        m_delegate = adoptNS([[WebCoreFPSContentKeySessionDelegate alloc] initWithParent:*this]);
 
     [m_session setDelegate:m_delegate.get() queue:dispatch_get_main_queue()];
     return m_session.get();
@@ -449,16 +438,14 @@ const String& CDMInstanceFairPlayStreamingAVFObjC::keySystem() const
     return keySystem;
 }
 
-#if HAVE(AVCONTENTKEYREPORTGROUP)
-static AVContentKeyReportGroup* groupForRequest(AVContentKeyRequest* request)
+static WebAVContentKeyGrouping *groupForRequest(AVContentKeyRequest *request)
 {
     ASSERT([request respondsToSelector:@selector(options)]);
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    auto group = (AVContentKeyReportGroup*)[request.options valueForKey:ContentKeyReportGroupKey];
+    WebAVContentKeyGrouping *group = [request.options valueForKey:ContentKeyReportGroupKey];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
     return group;
 }
-#endif
 
 void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest *request)
 {
@@ -610,7 +597,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
     return nullptr;
 }
 
-CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForRequest(AVContentKeyRequest* request) const
+CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForRequest(AVContentKeyRequest *request) const
 {
     auto index = m_sessions.findIf([&] (auto session) {
         return session && session->hasRequest(request);
@@ -619,15 +606,10 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
     if (index != notFound)
         return m_sessions[index].get();
 
-#if HAVE(AVCONTENTKEYREPORTGROUP)
     return sessionForGroup(groupForRequest(request));
-#else
-    return nullptr;
-#endif
 }
 
-#if HAVE(AVCONTENTKEYREPORTGROUP)
-CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForGroup(AVContentKeyReportGroup* group) const
+CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForGroup(WebAVContentKeyGrouping *group) const
 {
     auto index = m_sessions.findIf([group] (auto session) {
         return session && session->contentKeyReportGroup() == group;
@@ -635,9 +617,9 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
 
     if (index != notFound)
         return m_sessions[index].get();
+
     return nullptr;
 }
-#endif
 
 bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
 {
@@ -672,16 +654,11 @@ void CDMInstanceFairPlayStreamingAVFObjC::sessionKeyStatusesChanged(const CDMIns
 
 CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&& instance)
     : m_instance(WTFMove(instance))
-    , m_delegate(adoptNS([[WebCoreFPSContentKeySessionDelegate alloc] initWithParent:this]))
+    , m_delegate(adoptNS([[WebCoreFPSContentKeySessionDelegate alloc] initWithParent:*this]))
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_instance->logger())
 #endif
 {
-}
-
-CDMInstanceSessionFairPlayStreamingAVFObjC::~CDMInstanceSessionFairPlayStreamingAVFObjC()
-{
-    [m_delegate invalidate];
 }
 
 using Keys = CDMInstanceSessionFairPlayStreamingAVFObjC::Keys;
@@ -742,13 +719,12 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
 
     if (auto unexpectedRequest = m_instance->takeUnexpectedKeyRequestForInitializationData(initDataType, initData)) {
         ALWAYS_LOG(LOGIDENTIFIER, " found unexpectedRequest matching initData");
-#if HAVE(AVCONTENTKEYREPORTGROUP)
         if (m_group) {
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
             [m_group associateContentKeyRequest:unexpectedRequest.get()];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
         }
-#endif
+
         m_requestLicenseCallback = WTFMove(callback);
         didProvideRequest(unexpectedRequest.get());
         return;
@@ -776,13 +752,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     ALWAYS_LOG(LOGIDENTIFIER, " processing request");
     m_requestLicenseCallback = WTFMove(callback);
 
-#if HAVE(AVCONTENTKEYREPORTGROUP)
     if (m_group) {
         auto* options = @{ ContentKeyReportGroupKey: m_group.get(), InitializationDataTypeKey: (NSString*)initDataType };
         [m_group processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:options];
         return;
     }
-#endif
 
     auto* options = @{ InitializationDataTypeKey: (NSString*)initDataType };
     [m_session processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:options];
@@ -1033,11 +1007,9 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(const String&, Clo
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String& sessionId, LicenseType licenseType, RemoveSessionDataCallback&& callback)
 {
-#if HAVE(AVCONTENTKEYREPORTGROUP)
     if (m_group)
         [m_group expire];
     else
-#endif
         [m_session expire];
 
     if (licenseType == LicenseType::PersistentUsageRecord) {
@@ -1161,11 +1133,9 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
 
                 if (m_sessionId.isEmpty()) {
                     NSData *sessionID = nullptr;
-#if HAVE(AVCONTENTKEYREPORTGROUP)
                     if (m_group)
                         sessionID = [m_group contentProtectionSessionIdentifier];
                     else
-#endif
                         sessionID = [m_session contentProtectionSessionIdentifier];
                     sessionIdentifierChanged(sessionID);
                 }
@@ -1598,17 +1568,13 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup(KeyGroupin
     if (m_session)
         return true;
 
-#if HAVE(AVCONTENTKEYREPORTGROUP)
     if (m_group)
         return true;
 
     if (auto* session = m_instance->contentKeySession()) {
-        m_group = ContentKeyGroupFactoryAVFObjC::createContentKeyGroup(keyGroupingStrategy, session);
+        m_group = ContentKeyGroupFactoryAVFObjC::createContentKeyGroup(keyGroupingStrategy, session, *this);
         return true;
     }
-#else
-    UNUSED_PARAM(keyGroupingStrategy);
-#endif
 
     auto storageURL = m_instance->storageURL();
 #if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
@@ -1645,6 +1611,33 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::isLicenseTypeSupported(LicenseT
     }
 }
 
+Vector<RetainPtr<AVContentKey>> CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceKeys() const
+{
+    Vector<RetainPtr<AVContentKey>> keys;
+    keys.reserveInitialCapacity(m_requests.size());
+    for (auto& request : m_requests) {
+        for (auto& keyRequest : request.requests) {
+            if (AVContentKey *key = [keyRequest contentKey])
+                keys.append(key);
+        }
+    }
+    return keys;
 }
+
+#if !RELEASE_LOG_DISABLED
+
+const void* CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceLogIdentifier() const
+{
+    return logIdentifier();
+}
+
+const Logger& CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceLogger() const
+{
+    return logger();
+}
+
+#endif // !RELEASE_LOG_DISABLED
+
+} // namespace WebCore
 
 #endif // ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
