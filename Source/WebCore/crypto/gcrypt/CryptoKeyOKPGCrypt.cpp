@@ -250,7 +250,7 @@ static const std::array<uint8_t, 12> algorithmId(WebCore::CryptoKeyOKP::NamedCur
         return CryptoConstants::s_x25519Identifier;
     default:
         ASSERT_NOT_REACHED();
-        return { { "" } };
+        return { };
     }
 }
 
