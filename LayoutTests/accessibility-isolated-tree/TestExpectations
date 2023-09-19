@@ -33,13 +33,6 @@ accessibility/mac/attributed-string/attributed-string-has-completion-annotation.
 accessibility/mac/text-input-marked-range.html [ Failure ]
 accessibility/mac/text-input-marked-text-marker-range.html [ Failure ]
 
-# Fails because we build relations too soon before elements have renderers because calls to
-# AccessibilityNodeObject::ownerParentObject() require building relations very early in tree building.
-# One possible solution would be in AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType relationType),
-# if either origin or target elements are !Element::renderer() && Element::rendererIsNeeded(const RenderStyle&), then we have
-# to queue them up to be processed after a timer in a new m_deferredRelationsUpdate list.
-accessibility/mac/grid-selected-cells.html [ Failure ]
-
 # Frames are off by 1px vs. non-ITM mode.
 accessibility/table-cells.html [ Failure ]
 accessibility/mac/document-links.html [ Failure ]

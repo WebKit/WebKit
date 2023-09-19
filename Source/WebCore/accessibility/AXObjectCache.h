@@ -654,7 +654,9 @@ private:
     Timer m_performCacheUpdateTimer;
 
     AXTextStateChangeIntent m_textSelectionIntent;
-    HashSet<AXID> m_deferredRemovedObjects;
+    // An object can be "replaced" when we create an AX object from the backing element before it has
+    // attached a renderer, but then want to replace it with a new AX object after the renderer has been attached.
+    HashSet<AXID> m_deferredReplacedObjects;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
     WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
     WeakHashSet<AccessibilityTable> m_deferredRecomputeTableCellSlotsList;

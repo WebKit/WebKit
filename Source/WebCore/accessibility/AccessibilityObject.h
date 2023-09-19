@@ -151,7 +151,6 @@ public:
     AccessibilityChildrenVector columnHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector rowHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector visibleRows() override { return AccessibilityChildrenVector(); }
-    AccessibilityChildrenVector selectedCells() override;
     AXCoreObject* headerContainer() override { return nullptr; }
     int axColumnCount() const override { return 0; }
     int axRowCount() const override { return 0; }
@@ -524,7 +523,6 @@ public:
     void setSelectedChildren(const AccessibilityChildrenVector&) override { }
     AccessibilityChildrenVector visibleChildren() override { return { }; }
     bool shouldFocusActiveDescendant() const;
-    AccessibilityObject* activeDescendant() const final;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     virtual bool hasAttribute(const QualifiedName&) const;

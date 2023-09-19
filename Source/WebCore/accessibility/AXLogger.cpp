@@ -452,6 +452,71 @@ TextStream& operator<<(TextStream& stream, AccessibilityObjectInclusion inclusio
     return stream;
 }
 
+TextStream& operator<<(TextStream& stream, AXRelationType relationType)
+{
+    switch (relationType) {
+    case AXRelationType::None:
+        stream << "None";
+        break;
+    case AXRelationType::ActiveDescendant:
+        stream << "ActiveDescendant";
+        break;
+    case AXRelationType::ActiveDescendantOf:
+        stream << "ActiveDescendantOf";
+        break;
+    case AXRelationType::ControlledBy:
+        stream << "ControlledBy";
+        break;
+    case AXRelationType::ControllerFor:
+        stream << "ControllerFor";
+        break;
+    case AXRelationType::DescribedBy:
+        stream << "DescribedBy";
+        break;
+    case AXRelationType::DescriptionFor:
+        stream << "DescriptionFor";
+        break;
+    case AXRelationType::Details:
+        stream << "Details";
+        break;
+    case AXRelationType::DetailsFor:
+        stream << "DetailsFor";
+        break;
+    case AXRelationType::ErrorMessage:
+        stream << "ErrorMessage";
+        break;
+    case AXRelationType::ErrorMessageFor:
+        stream << "ErrorMessageFor";
+        break;
+    case AXRelationType::FlowsFrom:
+        stream << "FlowsFrom";
+        break;
+    case AXRelationType::FlowsTo:
+        stream << "FlowsTo";
+        break;
+    case AXRelationType::Headers:
+        stream << "Headers";
+        break;
+    case AXRelationType::HeaderFor:
+        stream << "HeaderFor";
+        break;
+    case AXRelationType::LabelledBy:
+        stream << "LabelledBy";
+        break;
+    case AXRelationType::LabelFor:
+        stream << "LabelFor";
+        break;
+    case AXRelationType::OwnedBy:
+        stream << "OwnedBy";
+        break;
+    case AXRelationType::OwnerFor:
+        stream << "OwnerFor";
+        break;
+    }
+
+    return stream;
+}
+
 TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notification)
 {
     switch (notification) {
