@@ -39,12 +39,10 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
     static NeverDestroyed<WebCore::ScriptExecutionContextIdentifier> sharedScriptIdentifier = WebCore::ScriptExecutionContextIdentifier::generate();
 
     String body, iconURL, tag, language;
-    WebCore::NotificationDirection direction = WebCore::NotificationDirection::Auto;
+    auto direction = WebCore::NotificationDirection::Auto;
     std::optional<bool> silent;
 
-    CString dataCString;
     Vector<uint8_t> dataJSON;
-
     if (notificationPayload->options) {
         body = notificationPayload->options->body;
         language = notificationPayload->options->lang;
@@ -53,17 +51,17 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
         direction = notificationPayload->options->dir;
         silent = notificationPayload->options->silent;
 
-        dataCString = notificationPayload->options->dataJSONString.utf8();
+        CString dataCString = notificationPayload->options->dataJSONString.utf8();
         dataJSON = { dataCString.dataAsUInt8Ptr(), dataCString.length() };
     }
 
     return {
         notificationPayload->defaultActionURL,
         notificationPayload->title,
-        body,
-        iconURL,
-        tag,
-        language,
+        WTFMove(body),
+        WTFMove(iconURL),
+        WTFMove(tag),
+        WTFMove(language),
         direction,
         WebCore::SecurityOriginData::fromURL(registrationURL).toString(),
         registrationURL,
@@ -72,7 +70,7 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
         PAL::SessionID::defaultSessionID(),
         MonotonicTime::now(),
         WTFMove(dataJSON),
-        silent
+        WTFMove(silent)
     };
 }
 
