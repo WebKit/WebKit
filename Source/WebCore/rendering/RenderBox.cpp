@@ -2079,6 +2079,13 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                         -layerRenderer->marginTop(),
                         std::max(layerRenderer->width() + layerRenderer->horizontalMarginExtent() + layerRenderer->borderLeft() + layerRenderer->borderRight(), rw),
                         std::max(layerRenderer->height() + layerRenderer->verticalMarginExtent() + layerRenderer->borderTop() + layerRenderer->borderBottom(), rh));
+
+                    // If we're drawing the root background, then we want to use the bounds of the view
+                    // (since root backgrounds cover the canvas, not just the element). If the root element
+                    // is composited though, we need to issue the repaint to that root element.
+                    auto documentElementRenderer = downcast<RenderBox>(document().documentElement()->renderer());
+                    if (documentElementRenderer->layer()->isComposited())
+                        layerRenderer = documentElementRenderer;
                 } else {
                     layerRenderer = this;
                     rendererRect = borderBoxRect();
