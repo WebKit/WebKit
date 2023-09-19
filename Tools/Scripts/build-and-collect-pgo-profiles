@@ -61,7 +61,8 @@ fi
 
 rm -rf "$BASE/*"
 
-mkdir -p "$BASE/speedometer"
+mkdir -p "$BASE/speedometer2"
+mkdir -p "$BASE/speedometer3"
 mkdir -p "$BASE/jetstream"
 mkdir -p "$BASE/motionmark"
 mkdir -p "$BASE/output"
@@ -89,9 +90,16 @@ jsargs=(
     --count 1
 )
 
-spargs=(
+sp2args=(
     --plan speedometer2
-    --diagnose-directory="$BASE/speedometer"
+    --diagnose-directory="$BASE/speedometer2"
+    --generate-pgo-profiles
+    --count 1
+)
+
+sp3args=(
+    --plan speedometer3
+    --diagnose-directory="$BASE/speedometer3"
     --generate-pgo-profiles
     --count 1
 )
@@ -105,12 +113,14 @@ mmargs=(
 
 if [[ -n $APP ]] ; then
    jsargs+=(--browser-path "$APP")
-   spargs+=(--browser-path "$APP")
+   sp2args+=(--browser-path "$APP")
+   sp3args+=(--browser-path "$APP")
    mmargs+=(--browser-path "$APP")
    deployment_target=$(vtool -show-build "$APP"/Contents/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore | grep -m1 minos | tr -d -c .0-9)
 else
    jsargs+=(--build-directory $BUILD)
-   spargs+=(--build-directory $BUILD)
+   sp2args+=(--build-directory $BUILD)
+   sp3args+=(--build-directory $BUILD)
    mmargs+=(--build-directory $BUILD)
    deployment_target=$(vtool -show-build "$BUILD"/JavaScriptCore.framework/Versions/A/JavaScriptCore | grep -m1 minos | tr -d -c .0-9)
 fi
@@ -124,15 +134,18 @@ SPTH='OpenSource/Tools/Scripts'
 $SPTH/run-benchmark "${jsargs[@]}"
 $SPTH/pgo-profile merge "$BASE/jetstream"
 
-$SPTH/run-benchmark "${spargs[@]}"
-$SPTH/pgo-profile merge "$BASE/speedometer"
+$SPTH/run-benchmark "${sp2args[@]}"
+$SPTH/pgo-profile merge "$BASE/speedometer2"
+
+$SPTH/run-benchmark "${sp3args[@]}"
+$SPTH/pgo-profile merge "$BASE/speedometer3"
 
 $SPTH/run-benchmark "${mmargs[@]}"
 $SPTH/pgo-profile merge "$BASE/motionmark"
 
 rm *.result
 
-$SPTH/pgo-profile combine --jetstream "$BASE/jetstream" --speedometer "$BASE/speedometer" --motionmark "$BASE/motionmark" --output "$BASE/output"
+$SPTH/pgo-profile combine --jetstream "$BASE/jetstream" --speedometer2 "$BASE/speedometer2" --speedometer3 "$BASE/speedometer3" --motionmark "$BASE/motionmark" --output "$BASE/output"
 
 mkdir -p "$BASE/Internal/WebKit/WebKitAdditions/Profiling/$target_triple"
 $SPTH/pgo-profile compress --input "$BASE/output" --output "$BASE/Internal/WebKit/WebKitAdditions/Profiling/$target_triple"
