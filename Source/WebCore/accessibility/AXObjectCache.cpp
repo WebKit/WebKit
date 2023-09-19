@@ -504,7 +504,7 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
 
     if (focus->shouldFocusActiveDescendant()) {
         if (auto* descendant = focus->activeDescendant())
-            return descendant;
+            return dynamicDowncast<AccessibilityObject>(descendant);
     }
 
     if (focus->accessibilityIsIgnored())
@@ -1185,7 +1185,7 @@ void AXObjectCache::onRendererCreated(Element& element)
         // update and remove(AXID) updates the isolated tree, that in turn calls
         // parentObjectUnignored() on the object being removed, that may result
         // in a call to textUnderElement, that can not be called during a layout.
-        m_deferredRemovedObjects.add(axID);
+        m_deferredReplacedObjects.add(axID);
         if (!m_performCacheUpdateTimer.isActive())
             m_performCacheUpdateTimer.startOneShot(0_s);
     }
@@ -2222,7 +2222,7 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
     if (element.document().focusedElement() != &element)
         return;
 
-    RefPtr activeDescendant = object->activeDescendant();
+    RefPtr activeDescendant = dynamicDowncast<AccessibilityObject>(object->activeDescendant());
     if (!activeDescendant) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (object->shouldFocusActiveDescendant()
@@ -2272,12 +2272,8 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         postPlatformNotification(target.get(), AXNotification::AXActiveDescendantChanged);
 
         // Table cell active descendant changes should trigger selected cell changes.
-        if (target->isTable() && activeDescendant->isExposedTableCell()) {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-            updateIsolatedTree(target.get(), AXNotification::AXSelectedCellsChanged);
-#endif
+        if (target->isTable() && activeDescendant->isExposedTableCell())
             postPlatformNotification(target.get(), AXSelectedCellsChanged);
-        }
     }
 }
 
@@ -3862,10 +3858,21 @@ void AXObjectCache::performDeferredCacheUpdate()
     }
     SetForScope performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
 
-    AXLOGDeferredCollection("RemovedObjects"_s, m_deferredRemovedObjects);
-    for (AXID axID : m_deferredRemovedObjects)
+    bool markedRelationsDirty = false;
+    auto markRelationsDirty = [&] () {
+        if (!markedRelationsDirty) {
+            relationsNeedUpdate(true);
+            markedRelationsDirty = true;
+        }
+    };
+    AXLOGDeferredCollection("ReplacedObjectsList"_s, m_deferredReplacedObjects);
+    for (AXID axID : m_deferredReplacedObjects) {
+        // If the replaced object was part of any relation, we need to make sure the relations are updated.
+        if (m_relations.contains(axID))
+            markRelationsDirty();
         remove(axID);
-    m_deferredRemovedObjects.clear();
+    }
+    m_deferredReplacedObjects.clear();
 
     AXLOGDeferredCollection("RecomputeTableIsExposedList"_s, m_deferredRecomputeTableIsExposedList);
     m_deferredRecomputeTableIsExposedList.forEach([this] (auto& tableElement) {
@@ -3916,15 +3923,12 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredTextFormControlValue.clear();
 
     AXLOGDeferredCollection("AttributeChange"_s, m_deferredAttributeChange);
-    bool idAttributeChanged = false;
     for (const auto& attributeChange : m_deferredAttributeChange) {
         handleAttributeChange(attributeChange.element.get(), attributeChange.attrName, attributeChange.oldValue, attributeChange.newValue);
         if (attributeChange.attrName == idAttr)
-            idAttributeChanged = true;
+            markRelationsDirty();
     }
     m_deferredAttributeChange.clear();
-    if (idAttributeChanged)
-        relationsNeedUpdate(true);
 
     if (m_deferredFocusedNodeChange) {
         AXLOG(makeString(
@@ -4133,9 +4137,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXRowIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXRowIndex);
             break;
+        //  FIXME: Contrary to the name "AXSelectedCellsChanged", this notification can be posted on a cell
+        //  who has changed selected state, not just on table or grid who has changed its selected cells.
         case AXSelectedCellsChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::SelectedCells);
-            break;
         case AXSelectedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
             break;

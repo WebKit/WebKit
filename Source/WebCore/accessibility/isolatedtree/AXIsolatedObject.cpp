@@ -248,9 +248,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (object.canHaveSelectedChildren())
         setObjectVectorProperty(AXPropertyName::SelectedChildren, object.selectedChildren());
 
-    if (object.canHaveSelectedCells())
-        setObjectVectorProperty(AXPropertyName::SelectedCells, object.selectedCells());
-
     if (object.isImage())
         setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 
@@ -1815,12 +1812,6 @@ AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::relatedObjects(AXRel
     if (auto relatedObjectIDs = tree()->relatedObjectIDsFor(*this, relationType))
         return tree()->objectsForIDs(*relatedObjectIDs);
     return { };
-}
-
-AXCoreObject* AXIsolatedObject::activeDescendant() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 OptionSet<AXAncestorFlag> AXIsolatedObject::ancestorFlags() const

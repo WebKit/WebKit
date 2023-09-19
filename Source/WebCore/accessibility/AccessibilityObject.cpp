@@ -3126,25 +3126,6 @@ AXCoreObject* AccessibilityObject::focusedUIElement() const
     return page && axObjectCache ? axObjectCache->focusedObjectForPage(page) : nullptr;
 }
 
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedCells()
-{
-    if (!isTable())
-        return { };
-
-    AXCoreObject::AccessibilityChildrenVector selectedCells;
-    for (auto& cell : cells()) {
-        if (cell->isSelected())
-            selectedCells.append(cell);
-    }
-
-    if (auto* activeDescendant = this->activeDescendant()) {
-        if (activeDescendant->isExposedTableCell() && !selectedCells.contains(activeDescendant))
-            selectedCells.append(activeDescendant);
-    }
-
-    return selectedCells;
-}
-
 void AccessibilityObject::setSelectedRows(AccessibilityChildrenVector&& selectedRows)
 {
     // Setting selected only makes sense in trees and tables (and tree-tables).
@@ -4302,15 +4283,6 @@ bool AccessibilityObject::shouldFocusActiveDescendant() const
     default:
         return false;
     }
-}
-
-AccessibilityObject* AccessibilityObject::activeDescendant() const
-{
-    auto activeDescendants = relatedObjects(AXRelationType::ActiveDescendant);
-    ASSERT(activeDescendants.size() <= 1);
-    if (!activeDescendants.isEmpty())
-        return dynamicDowncast<AccessibilityObject>(activeDescendants[0].get());
-    return nullptr;
 }
 
 bool AccessibilityObject::isActiveDescendantOfFocusedContainer() const

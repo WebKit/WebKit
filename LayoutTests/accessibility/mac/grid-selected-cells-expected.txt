@@ -1,14 +1,11 @@
 This tests that the ARIA grids will return and post selected cells.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
 PASS: grid.isAttributeSupported('AXSelectedCells') === true
 PASS: grid.selectedCells()[0].isEqual(selectedCell) === true
-Received notification: AXSelectedCellsChanged
-PASS: grid.selectedCells()[0].isEqual(accessibilityController.accessibleElementById('cell1')) === true
-PASS: grid.selectedCells()[1].isEqual(accessibilityController.accessibleElementById('cell2')) === true
-Received notification: AXSelectedCellsChanged
+Received notification AXSelectedCellsChanged for #grid
+Received notification AXSelectedCellsChanged for #cell1
+PASS: selectedCells[0].isEqual(accessibilityController.accessibleElementById('cell1')) === true
+PASS: selectedCells[1].isEqual(accessibilityController.accessibleElementById('cell2')) === true
 
 PASS successfullyParsed is true
 

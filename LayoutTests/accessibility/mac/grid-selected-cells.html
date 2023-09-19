@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -29,29 +29,22 @@
 
 <script>
 
-description("This tests that the ARIA grids will return and post selected cells.");
+var output = "This tests that the ARIA grids will return and post selected cells.\n\n";
 
 if (window.accessibilityController) {
     window.jsTestIsAsync = true
 
-    var output = "";
-    var grid, selectedCelll;
-    var notificationCount = 0;
+    var grid, selectedCell, selectedCells, notificationCount = 0;
     accessibilityController.addNotificationListener(function(element, notification) {
         if (notification == "AXSelectedCellsChanged") {
-            output += "Received notification: " + notification + "\n";
+            output += `Received notification ${notification} for #${element.domIdentifier}\n`;
             notificationCount++;
-            if (notificationCount == 2) {
-                document.getElementById("content").style.visibility = 'hidden';
-                debug(output);
-                finishJSTest();
-            }
         }
     });
 
     // Focus the grid so it can handle active descendants.
     document.getElementById("grid").focus();
-    setTimeout(function() {
+    setTimeout(async function() {
         grid = accessibilityController.accessibleElementById("grid");
         selectedCell = grid.childAtIndex(2).childAtIndex(0);
         output += expect("grid.isAttributeSupported('AXSelectedCells')", "true");
@@ -62,8 +55,18 @@ if (window.accessibilityController) {
 
         // Now change with aria-selected to ensure we also get the right notification.
         document.getElementById("cell1").setAttribute("aria-selected", "true");
-        output += expect("grid.selectedCells()[0].isEqual(accessibilityController.accessibleElementById('cell1'))", "true");
-        output += expect("grid.selectedCells()[1].isEqual(accessibilityController.accessibleElementById('cell2'))", "true");
+        await waitFor(() => {
+            if (notificationCount < 2)
+                return false;
+            selectedCells = grid.selectedCells();
+            return selectedCells.length >= 2;
+        });
+        output += expect("selectedCells[0].isEqual(accessibilityController.accessibleElementById('cell1'))", "true");
+        output += expect("selectedCells[1].isEqual(accessibilityController.accessibleElementById('cell2'))", "true");
+
+        document.getElementById("content").style.visibility = 'hidden';
+        debug(output);
+        finishJSTest();
     }, 0);
 }
 </script>

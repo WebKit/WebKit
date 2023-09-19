@@ -883,7 +883,7 @@ public:
     virtual AccessibilityChildrenVector columnHeaders() = 0;
     virtual AccessibilityChildrenVector rowHeaders() = 0;
     virtual AccessibilityChildrenVector visibleRows() = 0;
-    virtual AccessibilityChildrenVector selectedCells() = 0;
+    AccessibilityChildrenVector selectedCells();
     // Returns an object that contains, as children, all the objects that act as headers.
     virtual AXCoreObject* headerContainer() = 0;
     virtual int axColumnCount() const = 0;
@@ -1031,6 +1031,7 @@ public:
     virtual bool supportsARIAOwns() const = 0;
 
     // Retrieval of related objects.
+    AXCoreObject* activeDescendant() const;
     AccessibilityChildrenVector activeDescendantOfObjects() const { return relatedObjects(AXRelationType::ActiveDescendantOf); }
     AccessibilityChildrenVector controlledObjects() const { return relatedObjects(AXRelationType::ControllerFor); }
     AccessibilityChildrenVector controllers() const { return relatedObjects(AXRelationType::ControlledBy); }
@@ -1246,12 +1247,10 @@ public:
     virtual bool isDetachedFromParent() = 0;
 
     bool canHaveSelectedChildren() const;
-    bool canHaveSelectedCells() const;
     virtual AccessibilityChildrenVector selectedChildren() = 0;
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual AccessibilityChildrenVector visibleChildren() = 0;
     AccessibilityChildrenVector tabChildren();
-    virtual AXCoreObject* activeDescendant() const = 0;
     bool isDescendantOfObject(const AXCoreObject*) const;
     bool isAncestorOfObject(const AXCoreObject*) const;
 
@@ -1576,19 +1575,6 @@ inline bool AXCoreObject::supportsLiveRegion(bool excludeIfOff) const
     return excludeIfOff ? liveRegionStatusIsEnabled(AtomString { liveRegionStatusValue }) : !liveRegionStatusValue.isEmpty();
 }
 
-inline bool AXCoreObject::canHaveSelectedCells() const
-{
-    switch (roleValue()) {
-    case AccessibilityRole::Grid:
-    case AccessibilityRole::Table:
-    case AccessibilityRole::Tree:
-    case AccessibilityRole::TreeGrid:
-        return true;
-    default:
-        return false;
-    }
-}
-
 inline bool AXCoreObject::canHaveSelectedChildren() const
 {
     switch (roleValue()) {
@@ -1827,6 +1813,31 @@ inline String AXCoreObject::ariaLandmarkRoleDescription() const
     }
 }
 
+inline AXCoreObject* AXCoreObject::activeDescendant() const
+{
+    auto activeDescendants = relatedObjects(AXRelationType::ActiveDescendant);
+    ASSERT(activeDescendants.size() <= 1);
+    return activeDescendants.size() ? activeDescendants[0].get() : nullptr;
+}
+
+inline AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedCells()
+{
+    if (!isTable())
+        return { };
+
+    AXCoreObject::AccessibilityChildrenVector selectedCells;
+    for (auto& cell : cells()) {
+        if (cell->isSelected())
+            selectedCells.append(cell);
+    }
+
+    if (auto* activeDescendant = this->activeDescendant()) {
+        if (activeDescendant->isExposedTableCell() && !selectedCells.contains(activeDescendant))
+            selectedCells.append(activeDescendant);
+    }
+    return selectedCells;
+}
+
 inline void AXCoreObject::detach(AccessibilityDetachmentType detachmentType)
 {
     detachWrapper(detachmentType);
@@ -2022,5 +2033,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, const AccessibilitySearchCriteria&
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityObjectInclusion);
 WTF::TextStream& operator<<(WTF::TextStream&, const AXCoreObject&);
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityTextSource);
+WTF::TextStream& operator<<(WTF::TextStream&, AXRelationType);
 
 } // namespace WebCore
