@@ -52,7 +52,11 @@
     if (!(self = [super initWithFrame:CGRectZero]))
         return nil;
 
-    _backgroundView = adoptNS([[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial]]);
+    UIBlurEffect *blurEffect = nil;
+#if !PLATFORM(APPLETV)
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial];
+#endif
+    _backgroundView = adoptNS([[UIVisualEffectView alloc] initWithEffect:blurEffect]);
     _datePicker = datePicker;
     _accessoryView = adoptNS([UIToolbar new]);
 
