@@ -1961,6 +1961,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorOnLine.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorOnLine.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorPlugins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorPlugins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorPush.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorPush.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorServiceWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorServiceWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.cpp

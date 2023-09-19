@@ -560,6 +560,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/PictureInPictureEvent.idl \
     $(WebCore)/Modules/pictureinpicture/PictureInPictureWindow.idl \
+    $(WebCore)/Modules/push-api/NavigatorPush.idl \
     $(WebCore)/Modules/push-api/PushEncryptionKeyName.idl \
     $(WebCore)/Modules/push-api/PushEvent.idl \
     $(WebCore)/Modules/push-api/PushEventInit.idl \

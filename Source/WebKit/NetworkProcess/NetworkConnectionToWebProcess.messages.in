@@ -126,4 +126,11 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    NavigatorSubscribeToPushService(URL scopeURL, Vector<uint8_t> applicationServerKey) -> (Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
+    NavigatorUnsubscribeFromPushService(URL scopeURL, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (Expected<bool, WebCore::ExceptionData> result)
+    NavigatorGetPushSubscription(URL scopeURL) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
+    NavigatorGetPushPermissionState(URL scopeURL) -> (Expected<uint8_t, WebCore::ExceptionData> result)
+#endif
 }

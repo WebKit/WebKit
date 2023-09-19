@@ -571,6 +571,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/pictureinpicture/PictureInPictureEvent.idl
     Modules/pictureinpicture/PictureInPictureWindow.idl
 
+    Modules/push-api/NavigatorPush.idl
     Modules/push-api/PushEncryptionKeyName.idl
     Modules/push-api/PushEvent.idl
     Modules/push-api/PushEventInit.idl

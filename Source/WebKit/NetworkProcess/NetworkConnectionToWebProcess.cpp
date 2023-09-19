@@ -1497,6 +1497,62 @@ void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::
         loader->useRedirectionForCurrentNavigation(WTFMove(response));
 }
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if (!session) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    auto registrableDomain = RegistrableDomain(scopeURL);
+    session->notificationManager().subscribeToPushService(WTFMove(scopeURL), WTFMove(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), registrableDomain = WTFMove(registrableDomain)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
+        if (auto resourceLoadStatistics = weakThis && weakThis->networkSession() ? weakThis->networkSession()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
+            return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTFMove(registrableDomain), [result = WTFMove(result), completionHandler = WTFMove(completionHandler)] () mutable {
+                completionHandler(WTFMove(result));
+            });
+        }
+        completionHandler(WTFMove(result));
+    });
+}
+
+
+void NetworkConnectionToWebProcess::navigatorUnsubscribeFromPushService(URL&& scopeURL, const PushSubscriptionIdentifier& subscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if (!session) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session->notificationManager().unsubscribeFromPushService(WTFMove(scopeURL), subscriptionIdentifier, WTFMove(completionHandler));
+
+}
+
+void NetworkConnectionToWebProcess::navigatorGetPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if (!session) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session->notificationManager().getPushSubscription(WTFMove(scopeURL), WTFMove(completionHandler));
+}
+
+void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if (!session) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session->notificationManager().getPushPermissionState(WTFMove(scopeURL), WTFMove(completionHandler));
+}
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
 } // namespace WebKit
 
 #undef CONNECTION_RELEASE_LOG

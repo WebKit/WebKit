@@ -40,6 +40,9 @@ private:
     WebCore::PasteboardStrategy* createPasteboardStrategy() override;
     WebCore::MediaStrategy* createMediaStrategy() override;
     WebCore::BlobRegistry* createBlobRegistry() override;
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    WebCore::PushStrategy* createPushStrategy() override;
+#endif
 };
 
 } // namespace WebKit

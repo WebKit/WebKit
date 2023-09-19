@@ -532,6 +532,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/push-api/PushDatabase.h
     Modules/push-api/PushMessageCrypto.h
     Modules/push-api/PushPermissionState.h
+    Modules/push-api/PushStrategy.h
     Modules/push-api/PushSubscriptionData.h
     Modules/push-api/PushSubscriptionIdentifier.h
 

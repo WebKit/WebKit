@@ -36,6 +36,7 @@
 #include "GPU.h"
 #include "Geolocation.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSPushSubscription.h"
 #include "LoaderStrategy.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
@@ -43,6 +44,7 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
+#include "PushStrategy.h"
 #include "Quirks.h"
 #include "ResourceLoadObserver.h"
 #include "ScriptController.h"
@@ -64,6 +66,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Navigator);
 Navigator::Navigator(ScriptExecutionContext* context, LocalDOMWindow& window)
     : NavigatorBase(context)
     , LocalDOMWindowProperty(&window)
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    , m_pushManager(*this)
+#endif
 {
 }
 
@@ -441,6 +446,80 @@ void Navigator::clearClientBadge(Ref<DeferredPromise>&& promise)
     setClientBadge(0, WTFMove(promise));
 }
 
-#endif
+#endif // ENABLE(BADGING)
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+PushManager& Navigator::pushManager()
+{
+    return m_pushManager;
+}
+
+static URL toScope(Navigator& navigator)
+{
+    if (auto* frame = navigator.frame()) {
+        if (auto* document = frame->document())
+            return URL { document->url().protocolHostAndPort() };
+    }
+
+    return { };
+}
+
+void Navigator::subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
+{
+    LOG(Push, "Navigator::subscribeToPushService");
+
+    platformStrategies()->pushStrategy()->navigatorSubscribeToPushService(toScope(*this), applicationServerKey, [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto&& result) mutable {
+        LOG(Push, "Navigator::subscribeToPushService completed");
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+
+        promise.resolve(PushSubscription::create(result.releaseReturnValue(), protectedThis.ptr()));
+    });
+}
+
+void Navigator::unsubscribeFromPushService(PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    LOG(Push, "Navigator::unsubscribeFromPushService");
+
+    platformStrategies()->pushStrategy()->navigatorUnsubscribeFromPushService(toScope(*this), subscriptionIdentifier, [promise = WTFMove(promise)](auto&& result) mutable {
+        LOG(Push, "Navigator::unsubscribeFromPushService completed");
+        promise.settle(WTFMove(result));
+    });
+}
+
+void Navigator::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
+{
+    LOG(Push, "Navigator::getPushSubscription");
+
+    platformStrategies()->pushStrategy()->navigatorGetPushSubscription(toScope(*this), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto&& result) mutable {
+        LOG(Push, "Navigator::getPushSubscription completed");
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+
+        auto optionalPushSubscriptionData = result.releaseReturnValue();
+        if (!optionalPushSubscriptionData) {
+            promise.resolve(nullptr);
+            return;
+        }
+
+        promise.resolve(PushSubscription::create(WTFMove(*optionalPushSubscriptionData), protectedThis.ptr()).ptr());
+    });
+}
+
+void Navigator::getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
+{
+    LOG(Push, "Navigator::getPushPermissionState");
+
+    platformStrategies()->pushStrategy()->navigatorGetPushPermissionState(toScope(*this), [promise = WTFMove(promise)](auto&& result) mutable {
+        LOG(Push, "Navigator::getPushPermissionState completed");
+        promise.settle(WTFMove(result));
+    });
+}
+
+#endif // #if ENABLE(DECLARATIVE_WEB_PUSH)
 
 } // namespace WebCore

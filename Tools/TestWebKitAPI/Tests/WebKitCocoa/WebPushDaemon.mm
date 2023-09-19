@@ -368,6 +368,55 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 static ASCIILiteral validServerKey = "BA1Hxzyi1RUM1b5wjxsn7nGxAszw2u61m164i3MrAIxHF6YK5h4SDYic-dRuU_RCPCfA5aq9ojSwk5Y2EmClBPs"_s;
 static ASCIILiteral keyThatCausesInjectedFailure = "BEAxaUMo1s8tjORxJfnSSvWhYb4u51kg1hWT2s_9gpV7Zxar1pF_2BQ8AncuAdS2BoLhN4qaxzBy2CwHE8BBzWg"_s;
 
+static constexpr auto navigatorHTMLSource = R"SRC(
+<script>
+let globalSubscription = null;
+
+function log(msg)
+{
+    window.webkit.messageHandlers.test.postMessage(msg);
+}
+
+window.onload = function()
+{
+    log("Ready");
+}
+
+async function subscribe(key)
+{
+    try {
+        globalSubscription = await navigator.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: key
+        });
+        return globalSubscription.toJSON();
+    } catch (error) {
+        return "Error: " + error;
+    }
+}
+
+async function unsubscribe()
+{
+    try {
+        let result = await globalSubscription.unsubscribe();
+        return result;
+    } catch (error) {
+        return "Error: " + error;
+    }
+}
+
+async function getPushSubscription()
+{
+    try {
+        let subscription = await navigator.pushManager.getSubscription();
+        return subscription ? subscription.toJSON() : null;
+    } catch (error) {
+        return "Error: " + error;
+    }
+}
+</script>
+)SRC"_s;
+
 static constexpr auto htmlSource = R"SRC(
 <script>
 let globalRegistration = null;
@@ -472,7 +521,7 @@ self.addEventListener("notificationclick", () => {
 class WebPushDTestWebView {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider)
+    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html)
         : m_pushPartition(pushPartition)
         , m_dataStoreIdentifier(dataStoreIdentifier)
         , m_notificationProvider(notificationProvider)
@@ -487,7 +536,7 @@ public:
         }];
 
         m_server.reset(new TestWebKitAPI::HTTPServer({
-            { "/"_s, { htmlSource } },
+            { "/"_s, { html } },
             { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptSource } }
         }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy));
 
@@ -503,6 +552,10 @@ public:
         }];
         dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
         dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+        dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
+#endif
 
         // FIXME: This seems like it shouldn't be necessary, but _clearResourceLoadStatistics (called by clearWebsiteDataStore) doesn't seem to work.
         [[NSFileManager defaultManager] removeItemAtURL:[dataStoreConfiguration _resourceLoadStatisticsDirectory] error:nil];
@@ -531,6 +584,16 @@ public:
 
         [[configuration preferences] _setPushAPIEnabled:YES];
         m_notificationProvider.setPermission(m_origin, true);
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+        NSArray<_WKFeature *> * features = WKPreferences._features;
+        for (_WKFeature *feature in features) {
+            if ([feature.key isEqualToString:@"DeclarativeWebPush"]) {
+                [configuration.get().preferences _setEnabled:YES forFeature:feature];
+                break;
+            }
+        }
+#endif
 
         m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -753,7 +816,8 @@ private:
 
 class WebPushDTest : public ::testing::Test {
 public:
-    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes)
+    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes, ASCIILiteral html = htmlSource)
+        : m_html(html)
     {
         m_tempDirectory = retainPtr(setUpTestWebPushD(launchOnlyOnce));
     }
@@ -765,19 +829,19 @@ public:
 
         m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [processPool _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
 
-        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider);
+        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider, m_html);
         m_webViews.append(WTFMove(webView));
 
-        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider);
+        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider, m_html);
         m_webViews.append(WTFMove(webViewWithIdentifier1));
 
-        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider);
+        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html);
         m_webViews.append(WTFMove(webViewWithIdentifier2));
 
-        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider);
+        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html);
         m_webViews.append(WTFMove(webViewWithPartition));
 
-        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider);
+        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html);
         m_webViews.append(WTFMove(webViewWithPartitionAndIdentifier));
     }
 
@@ -811,12 +875,21 @@ protected:
     RetainPtr<NSURL> m_tempDirectory;
     std::unique_ptr<TestWebKitAPI::TestNotificationProvider> m_notificationProvider;
     Vector<UniqueRef<WebPushDTestWebView>> m_webViews;
+    ASCIILiteral m_html;
 };
 
 class WebPushDMultipleLaunchTest : public WebPushDTest {
 public:
     WebPushDMultipleLaunchTest()
         : WebPushDTest(LaunchOnlyOnce::No)
+    {
+    }
+};
+
+class WebPushDNavigatorTest : public WebPushDTest {
+public:
+    WebPushDNavigatorTest()
+        : WebPushDTest(LaunchOnlyOnce::Yes, navigatorHTMLSource)
     {
     }
 };
@@ -860,6 +933,47 @@ TEST_F(WebPushDTest, SubscribeTest)
     ASSERT_EQ(ignored.size(), 0u);
 }
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+TEST_F(WebPushDNavigatorTest, SubscribeTest)
+{
+    for (auto& v : webViews()) {
+        ASSERT_FALSE(v->hasPushSubscription());
+        id obj = v->subscribe();
+        ASSERT_TRUE(v->hasPushSubscription());
+
+        ASSERT_TRUE([obj isKindOfClass:[NSDictionary class]]);
+        NSDictionary *subscription = obj;
+        ASSERT_TRUE([subscription[@"endpoint"] hasPrefix:@"https://"]);
+        ASSERT_TRUE([subscription[@"keys"] isKindOfClass:[NSDictionary class]]);
+
+        // Shared auth secret should be 16 bytes (22 bytes in unpadded base64url).
+        ASSERT_EQ([subscription[@"keys"][@"auth"] length], 22u);
+
+        // Client public key should be 65 bytes (87 bytes in unpadded base64url).
+        ASSERT_EQ([subscription[@"keys"][@"p256dh"] length], 87u);
+    }
+
+    auto lessThan = [](const String& lhs, const String& rhs) {
+        return codePointCompare(lhs, rhs) < 0;
+    };
+    auto topics = getPushTopics();
+    auto& subscribed = topics.first;
+    std::sort(subscribed.begin(), subscribed.end(), lessThan);
+
+    Vector<String> expected {
+        "com.apple.WebKit.TestWebKitAPI ds:0bf5053b-164c-4b7d-8179-832e6bf158df https://example.com/"_s,
+        "com.apple.WebKit.TestWebKitAPI ds:940e7729-738e-439f-a366-1a8719e23b2d https://example.com/"_s,
+        "com.apple.WebKit.TestWebKitAPI https://example.com/"_s,
+        "com.apple.WebKit.TestWebKitAPI part:testPartition ds:940e7729-738e-439f-a366-1a8719e23b2d https://example.com/"_s,
+        "com.apple.WebKit.TestWebKitAPI part:testPartition https://example.com/"_s
+    };
+    ASSERT_EQ(subscribed, expected);
+
+    auto& ignored = topics.second;
+    ASSERT_EQ(ignored.size(), 0u);
+}
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
 TEST_F(WebPushDTest, SubscribeFailureTest)
 {
     for (auto& v : webViews()) {
@@ -874,6 +988,23 @@ TEST_F(WebPushDTest, SubscribeFailureTest)
 
     ASSERT_EQ(subscribedTopicsCount(), 0u);
 }
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+TEST_F(WebPushDNavigatorTest, SubscribeFailureTest)
+{
+    for (auto& v : webViews()) {
+        ASSERT_FALSE(v->hasPushSubscription());
+        id obj = v->subscribe(keyThatCausesInjectedFailure);
+        ASSERT_FALSE(v->hasPushSubscription());
+
+        // Spec says that an error in the push service should be an AbortError.
+        ASSERT_TRUE([obj isKindOfClass:[NSString class]]);
+        ASSERT_TRUE([obj hasPrefix:@"Error: AbortError"]);
+    }
+
+    ASSERT_EQ(subscribedTopicsCount(), 0u);
+}
+#endif
 
 TEST_F(WebPushDTest, UnsubscribeTest)
 {
@@ -898,6 +1029,32 @@ TEST_F(WebPushDTest, UnsubscribeTest)
         i++;
     }
 }
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+TEST_F(WebPushDNavigatorTest, UnsubscribeTest)
+{
+    for (auto& v : webViews())
+        v->subscribe();
+    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
+
+    int i = 1;
+    for (auto& v : webViews()) {
+        ASSERT_TRUE(v->hasPushSubscription());
+
+        // First unsubscribe should succeed.
+        ASSERT_TRUE([v->unsubscribe() isEqual:@YES]);
+        ASSERT_FALSE(v->hasPushSubscription());
+
+        // Second unsubscribe should fail since the first one removed the record already.
+        ASSERT_TRUE([v->unsubscribe() isEqual:@NO]);
+        ASSERT_FALSE(v->hasPushSubscription());
+
+        // Unsubscribing from this data store should not affect subscriptions in other data stores.
+        ASSERT_EQ(subscribedTopicsCount(), webViews().size() - i);
+        i++;
+    }
+}
+#endif
 
 TEST_F(WebPushDTest, UnsubscribesOnServiceWorkerUnregisterTest)
 {
