@@ -57,38 +57,14 @@ static CFDictionaryRef makeContextOptions(const CGDisplayListImageBufferBackend:
 
 class GraphicsContextCGDisplayList : public WebCore::GraphicsContextCG {
 public:
-    GraphicsContextCGDisplayList(const CGDisplayListImageBufferBackend::Parameters& parameters, WebCore::RenderingMode renderingMode)
-        : GraphicsContextCG(adoptCF(WKCGCommandsContextCreate(parameters.logicalSize, makeContextOptions(parameters))).autorelease(), GraphicsContextCG::Unknown, renderingMode)
+    GraphicsContextCGDisplayList(const CGDisplayListImageBufferBackend::Parameters& parameters, WebCore::IntSize backendSize, WebCore::RenderingMode renderingMode)
+        : GraphicsContextCG(adoptCF(WKCGCommandsContextCreate(backendSize, makeContextOptions(parameters))).autorelease(), GraphicsContextCG::Unknown, renderingMode)
     {
-        m_immutableBaseTransform.scale(parameters.resolutionScale);
-        m_inverseImmutableBaseTransform = *m_immutableBaseTransform.inverse();
-        m_resolutionScale = parameters.resolutionScale;
-    }
-
-    void setCTM(const WebCore::AffineTransform& transform) final
-    {
-        GraphicsContextCG::setCTM(m_inverseImmutableBaseTransform * transform);
-    }
-
-    WebCore::AffineTransform getCTM(IncludeDeviceScale includeDeviceScale) const final
-    {
-        return m_immutableBaseTransform * GraphicsContextCG::getCTM(includeDeviceScale);
-    }
-
-    std::optional<std::pair<float, float>> scaleForRoundingToDevicePixels() const final
-    {
-        auto scale = WebCore::GraphicsContextCG::scaleForRoundingToDevicePixels().value_or(std::make_pair<float>(1, 1));
-        return { { scale.first * m_resolutionScale, scale.second * m_resolutionScale } };
     }
 
     bool canUseShadowBlur() const final { return false; }
 
     bool needsCachedNativeImageInvalidationWorkaround(WebCore::RenderingMode) override { return true; }
-
-private:
-    WebCore::AffineTransform m_immutableBaseTransform;
-    WebCore::AffineTransform m_inverseImmutableBaseTransform;
-    float m_resolutionScale;
 };
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CGDisplayListImageBufferBackend);
@@ -152,8 +128,10 @@ std::optional<ImageBufferBackendHandle> CGDisplayListImageBufferBackend::createB
 
 WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context()
 {
-    if (!m_context)
-        m_context = makeUnique<GraphicsContextCGDisplayList>(m_parameters, m_renderingMode);
+    if (!m_context) {
+        m_context = makeUnique<GraphicsContextCGDisplayList>(m_parameters, backendSize(), m_renderingMode);
+        applyBaseTransform(*m_context);
+    }
     return *m_context;
 }
 
