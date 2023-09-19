@@ -3440,6 +3440,15 @@ bool Document::shouldScheduleLayout() const
         return false;
     if (view() && !view()->isVisuallyNonEmpty())
         return false;
+    auto isInsideDisplayNone = [&] {
+        for (auto* ownerElement = this->ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
+            if (!ownerElement->renderer())
+                return true;
+        }
+        return false;
+    };
+    if (isInsideDisplayNone())
+        return false;
     return true;
 }
 
