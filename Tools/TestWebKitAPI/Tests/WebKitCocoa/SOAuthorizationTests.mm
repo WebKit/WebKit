@@ -310,6 +310,9 @@ private:
 
 - (instancetype)initWithExpectation:(NSArray *)expectedMessages
 {
+    self = [super init];
+    if (!self)
+        return nil;
     _messages = adoptNS([[NSMutableArray alloc] init]);
     _expectedMessages = expectedMessages;
     return self;
