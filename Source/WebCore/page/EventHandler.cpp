@@ -2108,9 +2108,15 @@ HandleMouseEventResult EventHandler::handleMouseMoveEvent(const PlatformMouseEve
     if (hitTestResult)
         *hitTestResult = mouseEvent.hitTestResult();
 
-    if (m_resizeLayer && m_resizeLayer->inResizeMode())
+    if (m_resizeLayer && m_resizeLayer->inResizeMode()) {
         m_resizeLayer->resize(platformMouseEvent, m_offsetFromResizeCorner);
-    else {
+
+        if (m_resizeLayer->renderer().shouldPlaceVerticalScrollbarOnLeft()) {
+            auto absolutePoint = m_frame.view()->windowToContents(platformMouseEvent.position());
+            auto localPoint = roundedIntPoint(m_resizeLayer->absoluteToContents(absolutePoint));
+            m_offsetFromResizeCorner.setWidth(m_resizeLayer->offsetFromResizeCorner(localPoint).width());
+        }
+    } else {
         Scrollbar* scrollbar = mouseEvent.scrollbar();
         updateLastScrollbarUnderMouse(scrollbar, m_mousePressed ? SetOrClearLastScrollbar::Clear : SetOrClearLastScrollbar::Set);
 

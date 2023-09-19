@@ -1,0 +1,103 @@
+<style>
+    div {
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        box-sizing: border-box;
+        border: solid;
+        margin: 10px;
+        resize: both;
+    }
+</style>
+
+<pre id="console"></pre>
+<div id="target" dir="rtl"></div>
+
+<script type="text/javascript">
+    var mouseX = 0;
+    var mouseY = 0;
+
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function beginResize(target)
+    {
+        var x = document.body.offsetLeft + target.offsetLeft;
+        var y = document.body.offsetTop + target.offsetTop + target.offsetHeight;
+
+        mouseX = x + 6;
+        mouseY = y - 6;
+
+        eventSender.mouseMoveTo(mouseX, mouseY);
+        eventSender.mouseDown();
+    }
+
+    function endResize()
+    {
+        eventSender.mouseUp();
+    }
+
+    function resize(deltaX, deltaY)
+    {
+        mouseX += deltaX;
+        mouseY += deltaY;
+
+        eventSender.mouseMoveTo(mouseX, mouseY);
+    }
+
+    function assertSize(target, width, height)
+    {
+        var computedStyle = getComputedStyle(target);
+        var actualWidth = computedStyle.width;
+        var actualHeight = computedStyle.height;
+
+        if (actualWidth === width && actualHeight === height)
+            log("'" + target.id + "' resized as expected to (" + width + ", " + height + ").");
+        else
+            log("FAIL: '" + target.id + "' resized to (" + actualWidth + ", " + actualHeight + ") instead of (" + width + ", " + height + ").");
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+
+        var target = document.getElementById("target");
+
+        beginResize(target);
+        resize(0, 50);
+        endResize();
+
+        assertSize(target, "50px", "100px");
+
+        beginResize(target);
+        resize(-5, 50);
+        endResize();
+
+        assertSize(target, "55px", "150px");
+
+        beginResize(target);
+        resize(5, -50);
+        endResize();
+
+        assertSize(target, "50px", "100px");
+
+        beginResize(target);
+        resize(-5, 0);
+        resize(0, 10);
+        resize(0, 10);
+        resize(0, 10);
+        resize(0, 10);
+        resize(0, 10);
+        endResize();
+
+        assertSize(target, "55px", "150px");
+
+        beginResize(target);
+        resize(-5, -160);
+        resize(5, 10);
+        endResize();
+
+        assertSize(target, "55px", "15px");
+    }
+</script>

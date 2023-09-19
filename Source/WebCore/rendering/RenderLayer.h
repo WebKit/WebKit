@@ -243,6 +243,9 @@ public:
 
     bool willCompositeClipPath() const;
 
+    // Convert a point in absolute coords into layer coords, taking transforms into account
+    LayoutPoint absoluteToContents(const LayoutPoint&) const;
+
 protected:
     void destroy();
 
@@ -1171,9 +1174,6 @@ private:
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
 
     RenderLayer* enclosingTransformedAncestor() const;
-
-    // Convert a point in absolute coords into layer coords, taking transforms into account
-    LayoutPoint absoluteToContents(const LayoutPoint&) const;
 
     inline bool hasNonOpacityTransparency() const;
 

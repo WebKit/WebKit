@@ -1,0 +1,6 @@
+'target' resized as expected to (50px, 100px).
+'target' resized as expected to (55px, 150px).
+'target' resized as expected to (50px, 100px).
+'target' resized as expected to (55px, 150px).
+'target' resized as expected to (55px, 15px).
+

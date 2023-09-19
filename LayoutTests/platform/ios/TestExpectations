@@ -1140,6 +1140,7 @@ fast/css/resize-below-min-size-zoomed.html [ Skip ]
 fast/css/resize-below-min-size.html [ Skip ]
 fast/css/resize-corner-tracking.html [ Skip ]
 fast/css/resize-orthogonal-containing-block.html [ Skip ]
+fast/css/resize-rtl.html [ Skip ]
 fast/css/resize-single-axis.html [ Skip ]
 fast/events/mouse-events-on-textarea-resize.html [ Skip ]
 
