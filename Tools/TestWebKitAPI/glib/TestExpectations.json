@@ -132,15 +132,6 @@
             }
         }
     },
-    "TestWebKitUserContentManager": {
-        "subtests": {
-            "WebKit.MouseMoveAfterCrash": {
-                "expected": {
-                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/254002"}
-                }
-            }
-        }
-    },
     "TestWTF": {
         "subtests": {
             "ThreadMessage.MultipleSenders": {
