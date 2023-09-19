@@ -76,13 +76,13 @@
     description('Test that setting and getting grid-column-end and grid-row-end works as expected');
 
     debug("Test getting grid-column-end and grid-row-end set through CSS");
-    testColumnRowCSSParsing("gridElement", "auto / auto", "auto / auto");
+    testColumnCSSParsing("gridElement", "auto / auto");
     testColumnRowCSSParsing("gridItemWithPositiveInteger", "auto / 10", "auto / 15");
     testColumnRowCSSParsing("gridItemWithNegativeInteger", "auto / -10", "auto / -15");
     testColumnRowCSSParsing("gridItemWithBeforeSpan", "auto / span 2", "auto / span 9");
     testColumnRowCSSParsing("gridItemWithAfterSpan", "auto / span 2", "auto / span 9");
-    testColumnRowCSSParsing("gridItemWithOnlySpan", "auto / auto", "auto / auto");
-    testColumnRowCSSParsing("gridItemWithAutoElement", "auto / auto", "auto / auto");
+    testColumnCSSParsing("gridItemWithOnlySpan", "auto / auto");
+    testColumnCSSParsing("gridItemWithAutoElement", "auto / auto");
     testColumnRowCSSParsing("gridItemWithCustomIdent", "auto / first", "auto / last");
     testColumnRowCSSParsing("gridItemWithNumberCustomIdent", "auto / 2 first", "auto / 3 last");
     testColumnRowCSSParsing("gridItemWithSpanCustomIdentElement", "auto / span first", "auto / span last");
@@ -96,7 +96,6 @@
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column-end')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column')", "'auto / auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row-end')", "'auto'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row')", "'auto / auto'");
 
     debug("");
     debug("Test getting and setting grid-column-end and grid-row-end through JS");
@@ -105,7 +104,7 @@
     testColumnEndRowEndJSParsing("first", "last", "first", "last");
     testColumnEndRowEndJSParsing("span 7", "span 2");
     testColumnEndRowEndJSParsing("span first", "span last", "span first", "span last");
-    testColumnEndRowEndJSParsing("auto", "auto");
+    testColumnEndJSParsing("auto");
     testColumnEndRowEndJSParsing("thirdArea", "secondArea");
     testColumnEndRowEndJSParsing("nonExistentArea", "secondArea");
     testColumnEndRowEndJSParsing("secondArea", "nonExistentArea");
@@ -133,7 +132,7 @@
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column-end')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column')", "'auto / auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row-end')", "'auto'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row')", "'auto / auto'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row')", "'auto'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
