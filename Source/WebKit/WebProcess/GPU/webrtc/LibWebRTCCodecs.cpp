@@ -228,10 +228,10 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
     if (m_connection)
         return;
 
-    auto& gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
-    gpuConnection.addClient(*this);
-    m_connection = &gpuConnection.connection();
-    m_videoFrameObjectHeapProxy = &gpuConnection.videoFrameObjectHeapProxy();
+    Ref gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
+    gpuConnection->addClient(*this);
+    m_connection = &gpuConnection->connection();
+    m_videoFrameObjectHeapProxy = &gpuConnection->videoFrameObjectHeapProxy();
     m_connection->addWorkQueueMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), m_queue, *this);
 
     if (m_loggingLevel)
@@ -330,7 +330,7 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(VideoCodecType 
 
         {
             Locker locker { m_connectionLock };
-            createRemoteDecoder(*decoder, *m_connection, m_useRemoteFrames, m_enableAdditionalLogging, [identifier = decoder->identifier, callback = WTFMove(callback)](bool result) mutable {
+            createRemoteDecoder(*decoder, *protectedConnection(), m_useRemoteFrames, m_enableAdditionalLogging, [identifier = decoder->identifier, callback = WTFMove(callback)](bool result) mutable {
                 WebProcess::singleton().libWebRTCCodecs().m_queue->dispatch([identifier, result, callback = WTFMove(callback)]() mutable {
                     if (!result) {
                         callback(nullptr);
@@ -466,7 +466,7 @@ void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier
     // needs to be implemented.
     Ref<RemoteVideoFrameProxy> remoteVideoFrame = [&] {
         Locker locker { m_connectionLock };
-        return RemoteVideoFrameProxy::create(*m_connection, *m_videoFrameObjectHeapProxy, WTFMove(properties));
+        return RemoteVideoFrameProxy::create(*protectedConnection(), *protectedVideoFrameObjectHeapProxy(), WTFMove(properties));
     }();
     // FIXME: Do error logging.
     auto* decoder = m_decoders.get(decoderIdentifier);
@@ -872,6 +872,11 @@ IPC::Connection* LibWebRTCCodecs::decoderConnection(Decoder& decoder)
 void LibWebRTCCodecs::setDecoderConnection(Decoder& decoder, RefPtr<IPC::Connection>&& connection)
 {
     decoder.connection = WTFMove(connection);
+}
+
+inline RefPtr<RemoteVideoFrameObjectHeapProxy> LibWebRTCCodecs::protectedVideoFrameObjectHeapProxy() const
+{
+    return m_videoFrameObjectHeapProxy;
 }
 
 }

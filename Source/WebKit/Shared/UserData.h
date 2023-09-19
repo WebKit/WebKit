@@ -50,6 +50,7 @@ public:
     static RefPtr<API::Object> transform(API::Object*, const Transformer&);
 
     API::Object* object() const { return m_object.get(); }
+    RefPtr<API::Object> protectedObject() const { return m_object; }
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, UserData&) WARN_UNUSED_RETURN;

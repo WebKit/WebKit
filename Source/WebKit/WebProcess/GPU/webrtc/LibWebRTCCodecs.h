@@ -196,8 +196,10 @@ private:
     void initializeEncoderInternal(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
 
 private:
-    HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
+    RefPtr<IPC::Connection> protectedConnection() const WTF_REQUIRES_LOCK(m_connectionLock) { return m_connection; }
+    RefPtr<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy() const WTF_REQUIRES_LOCK(m_connectionLock);
 
+    HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     Lock m_encodersConnectionLock;
     HashMap<VideoEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
 

@@ -993,7 +993,7 @@ void WebPageProxy::handleMessage(IPC::Connection& connection, const String& mess
     if (!m_injectedBundleClient)
         return;
 
-    m_injectedBundleClient->didReceiveMessageFromInjectedBundle(this, messageName, m_process->transformHandlesToObjects(messageBody.object()).get());
+    m_injectedBundleClient->didReceiveMessageFromInjectedBundle(this, messageName, m_process->transformHandlesToObjects(messageBody.protectedObject().get()).get());
 }
 
 void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&& completionHandler)
@@ -1004,7 +1004,7 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
         return completionHandler({ });
 
     RefPtr<API::Object> returnData;
-    m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(this, messageName, m_process->transformHandlesToObjects(messageBody.object()).get(), [completionHandler = WTFMove(completionHandler), process = m_process] (RefPtr<API::Object>&& returnData) mutable {
+    m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(this, messageName, m_process->transformHandlesToObjects(messageBody.protectedObject().get()).get(), [completionHandler = WTFMove(completionHandler), process = m_process] (RefPtr<API::Object>&& returnData) mutable {
         completionHandler(UserData(process->transformObjectsToHandles(returnData.get())));
     });
 }
@@ -2703,7 +2703,7 @@ void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityS
 
     m_waitingForDidUpdateActivityState = true;
 
-    m_drawingArea->waitForDidUpdateActivityState(activityStateChangeID, process());
+    m_drawingArea->waitForDidUpdateActivityState(activityStateChangeID, protectedProcess());
 }
 
 IntSize WebPageProxy::viewSize() const
@@ -5535,10 +5535,10 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 
     internals().pageLoadState.commitChanges();
     if (m_loaderClient)
-        m_loaderClient->didStartProvisionalLoadForFrame(*this, *frame, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
+        m_loaderClient->didStartProvisionalLoadForFrame(*this, *frame, navigation.get(), process->transformHandlesToObjects(userData.protectedObject().get()).get());
     else {
         if (frameInfo.isMainFrame)
-            m_navigationClient->didStartProvisionalNavigation(*this, request, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
+            m_navigationClient->didStartProvisionalNavigation(*this, request, navigation.get(), process->transformHandlesToObjects(userData.protectedObject().get()).get());
         m_navigationClient->didStartProvisionalLoadForFrame(*this, WTFMove(request), WTFMove(frameInfo));
     }
 
@@ -5603,9 +5603,9 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrameShared(Ref<
 
     internals().pageLoadState.commitChanges();
     if (m_loaderClient)
-        m_loaderClient->didReceiveServerRedirectForProvisionalLoadForFrame(*this, *frame, frame->isMainFrame() ? navigation.get() : nullptr, process->transformHandlesToObjects(userData.object()).get());
+        m_loaderClient->didReceiveServerRedirectForProvisionalLoadForFrame(*this, *frame, frame->isMainFrame() ? navigation.get() : nullptr, process->transformHandlesToObjects(userData.protectedObject().get()).get());
     else if (frame->isMainFrame())
-        m_navigationClient->didReceiveServerRedirectForProvisionalNavigation(*this, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didReceiveServerRedirectForProvisionalNavigation(*this, navigation.get(), process->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 
 void WebPageProxy::willPerformClientRedirectForFrame(FrameIdentifier frameID, const String& url, double delay, WebCore::LockBackForwardList)
@@ -5712,9 +5712,9 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 
     if (willInternallyHandleFailure == WillInternallyHandleFailure::No) {
         if (m_loaderClient)
-            m_loaderClient->didFailProvisionalLoadWithErrorForFrame(*this, frame, navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
+            m_loaderClient->didFailProvisionalLoadWithErrorForFrame(*this, frame, navigation.get(), error, process->transformHandlesToObjects(userData.protectedObject().get()).get());
         else {
-            m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
+            m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), error, process->transformHandlesToObjects(userData.protectedObject().get()).get());
             m_navigationClient->didFailProvisionalLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
         }
     }
@@ -5889,10 +5889,10 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     internals().pageLoadState.commitChanges();
     if (m_loaderClient)
-        m_loaderClient->didCommitLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+        m_loaderClient->didCommitLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
     else {
         if (frameInfo.isMainFrame)
-            m_navigationClient->didCommitNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+            m_navigationClient->didCommitNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
         m_navigationClient->didCommitLoadForFrame(*this, WTFMove(request), WTFMove(frameInfo));
     }
     if (frame->isMainFrame()) {
@@ -5943,7 +5943,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64
         navigation = navigationState().navigation(navigationID);
 
     if (frame->isMainFrame()) {
-        m_navigationClient->didFinishDocumentLoad(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didFinishDocumentLoad(*this, navigation.get(), m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 #if ENABLE(TRACKING_PREVENTION)
         internals().didFinishDocumentLoadForMainFrameTimestamp = MonotonicTime::now();
 #endif
@@ -6029,10 +6029,10 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     }
 
     if (m_loaderClient)
-        m_loaderClient->didFinishLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+        m_loaderClient->didFinishLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
     else {
         if (frameInfo.isMainFrame)
-            m_navigationClient->didFinishNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+            m_navigationClient->didFinishNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
         m_navigationClient->didFinishLoadForFrame(*this, WTFMove(request), WTFMove(frameInfo));
     }
 
@@ -6086,10 +6086,10 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
 
     internals().pageLoadState.commitChanges();
     if (m_loaderClient)
-        m_loaderClient->didFailLoadWithErrorForFrame(*this, *frame, navigation.get(), error, m_process->transformHandlesToObjects(userData.object()).get());
+        m_loaderClient->didFailLoadWithErrorForFrame(*this, *frame, navigation.get(), error, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
     else {
         if (frameInfo.isMainFrame)
-            m_navigationClient->didFailNavigationWithError(*this, frameInfo, navigation.get(), error, m_process->transformHandlesToObjects(userData.object()).get());
+            m_navigationClient->didFailNavigationWithError(*this, frameInfo, navigation.get(), error, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
         m_navigationClient->didFailLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
     }
 
@@ -6135,7 +6135,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(FrameIdentifier frameID, ui
     internals().pageLoadState.commitChanges();
 
     if (isMainFrame)
-        m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, m_process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 
     if (isMainFrame)
         pageClient().didSameDocumentNavigationForMainFrame(navigationType);
@@ -6175,7 +6175,7 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJSHistoryAPI(WebCore::Fra
     internals().pageLoadState.commitChanges();
 
     if (isMainFrame)
-        m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, m_process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 
     if (isMainFrame)
         pageClient().didSameDocumentNavigationForMainFrame(navigationType);
@@ -6264,7 +6264,7 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(FrameIdentifier frameI
     MESSAGE_CHECK(m_process, frame);
 
     if (m_loaderClient)
-        m_loaderClient->didFirstVisuallyNonEmptyLayoutForFrame(*this, *frame, m_process->transformHandlesToObjects(userData.object()).get());
+        m_loaderClient->didFirstVisuallyNonEmptyLayoutForFrame(*this, *frame, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 
     if (frame->isMainFrame())
         pageClient().didFirstVisuallyNonEmptyLayoutForMainFrame();
@@ -6298,7 +6298,7 @@ void WebPageProxy::didDisplayInsecureContentForFrame(FrameIdentifier frameID, co
     internals().pageLoadState.didDisplayOrRunInsecureContent(transaction);
     internals().pageLoadState.commitChanges();
 
-    m_navigationClient->didDisplayInsecureContent(*this, m_process->transformHandlesToObjects(userData.object()).get());
+    m_navigationClient->didDisplayInsecureContent(*this, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 
 void WebPageProxy::didRunInsecureContentForFrame(FrameIdentifier frameID, const UserData& userData)
@@ -6312,7 +6312,7 @@ void WebPageProxy::didRunInsecureContentForFrame(FrameIdentifier frameID, const 
     internals().pageLoadState.didDisplayOrRunInsecureContent(transaction);
     internals().pageLoadState.commitChanges();
 
-    m_navigationClient->didRunInsecureContent(*this, m_process->transformHandlesToObjects(userData.object()).get());
+    m_navigationClient->didRunInsecureContent(*this, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 
 void WebPageProxy::mainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
@@ -6785,7 +6785,7 @@ void WebPageProxy::willSubmitForm(FrameIdentifier frameID, FrameIdentifier sourc
     for (auto& pair : textFieldValues)
         MESSAGE_CHECK(m_process, API::Dictionary::MapType::isValidKey(pair.first));
 
-    m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), WTFMove(completionHandler));
+    m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.protectedObject().get()).get(), WTFMove(completionHandler));
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -7134,7 +7134,7 @@ void WebPageProxy::setStatusText(const String& text)
 void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultData, OptionSet<WebEventModifier> modifiers, UserData&& userData)
 {
     m_lastMouseMoveHitTestResult = API::HitTestResult::create(hitTestResultData);
-    m_uiClient->mouseDidMoveOverElement(*this, hitTestResultData, modifiers, m_process->transformHandlesToObjects(userData.object()).get());
+    m_uiClient->mouseDidMoveOverElement(*this, hitTestResultData, modifiers, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
     setToolTip(hitTestResultData.toolTipText);
 }
 
@@ -11101,7 +11101,7 @@ void WebPageProxy::immediateActionDidComplete()
 
 void WebPageProxy::didPerformImmediateActionHitTest(const WebHitTestResultData& result, bool contentPreventsDefault, const UserData& userData)
 {
-    pageClient().didPerformImmediateActionHitTest(result, contentPreventsDefault, m_process->transformHandlesToObjects(userData.object()).get());
+    pageClient().didPerformImmediateActionHitTest(result, contentPreventsDefault, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 
 NSObject *WebPageProxy::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)
@@ -11171,12 +11171,12 @@ void WebPageProxy::setShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeM
 
 void WebPageProxy::handleAutoFillButtonClick(const UserData& userData)
 {
-    m_uiClient->didClickAutoFillButton(*this, m_process->transformHandlesToObjects(userData.object()).get());
+    m_uiClient->didClickAutoFillButton(*this, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 
 void WebPageProxy::didResignInputElementStrongPasswordAppearance(const UserData& userData)
 {
-    m_uiClient->didResignInputElementStrongPasswordAppearance(*this, m_process->transformHandlesToObjects(userData.object()).get());
+    m_uiClient->didResignInputElementStrongPasswordAppearance(*this, m_process->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

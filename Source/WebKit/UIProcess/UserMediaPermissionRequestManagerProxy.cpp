@@ -109,7 +109,7 @@ UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy(
 {
     m_page.sendWithAsyncReply(Messages::WebPage::StopMediaCapture { MediaProducerMediaCaptureKind::EveryKind }, [] { });
 #if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
+    UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().protectedProcess());
     proxies().remove(this);
 #endif
     invalidatePendingRequests();
