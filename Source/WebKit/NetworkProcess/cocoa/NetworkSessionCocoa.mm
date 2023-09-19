@@ -1375,10 +1375,9 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
 }
 
-#if HAVE(SESSION_CLEANUP)
 static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSessionCreationParameters& parameters)
 {
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(VISION)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
     // Don't override an explicitly set value.
     if (parameters.resourceLoadStatisticsParameters.isTrackingPreventionStateExplicitlySet)
         return;
@@ -1394,7 +1393,6 @@ static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSe
 #endif
 #endif
 }
-#endif
 
 NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : NetworkSession(networkProcess, parameters)
@@ -1523,9 +1521,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
         m_resourceLoadStatistics->setManagedDomains(HashSet<WebCore::RegistrableDomain> { parameters.resourceLoadStatisticsParameters.managedDomains }, [] { });
 #endif
 
-#if HAVE(SESSION_CLEANUP)
     activateSessionCleanup(*this, parameters);
-#endif
 }
 
 NetworkSessionCocoa::~NetworkSessionCocoa() = default;
