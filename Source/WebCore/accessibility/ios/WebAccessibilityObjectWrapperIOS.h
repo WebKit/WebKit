@@ -46,6 +46,9 @@ static NSString * const UIAccessibilityTokenAttachment = @"UIAccessibilityTokenA
 static NSString * const UIAccessibilityTextAttributeContext = @"UIAccessibilityTextAttributeContext";
 static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibilityTextualContextSourceCode";
 
+static NSString * const UIAccessibilityInlineTextCompletion = @"UIAccessibilityInlineTextCompletion";
+static NSString * const UIAccessibilityAcceptedInlineTextCompletion = @"UIAccessibilityAcceptedInlineTextCompletion";
+
 @interface WAKView (iOSAccessibility)
 - (BOOL)accessibilityIsIgnored;
 @end
