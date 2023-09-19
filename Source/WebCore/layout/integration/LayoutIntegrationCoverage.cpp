@@ -107,8 +107,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::MultiColumnFlowHasUnsupportedWritingMode:
         stream << "column has unsupported writing mode";
         break;
-    case AvoidanceReason::MultiColumnFlowHasFloatingOrOutOfFlowChild:
-        stream << "column with floating/out-of-flow boxes";
+    case AvoidanceReason::MultiColumnFlowHasOutOfFlowChild:
+        stream << "column with out-of-flow boxes";
         break;
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
@@ -285,8 +285,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     }
 
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
-        if (child.isFloating() || child.isOutOfFlowPositioned())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasFloatingOrOutOfFlowChild, reasons, includeReasons);
+        if (child.isOutOfFlowPositioned())
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasOutOfFlowChild, reasons, includeReasons);
     }
 
     if (is<RenderLineBreak>(child))

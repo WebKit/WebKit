@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationPagination.h"
 
+#include "FloatingState.h"
 #include "FontCascade.h"
 #include "InlineIteratorLineBox.h"
 #include "RenderBlockFlow.h"
@@ -35,10 +36,41 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, RenderBlockFlow& flow)
+Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::FloatingState& floatingState, RenderBlockFlow& flow)
 {
     auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
+
+    HashMap<size_t, LayoutUnit, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>  lineFloatBottomMap;
+    for (auto& item : floatingState.floats()) {
+        if (!item.layoutBox())
+            continue;
+
+        auto& renderer = downcast<RenderBox>(inlineContent.rendererForLayoutBox(*item.layoutBox()));
+        bool isUsplittable = renderer.isUnsplittableForPagination();
+
+        auto placedByLine = item.placedByLine();
+        if (!placedByLine) {
+            if (isUsplittable) {
+                auto rect = item.absoluteRectWithMargin();
+                flow.updateMinimumPageHeight(rect.top(), rect.height());
+            }
+            continue;
+        }
+
+        auto floatMinimumBottom = [&] {
+            auto* block = dynamicDowncast<RenderBlockFlow>(renderer);
+            if (block && !isUsplittable) {
+                if (auto firstLine = InlineIterator::firstLineBoxFor(*block))
+                    return LayoutUnit { firstLine->logicalBottom() };
+            }
+            return item.absoluteRectWithMargin().bottom();
+        }();
+
+        auto result = lineFloatBottomMap.add(*placedByLine, floatMinimumBottom);
+        if (!result.isNewEntry)
+            result.iterator->value = std::max(floatMinimumBottom, result.iterator->value);
+    }
 
     std::optional<size_t> previousPageBreakIndex;
 
@@ -49,7 +81,10 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
     for (size_t lineIndex = 0; lineIndex < lineCount;) {
         auto line = InlineIterator::lineBoxFor(inlineContent, lineIndex);
 
-        auto adjustment = flow.computeLineAdjustmentForPagination(line, accumulatedOffset);
+        auto it = lineFloatBottomMap.find(lineIndex);
+        auto floatMinimumBottom = it != lineFloatBottomMap.end() ? it->value : 0_lu;
+
+        auto adjustment = flow.computeLineAdjustmentForPagination(line, accumulatedOffset, floatMinimumBottom);
 
         if (adjustment.isFirstAfterPageBreak) {
             auto remainingLines = lineCount - lineIndex;
@@ -73,6 +108,10 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
         }
 
         accumulatedOffset += adjustment.strut;
+
+        if (adjustment.isFirstAfterPageBreak && !lineIndex)
+            accumulatedOffset += inlineContent.clearGapBeforeFirstLine;
+
         adjustments[lineIndex] = LineAdjustment { accumulatedOffset, adjustment.isFirstAfterPageBreak };
 
         ++lineIndex;

@@ -140,7 +140,7 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
             // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height and vertical margin.
             computeHeightAndMargin(layoutBox, containingBlockConstraints);
             if (layoutBox.isFloatingPositioned())
-                floatingState.append(floatingContext.toFloatItem(layoutBox, geometryForBox(layoutBox)));
+                floatingState.append(floatingContext.makeFloatItem(layoutBox, geometryForBox(layoutBox)));
             else {
                 // Adjust the vertical position now that we've got final margin values for non-float avoider boxes.
                 // Float avoiders have pre-computed vertical positions when floats are present.

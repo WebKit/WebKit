@@ -53,7 +53,7 @@ public:
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
         FloatItem(Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const Shape*);
-        FloatItem(const Box&, Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft);
+        FloatItem(const Box&, Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line);
 
         ~FloatItem();
 
@@ -69,6 +69,7 @@ public:
         PositionInContextRoot absoluteBottom() const { return { absoluteRectWithMargin().bottom() }; }
 
         const Shape* shape() const { return m_shape.get(); }
+        std::optional<size_t> placedByLine() const { return m_placedByLine; }
 
         const Box* layoutBox() const { return m_layoutBox.get(); }
 
@@ -78,6 +79,7 @@ public:
         BoxGeometry m_absoluteBoxGeometry;
         LayoutPoint m_localTopLeft;
         RefPtr<const Shape> m_shape;
+        std::optional<size_t> m_placedByLine;
     };
     using FloatList = Vector<FloatItem>;
     const FloatList& floats() const { return m_floats; }

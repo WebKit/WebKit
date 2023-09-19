@@ -497,12 +497,13 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     return constraints;
 }
 
-FloatingState::FloatItem FloatingContext::toFloatItem(const Box& floatBox, const BoxGeometry& boxGeometry) const
+FloatingState::FloatItem FloatingContext::makeFloatItem(const Box& floatBox, const BoxGeometry& boxGeometry, std::optional<size_t> line) const
 {
     auto borderBoxTopLeft = BoxGeometry::borderBoxTopLeft(boxGeometry);
     auto absoluteBoxGeometry = BoxGeometry { boxGeometry };
     absoluteBoxGeometry.setLogicalTopLeft(mapTopLeftToFloatingStateRoot(floatBox, borderBoxTopLeft));
-    return { floatBox, isFloatingCandidateLeftPositionedInFloatingState(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right, absoluteBoxGeometry, borderBoxTopLeft };
+    auto position = isFloatingCandidateLeftPositionedInFloatingState(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right;
+    return { floatBox, position, absoluteBoxGeometry, borderBoxTopLeft, line };
 }
 
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const

@@ -953,7 +953,8 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
         return false;
 
     auto placeFloatBox = [&] {
-        auto floatItem = floatingContext.toFloatItem(floatBox, boxGeometry);
+        auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
+        auto floatItem = floatingContext.makeFloatItem(floatBox, boxGeometry, lineIndex);
         // FIXME: Maybe FloatingContext should be able to preserve FloatItems and the caller should mutate the FloatingState instead.
         floatingState().append(floatItem);
         m_placedFloats.append(floatItem);

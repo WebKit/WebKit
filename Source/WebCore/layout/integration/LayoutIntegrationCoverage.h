@@ -89,7 +89,7 @@ enum class AvoidanceReason : uint64_t {
     MultiColumnFlowHasUnsupportedWritingMode     = 1LLU  << 47,
     // Unused                                    = 1LLU  << 48,
     // Unused                                    = 1LLU  << 49,
-    MultiColumnFlowHasFloatingOrOutOfFlowChild   = 1LLU  << 50,
+    MultiColumnFlowHasOutOfFlowChild             = 1LLU  << 50,
     // Unused                                    = 1LLU  << 51,
     // Unused                                    = 1LLU  << 52,
     // Unused                                    = 1LLU  << 53,
