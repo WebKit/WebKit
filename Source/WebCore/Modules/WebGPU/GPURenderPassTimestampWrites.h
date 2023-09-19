@@ -25,25 +25,28 @@
 
 #pragma once
 
-#include "WebGPUCanvasCompositingAlphaMode.h"
-#include <cstdint>
+#include "GPUIntegralTypes.h"
+#include "GPUQuerySet.h"
+#include "GPURenderPassTimestampLocation.h"
+#include "WebGPURenderPassTimestampWrites.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-enum class GPUCanvasCompositingAlphaMode : uint8_t {
-    Opaque,
-    Premultiplied,
-};
-
-inline WebGPU::CanvasCompositingAlphaMode convertToBacking(GPUCanvasCompositingAlphaMode canvasCompositingAlphaMode)
-{
-    switch (canvasCompositingAlphaMode) {
-    case GPUCanvasCompositingAlphaMode::Opaque:
-        return WebGPU::CanvasCompositingAlphaMode::Opaque;
-    case GPUCanvasCompositingAlphaMode::Premultiplied:
-        return WebGPU::CanvasCompositingAlphaMode::Premultiplied;
+struct GPURenderPassTimestampWrites {
+    WebGPU::RenderPassTimestampWrites convertToBacking() const
+    {
+        return {
+            querySet ? &querySet->backing() : nullptr,
+            beginningOfPassWriteIndex,
+            endOfPassWriteIndex,
+        };
     }
-    RELEASE_ASSERT_NOT_REACHED();
-}
+
+    GPUQuerySet* querySet { nullptr };
+    GPUSize32 beginningOfPassWriteIndex { 0 };
+    GPUSize32 endOfPassWriteIndex { 0 };
+};
 
 }

@@ -23,40 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// https://gpuweb.github.io/gpuweb/#typedefdef-gpurenderpasstimestampwrites
 
-#include "GPUComputePassTimestampLocation.h"
-#include "GPUIntegralTypes.h"
-#include "GPUQuerySet.h"
-#include "WebGPUComputePassTimestampWrites.h"
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
+// https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be here.
+typedef [EnforceRange] unsigned long GPUSize32;
 
-namespace WebCore {
-
-struct GPUComputePassTimestampWrite {
-    WebGPU::ComputePassTimestampWrite convertToBacking() const
-    {
-        ASSERT(querySet);
-        return {
-            querySet->backing(),
-            queryIndex,
-            WebCore::convertToBacking(location),
-        };
-    }
-
-    GPUQuerySet* querySet { nullptr };
-    GPUSize32 queryIndex { 0 };
-    GPUComputePassTimestampLocation location { GPUComputePassTimestampLocation::Beginning };
+[
+    EnabledBySetting=WebGPUEnabled
+]
+dictionary GPURenderPassTimestampWrites {
+    required GPUQuerySet querySet;
+    GPUSize32 beginningOfPassWriteIndex;
+    GPUSize32 endOfPassWriteIndex;
 };
 
-using GPUComputePassTimestampWrites = Vector<GPUComputePassTimestampWrite>;
-
-inline WebGPU::ComputePassTimestampWrites convertToBacking(const GPUComputePassTimestampWrites& computePassTimestampWrites)
-{
-    return computePassTimestampWrites.map([](auto& computePassTimestampWrite) {
-        return computePassTimestampWrite.convertToBacking();
-    });
-}
-
-}

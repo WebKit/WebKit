@@ -452,6 +452,8 @@ WGPUTextureFormat ConvertToBackingContext::convertToBacking(TextureFormat textur
         return WGPUTextureFormat_BGRA8UnormSrgb;
     case TextureFormat::Rgb9e5ufloat:
         return WGPUTextureFormat_RGB9E5Ufloat;
+    case TextureFormat::Rgb10a2uint:
+        return WGPUTextureFormat_RGB10A2Uint;
     case TextureFormat::Rgb10a2unorm:
         return WGPUTextureFormat_RGB10A2Unorm;
     case TextureFormat::Rg11b10ufloat:

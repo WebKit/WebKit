@@ -846,7 +846,7 @@ def headers_for_type(type):
         'WebCore::WebGPU::BufferBindingType': ['<WebCore/WebGPUBufferBindingType.h>'],
         'WebCore::WebGPU::BufferDynamicOffset': ['<WebCore/WebGPUIntegralTypes.h>'],
         'WebCore::WebGPU::BufferUsageFlags': ['<WebCore/WebGPUBufferUsage.h>'],
-        'WebCore::WebGPU::CanvasCompositingAlphaMode': ['<WebCore/WebGPUCanvasCompositingAlphaMode.h>'],
+        'WebCore::WebGPU::CanvasAlphaMode': ['<WebCore/WebGPUCanvasAlphaMode.h>'],
         'WebCore::WebGPU::ColorWriteFlags': ['<WebCore/WebGPUColorWrite.h>'],
         'WebCore::WebGPU::CompareFunction': ['<WebCore/WebGPUCompareFunction.h>'],
         'WebCore::WebGPU::CompilationMessageType': ['<WebCore/WebGPUCompilationMessageType.h>'],

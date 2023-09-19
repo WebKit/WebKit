@@ -498,7 +498,7 @@ size_t wgpuDeviceEnumerateFeatures(WGPUDevice device, WGPUFeatureName* features)
     return WebGPU::fromAPI(device).enumerateFeatures(features);
 }
 
-bool wgpuDeviceGetLimits(WGPUDevice device, WGPUSupportedLimits* limits)
+WGPUBool wgpuDeviceGetLimits(WGPUDevice device, WGPUSupportedLimits* limits)
 {
     return WebGPU::fromAPI(device).getLimits(*limits);
 }
@@ -508,7 +508,7 @@ WGPUQueue wgpuDeviceGetQueue(WGPUDevice device)
     return &WebGPU::fromAPI(device).getQueue();
 }
 
-bool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature)
+WGPUBool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature)
 {
     return WebGPU::fromAPI(device).hasFeature(feature);
 }

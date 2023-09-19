@@ -194,7 +194,7 @@ void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
         configuration.usage,
         configuration.viewFormats,
         configuration.colorSpace,
-        configuration.compositingAlphaMode,
+        configuration.alphaMode,
         WTFMove(renderBuffers),
         0,
     };

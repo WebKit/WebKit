@@ -90,6 +90,7 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
             limits.maxTextureDimension3D(),
             limits.maxTextureArrayLayers(),
             limits.maxBindGroups(),
+            limits.maxBindGroupsPlusVertexBuffers(),
             limits.maxBindingsPerBindGroup(),
             limits.maxDynamicUniformBuffersPerPipelineLayout(),
             limits.maxDynamicStorageBuffersPerPipelineLayout(),

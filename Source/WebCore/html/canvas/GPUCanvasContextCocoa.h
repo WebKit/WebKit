@@ -96,7 +96,7 @@ private:
         GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
         Vector<GPUTextureFormat> viewFormats;
         GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
-        GPUCanvasCompositingAlphaMode compositingAlphaMode { GPUCanvasCompositingAlphaMode::Opaque };
+        GPUCanvasAlphaMode compositingAlphaMode { GPUCanvasAlphaMode::Opaque };
         Vector<MachSendRight> renderBuffers;
         unsigned frameCount { 0 };
     };

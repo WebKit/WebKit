@@ -34,12 +34,10 @@ namespace WebCore::WebGPU {
 
 class QuerySet;
 
-struct RenderPassTimestampWrite {
-    QuerySet& querySet;
-    Size32 queryIndex { 0 };
-    RenderPassTimestampLocation location { RenderPassTimestampLocation::Beginning };
+struct RenderPassTimestampWrites {
+    QuerySet* querySet { nullptr };
+    Size32 beginningOfPassWriteIndex { 0 };
+    Size32 endOfPassWriteIndex { 0 };
 };
-
-using RenderPassTimestampWrites = Vector<RenderPassTimestampWrite>;
 
 } // namespace WebCore::WebGPU

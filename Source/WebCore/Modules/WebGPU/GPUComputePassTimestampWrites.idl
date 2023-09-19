@@ -23,28 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// https://gpuweb.github.io/gpuweb/#typedefdef-gpucomputepasstimestampwrites
 
-#include <cstdint>
-#include <wtf/EnumTraits.h>
+// https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be here.
+typedef [EnforceRange] unsigned long GPUSize32;
 
-namespace WebCore::WebGPU {
-
-enum class CanvasCompositingAlphaMode : uint8_t {
-    Opaque,
-    Premultiplied,
+[
+    EnabledBySetting=WebGPUEnabled
+]
+dictionary GPUComputePassTimestampWrites {
+    required GPUQuerySet querySet;
+    GPUSize32 beginningOfPassWriteIndex;
+    GPUSize32 endOfPassWriteIndex;
 };
-
-} // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::CanvasCompositingAlphaMode> {
-    using values = EnumValues<
-        WebCore::WebGPU::CanvasCompositingAlphaMode,
-        WebCore::WebGPU::CanvasCompositingAlphaMode::Opaque,
-        WebCore::WebGPU::CanvasCompositingAlphaMode::Premultiplied
-    >;
-};
-
-} // namespace WTF

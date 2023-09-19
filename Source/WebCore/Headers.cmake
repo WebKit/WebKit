@@ -33,7 +33,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUBufferDescriptor.h
     Modules/WebGPU/GPUBufferMapState.h
     Modules/WebGPU/GPUBufferUsage.h
-    Modules/WebGPU/GPUCanvasCompositingAlphaMode.h
+    Modules/WebGPU/GPUCanvasAlphaMode.h
     Modules/WebGPU/GPUCanvasConfiguration.h
     Modules/WebGPU/GPUColorDict.h
     Modules/WebGPU/GPUColorTargetState.h
@@ -49,7 +49,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUComputePassDescriptor.h
     Modules/WebGPU/GPUComputePassEncoder.h
     Modules/WebGPU/GPUComputePassTimestampLocation.h
-    Modules/WebGPU/GPUComputePassTimestampWrite.h
+    Modules/WebGPU/GPUComputePassTimestampWrites.h
     Modules/WebGPU/GPUComputePipeline.h
     Modules/WebGPU/GPUComputePipelineDescriptor.h
     Modules/WebGPU/GPUCullMode.h
@@ -107,7 +107,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPURenderPassEncoder.h
     Modules/WebGPU/GPURenderPassLayout.h
     Modules/WebGPU/GPURenderPassTimestampLocation.h
-    Modules/WebGPU/GPURenderPassTimestampWrite.h
+    Modules/WebGPU/GPURenderPassTimestampWrites.h
     Modules/WebGPU/GPURenderPipeline.h
     Modules/WebGPU/GPURenderPipelineDescriptor.h
     Modules/WebGPU/GPURequestAdapterOptions.h
@@ -193,7 +193,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPUBufferBindingType.h
     Modules/WebGPU/InternalAPI/WebGPUBufferDescriptor.h
     Modules/WebGPU/InternalAPI/WebGPUBufferUsage.h
-    Modules/WebGPU/InternalAPI/WebGPUCanvasCompositingAlphaMode.h
+    Modules/WebGPU/InternalAPI/WebGPUCanvasAlphaMode.h
     Modules/WebGPU/InternalAPI/WebGPUCanvasConfiguration.h
     Modules/WebGPU/InternalAPI/WebGPUColor.h
     Modules/WebGPU/InternalAPI/WebGPUColorTargetState.h

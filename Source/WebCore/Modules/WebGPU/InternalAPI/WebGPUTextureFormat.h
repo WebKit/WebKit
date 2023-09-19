@@ -62,6 +62,7 @@ enum class TextureFormat : uint8_t {
     Bgra8unormSRGB,
     // Packed 32-bit formats
     Rgb9e5ufloat,
+    Rgb10a2uint,
     Rgb10a2unorm,
     Rg11b10ufloat,
 

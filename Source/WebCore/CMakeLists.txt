@@ -1701,7 +1701,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferDescriptor.idl
     Modules/WebGPU/GPUBufferMapState.idl
     Modules/WebGPU/GPUBufferUsage.idl
-    Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
+    Modules/WebGPU/GPUCanvasAlphaMode.idl
     Modules/WebGPU/GPUCanvasConfiguration.idl
     Modules/WebGPU/GPUColorDict.idl
     Modules/WebGPU/GPUColorTargetState.idl
@@ -1718,7 +1718,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUComputePassDescriptor.idl
     Modules/WebGPU/GPUComputePassEncoder.idl
     Modules/WebGPU/GPUComputePassTimestampLocation.idl
-    Modules/WebGPU/GPUComputePassTimestampWrite.idl
+    Modules/WebGPU/GPUComputePassTimestampWrites.idl
     Modules/WebGPU/GPUComputePipeline.idl
     Modules/WebGPU/GPUComputePipelineDescriptor.idl
     Modules/WebGPU/GPUCullMode.idl
@@ -1784,7 +1784,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPURenderPassEncoder.idl
     Modules/WebGPU/GPURenderPassLayout.idl
     Modules/WebGPU/GPURenderPassTimestampLocation.idl
-    Modules/WebGPU/GPURenderPassTimestampWrite.idl
+    Modules/WebGPU/GPURenderPassTimestampWrites.idl
     Modules/WebGPU/GPURenderPipeline.idl
     Modules/WebGPU/GPURenderPipelineDescriptor.idl
     Modules/WebGPU/GPURequestAdapterOptions.idl

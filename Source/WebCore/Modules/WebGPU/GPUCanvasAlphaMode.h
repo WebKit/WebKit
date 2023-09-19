@@ -23,18 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#typedefdef-gpucomputepasstimestampwrites
+#pragma once
 
-// https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be here.
-typedef [EnforceRange] unsigned long GPUSize32;
+#include "WebGPUCanvasAlphaMode.h"
+#include <cstdint>
 
-[
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUComputePassTimestampWrite {
-    required GPUQuerySet querySet;
-    required GPUSize32 queryIndex;
-    required GPUComputePassTimestampLocation location;
+namespace WebCore {
+
+enum class GPUCanvasAlphaMode : uint8_t {
+    Opaque,
+    Premultiplied,
 };
 
-typedef sequence<GPUComputePassTimestampWrite> GPUComputePassTimestampWrites;
+inline WebGPU::CanvasAlphaMode convertToBacking(GPUCanvasAlphaMode canvasCompositingAlphaMode)
+{
+    switch (canvasCompositingAlphaMode) {
+    case GPUCanvasAlphaMode::Opaque:
+        return WebGPU::CanvasAlphaMode::Opaque;
+    case GPUCanvasAlphaMode::Premultiplied:
+        return WebGPU::CanvasAlphaMode::Premultiplied;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+}

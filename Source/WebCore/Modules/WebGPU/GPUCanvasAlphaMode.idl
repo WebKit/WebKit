@@ -23,18 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#typedefdef-gpurenderpasstimestampwrites
-
-// https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be here.
-typedef [EnforceRange] unsigned long GPUSize32;
+// https://gpuweb.github.io/gpuweb/#enumdef-gpucanvascompositingalphamode
 
 [
     EnabledBySetting=WebGPUEnabled
 ]
-dictionary GPURenderPassTimestampWrite {
-    required GPUQuerySet querySet;
-    required GPUSize32 queryIndex;
-    required GPURenderPassTimestampLocation location;
+enum GPUCanvasAlphaMode {
+    "opaque",
+    "premultiplied"
 };
-
-typedef sequence<GPURenderPassTimestampWrite> GPURenderPassTimestampWrites;

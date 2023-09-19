@@ -25,38 +25,28 @@
 
 #pragma once
 
+#include "GPUComputePassTimestampLocation.h"
 #include "GPUIntegralTypes.h"
 #include "GPUQuerySet.h"
-#include "GPURenderPassTimestampLocation.h"
-#include "WebGPURenderPassTimestampWrites.h"
+#include "WebGPUComputePassTimestampWrites.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct GPURenderPassTimestampWrite {
-    WebGPU::RenderPassTimestampWrite convertToBacking() const
+struct GPUComputePassTimestampWrites {
+    WebGPU::ComputePassTimestampWrites convertToBacking() const
     {
-        ASSERT(querySet);
         return {
-            querySet->backing(),
-            queryIndex,
-            WebCore::convertToBacking(location),
+            querySet ? &querySet->backing() : nullptr,
+            beginningOfPassWriteIndex,
+            endOfPassWriteIndex,
         };
     }
 
     GPUQuerySet* querySet { nullptr };
-    GPUSize32 queryIndex { 0 };
-    GPURenderPassTimestampLocation location { GPURenderPassTimestampLocation::Beginning };
+    GPUSize32 beginningOfPassWriteIndex { 0 };
+    GPUSize32 endOfPassWriteIndex { 0 };
 };
-
-using GPURenderPassTimestampWrites = Vector<GPURenderPassTimestampWrite>;
-
-inline WebGPU::RenderPassTimestampWrites convertToBacking(const GPURenderPassTimestampWrites& renderPassTimestampWrites)
-{
-    return renderPassTimestampWrites.map([](auto& renderPassTimestampWrite) {
-        return renderPassTimestampWrite.convertToBacking();
-    });
-}
 
 }

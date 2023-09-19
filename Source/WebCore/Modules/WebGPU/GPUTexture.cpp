@@ -26,11 +26,46 @@
 #include "config.h"
 #include "GPUTexture.h"
 
+#include "GPUTextureDescriptor.h"
 #include "GPUTextureView.h"
 #include "GPUTextureViewDescriptor.h"
 #include "WebGPUTextureViewDescriptor.h"
 
 namespace WebCore {
+
+template<int dimension>
+static uint32_t getDimension(auto& extent3D)
+{
+    static_assert(dimension >= 0 && dimension <= 2, "dimension must be 0, 1, or 2");
+    return WTF::switchOn(extent3D, [&](const Vector<GPUIntegerCoordinate>& vector) {
+        return dimension <vector.size() ? vector[dimension] : 1;
+    }, [&](const GPUExtent3DDict& extent3DDict) {
+        switch (dimension) {
+        case 0:
+            return extent3DDict.width;
+        case 1:
+            return extent3DDict.height;
+        case 2:
+            return extent3DDict.depthOrArrayLayers;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0u;
+        }
+    });
+}
+
+GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor)
+    : m_backing(WTFMove(backing))
+    , m_format(descriptor.format)
+    , m_width(getDimension<0>(descriptor.size))
+    , m_height(getDimension<1>(descriptor.size))
+    , m_depthOrArrayLayers(getDimension<2>(descriptor.size))
+    , m_mipLevelCount(descriptor.mipLevelCount)
+    , m_sampleCount(descriptor.sampleCount)
+    , m_dimension(descriptor.dimension)
+    , m_usage(descriptor.usage)
+{
+}
 
 String GPUTexture::label() const
 {
@@ -67,6 +102,41 @@ Ref<GPUTextureView> GPUTexture::createView(const std::optional<GPUTextureViewDes
 void GPUTexture::destroy()
 {
     m_backing->destroy();
+}
+
+GPUIntegerCoordinateOut GPUTexture::width() const
+{
+    return m_width;
+}
+
+GPUIntegerCoordinateOut GPUTexture::height() const
+{
+    return m_height;
+}
+
+GPUIntegerCoordinateOut GPUTexture::depthOrArrayLayers() const
+{
+    return m_depthOrArrayLayers;
+}
+
+GPUIntegerCoordinateOut GPUTexture::mipLevelCount() const
+{
+    return m_mipLevelCount;
+}
+
+GPUSize32Out GPUTexture::sampleCount() const
+{
+    return m_sampleCount;
+}
+
+GPUTextureDimension GPUTexture::dimension() const
+{
+    return m_dimension;
+}
+
+GPUFlagsConstant GPUTexture::usage() const
+{
+    return m_usage;
 }
 
 }

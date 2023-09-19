@@ -27,5 +27,5 @@
     WebCore::WebGPU::TextureUsageFlags usage
     Vector<WebCore::WebGPU::TextureFormat> viewFormats
     WebCore::WebGPU::PredefinedColorSpace colorSpace
-    WebCore::WebGPU::CanvasCompositingAlphaMode compositingAlphaMode
+    WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode
 }

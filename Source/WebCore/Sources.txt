@@ -3513,7 +3513,7 @@ JSGPUBufferBindingType.cpp
 JSGPUBufferDescriptor.cpp
 JSGPUBufferMapState.cpp
 JSGPUBufferUsage.cpp
-JSGPUCanvasCompositingAlphaMode.cpp
+JSGPUCanvasAlphaMode.cpp
 JSGPUCanvasConfiguration.cpp
 JSGPUCanvasContext.cpp
 JSGPUColorDict.cpp
@@ -3531,7 +3531,7 @@ JSGPUCompilationMessageType.cpp
 JSGPUComputePassDescriptor.cpp
 JSGPUComputePassEncoder.cpp
 JSGPUComputePassTimestampLocation.cpp
-JSGPUComputePassTimestampWrite.cpp
+JSGPUComputePassTimestampWrites.cpp
 JSGPUComputePipeline.cpp
 JSGPUComputePipelineDescriptor.cpp
 JSGPUCullMode.cpp
@@ -3597,7 +3597,7 @@ JSGPURenderPassDescriptor.cpp
 JSGPURenderPassEncoder.cpp
 JSGPURenderPassLayout.cpp
 JSGPURenderPassTimestampLocation.cpp
-JSGPURenderPassTimestampWrite.cpp
+JSGPURenderPassTimestampWrites.cpp
 JSGPURenderPipeline.cpp
 JSGPURenderPipelineDescriptor.cpp
 JSGPURequestAdapterOptions.cpp

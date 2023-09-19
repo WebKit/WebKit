@@ -1107,8 +1107,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferMapState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferMapState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasCompositingAlphaMode.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasCompositingAlphaMode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasAlphaMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasAlphaMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasConfiguration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasConfiguration.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.cpp
@@ -1143,8 +1143,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassEncoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassEncoder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampLocation.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampWrite.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampWrite.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampWrites.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampWrites.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePipeline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePipeline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePipelineDescriptor.cpp
@@ -1275,8 +1275,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassLayout.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassLayout.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampLocation.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampWrite.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampWrite.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampWrites.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampWrites.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPipeline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPipeline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPipelineDescriptor.cpp

@@ -154,6 +154,7 @@ void RemoteGPUProxy::requestAdapter(const WebCore::WebGPU::RequestAdapterOptions
         response->limits.maxTextureDimension3D,
         response->limits.maxTextureArrayLayers,
         response->limits.maxBindGroups,
+        response->limits.maxBindGroupsPlusVertexBuffers,
         response->limits.maxBindingsPerBindGroup,
         response->limits.maxDynamicUniformBuffersPerPipelineLayout,
         response->limits.maxDynamicStorageBuffersPerPipelineLayout,

@@ -78,7 +78,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUBufferDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferMapState.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
-    $(WebCore)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUCanvasAlphaMode.idl \
     $(WebCore)/Modules/WebGPU/GPUCanvasConfiguration.idl \
     $(WebCore)/Modules/WebGPU/GPUColorDict.idl \
     $(WebCore)/Modules/WebGPU/GPUColorTargetState.idl \
@@ -95,7 +95,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUComputePassDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePassEncoder.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePassTimestampLocation.idl \
-    $(WebCore)/Modules/WebGPU/GPUComputePassTimestampWrite.idl \
+    $(WebCore)/Modules/WebGPU/GPUComputePassTimestampWrites.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipeline.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipelineDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUCullMode.idl \
@@ -161,7 +161,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPURenderPassEncoder.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPassLayout.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPassTimestampLocation.idl \
-    $(WebCore)/Modules/WebGPU/GPURenderPassTimestampWrite.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPassTimestampWrites.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPipeline.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPipelineDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPURequestAdapterOptions.idl \

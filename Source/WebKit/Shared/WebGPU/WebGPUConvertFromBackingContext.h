@@ -220,7 +220,6 @@ public:
     std::optional<WebCore::WebGPU::CommandEncoderDescriptor> convertFromBacking(const CommandEncoderDescriptor&);
     RefPtr<WebCore::WebGPU::CompilationMessage> convertFromBacking(const CompilationMessage&);
     std::optional<WebCore::WebGPU::ComputePassDescriptor> convertFromBacking(const ComputePassDescriptor&);
-    std::optional<WebCore::WebGPU::ComputePassTimestampWrite> convertFromBacking(const ComputePassTimestampWrite&);
     std::optional<WebCore::WebGPU::ComputePassTimestampWrites> convertFromBacking(const ComputePassTimestampWrites&);
     std::optional<WebCore::WebGPU::ComputePipelineDescriptor> convertFromBacking(const ComputePipelineDescriptor&);
     std::optional<WebCore::WebGPU::DepthStencilState> convertFromBacking(const DepthStencilState&);
@@ -257,7 +256,6 @@ public:
     std::optional<WebCore::WebGPU::RenderPassDepthStencilAttachment> convertFromBacking(const RenderPassDepthStencilAttachment&);
     std::optional<WebCore::WebGPU::RenderPassDescriptor> convertFromBacking(const RenderPassDescriptor&);
     std::optional<WebCore::WebGPU::RenderPassLayout> convertFromBacking(const RenderPassLayout&);
-    std::optional<WebCore::WebGPU::RenderPassTimestampWrite> convertFromBacking(const RenderPassTimestampWrite&);
     std::optional<WebCore::WebGPU::RenderPassTimestampWrites> convertFromBacking(const RenderPassTimestampWrites&);
     std::optional<WebCore::WebGPU::RenderPipelineDescriptor> convertFromBacking(const RenderPipelineDescriptor&);
     std::optional<WebCore::WebGPU::RequestAdapterOptions> convertFromBacking(const RequestAdapterOptions&);

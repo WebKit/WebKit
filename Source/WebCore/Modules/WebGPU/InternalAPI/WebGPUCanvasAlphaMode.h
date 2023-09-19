@@ -23,12 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#enumdef-gpucanvascompositingalphamode
+#pragma once
 
-[
-    EnabledBySetting=WebGPUEnabled
-]
-enum GPUCanvasCompositingAlphaMode {
-    "opaque",
-    "premultiplied"
+#include <cstdint>
+#include <wtf/EnumTraits.h>
+
+namespace WebCore::WebGPU {
+
+enum class CanvasAlphaMode : uint8_t {
+    Opaque,
+    Premultiplied,
 };
+
+} // namespace WebCore::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::WebGPU::CanvasAlphaMode> {
+    using values = EnumValues<
+        WebCore::WebGPU::CanvasAlphaMode,
+        WebCore::WebGPU::CanvasAlphaMode::Opaque,
+        WebCore::WebGPU::CanvasAlphaMode::Premultiplied
+    >;
+};
+
+} // namespace WTF

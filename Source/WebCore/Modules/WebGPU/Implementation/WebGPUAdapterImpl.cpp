@@ -114,6 +114,7 @@ static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
         limits.limits.maxTextureDimension3D,
         limits.limits.maxTextureArrayLayers,
         limits.limits.maxBindGroups,
+        limits.limits.maxBindGroupsPlusVertexBuffers,
         limits.limits.maxBindingsPerBindGroup,
         limits.limits.maxDynamicUniformBuffersPerPipelineLayout,
         limits.limits.maxDynamicStorageBuffersPerPipelineLayout,
@@ -215,7 +216,8 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         .maxTextureDimension3D =    2048,
         .maxTextureArrayLayers =    256,
         .maxBindGroups =    4,
-        .maxBindingsPerBindGroup =    640,
+        .maxBindGroupsPlusVertexBuffers = 24,
+        .maxBindingsPerBindGroup =    1000,
         .maxDynamicUniformBuffersPerPipelineLayout =    8,
         .maxDynamicStorageBuffersPerPipelineLayout =    4,
         .maxSampledTexturesPerShaderStage =    16,
@@ -268,6 +270,7 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         SET_MAX_VALUE(maxTextureDimension3D)
         SET_MAX_VALUE(maxTextureArrayLayers)
         SET_MAX_VALUE(maxBindGroups)
+        SET_MAX_VALUE(maxBindGroupsPlusVertexBuffers)
         SET_MAX_VALUE(maxBindingsPerBindGroup)
         SET_MAX_VALUE(maxDynamicUniformBuffersPerPipelineLayout)
         SET_MAX_VALUE(maxDynamicStorageBuffersPerPipelineLayout)
@@ -323,6 +326,7 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         limits.maxTextureDimension3D,
         limits.maxTextureArrayLayers,
         limits.maxBindGroups,
+        limits.maxBindGroupsPlusVertexBuffers,
         limits.maxBindingsPerBindGroup,
         limits.maxDynamicUniformBuffersPerPipelineLayout,
         limits.maxDynamicStorageBuffersPerPipelineLayout,

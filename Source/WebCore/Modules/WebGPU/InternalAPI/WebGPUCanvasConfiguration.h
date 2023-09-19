@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUCanvasCompositingAlphaMode.h"
+#include "WebGPUCanvasAlphaMode.h"
 #include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureUsage.h"
@@ -41,7 +41,7 @@ struct CanvasConfiguration {
     TextureUsageFlags usage { TextureUsage::RenderAttachment };
     Vector<TextureFormat> viewFormats;
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
-    CanvasCompositingAlphaMode compositingAlphaMode { CanvasCompositingAlphaMode::Opaque };
+    CanvasAlphaMode compositingAlphaMode { CanvasAlphaMode::Opaque };
 };
 
 } // namespace WebCore::WebGPU

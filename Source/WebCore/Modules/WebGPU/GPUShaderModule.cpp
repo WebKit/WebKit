@@ -41,7 +41,7 @@ void GPUShaderModule::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-void GPUShaderModule::compilationInfo(CompilationInfoPromise&& promise)
+void GPUShaderModule::getCompilationInfo(CompilationInfoPromise&& promise)
 {
     m_backing->compilationInfo([promise = WTFMove(promise)](Ref<WebGPU::CompilationInfo>&& compilationInfo) mutable {
         promise.resolve(GPUCompilationInfo::create(WTFMove(compilationInfo)));

@@ -65,7 +65,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUBufferBindingType.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
-$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasConfiguration.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorTargetState.idl
@@ -83,6 +83,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUComputePassDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePassEncoder.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePassTimestampLocation.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePassTimestampWrite.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUComputePassTimestampWrites.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePipeline.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePipelineDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCullMode.idl
@@ -149,6 +150,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPURenderPassEncoder.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURenderPassLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURenderPassTimestampLocation.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURenderPassTimestampWrite.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPURenderPassTimestampWrites.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURenderPipeline.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURenderPipelineDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPURequestAdapterOptions.idl
@@ -210,7 +212,7 @@ $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferBindingType.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferUsage.idl
-$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasCompositingAlphaMode.idl
+$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasConfiguration.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorTargetState.idl
