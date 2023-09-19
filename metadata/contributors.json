@@ -4265,6 +4265,16 @@
    },
    {
       "emails" : [
+         "jhoffman23@apple.com"
+      ],
+      "github" : "hoffmanjoshua",
+      "name" : "Joshua Hoffman",
+      "nicks" : [
+         "hoffmanjoshua"
+      ]
+   },
+   {
+      "emails" : [
          "jberta.u-szeged@partner.samsung.com",
          "jberta@inf.u-szeged.hu"
       ],
