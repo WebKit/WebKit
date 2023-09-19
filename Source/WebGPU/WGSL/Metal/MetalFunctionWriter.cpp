@@ -89,6 +89,7 @@ public:
 
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
+    void visit(AST::CompoundAssignmentStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::DecrementIncrementStatement&) override;
     void visit(AST::IfStatement&) override;
@@ -1155,6 +1156,13 @@ void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
     visit(assignment.lhs());
     m_stringBuilder.append(" = ");
     visit(assignment.rhs());
+}
+
+void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
+{
+    visit(statement.leftExpression());
+    m_stringBuilder.append(" ", toASCIILiteral(statement.operation()), "= ");
+    visit(statement.rightExpression());
 }
 
 void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
