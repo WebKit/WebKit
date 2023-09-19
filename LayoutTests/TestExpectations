@@ -5250,7 +5250,6 @@ imported/w3c/web-platform-tests/css/filter-effects/filter-region-calc-001.html [
 imported/w3c/web-platform-tests/css/filter-effects/filter-region-transformed-child-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-region-units-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/fixed-pos-filter-clip-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/repaint-added-backdrop-filter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-external-filter-resource.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-filter-used-by-mask.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/will-change-blur-filter-under-clip.html [ ImageOnlyFailure ]
