@@ -64,13 +64,6 @@ static bool supportedAlgorithmIdentifier(CryptoAlgorithmIdentifier keyIdentifier
     return false;
 }
 
-static Vector<uint8_t> nine {
-    0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-};
-
 }
 
 static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerateEd25519Keys()
@@ -113,7 +106,7 @@ static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerate
         return std::nullopt;
 
     // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
-    auto d = X25519(*q, WebCore::CryptoKeyOKPImpl::nine);
+    auto d = GCrypt::RFC7748::X25519(*q, GCrypt::RFC7748::c_X25519BasePointU);
     if (UNLIKELY(!d))
         return std::nullopt;
 
@@ -162,11 +155,11 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve
     switch (namedCurve) {
     case NamedCurve::X25519: {
         // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
-        auto q = X25519(privateKey, WebCore::CryptoKeyOKPImpl::nine);
+        auto q = GCrypt::RFC7748::X25519(privateKey, GCrypt::RFC7748::c_X25519BasePointU);
         return q && q->size() == 32 && *q == publicKey;
     }
     case NamedCurve::Ed25519:
-        return validateEd25519KeyPair(privateKey, publicKey);
+        return GCrypt::RFC8032::validateEd25519KeyPair(privateKey, publicKey);
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -481,7 +474,7 @@ String CryptoKeyOKP::generateJwkX() const
 
     if (m_curve == CryptoKeyOKP::NamedCurve::X25519) {
         // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
-        auto q = X25519(m_data, WebCore::CryptoKeyOKPImpl::nine);
+        auto q = GCrypt::RFC7748::X25519(m_data, GCrypt::RFC7748::c_X25519BasePointU);
         if (q && q->size() == 32)
             return base64URLEncodeToString(*q);
 
