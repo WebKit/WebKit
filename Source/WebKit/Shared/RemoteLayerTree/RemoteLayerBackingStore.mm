@@ -570,10 +570,7 @@ void RemoteLayerBackingStore::paintContents()
         auto& displayListContext = m_displayListBuffer->context();
 
         BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
-        drawInContext(context, [&] {
-            displayListContext.scale(FloatSize(1, -1));
-            displayListContext.translate(0, -m_parameters.size.height());
-        });
+        drawInContext(context);
         return;
     }
 #endif
@@ -582,15 +579,12 @@ void RemoteLayerBackingStore::paintContents()
     drawInContext(context);
 }
 
-void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Function<void()>&& additionalContextSetupCallback)
+void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
 {
     auto markFrontBufferNotCleared = makeScopeExit([&]() {
         m_frontBuffer.isCleared = false;
     });
     GraphicsContextStateSaver stateSaver(context);
-
-    if (additionalContextSetupCallback)
-        additionalContextSetupCallback();
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
@@ -770,6 +764,7 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
         if (!replayCGDisplayListsIntoBackingStore) {
             [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
             [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
+            [layer setValue:@(layer.contentsScale) forKeyPath:@"separatedOptions.bifurcationScale"];
         } else
             layer.opaque = m_isOpaque;
         [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<CGDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayCGDisplayListsIntoBackingStore];
