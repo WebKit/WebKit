@@ -118,16 +118,16 @@ PASS grid-column.span <custom-ident>
 PASS grid-column.span <integer> <custom-ident>
 FAIL grid-column.reset assert_equals: reset expected "auto" but got "auto / auto"
 PASS grid-row
-FAIL grid-row.initial assert_equals: initial value of grid-row should be auto expected "auto" but got "auto / auto"
-FAIL grid-row.auto assert_equals: auto expected "auto" but got "auto / auto"
+PASS grid-row.initial
+PASS grid-row.auto
 PASS grid-row.<custom-ident>
-FAIL grid-row.<integer> start assert_equals: <integer> start expected "1" but got "1 / auto"
+PASS grid-row.<integer> start
 PASS grid-row.<integer>
 PASS grid-row.<integer> <ident>
 PASS grid-row.span <integer>
 PASS grid-row.span <custom-ident>
 PASS grid-row.span <integer> <custom-ident>
-FAIL grid-row.reset assert_equals: reset expected "auto" but got "auto / auto"
+PASS grid-row.reset
 PASS grid-area
 PASS grid-area.initial
 PASS grid-area.auto

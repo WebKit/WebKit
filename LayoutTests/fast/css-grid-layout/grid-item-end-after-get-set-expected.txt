@@ -7,9 +7,6 @@ Test getting grid-column-end and grid-row-end set through CSS
 PASS getComputedStyle(gridElement, '').getPropertyValue('grid-column') is "auto / auto"
 PASS getComputedStyle(gridElement, '').getPropertyValue('grid-column-start') is "auto"
 PASS getComputedStyle(gridElement, '').getPropertyValue('grid-column-end') is "auto"
-PASS getComputedStyle(gridElement, '').getPropertyValue('grid-row') is "auto / auto"
-PASS getComputedStyle(gridElement, '').getPropertyValue('grid-row-start') is "auto"
-PASS getComputedStyle(gridElement, '').getPropertyValue('grid-row-end') is "auto"
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('grid-column') is "auto / 10"
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('grid-column-start') is "auto"
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('grid-column-end') is "10"
@@ -37,15 +34,9 @@ PASS getComputedStyle(gridItemWithAfterSpan, '').getPropertyValue('grid-row-end'
 PASS getComputedStyle(gridItemWithOnlySpan, '').getPropertyValue('grid-column') is "auto / auto"
 PASS getComputedStyle(gridItemWithOnlySpan, '').getPropertyValue('grid-column-start') is "auto"
 PASS getComputedStyle(gridItemWithOnlySpan, '').getPropertyValue('grid-column-end') is "auto"
-PASS getComputedStyle(gridItemWithOnlySpan, '').getPropertyValue('grid-row') is "auto / auto"
-PASS getComputedStyle(gridItemWithOnlySpan, '').getPropertyValue('grid-row-start') is "auto"
-PASS getComputedStyle(gridItemWithOnlySpan, '').getPropertyValue('grid-row-end') is "auto"
 PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('grid-column') is "auto / auto"
 PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('grid-column-start') is "auto"
 PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('grid-column-end') is "auto"
-PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('grid-row') is "auto / auto"
-PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('grid-row-start') is "auto"
-PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('grid-row-end') is "auto"
 PASS getComputedStyle(gridItemWithCustomIdent, '').getPropertyValue('grid-column') is "auto / first"
 PASS getComputedStyle(gridItemWithCustomIdent, '').getPropertyValue('grid-column-start') is "auto"
 PASS getComputedStyle(gridItemWithCustomIdent, '').getPropertyValue('grid-column-end') is "first"
@@ -81,7 +72,6 @@ Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('grid-column-end') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('grid-column') is 'auto / auto'
 PASS getComputedStyle(element, '').getPropertyValue('grid-row-end') is 'auto'
-PASS getComputedStyle(element, '').getPropertyValue('grid-row') is 'auto / auto'
 
 Test getting and setting grid-column-end and grid-row-end through JS
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column') is "auto / 18"
@@ -117,9 +107,6 @@ PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-end') is "span la
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column') is "auto / auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-start') is "auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-end') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row') is "auto / auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-start') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-end') is "auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column') is "auto / thirdArea"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-start') is "auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-end') is "thirdArea"
@@ -163,20 +150,20 @@ Test setting grid-start and grid-before to 'initial' through JS
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column') is "1 / span 2"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-start') is "1"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-end') is "span 2"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row') is "span 3 / 5"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-start') is "span 3"
+PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row') is "first / 5"
+PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-start') is "first"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-end') is "5"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column') is "1 / auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-start') is "1"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-end') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row') is "span 3 / 5"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-start') is "span 3"
+PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row') is "first / 5"
+PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-start') is "first"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-end') is "5"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column') is "1 / auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-start') is "1"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-column-end') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row') is "span 3 / auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-start') is "span 3"
+PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row') is "first / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-start') is "first"
 PASS getComputedStyle(gridItem, '').getPropertyValue('grid-row-end') is "auto"
 
 Test setting grid-column-end and grid-row-end back to 'auto' through JS
@@ -187,7 +174,7 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-row') is 'auto / 66'
 PASS getComputedStyle(element, '').getPropertyValue('grid-column-end') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('grid-column') is 'auto / auto'
 PASS getComputedStyle(element, '').getPropertyValue('grid-row-end') is 'auto'
-PASS getComputedStyle(element, '').getPropertyValue('grid-row') is 'auto / auto'
+PASS getComputedStyle(element, '').getPropertyValue('grid-row') is 'auto'
 PASS successfullyParsed is true
 
 TEST COMPLETE

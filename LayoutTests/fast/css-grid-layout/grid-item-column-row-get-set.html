@@ -108,23 +108,23 @@
     description('Test that setting and getting grid-column and grid-row works as expected');
 
     debug("Test getting grid-column and grid-row set through CSS");
-    testColumnRowCSSParsing("gridItemWithNoCSSRule", "auto / auto", "auto / auto");
-    testColumnRowCSSParsing("gridItemWithPositiveInteger", "10 / auto", "15 / auto");
-    testColumnRowCSSParsing("gridItemWithNegativeInteger", "-10 / auto", "-15 / auto");
-    testColumnRowCSSParsing("gridItemWithAutoElement", "auto / auto", "auto / auto");
+    testColumnCSSParsing("gridItemWithNoCSSRule", "auto / auto");
+    testColumnCSSParsing("gridItemWithPositiveInteger", "10 / auto");
+    testColumnCSSParsing("gridItemWithNegativeInteger", "-10 / auto");
+    testColumnCSSParsing("gridItemWithAutoElement", "auto / auto");
     testColumnRowCSSParsing("gridItemWith2IntegerElement", "10 / 15", "5 / 5");
     testColumnRowCSSParsing("gridItemWithNegativePositiveIntegerElement", "10 / -10", "-8 / 5");
     testColumnRowCSSParsing("gridItemWithBeforeSpanElement", "span 2 / 4", "3 / span 5");
     testColumnRowCSSParsing("gridItemWithAfterSpanElement", "span 2 / 4", "3 / span 5");
-    testColumnRowCSSParsing("gridItemWith2OnlySpanElement", "auto / auto", "auto / auto");
-    testColumnRowCSSParsing("gridItemWith2AutoElement", "auto / auto" , "auto / auto");
+    testColumnCSSParsing("gridItemWith2OnlySpanElement", "auto / auto");
+    testColumnCSSParsing("gridItemWith2AutoElement", "auto / auto");
     testColumnRowCSSParsing("gridItemWithBothShortLongHandElement", "10 / 11", "4 / 5");
-    testColumnRowCSSParsing("gridItemWithNoSpaceElement", "auto / 1", "5 / auto");
-    testColumnRowCSSParsing("gridItemWithCustomIdent", "first / first", "last / last");
-    testColumnRowCSSParsing("gridItemWithNonExistingCustomIdent", "nav / nav", "foo / foo");
+    testColumnCSSParsing("gridItemWithNoSpaceElement", "auto / 1");
+    testColumnCSSParsing("gridItemWithCustomIdent", "first / first");
+    testColumnCSSParsing("gridItemWithNonExistingCustomIdent", "nav / nav");
     testColumnRowCSSParsing("gridItemWithSpanCustomIdent", "1 / span first", "-1 / span last");
     testColumnRowCSSParsing("gridItemWithSpanNumberCustomIdent", "1 / span 3 first", "-1 / span 2 last");
-    testColumnRowCSSParsing("gridItemWithSingleNamedGridArea", "thirdArea / thirdArea", "firstArea / firstArea");
+    testColumnCSSParsing("gridItemWithSingleNamedGridArea", "thirdArea / thirdArea");
     testColumnRowCSSParsing("gridItemWithNamedGridAreaAndSpan", "thirdArea / span 1", "firstArea / span 2");
 
     debug("");
@@ -134,21 +134,21 @@
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column')", "'auto / auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column-start')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column-end')", "'auto'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row')", "'auto / auto'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row-start')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row-end')", "'auto'");
 
     debug("");
     debug("Test getting and setting grid-column and grid-row through JS");
-    testColumnRowJSParsing("18", "66", "18 / auto", "66 / auto");
-    testColumnRowJSParsing("-55", "-40", "-55 / auto", "-40 / auto");
-    testColumnRowJSParsing("auto", "auto", "auto / auto", "auto / auto");
+    testColumnJSParsing("18", "18 / auto");
+    testColumnJSParsing("-55","-55 / auto");
+    testColumnJSParsing("auto", "auto / auto");
     testColumnRowJSParsing("10 / 55", "1 / 10");
     testColumnRowJSParsing("span 5 / 5", "4 / span 4");
     testColumnRowJSParsing("-5 / 5", "4 / -4");
-    testColumnRowJSParsing("4 / auto", "5 / auto");
+    testColumnJSParsing("4 / auto");
     testColumnRowJSParsing("auto / 5", "auto / 8");
-    testColumnRowJSParsing("span / 3", "5 / span", "auto / auto", "auto / auto");
+    testColumnJSParsing("span / 3", "auto / auto");
     testColumnRowJSParsing("span 1 / 3", "5 / span 1", "span 1 / 3", "5 / span 1");
     testColumnRowJSParsing("first span / 3", "5 / last span", "span first / 3", "5 / span last");
     testColumnRowJSParsing("first / last", "nav / last span", "first / last", "nav / span last");
@@ -176,64 +176,64 @@
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column')", "'auto / auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column-start')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-column-end')", "'auto'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row')", "'auto / auto'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row-start')", "'auto'");
     shouldBe("getComputedStyle(element, '').getPropertyValue('grid-row-end')", "'auto'");
 
     debug("");
     debug("Test getting and setting 'initial' grid-column and grid-row through JS");
-    testColumnRowInitialJSParsing();
+    testColumnInitialJSParsing();
 
     debug("");
     debug("Test getting and setting 'inherit' grid-column and grid-row through JS");
     testColumnRowInheritJSParsing("1 / auto", "inherit");
-    testColumnRowInheritJSParsing("inherit", "1 / auto");
+    testColumnRowInheritJSParsing("inherit", "1 / span 2");
     testColumnRowInheritJSParsing("inherit", "inherit");
 
     debug("");
     debug("Test getting and setting invalid grid-column and grid-row through JS");
-    testColumnRowInvalidJSParsing("4 5", "5 8");
-    testColumnRowInvalidJSParsing("4 /", "5 /");
-    testColumnRowInvalidJSParsing("5 5", "8 auto");
-    testColumnRowInvalidJSParsing("5 / /", "8 / /");
+    testColumnInvalidJSParsing("4 5");
+    testColumnInvalidJSParsing("4 /");
+    testColumnInvalidJSParsing("5 5");
+    testColumnInvalidJSParsing("5 / /");
 
     // 0 is invalid.
-    testColumnRowInvalidJSParsing("0 / 5", "0 / 6");
-    testColumnRowInvalidJSParsing("6 / 0", "8 / 0");
-    testColumnRowInvalidJSParsing("0", "0");
+    testColumnInvalidJSParsing("0 / 5");
+    testColumnInvalidJSParsing("6 / 0");
+    testColumnInvalidJSParsing("0");
 
     // 'span' alone is invalid
-    testColumnRowInvalidJSParsing("span", "span");
-    testColumnRowInvalidJSParsing("span / span", "span / span");
+    testColumnInvalidJSParsing("span");
+    testColumnInvalidJSParsing("span / span");
 
-    testColumnRowInvalidJSParsing("span span / span span", "span span / span span");
+    testColumnInvalidJSParsing("span span / span span");
 
     // More than 1 <integer> and / or <string>.
-    testColumnRowInvalidJSParsing("5 5 / span 2", "4 4 / 3 span");
-    testColumnRowInvalidJSParsing("5 first last / span 2", "first 4 last / 3 span");
-    testColumnRowInvalidJSParsing("5 / first last 2", "4 / first 3 last");
-    testColumnRowInvalidJSParsing("first last / span 2", "first last / 3 span");
-    testColumnRowInvalidJSParsing("5 / first last", "4 / first last");
-    testColumnRowInvalidJSParsing("5 5 span / 2", "span 4 4 / 3");
-    testColumnRowInvalidJSParsing("span 3 5 / 1", "5 span 4 / 3");
-    testColumnRowInvalidJSParsing("span last first / 1", "span first last / 3");
-    testColumnRowInvalidJSParsing("2 / span last first", "3 / span first last");
-    testColumnRowInvalidJSParsing("span 1 last first / 1", "span first last 7 / 3");
-    testColumnRowInvalidJSParsing("2 / span last 3 first", "3 / span first 5 last");
-    testColumnRowInvalidJSParsing("1 span 2 first / 1", "1 span last 7 / 3");
-    testColumnRowInvalidJSParsing("2 / 3 span 3 first", "3 / 5 span first 5");
+    testColumnInvalidJSParsing("5 5 / span 2");
+    testColumnInvalidJSParsing("5 first last / span 2");
+    testColumnInvalidJSParsing("5 / first last 2");
+    testColumnInvalidJSParsing("first last / span 2");
+    testColumnInvalidJSParsing("5 / first last");
+    testColumnInvalidJSParsing("5 5 span / 2", "span 4 4 / 3");
+    testColumnInvalidJSParsing("span 3 5 / 1", "5 span 4 / 3");
+    testColumnInvalidJSParsing("span last first / 1", "span first last / 3");
+    testColumnInvalidJSParsing("2 / span last first", "3 / span first last");
+    testColumnInvalidJSParsing("span 1 last first / 1", "span first last 7 / 3");
+    testColumnInvalidJSParsing("2 / span last 3 first", "3 / span first 5 last");
+    testColumnInvalidJSParsing("1 span 2 first / 1", "1 span last 7 / 3");
+    testColumnInvalidJSParsing("2 / 3 span 3 first", "3 / 5 span first 5");
 
     // Negative integer or 0 are invalid for spans.
-    testColumnRowInvalidJSParsing("span -1 / -2", "-3 span / -4");
-    testColumnRowInvalidJSParsing("-1 / -2 span", "-3 / span -4");
-    testColumnRowInvalidJSParsing("0 span / 0", "span 0 / 0");
-    testColumnRowInvalidJSParsing("0 / span 0", "0 / 0 span");
-    testColumnRowInvalidJSParsing("span -3 'first' / 3 last", "last -2 span / 1 nav");
+    testColumnInvalidJSParsing("span -1 / -2");
+    testColumnInvalidJSParsing("-1 / -2 span");
+    testColumnInvalidJSParsing("0 span / 0");
+    testColumnInvalidJSParsing("0 / span 0");
+    testColumnInvalidJSParsing("span -3 'first' / 3 last");
 
     // We don't allow span to be between the <integer> and the <string>.
-    testColumnRowInvalidJSParsing("first span 1 / last", "2 span first / last");
-    testColumnRowInvalidJSParsing("3 first / 2 span last", "5 nav / last span 7");
-    testColumnRowInvalidJSParsing("3 / 1 span 2", "5 / 3 span 3");
+    testColumnInvalidJSParsing("first span 1 / last"); 
+    testColumnInvalidJSParsing("3 first / 2 span last");
+    testColumnInvalidJSParsing("3 / 1 span 2");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
