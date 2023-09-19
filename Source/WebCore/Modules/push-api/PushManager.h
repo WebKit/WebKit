@@ -31,19 +31,19 @@
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionOptionsInit.h"
-#include "ServiceWorkerRegistration.h"
 #include <optional>
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class PushSubscriptionOwner;
 class ScriptExecutionContext;
 
 class PushManager {
     WTF_MAKE_ISO_ALLOCATED(PushManager);
 public:
-    explicit PushManager(ServiceWorkerRegistration&);
+    explicit PushManager(PushSubscriptionOwner&);
     ~PushManager();
 
     void ref() const;
@@ -56,7 +56,7 @@ public:
     void permissionState(ScriptExecutionContext&, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 
 private:
-    ServiceWorkerRegistration& m_serviceWorkerRegistration;
+    PushSubscriptionOwner& m_pushSubscriptionOwner;
 };
 
 } // namespace WebCore

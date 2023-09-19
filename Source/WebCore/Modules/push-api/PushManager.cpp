@@ -38,6 +38,7 @@
 #include "Logging.h"
 #include "NotificationClient.h"
 #include "PushCrypto.h"
+#include "PushSubscriptionOwner.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/IsoMallocInlines.h>
@@ -48,8 +49,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PushManager);
 
-PushManager::PushManager(ServiceWorkerRegistration& serviceWorkerRegistration)
-    : m_serviceWorkerRegistration(serviceWorkerRegistration)
+PushManager::PushManager(PushSubscriptionOwner& pushSubscriptionOwner)
+    : m_pushSubscriptionOwner(pushSubscriptionOwner)
 {
 }
 
@@ -62,12 +63,12 @@ Vector<String> PushManager::supportedContentEncodings()
 
 void PushManager::ref() const
 {
-    m_serviceWorkerRegistration.ref();
+    m_pushSubscriptionOwner.ref();
 }
 
 void PushManager::deref() const
 {
-    m_serviceWorkerRegistration.deref();
+    m_pushSubscriptionOwner.deref();
 }
 
 void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
@@ -111,7 +112,9 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
             return;
         }
 
-        if (!m_serviceWorkerRegistration.active()) {
+        if (!m_pushSubscriptionOwner.isActive()) {
+            // Only PushSubscriptionOwner objects related to service workers will ever return `false` for isActive(),
+            // so this error message is correct.
             promise.reject(Exception { InvalidStateError, "Subscribing for push requires an active service worker"_s });
             return;
         }
@@ -158,20 +161,20 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
                     return;
                 }
 
-                m_serviceWorkerRegistration.subscribeToPushService(WTFMove(keyData), WTFMove(promise));
+                m_pushSubscriptionOwner.subscribeToPushService(WTFMove(keyData), WTFMove(promise));
             });
             return;
         }
 
         RELEASE_ASSERT(permission == NotificationPermission::Granted);
-        m_serviceWorkerRegistration.subscribeToPushService(keyDataResult.releaseReturnValue(), WTFMove(promise));
+        m_pushSubscriptionOwner.subscribeToPushService(keyDataResult.releaseReturnValue(), WTFMove(promise));
     });
 }
 
 void PushManager::getSubscription(ScriptExecutionContext& context, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
     context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
-        m_serviceWorkerRegistration.getPushSubscription(WTFMove(promise));
+        m_pushSubscriptionOwner.getPushSubscription(WTFMove(promise));
     });
 }
 
