@@ -6013,9 +6013,11 @@ void LocalFrameView::willRemoveWidgetFromRenderTree(Widget& widget)
     m_widgetsInRenderTree.remove(&widget);
 }
 
-static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<Widget*>& set)
+static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<CheckedPtr<Widget>>& set)
 {
-    return copyToVectorOf<RefPtr<Widget>>(set);
+    return WTF::map(set, [](auto& widget) -> RefPtr<Widget> {
+        return widget.get();
+    });
 }
 
 void LocalFrameView::updateWidgetPositions()
@@ -6046,7 +6048,7 @@ void LocalFrameView::updateWidgetPositionsTimerFired()
 void LocalFrameView::notifyWidgets(WidgetNotification notification)
 {
     for (auto& widget : collectAndProtectWidgets(m_widgetsInRenderTree))
-        widget->notifyWidget(notification);
+        widget.get()->notifyWidget(notification);
 }
 
 void LocalFrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect)

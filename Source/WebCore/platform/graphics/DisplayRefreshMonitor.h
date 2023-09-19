@@ -28,6 +28,7 @@
 #include "AnimationFrameRate.h"
 #include "DisplayUpdate.h"
 #include "PlatformScreen.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -95,8 +96,8 @@ private:
     std::optional<FramesPerSecond> maximumClientPreferredFramesPerSecond() const;
     void computeMaxPreferredFramesPerSecond();
 
-    HashSet<DisplayRefreshMonitorClient*> m_clients;
-    HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified { nullptr };
+    HashSet<CheckedPtr<DisplayRefreshMonitorClient>> m_clients;
+    HashSet<CheckedPtr<DisplayRefreshMonitorClient>>* m_clientsToBeNotified { nullptr };
 
     PlatformDisplayID m_displayID { 0 };
     std::optional<FramesPerSecond> m_maxClientPreferredFramesPerSecond;

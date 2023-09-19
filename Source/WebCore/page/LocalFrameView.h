@@ -672,7 +672,7 @@ public:
     void didAddWidgetToRenderTree(Widget&);
     void willRemoveWidgetFromRenderTree(Widget&);
 
-    const HashSet<Widget*>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
+    const HashSet<CheckedPtr<Widget>>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
 
     void notifyAllFramesThatContentAreaWillPaint() const;
 
@@ -933,7 +933,7 @@ private:
 
     std::unique_ptr<Display::View> m_displayView;
 
-    HashSet<Widget*> m_widgetsInRenderTree;
+    HashSet<CheckedPtr<Widget>> m_widgetsInRenderTree;
     std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
     std::unique_ptr<WeakHashSet<RenderElement>> m_slowRepaintObjects;
 

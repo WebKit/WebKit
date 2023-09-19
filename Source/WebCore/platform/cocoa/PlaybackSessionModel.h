@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "PlatformMediaSession.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -114,7 +115,7 @@ public:
 #endif
 };
 
-class PlaybackSessionModelClient : public CanMakeWeakPtr<PlaybackSessionModelClient> {
+class PlaybackSessionModelClient : public CanMakeWeakPtr<PlaybackSessionModelClient>, public CanMakeCheckedPtr {
 public:
     virtual ~PlaybackSessionModelClient() { };
     virtual void durationChanged(double) { }

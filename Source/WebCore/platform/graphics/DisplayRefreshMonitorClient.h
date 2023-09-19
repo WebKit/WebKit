@@ -28,6 +28,7 @@
 #include "AnimationFrameRate.h"
 #include "PlatformScreen.h"
 #include <optional>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class DisplayRefreshMonitorFactory;
 
 struct DisplayUpdate;
 
-class DisplayRefreshMonitorClient {
+class DisplayRefreshMonitorClient : public CanMakeCheckedPtr {
 public:
     DisplayRefreshMonitorClient();
     virtual ~DisplayRefreshMonitorClient();

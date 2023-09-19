@@ -52,7 +52,7 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
         enum Kind { Begin, End };
         Kind kind;
         unsigned value; // Copy of markedText.startOffset/endOffset to avoid the need to branch based on kind.
-        const MarkedText* markedText;
+        CheckedPtr<const MarkedText> markedText;
     };
 
     // 1. Build table of all offsets.
@@ -75,7 +75,7 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
     // 3. Compute intersection.
     Vector<MarkedText> result;
     result.reserveInitialCapacity(numberOfMarkedTexts);
-    HashSet<const MarkedText*> processedMarkedTexts;
+    HashSet<CheckedPtr<const MarkedText>> processedMarkedTexts;
     unsigned offsetSoFar = offsets[0].value;
     for (unsigned i = 1; i < numberOfOffsets; ++i) {
         if (offsets[i].value > offsets[i - 1].value) {

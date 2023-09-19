@@ -34,6 +34,7 @@
 #include "RealtimeMediaSourceFactory.h"
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct OpaqueCMClock* CMClockRef;
@@ -50,7 +51,7 @@ class BaseAudioSharedUnit;
 class CaptureDeviceInfo;
 class WebAudioSourceProviderAVFObjC;
 
-class CoreAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoreAudioCaptureSource, WTF::DestructionThread::MainRunLoop> {
+class CoreAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoreAudioCaptureSource, WTF::DestructionThread::MainRunLoop>, public CanMakeCheckedPtr {
 public:
     WEBCORE_EXPORT static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
     static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, BaseAudioSharedUnit& overrideUnit, PageIdentifier);

@@ -45,6 +45,7 @@
 #include "RealtimeMediaSourceFactory.h"
 #include "RealtimeMediaSourceIdentifier.h"
 #include "VideoFrameTimeMetadata.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
@@ -102,7 +103,7 @@ public:
 
         virtual void hasStartedProducingData() { }
     };
-    class AudioSampleObserver {
+    class AudioSampleObserver : public CanMakeCheckedPtr {
     public:
         virtual ~AudioSampleObserver() = default;
 
@@ -330,7 +331,7 @@ private:
     WeakHashSet<Observer> m_observers;
 
     mutable Lock m_audioSampleObserversLock;
-    HashSet<AudioSampleObserver*> m_audioSampleObservers WTF_GUARDED_BY_LOCK(m_audioSampleObserversLock);
+    HashSet<CheckedPtr<AudioSampleObserver>> m_audioSampleObservers WTF_GUARDED_BY_LOCK(m_audioSampleObserversLock);
 
     mutable Lock m_videoFrameObserversLock;
     HashMap<VideoFrameObserver*, std::unique_ptr<VideoFrameAdaptor>> m_videoFrameObservers WTF_GUARDED_BY_LOCK(m_videoFrameObserversLock);

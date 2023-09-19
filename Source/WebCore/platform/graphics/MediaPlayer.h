@@ -49,6 +49,7 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/StringHash.h>
 
 OBJC_CLASS AVPlayer;
@@ -765,7 +766,7 @@ private:
     Timer m_reloadTimer;
     std::unique_ptr<MediaPlayerPrivateInterface> m_private;
     const MediaPlayerFactory* m_currentMediaEngine { nullptr };
-    HashSet<const MediaPlayerFactory*> m_attemptedEngines;
+    WeakHashSet<const MediaPlayerFactory> m_attemptedEngines;
     URL m_url;
     ContentType m_contentType;
     String m_keySystem;
@@ -801,7 +802,7 @@ private:
     ProcessIdentity m_processIdentity;
 };
 
-class MediaPlayerFactory {
+class MediaPlayerFactory : public CanMakeWeakPtr<MediaPlayerFactory> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaPlayerFactory() = default;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderingResourceIdentifier.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -34,7 +35,7 @@ namespace WebCore {
 class RenderingResource
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RenderingResource> {
 public:
-    class Observer {
+    class Observer : public CanMakeCheckedPtr {
     public:
         virtual ~Observer() = default;
         virtual void releaseRenderingResource(RenderingResourceIdentifier) = 0;
@@ -46,8 +47,8 @@ public:
     {
         if (!hasValidRenderingResourceIdentifier())
             return;
-        for (auto observer : m_observers)
-            observer->releaseRenderingResource(renderingResourceIdentifier());
+        for (auto& observer : m_observers)
+            observer.get()->releaseRenderingResource(renderingResourceIdentifier());
     }
 
     virtual bool isNativeImage() const { return false; }
@@ -89,7 +90,7 @@ protected:
     {
     }
 
-    HashSet<Observer*> m_observers;
+    HashSet<CheckedPtr<Observer>> m_observers;
     std::optional<RenderingResourceIdentifier> m_renderingResourceIdentifier;
 };
 

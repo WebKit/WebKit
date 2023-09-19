@@ -213,9 +213,9 @@
 
 namespace WebCore {
 
-static HashSet<Page*>& allPages()
+static HashSet<CheckedPtr<Page>>& allPages()
 {
-    static NeverDestroyed<HashSet<Page*>> set;
+    static NeverDestroyed<HashSet<CheckedPtr<Page>>> set;
     return set;
 }
 
@@ -235,7 +235,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
 void Page::forEachPage(const Function<void(Page&)>& function)
 {
-    for (auto* page : allPages())
+    for (auto& page : allPages())
         function(*page);
 }
 
@@ -250,8 +250,8 @@ static void networkStateChanged(bool isOnLine)
     Vector<Ref<LocalFrame>> frames;
 
     // Get all the frames of all the pages in all the page groups
-    for (auto* page : allPages()) {
-        for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto& page : allPages()) {
+        for (auto* frame = &page.get()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -476,8 +476,8 @@ void Page::firstTimeInitialization()
 
 void Page::clearPreviousItemFromAllPages(HistoryItem* item)
 {
-    for (auto* page : allPages()) {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    for (auto& page : allPages()) {
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(page.get()->mainFrame());
         if (!localMainFrame)
             return;
 
@@ -756,8 +756,8 @@ void Page::updateStyleAfterChangeInEnvironment()
 
 void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 {
-    for (auto* page : allPages())
-        page->updateStyleAfterChangeInEnvironment();
+    for (auto& page : allPages())
+        page.get()->updateStyleAfterChangeInEnvironment();
 }
 
 void Page::setNeedsRecalcStyleInAllFrames()
@@ -772,8 +772,8 @@ void Page::refreshPlugins(bool reload)
 {
     HashSet<PluginInfoProvider*> pluginInfoProviders;
 
-    for (auto* page : allPages())
-        pluginInfoProviders.add(&page->pluginInfoProvider());
+    for (auto& page : allPages())
+        pluginInfoProviders.add(&page.get()->pluginInfoProvider());
 
     for (auto& pluginInfoProvider : pluginInfoProviders)
         pluginInfoProvider->refresh(reload);

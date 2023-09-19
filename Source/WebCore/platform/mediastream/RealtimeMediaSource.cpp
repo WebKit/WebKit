@@ -364,8 +364,8 @@ void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const Pla
     updateHasStartedProducingData();
 
     Locker locker { m_audioSampleObserversLock };
-    for (auto* observer : m_audioSampleObservers)
-        observer->audioSamplesAvailable(time, audioData, description, numberOfFrames);
+    for (auto& observer : m_audioSampleObservers)
+        observer.get()->audioSamplesAvailable(time, audioData, description, numberOfFrames);
 }
 
 void RealtimeMediaSource::start()

@@ -49,6 +49,7 @@
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Assertions.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -278,7 +279,7 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<Render
 };
 
 
-class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page> {
+class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page>, public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(Page);
     WTF_MAKE_FAST_ALLOCATED;
     friend class SettingsBase;

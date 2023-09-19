@@ -210,8 +210,8 @@ private:
     void didCleanupFullscreen() final;
     void fullscreenMayReturnToInline() final;
 
-    HashSet<PlaybackSessionModelClient*> m_playbackClients;
-    HashSet<VideoFullscreenModelClient*> m_fullscreenClients;
+    HashSet<CheckedPtr<PlaybackSessionModelClient>> m_playbackClients;
+    HashSet<CheckedPtr<VideoFullscreenModelClient>> m_fullscreenClients;
     RefPtr<VideoFullscreenInterfaceAVKit> m_interface;
     RefPtr<VideoFullscreenModelVideoElement> m_fullscreenModel;
     RefPtr<PlaybackSessionModelMediaElement> m_playbackModel;
@@ -434,7 +434,7 @@ void VideoFullscreenControllerContext::hasVideoChanged(bool hasVideo)
     }
 
     for (auto& client : m_fullscreenClients)
-        client->hasVideoChanged(hasVideo);
+        client.get()->hasVideoChanged(hasVideo);
 }
 
 void VideoFullscreenControllerContext::videoDimensionsChanged(const FloatSize& videoDimensions)
@@ -447,7 +447,7 @@ void VideoFullscreenControllerContext::videoDimensionsChanged(const FloatSize& v
     }
 
     for (auto& client : m_fullscreenClients)
-        client->videoDimensionsChanged(videoDimensions);
+        client.get()->videoDimensionsChanged(videoDimensions);
 }
 
 void VideoFullscreenControllerContext::seekableRangesChanged(const TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
@@ -649,36 +649,36 @@ bool VideoFullscreenControllerContext::isPictureInPictureSupported() const
 void VideoFullscreenControllerContext::willEnterPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
-        client->willEnterPictureInPicture();
+    for (auto& client : m_fullscreenClients)
+        client.get()->willEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::didEnterPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
-        client->didEnterPictureInPicture();
+    for (auto& client : m_fullscreenClients)
+        client.get()->didEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::failedToEnterPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
-        client->failedToEnterPictureInPicture();
+    for (auto& client : m_fullscreenClients)
+        client.get()->failedToEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::willExitPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
-        client->willExitPictureInPicture();
+    for (auto& client : m_fullscreenClients)
+        client.get()->willExitPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::didExitPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
-        client->didExitPictureInPicture();
+    for (auto& client : m_fullscreenClients)
+        client.get()->didExitPictureInPicture();
 }
 
 FloatSize VideoFullscreenControllerContext::videoDimensions() const

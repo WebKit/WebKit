@@ -29,6 +29,7 @@
 
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceCenter.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -135,8 +136,8 @@ private:
     uint32_t m_outputDeviceID { 0 };
     std::optional<std::pair<String, uint32_t>> m_capturingDevice;
 
-    HashSet<CoreAudioCaptureSource*> m_clients;
-    Vector<CoreAudioCaptureSource*> m_audioThreadClients WTF_GUARDED_BY_LOCK(m_audioThreadClientsLock);
+    HashSet<CheckedPtr<CoreAudioCaptureSource>> m_clients;
+    Vector<CheckedPtr<CoreAudioCaptureSource>> m_audioThreadClients WTF_GUARDED_BY_LOCK(m_audioThreadClientsLock);
     Lock m_audioThreadClientsLock;
 
     bool m_isProducingMicrophoneSamples { true };
