@@ -90,26 +90,6 @@ end
     }
 end
 
-operator :textureSample, {
-    [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
-    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
-    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], Vector[I32, 2]) => Vector[F32, 4],
-    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T) => Vector[F32, 4],
-    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T, Vector[I32, 2]) => Vector[F32, 4],
-    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3]) => Vector[F32, 4],
-    [].(Texture[F32, TextureCube], Sampler, Vector[F32, 3]) => Vector[F32, 4],
-    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], Vector[I32, 3]) => Vector[F32, 4],
-    [T < ConcreteInteger].(Texture[F32, TextureCubeArray], Sampler, Vector[F32, 3], T) => Vector[F32, 4],
-
-    # FIXME: add overloads for texture_depth
-    # https://bugs.webkit.org/show_bug.cgi?id=254515
-}
-
-operator :textureSampleBaseClampToEdge, {
-  [].(TextureExternal, Sampler, Vector[F32, 2]) => Vector[F32, 4],
-  [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
-}
-
 # 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
 
 operator :!, {
@@ -574,9 +554,53 @@ operator :trunc, {
     [T < Float, N].(Vector[T, N]) => Vector[T, N],
 }
 
-# 17.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
+# 16.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
 
-# 17.7.4
+# 16.7.1
+operator :textureDimensions, {
+    # FIXME: add declarations for texture storage and texture depth
+    [S < Concrete32BitNumber].(Texture[S, Texture1d]) => U32,
+
+    [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture1d], T) => U32,
+
+    [S < Concrete32BitNumber].(Texture[S, Texture2d]) => Vector[U32, 2],
+    [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => Vector[U32, 2],
+    [S < Concrete32BitNumber].(Texture[S, TextureCube]) => Vector[U32, 2],
+    [S < Concrete32BitNumber].(Texture[S, TextureCubeArray]) => Vector[U32, 2],
+    [S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d]) => Vector[U32, 2],
+    [].(TextureExternal) => Vector[U32, 2],
+
+    [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture2d], T) => Vector[U32, 2],
+    [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture2dArray], T) => Vector[U32, 2],
+    [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, TextureCube], T) => Vector[U32, 2],
+    [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, TextureCubeArray], T) => Vector[U32, 2],
+
+    [S < Concrete32BitNumber].(Texture[S, Texture3d]) => Vector[U32, 3],
+
+    [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture3d], T) => Vector[U32, 3],
+}
+
+# 16.7.2
+
+operator :textureGather, {
+    # FIXME: add declarations for texture depth
+    [T < ConcreteInteger, S < Concrete32BitNumber].(T, Texture[S, Texture2d], Sampler, Vector[F32, 2]) => Vector[S, 4],
+
+    [T < ConcreteInteger, S < Concrete32BitNumber].(T, Texture[S, Texture2d], Sampler, Vector[F32, 2], Vector[I32, 2]) => Vector[S, 4],
+
+    [T < ConcreteInteger, S < Concrete32BitNumber, U < ConcreteInteger].(T, Texture[S, Texture2dArray], Sampler, Vector[F32, 2], U) => Vector[S, 4],
+
+    [T < ConcreteInteger, S < Concrete32BitNumber, U < ConcreteInteger].(T, Texture[S, Texture2dArray], Sampler, Vector[F32, 2], U, Vector[I32, 2]) => Vector[S, 4],
+
+    [T < ConcreteInteger, S < Concrete32BitNumber].(T, Texture[S, TextureCube], Sampler, Vector[F32, 3]) => Vector[S, 4],
+
+    [T < ConcreteInteger, S < Concrete32BitNumber, U < ConcreteInteger].(T, Texture[S, TextureCubeArray], Sampler, Vector[F32, 3], U) => Vector[S, 4],
+}
+
+# 16.7.3 textureGatherCompare
+# FIXME: this only applies to texture_depth, implement
+
+# 16.7.4
 operator :textureLoad, {
     [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture1d], T, U) => Vector[S, 4],
     [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2d], Vector[T, 2], U) => Vector[S, 4],
@@ -589,3 +613,120 @@ operator :textureLoad, {
     # FIXME: add overloads for texture_depth
     # https://bugs.webkit.org/show_bug.cgi?id=254515
 }
+
+# 16.7.5
+operator :textureNumLayers, {
+    # FIXME: add declarations for texture storage and texture depth
+    [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => U32,
+    [S < Concrete32BitNumber].(Texture[S, TextureCubeArray]) => U32,
+}
+
+# 16.7.6
+operator :textureNumLevels, {
+    # FIXME: add declarations for texture depth
+    [S < Concrete32BitNumber].(Texture[S, Texture1d]) => U32,
+    [S < Concrete32BitNumber].(Texture[S, Texture2d]) => U32,
+    [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => U32,
+    [S < Concrete32BitNumber].(Texture[S, Texture3d]) => U32,
+    [S < Concrete32BitNumber].(Texture[S, TextureCube]) => U32,
+    [S < Concrete32BitNumber].(Texture[S, TextureCubeArray]) => U32,
+}
+
+# 16.7.7
+operator :textureNumSamples, {
+    # FIXME: add declarations for texture depth
+    [S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d]) => U32,
+}
+
+# 16.7.8
+operator :textureSample, {
+    [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], Vector[I32, 2]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T, Vector[I32, 2]) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3]) => Vector[F32, 4],
+    [].(Texture[F32, TextureCube], Sampler, Vector[F32, 3]) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], Vector[I32, 3]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, TextureCubeArray], Sampler, Vector[F32, 3], T) => Vector[F32, 4],
+
+    # FIXME: add overloads for texture_depth
+    # https://bugs.webkit.org/show_bug.cgi?id=254515
+}
+
+# 16.7.9
+operator :textureSampleBias, {
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32, Vector[I32, 2]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T, F32) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T, F32, Vector[I32, 2]) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], F32) => Vector[F32, 4],
+    [].(Texture[F32, TextureCube], Sampler, Vector[F32, 3], F32) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], F32, Vector[I32, 3]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, TextureCubeArray], Sampler, Vector[F32, 3], T, F32) => Vector[F32, 4],
+}
+
+# 16.7.10 textureSampleCompare
+# FIXME: this only applies to texture_depth, implement
+
+# 16.7.11 textureSampleCompareLevel
+# FIXME: this only applies to texture_depth, implement
+
+# 16.7.12
+operator :textureSampleGrad, {
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], Vector[F32, 2], Vector[F32, 2]) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], Vector[F32, 2], Vector[F32, 2], Vector[I32, 2]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T, Vector[F32, 2], Vector[F32, 2]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T, Vector[F32, 2], Vector[F32, 2], Vector[I32, 2]) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], Vector[F32, 3], Vector[F32, 3]) => Vector[F32, 4],
+    [].(Texture[F32, TextureCube], Sampler, Vector[F32, 3], Vector[F32, 3], Vector[F32, 3]) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], Vector[F32, 3], Vector[F32, 3], Vector[I32, 3]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, TextureCubeArray], Sampler, Vector[F32, 3], T, Vector[F32, 3], Vector[F32, 3]) => Vector[F32, 4],
+}
+
+# 16.7.13
+operator :textureSampleLevel, {
+    # FIXME: add declarations for texture depth
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32, Vector[I32, 2]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T, F32) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, Texture2dArray], Sampler, Vector[F32, 2], T, F32, Vector[I32, 2]) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], F32) => Vector[F32, 4],
+    [].(Texture[F32, TextureCube], Sampler, Vector[F32, 3], F32) => Vector[F32, 4],
+
+    [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], F32, Vector[I32, 3]) => Vector[F32, 4],
+
+    [T < ConcreteInteger].(Texture[F32, TextureCubeArray], Sampler, Vector[F32, 3], T, F32) => Vector[F32, 4],
+}
+
+# 16.7.14
+operator :textureSampleBaseClampToEdge, {
+    [].(TextureExternal, Sampler, Vector[F32, 2]) => Vector[F32, 4],
+    [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
+}
+
+# 16.7.15 textureStore
+# FIXME: this only applies to texture_storage, implement
