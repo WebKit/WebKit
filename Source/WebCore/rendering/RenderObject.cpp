@@ -116,7 +116,7 @@ struct SameSizeAsRenderObject : CanMakeWeakPtr<SameSizeAsRenderObject> {
 #if ASSERT_ENABLED
     WeakHashSet<void*> cachedResourceClientAssociatedResources;
 #endif
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
+    CheckedRef<Node> node;
     void* pointers[3];
     CheckedPtr<Layout::Box> layoutBox;
 #if ASSERT_ENABLED

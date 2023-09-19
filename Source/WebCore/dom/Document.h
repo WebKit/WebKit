@@ -391,6 +391,10 @@ public:
 
     virtual ~Document();
 
+    // Resolve ambiguity for CanMakeCheckedPtr.
+    void incrementPtrCount() const { static_cast<const ContainerNode*>(this)->incrementPtrCount(); }
+    void decrementPtrCount() const { static_cast<const ContainerNode*>(this)->decrementPtrCount(); }
+
     // Nodes belonging to this document increase referencingNodeCount -
     // these are enough to keep the document from being destroyed, but
     // not enough to keep it from removing its children. This allows a
