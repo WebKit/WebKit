@@ -775,7 +775,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
                 unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
                 BaselineUnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];
                 StructureStubInfo& stubInfo = baselineJITData->m_stubInfos[index];
-                stubInfo.initializeFromUnlinkedStructureStubInfo(unlinkedStubInfo);
+                stubInfo.initializeFromUnlinkedStructureStubInfo(vm(), unlinkedStubInfo);
                 baselineJITData->at(i) = &stubInfo;
                 break;
             }

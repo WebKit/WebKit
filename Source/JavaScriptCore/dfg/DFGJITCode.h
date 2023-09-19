@@ -52,6 +52,7 @@ class JITCode;
 class JITCompiler;
 
 struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
+    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
     CodeOrigin codeOrigin;
     ScalarRegisterSet usedRegisters;
     CallSiteIndex callSiteIndex;
