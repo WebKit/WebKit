@@ -114,26 +114,22 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
     ASSERT(!CSSProperty::isInLogicalPropertyGroup(id));
     ASSERT(id < firstDeferredProperty);
 
-    auto& property = m_properties[id];
     ASSERT(id < m_propertyIsPresent.size());
     if (id == CSSPropertyCustom) {
         m_propertyIsPresent.set(id);
         const auto& customValue = downcast<CSSCustomPropertyValue>(cssValue);
-        bool hasValue = m_customProperties.contains(customValue.name());
-        if (!hasValue) {
+        auto result = m_customProperties.ensure(customValue.name(), [&]() {
             Property property;
-            property.id = id;
             property.cssValue = { };
             setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
-            m_customProperties.set(customValue.name(), property);
-        } else {
-            Property property = customProperty(customValue.name());
-            setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
-            m_customProperties.set(customValue.name(), property);
-        }
+            return property;
+        });
+        if (!result.isNewEntry)
+            setPropertyInternal(result.iterator->value, id, cssValue, matchedProperties, cascadeLevel);
         return;
     }
 
+    auto& property = m_properties[id];
     if (!m_propertyIsPresent[id])
         property.cssValue = { };
     m_propertyIsPresent.set(id);
