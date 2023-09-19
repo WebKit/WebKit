@@ -37,6 +37,12 @@ public:
 
     void layoutInlineAxis(const InlineItemRange&, const InlineItems&, Line&, InlineLayoutUnit availableWidth);
 
+    struct OverUnder {
+        InlineLayoutUnit over { 0.f };
+        InlineLayoutUnit under { 0.f };
+    };
+    OverUnder annotationExtent(const Box& rubyBaseLayoutBox);
+
 private:
     size_t layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart, const InlineItems&);
 
