@@ -1086,32 +1086,27 @@ ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrString>&& vector)
 // https://dom.spec.whatwg.org/#dom-parentnode-replacechildren
 ExceptionOr<void> ContainerNode::replaceChildren(FixedVector<NodeOrString>&& vector)
 {
-    auto targets = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
-    for (auto& node : targets) {
-        if (auto result = ensurePreInsertionValidity(node, nullptr); result.hasException())
-            return result.releaseException();
-        if (auto result = node->remove(); result.hasException())
-            return result.releaseException();
+    // step 1
+    auto result = convertNodesOrStringsIntoNode(WTFMove(vector));
+    if (result.hasException())
+        return result.releaseException();
+    auto node = result.releaseReturnValue();
+
+    // step 2
+    if (node) {
+        if (auto checkResult = ensurePreInsertionValidity(*node, nullptr); checkResult.hasException())
+            return checkResult;
     }
 
     // step 3
     Ref protectedThis { *this };
     ChildListMutationScope mutation(*this);
     NodeVector removedChildren;
-    auto didRemoveElements = removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::Yes);
-    auto replacedAllChildren = (targets.size() && is<Element>(targets[0]))
-        || didRemoveElements == DidRemoveElements::Yes ? ReplacedAllChildren::YesIncludingElements : ReplacedAllChildren::YesNotIncludingElements;
+    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::No);
 
-    for (auto& child : targets) {
-        if (child->parentNode())
-            break; // Exit early if mutation event listeners inserted child to elsewhere.
-
-        executeNodeInsertionWithScriptAssertion(*this, child, nullptr, ChildChange::Source::API, replacedAllChildren, [&] {
-            InspectorInstrumentation::willInsertDOMNode(document(), *this);
-            child->setTreeScopeRecursively(treeScope());
-            appendChildCommon(child);
-        });
-        replacedAllChildren = ReplacedAllChildren::No;
+    if (node) {
+        if (auto appendResult = appendChildWithoutPreInsertionValidityCheck(*node); appendResult.hasException())
+            return appendResult;
     }
 
     rebuildSVGExtensionsElementsIfNecessary();
