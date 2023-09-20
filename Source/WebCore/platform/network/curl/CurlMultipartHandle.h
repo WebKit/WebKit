@@ -27,7 +27,6 @@
 
 #pragma once
 
-#include <wtf/CheckedRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,57 +39,39 @@ class SharedBuffer;
 class CurlMultipartHandle {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static std::unique_ptr<CurlMultipartHandle> createIfNeeded(CurlMultipartHandleClient&, const CurlResponse&);
+    static std::unique_ptr<CurlMultipartHandle> createIfNeeded(CurlMultipartHandleClient&, const CurlResponse&);
 
-    CurlMultipartHandle(CurlMultipartHandleClient&, CString&&);
+    CurlMultipartHandle(CurlMultipartHandleClient&, const String&);
     ~CurlMultipartHandle() { }
 
-    WEBCORE_EXPORT void didReceiveMessage(const SharedBuffer&);
-    WEBCORE_EXPORT void didCompleteMessage();
-
-    WEBCORE_EXPORT void completeHeaderProcessing();
-
-    bool completed() { return m_didCompleteMessage; }
-    bool hasError() const { return m_hasError; }
+    void didReceiveData(const SharedBuffer&);
+    void didComplete();
 
 private:
     enum class State {
-        FindBoundaryStart,
+        CheckBoundary,
+        InBoundary,
         InHeader,
-        WaitingForHeaderProcessing,
-        InBody,
-        WaitingForTerminate,
-        Terminating,
+        InContent,
+        EndBoundary,
         End
     };
 
-    enum class ParseHeadersResult {
-        Success,
-        NeedMoreData,
-        HeaderSizeTooLarge
-    };
-
-    struct FindBoundaryResult {
-        bool isSyntaxError { false };
-        bool hasBoundary { false };
-        bool hasCloseDelimiter { false };
-        size_t processed { 0 };
-        size_t dataEnd { 0 };
-    };
+    static std::optional<String> extractBoundary(const CurlResponse&);
+    static std::optional<String> extractBoundaryFromContentType(const String&);
 
     bool processContent();
-    FindBoundaryResult findBoundary();
-    ParseHeadersResult parseHeadersIfPossible();
+    bool checkForBoundary(size_t& boundaryStartPosition, size_t& lastPartialMatchPosition);
+    size_t matchedLength(const uint8_t* data);
+    bool parseHeadersIfPossible();
 
-    CheckedRef<CurlMultipartHandleClient> m_client;
+    CurlMultipartHandleClient& m_client;
 
-    CString m_boundary;
+    String m_boundary;
     Vector<uint8_t> m_buffer;
     Vector<String> m_headers;
 
-    State m_state { State::FindBoundaryStart };
-    bool m_didCompleteMessage { false };
-    bool m_hasError { false };
+    State m_state { State::CheckBoundary };
 };
 
 } // namespace WebCore
