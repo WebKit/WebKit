@@ -441,6 +441,7 @@ end
 # OSR
 
 macro ipintPrologueOSR(increment)
+if JIT
     loadp WasmCodeBlock[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
@@ -518,8 +519,10 @@ end
     loadp WasmCodeBlock[cfr], ws0
 .continue:
 end
+end
 
 macro ipintLoopOSR(increment)
+if JIT
     loadp WasmCodeBlock[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
@@ -546,8 +549,10 @@ macro ipintLoopOSR(increment)
     loadp WasmCodeBlock[cfr], ws0
 .continue:
 end
+end
 
 macro ipintEpilogueOSR(increment)
+if JIT
     loadp WasmCodeBlock[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
@@ -555,6 +560,8 @@ macro ipintEpilogueOSR(increment)
     operationCall(macro() cCall2(_ipint_extern_epilogue_osr) end)
 .continue:
 end
+end
+
 
 ########################
 # In-Place Interpreter #

@@ -574,13 +574,15 @@ CatchInfo::CatchInfo(const Wasm::HandlerInfo* handler, const Wasm::Callee* calle
     m_valid = !!handler;
     if (m_valid) {
         m_type = HandlerType::Catch;
+#if ENABLE(JIT)
         m_nativeCode = handler->m_nativeCode;
         m_nativeCodeForDispatchAndCatch = nullptr;
+#endif
         m_catchPCForInterpreter = { static_cast<WasmInstruction*>(nullptr) };
         if (callee->compilationMode() == Wasm::CompilationMode::LLIntMode)
             m_catchPCForInterpreter = { static_cast<const Wasm::LLIntCallee*>(callee)->instructions().at(handler->m_target).ptr() };
         else {
-#if USE(JSVALUE64)
+#if USE(JSVALUE64) && ENABLE(JIT)
             m_nativeCode = Wasm::Thunks::singleton().stub(Wasm::catchInWasmThunkGenerator).template retagged<ExceptionHandlerPtrTag>().code();
             m_nativeCodeForDispatchAndCatch = handler->m_nativeCode;
 #endif

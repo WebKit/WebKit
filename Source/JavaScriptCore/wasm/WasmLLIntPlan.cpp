@@ -111,6 +111,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
 
 void LLIntPlan::didCompleteCompilation()
 {
+#if ENABLE(JIT)
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
         // LLInt entrypoint thunks generation
@@ -157,10 +158,12 @@ void LLIntPlan::didCompleteCompilation()
         if (!m_moduleInformation->clobberingTailCalls().isEmpty())
             computeTransitiveTailCalls();
     }
+#endif
 
     if (m_compilerMode == CompilerMode::Validation)
         return;
 
+#if ENABLE(JIT)
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
         if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
@@ -188,6 +191,7 @@ void LLIntPlan::didCompleteCompilation()
             ASSERT_UNUSED(result, result.isNewEntry);
         }
     }
+#endif
 
     for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
         for (auto& call : unlinked) {

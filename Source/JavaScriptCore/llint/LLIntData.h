@@ -240,8 +240,22 @@ ALWAYS_INLINE LLIntCode getWide32CodeFunctionPtr(OpcodeID opcodeID)
     return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr());
 #endif
 }
+#else // not ENABLE(JIT)
+ALWAYS_INLINE void* getCodePtr(OpcodeID id)
+{
+    return reinterpret_cast<void*>(getOpcode(id));
+}
 
-#if ENABLE(WEBASSEMBLY)
+ALWAYS_INLINE void* getWide16CodePtr(OpcodeID id)
+{
+    return reinterpret_cast<void*>(getOpcodeWide16(id));
+}
+
+ALWAYS_INLINE void* getWide32CodePtr(OpcodeID id)
+{
+    return reinterpret_cast<void*>(getOpcodeWide32(id));
+}
+#endif // ENABLE(JIT)
 
 inline Opcode getOpcode(WasmOpcodeID id)
 {
@@ -340,6 +354,7 @@ ALWAYS_INLINE MacroAssemblerCodeRef<tag> getWide32CodeRef(WasmOpcodeID opcodeID)
     return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getWide32CodePtr<tag>(opcodeID));
 }
 
+#if ENABLE(JIT)
 template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getCodeFunctionPtr(WasmOpcodeID opcodeID)
 {
@@ -369,21 +384,18 @@ ALWAYS_INLINE LLIntCode getWide32CodeFunctionPtr(WasmOpcodeID opcodeID)
     return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr());
 #endif
 }
-
-#endif // ENABLE(WEBASSEMBLY)
-
 #else // not ENABLE(JIT)
-ALWAYS_INLINE void* getCodePtr(OpcodeID id)
+ALWAYS_INLINE void* getCodePtr(WasmOpcodeID id)
 {
     return reinterpret_cast<void*>(getOpcode(id));
 }
 
-ALWAYS_INLINE void* getWide16CodePtr(OpcodeID id)
+ALWAYS_INLINE void* getWide16CodePtr(WasmOpcodeID id)
 {
     return reinterpret_cast<void*>(getOpcodeWide16(id));
 }
 
-ALWAYS_INLINE void* getWide32CodePtr(OpcodeID id)
+ALWAYS_INLINE void* getWide32CodePtr(WasmOpcodeID id)
 {
     return reinterpret_cast<void*>(getOpcodeWide32(id));
 }

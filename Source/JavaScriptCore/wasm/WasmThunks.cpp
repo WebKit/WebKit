@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmThunks.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
 
 #include "AllowMacroScratchRegisterUsage.h"
 #include "CCallHelpers.h"
@@ -214,4 +214,4 @@ MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::existingStub(ThunkGenerator genera
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY) && ENABLE(JIT)

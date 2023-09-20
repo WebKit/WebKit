@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
 
 #include "InternalFunction.h"
 #include "WasmB3IRGenerator.h"
@@ -48,4 +48,4 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers&, Callee&, 
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY) && ENABLE(JIT)

@@ -118,7 +118,7 @@ void initialize()
         thread.setSavedLastStackTop(thread.stack().origin());
 
         NativeCalleeRegistry::initialize();
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
         if (Wasm::isSupported()) {
             Wasm::Thunks::initialize();
         }
