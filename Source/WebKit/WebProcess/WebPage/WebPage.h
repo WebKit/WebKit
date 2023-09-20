@@ -1185,8 +1185,6 @@ public:
     void gestureEvent(const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool)>&&);
 #endif
 
-    void updateVisibilityState(bool isInitialState = false);
-
 #if PLATFORM(IOS_FAMILY)
     void setDeviceOrientation(WebCore::IntDegrees);
     void dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate&);
