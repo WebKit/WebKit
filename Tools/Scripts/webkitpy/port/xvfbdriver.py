@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2014-2021 Igalia S.L.
+# Copyright (C) 2014-2023 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,13 +27,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import errno
 import logging
 import os
-import sys
 import re
-import time
+import select
 import subprocess
-from webkitcorepy import string_utils
+import sys
+import time
 from webkitpy.port.server_process import ServerProcess
 from webkitpy.port.driver import Driver
 
@@ -58,32 +59,24 @@ class XvfbDriver(Driver):
         return xvfb_found
 
     def _xvfb_pipe(self):
-        read_fd, write_fd = os.pipe()
-
-        # By default, python3 creates file descriptors as non-inheritable
-        if sys.version_info.major == 3:
-            os.set_inheritable(write_fd, True)
-
-        return (read_fd, write_fd)
+        return os.pipe()
 
     def _xvfb_read_display_id(self, read_fd):
-        import errno
-        import select
-
-        fd_set = [read_fd]
-        while fd_set:
+        while True:
             try:
-                fd_list = select.select(fd_set, [], [])[0]
+                fd_list_ready_read = select.select([read_fd], [], [])[0]
             except select.error as e:
                 if e.args[0] == errno.EINTR:
                     continue
                 raise
-
-            if read_fd in fd_list:
-                # We only expect a number, so first read should be enough.
-                display_id = os.read(read_fd, 256).strip(string_utils.encode('\n'))
-                fd_set = []
-
+            if read_fd in fd_list_ready_read:
+                # We need to keep reading in a loop until getting EOL because Xvfb first writes the number and then the EOL
+                # and we shouldn't close the descriptor before reading the complete line to avoid crashing Xvfb
+                display_id = b''
+                while not display_id.endswith(b'\n'):
+                    display_id += os.read(read_fd, 256)
+                display_id = display_id.decode().strip()
+                break
         return int(display_id)
 
     def _xvfb_close_pipe(self, pipe_fds):
@@ -98,7 +91,7 @@ class XvfbDriver(Driver):
         if self._port._should_use_jhbuild():
             run_xvfb = self._port._jhbuild_wrapper + run_xvfb
         with open(os.devnull, 'w') as devnull:
-            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull, env=environment, close_fds=False)
+            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stdout=devnull, stderr=devnull, env=environment, pass_fds=[write_fd])
         display_id = self._xvfb_read_display_id(read_fd)
         self._xvfb_close_pipe((read_fd, write_fd))
         return display_id
@@ -111,8 +104,11 @@ class XvfbDriver(Driver):
 
     def _xvfb_stop(self):
         if self._xvfb_process:
-            if not self._xvfb_process.poll():
+            retcode = self._xvfb_process.poll()
+            if retcode is None:
                 self._port.host.executive.kill_process(self._xvfb_process.pid)
+            else:
+                _log.warning('The Xvfb display server exited prematurely before the call to stop in the driver with return code "%d"' % retcode)
             self._xvfb_process = None
 
     def _xvfb_check_if_ready(self, display_id):
@@ -186,10 +182,14 @@ class XvfbDriver(Driver):
         return driver_environment
 
     def has_crashed(self):
-        if self._xvfb_process and self._xvfb_process.poll():
-            self._crashed_process_name = 'Xvfb'
-            self._crashed_pid = self._xvfb_process.pid
-            return True
+        if self._xvfb_process:
+            retcode = self._xvfb_process.poll()
+            if retcode is not None:
+                _log.error('Xvfb with pid %d crashed with retcode "%d".' % (self._xvfb_process.pid, retcode))
+                self._crashed_process_name = 'Xvfb'
+                self._crashed_pid = self._xvfb_process.pid
+                self._xvfb_process = None
+                return True
         return super(XvfbDriver, self).has_crashed()
 
     def stop(self):
