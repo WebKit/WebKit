@@ -62,6 +62,7 @@ ScrollingStateNode::~ScrollingStateNode() = default;
 void ScrollingStateNode::attachAfterDeserialization(ScrollingStateTree& tree)
 {
     ASSERT(m_scrollingStateTree); // FIXME: This will switch to ASSERT(!m_scrollingStateTree) once we deserialize nodes without the context of a ScrollingStateTree.
+    ASSERT(m_scrollingStateTree != &tree);
     m_scrollingStateTree = &tree;
     for (auto& child : m_children)
         child->attachAfterDeserialization(tree);

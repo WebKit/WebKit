@@ -43,8 +43,9 @@ namespace WebKit {
 
 class RemoteScrollingCoordinatorTransaction {
 public:
+    enum class FromDeserialization : bool { No, Yes };
     RemoteScrollingCoordinatorTransaction();
-    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool);
+    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool, FromDeserialization = FromDeserialization::Yes);
     RemoteScrollingCoordinatorTransaction(RemoteScrollingCoordinatorTransaction&&);
     RemoteScrollingCoordinatorTransaction& operator=(RemoteScrollingCoordinatorTransaction&&);
     ~RemoteScrollingCoordinatorTransaction();
