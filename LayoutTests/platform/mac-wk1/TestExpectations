@@ -1873,7 +1873,6 @@ imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 # rdar://53137847 (macOS WK1: editing/spelling/retro-correction-spelling-markers.html, editing/spelling/grammar.html, and editing/spelling/markers.html are flaky)
 webkit.org/b/206071 editing/spelling/grammar.html [ Skip ]
 webkit.org/b/206071 editing/spelling/markers.html [ Skip ]
-webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Pass Failure ]
 
 webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement-types.html [ Timeout ]
 

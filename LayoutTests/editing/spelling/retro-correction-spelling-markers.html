@@ -1,17 +1,25 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script src="../editing.js"></script>
 
 <script>
-function runTest() {
-    jsTestIsAsync = true;
-
+jsTestIsAsync = true;
+async function runTest() {
     if (window.internals) {
         internals.settings.setUnifiedTextCheckerEnabled(true);
         internals.settings.setAsynchronousSpellCheckingEnabled(true);
         internals.setAutomaticTextReplacementEnabled(false);
         internals.setAutomaticSpellingCorrectionEnabled(false);
+
+        await UIHelper.setSpellCheckerResults({
+            "It's muhc to late too finish this.": [
+                { "type": "spelling", "from": 5, "to": 9 },
+                { "type": "spelling", "from": 10, "to": 12, },
+                { "type": "spelling", "from": 18, "to": 21, },
+            ]
+        });
     }
 
     document.getElementById("editor").focus();

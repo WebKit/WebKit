@@ -552,6 +552,16 @@ static JSValueRef goBackCallback(JSContextRef context, JSObjectRef function, JSO
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef isMacCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+#if PLATFORM(MAC)
+    bool isMac = true;
+#else
+    bool isMac = false;
+#endif
+    return JSValueMakeBoolean(context, isMac);
+}
+
 static JSValueRef isCommandEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has Mac implementation.
@@ -2035,6 +2045,7 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "ignoreLegacyWebNotificationPermissionRequests", ignoreLegacyWebNotificationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isGeolocationProviderActive", isGeolocationProviderActiveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isCommandEnabled", isCommandEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isMac", isMacCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "keepWebHistory", keepWebHistoryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberOfPendingGeolocationPermissionRequests", numberOfPendingGeolocationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
