@@ -1898,6 +1898,42 @@ Vector<typename CompactMapper<MapFunction, SourceType>::DestinationItemType> com
     return CompactMapper<MapFunction, SourceType>::compactMap(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
 }
 
+template<typename MapFunction, typename SourceType>
+struct FlatMapper {
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
+    using DestinationItemType = typename CollectionInspector<typename std::invoke_result<MapFunction, SourceItemType&>::type>::SourceItemType;
+
+    static Vector<DestinationItemType> flatMap(const SourceType& source, const MapFunction& mapFunction)
+    {
+        Vector<DestinationItemType> result;
+        for (auto&& item : source)
+            result.appendVector(mapFunction(item));
+        result.shrinkToFit();
+        return result;
+    }
+};
+
+template<typename MapFunction, typename SourceType> requires std::is_rvalue_reference<SourceType&&>::value
+struct FlatMapper<MapFunction, SourceType> {
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
+    using DestinationItemType = typename CollectionInspector<typename std::invoke_result<MapFunction, SourceItemType&&>::type>::SourceItemType;
+
+    static Vector<DestinationItemType> flatMap(SourceType&& source, const MapFunction& mapFunction)
+    {
+        Vector<DestinationItemType> result;
+        for (auto&& item : source)
+            result.appendVector(mapFunction(WTFMove(item)));
+        result.shrinkToFit();
+        return result;
+    }
+};
+
+template<typename MapFunction, typename SourceType>
+Vector<typename FlatMapper<MapFunction, SourceType>::DestinationItemType> flatMap(SourceType&& source, MapFunction&& mapFunction)
+{
+    return FlatMapper<MapFunction, SourceType>::flatMap(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+}
+
 template<typename DestinationVector, typename Collection>
 inline auto copyToVectorSpecialization(const Collection& collection) -> DestinationVector
 {

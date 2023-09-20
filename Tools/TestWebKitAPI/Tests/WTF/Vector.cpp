@@ -1910,4 +1910,101 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 }
 
+static Vector<int> mapVector(Vector<int> vector)
+{
+    return vector;
+}
+
+TEST(WTF_Vector, FlatMapCopy)
+{
+    Vector<Vector<int>> vector {
+        { 1, 2 },
+        { 3, 4 },
+    };
+
+    static_assert(std::is_same<decltype(WTF::flatMap(vector, mapVector)), typename WTF::Vector<int>>::value,
+        "WTF::flatMap returns Vector<int>");
+    auto mapped = WTF::flatMap(vector, mapVector);
+
+    EXPECT_EQ(2U, vector.size());
+    EXPECT_EQ(2U, vector[0].size());
+    EXPECT_EQ(2U, vector[1].size());
+
+    EXPECT_EQ(4U, mapped.size());
+    EXPECT_EQ(1, mapped[0]);
+    EXPECT_EQ(2, mapped[1]);
+    EXPECT_EQ(3, mapped[2]);
+    EXPECT_EQ(4, mapped[3]);
+}
+
+TEST(WTF_Vector, FlatMapMove)
+{
+    Vector<Vector<int>> vector {
+        { 1, 2 },
+        { 3, 4 },
+    };
+
+    static_assert(std::is_same<decltype(WTF::flatMap(WTFMove(vector), mapVector)), typename WTF::Vector<int>>::value,
+        "WTF::flatMap returns Vector<int>");
+    auto mapped = WTF::flatMap(WTFMove(vector), mapVector);
+
+    EXPECT_EQ(2U, vector.size());
+    EXPECT_EQ(0U, vector[0].size());
+    EXPECT_EQ(0U, vector[1].size());
+
+    EXPECT_EQ(4U, mapped.size());
+    EXPECT_EQ(1, mapped[0]);
+    EXPECT_EQ(2, mapped[1]);
+    EXPECT_EQ(3, mapped[2]);
+    EXPECT_EQ(4, mapped[3]);
+}
+
+TEST(WTF_Vector, FlatMapEmptyInnerVector)
+{
+    Vector<Vector<int>> vector {
+        { },
+        { 1, 2 },
+        { },
+        { 3, 4 },
+        { },
+    };
+
+    static_assert(std::is_same<decltype(WTF::flatMap(vector, mapVector)), typename WTF::Vector<int>>::value,
+        "WTF::flatMap returns Vector<int>");
+    auto mapped = WTF::flatMap(vector, mapVector);
+
+    EXPECT_EQ(4U, mapped.size());
+    EXPECT_EQ(1, mapped[0]);
+    EXPECT_EQ(2, mapped[1]);
+    EXPECT_EQ(3, mapped[2]);
+    EXPECT_EQ(4, mapped[3]);
+}
+
+struct InnerStruct {
+    Vector<int> vector;
+};
+
+static Vector<int> mapInnerStruct(InnerStruct innerStruct)
+{
+    return innerStruct.vector;
+}
+
+TEST(WTF_Vector, FlatMapInnerStruct)
+{
+    Vector<InnerStruct> vector {
+        { { 1, 2 } },
+        { { 3, 4 } },
+    };
+
+    static_assert(std::is_same<decltype(WTF::flatMap(vector, mapInnerStruct)), typename WTF::Vector<int>>::value,
+        "WTF::flatMap returns Vector<int>");
+    auto mapped = WTF::flatMap(vector, mapInnerStruct);
+
+    EXPECT_EQ(4U, mapped.size());
+    EXPECT_EQ(1, mapped[0]);
+    EXPECT_EQ(2, mapped[1]);
+    EXPECT_EQ(3, mapped[2]);
+    EXPECT_EQ(4, mapped[3]);
+}
+
 } // namespace TestWebKitAPI
