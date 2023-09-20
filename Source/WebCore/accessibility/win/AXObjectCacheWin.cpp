@@ -153,10 +153,12 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocuse
     if (!page || !page->chrome().platformPageClient())
         return;
 
-    if (RefPtr focusedObject = focusedObjectForPage(page)) {
-        ASSERT(!focusedObject->accessibilityIsIgnored());
-        postPlatformNotification(*focusedObject, AXFocusedUIElementChanged);
-    }
+    RefPtr focusedObject = focusedObjectForPage(page);
+    if (!focusedObject)
+        return;
+
+    ASSERT(!focusedObject->isIgnored());
+    postPlatformNotification(*focusedObject, AXFocusedUIElementChanged);
 }
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()

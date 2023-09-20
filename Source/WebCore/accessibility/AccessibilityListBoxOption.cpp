@@ -111,7 +111,7 @@ bool AccessibilityListBoxOption::computeAccessibilityIsIgnored() const
         return true;
 
     auto* parent = parentObject();
-    return parent ? parent->accessibilityIsIgnored() : true;
+    return parent ? parent->isIgnored() : true;
 }
 
 bool AccessibilityListBoxOption::canSetSelectedAttribute() const

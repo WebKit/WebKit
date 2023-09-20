@@ -29,6 +29,7 @@
 
 #include "AXCoreObject.h"
 #include "AXObjectCache.h"
+#include "AXTreeFilter.h"
 #include "AccessibilityNodeObject.h"
 #include "ContainerNode.h"
 #include "Document.h"
@@ -178,7 +179,7 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
         computedProperties.headingLevel = axObject->headingLevel();
         computedProperties.hidden = axObject->isHidden();
         computedProperties.hierarchicalLevel = axObject->hierarchicalLevel();
-        computedProperties.ignored = axObject->accessibilityIsIgnored();
+        computedProperties.ignored = axObject->isIgnored();
         computedProperties.ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
 
         String invalidValue = axObject->invalidStatus();
@@ -305,7 +306,7 @@ ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getParentNode(Node&
     ERROR_IF_NO_ACTIVE_AUDIT();
 
     if (auto* axObject = accessibilityObjectForNode(node)) {
-        if (AXCoreObject* parentObject = axObject->parentObjectUnignored())
+        if (auto* parentObject = AXTreeFilter::parent(axObject))
             return parentObject->node();
     }
 

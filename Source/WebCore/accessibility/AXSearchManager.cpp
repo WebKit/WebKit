@@ -232,10 +232,10 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
     size_t endIndex = isForward ? 0 : childrenSize;
 
     // If the startObject is ignored, we should use an accessible sibling as a start element instead.
-    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object.get())) {
+    if (startObject && startObject->isIgnored() && startObject->isDescendantOfObject(object.get())) {
         RefPtr<AXCoreObject> parentObject = startObject->parentObject();
         // Go up the parent chain to find the highest ancestor that's also being ignored.
-        while (parentObject && parentObject->accessibilityIsIgnored()) {
+        while (parentObject && parentObject->isIgnored()) {
             if (parentObject == object)
                 break;
             startObject = parentObject;
@@ -247,7 +247,7 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
         ASSERT(is<AccessibilityObject>(startObject));
         auto* newStartObject = dynamicDowncast<AccessibilityObject>(startObject.get());
         // Get the un-ignored sibling based on the search direction, and update the searchPosition.
-        if (newStartObject && newStartObject->accessibilityIsIgnored())
+        if (newStartObject && newStartObject->isIgnored())
             newStartObject = isForward ? newStartObject->previousSiblingUnignored() : newStartObject->nextSiblingUnignored();
         startObject = newStartObject;
     }
@@ -294,11 +294,11 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
     RefPtr<AXCoreObject> previousObject;
     if (!isForward && startObject != criteria.anchorObject) {
         previousObject = startObject;
-        startObject = startObject->parentObjectUnignored();
+        startObject = startObject->parentObject();
     }
 
     // The outer loop steps up the parent chain each time (unignored is important here because otherwise elements would be searched twice)
-    for (auto* stopSearchElement = criteria.anchorObject->parentObjectUnignored(); startObject && startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
+    for (auto* stopSearchElement = criteria.anchorObject->parentObject(); startObject && startObject != stopSearchElement; startObject = startObject->parentObject()) {
         // Only append the children after/before the previous element, so that the search does not check elements that are
         // already behind/ahead of start element.
         AXCoreObject::AccessibilityChildrenVector searchStack;

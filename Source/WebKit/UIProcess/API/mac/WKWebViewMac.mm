@@ -804,7 +804,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)accessibilityIsIgnored
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    return _impl->accessibilityIsIgnored();
+    return _impl->isIgnored();
 }
 
 - (id)accessibilityHitTest:(NSPoint)point

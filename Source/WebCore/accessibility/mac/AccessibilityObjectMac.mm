@@ -27,6 +27,7 @@
 #import "AccessibilityObject.h"
 
 #import "AXRemoteFrame.h"
+#import "AXTreeFilter.h"
 #import "AccessibilityLabel.h"
 #import "AccessibilityList.h"
 #import "ColorCocoa.h"
@@ -74,12 +75,12 @@ void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
 {
     if (!isAttachment())
         return;
-    
+
     id parentWrapper = nil;
-    if (parent) {
-        if (parent->accessibilityIsIgnored())
-            parent = parent->parentObjectUnignored();
-        parentWrapper = parent->wrapper();
+    if (parent && parent->isIgnored()) {
+        parent = AXTreeFilter::parent(parent);
+        if (parent)
+            parentWrapper = parent->wrapper();
     }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

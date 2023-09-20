@@ -340,7 +340,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::Tab:
     case AccessibilityRole::TextField:
     case AccessibilityRole::ToggleButton:
-        return !self.axBackingObject->accessibilityIsIgnored();
+        return !self.axBackingObject->isIgnored();
     default:
         return false;
     }

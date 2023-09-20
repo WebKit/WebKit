@@ -473,7 +473,7 @@ public:
     void accessibilityRegisterUIProcessTokens();
     void updateRemoteAccessibilityRegistration(bool registerProcess);
     id accessibilityFocusedUIElement();
-    bool accessibilityIsIgnored() const { return false; }
+    bool isIgnored() const { return false; }
     id accessibilityHitTest(CGPoint);
     void enableAccessibilityIfNecessary();
     id accessibilityAttributeValue(NSString *, id parameter = nil);

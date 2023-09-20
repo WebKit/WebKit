@@ -531,7 +531,7 @@ void AccessibilityObjectAtspi::setParent(std::optional<AccessibilityObjectAtspi*
         return;
 
     m_parent = atspiParent;
-    if (!m_coreObject || m_coreObject->accessibilityIsIgnored())
+    if (!m_coreObject || m_coreObject->isIgnored())
         return;
 
     AccessibilityAtspi::singleton().parentChanged(*this);
@@ -1152,7 +1152,7 @@ void AccessibilityObjectAtspi::childAdded(AccessibilityObjectAtspi& child)
     if (!m_isRegistered)
         return;
 
-    if (!m_coreObject || m_coreObject->accessibilityIsIgnored())
+    if (!m_coreObject || m_coreObject->isIgnored())
         return;
 
     AccessibilityAtspi::singleton().childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Added);
@@ -1358,7 +1358,7 @@ void AccessibilityObjectAtspi::updateBackingStore()
 
 bool AccessibilityObjectAtspi::isIgnored() const
 {
-    return m_coreObject ? m_coreObject->accessibilityIsIgnored() : true;
+    return m_coreObject ? m_coreObject->isIgnored() : true;
 }
 
 void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)

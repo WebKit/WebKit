@@ -36,6 +36,7 @@ class AccessibilityTable;
 class AccessibilityTableRow;
 
 class AccessibilityTableCell : public AccessibilityRenderObject {
+    friend class AXTreeFilter;
 public:
     static Ref<AccessibilityTableCell> create(RenderObject&);
     static Ref<AccessibilityTableCell> create(Node&);
@@ -81,7 +82,6 @@ protected:
 
     AccessibilityTableRow* parentRow() const;
     AccessibilityRole determineAccessibilityRole() final;
-    AccessibilityObject* parentObjectUnignored() const override;
 
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.

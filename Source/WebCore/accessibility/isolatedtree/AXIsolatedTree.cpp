@@ -30,6 +30,7 @@
 
 #include "AXIsolatedObject.h"
 #include "AXLogger.h"
+#include "AXTreeFilter.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
 #include "FrameSelection.h"
@@ -167,7 +168,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 
     for (auto& relatedObjectID : relations.keys()) {
         RefPtr axObject = axObjectCache.objectForID(relatedObjectID);
-        if (axObject && axObject->accessibilityIsIgnored())
+        if (axObject && axObject->isIgnored())
             tree->addUnconnectedNode(axObject.releaseNonNull());
     }
 
@@ -250,7 +251,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::retrieveObjectForIDFromMainThread(const
             return nullptr;
 
         RefPtr axObject = cache->objectForID(axID);
-        if (!axObject || !axObject->accessibilityIsIgnored())
+        if (!axObject || !axObject->isIgnored())
             return nullptr;
 
         auto object = AXIsolatedObject::create(*axObject, const_cast<AXIsolatedTree*>(this));
@@ -277,7 +278,7 @@ void AXIsolatedTree::generateSubtree(AccessibilityObject& axObject)
 bool AXIsolatedTree::shouldCreateNodeChange(AccessibilityObject& axObject)
 {
     // We should never create an isolated object from a detached or ignored object.
-    return !axObject.isDetached() && (!axObject.accessibilityIsIgnored() || m_unconnectedNodes.contains(axObject.objectID()));
+    return !axObject.isDetached() && (!axObject.isIgnored() || m_unconnectedNodes.contains(axObject.objectID()));
 }
 
 std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Ref<AccessibilityObject> axObject, AttachWrapper attachWrapper)
@@ -456,7 +457,7 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
     if (m_collectingNodeChangesAtTreeLevel >= m_maxTreeDepth)
         return;
 
-    auto* axParent = axObject.parentObjectUnignored();
+    auto* axParent = axObject.parentObject();
     auto iterator = m_nodeMap.find(axObject.objectID());
     if (iterator == m_nodeMap.end())
         m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnMainThread);
@@ -522,7 +523,7 @@ void AXIsolatedTree::updateNode(AccessibilityObject& axObject)
     if (!axObject.isDescendantOfBarrenParent())
         return;
 
-    auto* axParent = axObject.parentObjectUnignored();
+    auto* axParent = AXTreeFilter::parent(axObject);
     if (!axParent)
         return;
 
@@ -798,7 +799,7 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
 
         if (updateTableAncestorColumns && is<AccessibilityTable>(*ancestor)) {
             // Only `updateChildren` if the table is unignored, because otherwise `updateChildren` will ascend and update the next highest unignored ancestor, which doesn't accomplish our goal of updating table columns.
-            if (ancestor->accessibilityIsIgnored())
+            if (ancestor->isIgnored())
                 break;
             // Use `NodeUpdateOptions::childrenUpdate()` rather than `updateNodeProperty` because `childrenUpdate()` will ensure the columns (which are children) will have associated isolated objects created.
             queueNodeUpdate(ancestor->objectID(), NodeUpdateOptions::childrenUpdate());
@@ -864,7 +865,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 
                 // This child should be added to the isolated tree but hasn't been yet.
                 // Add it to the nodemap so the recursive call to updateChildren below properly builds the subtree for this object.
-                auto* parent = liveChild->parentObjectUnignored();
+                auto* parent = AXTreeFilter::parent(liveChild);
                 m_nodeMap.set(liveChild->objectID(), ParentChildrenIDs { parent ? parent->objectID() : AXID(), liveChild->childrenIDs() });
                 m_unresolvedPendingAppends.set(liveChild->objectID(), AttachWrapper::OnMainThread);
             }
@@ -1111,7 +1112,7 @@ void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
     }
 
     m_unresolvedPendingAppends.remove(axObject.objectID());
-    removeSubtreeFromNodeMap(axObject.objectID(), axObject.parentObjectUnignored());
+    removeSubtreeFromNodeMap(axObject.objectID(), AXTreeFilter::parent(axObject));
     queueRemovals({ axObject.objectID() });
 }
 
