@@ -2454,10 +2454,10 @@ void GraphicsLayerCA::updateBackfaceVisibility()
 
 void GraphicsLayerCA::updateFilters()
 {
-    m_layer->setFilters(m_filters);
+    primaryLayer()->setFilters(m_filters);
 
-    if (m_layerClones) {
-        for (auto& clone : m_layerClones->primaryLayerClones) {
+    if (LayerMap* layerCloneMap = primaryLayerClones()) {
+        for (auto& clone : *layerCloneMap) {
             if (m_replicaLayer && isReplicatedRootClone(clone.key))
                 continue;
 
@@ -2639,6 +2639,7 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         | FiltersChanged
         | BackdropFiltersChanged
         | BackdropRootChanged
+        | BlendModeChanged
         | MaskLayerChanged
         | OpacityChanged;
 
@@ -2697,8 +2698,10 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     FloatPoint3D anchorPoint(0.5f, 0.5f, 0);
     m_layer->setPosition(point);
     m_layer->setAnchorPoint(anchorPoint);
+    m_layer->setFilters(FilterOperations());
     m_layer->setTransform(TransformationMatrix());
     m_layer->setOpacity(1);
+    m_layer->setBlendMode(BlendMode::Normal);
     if (m_layerClones) {
         for (auto& layer : m_layerClones->primaryLayerClones.values()) {
             layer->setPosition(point);
