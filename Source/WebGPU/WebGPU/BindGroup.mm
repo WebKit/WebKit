@@ -473,12 +473,12 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             return BindGroup::createInvalid(*this);
 
         for (ShaderStage stage : stages) {
-            auto optionalIndex = bindGroupLayout.indexForBinding(entry.binding, stage);
-            if (!optionalIndex)
+            auto optionalAccess = bindGroupLayout.bindingAccessForBindingIndex(entry.binding, stage);
+            if (!optionalAccess)
                 continue;
 
-            auto index = optionalIndex->first;
-            MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(optionalIndex->second);
+            auto index = entry.binding;
+            MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(*optionalAccess);
 
             if (bufferIsPresent) {
                 id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();

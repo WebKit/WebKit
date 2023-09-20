@@ -67,7 +67,7 @@ public:
     static constexpr auto BindingAccessReadWrite = MTLBindingAccessReadWrite;
     static constexpr auto BindingAccessWriteOnly = MTLBindingAccessWriteOnly;
 #endif
-    using StageMapValue = std::pair<NSUInteger, BindingAccess>;
+    using StageMapValue = BindingAccess;
     using StageMapTable = HashMap<uint64_t, StageMapValue, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
     static Ref<BindGroupLayout> create(StageMapTable&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& entries)
@@ -91,7 +91,7 @@ public:
     id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
     id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
-    std::optional<StageMapValue> indexForBinding(uint32_t bindingIndex, ShaderStage renderStage) const;
+    std::optional<StageMapValue> bindingAccessForBindingIndex(uint32_t bindingIndex, ShaderStage renderStage) const;
 
     static bool isPresent(const WGPUBufferBindingLayout&);
     static bool isPresent(const WGPUSamplerBindingLayout&);
