@@ -84,6 +84,16 @@ bool WillChangeData::createsContainingBlockForOutOfFlowPositioned(bool isRootEle
         || containsProperty(CSSPropertyFilter);
 }
 
+bool WillChangeData::canBeBackdropRoot() const
+{
+    return containsProperty(CSSPropertyOpacity)
+        || containsProperty(CSSPropertyWebkitBackdropFilter)
+        || containsProperty(CSSPropertyClipPath)
+        || containsProperty(CSSPropertyFilter)
+        || containsProperty(CSSPropertyMixBlendMode)
+        || containsProperty(CSSPropertyMask);
+}
+
 // "If any non-initial value of a property would create a stacking context on the element,
 // specifying that property in will-change must create a stacking context on the element."
 bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)

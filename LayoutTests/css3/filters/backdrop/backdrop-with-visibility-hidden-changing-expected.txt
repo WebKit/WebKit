@@ -8,16 +8,22 @@ Dump when filter is visible:
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 0.00 150.00)
-          (bounds 402.00 52.00)
+          (bounds 800.00 600.00)
           (drawsContent 1)
-          (structural layer
-            (position 201.00 176.00)
-            (bounds 402.00 52.00)
-          )
-          (backdrop layer
-            (position 0.00 0.00)
-            (bounds 402.00 52.00)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 150.00)
+              (bounds 402.00 52.00)
+              (drawsContent 1)
+              (structural layer
+                (position 201.00 176.00)
+                (bounds 402.00 52.00)
+              )
+              (backdrop layer
+                (position 0.00 0.00)
+                (bounds 402.00 52.00)
+              )
+            )
           )
         )
       )
@@ -34,17 +40,23 @@ Dump when filter is hidden:
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 0.00 150.00)
-          (bounds 402.00 52.00)
-          (contentsVisible 0)
-          (structural layer
-            (position 201.00 176.00)
-            (bounds 402.00 52.00)
-          )
-          (backdrop layer
-            (position 0.00 0.00)
-            (bounds 402.00 52.00)
-            (hidden)
+          (bounds 800.00 600.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 150.00)
+              (bounds 402.00 52.00)
+              (contentsVisible 0)
+              (structural layer
+                (position 201.00 176.00)
+                (bounds 402.00 52.00)
+              )
+              (backdrop layer
+                (position 0.00 0.00)
+                (bounds 402.00 52.00)
+                (hidden)
+              )
+            )
           )
         )
       )
@@ -61,16 +73,22 @@ Dump when filter is visible again:
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 0.00 150.00)
-          (bounds 402.00 52.00)
+          (bounds 800.00 600.00)
           (drawsContent 1)
-          (structural layer
-            (position 201.00 176.00)
-            (bounds 402.00 52.00)
-          )
-          (backdrop layer
-            (position 0.00 0.00)
-            (bounds 402.00 52.00)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 150.00)
+              (bounds 402.00 52.00)
+              (drawsContent 1)
+              (structural layer
+                (position 201.00 176.00)
+                (bounds 402.00 52.00)
+              )
+              (backdrop layer
+                (position 0.00 0.00)
+                (bounds 402.00 52.00)
+              )
+            )
           )
         )
       )

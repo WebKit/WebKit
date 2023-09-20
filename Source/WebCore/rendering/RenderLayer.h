@@ -766,6 +766,14 @@ public:
     IntOutsets filterOutsets() const;
     inline bool hasBackdropFilter() const;
 
+    bool hasBackdropFilterDescendantsWithoutRoot() const { return m_hasBackdropFilterDescendantsWithoutRoot; }
+    void setHasBackdropFilterDescendantsWithoutRoot(bool hasBackdropFilterDescendantsWithoutRoot)
+    {
+        m_hasBackdropFilterDescendantsWithoutRoot = hasBackdropFilterDescendantsWithoutRoot;
+    }
+    bool canBeBackdropRoot() const { return m_canBeBackdropRoot; }
+    bool isBackdropRoot() const { return hasBackdropFilterDescendantsWithoutRoot() && canBeBackdropRoot(); }
+
 #if ENABLE(CSS_COMPOSITING)
     inline bool hasBlendMode() const;
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
@@ -778,7 +786,7 @@ public:
     }
 
     bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isCSSStackingContext(); }
-    
+
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
     bool hasNotIsolatedBlendingDescendantsStatusDirty() const { return m_hasNotIsolatedBlendingDescendantsStatusDirty; }
@@ -895,12 +903,14 @@ private:
 
     bool shouldBeNormalFlowOnly() const;
     bool shouldBeCSSStackingContext() const;
+    bool computeCanBeBackdropRoot() const;
 
     // Return true if changed.
     bool setIsNormalFlowOnly(bool);
 
     bool setIsCSSStackingContext(bool);
-    
+    bool setCanBeBackdropRoot(bool);
+
     void isStackingContextChanged();
 
     bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
@@ -1206,6 +1216,8 @@ private:
 
     bool m_isNormalFlowOnly : 1;
     bool m_isCSSStackingContext : 1;
+    bool m_canBeBackdropRoot : 1;
+    bool m_hasBackdropFilterDescendantsWithoutRoot : 1;
     bool m_isOpportunisticStackingContext : 1;
 
     bool m_zOrderListsDirty : 1;
