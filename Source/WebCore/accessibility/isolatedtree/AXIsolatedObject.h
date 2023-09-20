@@ -27,8 +27,8 @@
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
+#include "AXCoreObject.h"
 #include "AXObjectCache.h"
-#include "AccessibilityObjectInterface.h"
 #include "IntPoint.h"
 #include "LayoutRect.h"
 #include "Path.h"

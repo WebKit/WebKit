@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "AXCoreObject.h"
 #include "AXObjectCache.h"
-#include "AccessibilityObjectInterface.h"
 
 namespace WebCore {
 
