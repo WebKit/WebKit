@@ -179,10 +179,11 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
         auto lineInput = LineInput { { leadingInlineItemPosition, needsLayoutRange.end }, lineInitialRect };
-        auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine);
-
         auto lineIndex = previousLine ? (previousLine->lineIndex + 1) : 0lu;
-        auto lineLogicalRect = createDisplayContentForInlineContent(lineIndex, lineLayoutResult, constraints, inlineLayoutState, layoutResult.displayContent);
+
+        auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine);
+        auto lineBox = LineBoxBuilder { *this, inlineLayoutState, lineLayoutResult }.build(lineIndex);
+        auto lineLogicalRect = createDisplayContentForInlineContent(lineBox, lineLayoutResult, constraints, inlineLayoutState, layoutResult.displayContent);
         updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats);
         updateInlineLayoutStateWithLineLayoutResult(lineLayoutResult, inlineLayoutState, lineLogicalRect, floatingContext);
 
@@ -276,19 +277,20 @@ void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutR
     }
 }
 
-InlineRect InlineFormattingContext::createDisplayContentForInlineContent(size_t lineIndex, const LineLayoutResult& lineLayoutResult, const ConstraintsForInlineContent& constraints, InlineLayoutState& inlineLayoutState, InlineDisplay::Content& displayContent)
+InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const LineBox& lineBox, const LineLayoutResult& lineLayoutResult, const ConstraintsForInlineContent& constraints, InlineLayoutState& inlineLayoutState, InlineDisplay::Content& displayContent)
 {
+    auto lineIndex = lineBox.lineIndex();
     auto numberOfVisibleLinesAllowed = [&] () -> std::optional<size_t> {
         if (auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp())
             return lineClamp->maximumLineCount > lineClamp->currentLineCount ? lineClamp->maximumLineCount - lineClamp->currentLineCount : 0;
         return { };
     }();
 
-    auto ellipsisPolicy = lineEndingEllipsisPolicy(root().style(), lineIndex, numberOfVisibleLinesAllowed);
     auto lineIsFullyTruncatedInBlockDirection = numberOfVisibleLinesAllowed && lineIndex + 1 > *numberOfVisibleLinesAllowed;
-    auto lineBox = LineBoxBuilder { *this, inlineLayoutState, lineLayoutResult }.build(lineIndex);
     auto displayLine = InlineDisplayLineBuilder { constraints, *this }.build(lineLayoutResult, lineBox, lineIsFullyTruncatedInBlockDirection);
     auto boxes = InlineDisplayContentBuilder { constraints, *this, formattingState(), displayLine, lineIndex }.build(lineLayoutResult, lineBox);
+
+    auto ellipsisPolicy = lineEndingEllipsisPolicy(root().style(), lineIndex, numberOfVisibleLinesAllowed);
     if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(ellipsisPolicy, displayLine, boxes, lineLayoutResult.isFirstLast.isLastLineWithInlineContent)) {
         displayLine.setEllipsisVisualRect(*ellipsisRect);
         if (ellipsisPolicy == LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection)
@@ -356,7 +358,8 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
     lineBreakingResult.lineGeometry.logicalTopLeft = { constraints.horizontal().logicalLeft, constraints.logicalTop() };
     lineBreakingResult.lineGeometry.logicalWidth = constraints.horizontal().logicalWidth;
     lineBreakingResult.contentGeometry.logicalLeft = InlineFormattingGeometry::horizontalAlignmentOffset(root().style(), lineBreakingResult.contentGeometry.logicalWidth, lineBreakingResult.lineGeometry.logicalWidth, lineBreakingResult.hangingContent.logicalWidth, lineBreakingResult.inlineContent, true);
-    createDisplayContentForInlineContent(0, lineBreakingResult, constraints, inlineLayoutState, layoutResult.displayContent);
+    auto lineBox = LineBoxBuilder { *this, inlineLayoutState, lineBreakingResult }.build({ });
+    createDisplayContentForInlineContent(lineBox, lineBreakingResult, constraints, inlineLayoutState, layoutResult.displayContent);
     return true;
 }
 
