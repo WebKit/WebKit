@@ -932,6 +932,9 @@ template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<En
 #if ENABLE(OPTION_SET_SECOND_VALUE)
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue)
 #endif
+#if !ENABLE(OPTION_SET_SECOND_VALUE)
+        | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValueElse)
+#endif
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue)
         | 0;
     return (value.toRaw() | allValidBitsValue) == allValidBitsValue;

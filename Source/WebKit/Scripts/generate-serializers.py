@@ -170,6 +170,7 @@ class SerializedEnum(object):
     def is_webkit_platform(self):
         return 'WebKitPlatform' in self.attributes
 
+
 class MemberVariable(object):
     def __init__(self, type, name, condition, attributes, namespace=None, is_subclass=False):
         self.type = type
@@ -199,6 +200,7 @@ class EnumMember(object):
         self.name = name
         self.condition = condition
 
+
 class ConditionalHeader(object):
     def __init__(self, header, condition, webkit_platform=False):
         self.header = header
@@ -217,6 +219,14 @@ class ConditionalHeader(object):
 
     def __hash__(self):
         return hash((self.header, self.condition))
+
+
+class UsingStatement(object):
+    def __init__(self, name, alias, condition):
+        self.name = name
+        self.alias = alias
+        self.condition = condition
+
 
 def sanitize_string_for_variable_name(string):
     return string.replace('()', '').replace('.', '')
@@ -804,7 +814,7 @@ def generate_optional_tuple_type_info(type):
     return result
 
 
-def generate_serialized_type_info(serialized_types, serialized_enums, headers, typedefs):
+def generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -846,10 +856,14 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
             if member.condition is not None:
                 result.append('#endif')
         result.append('        } },')
-    for typedef in typedefs:
-        result.append('        { "' + typedef[0] + '"_s, {')
-        result.append('            { "' + typedef[1] + '"_s, "alias"_s }')
+    for using_statement in using_statements:
+        if using_statement.condition is not None:
+            result.append('#if ' + using_statement.condition)
+        result.append('        { "' + using_statement.name + '"_s, {')
+        result.append('            { "' + using_statement.alias + '"_s, "alias"_s }')
         result.append('        } },')
+        if using_statement.condition is not None:
+            result.append('#endif')
     result.append('    };')
     result.append('}')
     result.append('')
@@ -885,7 +899,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
 def parse_serialized_types(file):
     serialized_types = []
     serialized_enums = []
-    typedefs = []
+    using_statements = []
     headers = []
 
     attributes = None
@@ -902,7 +916,12 @@ def parse_serialized_types(file):
     for line in file:
         line = line.strip()
         if line.startswith('#'):
-            if line.startswith('#if '):
+            if line == '#else':
+                if name is None:
+                    type_condition = '!' + type_condition
+                else:
+                    member_condition = '!' + member_condition
+            elif line.startswith('#if '):
                 if name is None:
                     type_condition = line[4:]
                 else:
@@ -995,7 +1014,7 @@ def parse_serialized_types(file):
             continue
         match = re.search(r'using (.*) = ([^;]*)', line)
         if match:
-            typedefs.append(match.groups())
+            using_statements.append(UsingStatement(match.groups()[0], match.groups()[1], type_condition))
             continue
 
         if underlying_type is not None:
@@ -1030,13 +1049,13 @@ def parse_serialized_types(file):
             if match:
                 member_type, member_name = match.groups()
                 members.append(MemberVariable(member_type, member_name, member_condition, []))
-    return [serialized_types, serialized_enums, headers, typedefs]
+    return [serialized_types, serialized_enums, headers, using_statements]
 
 
 def main(argv):
     serialized_types = []
     serialized_enums = []
-    typedefs = []
+    using_statements = []
     headers = []
     header_set = set()
     file_extension = argv[1]
@@ -1052,13 +1071,13 @@ def main(argv):
             continue
         path = os.path.sep.join([directory, argv[i]])
         with open(path) as file:
-            new_types, new_enums, new_headers, new_typedefs = parse_serialized_types(file)
+            new_types, new_enums, new_headers, new_using_statements = parse_serialized_types(file)
             for type in new_types:
                 serialized_types.append(type)
             for enum in new_enums:
                 serialized_enums.append(enum)
-            for typedef in new_typedefs:
-                typedefs.append(typedef)
+            for using_statement in new_using_statements:
+                using_statements.append(using_statement)
             for header in new_headers:
                 header_set.add(header)
     headers = sorted(header_set)
@@ -1070,7 +1089,7 @@ def main(argv):
     with open('WebKitPlatformGeneratedSerializers.%s' % file_extension, "w+") as output:
         output.write(generate_impl(serialized_types, serialized_enums, headers, True))
     with open('SerializedTypeInfo.%s' % file_extension, "w+") as output:
-        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, typedefs))
+        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements))
     return 0
 
 
