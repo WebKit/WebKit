@@ -256,6 +256,9 @@ typedef enum {
 @property (setter=_setPrivacyProxyFailClosed:) BOOL _privacyProxyFailClosed;
 @property (readonly) BOOL _useEnhancedPrivacyMode;
 #endif
+#if HAVE(PRIVACY_PROXY_FAIL_CLOSED_FOR_UNREACHABLE_HOSTS)
+@property (readonly) BOOL _privacyProxyFailClosedForUnreachableNonMainHosts;
+#endif
 @end
 
 @interface NSURLResponse ()
