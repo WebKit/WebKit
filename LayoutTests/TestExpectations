@@ -5249,11 +5249,6 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-009.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-url-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyFailure ]
 
-# CSS motion path: positioning inset shapes with border-radius.
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-002.html [ ImageOnlyFailure ]
-
 # CSS motion path: misc xywh bug.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-003.html [ ImageOnlyFailure ]
 

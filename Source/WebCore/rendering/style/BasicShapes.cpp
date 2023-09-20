@@ -99,7 +99,7 @@ public:
     static Path createValueForKey(const FloatRoundedRect& rect)
     {
         Path path;
-        path.addRoundedRect(rect);
+        path.addRoundedRect(rect, PathRoundedRect::Strategy::PreferBezier);
         return path;
     }
 };
