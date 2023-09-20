@@ -1570,11 +1570,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
     ASSERT(!forVisitedLink);
 
     auto& cache = colorCache(options);
-    auto it = cache.systemStyleColors.find(cssValueID);
-    if (it != cache.systemStyleColors.end())
-        return it->value;
-
-    auto color = [this, cssValueID, options]() -> Color {
+    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
         const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
         const bool useElevatedUserInterfaceLevel = options.contains(StyleColorOptions::UseElevatedUserInterfaceLevel);
         if (!globalCSSValueToSystemColorMap().isEmpty()) {
@@ -1587,10 +1583,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
         if (color)
             return *color;
         return RenderTheme::systemColor(cssValueID, options);
-    }();
-
-    cache.systemStyleColors.add(cssValueID, color);
-    return color;
+    }).iterator->value;
 }
 
 Color RenderThemeIOS::pictureFrameColor(const RenderObject& buttonRenderer)

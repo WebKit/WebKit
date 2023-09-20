@@ -1814,131 +1814,134 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
     // Deprecated system-colors:
     // https://drafts.csswg.org/css-color-4/#deprecated-system-colors
 
+    // FIXME: CSS Color 4 imposes same-as requirements on all the deprecated
+    // system colors - https://webkit.org/b/245609.
+
     // https://drafts.csswg.org/css-color-4/#activeborder
     // DEPRECATED: Active window border.
     case CSSValueActiveborder:
-        return systemColor(CSSValueButtonborder, options);
+        return Color::white;
 
     // https://drafts.csswg.org/css-color-4/#activecaption
     // DEPRECATED: Active window caption.
     case CSSValueActivecaption:
-        return systemColor(CSSValueCanvastext, options);
+        return SRGBA<uint8_t> { 204, 204, 204 };
 
     // https://drafts.csswg.org/css-color-4/#appworkspace
     // DEPRECATED: Background color of multiple document interface.
     case CSSValueAppworkspace:
-        return systemColor(CSSValueCanvas, options);
+        return Color::white;
 
     // https://drafts.csswg.org/css-color-4/#background
     // DEPRECATED: Desktop background.
     case CSSValueBackground:
-        return systemColor(CSSValueCanvas, options);
+        return SRGBA<uint8_t> { 99, 99, 206 };
 
     // https://drafts.csswg.org/css-color-4/#buttonhighlight
     // DEPRECATED: The color of the border facing the light source for 3-D elements that
     // appear 3-D due to one layer of surrounding border.
     case CSSValueButtonhighlight:
-        return systemColor(CSSValueButtonface, options);
+        return SRGBA<uint8_t> { 221, 221, 221 };
 
     // https://drafts.csswg.org/css-color-4/#buttonshadow
     // DEPRECATED: The color of the border away from the light source for 3-D elements that
     // appear 3-D due to one layer of surrounding border.
     case CSSValueButtonshadow:
-        return systemColor(CSSValueButtonface, options);
+        return SRGBA<uint8_t> { 136, 136, 136 };
 
     // https://drafts.csswg.org/css-color-4/#captiontext
     // DEPRECATED: Text in caption, size box, and scrollbar arrow box.
     case CSSValueCaptiontext:
-        return systemColor(CSSValueCanvastext, options);
+        return Color::black;
 
     // https://drafts.csswg.org/css-color-4/#inactiveborder
     // DEPRECATED: Inactive window border.
     case CSSValueInactiveborder:
-        return systemColor(CSSValueButtonborder, options);
+        return Color::white;
 
     // https://drafts.csswg.org/css-color-4/#inactivecaption
     // DEPRECATED: Inactive window caption.
     case CSSValueInactivecaption:
-        return systemColor(CSSValueCanvas, options);
+        return Color::white;
 
     // https://drafts.csswg.org/css-color-4/#inactivecaptiontext
     // DEPRECATED: Color of text in an inactive caption.
     case CSSValueInactivecaptiontext:
-        return systemColor(CSSValueGraytext, options);
+        return SRGBA<uint8_t> { 127, 127, 127 };
 
     // https://drafts.csswg.org/css-color-4/#infobackground
     // DEPRECATED: Background color for tooltip controls.
     case CSSValueInfobackground:
-        return systemColor(CSSValueCanvas, options);
+        return SRGBA<uint8_t> { 251, 252, 197 };
 
     // https://drafts.csswg.org/css-color-4/#infotext
     // DEPRECATED: Text color for tooltip controls.
     case CSSValueInfotext:
-        return systemColor(CSSValueCanvastext, options);
+        return Color::black;
 
     // https://drafts.csswg.org/css-color-4/#menu
     // DEPRECATED: Menu background.
     case CSSValueMenu:
-        return systemColor(CSSValueCanvas, options);
+        return Color::lightGray;
 
     // https://drafts.csswg.org/css-color-4/#menutext
     // DEPRECATED: Text in menus.
     case CSSValueMenutext:
-        return systemColor(CSSValueCanvastext, options);
+        return Color::black;
 
     // https://drafts.csswg.org/css-color-4/#scrollbar
     // DEPRECATED: Scroll bar gray area.
     case CSSValueScrollbar:
-        return systemColor(CSSValueCanvas, options);
+        return Color::white;
 
     // https://drafts.csswg.org/css-color-4/#threeddarkshadow
     // DEPRECATED: The color of the darker (generally outer) of the two borders away from
     // thelight source for 3-D elements that appear 3-D due to two concentric layers of
     // surrounding border.
     case CSSValueThreeddarkshadow:
-        return systemColor(CSSValueButtonborder, options);
+        return SRGBA<uint8_t> { 102, 102, 102 };
 
     // https://drafts.csswg.org/css-color-4/#threedface
     // DEPRECATED: The face background color for 3-D elements that appear 3-D due to two
     // concentric layers of surrounding border
     case CSSValueThreedface:
-        return systemColor(CSSValueButtonface, options);
+        return Color::lightGray;
 
     // https://drafts.csswg.org/css-color-4/#threedhighlight
     // DEPRECATED: The color of the lighter (generally outer) of the two borders facing
     // the light source for 3-D elements that appear 3-D due to two concentric layers of
     // surrounding border.
     case CSSValueThreedhighlight:
-        return systemColor(CSSValueButtonborder, options);
+        return SRGBA<uint8_t> { 221, 221, 221 };
 
     // https://drafts.csswg.org/css-color-4/#threedlightshadow
     // DEPRECATED: The color of the darker (generally inner) of the two borders facing
     // the light source for 3-D elements that appear 3-D due to two concentric layers of
     // surrounding border
     case CSSValueThreedlightshadow:
-        return systemColor(CSSValueButtonborder, options);
+        return Color::lightGray;
 
     // https://drafts.csswg.org/css-color-4/#threedshadow
     // DEPRECATED: The color of the lighter (generally inner) of the two borders away
     // from the light source for 3-D elements that appear 3-D due to two concentric layers
     // of surrounding border.
     case CSSValueThreedshadow:
-        return systemColor(CSSValueButtonborder, options);
+        return SRGBA<uint8_t> { 136, 136, 136 };
 
     // https://drafts.csswg.org/css-color-4/#window
     // DEPRECATED: Window background.
     case CSSValueWindow:
-        return systemColor(CSSValueCanvas, options);
+        return Color::white;
 
     // https://drafts.csswg.org/css-color-4/#windowframe
     // DEPRECATED: Window frame.
     case CSSValueWindowframe:
-        return systemColor(CSSValueButtonborder, options);
+        return SRGBA<uint8_t> { 204, 204, 204 };
 
     // https://drafts.csswg.org/css-color-4/#windowtext
     // DEPRECATED: Text in windows.
     case CSSValueWindowtext:
-        return systemColor(CSSValueCanvastext, options);
+        return Color::black;
 
     default:
         return { };
