@@ -34,6 +34,7 @@
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/Scope.h>
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSONObject.h>
