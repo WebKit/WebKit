@@ -235,14 +235,13 @@ namespace JSC {
 
     public:
         void loadConstant(unsigned constantIndex, GPRReg);
-        static void emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers&);
-
     private:
         void loadGlobalObject(GPRReg);
 
         // Assuming s_constantsGPR is available.
         static void loadGlobalObject(CCallHelpers&, GPRReg);
         static void loadConstant(CCallHelpers&, unsigned constantIndex, GPRReg);
+        static void emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers&);
 
         void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
         void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
@@ -356,8 +355,6 @@ namespace JSC {
         void emitJumpSlowCaseIfNotInt(RegisterID);
 #endif
 
-        void emitNakedNearJumpIfNotJSCell(JSValueRegs, VirtualRegister, CodePtr<JITThunkPtrTag>);
-
         void emitJumpSlowCaseIfNotInt(JSValueRegs);
 
         void emitJumpSlowCaseIfNotJSCell(JSValueRegs);
@@ -406,7 +403,9 @@ namespace JSC {
         void emit_op_identity_with_profile(const JSInstruction*);
         void emit_op_debug(const JSInstruction*);
         void emit_op_del_by_id(const JSInstruction*);
+        void emitSlow_op_del_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_del_by_val(const JSInstruction*);
+        void emitSlow_op_del_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_div(const JSInstruction*);
         void emit_op_end(const JSInstruction*);
         void emit_op_enter(const JSInstruction*);
@@ -539,16 +538,23 @@ namespace JSC {
         void emit_op_log_shadow_chicken_tail(const JSInstruction*);
         void emit_op_to_property_key(const JSInstruction*);
 
+        template<typename OpcodeType>
+        void generateGetByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
+
         void emit_op_get_property_enumerator(const JSInstruction*);
         void emit_op_enumerator_next(const JSInstruction*);
         void emit_op_enumerator_get_by_val(const JSInstruction*);
+        void emitSlow_op_enumerator_get_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         template<typename OpcodeType, typename SlowPathFunctionType>
         void emit_enumerator_has_propertyImpl(const OpcodeType&, SlowPathFunctionType);
         void emit_op_enumerator_in_by_val(const JSInstruction*);
         void emit_op_enumerator_has_own_property(const JSInstruction*);
 
+        template<typename OpcodeType>
+        void generatePutByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
         void emit_op_enumerator_put_by_val(const JSInstruction*);
+        void emitSlow_op_enumerator_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitSlow_op_add(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
@@ -562,7 +568,21 @@ namespace JSC {
         void emitSlow_op_construct(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_eq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_callee(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_try_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_id_with_this(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_id_direct(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_val_with_this(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_set_private_brand(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_check_private_brand(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_argument_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_in_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_in_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_has_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_has_private_brand(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_instanceof(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_less(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_lesseq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_greater(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
@@ -588,6 +608,10 @@ namespace JSC {
         void emitSlow_op_negate(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_neq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_new_object(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_val_direct(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emit_op_resolve_scope(const JSInstruction*);
@@ -605,6 +629,7 @@ namespace JSC {
         void emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType);
+        void emitHasPrivateSlow(AccessType);
 
         template<typename Op>
         void emitNewFuncCommon(const JSInstruction*);
@@ -642,12 +667,24 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
 
     private:
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_with_this_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_id_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_val_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_val_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_private_name_callSlowOperationThenCheckExceptionGenerator(VM&);
+
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_to_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_throw_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
 
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_id_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_val_with_this_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_instanceof_callSlowOperationThenCheckExceptionGenerator(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&);
         template <ResolveType>
@@ -906,6 +943,18 @@ namespace JSC {
         Vector<Call> m_consistencyCheckCalls;
 #endif
 
+        unsigned m_getByIdIndex { UINT_MAX };
+        unsigned m_getByValIndex { UINT_MAX };
+        unsigned m_getByIdWithThisIndex { UINT_MAX };
+        unsigned m_getByValWithThisIndex { UINT_MAX };
+        unsigned m_putByIdIndex { UINT_MAX };
+        unsigned m_putByValIndex { UINT_MAX };
+        unsigned m_inByIdIndex { UINT_MAX };
+        unsigned m_inByValIndex { UINT_MAX };
+        unsigned m_delByValIndex { UINT_MAX };
+        unsigned m_delByIdIndex { UINT_MAX };
+        unsigned m_instanceOfIndex { UINT_MAX };
+        unsigned m_privateBrandAccessIndex { UINT_MAX };
         unsigned m_callLinkInfoIndex { UINT_MAX };
         unsigned m_bytecodeCountHavingSlowCase { 0 };
         

@@ -130,7 +130,7 @@ public:
     void deref();
     void aboutToDie();
 
-    void initializeFromUnlinkedStructureStubInfo(VM&, const BaselineUnlinkedStructureStubInfo&);
+    void initializeFromUnlinkedStructureStubInfo(const BaselineUnlinkedStructureStubInfo&);
     void initializeFromDFGUnlinkedStructureStubInfo(const DFG::UnlinkedStructureStubInfo&);
 
     DECLARE_VISIT_AGGREGATE;
@@ -537,6 +537,7 @@ struct UnlinkedStructureStubInfo {
     bool isEnumerator : 1 { false };
     CacheableIdentifier m_identifier; // This only comes from already marked one. Thus, we do not mark it via GC.
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
+    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 };
 
 struct BaselineUnlinkedStructureStubInfo : UnlinkedStructureStubInfo {

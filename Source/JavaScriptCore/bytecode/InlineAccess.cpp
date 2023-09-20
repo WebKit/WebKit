@@ -446,18 +446,25 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
 
 void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    if (JITCode::isBaselineCode(codeBlock->jitType()))
-        rewireStubAsJumpInAccess(codeBlock, stubInfo, CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(codeBlock->vm(), stubInfo.accessType).code().template retagged<JITStubRoutinePtrTag>() });
-    else
-        rewireStubAsJumpInAccess(codeBlock, stubInfo, stubInfo.slowPathStartLocation);
+    if (codeBlock->useDataIC()) {
+        stubInfo.m_codePtr = stubInfo.slowPathStartLocation;
+        stubInfo.m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
+        return;
+    }
+
+    CCallHelpers::emitJITCodeOver(stubInfo.startLocation.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+        // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
+        auto jump = jit.jump();
+        auto slowPathStartLocation = stubInfo.slowPathStartLocation;
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(jump, slowPathStartLocation);
+        });
+    }), "InlineAccess: linking constant jump");
 }
 
 void InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    if (JITCode::isBaselineCode(codeBlock->jitType()))
-        rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(codeBlock->vm(), stubInfo.accessType).code().template retagged<JITStubRoutinePtrTag>() });
-    else
-        rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, stubInfo.slowPathStartLocation);
+    rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, stubInfo.slowPathStartLocation);
 }
 
 } // namespace JSC

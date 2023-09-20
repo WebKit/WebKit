@@ -488,6 +488,18 @@ void JIT::privateCompileLinkPass()
 
 void JIT::privateCompileSlowCases()
 {
+    m_getByIdIndex = 0;
+    m_getByValIndex = 0;
+    m_getByIdWithThisIndex = 0;
+    m_getByValWithThisIndex = 0;
+    m_putByIdIndex = 0;
+    m_putByValIndex = 0;
+    m_inByIdIndex = 0;
+    m_inByValIndex = 0;
+    m_delByIdIndex = 0;
+    m_delByValIndex = 0;
+    m_instanceOfIndex = 0;
+    m_privateBrandAccessIndex = 0;
     m_callLinkInfoIndex = 0;
 
     unsigned bytecodeCountHavingSlowCase = 0;
@@ -534,6 +546,22 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_construct_varargs)
         DEFINE_SLOWCASE_OP(op_construct)
         DEFINE_SLOWCASE_OP(op_eq)
+        DEFINE_SLOWCASE_OP(op_try_get_by_id)
+        DEFINE_SLOWCASE_OP(op_in_by_id)
+        DEFINE_SLOWCASE_OP(op_in_by_val)
+        DEFINE_SLOWCASE_OP(op_has_private_name)
+        DEFINE_SLOWCASE_OP(op_has_private_brand)
+        DEFINE_SLOWCASE_OP(op_get_by_id)
+        DEFINE_SLOWCASE_OP(op_get_by_id_with_this)
+        DEFINE_SLOWCASE_OP(op_get_by_id_direct)
+        DEFINE_SLOWCASE_OP(op_get_by_val)
+        DEFINE_SLOWCASE_OP(op_get_by_val_with_this)
+        DEFINE_SLOWCASE_OP(op_enumerator_get_by_val)
+        DEFINE_SLOWCASE_OP(op_enumerator_put_by_val)
+        DEFINE_SLOWCASE_OP(op_get_private_name)
+        DEFINE_SLOWCASE_OP(op_set_private_brand)
+        DEFINE_SLOWCASE_OP(op_check_private_brand)
+        DEFINE_SLOWCASE_OP(op_instanceof)
         DEFINE_SLOWCASE_OP(op_less)
         DEFINE_SLOWCASE_OP(op_lesseq)
         DEFINE_SLOWCASE_OP(op_greater)
@@ -559,6 +587,12 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_negate)
         DEFINE_SLOWCASE_OP(op_neq)
         DEFINE_SLOWCASE_OP(op_new_object)
+        DEFINE_SLOWCASE_OP(op_put_by_id)
+        DEFINE_SLOWCASE_OP(op_put_by_val_direct)
+        DEFINE_SLOWCASE_OP(op_put_by_val)
+        DEFINE_SLOWCASE_OP(op_put_private_name)
+        DEFINE_SLOWCASE_OP(op_del_by_val)
+        DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
         DEFINE_SLOWCASE_OP(op_put_to_scope)
 
@@ -612,6 +646,14 @@ void JIT::privateCompileSlowCases()
     }
 
     RELEASE_ASSERT(bytecodeCountHavingSlowCase == m_bytecodeCountHavingSlowCase);
+    RELEASE_ASSERT(m_getByIdIndex == m_getByIds.size());
+    RELEASE_ASSERT(m_getByIdWithThisIndex == m_getByIdsWithThis.size());
+    RELEASE_ASSERT(m_getByValWithThisIndex == m_getByValsWithThis.size());
+    RELEASE_ASSERT(m_putByIdIndex == m_putByIds.size());
+    RELEASE_ASSERT(m_putByValIndex == m_putByVals.size());
+    RELEASE_ASSERT(m_inByIdIndex == m_inByIds.size());
+    RELEASE_ASSERT(m_instanceOfIndex == m_instanceOfs.size());
+    RELEASE_ASSERT(m_privateBrandAccessIndex == m_privateBrandAccesses.size());
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
 
 #ifndef NDEBUG
@@ -916,8 +958,10 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
 #endif
 
     auto finalizeICs = [&] (auto& generators) {
-        for (auto& gen : generators)
+        for (auto& gen : generators) {
             gen.m_unlinkedStubInfo->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
+            gen.m_unlinkedStubInfo->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
+        }
     };
 
     finalizeICs(m_getByIds);

@@ -465,7 +465,6 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
     loadConstant(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR);
-    addSlowCase(branchIfNotObject(baseJSR.payloadGPR()));
 
     static_assert(noOverlap(returnValueJSR, stubInfoGPR));
 
@@ -477,8 +476,10 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
 
     gen.generateBaselineDataICFastPath(*this);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
+    addSlowCase();
     m_getByIds.append(gen);
 
+    setFastPathResumePoint();
     emitValueProfilingSite(bytecode, resultJSR);
     emitPutVirtualRegister(bytecode.m_next, resultJSR);
 
@@ -496,6 +497,23 @@ void JIT::emitSlow_op_iterator_open(const JSInstruction* instruction, Vector<Slo
     emitJumpSlowToHotForCheckpoint(jump());
 
     linkAllSlowCases(iter);
+
+    using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::stubInfoGPR;
+    using BaselineJITRegisters::GetById::globalObjectGPR;
+
+    JumpList notObject;
+    notObject.append(branchIfNotCell(baseJSR));
+    notObject.append(branchIfNotObject(baseJSR.payloadGPR()));
+
+    JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+    Label coldPathBegin = label();
+    emitNakedNearCall(vm().getCTIStub(slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
+    static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
+    gen.reportSlowPathCall(coldPathBegin, Call());
+    jump().linkTo(fastPathResumePoint(), this);
+
+    notObject.link(this);
     loadGlobalObject(argumentGPR0);
     callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
 }
@@ -514,6 +532,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
+    using BaselineJITRegisters::GetById::dontClobberJSR;
     using BaselineJITRegisters::GetById::stubInfoGPR;
 
     constexpr JSValueRegs nextJSR = baseJSR; // Used as temporary register
@@ -534,7 +553,9 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     // call result ({ done, value } JSObject) in regT0  (regT1/regT0 or 32-bit)
     static_assert(noOverlap(resultJSR, stubInfoGPR));
 
+    constexpr JSValueRegs iterCallResultJSR = dontClobberJSR;
     moveValueRegs(returnValueJSR, baseJSR);
+    moveValueRegs(returnValueJSR, iterCallResultJSR);
 
     addSlowCase(branchIfNotCell(baseJSR));
     addSlowCase(branchIfNotObject(baseJSR.payloadGPR()));
@@ -542,12 +563,15 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         loadConstant(stubInfoIndex, stubInfoGPR);
 
+        auto preservedRegs = RegisterSetBuilder::stubUnavailableRegisters();
+        preservedRegs.add(iterCallResultJSR, IgnoreVectors);
         JITGetByIdGenerator gen(
-            nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSetBuilder::stubUnavailableRegisters(),
+            nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
 
         gen.generateBaselineDataICFastPath(*this);
         resetSP(); // We might OSR exit here, so we need to conservatively reset SP
+        addSlowCase();
         m_getByIds.append(gen);
 
         BytecodeIndex bytecodeIndex = m_bytecodeIndex;
@@ -557,7 +581,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     }
 
     {
-        auto usedRegisters = RegisterSetBuilder(resultJSR).buildAndValidate();
+        auto usedRegisters = RegisterSetBuilder(resultJSR, iterCallResultJSR).buildAndValidate();
         ScratchRegisterAllocator scratchAllocator(usedRegisters);
         GPRReg scratch1 = scratchAllocator.allocateScratchGPR();
         GPRReg scratch2 = scratchAllocator.allocateScratchGPR();
@@ -566,7 +590,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         loadGlobalObject(globalGPR);
         JumpList iterationDone = branchIfTruthy(vm(), resultJSR, scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, globalGPR);
 
-        emitGetVirtualRegister(bytecode.m_value, baseJSR);
+        moveValueRegs(iterCallResultJSR, baseJSR);
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         loadConstant(stubInfoIndex, stubInfoGPR);
 
@@ -576,8 +600,10 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 
         gen.generateBaselineDataICFastPath(*this);
         resetSP(); // We might OSR exit here, so we need to conservatively reset SP
+        addSlowCase();
         m_getByIds.append(gen);
 
+        setFastPathResumePoint();
         emitValueProfilingSite(bytecode, resultJSR);
         emitPutVirtualRegister(bytecode.m_value, resultJSR);
 
@@ -597,9 +623,37 @@ void JIT::emitSlow_op_iterator_next(const JSInstruction* instruction, Vector<Slo
     emitPutCallResult(bytecode);
     emitJumpSlowToHotForCheckpoint(jump());
 
+    using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::resultJSR;
+    using BaselineJITRegisters::GetById::globalObjectGPR;
+    using BaselineJITRegisters::GetById::dontClobberJSR;
+    using BaselineJITRegisters::GetById::stubInfoGPR;
+
+    constexpr JSValueRegs iterCallResultJSR = dontClobberJSR;
+
     linkAllSlowCases(iter);
     loadGlobalObject(argumentGPR0);
     callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
+
+    {
+        JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+        Label coldPathBegin = label();
+        emitNakedNearCall(vm().getCTIStub(slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
+        static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
+        gen.reportSlowPathCall(coldPathBegin, Call());
+        static_assert(noOverlap(resultJSR, iterCallResultJSR));
+        emitGetVirtualRegister(bytecode.m_value, iterCallResultJSR);
+        emitJumpSlowToHotForCheckpoint(jump());
+    }
+
+    {
+        linkAllSlowCases(iter);
+        JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+        Label coldPathBegin = label();
+        emitNakedNearCall(vm().getCTIStub(slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
+        static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
+        gen.reportSlowPathCall(coldPathBegin, Call());
+    }
 }
 
 } // namespace JSC
