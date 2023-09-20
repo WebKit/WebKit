@@ -320,8 +320,11 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         return;
 
     NSUInteger bytesPerRow = dataLayout.bytesPerRow;
+    if (bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
+        bytesPerRow = size.height ? (dataSize / size.height) : dataSize;
 
-    NSUInteger bytesPerImage = dataLayout.bytesPerRow * dataLayout.rowsPerImage;
+    NSUInteger rowsPerImage = (dataLayout.rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED) ? size.height : dataLayout.rowsPerImage;
+    NSUInteger bytesPerImage = bytesPerRow * rowsPerImage;
 
     MTLBlitOption options = MTLBlitOptionNone;
     switch (destination.aspect) {

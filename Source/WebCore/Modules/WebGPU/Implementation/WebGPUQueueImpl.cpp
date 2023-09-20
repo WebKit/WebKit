@@ -99,8 +99,8 @@ void QueueImpl::writeTexture(
     WGPUTextureDataLayout backingDataLayout {
         nullptr,
         dataLayout.offset,
-        dataLayout.bytesPerRow.value_or(0),
-        dataLayout.rowsPerImage.value_or(1),
+        dataLayout.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
+        dataLayout.rowsPerImage.value_or(WGPU_COPY_STRIDE_UNDEFINED),
     };
 
     WGPUExtent3D backingSize = m_convertToBackingContext->convertToBacking(size);
