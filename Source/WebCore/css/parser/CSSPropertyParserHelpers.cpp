@@ -66,6 +66,7 @@
 #include "CSSPaintImageValue.h"
 #include "CSSParser.h"
 #include "CSSParserIdioms.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSQuadValue.h"
 #include "CSSRayValue.h"
@@ -1700,9 +1701,10 @@ static std::optional<CSSValueID> consumeIdentRangeRaw(CSSParserTokenRange& range
 
 RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange& range, CSSValueID lower, CSSValueID upper)
 {
-    if (range.peek().id() < lower || range.peek().id() > upper)
+    auto value = consumeIdentRangeRaw(range, lower, upper);
+    if (!value)
         return nullptr;
-    return consumeIdent(range);
+    return CSSPrimitiveValue::create(*value);
 }
 
 static String consumeCustomIdentRaw(CSSParserTokenRange& range, bool shouldLowercase = false)
@@ -4877,7 +4879,8 @@ AtomString concatenateFamilyName(CSSParserTokenRange& range)
         }
         builder.append(range.consumeIncludingWhitespace().value());
     }
-    if (!addedSpace && !isValidCustomIdentifier(firstToken.id()))
+    // <family-name> can't contain unquoted generic families
+    if (!addedSpace && (!isValidCustomIdentifier(firstToken.id()) || !genericFontFamily(firstToken.id()).isNull()))
         return nullAtom();
     return builder.toAtomString();
 }
@@ -4904,11 +4907,27 @@ Vector<AtomString> consumeFamilyNameListRaw(CSSParserTokenRange& range)
     return result;
 }
 
+static std::optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange& range)
+{
+    return consumeIdentRaw<CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody, CSSValueWebkitPictograph, CSSValueSystemUi>(range);
+}
+
+static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range)
+{
+    if (auto familyName = consumeGenericFamilyRaw(range)) {
+        // FIXME: Remove special case for system-ui.
+        if (*familyName == CSSValueSystemUi)
+            return CSSValuePool::singleton().createFontFamilyValue(nameString(*familyName));
+        return CSSPrimitiveValue::create(*familyName);
+    }
+    return nullptr;
+}
+
 static std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange& range)
 {
     Vector<FontFamilyRaw> list;
     do {
-        if (auto ident = consumeIdentRangeRaw(range, CSSValueSerif, CSSValueWebkitBody))
+        if (auto ident = consumeGenericFamilyRaw(range))
             list.append({ *ident });
         else {
             auto familyName = consumeFamilyNameRaw(range);
@@ -5039,7 +5058,7 @@ const AtomString& genericFontFamily(CSSValueID ident)
     case CSSValueSystemUi:
         return WebKitFontFamilyNames::systemUiFamily.get();
     default:
-        return emptyAtom();
+        return nullAtom();
     }
 }
 
@@ -5553,11 +5572,6 @@ RefPtr<CSSValue> consumeFamilyNameList(CSSParserTokenRange& range)
     return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [] (auto& range) {
         return consumeFamilyName(range);
     });
-}
-
-static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range)
-{
-    return consumeIdentRange(range, CSSValueSerif, CSSValueWebkitBody);
 }
 
 RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange& range)

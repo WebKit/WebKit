@@ -1,6 +1,6 @@
 
 PASS CSS Fonts Module Level 4: parsing @font-palette-values
-FAIL CSS Fonts Module Level 4: parsing @font-palette-values 1 assert_equals: expected -1 but got 27
+PASS CSS Fonts Module Level 4: parsing @font-palette-values 1
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 2
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 3
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 4
