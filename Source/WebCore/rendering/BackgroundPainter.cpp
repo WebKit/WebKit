@@ -339,7 +339,11 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
 
     auto isOpaqueRoot = false;
     if (isRoot) {
-        isOpaqueRoot = bgLayer.next() || bgColor.isOpaque() || view().shouldPaintBaseBackground();
+        bool shouldPaintBaseBackground = view().rootElementShouldPaintBaseBackground();
+        isOpaqueRoot = bgLayer.next() || bgColor.isOpaque() || shouldPaintBaseBackground;
+        if (!shouldPaintBaseBackground)
+            baseBgColorUsage = BaseBackgroundColorSkip;
+
         view().frameView().setContentIsOpaque(isOpaqueRoot);
     }
 

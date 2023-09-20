@@ -632,7 +632,6 @@ webkit.org/b/214417 [ Debug ] css3/color/composited-solid-backgrounds.html [ Cra
 # Failures related with ENABLE_CSS_COMPOSITING=ON
 webkit.org/b/169916 css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-body-composited-child-background-color.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-body-composited-child.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-child.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-double.html [ ImageOnlyFailure ]

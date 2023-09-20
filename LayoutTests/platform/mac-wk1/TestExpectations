@@ -2664,6 +2664,14 @@ fast/mediastream/device-change-event-2.html [ Failure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ Pass ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg.html [ Pass ]
 
+# WK1-specific subtle blending differences
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-parent.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-sibling.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-parent.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-sibling.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph-background-image.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph.html [ ImageOnlyFailure ]
+
 webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-lists.html [ Crash ]
 
 # webkit.org/b/261304 Batch mark expectations for flaky media tests

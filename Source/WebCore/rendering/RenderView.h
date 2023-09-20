@@ -148,6 +148,7 @@ public:
     // Renderer that paints the root background has background-images which all have background-attachment: fixed.
     bool rootBackgroundIsEntirelyFixed() const;
 
+    bool rootElementShouldPaintBaseBackground() const;
     bool shouldPaintBaseBackground() const;
 
     FloatSize sizeForCSSSmallViewportUnits() const;
