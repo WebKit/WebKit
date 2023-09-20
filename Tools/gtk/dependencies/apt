@@ -23,7 +23,6 @@ PACKAGES+=(
     libpulse-dev
     librsvg2-dev
     libsecret-1-dev
-    libsoup2.4-dev
     libsrtp2-dev
     libtheora-dev
     libupower-glib-dev
