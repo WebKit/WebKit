@@ -223,14 +223,9 @@ IntSize GraphicsContext::compatibleImageBufferSize(const FloatSize& size) const
     return scaledImageBufferSize(size, scaleFactor());
 }
 
-RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
+RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod>) const
 {
     auto bufferOptions = bufferOptionsForRendingMode(renderingMode.value_or(this->renderingMode()));
-
-    if (!renderingMethod || *renderingMethod == RenderingMethod::Local)
-        return ImageBuffer::create(size, RenderingPurpose::Unspecified, resolutionScale, colorSpace, PixelFormat::BGRA8, bufferOptions);
-
-    bufferOptions.add(ImageBufferOptions::UseDisplayList);
     return ImageBuffer::create(size, RenderingPurpose::Unspecified, resolutionScale, colorSpace, PixelFormat::BGRA8, bufferOptions);
 }
 

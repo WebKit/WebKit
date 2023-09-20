@@ -620,11 +620,6 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
     recordClipToImageBuffer(imageBuffer, destRect);
 }
 
-RefPtr<ImageBuffer> Recorder::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
-{
-    return GraphicsContext::createImageBuffer(size, resolutionScale, colorSpace, renderingMode, renderingMethod.value_or(RenderingMethod::DisplayList));
-}
-
 #if ENABLE(VIDEO)
 void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
