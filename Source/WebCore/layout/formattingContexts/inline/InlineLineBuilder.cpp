@@ -918,10 +918,10 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
             boxGeometry.setVerticalMargin({ boxGeometry.marginBefore() + additionalOffsets->sunkenBelowFirstLineOffset, boxGeometry.marginAfter() });
         }
         staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
-        boxGeometry.setLogicalTopLeft(staticPosition);
+        boxGeometry.setTopLeft(staticPosition);
         // Compute float position by running float layout.
         auto floatingPosition = floatingContext.positionForFloat(floatBox, boxGeometry, *m_rootHorizontalConstraints);
-        boxGeometry.setLogicalTopLeft(floatingPosition);
+        boxGeometry.setTopLeft(floatingPosition);
     };
     computeFloatBoxPosition();
 

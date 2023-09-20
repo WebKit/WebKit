@@ -66,7 +66,7 @@ void LayoutContext::layout(const LayoutSize& rootContentBoxSize)
     boxGeometry.setVerticalMargin({ });
     boxGeometry.setBorder({ });
     boxGeometry.setPadding({ });
-    boxGeometry.setLogicalTopLeft({ });
+    boxGeometry.setTopLeft({ });
     boxGeometry.setContentBoxHeight(rootContentBoxSize.height());
     boxGeometry.setContentBoxWidth(rootContentBoxSize.width());
 

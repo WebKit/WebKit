@@ -796,7 +796,7 @@ void LineLayout::prepareFloatingState()
             return LayoutRect { logicalLeft, logicalTop, logicalWidth, logicalHeight };
         }();
 
-        boxGeometry.setLogicalTopLeft(logicalRect.location());
+        boxGeometry.setTopLeft(logicalRect.location());
         boxGeometry.setContentBoxWidth(logicalRect.width());
         boxGeometry.setContentBoxHeight(logicalRect.height());
         boxGeometry.setBorder({ });

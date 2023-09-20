@@ -501,7 +501,7 @@ FloatingState::FloatItem FloatingContext::makeFloatItem(const Box& floatBox, con
 {
     auto borderBoxTopLeft = BoxGeometry::borderBoxTopLeft(boxGeometry);
     auto absoluteBoxGeometry = BoxGeometry { boxGeometry };
-    absoluteBoxGeometry.setLogicalTopLeft(mapTopLeftToFloatingStateRoot(floatBox, borderBoxTopLeft));
+    absoluteBoxGeometry.setTopLeft(mapTopLeftToFloatingStateRoot(floatBox, borderBoxTopLeft));
     auto position = isFloatingCandidateLeftPositionedInFloatingState(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right;
     return { floatBox, position, absoluteBoxGeometry, borderBoxTopLeft, line };
 }

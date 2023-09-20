@@ -98,8 +98,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
 
         cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(*cell));
         cellBoxGeometry.setPadding(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace));
-        cellBoxGeometry.setLogicalTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
-        cellBoxGeometry.setLogicalLeft(columnList[cell->startColumn()].usedLogicalLeft());
+        cellBoxGeometry.setTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
+        cellBoxGeometry.setLeft(columnList[cell->startColumn()].usedLogicalLeft());
         cellBoxGeometry.setContentBoxWidth(formattingGeometry.horizontalSpaceForCellContent(*cell));
 
         if (cellBox.hasInFlowOrFloatingChild()) {
@@ -226,8 +226,8 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             // This row is in a different section.
             rowLogicalTop = { };
         }
-        rowBoxGeometry.setLogicalTop(rowLogicalTop);
-        rowBoxGeometry.setLogicalLeft({ });
+        rowBoxGeometry.setTop(rowLogicalTop);
+        rowBoxGeometry.setLeft({ });
 
         rowLogicalTop += row.logicalHeight() + grid.verticalSpacing();
         previousRow = &rowBox;
@@ -280,8 +280,8 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         }
         sectionContentHeight += verticalSpacing * (rowCount - 1);
         sectionBoxGeometry.setContentBoxHeight(sectionContentHeight);
-        sectionBoxGeometry.setLogicalLeft(constraints.horizontal().logicalLeft);
-        sectionBoxGeometry.setLogicalTop(logicalTop);
+        sectionBoxGeometry.setLeft(constraints.horizontal().logicalLeft);
+        sectionBoxGeometry.setTop(logicalTop);
 
         logicalTop += sectionBoxGeometry.borderBoxHeight();
     }

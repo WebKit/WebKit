@@ -284,7 +284,7 @@ void InlineDisplayContentBuilder::appendHardLineBreakDisplayBox(const Line::Run&
     });
 
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
+    boxGeometry.setTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
     boxGeometry.setContentBoxHeight(toLayoutUnit(lineBreakBoxRect.height()));
 }
 
@@ -316,7 +316,7 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
     });
     // Note that inline boxes are relative to the line and their top position can be negative.
     // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
-    formattingState().boxGeometry(layoutBox).setLogicalTopLeft(toLayoutPoint(borderBoxRect.topLeft()));
+    formattingState().boxGeometry(layoutBox).setTopLeft(toLayoutPoint(borderBoxRect.topLeft()));
 }
 
 void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& layoutBox, const InlineRect& rect, bool isFirstInlineBoxFragment)
@@ -329,7 +329,7 @@ void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& layoutBox, con
         enclosingBorderBoxRect.expandToContain(adjustedRect);
         adjustedRect = enclosingBorderBoxRect;
     }
-    boxGeometry.setLogicalTopLeft(adjustedRect.topLeft());
+    boxGeometry.setTopLeft(adjustedRect.topLeft());
     auto contentBoxHeight = adjustedRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu));
     auto contentBoxWidth = adjustedRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu));
     boxGeometry.setContentBoxHeight(contentBoxHeight);
@@ -468,7 +468,7 @@ void InlineDisplayContentBuilder::appendAssociatedRubyAnnotationBoxIfNeeded(cons
         , isLineFullyTruncatedInBlockDirection()
     });
 
-    geometry.setLogicalTopLeft(toLayoutPoint(annoationBorderBox.topLeft()));
+    geometry.setTopLeft(toLayoutPoint(annoationBorderBox.topLeft()));
 }
 
 void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
@@ -534,7 +534,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
             if (layoutBox.style().isOriginalDisplayInlineType()) {
                 auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
                 logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
-                boxGeometry.setLogicalTopLeft(toLayoutPoint(logicalTopLeft));
+                boxGeometry.setTopLeft(toLayoutPoint(logicalTopLeft));
             } else
                 blockLevelOutOfFlowBoxList.append(index);
             continue;
@@ -643,7 +643,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
             auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
 
             auto borderBoxLeft = LayoutUnit { contentRightInInlineDirectionVisualOrder + boxMarginLeft };
-            boxGeometry.setLogicalLeft(borderBoxLeft);
+            boxGeometry.setLeft(borderBoxLeft);
             setLeftForWritingMode(displayBox, borderBoxLeft, writingMode);
 
             contentRightInInlineDirectionVisualOrder += boxGeometry.marginBoxWidth();
@@ -810,7 +810,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 if (layoutBox.style().isOriginalDisplayInlineType()) {
                     auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
                     logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
-                    boxGeometry.setLogicalTopLeft(toLayoutPoint(logicalTopLeft));
+                    boxGeometry.setTopLeft(toLayoutPoint(logicalTopLeft));
                 } else
                     blockLevelOutOfFlowBoxList.append(index);
                 continue;
@@ -941,7 +941,7 @@ void InlineDisplayContentBuilder::setGeometryForBlockLevelOutOfFlowBoxes(const V
         // Block level boxes are placed either at the start of the line or "under" depending whether they have previous inflow sibling.
         auto logicalTop = hasPreviousInFlowContent() ? lineBox.logicalRect().bottom() : lineBox.logicalRect().top();
         auto& lineRun = visualOrderList.isEmpty() ? lineRuns[outOfFlowBoxIndex] : lineRuns[visualOrderList[outOfFlowBoxIndex]];
-        formattingState().boxGeometry(lineRun.layoutBox()).setLogicalTopLeft({ constraints().horizontal().logicalLeft, logicalTop });
+        formattingState().boxGeometry(lineRun.layoutBox()).setTopLeft({ constraints().horizontal().logicalLeft, logicalTop });
     }
 }
 

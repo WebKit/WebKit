@@ -58,7 +58,7 @@ FloatingState::FloatItem::FloatItem(Position position, const BoxGeometry& absolu
 BoxGeometry FloatingState::FloatItem::boxGeometry() const
 {
     auto boxGeometry = BoxGeometry { m_absoluteBoxGeometry };
-    boxGeometry.setLogicalTopLeft(m_localTopLeft);
+    boxGeometry.setTopLeft(m_localTopLeft);
     return boxGeometry;
 }
 

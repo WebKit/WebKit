@@ -147,7 +147,7 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
                 if (!layoutBox.isFloatAvoider() || floatingContext.isEmpty()) {
                     auto& formattingState = this->formattingState();
                     auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                    boxGeometry.setLogicalTop(verticalPositionWithMargin(layoutBox, formattingState.usedVerticalMargin(layoutBox), containingBlockConstraints.logicalTop()));
+                    boxGeometry.setTop(verticalPositionWithMargin(layoutBox, formattingState.usedVerticalMargin(layoutBox), containingBlockConstraints.logicalTop()));
                 }
             }
             auto establishesFormattingContext = layoutBox.establishesFormattingContext(); 
@@ -259,12 +259,12 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const ElementBox& ele
 
 void BlockFormattingContext::computeStaticVerticalPosition(const ElementBox& layoutBox, LayoutUnit containingBlockContentBoxTop)
 {
-    formattingState().boxGeometry(layoutBox).setLogicalTop(formattingGeometry().staticVerticalPosition(layoutBox, containingBlockContentBoxTop));
+    formattingState().boxGeometry(layoutBox).setTop(formattingGeometry().staticVerticalPosition(layoutBox, containingBlockContentBoxTop));
 }
 
 void BlockFormattingContext::computeStaticHorizontalPosition(const ElementBox& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    formattingState().boxGeometry(layoutBox).setLogicalLeft(formattingGeometry().staticHorizontalPosition(layoutBox, horizontalConstraints));
+    formattingState().boxGeometry(layoutBox).setLeft(formattingGeometry().staticHorizontalPosition(layoutBox, horizontalConstraints));
 }
 
 void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const ElementBox& layoutBox, const ConstraintsPair& constraintsPair)
@@ -297,7 +297,7 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
 
         formattingState().setUsedVerticalMargin(*ancestor, verticalMargin);
         boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
-        boxGeometry.setLogicalTop(verticalPositionWithMargin(*ancestor, verticalMargin, constraintsForAncestor.logicalTop()));
+        boxGeometry.setTop(verticalPositionWithMargin(*ancestor, verticalMargin, constraintsForAncestor.logicalTop()));
 #if ASSERT_ENABLED
         setPrecomputedMarginBefore(*ancestor, precomputedMarginBefore);
         boxGeometry.setHasPrecomputedMarginBefore();
@@ -317,7 +317,7 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
     if (layoutBox.isFloatingPositioned()) {
         precomputeVerticalPositionForBoxAndAncestors(layoutBox, constraintsPair);
         auto borderBoxTopLeft = floatingContext.positionForFloat(layoutBox, boxGeometry, constraintsPair.containingBlock.horizontal());
-        boxGeometry.setLogicalTopLeft(borderBoxTopLeft);
+        boxGeometry.setTopLeft(borderBoxTopLeft);
         return;
     }
     // Non-float positioned float avoiders (formatting context roots and clear boxes) should be fine unless there are floats in this context.
@@ -329,7 +329,7 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
 
     ASSERT(layoutBox.establishesFormattingContext());
     auto borderBoxTopLeft = floatingContext.positionForNonFloatingFloatAvoider(layoutBox, boxGeometry);
-    boxGeometry.setLogicalTopLeft(borderBoxTopLeft);
+    boxGeometry.setTopLeft(borderBoxTopLeft);
 }
 
 void BlockFormattingContext::computeVerticalPositionForFloatClear(const FloatingContext& floatingContext, const ElementBox& layoutBox)
@@ -343,7 +343,7 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
         return;
 
     ASSERT(verticalPositionAndClearance->position >= BoxGeometry::borderBoxTop(boxGeometry));
-    boxGeometry.setLogicalTop(verticalPositionAndClearance->position);
+    boxGeometry.setTop(verticalPositionAndClearance->position);
     if (verticalPositionAndClearance->clearance)
         formattingState().setHasClearance(layoutBox);
     // FIXME: Reset the margin values on the ancestors/previous siblings now that the float avoider with clearance does not margin collapse anymore.
