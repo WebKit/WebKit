@@ -80,9 +80,7 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
     auto accumulatedOffset = 0_lu;
     for (size_t lineIndex = 0; lineIndex < lineCount;) {
         auto line = InlineIterator::lineBoxFor(inlineContent, lineIndex);
-
-        auto it = lineFloatBottomMap.find(lineIndex);
-        auto floatMinimumBottom = it != lineFloatBottomMap.end() ? it->value : 0_lu;
+        auto floatMinimumBottom = lineFloatBottomMap.getOptional(lineIndex).value_or(0_lu);
 
         auto adjustment = flow.computeLineAdjustmentForPagination(line, accumulatedOffset, floatMinimumBottom);
 

@@ -133,6 +133,7 @@ public:
     const_iterator find(const KeyType&) const;
     bool contains(const KeyType&) const;
     MappedPeekType get(const KeyType&) const;
+    std::optional<MappedType> getOptional(const KeyType&) const;
 
     // Same as get(), but aggressively inlined.
     MappedPeekType inlineGet(const KeyType&) const;
@@ -468,6 +469,15 @@ template<typename T, typename U, typename V, typename W, typename X, typename Y>
 inline auto HashMap<T, U, V, W, X, Y>::get(const KeyType& key) const -> MappedPeekType
 {
     return get<IdentityTranslatorType>(key);
+}
+
+template<typename T, typename U, typename V, typename W, typename X, typename Y>
+inline auto HashMap<T, U, V, W, X, Y>::getOptional(const KeyType& key) const -> std::optional<MappedType>
+{
+    auto* entry = const_cast<HashTableType&>(m_impl).template lookup<IdentityTranslatorType>(key);
+    if (!entry)
+        return { };
+    return { entry->value };
 }
 
 template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
