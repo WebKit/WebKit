@@ -264,7 +264,7 @@ private:
 #if USE(CG)
     mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
 #endif
-    RefPtr<Image> m_cachedImage;
+    RefPtr<NativeImage> m_cachedImage;
 };
 
 } // namespace WebCore
