@@ -48,6 +48,12 @@ window.testColumnCSSParsing = function(id, columnValue)
     checkColumnValue(gridItem, columnValue);
 }
 
+window.testRowCSSParsing = function(id, rowValue)
+{
+    var gridItem = document.getElementById(id);
+    checkRowValue(gridItem, rowValue);
+}
+
 window.testColumnRowJSParsing = function(columnValue, rowValue, expectedColumnValue, expectedRowValue)
 {
     var gridItem = document.createElement("div");
@@ -59,41 +65,6 @@ window.testColumnRowJSParsing = function(columnValue, rowValue, expectedColumnVa
     checkColumnRowValues(gridItem, expectedColumnValue ? expectedColumnValue : columnValue, expectedRowValue ? expectedRowValue : rowValue);
 
     gridElement.removeChild(gridItem);
-}
-
-window.testColumnJSParsing = function(columnValue, expectedColumnValue)
-{
-    var gridItem = document.createElement("div");
-    var gridElement = document.getElementsByClassName("grid")[0];
-    gridElement.appendChild(gridItem);
-    gridItem.style.gridColumn = columnValue;
-
-    checkColumnValue(gridItem, expectedColumnValue ? expectedColumnValue : columnValue);
-
-    gridElement.removeChild(gridItem);
-}
-
-window.testColumnRowInvalidJSParsing = function(columnValue, rowValue)
-{
-    var gridItem = document.createElement("div");
-    document.body.appendChild(gridItem);
-    gridItem.style.gridColumn = columnValue;
-    gridItem.style.gridRow = rowValue;
-
-    checkColumnRowValues(gridItem, "auto / auto", "auto / auto");
-
-    document.body.removeChild(gridItem);
-}
-
-window.testColumnInvalidJSParsing = function(columnValue)
-{
-    var gridItem = document.createElement("div");
-    document.body.appendChild(gridItem);
-    gridItem.style.gridColumn = columnValue;
-
-    checkColumnValue(gridItem, "auto / auto");
-
-    document.body.removeChild(gridItem);
 }
 
 window.testColumnStartRowStartJSParsing = function(columnStartValue, rowStartValue, expectedColumnStartValue, expectedRowStartValue)
@@ -147,29 +118,14 @@ window.testColumnEndRowEndJSParsing = function(columnEndValue, rowEndValue, expe
     gridElement.removeChild(gridItem);
 }
 
-window.testColumnEndJSParsing = function(columnEndValue, expectedColumnEndValue)
-{
-    var gridItem = document.createElement("div");
-    var gridElement = document.getElementsByClassName("grid")[0];
-    gridElement.appendChild(gridItem);
-    gridItem.style.gridColumnEnd = columnEndValue;
-
-    if (expectedColumnEndValue === undefined)
-        expectedColumnEndValue = columnEndValue;
-
-    checkColumnValue(gridItem, "auto / " + expectedColumnEndValue);
-
-    gridElement.removeChild(gridItem);
-}
-
-var placeholderParentStartValueForInherit = "6";
+var placeholderParentStartValueForInherit = "last";
 var placeholderParentEndValueForInherit = "span 2";
 var placeholderParentColumnValueForInherit = placeholderParentStartValueForInherit + " / " + placeholderParentEndValueForInherit;
 var placeholderParentBeforeValueForInherit = "gridArea";
 var placeholderParentAfterValueForInherit = "7";
 var placeholderParentRowValueForInherit = placeholderParentBeforeValueForInherit + " / " + placeholderParentAfterValueForInherit;
 
-var placeholderStartValueForInitial = "1";
+var placeholderStartValueForInitial = "a";
 var placeholderEndValueForInitial = "span 2";
 var placeholderColumnValueForInitial = placeholderStartValueForInitial + " / " + placeholderEndValueForInitial;
 var placeholderBeforeValueForInitial = "first";
@@ -239,16 +195,6 @@ window.testEndAfterInheritJSParsing = function(endValue, afterValue)
     checkColumnRowValues(parentElement.firstChild, columnValueForInherit, rowValueForInherit);
 
     document.body.removeChild(parentElement);
-}
-
-window.testColumnInitialJSParsing = function()
-{
-    var gridItem = setupInitialTest();
-
-    gridItem.style.gridColumn = "initial";
-    checkColumnValue(gridItem, "auto / auto");
-
-    document.body.removeChild(gridItem);
 }
 
 window.testStartBeforeInitialJSParsing = function()
