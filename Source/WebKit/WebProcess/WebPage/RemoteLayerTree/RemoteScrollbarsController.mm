@@ -94,6 +94,11 @@ bool RemoteScrollbarsController::shouldDrawIntoScrollbarLayer(WebCore::Scrollbar
     return scrollbar.isCustomScrollbar() || scrollbar.isMockScrollbar();
 }
 
+bool RemoteScrollbarsController::shouldRegisterScrollbars() const
+{
+    return scrollableArea().isListBox();
+}
+
 void RemoteScrollbarsController::setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation orientation, int minimumThumbLength)
 {
     if (orientation == WebCore::ScrollbarOrientation::Horizontal)

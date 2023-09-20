@@ -28,9 +28,8 @@
 
 #import <wtf/WorkQueue.h>
 
-using namespace WebCore;
-
 namespace WebPushD {
+using namespace WebCore;
 
 PushCrypto::ClientKeys PushServiceConnection::generateClientKeys()
 {

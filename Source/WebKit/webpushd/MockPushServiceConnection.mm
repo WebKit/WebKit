@@ -28,9 +28,8 @@
 
 #import <wtf/text/Base64.h>
 
-using namespace WebCore::PushCrypto;
-
 namespace WebPushD {
+using namespace WebCore::PushCrypto;
 
 MockPushServiceConnection::MockPushServiceConnection()
 {

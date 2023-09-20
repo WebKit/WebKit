@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebBadgeClient.h"
+#pragma once
 
-#include "WebPage.h"
-#include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
+#if ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
 
-namespace WebKit {
-using namespace WebCore;
 
-void WebBadgeClient::setAppBadge(Page* page, const SecurityOriginData& origin, std::optional<uint64_t> badge)
-{
-    std::optional<WebPageProxyIdentifier> pageIdentifier;
-    if (page)
-        pageIdentifier = WebPage::fromCorePage(*page)->webPageProxyIdentifier();
 
-    WebProcess::singleton().setAppBadge(pageIdentifier, origin, badge);
-}
-
-void WebBadgeClient::setClientBadge(Page& page, const SecurityOriginData& origin, std::optional<uint64_t> badge)
-{
-    WebProcess::singleton().setClientBadge(WebPage::fromCorePage(page)->webPageProxyIdentifier(), origin, badge);
-}
-
-} // namespace WebKit
+#endif // ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)

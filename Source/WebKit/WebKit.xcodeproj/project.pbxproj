@@ -2995,6 +2995,8 @@
 		0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCaptureSampleManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		0FF24A2F1879E4FE003ABF0C /* RemoteLayerTreeDrawingAreaProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteLayerTreeDrawingAreaProxy.messages.in; sourceTree = "<group>"; };
+		0FF655D22ABA5FDD00A58832 /* PDFPluginBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFPluginBase.h; path = PDF/PDFPluginBase.h; sourceTree = "<group>"; };
+		0FF655D32ABA5FDD00A58832 /* PDFPluginBase.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginBase.mm; path = PDF/PDFPluginBase.mm; sourceTree = "<group>"; };
 		0FF7CE882901FDA500EA62D6 /* RemoteScrollingTreeIOS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteScrollingTreeIOS.cpp; sourceTree = "<group>"; };
 		0FF7CE892901FDA500EA62D6 /* RemoteScrollingTreeIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingTreeIOS.h; sourceTree = "<group>"; };
 		0FF7CE8A2901FDAC00EA62D6 /* RemoteScrollingTreeMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingTreeMac.h; sourceTree = "<group>"; };
@@ -13935,6 +13937,8 @@
 				2D0035231BC7414800DA8716 /* PDFPlugin.mm */,
 				2D2ADF021636243500197E47 /* PDFPluginAnnotation.h */,
 				2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */,
+				0FF655D22ABA5FDD00A58832 /* PDFPluginBase.h */,
+				0FF655D32ABA5FDD00A58832 /* PDFPluginBase.mm */,
 				2D2ADF0D16364D8200197E47 /* PDFPluginChoiceAnnotation.h */,
 				2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */,
 				2D429BFA1721E2BA00EC681F /* PDFPluginPasswordField.h */,

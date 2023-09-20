@@ -52,7 +52,7 @@ public:
     void setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation, int) final;
     void setScrollbarVisibilityState(WebCore::ScrollbarOrientation, bool) final;
     bool shouldDrawIntoScrollbarLayer(WebCore::Scrollbar&) const final;
-    bool shouldRegisterScrollbars() const final { return scrollableArea().isListBox(); }
+    bool shouldRegisterScrollbars() const final;
     int minimumThumbLength(WebCore::ScrollbarOrientation) final;
     void updateScrollbarEnabledState(WebCore::Scrollbar&) final;
 
