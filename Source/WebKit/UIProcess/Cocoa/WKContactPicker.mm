@@ -40,6 +40,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #endif
 
 SOFT_LINK_FRAMEWORK(Contacts)
@@ -166,7 +167,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
     [_contactPickerViewController setDelegate:_contactPickerDelegate.get()];
     [_contactPickerViewController setPrompt:requestData.url];
 
-    UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_webView.get().get()];
+    auto presentationViewController = [_webView _wk_viewControllerForFullScreenPresentation];
     [presentationViewController presentViewController:_contactPickerViewController.get() animated:YES completion:[weakSelf = WeakObjCPtr<WKContactPicker>(self)] {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)

@@ -42,6 +42,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PathUtilities.h>
+#import <WebCore/UIViewControllerUtilities.h>
 #import <pal/spi/ios/DataDetectorsUISoftLink.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/SoftLinking.h>
@@ -168,7 +169,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     UIViewController *controller = nil;
     UIView *currentView = view;
     while (currentView) {
-        UIViewController *aController = [UIViewController viewControllerForView:currentView];
+        auto aController = WebCore::viewController(currentView);
         if (aController)
             controller = aController;
 

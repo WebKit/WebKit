@@ -538,6 +538,7 @@ platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm
 platform/ios/TileControllerMemoryHandlerIOS.cpp
 platform/ios/UIFoundationSoftLink.mm
+platform/ios/UIViewControllerUtilities.mm
 platform/ios/UserAgentIOS.mm
 platform/ios/ValidationBubbleIOS.mm
 platform/ios/VideoFullscreenInterfaceAVKit.mm @no-unify

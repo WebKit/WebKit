@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -166,7 +167,7 @@
 
 - (void)presentInView:(UIView *)view sourceRect:(CGRect)rect interactionBounds:(CGRect)interactionBounds completion:(void(^)())completion
 {
-    RetainPtr controller = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
+    RetainPtr controller = [view _wk_viewControllerForFullScreenPresentation];
 
     while ([controller isBeingDismissed]) {
         // When tabbing between date pickers, it's possible for the view controller for fullscreen presentation

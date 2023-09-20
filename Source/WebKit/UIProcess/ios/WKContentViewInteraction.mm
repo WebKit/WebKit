@@ -1655,7 +1655,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
             // a view underneath this view controller; however, there doesn't seem to be any way of doing
             // so at the moment. In lieu of this, we can at least check that the web view itself isn't
             // inside the popover.
-            auto *controller = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+            auto controller = self._wk_viewControllerForFullScreenPresentation;
             return [self isDescendantOfView:controller.viewIfLoaded] || controller.modalPresentationStyle != UIModalPresentationPopover;
         }
 #endif // PLATFORM(MACCATALYST)
@@ -7616,7 +7616,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     [self dismissAllInputViewControllers:NO];
 
     _shouldRestoreFirstResponderStatusAfterLosingFocus = self.isFirstResponder;
-    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    auto presentingViewController = self._wk_viewControllerForFullScreenPresentation;
 
     ASSERT(!_presentedFullScreenInputViewController);
 
@@ -11042,7 +11042,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     _visualSearchPreviewImageBounds = imageBounds;
 
-    UIViewController *currentPresentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    auto currentPresentingViewController = self._wk_viewControllerForFullScreenPresentation;
     [currentPresentingViewController presentViewController:_visualSearchPreviewController.get() animated:YES completion:nil];
 }
 
@@ -11212,7 +11212,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)updateImageAnalysisForContextMenuPresentation:(CocoaImageAnalysis *)analysis
 {
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-    analysis.presentingViewControllerForMrcAction = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    analysis.presentingViewControllerForMrcAction = self._wk_viewControllerForFullScreenPresentation;
 #endif
 }
 

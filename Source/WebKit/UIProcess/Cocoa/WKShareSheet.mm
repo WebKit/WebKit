@@ -44,6 +44,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "LinkPresentationSPI.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #else
@@ -345,7 +346,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     if ([_delegate respondsToSelector:@selector(shareSheet:willShowActivityItems:)])
         [_delegate shareSheet:self willShowActivityItems:sharingItems];
 
-    _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:webView];
+    _presentationViewController = webView._wk_viewControllerForFullScreenPresentation;
     [_presentationViewController presentViewController:_shareSheetViewController.get() animated:YES completion:nil];
 #endif
 }

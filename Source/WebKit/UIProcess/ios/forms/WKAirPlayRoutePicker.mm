@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(AIRPLAY_PICKER)
 
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import <WebCore/AudioSession.h>
 #import <pal/spi/ios/MediaPlayerSPI.h>
 #import <wtf/RetainPtr.h>
@@ -96,7 +97,7 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
         _actionSheet = nil;
     };
 
-    UIViewController *viewControllerForPresentation = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
+    auto viewControllerForPresentation = view._wk_viewControllerForFullScreenPresentation;
     [viewControllerForPresentation presentViewController:_actionSheet.get() animated:YES completion:nil];
 }
 

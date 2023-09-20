@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIKitUtilities.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
@@ -1226,7 +1227,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     [_view startRelinquishingFirstResponderToFocusedElement];
 
     [self configurePresentation];
-    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_view];
+    auto presentingViewController = _view._wk_viewControllerForFullScreenPresentation;
     [presentingViewController presentViewController:_navigationController.get() animated:YES completion:nil];
 }
 

@@ -576,8 +576,6 @@ typedef enum {
 @end
 
 @interface UIViewController ()
-+ (UIViewController *)_viewControllerForFullScreenPresentationFromView:(UIView *)view;
-+ (UIViewController *)viewControllerForView:(UIView *)view;
 - (BOOL)isPerformingModalTransition;
 @end
 

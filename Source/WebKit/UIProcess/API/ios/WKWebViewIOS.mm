@@ -729,7 +729,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
 - (UIEdgeInsets)_contentInsetsFromSystemMinimumLayoutMargins
 {
-    if (auto controller = [UIViewController _viewControllerForFullScreenPresentationFromView:self]) {
+    if (auto controller = self._wk_viewControllerForFullScreenPresentation) {
         auto margins = controller.systemMinimumLayoutMargins;
         auto insets = UIEdgeInsetsMake(margins.top, margins.leading, margins.bottom, margins.trailing);
         if (_page && _page->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL)
@@ -3350,7 +3350,7 @@ static bool isLockdownModeWarningNeeded()
 
             [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Lockdown Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
 
-            UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:protectedSelf.get()];
+            auto presentationViewController = [protectedSelf _wk_viewControllerForFullScreenPresentation];
             [presentationViewController presentViewController:alert.get() animated:YES completion:nil];
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitLockdownModeAlertShownKey];
         });

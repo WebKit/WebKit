@@ -39,6 +39,19 @@
 
 @end
 
+@implementation UIView (WebKitInternal)
+
+- (UIViewController *)_wk_viewControllerForFullScreenPresentation
+{
+    auto controller = self.window.rootViewController;
+    UIViewController *nextPresentedController = nil;
+    while ((nextPresentedController = controller.presentedViewController))
+        controller = nextPresentedController;
+    return controller.viewIfLoaded.window == self.window ? controller : nil;
+}
+
+@end
+
 namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message)
