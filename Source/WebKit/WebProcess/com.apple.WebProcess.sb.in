@@ -1860,18 +1860,26 @@
 (disable-syscall-inference)
 #endif
 
-(define (syscall-unix-common)
+(define (syscall-unix-only-in-use-before-launch)
+    (syscall-number
+        SYS_csops
+        SYS_fsgetpath
+        SYS_getaudit_addr
+        SYS_getfsstat64
+        SYS_kdebug_trace
+        SYS_pathconf
+        SYS_statfs64))
+
+(define (syscall-unix-in-use-after-launch)
     (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
-        SYS___semwait_signal
         SYS_access
         SYS_bsdthread_create
         SYS_bsdthread_ctl
         SYS_bsdthread_terminate
         SYS_close
         SYS_close_nocancel
-        SYS_csops
         SYS_csops_audittoken
         SYS_csrctl
         SYS_dup ;; Remove when <rdar://88210738> is fixed
@@ -1879,28 +1887,19 @@
         SYS_fcntl
         SYS_fcntl_nocancel
         SYS_fgetxattr
-        SYS_flock
-        SYS_fsetxattr ;; <rdar://problem/56332491>
-        SYS_fsgetpath
         SYS_fstat64
         SYS_fstatfs64
-        SYS_ftruncate
         SYS_getattrlist
         SYS_getattrlistbulk
-        SYS_getaudit_addr
         SYS_getdirentries64
         SYS_getentropy
         SYS_geteuid
-        SYS_getfsstat64
-        SYS_getgid
         SYS_getrlimit
         SYS_getrusage
         SYS_gettimeofday
         SYS_getuid
-        SYS_getxattr
         SYS_ioctl
         SYS_issetugid
-        SYS_kdebug_trace
         SYS_kdebug_trace64
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
         SYS_kevent_id
@@ -1908,18 +1907,13 @@
         SYS_lseek
         SYS_lstat64
         SYS_madvise
-#if !PLATFORM(MAC)
-        SYS_memorystatus_control
-#endif
         SYS_mkdir
         SYS_mmap
         SYS_mprotect
-        SYS_msync
         SYS_munmap
         SYS_open
         SYS_open_nocancel
         SYS_openat
-        SYS_pathconf
         SYS_pread
         SYS_proc_info
         SYS_psynch_cvbroad
@@ -1929,26 +1923,40 @@
         SYS_psynch_mutexdrop
         SYS_psynch_mutexwait
         SYS_read
-        SYS_read_nocancel
         SYS_readlink
-        SYS_rename
-        SYS_sendto
 #if ASAN_ENABLED
         SYS_sigaltstack
 #endif
         SYS_stat64
-        SYS_statfs64
         SYS_sysctl
         SYS_thread_selfid
-#if !PLATFORM(MAC)
-        SYS_thread_selfusage
-#endif
         SYS_ulock_wait
         SYS_ulock_wait2
         SYS_ulock_wake
         SYS_workq_kernreturn
         SYS_write_nocancel
         SYS_writev))
+
+(define (syscall-unix-possibly-in-use-after-launch)
+    (syscall-number
+        SYS___semwait_signal
+        SYS_flock
+        SYS_fsetxattr ;; <rdar://problem/56332491>
+        SYS_ftruncate
+        SYS_getgid
+        SYS_getxattr
+#if !PLATFORM(MAC)
+        SYS_memorystatus_control
+#endif
+        SYS_msync
+        SYS_read_nocancel
+        SYS_rename
+        SYS_sendto
+        SYS_sigaltstack
+#if !PLATFORM(MAC)
+        SYS_thread_selfusage
+#endif
+        ))
 
 (define (syscall-unix-apple-silicon)
     (syscall-number
@@ -2018,15 +2026,29 @@
 
 (deny syscall-unix)
 
-(allow syscall-unix (syscall-unix-common))
-(allow syscall-unix (syscalls-rarely-used))
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+    (allow syscall-unix (syscall-unix-only-in-use-before-launch)))
+(with-filter (state-flag "WebContentProcessLaunched")
+    (allow syscall-unix (with report) (with telemetry) (with message "Syscall unexpectedly used after launch") (syscall-unix-only-in-use-before-launch)))
+(allow syscall-unix (syscall-unix-in-use-after-launch))
+(allow syscall-unix (with report) (with telemetry) (syscall-unix-possibly-in-use-after-launch))
+#else
+(allow syscall-unix
+    (syscall-unix-only-in-use-before-launch)
+    (syscall-unix-in-use-after-launch)
+    (syscall-unix-possibly-in-use-after-launch))
+#endif
+
+(allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used))
 
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
 (with-filter (require-not (lockdown-mode))
     (allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
         (allow syscall-unix (syscall-unix-apple-silicon)))
-    (allow syscall-unix (syscalls-rarely-used-blocked-in-lockdown-mode)))
+    (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode)))
 #else
 (allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
 (when (equal? (param "CPU") "arm64")
