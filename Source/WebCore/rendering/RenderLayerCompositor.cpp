@@ -123,9 +123,12 @@ struct ScrollingTreeState {
 
 struct RenderLayerCompositor::OverlapExtent {
     LayoutRect bounds;
+    Vector<LayerOverlapMap::LayerAndBounds> clippingScopes;
+
     bool extentComputed { false };
     bool hasTransformAnimation { false };
     bool animationCausesExtentUncertainty { false };
+    bool clippingScopesComputed { false };
 
     bool knownToBeHaveExtentUncertainty() const { return extentComputed && animationCausesExtentUncertainty; }
 };
@@ -2234,35 +2237,44 @@ static AncestorTraversal traverseAncestorLayers(const RenderLayer& layer, Functi
     return AncestorTraversal::Continue;
 }
 
-static bool createsClippingScope(const RenderLayer& layer)
+void RenderLayerCompositor::computeClippingScopes(const RenderLayer& layer, OverlapExtent& extent) const
 {
-    return layer.hasCompositedScrollableOverflow();
-}
+    if (extent.clippingScopesComputed)
+        return;
 
-static Vector<LayerOverlapMap::LayerAndBounds> enclosingClippingScopes(const RenderLayer& layer, const RenderLayer& rootLayer)
-{
-    Vector<LayerOverlapMap::LayerAndBounds> clippingScopes;
-    clippingScopes.append({ const_cast<RenderLayer&>(rootLayer), { } });
+    // FIXME: constrain the scopes (by composited stacking context ancestor I think).
+    auto enclosingClippingScopes = [] (const RenderLayer& layer, const RenderLayer& rootLayer) {
 
-    if (!layer.hasCompositedScrollingAncestor())
-        return clippingScopes;
+        auto createsClippingScope = [](const RenderLayer& layer) {
+            return layer.hasCompositedScrollableOverflow();
+        };
 
-    traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool inContainingBlockChain, bool) {
-        if (inContainingBlockChain && createsClippingScope(ancestorLayer)) {
-            LayoutRect clipRect;
-            if (is<RenderBox>(ancestorLayer.renderer())) {
-                // FIXME: This is expensive. Broken with transforms.
-                LayoutPoint offsetFromRoot = ancestorLayer.convertToLayerCoords(&rootLayer, { });
-                clipRect = downcast<RenderBox>(ancestorLayer.renderer()).overflowClipRect(offsetFromRoot);
+        Vector<LayerOverlapMap::LayerAndBounds> clippingScopes;
+        clippingScopes.append({ const_cast<RenderLayer&>(rootLayer), { } });
+
+        if (!layer.hasCompositedScrollingAncestor())
+            return clippingScopes;
+
+        traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool inContainingBlockChain, bool) {
+            if (inContainingBlockChain && createsClippingScope(ancestorLayer)) {
+                LayoutRect clipRect;
+                if (is<RenderBox>(ancestorLayer.renderer())) {
+                    // FIXME: This is expensive. Broken with transforms.
+                    LayoutPoint offsetFromRoot = ancestorLayer.convertToLayerCoords(&rootLayer, { });
+                    clipRect = downcast<RenderBox>(ancestorLayer.renderer()).overflowClipRect(offsetFromRoot);
+                }
+
+                LayerOverlapMap::LayerAndBounds layerAndBounds { const_cast<RenderLayer&>(ancestorLayer), clipRect };
+                clippingScopes.insert(1, layerAndBounds); // Order is roots to leaves.
             }
+            return AncestorTraversal::Continue;
+        });
 
-            LayerOverlapMap::LayerAndBounds layerAndBounds { const_cast<RenderLayer&>(ancestorLayer), clipRect };
-            clippingScopes.insert(1, layerAndBounds); // Order is roots to leaves.
-        }
-        return AncestorTraversal::Continue;
-    });
+        return clippingScopes;
+    };
 
-    return clippingScopes;
+    extent.clippingScopes = enclosingClippingScopes(layer, rootRenderLayer());
+    extent.clippingScopesComputed = true;
 }
 
 void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
@@ -2271,14 +2283,12 @@ void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const R
         return;
 
     computeExtent(overlapMap, layer, extent);
-
-    // FIXME: constrain the scopes (by composited stacking context ancestor I think).
-    auto clippingScopes = enclosingClippingScopes(layer, rootRenderLayer());
+    computeClippingScopes(layer, extent);
 
     LayoutRect clipRect;
     if (layer.hasCompositedScrollingAncestor()) {
         // Compute a clip up to the composited scrolling ancestor, then convert it to absolute coordinates.
-        auto& scrollingScope = clippingScopes.last();
+        auto& scrollingScope = extent.clippingScopes.last();
         auto& scopeLayer = scrollingScope.layer;
         clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&scopeLayer, TemporaryClipRects, { })).rect();
         if (!clipRect.isInfinite())
@@ -2295,7 +2305,7 @@ void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const R
         clippedBounds.intersect(clipRect);
     }
 
-    overlapMap.add(layer, clippedBounds, clippingScopes);
+    overlapMap.add(layer, clippedBounds, extent.clippingScopes);
 }
 
 void RenderLayerCompositor::addDescendantsToOverlapMapRecursive(LayerOverlapMap& overlapMap, const RenderLayer& layer, const RenderLayer* ancestorLayer) const
@@ -2345,12 +2355,12 @@ void RenderLayerCompositor::updateOverlapMap(LayerOverlapMap& overlapMap, const 
     }
 }
 
-bool RenderLayerCompositor::layerOverlaps(const LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& layerExtent) const
+bool RenderLayerCompositor::layerOverlaps(const LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
 {
-    computeExtent(overlapMap, layer, layerExtent);
+    computeExtent(overlapMap, layer, extent);
+    computeClippingScopes(layer, extent);
 
-    auto clippingScopes = enclosingClippingScopes(layer, rootRenderLayer());
-    return overlapMap.overlapsLayers(layer, layerExtent.bounds, clippingScopes);
+    return overlapMap.overlapsLayers(layer, extent.bounds, extent.clippingScopes);
 }
 
 #if ENABLE(VIDEO)
