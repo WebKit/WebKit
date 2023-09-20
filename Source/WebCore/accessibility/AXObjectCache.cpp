@@ -2555,6 +2555,12 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         recomputeParentTableProperties(element, { TableProperty::CellSlots, TableProperty::Exposed });
     } else if (attrName == aria_sortAttr)
         postNotification(element, AXObjectCache::AXSortDirectionChanged);
+    else if (attrName == aria_ownsAttr) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        if (oldValue.isEmpty() || newValue.isEmpty())
+            updateIsolatedTree(get(element), AXPropertyName::SupportsARIAOwns);
+#endif
+    }
 }
 
 void AXObjectCache::labelChanged(Element* element)
@@ -4209,6 +4215,21 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
     }
 }
 
+void AXObjectCache::updateIsolatedTree(AccessibilityObject* axObject, AXPropertyName property) const
+{
+    if (axObject)
+        updateIsolatedTree(*axObject, property);
+}
+
+void AXObjectCache::updateIsolatedTree(AccessibilityObject& axObject, AXPropertyName property) const
+{
+    RefPtr tree = AXIsolatedTree::treeForPageID(*m_pageID);
+    if (!tree)
+        return;
+
+    tree->updateNodeProperty(axObject, property);
+}
+
 void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) const
 {
     if (!m_pageID)
@@ -4567,6 +4588,9 @@ void AXObjectCache::removeRelations(Element& origin, AXRelationType relationType
 
     for (AXID targetID : targetIDs)
         removeRelationByID(targetID, object->objectID(), symmetric);
+
+    if (!targetIDs.isEmpty() && relationType == AXRelationType::OwnerFor)
+        childrenChanged(object);
 }
 
 void AXObjectCache::removeRelationByID(AXID originID, AXID targetID, AXRelationType relationType)

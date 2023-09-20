@@ -1,45 +1,55 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div tabindex=0 id="group" role="group" aria-owns="extra extra2">
-<div>Item 1</div>
-<div>Item 2</div>
-<div>Item 3</div>
+    <div>Item 1</div>
+    <div>Item 2</div>
+    <div>Item 3</div>
 </div>
 
 <div id="extra" role="button">BUTTON</div>
 <div id="extra2" role="radio">RADIO BUTTON</div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-
-description("This tests that aria-owns correctly exposes AXOwns and correctly returns the right elements");
+var output = "This tests that aria-owns correctly exposes AXOwns and correctly returns the right elements\n\n";
 
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
-    var output = "";
     var group;
-    document.getElementById("group").focus();
-    setTimeout(function() {
-        group = accessibilityController.focusedElement;
+    setTimeout(async () => {
+        group = accessibilityController.accessibleElementById("group");
+        if (accessibilityController.platformName === "mac")
+            output += expect("group.isAttributeSupported('AXOwns')",  "true");
         output += expect("group.ariaOwnsElementAtIndex(0).role", "'AXRole: AXButton'");
         output += expect("group.ariaOwnsElementAtIndex(0).title", "'AXTitle: BUTTON'");
         output += expect("group.ariaOwnsElementAtIndex(1).role", "'AXRole: AXRadioButton'");
         output += expect("group.ariaOwnsElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
+        output += expect("group.childrenCount", "5");
+        output += expect("group.childAtIndex(4).title", "'AXTitle: RADIO BUTTON'");
+
+        // Remove aria-owns and confirm children count has updated.
+        output += evalAndReturn("document.getElementById('group').removeAttribute('aria-owns')");
+        output += await expectAsync("group.childrenCount", "3");
+        if (accessibilityController.platformName === "mac")
+            output += await expectAsync("group.isAttributeSupported('AXOwns')", "false");
+
+        // Add one ARIA child back.
+        output += evalAndReturn("document.getElementById('group').setAttribute('aria-owns', 'extra')");
+        output += await expectAsync("group.childrenCount", "4");
+        if (accessibilityController.platformName === "mac")
+            output += await expectAsync("group.isAttributeSupported('AXOwns')", "true");
+        output += expect("group.childAtIndex(3).title", "'AXTitle: BUTTON'");
+
         debug(output);
         finishJSTest();
-     }, 0);
+    });
 }
-
 </script>
-
 </body>
 </html>
