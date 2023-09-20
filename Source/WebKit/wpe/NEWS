@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.42.0
+=================
+
+What's new in WPE WebKit 2.42.0?
+
+  - GBM is no longer required for WebGL implementation.
+  - Add API to configure experimental features at runtime.
+  - Add API to set the percentage of volume space that can be used for data storage.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.40.2
 =================
 
