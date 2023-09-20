@@ -51,3 +51,17 @@ header: <wtf/text/AtomString.h>
     uint64_t high();
     [Validator='((static_cast<UInt128>(*high) << 64) | *low) != WTF::UUID::deletedValue'] uint64_t low();
 }
+
+#if OS(WINDOWS)
+using WTF::ProcessID = int;
+#else
+using WTF::ProcessID = pid_t;
+#endif
+
+enum class WTFLogLevel : uint8_t {
+    Always,
+    Error,
+    Warning,
+    Info,
+    Debug
+};

@@ -103,7 +103,8 @@ class SerializedType(object):
 
     def namespace_unless_wtf_and_name(self):
         if self.namespace == 'WTF':
-            return self.name
+            if self.name != "UUID":
+                return self.name
         return self.namespace_and_name()
 
     def subclass_enum_name(self):

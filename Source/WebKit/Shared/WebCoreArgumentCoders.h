@@ -528,16 +528,6 @@ template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
 #endif
 
 #undef Always
-template<> struct EnumTraits<WTFLogLevel> {
-    using values = EnumValues<
-    WTFLogLevel,
-    WTFLogLevel::Always,
-    WTFLogLevel::Error,
-    WTFLogLevel::Warning,
-    WTFLogLevel::Info,
-    WTFLogLevel::Debug
-    >;
-};
 
 #if ENABLE(ENCRYPTED_MEDIA)
 template <> struct EnumTraits<WebCore::CDMInstanceSession::SessionLoadFailure> {
