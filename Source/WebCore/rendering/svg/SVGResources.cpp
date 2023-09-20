@@ -179,13 +179,13 @@ static inline bool isChainableResource(const SVGElement& element, const SVGEleme
     return false;
 }
 
-static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(TreeScope& treeScope, const SVGPaintType& paintType, const String& paintUri, AtomString& id, bool& hasPendingResource)
+static inline LegacyRenderSVGResourceContainer* paintingResourceFromSVGPaint(TreeScope& treeScope, const SVGPaintType& paintType, const String& paintUri, AtomString& id, bool& hasPendingResource)
 {
     if (paintType != SVGPaintType::URI && paintType != SVGPaintType::URIRGBColor && paintType != SVGPaintType::URICurrentColor)
         return nullptr;
 
     id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, treeScope.documentScope());
-    RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(treeScope, id);
+    LegacyRenderSVGResourceContainer* container = getRenderSVGResourceContainerById(treeScope, id);
     if (!container) {
         hasPendingResource = true;
         return nullptr;
@@ -369,7 +369,7 @@ void SVGResources::removeClientFromCache(RenderElement& renderer, bool markForIn
     }
 }
 
-bool SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
+bool SVGResources::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
 {
     if (isEmpty())
         return false;
@@ -453,7 +453,7 @@ bool SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
     return foundResources;
 }
 
-void SVGResources::buildSetOfResources(WeakHashSet<RenderSVGResourceContainer>& set)
+void SVGResources::buildSetOfResources(WeakHashSet<LegacyRenderSVGResourceContainer>& set)
 {
     if (isEmpty())
         return;
@@ -618,7 +618,7 @@ void SVGResources::resetMasker()
     m_clipperFilterMaskerData->masker = nullptr;
 }
 
-bool SVGResources::setFill(RenderSVGResourceContainer* fill)
+bool SVGResources::setFill(LegacyRenderSVGResourceContainer* fill)
 {
     if (!fill)
         return false;
@@ -641,7 +641,7 @@ void SVGResources::resetFill()
     m_fillStrokeData->fill = nullptr;
 }
 
-bool SVGResources::setStroke(RenderSVGResourceContainer* stroke)
+bool SVGResources::setStroke(LegacyRenderSVGResourceContainer* stroke)
 {
     if (!stroke)
         return false;
@@ -664,7 +664,7 @@ void SVGResources::resetStroke()
     m_fillStrokeData->stroke = nullptr;
 }
 
-bool SVGResources::setLinkedResource(RenderSVGResourceContainer* linkedResource)
+bool SVGResources::setLinkedResource(LegacyRenderSVGResourceContainer* linkedResource)
 {
     if (!linkedResource)
         return false;

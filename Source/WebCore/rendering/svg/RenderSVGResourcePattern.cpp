@@ -39,13 +39,13 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourcePattern);
 
 RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element, RenderStyle&& style)
-    : RenderSVGResourceContainer(element, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(element, WTFMove(style))
 {
 }
 
 SVGPatternElement& RenderSVGResourcePattern::patternElement() const
 {
-    return downcast<SVGPatternElement>(RenderSVGResourceContainer::element());
+    return downcast<SVGPatternElement>(LegacyRenderSVGResourceContainer::element());
 }
 
 void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidation)

@@ -1019,8 +1019,8 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == HTMLNames::idAttr) {
         auto renderer = this->renderer();
         // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
-        if (is<RenderSVGResourceContainer>(renderer))
-            downcast<RenderSVGResourceContainer>(*renderer).idChanged();
+        if (is<LegacyRenderSVGResourceContainer>(renderer))
+            downcast<LegacyRenderSVGResourceContainer>(*renderer).idChanged();
         if (isConnected())
             buildPendingResourcesIfNeeded();
         invalidateInstances();
@@ -1066,7 +1066,7 @@ void SVGElement::buildPendingResourcesIfNeeded()
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
             if (auto renderer = clientElement->renderer()) {
-                for (auto& ancestor : ancestorsOfType<RenderSVGResourceContainer>(*renderer))
+                for (auto& ancestor : ancestorsOfType<LegacyRenderSVGResourceContainer>(*renderer))
                     ancestor.markAllClientsForRepaint();
             }
             treeScope.clearHasPendingSVGResourcesIfPossible(*clientElement);

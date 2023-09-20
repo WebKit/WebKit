@@ -32,7 +32,7 @@ namespace WebCore {
 
 inline SVGFilterElement& RenderSVGResourceFilter::filterElement() const
 {
-    return downcast<SVGFilterElement>(RenderSVGResourceContainer::element());
+    return downcast<SVGFilterElement>(LegacyRenderSVGResourceContainer::element());
 }
 
 inline SVGUnitTypes::SVGUnitType RenderSVGResourceFilter::filterUnits() const

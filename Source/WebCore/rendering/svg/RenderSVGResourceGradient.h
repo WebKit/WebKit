@@ -22,7 +22,7 @@
 #pragma once
 
 #include "ImageBuffer.h"
-#include "RenderSVGResourceContainer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "SVGGradientElement.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -56,10 +56,10 @@ struct GradientData {
     Inputs inputs;
 };
 
-class RenderSVGResourceGradient : public RenderSVGResourceContainer {
+class RenderSVGResourceGradient : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceGradient);
 public:
-    SVGGradientElement& gradientElement() const { return static_cast<SVGGradientElement&>(RenderSVGResourceContainer::element()); }
+    SVGGradientElement& gradientElement() const { return static_cast<SVGGradientElement&>(LegacyRenderSVGResourceContainer::element()); }
 
     void removeAllClientsFromCache(bool markForInvalidation = true) final;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) final;

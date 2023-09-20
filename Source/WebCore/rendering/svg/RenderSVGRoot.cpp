@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "RenderBoxInlines.h"
@@ -40,7 +41,6 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
@@ -513,7 +513,7 @@ bool RenderSVGRoot::hasRelativeDimensions() const
     return svgSVGElement().intrinsicHeight().isPercentOrCalculated() || svgSVGElement().intrinsicWidth().isPercentOrCalculated();
 }
 
-void RenderSVGRoot::addResourceForClientInvalidation(RenderSVGResourceContainer* resource)
+void RenderSVGRoot::addResourceForClientInvalidation(LegacyRenderSVGResourceContainer* resource)
 {
     UNUSED_PARAM(resource);
     /* FIXME: [LBSE] Rename findTreeRootObject -> findLegacyTreeRootObject, and re-add findTreeRootObject for RenderSVGRoot

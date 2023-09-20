@@ -20,7 +20,7 @@
 #pragma once
 
 #include "ImageBuffer.h"
-#include "RenderSVGResourceContainer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
 
 #include <wtf/HashMap.h>
@@ -35,7 +35,7 @@ struct MaskerData {
     RefPtr<ImageBuffer> maskImage;
 };
 
-class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
+class RenderSVGResourceMasker final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceMasker);
 public:
     RenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);

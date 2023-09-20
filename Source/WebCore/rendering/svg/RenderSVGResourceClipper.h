@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "RenderSVGResourceContainer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
 
 #include <wtf/HashMap.h>
@@ -56,7 +56,7 @@ struct ClipperData {
     Inputs inputs;
 };
 
-class RenderSVGResourceClipper final : public RenderSVGResourceContainer {
+class RenderSVGResourceClipper final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceClipper);
 public:
     RenderSVGResourceClipper(SVGClipPathElement&, RenderStyle&&);

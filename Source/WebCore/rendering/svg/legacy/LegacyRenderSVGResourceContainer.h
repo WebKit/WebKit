@@ -28,11 +28,11 @@ namespace WebCore {
 
 class RenderLayer;
 
-class RenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer,
-                                   public RenderSVGResource {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceContainer);
+class LegacyRenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer,
+                                         public RenderSVGResource {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceContainer);
 public:
-    virtual ~RenderSVGResourceContainer();
+    virtual ~LegacyRenderSVGResourceContainer();
 
     void layout() override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
@@ -49,7 +49,7 @@ public:
     void markAllClientLayersForInvalidation();
 
 protected:
-    RenderSVGResourceContainer(SVGElement&, RenderStyle&&);
+    LegacyRenderSVGResourceContainer(SVGElement&, RenderStyle&&);
 
     enum InvalidationMode {
         LayoutAndBoundariesInvalidation,
@@ -79,12 +79,12 @@ private:
     bool m_isInvalidating { false };
 };
 
-inline RenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeScope& treeScope, const AtomString& id)
+inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeScope& treeScope, const AtomString& id)
 {
     if (id.isEmpty())
         return nullptr;
 
-    if (RenderSVGResourceContainer* renderResource = treeScope.svgResourceById(id))
+    if (LegacyRenderSVGResourceContainer* renderResource = treeScope.svgResourceById(id))
         return renderResource;
 
     return nullptr;
@@ -94,7 +94,7 @@ template<typename Renderer>
 Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
 {
     // Using the RenderSVGResource type here avoids ambiguous casts for types that
-    // descend from both RenderObject and RenderSVGResourceContainer.
+    // descend from both RenderObject and LegacyRenderSVGResourceContainer.
     RenderSVGResource* container = getRenderSVGResourceContainerById(treeScope, id);
     if (is<Renderer>(container))
         return downcast<Renderer>(container);
@@ -104,4 +104,4 @@ Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceContainer, isSVGResourceContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGResourceContainer, isSVGResourceContainer())

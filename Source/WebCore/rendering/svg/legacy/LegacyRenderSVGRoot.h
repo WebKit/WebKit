@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class AffineTransform;
-class RenderSVGResourceContainer;
+class LegacyRenderSVGResourceContainer;
 class SVGSVGElement;
 
 class LegacyRenderSVGRoot final : public RenderReplaced {
@@ -63,7 +63,7 @@ public:
 
     // The flag is cleared at the beginning of each layout() pass. Elements then call this
     // method during layout when they are invalidated by a filter.
-    static void addResourceForClientInvalidation(RenderSVGResourceContainer*);
+    static void addResourceForClientInvalidation(LegacyRenderSVGResourceContainer*);
 
 private:
     void element() const = delete;
@@ -116,7 +116,7 @@ private:
     FloatRect m_repaintBoundingBox;
     mutable AffineTransform m_localToParentTransform;
     AffineTransform m_localToBorderBoxTransform;
-    WeakHashSet<RenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
+    WeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
     bool m_isLayoutSizeChanged : 1;
     bool m_needsBoundariesOrTransformUpdate : 1;
     bool m_hasBoxDecorations : 1;

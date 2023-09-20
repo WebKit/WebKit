@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "RenderBoxInlines.h"
@@ -36,7 +37,6 @@
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
@@ -467,7 +467,7 @@ bool LegacyRenderSVGRoot::hasRelativeDimensions() const
     return svgSVGElement().intrinsicHeight().isPercentOrCalculated() || svgSVGElement().intrinsicWidth().isPercentOrCalculated();
 }
 
-void LegacyRenderSVGRoot::addResourceForClientInvalidation(RenderSVGResourceContainer* resource)
+void LegacyRenderSVGRoot::addResourceForClientInvalidation(LegacyRenderSVGResourceContainer* resource)
 {
     LegacyRenderSVGRoot* svgRoot = SVGRenderSupport::findTreeRootObject(*resource);
     if (!svgRoot)

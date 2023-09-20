@@ -25,7 +25,7 @@
 
 #include "FilterResults.h"
 #include "FilterTargetSwitcher.h"
-#include "RenderSVGResourceContainer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "SVGFilter.h"
 #include "SVGUnitTypes.h"
 #include <wtf/IsoMalloc.h>
@@ -53,7 +53,7 @@ public:
     FilterDataState state { PaintingSource };
 };
 
-class RenderSVGResourceFilter final : public RenderSVGResourceContainer {
+class RenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceFilter);
 public:
     RenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);

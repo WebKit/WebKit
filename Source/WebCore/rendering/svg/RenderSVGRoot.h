@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class RenderSVGResourceContainer;
+class LegacyRenderSVGResourceContainer;
 class RenderSVGViewportContainer;
 class SVGSVGElement;
 
@@ -60,7 +60,7 @@ public:
 
     // The flag is cleared at the beginning of each layout() pass. Elements then call this
     // method during layout when they are invalidated by a filter.
-    static void addResourceForClientInvalidation(RenderSVGResourceContainer*);
+    static void addResourceForClientInvalidation(LegacyRenderSVGResourceContainer*);
 
     bool shouldApplyViewportClip() const;
 
@@ -127,7 +127,7 @@ private:
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
     FloatRect m_strokeBoundingBox;
-    WeakHashSet<RenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
+    WeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
 };
 
 } // namespace WebCore

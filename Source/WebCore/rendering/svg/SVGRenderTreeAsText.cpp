@@ -169,8 +169,8 @@ static void writeSVGPaintingResource(TextStream& ts, const RenderSVGResource& re
     else if (resourceType == RadialGradientResourceType)
         ts << "[type=RADIAL-GRADIENT]";
 
-    // All other resources derive from RenderSVGResourceContainer
-    const auto& container = static_cast<const RenderSVGResourceContainer&>(resource);
+    // All other resources derive from LegacyRenderSVGResourceContainer
+    const auto& container = static_cast<const LegacyRenderSVGResourceContainer&>(resource);
     ts << " [id=\"" << container.element().getIdAttribute() << "\"]";
 }
 
@@ -455,7 +455,7 @@ static inline void writeCommonGradientProperties(TextStream& ts, SVGSpreadMethod
         ts << " [gradientTransform=" << gradientTransform << "]";
 }
 
-void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer& resource, OptionSet<RenderAsTextFlag> behavior)
+void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceContainer& resource, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, resource, behavior);
 

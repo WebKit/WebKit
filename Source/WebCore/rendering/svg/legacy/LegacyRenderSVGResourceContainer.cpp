@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourceContainer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 
 #include "LegacyRenderSVGRoot.h"
 #include "RenderLayer.h"
@@ -33,17 +33,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceContainer);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceContainer);
 
-RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(SVGElement& element, RenderStyle&& style)
     : LegacyRenderSVGHiddenContainer(element, WTFMove(style))
     , m_id(element.getIdAttribute())
 {
 }
 
-RenderSVGResourceContainer::~RenderSVGResourceContainer() = default;
+LegacyRenderSVGResourceContainer::~LegacyRenderSVGResourceContainer() = default;
 
-void RenderSVGResourceContainer::layout()
+void LegacyRenderSVGResourceContainer::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     // Invalidate all resources if our layout changed.
@@ -53,7 +53,7 @@ void RenderSVGResourceContainer::layout()
     LegacyRenderSVGHiddenContainer::layout();
 }
 
-void RenderSVGResourceContainer::willBeDestroyed()
+void LegacyRenderSVGResourceContainer::willBeDestroyed()
 {
     SVGResourcesCache::resourceDestroyed(*this);
 
@@ -65,7 +65,7 @@ void RenderSVGResourceContainer::willBeDestroyed()
     LegacyRenderSVGHiddenContainer::willBeDestroyed();
 }
 
-void RenderSVGResourceContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGResourceContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     LegacyRenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
@@ -75,7 +75,7 @@ void RenderSVGResourceContainer::styleDidChange(StyleDifference diff, const Rend
     }
 }
 
-void RenderSVGResourceContainer::idChanged()
+void LegacyRenderSVGResourceContainer::idChanged()
 {
     // Invalidate all our current clients.
     removeAllClientsFromCache();
@@ -87,12 +87,12 @@ void RenderSVGResourceContainer::idChanged()
     registerResource();
 }
 
-void RenderSVGResourceContainer::markAllClientsForRepaint()
+void LegacyRenderSVGResourceContainer::markAllClientsForRepaint()
 {
     markAllClientsForInvalidation(RepaintInvalidation);
 }
 
-void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode mode)
+void LegacyRenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode mode)
 {
     // FIXME: Style invalidation should either be a pre-layout task or this function
     // should never get called while in layout. See webkit.org/b/208903.
@@ -110,8 +110,8 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
         if (root != SVGRenderSupport::findTreeRootObject(client))
             continue;
 
-        if (is<RenderSVGResourceContainer>(client)) {
-            downcast<RenderSVGResourceContainer>(client).removeAllClientsFromCache(markForInvalidation);
+        if (is<LegacyRenderSVGResourceContainer>(client)) {
+            downcast<LegacyRenderSVGResourceContainer>(client).removeAllClientsFromCache(markForInvalidation);
             continue;
         }
 
@@ -124,7 +124,7 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
     markAllClientLayersForInvalidation();
 }
 
-void RenderSVGResourceContainer::markAllClientLayersForInvalidation()
+void LegacyRenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
     if (m_clientLayers.isEmptyIgnoringNullReferences())
         return;
@@ -147,7 +147,7 @@ void RenderSVGResourceContainer::markAllClientLayersForInvalidation()
     }
 }
 
-void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)
+void LegacyRenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)
 {
     ASSERT(!m_clients.isEmptyIgnoringNullReferences());
 
@@ -165,28 +165,28 @@ void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client,
     }
 }
 
-void RenderSVGResourceContainer::addClient(RenderElement& client)
+void LegacyRenderSVGResourceContainer::addClient(RenderElement& client)
 {
     m_clients.add(client);
 }
 
-void RenderSVGResourceContainer::removeClient(RenderElement& client)
+void LegacyRenderSVGResourceContainer::removeClient(RenderElement& client)
 {
     removeClientFromCache(client, false);
     m_clients.remove(client);
 }
 
-void RenderSVGResourceContainer::addClientRenderLayer(RenderLayer& client)
+void LegacyRenderSVGResourceContainer::addClientRenderLayer(RenderLayer& client)
 {
     m_clientLayers.add(client);
 }
 
-void RenderSVGResourceContainer::removeClientRenderLayer(RenderLayer& client)
+void LegacyRenderSVGResourceContainer::removeClientRenderLayer(RenderLayer& client)
 {
     m_clientLayers.remove(client);
 }
 
-void RenderSVGResourceContainer::registerResource()
+void LegacyRenderSVGResourceContainer::registerResource()
 {
     auto& treeScope = this->treeScopeForSVGReferences();
     if (!treeScope.isIdOfPendingSVGResource(m_id)) {
@@ -210,7 +210,7 @@ void RenderSVGResourceContainer::registerResource()
     }
 }
 
-float RenderSVGResourceContainer::computeTextPaintingScale(const RenderElement& renderer)
+float LegacyRenderSVGResourceContainer::computeTextPaintingScale(const RenderElement& renderer)
 {
 #if USE(CG)
     UNUSED_PARAM(renderer);
@@ -227,7 +227,7 @@ float RenderSVGResourceContainer::computeTextPaintingScale(const RenderElement& 
 }
 
 // FIXME: This does not belong here.
-AffineTransform RenderSVGResourceContainer::transformOnNonScalingStroke(RenderObject* object, const AffineTransform& resourceTransform)
+AffineTransform LegacyRenderSVGResourceContainer::transformOnNonScalingStroke(RenderObject* object, const AffineTransform& resourceTransform)
 {
     if (!object->isSVGShapeOrLegacySVGShape())
         return resourceTransform;
