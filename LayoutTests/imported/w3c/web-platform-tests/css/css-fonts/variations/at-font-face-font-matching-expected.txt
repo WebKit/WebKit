@@ -13,11 +13,11 @@ PASS Matching font-weight: '430' should prefer '420 440' over '450 460'
 PASS Matching font-weight: '430' should prefer '450 460' over '500'
 PASS Matching font-weight: '430' should prefer '500' over '400 425'
 PASS Matching font-weight: '430' should prefer '400 425' over '350 399'
-FAIL Matching font-weight: '430' should prefer '350 399' over '340 398' assert_equals: Unexpected font on test element expected 488 but got 533
+PASS Matching font-weight: '430' should prefer '350 399' over '340 398'
 PASS Matching font-weight: '430' should prefer '340 398' over '501 550'
-FAIL Matching font-weight: '430' should prefer '501 550' over '502 560' assert_equals: Unexpected font on test element expected 488 but got 533
+PASS Matching font-weight: '430' should prefer '501 550' over '502 560'
 PASS Matching font-weight: '500' should prefer '500' over '450 460'
-FAIL Matching font-weight: '500' should prefer '450 460' over '400' assert_equals: Unexpected font on test element expected 488 but got 533
+PASS Matching font-weight: '500' should prefer '450 460' over '400'
 PASS Matching font-weight: '500' should prefer '400' over '350 399'
 PASS Matching font-weight: '500' should prefer '350 399' over '351 398'
 PASS Matching font-weight: '500' should prefer '351 398' over '501 550'
@@ -27,7 +27,7 @@ PASS Matching font-weight: '501' should prefer '502 510' over '503 520'
 PASS Matching font-weight: '501' should prefer '503 520' over '500'
 PASS Matching font-weight: '501' should prefer '500' over '450 460'
 PASS Matching font-weight: '501' should prefer '450 460' over '390 410'
-FAIL Matching font-weight: '501' should prefer '390 410' over '300 350' assert_equals: Unexpected font on test element expected 488 but got 533
+PASS Matching font-weight: '501' should prefer '390 410' over '300 350'
 PASS Matching font-weight: '399' should prefer '350 399' over '340 360'
 PASS Matching font-weight: '399' should prefer '340 360' over '200 300'
 PASS Matching font-weight: '399' should prefer '200 300' over '400'
@@ -70,7 +70,7 @@ PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 21deg' over 'ob
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg'
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 40deg 50deg' over 'oblique 20deg'
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 20deg' over 'oblique 10deg'
-PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 10deg' over 'italic'
+FAIL Matching font-style: 'oblique 21deg' should prefer 'oblique 10deg' over 'italic' assert_equals: Unexpected font on test element expected 488 but got 533
 PASS Matching font-style: 'oblique 21deg' should prefer 'italic' over 'oblique 0deg'
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique 0deg' over 'oblique -50deg -20deg'
 PASS Matching font-style: 'oblique 21deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg'
@@ -87,7 +87,7 @@ PASS Matching font-style: 'oblique 0deg' should prefer 'oblique 5deg' over 'obli
 FAIL Matching font-style: 'oblique 0deg' should prefer 'oblique 15deg 20deg' over 'oblique 30deg 60deg' assert_equals: Unexpected font on test element expected 277 but got 533
 FAIL Matching font-style: 'oblique 0deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' assert_equals: Unexpected font on test element expected 277 but got 533
 FAIL Matching font-style: 'oblique 0deg' should prefer 'oblique 40deg 50deg' over 'italic' assert_equals: Unexpected font on test element expected 277 but got 533
-FAIL Matching font-style: 'oblique 0deg' should prefer 'italic' over 'oblique -50deg -20deg' assert_equals: Unexpected font on test element expected 277 but got 533
+FAIL Matching font-style: 'oblique 0deg' should prefer 'italic' over 'oblique -50deg -20deg' assert_equals: Unexpected font on test element expected 488 but got 533
 PASS Matching font-style: 'oblique 0deg' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg'
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -10deg' over 'oblique -5deg'
 PASS Matching font-style: 'oblique -10deg' should prefer 'oblique -5deg' over 'oblique -1deg 0deg'
@@ -106,7 +106,7 @@ FAIL Matching font-style: 'oblique -20deg' should prefer 'oblique 30deg 60deg' o
 PASS Matching font-style: 'oblique -21deg' should prefer 'oblique -21deg' over 'oblique -60deg -40deg'
 PASS Matching font-style: 'oblique -21deg' should prefer 'oblique -60deg -40deg' over 'oblique -10deg'
 PASS Matching font-style: 'oblique -21deg' should prefer 'oblique -10deg' over 'italic'
-FAIL Matching font-style: 'oblique -21deg' should prefer 'italic' over 'oblique 0deg' assert_equals: Unexpected font on test element expected 277 but got 533
+FAIL Matching font-style: 'oblique -21deg' should prefer 'italic' over 'oblique 0deg' assert_equals: Unexpected font on test element expected 488 but got 533
 PASS Matching font-style: 'oblique -21deg' should prefer 'oblique 0deg' over 'oblique 30deg 60deg'
 FAIL Matching font-style: 'oblique -21deg' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' assert_equals: Unexpected font on test element expected 277 but got 533
 
