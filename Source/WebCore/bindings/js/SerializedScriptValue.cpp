@@ -2884,7 +2884,7 @@ private:
         } u;
         if (!readLittleEndian(u.i64))
             return false;
-        d = u.d;
+        d = purifyNaN(u.d);
         return true;
     }
 
@@ -4189,7 +4189,7 @@ private:
             double d;
             if (!read(d))
                 return JSValue();
-            return jsNumber(purifyNaN(d));
+            return jsNumber(d);
         }
         case BigIntTag:
             return readBigInt();
@@ -4197,7 +4197,7 @@ private:
             double d;
             if (!read(d))
                 return JSValue();
-            NumberObject* obj = constructNumber(m_globalObject, jsNumber(purifyNaN(d)));
+            NumberObject* obj = constructNumber(m_globalObject, jsNumber(d));
             m_gcBuffer.appendWithCrashOnOverflow(obj);
             return obj;
         }
