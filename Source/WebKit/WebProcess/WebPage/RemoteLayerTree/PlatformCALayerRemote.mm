@@ -587,12 +587,6 @@ void PlatformCALayerRemote::setSublayerTransform(const TransformationMatrix& val
     m_properties.notePropertiesChanged(LayerChange::SublayerTransformChanged);
 }
 
-void PlatformCALayerRemote::setIsBackdropRoot(bool isBackdropRoot)
-{
-    m_properties.backdropRoot = isBackdropRoot;
-    m_properties.notePropertiesChanged(LayerChange::BackdropRootChanged);
-}
-
 bool PlatformCALayerRemote::isHidden() const
 {
     return m_properties.hidden;

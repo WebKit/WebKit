@@ -557,7 +557,6 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
 #endif
-    updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
@@ -806,14 +805,6 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
 }
 #endif
 
-bool RenderLayerBacking::updateBackdropRoot()
-{
-    if (m_graphicsLayer->isBackdropRoot() == m_owningLayer.isBackdropRoot())
-        return false;
-    m_graphicsLayer->setIsBackdropRoot(m_owningLayer.isBackdropRoot());
-    return true;
-}
-
 #if ENABLE(CSS_COMPOSITING)
 void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 {
@@ -1038,7 +1029,6 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
 #if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
 #endif
-    updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
@@ -1210,9 +1200,6 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         m_graphicsLayer->setContentsRectClipsDescendants(true);
         updateContentsRects();
     }
-
-    if (updateBackdropRoot())
-        layerConfigChanged = true;
 
     if (layerConfigChanged)
         updatePaintingPhases();
@@ -1394,7 +1381,6 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 #if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
 #endif
-    updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif

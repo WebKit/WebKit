@@ -60,7 +60,6 @@ header: "RemoteLayerTreeTransaction.h"
     OpaqueChanged
     ContentsHiddenChanged
     UserInteractionEnabledChanged
-    BackdropRootChanged
     EventRegionChanged
 #if ENABLE(SCROLLING_THREAD)
     ScrollingNodeIDChanged
@@ -233,7 +232,6 @@ struct WebKit::LayerProperties {
     [OptionalTupleBit=WebKit::LayerChange::OpaqueChanged] bool opaque;
     [OptionalTupleBit=WebKit::LayerChange::ContentsHiddenChanged] bool contentsHidden;
     [OptionalTupleBit=WebKit::LayerChange::UserInteractionEnabledChanged] bool userInteractionEnabled;
-    [OptionalTupleBit=WebKit::LayerChange::BackdropRootChanged] bool backdropRoot;
     [OptionalTupleBit=WebKit::LayerChange::EventRegionChanged] WebCore::EventRegion eventRegion;
 #if ENABLE(SCROLLING_THREAD)
     [OptionalTupleBit=WebKit::LayerChange::ScrollingNodeIDChanged] WebCore::ScrollingNodeID scrollingNodeID;

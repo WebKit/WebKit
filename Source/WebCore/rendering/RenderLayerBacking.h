@@ -352,7 +352,6 @@ private:
     void updateBackdropFilters(const RenderStyle&);
     void updateBackdropFiltersGeometry();
 #endif
-    bool updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
 #endif

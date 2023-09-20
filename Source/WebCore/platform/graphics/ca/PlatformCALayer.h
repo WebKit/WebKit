@@ -184,8 +184,6 @@ public:
     virtual TransformationMatrix sublayerTransform() const = 0;
     virtual void setSublayerTransform(const TransformationMatrix&) = 0;
 
-    virtual void setIsBackdropRoot(bool) = 0;
-
     virtual bool isHidden() const = 0;
     virtual void setHidden(bool) = 0;
 

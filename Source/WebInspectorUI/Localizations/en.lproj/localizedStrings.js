@@ -635,7 +635,6 @@ localizedStrings["Element is <canvas>"] = "Element is <canvas>";
 localizedStrings["Element is <iframe>"] = "Element is <iframe>";
 localizedStrings["Element is <model>"] = "Element is <model>";
 localizedStrings["Element is <video>"] = "Element is <video>";
-localizedStrings["Element is a backdrop root""] = "Element is a backdrop root"";
 localizedStrings["Element is a plug-in"] = "Element is a plug-in";
 localizedStrings["Element is a stacking context and has composited descendants with CSS blending applied"] = "Element is a stacking context and has composited descendants with CSS blending applied";
 localizedStrings["Element is animated"] = "Element is animated";

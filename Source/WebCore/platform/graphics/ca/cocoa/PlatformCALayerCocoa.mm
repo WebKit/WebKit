@@ -648,13 +648,6 @@ void PlatformCALayerCocoa::setSublayerTransform(const TransformationMatrix& valu
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerCocoa::setIsBackdropRoot(bool isBackdropRoot)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setShouldRasterize:isBackdropRoot];
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
 bool PlatformCALayerCocoa::isHidden() const
 {
     return [m_layer isHidden];

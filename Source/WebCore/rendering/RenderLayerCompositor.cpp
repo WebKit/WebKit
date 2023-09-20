@@ -159,7 +159,6 @@ struct RenderLayerCompositor::CompositingState {
 #if ENABLE(CSS_COMPOSITING)
         childState.hasNotIsolatedCompositedBlendingDescendants = false; // FIXME: should this only be reset for stacking contexts?
 #endif
-        childState.hasBackdropFilterDescendantsWithoutRoot = false;
 #if !LOG_DISABLED
         childState.depth = depth + 1;
 #endif
@@ -202,9 +201,6 @@ struct RenderLayerCompositor::CompositingState {
         if ((layer.isComposited() && layer.hasBlendMode()) || (layer.hasNotIsolatedCompositedBlendingDescendants() && !layer.isolatesCompositedBlending()))
             hasNotIsolatedCompositedBlendingDescendants = true;
 #endif
-
-        if ((layer.isComposited() && layer.hasBackdropFilter()) || (layer.hasBackdropFilterDescendantsWithoutRoot() && !layer.isBackdropRoot()))
-            hasBackdropFilterDescendantsWithoutRoot = true;
     }
 
     bool hasNonRootCompositedAncestor() const
@@ -224,7 +220,6 @@ struct RenderLayerCompositor::CompositingState {
 #if ENABLE(CSS_COMPOSITING)
     bool hasNotIsolatedCompositedBlendingDescendants { false };
 #endif
-    bool hasBackdropFilterDescendantsWithoutRoot { false };
 #if !LOG_DISABLED
     unsigned depth { 0 };
 #endif
@@ -1227,12 +1222,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     ASSERT(!layer.hasNotIsolatedCompositedBlendingDescendants() || layer.hasNotIsolatedBlendingDescendants());
 #endif
-
-    bool isBackdropRoot = layer.isBackdropRoot();
-    layer.setHasBackdropFilterDescendantsWithoutRoot(currentState.hasBackdropFilterDescendantsWithoutRoot);
-    if (layer.isBackdropRoot() != isBackdropRoot)
-        layer.setNeedsCompositingConfigurationUpdate();
-
     // Now check for reasons to become composited that depend on the state of descendant layers.
     if (!willBeComposited && canBeComposited(layer)) {
         auto indirectReason = computeIndirectCompositingReason(layer, currentState.subtreeIsCompositing, anyDescendantHas3DTransform, layerPaintsIntoProvidedBacking);
@@ -2979,9 +2968,6 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         if (renderer.hasFilter() || renderer.hasBackdropFilter())
             reasons.add(CompositingReason::FilterWithCompositedDescendants);
 
-        if (layer.isBackdropRoot())
-            reasons.add(CompositingReason::BackdropRoot);
-
 #if ENABLE(CSS_COMPOSITING)
         if (layer.isolatesCompositedBlending())
             reasons.add(CompositingReason::IsolatesCompositedBlendingDescendants);
@@ -3037,7 +3023,6 @@ static const char* compositingReasonToString(CompositingReason reason)
     case CompositingReason::WillChange: return "will-change";
     case CompositingReason::Root: return "root";
     case CompositingReason::Model: return "model";
-    case CompositingReason::BackdropRoot: return "backdrop root";
     }
     return "";
 }
@@ -3615,7 +3600,7 @@ IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReaso
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
     auto& renderer = layer.renderer();
-    if (hasCompositedDescendants && (layer.isolatesCompositedBlending() || layer.isBackdropRoot() || layer.transform() || renderer.createsGroup() || renderer.hasReflection()))
+    if (hasCompositedDescendants && (layer.isolatesCompositedBlending() || layer.transform() || renderer.createsGroup() || renderer.hasReflection()))
         return IndirectCompositingReason::GraphicalEffect;
 
     // A layer with preserve-3d or perspective only needs to be composited if there are descendant layers that

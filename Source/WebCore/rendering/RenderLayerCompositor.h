@@ -83,7 +83,6 @@ enum class CompositingReason {
     Root                                   = 1 << 25,
     IsolatesCompositedBlendingDescendants  = 1 << 26,
     Model                                  = 1 << 27,
-    BackdropRoot                           = 1 << 28,
 };
 
 enum class ScrollCoordinationRole {

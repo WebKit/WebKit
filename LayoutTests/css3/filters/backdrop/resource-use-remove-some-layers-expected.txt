@@ -5,101 +5,96 @@
     (GraphicsLayer
       (bounds 1242.00 2208.00)
       (contentsOpaque 1)
-      (children 1
+      (children 7
         (GraphicsLayer
           (bounds 1242.00 2208.00)
-          (children 7
-            (GraphicsLayer
-              (bounds 1242.00 2208.00)
-              (usingTiledLayer 1)
-              (drawsContent 1)
-              (structural layer
-                (position 621.00 1104.00)
-                (bounds 1242.00 2208.00)
-              )
-              (backdrop layer
-                (position 0.00 0.00)
-                (bounds 1242.00 2208.00)
-              )
-            )
-            (GraphicsLayer
-              (bounds 1242.00 2208.00)
-              (usingTiledLayer 1)
-              (drawsContent 1)
-              (structural layer
-                (position 621.00 1104.00)
-                (bounds 1242.00 2208.00)
-              )
-              (backdrop layer
-                (position 0.00 0.00)
-                (bounds 1242.00 2208.00)
-              )
-            )
-            (GraphicsLayer
-              (bounds 1242.00 2208.00)
-              (usingTiledLayer 1)
-              (drawsContent 1)
-              (structural layer
-                (position 621.00 1104.00)
-                (bounds 1242.00 2208.00)
-              )
-              (backdrop layer
-                (position 0.00 0.00)
-                (bounds 1242.00 2208.00)
-              )
-            )
-            (GraphicsLayer
-              (bounds 1242.00 2208.00)
-              (usingTiledLayer 1)
-              (drawsContent 1)
-              (structural layer
-                (position 621.00 1104.00)
-                (bounds 1242.00 2208.00)
-              )
-              (backdrop layer
-                (position 0.00 0.00)
-                (bounds 1242.00 2208.00)
-              )
-            )
-            (GraphicsLayer
-              (bounds 1242.00 2208.00)
-              (usingTiledLayer 1)
-              (drawsContent 1)
-              (structural layer
-                (position 621.00 1104.00)
-                (bounds 1242.00 2208.00)
-              )
-              (backdrop layer
-                (position 0.00 0.00)
-                (bounds 1242.00 2208.00)
-              )
-            )
-            (GraphicsLayer
-              (bounds 1242.00 2208.00)
-              (usingTiledLayer 1)
-              (drawsContent 1)
-              (structural layer
-                (position 621.00 1104.00)
-                (bounds 1242.00 2208.00)
-              )
-              (backdrop layer
-                (position 0.00 0.00)
-                (bounds 1242.00 2208.00)
-              )
-            )
-            (GraphicsLayer
-              (bounds 1242.00 2208.00)
-              (usingTiledLayer 1)
-              (drawsContent 1)
-              (structural layer
-                (position 621.00 1104.00)
-                (bounds 1242.00 2208.00)
-              )
-              (backdrop layer
-                (position 0.00 0.00)
-                (bounds 1242.00 2208.00)
-              )
-            )
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (structural layer
+            (position 621.00 1104.00)
+            (bounds 1242.00 2208.00)
+          )
+          (backdrop layer
+            (position 0.00 0.00)
+            (bounds 1242.00 2208.00)
+          )
+        )
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (structural layer
+            (position 621.00 1104.00)
+            (bounds 1242.00 2208.00)
+          )
+          (backdrop layer
+            (position 0.00 0.00)
+            (bounds 1242.00 2208.00)
+          )
+        )
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (structural layer
+            (position 621.00 1104.00)
+            (bounds 1242.00 2208.00)
+          )
+          (backdrop layer
+            (position 0.00 0.00)
+            (bounds 1242.00 2208.00)
+          )
+        )
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (structural layer
+            (position 621.00 1104.00)
+            (bounds 1242.00 2208.00)
+          )
+          (backdrop layer
+            (position 0.00 0.00)
+            (bounds 1242.00 2208.00)
+          )
+        )
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (structural layer
+            (position 621.00 1104.00)
+            (bounds 1242.00 2208.00)
+          )
+          (backdrop layer
+            (position 0.00 0.00)
+            (bounds 1242.00 2208.00)
+          )
+        )
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (structural layer
+            (position 621.00 1104.00)
+            (bounds 1242.00 2208.00)
+          )
+          (backdrop layer
+            (position 0.00 0.00)
+            (bounds 1242.00 2208.00)
+          )
+        )
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (structural layer
+            (position 621.00 1104.00)
+            (bounds 1242.00 2208.00)
+          )
+          (backdrop layer
+            (position 0.00 0.00)
+            (bounds 1242.00 2208.00)
           )
         )
       )

@@ -867,12 +867,6 @@ bool GraphicsLayerCA::setBackdropFilters(const FilterOperations& filterOperation
     return canCompositeFilters;
 }
 
-void GraphicsLayerCA::setIsBackdropRoot(bool isBackdropRoot)
-{
-    GraphicsLayer::setIsBackdropRoot(isBackdropRoot);
-    noteLayerPropertyChanged(BackdropRootChanged);
-}
-
 void GraphicsLayerCA::setBackdropFiltersRect(const FloatRoundedRect& backdropFiltersRect)
 {
     if (backdropFiltersRect == m_backdropFiltersRect)
@@ -2061,9 +2055,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & BackdropFiltersChanged || needsBackdrop())
         updateBackdropFilters(commitState);
 
-    if (m_uncommittedChanges & BackdropRootChanged)
-        updateBackdropRoot();
-
     if (m_uncommittedChanges & BackdropFiltersRectChanged)
         updateBackdropFiltersRect();
 
@@ -2555,11 +2546,6 @@ void GraphicsLayerCA::updateBackdropFiltersRect()
     }
 }
 
-void GraphicsLayerCA::updateBackdropRoot()
-{
-    m_layer->setIsBackdropRoot(isBackdropRoot());
-}
-
 #if ENABLE(CSS_COMPOSITING)
 void GraphicsLayerCA::updateBlendMode()
 {
@@ -2638,7 +2624,6 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         | BackfaceVisibilityChanged
         | FiltersChanged
         | BackdropFiltersChanged
-        | BackdropRootChanged
         | BlendModeChanged
         | MaskLayerChanged
         | OpacityChanged;
@@ -4391,7 +4376,6 @@ const char* GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
 #endif
     case LayerChange::ContentsScalingFiltersChanged: return "ContentsScalingFiltersChanged";
     case LayerChange::VideoGravityChanged: return "VideoGravityChanged";
-    case LayerChange::BackdropRootChanged: return "BackdropRootChanged";
     }
     ASSERT_NOT_REACHED();
     return "";
@@ -4556,7 +4540,6 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | AcceleratesDrawingChanged
         | FiltersChanged
         | BackdropFiltersChanged
-        | BackdropRootChanged
         | MaskLayerChanged
         | OpacityChanged
         | EventRegionChanged

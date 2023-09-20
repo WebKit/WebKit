@@ -339,9 +339,6 @@ public:
     void setIsMaskLayer(bool isMask) { m_isMaskLayer = isMask; }
     bool isMaskLayer() const { return m_isMaskLayer; }
 
-    virtual void setIsBackdropRoot(bool isBackdropRoot) { m_isBackdropRoot = isBackdropRoot; }
-    bool isBackdropRoot() const { return m_isBackdropRoot; }
-
     // The given layer will replicate this layer and its children; the replica renders behind this layer.
     WEBCORE_EXPORT virtual void setReplicatedByLayer(RefPtr<GraphicsLayer>&&);
     // Whether this layer is being replicated by another layer.
@@ -789,7 +786,6 @@ protected:
     bool m_showDebugBorder : 1;
     bool m_showRepaintCounter : 1;
     bool m_isMaskLayer : 1;
-    bool m_isBackdropRoot : 1;
     bool m_isTrackingDisplayListReplay : 1;
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
