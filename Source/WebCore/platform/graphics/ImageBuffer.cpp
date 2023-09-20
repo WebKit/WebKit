@@ -246,11 +246,6 @@ RefPtr<ImageBuffer> ImageBuffer::clone() const
     return copyImageBuffer(const_cast<ImageBuffer&>(*this), PreserveResolution::Yes);
 }
 
-RefPtr<ImageBuffer> ImageBuffer::cloneForDifferentThread()
-{
-    return clone();
-}
-
 GraphicsContext& ImageBuffer::context() const
 {
     ASSERT(m_backend);

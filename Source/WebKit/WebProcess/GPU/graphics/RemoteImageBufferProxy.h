@@ -80,7 +80,6 @@ private:
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
 
     RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread() final;
-    RefPtr<ImageBuffer> cloneForDifferentThread() final;
 
     RefPtr<WebCore::Image> filteredImage(WebCore::Filter&) final;
 
