@@ -577,6 +577,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::SelectedChildren:
             propertyMap.set(AXPropertyName::SelectedChildren, axIDs(axObject.selectedChildren()));
             break;
+        case AXPropertyName::SupportsARIAOwns:
+            propertyMap.set(AXPropertyName::SupportsARIAOwns, axObject.supportsARIAOwns());
+            break;
         case AXPropertyName::SupportsPosInSet:
             propertyMap.set(AXPropertyName::SupportsPosInSet, axObject.supportsPosInSet());
             break;

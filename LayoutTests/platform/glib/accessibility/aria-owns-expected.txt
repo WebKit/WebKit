@@ -1,6 +1,5 @@
 This tests that aria-owns correctly exposes AXOwns and correctly returns the right elements
 
-PASS: group.isAttributeSupported('AXOwns') === true
 PASS: group.ariaOwnsElementAtIndex(0).role === 'AXRole: AXButton'
 PASS: group.ariaOwnsElementAtIndex(0).title === 'AXTitle: BUTTON'
 PASS: group.ariaOwnsElementAtIndex(1).role === 'AXRole: AXRadioButton'
@@ -9,10 +8,8 @@ PASS: group.childrenCount === 5
 PASS: group.childAtIndex(4).title === 'AXTitle: RADIO BUTTON'
 document.getElementById('group').removeAttribute('aria-owns')
 PASS: group.childrenCount === 3
-PASS: group.isAttributeSupported('AXOwns') === false
 document.getElementById('group').setAttribute('aria-owns', 'extra')
 PASS: group.childrenCount === 4
-PASS: group.isAttributeSupported('AXOwns') === true
 PASS: group.childAtIndex(3).title === 'AXTitle: BUTTON'
 
 PASS successfullyParsed is true
