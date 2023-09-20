@@ -637,6 +637,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/websockets/WebSocketIdentifier.h
     Modules/websockets/WebSocketHandshake.h
 
+    accessibility/AXCoreObject.h
     accessibility/AXGeometryManager.h
     accessibility/AXLogger.h
     accessibility/AXObjectCache.h
@@ -648,7 +649,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/AccessibilityMockObject.h
     accessibility/AccessibilityNodeObject.h
     accessibility/AccessibilityObject.h
-    accessibility/AccessibilityObjectInterface.h
     accessibility/AccessibilityRenderObject.h
     accessibility/AccessibilityScrollView.h
     accessibility/ForcedAccessibilityValue.h

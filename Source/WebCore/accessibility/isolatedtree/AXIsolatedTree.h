@@ -27,8 +27,8 @@
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
+#include "AXCoreObject.h"
 #include "AXTreeStore.h"
-#include "AccessibilityObjectInterface.h"
 #include "PageIdentifier.h"
 #include "RenderStyleConstants.h"
 #include "RuntimeApplicationChecks.h"

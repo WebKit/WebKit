@@ -59,8 +59,8 @@
 #include "WebPageGroupProxy.h"
 #include "WebPageOverlay.h"
 #include "WebProcess.h"
+#include <WebCore/AXCoreObject.h>
 #include <WebCore/AXObjectCache.h>
-#include <WebCore/AccessibilityObjectInterface.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CSSParser.h>
 #include <WebCore/CaptionUserPreferences.h>

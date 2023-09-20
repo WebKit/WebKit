@@ -21,9 +21,9 @@
 #include "AccessibilityObjectAtspi.h"
 
 #if USE(ATSPI)
+#include "AXCoreObject.h"
 #include "AXObjectCache.h"
 #include "AccessibilityAtspiInterfaces.h"
-#include "AccessibilityObjectInterface.h"
 #include "AccessibilityRootAtspi.h"
 #include "AccessibilityTableCell.h"
 #include "ElementInlines.h"
