@@ -69,7 +69,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
     // TextTrackRepresentationClient
-    RefPtr<Image> createTextTrackRepresentationImage() override;
+    RefPtr<NativeImage> createTextTrackRepresentationImage() override;
     void textTrackRepresentationBoundsChanged(const IntRect&) override;
 
     void updateTextTrackRepresentationIfNeeded();
