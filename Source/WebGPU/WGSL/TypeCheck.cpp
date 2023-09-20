@@ -269,9 +269,12 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             variable.maybeInitializer()->m_inferredType = initializerType;
         }
 
-        if (!result)
-            result = initializerType;
-        else if (unify(result, initializerType))
+        if (!result) {
+            if (variable.flavor() == AST::VariableFlavor::Const)
+                result = initializerType;
+            else
+                result = concretize(initializerType, m_types);
+        } else if (unify(result, initializerType))
             variable.maybeInitializer()->m_inferredType = result;
         else
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");

@@ -5,6 +5,9 @@ fn testVariableInialization() {
   let x2: vec2<u32> = vec2(0, 0);
   let x3: f32 = 0;
   let x4: f32 = 0.0;
+
+  var v1 = vec2(0.0);
+  v1 = vec2f(0);
 }
 
 @vertex

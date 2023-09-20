@@ -134,4 +134,44 @@ const Type* satisfyOrPromote(const Type* type, Constraint constraint, const Type
     }
 }
 
+const Type* concretize(const Type* type, TypeStore& types)
+{
+    using namespace Types;
+
+    return WTF::switchOn(*type,
+        [&](const Primitive&) -> const Type* {
+            return satisfyOrPromote(type, Constraints::ConcreteScalar, types);
+        },
+        [&](const Vector& vector) -> const Type* {
+            return types.vectorType(concretize(vector.element, types), vector.size);
+        },
+        [&](const Matrix& matrix) -> const Type* {
+            return types.matrixType(concretize(matrix.element, types), matrix.columns, matrix.rows);
+        },
+        [&](const Array& array) -> const Type* {
+            return types.arrayType(concretize(array.element, types), array.size);
+        },
+        [&](const Struct&) -> const Type* {
+            return type;
+        },
+        [&](const Function&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Texture&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureStorage&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Reference&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TypeConstructor&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) -> const Type* {
+            return type;
+        });
+}
+
 } // namespace WGSL
