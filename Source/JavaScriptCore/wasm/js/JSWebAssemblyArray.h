@@ -88,7 +88,7 @@ public:
         }
     }
 
-    void set(VM& vm, uint32_t index, EncodedJSValue value)
+    void set(uint32_t index, EncodedJSValue value)
     {
         if (m_elementType.type.is<Wasm::PackedType>()) {
             // `value` is assumed to be an unboxed int32; truncate it to either 8 or 16 bits
@@ -121,7 +121,7 @@ public:
         case Wasm::TypeKind::RefNull: {
             WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(m_payload64.data());
             pointer += index;
-            pointer->set(vm, this, JSValue::decode(value));
+            pointer->set(vm(), this, JSValue::decode(value));
             break;
         }
         case Wasm::TypeKind::V128:

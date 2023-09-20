@@ -58,7 +58,7 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     uint64_t get(uint32_t) const;
-    void set(JSGlobalObject*, uint32_t, JSValue);
+    void set(uint32_t, EncodedJSValue);
     const Wasm::StructType* structType() const { return m_type->as<Wasm::StructType>(); }
     Wasm::FieldType fieldType(uint32_t fieldIndex) const { return structType()->field(fieldIndex); }
 

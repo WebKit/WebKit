@@ -735,6 +735,7 @@ WASM_SLOW_PATH_DECL(struct_get)
 
 WASM_SLOW_PATH_DECL(struct_set)
 {
+    UNUSED_PARAM(instance);
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
     auto instruction = pc->as<WasmStructSet>();
@@ -742,7 +743,7 @@ WASM_SLOW_PATH_DECL(struct_set)
     if (JSValue::decode(structReference).isNull())
         WASM_THROW(Wasm::ExceptionType::NullStructSet);
     auto value = READ(instruction.m_value).encodedJSValue();
-    Wasm::structSet(instance, structReference, instruction.m_fieldIndex, value);
+    Wasm::structSet(structReference, instruction.m_fieldIndex, value);
     WASM_END();
 }
 
