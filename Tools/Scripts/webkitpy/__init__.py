@@ -32,7 +32,7 @@ if sys.platform == 'darwin':
         libraries = os.path.expanduser('~/Library/webkitpy')
 
 from webkitcorepy import AutoInstall, Package, Version
-AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled'))
 
 if sys.version_info >= (3, 7):
     AutoInstall.register(Package('pylint', Version(2, 6, 0)))
@@ -57,10 +57,10 @@ else:
     sys.stderr.write("pytest, pylint and websockets do not support Python version! (%s)\n" % sys.version)
 
 if sys.version_info >= (3, 6):
-    AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
+    AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1), implicit_deps=['zipp', 'typing_extensions']))
     AutoInstall.register(Package('typing_extensions', Version(3, 10, 0)))
 else:
-    AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
+    AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0), implicit_deps=['zipp']))
 
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(20, 3, 0), pypi_name='attrs'))

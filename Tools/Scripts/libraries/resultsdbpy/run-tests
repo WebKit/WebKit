@@ -39,7 +39,7 @@ if sys.platform == 'darwin':
     does_own_libraries = os.stat(libraries).st_uid == os.getuid()
     if (is_root or not does_own_libraries):
         libraries = os.path.expanduser('~/Library/webkitpy')
-AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled'))
 
 from cassandra.cqlengine.management import CQLENG_ALLOW_SCHEMA_MANAGEMENT
 

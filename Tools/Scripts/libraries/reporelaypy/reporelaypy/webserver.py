@@ -28,7 +28,7 @@ from flask_cors import CORS
 autoinstall_path = os.environ.get('AUTOINSTALL_PATH')
 if autoinstall_path:
     from webkitcorepy import AutoInstall
-    AutoInstall.set_directory(autoinstall_path)
+    AutoInstall.set_directory(autoinstall_path, create_platform_subdirectory=False)
 
 from flask import Flask, current_app, json as fjson
 from reporelaypy import Checkout, CheckoutRoute, Redirector, HookReceiver
