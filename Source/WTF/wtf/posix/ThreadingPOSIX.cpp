@@ -261,6 +261,7 @@ dispatch_qos_class_t Thread::dispatchQOSClass(QOS qos)
 }
 #endif
 
+#if HAVE(SCHEDULING_POLICIES) || OS(LINUX)
 static int schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
 {
     switch (schedulingPolicy) {
@@ -274,6 +275,7 @@ static int schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
     ASSERT_NOT_REACHED();
     return SCHED_OTHER;
 }
+#endif
 
 #if OS(LINUX)
 static int schedPolicy(Thread::QOS qos, Thread::SchedulingPolicy schedulingPolicy)
