@@ -29,6 +29,9 @@
 #if ENABLE(CSS_PAINTING_API)
 
 #include "CanvasRenderingContext.h"
+#include "DisplayListDrawingContext.h"
+#include "DisplayListRecorder.h"
+#include "DisplayListReplayer.h"
 #include "ImageBitmap.h"
 #include "PaintRenderingContext2D.h"
 #include "ScriptExecutionContext.h"
@@ -60,48 +63,33 @@ RefPtr<PaintRenderingContext2D> CustomPaintCanvas::getContext()
         return &downcast<PaintRenderingContext2D>(*m_context);
 
     m_context = PaintRenderingContext2D::create(*this);
-    downcast<PaintRenderingContext2D>(*m_context).setUsesDisplayListDrawing(true);
 
     return &downcast<PaintRenderingContext2D>(*m_context);
 }
 
-void CustomPaintCanvas::replayDisplayList(GraphicsContext* ctx) const
+void CustomPaintCanvas::replayDisplayList(GraphicsContext& target)
 {
-    ASSERT(!m_destinationGraphicsContext);
     if (!width() || !height())
         return;
-
     // FIXME: Using an intermediate buffer is not needed if there are no composite operations.
-    auto clipBounds = ctx->clipBounds();
-
-    auto image = ctx->createAlignedImageBuffer(clipBounds.size());
+    auto clipBounds = target.clipBounds();
+    auto image = target.createAlignedImageBuffer(clipBounds.size());
     if (!image)
         return;
-
-    m_destinationGraphicsContext = &image->context();
-    m_destinationGraphicsContext->translate(-clipBounds.location());
-    if (m_context)
-        m_context->paintRenderingResultsToCanvas();
-    m_destinationGraphicsContext = nullptr;
-
-    ctx->drawImageBuffer(*image, clipBounds);
+    auto& imageTarget = image->context();
+    imageTarget.translate(-clipBounds.location());
+    replayDisplayListImpl(imageTarget);
+    target.drawImageBuffer(*image, clipBounds);
 }
 
 Image* CustomPaintCanvas::copiedImage() const
 {
-    ASSERT(!m_destinationGraphicsContext);
     if (!width() || !height())
         return nullptr;
-
     m_copiedBuffer = ImageBuffer::create(size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!m_copiedBuffer)
         return nullptr;
-
-    m_destinationGraphicsContext = &m_copiedBuffer->context();
-    if (m_context)
-        m_context->paintRenderingResultsToCanvas();
-    m_destinationGraphicsContext = nullptr;
-
+    replayDisplayListImpl(m_copiedBuffer->context());
     m_copiedImage = m_copiedBuffer->copyImage(DontCopyBackingStore, PreserveResolution::Yes);
     return m_copiedImage.get();
 }
@@ -113,12 +101,26 @@ void CustomPaintCanvas::clearCopiedImage() const
 
 GraphicsContext* CustomPaintCanvas::drawingContext() const
 {
-    return m_destinationGraphicsContext;
+    if (!m_recordingContext)
+        m_recordingContext = makeUnique<DisplayList::DrawingContext>(size());
+    return &m_recordingContext->context();
 }
 
 GraphicsContext* CustomPaintCanvas::existingDrawingContext() const
 {
-    return drawingContext();
+    return m_recordingContext ? &m_recordingContext->context() : nullptr;
+}
+
+void CustomPaintCanvas::replayDisplayListImpl(GraphicsContext& target) const
+{
+    if (!m_recordingContext)
+        return;
+    auto& displayList = m_recordingContext->displayList();
+    if (!displayList.isEmpty()) {
+        DisplayList::Replayer replayer(target, displayList);
+        replayer.replay(FloatRect { { }, size() });
+        displayList.clear();
+    }
 }
 
 }

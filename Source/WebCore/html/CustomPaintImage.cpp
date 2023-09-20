@@ -124,7 +124,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 
-    canvas->replayDisplayList(&destContext);
+    canvas->replayDisplayList(destContext);
 
     return ImageDrawResult::DidDraw;
 }

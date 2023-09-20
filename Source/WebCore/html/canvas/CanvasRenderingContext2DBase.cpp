@@ -45,9 +45,6 @@
 #include "ColorSerialization.h"
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"
-#include "DisplayListDrawingContext.h"
-#include "DisplayListRecorder.h"
-#include "DisplayListReplayer.h"
 #include "FloatQuad.h"
 #include "GeometryUtilities.h"
 #include "Gradient.h"
@@ -273,8 +270,6 @@ void CanvasRenderingContext2DBase::reset()
     m_path.clear();
     m_unrealizedSaveCount = 0;
     m_cachedImageData = std::nullopt;
-
-    m_recordingContext = nullptr;
 
     clearAccumulatedDirtyRect();
     resetTransform();
@@ -2269,32 +2264,10 @@ const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBa
     return m_stateStack;
 }
 
-void CanvasRenderingContext2DBase::paintRenderingResultsToCanvas()
-{
-    if (!m_recordingContext)
-        return;
-
-    ASSERT(m_usesDisplayListDrawing);
-
-    auto& displayList = m_recordingContext->displayList();
-    if (!displayList.isEmpty()) {
-        DisplayList::Replayer replayer(*canvasBase().drawingContext(), displayList);
-        replayer.replay(backingStoreBounds());
-        displayList.clear();
-    }
-}
-
 GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
-    if (UNLIKELY(m_usesDisplayListDrawing)) {
-        if (!m_recordingContext)
-            m_recordingContext = makeUnique<DisplayList::DrawingContext>(canvasBase().size());
-        return &m_recordingContext->context();
-    }
-
     return canvasBase().drawingContext();
 }
-
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
