@@ -90,7 +90,11 @@ public:
     virtual void workerUpdatedAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>)
     {
     }
-    
+
+    virtual void navigationToNotificationActionURL(const URL&)
+    {
+    }
+
     virtual void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler)
     {
         UNUSED_PARAM(topOrigin);

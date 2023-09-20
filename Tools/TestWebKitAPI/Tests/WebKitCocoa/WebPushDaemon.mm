@@ -66,9 +66,11 @@
 static bool alertReceived = false;
 @interface PushNotificationDelegate : NSObject<WKUIDelegatePrivate, _WKWebsiteDataStoreDelegate> {
     RetainPtr<_WKNotificationData> _mostRecentNotification;
+    RetainPtr<NSURL> _mostRecentActionURL;
     std::optional<uint64_t> _mostRecentAppBadge;
 }
 @property (nonatomic, readonly) RetainPtr<_WKNotificationData> mostRecentNotification;
+@property (nonatomic, readonly) RetainPtr<NSURL> mostRecentActionURL;
 @property (nonatomic, readonly) std::optional<uint64_t> mostRecentAppBadge;
 @end
 
@@ -96,6 +98,11 @@ static bool alertReceived = false;
         _mostRecentAppBadge = [badge unsignedLongLongValue];
     else
         _mostRecentAppBadge = std::nullopt;
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore navigateToNotificationActionURL:(NSURL *)url
+{
+    _mostRecentActionURL = url;
 }
 
 @end
@@ -1822,6 +1829,17 @@ TEST(WebPushD, DeclarativeWebPushHandling)
             EXPECT_EQ(delegate.get().mostRecentAppBadge, 18446744073709551615ULL);
             done = true;
         }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+
+    // Verify that processing the most recent notification results in its action URL being sent to the data store delegate
+    done = false;
+    [dataStore _processPersistentNotificationClick:delegate.get().mostRecentNotification.get().userInfo completionHandler:^(bool handled) {
+        EXPECT_TRUE(handled);
+        EXPECT_TRUE([delegate.get().mostRecentActionURL.get().absoluteString isEqualToString:@"https://example.com/"]);
+
+        done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 }

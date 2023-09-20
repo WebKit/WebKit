@@ -73,6 +73,7 @@ public:
         , m_hasShowNotificationSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:showNotification:)])
         , m_hasNotificationPermissionsSelector([m_delegate.get() respondsToSelector:@selector(notificationPermissionsForWebsiteDataStore:)])
         , m_hasWorkerUpdatedAppBadgeSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:workerOrigin:updatedAppBadge:)])
+        , m_hasNavigateToNotificationActionURLSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:navigateToNotificationActionURL:)])
         , m_hasGetDisplayedNotificationsSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:getDisplayedNotificationsForWorkerOrigin:completionHandler:)])
         , m_hasRequestBackgroundFetchPermissionSelector([m_delegate.get() respondsToSelector:@selector(requestBackgroundFetchPermission:frameOrigin:decisionHandler:)])
         , m_hasNotifyBackgroundFetchChangeSelector([m_delegate.get() respondsToSelector:@selector(notifyBackgroundFetchChange:change:)])
@@ -217,6 +218,15 @@ private:
         [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() workerOrigin:wrapper(apiOrigin.get()) updatedAppBadge:(NSNumber *)nsBadge];
     }
 
+    void navigationToNotificationActionURL(const URL& url) final
+    {
+        if (!m_hasNavigateToNotificationActionURLSelector || !m_delegate || !m_dataStore)
+            return;
+
+        [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() navigateToNotificationActionURL:(NSURL *)url];
+    }
+
+
     void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler) final
     {
         if (!m_hasRequestBackgroundFetchPermissionSelector) {
@@ -266,6 +276,7 @@ private:
     bool m_hasShowNotificationSelector { false };
     bool m_hasNotificationPermissionsSelector { false };
     bool m_hasWorkerUpdatedAppBadgeSelector { false };
+    bool m_hasNavigateToNotificationActionURLSelector { false };
     bool m_hasGetDisplayedNotificationsSelector { false };
     bool m_hasRequestBackgroundFetchPermissionSelector { false };
     bool m_hasNotifyBackgroundFetchChangeSelector { false };
@@ -1061,6 +1072,16 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         completionHandler(false);
         return;
     }
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    if (!notificationData->defaultActionURL.isEmpty() && _websiteDataStore->configuration().isDeclarativeWebPushEnabled()) {
+        RELEASE_LOG(Push, "Sending persistent notification clicked with default action URL. Requesting navigation to it now.");
+
+        _websiteDataStore->client().navigationToNotificationActionURL(notificationData->defaultActionURL);
+        completionHandler(true);
+        return;
+    }
+#endif
 
     RELEASE_LOG(Push, "Sending persistent notification click from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
 
