@@ -232,7 +232,7 @@ private:
 
     bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
 
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
+    CheckedPtr<Node> m_node;
 };
 
 } // namespace WebCore

@@ -51,7 +51,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRoot);
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     uint8_t flagsAndModes[3];
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> host;
+    CheckedPtr<Element> host;
     void* styleSheetList;
     void* styleScope;
     void* slotAssignment;

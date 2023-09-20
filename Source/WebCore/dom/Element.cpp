@@ -242,6 +242,12 @@ static bool shouldAutofocus(const Element& element)
     return true;
 }
 
+static HashMap<CheckedPtr<Element>, ElementIdentifier>& elementIdentifiersMap()
+{
+    static MainThreadNeverDestroyed<HashMap<CheckedPtr<Element>, ElementIdentifier>> map;
+    return map;
+}
+
 Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new Element(tagName, document, CreateElement));
@@ -258,6 +264,7 @@ Element::~Element()
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
 
+    elementIdentifiersMap().remove(this);
     disconnectFromIntersectionObservers();
 
     disconnectFromResizeObservers();
@@ -2821,7 +2828,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
         ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
 
-        shadowRoot.setHost(*this);
+        shadowRoot.setHost(this);
         shadowRoot.setParentTreeScope(treeScope());
 
         NodeVector postInsertionNotificationTargets;
@@ -5308,22 +5315,16 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     return animations;
 }
 
-static WeakHashMap<Element, ElementIdentifier, WeakPtrImplWithEventTargetData>& elementIdentifiersMap()
-{
-    static MainThreadNeverDestroyed<WeakHashMap<Element, ElementIdentifier, WeakPtrImplWithEventTargetData>> map;
-    return map;
-}
-
 ElementIdentifier Element::identifier() const
 {
-    return elementIdentifiersMap().ensure(*this, [] { return ElementIdentifier::generate(); }).iterator->value;
+    return elementIdentifiersMap().ensure(const_cast<Element*>(this), [] { return ElementIdentifier::generate(); }).iterator->value;
 }
 
 Element* Element::fromIdentifier(ElementIdentifier identifier)
 {
-    for (auto [element, elementIdentifier] : elementIdentifiersMap()) {
+    for (auto& [element, elementIdentifier] : elementIdentifiersMap()) {
         if (elementIdentifier == identifier)
-            return &element;
+            return element.get();
     }
     return nullptr;
 }

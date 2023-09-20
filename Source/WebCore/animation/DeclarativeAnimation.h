@@ -94,7 +94,7 @@ private:
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
 
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_owningElement;
+    CheckedPtr<Element> m_owningElement;
     PseudoId m_owningPseudoId;
     Ref<Animation> m_backingAnimation;
     double m_previousIteration;

@@ -117,7 +117,7 @@ void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderS
     ASSERT(m_owningElement);
 
     setEffect(KeyframeEffect::create(*m_owningElement, m_owningPseudoId));
-    setTimeline(&m_owningElement->document().timeline());
+    setTimeline(&m_owningElement.get()->document().timeline());
     downcast<KeyframeEffect>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
     syncPropertiesWithBackingAnimation();
     if (backingAnimation().playState() == AnimationPlayState::Playing)
@@ -264,7 +264,7 @@ auto DeclarativeAnimation::shouldFireDOMEvents() const -> ShouldFireEvents
     if (!m_owningElement)
         return ShouldFireEvents::No;
 
-    auto& document = m_owningElement->document();
+    auto& document = m_owningElement.get()->document();
     if (is<CSSAnimation>(*this)) {
         if (document.hasListenerType(Document::ListenerType::CSSAnimation))
             return ShouldFireEvents::YesForCSSAnimation;
