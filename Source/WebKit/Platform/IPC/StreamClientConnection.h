@@ -58,12 +58,12 @@ class StreamClientConnection final : public ThreadSafeRefCounted<StreamClientCon
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
 public:
     struct StreamConnectionPair {
-        RefPtr<StreamClientConnection> streamConnection;
+        Ref<StreamClientConnection> streamConnection;
         IPC::StreamServerConnection::Handle connectionHandle;
     };
 
     // The messages from the server are delivered to the caller through the passed IPC::MessageReceiver.
-    static StreamConnectionPair create(unsigned bufferSizeLog2);
+    static std::optional<StreamConnectionPair> create(unsigned bufferSizeLog2);
 
     ~StreamClientConnection();
 

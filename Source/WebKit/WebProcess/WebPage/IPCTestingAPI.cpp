@@ -412,6 +412,12 @@ private:
     IPCTesterReceiver m_testerProxy;
 };
 
+static JSValueRef createError(JSContextRef context, const String& message)
+{
+    JSC::JSLockHolder lock(toJS(context)->vm());
+    return toRef(JSC::createError(toJS(context), message));
+}
+
 static JSValueRef createTypeError(JSContextRef context, const String& message)
 {
     JSC::JSLockHolder lock(toJS(context)->vm());
@@ -2475,15 +2481,19 @@ JSValueRef JSIPC::createStreamClientConnection(JSContextRef context, JSObjectRef
         return JSValueMakeUndefined(context);
     }
     auto connectionPair = IPC::StreamClientConnection::create(*bufferSizeLog2);
+    if (!connectionPair) {
+        *exception = createError(context, "Failed to create the connection"_s);
+        return JSValueMakeUndefined(context);
+    }
     auto& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::JSObject* connectionPairObject = JSC::constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     int index = 0;
-    auto jsValue = toJS(globalObject, JSIPCStreamClientConnection::create(*jsIPC, WTFMove(connectionPair.streamConnection))->createJSWrapper(context));
+    auto jsValue = toJS(globalObject, JSIPCStreamClientConnection::create(*jsIPC, WTFMove(connectionPair->streamConnection))->createJSWrapper(context));
     connectionPairObject->putDirectIndex(globalObject, index++, jsValue);
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
-    jsValue = toJS(globalObject, JSIPCStreamServerConnectionHandle::create(WTFMove(connectionPair.connectionHandle))->createJSWrapper(context));
+    jsValue = toJS(globalObject, JSIPCStreamServerConnectionHandle::create(WTFMove(connectionPair->connectionHandle))->createJSWrapper(context));
     connectionPairObject->putDirectIndex(globalObject, index++, jsValue);
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     return toRef(vm, connectionPairObject);

@@ -81,10 +81,11 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::C
     unsigned connectionBufferSizeLog2 = defaultConnectionBufferSizeLog2;
     if (attributes.failContextCreationForTesting == WebCore::GraphicsContextGLAttributes::SimulatedCreationFailure::IPCBufferOOM)
         connectionBufferSizeLog2 = 50; // Expect this to fail.
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
-    if (!clientConnection)
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+    if (!connectionPair)
         return nullptr;
-    auto instance = platformCreate(connection, clientConnection.releaseNonNull(), attributes
+    auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
+    auto instance = platformCreate(connection, clientConnection, attributes
 #if ENABLE(VIDEO)
         , WTFMove(videoFrameObjectHeapProxy)
 #endif

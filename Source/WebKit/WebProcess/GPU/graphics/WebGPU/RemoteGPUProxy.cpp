@@ -46,10 +46,11 @@ namespace WebKit {
 RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
 {
     constexpr size_t connectionBufferSizeLog2 = 21;
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
-    if (!clientConnection)
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+    if (!connectionPair)
         return nullptr;
-    auto remoteGPUProxy = adoptRef(new RemoteGPUProxy(gpuProcessConnection, clientConnection.releaseNonNull(), convertToBackingContext, identifier));
+    auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
+    auto remoteGPUProxy = adoptRef(new RemoteGPUProxy(gpuProcessConnection, clientConnection, convertToBackingContext, identifier));
     remoteGPUProxy->initializeIPC(WTFMove(serverConnectionHandle), renderingBackend);
     return remoteGPUProxy;
 }

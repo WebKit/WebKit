@@ -212,8 +212,9 @@ public:
 
 TEST_F(StreamConnectionTest, OpenConnections)
 {
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
-    ASSERT_TRUE(clientConnection);
+    auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    ASSERT_TRUE(!!connectionPair);
+    auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
     auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
     auto cleanup = localReferenceBarrier();
     MockMessageReceiver mockClientReceiver;
@@ -229,8 +230,9 @@ TEST_F(StreamConnectionTest, OpenConnections)
 
 TEST_F(StreamConnectionTest, InvalidateUnopened)
 {
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
-    ASSERT_TRUE(clientConnection);
+    auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    ASSERT_TRUE(!!connectionPair);
+    auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
     auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
     auto cleanup = localReferenceBarrier();
     serverQueue().dispatch([this, serverConnection] {
@@ -250,8 +252,9 @@ public:
     void SetUp() override
     {
         setupBase();
-        auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(bufferSizeLog2());
-        ASSERT(clientConnection);
+        auto connectionPair = IPC::StreamClientConnection::create(bufferSizeLog2());
+        ASSERT(!!connectionPair);
+        auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
         auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
         m_clientConnection = WTFMove(clientConnection);
         m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
