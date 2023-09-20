@@ -67,6 +67,8 @@ public:
     void setInitialCaps(GRefPtr<GstCaps>&& caps) { m_initialCaps = WTFMove(caps); }
     const GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
 
+    static String trackIdFromPadStreamStartOrUniqueID(TrackType, unsigned index, const GRefPtr<GstPad>&);
+
 protected:
     TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
     TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GstStream*);
@@ -76,8 +78,13 @@ protected:
 
     GstObject* objectForLogging() const;
 
-    virtual void tagsChanged(const GRefPtr<GstTagList>&) { }
-    virtual void capsChanged(const String&, const GRefPtr<GstCaps>&) { }
+    virtual void tagsChanged(GRefPtr<GstTagList>&&) { }
+    virtual void capsChanged(const String&, GRefPtr<GstCaps>&&) { }
+    void installUpdateConfigurationHandlers();
+    virtual void updateConfigurationFromCaps(const GRefPtr<GstCaps>&&) { }
+    virtual void updateConfigurationFromTags(const GRefPtr<GstTagList>&&) { }
+
+    static GRefPtr<GstTagList> getAllTags(const GRefPtr<GstPad>&);
 
     enum MainThreadNotification {
         TagsChanged = 1 << 1,

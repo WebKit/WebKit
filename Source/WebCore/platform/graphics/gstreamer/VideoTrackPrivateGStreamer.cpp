@@ -51,6 +51,7 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     , m_player(player)
 {
     ensureVideoTrackDebugCategoryInitialized();
+    installUpdateConfigurationHandlers();
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
@@ -58,34 +59,19 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     , m_player(player)
 {
     ensureVideoTrackDebugCategoryInitialized();
-
-    g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
-        track->m_taskQueue.enqueueTask([track]() {
-            auto caps = adoptGRef(gst_stream_get_caps(track->m_stream.get()));
-            track->capsChanged(String::fromLatin1(gst_stream_get_stream_id(track->m_stream.get())), caps);
-        });
-    }), this);
-    g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
-        auto tags = adoptGRef(gst_stream_get_tags(track->m_stream.get()));
-        if (isMainThread())
-            track->updateConfigurationFromTags(tags);
-        else
-            track->m_taskQueue.enqueueTask([track, tags = WTFMove(tags)]() {
-                track->updateConfigurationFromTags(tags);
-            });
-    }), this);
+    installUpdateConfigurationHandlers();
 
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
-    updateConfigurationFromCaps(caps);
+    updateConfigurationFromCaps(WTFMove(caps));
 
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-    updateConfigurationFromTags(tags);
+    updateConfigurationFromTags(WTFMove(tags));
 }
 
-void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, const GRefPtr<GstCaps>& caps)
+void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
-    updateConfigurationFromCaps(caps);
+    updateConfigurationFromCaps(WTFMove(caps));
 
     if (!m_player)
         return;
@@ -100,7 +86,7 @@ void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, const GRefP
     setConfiguration(WTFMove(configuration));
 }
 
-void VideoTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTagList>& tags)
+void VideoTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTagList>&& tags)
 {
     ASSERT(isMainThread());
     GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, tags.get());
@@ -117,7 +103,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTa
     setConfiguration(WTFMove(configuration));
 }
 
-void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(const GRefPtr<GstCaps>& caps)
+void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(const GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
     if (!caps || !gst_caps_is_fixed(caps.get()))

@@ -318,9 +318,6 @@ protected:
     void ensureSeekFlags();
 
     static void sourceSetupCallback(MediaPlayerPrivateGStreamer*, GstElement*);
-    static void videoChangedCallback(MediaPlayerPrivateGStreamer*);
-    static void audioChangedCallback(MediaPlayerPrivateGStreamer*);
-    static void textChangedCallback(MediaPlayerPrivateGStreamer*);
 
     void timeChanged(const MediaTime&); // If MediaTime is valid, indicates that a seek has completed.
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
