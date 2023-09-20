@@ -1854,6 +1854,13 @@ struct CompactMapTraits<RefPtr<T>> {
     static ItemType extractValue(RefPtr<T>&& returnValue) { return returnValue.releaseNonNull(); }
 };
 
+template<typename T>
+struct CompactMapTraits<RetainPtr<T>> {
+    using ItemType = RetainPtr<T>;
+    static bool hasValue(const RetainPtr<T>& returnValue) { return !!returnValue; }
+    static ItemType extractValue(RetainPtr<T>&& returnValue) { return WTFMove(returnValue); }
+};
+
 template<typename MapFunction, typename SourceType, typename Enable = void>
 struct CompactMapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;

@@ -1613,15 +1613,11 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::isLicenseTypeSupported(LicenseT
 
 Vector<RetainPtr<AVContentKey>> CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceKeys() const
 {
-    Vector<RetainPtr<AVContentKey>> keys;
-    keys.reserveInitialCapacity(m_requests.size());
-    for (auto& request : m_requests) {
-        for (auto& keyRequest : request.requests) {
-            if (AVContentKey *key = [keyRequest contentKey])
-                keys.append(key);
-        }
-    }
-    return keys;
+    return WTF::flatMap(m_requests, [](auto& request) {
+        return WTF::compactMap(request.requests, [](auto& request) {
+            return RetainPtr { [request contentKey] };
+        });
+    });
 }
 
 #if !RELEASE_LOG_DISABLED
