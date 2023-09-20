@@ -38,10 +38,9 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
 
+namespace WebPushD {
 using namespace WebKit;
 using namespace WebCore;
-
-namespace WebPushD {
 
 static void updateTopicLists(PushServiceConnection& connection, PushDatabase& database, CompletionHandler<void()> completionHandler)
 {
