@@ -1,0 +1,14 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+addEventListener("message", () => {
+    testPassed("postMessage received");
+    testRunner.notifyDone();
+});
+</script>
+<iframe src="http://localhost:8000/site-isolation/resources/post-message-to-parent.html"></iframe>
