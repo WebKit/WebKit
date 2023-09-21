@@ -21,11 +21,29 @@
 
 #include "BPlatform.h"
 #include <cstdint>
-#include <unistd.h>
 
 #if BOS(LINUX)
 
+#ifndef PRIu64
+#define PRIu64 "lu"
+#endif
+
+#include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
+#include <climits>
+#include <cerrno>
+#include <cstdio>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <cstdlib>
+#include <cstdio>
+
+#ifndef assert
+static inline void assert(bool)
+{
+}
+#endif
 
 static int uv__open_cloexec(const char* path, int flags)
 {
