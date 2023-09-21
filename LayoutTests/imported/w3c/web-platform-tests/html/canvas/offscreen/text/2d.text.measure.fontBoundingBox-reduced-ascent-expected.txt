@@ -3,5 +3,5 @@
 Testing fontBoundingBox for OffscreenCanvas with reduced ascent metric
 
 
-FAIL Testing fontBoundingBox for OffscreenCanvas with reduced ascent metric assert_equals: ctx.measureText('A').fontBoundingBoxAscent === 10 (got 68[number], expected 10[number]) expected 10 but got 68
+PASS Testing fontBoundingBox for OffscreenCanvas with reduced ascent metric
 

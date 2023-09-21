@@ -1,7 +1,0 @@
-2d.text.measure.emHeights-low-ascent
-
-Testing emHeights with reduced ascent metric
-
-
-FAIL Testing emHeights with reduced ascent metric assert_equals: ctx.measureText('A').emHeightAscent === 20 (got 10[number], expected 20[number]) expected 20 but got 10
-
