@@ -73,6 +73,8 @@ public:
     void applyFilterEffect(GraphicsContext& destinationContext);
 
 private:
+    bool needsRedrawSourceImage() const;
+
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
 
