@@ -790,7 +790,7 @@ OptionSet<Atspi::State> AccessibilityObjectAtspi::states() const
     if (m_coreObject->isRequired())
         states.add(Atspi::State::Required);
 
-    if (m_coreObject->roleValue() == AccessibilityRole::TextArea || m_coreObject->ariaIsMultiline())
+    if (m_coreObject->roleValue() == AccessibilityRole::TextArea || (liveObject && liveObject->ariaIsMultiline()))
         states.add(Atspi::State::MultiLine);
     else if (m_coreObject->roleValue() == AccessibilityRole::TextField || m_coreObject->roleValue() == AccessibilityRole::SearchField)
         states.add(Atspi::State::SingleLine);
@@ -958,7 +958,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         }
     }
 
-    String isReadOnly = m_coreObject->readOnlyValue();
+    String isReadOnly = liveObject ? liveObject->readOnlyValue() : String();
     if (!isReadOnly.isEmpty())
         map.add("readonly"_s, isReadOnly);
 

@@ -71,10 +71,6 @@ typedef WebCore::AccessibilityObjectAtspi AccessibilityObjectWrapper;
 class AccessibilityObjectWrapper;
 #endif
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WTF {
 class TextStream;
 }
@@ -1058,7 +1054,6 @@ public:
     virtual String popupValue() const = 0;
     virtual bool supportsHasPopup() const = 0;
     virtual bool pressedIsPresent() const = 0;
-    virtual bool ariaIsMultiline() const = 0;
     virtual String invalidStatus() const = 0;
     virtual bool supportsExpanded() const = 0;
     virtual bool supportsChecked() const = 0;
@@ -1332,7 +1327,6 @@ public:
     virtual const String liveRegionRelevant() const = 0;
     virtual bool liveRegionAtomic() const = 0;
     virtual bool isBusy() const = 0;
-    virtual String readOnlyValue() const = 0;
     virtual String autoCompleteValue() const = 0;
 
     // Make this object visible by scrolling as many nested scrollable views as needed.
@@ -1432,9 +1426,6 @@ public:
     virtual AXCoreObject* highestEditableAncestor() = 0;
     virtual AXCoreObject* exposedTableAncestor(bool includeSelf = false) const = 0;
 
-    virtual PAL::SessionID sessionID() const = 0;
-    virtual String documentURI() const = 0;
-    virtual String documentEncoding() const = 0;
     virtual AccessibilityChildrenVector documentLinks() = 0;
 
     virtual String innerHTML() const = 0;

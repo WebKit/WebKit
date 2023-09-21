@@ -716,18 +716,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
-{
-    notImplemented();
-    return nullptr;
-}
-
 JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
 {
     notImplemented();

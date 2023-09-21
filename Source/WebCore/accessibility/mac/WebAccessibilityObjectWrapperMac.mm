@@ -74,7 +74,6 @@
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
-#import <pal/SessionID.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -205,14 +204,6 @@ using namespace WebCore;
 
 #ifndef NSAccessibilityIsMultiSelectableAttribute
 #define NSAccessibilityIsMultiSelectableAttribute @"AXIsMultiSelectable"
-#endif
-
-#ifndef NSAccessibilityDocumentURIAttribute
-#define NSAccessibilityDocumentURIAttribute @"AXDocumentURI"
-#endif
-
-#ifndef NSAccessibilityDocumentEncodingAttribute
-#define NSAccessibilityDocumentEncodingAttribute @"AXDocumentEncoding"
 #endif
 
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
@@ -433,10 +424,6 @@ using namespace WebCore;
 
 #ifndef NSAccessibilityCaretBrowsingEnabledAttribute
 #define NSAccessibilityCaretBrowsingEnabledAttribute @"AXCaretBrowsingEnabled"
-#endif
-
-#ifndef NSAccessibilityWebSessionIDAttribute
-#define NSAccessibilityWebSessionIDAttribute @"AXWebSessionID"
 #endif
 
 #ifndef NSAccessibilitFocusableAncestorAttribute
@@ -968,7 +955,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityURLAttribute];
         [tempArray addObject:NSAccessibilityCaretBrowsingEnabledAttribute];
         [tempArray addObject:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute];
-        [tempArray addObject:NSAccessibilityWebSessionIDAttribute];
         return tempArray;
     }();
     static NeverDestroyed textAttrs = [] {
@@ -1620,8 +1606,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return [NSNumber numberWithBool:backingObject->preventKeyboardDOMEventDispatch()];
         if ([attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
             return [NSNumber numberWithBool:backingObject->caretBrowsingEnabled()];
-        if ([attributeName isEqualToString:NSAccessibilityWebSessionIDAttribute])
-            return @(backingObject->sessionID().toUInt64());
     }
 
     if (backingObject->isTextControl()) {
@@ -2179,12 +2163,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"AXARIAPressedIsPresent"])
         return [NSNumber numberWithBool:backingObject->pressedIsPresent()];
 
-    if ([attributeName isEqualToString:@"AXIsMultiline"])
-        return [NSNumber numberWithBool:backingObject->ariaIsMultiline()];
-
-    if ([attributeName isEqualToString:@"AXReadOnlyValue"])
-        return backingObject->readOnlyValue();
-
     if ([attributeName isEqualToString:AXHasDocumentRoleAncestorAttribute])
         return [NSNumber numberWithBool:backingObject->hasDocumentRoleAncestor()];
 
@@ -2223,13 +2201,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // Multi-selectable
     if ([attributeName isEqualToString:NSAccessibilityIsMultiSelectableAttribute])
         return [NSNumber numberWithBool:backingObject->isMultiSelectable()];
-
-    // Document attributes
-    if ([attributeName isEqualToString:NSAccessibilityDocumentURIAttribute])
-        return backingObject->documentURI();
-
-    if ([attributeName isEqualToString:NSAccessibilityDocumentEncodingAttribute])
-        return backingObject->documentEncoding();
 
     if ([attributeName isEqualToString:NSAccessibilityFocusableAncestorAttribute]) {
         AXCoreObject* object = backingObject->focusableAncestor();

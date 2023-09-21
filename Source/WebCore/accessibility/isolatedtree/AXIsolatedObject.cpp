@@ -31,7 +31,6 @@
 #include "AXGeometryManager.h"
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
-#include <pal/SessionID.h>
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/HIServicesSPI.h>
@@ -53,14 +52,12 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXI
     auto* axParent = axObject->parentObjectUnignored();
     m_parentID = axParent ? axParent->objectID() : AXID();
 
-    auto isRoot = !axParent && axObject->isScrollView() ? IsRoot::Yes : IsRoot::No;
-
     // Every object will have at least this many properties. We can shrink this number
     // to some estimated average once we implement sparse property storage (i.e. only storing
     // a property if it's not the default value for its type).
-    m_propertyMap.reserveInitialCapacity(94);
+    m_propertyMap.reserveInitialCapacity(92);
 
-    initializeProperties(axObject, isRoot);
+    initializeProperties(axObject);
 }
 
 Ref<AXIsolatedObject> AXIsolatedObject::create(const Ref<AccessibilityObject>& object, AXIsolatedTree* tree)
@@ -73,7 +70,7 @@ AXIsolatedObject::~AXIsolatedObject()
     ASSERT(!wrapper());
 }
 
-void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axObject, IsRoot isRoot)
+void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axObject)
 {
     auto& object = axObject.get();
 
@@ -118,7 +115,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::MinValueForRange, object.minValueForRange());
     setProperty(AXPropertyName::SupportsARIAOwns, object.supportsARIAOwns());
     setProperty(AXPropertyName::PopupValue, object.popupValue().isolatedCopy());
-    setProperty(AXPropertyName::ARIAIsMultiline, object.ariaIsMultiline());
     setProperty(AXPropertyName::InvalidStatus, object.invalidStatus().isolatedCopy());
     setProperty(AXPropertyName::SupportsExpanded, object.supportsExpanded());
     setProperty(AXPropertyName::SortDirection, static_cast<int>(object.sortDirection()));
@@ -148,7 +144,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::ValueAutofillButtonType, static_cast<int>(object.valueAutofillButtonType()));
     setProperty(AXPropertyName::URL, object.url().isolatedCopy());
     setProperty(AXPropertyName::AccessKey, object.accessKey().isolatedCopy());
-    setProperty(AXPropertyName::ReadOnlyValue, object.readOnlyValue().isolatedCopy());
     setProperty(AXPropertyName::AutoCompleteValue, object.autoCompleteValue().isolatedCopy());
     setProperty(AXPropertyName::ColorValue, object.colorValue());
     setProperty(AXPropertyName::Orientation, static_cast<int>(object.orientation()));
@@ -305,12 +300,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXPropertyName::TitleAttributeValue, object.titleAttributeValue().isolatedCopy());
         setProperty(AXPropertyName::DescriptionAttributeValue, object.descriptionAttributeValue().isolatedCopy());
         setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
-    }
-
-    if (isRoot == IsRoot::Yes) {
-        setProperty(AXPropertyName::SessionID, object.sessionID().isolatedCopy());
-        setProperty(AXPropertyName::DocumentURI, object.documentURI().isolatedCopy());
-        setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding().isolatedCopy());
     }
 
     if (object.isScrollView()) {
@@ -504,27 +493,6 @@ AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsign
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
 {
     texts = const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AccessibilityText>>(AXPropertyName::AccessibilityText);
-}
-
-PAL::SessionID AXIsolatedObject::sessionID() const
-{
-    if (auto root = tree()->rootNode())
-        return root->sessionIDAttributeValue(AXPropertyName::SessionID);
-    return PAL::SessionID(PAL::SessionID::SessionConstants::HashTableEmptyValueID);
-}
-
-String AXIsolatedObject::documentURI() const
-{
-    if (auto root = tree()->rootNode())
-        return root->stringAttributeValue(AXPropertyName::DocumentURI);
-    return String();
-}
-
-String AXIsolatedObject::documentEncoding() const
-{
-    if (auto root = tree()->rootNode())
-        return root->stringAttributeValue(AXPropertyName::DocumentEncoding);
-    return String();
 }
 
 void AXIsolatedObject::insertMathPairs(Vector<std::pair<AXID, AXID>>& isolatedPairs, AccessibilityMathMultiscriptPairs& pairs)
@@ -751,15 +719,6 @@ AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName
     );
 
     return tree()->objectForID(nodeID).get();
-}
-
-PAL::SessionID AXIsolatedObject::sessionIDAttributeValue(AXPropertyName propertyName) const
-{
-    auto value = m_propertyMap.get(propertyName);
-    return WTF::switchOn(value,
-        [] (PAL::SessionID& typedValue) -> PAL::SessionID { return typedValue; },
-        [] (auto&) { return PAL::SessionID(PAL::SessionID::SessionConstants::HashTableEmptyValueID); }
-    );
 }
 
 template<typename T>

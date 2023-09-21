@@ -1103,16 +1103,6 @@ void AccessibilityUIElement::clearSelectedChildren() const
 {
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
-{
-    return WTR::createJSString();
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
-{
-    return WTR::createJSString();
-}
-
 bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallback)
 {
     if (!functionCallback)

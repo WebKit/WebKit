@@ -555,9 +555,6 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::PosInSet:
             propertyMap.set(AXPropertyName::PosInSet, axObject.posInSet());
             break;
-        case AXPropertyName::ReadOnlyValue:
-            propertyMap.set(AXPropertyName::ReadOnlyValue, axObject.readOnlyValue().isolatedCopy());
-            break;
         case AXPropertyName::RoleDescription:
             propertyMap.set(AXPropertyName::RoleDescription, axObject.roleDescription().isolatedCopy());
             break;

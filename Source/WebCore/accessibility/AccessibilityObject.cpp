@@ -91,7 +91,6 @@
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
-#include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -4059,29 +4058,6 @@ AccessibilityObject* AccessibilityObject::radioGroupAncestor() const
     return Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const AccessibilityObject& object) {
         return object.isRadioGroup();
     });
-}
-
-String AccessibilityObject::documentURI() const
-{
-    if (auto* document = this->document())
-        return document->documentURI();
-    return String();
-}
-
-String AccessibilityObject::documentEncoding() const
-{
-    if (auto* document = this->document())
-        return document->encoding();
-    return String();
-}
-
-PAL::SessionID AccessibilityObject::sessionID() const
-{
-    if (auto* document = topDocument()) {
-        if (auto* page = document->page())
-            return page->sessionID();
-    }
-    return PAL::SessionID(PAL::SessionID::SessionConstants::HashTableEmptyValueID);
 }
 
 AtomString AccessibilityObject::tagName() const
