@@ -2878,3 +2878,5 @@ webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transfo
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ ImageOnlyFailure ]
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ ImageOnlyFailure ]
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-no-perspective.html [ ImageOnlyFailure ]
+
+webkit.org/b/261911 media/media-source/media-managedmse-seek.html [ Pass ImageOnlyFailure ]
