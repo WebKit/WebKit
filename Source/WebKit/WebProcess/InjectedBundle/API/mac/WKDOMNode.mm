@@ -113,7 +113,7 @@
 
 - (NSArray *)textRects
 {
-    _impl->document().updateLayoutIgnorePendingStylesheets();
+    _impl->document().updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
     if (!_impl->renderer())
         return nil;
     return createNSArray(WebCore::RenderObject::absoluteTextRects(WebCore::makeRangeSelectingNodeContents(*_impl))).autorelease();

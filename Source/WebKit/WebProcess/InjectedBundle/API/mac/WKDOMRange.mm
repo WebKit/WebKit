@@ -130,7 +130,7 @@
 - (NSArray *)textRects
 {
     auto range = makeSimpleRange(*_impl);
-    range.start.document().updateLayoutIgnorePendingStylesheets();
+    range.start.document().updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
     return createNSArray(WebCore::RenderObject::absoluteTextRects(range)).autorelease();
 }
 
