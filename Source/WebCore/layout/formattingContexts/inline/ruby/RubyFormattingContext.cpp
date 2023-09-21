@@ -123,6 +123,20 @@ size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& ru
     return inlineItems.size() - rubyBaseContentStartIndex;
 }
 
+InlineLayoutPoint RubyFormattingContext::annotationPosition(const Box& rubyBaseLayoutBox)
+{
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
+    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
+    if (!annotationBox) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    auto annotationMarginBoxHeight = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxHeight() };
+    if (annotationBox->style().rubyPosition() == RubyPosition::Before)
+        return { { }, -annotationMarginBoxHeight };
+    return { { }, parentFormattingContext().geometryForBox(rubyBaseLayoutBox).marginBoxHeight() };
+}
+
 RubyFormattingContext::OverUnder RubyFormattingContext::annotationExtent(const Box& rubyBaseLayoutBox)
 {
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();

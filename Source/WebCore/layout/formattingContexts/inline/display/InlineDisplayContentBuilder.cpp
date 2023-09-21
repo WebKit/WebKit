@@ -32,6 +32,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "RenderStyleInlines.h"
+#include "RubyFormattingContext.h"
 #include "TextUtil.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Range.h>
@@ -386,7 +387,8 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , isFirstLastBox(inlineBox)
     });
 
-    appendAssociatedRubyAnnotationBoxIfNeeded(layoutBox, inlineBoxBorderBox, boxes);
+    if (layoutBox.isRubyBase())
+        appendAssociatedRubyAnnotationBoxIfNeeded(layoutBox, boxes);
 }
 
 void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, bool linehasContent, InlineDisplay::Boxes& boxes)
@@ -424,6 +426,9 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
         , isLineFullyTruncatedInBlockDirection()
         , isFirstLastBox(inlineBox)
     });
+
+    if (layoutBox.isRubyBase())
+        appendAssociatedRubyAnnotationBoxIfNeeded(layoutBox, boxes);
 }
 
 void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box& layoutBox, InlineDisplay::Boxes& boxes)
@@ -443,18 +448,21 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
     });
 }
 
-void InlineDisplayContentBuilder::appendAssociatedRubyAnnotationBoxIfNeeded(const Box& layoutBox, const InlineRect& inlineBoxBorderBox, InlineDisplay::Boxes& boxes)
+void InlineDisplayContentBuilder::appendAssociatedRubyAnnotationBoxIfNeeded(const Box& rubyBaseLayoutBox, InlineDisplay::Boxes& boxes)
 {
-    auto* annotationBox = layoutBox.associatedRubyAnnotationBox();
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
+    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!annotationBox)
         return;
 
-    auto& geometry = formattingState().boxGeometry(*annotationBox);
+    auto annotationBoxPosition = RubyFormattingContext { formattingContext() }.annotationPosition(rubyBaseLayoutBox);
+    // Turn ruby-base relatively positioned annotation box to relative to line box.
+    annotationBoxPosition.moveBy(BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(rubyBaseLayoutBox)));
 
-    auto top = inlineBoxBorderBox.top() - geometry.borderBoxHeight();
-    auto left = inlineBoxBorderBox.left() + ((inlineBoxBorderBox.width() - geometry.borderBoxWidth()) / 2);
+    auto& annotationBoxGeometry = formattingState().boxGeometry(*annotationBox);
+    annotationBoxGeometry.setTopLeft(toLayoutPoint(annotationBoxPosition));
 
-    auto annoationBorderBox = InlineRect { top, left, geometry.borderBoxWidth(), geometry.borderBoxHeight() };
+    auto annoationBorderBox = InlineRect { annotationBoxPosition.y(), annotationBoxPosition.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
@@ -467,8 +475,6 @@ void InlineDisplayContentBuilder::appendAssociatedRubyAnnotationBoxIfNeeded(cons
         , true
         , isLineFullyTruncatedInBlockDirection()
     });
-
-    geometry.setTopLeft(toLayoutPoint(annoationBorderBox.topLeft()));
 }
 
 void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
