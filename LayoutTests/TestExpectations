@@ -6287,10 +6287,12 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/empty-assertion-clause.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/invalid-type-assertion-error.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/unsupported-assertion.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html [ Pass Failure ]
-
-webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-overflowing-float-margins-tirmmed-at-final-position-block-layout.html [ ImageOnlyFailure ]
-webkit.org/b/261254 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-float-block-start-block-layout.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/load-error-events.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Skip ]
 
 #Skipping text-spacing tests until the features get implemented.
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-computed.html [ Skip ]

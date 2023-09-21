@@ -373,26 +373,7 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
 inline void BreakingContext::handleFloat()
 {
     auto& floatBox = downcast<RenderBox>(*m_current.renderer());
-    auto& floatingObject = *m_lineBreaker.insertFloatingObject(floatBox);
-
-    auto wouldFitWithTrimmedMargin = [&](MarginTrimType marginTrimType) {
-        auto widthWitoutMargin = floatingObject.width();
-        widthWitoutMargin -= marginTrimType == MarginTrimType::InlineStart ? floatBox.marginStart(&m_blockStyle) : floatBox.marginEnd(&m_blockStyle);
-        return m_width.fitsOnLineExcludingTrailingWhitespace(widthWitoutMargin.toFloat());
-    };
-    auto hasFloatsOnSideAtVerticalPosition = [&](UsedFloat floatPosition) {
-        return (floatPosition == UsedFloat::Left) ? m_block.logicalLeftOffsetForLine(m_block.logicalHeight(), DoNotIndentText)  != m_block.logicalLeftOffsetForContent(m_block.logicalHeight()) :  m_block.logicalRightOffsetForLine(m_block.logicalHeight(), DoNotIndentText) != m_block.logicalRightOffsetForContent(m_block.logicalHeight());
-    };
-
-    // We should trim a float's margin early at a particular vertical position if the following are true:
-    // 1.) The float's candidate position is adjacent to the containing block's inner edge
-    // 2.) margin-trim is set for that edge (e.g. margin-trim: inline/inline-start for a left positioned float)
-    // 3.) The float overconstrains a line box or intersects with another float at that vertical position
-    //     but would not overconstrain a line box/intersect a float if that margin were trimmed
-    if (m_blockStyle.marginTrim().contains(MarginTrimType::InlineStart) && RenderStyle::usedFloat(floatBox) == UsedFloat::Left && !hasFloatsOnSideAtVerticalPosition(UsedFloat::Left) && wouldFitWithTrimmedMargin(MarginTrimType::InlineStart))
-        m_block.trimMarginForFloat(floatingObject, MarginTrimType::InlineStart);
-    else if (m_blockStyle.marginTrim().contains(MarginTrimType::InlineEnd) && RenderStyle::usedFloat(floatBox) == UsedFloat::Right && !hasFloatsOnSideAtVerticalPosition(UsedFloat::Right) && wouldFitWithTrimmedMargin(MarginTrimType::InlineEnd))
-        m_block.trimMarginForFloat(floatingObject, MarginTrimType::InlineEnd);
+    const auto& floatingObject = *m_lineBreaker.insertFloatingObject(floatBox);
     // check if it fits in the current line.
     // If it does, position it now, otherwise, position
     // it after moving to next line (in clearFloats() func)
