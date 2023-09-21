@@ -778,7 +778,7 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
     [[webView window] makeFirstResponder:[[[webView mainFrame] frameView] documentView]];
 
     CGRect uiWindowRect = layoutTestViewportRect;
-    uiWindowRect.origin.y += [UIApp statusBarHeight];
+    uiWindowRect.origin.y += UIApplication.sharedApplication.statusBarHeight;
     auto uiWindow = adoptNS([[UIWindow alloc] initWithFrame:uiWindowRect]);
 
     auto viewController = adoptNS([[UIViewController alloc] init]);
@@ -2010,7 +2010,7 @@ static void runTest(const std::string& inputLine)
     }
 
 #if PLATFORM(IOS_FAMILY)
-    [(DumpRenderTree *)UIApp _waitForWebThread];
+    [(DumpRenderTree *)UIApplication.sharedApplication _waitForWebThread];
     WebThreadLockAfterDelegateCallbacksHaveCompleted();
 #endif
 

@@ -407,9 +407,9 @@ static bool isJavaScriptURL(NSURL *url)
             return;
 
         if (!alternateURL && userInfo) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [UIApp _cancelAllTouches];
-ALLOW_DEPRECATED_DECLARATIONS_END
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            [UIApplication.sharedApplication _cancelAllTouches];
+            ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 

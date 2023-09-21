@@ -1330,14 +1330,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @property (nonatomic, copy, setter=_setSuggestedColors:) NSArray<UIColor *> *_suggestedColors;
 @end
 
-#if HAVE(UI_FOCUS_EFFECT)
-@class UIFocusEffect;
-
-@interface UIView (Staging_75759822)
-@property (nonatomic, readwrite, copy) UIFocusEffect *focusEffect;
-@end
-#endif
-
 #if HAVE(UIFINDINTERACTION)
 
 @interface _UIFindInteraction (Staging_84486967)
@@ -1372,7 +1364,6 @@ extern NSString * const UIKeyboardPrivateDidRequestDismissalNotification;
 
 extern NSString * const UIKeyboardIsLocalUserInfoKey;
 
-extern UIApplication *UIApp;
 BOOL _UIApplicationIsExtension(void);
 void _UIApplicationLoadWebKit(void);
 

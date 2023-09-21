@@ -8496,7 +8496,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
             // Prevent tap-and-hold and panning.
             if (shouldCancelAllTouches)
-                [UIApp _cancelAllTouches];
+                [UIApplication.sharedApplication _cancelAllTouches];
 
             return YES;
         }
