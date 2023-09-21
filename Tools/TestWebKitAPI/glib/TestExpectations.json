@@ -95,11 +95,6 @@
     },
     "TestWebKit": {
         "subtests": {
-            "WebKit.MouseMoveAfterCrash": {
-                "expected": {
-                    "gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/85066"}
-                }
-            },
             "WebKit.NewFirstVisuallyNonEmptyLayoutForImages": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/85066"}}
             },
