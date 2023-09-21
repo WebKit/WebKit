@@ -1552,35 +1552,17 @@
 #if PLATFORM(MAC)
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "NO")
-    (allow mach-lookup
-        (global-name "com.apple.system.notification_center"))
+    (allow mach-lookup (global-name "com.apple.system.notification_center"))
 ;; else
-    (allow mach-lookup
-        (global-name "com.apple.system.notification_center")
+    (allow mach-lookup (global-name "com.apple.system.notification_center")
         (apply-message-filter
             (deny mach-message-send)
             (deny mach-message-send (with no-report) (message-number 1023))
             (allow mach-message-send (message-number
-                1002
-                1010
-                1011
-                1012
-                1016
-                1017
-                1018
-                1021
-                1022
-                1025
-                1026
-                1028
-                1029
-                1030
-                1031
-                1032
-            ))
-        )
-    )
-)
+                1002 1010 1011 1012 1016 1017 1018 1021 1022 1025 1026 1028 1029 1030 1031 1032)))))
+
+(with-filter (state-flag "EnableExperimentalSandbox")
+    (deny mach-lookup (global-name "com.apple.system.notification_center")))
 #endif
 
 ;; <rdar://problem/63943836>
