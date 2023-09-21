@@ -363,8 +363,13 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
 {
     if (!image)
         return;
+    ASSERT(this != &image->context());
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
-    ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, options);
+    FloatRect scaledSource = source;
+    scaledSource.scale(image->resolutionScale());
+    auto backendSize = image->backendSize();
+    if (auto nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(image)))
+        drawNativeImageInternal(*nativeImage, backendSize, destination, scaledSource, options);
 }
 
 void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
@@ -382,9 +387,12 @@ void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const Fl
     scale(filter.filterScale());
 }
 
-void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect, const FloatRect& source, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    image.drawPattern(*this, destRect, tileRect, patternTransform, phase, spacing, options);
+    FloatRect scaledSource = source;
+    scaledSource.scale(image.resolutionScale());
+    if (auto copiedImage = image.copyImage(this == &image.context() ? CopyBackingStore : DontCopyBackingStore))
+        copiedImage->drawPattern(*this, destRect, scaledSource, patternTransform, phase, spacing, options);
 }
 
 void GraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)

@@ -250,12 +250,6 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(GraphicsCo
     return copyNativeImage(DontCopyBackingStore);
 }
 
-void RemoteImageBufferProxy::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
-{
-    ASSERT(&destContext != &context());
-    destContext.drawImageBuffer(*this, destRect, srcRect, options);
-}
-
 RefPtr<NativeImage> RemoteImageBufferProxy::sinkIntoNativeImage()
 {
     return copyNativeImage();
