@@ -857,6 +857,8 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
     ]
     failedTestsFormatString = "%d api test%s failed or timed out"
     test_summary_re = re.compile(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful')
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
@@ -878,9 +880,26 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
         return self.failedTestCount
 
     def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
+
         match = self.test_summary_re.match(line)
         if match:
             self.failedTestCount = int(match.group('ran')) - int(match.group('passed'))
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
+
+    def getResultSummary(self):
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
+        return super().getResultSummary()
 
 
 class RunPythonTests(TestWithFailureCount):
