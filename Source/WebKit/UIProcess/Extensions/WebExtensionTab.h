@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "CocoaImage.h"
+#include "WebExtensionEventListenerType.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
@@ -42,6 +43,7 @@ namespace WebKit {
 
 class WebExtensionContext;
 class WebExtensionWindow;
+class WebProcessProxy;
 struct WebExtensionTabParameters;
 struct WebExtensionTabQueryParameters;
 
@@ -79,8 +81,10 @@ public:
 
     enum class AssumeWindowMatches : bool { No, Yes };
     enum class SkipContainsCheck : bool { No, Yes };
+    enum class MainWebViewOnly : bool { No, Yes };
 
     using Error = std::optional<String>;
+    using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionTabParameters parameters() const;
@@ -153,6 +157,8 @@ public:
     void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&&);
 
     void close(CompletionHandler<void(Error)>&&);
+
+    WebProcessProxySet processes(WebExtensionEventListenerType, MainWebViewOnly = MainWebViewOnly::Yes) const;
 
 #ifdef __OBJC__
     _WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }

@@ -31,6 +31,7 @@
 #include "WebExtensionContext.h"
 #include "WebExtensionContextParameters.h"
 #include "WebExtensionEventListenerType.h"
+#include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionWindowIdentifier.h"
 #include "WebPageProxyIdentifier.h"
@@ -79,24 +80,38 @@ public:
 
     _WKWebExtensionLocalization *localization() { return m_localization.get(); }
 
-    static RetainPtr<_WKWebExtensionLocalization> parseLocalization(API::Data&);
-    static RetainPtr<NSDictionary> parseJSON(API::Data&);
+    static _WKWebExtensionLocalization *parseLocalization(API::Data&);
 
     bool inTestingMode() { return m_testingMode; }
 
-    WebCore::DOMWrapperWorld* contentScriptWorld() { return m_contentScriptWorld.get(); }
+    WebCore::DOMWrapperWorld& contentScriptWorld() { return *m_contentScriptWorld; }
     void setContentScriptWorld(WebCore::DOMWrapperWorld* world) { m_contentScriptWorld = world; }
 
     void addFrameWithExtensionContent(WebFrame&);
 
-    void enumerateNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>&, WebCore::DOMWrapperWorld& = WebCore::mainThreadNormalWorld());
-    void enumerateContentScriptNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>& function) { ASSERT(contentScriptWorld()); enumerateNamespaceObjects(function, *contentScriptWorld()); };
+    void enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>&, WebCore::DOMWrapperWorld& = WebCore::mainThreadNormalWorld());
+
+    void enumerateNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>& function, WebCore::DOMWrapperWorld& = WebCore::mainThreadNormalWorld())
+    {
+        enumerateFramesAndNamespaceObjects([&](WebFrame&, WebExtensionAPINamespace& namespaceObject) {
+            function(namespaceObject);
+        });
+    }
+
+    void enumerateContentScriptFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function)
+    {
+        enumerateFramesAndNamespaceObjects(function, contentScriptWorld());
+    }
 
 private:
     explicit WebExtensionContextProxy(const WebExtensionContextParameters&);
 
     // Alarms
     void dispatchAlarmsEvent(const WebExtensionAlarmParameters&);
+
+    // Runtime
+    void dispatchRuntimeMessageEvent(WebCore::DOMWrapperWorld&, String messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
+    void dispatchRuntimeContentScriptMessageEvent(String, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
 
     // Permissions
     void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);

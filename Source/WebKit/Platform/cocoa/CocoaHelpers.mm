@@ -28,7 +28,9 @@
 #endif
 
 #import "config.h"
+#import "APIData.h"
 #import "CocoaHelpers.h"
+#import "WKNSData.h"
 
 namespace WebKit {
 
@@ -188,7 +190,42 @@ NSSet *objectForKey<NSSet>(NSDictionary *dictionary, id key, bool nilIfEmpty, Cl
     });
 }
 
-// MARK: NSDictionary helper methods.
+// MARK: JSON Helpers
+
+NSDictionary *parseJSON(NSData *json, NSError **error)
+{
+    if (!json)
+        return nil;
+    return dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:json options:0 error:error]);
+}
+
+NSDictionary *parseJSON(NSString *json, NSError **error)
+{
+    return parseJSON([json dataUsingEncoding:NSUTF8StringEncoding], error);
+}
+
+NSDictionary *parseJSON(API::Data& json, NSError **error)
+{
+    return parseJSON(wrapper(json), error);
+}
+
+NSString *encodeJSONString(NSDictionary *dictionary, NSError **error)
+{
+    if (auto *data = encodeJSONData(dictionary, error))
+        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    return nil;
+}
+
+NSData *encodeJSONData(NSDictionary *dictionary, NSError **error)
+{
+    if (!dictionary)
+        return nil;
+
+    ASSERT([NSJSONSerialization isValidJSONObject:dictionary]);
+    return [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:error];
+}
+
+// MARK: NSDictionary Helpers
 
 NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *dictionary)
 {
@@ -242,7 +279,7 @@ NSDictionary *mergeDictionariesAndSetValues(NSDictionary *dictionaryA, NSDiction
     return [newDictionary copy];
 }
 
-// MARK: NSError helper methods
+// MARK: NSError Helpers
 
 NSString *privacyPreservingDescription(NSError *error)
 {

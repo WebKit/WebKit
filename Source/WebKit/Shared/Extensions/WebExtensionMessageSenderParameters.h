@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPIRuntime {
+#pragma once
 
-    [URL, ConvertNullStringTo=Null, RaisesException] DOMString getURL(DOMString resourcePath);
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    [NSDictionary] any getManifest();
+#include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionTabParameters.h"
+#include <wtf/Forward.h>
 
-    [ImplementedAs=runtimeIdentifier] readonly attribute DOMString id;
+namespace WebKit {
 
-    [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);
-
-    [MainWorldOnly] readonly attribute any lastError;
-
-    // readonly attribute WebExtensionAPIEvent onConnect;
-    readonly attribute WebExtensionAPIEvent onMessage;
-
+struct WebExtensionMessageSenderParameters {
+    std::optional<WebExtensionTabParameters> tabParameters;
+    std::optional<WebExtensionFrameIdentifier> frameIdentifier;
+    URL url;
 };
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -35,7 +35,13 @@
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "Logging.h"
+#import "WebExtensionAPITabs.h"
+#import "WebExtensionMessageSenderParameters.h"
 #import <objc/runtime.h>
+
+static NSString * const frameIdKey = @"frameId";
+static NSString * const tabKey = @"tab";
+static NSString * const urlKey = @"url";
 
 namespace WebKit {
 
@@ -337,6 +343,22 @@ NSString *toWebAPI(NSLocale *locale)
     if (locale.countryCode.length)
         return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
     return locale.languageCode;
+}
+
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
+{
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+
+    if (parameters.tabParameters)
+        result[tabKey] = toWebAPI(parameters.tabParameters.value());
+
+    if (parameters.frameIdentifier)
+        result[frameIdKey] = @(toWebAPI(parameters.frameIdentifier.value()));
+
+    if (parameters.url.isValid())
+        result[urlKey] = (NSURL *)parameters.url;
+
+    return [result copy];
 }
 
 } // namespace WebKit

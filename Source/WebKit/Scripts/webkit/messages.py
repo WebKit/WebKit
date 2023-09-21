@@ -363,6 +363,7 @@ def serialized_identifiers():
         'WebKit::VideoEncoderIdentifier',
         'WebKit::WebExtensionContextIdentifier',
         'WebKit::WebExtensionControllerIdentifier',
+        'WebKit::WebExtensionFrameIdentifier',
         'WebKit::WebExtensionTabIdentifier',
         'WebKit::WebExtensionWindowIdentifier',
         'WebKit::WebGPUIdentifier',

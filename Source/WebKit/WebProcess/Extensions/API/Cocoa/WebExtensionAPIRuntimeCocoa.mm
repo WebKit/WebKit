@@ -32,7 +32,12 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
 #import "Logging.h"
+#import "WebExtensionAPIEvent.h"
+#import "WebExtensionAPINamespace.h"
+#import "WebExtensionUtilities.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -109,6 +114,79 @@ JSValueRef WebExtensionAPIRuntime::lastError()
     m_lastErrorAccessed = true;
 
     return m_lastError.get().JSValueRef;
+}
+
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessage()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage
+
+    if (!m_onMessage)
+        m_onMessage = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::RuntimeOnMessage);
+
+    return *m_onMessage;
+}
+
+void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebCore::DOMWrapperWorld& world, String messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
+{
+    auto *message = parseJSON(messageJSON);
+    auto *senderInfo = toWebAPI(senderParameters);
+
+    __block bool anyListenerHandledMessage = false;
+    bool sentReply = false;
+
+    __block auto handleReply = [&sentReply, completionHandler = WTFMove(completionHandler)](id replyMessage) mutable {
+        if (sentReply)
+            return;
+
+        NSString *replyMessageJSON;
+        if (JSValue *value = dynamic_objc_cast<JSValue>(replyMessage))
+            replyMessageJSON = value._toJSONString;
+        else
+            replyMessageJSON = encodeJSONString(replyMessage);
+
+        if (replyMessageJSON.length > webExtensionMaxMessageLength)
+            replyMessageJSON = nil;
+
+        sentReply = true;
+        completionHandler(replyMessageJSON ? std::optional(String(replyMessageJSON)) : std::nullopt);
+    };
+
+    enumerateFramesAndNamespaceObjects(makeBlockPtr(^(WebFrame& frame, WebExtensionAPINamespace& namespaceObject) {
+        if (frameIdentifier && !matchesFrame(frameIdentifier.value(), frame))
+            return;
+
+        for (auto& listener : namespaceObject.runtime().onMessage().listeners()) {
+            id returnValue = listener->call(message, senderInfo, ^(id replyMessage) {
+                handleReply(replyMessage);
+            });
+
+            if (dynamic_objc_cast<NSNumber>(returnValue).boolValue) {
+                anyListenerHandledMessage = true;
+                continue;
+            }
+
+            JSValue *value = dynamic_objc_cast<JSValue>(returnValue);
+            if (!value._isThenable)
+                continue;
+
+            anyListenerHandledMessage = true;
+
+            [value _awaitThenableResolutionWithCompletionHandler:^(id replyMessage, id error) {
+                if (error)
+                    return;
+
+                handleReply(replyMessage);
+            }];
+        }
+    }).get(), world);
+
+    if (!sentReply && !anyListenerHandledMessage)
+        handleReply(nil);
+}
+
+void WebExtensionContextProxy::dispatchRuntimeContentScriptMessageEvent(String messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
+{
+    dispatchRuntimeMessageEvent(contentScriptWorld(), messageJSON, frameIdentifier, senderParameters, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

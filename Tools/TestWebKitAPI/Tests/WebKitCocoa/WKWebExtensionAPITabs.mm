@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
 #import <WebKit/_WKWebExtensionTabCreationOptions.h>
@@ -45,6 +46,25 @@ static auto *tabsManifest = @{
         @"type": @"module",
         @"persistent": @NO,
     },
+};
+
+static auto *tabsContentScriptManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Tabs Test",
+    @"description": @"Tabs Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"content_scripts": @[ @{
+        @"js": @[ @"content.js" ],
+        @"matches": @[ @"*://localhost/*" ],
+    } ],
 };
 
 TEST(WKWebExtensionAPITabs, Errors)
@@ -945,6 +965,107 @@ TEST(WKWebExtensionAPITabs, HighlightedAlsoActivatesTab)
     ]);
 
     Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPITabs, SendMessage)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+        @"const messageToSend = { content: 'Hello' }",
+
+        @"const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, messageToSend))",
+        @"browser.test.assertEq(response.content, 'Received', 'Should get the response from the content script')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"    browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+        @"    sendResponse({ content: 'Received' })",
+        @"})"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, SendMessageWithPromiseReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+        @"const messageToSend = { content: 'Hello' }",
+
+        @"const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, messageToSend))",
+        @"browser.test.assertEq(response.content, 'Received', 'Should get the response from the content script')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender) => {",
+        @"    browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+        @"    return Promise.resolve({ content: 'Received' })",
+        @"})"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, SendMessageWithoutReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+        @"const messageToSend = { content: 'Hello' }",
+
+        @"const response = await browser.tabs.sendMessage(tabId, messageToSend)",
+        @"browser.test.assertEq(response, undefined, 'Should resolve with undefined as there was no reply')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+        @"})"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
 }
 
 } // namespace TestWebKitAPI

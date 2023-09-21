@@ -58,7 +58,7 @@
     // [RaisesException, Dynamic] void insertCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
     // [RaisesException, Dynamic] void removeCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
 
-    // [ProcessArgumentsLeftToRight, RaisesException, NeedsFrame] void sendMessage(double tabID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [ProcessArgumentsLeftToRight, RaisesException, NeedsFrame] void sendMessage(double tabID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
     // [NeedsFrame] WebExtensionAPIPort connect(double tabID, [Optional, NSDictionary] any connectInfo);
 
     [ImplementedAs=tabIdentifierNone] readonly attribute double TAB_ID_NONE;

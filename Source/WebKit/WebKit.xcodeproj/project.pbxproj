@@ -435,6 +435,8 @@
 		1C49579B2A9813AA007D0B64 /* WebExtensionContextAPIWindowsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C49579A2A9813AA007D0B64 /* WebExtensionContextAPIWindowsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C49579D2A983DE4007D0B64 /* WebExtensionWindowParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C49579C2A983DE4007D0B64 /* WebExtensionWindowParameters.h */; };
 		1C4957A12A983E2B007D0B64 /* WebExtensionTabParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4957A02A983E2B007D0B64 /* WebExtensionTabParameters.h */; };
+		1C4A14C62ABB710E00A1018C /* WebExtensionFrameIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4A14C52ABB710E00A1018C /* WebExtensionFrameIdentifier.h */; };
+		1C4EBD722ABA47610005868F /* WebExtensionMessageSenderParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4EBD712ABA47610005868F /* WebExtensionMessageSenderParameters.h */; };
 		1C56557F2745C5A1006300AF /* UnifiedSource101.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */; };
 		1C5655802745C5A1006300AF /* UnifiedSource102.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */; };
 		1C5655812745C5A1006300AF /* UnifiedSource103.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */; };
@@ -3525,7 +3527,10 @@
 		1C49579E2A983DF1007D0B64 /* WebExtensionWindow.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionWindow.serialization.in; sourceTree = "<group>"; };
 		1C4957A02A983E2B007D0B64 /* WebExtensionTabParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionTabParameters.h; sourceTree = "<group>"; };
 		1C4957A22A983E39007D0B64 /* WebExtensionTab.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionTab.serialization.in; sourceTree = "<group>"; };
+		1C4A14C52ABB710E00A1018C /* WebExtensionFrameIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionFrameIdentifier.h; sourceTree = "<group>"; };
 		1C4B7BBF28E7A43F00B7265A /* WebExtensionControllerParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionControllerParameters.serialization.in; sourceTree = "<group>"; };
+		1C4EBD712ABA47610005868F /* WebExtensionMessageSenderParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionMessageSenderParameters.h; sourceTree = "<group>"; };
+		1C4EBD732ABA481B0005868F /* WebExtensionMessageSenderParameters.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionMessageSenderParameters.serialization.in; sourceTree = "<group>"; };
 		1C4F5A1C297CB57A005BBEE9 /* RemoteCompositorIntegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCompositorIntegration.h; sourceTree = "<group>"; };
 		1C4F5A1D297CB57B005BBEE9 /* RemoteCompositorIntegration.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteCompositorIntegration.messages.in; sourceTree = "<group>"; };
 		1C4F5A1E297CB57B005BBEE9 /* RemoteCompositorIntegration.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCompositorIntegration.cpp; sourceTree = "<group>"; };
@@ -12183,6 +12188,9 @@
 				1C4B7BBF28E7A43F00B7265A /* WebExtensionControllerParameters.serialization.in */,
 				B6114A8B293AE05200380B1B /* WebExtensionEventListenerType.h */,
 				8696CE2F297EB3C90081C800 /* WebExtensionEventListenerType.serialization.in */,
+				1C4A14C52ABB710E00A1018C /* WebExtensionFrameIdentifier.h */,
+				1C4EBD712ABA47610005868F /* WebExtensionMessageSenderParameters.h */,
+				1C4EBD732ABA481B0005868F /* WebExtensionMessageSenderParameters.serialization.in */,
 				1C4957A22A983E39007D0B64 /* WebExtensionTab.serialization.in */,
 				1C66BDD82A8ADB8A009D4452 /* WebExtensionTabIdentifier.h */,
 				1C4957A02A983E2B007D0B64 /* WebExtensionTabParameters.h */,
@@ -15218,6 +15226,8 @@
 				1C3BEB7D2888A01600E66E38 /* WebExtensionControllerProxy.h in Headers */,
 				1C3BEB512887492F00E66E38 /* WebExtensionControllerProxyMessages.h in Headers */,
 				B6114A8C293AE06800380B1B /* WebExtensionEventListenerType.h in Headers */,
+				1C4A14C62ABB710E00A1018C /* WebExtensionFrameIdentifier.h in Headers */,
+				1C4EBD722ABA47610005868F /* WebExtensionMessageSenderParameters.h in Headers */,
 				1C66BDDC2A8ADB94009D4452 /* WebExtensionTab.h in Headers */,
 				1C66BDDA2A8ADB8A009D4452 /* WebExtensionTabIdentifier.h in Headers */,
 				1C4957A12A983E2B007D0B64 /* WebExtensionTabParameters.h in Headers */,

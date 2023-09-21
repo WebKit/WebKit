@@ -422,6 +422,28 @@ void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPagePro
     tab->toggleReaderMode(WTFMove(completionHandler));
 }
 
+void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, String messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(tabIdentifier);
+    if (!tab) {
+        completionHandler(nullString(), toErrorString(@"tabs.sendMessage()", nil, @"tab not found"));
+        return;
+    }
+
+    WebProcessProxySet processes = tab->processes(WebExtensionEventListenerType::RuntimeOnMessage);
+    if (processes.isEmpty()) {
+        completionHandler(std::nullopt, std::nullopt);
+        return;
+    }
+
+    ASSERT(processes.size() == 1);
+    auto process = processes.takeAny();
+
+    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeContentScriptMessageEvent(messageJSON, frameIdentifier, senderParameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](std::optional<String> replyJSON) mutable {
+        completionHandler(replyJSON, std::nullopt);
+    }, identifier());
+}
+
 void WebExtensionContext::tabsGetZoom(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<double>, WebExtensionTab::Error)>&& completionHandler)
 {
     auto tab = getTab(webPageProxyIdentifier, tabIdentifier);

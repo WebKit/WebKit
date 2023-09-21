@@ -31,6 +31,9 @@
 
 namespace WebKit {
 
+class WebFrame;
+struct WebExtensionMessageSenderParameters;
+
 /// Verifies that a dictionary:
 ///  - Contains a required set of string keys, as listed in `requiredKeys`, all other types specified in `keyTypes` are optional keys.
 ///  - Has values that are the appropriate type for each key, as specified by `keyTypes`. The keys in this dictionary
@@ -58,6 +61,10 @@ NSString *toErrorString(NSString *callingAPIName, NSString *sourceKey, NSString 
 JSObjectRef toJSError(JSContextRef, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString);
 
 NSString *toWebAPI(NSLocale *);
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters&);
+
+/// This matches the maximum message length enforced by Chromium in its `MessageFromJSONString()` function.
+constexpr size_t webExtensionMaxMessageLength = 1024 * 1024 * 64;
 
 } // namespace WebKit
 

@@ -39,6 +39,7 @@
 #import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
+#import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionTabParameters.h"
 #import "WebExtensionTabQueryParameters.h"
 #import "WebExtensionUtilities.h"
@@ -104,6 +105,8 @@ static NSString * const pngValue = @"png";
 static NSString * const jpegValue = @"jpeg";
 
 static NSString * const qualityKey = @"quality";
+
+static NSString * const frameIdKey = @"frameId";
 
 static NSString * const emptyURLValue = @"";
 static NSString * const emptyTitleValue = @"";
@@ -423,6 +426,28 @@ bool WebExtensionAPITabs::parseCaptureVisibleTabOptions(NSDictionary *options, W
         }
 
         imageQuality = quality.unsignedCharValue;
+    }
+
+    return true;
+}
+
+bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, std::optional<WebExtensionFrameIdentifier>& frameIdentifier, NSString *sourceKey, NSString **outExceptionString)
+{
+    static NSDictionary<NSString *, id> *types = @{
+        frameIdKey: NSNumber.class,
+    };
+
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
+        return false;
+
+    if (NSNumber *frameNumber = objectForKey<NSNumber>(options, frameIdKey)) {
+        auto identifier = toWebExtensionFrameIdentifier(frameNumber.doubleValue);
+        if (!identifier) {
+            *outExceptionString = toErrorString(nil, frameIdKey, @"it is not a frame identifier");
+            return false;
+        }
+
+        frameIdentifier = identifier.value();
     }
 
     return true;
@@ -836,6 +861,44 @@ void WebExtensionAPITabs::captureVisibleTab(WebPage* page, double windowID, NSDi
 
         callback->call((NSString *)imageDataURL.value().string());
     }, extensionContext().identifier().toUInt64());
+}
+
+void WebExtensionAPITabs::sendMessage(WebFrame *frame, double tabID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/sendMessage
+
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    if (message.length > webExtensionMaxMessageLength) {
+        *outExceptionString = toErrorString(nil, @"message", @"it exceeded the maximum allowed length");
+        return;
+    }
+
+    std::optional<WebExtensionFrameIdentifier> targetFrameIdentifier;
+    if (!parseSendMessageOptions(options, targetFrameIdentifier, @"options", outExceptionString))
+        return;
+
+    WebExtensionMessageSenderParameters sender {
+        std::nullopt, // tabParameters
+        toWebExtensionFrameIdentifier(*frame),
+        frame->url(),
+    };
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), message, targetFrameIdentifier, sender), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!replyJSON) {
+            callback->call();
+            return;
+        }
+
+        callback->call(parseJSON(replyJSON.value()));
+    }, extensionContext().identifier());
 }
 
 WebExtensionAPIEvent& WebExtensionAPITabs::onActivated()

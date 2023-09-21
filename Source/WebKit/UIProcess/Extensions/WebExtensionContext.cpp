@@ -68,18 +68,32 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
     };
 }
 
-WeakHashSet<WebProcessProxy> WebExtensionContext::processes(WebExtensionEventListenerType type) const
+bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExtensionEventListenerType type) const
 {
-    WeakHashSet<WebProcessProxy> processes;
-    auto page = m_eventListenerPages.find(type);
-    if (page != m_eventListenerPages.end()) {
-        for (auto entry : page->value) {
-            Ref process = entry.key.process();
-            if (process->canSendMessage())
-                processes.add(process);
-        }
+    auto pagesEntry = m_eventListenerPages.find(type);
+    if (pagesEntry == m_eventListenerPages.end())
+        return false;
+
+    if (!pagesEntry->value.contains(page))
+        return false;
+
+    return page.process().canSendMessage();
+}
+
+WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(WebExtensionEventListenerType type) const
+{
+    auto pagesEntry = m_eventListenerPages.find(type);
+    if (pagesEntry == m_eventListenerPages.end())
+        return { };
+
+    WebProcessProxySet result;
+    for (auto entry : pagesEntry->value) {
+        Ref process = entry.key.process();
+        if (process->canSendMessage())
+            result.add(WTFMove(process));
     }
-    return processes;
+
+    return result;
 }
 
 } // namespace WebKit

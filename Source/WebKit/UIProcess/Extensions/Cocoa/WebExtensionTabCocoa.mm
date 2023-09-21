@@ -37,12 +37,14 @@
 #import "WKSnapshotConfiguration.h"
 #import "WKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionTabParameters.h"
 #import "WebExtensionTabQueryParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
+#import "WebPageProxy.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <wtf/BlockPtr.h>
@@ -849,6 +851,26 @@ void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
 
         completionHandler(std::nullopt);
     }];
+}
+
+WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEventListenerType type, MainWebViewOnly mainWebViewOnly) const
+{
+    if (!isValid())
+        return { };
+
+    auto *webViews = mainWebViewOnly == MainWebViewOnly::Yes ? [NSArray arrayWithObject:mainWebView()] : this->webViews();
+
+    WebProcessProxySet result;
+    for (WKWebView *webView in webViews) {
+        if (!extensionContext()->pageListensForEvent(*webView._page, type))
+            continue;
+
+        Ref process = webView._page->process();
+        if (process->canSendMessage())
+            result.add(WTFMove(process));
+    }
+
+    return result;
 }
 
 } // namespace WebKit

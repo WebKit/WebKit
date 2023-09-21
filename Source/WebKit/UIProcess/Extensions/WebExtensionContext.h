@@ -37,6 +37,7 @@
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionController.h"
 #include "WebExtensionEventListenerType.h"
+#include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionMatchPattern.h"
 #include "WebExtensionTab.h"
 #include "WebExtensionTabIdentifier.h"
@@ -122,6 +123,8 @@ public:
 
     using PopulateTabs = WebExtensionWindow::PopulateTabs;
     using WindowTypeFilter = WebExtensionWindow::TypeFilter;
+
+    using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
@@ -276,6 +279,12 @@ public:
 
     void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
 
+    HashSet<Ref<WebProcessProxy>> processes(WebExtensionEventListenerType) const;
+    bool pageListensForEvent(const WebPageProxy&, WebExtensionEventListenerType) const;
+
+    template<typename T>
+    void sendToProcesses(const WebProcessProxySet&, const T& message);
+
     template<typename T>
     void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message);
 
@@ -368,6 +377,7 @@ private:
     void tabsDetectLanguage(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, WebExtensionTab::Error)>&&);
     void tabsCaptureVisibleTab(WebPageProxyIdentifier, std::optional<WebExtensionWindowIdentifier>, WebExtensionTab::ImageFormat, uint8_t imageQuality, CompletionHandler<void(std::optional<URL>, WebExtensionTab::Error)>&&);
     void tabsToggleReaderMode(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
+    void tabsSendMessage(WebExtensionTabIdentifier, String messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, WebExtensionTab::Error)>&&);
     void tabsGetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<double>, WebExtensionTab::Error)>&&);
     void tabsSetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, double, CompletionHandler<void(WebExtensionTab::Error)>&&);
     void tabsRemove(Vector<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
@@ -392,8 +402,6 @@ private:
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    WeakHashSet<WebProcessProxy> processes(WebExtensionEventListenerType) const;
 
     WebExtensionContextIdentifier m_identifier;
 
@@ -459,10 +467,16 @@ private:
 };
 
 template<typename T>
+void WebExtensionContext::sendToProcesses(const WebProcessProxySet& processes, const T& message)
+{
+    for (auto& process : processes)
+        process->send(T(message), identifier());
+}
+
+template<typename T>
 void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType type, const T& message)
 {
-    for (auto& process : processes(type))
-        process.send(T(message), identifier());
+    sendToProcesses(processes(type), message);
 }
 
 } // namespace WebKit
