@@ -89,7 +89,7 @@ MediaRecorderPrivate::~MediaRecorderPrivate()
     m_connection->send(Messages::RemoteMediaRecorderManager::ReleaseRecorder { m_identifier }, 0);
 }
 
-void MediaRecorderPrivate::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
+void MediaRecorderPrivate::videoFrameAvailable(WebCore::VideoFrame& videoFrame, VideoFrameTimeMetadata)
 {
     if (shouldMuteVideo()) {
         if (!m_blackFrameSize) {

@@ -118,9 +118,8 @@ private:
     void createBuffer(const WebGPU::BufferDescriptor&, WebGPUIdentifier);
     void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);
     void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);
-    void importExternalTexture(const WebGPU::ExternalTextureDescriptor&, WebGPUIdentifier);
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    void importExternalTextureFromPixelBuffer(const WebGPU::ExternalTextureDescriptor&, std::optional<WebKit::SharedVideoFrame::Buffer>, WebGPUIdentifier);
+    void importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor&, WebGPUIdentifier);
 #endif
 
     void createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor&, WebGPUIdentifier);

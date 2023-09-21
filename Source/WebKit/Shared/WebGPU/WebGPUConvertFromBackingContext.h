@@ -45,6 +45,10 @@
 #include <optional>
 #include <wtf/RefCounted.h>
 
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+typedef struct __CVBuffer* CVPixelBufferRef;
+#endif
+
 namespace WebCore::WebGPU {
 
 class Adapter;
@@ -228,7 +232,12 @@ public:
     std::optional<WebCore::WebGPU::Extent3D> convertFromBacking(const Extent3D&);
     std::optional<WebCore::WebGPU::Extent3DDict> convertFromBacking(const Extent3DDict&);
     std::optional<WebCore::WebGPU::ExternalTextureBindingLayout> convertFromBacking(const ExternalTextureBindingLayout&);
-    std::optional<WebCore::WebGPU::ExternalTextureDescriptor> convertFromBacking(const ExternalTextureDescriptor&);
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    using PixelBufferType = RetainPtr<CVPixelBufferRef>;
+#else
+    using PixelBufferType = void*;
+#endif
+    std::optional<WebCore::WebGPU::ExternalTextureDescriptor> convertFromBacking(const ExternalTextureDescriptor&, PixelBufferType);
     std::optional<WebCore::WebGPU::FragmentState> convertFromBacking(const FragmentState&);
     std::optional<WebCore::WebGPU::Identifier> convertFromBacking(const Identifier&);
     std::optional<WebCore::WebGPU::ImageCopyBuffer> convertFromBacking(const ImageCopyBuffer&);
