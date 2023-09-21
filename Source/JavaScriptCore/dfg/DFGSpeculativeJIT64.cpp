@@ -187,7 +187,7 @@ void SpeculativeJIT::cachedGetById(Node* node, CodeOrigin codeOrigin, GPRReg bas
             spillMode, ExceptionCheckRequirement::CheckNeeded,
             resultGPR, baseGPR, LinkableConstant::globalObject(*this, node), stubInfoGPR);
     } else {
-        gen.generateFastPath(*this, scratchGPR);
+        gen.generateFastPath(*this);
         slowCases.append(gen.slowPathJump());
         slowPath = slowPathCall(
             slowCases, this, appropriateGetByIdOptimizeFunction(type),
@@ -234,7 +234,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(Node* node, CodeOrigin codeOrigin, GP
             DontSpill, ExceptionCheckRequirement::CheckNeeded,
             resultGPR, baseGPR, thisGPR, LinkableConstant::globalObject(*this, node), stubInfoGPR);
     } else {
-        gen.generateFastPath(*this, scratchGPR);
+        gen.generateFastPath(*this);
         slowCases.append(gen.slowPathJump());
         slowPath = slowPathCall(
             slowCases, this, operationGetByIdWithThisOptimize,

@@ -5220,6 +5220,9 @@ private:
                     scratchGPR = params.gpScratch(1);
                     scratch2GPR = params.gpScratch(2);
                 }
+                UNUSED_PARAM(stubInfoGPR);
+                UNUSED_PARAM(scratchGPR);
+                UNUSED_PARAM(scratch2GPR);
 
                 auto* stubInfo = state->addStructureStubInfo();
                 auto generator = Box<JITPutByIdGenerator>::create(
@@ -5228,7 +5231,7 @@ private:
                     JSValueRegs(params[1].gpr()), stubInfoGPR, GPRInfo::patchpointScratchRegister, ecmaMode,
                     accessType);
 
-                generator->generateFastPath(jit, scratchGPR, scratch2GPR);
+                generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
 
                 params.addLatePath(
@@ -14227,6 +14230,8 @@ IGNORE_CLANG_WARNINGS_END
                     if constexpr (type == AccessType::InById)
                         scratchGPR = params.gpScratch(1);
                 }
+                UNUSED_PARAM(stubInfoGPR);
+                UNUSED_PARAM(scratchGPR);
                 auto returnGPR = params[0].gpr();
                 auto base = JSValueRegs(params[1].gpr());
 
@@ -14267,10 +14272,7 @@ IGNORE_CLANG_WARNINGS_END
                 }();
 
                 CCallHelpers::JumpList slowCases;
-                if constexpr (type == AccessType::InById)
-                    generator->generateFastPath(jit, scratchGPR);
-                else
-                    generator->generateFastPath(jit);
+                generator->generateFastPath(jit);
                 if (!Options::useDataICInFTL())
                     slowCases.append(generator->slowPathJump());
                 CCallHelpers::Label done = jit.label();
@@ -16877,6 +16879,8 @@ IGNORE_CLANG_WARNINGS_END
                     stubInfoGPR = params.gpScratch(0);
                     scratchGPR = params.gpScratch(1);
                 }
+                UNUSED_PARAM(stubInfoGPR);
+                UNUSED_PARAM(scratchGPR);
 
                 auto* stubInfo = state->addStructureStubInfo();
                 auto generator = Box<JITGetByIdGenerator>::create(
@@ -16884,7 +16888,7 @@ IGNORE_CLANG_WARNINGS_END
                     params.unavailableRegisters(), identifier, JSValueRegs(params[1].gpr()),
                     JSValueRegs(params[0].gpr()), stubInfoGPR, type);
 
-                generator->generateFastPath(jit, scratchGPR);
+                generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
 
                 params.addLatePath(
@@ -16965,6 +16969,8 @@ IGNORE_CLANG_WARNINGS_END
                     stubInfoGPR = params.gpScratch(0);
                     scratchGPR = params.gpScratch(1);
                 }
+                UNUSED_PARAM(stubInfoGPR);
+                UNUSED_PARAM(scratchGPR);
 
                 auto* stubInfo = state->addStructureStubInfo();
                 auto generator = Box<JITGetByIdWithThisGenerator>::create(
@@ -16972,7 +16978,7 @@ IGNORE_CLANG_WARNINGS_END
                     params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), stubInfoGPR);
 
-                generator->generateFastPath(jit, scratchGPR);
+                generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
 
                 params.addLatePath(

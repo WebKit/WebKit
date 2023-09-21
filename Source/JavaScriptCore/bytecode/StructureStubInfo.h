@@ -130,7 +130,7 @@ public:
     void deref();
     void aboutToDie();
 
-    void initializeFromUnlinkedStructureStubInfo(const BaselineUnlinkedStructureStubInfo&);
+    void initializeFromUnlinkedStructureStubInfo(VM&, const BaselineUnlinkedStructureStubInfo&);
     void initializeFromDFGUnlinkedStructureStubInfo(const DFG::UnlinkedStructureStubInfo&);
 
     DECLARE_VISIT_AGGREGATE;
@@ -394,15 +394,7 @@ public:
     CodeOrigin codeOrigin { };
     PropertyOffset byIdSelfOffset;
     WriteBarrierStructureID m_inlineAccessBaseStructureID;
-    std::unique_ptr<PolymorphicAccess> m_stub;
     CacheableIdentifier m_identifier;
-private:
-    // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
-    // Note that it's always safe to clear this. If we clear it prematurely, then if we see the same
-    // structure again during this buffering countdown, we will create an AccessCase object for it.
-    // That's not so bad - we'll get rid of the redundant ones once we regenerate.
-    HashSet<BufferedStructure, BufferedStructure::Hash, BufferedStructure::KeyTraits> m_bufferedStructures WTF_GUARDED_BY_LOCK(m_bufferedStructuresLock);
-public:
     // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
     // If useDataIC is true, then it is nullptr.
     CodeLocationLabel<JITStubRoutinePtrTag> startLocation;
@@ -415,6 +407,14 @@ public:
     };
 
     CodePtr<JITStubRoutinePtrTag> m_codePtr;
+    std::unique_ptr<PolymorphicAccess> m_stub;
+private:
+    // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
+    // Note that it's always safe to clear this. If we clear it prematurely, then if we see the same
+    // structure again during this buffering countdown, we will create an AccessCase object for it.
+    // That's not so bad - we'll get rid of the redundant ones once we regenerate.
+    HashSet<BufferedStructure, BufferedStructure::Hash, BufferedStructure::KeyTraits> m_bufferedStructures WTF_GUARDED_BY_LOCK(m_bufferedStructuresLock);
+public:
 
     ScalarRegisterSet usedRegisters;
 
@@ -537,7 +537,6 @@ struct UnlinkedStructureStubInfo {
     bool isEnumerator : 1 { false };
     CacheableIdentifier m_identifier; // This only comes from already marked one. Thus, we do not mark it via GC.
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
-    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 };
 
 struct BaselineUnlinkedStructureStubInfo : UnlinkedStructureStubInfo {

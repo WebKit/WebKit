@@ -43,6 +43,7 @@
 #include "Heap.h"
 #include "InstanceOfAccessCase.h"
 #include "IntrinsicGetterAccessCase.h"
+#include "JIT.h"
 #include "JITOperations.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
@@ -50,6 +51,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "MegamorphicCache.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "ProxyObjectAccessCase.h"
@@ -439,9 +441,13 @@ void InlineCacheCompiler::restoreScratch()
 void InlineCacheCompiler::succeed()
 {
     restoreScratch();
-    if (m_jit->codeBlock()->useDataIC())
-        m_jit->farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfDoneLocation()), JSInternalPtrTag);
-    else
+    if (m_jit->codeBlock()->useDataIC()) {
+        if (JITCode::isBaselineCode(m_jit->codeBlock()->jitType())) {
+            emitDataICEpilogue(*m_jit);
+            m_jit->ret();
+        } else
+            m_jit->farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfDoneLocation()), JSInternalPtrTag);
+    } else
         m_success.append(m_jit->jump());
 }
 
@@ -641,6 +647,489 @@ ScratchRegisterAllocator InlineCacheCompiler::makeDefaultScratchAllocator(GPRReg
     allocator.lock(extraToLock);
 
     return allocator;
+}
+
+#if CPU(X86_64) && OS(WINDOWS)
+static constexpr size_t prologueSizeInBytesDataIC = 4;
+#elif CPU(X86_64)
+static constexpr size_t prologueSizeInBytesDataIC = 1;
+#elif CPU(ARM64E)
+static constexpr size_t prologueSizeInBytesDataIC = 8;
+#elif CPU(ARM64)
+static constexpr size_t prologueSizeInBytesDataIC = 4;
+#elif CPU(ARM_THUMB2)
+static constexpr size_t prologueSizeInBytesDataIC = 4;
+#elif CPU(MIPS)
+static constexpr size_t prologueSizeInBytesDataIC = 16;
+#elif CPU(RISCV64)
+static constexpr size_t prologueSizeInBytesDataIC = 12;
+#else
+#error "unsupported architecture"
+#endif
+
+void InlineCacheCompiler::emitDataICPrologue(CCallHelpers& jit)
+{
+    // Important difference from the normal emitPrologue is that DataIC handler does not change callFrameRegister.
+    // callFrameRegister is an original one of the caller JS function. This removes necessity of complicated handling
+    // of exception unwinding, and it allows operations to access to CallFrame* via callFrameRegister.
+#if ASSERT_ENABLED
+    size_t startOffset = jit.debugOffset();
+#endif
+
+#if CPU(X86_64) && OS(WINDOWS)
+    static_assert(maxFrameExtentForSlowPathCall);
+    jit.push(CCallHelpers::framePointerRegister);
+    jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+#elif CPU(X86_64)
+    static_assert(!maxFrameExtentForSlowPathCall);
+    jit.push(CCallHelpers::framePointerRegister);
+#elif CPU(ARM64)
+    static_assert(!maxFrameExtentForSlowPathCall);
+    jit.tagReturnAddress();
+    jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+#elif CPU(ARM_THUMB2)
+    static_assert(maxFrameExtentForSlowPathCall);
+    jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+    jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+#elif CPU(MIPS)
+    static_assert(maxFrameExtentForSlowPathCall);
+    jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::returnAddressRegister);
+    jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+#elif CPU(RISCV64)
+    static_assert(!maxFrameExtentForSlowPathCall);
+    jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+#else
+#error "unsupported architecture"
+#endif
+
+#if ASSERT_ENABLED
+    ASSERT(prologueSizeInBytesDataIC == (jit.debugOffset() - startOffset));
+#endif
+}
+
+void InlineCacheCompiler::emitDataICEpilogue(CCallHelpers& jit)
+{
+    if constexpr (!!maxFrameExtentForSlowPathCall)
+        jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+    jit.emitFunctionEpilogueWithEmptyFrame();
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationGetByIdOptimize);
+
+    using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::globalObjectGPR;
+    using BaselineJITRegisters::GetById::stubInfoGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(baseJSR, globalObjectGPR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_id_slow");
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdWithThisSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationGetByIdWithThisOptimize);
+
+    using BaselineJITRegisters::GetByIdWithThis::baseJSR;
+    using BaselineJITRegisters::GetByIdWithThis::thisJSR;
+    using BaselineJITRegisters::GetByIdWithThis::globalObjectGPR;
+    using BaselineJITRegisters::GetByIdWithThis::stubInfoGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(baseJSR, thisJSR, globalObjectGPR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_id_with_this_slow");
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> getByValSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationGetByValOptimize);
+
+    using BaselineJITRegisters::GetByVal::baseJSR;
+    using BaselineJITRegisters::GetByVal::propertyJSR;
+    using BaselineJITRegisters::GetByVal::globalObjectGPR;
+    using BaselineJITRegisters::GetByVal::stubInfoGPR;
+    using BaselineJITRegisters::GetByVal::profileGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, globalObjectGPR, stubInfoGPR, profileGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_val_slow");
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> getPrivateNameSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationGetPrivateNameOptimize);
+
+    using BaselineJITRegisters::PrivateBrand::baseJSR;
+    using BaselineJITRegisters::PrivateBrand::propertyJSR;
+    using BaselineJITRegisters::PrivateBrand::globalObjectGPR;
+    using BaselineJITRegisters::PrivateBrand::stubInfoGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, globalObjectGPR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_private_name_slow");
+}
+
+#if USE(JSVALUE64)
+static MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithThisSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationGetByValWithThisOptimize);
+
+    using BaselineJITRegisters::GetByValWithThis::baseJSR;
+    using BaselineJITRegisters::GetByValWithThis::propertyJSR;
+    using BaselineJITRegisters::GetByValWithThis::thisJSR;
+    using BaselineJITRegisters::GetByValWithThis::globalObjectGPR;
+    using BaselineJITRegisters::GetByValWithThis::stubInfoGPR;
+    using BaselineJITRegisters::GetByValWithThis::profileGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, thisJSR, globalObjectGPR, stubInfoGPR, profileGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 4>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_val_with_this_slow");
+}
+#endif
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationPutByIdStrictOptimize);
+
+    using BaselineJITRegisters::PutById::baseJSR;
+    using BaselineJITRegisters::PutById::valueJSR;
+    using BaselineJITRegisters::PutById::globalObjectGPR;
+    using BaselineJITRegisters::PutById::stubInfoGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(valueJSR, baseJSR, globalObjectGPR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC put_by_id_slow");
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperatoin = decltype(operationPutByValStrictOptimize);
+
+    using BaselineJITRegisters::PutByVal::baseJSR;
+    using BaselineJITRegisters::PutByVal::propertyJSR;
+    using BaselineJITRegisters::PutByVal::valueJSR;
+    using BaselineJITRegisters::PutByVal::profileGPR;
+    using BaselineJITRegisters::PutByVal::stubInfoGPR;
+    using BaselineJITRegisters::PutByVal::globalObjectGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperatoin>(baseJSR, propertyJSR, valueJSR, globalObjectGPR, stubInfoGPR, profileGPR);
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+#if CPU(ARM_THUMB2)
+    // ARMv7 clobbers metadataTable register. Thus we need to restore them back here.
+    JIT::emitMaterializeMetadataAndConstantPoolRegisters(jit);
+#endif
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC put_by_val_slow");
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationInstanceOfOptimize);
+
+    using BaselineJITRegisters::Instanceof::valueJSR;
+    using BaselineJITRegisters::Instanceof::protoJSR;
+    using BaselineJITRegisters::Instanceof::globalObjectGPR;
+    using BaselineJITRegisters::Instanceof::stubInfoGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(valueJSR, protoJSR, globalObjectGPR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC instanceof_slow");
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> delByIdSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationDeleteByIdStrictOptimize);
+
+    using BaselineJITRegisters::DelById::baseJSR;
+    using BaselineJITRegisters::DelById::globalObjectGPR;
+    using BaselineJITRegisters::DelById::stubInfoGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(baseJSR, globalObjectGPR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC del_by_id_slow");
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> delByValSlowPathCodeGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    using SlowOperation = decltype(operationDeleteByValStrictOptimize);
+
+    using BaselineJITRegisters::DelByVal::baseJSR;
+    using BaselineJITRegisters::DelByVal::propertyJSR;
+    using BaselineJITRegisters::DelByVal::globalObjectGPR;
+    using BaselineJITRegisters::DelByVal::stubInfoGPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    // Call slow operation
+    jit.prepareCallOperation(vm);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
+    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, globalObjectGPR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
+
+    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    // While sp is extended, it is OK. Jump target will adjust it.
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC del_by_val_slow");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(VM& vm, AccessType type)
+{
+    switch (type) {
+    case AccessType::GetById:
+    case AccessType::TryGetById:
+    case AccessType::GetByIdDirect:
+    case AccessType::InById:
+    case AccessType::GetPrivateNameById: {
+        using ArgumentTypes = FunctionTraits<decltype(operationGetByIdOptimize)>::ArgumentTypes;
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationTryGetByIdOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationGetByIdDirectOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationInByIdOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationGetPrivateNameByIdOptimize)>::ArgumentTypes, ArgumentTypes>);
+        return vm.getCTIStub(getByIdSlowPathCodeGenerator);
+    }
+
+    case AccessType::GetByIdWithThis:
+        return vm.getCTIStub(getByIdWithThisSlowPathCodeGenerator);
+
+    case AccessType::GetByVal:
+    case AccessType::InByVal: {
+        using ArgumentTypes = FunctionTraits<decltype(operationGetByValOptimize)>::ArgumentTypes;
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationInByValOptimize)>::ArgumentTypes, ArgumentTypes>);
+        return vm.getCTIStub(getByValSlowPathCodeGenerator);
+    }
+
+    case AccessType::GetByValWithThis: {
+#if USE(JSVALUE64)
+        return vm.getCTIStub(getByValWithThisSlowPathCodeGenerator);
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
+#endif
+    }
+
+    case AccessType::GetPrivateName:
+    case AccessType::HasPrivateBrand:
+    case AccessType::HasPrivateName:
+    case AccessType::CheckPrivateBrand:
+    case AccessType::SetPrivateBrand: {
+        using ArgumentTypes = FunctionTraits<decltype(operationGetPrivateNameOptimize)>::ArgumentTypes;
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationHasPrivateBrandOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationHasPrivateNameOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationCheckPrivateBrandOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationSetPrivateBrandOptimize)>::ArgumentTypes, ArgumentTypes>);
+        return vm.getCTIStub(getPrivateNameSlowPathCodeGenerator);
+    }
+
+    case AccessType::PutByIdStrict:
+    case AccessType::PutByIdSloppy:
+    case AccessType::PutByIdDirectStrict:
+    case AccessType::PutByIdDirectSloppy:
+    case AccessType::DefinePrivateNameById:
+    case AccessType::SetPrivateNameById: {
+        using ArgumentTypes = FunctionTraits<decltype(operationPutByIdStrictOptimize)>::ArgumentTypes;
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationPutByIdSloppyOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationPutByIdDirectStrictOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationPutByIdDirectSloppyOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationPutByIdDefinePrivateFieldStrictOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationPutByIdSetPrivateFieldStrictOptimize)>::ArgumentTypes, ArgumentTypes>);
+        return vm.getCTIStub(putByIdSlowPathCodeGenerator);
+    }
+
+    case AccessType::PutByValStrict:
+    case AccessType::PutByValSloppy:
+    case AccessType::PutByValDirectStrict:
+    case AccessType::PutByValDirectSloppy:
+    case AccessType::DefinePrivateNameByVal:
+    case AccessType::SetPrivateNameByVal: {
+        using ArgumentTypes = FunctionTraits<decltype(operationPutByValStrictOptimize)>::ArgumentTypes;
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationPutByValSloppyOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationDirectPutByValSloppyOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationDirectPutByValStrictOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationPutByValDefinePrivateFieldOptimize)>::ArgumentTypes, ArgumentTypes>);
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationPutByValSetPrivateFieldOptimize)>::ArgumentTypes, ArgumentTypes>);
+        return vm.getCTIStub(putByValSlowPathCodeGenerator);
+    }
+
+    case AccessType::InstanceOf:
+        return vm.getCTIStub(instanceOfSlowPathCodeGenerator);
+
+    case AccessType::DeleteByIdStrict:
+    case AccessType::DeleteByIdSloppy: {
+        using ArgumentTypes = FunctionTraits<decltype(operationDeleteByIdStrictOptimize)>::ArgumentTypes;
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationDeleteByIdSloppyOptimize)>::ArgumentTypes, ArgumentTypes>);
+        return vm.getCTIStub(delByIdSlowPathCodeGenerator);
+    }
+
+    case AccessType::DeleteByValStrict:
+    case AccessType::DeleteByValSloppy: {
+        using ArgumentTypes = FunctionTraits<decltype(operationDeleteByValStrictOptimize)>::ArgumentTypes;
+        static_assert(std::is_same_v<FunctionTraits<decltype(operationDeleteByValSloppyOptimize)>::ArgumentTypes, ArgumentTypes>);
+        return vm.getCTIStub(delByValSlowPathCodeGenerator);
+    }
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
 }
 
 void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers::JumpList& fallThrough)
@@ -2098,7 +2587,10 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
 
             if (codeBlock->useDataIC()) {
                 jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
-                jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
+                if (JITCode::isBaselineCode(codeBlock->jitType()))
+                    jit.addPtr(CCallHelpers::TrustedImm32(-(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall + m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
+                else
+                    jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
                 jit.addPtr(m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
             } else {
                 int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
@@ -2854,7 +3346,10 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
 
     if (codeBlock->useDataIC()) {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
-        jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
+        if (JITCode::isBaselineCode(codeBlock->jitType()))
+            jit.addPtr(CCallHelpers::TrustedImm32(-(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall + m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
+        else
+            jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
         jit.addPtr(m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
     } else {
         int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
@@ -3411,10 +3906,15 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     CCallHelpers jit(codeBlock);
     m_jit = &jit;
 
+    if (JITCode::isBaselineCode(codeBlock->jitType()))
+        emitDataICPrologue(*m_jit);
+
     if (!canBeShared && ASSERT_ENABLED) {
         if (codeBlock->useDataIC()) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), jit.scratchRegister());
             jit.addPtr(jit.scratchRegister(), GPRInfo::callFrameRegister, jit.scratchRegister());
+            if (JITCode::isBaselineCode(codeBlock->jitType()))
+                jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall)), jit.scratchRegister());
         } else
             jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, jit.scratchRegister());
         auto ok = jit.branchPtr(CCallHelpers::Equal, CCallHelpers::stackPointerRegister, jit.scratchRegister());
@@ -3608,6 +4108,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         ASSERT(!spillState.isEmpty());
         jit.loadPtr(vm().addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
         if (codeBlock->useDataIC()) {
+            ASSERT(!JITCode::isBaselineCode(codeBlock->jitType()));
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
             jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
             jit.addPtr(m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
@@ -3641,13 +4142,11 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     }
 
     if (codeBlock->useDataIC()) {
-        failure.link(&jit);
-        JIT_COMMENT(jit, "failure far jump");
-        // In ARM64, we do not push anything on stack specially.
-        // So we can just jump to the slow-path even though this thunk is called (not jumped).
-        // FIXME: We should tail call to the thunk which calls the slow path function.
-        // And we should eliminate IC slow-path generation in BaselineJIT.
-        jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfSlowPathStartLocation()), JITStubRoutinePtrTag);
+        if (!JITCode::isBaselineCode(codeBlock->jitType())) {
+            failure.link(&jit);
+            JIT_COMMENT(jit, "failure far jump");
+            jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfSlowPathStartLocation()), JITStubRoutinePtrTag);
+        }
     }
 
     RefPtr<PolymorphicAccessJITStubRoutine> stub;
@@ -3679,9 +4178,11 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     CodeLocationLabel<JSInternalPtrTag> successLabel = m_stubInfo->doneLocation;
 
-    if (codeBlock->useDataIC())
+    if (codeBlock->useDataIC()) {
         ASSERT(m_success.empty());
-    else {
+        if (JITCode::isBaselineCode(codeBlock->jitType()))
+            linkBuffer.link(failure, CodeLocationLabel(CodePtr<NoPtrTag> { (generateSlowPathCode(vm(), m_stubInfo->accessType).retaggedCode<NoPtrTag>().untaggedPtr<uint8_t*>() + prologueSizeInBytesDataIC) }));
+    } else {
         linkBuffer.link(m_success, successLabel);
         linkBuffer.link(failure, m_stubInfo->slowPathStartLocation);
     }
