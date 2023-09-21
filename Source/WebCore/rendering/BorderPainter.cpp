@@ -1422,15 +1422,20 @@ Color BorderPainter::calculateBorderStyleColor(const BorderStyle& style, const B
 
     Operation operation = (side == BoxSide::Top || side == BoxSide::Left) == (style == BorderStyle::Inset) ? Darken : Lighten;
 
-    // Here we will darken the border decoration color when needed. This will yield a similar behavior as in FF.
-    if (operation == Darken) {
-        if (color.luminance() > baseDarkColorLuminance)
-            return color.darkened();
-    } else {
-        if (color.luminance() < baseLightColorLuminance)
-            return color.lightened();
-    }
-    return color;
+    bool isVeryDarkColor = color.luminance() <= baseDarkColorLuminance;
+    bool isVeryLightColor = color.luminance() > baseLightColorLuminance;
+
+    // Special case very dark colors to give them extra contrast.
+    if (isVeryDarkColor)
+        return operation == Darken ? color.lightened() : color.lightened().lightened();
+
+    // Here we will darken the border decoration color when needed.
+    if (operation == Darken)
+        return color.darkened();
+
+    ASSERT(operation == Lighten);
+
+    return isVeryLightColor ? color : color.lightened();
 }
 
 const Document& BorderPainter::document() const
