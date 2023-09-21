@@ -153,7 +153,7 @@ void EntryPointRewriter::collectParameters()
 
 void EntryPointRewriter::checkReturnType()
 {
-    if (m_stage != AST::StageAttribute::Stage::Vertex)
+    if (m_stage == AST::StageAttribute::Stage::Compute)
         return;
 
     if (auto* maybeReturnType = m_function.maybeReturnType()) {
@@ -162,8 +162,13 @@ void EntryPointRewriter::checkReturnType()
 
         auto& namedTypeName = downcast<AST::IdentifierExpression>(*maybeReturnType);
         if (auto* structType = std::get_if<Types::Struct>(namedTypeName.inferredType())) {
-            ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
+            if (m_stage == AST::StageAttribute::Stage::Fragment) {
+                if (structType->structure.role() == AST::StructureRole::UserDefined)
+                    structType->structure.role() = AST::StructureRole::FragmentOutput;
+                return;
+            }
 
+            ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
             String returnStructName = makeString("__", structType->structure.name(), "_VertexOutput");
             auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
                 SourceSpan::empty(),

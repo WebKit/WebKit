@@ -531,6 +531,9 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::UserDefinedResource:
         case AST::StructureRole::PackedResource:
             return;
+        case AST::StructureRole::FragmentOutput:
+            m_stringBuilder.append("[[color(", *AST::extractInteger(location.location()), ")]]");
+            return;
         case AST::StructureRole::VertexInput:
             m_stringBuilder.append("[[attribute(", *AST::extractInteger(location.location()), ")]]");
             break;
