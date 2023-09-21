@@ -38,6 +38,8 @@ set(bmalloc_SOURCES
     bmalloc/Scavenger.cpp
     bmalloc/bmalloc.cpp
 
+    bmalloc/uv_get_constrained_memory.cpp
+
     libpas/src/libpas/bmalloc_heap.c
     libpas/src/libpas/bmalloc_heap_config.c
     libpas/src/libpas/bmalloc_type.c
