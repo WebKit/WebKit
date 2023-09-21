@@ -140,7 +140,7 @@ void Line::applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInf
     m_contentLogicalWidth += accumulatedExpansion;
 }
 
-void Line::moveRunsBy(InlineLayoutUnit offset, size_t startRunIndex)
+void Line::moveRunsBy(size_t startRunIndex, InlineLayoutUnit offset)
 {
     if (startRunIndex >= m_runs.size()) {
         ASSERT_NOT_REACHED();
@@ -148,6 +148,20 @@ void Line::moveRunsBy(InlineLayoutUnit offset, size_t startRunIndex)
     }
     for (auto index = startRunIndex; index < m_runs.size(); ++index)
         m_runs[index].moveHorizontally(offset);
+    m_contentLogicalWidth += offset;
+}
+
+void Line::expandBy(size_t runIndex, InlineLayoutUnit logicalWidth)
+{
+    if (runIndex >= m_runs.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_runs[runIndex].shrinkHorizontally(-logicalWidth);
+    if (runIndex < m_runs.size() - 1)
+        moveRunsBy(runIndex + 1, logicalWidth);
+    else
+        m_contentLogicalWidth += logicalWidth;
 }
 
 InlineLayoutUnit Line::handleTrailingTrimmableContent(TrailingContentAction trailingTrimmableContentAction)

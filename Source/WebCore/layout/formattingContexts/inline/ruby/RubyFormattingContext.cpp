@@ -74,7 +74,7 @@ void RubyFormattingContext::layoutInlineAxis(const InlineItemRange& rubyRange, c
 
 size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineItems& inlineItems)
 {
-    // Append ruby base content (including start/end inline box) to the line and apply "ruby-align: space-between" on the ruby subrange.
+    // Append ruby base content (including start/end inline box) to the line and apply "ruby-align: space-around" on the ruby subrange.
     auto& formattingGeometry = parentFormattingContext().formattingGeometry();
     auto lineLogicalRight = line.contentLogicalRight();
     auto baseContentLogicalWidth = InlineLayoutUnit { };
@@ -88,31 +88,7 @@ size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& ru
                 ASSERT_NOT_REACHED();
                 return { };
             }
-            // End of base content.
-            // https://drafts.csswg.org/css-ruby/#interlinear-inline
-            // Within each base and annotation box, how the extra space is distributed when its content is narrower than
-            // the measure of the box is specified by its ruby-align property.
-            auto applyRubyAlign = [&] {
-                auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-                if (!annotationBox)
-                    return;
-                auto annotationBoxLogicalWidth = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxWidth() };
-                if (annotationBoxLogicalWidth <= baseContentLogicalWidth)
-                    return;
-                auto baseRunRange = WTF::Range<size_t> { baseRunStart, baseRunStart + baseRunCount };
-                auto expansion = ExpansionInfo { };
-                // ruby-align: space-between
-                // The ruby content expands as defined for normal text justification (as defined by text-justify), except that if there are no justification
-                // opportunities the content is centered.
-                TextUtil::computedExpansions(line.runs(), baseRunRange, { }, expansion);
-                if (expansion.opportunityCount)
-                    line.applyExpansionOnRange(baseRunRange, expansion, annotationBoxLogicalWidth - baseContentLogicalWidth);
-                else {
-                    auto centerOffset = (annotationBoxLogicalWidth - baseContentLogicalWidth) / 2;
-                    line.moveRunsBy(centerOffset, baseRunRange.begin());
-                }
-            };
-            applyRubyAlign();
+            applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
             return index - rubyBaseContentStartIndex;
         }
         auto logicalWidth = formattingGeometry.inlineItemWidth(rubyBaseInlineItem, lineLogicalRight + baseContentLogicalWidth, { });
@@ -146,6 +122,35 @@ RubyFormattingContext::OverUnder RubyFormattingContext::annotationExtent(const B
     if (annotationBox->style().rubyPosition() == RubyPosition::Before)
         return { annotationBoxLogicalHeight, { } };
     return { { }, annotationBoxLogicalHeight };
+}
+
+void RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth)
+{
+    // https://drafts.csswg.org/css-ruby/#interlinear-inline
+    // Within each base and annotation box, how the extra space is distributed when its content is narrower than
+    // the measure of the box is specified by its ruby-align property.
+    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
+    if (!annotationBox)
+        return;
+    auto annotationBoxLogicalWidth = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxWidth() };
+    if (annotationBoxLogicalWidth <= baseContentLogicalWidth)
+        return;
+    auto expansion = ExpansionInfo { };
+    // ruby-align: space-around
+    // As for space-between except that there exists an extra justification opportunities whose space is distributed half before and half after the ruby content.
+    TextUtil::computedExpansions(line.runs(), baseRunRange, { }, expansion);
+    if (expansion.opportunityCount) {
+        auto extraSpace = annotationBoxLogicalWidth - baseContentLogicalWidth;
+        auto baseContentOffset = extraSpace / (expansion.opportunityCount + 1) / 2;
+        line.expandBy(baseRunRange.begin() - 1, baseContentOffset);
+        extraSpace -= (2 * baseContentOffset);
+        line.applyExpansionOnRange(baseRunRange, expansion, extraSpace);
+        line.expandBy(baseRunRange.end() - 1, baseContentOffset);
+    } else {
+        auto centerOffset = (annotationBoxLogicalWidth - baseContentLogicalWidth) / 2;
+        line.moveRunsBy(baseRunRange.begin(), centerOffset);
+        line.expandBy(baseRunRange.begin(), centerOffset);
+    }
 }
 
 }

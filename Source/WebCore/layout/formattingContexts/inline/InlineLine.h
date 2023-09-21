@@ -75,7 +75,8 @@ public:
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
     void applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
-    void moveRunsBy(InlineLayoutUnit offset, size_t startRunIndex);
+    void moveRunsBy(size_t startRunIndex, InlineLayoutUnit offset);
+    void expandBy(size_t startRunIndex, InlineLayoutUnit logicalWidth);
 
     struct Run {
         enum class Type : uint8_t {
