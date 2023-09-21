@@ -2284,6 +2284,7 @@ platform/graphics/MediaPlayerPrivate.cpp
 platform/graphics/MediaSourcePrivate.cpp
 platform/graphics/Model.cpp
 platform/graphics/NamedImageGeneratedImage.cpp
+platform/graphics/NullImageBufferBackend.cpp
 platform/graphics/NativeImage.cpp
 platform/graphics/Path.cpp
 platform/graphics/PathImpl.cpp

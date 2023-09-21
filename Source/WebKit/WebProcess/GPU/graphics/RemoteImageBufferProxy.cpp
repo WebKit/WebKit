@@ -193,19 +193,26 @@ void RemoteImageBufferProxy::backingStoreWillChange()
     prepareForBackingStoreChange();
 }
 
-void RemoteImageBufferProxy::didCreateBackend(ImageBufferBackendHandle&& handle)
+void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHandle> handle)
 {
     ASSERT(!m_backend);
-    if (renderingMode() == RenderingMode::Accelerated && std::holds_alternative<ShareableBitmap::Handle>(handle))
-        m_backendInfo = ImageBuffer::populateBackendInfo<UnacceleratedImageBufferShareableBackend>(parameters());
-
+    if (!handle) {
+        m_remoteDisplayList.disconnect();
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
+        m_remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
+        m_remoteRenderingBackendProxy = nullptr;
+        return;
+    }
+    // This should match RemoteImageBufferProxy::create<>() call site and RemoteImageBuffer::create<>() call site.
+    // FIXME: this will be removed and backend be constructed in the contructor.
     std::unique_ptr<ImageBufferBackend> backend;
-    if (renderingMode() == RenderingMode::Unaccelerated)
-        backend = UnacceleratedImageBufferShareableBackend::create(parameters(), WTFMove(handle));
-    else if (canMapBackingStore())
-        backend = AcceleratedImageBufferShareableMappedBackend::create(parameters(), WTFMove(handle));
-    else
-        backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(handle));
+    if (renderingMode() == RenderingMode::Accelerated) {
+        if (canMapBackingStore())
+            backend = AcceleratedImageBufferShareableMappedBackend::create(parameters(), WTFMove(*handle));
+        else
+            backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(*handle));
+    } else
+        backend = UnacceleratedImageBufferShareableBackend::create(parameters(), WTFMove(*handle));
 
     setBackend(WTFMove(backend));
 }
@@ -274,22 +281,20 @@ RefPtr<Image> RemoteImageBufferProxy::filteredImage(Filter& filter)
     return m_remoteRenderingBackendProxy->getFilteredImage(m_renderingResourceIdentifier, filter);
 }
 
-RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
+RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, const ImageBufferAllocator& allocator) const
 {
     if (canMapBackingStore()) {
         const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
-        return ImageBuffer::getPixelBuffer(destinationFormat, srcRect, allocator);
+        return ImageBuffer::getPixelBuffer(destinationFormat, sourceRect, allocator);
     }
-
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+    auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, sourceRect.size());
+    if (UNLIKELY(!pixelBuffer))
         return nullptr;
-    IntRect sourceRectScaled = srcRect;
-    sourceRectScaled.scale(resolutionScale());
-    auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
-    if (!pixelBuffer)
-        return nullptr;
-    if (!m_remoteRenderingBackendProxy->getPixelBufferForImageBuffer(m_renderingResourceIdentifier, destinationFormat, srcRect, { pixelBuffer->bytes(), pixelBuffer->sizeInBytes() }))
-        return nullptr;
+    if (LIKELY(m_remoteRenderingBackendProxy)) {
+        if (m_remoteRenderingBackendProxy->getPixelBufferForImageBuffer(m_renderingResourceIdentifier, destinationFormat, sourceRect, { pixelBuffer->bytes(), pixelBuffer->sizeInBytes() }))
+            return pixelBuffer;
+    }
+    pixelBuffer->zeroFill();
     return pixelBuffer;
 }
 
