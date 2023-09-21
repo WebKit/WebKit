@@ -46,6 +46,7 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SizesAttributeParser.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/MainThread.h>
 #include <wtf/SortedArrayMap.h>
 
@@ -116,6 +117,7 @@ public:
         if (m_tagId >= TagId::Unknown)
             return;
 
+        Ref document = protectedDocument();
         for (auto& attribute : attributes) {
             auto knownAttributeName = AtomString::lookUp(attribute.name.data(), attribute.name.size());
             StringView attributeValue { attribute.value.data(), static_cast<unsigned>(attribute.value.size()) };
@@ -123,7 +125,7 @@ public:
         }
 
         if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last() && m_mediaMatched && m_typeMatched && !m_srcSetAttribute.isEmpty()) {
-            auto sourceSize = SizesAttributeParser(m_sizesAttribute, m_document).length();
+            auto sourceSize = SizesAttributeParser(m_sizesAttribute, document).length();
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, AtomString { m_urlToLoad }, m_srcSetAttribute, sourceSize);
             if (!imageCandidate.isEmpty()) {
                 pictureState.last() = true;
@@ -133,16 +135,16 @@ public:
 
         // Resolve between src and srcSet if we have them and the tag is img.
         if (m_tagId == TagId::Img && !m_srcSetAttribute.isEmpty()) {
-            auto sourceSize = SizesAttributeParser(m_sizesAttribute, m_document).length();
+            auto sourceSize = SizesAttributeParser(m_sizesAttribute, document).length();
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, AtomString { m_urlToLoad }, m_srcSetAttribute, sourceSize);
             setURLToLoadAllowingReplacement(imageCandidate.string);
         }
 
         if (m_metaIsViewport && !m_metaContent.isNull())
-            m_document.processViewport(m_metaContent, ViewportArguments::ViewportMeta);
+            document->processViewport(m_metaContent, ViewportArguments::ViewportMeta);
 
         if (m_metaIsDisabledAdaptations && !m_metaContent.isNull())
-            m_document.processDisabledAdaptations(m_metaContent);
+            document->processDisabledAdaptations(m_metaContent);
     }
 
     std::unique_ptr<PreloadRequest> createPreloadRequest(const URL& predictedBaseURL)
@@ -154,7 +156,7 @@ public:
         if (!type)
             return nullptr;
 
-        if (m_tagId == TagId::Link && !LinkLoader::isSupportedType(type.value(), m_typeAttribute, m_document))
+        if (m_tagId == TagId::Link && !LinkLoader::isSupportedType(type.value(), m_typeAttribute, protectedDocument()))
             return nullptr;
 
         // Do not preload if lazyload is possible but metadata fetch is disabled.
@@ -203,6 +205,7 @@ private:
     {
         bool inPicture = !pictureState.isEmpty();
         bool alreadyMatchedSource = inPicture && pictureState.last();
+        Ref document = protectedDocument();
 
         switch (m_tagId) {
         case TagId::Img:
@@ -216,7 +219,7 @@ private:
                 m_sizesAttribute = attributeValue.toString();
                 break;
             }
-            if (match(attributeName, fetchpriorityAttr) && m_document.settings().fetchPriorityEnabled()) {
+            if (match(attributeName, fetchpriorityAttr) && document->settings().fetchPriorityEnabled()) {
                 m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
                 break;
             }
@@ -224,7 +227,7 @@ private:
                 m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
                 break;
             }
-            if (m_document.settings().lazyImageLoadingEnabled()) {
+            if (document->settings().lazyImageLoadingEnabled()) {
                 if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
                     m_lazyloadAttribute = attributeValue.toString();
                     break;
@@ -245,10 +248,10 @@ private:
             }
             if (match(attributeName, mediaAttr) && m_mediaAttribute.isNull()) {
                 m_mediaAttribute = attributeValue.toString();
-                auto mediaQueries = MQ::MediaQueryParser::parse(m_mediaAttribute, { m_document });
-                RefPtr documentElement = m_document.documentElement();
+                auto mediaQueries = MQ::MediaQueryParser::parse(m_mediaAttribute, { document.get() });
+                RefPtr documentElement = document->documentElement();
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
-                m_mediaMatched = MQ::MediaQueryEvaluator { m_document.printing() ? printAtom() : screenAtom(), m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaQueries);
+                m_mediaMatched = MQ::MediaQueryEvaluator { document->printing() ? printAtom() : screenAtom(), document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaQueries);
             }
             if (match(attributeName, typeAttr) && m_typeAttribute.isNull()) {
                 // when multiple type attributes present: first value wins, ignore subsequent (to match ImageElement parser and Blink behaviours)
@@ -275,7 +278,7 @@ private:
             } else if (match(attributeName, asyncAttr)) {
                 m_scriptIsAsync = true;
                 break;
-            } else if (match(attributeName, fetchpriorityAttr) && m_document.settings().fetchPriorityEnabled()) {
+            } else if (match(attributeName, fetchpriorityAttr) && document->settings().fetchPriorityEnabled()) {
                 m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
                 break;
             }
@@ -285,7 +288,7 @@ private:
             if (match(attributeName, hrefAttr))
                 setURLToLoad(attributeValue);
             else if (match(attributeName, relAttr)) {
-                LinkRelAttribute parsedAttribute { m_document, attributeValue };
+                LinkRelAttribute parsedAttribute { document, attributeValue };
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(parsedAttribute);
                 m_linkIsPreload = parsedAttribute.isLinkPreload;
             } else if (match(attributeName, mediaAttr))
@@ -302,7 +305,7 @@ private:
                 m_typeAttribute = attributeValue.toString();
             else if (match(attributeName, referrerpolicyAttr))
                 m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-            else if (match(attributeName, fetchpriorityAttr) && m_document.settings().fetchPriorityEnabled())
+            else if (match(attributeName, fetchpriorityAttr) && document->settings().fetchPriorityEnabled())
                 m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
             break;
         case TagId::Input:
@@ -316,7 +319,7 @@ private:
                 m_metaContent = attributeValue.toString();
             else if (match(attributeName, nameAttr))
                 m_metaIsViewport = equalLettersIgnoringASCIICase(attributeValue, "viewport"_s);
-            else if (m_document.settings().disabledAdaptationsMetaTagEnabled() && match(attributeName, nameAttr))
+            else if (document->settings().disabledAdaptationsMetaTagEnabled() && match(attributeName, nameAttr))
                 m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(attributeValue, "disabled-adaptations"_s);
             break;
         case TagId::Base:
@@ -369,7 +372,7 @@ private:
             if (m_linkIsStyleSheet)
                 return CachedResource::Type::CSSStyleSheet;
             if (m_linkIsPreload)
-                return LinkLoader::resourceTypeFromAsAttribute(m_asAttribute, m_document);
+                return LinkLoader::resourceTypeFromAsAttribute(m_asAttribute, protectedDocument());
             break;
         case TagId::Meta:
         case TagId::Unknown:
@@ -400,7 +403,9 @@ private:
         return true;
     }
 
-    Document& m_document;
+    Ref<Document> protectedDocument() const { return m_document.get(); }
+
+    CheckedRef<Document> m_document;
     TagId m_tagId;
     String m_urlToLoad;
     String m_srcSetAttribute;
