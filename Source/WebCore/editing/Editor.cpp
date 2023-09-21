@@ -1047,7 +1047,7 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
     if (m_document.selection().isNone())
         return;
 
-    ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties)->apply();
+    ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::PropertyLevel::ForceBlock)->apply();
 
     if (client())
         client()->didApplyStyle();
