@@ -93,9 +93,7 @@ public:
     void setVideoLayer(AVSampleBufferDisplayLayer*);
     void setDecompressionSession(WebCoreDecompressionSession*);
 
-#if PLATFORM(IOS_FAMILY)
     void flushActiveSourceBuffersIfNeeded();
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     void cdmInstanceAttached(CDMInstance&);
