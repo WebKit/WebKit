@@ -2114,15 +2114,10 @@
         (when (defined? 'mach_vm_range_create) mach_vm_range_create))) ;; <rdar://105161083>
 #endif
 
-(define (kernel-mig-routines-common) (kernel-mig-routine
+(define (kernel-mig-routines-in-use) (kernel-mig-routine
     _mach_make_memory_entry
     host_get_io_master
     host_info
-    io_connect_add_client
-    io_connect_async_method
-    io_connect_method
-    io_connect_method_var_output
-    io_connect_set_notification_port_64
     io_iterator_is_valid
     io_iterator_next
     io_object_conforms_to
@@ -2130,24 +2125,14 @@
     io_registry_entry_from_path
     io_registry_entry_get_parent_iterator
     io_registry_entry_get_property_bin_buf
-    io_registry_entry_get_property_bytes
     io_registry_entry_get_registry_entry_id
     io_server_version
-    io_service_add_interest_notification_64
-    io_service_add_notification_bin_64
-    io_service_get_matching_service_bin
-    io_service_get_matching_services_bin
-    io_service_open_extended
-    mach_exception_raise
     mach_memory_entry_ownership
-    mach_port_extract_right
-    mach_port_get_context_from_user
     mach_port_get_refs
     mach_port_request_notification
     mach_port_set_attributes
     mach_vm_copy
     mach_vm_map_external
-    mach_vm_region
     mach_vm_region_recurse
     mach_vm_remap_external
     semaphore_create
@@ -2161,6 +2146,25 @@
     thread_resume
     thread_suspend))
 
+(define (kernel-mig-routines-possibly-in-use) (kernel-mig-routine
+    io_connect_add_client
+    io_connect_async_method
+    io_connect_method
+    io_connect_method_var_output
+    io_connect_set_notification_port_64
+    io_registry_entry_get_property_bytes
+    mach_exception_raise
+    mach_port_extract_right
+    mach_port_get_context_from_user
+    mach_vm_region))
+
+(define (kernel-mig-routines-iokit-service) (kernel-mig-routine
+    io_service_add_interest_notification_64
+    io_service_add_notification_bin_64
+    io_service_get_matching_service_bin
+    io_service_get_matching_services_bin
+    io_service_open_extended))
+
 (define (kernel-mig-routines-blocked-in-lockdown-mode) (kernel-mig-routine
     clock_get_time
     host_request_notification
@@ -2173,9 +2177,12 @@
     io_registry_get_root_entry
     io_service_close
     task_threads_from_user
-    thread_info
     thread_policy
     thread_policy_set))
+
+(define (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry) (kernel-mig-routine
+    thread_info
+    thread_set_exception_ports))
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
@@ -2183,16 +2190,19 @@
             (deny mach-message-send)
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
             (with-filter (require-not (lockdown-mode))
-                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode)))
+                (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
+                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
             (with-filter (lockdown-mode)
-                (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
+                (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
+                (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
 #else
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
+            (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry))
 #endif
-            (with-filter (require-not (lockdown-mode))
-                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 
-            (allow mach-message-send (kernel-mig-routines-common))
+            (allow mach-message-send (kernel-mig-routines-in-use))
+            (allow mach-message-send (kernel-mig-routines-iokit-service))
+            (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-possibly-in-use))
                 
 #if HAVE(SANDBOX_STATE_FLAGS) && HAVE(MACH_RANGE_CREATE)
             (with-filter (require-not (state-flag "WebContentProcessLaunched"))
