@@ -30,7 +30,6 @@ import shutil
 import ssl
 import subprocess
 import sys
-import sysconfig
 import tarfile
 import tempfile
 import time
@@ -493,61 +492,7 @@ class AutoInstall(object):
                 os.chown(os.path.join(root, file), uid, gid)
 
     @classmethod
-    def _platform_compatibility_tag(cls):
-        try:
-            impl = sys.implementation.name
-        except AttributeError:
-            # Python 2
-            impl = platform.python_implementation().lower()
-
-        INTERPRETER_SHORT_NAMES = {
-            "python": "py",
-            "cpython": "cp",
-            "pypy": "pp",
-            "ironpython": "ip",
-            "jython": "jy",
-        }
-
-        impl = INTERPRETER_SHORT_NAMES.get(impl, impl)
-
-        version = "".join(map(str, sys.version_info[:2]))
-
-        try:
-            abi = sys.abiflags
-        except AttributeError:
-            # Python 2
-            abi = ""
-
-        if platform.system() == "Darwin":
-            mac_version_str, _, mac_arch = platform.mac_ver()
-            mac_version = tuple(map(int, mac_version_str.split(".")))
-            tag_platform = "macosx_{}_{}_{}".format(
-                mac_version[0], 0 if mac_version[0] >= 11 else mac_version[1], mac_arch
-            )
-        else:
-            tag_platform = (
-                sysconfig.get_platform()
-                .replace(".", "_")
-                .replace("-", "_")
-                .replace(" ", "_")
-            )
-            if platform.system() == "Linux" and sys.maxsize <= 2**32:
-                if tag_platform == "linux_x86_64":
-                    tag_platform = "linux_i686"
-                elif tag_platform == "linux_aarch64":
-                    tag_platform = "linux_armv7l"
-
-        if impl == "cp":
-            return "{impl}{version}-{impl}{version}{abi}-{platform}".format(
-                impl=impl, version=version, abi=abi, platform=tag_platform
-            )
-        else:
-            return "{impl}{version}-{abi}-{platform}".format(
-                impl=impl, version=version, abi=abi, platform=tag_platform
-            )
-
-    @classmethod
-    def set_directory(cls, directory, create_platform_subdirectory=True):
+    def set_directory(cls, directory):
         if not directory or not isinstance(directory, str):
             raise ValueError('{} is an invalid autoinstall directory'.format(directory))
 
@@ -558,9 +503,6 @@ class AutoInstall(object):
                 os.environ.get(cls.DISABLE_ENV_VAR),
             ))
             return
-
-        if create_platform_subdirectory:
-            directory = os.path.join(directory, cls._platform_compatibility_tag())
 
         directory = os.path.abspath(directory)
         if not os.path.isdir(directory):

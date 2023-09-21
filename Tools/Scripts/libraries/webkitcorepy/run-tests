@@ -32,7 +32,7 @@ from webkitcorepy.testing import PythonTestRunner
 
 
 libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled'))
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.WARNING)
