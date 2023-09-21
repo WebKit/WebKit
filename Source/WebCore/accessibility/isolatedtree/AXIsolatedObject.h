@@ -75,8 +75,7 @@ private:
     bool isAXIsolatedObjectInstance() const override { return true; }
     AccessibilityObject* associatedAXObject() const;
 
-    enum class IsRoot : bool { No, Yes };
-    void initializeProperties(const Ref<AccessibilityObject>&, IsRoot);
+    void initializeProperties(const Ref<AccessibilityObject>&);
     void initializePlatformProperties(const Ref<const AccessibilityObject>&);
 
     void setProperty(AXPropertyName, AXPropertyValueVariant&&, bool shouldRemove = false);
@@ -91,7 +90,6 @@ private:
     double doubleAttributeValue(AXPropertyName) const;
     float floatAttributeValue(AXPropertyName) const;
     AXCoreObject* objectAttributeValue(AXPropertyName) const;
-    PAL::SessionID sessionIDAttributeValue(AXPropertyName) const;
     IntPoint intPointAttributeValue(AXPropertyName) const;
     Color colorAttributeValue(AXPropertyName) const;
     URL urlAttributeValue(AXPropertyName) const;
@@ -213,7 +211,6 @@ private:
     bool supportsARIAOwns() const override { return boolAttributeValue(AXPropertyName::SupportsARIAOwns); }
     String popupValue() const override { return stringAttributeValue(AXPropertyName::PopupValue); }
     bool pressedIsPresent() const override;
-    bool ariaIsMultiline() const override { return boolAttributeValue(AXPropertyName::ARIAIsMultiline); }
     String invalidStatus() const override { return stringAttributeValue(AXPropertyName::InvalidStatus); }
     bool supportsExpanded() const override { return boolAttributeValue(AXPropertyName::SupportsExpanded); }
     AccessibilitySortDirection sortDirection() const override { return static_cast<AccessibilitySortDirection>(intAttributeValue(AXPropertyName::SortDirection)); }
@@ -264,7 +261,6 @@ private:
     String accessKey() const override { return stringAttributeValue(AXPropertyName::AccessKey); }
     String localizedActionVerb() const override { return stringAttributeValue(AXPropertyName::LocalizedActionVerb); }
     String actionVerb() const override { return stringAttributeValue(AXPropertyName::ActionVerb); }
-    String readOnlyValue() const override { return stringAttributeValue(AXPropertyName::ReadOnlyValue); }
     String autoCompleteValue() const override { return stringAttributeValue(AXPropertyName::AutoCompleteValue); }
     bool isMathElement() const override { return boolAttributeValue(AXPropertyName::IsMathElement); }
     bool isMathFraction() const override { return boolAttributeValue(AXPropertyName::IsMathFraction); }
@@ -334,10 +330,6 @@ private:
     Vector<String> performTextOperation(const AccessibilityTextOperation&) override;
     void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) override;
 
-    // Attributes retrieved from the root node only so that the data isn't duplicated on each node.
-    PAL::SessionID sessionID() const override;
-    String documentURI() const override;
-    String documentEncoding() const override;
 #if PLATFORM(COCOA)
     bool preventKeyboardDOMEventDispatch() const override { return boolAttributeValue(AXPropertyName::PreventKeyboardDOMEventDispatch); }
 #endif

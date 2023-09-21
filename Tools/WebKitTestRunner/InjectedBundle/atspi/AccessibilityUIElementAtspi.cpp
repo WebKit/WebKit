@@ -1506,24 +1506,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
     return JSStringCreateWithCharacters(nullptr, 0);
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
-{
-    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Document))
-        return JSStringCreateWithCharacters(nullptr, 0);
-
-    m_element->updateBackingStore();
-    return OpaqueJSString::tryCreate(m_element->documentAttribute("Encoding"_s)).leakRef();
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
-{
-    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Document))
-        return JSStringCreateWithCharacters(nullptr, 0);
-
-    m_element->updateBackingStore();
-    return OpaqueJSString::tryCreate(m_element->documentAttribute("URI"_s)).leakRef();
-}
-
 JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
 {
     if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Hyperlink))
