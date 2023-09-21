@@ -6685,3 +6685,5 @@ imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-l
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-003.html [ Pass Failure ]
 
 webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
+
+webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]
