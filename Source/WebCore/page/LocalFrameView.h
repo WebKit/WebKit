@@ -736,6 +736,14 @@ public:
     ScrollbarGutter scrollbarGutterStyle() const final;
     ScrollbarWidth scrollbarWidthStyle() const final;
 
+    void updateScrollAnchoringElement() final;
+    void updateScrollPositionForScrollAnchoringController() final;
+    void invalidateScrollAnchoringElement();
+
+    void dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
+    void queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
+    void updateScrollAnchoringPositionForScrollableAreas();
+
 private:
     explicit LocalFrameView(LocalFrame&);
 
@@ -1017,6 +1025,7 @@ private:
     ScrollPinningBehavior m_scrollPinningBehavior { ScrollPinningBehavior::DoNotPin };
     SelectionRevealMode m_selectionRevealModeForFocusedElement { SelectionRevealMode::DoNotReveal };
     std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
+    ScrollableAreaSet m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate;
 
     bool m_shouldUpdateWhileOffscreen { true };
     bool m_overflowStatusDirty { true };

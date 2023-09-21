@@ -25,30 +25,96 @@
 
 #include "config.h"
 #include "ScrollAnchoringController.h"
+#include "ElementIterator.h"
+#include "HTMLHtmlElement.h"
+#include "RenderBox.h"
+#include "TypedElementDescendantIteratorInlines.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
 void ScrollAnchoringController::invalidateAnchorElement()
 {
-    m_anchorElement = nullptr;
-    m_lastPositionForAnchorElement = FloatPoint();
+    if (!m_midUpdatingScrollPositionForAnchorElement) {
+        m_anchorElement = nullptr;
+        m_lastOffsetForAnchorElement = { };
+        m_isQueuedForScrollPositionUpdate = false;
+        m_frameView.queueScrollableAreaForScrollAnchoringUpdate(m_frameView);
+    }
 }
 
-void ScrollAnchoringController::selectAnchorElement()
+ScrollOffset ScrollAnchoringController::computeOffset(RenderBox& candidate)
 {
-    // TODO: implement
-    // perform Anchor Element Selection algorithm on dom elements within frame view's viewable region
-    // Firefox appears to only iterate through frame tree under the current frame (unclear if
-    // looking through frame tree is sufficient)
-    // unclear to me where to call this from 
+    // TODO: investigate this for zoom/rtl
+    // make sure this works for subscrollers
+    return ScrollOffset(FloatPoint(candidate.absoluteBoundingBoxRect().location() - m_frameView.layoutViewportRect().location()));
 }
 
-void ScrollAnchoringController::updateScrollPosition()
+void ScrollAnchoringController::chooseAnchorElement()
 {
-    // TODO: implement
-    // calling m_frame.scrollTo with different between m_anchorElement current position
-    // and m_lastPositionForAnchorElement
-    // should be called after suppression window (maybe Page::doAfterUpdateRendering())
+    // TODO: fully implement anchor node selection algorithm in spec
+    // (specifically excluded subtrees and priority nodes)
+    // https://drafts.csswg.org/css-scroll-anchoring/#anchor-node-selection
+
+    auto* document = m_frameView.frame().document();
+    if (!document)
+        return;
+
+    Element* candidateAnchor = nullptr;
+    auto layoutViewport = m_frameView.layoutViewportRect();
+
+    // TODO: iterate from the current scroller not document root
+    for (auto& element : descendantsOfType<Element>(document->rootNode())) {
+        if (auto renderer = element.renderBox()) {
+            if (renderer->style().overflowAnchor() == OverflowAnchor::None || &element == document->bodyOrFrameset() || is<HTMLHtmlElement>(&element))
+                continue;
+            auto boxRect = renderer->absoluteBoundingBoxRect();
+            if (layoutViewport.intersects(boxRect))
+                candidateAnchor = &element;
+            if (layoutViewport.contains(boxRect))
+                break;
+        }
+    }
+    if (!candidateAnchor)
+        return;
+    m_anchorElement = candidateAnchor;
+    m_lastOffsetForAnchorElement = computeOffset(*m_anchorElement->renderBox());
+}
+
+void ScrollAnchoringController::updateAnchorElement()
+{
+    // TODO: check owning scroller scroll position
+    if (frameView().scrollPosition().isZero() || m_isQueuedForScrollPositionUpdate)
+        return;
+
+    if (!m_anchorElement || !m_anchorElement->renderBox()) {
+        chooseAnchorElement();
+        if (!m_anchorElement)
+            return;
+    }
+    m_isQueuedForScrollPositionUpdate = true;
+    m_frameView.queueScrollableAreaForScrollAnchoringUpdate(m_frameView);
+}
+
+void ScrollAnchoringController::adjustScrollPositionForAnchoring()
+{
+    SetForScope midUpdatingScrollPositionForAnchorElement(m_midUpdatingScrollPositionForAnchorElement, true);
+    auto queued = std::exchange(m_isQueuedForScrollPositionUpdate, false);
+    if (!m_anchorElement || !queued)
+        return;
+    auto renderBox = m_anchorElement->renderBox();
+    if (!renderBox) {
+        invalidateAnchorElement();
+        return;
+    }
+    FloatSize adjustment = computeOffset(*renderBox) - m_lastOffsetForAnchorElement;
+    if (!adjustment.isZero()) {
+        auto newScrollPosition = frameView().scrollPosition() + IntPoint(adjustment.width(), adjustment.height());
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollAnchoringController::adjustScrollPositionForAnchoring() for frame: " << m_frameView << " adjusting from: " << frameView().scrollPosition() << " to: " << newScrollPosition);
+        auto options = ScrollPositionChangeOptions::createProgrammatic();
+        options.originalScrollDelta = adjustment;
+        m_frameView.setScrollPosition(newScrollPosition, options);
+    }
 }
 
 } // namespace WebCore

@@ -2351,6 +2351,11 @@ void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions)
     if (layoutOptions.contains(LayoutOptions::RunPostLayoutTasksSynchronously) && view())
         view()->flushAnyPendingPostLayoutTasks();
 
+    if (layoutOptions.contains(LayoutOptions::IgnorePendingStylesheets)) {
+        if (RefPtr frameView = view())
+            frameView->updateScrollAnchoringPositionForScrollableAreas();
+    }
+
     m_ignorePendingStylesheets = oldIgnore;
 }
 
@@ -4634,6 +4639,9 @@ void Document::runScrollSteps()
         }
         if (scrollAnimationsInProgress)
             page()->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+
+        frameView->updateScrollAnchoringElement();
+        frameView->updateScrollAnchoringPositionForScrollableAreas();
     }
 
     // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/66.

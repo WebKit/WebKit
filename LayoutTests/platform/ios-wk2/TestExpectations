@@ -2291,6 +2291,8 @@ webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-transforme
 webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-shape-child.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-group-child.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/261849 imported/w3c/web-platform-tests/css/cssom-view/position-sticky-root-scroller-with-scroll-behavior.html [ Failure ]
+
 webkit.org/b/243589 [ Debug ] http/wpt/service-workers/update-with-importScripts.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/credentials.https.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Crash ]

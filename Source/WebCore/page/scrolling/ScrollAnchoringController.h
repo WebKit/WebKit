@@ -32,21 +32,26 @@ namespace WebCore {
 
 class Element;
 
-class ScrollAnchoringController final {
+class ScrollAnchoringController final : public CanMakeWeakPtr<ScrollAnchoringController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ScrollAnchoringController(LocalFrameView& frameView)
         : m_frameView(frameView)
     { }
     void invalidateAnchorElement();
-    void updateScrollPosition();
+    void adjustScrollPositionForAnchoring();
     void selectAnchorElement();
+    void chooseAnchorElement();
+    void updateAnchorElement();
     LocalFrameView& frameView() { return m_frameView; }
 
 private:
     LocalFrameView& m_frameView;
-    CheckedPtr<Element> m_anchorElement;
-    FloatPoint m_lastPositionForAnchorElement;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_anchorElement;
+    ScrollOffset computeOffset(RenderBox& candidate);
+    ScrollOffset m_lastOffsetForAnchorElement;
+    bool m_midUpdatingScrollPositionForAnchorElement { false };
+    bool m_isQueuedForScrollPositionUpdate { false };
 };
 
 } // namespace WebCore
