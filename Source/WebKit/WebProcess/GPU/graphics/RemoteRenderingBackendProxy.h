@@ -155,9 +155,9 @@ private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
     template<typename T, typename U, typename V> auto send(T&& message, ObjectIdentifierGeneric<U, V>);
-    template<typename T> auto send(T&& message) { return send(WTFMove(message), renderingBackendIdentifier()); }
+    template<typename T> auto send(T&& message) { return send(std::forward<T>(message), renderingBackendIdentifier()); }
     template<typename T, typename U, typename V> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V>);
-    template<typename T> auto sendSync(T&& message) { return sendSync(WTFMove(message), renderingBackendIdentifier()); }
+    template<typename T> auto sendSync(T&& message) { return sendSync(std::forward<T>(message), renderingBackendIdentifier()); }
 
     // Connection::Client
     void didClose(IPC::Connection&) final;

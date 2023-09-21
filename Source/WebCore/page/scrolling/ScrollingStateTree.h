@@ -45,6 +45,7 @@ class ScrollingStateTree {
     friend class ScrollingStateNode;
 public:
     WEBCORE_EXPORT ScrollingStateTree(AsyncScrollingCoordinator* = nullptr);
+    WEBCORE_EXPORT ScrollingStateTree(ScrollingStateTree&&);
     WEBCORE_EXPORT ~ScrollingStateTree();
 
     ScrollingStateFrameScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
@@ -59,6 +60,8 @@ public:
 
     // Copies the current tree state and clears the changed properties mask in the original.
     WEBCORE_EXPORT std::unique_ptr<ScrollingStateTree> commit(LayerRepresentation::Type preferredLayerRepresentation);
+
+    WEBCORE_EXPORT void attachDeserializedNodes();
 
     WEBCORE_EXPORT void setHasChangedProperties(bool = true);
     bool hasChangedProperties() const { return m_hasChangedProperties; }
@@ -77,7 +80,10 @@ public:
 
     void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
 
-    void scrollingNodeAdded() { ++m_scrollingNodeCount; }
+    void scrollingNodeAdded()
+    {
+        ++m_scrollingNodeCount;
+    }
     void scrollingNodeRemoved()
     {
         ASSERT(m_scrollingNodeCount);

@@ -74,7 +74,6 @@
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
-#import <pal/SessionID.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -205,14 +204,6 @@ using namespace WebCore;
 
 #ifndef NSAccessibilityIsMultiSelectableAttribute
 #define NSAccessibilityIsMultiSelectableAttribute @"AXIsMultiSelectable"
-#endif
-
-#ifndef NSAccessibilityDocumentURIAttribute
-#define NSAccessibilityDocumentURIAttribute @"AXDocumentURI"
-#endif
-
-#ifndef NSAccessibilityDocumentEncodingAttribute
-#define NSAccessibilityDocumentEncodingAttribute @"AXDocumentEncoding"
 #endif
 
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
@@ -433,10 +424,6 @@ using namespace WebCore;
 
 #ifndef NSAccessibilityCaretBrowsingEnabledAttribute
 #define NSAccessibilityCaretBrowsingEnabledAttribute @"AXCaretBrowsingEnabled"
-#endif
-
-#ifndef NSAccessibilityWebSessionIDAttribute
-#define NSAccessibilityWebSessionIDAttribute @"AXWebSessionID"
 #endif
 
 #ifndef NSAccessibilitFocusableAncestorAttribute
@@ -968,7 +955,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityURLAttribute];
         [tempArray addObject:NSAccessibilityCaretBrowsingEnabledAttribute];
         [tempArray addObject:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute];
-        [tempArray addObject:NSAccessibilityWebSessionIDAttribute];
         return tempArray;
     }();
     static NeverDestroyed textAttrs = [] {
@@ -1565,7 +1551,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (backingObject->isModel()) {
             auto modelChildren = backingObject->modelElementChildren();
             if (modelChildren.size()) {
-                return createNSArray(modelChildren, [] (auto& child) -> id {
+                return createNSArray(WTFMove(modelChildren), [] (auto&& child) -> id {
                     return child.get();
                 }).autorelease();
             }
@@ -1620,8 +1606,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return [NSNumber numberWithBool:backingObject->preventKeyboardDOMEventDispatch()];
         if ([attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
             return [NSNumber numberWithBool:backingObject->caretBrowsingEnabled()];
-        if ([attributeName isEqualToString:NSAccessibilityWebSessionIDAttribute])
-            return @(backingObject->sessionID().toUInt64());
     }
 
     if (backingObject->isTextControl()) {
@@ -1733,8 +1717,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString: NSAccessibilityHelpAttribute])
         return [self baseAccessibilityHelpText];
 
-    if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute])
-        return [NSNumber numberWithBool: backingObject->isFocused()];
+    if ([attributeName isEqualToString:NSAccessibilityFocusedAttribute])
+        return @(backingObject->isFocused());
 
     if ([attributeName isEqualToString: NSAccessibilityEnabledAttribute])
         return [NSNumber numberWithBool: backingObject->isEnabled()];
@@ -2179,12 +2163,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"AXARIAPressedIsPresent"])
         return [NSNumber numberWithBool:backingObject->pressedIsPresent()];
 
-    if ([attributeName isEqualToString:@"AXIsMultiline"])
-        return [NSNumber numberWithBool:backingObject->ariaIsMultiline()];
-
-    if ([attributeName isEqualToString:@"AXReadOnlyValue"])
-        return backingObject->readOnlyValue();
-
     if ([attributeName isEqualToString:AXHasDocumentRoleAncestorAttribute])
         return [NSNumber numberWithBool:backingObject->hasDocumentRoleAncestor()];
 
@@ -2223,13 +2201,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // Multi-selectable
     if ([attributeName isEqualToString:NSAccessibilityIsMultiSelectableAttribute])
         return [NSNumber numberWithBool:backingObject->isMultiSelectable()];
-
-    // Document attributes
-    if ([attributeName isEqualToString:NSAccessibilityDocumentURIAttribute])
-        return backingObject->documentURI();
-
-    if ([attributeName isEqualToString:NSAccessibilityDocumentEncodingAttribute])
-        return backingObject->documentEncoding();
 
     if ([attributeName isEqualToString:NSAccessibilityFocusableAncestorAttribute]) {
         AXCoreObject* object = backingObject->focusableAncestor();
@@ -2873,7 +2844,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)showNodeForTextMarker:(AXTextMarkerRef)textMarker
 {
     auto visiblePosition = visiblePositionForTextMarker(self.axBackingObject->axObjectCache(), textMarker);
-    Node* node = visiblePosition.deepEquivalent().deprecatedNode();
+    auto node = visiblePosition.deepEquivalent().protectedDeprecatedNode();
     if (!node)
         return;
     node->showNode();
@@ -2883,7 +2854,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)showNodeTreeForTextMarker:(AXTextMarkerRef)textMarker
 {
     auto visiblePosition = visiblePositionForTextMarker(self.axBackingObject->axObjectCache(), textMarker);
-    Node* node = visiblePosition.deepEquivalent().deprecatedNode();
+    auto node = visiblePosition.deepEquivalent().protectedDeprecatedNode();
     if (!node)
         return;
     node->showTreeForThis();
@@ -3121,8 +3092,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto ranges = backingObject->findTextRanges(criteria);
             if (ranges.isEmpty())
                 return nil;
-            return createNSArray(ranges, [&] (auto& range) {
-                return (id)textMarkerRangeFromRange(backingObject->axObjectCache(), range);
+            return createNSArray(WTFMove(ranges), [&] (SimpleRange&& range) {
+                return (id)textMarkerRangeFromRange(backingObject->axObjectCache(), WTFMove(range));
             }).autorelease();
         });
     }
@@ -3712,7 +3683,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             NSArray *children = nil;
 #if ENABLE(MODEL_ELEMENT)
             if (backingObject->isModel()) {
-                children = createNSArray(backingObject->modelElementChildren(), [] (auto& child) -> id {
+                children = createNSArray(backingObject->modelElementChildren(), [] (auto&& child) -> id {
                     return child.get();
                 }).autorelease();
             } else

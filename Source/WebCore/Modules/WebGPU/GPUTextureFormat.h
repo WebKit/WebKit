@@ -62,6 +62,7 @@ enum class GPUTextureFormat : uint8_t {
     Bgra8unormSRGB,
     // Packed 32-bit formats
     Rgb9e5ufloat,
+    Rgb10a2uint,
     Rgb10a2unorm,
     Rg11b10ufloat,
 
@@ -203,6 +204,8 @@ inline WebGPU::TextureFormat convertToBacking(GPUTextureFormat textureFormat)
         return WebGPU::TextureFormat::Bgra8unormSRGB;
     case GPUTextureFormat::Rgb9e5ufloat:
         return WebGPU::TextureFormat::Rgb9e5ufloat;
+    case GPUTextureFormat::Rgb10a2uint:
+        return WebGPU::TextureFormat::Rgb10a2uint;
     case GPUTextureFormat::Rgb10a2unorm:
         return WebGPU::TextureFormat::Rgb10a2unorm;
     case GPUTextureFormat::Rg11b10ufloat:

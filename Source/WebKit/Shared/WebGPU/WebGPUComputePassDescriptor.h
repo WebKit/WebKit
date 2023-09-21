@@ -34,7 +34,7 @@
 namespace WebKit::WebGPU {
 
 struct ComputePassDescriptor : public ObjectDescriptorBase {
-    ComputePassTimestampWrites timestampWrites;
+    std::optional<ComputePassTimestampWrites> timestampWrites;
 };
 
 } // namespace WebKit::WebGPU

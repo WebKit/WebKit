@@ -66,7 +66,7 @@ public:
     HashMap<String, bool> notificationPermissions();
 
     void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
-    void show(const WebsiteDataStore&, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
+    bool showPersistent(const WebsiteDataStore&, IPC::Connection*, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
     void cancel(WebPageProxy*, const WTF::UUID& pageNotificationID);
     void clearNotifications(WebPageProxy*);
     void clearNotifications(WebPageProxy*, const Vector<WTF::UUID>& pageNotificationIDs);
@@ -92,7 +92,7 @@ private:
     void refWebContextSupplement() override;
     void derefWebContextSupplement() override;
 
-    void showImpl(WebPageProxy*, Ref<WebNotification>&&, RefPtr<WebCore::NotificationResources>&&);
+    bool showImpl(WebPageProxy*, Ref<WebNotification>&&, RefPtr<WebCore::NotificationResources>&&);
 
     std::unique_ptr<API::NotificationProvider> m_provider;
 

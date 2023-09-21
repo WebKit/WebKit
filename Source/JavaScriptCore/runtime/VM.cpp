@@ -1665,11 +1665,42 @@ void VM::removeDebugger(Debugger& debugger)
     m_debuggers.remove(&debugger);
 }
 
-void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions> options)
 {
     JSLockHolder locker { *this };
-    if (!deferredWorkTimer->hasAnyPendingWork())
-        heap.sweeper().doWorkUntil(*this, deadline);
+    if (deferredWorkTimer->hasAnyPendingWork())
+        return;
+
+    SetForScope insideOpportunisticTaskScope { heap.m_isInOpportunisticTask, true };
+    [&] {
+        if (options.contains(SchedulerOptions::HasImminentlyScheduledWork))
+            return;
+
+        static constexpr auto minimumDelayBeforeOpportunisticFullGC = 30_ms;
+        static constexpr auto minimumDelayBeforeOpportunisticEdenGC = 10_ms;
+        static constexpr auto extraDurationToAvoidExceedingDeadlineDuringFullGC = 2_ms;
+        static constexpr auto extraDurationToAvoidExceedingDeadlineDuringEdenGC = 1_ms;
+
+        auto secondsSinceEpoch = ApproximateTime::now().secondsSinceEpoch();
+        auto timeSinceFinishingLastFullGC = secondsSinceEpoch - heap.m_lastFullGCEndTime.secondsSinceEpoch();
+        auto remainingTime = deadline.secondsSinceEpoch() - secondsSinceEpoch;
+        if (timeSinceFinishingLastFullGC > minimumDelayBeforeOpportunisticFullGC && heap.m_shouldDoOpportunisticFullCollection && heap.m_totalBytesVisitedAfterLastFullCollect) {
+            auto estimatedGCDuration = (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect;
+            if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringFullGC < remainingTime) {
+                heap.collectSync(CollectionScope::Full);
+                return;
+            }
+        }
+
+        auto timeSinceLastGC = secondsSinceEpoch - std::max(heap.m_lastGCEndTime, heap.m_currentGCStartTime).secondsSinceEpoch();
+        if (timeSinceLastGC > minimumDelayBeforeOpportunisticEdenGC && heap.m_bytesAllocatedThisCycle && heap.m_bytesAllocatedBeforeLastEdenCollect) {
+            auto estimatedGCDuration = (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect;
+            if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime)
+                heap.collectSync(CollectionScope::Eden);
+        }
+    }();
+
+    heap.sweeper().doWorkUntil(*this, deadline);
 }
 
 void QueuedTask::run()

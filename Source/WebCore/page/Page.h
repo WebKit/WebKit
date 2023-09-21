@@ -49,6 +49,7 @@
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Assertions.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -114,6 +115,7 @@ class FormData;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
+class HistoryItemClient;
 class OpportunisticTaskScheduler;
 class ImageAnalysisQueue;
 class ImageOverlayController;
@@ -277,7 +279,7 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<Render
 };
 
 
-class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page> {
+class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page>, public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(Page);
     WTF_MAKE_FAST_ALLOCATED;
     friend class SettingsBase;
@@ -478,7 +480,8 @@ public:
     void didStartProvisionalLoad();
     void didCommitLoad();
     void didFinishLoad();
-    void didFirstMeaningfulPaint();
+
+    void willChangeLocationInCompletelyLoadedSubframe();
 
     bool delegatesScaling() const { return m_delegatesScaling; }
     WEBCORE_EXPORT void setDelegatesScaling(bool);
@@ -1044,6 +1047,7 @@ public:
 #endif
 
     BadgeClient& badgeClient() { return m_badgeClient.get(); }
+    HistoryItemClient& historyItemClient() { return m_historyItemClient.get(); }
 
     void willBeginScrolling();
     void didFinishScrolling();
@@ -1055,7 +1059,12 @@ public:
     void opportunisticallyRunIdleCallbacks();
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
 
-    bool isWaitingForFirstMeaningfulPaint() const { return m_isWaitingForFirstMeaningfulPaint; }
+    bool isWaitingForLoadToFinish() const { return m_isWaitingForLoadToFinish; }
+
+#if PLATFORM(IOS_FAMILY)
+    WEBCORE_EXPORT void setSceneIdentifier(String&&);
+#endif
+    WEBCORE_EXPORT String sceneIdentifier() const;
 
 private:
     struct Navigation {
@@ -1085,7 +1094,7 @@ private:
     void playbackControlsManagerUpdateTimerFired();
 #endif
 
-    void handleLowModePowerChange(bool);
+    void handleLowPowerModeChange(bool);
     void handleThermalMitigationChange(bool);
 
     enum class TimerThrottlingState { Disabled, Enabled, EnabledIncreasing };
@@ -1413,7 +1422,7 @@ private:
     std::unique_ptr<AttachmentElementClient> m_attachmentElementClient;
 #endif
 
-    bool m_isWaitingForFirstMeaningfulPaint { false };
+    bool m_isWaitingForLoadToFinish { false };
     Ref<OpportunisticTaskScheduler> m_opportunisticTaskScheduler;
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -1428,8 +1437,13 @@ private:
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
 
     Ref<BadgeClient> m_badgeClient;
+    Ref<HistoryItemClient> m_historyItemClient;
 
     HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
+
+#if PLATFORM(IOS_FAMILY)
+    String m_sceneIdentifier;
+#endif
 };
 
 inline PageGroup& Page::group()

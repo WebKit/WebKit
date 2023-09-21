@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (0,-14.56) size 52x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGHiddenContainer {defs} at (0,-14.56) size 51.30x18.63
-layer at (0,-14.56) size 46x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (0,-14.41) size 51x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (0,-14.41) size 50.66x18.41
+layer at (0,-14.41) size 45x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 46x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 46x19
-      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 7 width 45.89: "Failure"
-layer at (0,-14.56) size 51x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGText {text} at (0,0) size 52x19 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 52x19
-      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 7 width 51.29: "Success"
-layer at (20,5.44) size 51x19
-  RenderSVGText {text} at (20,5) size 52x20 contains 1 chunk(s)
-    RenderSVGInline {tref} at (0,0) size 52x19
-      RenderSVGInlineText {#text} at (0,0) size 52x19
-        chunk 1 text run 1 at (20.00,20.00) startOffset 0 endOffset 7 width 51.29: "Success"
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 7 width 45.32: "Failure"
+layer at (0,-14.41) size 51x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 51x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 51x19
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 7 width 50.66: "Success"
+layer at (20,5.59) size 51x18
+  RenderSVGText {text} at (20,5) size 51x19 contains 1 chunk(s)
+    RenderSVGInline {tref} at (0,0) size 51x19
+      RenderSVGInlineText {#text} at (0,0) size 51x19
+        chunk 1 text run 1 at (20.00,20.00) startOffset 0 endOffset 7 width 50.66: "Success"
     RenderSVGInlineText {#text} at (0,0) size 0x0

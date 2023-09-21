@@ -573,18 +573,9 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     if (!scriptExecutionContext)
         return nullptr;
 
-    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !scriptExecutionContext->settingsValues().webGLEnabled)
-        return nullptr;
-
-    GraphicsClient* graphicsClient = canvas.graphicsClient();
+    GraphicsClient* graphicsClient = scriptExecutionContext->graphicsClient();
 
     auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas);
-
-    if (!scriptExecutionContext->settingsValues().webGLEnabled) {
-        canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
-            Event::CanBubble::No, Event::IsCancelable::Yes, "Web page was not allowed to create a WebGL context."_s));
-        return nullptr;
-    }
 
     if (scriptExecutionContext->settingsValues().forceWebGLUsesLowPower) {
         if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
@@ -645,18 +636,15 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
     : GPUBasedCanvasRenderingContext(canvas)
     , m_generatedImageCache(4)
     , m_attributes(attributes)
-    , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
+    , m_numGLErrorsToConsoleAllowed(canvas.scriptExecutionContext()->settingsValues().webGLErrorsToConsoleEnabled ? maxGLErrorsAllowedToConsole : 0)
     , m_checkForContextLossHandlingTimer(*this, &WebGLRenderingContextBase::checkForContextLossHandling)
 #if ENABLE(WEBXR)
     , m_isXRCompatible(attributes.xrCompatible)
 #endif
 {
     registerWithWebGLStateTracker();
-    if (auto* canvas = htmlCanvas()) {
+    if (htmlCanvas())
         m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
-        if (Page* page = canvas->document().page())
-            m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
-    }
 }
 
 WebGLCanvas WebGLRenderingContextBase::canvas()
@@ -757,7 +745,6 @@ void WebGLRenderingContextBase::initializeContextState()
     m_stencilFuncMask = 0xFFFFFFFF;
     m_stencilFuncMaskBack = 0xFFFFFFFF;
     m_layerCleared = false;
-    m_numGLErrorsToConsoleAllowed = maxGLErrorsAllowedToConsole;
 
     m_rasterizerDiscardEnabled = false;
 
@@ -5309,13 +5296,17 @@ bool WebGLRenderingContextBase::validateStencilFunc(const char* functionName, GC
 
 bool WebGLRenderingContextBase::shouldPrintToConsole() const
 {
-    return m_synthesizedErrorsToConsole && m_numGLErrorsToConsoleAllowed;
+    return m_numGLErrorsToConsoleAllowed;
 }
 
 // Frequent call sites should use above condition before constructing the message for the printToConsole().
 void WebGLRenderingContextBase::printToConsole(MessageLevel level, String&& message)
 {
     if (!shouldPrintToConsole())
+        return;
+
+    auto* scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext)
         return;
 
     std::unique_ptr<Inspector::ConsoleMessage> consoleMessage;
@@ -5327,13 +5318,11 @@ void WebGLRenderingContextBase::printToConsole(MessageLevel level, String&& mess
     } else
         consoleMessage = makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, WTFMove(message));
 
-    auto* canvas = htmlCanvas();
-    if (canvas)
-        canvas->document().addConsoleMessage(WTFMove(consoleMessage));
+    scriptExecutionContext->addConsoleMessage(WTFMove(consoleMessage));
 
     --m_numGLErrorsToConsoleAllowed;
-    if (m_numGLErrorsToConsoleAllowed == 1)
-        printToConsole(MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_s);
+    if (!m_numGLErrorsToConsoleAllowed)
+        scriptExecutionContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_s));
 }
 
 bool WebGLRenderingContextBase::validateFramebufferTarget(GCGLenum target)
@@ -5647,7 +5636,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!scriptExecutionContext->settingsValues().webGLEnabled)
         return;
 
-    GraphicsClient* graphicsClient = canvasBase().graphicsClient();
+    GraphicsClient* graphicsClient = scriptExecutionContext->graphicsClient();
     if (!graphicsClient)
         return;
 

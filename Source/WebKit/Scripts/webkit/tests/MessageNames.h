@@ -203,6 +203,7 @@ enum class MessageName : uint16_t {
     TestWithoutAttributes_TestMultipleAttributes,
     WrappedAsyncMessageForTesting,
     Count,
+    Invalid = Count,
     Last = Count - 1
 };
 

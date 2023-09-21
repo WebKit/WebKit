@@ -54,7 +54,7 @@ PositionIterator::operator Position() const
         return atStartOfNode() ? positionBeforeNode(m_anchorNode.get()) : positionAfterNode(m_anchorNode.get());
     if (m_anchorNode->hasChildNodes())
         return lastPositionInOrAfterNode(m_anchorNode.get());
-    return makeDeprecatedLegacyPosition(m_anchorNode.get(), m_offsetInAnchor);
+    return makeDeprecatedLegacyPosition(m_anchorNode.copyRef(), m_offsetInAnchor);
 }
 
 void PositionIterator::increment()

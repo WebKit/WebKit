@@ -48,13 +48,13 @@ bool MessageSender::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, Asyn
     return connection->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(replyHandler), sendOptions) == Error::NoError;
 }
 
-bool MessageSender::performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&)
+bool MessageSender::performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&) const
 {
     // Senders that use sendWithoutUsingIPCConnection(T&& message) must also override this.
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool MessageSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Decoder*)>)
+bool MessageSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Decoder*)>&&) const
 {
     // Senders that use sendWithAsyncReplyWithoutUsingIPCConnection(T&& message, C&& completionHandler) must also override this.
     RELEASE_ASSERT_NOT_REACHED();

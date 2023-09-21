@@ -86,6 +86,7 @@ struct LineLayoutResult {
     };
     IsFirstLast isFirstLast { };
     // Misc
+    bool endsWithHyphen { false };
     size_t nonSpanningInlineLevelBoxCount { 0 };
     InlineLayoutUnit trimmedTrailingWhitespaceWidth { 0.f }; // only used for line-break: after-white-space currently
     std::optional<InlineLayoutUnit> hintForNextLineTopToAvoidIntrusiveFloat { }; // This is only used for cases when intrusive floats prevent any content placement at current vertical position.

@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "TextRun.h"
 #include "TextRunHash.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -43,7 +44,7 @@ namespace InlineDisplay {
 struct Box;
 }
 
-class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeWeakPtr<GlyphDisplayListCacheEntry> {
+class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     friend struct GlyphDisplayListCacheKeyTranslator;
     friend void add(Hasher&, const GlyphDisplayListCacheEntry&);
@@ -90,8 +91,8 @@ inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
 }
 
 struct GlyphDisplayListCacheEntryHash {
-    static unsigned hash(GlyphDisplayListCacheEntry* entry) { return computeHash(*entry); }
-    static bool equal(GlyphDisplayListCacheEntry* a, GlyphDisplayListCacheEntry* b) { return a == b; }
+    static unsigned hash(const CheckedPtr<GlyphDisplayListCacheEntry>& entry) { return computeHash(*entry); }
+    static bool equal(const CheckedPtr<GlyphDisplayListCacheEntry>& a, const CheckedPtr<GlyphDisplayListCacheEntry>& b) { return a.get() == b.get(); }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
@@ -123,13 +124,13 @@ private:
     void remove(const void* run);
 
     HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
-    HashSet<GlyphDisplayListCacheEntry*> m_entries;
+    HashSet<CheckedPtr<GlyphDisplayListCacheEntry>> m_entries;
 };
 
 } // namespace WebCore
 
 namespace WTF {
 
-template<> struct DefaultHash<WebCore::GlyphDisplayListCacheEntry*> : WebCore::GlyphDisplayListCacheEntryHash { };
+template<> struct DefaultHash<CheckedPtr<WebCore::GlyphDisplayListCacheEntry>> : WebCore::GlyphDisplayListCacheEntryHash { };
 
 } // namespace WTF

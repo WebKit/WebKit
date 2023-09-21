@@ -19,8 +19,23 @@
 
 #pragma once
 
+#include <array>
+#include <cstdint>
+#include <optional>
+#include <span>
+#include <wtf/Vector.h>
+
 namespace WebCore {
+namespace GCrypt {
+namespace RFC7748 {
 
-std::optional<Vector<uint8_t>> X25519(const Vector<uint8_t>& kArg, const Vector<uint8_t>& uArg);
+static constexpr std::array<uint8_t, 32> c_X25519BasePointU {
+    0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
 
-} // namespace WebCore
+std::optional<Vector<uint8_t>> X25519(const std::span<const uint8_t>& kArg, const std::span<const uint8_t>& uArg);
+
+} } } // namespace WebCore::GCrypt::RFC7748

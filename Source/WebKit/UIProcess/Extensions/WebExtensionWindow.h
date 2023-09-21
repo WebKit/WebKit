@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "WebExtensionWindowIdentifier.h"
+#include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakObjCPtr.h>
 
@@ -41,6 +42,7 @@ namespace WebKit {
 
 class WebExtensionContext;
 class WebExtensionTab;
+struct WebExtensionTabQueryParameters;
 struct WebExtensionWindowParameters;
 
 class WebExtensionWindow : public RefCounted<WebExtensionWindow> {
@@ -88,6 +90,9 @@ public:
 
     bool operator==(const WebExtensionWindow&) const;
 
+    bool matches(OptionSet<TypeFilter>) const;
+    bool matches(const WebExtensionTabQueryParameters&, std::optional<WebPageProxyIdentifier> = std::nullopt) const;
+
     TabVector tabs() const;
     RefPtr<WebExtensionTab> activeTab() const;
 
@@ -97,6 +102,7 @@ public:
     void setState(State, CompletionHandler<void(Error)>&&);
 
     bool isFocused() const;
+    bool isFrontmost() const;
     void focus(CompletionHandler<void(Error)>&&);
 
     bool isPrivate() const;

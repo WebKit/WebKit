@@ -52,7 +52,8 @@ private:
     IntSize backendSize() const final;
     unsigned bytesPerRow() const final;
 
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) final;
+    RefPtr<NativeImage> copyNativeImage() final;
+    RefPtr<NativeImage> createNativeImageReference() final;
 
     void getPixelBuffer(const IntRect&, PixelBuffer&) final;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;

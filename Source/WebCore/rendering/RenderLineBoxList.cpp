@@ -222,7 +222,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
         return;
 
     PaintInfo info(paintInfo);
-    ListHashSet<RenderInline*> outlineObjects;
+    WeakListHashSet<RenderInline> outlineObjects;
     info.outlineObjects = &outlineObjects;
 
     // See if our root lines intersect with the dirty rect.  If so, then we paint
@@ -263,10 +263,10 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
     }
 
     if (info.phase == PaintPhase::Outline || info.phase == PaintPhase::SelfOutline || info.phase == PaintPhase::ChildOutlines) {
-        ListHashSet<RenderInline*>::iterator end = info.outlineObjects->end();
-        for (ListHashSet<RenderInline*>::iterator it = info.outlineObjects->begin(); it != end; ++it) {
-            RenderInline* flow = *it;
-            flow->paintOutline(info, paintOffset);
+        auto end = info.outlineObjects->end();
+        for (auto it = info.outlineObjects->begin(); it != end; ++it) {
+            RenderInline& flow = *it;
+            flow.paintOutline(info, paintOffset);
         }
         info.outlineObjects->clear();
     }

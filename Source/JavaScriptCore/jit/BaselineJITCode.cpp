@@ -57,6 +57,15 @@ BaselineJITCode::~BaselineJITCode()
 {
 }
 
+BaselineJITData::BaselineJITData(unsigned size, CodeBlock* codeBlock)
+    : Base(size)
+    , m_globalObject(codeBlock->globalObject())
+    , m_stackOffset(codeBlock->stackPointerOffset() * sizeof(Register))
+{
+}
+
+
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

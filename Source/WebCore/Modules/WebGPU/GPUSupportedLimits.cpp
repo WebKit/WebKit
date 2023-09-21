@@ -53,6 +53,11 @@ uint32_t GPUSupportedLimits::maxBindGroups() const
     return m_backing->maxBindGroups();
 }
 
+uint32_t GPUSupportedLimits::maxBindGroupsPlusVertexBuffers() const
+{
+    return m_backing->maxBindGroupsPlusVertexBuffers();
+}
+
 uint32_t GPUSupportedLimits::maxBindingsPerBindGroup() const
 {
     return m_backing->maxBindingsPerBindGroup();

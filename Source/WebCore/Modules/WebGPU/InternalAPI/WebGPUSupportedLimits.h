@@ -39,6 +39,7 @@ public:
         uint32_t maxTextureDimension3D,
         uint32_t maxTextureArrayLayers,
         uint32_t maxBindGroups,
+        uint32_t maxBindGroupsPlusVertexBuffers,
         uint32_t maxBindingsPerBindGroup,
         uint32_t maxDynamicUniformBuffersPerPipelineLayout,
         uint32_t maxDynamicStorageBuffersPerPipelineLayout,
@@ -72,6 +73,7 @@ public:
             maxTextureDimension3D,
             maxTextureArrayLayers,
             maxBindGroups,
+            maxBindGroupsPlusVertexBuffers,
             maxBindingsPerBindGroup,
             maxDynamicUniformBuffersPerPipelineLayout,
             maxDynamicStorageBuffersPerPipelineLayout,
@@ -108,6 +110,7 @@ public:
             limits.maxTextureDimension3D(),
             limits.maxTextureArrayLayers(),
             limits.maxBindGroups(),
+            limits.maxBindGroupsPlusVertexBuffers(),
             limits.maxBindingsPerBindGroup(),
             limits.maxDynamicUniformBuffersPerPipelineLayout(),
             limits.maxDynamicStorageBuffersPerPipelineLayout(),
@@ -141,6 +144,7 @@ public:
     uint32_t maxTextureDimension3D() const { return m_maxTextureDimension3D; }
     uint32_t maxTextureArrayLayers() const { return m_maxTextureArrayLayers; }
     uint32_t maxBindGroups() const { return m_maxBindGroups; }
+    uint32_t maxBindGroupsPlusVertexBuffers() const { return m_maxBindGroupsPlusVertexBuffers; }
     uint32_t maxBindingsPerBindGroup() const { return m_maxBindingsPerBindGroup; }
     uint32_t maxDynamicUniformBuffersPerPipelineLayout() const { return m_maxDynamicUniformBuffersPerPipelineLayout; }
     uint32_t maxDynamicStorageBuffersPerPipelineLayout() const { return m_maxDynamicStorageBuffersPerPipelineLayout; }
@@ -175,6 +179,7 @@ private:
         uint32_t maxTextureDimension3D,
         uint32_t maxTextureArrayLayers,
         uint32_t maxBindGroups,
+        uint32_t maxBindGroupsPlusVertexBuffers,
         uint32_t maxBindingsPerBindGroup,
         uint32_t maxDynamicUniformBuffersPerPipelineLayout,
         uint32_t maxDynamicStorageBuffersPerPipelineLayout,
@@ -206,6 +211,7 @@ private:
             , m_maxTextureDimension3D(maxTextureDimension3D)
             , m_maxTextureArrayLayers(maxTextureArrayLayers)
             , m_maxBindGroups(maxBindGroups)
+            , m_maxBindGroupsPlusVertexBuffers(maxBindGroupsPlusVertexBuffers)
             , m_maxBindingsPerBindGroup(maxBindingsPerBindGroup)
             , m_maxDynamicUniformBuffersPerPipelineLayout(maxDynamicUniformBuffersPerPipelineLayout)
             , m_maxDynamicStorageBuffersPerPipelineLayout(maxDynamicStorageBuffersPerPipelineLayout)
@@ -245,6 +251,7 @@ private:
     uint32_t m_maxTextureDimension3D { 0 };
     uint32_t m_maxTextureArrayLayers { 0 };
     uint32_t m_maxBindGroups { 0 };
+    uint32_t m_maxBindGroupsPlusVertexBuffers { 0 };
     uint32_t m_maxBindingsPerBindGroup { 0 };
     uint32_t m_maxDynamicUniformBuffersPerPipelineLayout { 0 };
     uint32_t m_maxDynamicStorageBuffersPerPipelineLayout { 0 };

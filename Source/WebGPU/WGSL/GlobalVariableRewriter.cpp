@@ -621,6 +621,10 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             };
         case Types::Primitive::TextureExternal:
             return ExternalTextureBindingLayout { };
+        case Types::Primitive::AccessMode:
+        case Types::Primitive::TexelFormat:
+        case Types::Primitive::AddressSpace:
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }, [&](const Vector& vector) -> BindGroupLayoutEntry::BindingMember {
         auto* primitive = std::get_if<Primitive>(vector.element);
@@ -654,7 +658,6 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
     }, [&](const Texture& texture) -> BindGroupLayoutEntry::BindingMember {
         TextureViewDimension viewDimension;
         bool multisampled = false;
-        bool isStorageTexture = false;
         switch (texture.kind) {
         case Types::Texture::Kind::Texture1d:
             viewDimension = TextureViewDimension::OneDimensional;
@@ -678,29 +681,6 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             viewDimension = TextureViewDimension::TwoDimensional;
             multisampled = true;
             break;
-
-        case Types::Texture::Kind::TextureStorage1d:
-            isStorageTexture = true;
-            viewDimension = TextureViewDimension::OneDimensional;
-            break;
-        case Types::Texture::Kind::TextureStorage2d:
-            isStorageTexture = true;
-            viewDimension = TextureViewDimension::TwoDimensional;
-            break;
-        case Types::Texture::Kind::TextureStorage2dArray:
-            isStorageTexture = true;
-            viewDimension = TextureViewDimension::TwoDimensionalArray;
-            break;
-        case Types::Texture::Kind::TextureStorage3d:
-            isStorageTexture = true;
-            viewDimension = TextureViewDimension::ThreeDimensional;
-            break;
-        }
-
-        if (isStorageTexture) {
-            return StorageTextureBindingLayout {
-                .viewDimension = viewDimension
-            };
         }
 
         return TextureBindingLayout {
@@ -708,7 +688,29 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             .viewDimension = viewDimension,
             .multisampled = multisampled
         };
+    }, [&](const TextureStorage& texture) -> BindGroupLayoutEntry::BindingMember {
+        TextureViewDimension viewDimension;
+        switch (texture.kind) {
+        case Types::TextureStorage::Kind::TextureStorage1d:
+            viewDimension = TextureViewDimension::OneDimensional;
+            break;
+        case Types::TextureStorage::Kind::TextureStorage2d:
+            viewDimension = TextureViewDimension::TwoDimensional;
+            break;
+        case Types::TextureStorage::Kind::TextureStorage2dArray:
+            viewDimension = TextureViewDimension::TwoDimensionalArray;
+            break;
+        case Types::TextureStorage::Kind::TextureStorage3d:
+            viewDimension = TextureViewDimension::ThreeDimensional;
+            break;
+        }
+
+        return StorageTextureBindingLayout {
+            .viewDimension = viewDimension
+        };
     }, [&](const Reference&) -> BindGroupLayoutEntry::BindingMember {
+        RELEASE_ASSERT_NOT_REACHED();
+    }, [&](const Pointer&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Function&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
@@ -730,7 +732,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
         switch (variable.flavor()) {
         case AST::VariableFlavor::Override:
             usesOverride(variable);
-            break;
+            continue;
         case AST::VariableFlavor::Var:
         case AST::VariableFlavor::Let:
         case AST::VariableFlavor::Const:
@@ -793,6 +795,9 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
     case Types::Primitive::AbstractFloat:
     case Types::Primitive::Sampler:
     case Types::Primitive::TextureExternal:
+    case Types::Primitive::AccessMode:
+    case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         RELEASE_ASSERT_NOT_REACHED();
     }
     m_entryPointInformation->specializationConstants.add(variable.name(), Reflection::SpecializationConstant { String(), constantType });

@@ -28,13 +28,14 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
 #import "WKFormSelectControl.h"
 #import "WKWebViewPrivateForTesting.h"
 #import "WebPageProxy.h"
+#import <UIKit/UIKit.h>
 #import <WebCore/LocalizedStrings.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
 
@@ -1196,13 +1197,11 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
         UIPresentationController *presentationController = [_navigationController presentationController];
         presentationController.delegate = self;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([presentationController isKindOfClass:[_UISheetPresentationController class]]) {
-            _UISheetPresentationController *sheetPresentationController = (_UISheetPresentationController *)presentationController;
-            sheetPresentationController._detents = @[_UISheetDetent._mediumDetent, _UISheetDetent._largeDetent];
-ALLOW_DEPRECATED_DECLARATIONS_END
-            sheetPresentationController._widthFollowsPreferredContentSizeWhenBottomAttached = YES;
-            sheetPresentationController._wantsBottomAttachedInCompactHeight = YES;
+
+        if (auto sheetPresentationController = dynamic_objc_cast<UISheetPresentationController>(presentationController)) {
+            sheetPresentationController.detents = @[UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent];
+            sheetPresentationController.widthFollowsPreferredContentSizeWhenEdgeAttached = YES;
+            sheetPresentationController.prefersEdgeAttachedInCompactHeight = YES;
         }
     } else {
         [_navigationController setModalPresentationStyle:UIModalPresentationPopover];
@@ -1228,7 +1227,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_view startRelinquishingFirstResponderToFocusedElement];
 
     [self configurePresentation];
-    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_view];
+    auto presentingViewController = _view._wk_viewControllerForFullScreenPresentation;
     [presentingViewController presentViewController:_navigationController.get() animated:YES completion:nil];
 }
 

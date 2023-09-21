@@ -33,7 +33,7 @@ namespace WebCore {
 
 inline SVGMarkerElement& RenderSVGResourceMarker::markerElement() const
 {
-    return downcast<SVGMarkerElement>(RenderSVGResourceContainer::element());
+    return downcast<SVGMarkerElement>(LegacyRenderSVGResourceContainer::element());
 }
 
 inline SVGMarkerUnitsType RenderSVGResourceMarker::markerUnits() const

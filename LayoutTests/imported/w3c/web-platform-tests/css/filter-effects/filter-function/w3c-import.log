@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-007-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-008-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-conic-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-conic-gradient-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-conic-gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-linear-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-linear-gradient-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-linear-gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-radial-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-radial-gradient-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-radial-gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-conic-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-conic-gradient-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-conic-gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-linear-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-linear-gradient-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-linear-gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-radial-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-radial-gradient-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-repeating-radial-gradient.html

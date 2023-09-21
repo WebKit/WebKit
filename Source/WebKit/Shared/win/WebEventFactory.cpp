@@ -77,7 +77,7 @@ static inline int clickCount(WebEventType type, WebMouseEventButton button, cons
     static int gLastClickCount;
     static double gLastClickTime;
     static POINT lastClickPosition;
-    static WebMouseEventButton lastClickButton = WebMouseEventButton::LeftButton;
+    static WebMouseEventButton lastClickButton = WebMouseEventButton::Left;
 
     bool cancelPreviousClick = (std::abs(lastClickPosition.x - position.x) > (::GetSystemMetrics(SM_CXDOUBLECLK) / 2))
         || (std::abs(lastClickPosition.y - position.y) > (::GetSystemMetrics(SM_CYDOUBLECLK) / 2))
@@ -335,25 +335,25 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEventType type)
 WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
 {
     WebEventType type;
-    WebMouseEventButton button = WebMouseEventButton::NoButton;
+    WebMouseEventButton button = WebMouseEventButton::None;
     switch (message) {
     case WM_MOUSEMOVE:
         type = WebEventType::MouseMove;
         if (wParam & MK_LBUTTON)
-            button = WebMouseEventButton::LeftButton;
+            button = WebMouseEventButton::Left;
         else if (wParam & MK_MBUTTON)
-            button = WebMouseEventButton::MiddleButton;
+            button = WebMouseEventButton::Middle;
         else if (wParam & MK_RBUTTON)
-            button = WebMouseEventButton::RightButton;
+            button = WebMouseEventButton::Right;
         break;
     case WM_MOUSELEAVE:
         type = WebEventType::MouseMove;
         if (wParam & MK_LBUTTON)
-            button = WebMouseEventButton::LeftButton;
+            button = WebMouseEventButton::Left;
         else if (wParam & MK_MBUTTON)
-            button = WebMouseEventButton::MiddleButton;
+            button = WebMouseEventButton::Middle;
         else if (wParam & MK_RBUTTON)
-            button = WebMouseEventButton::RightButton;
+            button = WebMouseEventButton::Right;
 
         // Set the current mouse position (relative to the client area of the
         // current window) since none is specified for this event.
@@ -362,29 +362,29 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
     case WM_LBUTTONDOWN:
     case WM_LBUTTONDBLCLK:
         type = WebEventType::MouseDown;
-        button = WebMouseEventButton::LeftButton;
+        button = WebMouseEventButton::Left;
         break;
     case WM_MBUTTONDOWN:
     case WM_MBUTTONDBLCLK:
         type = WebEventType::MouseDown;
-        button = WebMouseEventButton::MiddleButton;
+        button = WebMouseEventButton::Middle;
         break;
     case WM_RBUTTONDOWN:
     case WM_RBUTTONDBLCLK:
         type = WebEventType::MouseDown;
-        button = WebMouseEventButton::RightButton;
+        button = WebMouseEventButton::Right;
         break;
     case WM_LBUTTONUP:
         type = WebEventType::MouseUp;
-        button = WebMouseEventButton::LeftButton;
+        button = WebMouseEventButton::Left;
         break;
     case WM_MBUTTONUP:
         type = WebEventType::MouseUp;
-        button = WebMouseEventButton::MiddleButton;
+        button = WebMouseEventButton::Middle;
         break;
     case WM_RBUTTONUP:
         type = WebEventType::MouseUp;
-        button = WebMouseEventButton::RightButton;
+        button = WebMouseEventButton::Right;
         break;
     default:
         ASSERT_NOT_REACHED();

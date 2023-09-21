@@ -1035,6 +1035,7 @@ fast/forms/validation-message-maxLength.html [ Skip ]
 fast/forms/ValidityState-valueMissing-002.html [ Skip ]
 fast/frames/focus-controller-crash-change-event.html
 fast/html/details-keyboard-show-hide.html [ Skip ]
+fast/html/details-no-summary-keyboard-show-hide.html [ Skip ]
 fast/html/transient-activation.html [ Skip ]
 fast/shadow-dom/activate-over-slotted-content.html [ Skip ]
 fast/shadow-dom/clear-active-state-in-shadow.html [ Skip ]
@@ -1139,6 +1140,7 @@ fast/css/resize-below-min-size-zoomed.html [ Skip ]
 fast/css/resize-below-min-size.html [ Skip ]
 fast/css/resize-corner-tracking.html [ Skip ]
 fast/css/resize-orthogonal-containing-block.html [ Skip ]
+fast/css/resize-rtl.html [ Skip ]
 fast/css/resize-single-axis.html [ Skip ]
 fast/events/mouse-events-on-textarea-resize.html [ Skip ]
 
@@ -2304,7 +2306,6 @@ imported/blink/fast/pagination/div-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/div-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/viewport-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/viewport-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
-fast/multicol/newmulticol/hide-box-vertical-lr.html [ ImageOnlyFailure ]
 
 # Failing tests related to picture element
 webkit.org/b/152141 fast/picture/image-picture-1x.html [ Skip ]
@@ -4595,3 +4596,9 @@ webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-both-parent-and-blended-with-3D-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-clip-rect.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-image-root-filter.html [ ImageOnlyFailure ]

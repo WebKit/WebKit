@@ -327,9 +327,9 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
     RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
     bool pointerIsPressed = capturingData ? capturingData->pointerIsPressed : false;
 
-    short newButton = mouseEvent.button();
-    short previousMouseButton = capturingData ? capturingData->previousMouseButton : -1;
-    short button = (type == names.mousemoveEvent && newButton == previousMouseButton) ? -1 : newButton;
+    MouseButton newButton = mouseEvent.button();
+    MouseButton previousMouseButton = capturingData ? capturingData->previousMouseButton : MouseButton::PointerMove;
+    MouseButton button = (type == names.mousemoveEvent && newButton == previousMouseButton) ? MouseButton::PointerMove : newButton;
 
     // https://w3c.github.io/pointerevents/#chorded-button-interactions
     // Some pointer devices, such as mouse or pen, support multiple buttons. In the Mouse Event model, each button

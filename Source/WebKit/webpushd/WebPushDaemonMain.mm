@@ -24,6 +24,8 @@
  */
 
 #import "config.h"
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+
 #import "WebPushDaemonMain.h"
 
 #import "AuxiliaryProcess.h"
@@ -152,6 +154,8 @@ int WebPushDaemonMain(int argc, char** argv)
 
         WebKit::startListeningForMachServiceConnections(machServiceName, entitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
 
+        ::WebPushD::WebPushDaemon::singleton().setMachServiceName(String::fromUTF8(machServiceName));
+
         if (useMockPushService)
             ::WebPushD::WebPushDaemon::singleton().startMockPushService();
         else {
@@ -171,3 +175,6 @@ int WebPushDaemonMain(int argc, char** argv)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GPUComputePassTimestampWrite.h"
+#include "GPUComputePassTimestampWrites.h"
 #include "GPUObjectDescriptorBase.h"
 #include "WebGPUComputePassDescriptor.h"
 
@@ -36,7 +36,7 @@ struct GPUComputePassDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            WebCore::convertToBacking(timestampWrites),
+            timestampWrites.convertToBacking(),
         };
     }
 

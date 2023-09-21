@@ -1857,7 +1857,7 @@ gboolean webkit_settings_get_enable_html5_database(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->databasesEnabled();
+    return settings->priv->preferences->indexedDBAPIEnabled();
 }
 
 /**
@@ -1872,11 +1872,11 @@ void webkit_settings_set_enable_html5_database(WebKitSettings* settings, gboolea
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->databasesEnabled();
+    bool currentValue = priv->preferences->indexedDBAPIEnabled();
     if (currentValue == enabled)
         return;
 
-    priv->preferences->setDatabasesEnabled(enabled);
+    priv->preferences->setIndexedDBAPIEnabled(enabled);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_HTML5_DATABASE]);
 }
 

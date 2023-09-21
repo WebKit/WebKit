@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +24,18 @@
  */
 
 #import "config.h"
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
 #import "WebPushToolConnection.h"
 
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
+#import "PushClientConnectionMessages.h"
 #import "WebPushDaemonConnectionConfiguration.h"
 #import "WebPushDaemonConstants.h"
 #import <mach/mach_init.h>
 #import <mach/task.h>
 #import <pal/spi/cocoa/ServersSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 
@@ -136,20 +139,14 @@ void Connection::sendPushMessage()
 {
     ASSERT(m_pushMessage);
 
-    WebKit::Daemon::Encoder encoder;
-    encoder << *m_pushMessage;
-
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
-    xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, WebKit::vectorToXPCData(encoder.takeBuffer()).get());
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(WebKit::WebPushD::MessageType::InjectPushMessageForTesting));
-
     printf("Injecting push message\n");
 
-    // If we have no action for this invocation (such as streaming debug messages) then we can exit after the push injection completes
-    __block bool shouldExitAfterInject = !m_action;
-    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), dispatch_get_main_queue(), ^(xpc_object_t resultMessage) {
-        printf("Push message injected\n");
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(*m_pushMessage), [shouldExitAfterInject = !m_action] (const String& error) {
+        if (!error.isEmpty())
+            printf("Push message injected. Error: %s\n", error.utf8().data());
+        else
+            printf("Push message injected.\n");
+
         if (shouldExitAfterInject)
             CFRunLoopStop(CFRunLoopGetMain());
     });
@@ -157,14 +154,7 @@ void Connection::sendPushMessage()
 
 void Connection::startDebugStreamAction()
 {
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    std::array<uint8_t, 1> encodedMessage { 1 };
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(WebKit::WebPushD::MessageType::SetDebugModeIsEnabled));
-    xpc_dictionary_set_data(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encodedMessage.data(), encodedMessage.size());
-
-    xpc_connection_send_message(m_connection.get(), dictionary.get());
-
+    sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetDebugModeIsEnabled(true));
     printf("Now streaming debug messages\n");
 }
 
@@ -186,14 +176,7 @@ void Connection::sendAuditToken()
     memcpy(tokenVector.data(), &token, sizeof(token));
     configuration.hostAppAuditTokenData = WTFMove(tokenVector);
 
-    WebKit::Daemon::Encoder encoder;
-    configuration.encode(encoder);
-
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(WebKit::WebPushD::MessageType::UpdateConnectionConfiguration));
-    xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, WebKit::vectorToXPCData(encoder.takeBuffer()).get());
-    xpc_connection_send_message(m_connection.get(), dictionary.get());
+    sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(WTFMove(configuration)));
 }
 
 void Connection::connectionDropped()
@@ -219,4 +202,50 @@ void Connection::messageReceived(xpc_object_t message)
     printf("%s\n", debugMessage);
 }
 
+static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
+{
+    auto xpcData = WebKit::encoderToXPCData(WTFMove(encoder));
+    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
+    xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, xpcData.get());
+
+    return dictionary;
+}
+
+bool Connection::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder) const
+{
+    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+    xpc_connection_send_message(m_connection.get(), dictionary.get());
+
+    return true;
+}
+
+bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
+{
+    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), dispatch_get_main_queue(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+        if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
+            ASSERT_NOT_REACHED();
+            return completionHandler(nullptr);
+        }
+        if (xpc_dictionary_get_uint64(reply, WebKit::WebPushD::protocolVersionKey) != WebKit::WebPushD::protocolVersionValue) {
+            ASSERT_NOT_REACHED();
+            return completionHandler(nullptr);
+        }
+
+        size_t dataSize { 0 };
+        const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebKit::WebPushD::protocolEncodedMessageKey, &dataSize));
+        auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+        ASSERT(decoder);
+
+        completionHandler(decoder.get());
+    }).get());
+
+    return true;
+}
+
+
 } // namespace WebPushTool
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+

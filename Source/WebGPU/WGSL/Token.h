@@ -129,6 +129,10 @@ FOREACH_KEYWORD(ENUM_ENTRY)
     Underbar,
     Xor,
     XorEq,
+
+    Placeholder,
+    TemplateArgsLeft,
+    TemplateArgsRight,
     // FIXME: add all the other special tokens
 };
 
@@ -180,6 +184,30 @@ struct Token {
         if (type == TokenType::Identifier)
             ident.~String();
 
+        type = other.type;
+        span = other.span;
+
+        switch (other.type) {
+        case TokenType::Identifier:
+            new (NotNull, &ident) String();
+            ident = other.ident;
+            break;
+        case TokenType::AbstractFloatLiteral:
+        case TokenType::IntegerLiteral:
+        case TokenType::IntegerLiteralSigned:
+        case TokenType::IntegerLiteralUnsigned:
+        case TokenType::FloatLiteral:
+            literalValue = other.literalValue;
+            break;
+        default:
+            break;
+        }
+
+        return *this;
+    }
+
+    Token& operator=(const Token& other)
+    {
         type = other.type;
         span = other.span;
 

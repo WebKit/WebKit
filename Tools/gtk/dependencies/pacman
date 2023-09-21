@@ -20,7 +20,7 @@ PACKAGES+=(
     libpulse
     librsvg
     libsecret
-    libsoup
+    libsoup3
     libsrtp
     libtheora
     libvorbis

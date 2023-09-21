@@ -227,7 +227,6 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
 
         unsigned rangeLength = rangeStringView.length();
         unsigned rangeSubtagsStartIndex = 0;
-        unsigned rangeSubtagsEndIndex = rangeLength;
         unsigned lastMatchedLanguageSubtagIndex = 0;
 
         bool matchedRange = true;
@@ -236,7 +235,7 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
                 rangeSubtagsStartIndex += 1;
             if (rangeSubtagsStartIndex > languageLength)
                 return false;
-            rangeSubtagsEndIndex = std::min<unsigned>(rangeStringView.find('-', rangeSubtagsStartIndex), rangeLength);
+            unsigned rangeSubtagsEndIndex = std::min<unsigned>(rangeStringView.find('-', rangeSubtagsStartIndex), rangeLength);
             StringView rangeSubtag = rangeStringView.substring(rangeSubtagsStartIndex, rangeSubtagsEndIndex - rangeSubtagsStartIndex);
             if (!containslanguageSubtagMatchingRange(languageStringView, rangeSubtag, languageLength, lastMatchedLanguageSubtagIndex)) {
                 matchedRange = false;

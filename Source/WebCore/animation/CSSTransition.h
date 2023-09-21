@@ -42,7 +42,7 @@ class RenderStyle;
 class CSSTransition final : public DeclarativeAnimation {
     WTF_MAKE_ISO_ALLOCATED(CSSTransition);
 public:
-    static Ref<CSSTransition> create(const Styleable&, AnimatableProperty, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
+    static Ref<CSSTransition> create(const Styleable&, const AnimatableProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
     ~CSSTransition() = default;
 
     const AtomString transitionProperty() const;
@@ -55,7 +55,7 @@ public:
     double reversingShorteningFactor() const { return m_reversingShorteningFactor; }
 
 private:
-    CSSTransition(const Styleable&, AnimatableProperty, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
+    CSSTransition(const Styleable&, const AnimatableProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) final;
     void resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;

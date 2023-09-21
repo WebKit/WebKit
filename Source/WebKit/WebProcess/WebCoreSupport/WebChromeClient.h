@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/ChromeClient.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 class HTMLImageElement;
@@ -48,7 +49,8 @@ public:
     WebChromeClient(WebPage&);
     ~WebChromeClient();
 
-    WebPage& page() const { return m_page; }
+    WebPage& page() const { return m_page.get(); }
+    Ref<WebPage> protectedPage() const;
 
 private:
     void chromeDestroyed() final;
@@ -491,7 +493,7 @@ private:
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 
-    WebPage& m_page;
+    CheckedRef<WebPage> m_page;
 };
 
 } // namespace WebKit

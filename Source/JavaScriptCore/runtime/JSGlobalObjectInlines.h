@@ -437,6 +437,16 @@ inline JSScope* JSGlobalObject::globalScope()
     return m_globalLexicalEnvironment.get();
 }
 
+// https://tc39.es/ecma262/#sec-hasvardeclaration
+inline bool JSGlobalObject::hasVarDeclaration(const RefPtr<UniquedStringImpl>& ident)
+{
+    SymbolTableEntry entry = symbolTable()->get(ident.get());
+    if (!entry.isNull() && entry.scopeOffset() > m_lastStaticGlobalOffset)
+        return true;
+
+    return m_varNamesDeclaredViaEval.contains(ident);
+}
+
 // https://tc39.es/ecma262/#sec-candeclareglobalvar
 inline bool JSGlobalObject::canDeclareGlobalVar(const Identifier& ident)
 {
@@ -463,8 +473,10 @@ inline void JSGlobalObject::createGlobalVarBinding(const Identifier& ident)
     ASSERT(isStructureExtensible());
     if constexpr (context == BindingCreationContext::Global)
         addSymbolTableEntry(ident);
-    else
+    else {
         putDirect(vm, ident, jsUndefined());
+        m_varNamesDeclaredViaEval.add(ident.impl());
+    }
 }
 
 inline InlineWatchpointSet& JSGlobalObject::typedArraySpeciesWatchpointSet(TypedArrayType type)

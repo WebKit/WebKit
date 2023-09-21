@@ -31,7 +31,7 @@ namespace WebCore {
 
 static std::optional<Vector<uint8_t>> gcryptDerive(const Vector<uint8_t>& baseKey, const Vector<uint8_t>& publicKey)
 {
-    return X25519(baseKey, publicKey);
+    return GCrypt::RFC7748::X25519(baseKey, publicKey);
 }
 
 std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey)

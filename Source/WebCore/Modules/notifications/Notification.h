@@ -68,6 +68,8 @@ public:
         String tag;
         String icon;
         JSC::JSValue data;
+        RefPtr<SerializedScriptValue> serializedData;
+        RefPtr<JSON::Value> jsonData;
         std::optional<bool> silent;
     };
     // For JS constructor only.

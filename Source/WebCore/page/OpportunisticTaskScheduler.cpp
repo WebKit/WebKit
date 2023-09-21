@@ -62,7 +62,7 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     if (UNLIKELY(!page))
         return;
 
-    if (page->isWaitingForFirstMeaningfulPaint())
+    if (page->isWaitingForLoadToFinish() || !page->isVisibleAndActive())
         return;
 
     auto currentTime = ApproximateTime::now();

@@ -834,6 +834,29 @@ TEST(WebKit, CannotHaveMultipleFindOverlays)
     EXPECT_EQ(overlayCount(webView.get()), 1U);
 }
 
+TEST(WebKit, FindOverlayCloseWebViewCrash)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView setFindInteractionEnabled:YES];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto *findInteraction = [webView findInteraction];
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+
+    // Wait for two presentation updates, as the document overlay root layer is
+    // created lazily.
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(overlayCount(webView.get()), 1U);
+
+    [webView _close];
+    [webView removeFromSuperview];
+}
+
 TEST(WebKit, FindOverlaySPI)
 {
     auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);

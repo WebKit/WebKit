@@ -68,11 +68,10 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineLayou
         // Floats must have prevented us placing any content on the line.
         // Move next line below the intrusive float(s).
         ASSERT(lineLayoutResult.inlineContent.isEmpty() || lineLayoutResult.inlineContent[0].isLineSpanningInlineBoxStart());
-        ASSERT(lineLayoutResult.floatContent.hasIntrusiveFloat);
         auto nextLineLogicalTop = [&]() -> LayoutUnit {
             if (auto nextLineLogicalTopCandidate = lineLayoutResult.hintForNextLineTopToAvoidIntrusiveFloat)
                 return LayoutUnit { *nextLineLogicalTopCandidate };
-            // We have to have a hit when intrusive floats prevented any inline content placement.
+            // We have to have a hint when intrusive floats prevented any inline content placement.
             ASSERT_NOT_REACHED();
             return LayoutUnit { lineLogicalRect.top() + formattingContext().root().style().computedLineHeight() };
         };
@@ -364,12 +363,6 @@ InlineLayoutUnit InlineFormattingGeometry::inlineItemWidth(const InlineItem& inl
     if (inlineItem.isOpaque())
         return { };
 
-    // FIXME: The overhang should be computed to not overlap the neighboring runs or overflow the line.
-    if (auto* rubyAdjustments = layoutBox.rubyAdjustments()) {
-        auto& overhang = useFirstLineStyle ? rubyAdjustments->firstLineOverhang : rubyAdjustments->overhang;
-        return boxGeometry.marginBoxWidth() - (overhang.start + overhang.end);
-    }
-
     // Non-replaced inline box (e.g. inline-block)
     return boxGeometry.marginBoxWidth();
 }
@@ -468,6 +461,10 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             return index;
         }
         if (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) {
+            if (currentItem.layoutBox().isRuby()) {
+                // Should be able to break _before_ <ruby>.
+                return index;
+            }
             // Need to see what comes next to decide.
             continue;
         }
@@ -518,7 +515,7 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             // Soft wrap opportunity is at the first inline box that encloses the trailing content.
             for (auto candidateIndex = start + 1; candidateIndex < end; ++candidateIndex) {
                 auto& inlineItem = inlineItems[candidateIndex];
-                ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
+                ASSERT((inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque()) && !inlineItem.layoutBox().isRuby());
                 if (inlineItem.isInlineBoxStart())
                     inlineBoxStack.append({ &inlineItem.layoutBox(), candidateIndex });
                 else if (inlineItem.isInlineBoxEnd() && !inlineBoxStack.isEmpty())

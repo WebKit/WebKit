@@ -76,6 +76,8 @@ enum class EnumNamespace::EnumType : uint16_t {
     OptionSetFirstValue,
 #if ENABLE(OPTION_SET_SECOND_VALUE)
     OptionSetSecondValue,
+#else
+    OptionSetSecondValueElse,
 #endif
     OptionSetThirdValue
 }
@@ -183,3 +185,9 @@ class WebKit::LayerProperties {
 #endif
     [OptionalTupleBit=WebKit::LayerChange::FeatureEnabledMember, BitField] bool bitFieldMember;
 };
+
+#if OS(WINDOWS)
+using WTF::ProcessID = int;
+#else
+using WTF::ProcessID = pid_t;
+#endif

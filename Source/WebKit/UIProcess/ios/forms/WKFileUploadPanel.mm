@@ -34,6 +34,7 @@
 #import "APIString.h"
 #import "PhotosUISPI.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
 #import "WKStringCF.h"
@@ -544,7 +545,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // If there is any kind of view controller presented on this view, it will be removed.
 
     if (auto view = _view.get())
-        [[UIViewController _viewControllerForFullScreenPresentationFromView:view.get()] dismissViewControllerAnimated:NO completion:nil];
+        [[view _wk_viewControllerForFullScreenPresentation] dismissViewControllerAnimated:NO completion:nil];
 
     _presentationViewController = nil;
 
@@ -895,7 +896,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 {
     [self _dismissDisplayAnimated:animated];
 
-    _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_view.getAutoreleased()];
+    _presentationViewController = [_view _wk_viewControllerForFullScreenPresentation];
     [_presentationViewController presentViewController:viewController animated:animated completion:nil];
 }
 

@@ -81,6 +81,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;
     using ReplyArguments = std::tuple<uint64_t>;
+    using Promise = WTF::NativePromise<uint64_t, IPC::Error, true>;
     explicit TestAsyncMessage(WebKit::TestTwoStateEnum twoStateEnum)
         : m_arguments(twoStateEnum)
     {
@@ -109,6 +110,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
+    using Promise = WTF::NativePromise<void, IPC::Error, true>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);
@@ -132,6 +134,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool, uint64_t>;
+    using Promise = WTF::NativePromise<std::tuple<bool, uint64_t>, IPC::Error, true>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);
@@ -155,6 +158,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
+    using Promise = WTF::NativePromise<bool, IPC::Error, true>;
     explicit TestAsyncMessageWithConnection(const int& value)
         : m_arguments(value)
     {

@@ -750,7 +750,7 @@ Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, Ti
     float temporaryScaleFactor = owningGraphicsLayer()->platformCALayerContentsScaleMultiplierForNewTiles(m_tileCacheLayer);
     m_hasTilesWithTemporaryScaleFactor |= temporaryScaleFactor != 1;
 
-    auto layer = m_tileCacheLayer->createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerTypeTiledBackingTileLayer, &grid, tileRect.size());
+    auto layer = m_tileCacheLayer->createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer, &grid, tileRect.size());
     layer->setAnchorPoint(FloatPoint3D());
     layer->setPosition(tileRect.location());
     layer->setBorderColor(m_tileDebugBorderColor);

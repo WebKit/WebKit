@@ -1278,7 +1278,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 
             RefPtr<API::Array> removedItemsArray;
             if (!removedItems.isEmpty()) {
-                auto removedItemsVector = WTF::map(WTFMove(removedItems), [](auto&& removedItem) -> RefPtr<API::Object> {
+                auto removedItemsVector = WTF::map(WTFMove(removedItems), [](Ref<WebBackForwardListItem>&& removedItem) -> RefPtr<API::Object> {
                     return WTFMove(removedItem);
                 });
                 removedItemsArray = API::Array::create(WTFMove(removedItemsVector));

@@ -109,6 +109,7 @@ inline const LengthBox& RenderStyle::borderImageSlices() const { return border()
 inline StyleImage* RenderStyle::borderImageSource() const { return border().image().image(); }
 inline NinePieceImageRule RenderStyle::borderImageVerticalRule() const { return border().image().verticalRule(); }
 inline const LengthBox& RenderStyle::borderImageWidth() const { return border().image().borderSlices(); }
+inline bool RenderStyle::borderIsEquivalentForPainting(const RenderStyle& otherStyle) const { return border().isEquivalentForPainting(otherStyle.border(), color() != otherStyle.color()); }
 inline const BorderValue& RenderStyle::borderLeft() const { return border().left(); }
 inline const StyleColor& RenderStyle::borderLeftColor() const { return border().left().color(); }
 inline bool RenderStyle::borderLeftIsTransparent() const { return border().left().isTransparent(); }
@@ -864,7 +865,8 @@ constexpr bool RenderStyle::isDisplayBlockType(DisplayType display)
         || display == DisplayType::FlowRoot
         || display == DisplayType::Grid
         || display == DisplayType::ListItem
-        || display == DisplayType::Table;
+        || display == DisplayType::Table
+        || display == DisplayType::RubyBlock;
 }
 
 constexpr bool RenderStyle::isDisplayInlineType(DisplayType display)
@@ -874,7 +876,10 @@ constexpr bool RenderStyle::isDisplayInlineType(DisplayType display)
         || display == DisplayType::InlineBox
         || display == DisplayType::InlineFlex
         || display == DisplayType::InlineGrid
-        || display == DisplayType::InlineTable;
+        || display == DisplayType::InlineTable
+        || display == DisplayType::Ruby
+        || display == DisplayType::RubyBase
+        || display == DisplayType::RubyAnnotation;
 }
 
 constexpr bool RenderStyle::isDisplayRegionType() const

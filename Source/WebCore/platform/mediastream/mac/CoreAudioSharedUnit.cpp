@@ -714,7 +714,7 @@ void CoreAudioSharedUnit::setIsInBackground(bool isInBackground)
     if (m_statusBarManager)
         return;
 
-    m_statusBarManager = makeUnique<MediaCaptureStatusBarManager>([this](auto&& completionHandler) {
+    m_statusBarManager = makeUnique<MediaCaptureStatusBarManager>([this](CompletionHandler<void()>&& completionHandler) {
         if (m_statusBarWasTappedCallback)
             m_statusBarWasTappedCallback(WTFMove(completionHandler));
     }, [this] {

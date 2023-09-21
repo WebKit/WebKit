@@ -29,8 +29,8 @@
 
 #include <WebCore/GamepadProvider.h>
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 enum class EventMakesGamepadsVisible : bool;
@@ -64,7 +64,7 @@ private:
     void playEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
 
-    HashSet<WebCore::GamepadProviderClient*> m_clients;
+    WeakHashSet<WebCore::GamepadProviderClient> m_clients;
 
     Vector<std::unique_ptr<WebGamepad>> m_gamepads;
     Vector<WeakPtr<WebCore::PlatformGamepad>> m_rawGamepads;

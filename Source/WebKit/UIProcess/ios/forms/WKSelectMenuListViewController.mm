@@ -28,7 +28,7 @@
 
 #if HAVE(PEPPER_UI_CORE)
 
-#import "UIKitSPI.h"
+#import "PepperUICoreSPI.h"
 #import <wtf/RetainPtr.h>
 
 static const CGFloat checkmarkImageViewWidth = 32;

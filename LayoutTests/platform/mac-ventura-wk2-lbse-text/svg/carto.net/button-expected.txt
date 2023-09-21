@@ -24,11 +24,11 @@ layer at (101,101) size 100x30
   RenderSVGRect {rect} at (2,2) size 100x30 [fill={[type=SOLID] [color=#000080]}] [x=101.00] [y=101.00] [width=100.00] [height=30.00]
 layer at (100,100) size 100x30
   RenderSVGRect {rect} at (1,1) size 100x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=100.00] [y=100.00] [width=100.00] [height=30.00]
-layer at (127.91,109.97) size 44x13
-  RenderSVGText {text} at (28,10) size 46x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 45x13
-      RenderSVGInlineText {#text} at (0,0) size 45x13
-        chunk 1 (middle anchor) text run 1 at (127.92,120.40) startOffset 0 endOffset 8 width 44.16: "Click me"
+layer at (126.98,109.53) size 46x13
+  RenderSVGText {text} at (27,10) size 47x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 47x14
+      RenderSVGInlineText {#text} at (0,0) size 47x14
+        chunk 1 (middle anchor) text run 1 at (127.00,120.40) startOffset 0 endOffset 8 width 46.00: "Click me"
 layer at (219,99) size 102x32
   RenderSVGTransformableContainer {g} at (120,0) size 102x32
 layer at (219,99) size 100x30
@@ -37,11 +37,11 @@ layer at (221,101) size 100x30
   RenderSVGRect {rect} at (2,2) size 100x30 [fill={[type=SOLID] [color=#000080]}] [x=221.00] [y=101.00] [width=100.00] [height=30.00]
 layer at (220,100) size 100x30
   RenderSVGRect {rect} at (1,1) size 100x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=220.00] [y=100.00] [width=100.00] [height=30.00]
-layer at (243.11,109.97) size 54x13
-  RenderSVGText {text} at (24,10) size 54x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 54x13
-      RenderSVGInlineText {#text} at (0,0) size 54x13
-        chunk 1 (middle anchor) text run 1 at (243.12,120.40) startOffset 0 endOffset 10 width 53.77: "Click me 2"
+layer at (241.98,109.53) size 56x13
+  RenderSVGText {text} at (22,10) size 57x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 57x14
+      RenderSVGInlineText {#text} at (0,0) size 57x14
+        chunk 1 (middle anchor) text run 1 at (242.00,120.40) startOffset 0 endOffset 10 width 56.01: "Click me 2"
 layer at (339,99) size 132x32
   RenderSVGTransformableContainer {g} at (240,0) size 132x32
 layer at (339,99) size 130x30
@@ -50,11 +50,11 @@ layer at (341,101) size 130x30
   RenderSVGRect {rect} at (2,2) size 130x30 [fill={[type=SOLID] [color=#000080]}] [x=341.00] [y=101.00] [width=130.00] [height=30.00]
 layer at (340,100) size 130x30
   RenderSVGRect {rect} at (1,1) size 130x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=340.00] [y=100.00] [width=130.00] [height=30.00]
-layer at (354.72,109.97) size 100x13
-  RenderSVGText {text} at (15,10) size 102x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 101x13
-      RenderSVGInlineText {#text} at (0,0) size 101x13
-        chunk 1 (middle anchor) text run 1 at (354.73,120.40) startOffset 0 endOffset 19 width 100.54: "Deactivate Button 2"
+layer at (352.63,109.53) size 104x13
+  RenderSVGText {text} at (13,10) size 106x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 105x14
+      RenderSVGInlineText {#text} at (0,0) size 105x14
+        chunk 1 (middle anchor) text run 1 at (352.63,120.40) startOffset 0 endOffset 19 width 104.73: "Deactivate Button 2"
 layer at (489,99) size 122x32
   RenderSVGTransformableContainer {g} at (390,0) size 122x32
 layer at (489,99) size 120x30
@@ -63,11 +63,11 @@ layer at (491,101) size 120x30
   RenderSVGRect {rect} at (2,2) size 120x30 [fill={[type=SOLID] [color=#000080]}] [x=491.00] [y=101.00] [width=120.00] [height=30.00]
 layer at (490,100) size 120x30
   RenderSVGRect {rect} at (1,1) size 120x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=490.00] [y=100.00] [width=120.00] [height=30.00]
-layer at (506.77,109.97) size 86x13
-  RenderSVGText {text} at (17,10) size 88x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 87x13
-      RenderSVGInlineText {#text} at (0,0) size 87x13
-        chunk 1 (middle anchor) text run 1 at (506.77,120.40) startOffset 0 endOffset 16 width 86.45: "Switch Button on"
+layer at (504.97,109.53) size 90x13
+  RenderSVGText {text} at (15,10) size 92x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 91x14
+      RenderSVGInlineText {#text} at (0,0) size 91x14
+        chunk 1 (middle anchor) text run 1 at (504.97,120.40) startOffset 0 endOffset 16 width 90.05: "Switch Button on"
 layer at (629,99) size 132x32
   RenderSVGTransformableContainer {g} at (530,0) size 132x32
 layer at (629,99) size 130x30
@@ -76,11 +76,11 @@ layer at (631,101) size 130x30
   RenderSVGRect {rect} at (2,2) size 130x30 [fill={[type=SOLID] [color=#000080]}] [x=631.00] [y=101.00] [width=130.00] [height=30.00]
 layer at (630,100) size 130x30
   RenderSVGRect {rect} at (1,1) size 130x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=630.00] [y=100.00] [width=130.00] [height=30.00]
-layer at (650.48,109.97) size 90x13
-  RenderSVGText {text} at (21,10) size 90x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 90x13
-      RenderSVGInlineText {#text} at (0,0) size 90x13
-        chunk 1 (middle anchor) text run 1 at (650.49,120.40) startOffset 0 endOffset 15 width 89.01: "Remove Button 1"
+layer at (648.64,109.53) size 92x13
+  RenderSVGText {text} at (19,10) size 94x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 93x14
+      RenderSVGInlineText {#text} at (0,0) size 93x14
+        chunk 1 (middle anchor) text run 1 at (648.64,120.40) startOffset 0 endOffset 15 width 92.72: "Remove Button 1"
 layer at (779,99) size 132x32 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (680,0) size 132x32
 layer at (779,99) size 130x30 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -89,11 +89,11 @@ layer at (781,101) size 130x30 backgroundClip at (0,0) size 800x600 clip at (0,0
   RenderSVGRect {rect} at (2,2) size 130x30 [fill={[type=SOLID] [color=#000080]}] [x=781.00] [y=101.00] [width=130.00] [height=30.00]
 layer at (780,100) size 130x30 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (1,1) size 130x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=780.00] [y=100.00] [width=130.00] [height=30.00]
-layer at (796.97,109.97) size 96x13 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGText {text} at (17,10) size 98x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 97x13
-      RenderSVGInlineText {#text} at (0,0) size 97x13
-        chunk 1 (middle anchor) text run 1 at (796.97,120.40) startOffset 0 endOffset 18 width 96.06: "Switch Button 4 on"
+layer at (794.97,109.53) size 100x13 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (15,10) size 102x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 101x14
+      RenderSVGInlineText {#text} at (0,0) size 101x14
+        chunk 1 (middle anchor) text run 1 at (794.97,120.40) startOffset 0 endOffset 18 width 100.06: "Switch Button 4 on"
 layer at (199,299) size 152x62
   RenderSVGTransformableContainer {g} at (100,200) size 152x62
 layer at (199,299) size 150x60
@@ -102,17 +102,17 @@ layer at (201,301) size 150x60
   RenderSVGRect {rect} at (2,2) size 150x60 [fill={[type=SOLID] [color=#000080]}] [x=201.00] [y=301.00] [width=150.00] [height=60.00]
 layer at (200,300) size 150x60
   RenderSVGRect {rect} at (1,1) size 150x60 [fill={[type=SOLID] [color=#B0C4DE]}] [x=200.00] [y=300.00] [width=150.00] [height=60.00]
-layer at (230.81,311.77) size 88x39
-  RenderSVGText {text} at (31,12) size 90x41 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 89x13
-      RenderSVGInlineText {#text} at (0,0) size 89x13
-        chunk 1 (middle anchor) text run 1 at (230.83,322.20) startOffset 0 endOffset 19 width 88.35: "This is a multiline"
-    RenderSVGTSpan {tspan} at (0,0) size 75x14
-      RenderSVGInlineText {#text} at (7,13) size 75x13
-        chunk 1 (middle anchor) text run 1 at (237.86,335.40) startOffset 0 endOffset 15 width 74.28: "textbutton with"
-    RenderSVGTSpan {tspan} at (0,0) size 72x14
-      RenderSVGInlineText {#text} at (8,26) size 72x13
-        chunk 1 (middle anchor) text run 1 at (239.46,348.60) startOffset 0 endOffset 13 width 71.08: "round corners"
+layer at (228.98,311.33) size 92x40
+  RenderSVGText {text} at (29,12) size 94x41 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 93x14
+      RenderSVGInlineText {#text} at (0,0) size 93x14
+        chunk 1 (middle anchor) text run 1 at (228.99,322.20) startOffset 0 endOffset 19 width 92.03: "This is a multiline"
+    RenderSVGTSpan {tspan} at (0,0) size 78x14
+      RenderSVGInlineText {#text} at (7,13) size 78x14
+        chunk 1 (middle anchor) text run 1 at (236.31,335.40) startOffset 0 endOffset 15 width 77.38: "textbutton with"
+    RenderSVGTSpan {tspan} at (0,0) size 76x14
+      RenderSVGInlineText {#text} at (8,26) size 75x14
+        chunk 1 (middle anchor) text run 1 at (237.98,348.60) startOffset 0 endOffset 13 width 74.04: "round corners"
 layer at (-3,-7) size 379x178 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (-3,-7) size 379x178
 layer at (-3,-7) size 324x178 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -151,15 +151,15 @@ layer at (0,0) size 3x7
   RenderSVGPath {line} at (3,7) size 3x7 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
 layer at (-3,-7) size 8x10 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGPath {path} at (0,0) size 7.25x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
-layer at (100,194.95) size 71x19
-  RenderSVGText {text} at (100,194) size 72x21 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 72x20
-      chunk 1 text run 1 at (100.00,210.00) startOffset 0 endOffset 10 width 71.18: "StatusText"
-layer at (430,304.95) size 473x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGText {text} at (430,304) size 473x21 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 473x20
-      chunk 1 text run 1 at (430.00,320.00) startOffset 0 endOffset 73 width 472.77: "Click this text to randomly resize the multiline textbutton (textbutton7)"
-layer at (430,324.95) size 501x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGText {text} at (430,324) size 501x21 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 501x20
-      chunk 1 text run 1 at (430.00,340.00) startOffset 0 endOffset 77 width 500.52: "Click this text to randomly reposition the multiline textbutton (textbutton7)"
+layer at (100,195.44) size 68x19
+  RenderSVGText {text} at (100,195) size 69x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 69x19
+      chunk 1 text run 1 at (100.00,210.00) startOffset 0 endOffset 10 width 68.44: "StatusText"
+layer at (430,305.44) size 455x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (430,305) size 455x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 455x19
+      chunk 1 text run 1 at (430.00,320.00) startOffset 0 endOffset 73 width 454.59: "Click this text to randomly resize the multiline textbutton (textbutton7)"
+layer at (430,325.44) size 481x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (430,325) size 482x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 482x19
+      chunk 1 text run 1 at (430.00,340.00) startOffset 0 endOffset 77 width 481.27: "Click this text to randomly reposition the multiline textbutton (textbutton7)"

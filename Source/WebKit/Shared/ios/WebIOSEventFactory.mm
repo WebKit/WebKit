@@ -136,7 +136,7 @@ WebKit::WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
     ASSERT_ARG(event, event.type == WebEventMouseMoved);
 
     auto type = WebKit::WebEventType::MouseMove;
-    auto button = WebKit::WebMouseEventButton::NoButton;
+    auto button = WebKit::WebMouseEventButton::None;
     unsigned short buttons = 0;
     auto position = WebCore::IntPoint(event.locationInWindow);
     float deltaX = 0;

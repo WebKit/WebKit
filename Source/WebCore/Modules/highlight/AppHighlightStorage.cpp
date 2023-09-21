@@ -57,7 +57,7 @@ static RefPtr<Node> findNodeByPathIndex(const Node& parent, unsigned pathIndex, 
     if (!is<ContainerNode>(parent))
         return nullptr;
 
-    for (auto* child = downcast<ContainerNode>(parent).firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = downcast<ContainerNode>(parent).firstChild(); child; child = child->nextSibling()) {
         if (nodeName != child->nodeName())
             continue;
 
@@ -124,8 +124,8 @@ static std::optional<SimpleRange> findRangeByIdentifyingStartAndEndPositions(con
     if (!endContainer)
         return std::nullopt;
 
-    auto start = makeContainerOffsetPosition(startContainer.get(), range.startOffset());
-    auto end = makeContainerOffsetPosition(endContainer.get(), range.endOffset());
+    auto start = makeContainerOffsetPosition(WTFMove(startContainer), range.startOffset());
+    auto end = makeContainerOffsetPosition(WTFMove(endContainer), range.endOffset());
     if (start.isOrphan() || end.isOrphan())
         return std::nullopt;
 
@@ -174,7 +174,7 @@ static unsigned computePathIndex(const Node& node)
 {
     String nodeName = node.nodeName();
     unsigned index = 0;
-    for (auto* previousSibling = node.previousSibling(); previousSibling; previousSibling = previousSibling->previousSibling()) {
+    for (RefPtr previousSibling = node.previousSibling(); previousSibling; previousSibling = previousSibling->previousSibling()) {
         if (previousSibling->nodeName() == nodeName)
             index++;
     }

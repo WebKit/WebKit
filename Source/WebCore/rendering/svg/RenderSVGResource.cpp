@@ -233,9 +233,9 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject&
     while (current) {
         removeFromCacheAndInvalidateDependencies(*current, needsLayout);
 
-        if (is<RenderSVGResourceContainer>(*current)) {
+        if (is<LegacyRenderSVGResourceContainer>(*current)) {
             // This will process the rest of the ancestors.
-            downcast<RenderSVGResourceContainer>(*current).removeAllClientsFromCache();
+            downcast<LegacyRenderSVGResourceContainer>(*current).removeAllClientsFromCache();
             break;
         }
 

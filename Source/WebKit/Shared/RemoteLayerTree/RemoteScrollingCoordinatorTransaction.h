@@ -27,6 +27,7 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -42,16 +43,15 @@ namespace WebKit {
 
 class RemoteScrollingCoordinatorTransaction {
 public:
+    enum class FromDeserialization : bool { No, Yes };
     RemoteScrollingCoordinatorTransaction();
-    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool);
+    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool, FromDeserialization = FromDeserialization::Yes);
     RemoteScrollingCoordinatorTransaction(RemoteScrollingCoordinatorTransaction&&);
     RemoteScrollingCoordinatorTransaction& operator=(RemoteScrollingCoordinatorTransaction&&);
     ~RemoteScrollingCoordinatorTransaction();
 
     std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<RemoteScrollingCoordinatorTransaction> decode(IPC::Decoder&);
+    const std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() const { return m_scrollingStateTree; }
 
     bool clearScrollLatching() const { return m_clearScrollLatching; }
 
@@ -69,5 +69,12 @@ private:
 };
 
 } // namespace WebKit
+
+namespace IPC {
+template<> struct ArgumentCoder<WebCore::ScrollingStateTree> {
+    static void encode(Encoder&, const WebCore::ScrollingStateTree&);
+    static std::optional<WebCore::ScrollingStateTree> decode(Decoder&);
+};
+}
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

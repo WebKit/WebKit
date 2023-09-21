@@ -34,6 +34,7 @@
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIRuntime.h"
+#include "WebExtensionAPIScripting.h"
 #include "WebExtensionAPITabs.h"
 #include "WebExtensionAPITest.h"
 #include "WebExtensionAPIWebNavigation.h"
@@ -49,15 +50,16 @@ class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExten
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
     WebExtensionAPIAlarms& alarms();
     WebExtensionAPIExtension& extension();
     WebExtensionAPILocalization& i18n();
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() final;
-    WebExtensionAPITest& test();
+    WebExtensionAPIScripting& scripting();
     WebExtensionAPITabs& tabs();
+    WebExtensionAPITest& test();
     WebExtensionAPIWindows& windows();
     WebExtensionAPIWebNavigation& webNavigation();
 #endif
@@ -68,6 +70,7 @@ private:
     RefPtr<WebExtensionAPILocalization> m_i18n;
     RefPtr<WebExtensionAPIPermissions> m_permissions;
     RefPtr<WebExtensionAPIRuntime> m_runtime;
+    RefPtr<WebExtensionAPIScripting> m_scripting;
     RefPtr<WebExtensionAPITabs> m_tabs;
     RefPtr<WebExtensionAPITest> m_test;
     RefPtr<WebExtensionAPIWindows> m_windows;

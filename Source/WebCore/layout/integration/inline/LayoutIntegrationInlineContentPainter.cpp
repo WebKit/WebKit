@@ -140,8 +140,8 @@ void InlineContentPainter::paint()
     if (lastBoxLineIndex)
         paintEllipsis(*lastBoxLineIndex);
 
-    for (auto* renderInline : m_outlineObjects)
-        renderInline->paintOutline(m_paintInfo, m_paintOffset);
+    for (auto& renderInline : m_outlineObjects)
+        renderInline.paintOutline(m_paintInfo, m_paintOffset);
 }
 
 LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& childRenderer) const

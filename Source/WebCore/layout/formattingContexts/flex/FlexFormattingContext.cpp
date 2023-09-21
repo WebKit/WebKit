@@ -220,7 +220,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
             ASSERT_NOT_REACHED();
             break;
         }
-        flexItemGeometry.setLogicalTopLeft(borderBoxTopLeft);
+        flexItemGeometry.setTopLeft(borderBoxTopLeft);
 
         auto contentBoxWidth = isMainAxisParallelWithInlineAxis ? logicalRect.width() : logicalRect.height();
         auto contentBoxHeight = isMainAxisParallelWithInlineAxis ? logicalRect.height() : logicalRect.width();

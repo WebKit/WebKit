@@ -820,7 +820,7 @@ bool Editor::shouldInsertText(const String& text, const std::optional<SimpleRang
 void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
 {
     if (AXObjectCache::accessibilityEnabled()) {
-        RefPtr node { endingSelection.start().deprecatedNode() };
+        auto node = endingSelection.start().protectedDeprecatedNode();
         if (AXObjectCache* cache = document().existingAXObjectCache())
             cache->postNotification(node.get(), AXObjectCache::AXValueChanged, PostTarget::ObservableParent);
     }
@@ -838,12 +838,12 @@ bool Editor::hasBidiSelection() const
 
     RefPtr<Node> startNode;
     if (m_document.selection().isRange()) {
-        startNode = m_document.selection().selection().start().downstream().deprecatedNode();
-        RefPtr endNode { m_document.selection().selection().end().upstream().deprecatedNode() };
+        startNode = m_document.selection().selection().start().downstream().protectedDeprecatedNode();
+        auto endNode = m_document.selection().selection().end().upstream().protectedDeprecatedNode();
         if (enclosingBlock(startNode.get()) != enclosingBlock(endNode.get()))
             return false;
     } else
-        startNode = m_document.selection().selection().visibleStart().deepEquivalent().deprecatedNode();
+        startNode = m_document.selection().selection().visibleStart().deepEquivalent().protectedDeprecatedNode();
 
     if (!startNode)
         return false;
@@ -1047,7 +1047,7 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
     if (m_document.selection().isNone())
         return;
 
-    ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties)->apply();
+    ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::PropertyLevel::ForceBlock)->apply();
 
     if (client())
         client()->didApplyStyle();
@@ -1409,7 +1409,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     // that is contained in the event target.
     selection = selectionForCommand(triggeringEvent);
     if (selection.isContentEditable()) {
-        if (RefPtr selectionStart = selection.start().deprecatedNode()) {
+        if (auto selectionStart = selection.start().protectedDeprecatedNode()) {
             Ref<Document> document(selectionStart->document());
 
             // Insert the text
@@ -2062,7 +2062,7 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
     auto result = WritingDirection::LeftToRight;
 
     Position pos = m_document.selection().selection().visibleStart().deepEquivalent();
-    RefPtr node { pos.deprecatedNode() };
+    auto node = pos.protectedDeprecatedNode();
     if (!node)
         return result;
 
@@ -2188,7 +2188,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     m_customCompositionAnnotations.clear();
 
     if (auto* cache = m_document.existingAXObjectCache(); cache && previousCompositionNode)
-        cache->onTextCompositionChange(*previousCompositionNode, AXObjectCache::CompositionState::Ended, false);
+        cache->onTextCompositionChange(*previousCompositionNode, CompositionState::Ended, false, text, m_compositionStart, m_isHandlingAcceptedCandidate);
 
     if (m_document.selection().isNone())
         return;
@@ -2298,9 +2298,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         // Find out what node has the composition now.
         Position base = m_document.selection().selection().base().downstream();
         Position extent = m_document.selection().selection().extent();
-        RefPtr baseNode { base.deprecatedNode() };
+        auto baseNode = base.protectedDeprecatedNode();
         unsigned baseOffset = base.deprecatedEditingOffset();
-        RefPtr extentNode { extent.deprecatedNode() };
+        auto extentNode = extent.protectedDeprecatedNode();
         unsigned extentOffset = extent.deprecatedEditingOffset();
 
         if (is<Text>(baseNode) && baseNode == extentNode && baseOffset + text.length() == extentOffset) {
@@ -2335,12 +2335,12 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 
     if (auto* cache = m_document.existingAXObjectCache()) {
         if (previousCompositionNode && previousCompositionNode != m_compositionNode) {
-            auto state = m_compositionNode ? AXObjectCache::CompositionState::InProgress : AXObjectCache::CompositionState::Ended;
-            cache->onTextCompositionChange(*previousCompositionNode, state, true);
+            auto state = m_compositionNode ? CompositionState::InProgress : CompositionState::Ended;
+            cache->onTextCompositionChange(*previousCompositionNode, state, true, text, m_compositionStart, m_isHandlingAcceptedCandidate);
         }
         if (m_compositionNode) {
-            auto state = previousCompositionNode ? AXObjectCache::CompositionState::InProgress : AXObjectCache::CompositionState::Started;
-            cache->onTextCompositionChange(*m_compositionNode, state, true);
+            auto state = previousCompositionNode ? CompositionState::InProgress : CompositionState::Started;
+            cache->onTextCompositionChange(*m_compositionNode, state, true, text, m_compositionStart, m_isHandlingAcceptedCandidate);
         }
     }
 
@@ -3266,7 +3266,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     // of marker that contains the word in question, and remove marker on that whole range.
     auto wordRange = *makeSimpleRange(startOfFirstWord, endOfLastWord);
 
-    for (auto* marker : document().markers().markersInRange(wordRange, DocumentMarker::DictationAlternatives))
+    for (auto& marker : document().markers().markersInRange(wordRange, DocumentMarker::DictationAlternatives))
         m_alternativeTextController->removeDictationAlternativesForMarker(*marker);
 
     OptionSet<DocumentMarker::MarkerType> markerTypesToRemove {
@@ -3532,17 +3532,16 @@ void Editor::removeTextPlaceholder(TextPlaceholderElement& placeholder)
 {
     ASSERT(placeholder.isConnected());
 
-    Ref<Document> document { this->document() };
+    Ref document { this->document() };
 
     // Save off state so that we can set the text insertion position to just before the placeholder element after removal.
     RefPtr savedRootEditableElement { placeholder.rootEditableElement() };
-    auto savedPositionBeforePlaceholder = positionBeforeNode(&placeholder).parentAnchoredEquivalent();
+    auto savedPositionBeforePlaceholder = positionInParentBeforeNode(&placeholder);
 
     // FIXME: Save the current selection if it has changed since the placeholder was inserted
     // and restore it after text insertion.
     placeholder.remove();
-
-    // To match the Legacy WebKit implementation, set the text insertion point to be before where the placeholder use to be.
+    // To match the Legacy WebKit implementation, set the text insertion point to be before where the placeholder used to be.
     if (m_document.selection().isFocusedAndActive() && document->focusedElement() == savedRootEditableElement)
         m_document.selection().setSelection(VisibleSelection { savedPositionBeforePlaceholder }, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
 }
@@ -4057,14 +4056,13 @@ static RefPtr<Node> findFirstMarkable(Node* startingNode)
 
 bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, int from, int length) const
 {
-    auto node = findFirstMarkable(m_document.selection().selection().start().deprecatedNode());
+    auto node = findFirstMarkable(m_document.selection().selection().start().protectedDeprecatedNode().get());
     if (!node)
         return false;
 
     unsigned int startOffset = static_cast<unsigned int>(from);
     unsigned int endOffset = static_cast<unsigned int>(from + length);
-    Vector<RenderedDocumentMarker*> markers = document().markers().markersFor(*node);
-    for (auto* marker : markers) {
+    for (auto& marker : document().markers().markersFor(*node)) {
         if (marker->startOffset() <= startOffset && endOffset <= marker->endOffset() && marker->type() == markerType)
             return true;
     }
@@ -4182,13 +4180,13 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
     if (!startContainer)
         return { };
 
-    auto* editableRoot = highestEditableRoot(firstPositionInOrBeforeNode(startContainer.get()));
+    auto editableRoot = highestEditableRoot(firstPositionInOrBeforeNode(startContainer.get()));
     if (!editableRoot)
         return { };
 
     Vector<Ref<HTMLElement>> enclosingLists;
     for (auto& ancestor : ancestorsOfType<HTMLElement>(*startContainer)) {
-        if (&ancestor == editableRoot)
+        if (&ancestor == editableRoot.get())
             break;
 
         auto* renderer = ancestor.renderer();
@@ -4534,7 +4532,7 @@ const RenderStyle* Editor::styleForSelectionStart(RefPtr<Node>& nodeToRemove)
 
     styleElement->appendChild(document().createEditingTextNode(String { emptyString() }));
 
-    auto positionNode = position.deprecatedNode();
+    auto positionNode = position.protectedDeprecatedNode();
     ASSERT(positionNode);
     RefPtr parent { positionNode->parentNode() };
     if (!parent || parent->appendChild(styleElement.get()).hasException())

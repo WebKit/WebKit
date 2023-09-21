@@ -105,8 +105,6 @@ public:
 #endif
 #if PLATFORM(COCOA)
     virtual CVPixelBufferRef pixelBuffer() const { return nullptr; };
-    using ResourceIdentifier = std::pair<uint64_t, uint64_t>;
-    virtual ResourceIdentifier resourceIdentifier() const { return { }; }
 #endif
     WEBCORE_EXPORT virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 

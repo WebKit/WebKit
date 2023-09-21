@@ -1055,15 +1055,15 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
     StringPrintStream getPadProperty;
     getPadProperty.printf("get-%s-pad", typeName);
 
+    bool changed = false;
     for (unsigned i = 0; i < numberOfTracks; ++i) {
         GRefPtr<GstPad> pad;
         g_signal_emit_by_name(m_pipeline.get(), getPadProperty.toCString().data(), i, &pad.outPtr(), nullptr);
         ASSERT(pad);
+        if (!pad)
+            continue;
 
-        // The pad might not have a sticky stream-start event yet, so we can't use
-        // gst_pad_get_stream_id() here.
-        auto streamId = TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID(type, i);
-        validStreams.append(streamId);
+        AtomString streamId(TrackPrivateBaseGStreamer::trackIdFromPadStreamStartOrUniqueID(type, i, pad));
 
         if (i < tracks.size()) {
             RefPtr<TrackPrivateType> existingTrack = tracks.get(streamId);
@@ -1077,10 +1077,11 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             }
         }
 
-        auto track = TrackPrivateType::create(*this, i, WTFMove(pad));
+        auto track = TrackPrivateType::create(*this, i, GRefPtr(pad));
+        ASSERT(track->id() == streamId);
+        validStreams.append(track->id());
         if (!track->trackIndex() && (type == TrackType::Audio || type == TrackType::Video))
             track->setActive(true);
-        ASSERT(streamId == track->id());
 
         std::variant<AudioTrackPrivate*, VideoTrackPrivate*, InbandTextTrackPrivate*> variantTrack(&track.get());
         switch (variantTrack.index()) {
@@ -1094,15 +1095,17 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             player->addTextTrack(*std::get<InbandTextTrackPrivate*>(variantTrack));
             break;
         }
-        tracks.add(streamId, WTFMove(track));
+        tracks.add(track->id(), WTFMove(track));
+        changed = true;
     }
 
     // Purge invalid tracks
-    tracks.removeIf([validStreams](auto& keyAndValue) {
+    changed = changed || tracks.removeIf([validStreams](auto& keyAndValue) {
         return !validStreams.contains(keyAndValue.key);
     });
 
-    player->mediaEngineUpdated();
+    if (changed)
+        player->mediaEngineUpdated();
 }
 
 bool MediaPlayerPrivateGStreamer::hasFirstVideoSampleReachedSink() const
@@ -1133,20 +1136,6 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
         if (!weakThis)
             return;
         updateVideoSizeAndOrientationFromCaps(caps.get());
-    });
-}
-
-void MediaPlayerPrivateGStreamer::audioChangedCallback(MediaPlayerPrivateGStreamer* player)
-{
-    player->m_notifier->notify(MainThreadNotification::AudioChanged, [player] {
-        player->notifyPlayerOfTrack<AudioTrackPrivateGStreamer>();
-    });
-}
-
-void MediaPlayerPrivateGStreamer::textChangedCallback(MediaPlayerPrivateGStreamer* player)
-{
-    player->m_notifier->notify(MainThreadNotification::TextChanged, [player] {
-        player->notifyPlayerOfTrack<InbandTextTrackPrivateGStreamer>();
     });
 }
 
@@ -1558,13 +1547,6 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstObject>& collect
             GST_WARNING("Unknown track type found for stream %s", streamId.string().ascii().data());
     }
 #undef CREATE_OR_SELECT_TRACK
-}
-
-void MediaPlayerPrivateGStreamer::videoChangedCallback(MediaPlayerPrivateGStreamer* player)
-{
-    player->m_notifier->notify(MainThreadNotification::VideoChanged, [player] {
-        player->notifyPlayerOfTrack<VideoTrackPrivateGStreamer>();
-    });
 }
 
 void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* message)
@@ -2061,6 +2043,16 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         // request it being attended. Note that it's not possible to send a SELECT_STREAMS before the first
         // STREAMS_SELECTED message because at that point the pipeline is not compeletely constructed.
         playbin3SendSelectStreamsIfAppropriate();
+        break;
+    }
+    case GST_MESSAGE_STREAM_START: {
+        // Real track id configuration in MSE is managed by AppendPipeline. In MediaStream we don't support native stream ids.
+        if (!m_isLegacyPlaybin)
+            break;
+
+        notifyPlayerOfTrack<VideoTrackPrivateGStreamer>();
+        notifyPlayerOfTrack<AudioTrackPrivateGStreamer>();
+        notifyPlayerOfTrack<InbandTextTrackPrivateGStreamer>();
         break;
     }
     default:
@@ -2985,13 +2977,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     }), this);
 
     g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(sourceSetupCallback), this);
-    if (m_isLegacyPlaybin) {
-        g_signal_connect_swapped(m_pipeline.get(), "video-changed", G_CALLBACK(videoChangedCallback), this);
-        g_signal_connect_swapped(m_pipeline.get(), "audio-changed", G_CALLBACK(audioChangedCallback), this);
-    }
-
-    if (m_isLegacyPlaybin)
-        g_signal_connect_swapped(m_pipeline.get(), "text-changed", G_CALLBACK(textChangedCallback), this);
 
     if (auto* textCombiner = webkitTextCombinerNew())
         g_object_set(m_pipeline.get(), "text-stream-combiner", textCombiner, nullptr);

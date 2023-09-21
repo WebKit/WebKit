@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#import "MessageSenderInlines.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"

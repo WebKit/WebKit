@@ -254,43 +254,23 @@ struct IsSmartPtr<RefPtr<T, U, V>> {
 };
 
 template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
-inline bool is(RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
-{
-    return is<ExpectedType>(source.get());
-}
-
-template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
 inline bool is(const RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
 {
     return is<ExpectedType>(source.get());
 }
 
 template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
-inline Target* downcast(RefPtr<Source, PtrTraits, RefDerefTraits>& source)
-{
-    return downcast<Target>(source.get());
-}
-
-template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
-inline Target* downcast(const RefPtr<Source, PtrTraits, RefDerefTraits>& source)
-{
-    return downcast<Target>(source.get());
-}
-
-template<typename Target, typename Source, typename TargetPtrTraits = RawPtrTraits<Target>, typename TargetRefDerefTraits = DefaultRefDerefTraits<Target>,
-    typename SourcePtrTraits, typename SourceRefDerefTraits>
-inline RefPtr<Target, TargetPtrTraits, TargetRefDerefTraits> dynamicDowncast(const RefPtr<Source, SourcePtrTraits, SourceRefDerefTraits>& source)
+inline RefPtr<Target> downcast(RefPtr<Source, PtrTraits, RefDerefTraits> source)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    if (!is<Target>(source))
-        return nullptr;
-    return static_pointer_cast<Target, TargetPtrTraits, TargetRefDerefTraits>(source);
+    ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
+    return static_pointer_cast<Target>(WTFMove(source));
 }
 
 template<typename Target, typename Source, typename TargetPtrTraits = RawPtrTraits<Target>, typename TargetRefDerefTraits = DefaultRefDerefTraits<Target>,
     typename SourcePtrTraits, typename SourceRefDerefTraits>
-inline RefPtr<Target, TargetPtrTraits, TargetRefDerefTraits> dynamicDowncast(RefPtr<Source, SourcePtrTraits, SourceRefDerefTraits>&& source)
+inline RefPtr<Target, TargetPtrTraits, TargetRefDerefTraits> dynamicDowncast(RefPtr<Source, SourcePtrTraits, SourceRefDerefTraits> source)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");

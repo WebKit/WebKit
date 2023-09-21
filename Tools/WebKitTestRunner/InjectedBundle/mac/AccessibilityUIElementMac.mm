@@ -1663,22 +1663,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
     return createJSString();
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
-{
-    if (auto result = stringAttributeValue(@"AXDocumentEncoding"))
-        return result;
-
-    return createJSString();
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
-{
-    if (auto result = stringAttributeValue(@"AXDocumentURI"))
-        return result;
-
-    return createJSString();
-}
-
 JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

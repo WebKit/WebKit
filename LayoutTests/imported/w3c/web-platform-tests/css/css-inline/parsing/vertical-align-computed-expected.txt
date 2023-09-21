@@ -1,0 +1,14 @@
+
+PASS Property vertical-align value 'baseline'
+PASS Property vertical-align value 'sub'
+PASS Property vertical-align value 'super'
+PASS Property vertical-align value 'top'
+PASS Property vertical-align value 'text-top'
+PASS Property vertical-align value 'middle'
+PASS Property vertical-align value 'bottom'
+PASS Property vertical-align value 'text-bottom'
+PASS Property vertical-align value '-10px'
+PASS Property vertical-align value '20%'
+PASS Property vertical-align value 'calc(20% + 10px)'
+PASS Property vertical-align value 'calc(10px - 0.5em)'
+

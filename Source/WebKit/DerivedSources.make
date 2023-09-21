@@ -104,6 +104,7 @@ VPATH = \
     $(WebKit2)/UIProcess/WebAuthentication \
     $(WebKit2)/UIProcess/mac \
     $(WebKit2)/UIProcess/ios \
+    $(WebKit2)/webpushd \
     $(WebKit2)/webpushd/mac \
     $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) \
 #
@@ -316,6 +317,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteMediaSourceProxy \
 	GPUProcess/media/RemoteRemoteCommandListenerProxy \
 	GPUProcess/media/RemoteSourceBufferProxy \
+	webpushd/PushClientConnection \
 #
 
 GENERATE_MESSAGE_RECEIVER_SCRIPT = $(WebKit2)/Scripts/generate-message-receiver.py
@@ -478,6 +480,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
+	Platform/IPC/StreamServerConnection.serialization.in \
 	Platform/SharedMemory.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	Shared/API/APIData.serialization.in \
@@ -525,10 +528,12 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Pasteboard.serialization.in \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \
+	Shared/PushMessageForTesting.serialization.in \
 	Shared/RemoteWorkerType.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \
 	Shared/ShareableBitmap.serialization.in \
+	Shared/ShareableResource.serialization.in \
 	Shared/TextFlags.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
@@ -547,6 +552,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ApplePay/PaymentSetupConfiguration.serialization.in \
 	Shared/Databases/IndexedDB/WebIDBResult.serialization.in \
 	Shared/RemoteLayerTree/RemoteLayerTree.serialization.in \
+	Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in \
 	Shared/mac/PDFContextMenuItem.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
@@ -636,13 +642,20 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 	ActivityState.serialization.in \
 	DragActions.serialization.in \
 	InbandTextTrackPrivate.serialization.in \
+	IndexedDB.serialization.in \
 	LayoutMilestones.serialization.in \
 	MediaPlaybackTargetContext.serialization.in \
 	MediaProducer.serialization.in \
 	MDNSRegisterError.serialization.in \
+	PlatformCALayer.messages.in \
 	PlatformEvent.serialization.in \
 	PlatformMediaSession.serialization.in \
 	PlatformScreen.serialization.in \
+	PlatformWheelEvent.serialization.in \
+	PlaybackSessionModel.serialization.in \
+	ProtectionSpaceBase.serialization.in \
+	ScrollTypes.serialization.in \
+	WebGPU.serialization.in \
 #
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH := $(foreach I,$(WEBCORE_SERIALIZATION_DESCRIPTION_FILES),$(WebCorePrivateHeaders)/$I)
@@ -672,6 +685,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPINamespace \
     WebExtensionAPIPermissions \
     WebExtensionAPIRuntime \
+    WebExtensionAPIScripting \
     WebExtensionAPITabs \
     WebExtensionAPITest \
     WebExtensionAPIWebNavigation \

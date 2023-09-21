@@ -52,11 +52,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     RefPtr<PlatformCALayerRemote> layer;
 
-    if (layerType == LayerTypeTiledBackingLayer ||  layerType == LayerTypePageTiledBackingLayer)
+    if (layerType == WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingLayer ||  layerType == WebCore::PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer)
         layer = adoptRef(new PlatformCALayerRemoteTiledBacking(layerType, owner, context));
     else
         layer = adoptRef(new PlatformCALayerRemote(layerType, owner, context));
@@ -98,7 +98,7 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
     : PlatformCALayer(layerType, owner)
     , m_context(&context)
 {
-    if (owner && layerType != LayerTypeContentsProvidedLayer && layerType != LayerTypeTransformLayer) {
+    if (owner && layerType != PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer && layerType != PlatformCALayer::LayerType::LayerTypeTransformLayer) {
         m_properties.contentsScale = owner->platformCALayerDeviceScaleFactor();
         m_properties.notePropertiesChanged(LayerChange::ContentsScaleChanged);
     }
@@ -854,7 +854,7 @@ float PlatformCALayerRemote::contentsScale() const
 
 void PlatformCALayerRemote::setContentsScale(float value)
 {
-    if (m_layerType == LayerTypeTransformLayer)
+    if (m_layerType == PlatformCALayer::LayerType::LayerTypeTransformLayer)
         return;
 
     m_properties.contentsScale = value;
@@ -916,26 +916,26 @@ void PlatformCALayerRemote::setShapeRoundedRect(const FloatRoundedRect& roundedR
 
 Path PlatformCALayerRemote::shapePath() const
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
     return m_properties.shapePath;
 }
 
 void PlatformCALayerRemote::setShapePath(const Path& path)
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
     m_properties.shapePath = path;
     m_properties.notePropertiesChanged(LayerChange::ShapePathChanged);
 }
 
 WindRule PlatformCALayerRemote::shapeWindRule() const
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
     return m_properties.windRule;
 }
 
 void PlatformCALayerRemote::setShapeWindRule(WindRule windRule)
 {
-    ASSERT(m_layerType == LayerTypeShapeLayer);
+    ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
     m_properties.windRule = windRule;
     m_properties.notePropertiesChanged(LayerChange::WindRuleChanged);
 }

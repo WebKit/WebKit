@@ -295,13 +295,12 @@ inline EncodedJSValue arrayGet(Instance* instance, uint32_t typeIndex, EncodedJS
 
 inline void arraySet(Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index, EncodedJSValue value)
 {
-    ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
-    VM& vm = instance->vm();
-
 #if ASSERT_ENABLED
+    ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
     const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
 #else
+    UNUSED_PARAM(instance);
     UNUSED_PARAM(typeIndex);
 #endif
 
@@ -309,7 +308,7 @@ inline void arraySet(Instance* instance, uint32_t typeIndex, EncodedJSValue arra
     ASSERT(arrayRef.isObject());
     JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
 
-    arrayObject->set(vm, index, value);
+    arrayObject->set(index, value);
 }
 
 // structNew() expects the `arguments` array (when used) to be in reverse order
@@ -317,6 +316,7 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
 {
     JSWebAssemblyInstance* jsInstance = instance->owner();
     JSGlobalObject* globalObject = instance->globalObject();
+
     const TypeDefinition& structTypeDefinition = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     const StructType& structType = *structTypeDefinition.as<StructType>();
     auto structRTT = instance->module().moduleInformation().rtts[typeIndex];
@@ -325,14 +325,10 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
     RELEASE_ASSERT(structValue);
     if (static_cast<Wasm::UseDefaultValue>(useDefault) == Wasm::UseDefaultValue::Yes) {
         for (unsigned i = 0; i < structType.fieldCount(); ++i) {
-            JSValue value = JSValue(0);
+            EncodedJSValue value = 0;
             if (Wasm::isRefType(structType.field(i).type))
-                value = jsNull();
-            else if (structType.field(i).type.as<Type>().kind == Wasm::TypeKind::I64) {
-                // This will convert to the appropriate I64 via ToBigInt() in set().
-                value = jsBoolean(false);
-            }
-            structValue->set(globalObject, i, value);
+                value = JSValue::encode(jsNull());
+            structValue->set(i, value);
         }
     } else {
         ASSERT(arguments);
@@ -341,7 +337,7 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
             ASSERT(structType.field(dstIndex).type.is<Type>());
             // Arguments are in reverse order!
             unsigned srcIndex = structType.fieldCount() - dstIndex - 1;
-            structValue->set(globalObject, dstIndex, toJSValue(globalObject, structType.field(dstIndex).type.as<Type>(), arguments[srcIndex]));
+            structValue->set(dstIndex, arguments[srcIndex]);
         }
     }
     return JSValue::encode(structValue);
@@ -357,9 +353,8 @@ inline EncodedJSValue structGet(EncodedJSValue encodedStructReference, uint32_t 
     return structPointer->get(fieldIndex);
 }
 
-inline void structSet(Instance* instance, EncodedJSValue encodedStructReference, uint32_t fieldIndex, EncodedJSValue argument)
+inline void structSet(EncodedJSValue encodedStructReference, uint32_t fieldIndex, EncodedJSValue argument)
 {
-    JSGlobalObject* globalObject = instance->globalObject();
     auto structReference = JSValue::decode(encodedStructReference);
     ASSERT(structReference.isObject());
     JSObject* structureAsObject = jsCast<JSObject*>(structReference);
@@ -369,8 +364,7 @@ inline void structSet(Instance* instance, EncodedJSValue encodedStructReference,
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
     ASSERT(structPointer->structType()->field(fieldIndex).type.is<Type>());
 
-    const auto fieldType = structPointer->structType()->field(fieldIndex).type.as<Type>();
-    return structPointer->set(globalObject, fieldIndex, toJSValue(globalObject, fieldType, argument));
+    return structPointer->set(fieldIndex, argument);
 }
 
 inline bool refCast(EncodedJSValue encodedReference, bool allowNull, TypeIndex typeIndex)
@@ -577,10 +571,9 @@ static inline int32_t waitImpl(VM& vm, ValueType* pointer, ValueType expectedVal
     return static_cast<int32_t>(WaiterListManager::singleton().waitSync(vm, pointer, expectedValue, timeout));
 }
 
-inline int32_t memoryAtomicWait32(Instance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds)
+inline int32_t memoryAtomicWait32(Instance* instance, uint64_t offsetInMemory, int32_t value, int64_t timeoutInNanoseconds)
 {
     VM& vm = instance->vm();
-    uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
     if (offsetInMemory & (0x4 - 1))
         return -1;
     if (!instance->memory())
@@ -595,10 +588,14 @@ inline int32_t memoryAtomicWait32(Instance* instance, unsigned base, unsigned of
     return waitImpl<int32_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-inline int32_t memoryAtomicWait64(Instance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds)
+inline int32_t memoryAtomicWait32(Instance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds)
+{
+    return memoryAtomicWait32(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds);
+}
+
+inline int32_t memoryAtomicWait64(Instance* instance, uint64_t offsetInMemory, int64_t value, int64_t timeoutInNanoseconds)
 {
     VM& vm = instance->vm();
-    uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
     if (offsetInMemory & (0x8 - 1))
         return -1;
     if (!instance->memory())
@@ -611,6 +608,11 @@ inline int32_t memoryAtomicWait64(Instance* instance, unsigned base, unsigned of
         return -1;
     int64_t* pointer = bitwise_cast<int64_t*>(bitwise_cast<uint8_t*>(instance->memory()->basePointer()) + offsetInMemory);
     return waitImpl<int64_t>(vm, pointer, value, timeoutInNanoseconds);
+}
+
+inline int32_t memoryAtomicWait64(Instance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds)
+{
+    return memoryAtomicWait64(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds);
 }
 
 inline int32_t memoryAtomicNotify(Instance* instance, unsigned base, unsigned offset, int32_t countValue)

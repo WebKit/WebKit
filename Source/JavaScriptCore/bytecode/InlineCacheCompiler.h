@@ -234,7 +234,6 @@ public:
 
     const ScalarRegisterSet& liveRegistersForCall();
 
-    CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     DisposableCallSiteIndex callSiteIndexForExceptionHandling();
 
     const HandlerInfo& originalExceptionHandler();
@@ -285,7 +284,13 @@ public:
 
     AccessGenerationResult regenerate(const GCSafeConcurrentJSLocker&, PolymorphicAccess&, CodeBlock*);
 
+    static MacroAssemblerCodeRef<JITThunkPtrTag> generateSlowPathCode(VM&, AccessType);
+
+    static void emitDataICPrologue(CCallHelpers&);
+    static void emitDataICEpilogue(CCallHelpers&);
+
 private:
+    CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     const ScalarRegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
 
     void emitDOMJITGetter(GetterSetterAccessCase&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);

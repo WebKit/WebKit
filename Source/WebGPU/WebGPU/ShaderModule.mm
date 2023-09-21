@@ -331,7 +331,7 @@ static WGSL::BindGroupLayoutEntry::BindingMember convertBindingLayout(const Bind
     return WTF::switchOn(bindingLayout, [](const WGPUBufferBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::BufferBindingLayout {
             .type = wgslBindingType(bindingLayout.type),
-            .hasDynamicOffset = bindingLayout.hasDynamicOffset,
+            .hasDynamicOffset = !!bindingLayout.hasDynamicOffset,
             .minBindingSize = bindingLayout.minBindingSize
         };
     }, [](const WGPUSamplerBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
@@ -342,7 +342,7 @@ static WGSL::BindGroupLayoutEntry::BindingMember convertBindingLayout(const Bind
         return WGSL::TextureBindingLayout {
             .sampleType = wgslSampleType(bindingLayout.sampleType),
             .viewDimension = wgslViewDimension(bindingLayout.viewDimension),
-            .multisampled = bindingLayout.multisampled
+            .multisampled = !!bindingLayout.multisampled
         };
     }, [](const WGPUStorageTextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::StorageTextureBindingLayout {

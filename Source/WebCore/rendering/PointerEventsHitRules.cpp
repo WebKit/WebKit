@@ -22,7 +22,7 @@
 
 namespace WebCore {
 
-PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, const HitTestRequest& request, PointerEvents pointerEvents)
+PointerEventsHitRules::PointerEventsHitRules(HitTestingTargetType hitTestingTargetType, const HitTestRequest& request, PointerEvents pointerEvents)
     : requireVisible(false)
     , requireFill(false)
     , requireStroke(false)
@@ -33,7 +33,7 @@ PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, const HitTe
     if (request.svgClipContent())
         pointerEvents = PointerEvents::Fill;
 
-    if (hitTesting == SVG_PATH_HITTESTING) {
+    if (hitTestingTargetType == HitTestingTargetType::SVGPath) {
         switch (pointerEvents)
         {
             case PointerEvents::VisiblePainted:

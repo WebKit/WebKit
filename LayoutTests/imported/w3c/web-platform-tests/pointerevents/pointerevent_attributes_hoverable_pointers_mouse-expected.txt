@@ -25,6 +25,7 @@ PASS mouse pointerover.toElement value is null
 PASS mouse pointerover.isTrusted value is true
 PASS mouse pointerover.composed value is valid
 PASS mouse pointerover.bubbles value is valid
+PASS mouse pointerover.cancelable value is valid
 PASS mouse pointerover.pressure value is valid
 PASS mouse pointerover properties for pointerType = mouse
 PASS mouse pointerover.isPrimary attribute is true.
@@ -39,6 +40,7 @@ PASS mouse pointerenter.toElement value is null
 PASS mouse pointerenter.isTrusted value is true
 PASS mouse pointerenter.composed value is valid
 PASS mouse pointerenter.bubbles value is valid
+PASS mouse pointerenter.cancelable value is valid
 PASS mouse pointerenter.pressure value is valid
 PASS mouse pointerenter properties for pointerType = mouse
 PASS mouse pointerenter.isPrimary attribute is true.
@@ -54,6 +56,7 @@ PASS mouse pointermove.toElement value is null
 PASS mouse pointermove.isTrusted value is true
 PASS mouse pointermove.composed value is valid
 PASS mouse pointermove.bubbles value is valid
+PASS mouse pointermove.cancelable value is valid
 PASS mouse pointermove.pressure value is valid
 PASS mouse pointermove properties for pointerType = mouse
 PASS mouse pointermove.isPrimary attribute is true.
@@ -69,6 +72,7 @@ PASS mouse pointerdown.toElement value is null
 PASS mouse pointerdown.isTrusted value is true
 PASS mouse pointerdown.composed value is valid
 PASS mouse pointerdown.bubbles value is valid
+PASS mouse pointerdown.cancelable value is valid
 FAIL mouse pointerdown.pressure value is valid assert_greater_than: pressure is greater than 0 with a button pressed expected a number greater than 0 but got 0
 PASS mouse pointerdown properties for pointerType = mouse
 PASS mouse pointerdown.isPrimary attribute is true.
@@ -84,6 +88,7 @@ PASS mouse pointerup.toElement value is null
 PASS mouse pointerup.isTrusted value is true
 PASS mouse pointerup.composed value is valid
 PASS mouse pointerup.bubbles value is valid
+PASS mouse pointerup.cancelable value is valid
 PASS mouse pointerup.pressure value is valid
 PASS mouse pointerup properties for pointerType = mouse
 PASS mouse pointerup properties for pointerup
@@ -100,6 +105,7 @@ PASS mouse pointerout.toElement value is null
 PASS mouse pointerout.isTrusted value is true
 PASS mouse pointerout.composed value is valid
 PASS mouse pointerout.bubbles value is valid
+PASS mouse pointerout.cancelable value is valid
 PASS mouse pointerout.pressure value is valid
 PASS mouse pointerout properties for pointerType = mouse
 PASS mouse pointerout.isPrimary attribute is true.
@@ -115,6 +121,7 @@ PASS mouse pointerleave.toElement value is null
 PASS mouse pointerleave.isTrusted value is true
 PASS mouse pointerleave.composed value is valid
 PASS mouse pointerleave.bubbles value is valid
+PASS mouse pointerleave.cancelable value is valid
 PASS mouse pointerleave.pressure value is valid
 PASS mouse pointerleave properties for pointerType = mouse
 PASS mouse pointerleave.isPrimary attribute is true.

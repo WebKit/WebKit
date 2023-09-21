@@ -61,8 +61,8 @@ protected:
     bool flushContextDraws();
     IntSize backendSize() const override;
     
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) override;
-    RefPtr<NativeImage> copyNativeImageForDrawing(GraphicsContext&) override;
+    RefPtr<NativeImage> copyNativeImage() override;
+    RefPtr<NativeImage> createNativeImageReference() override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
 
     void getPixelBuffer(const IntRect&, PixelBuffer&) override;

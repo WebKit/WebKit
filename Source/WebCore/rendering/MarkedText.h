@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +37,7 @@ class RenderText;
 class RenderedDocumentMarker;
 struct TextBoxSelectableRange;
 
-struct MarkedText {
+struct MarkedText : public CanMakeCheckedPtr {
     // Sorted by paint order
     enum class Type : uint8_t {
         Unmarked,

@@ -58,8 +58,10 @@ using namespace WebCore;
 static bool sendMessage(WebPage* page, const Function<bool(IPC::Connection&, uint64_t)>& sendMessage)
 {
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
-    if (DeprecatedGlobalSettings::builtInNotificationsEnabled())
-        return sendMessage(WebProcess::singleton().ensureNetworkProcessConnection().connection(), WebProcess::singleton().sessionID().toUInt64());
+    if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
+        Ref networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        return sendMessage(networkProcessConnection, WebProcess::singleton().sessionID().toUInt64());
+    }
 #endif
 
     std::optional<WebCore::PageIdentifier> pageIdentifier;
@@ -74,20 +76,21 @@ static bool sendMessage(WebPage* page, const Function<bool(IPC::Connection&, uin
 #endif
 
     ASSERT(pageIdentifier);
-    return sendMessage(*WebProcess::singleton().parentProcessConnection(), pageIdentifier->toUInt64());
+    Ref parentConnection = *WebProcess::singleton().parentProcessConnection();
+    return sendMessage(parentConnection, pageIdentifier->toUInt64());
 }
 
 template<typename U> static bool sendNotificationMessage(U&& message, WebPage* page)
 {
     return sendMessage(page, [&] (auto& connection, auto destinationIdentifier) {
-        return connection.send(WTFMove(message), destinationIdentifier) == IPC::Error::NoError;
+        return connection.send(std::forward<U>(message), destinationIdentifier) == IPC::Error::NoError;
     });
 }
 
 template<typename U> static bool sendNotificationMessageWithAsyncReply(U&& message, WebPage* page, CompletionHandler<void()>&& callback)
 {
     return sendMessage(page, [&] (auto& connection, auto destinationIdentifier) {
-        return !!connection.sendWithAsyncReply(WTFMove(message), WTFMove(callback), destinationIdentifier);
+        return !!connection.sendWithAsyncReply(std::forward<U>(message), WTFMove(callback), destinationIdentifier);
     });
 }
 #endif // ENABLE(NOTIFICATIONS)

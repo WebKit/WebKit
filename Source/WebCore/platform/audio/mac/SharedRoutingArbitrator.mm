@@ -122,7 +122,7 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const Token& token
     [[PAL::getAVAudioRoutingArbiterClass() sharedRoutingArbiter] beginArbitrationWithCategory:arbitrationCategory completionHandler:[this, identifier = WTFMove(identifier)](BOOL defaultDeviceChanged, NSError * _Nullable error) mutable {
         callOnMainRunLoop([this, defaultDeviceChanged, error = retainPtr(error), identifier = WTFMove(identifier)] {
             if (error)
-                ERROR_LOG(identifier, [[error localizedDescription] UTF8String], ", routeChanged = ", !!defaultDeviceChanged);
+                ERROR_LOG(identifier, error.get(), ", routeChanged = ", !!defaultDeviceChanged);
 
             // FIXME: Do we need to reset sample rate and buffer size if the default device changes?
 

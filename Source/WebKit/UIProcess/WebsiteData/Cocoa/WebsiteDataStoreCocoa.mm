@@ -68,13 +68,6 @@ static constexpr double defaultBrowserOriginQuotaRatio = 0.6;
 static constexpr double defaultAppTotalQuotaRatio = 0.2;
 static constexpr double defaultAppOriginQuotaRatio = 0.15;
 
-static HashSet<WebsiteDataStore*>& dataStores()
-{
-    static NeverDestroyed<HashSet<WebsiteDataStore*>> dataStores;
-
-    return dataStores;
-}
-
 #if ENABLE(APP_BOUND_DOMAINS)
 static WorkQueue& appBoundDomainQueue()
 {
@@ -234,8 +227,6 @@ bool WebsiteDataStore::useNetworkLoader()
 
 void WebsiteDataStore::platformInitialize()
 {
-    ASSERT(!dataStores().contains(this));
-    dataStores().add(this);
 #if ENABLE(APP_BOUND_DOMAINS)
     initializeAppBoundDomains();
 #endif
@@ -246,8 +237,6 @@ void WebsiteDataStore::platformInitialize()
 
 void WebsiteDataStore::platformDestroy()
 {
-    ASSERT(dataStores().contains(this));
-    dataStores().remove(this);
 }
 
 static String defaultWebsiteDataStoreRootDirectory()

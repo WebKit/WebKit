@@ -66,16 +66,17 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
         if (handler.m_nativeCodeForDispatchAndCatch)
             dispatchAndCatchRoutine = handler.m_nativeCodeForDispatchAndCatch.taggedPtr();
 #else
-#if ENABLE(WEBASSEMBLY)
-#error WASM requires the JIT, so this section assumes we are in JS
-#endif
-        const auto* pc = std::get<const JSInstruction*>(catchPCForInterpreter);
-        if (pc->isWide32())
-            catchRoutine = LLInt::getWide32CodePtr(pc->opcodeID());
-        else if (pc->isWide16())
-            catchRoutine = LLInt::getWide16CodePtr(pc->opcodeID());
-        else
-            catchRoutine = LLInt::getCodePtr(pc->opcodeID());
+        auto getCatchRoutine = [](const auto* pc) {
+            if (pc->isWide32())
+                return LLInt::getWide32CodePtr(pc->opcodeID());
+            if (pc->isWide16())
+                return LLInt::getWide16CodePtr(pc->opcodeID());
+            return LLInt::getCodePtr(pc->opcodeID());
+        };
+
+        catchRoutine = std::holds_alternative<const JSInstruction*>(catchPCForInterpreter)
+            ? getCatchRoutine(std::get<const JSInstruction*>(catchPCForInterpreter))
+            : getCatchRoutine(std::get<const WasmInstruction*>(catchPCForInterpreter));
 #endif
     } else
         catchRoutine = LLInt::handleUncaughtException(vm).code().taggedPtr();

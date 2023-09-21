@@ -649,6 +649,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Merge-Queue': [
             'configure-build',
             'validate-change',
+            'determine-label-owner',
             'validate-commiter-and-reviewer',
             'configuration',
             'clean-up-git-repo',
@@ -679,6 +680,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Unsafe-Merge-Queue': [
             'configure-build',
             'validate-change',
+            'determine-label-owner',
             'validate-commiter-and-reviewer',
             'configuration',
             'clean-up-git-repo',

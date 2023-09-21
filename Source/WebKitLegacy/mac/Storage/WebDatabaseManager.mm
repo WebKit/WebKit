@@ -89,7 +89,7 @@ static NSString *databasesDirectoryPath();
 
 - (NSArray *)origins
 {
-    return createNSArray(DatabaseTracker::singleton().origins(), [] (auto& origin) {
+    return createNSArray(DatabaseTracker::singleton().origins(), [] (auto&& origin) {
         return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
     }).autorelease();
 }

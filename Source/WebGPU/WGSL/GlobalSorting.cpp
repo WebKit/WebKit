@@ -176,6 +176,7 @@ public:
     void visit(AST::Function&) override;
     void visit(AST::VariableStatement&) override;
     void visit(AST::CompoundStatement&) override;
+    void visit(AST::ForStatement&) override;
     void visit(AST::IdentifierExpression&) override;
 
 private:
@@ -228,6 +229,13 @@ template<typename ASTNode>
 void GraphBuilder<ASTNode>::visit(AST::CompoundStatement& statement)
 {
     ContextScope blockScope(this);
+    AST::Visitor::visit(statement);
+}
+
+template<typename ASTNode>
+void GraphBuilder<ASTNode>::visit(AST::ForStatement& statement)
+{
+    ContextScope forScope(this);
     AST::Visitor::visit(statement);
 }
 

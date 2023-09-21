@@ -735,8 +735,8 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         auto cookies = nsCookiesToCookieVector(addedCookies, [](NSHTTPCookie *cookie) { return !cookie.HTTPOnly; });
         if (cookies.isEmpty())
             return;
-        for (auto* observer : it->value)
-            observer->cookiesAdded(host, cookies);
+        for (auto& observer : it->value)
+            observer.get()->cookiesAdded(host, cookies);
     }).get() onQueue:dispatch_get_main_queue()];
 
     [nsCookieStorage() _setCookiesRemovedHandler:makeBlockPtr([this, weakThis = WeakPtr { *this }](NSArray<NSHTTPCookie *> *removedCookies, NSString *domainForRemovedCookies, bool removeAllCookies) {
@@ -744,8 +744,8 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
             return;
         if (removeAllCookies) {
             for (auto& observers : m_cookieChangeObservers.values()) {
-                for (auto* observer : observers)
-                    observer->allCookiesDeleted();
+                for (auto& observer : observers)
+                    observer.get()->allCookiesDeleted();
             }
             return;
         }
@@ -758,8 +758,8 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         auto cookies = nsCookiesToCookieVector(removedCookies, [](NSHTTPCookie *cookie) { return !cookie.HTTPOnly; });
         if (cookies.isEmpty())
             return;
-        for (auto* observer : it->value)
-            observer->cookiesDeleted(host, cookies);
+        for (auto& observer : it->value)
+            observer.get()->cookiesDeleted(host, cookies);
     }).get() onQueue:dispatch_get_main_queue()];
 }
 
@@ -780,7 +780,7 @@ void NetworkStorageSession::startListeningForCookieChangeNotifications(CookieCha
     registerCookieChangeListenersIfNecessary();
 
     auto& observers = m_cookieChangeObservers.ensure(host, [] {
-        return HashSet<CookieChangeObserver*> { };
+        return HashSet<CheckedPtr<CookieChangeObserver>> { };
     }).iterator->value;
     ASSERT(!observers.contains(&observer));
     observers.add(&observer);

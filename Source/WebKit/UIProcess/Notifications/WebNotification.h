@@ -46,10 +46,10 @@ public:
     static Ref<WebNotification> createNonPersistent(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, IPC::Connection& sourceConnection)
     {
         ASSERT(!data.isPersistent());
-        return adoptRef(*new WebNotification(data, pageIdentifier, std::nullopt, sourceConnection));
+        return adoptRef(*new WebNotification(data, pageIdentifier, std::nullopt, &sourceConnection));
     }
 
-    static Ref<WebNotification> createPersistent(const WebCore::NotificationData& data, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection& sourceConnection)
+    static Ref<WebNotification> createPersistent(const WebCore::NotificationData& data, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection* sourceConnection)
     {
         ASSERT(data.isPersistent());
         return adoptRef(*new WebNotification(data, WebPageProxyIdentifier(), dataStoreIdentifier, sourceConnection));
@@ -77,7 +77,7 @@ public:
     RefPtr<IPC::Connection> sourceConnection() const { return m_sourceConnection.get(); }
 
 private:
-    WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection&);
+    WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection*);
 
     WebCore::NotificationData m_data;
     RefPtr<API::SecurityOrigin> m_origin;

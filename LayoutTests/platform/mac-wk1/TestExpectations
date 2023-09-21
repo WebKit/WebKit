@@ -1814,7 +1814,7 @@ webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass I
 
 webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/190627 compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
+webkit.org/b/190627 [ Monterey+ ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
 
 webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Skip ]
 
@@ -1873,7 +1873,6 @@ imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 # rdar://53137847 (macOS WK1: editing/spelling/retro-correction-spelling-markers.html, editing/spelling/grammar.html, and editing/spelling/markers.html are flaky)
 webkit.org/b/206071 editing/spelling/grammar.html [ Skip ]
 webkit.org/b/206071 editing/spelling/markers.html [ Skip ]
-webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Pass Failure ]
 
 webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement-types.html [ Timeout ]
 
@@ -2530,7 +2529,7 @@ imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ WontFix 
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
 
 # IPC is for WK2
-ipc/shared-video-frame-size.html [ Skip ]
+ipc [ WontFix ]
 
 # Displays blank on WK1
 fullscreen/fullscreen-iframe-navigation.html [ Skip ]
@@ -2579,6 +2578,7 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-014.html  [ S
 
 # webkit.org/b/258628 Skipping some newly imported pointerevents WPT
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-on-object.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault-passive.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?mouse [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?pen [ Skip ]
@@ -2663,6 +2663,14 @@ fast/mediastream/device-change-event-2.html [ Failure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ Pass ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg.html [ Pass ]
 
+# WK1-specific subtle blending differences
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-parent.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-sibling.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-parent.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-sibling.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph-background-image.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph.html [ ImageOnlyFailure ]
+
 webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-lists.html [ Crash ]
 
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
@@ -2682,3 +2690,7 @@ webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-li
 
 webkit.org/b/261339 [ Monterey+ Debug ] editing/selection/cleared-by-relayout.html [ Crash ]
 webkit.org/b/261339 [ Monterey+ Debug ] imported/w3c/web-platform-tests/editing/crashtests/designMode-document-will-be-blurred-by-focus-event-listener.html [ Crash ]
+
+webkit.org/b/261427 [ Ventura+ ] media/track/track-in-band-mode.html [ Pass Crash ]
+
+webkit.org/b/261618 [ Monterey+ Debug ] imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html [ Pass Crash ]

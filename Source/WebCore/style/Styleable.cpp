@@ -373,7 +373,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     element.cssAnimationsDidUpdate(pseudoId);
 }
 
-static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, AnimatableProperty property)
+static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, const AnimatableProperty& property)
 {
     if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
         auto effects = keyframeEffectStack->sortedEffects();
@@ -386,7 +386,7 @@ static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styl
     return nullptr;
 }
 
-static bool propertyInStyleMatchesValueForTransitionInMap(AnimatableProperty property, const RenderStyle& style, AnimatablePropertyToTransitionMap& transitions, const Document& document)
+static bool propertyInStyleMatchesValueForTransitionInMap(const AnimatableProperty& property, const RenderStyle& style, AnimatablePropertyToTransitionMap& transitions, const Document& document)
 {
     if (auto* transition = transitions.get(property)) {
         if (CSSPropertyAnimation::propertiesEqual(property, style, transition->targetStyle(), document))
@@ -395,7 +395,7 @@ static bool propertyInStyleMatchesValueForTransitionInMap(AnimatableProperty pro
     return false;
 }
 
-static bool transitionMatchesProperty(const Animation& transition, AnimatableProperty property, const RenderStyle& style)
+static bool transitionMatchesProperty(const Animation& transition, const AnimatableProperty& property, const RenderStyle& style)
 {
     if (transition.isPropertyFilled())
         return false;
@@ -475,7 +475,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
     }
 }
 
-static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleable, AnimatableProperty property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime)
+static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleable, const AnimatableProperty& property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime)
 {
     auto* keyframeEffect = keyframeEffectForElementAndProperty(styleable, property);
     auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
@@ -508,7 +508,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         hasMatchingTransitionProperty = true;
     }
 
-    auto effectTargetsProperty = [property](KeyframeEffect& effect) {
+    auto effectTargetsProperty = [&property](KeyframeEffect& effect) {
         if (effect.animatesProperty(property))
             return true;
         if (auto* transition = dynamicDowncast<CSSTransition>(effect.animation()))
@@ -552,11 +552,12 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         return RenderStyle::clone(newStyle);
     }();
 
-    if (!styleable.hasRunningTransitionForProperty(property)
+    bool hasRunningTransition = styleable.hasRunningTransitionForProperty(property);
+    if (!hasRunningTransition
+        && hasMatchingTransitionProperty && matchingTransitionDuration > 0
         && !CSSPropertyAnimation::propertiesEqual(property, beforeChangeStyle, afterChangeStyle, document)
         && CSSPropertyAnimation::canPropertyBeInterpolated(property, beforeChangeStyle, afterChangeStyle, document)
-        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document)
-        && hasMatchingTransitionProperty && matchingTransitionDuration > 0) {
+        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document)) {
         // 1. If all of the following are true:
         //   - the element does not have a running transition for the property,
         //   - the before-change style is different from and can be interpolated with the after-change style for that property,
@@ -580,23 +581,26 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         auto& reversingAdjustedStartStyle = beforeChangeStyle;
         auto reversingShorteningFactor = 1;
         styleable.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(styleable, property, generationTime, *matchingBackingAnimation, beforeChangeStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+        ASSERT(styleable.hasRunningTransitionForProperty(property));
+        hasRunningTransition = true;
     } else if (styleable.hasCompletedTransitionForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document)) {
         // 2. Otherwise, if the element has a completed transition for the property and the end value of the completed transition is different from
         //    the after-change style for the property, then implementations must remove the completed transition from the set of completed transitions.
         styleable.ensureCompletedTransitionsByProperty().remove(property);
     }
 
-    bool hasRunningTransition = styleable.hasRunningTransitionForProperty(property);
-    if ((hasRunningTransition || styleable.hasCompletedTransitionForProperty(property)) && !hasMatchingTransitionProperty) {
+    if (!hasMatchingTransitionProperty) {
         // 3. If the element has a running transition or completed transition for the property, and there is not a matching transition-property
         //    value, then implementations must cancel the running transition or remove the completed transition from the set of completed transitions.
         if (hasRunningTransition)
             styleable.ensureRunningTransitionsByProperty().take(property)->cancelFromStyle();
-        else
+        else if (styleable.hasCompletedTransitionForProperty(property))
             styleable.ensureCompletedTransitionsByProperty().remove(property);
+        return;
     }
 
-    if (hasMatchingTransitionProperty && styleable.hasRunningTransitionForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureRunningTransitionsByProperty(), document)) {
+    ASSERT(hasMatchingTransitionProperty);
+    if (hasRunningTransition && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureRunningTransitionsByProperty(), document)) {
         auto previouslyRunningTransition = styleable.ensureRunningTransitionsByProperty().take(property);
         auto& previouslyRunningTransitionCurrentStyle = previouslyRunningTransition->currentStyle();
         // 4. If the element has a running transition for the property, there is a matching transition-property value, and the end value of the running
@@ -708,7 +712,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
         return;
     }
 
-    for (auto property : transitionProperties)
+    for (auto& property : transitionProperties)
         updateCSSTransitionsForStyleableAndProperty(*this, property, currentStyle, newStyle, generationTime);
 }
 

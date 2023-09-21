@@ -735,7 +735,7 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
     // The number of interpretations will be i1 * i2 * ... * iN, where iX is the number of interpretations for the Xth phrase with alternatives.
     size_t interpretationsCount = 1;
 
-    for (auto* marker : markersInRoot)
+    for (auto& marker : markersInRoot)
         interpretationsCount *= std::get<Vector<String>>(marker->data()).size() + 1;
 
     Vector<Vector<UChar>> interpretations;
@@ -746,7 +746,7 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
     unsigned combinationsSoFar = 1;
 
     for (auto& node : intersectingNodes(rangeOfRootContents)) {
-        for (auto* marker : document()->markers().markersFor(node, DocumentMarker::DictationPhraseWithAlternatives)) {
+        for (auto& marker : document()->markers().markersFor(node, DocumentMarker::DictationPhraseWithAlternatives)) {
             auto& alternatives = std::get<Vector<String>>(marker->data());
 
             auto rangeForMarker = makeSimpleRange(node, *marker);

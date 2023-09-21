@@ -31,6 +31,7 @@
 #import "WKImmediateActionTypes.h"
 #import "WebHitTestResultData.h"
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
+#import <wtf/CheckedPtr.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/NakedRef.h>
 #import <wtf/RetainPtr.h>

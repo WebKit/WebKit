@@ -1,0 +1,3 @@
+
+PASS Testing small caps setting in fontVariant
+

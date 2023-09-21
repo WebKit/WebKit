@@ -123,21 +123,21 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
         return;
 
     case StyleRuleType::Media: {
-        auto& mediaRule = downcast<StyleRuleMedia>(rule);
-        if (m_mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
-            addChildRules(mediaRule.childRules());
-        m_mediaQueryCollector.pop(mediaRule.mediaQueries());
+        auto mediaRule = downcast<StyleRuleMedia>(WTFMove(rule));
+        if (m_mediaQueryCollector.pushAndEvaluate(mediaRule->mediaQueries()))
+            addChildRules(mediaRule->childRules());
+        m_mediaQueryCollector.pop(mediaRule->mediaQueries());
         return;
     }
 
     case StyleRuleType::Container: {
-        auto& containerRule = downcast<StyleRuleContainer>(rule);
+        auto containerRule = downcast<StyleRuleContainer>(WTFMove(rule));
         auto previousContainerQueryIdentifier = m_currentContainerQueryIdentifier;
         if (m_ruleSet) {
-            m_ruleSet->m_containerQueries.append({ containerRule, previousContainerQueryIdentifier });
+            m_ruleSet->m_containerQueries.append({ containerRule.copyRef(), previousContainerQueryIdentifier });
             m_currentContainerQueryIdentifier = m_ruleSet->m_containerQueries.size();
         }
-        addChildRules(containerRule.childRules());
+        addChildRules(containerRule->childRules());
         if (m_ruleSet)
             m_currentContainerQueryIdentifier = previousContainerQueryIdentifier;
         return;
@@ -147,16 +147,16 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
     case StyleRuleType::LayerStatement: {
         disallowDynamicMediaQueryEvaluationIfNeeded();
 
-        auto& layerRule = downcast<StyleRuleLayer>(rule);
-        if (layerRule.isStatement()) {
+        auto layerRule = downcast<StyleRuleLayer>(WTFMove(rule));
+        if (layerRule->isStatement()) {
             // Statement syntax just registers the layers.
-            registerLayers(layerRule.nameList());
+            registerLayers(layerRule->nameList());
             return;
         }
         // Block syntax.
-        pushCascadeLayer(layerRule.name());
-        addChildRules(layerRule.childRules());
-        popCascadeLayer(layerRule.name());
+        pushCascadeLayer(layerRule->name());
+        addChildRules(layerRule->childRules());
+        popCascadeLayer(layerRule->name());
         return;
     }
     case StyleRuleType::CounterStyle:
@@ -170,11 +170,12 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
             m_collectedResolverMutatingRules.append({ rule, m_currentCascadeLayerIdentifier });
         return;
 
-    case StyleRuleType::Supports:
-        if (downcast<StyleRuleSupports>(rule).conditionIsSupported())
-            addChildRules(downcast<StyleRuleSupports>(rule).childRules());
+    case StyleRuleType::Supports: {
+        auto supportsRule = downcast<StyleRuleSupports>(WTFMove(rule));
+        if (supportsRule->conditionIsSupported())
+            addChildRules(supportsRule->childRules());
         return;
-
+    }
     case StyleRuleType::Import:
     case StyleRuleType::Margin:
     case StyleRuleType::Namespace:

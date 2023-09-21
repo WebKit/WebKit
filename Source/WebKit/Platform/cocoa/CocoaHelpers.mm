@@ -242,18 +242,6 @@ NSDictionary *mergeDictionariesAndSetValues(NSDictionary *dictionaryA, NSDiction
     return [newDictionary copy];
 }
 
-// MARK: NSLocale helper methods.
-
-NSString *localeStringInWebExtensionFormat(NSLocale *locale)
-{
-    if (!locale.languageCode)
-        return @"";
-
-    if (locale.countryCode.length)
-        return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
-    return locale.languageCode;
-}
-
 // MARK: NSError helper methods
 
 NSString *privacyPreservingDescription(NSError *error)

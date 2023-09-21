@@ -93,6 +93,7 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
         return { };
     }
 
+    ASSERT(stateTree);
     connectStateNodeLayers(*stateTree, *layerTreeHost);
     bool succeeded = m_scrollingTree->commitTreeState(WTFMove(stateTree));
     MESSAGE_CHECK_WITH_RETURN_VALUE(succeeded, std::nullopt);

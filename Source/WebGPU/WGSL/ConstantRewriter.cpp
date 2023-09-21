@@ -54,6 +54,7 @@ public:
 
     // Statements
     void visit(AST::CompoundStatement&) override;
+    void visit(AST::ForStatement&) override;
 
     // Expressions
     void visit(AST::IdentifierExpression&) override;
@@ -145,6 +146,12 @@ void ConstantRewriter::visit(AST::Function& function)
 void ConstantRewriter::visit(AST::CompoundStatement& statement)
 {
     ContextScope blockScope(this);
+    AST::Visitor::visit(statement);
+}
+
+void ConstantRewriter::visit(AST::ForStatement& statement)
+{
+    ContextScope forScope(this);
     AST::Visitor::visit(statement);
 }
 
@@ -274,6 +281,9 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
             case Primitive::Void:
             case Primitive::Sampler:
             case Primitive::TextureExternal:
+            case Primitive::AccessMode:
+            case Primitive::TexelFormat:
+            case Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -292,10 +302,16 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
         [&](const Reference&) {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const Pointer&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Function&) {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Texture&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureStorage&) {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) {

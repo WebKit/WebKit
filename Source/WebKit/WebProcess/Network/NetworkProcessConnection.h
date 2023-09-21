@@ -65,6 +65,7 @@ public:
     }
     ~NetworkProcessConnection();
     
+    Ref<IPC::Connection> protectedConnection() { return m_connection; }
     IPC::Connection& connection() { return m_connection.get(); }
 
     void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);

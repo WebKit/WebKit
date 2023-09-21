@@ -500,7 +500,7 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
                 };
                 entries.append(bufferEntry);
 
-                bufferEntry.binding = newEntry.binding + 1;
+                bufferEntry.binding = newEntry.binding + 2;
                 bufferEntry.buffer = WGPUBufferBindingLayout {
                     .nextInChain = nullptr,
                     .type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float4x3),

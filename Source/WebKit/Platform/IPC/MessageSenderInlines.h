@@ -58,7 +58,7 @@ template<typename MessageType, typename C> inline AsyncReplyID MessageSender::se
     return { };
 }
 
-template<typename MessageType> inline bool MessageSender::sendWithoutUsingIPCConnection(MessageType&& message)
+template<typename MessageType> inline bool MessageSender::sendWithoutUsingIPCConnection(MessageType&& message) const
 {
     static_assert(!MessageType::isSync);
     auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), messageSenderDestinationID());
@@ -67,13 +67,13 @@ template<typename MessageType> inline bool MessageSender::sendWithoutUsingIPCCon
     return performSendWithoutUsingIPCConnection(WTFMove(encoder));
 }
 
-template<typename MessageType, typename C> inline bool MessageSender::sendWithAsyncReplyWithoutUsingIPCConnection(MessageType&& message, C&& completionHandler)
+template<typename MessageType, typename C> inline bool MessageSender::sendWithAsyncReplyWithoutUsingIPCConnection(MessageType&& message, C&& completionHandler) const
 {
     static_assert(!MessageType::isSync);
     auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), messageSenderDestinationID());
     encoder.get() << std::forward<MessageType>(message).arguments();
 
-    auto asyncHandler = [completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
+    auto asyncHandler = [completionHandler = std::forward<C>(completionHandler)] (Decoder* decoder) mutable {
         if (decoder && decoder->isValid())
             Connection::callReply<MessageType>(*decoder, WTFMove(completionHandler));
         else

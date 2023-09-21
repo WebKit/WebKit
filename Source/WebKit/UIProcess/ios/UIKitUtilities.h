@@ -34,6 +34,10 @@
 @property (readonly, nonatomic) BOOL _wk_isInterruptingDeceleration;
 @end
 
+@interface UIView (WebKitInternal)
+@property (nonatomic, readonly) UIViewController *_wk_viewControllerForFullScreenPresentation;
+@end
+
 namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message);

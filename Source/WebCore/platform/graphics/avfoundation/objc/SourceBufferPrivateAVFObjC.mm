@@ -1016,7 +1016,7 @@ void SourceBufferPrivateAVFObjC::unregisterForErrorNotifications(SourceBufferPri
 
 void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *layer, NSError *error)
 {
-    ERROR_LOG(LOGIDENTIFIER, [[error description] UTF8String]);
+    ERROR_LOG(LOGIDENTIFIER, error);
 
 #if PLATFORM(IOS_FAMILY)
     if ([layer status] == AVQueuedSampleBufferRenderingStatusFailed && [[error domain] isEqualToString:@"AVFoundationErrorDomain"] && [error code] == AVErrorOperationInterrupted) {
@@ -1080,7 +1080,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
-    ERROR_LOG(LOGIDENTIFIER, [[error description] UTF8String]);
+    ERROR_LOG(LOGIDENTIFIER, error);
 
     if ([error code] == 'HDCP')
         m_hdcpError = error;
@@ -1209,7 +1209,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
     if (!is<MediaSampleAVFObjC>(sample))
         return;
 
-    Ref<MediaSampleAVFObjC> sampleAVFObjC = static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample));
+    Ref sampleAVFObjC = downcast<MediaSampleAVFObjC>(WTFMove(sample));
     if (!canEnqueueSample(trackID, sampleAVFObjC)) {
         m_blockedSamples.append({ trackID, WTFMove(sampleAVFObjC) });
         return;

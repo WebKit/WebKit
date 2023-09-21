@@ -48,7 +48,7 @@ public:
     void setLabel(String&&);
 
     using CompilationInfoPromise = DOMPromiseDeferred<IDLInterface<GPUCompilationInfo>>;
-    void compilationInfo(CompilationInfoPromise&&);
+    void getCompilationInfo(CompilationInfoPromise&&);
 
     WebGPU::ShaderModule& backing() { return m_backing; }
     const WebGPU::ShaderModule& backing() const { return m_backing; }

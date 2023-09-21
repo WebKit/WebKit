@@ -115,7 +115,7 @@ ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Param
     m_context->applyDeviceScaleFactor(resolutionScale());
 }
 
-ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle(SharedMemory::Protection protection) const
+std::optional<ImageBufferBackendHandle> ImageBufferShareableBitmapBackend::createBackendHandle(SharedMemory::Protection protection) const
 {
     if (auto handle = m_bitmap->createHandle(protection))
         return ImageBufferBackendHandle(WTFMove(*handle));
@@ -139,9 +139,14 @@ RefPtr<cairo_surface_t> ImageBufferShareableBitmapBackend::createCairoSurface()
 }
 #endif
 
-RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior)
+RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage()
 {
-    return NativeImage::create(m_bitmap->createPlatformImage(copyBehavior));
+    return NativeImage::create(m_bitmap->createPlatformImage(CopyBackingStore));
+}
+
+RefPtr<NativeImage> ImageBufferShareableBitmapBackend::createNativeImageReference()
+{
+    return NativeImage::create(m_bitmap->createPlatformImage(DontCopyBackingStore));
 }
 
 void ImageBufferShareableBitmapBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)

@@ -133,6 +133,7 @@ class FormController;
 class FrameSelection;
 class FullscreenManager;
 class GPUCanvasContext;
+class GraphicsClient;
 class HTMLAllCollection;
 class HTMLAttachmentElement;
 class HTMLBodyElement;
@@ -149,7 +150,7 @@ class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLMetaElement;
 class HTMLVideoElement;
-class HighlightRangeData;
+class HighlightRange;
 class HighlightRegister;
 class HitTestLocation;
 class HitTestRequest;
@@ -333,6 +334,11 @@ enum class DimensionsCheck : uint8_t {
     All = 1 << 2, // FIXME: This is probably meant to be Width | Height instead.
 };
 
+enum class LayoutOptions : uint8_t {
+    RunPostLayoutTasksSynchronously = 1 << 0,
+    IgnorePendingStylesheets = 1 << 1,
+};
+
 enum class HttpEquivPolicy {
     Enabled,
     DisabledBySettings,
@@ -389,6 +395,10 @@ public:
     static Ref<Document> create(Document&);
 
     virtual ~Document();
+
+    // Resolve ambiguity for CanMakeCheckedPtr.
+    void incrementPtrCount() const { static_cast<const ContainerNode*>(this)->incrementPtrCount(); }
+    void decrementPtrCount() const { static_cast<const ContainerNode*>(this)->decrementPtrCount(); }
 
     // Nodes belonging to this document increase referencingNodeCount -
     // these are enough to keep the document from being destroyed, but
@@ -661,12 +671,11 @@ public:
     bool needsStyleRecalc() const;
     unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }
 
-    WEBCORE_EXPORT void updateLayout();
+    WEBCORE_EXPORT void updateLayout(OptionSet<LayoutOptions> = { });
     
     // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
     // so calling this may cause a flash of unstyled content (FOUC).
-    enum class RunPostLayoutTasks : bool { Asynchronously, Synchronously };
-    WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
+    void updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> = { });
 
     std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, PseudoId = PseudoId::None);
 
@@ -690,6 +699,7 @@ public:
     void suspendActiveDOMObjects(ReasonForSuspension) final;
     void resumeActiveDOMObjects(ReasonForSuspension) final;
     void stopActiveDOMObjects() final;
+    GraphicsClient* graphicsClient() final;
 
     const Settings::Values& settingsValues() const final { return settings().values(); }
 
@@ -829,9 +839,9 @@ public:
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
 
-    const Color& linkColor() const { return m_linkColor; }
-    const Color& visitedLinkColor() const { return m_visitedLinkColor; }
-    const Color& activeLinkColor() const { return m_activeLinkColor; }
+    Color linkColor(const RenderStyle&) const;
+    Color visitedLinkColor(const RenderStyle&) const;
+    Color activeLinkColor(const RenderStyle&) const;
     void setLinkColor(const Color& c) { m_linkColor = c; }
     void setVisitedLinkColor(const Color& c) { m_visitedLinkColor = c; }
     void setActiveLinkColor(const Color& c) { m_activeLinkColor = c; }
@@ -1000,6 +1010,7 @@ public:
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
+    void metaElementColorSchemeChanged();
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -1899,7 +1910,7 @@ private:
 
     void platformSuspendOrStopActiveDOMObjects();
 
-    void collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&, const HighlightRegister&);
+    void collectRangeDataFromRegister(Vector<WeakPtr<HighlightRange>>&, const HighlightRegister&);
 
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 
@@ -2002,7 +2013,7 @@ private:
 
     std::unique_ptr<Style::Update> m_pendingRenderTreeUpdate;
 
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_cssTarget;
+    CheckedPtr<Element> m_cssTarget;
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
 
@@ -2060,8 +2071,8 @@ private:
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElementShowingTextTrack;
 #endif
 
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_mainArticleElement;
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_articleElements;
+    CheckedPtr<Element> m_mainArticleElement;
+    HashSet<CheckedPtr<Element>> m_articleElements;
 
     WeakHashSet<VisibilityChangeClient> m_visibilityStateCallbackClients;
 

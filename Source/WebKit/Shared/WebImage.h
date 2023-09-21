@@ -60,7 +60,7 @@ public:
     RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
-    ShareableBitmap::Handle createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
+    std::optional<ShareableBitmap::Handle> createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
 
 private:
     WebImage(Ref<WebCore::ImageBuffer>&&);

@@ -360,7 +360,7 @@ public:
         Address unlinkedAddress()
         {
             ASSERT(isUnlinked());
-            return Address(GPRInfo::constantsRegister, JITData::offsetOfData() + sizeof(void*) * m_index);
+            return Address(GPRInfo::jitDataRegister, JITData::offsetOfData() + sizeof(void*) * m_index);
         }
 #endif
 

@@ -590,7 +590,7 @@ void setMatchingItemsContextSuspended(ScriptExecutionContext& currentContext, Ha
         if (&iterator.value->originThread() != &currentThread)
             continue;
 
-        auto* context = iterator.value->scriptExecutionContext();
+        RefPtr context = iterator.value->scriptExecutionContext();
         if (!context)
             continue;
 

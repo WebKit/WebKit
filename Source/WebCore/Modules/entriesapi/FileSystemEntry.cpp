@@ -72,11 +72,11 @@ void FileSystemEntry::getParent(ScriptExecutionContext& context, RefPtr<FileSyst
         return;
 
     filesystem().getParent(context, *this, [this, pendingActivity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
-        auto* document = this->document();
+        RefPtr document = this->document();
         if (!document)
             return;
 
-        document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), result = WTFMove(result), pendingActivity = WTFMove(pendingActivity)]() mutable {
+        document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), result = std::forward<decltype(result)>(result), pendingActivity = WTFMove(pendingActivity)]() mutable {
             if (result.hasException()) {
                 if (errorCallback)
                     errorCallback->handleEvent(DOMException::create(result.releaseException()));

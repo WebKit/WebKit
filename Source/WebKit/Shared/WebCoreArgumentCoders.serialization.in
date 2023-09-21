@@ -308,7 +308,8 @@ enum class WebCore::AutofillFieldName : uint8_t {
     TelExtension,
     Email,
     Impp,
-    WebAuthn
+    WebAuthn,
+    OneTimeCode
 };
 
 enum class WebCore::NonAutofillCredentialType : bool;
@@ -1335,6 +1336,7 @@ struct WebCore::HTMLModelElementCamera {
 };
 
 struct WebCore::NotificationData {
+    URL defaultActionURL;
     String title;
     String body;
     String iconURL;
@@ -1642,12 +1644,6 @@ enum class WebCore::InputMode : uint8_t {
     Numeric,
     Decimal,
     Search
-};
-
-enum class WebCore::NotificationDirection : uint8_t {
-    Auto,
-    Ltr,
-    Rtl
 };
 
 enum class WebCore::IndexedDB::GetAllType : bool
@@ -1979,6 +1975,7 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::BooleanConstraint> m_displaySurface;
     std::optional<WebCore::BooleanConstraint> m_logicalSurface;
     std::optional<WebCore::StringConstraint> m_facingMode;
+    std::optional<WebCore::StringConstraint> m_whiteBalanceMode;
     std::optional<WebCore::StringConstraint> m_deviceId;
     std::optional<WebCore::StringConstraint> m_groupId;
 }
@@ -2385,13 +2382,6 @@ header: <WebCore/ScrollTypes.h>
     Visible,
     HiddenByStyle,
     ReplacedByCustomScrollbar
-};
-
-header: <WebCore/ScrollTypes.h>
-[CustomHeader] enum class WebCore::ScrollbarWidth : uint8_t {
-    Auto,
-    Thin,
-    None
 };
 
 header: <WebCore/ScrollingCoordinatorTypes.h>
@@ -3596,7 +3586,9 @@ header: <WebCore/ScrollingStateNode.h>
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-enum class WebCore::CDMEncryptionScheme : bool
+enum class WebCore::CDMEncryptionScheme : bool;
+
+enum class WebCore::CDMKeyGroupingStrategy : bool;
 
 struct WebCore::CDMMediaCapability {
     String contentType;
@@ -3614,7 +3606,7 @@ struct WebCore::CDMRestrictions {
     bool distinctiveIdentifierDenied;
     bool persistentStateDenied;
     HashSet<WebCore::CDMSessionType, IntHash<WebCore::CDMSessionType>, WTF::StrongEnumHashTraits<WebCore::CDMSessionType>> deniedSessionTypes;
-}
+};
 
 #endif
 
@@ -4641,6 +4633,7 @@ enum class WebCore::MediaConstraintType : uint8_t {
     DisplaySurface,
     LogicalSurface,
     Zoom,
+    WhiteBalanceMode,
 };
 
 header: <WebCore/MediaConstraints.h>
@@ -4693,6 +4686,7 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsAspectRatio();
     bool supportsFrameRate();
     bool supportsFacingMode();
+    bool supportsWhiteBalanceMode();
     bool supportsVolume();
     bool supportsSampleRate();
     bool supportsSampleSize();
@@ -4721,11 +4715,20 @@ enum class WebCore::DisplaySurfaceType : uint8_t {
     Invalid,
 };
 
+header: <WebCore/MeteringMode.h>
+[CustomHeader] enum class WebCore::MeteringMode : uint8_t {
+    None,
+    Manual,
+    SingleShot,
+    Continuous,
+};
+
 class WebCore::RealtimeMediaSourceSettings {
     uint32_t width();
     uint32_t height();
     float frameRate();
     WebCore::VideoFacingMode facingMode();
+    WebCore::MeteringMode whiteBalanceMode();
     double volume();
     uint32_t sampleRate();
     uint32_t sampleSize();
@@ -4773,6 +4776,7 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::CapabilityValueOrRange aspectRatio();
     WebCore::CapabilityValueOrRange frameRate();
     Vector<WebCore::VideoFacingMode> facingMode();
+    Vector<WebCore::MeteringMode> whiteBalanceModes();
     WebCore::CapabilityValueOrRange volume();
     WebCore::CapabilityValueOrRange sampleRate();
     WebCore::CapabilityValueOrRange sampleSize();
@@ -5503,33 +5507,6 @@ header: <WebCore/CaretAnimator.h>
 };
 #endif
 
-[Nested] enum class WebCore::ProtectionSpace::ServerType : uint8_t {
-    HTTP,
-    HTTPS,
-    FTP,
-    FTPS,
-    ProxyHTTP,
-    ProxyHTTPS,
-    ProxyFTP,
-    ProxySOCKS
-};
-
-[Nested] enum class WebCore::ProtectionSpace::AuthenticationScheme : uint8_t {
-    Default,
-    HTTPBasic,
-    HTTPDigest,
-    HTMLForm,
-    NTLM,
-    Negotiate,
-    ClientCertificateRequested,
-    ServerTrustEvaluationRequested,
-    OAuth,
-#if USE(GLIB)
-    ClientCertificatePINRequested,
-#endif
-    Unknown
-};
-
 class WebCore::ProtectionSpace {
     String host();
     int port();
@@ -5886,3 +5863,67 @@ header: <WebCore/ScrollingConstraints.h>
     WebCore::FloatSize stickyOffsetAtLastLayout();
     WebCore::FloatPoint layerPositionAtLastLayout();
 };
+
+class WebCore::FloatLine {
+    WebCore::FloatPoint start();
+    WebCore::FloatPoint end();
+};
+
+header: <WebCore/FontCache.h>
+[CustomHeader] struct WebCore::FontCachePrewarmInformation {
+    Vector<String> seenFamilies;
+    Vector<String> fontNamesRequiringSystemFallback;
+};
+
+struct WebCore::PrewarmInformation {
+    WebCore::FontCachePrewarmInformation fontCache;
+};
+
+using WebCore::PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<WebCore::PlatformLayerIdentifierType>>;
+
+header: <WebCore/FontSelectionAlgorithm.h>
+using WebCore::FontSelectionValue::BackingType = int16_t;
+[CustomHeader] class WebCore::FontSelectionValue {
+    WebCore::FontSelectionValue::BackingType rawValue();
+};
+
+[CustomHeader] struct WebCore::FontSelectionRange {
+    WebCore::FontSelectionValue minimum;
+    WebCore::FontSelectionValue maximum;
+};
+
+[CustomHeader] struct WebCore::FontSelectionSpecifiedCapabilities {
+    std::optional<WebCore::FontSelectionRange> weight;
+    std::optional<WebCore::FontSelectionRange> width;
+    std::optional<WebCore::FontSelectionRange> slope;
+};
+
+struct WebCore::RemoteMouseEventData {
+    WebCore::FrameIdentifier targetFrameID;
+    WebCore::IntPoint transformedPoint;
+};
+
+struct WebCore::LinkDecorationFilteringData {
+    WebCore::RegistrableDomain domain;
+    String linkDecoration;
+};
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+[WebKitPlatform] struct WebCore::NotificationPayload {
+    URL defaultActionURL;
+    String title;
+    std::optional<unsigned long long> appBadge;
+    std::optional<WebCore::NotificationOptionsPayload> options;
+    bool isMutable;
+};
+
+[WebKitPlatform] struct WebCore::NotificationOptionsPayload {
+    WebCore::NotificationDirection dir;
+    String lang;
+    String body;
+    String tag;
+    String icon;
+    String dataJSONString;
+    std::optional<bool> silent;
+};
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)

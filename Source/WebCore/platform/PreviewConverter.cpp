@@ -81,7 +81,7 @@ void PreviewConverter::updateMainResource()
         return;
     }
 
-    provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto&& buffer) {
+    provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = Ref { *this }](Ref<FragmentedSharedBuffer>&& buffer) {
         appendFromBuffer(WTFMove(buffer));
     });
 }

@@ -27,6 +27,7 @@
     uint32_t maxTextureDimension3D
     uint32_t maxTextureArrayLayers
     uint32_t maxBindGroups
+    uint32_t maxBindGroupsPlusVertexBuffers;
     uint32_t maxBindingsPerBindGroup
     uint32_t maxDynamicUniformBuffersPerPipelineLayout
     uint32_t maxDynamicStorageBuffersPerPipelineLayout

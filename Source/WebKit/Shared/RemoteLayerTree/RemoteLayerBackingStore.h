@@ -32,6 +32,7 @@
 #include <WebCore/Region.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS CALayer;
 
@@ -81,7 +82,7 @@ struct BufferAndBackendInfo {
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, BufferAndBackendInfo&);
 };
 
-class RemoteLayerBackingStore {
+class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -181,7 +182,7 @@ public:
 private:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 
-    void drawInContext(WebCore::GraphicsContext&, WTF::Function<void()>&& additionalContextSetupCallback = nullptr);
+    void drawInContext(WebCore::GraphicsContext&);
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;
@@ -202,6 +203,8 @@ private:
     SwapBuffersDisplayRequirement prepareBuffers();
     void ensureFrontBuffer();
     void dirtyRepaintCounterIfNecessary();
+
+    WebCore::IntRect layerBounds() const;
 
     PlatformCALayerRemote* m_layer;
 

@@ -59,7 +59,7 @@ static String validationPolicyAsString(OptionSet<TileGrid::ValidationPolicyFlag>
 
 TileGrid::TileGrid(TileController& controller)
     : m_controller(controller)
-    , m_containerLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
+    , m_containerLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_cohortRemovalTimer(*this, &TileGrid::cohortRemovalTimerFired)
     , m_tileSize(kDefaultTileSize, kDefaultTileSize)
 {

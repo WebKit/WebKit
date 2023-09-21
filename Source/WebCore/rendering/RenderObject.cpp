@@ -68,7 +68,6 @@
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
-#include "RenderSVGResourceContainer.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
 #include "RenderTheme.h"
@@ -116,7 +115,7 @@ struct SameSizeAsRenderObject : CanMakeWeakPtr<SameSizeAsRenderObject> {
 #if ASSERT_ENABLED
     WeakHashSet<void*> cachedResourceClientAssociatedResources;
 #endif
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
+    CheckedRef<Node> node;
     void* pointers[3];
     CheckedPtr<Layout::Box> layoutBox;
 #if ASSERT_ENABLED
@@ -911,8 +910,8 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     // FIXME: We should really propagate only when the child renderer sticks out.
     bool repaintRectNeedsConverting = false;
     // Issue repaint on the renderer with outline: auto.
-    for (const auto* renderer = this; renderer; renderer = renderer->parent()) {
-        const auto* originalRenderer = renderer;
+    for (auto* renderer = this; renderer; renderer = renderer->parent()) {
+        auto* originalRenderer = renderer;
         if (is<RenderMultiColumnSet>(renderer->previousSibling()) && !renderer->isLegend()) {
             auto previousMultiColumnSet = downcast<RenderMultiColumnSet>(renderer->previousSibling());
             auto enclosingMultiColumnFlow = previousMultiColumnSet->multiColumnFlow();
@@ -936,7 +935,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
         if (!repaintRectNeedsConverting)
             repaintContainer.repaintRectangle(adjustedRepaintRect);
         else if (is<RenderLayerModelObject>(originalRenderer)) {
-            const auto& rendererWithOutline = downcast<RenderLayerModelObject>(*originalRenderer);
+            auto& rendererWithOutline = downcast<RenderLayerModelObject>(*originalRenderer);
             adjustedRepaintRect = LayoutRect(repaintContainer.localToContainerQuad(FloatRect(adjustedRepaintRect), &rendererWithOutline).boundingBox());
             rendererWithOutline.repaintRectangle(adjustedRepaintRect);
         }
@@ -1181,11 +1180,11 @@ void RenderObject::outputRegionsInformation(TextStream& stream) const
 
         stream << " [fragment containers ";
         bool first = true;
-        for (const auto* fragment : fragmentContainers) {
+        for (const auto& fragment : fragmentContainers) {
             if (!first)
                 stream << ", ";
             first = false;
-            stream << fragment;
+            stream << &fragment;
         }
         stream << "]";
     }
@@ -2266,7 +2265,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
 
     bool useVisibleBounds = behavior.contains(RenderObject::BoundingRectBehavior::UseVisibleBounds);
 
-    HashSet<Element*> selectedElementsSet;
+    HashSet<RefPtr<Element>> selectedElementsSet;
     for (auto& node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         if (is<Element>(node))
             selectedElementsSet.add(&downcast<Element>(node));

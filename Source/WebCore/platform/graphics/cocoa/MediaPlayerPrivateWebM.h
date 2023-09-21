@@ -111,7 +111,7 @@ private:
     bool hasVideo() const final { return m_hasVideo; }
     bool hasAudio() const final { return m_hasAudio; }
 
-    void setPageIsVisible(bool) final;
+    void setPageIsVisible(bool, String&& sceneIdentifier) final;
 
     MediaTime timeFudgeFactor() const { return { 1, 10 }; }
     MediaTime currentMediaTime() const final;

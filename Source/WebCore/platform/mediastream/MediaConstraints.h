@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -628,6 +628,7 @@ public:
     std::optional<BooleanConstraint> logicalSurface() const { return m_logicalSurface; }
 
     std::optional<StringConstraint> facingMode() const { return m_facingMode; }
+    std::optional<StringConstraint> whiteBalanceMode() const { return m_whiteBalanceMode; }
     std::optional<StringConstraint> deviceId() const { return m_deviceId; }
     std::optional<StringConstraint> groupId() const { return m_groupId; }
 
@@ -648,6 +649,7 @@ private:
     std::optional<BooleanConstraint> m_logicalSurface;
 
     std::optional<StringConstraint> m_facingMode;
+    std::optional<StringConstraint> m_whiteBalanceMode;
     std::optional<StringConstraint> m_deviceId;
     std::optional<StringConstraint> m_groupId;
 };

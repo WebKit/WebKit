@@ -58,6 +58,7 @@ GtkWidget* browser_window_new(GtkWindow*, WebKitWebContext*);
 #endif
 WebKitWebContext* browser_window_get_web_context(BrowserWindow*);
 void browser_window_append_view(BrowserWindow*, WebKitWebView*);
+void browser_window_fullscreen(BrowserWindow*);
 void browser_window_load_uri(BrowserWindow*, const char *uri);
 void browser_window_load_session(BrowserWindow *, const char *sessionFile);
 void browser_window_set_background_color(BrowserWindow*, GdkRGBA*);

@@ -70,6 +70,26 @@ DEFAULT_REMOTE = 'origin'
 LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, GITHUB_PROJECTS[0], DEFAULT_BRANCH)
 MAX_COMMITS_IN_PR_SERIES = 50
 QUEUES_WITH_PUSH_ACCESS = ('commit-queue', 'merge-queue', 'unsafe-merge-queue')
+THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
+
+
+class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
+    """A pretty wrapper for LineConsumerLogObserver to avoid
+       repeatedly setting up generator processors."""
+    def __init__(self, consumeLineFunc):
+        if not callable(consumeLineFunc):
+            raise Exception("Error: ParseByLineLogObserver requires consumeLineFunc to be callable.")
+        self.consumeLineFunc = consumeLineFunc
+        super(ParseByLineLogObserver, self).__init__(self.consumeLineGenerator)
+
+    def consumeLineGenerator(self):
+        """The generator LineConsumerLogObserver expects."""
+        try:
+            while True:
+                stream, line = yield
+                self.consumeLineFunc(line)
+        except GeneratorExit:
+            return
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -170,6 +190,7 @@ class GitHubMixin(object):
     BLOCKED_LABEL = 'merging-blocked'
     MERGE_QUEUE_LABEL = 'merge-queue'
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
+    SAFE_MERGE_QUEUE_LABEL = 'safe-merge-queue'
     REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
     PER_PAGE_LIMIT = 100
     NUM_PAGE_LIMIT = 10
@@ -192,6 +213,29 @@ class GitHubMixin(object):
             defer.returnValue(False if response.status_code // 100 == 4 else None)
         else:
             defer.returnValue(response)
+
+    @defer.inlineCallbacks
+    def query_graph_ql(self, payload):
+        headers = {'Accept': ['application/vnd.github.v3+json']}
+        graphql_url = 'https://api.github.com/graphql'
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        if username and access_token:
+            auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
+            headers['Authorization'] = ['bearer {}'.format(access_token)]
+
+        response = yield TwistedAdditions.request(
+            graphql_url, type=b'POST',
+            headers=headers,
+            logger=lambda content: self._addToLog('stdio', content),
+            json=payload,
+        )
+        if response and response.status_code // 100 != 2:
+            yield self._addToLog('stdio', f'Accessed {graphql_url} with unexpected status code {response.status_code}.\n')
+            defer.returnValue(False if response.status_code // 100 == 4 else None)
+        else:
+            data = json.loads(response.text)
+            defer.returnValue(data)
+
 
     @defer.inlineCallbacks
     def get_pr_json(self, pr_number, repository_url=None, retry=0):
@@ -2010,6 +2054,67 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         defer.returnValue(SUCCESS)
 
 
+class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'determine-label-owner'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        builder_name = self.getProperty('buildername', '')
+        pr_number = self.getProperty('github.number', '')
+        self.setProperty('pr_number', pr_number)
+        if builder_name == 'Safe-Merge-Queue':
+            list_of_prs = self.getProperty('list_of_prs', [])
+            pr_number = list_of_prs.pop()
+            self.setProperty('pr_number', pr_number)
+            self.setProperty('list_of_prs', list_of_prs)
+
+        if not pr_number:
+            yield self._addToLog('stdio', 'Unable to fetch PR number.\n')
+            return defer.returnValue(FAILURE)
+
+        project = self.getProperty('project') or GITHUB_PROJECTS[0]
+        owner, name = project.split('/', 1)
+        query_body = '{repository(owner:"%s", name:"%s") { pullRequest(number: %s) {timelineItems(itemTypes: LABELED_EVENT, last: 5) {nodes {... on LabeledEvent {actor { login } label { name } createdAt } } } } } }' % (owner, name, pr_number)
+        query = {'query': query_body}
+
+        response = yield self.query_graph_ql(query)
+        if 'errors' in response:
+            yield self._addToLog('stdio', response['errors'][0]['message'])
+            return defer.returnValue(FAILURE)
+        if response:
+            yield self._addToLog('stdio', 'Retrieved labels.\n')
+            label_events = response['data']['repository']['pullRequest']['timelineItems']['nodes']
+        else:
+            yield self._addToLog('stdio', 'Failed to retrieve label author.\n')
+            return defer.returnValue(FAILURE)
+
+        owner = None
+        label = builder_name.lower()
+        for event in reversed(label_events):
+            if event['label']['name'] == label:
+                owner = event['actor']['login']
+                yield self._addToLog('stdio', f'Label: {label}, Owner: {owner}\n')
+                if owner == 'webkit-commit-queue' or owner == 'webkit-ews-buildbot':
+                    label = 'safe-merge-queue'
+                    continue
+                else:
+                    break
+        if owner:
+            self.setProperty('owners', [owner])
+            defer.returnValue(SUCCESS)
+        else:
+            yield self._addToLog('stdio', f'Did not change owner because owner not found from labels.\n')
+            defer.returnValue(FAILURE)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': f"Owner of PR {self.getProperty('pr_number')} determined to be {self.getProperty('owners')[0]}\n"}
+        elif self.results == FAILURE:
+            return {'step': f"Unable to determine owner of PR {self.getProperty('pr_number')}\n"}
+
+
 class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
     name = 'set-cq-minus-flag-on-patch'
 
@@ -2618,16 +2723,23 @@ def customBuildFlag(platform, fullPlatform):
     return ['--' + platform]
 
 
-class BuildLogLineObserver(logobserver.LogLineObserver, object):
-    def __init__(self, errorReceived, searchString='rror:', includeRelatedLines=True):
+class BuildLogLineObserver(ParseByLineLogObserver):
+    def __init__(self, errorReceived, searchString='rror:', includeRelatedLines=True, thresholdExceedCallBack=None):
         self.errorReceived = errorReceived
         self.searchString = searchString
         self.includeRelatedLines = includeRelatedLines
         self.error_context_buffer = []
         self.whitespace_re = re.compile(r'^[\s]*$')
-        super().__init__()
+        self.line_count = 0
+        self.thresholdExceedCallBack = thresholdExceedCallBack
+        super().__init__(self.parseOutputLine)
 
-    def outLineReceived(self, line):
+    def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.thresholdExceedCallBack()
+            return
+
         if not self.errorReceived:
             return
 
@@ -2660,6 +2772,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 
     def __init__(self, skipUpload=False, **kwargs):
         self.skipUpload = skipUpload
+        self.cancelled_due_to_huge_logs = False
         super().__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
@@ -2671,9 +2784,9 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         architecture = self.getProperty('architecture')
 
         if platform in ['wincairo']:
-            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False))
+            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False, thresholdExceedCallBack=self.handleExcessiveLogging))
         else:
-            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived))
+            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, thresholdExceedCallBack=self.handleExcessiveLogging))
 
         additionalArguments = self.getProperty('additionalArguments')
         for additionalArgument in (additionalArguments or []):
@@ -2707,6 +2820,12 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 
     def errorReceived(self, error):
         self._addToLog('errors', error + '\n')
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'Stopping build due to excessive logging: {build_url}\n\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=f'Stopped due to excessive logging. Log limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}', results=FAILURE)
 
     def evaluateCommand(self, cmd):
         if cmd.didFail():
@@ -2749,6 +2868,8 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             if self.getProperty('fast_commit_queue'):
                 return {'step': 'Skipped compiling WebKit in fast-cq mode'}
             return {'step': 'Skipped compiling WebKit'}
+        if self.results == CANCELLED and self.cancelled_due_to_huge_logs:
+            return {'step': 'Cancelled step due to huge logs', 'build': 'Cancelled build due to huge logs'}
         return shell.Compile.getResultSummary(self)
 
 
@@ -3545,11 +3666,14 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
     ENABLE_ADDITIONAL_ARGUMENTS = False
     FAILURE_MSG_IN_STRESS_MODE = 'Found test failures in stress mode'
 
-    def __init__(self, num_iterations=100):
+    def __init__(self, num_iterations=100, layout_test_class=RunWebKitTests):
         self.num_iterations = num_iterations
+        self.layout_test_class = layout_test_class
         super().__init__()
 
     def setLayoutTestCommand(self):
+        if self.layout_test_class == RunWebKit1Tests:
+            self.setProperty('use-dump-render-tree', True)
         RunWebKitTests.setLayoutTestCommand(self)
 
         self.setCommand(self.command + ['--iterations', self.num_iterations])

@@ -66,11 +66,6 @@ void WebBackForwardListProxy::addItemFromUIProcess(const BackForwardItemIdentifi
     clearCachedListCounts();
 }
 
-static void WK2NotifyHistoryItemChanged(HistoryItem& item)
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::UpdateBackForwardItem(toBackForwardListItemState(item)), 0);
-}
-
 HistoryItem* WebBackForwardListProxy::itemForID(const BackForwardItemIdentifier& itemID)
 {
     return idToHistoryItemMap().get(itemID);
@@ -89,8 +84,6 @@ void WebBackForwardListProxy::removeItem(const BackForwardItemIdentifier& itemID
 WebBackForwardListProxy::WebBackForwardListProxy(WebPage& page)
     : m_page(&page)
 {
-    // FIXME: This means that if we mix legacy WebKit and modern WebKit in the same process, we won't get both notifications.
-    WebCore::notifyHistoryItemChanged = WK2NotifyHistoryItemChanged;
 }
 
 void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)

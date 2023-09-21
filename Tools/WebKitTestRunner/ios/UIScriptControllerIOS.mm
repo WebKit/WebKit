@@ -1198,6 +1198,11 @@ bool UIScriptControllerIOS::isShowingPopover() const
     return webView().showingPopover;
 }
 
+bool UIScriptControllerIOS::isShowingFormValidationBubble() const
+{
+    return webView().showingFormValidationBubble;
+}
+
 void UIScriptControllerIOS::setWillPresentPopoverCallback(JSValueRef callback)
 {
     UIScriptController::setWillPresentPopoverCallback(callback);

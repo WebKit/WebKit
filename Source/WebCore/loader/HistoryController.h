@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class HistoryItem;
+class HistoryItemClient;
 class LocalFrame;
 class SerializedScriptValue;
 
@@ -94,8 +95,8 @@ private:
     void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad);
 
     void initializeItem(HistoryItem&);
-    Ref<HistoryItem> createItem();
-    Ref<HistoryItem> createItemTree(LocalFrame& targetFrame, bool clipAtTarget);
+    Ref<HistoryItem> createItem(HistoryItemClient&);
+    Ref<HistoryItem> createItemTree(HistoryItemClient&, LocalFrame& targetFrame, bool clipAtTarget);
 
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*);
     void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad);

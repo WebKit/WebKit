@@ -367,13 +367,13 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
         setImageObserver(observer);
         buffer->convertToLuminanceMask();
 
-        m_cachedImage = ImageBuffer::sinkIntoImage(WTFMove(buffer), PreserveResolution::Yes);
+        m_cachedImage = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
         if (!m_cachedImage)
             return;
     }
 
     ctxt.setDrawLuminanceMask(false);
-    m_cachedImage->drawPattern(ctxt, destRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
+    ctxt.drawPattern(*m_cachedImage, destRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
 }
 
 bool BitmapImage::shouldAnimate() const

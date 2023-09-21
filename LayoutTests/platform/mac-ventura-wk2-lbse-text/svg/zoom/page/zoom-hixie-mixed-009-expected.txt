@@ -4,8 +4,8 @@ layer at (0,0) size 800x435
   RenderBlock {html} at (0,0) size 800x435.36
     RenderBody {body} at (11.52,14.39) size 776.97x406.58
       RenderBlock {p} at (0,0) size 776.97x26 [color=#000080]
-        RenderText {#text} at (0,0) size 659x26
-          text run at (0,0) width 659: "The word \"TEST \" should appear twice below, the same size each time."
+        RenderText {#text} at (0,0) size 660x26
+          text run at (0,0) width 660: "The word \"TEST \" should appear twice below, the same size each time."
       RenderBlock (anonymous) at (0,40.39) size 776.97x179
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {div} at (0,233.78) size 576x172.80 [color=#000080] [bgcolor=#EEEEEE]

@@ -59,7 +59,7 @@ private:
 
 inline std::optional<StreamServerConnectionBuffer> StreamServerConnectionBuffer::map(Handle&& handle)
 {
-    auto sharedMemory = WebKit::SharedMemory::map(WTFMove(handle.memory), WebKit::SharedMemory::Protection::ReadWrite);
+    auto sharedMemory = WebKit::SharedMemory::map(WTFMove(handle), WebKit::SharedMemory::Protection::ReadWrite);
     if (UNLIKELY(!sharedMemory))
         return std::nullopt;
     return StreamServerConnectionBuffer { sharedMemory.releaseNonNull() };

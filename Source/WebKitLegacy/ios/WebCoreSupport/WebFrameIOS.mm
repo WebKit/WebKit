@@ -206,7 +206,7 @@ using namespace WebCore;
 
 - (NSArray *)selectionRectsForCoreRange:(const SimpleRange&)range
 {
-    return createNSArray(RenderObject::collectSelectionGeometries(range), [] (auto& geometry) {
+    return createNSArray(RenderObject::collectSelectionGeometries(range), [] (auto&& geometry) {
         auto webRect = [WebSelectionRect selectionRect];
         webRect.rect = geometry.rect();
         webRect.writingDirection = geometry.direction() == TextDirection::LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;

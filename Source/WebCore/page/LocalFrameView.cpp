@@ -2330,7 +2330,7 @@ bool LocalFrameView::scrollToFragment(const URL& url)
                 if (commonAncestor && !is<Element>(commonAncestor))
                     commonAncestor = commonAncestor->parentElement();
                 if (commonAncestor)
-                    document->setCSSTarget(downcast<Element>(commonAncestor));
+                    document->setCSSTarget(downcast<Element>(commonAncestor.get()));
                 // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
                 TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
                 maintainScrollPositionAtScrollToTextFragmentRange(range);
@@ -4393,9 +4393,11 @@ bool LocalFrameView::isScrollable(Scrollability definitionOfScrollable)
     if (!didFirstLayout())
         return false;
 
+#if HAVE(RUBBER_BANDING)
     bool requiresActualOverflowToBeConsideredScrollable = !m_frame->isMainFrame() || definitionOfScrollable != Scrollability::ScrollableOrRubberbandable;
-#if !HAVE(RUBBER_BANDING)
-    requiresActualOverflowToBeConsideredScrollable = true;
+#else
+    UNUSED_PARAM(definitionOfScrollable);
+    bool requiresActualOverflowToBeConsideredScrollable = true;
 #endif
 
     // Covers #1
@@ -5930,11 +5932,8 @@ void LocalFrameView::firePaintRelatedMilestonesIfNeeded()
     if (m_milestonesPendingPaint & LayoutMilestone::DidFirstMeaningfulPaint) {
         if (page->requestedLayoutMilestones() & LayoutMilestone::DidFirstMeaningfulPaint)
             milestonesAchieved.add(LayoutMilestone::DidFirstMeaningfulPaint);
-        if (m_frame->isMainFrame()) {
+        if (m_frame->isMainFrame())
             WTFEmitSignpost(m_frame->document(), "Page Load: First Meaningful Paint");
-            if (auto* page = m_frame->page())
-                page->didFirstMeaningfulPaint();
-        }
     }
 
     m_milestonesPendingPaint = { };
@@ -6014,9 +6013,11 @@ void LocalFrameView::willRemoveWidgetFromRenderTree(Widget& widget)
     m_widgetsInRenderTree.remove(&widget);
 }
 
-static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<Widget*>& set)
+static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<CheckedPtr<Widget>>& set)
 {
-    return copyToVectorOf<RefPtr<Widget>>(set);
+    return WTF::map(set, [](auto& widget) -> RefPtr<Widget> {
+        return widget.get();
+    });
 }
 
 void LocalFrameView::updateWidgetPositions()
@@ -6047,7 +6048,7 @@ void LocalFrameView::updateWidgetPositionsTimerFired()
 void LocalFrameView::notifyWidgets(WidgetNotification notification)
 {
     for (auto& widget : collectAndProtectWidgets(m_widgetsInRenderTree))
-        widget->notifyWidget(notification);
+        widget.get()->notifyWidget(notification);
 }
 
 void LocalFrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect)

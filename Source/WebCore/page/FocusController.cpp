@@ -589,18 +589,18 @@ bool FocusController::relinquishFocusToChrome(FocusDirection direction)
 bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, KeyboardEvent* event, bool initialFocus)
 {
     LocalFrame& frame = focusedOrMainFrame();
-    Document* document = frame.document();
+    RefPtr document = frame.document();
 
-    Node* currentNode = document->focusNavigationStartingNode(direction);
+    RefPtr<Node> currentNode = document->focusNavigationStartingNode(direction);
     // FIXME: Not quite correct when it comes to focus transitions leaving/entering the WebView itself
     bool caretBrowsing = frame.settings().caretBrowsingEnabled();
 
     if (caretBrowsing && !currentNode)
-        currentNode = frame.selection().selection().start().deprecatedNode();
+        currentNode = frame.selection().selection().start().protectedDeprecatedNode();
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    RefPtr<Element> element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(currentNode ? *currentNode : *document), currentNode, event);
+    RefPtr<Element> element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(currentNode ? *currentNode : *document), currentNode.get(), event);
 
     if (!element) {
         // We didn't find a node to focus, so we should try to pass focus to Chrome.
@@ -931,7 +931,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
     RefPtr oldFocusedFrame { focusedFrame() };
     RefPtr oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
     
-    Element* oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
+    RefPtr oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
     if (oldFocusedElement == element) {
         if (element)
             m_page.chrome().client().elementDidRefocus(*element, options);
@@ -944,7 +944,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
 
     m_page.editorClient().willSetInputMethodState();
 
-    if (shouldClearSelectionWhenChangingFocusedElement(m_page, oldFocusedElement, element))
+    if (shouldClearSelectionWhenChangingFocusedElement(m_page, WTFMove(oldFocusedElement), element))
         clearSelectionIfNeeded(oldFocusedFrame.get(), &newFocusedFrame, element);
 
     if (!element) {
@@ -954,7 +954,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
         return true;
     }
 
-    Ref<Document> newDocument(element->document());
+    Ref newDocument(element->document());
 
     if (newDocument->focusedElement() == element) {
         m_page.editorClient().setInputMethodState(element);
@@ -969,8 +969,6 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
         return false;
     }
     setFocusedFrame(&newFocusedFrame);
-
-    Ref<Element> protect(*element);
 
     bool successfullyFocused = newDocument->setFocusedElement(element, options);
     if (!successfullyFocused)

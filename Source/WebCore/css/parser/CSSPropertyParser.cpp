@@ -494,9 +494,9 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     };
 
     if (is<CSSValueList>(value.get()) || is<CSSTransformListValue>(value.get())) {
-        auto& valueList = downcast<CSSValueContainingVector>(*value);
-        auto syntaxValueList = CSSCustomPropertyValue::SyntaxValueList { { }, valueList.separator() };
-        for (auto& listValue : valueList) {
+        Ref valueList = downcast<CSSValueContainingVector>(value.releaseNonNull());
+        auto syntaxValueList = CSSCustomPropertyValue::SyntaxValueList { { }, valueList->separator() };
+        for (Ref listValue : valueList.get()) {
             auto syntaxValue = resolveSyntaxValue(listValue);
             if (!syntaxValue)
                 return nullptr;

@@ -51,7 +51,7 @@ WakeLock::WakeLock(Document* document)
 // https://www.w3.org/TR/screen-wake-lock/#the-request-method
 void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->isFullyActive() || !document->page()) {
         promise->reject(Exception { NotAllowedError, "Document is not fully active"_s });
         return;

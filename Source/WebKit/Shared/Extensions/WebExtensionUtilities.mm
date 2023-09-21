@@ -47,17 +47,19 @@ static NSString *classToClassString(Class classType, bool plural = false)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         classTypeToSingularClassString = [NSMapTable strongToStrongObjectsMapTable];
-        [classTypeToSingularClassString setObject:@"a boolean value" forKey:@YES.class];
-        [classTypeToSingularClassString setObject:@"a number value" forKey:NSNumber.class];
-        [classTypeToSingularClassString setObject:@"a string value" forKey:NSString.class];
+        [classTypeToSingularClassString setObject:@"a boolean" forKey:@YES.class];
+        [classTypeToSingularClassString setObject:@"a number" forKey:NSNumber.class];
+        [classTypeToSingularClassString setObject:@"a string" forKey:NSString.class];
+        [classTypeToSingularClassString setObject:@"a value" forKey:JSValue.class];
         [classTypeToSingularClassString setObject:@"null" forKey:NSNull.class];
         [classTypeToSingularClassString setObject:@"an array" forKey:NSArray.class];
         [classTypeToSingularClassString setObject:@"an object" forKey:NSDictionary.class];
 
         classTypeToPluralClassString = [NSMapTable strongToStrongObjectsMapTable];
-        [classTypeToPluralClassString setObject:@"boolean values" forKey:@YES.class];
-        [classTypeToPluralClassString setObject:@"number values" forKey:NSNumber.class];
-        [classTypeToPluralClassString setObject:@"string values" forKey:NSString.class];
+        [classTypeToPluralClassString setObject:@"booleans" forKey:@YES.class];
+        [classTypeToPluralClassString setObject:@"numbers" forKey:NSNumber.class];
+        [classTypeToPluralClassString setObject:@"strings" forKey:NSString.class];
+        [classTypeToPluralClassString setObject:@"values" forKey:JSValue.class];
         [classTypeToPluralClassString setObject:@"null values" forKey:NSNull.class];
         [classTypeToPluralClassString setObject:@"arrays" forKey:NSArray.class];
         [classTypeToPluralClassString setObject:@"objects" forKey:NSDictionary.class];
@@ -223,11 +225,15 @@ static NSString *formatList(NSArray<NSString *> *list)
     return [NSString stringWithFormat:@"'%@', and '%@'", formattedInitialItems, list.lastObject];
 }
 
-bool validateDictionary(NSDictionary<NSString *, id> *dictionary, NSString *sourceKey, NSArray<NSString *> *requiredKeys, NSArray<NSString *> *optionalKeys, NSDictionary<NSString *, id> *keyTypes, NSString **outExceptionString)
+bool validateDictionary(NSDictionary<NSString *, id> *dictionary, NSString *sourceKey, NSArray<NSString *> *requiredKeys, NSDictionary<NSString *, id> *keyTypes, NSString **outExceptionString)
 {
+    ASSERT(keyTypes.count);
+
     NSMutableSet<NSString *> *remainingRequiredKeys = [[NSMutableSet alloc] initWithArray:requiredKeys];
     NSSet<NSString *> *requiredKeysSet = [[NSSet alloc] initWithArray:requiredKeys];
-    NSSet<NSString *> *optionalKeysSet = [[NSSet alloc] initWithArray:optionalKeys];
+
+    NSMutableSet<NSString *> *optionalKeysSet = [[NSMutableSet alloc] initWithArray:keyTypes.allKeys];
+    [optionalKeysSet minusSet:requiredKeysSet];
 
     __block NSString *errorString;
 
@@ -262,6 +268,8 @@ bool validateDictionary(NSDictionary<NSString *, id> *dictionary, NSString *sour
 
 bool validateObject(NSObject *object, NSString *sourceKey, id expectedValueType, NSString **outExceptionString)
 {
+    ASSERT(expectedValueType);
+
     NSString *errorString;
     validate(nil, object, expectedValueType, &errorString);
 
@@ -319,6 +327,16 @@ NSString *toErrorString(NSString *callingAPIName, NSString *sourceKey, NSString 
 JSObjectRef toJSError(JSContextRef context, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString)
 {
     return toJSError(context, toErrorString(callingAPIName, sourceKey, underlyingErrorString));
+}
+
+NSString *toWebAPI(NSLocale *locale)
+{
+    if (!locale.languageCode)
+        return nil;
+
+    if (locale.countryCode.length)
+        return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
+    return locale.languageCode;
 }
 
 } // namespace WebKit

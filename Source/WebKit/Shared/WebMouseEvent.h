@@ -43,11 +43,11 @@ namespace WebKit {
 
 enum class GestureWasCancelled : bool { No, Yes };
 
-enum class WebMouseEventButton : int32_t {
-    LeftButton = 0,
-    MiddleButton,
-    RightButton,
-    NoButton = -2
+enum class WebMouseEventButton : int8_t {
+    Left,
+    Middle,
+    Right,
+    None = -2,
 };
 WebMouseEventButton mouseButton(const WebCore::NavigationAction&);
 
@@ -60,9 +60,6 @@ WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationActi
 
 class WebMouseEvent : public WebEvent {
 public:
-
-    WebMouseEvent();
-
 #if PLATFORM(MAC)
     WebMouseEvent(WebEvent&&, WebMouseEventButton, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap, int eventNumber = -1, int menuType = 0, GestureWasCancelled = GestureWasCancelled::No);
 #elif PLATFORM(GTK)
@@ -71,9 +68,10 @@ public:
     WebMouseEvent(WebEvent&&, WebMouseEventButton, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force = 0, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::mousePointerEventType(), GestureWasCancelled = GestureWasCancelled::No);
 #endif
 
-    WebMouseEventButton button() const { return static_cast<WebMouseEventButton>(m_button); }
+    WebMouseEventButton button() const { return m_button; }
     unsigned short buttons() const { return m_buttons; }
     const WebCore::IntPoint& position() const { return m_position; } // Relative to the view.
+    void setPosition(const WebCore::IntPoint& position) { m_position = position; }
     const WebCore::IntPoint& globalPosition() const { return m_globalPosition; }
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }
@@ -94,7 +92,7 @@ public:
 private:
     static bool isMouseEventType(WebEventType);
 
-    WebMouseEventButton m_button { WebMouseEventButton::NoButton };
+    WebMouseEventButton m_button { WebMouseEventButton::None };
     unsigned short m_buttons { 0 };
     WebCore::IntPoint m_position; // Relative to the view.
     WebCore::IntPoint m_globalPosition;

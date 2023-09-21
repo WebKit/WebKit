@@ -43,8 +43,8 @@ WebValidationMessageClient::WebValidationMessageClient(WebPage& page)
 
 WebValidationMessageClient::~WebValidationMessageClient()
 {
-    if (m_currentAnchor)
-        hideValidationMessage(*m_currentAnchor);
+    if (RefPtr anchor = m_currentAnchor.get())
+        hideValidationMessage(*anchor);
 }
 
 void WebValidationMessageClient::documentDetached(Document& document)

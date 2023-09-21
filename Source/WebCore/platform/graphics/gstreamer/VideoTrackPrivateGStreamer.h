@@ -62,11 +62,11 @@ public:
     AtomString language() const final { return m_language; }
 
 protected:
-    void updateConfigurationFromCaps(const GRefPtr<GstCaps>&);
-    void updateConfigurationFromTags(const GRefPtr<GstTagList>&);
+    void updateConfigurationFromCaps(const GRefPtr<GstCaps>&&) override;
+    void updateConfigurationFromTags(const GRefPtr<GstTagList>&&) override;
 
-    void tagsChanged(const GRefPtr<GstTagList>& tags) final { updateConfigurationFromTags(tags); }
-    void capsChanged(const String&, const GRefPtr<GstCaps>&) final;
+    void tagsChanged(GRefPtr<GstTagList>&& tags) final { updateConfigurationFromTags(WTFMove(tags)); }
+    void capsChanged(const String&, GRefPtr<GstCaps>&&) final;
 
 private:
     VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);

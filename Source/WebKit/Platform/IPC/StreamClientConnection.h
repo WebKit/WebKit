@@ -58,12 +58,12 @@ class StreamClientConnection final : public ThreadSafeRefCounted<StreamClientCon
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
 public:
     struct StreamConnectionPair {
-        RefPtr<StreamClientConnection> streamConnection;
+        Ref<StreamClientConnection> streamConnection;
         IPC::StreamServerConnection::Handle connectionHandle;
     };
 
     // The messages from the server are delivered to the caller through the passed IPC::MessageReceiver.
-    static StreamConnectionPair create(unsigned bufferSizeLog2);
+    static std::optional<StreamConnectionPair> create(unsigned bufferSizeLog2);
 
     ~StreamClientConnection();
 
@@ -141,7 +141,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> de
             return Error::NoError;
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    return m_connection->send(WTFMove(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    return m_connection->send(std::forward<T>(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 template<typename T, typename C, typename U, typename V>
@@ -156,7 +156,7 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
     if (!span)
         return { }; // FIXME: Propagate errors.
 
-    auto handler = Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
+    auto handler = Connection::makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
     auto replyID = handler.replyID;
     m_connection->addAsyncReplyHandler(WTFMove(handler));
     if constexpr(T::isStreamEncodable) {
@@ -215,7 +215,7 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
             return WTFMove(*maybeSendResult);
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    return m_connection->sendSync(WTFMove(message), destinationID.toUInt64(), timeout);
+    return m_connection->sendSync(std::forward<T>(message), destinationID.toUInt64(), timeout);
 }
 
 template<typename T, typename U, typename V>
@@ -245,7 +245,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
             if (!replySpan)
                 return Connection::DecoderOrError { Error::FailedToAcquireReplyBufferSpan };
 
-            auto decoder = std::unique_ptr<Decoder> { new Decoder(replySpan->data(), replySpan->size(), m_currentDestinationID) };
+            auto decoder = std::unique_ptr<Decoder> { new Decoder(*replySpan, m_currentDestinationID) };
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
                 ASSERT(decoder->messageName() == MessageName::SyncMessageReply);
                 return Connection::DecoderOrError { WTFMove(decoder) };

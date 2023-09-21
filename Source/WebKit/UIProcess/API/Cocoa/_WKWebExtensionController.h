@@ -159,20 +159,28 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 
 /*!
  @abstract Should be called by the app when a tab is activated to notify all loaded web extensions.
- @param activatedTab The activated tab.
+ @param activatedTab The tab that has become active.
+ @param previousTab The tab that was active before. This parameter can be \c nil if there was no previously active tab.
  @discussion This method informs all loaded extensions of the tab activation, ensuring consistent state awareness across extensions.
  If the intention is to inform only a specific extension, use the respective method on that extension's context instead.
  */
-- (void)didActivateTab:(id <_WKWebExtensionTab>)activatedTab;
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<_WKWebExtensionTab>)previousTab;
 
 /*!
  @abstract Should be called by the app when tabs are selected to fire appropriate events with all loaded web extensions.
- @param selectedTabs The set of tabs that were selected. An empty set indicates that no tabs are currently selected or that the
- selected tabs are not visible to extensions.
- @discussion This method informs all loaded extensions of the selection of tabs, ensuring consistent understanding across extensions.
+ @param selectedTabs The set of tabs that were selected.
+ @discussion This method informs all loaded extensions that tabs have been selected, ensuring consistent understanding across extensions.
  If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
  */
 - (void)didSelectTabs:(NSSet<id <_WKWebExtensionTab>> *)selectedTabs;
+
+/*!
+ @abstract Should be called by the app when tabs are deselected to fire appropriate events with all loaded web extensions.
+ @param deselectedTabs The set of tabs that were deselected.
+ @discussion This method informs all loaded extensions that tabs have been deselected, ensuring consistent understanding across extensions.
+ If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
+ */
+- (void)didDeselectTabs:(NSSet<id <_WKWebExtensionTab>> *)deselectedTabs;
 
 /*!
  @abstract Should be called by the app when a tab is moved to fire appropriate events with all loaded web extensions.

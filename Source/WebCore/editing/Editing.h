@@ -48,19 +48,19 @@ struct SimpleRange;
 // Node
 // -------------------------------------------------------------------------
 
-ContainerNode* highestEditableRoot(const Position&, EditableType = ContentIsEditable);
+RefPtr<ContainerNode> highestEditableRoot(const Position&, EditableType = ContentIsEditable);
 
 Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = nullptr);
 Node* highestNodeToRemoveInPruning(Node*);
 Element* lowestEditableAncestor(Node*);
 
 Element* deprecatedEnclosingBlockFlowElement(Node*); // Use enclosingBlock instead.
-Element* enclosingBlock(Node*, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-Element* enclosingTableCell(const Position&);
+RefPtr<Element> enclosingBlock(RefPtr<Node>, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+RefPtr<Element> enclosingTableCell(const Position&);
 Node* enclosingEmptyListItem(const VisiblePosition&);
 Element* enclosingAnchorElement(const Position&);
 Element* enclosingElementWithTag(const Position&, const QualifiedName&);
-Node* enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 HTMLSpanElement* tabSpanNode(const Node*);
 Element* isLastPositionBeforeTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 Element* isFirstPositionAfterTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.

@@ -30,6 +30,7 @@
 #include "JSWebExtensionAPITabs.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionTab.h"
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
@@ -44,30 +45,32 @@ class WebExtensionAPITabs : public WebExtensionAPIObject, public JSWebExtensionW
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
-    void createTab(NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void createTab(WebPage*, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void query(NSDictionary *queryInfo, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void query(WebPage*, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void get(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getCurrent(Ref<WebExtensionCallbackHandler>&&);
-    void getSelected(double windowID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getCurrent(WebPage*, Ref<WebExtensionCallbackHandler>&&);
+    void getSelected(WebPage*, double windowID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void duplicate(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void update(double tabID, NSDictionary *updateProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void duplicate(double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void update(WebPage*, double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void reload(double tabID, NSDictionary *reloadProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void goBack(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void goForward(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void reload(WebPage*, double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void goBack(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void goForward(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void getZoom(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void setZoom(double tabID, double zoomFactor, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getZoom(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void setZoom(WebPage*, double tabID, double zoomFactor, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void detectLanguage(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void detectLanguage(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void toggleReaderMode(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void toggleReaderMode(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+
+    void captureVisibleTab(WebPage*, double windowID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     double tabIdentifierNone() const { return -1; }
 
@@ -84,7 +87,9 @@ public:
 private:
     static bool parseTabCreateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabUpdateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseTabDuplicateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabQueryOptions(NSDictionary *, WebExtensionTabQueryParameters&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseCaptureVisibleTabOptions(NSDictionary *, WebExtensionTab::ImageFormat&, uint8_t& imageQuality, NSString *sourceKey, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onActivated;
     RefPtr<WebExtensionAPIEvent> m_onAttached;

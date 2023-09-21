@@ -29,6 +29,7 @@
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 
+#import "LegacyHistoryItemClient.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
@@ -110,7 +111,7 @@ static HistoryItemMap& historyItemWrappers()
     return historyItemWrappers;
 }
 
-void WKNotifyHistoryItemChanged(HistoryItem&)
+void WKNotifyHistoryItemChanged()
 {
 #if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter]
@@ -133,14 +134,14 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 
 - (instancetype)init
 {
-    return [self initWithWebCoreHistoryItem:HistoryItem::create()];
+    return [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton())];
 }
 
 - (instancetype)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
     WebCoreThreadViolationCheckRoundOne();
 
-    WebHistoryItem *item = [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title)];
+    WebHistoryItem *item = [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title)];
     item->_private->_lastVisitedTime = time;
 
     return item;
@@ -280,7 +281,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
-    auto item = [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, displayTitle)];
+    auto item = [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title, displayTitle)];
     if (!item)
         return nil;
     item->_private->_lastVisitedTime = time;
@@ -290,14 +291,6 @@ WebHistoryItem *kit(HistoryItem* item)
 - (id)initWithWebCoreHistoryItem:(Ref<HistoryItem>&&)item
 {   
     WebCoreThreadViolationCheckRoundOne();
-
-    // Need to tell WebCore what function to call for the 
-    // "History Item has Changed" notification - no harm in doing this
-    // everytime a WebHistoryItem is created
-    // Note: We also do this in [WebFrameView initWithFrame:] where we do
-    // other "init before WebKit is used" type things
-    // FIXME: This means that if we mix legacy WebKit and modern WebKit in the same process, we won't get both notifications.
-    WebCore::notifyHistoryItemChanged = WKNotifyHistoryItemChanged;
 
     if (!(self = [super init]))
         return nil;

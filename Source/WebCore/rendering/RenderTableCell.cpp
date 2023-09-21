@@ -455,7 +455,7 @@ void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
     // If border was changed, notify table.
     RenderTable* table = this->table();
-    if (table && oldStyle && oldStyle->border() != style().border()) {
+    if (table && oldStyle && !oldStyle->borderIsEquivalentForPainting(style())) {
         table->invalidateCollapsedBorders(this);
         if (table->collapseBorders() && diff == StyleDifference::Layout) {
             markCellDirtyWhenCollapsedBorderChanges(table->cellBelow(this));

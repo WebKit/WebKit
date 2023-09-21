@@ -53,7 +53,7 @@ void PDFPluginChoiceAnnotation::updateGeometry()
 {
     PDFPluginAnnotation::updateGeometry();
 
-    StyledElement* styledElement = static_cast<StyledElement*>(element());
+    RefPtr styledElement = downcast<StyledElement>(element());
     styledElement->setInlineStyleProperty(CSSPropertyFontSize, choiceAnnotation().font.pointSize * pdfLayerController().contentScaleFactor, CSSUnitType::CSS_PX);
 }
 
@@ -66,31 +66,29 @@ void PDFPluginChoiceAnnotation::commit()
 
 Ref<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
 {
-    Document& document = parent()->document();
+    Ref document = parent()->document();
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     PDFAnnotationChoiceWidget *choiceAnnotation = this->choiceAnnotation();
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    auto element = document.createElement(selectTag, false);
-
-    auto& styledElement = downcast<StyledElement>(element.get());
+    Ref element = downcast<StyledElement>(document->createElement(selectTag, false));
 
     // FIXME: Match font weight and style as well?
-    styledElement.setInlineStyleProperty(CSSPropertyColor, serializationForHTML(colorFromCocoaColor(choiceAnnotation.fontColor)));
-    styledElement.setInlineStyleProperty(CSSPropertyFontFamily, choiceAnnotation.font.familyName);
+    element->setInlineStyleProperty(CSSPropertyColor, serializationForHTML(colorFromCocoaColor(choiceAnnotation.fontColor)));
+    element->setInlineStyleProperty(CSSPropertyFontFamily, choiceAnnotation.font.familyName);
 
     NSArray *choices = choiceAnnotation.choices;
     NSString *selectedChoice = choiceAnnotation.stringValue;
 
     for (NSString *choice in choices) {
-        auto choiceOption = document.createElement(optionTag, false);
+        auto choiceOption = document->createElement(optionTag, false);
         choiceOption->setAttributeWithoutSynchronization(valueAttr, choice);
         choiceOption->setTextContent(choice);
 
         if (choice == selectedChoice)
             choiceOption->setAttributeWithoutSynchronization(selectedAttr, "selected"_s);
 
-        styledElement.appendChild(choiceOption);
+        element->appendChild(choiceOption);
     }
 
     return element;

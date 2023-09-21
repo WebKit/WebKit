@@ -64,7 +64,7 @@ public:
     void setX(LayoutUnit x) { ASSERT(!isInPlacedTree()); m_frameRect.setX(x); }
     void setY(LayoutUnit y) { ASSERT(!isInPlacedTree()); m_frameRect.setY(y); }
     void setWidth(LayoutUnit width) { ASSERT(!isInPlacedTree()); m_frameRect.setWidth(width); }
-    void setHeight(LayoutUnit height) { ASSERT(!isInPlacedTree() || isLowestPlacedFloatBottomInBlockFormattingContext()); m_frameRect.setHeight(height); }
+    void setHeight(LayoutUnit height) { ASSERT(!isInPlacedTree()); m_frameRect.setHeight(height); }
 
     void setMarginOffset(LayoutSize offset) { ASSERT(!isInPlacedTree()); m_marginOffset = offset; }
 
@@ -93,8 +93,6 @@ public:
     LegacyRootInlineBox* originatingLine() const { return m_originatingLine.get(); }
     void clearOriginatingLine() { m_originatingLine = nullptr; }
     void setOriginatingLine(LegacyRootInlineBox& line) { m_originatingLine = line; }
-
-    bool isLowestPlacedFloatBottomInBlockFormattingContext() const;
 
     LayoutSize locationOffsetOfBorderBox() const
     {

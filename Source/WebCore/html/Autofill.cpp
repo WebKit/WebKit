@@ -81,6 +81,7 @@ static constexpr std::pair<ComparableLettersLiteral, AutofillFieldNameMapping> f
     { "nickname", { AutofillFieldName::Nickname, AutofillCategory::Normal } },
     { "off", { AutofillFieldName::None, AutofillCategory::Off } },
     { "on", { AutofillFieldName::None, AutofillCategory::Automatic } },
+    { "one-time-code", { AutofillFieldName::OneTimeCode, AutofillCategory::Normal } },
     { "organization", { AutofillFieldName::Organization, AutofillCategory::Normal } },
     { "organization-title", { AutofillFieldName::OrganizationTitle, AutofillCategory::Normal } },
     { "photo", { AutofillFieldName::Photo, AutofillCategory::Normal } },

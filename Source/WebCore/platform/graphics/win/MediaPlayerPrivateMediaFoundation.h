@@ -72,7 +72,7 @@ public:
     bool hasVideo() const final;
     bool hasAudio() const final;
 
-    void setPageIsVisible(bool) final;
+    void setPageIsVisible(bool, String&&) final;
 
     bool seeking() const final;
     void seekToTarget(const SeekTarget&) final;

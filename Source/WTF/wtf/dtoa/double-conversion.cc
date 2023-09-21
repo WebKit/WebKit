@@ -51,6 +51,12 @@ const DoubleToStringConverter& DoubleToStringConverter::EcmaScriptConverter() {
   return converter;
 }
 
+const DoubleToStringConverter& DoubleToStringConverter::EcmaScriptConverterWithTrailingPoint() {
+  constexpr int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN | EMIT_TRAILING_DECIMAL_POINT;
+  static constexpr DoubleToStringConverter converter(flags, "Infinity", "NaN", 'e', -6, 21, 6, 0);
+  return converter;
+}
+
 const DoubleToStringConverter& DoubleToStringConverter::CSSConverter() {
   constexpr int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN;
   static constexpr DoubleToStringConverter converter(flags, "infinity", "NaN", 'e', -6, 21, 6, 0);

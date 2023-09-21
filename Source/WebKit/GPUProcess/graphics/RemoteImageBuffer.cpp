@@ -112,10 +112,10 @@ void RemoteImageBuffer::putPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer, We
     m_imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
-void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveResolution, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    ShareableBitmap::Handle handle;
+    std::optional<ShareableBitmap::Handle> handle;
     [&]() {
         auto backendSize = m_imageBuffer->backendSize();
         auto logicalSize = m_imageBuffer->logicalSize();
@@ -127,16 +127,15 @@ void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveR
         if (!context)
             return;
         context->drawImageBuffer(m_imageBuffer.get(), WebCore::FloatRect { { }, resultSize }, FloatRect { { }, logicalSize }, { CompositeOperator::Copy });
-        if (auto bitmapHandle = bitmap->createHandle())
-            handle = WTFMove(*bitmapHandle);
+        handle = bitmap->createHandle();
     }();
     completionHandler(WTFMove(handle));
 }
 
-void RemoteImageBuffer::getFilteredImage(Ref<WebCore::Filter> filter, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void RemoteImageBuffer::getFilteredImage(Ref<WebCore::Filter> filter, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    ShareableBitmap::Handle handle;
+    std::optional<ShareableBitmap::Handle> handle;
     [&]() {
         auto image = m_imageBuffer->filteredImage(filter);
         if (!image)
@@ -149,8 +148,7 @@ void RemoteImageBuffer::getFilteredImage(Ref<WebCore::Filter> filter, Completion
         if (!context)
             return;
         context->drawImage(*image, FloatPoint());
-        if (auto bitmapHandle = bitmap->createHandle())
-            handle = WTFMove(*bitmapHandle);
+        handle = bitmap->createHandle();
     }();
     completionHandler(WTFMove(handle));
 }
@@ -167,11 +165,17 @@ void RemoteImageBuffer::transformToColorSpace(const WebCore::DestinationColorSpa
     m_imageBuffer->transformToColorSpace(colorSpace);
 }
 
-void RemoteImageBuffer::flushContext(IPC::Semaphore&& semaphore)
+void RemoteImageBuffer::setFlushSignal(IPC::Signal&& signal)
 {
+    m_flushSignal = WTFMove(signal);
+}
+
+void RemoteImageBuffer::flushContext()
+{
+    RELEASE_ASSERT(m_flushSignal);
     assertIsCurrent(workQueue());
     m_imageBuffer->flushDrawingContext();
-    semaphore.signal();
+    m_flushSignal->signal();
 }
 
 void RemoteImageBuffer::flushContextSync(CompletionHandler<void()>&& completionHandler)

@@ -78,7 +78,7 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
                     NSError *error = nil;
                     auto keyStatus = [item statusOfValueForKey:@"value" error:&error];
                     if (error)
-                        ERROR_LOG(identifier, "@\"value\" failed failed to load, status is ", (int)keyStatus, ", error = ", [[error localizedDescription] UTF8String]);
+                        ERROR_LOG(identifier, "@\"value\" failed failed to load, status is ", (int)keyStatus, ", error = ", error);
 
                     if (keyStatus == AVKeyValueStatusLoaded && !error) {
                         callOnMainThread([item = WTFMove(item), protectedThis = WTFMove(protectedThis), createChapterCue = WTFMove(createChapterCue), chapterNumber] () mutable {

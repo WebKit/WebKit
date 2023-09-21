@@ -121,7 +121,7 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
 
     thread().messagingProxy().postTaskToAudioWorklet([name = WTFMove(name).isolatedCopy(), parameterDescriptors = crossThreadCopy(WTFMove(parameterDescriptors))](AudioWorklet& worklet) mutable {
         ASSERT(isMainThread());
-        if (auto* audioContext = worklet.audioContext())
+        if (RefPtr audioContext = worklet.audioContext())
             audioContext->addAudioParamDescriptors(name, WTFMove(parameterDescriptors));
     });
 

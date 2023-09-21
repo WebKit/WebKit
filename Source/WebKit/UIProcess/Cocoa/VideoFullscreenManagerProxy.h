@@ -45,6 +45,7 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS WKLayerHostView;
+OBJC_CLASS WKVideoView;
 OBJC_CLASS WebAVPlayerLayer;
 OBJC_CLASS WebAVPlayerLayerView;
 
@@ -67,8 +68,6 @@ public:
     }
     virtual ~VideoFullscreenModelContext();
 
-    void invalidate() { m_manager = nullptr; }
-
     PlatformView *layerHostView() const { return m_layerHostView.get(); }
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
@@ -78,6 +77,9 @@ public:
 #if PLATFORM(IOS_FAMILY)
     WebAVPlayerLayerView *playerView() const { return m_playerView.get(); }
     void setPlayerView(RetainPtr<WebAVPlayerLayerView>&& playerView) { m_playerView = WTFMove(playerView); }
+
+    WKVideoView *videoView() const { return m_videoView.get(); }
+    void setVideoView(RetainPtr<WKVideoView>&& videoView) { m_videoView = WTFMove(videoView); }
 #endif
 
     void requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&&);
@@ -129,7 +131,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    VideoFullscreenManagerProxy* m_manager;
+    WeakPtr<VideoFullscreenManagerProxy> m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
     PlaybackSessionContextIdentifier m_contextId;
     RetainPtr<PlatformView> m_layerHostView;
@@ -137,9 +139,10 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<WebAVPlayerLayerView> m_playerView;
+    RetainPtr<WKVideoView> m_videoView;
 #endif
 
-    HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
+    WeakHashSet<WebCore::VideoFullscreenModelClient> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
 
@@ -148,8 +151,15 @@ private:
 #endif
 };
 
-class VideoFullscreenManagerProxy : public RefCounted<VideoFullscreenManagerProxy>, private IPC::MessageReceiver {
+class VideoFullscreenManagerProxy
+    : public RefCounted<VideoFullscreenManagerProxy>
+    , public CanMakeWeakPtr<VideoFullscreenManagerProxy>
+    , private IPC::MessageReceiver {
 public:
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::WeakPtrImplType;
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::WeakValueType;
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::weakPtrFactory;
+
     static Ref<VideoFullscreenManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
     virtual ~VideoFullscreenManagerProxy();
 
@@ -173,11 +183,11 @@ public:
 
     void forEachSession(Function<void(VideoFullscreenModelContext&, WebCore::PlatformVideoFullscreenInterface&)>&&);
 
-    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
-    RetainPtr<WebAVPlayerLayerView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
+    RetainPtr<WKVideoView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 #endif
 
     PlatformLayerContainer createLayerWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
@@ -251,7 +261,7 @@ private:
     bool m_mockVideoPresentationModeEnabled { false };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
 
-    WebPageProxy* m_page;
+    WeakPtr<WebPageProxy> m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;

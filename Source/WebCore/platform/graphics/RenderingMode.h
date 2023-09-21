@@ -43,7 +43,7 @@ enum class RenderingPurpose : uint8_t {
 };
 
 enum class RenderingMode : bool { Unaccelerated, Accelerated };
-enum class RenderingMethod : bool { Local, DisplayList };
+enum class RenderingMethod : bool { Local };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, RenderingPurpose);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, RenderingMode);

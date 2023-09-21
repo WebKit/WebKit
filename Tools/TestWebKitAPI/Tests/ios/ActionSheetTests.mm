@@ -27,13 +27,13 @@
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
-#import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "TestWKWebViewController.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "UserInterfaceSwizzler.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -110,11 +110,11 @@ TEST(ActionSheetTests, DISABLED_DismissingActionSheetShouldNotDismissPresentingV
     [webView setNavigationDelegate:navigationDelegate.get()];
     [rootViewController presentViewController:webViewController.get() animated:NO completion:nil];
 
-    // Since TestWebKitAPI is not a UI application, +[UIViewController _viewControllerForFullScreenPresentationFromView:]
+    // Since TestWebKitAPI is not a UI application, -[UIView _wk_viewControllerForFullScreenPresentation]
     // returns nil. To ensure that we actually present the action sheet from the web view controller, we mock this for the
     // time being until https://webkit.org/b/175204 is fixed.
     setOverrideViewControllerForFullscreenPresentation(webViewController.get());
-    ClassMethodSwizzler swizzler([UIViewController class], @selector(_viewControllerForFullScreenPresentationFromView:), reinterpret_cast<IMP>(overrideViewControllerForFullscreenPresentation));
+    InstanceMethodSwizzler swizzler([UIView class], @selector(_wk_viewControllerForFullScreenPresentation), reinterpret_cast<IMP>(overrideViewControllerForFullscreenPresentation));
 
     [observer setPresentationHandler:^(_WKActivatedElementInfo *, NSArray *actions) {
         // Killing the web content process should dismiss the action sheet.

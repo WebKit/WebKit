@@ -1,0 +1,7 @@
+2d.text.measure.fontBoundingBox-zero-descent
+
+Testing fontBoundingBox for OffscreenCanvas with zero descent metric
+
+
+PASS Testing fontBoundingBox for OffscreenCanvas with zero descent metric
+

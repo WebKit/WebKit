@@ -28,6 +28,7 @@
 #include "StyleSheet.h"
 #include <memory>
 #include <variant>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakHashSet.h>
@@ -182,7 +183,7 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;
     WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData> m_adoptingTreeScopes;
 
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_ownerNode;
+    CheckedPtr<Node> m_ownerNode;
     WeakPtr<CSSImportRule> m_ownerRule;
 
     TextPosition m_startPosition;

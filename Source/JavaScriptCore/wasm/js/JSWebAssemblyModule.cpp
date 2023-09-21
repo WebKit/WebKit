@@ -52,6 +52,7 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, JSGlobalObject* glo
     auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm)) JSWebAssemblyModule(vm, structure, result.value().releaseNonNull());
     module->finishCreation(vm);
 
+#if ENABLE(JIT)
     auto error = module->generateWasmToJSStubs(vm);
     if (UNLIKELY(!error)) {
         switch (error.error()) {
@@ -61,6 +62,7 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, JSGlobalObject* glo
         }
         ASSERT_NOT_REACHED();
     }
+#endif
     return module;
 }
 
@@ -137,16 +139,25 @@ DEFINE_VISIT_CHILDREN(JSWebAssemblyModule);
 
 void JSWebAssemblyModule::clearJSCallICs(VM& vm)
 {
+#if ENABLE(JIT)
     for (auto& callLinkInfo : m_callLinkInfos)
         callLinkInfo.unlink(vm);
+#else
+    UNUSED_PARAM(vm);
+#endif
 }
 
 void JSWebAssemblyModule::finalizeUnconditionally(VM& vm, CollectionScope)
 {
+#if ENABLE(JIT)
     for (auto& callLinkInfo : m_callLinkInfos)
         callLinkInfo.visitWeak(vm);
+#else
+    UNUSED_PARAM(vm);
+#endif
 }
 
+#if ENABLE(JIT)
 Expected<void, Wasm::BindingFailure> JSWebAssemblyModule::generateWasmToJSStubs(VM& vm)
 {
     const Wasm::ModuleInformation& moduleInformation = m_module->moduleInformation();
@@ -165,6 +176,7 @@ Expected<void, Wasm::BindingFailure> JSWebAssemblyModule::generateWasmToJSStubs(
     }
     return { };
 }
+#endif // ENABLE(JIT)
 
 } // namespace JSC
 

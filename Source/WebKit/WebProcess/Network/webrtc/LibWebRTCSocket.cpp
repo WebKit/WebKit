@@ -124,7 +124,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
 
 int LibWebRTCSocket::Close()
 {
-    auto* connection = m_factory.connection();
+    RefPtr connection = m_factory.connection();
     if (!connection || m_state == STATE_CLOSED)
         return 0;
 

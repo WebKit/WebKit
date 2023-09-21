@@ -88,11 +88,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
 
-    auto* requestingFrame = WebProcess::singleton().webFrame(*requester.frameID);
+    RefPtr requestingFrame = WebProcess::singleton().webFrame(*requester.frameID);
 
     auto originatingFrameID = *requester.frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
-    if (auto* parentFrame = requestingFrame ? requestingFrame->parentFrame() : nullptr)
+    if (auto parentFrame = requestingFrame ? requestingFrame->parentFrame() : nullptr)
         parentFrameID = parentFrame->frameID();
 
     FrameInfoData originatingFrameInfoData {
@@ -180,10 +180,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 void WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
 {
     auto* webPage = m_frame->page();
-    if (!webPage) {
-        ASSERT_NOT_REACHED();
+    if (!webPage)
         return;
-    }
     webPage->send(Messages::WebPageProxy::BroadcastFrameRemovalToOtherProcesses(m_frame->frameID()));
 }
 

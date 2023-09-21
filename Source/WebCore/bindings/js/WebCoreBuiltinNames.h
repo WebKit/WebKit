@@ -78,6 +78,7 @@ namespace WebCore {
     macro(AudioContext) \
     macro(AudioData) \
     macro(AudioDecoder) \
+    macro(AudioEncoder) \
     macro(AudioDestinationNode) \
     macro(AudioListener) \
     macro(AudioNode) \

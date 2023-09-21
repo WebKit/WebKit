@@ -62,7 +62,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, RefPtr<WindowPro
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
-    const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
+    const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
     EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
 {
     return adoptRef(*new MouseEvent(type, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail,
@@ -70,7 +70,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& type, CanBubble canBubble, 
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& view, int detail,
-    int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
+    int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
     SyntheticClickType syntheticClickType, EventTarget* relatedTarget)
 {
     return adoptRef(*new MouseEvent(eventType, canBubble, isCancelable, isComposed, WTFMove(view), detail, { screenX, screenY }, { clientX, clientY }, 0, 0, modifiers, button, buttons, syntheticClickType, relatedTarget));
@@ -80,13 +80,13 @@ MouseEvent::MouseEvent() = default;
 
 MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
-    const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
+    const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
     EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
     : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, isSimulated, isTrusted)
-    , m_button(button == -2 ? 0 : button)
+    , m_button(enumToUnderlyingType(button == MouseButton::None ? MouseButton::Left : button))
     , m_buttons(buttons)
-    , m_syntheticClickType(button == -2 ? SyntheticClickType::NoTap : syntheticClickType)
-    , m_buttonDown(button != -2)
+    , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
+    , m_buttonDown(button != MouseButton::None)
     , m_relatedTarget(relatedTarget)
     , m_force(force)
 {
@@ -94,12 +94,12 @@ MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCance
 
 MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, double movementX, double movementY,
-    OptionSet<Modifier> modifiers, short button, unsigned short buttons, SyntheticClickType syntheticClickType, EventTarget* relatedTarget)
+    OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons, SyntheticClickType syntheticClickType, EventTarget* relatedTarget)
     : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { }, movementX, movementY, modifiers, IsSimulated::No)
-    , m_button(button == -2 ? 0 : button)
+    , m_button(enumToUnderlyingType(button == MouseButton::None ? MouseButton::Left : button))
     , m_buttons(buttons)
-    , m_syntheticClickType(button == -2 ? SyntheticClickType::NoTap : syntheticClickType)
-    , m_buttonDown(button != -2)
+    , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
+    , m_buttonDown(button != MouseButton::None)
     , m_relatedTarget(relatedTarget)
 {
     initCoordinates(clientLocation);
@@ -107,9 +107,9 @@ MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCance
 
 MouseEvent::MouseEvent(const AtomString& eventType, const MouseEventInit& initializer)
     : MouseRelatedEvent(eventType, initializer)
-    , m_button(initializer.button == -2 ? 0 : initializer.button)
+    , m_button(initializer.button == enumToUnderlyingType(MouseButton::None) ? enumToUnderlyingType(MouseButton::Left) : initializer.button)
     , m_buttons(initializer.buttons)
-    , m_buttonDown(initializer.button != -2)
+    , m_buttonDown(initializer.button != enumToUnderlyingType(MouseButton::None))
     , m_relatedTarget(initializer.relatedTarget)
 {
     initCoordinates({ initializer.clientX, initializer.clientY });
@@ -118,7 +118,7 @@ MouseEvent::MouseEvent(const AtomString& eventType, const MouseEventInit& initia
 MouseEvent::~MouseEvent() = default;
 
 void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail,
-    int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, short button, EventTarget* relatedTarget)
+    int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, int16_t button, EventTarget* relatedTarget)
 {
     if (isBeingDispatched())
         return;
@@ -127,9 +127,9 @@ void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool can
 
     m_screenLocation = IntPoint(screenX, screenY);
     setModifierKeys(ctrlKey, altKey, shiftKey, metaKey);
-    m_button = button == -2 ? 0 : button;
+    m_button = button == enumToUnderlyingType(MouseButton::None) ? enumToUnderlyingType(MouseButton::Left) : button;
     m_syntheticClickType = SyntheticClickType::NoTap;
-    m_buttonDown = button != -2;
+    m_buttonDown = button != enumToUnderlyingType(MouseButton::None);
     m_relatedTarget = relatedTarget;
 
     initCoordinates(IntPoint(clientX, clientY));
@@ -139,7 +139,7 @@ void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool can
 
 // FIXME: We need this quirk because iAd Producer is calling this function with a relatedTarget that is not an EventTarget (rdar://problem/30640101).
 // We should remove this quirk when possible.
-void MouseEvent::initMouseEventQuirk(JSGlobalObject& state, ScriptExecutionContext& scriptExecutionContext, const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, short button, JSValue relatedTargetValue)
+void MouseEvent::initMouseEventQuirk(JSGlobalObject& state, ScriptExecutionContext& scriptExecutionContext, const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, int16_t button, JSValue relatedTargetValue)
 {
     EventTarget* relatedTarget = nullptr;
 #if PLATFORM(MAC)
@@ -178,7 +178,16 @@ bool MouseEvent::isMouseEvent() const
 
 bool MouseEvent::canTriggerActivationBehavior(const Event& event)
 {
-    return event.type() == eventNames().clickEvent && (!is<MouseEvent>(event) || downcast<MouseEvent>(event).button() != RightButton);
+    return event.type() == eventNames().clickEvent && (!is<MouseEvent>(event) || downcast<MouseEvent>(event).button() != MouseButton::Right);
+}
+
+MouseButton MouseEvent::button() const
+{
+    static constexpr std::array mouseButtonCases { MouseButton::None, MouseButton::PointerMove, MouseButton::Left, MouseButton::Middle, MouseButton::Right };
+    const auto isKnownButton = WTF::anyOf(mouseButtonCases, [buttonValue = this->m_button](MouseButton button) {
+        return buttonValue == enumToUnderlyingType(button);
+    });
+    return isKnownButton ? static_cast<MouseButton>(m_button) : MouseButton::Other;
 }
 
 int MouseEvent::which() const

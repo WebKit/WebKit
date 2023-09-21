@@ -87,10 +87,6 @@ NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *);
 NSDictionary *mergeDictionaries(NSDictionary *, NSDictionary *);
 NSDictionary *mergeDictionariesAndSetValues(NSDictionary *, NSDictionary *);
 
-// MARK: NSLocale helper methods.
-
-NSString *localeStringInWebExtensionFormat(NSLocale *);
-
 // MARK: NSError helper methods.
 
 NSString *privacyPreservingDescription(NSError *);

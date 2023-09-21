@@ -24,8 +24,8 @@
 #include "LocalFrameView.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
+#include "RenderSelection.h"
 #include "RenderWidget.h"
-#include "SelectionRangeData.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -96,7 +96,7 @@ public:
     // Return the renderer whose background style is used to paint the root background.
     RenderElement* rendererForRootBackground() const;
 
-    SelectionRangeData& selection() { return m_selection; }
+    RenderSelection& selection() { return m_selection; }
 
     bool printing() const;
 
@@ -148,6 +148,7 @@ public:
     // Renderer that paints the root background has background-images which all have background-attachment: fixed.
     bool rootBackgroundIsEntirelyFixed() const;
 
+    bool rootElementShouldPaintBaseBackground() const;
     bool shouldPaintBaseBackground() const;
 
     FloatSize sizeForCSSSmallViewportUnits() const;
@@ -205,7 +206,7 @@ public:
 
     void registerBoxWithScrollSnapPositions(const RenderBox&);
     void unregisterBoxWithScrollSnapPositions(const RenderBox&);
-    const HashSet<const RenderBox*>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
+    const WeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
 
     void registerContainerQueryBox(const RenderBox&);
     void unregisterContainerQueryBox(const RenderBox&);
@@ -241,7 +242,7 @@ private:
     UniqueRef<Layout::LayoutState> m_layoutState;
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
-    SelectionRangeData m_selection;
+    RenderSelection m_selection;
 
     WeakPtr<RenderLayer> m_styleChangeLayerMutationRoot;
 
@@ -261,7 +262,7 @@ private:
     void lazyRepaintTimerFired();
 
     Timer m_lazyRepaintTimer;
-    HashSet<RenderBox*> m_renderersNeedingLazyRepaint;
+    WeakHashSet<RenderBox> m_renderersNeedingLazyRepaint;
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;
@@ -278,11 +279,11 @@ private:
     bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };
     bool m_needsEventRegionUpdateForNonCompositedFrame { false };
 
-    HashMap<RenderElement*, Vector<CachedImage*>> m_renderersWithPausedImageAnimation;
+    WeakHashMap<RenderElement, Vector<WeakPtr<CachedImage>>> m_renderersWithPausedImageAnimation;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_SVGSVGElementsWithPausedImageAnimation;
-    HashSet<RenderElement*> m_visibleInViewportRenderers;
+    WeakHashSet<RenderElement> m_visibleInViewportRenderers;
 
-    HashSet<const RenderBox*> m_boxesWithScrollSnapPositions;
+    WeakHashSet<const RenderBox> m_boxesWithScrollSnapPositions;
     WeakHashSet<const RenderBox> m_containerQueryBoxes;
 };
 

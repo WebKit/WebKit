@@ -27,12 +27,11 @@
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
+#include "AXCoreObject.h"
 #include "AXTreeStore.h"
-#include "AccessibilityObjectInterface.h"
 #include "PageIdentifier.h"
 #include "RenderStyleConstants.h"
 #include "RuntimeApplicationChecks.h"
-#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
@@ -53,7 +52,6 @@ class Page;
 enum class AXStreamOptions : uint8_t;
 
 enum class AXPropertyName : uint16_t {
-    ARIAIsMultiline,
     ARIATreeItemContent,
     ARIATreeRows,
     AttributedText,
@@ -125,7 +123,6 @@ enum class AXPropertyName : uint16_t {
     IsExposable,
     IsExposedTableCell,
     IsFieldset,
-    IsFocused,
     IsIndeterminate,
     IsInlineText,
     IsInputImage,
@@ -191,7 +188,6 @@ enum class AXPropertyName : uint16_t {
     PopupValue,
     PosInSet,
     PreventKeyboardDOMEventDispatch,
-    ReadOnlyValue,
     RelativeFrame,
     RoleValue,
     RolePlatformString,
@@ -201,9 +197,7 @@ enum class AXPropertyName : uint16_t {
     RowIndex,
     RowIndexRange,
     ScreenRelativePosition,
-    SelectedCells,
     SelectedChildren,
-    SessionID,
     SetSize,
     SortDirection,
     SpeechHint,
@@ -239,7 +233,7 @@ enum class AXPropertyName : uint16_t {
     VisibleRows,
 };
 
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, PAL::SessionID, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>>;
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>>;
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {
@@ -269,6 +263,7 @@ public:
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
     RefPtr<AXIsolatedObject> rootNode();
+    AXID focusedNodeID();
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;

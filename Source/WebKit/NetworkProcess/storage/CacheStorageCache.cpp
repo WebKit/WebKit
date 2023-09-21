@@ -281,7 +281,7 @@ void CacheStorageCache::putRecords(Vector<WebCore::DOMCacheEngine::CrossThreadRe
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
     int64_t spaceRequested = 0;
-    auto cacheStorageRecords = WTF::map(records, [&](auto&& record) {
+    auto cacheStorageRecords = WTF::map(WTFMove(records), [&](WebCore::DOMCacheEngine::CrossThreadRecord&& record) {
         spaceRequested += record.responseBodySize;
         if (auto* existingRecord = findExistingRecord(record.request))
             spaceRequested -= existingRecord->size;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/GeolocationClient.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebKit {
 
@@ -54,7 +55,7 @@ private:
     void requestPermission(WebCore::Geolocation&) final;
     void cancelPermissionRequest(WebCore::Geolocation&) final;
 
-    WebPage& m_page;
+    CheckedRef<WebPage> m_page;
 };
 
 } // namespace WebKit

@@ -34,6 +34,7 @@
 
 #include "IntRect.h"
 #include "PlatformScreen.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
@@ -84,7 +85,7 @@ enum WidgetNotification { WillPaintFlattened, DidPaintFlattened };
 // Scrollbar - Mac, Gtk
 // Plugin - Mac, Windows (windowed only), Qt (windowed only, widget is an HWND on windows), Gtk (windowed only)
 //
-class Widget : public RefCounted<Widget>, public CanMakeWeakPtr<Widget> {
+class Widget : public RefCounted<Widget>, public CanMakeWeakPtr<Widget>, public CanMakeCheckedPtr {
 public:
     WEBCORE_EXPORT explicit Widget(PlatformWidget = nullptr);
     WEBCORE_EXPORT virtual ~Widget();

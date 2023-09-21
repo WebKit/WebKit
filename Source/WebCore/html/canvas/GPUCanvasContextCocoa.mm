@@ -151,7 +151,7 @@ void GPUCanvasContextCocoa::reshape(int width, int height)
     m_height = height;
 
     auto configuration = WTFMove(m_configuration);
-    ASSERT(!isConfigured());
+    m_configuration.reset();
     if (configuration) {
         GPUCanvasConfiguration canvasConfiguration {
             configuration->device.ptr(),
@@ -194,7 +194,7 @@ void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
         configuration.usage,
         configuration.viewFormats,
         configuration.colorSpace,
-        configuration.compositingAlphaMode,
+        configuration.alphaMode,
         WTFMove(renderBuffers),
         0,
     };
@@ -268,10 +268,8 @@ void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()
         }
     }
 
-    if (!canvasIsDirty) {
-        canvasIsDirty = true;
+    if (!canvasIsDirty)
         canvasBase().didDraw({ });
-    }
 
     if (!isAccelerated())
         return;

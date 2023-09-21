@@ -1345,7 +1345,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
-            'compile-webkit',
+            'compile-jsc',
             'jscore-test'
         ],
         'JSCOnly-Linux-ARMv7-Thumb2-Release': [
@@ -1356,7 +1356,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
-            'compile-webkit',
+            'compile-jsc',
             'jscore-test'
         ],
         'JSCOnly-Linux-MIPS32el-Release': [
@@ -1367,7 +1367,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
-            'compile-webkit',
+            'compile-jsc',
             'jscore-test'
         ],
         'WPE-Linux-64-bit-Release-Build': [

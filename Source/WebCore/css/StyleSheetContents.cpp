@@ -81,6 +81,7 @@ StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String&
 
 StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     : RefCounted<StyleSheetContents>()
+    , CanMakeWeakPtr<StyleSheetContents>()
     , m_ownerRule(nullptr)
     , m_originalURL(o.m_originalURL)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
@@ -490,7 +491,7 @@ static bool traverseRulesInVector(const Vector<Ref<StyleRuleBase>>& rules, const
         }
         if (!rule->isGroupRule())
             continue;
-        if (traverseRulesInVector(downcast<StyleRuleGroup>(rule).childRules(), handler))
+        if (traverseRulesInVector(downcast<StyleRuleGroup>(rule.get()).childRules(), handler))
             return true;
     }
     return false;

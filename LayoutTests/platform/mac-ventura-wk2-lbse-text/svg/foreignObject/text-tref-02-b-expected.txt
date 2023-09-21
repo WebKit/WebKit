@@ -18,11 +18,11 @@ layer at (75,171.19) size 82x36
     RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGInline {tref} at (0,0) size 0x0
     RenderSVGInlineText {#text} at (0,0) size 0x0
-layer at (10,314.55) size 229x33
-  RenderSVGTransformableContainer {g} at (10,314.55) size 228.02x31.83
-layer at (10,314.55) size 228x32
-  RenderSVGText {text} at (0,0) size 229x32 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 229x32
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.01: "$Revision: 1.5 $"
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
+  RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x33
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.5 $"
 layer at (1,1) size 478x358
   RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

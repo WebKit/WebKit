@@ -56,19 +56,21 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
     for (const auto& colorAttachment : descriptor.colorAttachments) {
         if (colorAttachment) {
             colorAttachments.append(WGPURenderPassColorAttachment {
-                m_convertToBackingContext->convertToBacking(colorAttachment->view),
-                colorAttachment->resolveTarget ? m_convertToBackingContext->convertToBacking(*colorAttachment->resolveTarget) : nullptr,
-                m_convertToBackingContext->convertToBacking(colorAttachment->loadOp),
-                m_convertToBackingContext->convertToBacking(colorAttachment->storeOp),
-                colorAttachment->clearValue ? m_convertToBackingContext->convertToBacking(*colorAttachment->clearValue) : WGPUColor { 0, 0, 0, 0 },
+                .nextInChain = nullptr,
+                .view = m_convertToBackingContext->convertToBacking(colorAttachment->view),
+                .resolveTarget = colorAttachment->resolveTarget ? m_convertToBackingContext->convertToBacking(*colorAttachment->resolveTarget) : nullptr,
+                .loadOp = m_convertToBackingContext->convertToBacking(colorAttachment->loadOp),
+                .storeOp = m_convertToBackingContext->convertToBacking(colorAttachment->storeOp),
+                .clearValue = colorAttachment->clearValue ? m_convertToBackingContext->convertToBacking(*colorAttachment->clearValue) : WGPUColor { 0, 0, 0, 0 },
             });
         } else
-            colorAttachments.append({
-                nullptr,
-                nullptr,
-                WGPULoadOp_Clear,
-                WGPUStoreOp_Discard,
-                { 0, 0, 0, 0 },
+            colorAttachments.append(WGPURenderPassColorAttachment {
+                .nextInChain = nullptr,
+                .view = nullptr,
+                .resolveTarget = nullptr,
+                .loadOp = WGPULoadOp_Clear,
+                .storeOp = WGPUStoreOp_Discard,
+                .clearValue = { 0, 0, 0, 0 },
             });
     }
 
@@ -88,11 +90,11 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
     }
 
     Vector<WGPURenderPassTimestampWrite> timestampWrites;
-    for (const auto& timestampWrite : descriptor.timestampWrites) {
+    if (descriptor.timestampWrites && descriptor.timestampWrites->querySet) {
         timestampWrites.append(WGPURenderPassTimestampWrite {
-            m_convertToBackingContext->convertToBacking(timestampWrite.querySet),
-            timestampWrite.queryIndex,
-            m_convertToBackingContext->convertToBacking(timestampWrite.location),
+            m_convertToBackingContext->convertToBacking(*descriptor.timestampWrites->querySet),
+            descriptor.timestampWrites->beginningOfPassWriteIndex,
+            static_cast<WGPURenderPassTimestampLocation>(descriptor.timestampWrites->endOfPassWriteIndex)
         });
     }
 
@@ -115,14 +117,12 @@ Ref<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optional
     CString label = descriptor ? descriptor->label.utf8() : CString("");
 
     Vector<WGPUComputePassTimestampWrite> timestampWrites;
-    if (descriptor) {
-        for (const auto& timestampWrite : descriptor->timestampWrites) {
-            timestampWrites.append(WGPUComputePassTimestampWrite {
-                m_convertToBackingContext->convertToBacking(timestampWrite.querySet),
-                timestampWrite.queryIndex,
-                m_convertToBackingContext->convertToBacking(timestampWrite.location),
-            });
-        }
+    if (descriptor && descriptor->timestampWrites && descriptor->timestampWrites->querySet) {
+        timestampWrites.append(WGPUComputePassTimestampWrite {
+            m_convertToBackingContext->convertToBacking(*descriptor->timestampWrites->querySet),
+            descriptor->timestampWrites->beginningOfPassWriteIndex,
+            static_cast<WGPUComputePassTimestampLocation>(descriptor->timestampWrites->endOfPassWriteIndex)
+        });
     }
 
     WGPUComputePassDescriptor backingDescriptor {

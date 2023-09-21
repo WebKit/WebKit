@@ -119,7 +119,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
         return;
     }
 
-    m_connection->chainOperation(WTFMove(promise), [this, weakThis = WeakPtr { *this }, withTrack = WTFMove(withTrack)](auto&& promise) mutable {
+    m_connection->chainOperation(WTFMove(promise), [this, weakThis = WeakPtr { *this }, withTrack = WTFMove(withTrack)](Ref<DeferredPromise>&& promise) mutable {
         if (!weakThis)
             return;
         if (isStopped()) {
@@ -132,7 +132,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
             return;
         }
 
-        auto* context = m_connection->scriptExecutionContext();
+        RefPtr context = m_connection->scriptExecutionContext();
         if (!context)
             return;
 

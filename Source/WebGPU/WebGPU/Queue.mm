@@ -320,8 +320,11 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         return;
 
     NSUInteger bytesPerRow = dataLayout.bytesPerRow;
+    if (bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
+        bytesPerRow = size.height ? (dataSize / size.height) : dataSize;
 
-    NSUInteger bytesPerImage = dataLayout.bytesPerRow * dataLayout.rowsPerImage;
+    NSUInteger rowsPerImage = (dataLayout.rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED) ? size.height : dataLayout.rowsPerImage;
+    NSUInteger bytesPerImage = bytesPerRow * rowsPerImage;
 
     MTLBlitOption options = MTLBlitOptionNone;
     switch (destination.aspect) {
@@ -524,7 +527,7 @@ void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlo
     });
 }
 
-void wgpuQueueSubmit(WGPUQueue queue, uint32_t commandCount, const WGPUCommandBuffer* commands)
+void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
 {
     Vector<std::reference_wrapper<const WebGPU::CommandBuffer>> commandsToForward;
     for (uint32_t i = 0; i < commandCount; ++i)

@@ -63,7 +63,7 @@ class Variable
         if @kind == DSL::type_variable
             "candidate.typeVariables.append(#{name});"
         else
-            "candidate.numericVariables.append(#{name});"
+            "candidate.valueVariables.append(#{name});"
         end
     end
 end
@@ -227,14 +227,16 @@ module DSL
     @aliases = {}
     @operators = {}
     @TypeVariable = VariableKind.new(:TypeVariable)
-    @NumericVariable = VariableKind.new(:NumericVariable)
+    @ValueVariable = VariableKind.new(:ValueVariable)
+    @AddressSpace = VariableKind.new(:AddressSpace)
+    @AccessMode = VariableKind.new(:AccessMode)
 
     def self.type_variable
         @TypeVariable
     end
 
     def self.numeric_variable
-        @NumericVariable
+        @ValueVariable
     end
 
     def self.operator(name, map)
@@ -277,6 +279,8 @@ module DSL
         Matrix = AbstractType.new(:Matrix)
         Array = AbstractType.new(:Array)
         Texture = AbstractType.new(:Texture)
+        Ref = AbstractType.new(:Reference)
+        Ptr = AbstractType.new(:Pointer)
 
         Texture1d = Variable.new(:"Types::Texture::Kind::Texture1d", nil)
         Texture2d = Variable.new(:"Types::Texture::Kind::Texture2d", nil)
@@ -300,10 +304,13 @@ module DSL
         T = Variable.new(:T, @TypeVariable)
         U = Variable.new(:U, @TypeVariable)
         V = Variable.new(:V, @TypeVariable)
-        N = Variable.new(:N, @NumericVariable)
-        C = Variable.new(:C, @NumericVariable)
-        R = Variable.new(:R, @NumericVariable)
-        K = Variable.new(:K, @NumericVariable)
+        N = Variable.new(:N, @ValueVariable)
+        C = Variable.new(:C, @ValueVariable)
+        R = Variable.new(:R, @ValueVariable)
+        K = Variable.new(:K, @ValueVariable)
+
+        AS = Variable.new(:AS, @ValueVariable)
+        AM = Variable.new(:AM, @ValueVariable)
 
         Number = Constraint.new(:Number)
         Integer = Constraint.new(:Integer)

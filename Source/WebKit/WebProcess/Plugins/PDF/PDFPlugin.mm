@@ -195,7 +195,7 @@ static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::
 {
     if (!_parent) {
         if (auto* axObjectCache = _pdfPlugin->axObjectCache()) {
-            if (auto* pluginAxObject = axObjectCache->getOrCreate(_pluginElement.get()))
+            if (RefPtr pluginAxObject = axObjectCache->getOrCreate(_pluginElement.get()))
                 _parent = pluginAxObject->wrapper();
         }
     }
@@ -335,9 +335,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)accessibilityFocusedUIElement
 {
-    if (WebKit::PDFPluginAnnotation* activeAnnotation = _pdfPlugin->activeAnnotation()) {
+    if (RefPtr activeAnnotation = _pdfPlugin->activeAnnotation()) {
         if (WebCore::AXObjectCache* existingCache = _pdfPlugin->axObjectCache()) {
-            if (WebCore::AccessibilityObject* object = existingCache->getOrCreate(activeAnnotation->element()))
+            if (RefPtr object = existingCache->getOrCreate(activeAnnotation->element()))
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return [object->wrapper() accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -349,7 +349,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (id)accessibilityAssociatedControlForAnnotation:(PDFAnnotation *)annotation
 {
     // Only active annotations seem to have their associated controls available.
-    WebKit::PDFPluginAnnotation* activeAnnotation = _pdfPlugin->activeAnnotation();
+    RefPtr activeAnnotation = _pdfPlugin->activeAnnotation();
     if (!activeAnnotation || ![activeAnnotation->annotation() isEqual:annotation])
         return nil;
     
@@ -357,7 +357,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!cache)
         return nil;
     
-    WebCore::AccessibilityObject* object = cache->getOrCreate(activeAnnotation->element());
+    RefPtr object = cache->getOrCreate(activeAnnotation->element());
     if (!object)
         return nil;
 
@@ -653,7 +653,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
 #endif
     , m_identifier(PDFPluginIdentifier::generate())
 {
-    auto& document = element.document();
+    Ref document = element.document();
 
     if ([m_pdfLayerController respondsToSelector:@selector(setDisplaysPDFHUDController:)])
         [m_pdfLayerController setDisplaysPDFHUDController:NO];
@@ -664,18 +664,18 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     bool isFullFrame = isFullFramePlugin();
     if (isFullFrame) {
         // FIXME: <rdar://problem/75332948> get the background color from PDFKit instead of hardcoding it
-        document.bodyOrFrameset()->setInlineStyleProperty(WebCore::CSSPropertyBackgroundColor, WebCore::serializationForHTML(WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor)));
+        RefPtr { document->bodyOrFrameset() }->setInlineStyleProperty(WebCore::CSSPropertyBackgroundColor, WebCore::serializationForHTML(WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor)));
     }
 
     if (supportsForms()) {
-        m_annotationContainer = document.createElement(divTag, false);
+        m_annotationContainer = document->createElement(divTag, false);
         m_annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_s);
 
-        auto annotationStyleElement = document.createElement(styleTag, false);
+        auto annotationStyleElement = document->createElement(styleTag, false);
         annotationStyleElement->setTextContent(annotationStyle);
 
         m_annotationContainer->appendChild(annotationStyleElement);
-        document.bodyOrFrameset()->appendChild(*m_annotationContainer);
+        RefPtr { document->bodyOrFrameset() }->appendChild(*m_annotationContainer);
     }
 
     m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]);
@@ -1019,11 +1019,11 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
 
     if (!m_frame)
         return;
-    auto* coreFrame = m_frame->coreLocalFrame();
+    RefPtr coreFrame = m_frame->coreLocalFrame();
     if (!coreFrame)
         return;
 
-    auto* documentLoader = coreFrame->loader().documentLoader();
+    RefPtr documentLoader = coreFrame->loader().documentLoader();
     if (!documentLoader)
         return;
 
@@ -1597,13 +1597,13 @@ JSValueRef PDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSOb
     if (!JSValueIsObjectOfClass(ctx, thisObject, jsPDFDocClass()))
         return JSValueMakeUndefined(ctx);
 
-    auto* pdfPlugin = static_cast<PDFPlugin*>(JSObjectGetPrivate(thisObject));
+    RefPtr pdfPlugin = static_cast<PDFPlugin*>(JSObjectGetPrivate(thisObject));
 
-    auto* frame = pdfPlugin->m_frame.get();
+    RefPtr frame = pdfPlugin->m_frame.get();
     if (!frame)
         return JSValueMakeUndefined(ctx);
 
-    auto* coreFrame = frame->coreLocalFrame();
+    RefPtr coreFrame = frame->coreLocalFrame();
     if (!coreFrame)
         return JSValueMakeUndefined(ctx);
 
@@ -2118,10 +2118,10 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
         return true;
     case WebEventType::MouseDown:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             eventType = NSEventTypeLeftMouseDown;
             return true;
-        case WebMouseEventButton::RightButton:
+        case WebMouseEventButton::Right:
             eventType = NSEventTypeRightMouseDown;
             return true;
         default:
@@ -2129,10 +2129,10 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
         }
     case WebEventType::MouseUp:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             eventType = NSEventTypeLeftMouseUp;
             return true;
-        case WebMouseEventButton::RightButton:
+        case WebMouseEventButton::Right:
             eventType = NSEventTypeRightMouseUp;
             return true;
         default:
@@ -2140,13 +2140,13 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
         }
     case WebEventType::MouseMove:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             eventType = NSEventTypeLeftMouseDragged;
             return true;
-        case WebMouseEventButton::RightButton:
+        case WebMouseEventButton::Right:
             eventType = NSEventTypeRightMouseDragged;
             return true;
-        case WebMouseEventButton::NoButton:
+        case WebMouseEventButton::None:
             eventType = NSEventTypeMouseMoved;
             return true;
         default:
@@ -2206,7 +2206,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
         return false;
 
     // Right-clicks and Control-clicks always call handleContextMenuEvent as well.
-    if (event.button() == WebMouseEventButton::RightButton || (event.button() == WebMouseEventButton::LeftButton && event.controlKey()))
+    if (event.button() == WebMouseEventButton::Right || (event.button() == WebMouseEventButton::Left && event.controlKey()))
         return true;
 
     NSEvent *nsEvent = nsEventForWebMouseEvent(event);
@@ -2227,44 +2227,50 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             targetScrollbarForLastMousePosition->mouseExited();
 
         switch (event.button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             [m_pdfLayerController mouseDragged:nsEvent];
             return true;
-        case WebMouseEventButton::RightButton:
-        case WebMouseEventButton::MiddleButton:
+        case WebMouseEventButton::Right:
+        case WebMouseEventButton::Middle:
             return false;
-        case WebMouseEventButton::NoButton:
+        case WebMouseEventButton::None:
             [m_pdfLayerController mouseMoved:nsEvent];
             return true;
+        default:
+            return false;
         }
         break;
     case WebEventType::MouseDown:
         switch (event.button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             if (targetScrollbar)
                 return targetScrollbar->mouseDown(platformEvent);
 
             [m_pdfLayerController mouseDown:nsEvent];
             return true;
-        case WebMouseEventButton::RightButton:
+        case WebMouseEventButton::Right:
             [m_pdfLayerController rightMouseDown:nsEvent];
             return true;
-        case WebMouseEventButton::MiddleButton:
-        case WebMouseEventButton::NoButton:
+        case WebMouseEventButton::Middle:
+        case WebMouseEventButton::None:
+            return false;
+        default:
             return false;
         }
         break;
     case WebEventType::MouseUp:
         switch (event.button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             if (targetScrollbar)
                 return targetScrollbar->mouseUp(platformEvent);
 
             [m_pdfLayerController mouseUp:nsEvent];
             return true;
-        case WebMouseEventButton::RightButton:
-        case WebMouseEventButton::MiddleButton:
-        case WebMouseEventButton::NoButton:
+        case WebMouseEventButton::Right:
+        case WebMouseEventButton::Middle:
+        case WebMouseEventButton::None:
+            return false;
+        default:
             return false;
         }
         break;
@@ -2293,7 +2299,7 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
-    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::RightButton, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
+    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
     return handleContextMenuEvent(event);
 }
 
@@ -2301,10 +2307,10 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
     if (!m_frame || !m_frame->coreLocalFrame())
         return false;
-    auto* webPage = m_frame->page();
+    RefPtr webPage = m_frame->page();
     if (!webPage)
         return false;
-    auto* frameView = m_frame->coreLocalFrame()->view();
+    RefPtr frameView = m_frame->coreLocalFrame()->view();
     if (!frameView)
         return false;
 
@@ -2350,12 +2356,8 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
     
     NSEvent *fakeEvent = [NSEvent keyEventWithType:eventType location:NSZeroPoint modifierFlags:modifierFlags timestamp:0 windowNumber:0 context:0 characters:event.text() charactersIgnoringModifiers:event.unmodifiedText() isARepeat:event.isAutoRepeat() keyCode:event.nativeVirtualKeyCode()];
     
-    switch (event.type()) {
-    case WebEventType::KeyDown:
+    if (event.type() == WebEventType::KeyDown)
         return [m_pdfLayerController keyDown:fakeEvent];
-    default:
-        return false;
-    }
     
     return false;
 }
@@ -2418,10 +2420,10 @@ bool PDFPlugin::isFullFramePlugin() const
     // check whether our frame's widget is exactly our PluginView.
     if (!m_frame || !m_frame->coreLocalFrame())
         return false;
-    auto* document = m_frame->coreLocalFrame()->document();
-    if (!document)
+    RefPtr document = m_frame->coreLocalFrame()->document();
+    if (!is<PluginDocument>(document))
         return false;
-    return document->isPluginDocument() && static_cast<PluginDocument*>(document)->pluginWidget() == m_view;
+    return downcast<PluginDocument>(*document).pluginWidget() == m_view;
 }
 
 bool PDFPlugin::handlesPageScaleFactor() const
@@ -2440,8 +2442,8 @@ void PDFPlugin::clickedLink(NSURL *url)
         return;
 
     RefPtr<Event> coreEvent;
-    if (m_lastMouseEvent.type() != WebEventType::NoType)
-        coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(m_lastMouseEvent), 0, 0);
+    if (m_lastMouseEvent)
+        coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(*m_lastMouseEvent), 0, 0);
 
     frame->loader().changeLocation(coreURL, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }

@@ -25,8 +25,8 @@
 
 namespace WebCore {
 
+class LegacyRenderSVGResourceContainer;
 class RenderElement;
-class RenderSVGResourceContainer;
 class SVGResources;
 
 class SVGResourcesCycleSolver {
@@ -37,8 +37,8 @@ public:
 private:
     SVGResourcesCycleSolver() { }
 
-    static bool resourceContainsCycles(RenderSVGResourceContainer&, WeakHashSet<RenderSVGResourceContainer>& activeResources, WeakHashSet<RenderSVGResourceContainer>& acyclicResources);
-    static void breakCycle(RenderSVGResourceContainer&, SVGResources&);
+    static bool resourceContainsCycles(LegacyRenderSVGResourceContainer&, WeakHashSet<LegacyRenderSVGResourceContainer>& activeResources, WeakHashSet<LegacyRenderSVGResourceContainer>& acyclicResources);
+    static void breakCycle(LegacyRenderSVGResourceContainer&, SVGResources&);
 };
 
 } // namespace WebCore

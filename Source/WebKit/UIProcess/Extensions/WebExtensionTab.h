@@ -27,7 +27,9 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "CocoaImage.h"
 #include "WebExtensionTabIdentifier.h"
+#include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakObjCPtr.h>
 
@@ -41,6 +43,7 @@ namespace WebKit {
 class WebExtensionContext;
 class WebExtensionWindow;
 struct WebExtensionTabParameters;
+struct WebExtensionTabQueryParameters;
 
 class WebExtensionTab : public RefCounted<WebExtensionTab> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
@@ -69,30 +72,47 @@ public:
         All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
     };
 
-    enum class ExtendSelection : bool { No, Yes };
+    enum class ImageFormat : uint8_t {
+        PNG,
+        JPEG,
+    };
+
+    enum class AssumeWindowMatches : bool { No, Yes };
+    enum class SkipContainsCheck : bool { No, Yes };
 
     using Error = std::optional<String>;
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionTabParameters parameters() const;
+    WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties>) const;
 
     WebExtensionContext* extensionContext() const;
 
     bool operator==(const WebExtensionTab&) const;
 
-    RefPtr<WebExtensionWindow> window() const;
+    bool matches(const WebExtensionTabQueryParameters&, AssumeWindowMatches = AssumeWindowMatches::No, std::optional<WebPageProxyIdentifier> = std::nullopt) const;
+
+    bool extensionHasAccess() const;
+
+    RefPtr<WebExtensionWindow> window(SkipContainsCheck = SkipContainsCheck::No) const;
     size_t index() const;
 
     RefPtr<WebExtensionTab> parentTab() const;
+    void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(Error)>&&);
 
     WKWebView *mainWebView() const;
     NSArray *webViews() const;
 
     String title() const;
 
+    bool isActive() const;
     bool isSelected() const;
-    bool isPinned() const;
     bool isPrivate() const;
+
+    void pin(CompletionHandler<void(Error)>&&);
+    void unpin(CompletionHandler<void(Error)>&&);
+
+    bool isPinned() const;
 
     void toggleReaderMode(CompletionHandler<void(Error)>&&);
 
@@ -116,6 +136,7 @@ public:
     bool isLoadingComplete() const;
 
     void detectWebpageLocale(CompletionHandler<void(NSLocale *, Error)>&&);
+    void captureVisibleWebpage(CompletionHandler<void(CocoaImage *, Error)>&&);
 
     void loadURL(URL, CompletionHandler<void(Error)>&&);
 
@@ -126,9 +147,10 @@ public:
     void goForward(CompletionHandler<void(Error)>&&);
 
     void activate(CompletionHandler<void(Error)>&&);
-    void select(ExtendSelection, CompletionHandler<void(Error)>&&);
+    void select(CompletionHandler<void(Error)>&&);
+    void deselect(CompletionHandler<void(Error)>&&);
 
-    void duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&&);
+    void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&&);
 
     void close(CompletionHandler<void(Error)>&&);
 
@@ -144,11 +166,14 @@ private:
     WeakObjCPtr<_WKWebExtensionTab> m_delegate;
     bool m_respondsToWindow : 1 { false };
     bool m_respondsToParentTab : 1 { false };
+    bool m_respondsToSetParentTab : 1 { false };
     bool m_respondsToMainWebView : 1 { false };
     bool m_respondsToWebViews : 1 { false };
     bool m_respondsToTabTitle : 1 { false };
     bool m_respondsToIsSelected : 1 { false };
     bool m_respondsToIsPinned : 1 { false };
+    bool m_respondsToPin : 1 { false };
+    bool m_respondsToUnpin : 1 { false };
     bool m_respondsToIsReaderModeAvailable : 1 { false };
     bool m_respondsToIsShowingReaderMode : 1 { false };
     bool m_respondsToToggleReaderMode : 1 { false };
@@ -163,6 +188,7 @@ private:
     bool m_respondsToPendingURL : 1 { false };
     bool m_respondsToIsLoadingComplete : 1 { false };
     bool m_respondsToDetectWebpageLocale : 1 { false };
+    bool m_respondsToCaptureVisibleWebpage : 1 { false };
     bool m_respondsToLoadURL : 1 { false };
     bool m_respondsToReload : 1 { false };
     bool m_respondsToReloadFromOrigin : 1 { false };
@@ -170,10 +196,23 @@ private:
     bool m_respondsToGoForward : 1 { false };
     bool m_respondsToActivate : 1 { false };
     bool m_respondsToSelect : 1 { false };
+    bool m_respondsToDeselect : 1 { false };
     bool m_respondsToDuplicate : 1 { false };
     bool m_respondsToClose : 1 { false };
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebExtensionTab::ImageFormat> {
+    using values = EnumValues<
+        WebKit::WebExtensionTab::ImageFormat,
+        WebKit::WebExtensionTab::ImageFormat::PNG,
+        WebKit::WebExtensionTab::ImageFormat::JPEG
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

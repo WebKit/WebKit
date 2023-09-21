@@ -58,7 +58,7 @@ struct UpdateInfo {
     float updateScaleFactor { 0 };
 
     // The handle of the shareable bitmap containing the updates. Will be null if there are no updates.
-    ShareableBitmap::Handle bitmapHandle;
+    std::optional<ShareableBitmap::Handle> bitmapHandle;
 
     // The offset in the bitmap where the rendered contents are.
     WebCore::IntPoint bitmapOffset;

@@ -68,6 +68,7 @@ public:
     static void invalidateWithMatchElementRuleSets(Element&, const MatchElementRuleSets&);
     static void invalidateAllStyle(Scope&);
     static void invalidateHostAndSlottedStyleIfNeeded(ShadowRoot&);
+    static void invalidateWithScopeBreakingHasPseudoClassRuleSet(Element&, const RuleSet*);
 
 private:
     enum class CheckDescendants : bool { No, Yes };

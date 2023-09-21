@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2015 Google Inc. All rights reserved.
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,41 +44,41 @@ class LocalFrame;
 
 namespace WebCoreTestSupport {
 
-void initializeNames() TEST_SUPPORT_EXPORT;
+TEST_SUPPORT_EXPORT void initializeNames();
 
-void injectInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
-void resetInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
-void monitorWheelEvents(WebCore::LocalFrame&, bool clearLatchingState) TEST_SUPPORT_EXPORT;
-void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WebCore::LocalFrame&, JSContextRef, JSObjectRef) TEST_SUPPORT_EXPORT;
-void clearWheelEventTestMonitor(WebCore::LocalFrame&) TEST_SUPPORT_EXPORT;
+TEST_SUPPORT_EXPORT void injectInternalsObject(JSContextRef);
+TEST_SUPPORT_EXPORT void resetInternalsObject(JSContextRef);
+TEST_SUPPORT_EXPORT void monitorWheelEvents(WebCore::LocalFrame&, bool clearLatchingState);
+TEST_SUPPORT_EXPORT void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WebCore::LocalFrame&, JSContextRef, JSObjectRef);
+TEST_SUPPORT_EXPORT void clearWheelEventTestMonitor(WebCore::LocalFrame&);
 
-void setLogChannelToAccumulate(const String& name) TEST_SUPPORT_EXPORT;
-void clearAllLogChannelsToAccumulate() TEST_SUPPORT_EXPORT;
-void initializeLogChannelsIfNecessary() TEST_SUPPORT_EXPORT;
-void setAllowsAnySSLCertificate(bool) TEST_SUPPORT_EXPORT;
-bool allowsAnySSLCertificate() TEST_SUPPORT_EXPORT;
-void setLinkedOnOrAfterEverythingForTesting() TEST_SUPPORT_EXPORT;
+TEST_SUPPORT_EXPORT void setLogChannelToAccumulate(const String& name);
+TEST_SUPPORT_EXPORT void clearAllLogChannelsToAccumulate();
+TEST_SUPPORT_EXPORT void initializeLogChannelsIfNecessary();
+TEST_SUPPORT_EXPORT void setAllowsAnySSLCertificate(bool);
+TEST_SUPPORT_EXPORT bool allowsAnySSLCertificate();
+TEST_SUPPORT_EXPORT void setLinkedOnOrAfterEverythingForTesting();
 
-void installMockGamepadProvider() TEST_SUPPORT_EXPORT;
-void connectMockGamepad(unsigned index) TEST_SUPPORT_EXPORT;
-void disconnectMockGamepad(unsigned index) TEST_SUPPORT_EXPORT;
-void setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble) TEST_SUPPORT_EXPORT;
-void setMockGamepadAxisValue(unsigned index, unsigned axisIndex, double value) TEST_SUPPORT_EXPORT;
-void setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value) TEST_SUPPORT_EXPORT;
+TEST_SUPPORT_EXPORT void installMockGamepadProvider();
+TEST_SUPPORT_EXPORT void connectMockGamepad(unsigned index);
+TEST_SUPPORT_EXPORT void disconnectMockGamepad(unsigned index);
+TEST_SUPPORT_EXPORT void setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble);
+TEST_SUPPORT_EXPORT void setMockGamepadAxisValue(unsigned index, unsigned axisIndex, double value);
+TEST_SUPPORT_EXPORT void setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value);
 
-void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier) TEST_SUPPORT_EXPORT;
+TEST_SUPPORT_EXPORT void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier);
     
-void setAdditionalSupportedImageTypesForTesting(const String&) TEST_SUPPORT_EXPORT;
+TEST_SUPPORT_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);
 
 #if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 #if ENABLE(JIT_OPERATION_DISASSEMBLY)
-void populateDisassemblyLabels() TEST_SUPPORT_EXPORT;
+TEST_SUPPORT_EXPORT void populateDisassemblyLabels();
 #else
 inline void populateDisassemblyLabels() { }
 #endif
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-void populateJITOperations() TEST_SUPPORT_EXPORT;
+TEST_SUPPORT_EXPORT void populateJITOperations();
 #else
 inline void populateJITOperations() { populateDisassemblyLabels(); }
 #endif

@@ -1,22 +1,10 @@
+#include "Base-libvpx.xcconfig"
+
 PRODUCT_NAME = vpx;
-
-CLANG_WARN_BOOL_CONVERSION = YES;
-CLANG_WARN_ENUM_CONVERSION = YES;
-CLANG_WARN_INT_CONVERSION = YES;
-GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-COMBINE_HIDPI_IMAGES = NO;
-ENABLE_STRICT_OBJC_MSGSEND = YES;
-
-HEADER_SEARCH_PATHS[arch=x86_64] = Source/third_party/libvpx/source/config/mac/x64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
-HEADER_SEARCH_PATHS[arch=arm64*] = Source/third_party/libvpx/source/config/ios/arm64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
 
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_INSTALL_PATH);
 PUBLIC_HEADERS_FOLDER_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/libwebrtc;
 USE_HEADERMAP = NO;
-
-GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION;
-GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) $(GCC_PREPROCESSOR_DEFINITIONS_$(WK_IS_CATALYST))
-GCC_PREPROCESSOR_DEFINITIONS_YES = WEBRTC_WEBKIT_MAC_CATALIST
 
 ARM_FILES = *_neon.c arm_cpudetect.c *_arm.c
 X86_FILES = *_sse2.c *_ssse3.c *_sse4.c *_avx2.c *_avx2.cc *_avx.c *.asm

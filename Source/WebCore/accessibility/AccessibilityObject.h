@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "AccessibilityObjectInterface.h"
+#include "AXCoreObject.h"
 #include "CharacterRange.h"
 #include "FloatQuad.h"
 #include "LayoutRect.h"
@@ -151,7 +151,6 @@ public:
     AccessibilityChildrenVector columnHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector rowHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector visibleRows() override { return AccessibilityChildrenVector(); }
-    AccessibilityChildrenVector selectedCells() override;
     AXCoreObject* headerContainer() override { return nullptr; }
     int axColumnCount() const override { return 0; }
     int axRowCount() const override { return 0; }
@@ -291,7 +290,7 @@ public:
     bool hasDatalist() const;
     bool supportsHasPopup() const override;
     bool pressedIsPresent() const override;
-    bool ariaIsMultiline() const override;
+    bool ariaIsMultiline() const;
     String invalidStatus() const override;
     bool supportsPressed() const;
     bool supportsExpanded() const override;
@@ -524,7 +523,6 @@ public:
     void setSelectedChildren(const AccessibilityChildrenVector&) override { }
     AccessibilityChildrenVector visibleChildren() override { return { }; }
     bool shouldFocusActiveDescendant() const;
-    AccessibilityObject* activeDescendant() const final;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     virtual bool hasAttribute(const QualifiedName&) const;
@@ -592,6 +590,7 @@ public:
     IntRect doAXBoundsForRange(const CharacterRange&) const override { return { }; }
     IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const override { return { }; }
     static StringView listMarkerTextForNodeAndPosition(Node*, const VisiblePosition&);
+    static StringView listMarkerTextForNodeAndPosition(Node*, Position&&);
 
     unsigned doAXLineForIndex(unsigned) override;
 
@@ -617,7 +616,7 @@ public:
     bool hasContentEditableAttributeSet() const;
 
     bool supportsReadOnly() const;
-    String readOnlyValue() const override;
+    virtual String readOnlyValue() const;
 
     bool supportsAutoComplete() const;
     String autoCompleteValue() const override;
@@ -751,9 +750,6 @@ public:
     void clearIsIgnoredFromParentData() { m_isIgnoredFromParentData = { }; }
     void setIsIgnoredFromParentDataForChild(AccessibilityObject*);
 
-    PAL::SessionID sessionID() const override;
-    String documentURI() const override;
-    String documentEncoding() const override;
     AccessibilityChildrenVector documentLinks() override { return AccessibilityChildrenVector(); }
 
     AccessibilityChildrenVector relatedObjects(AXRelationType) const override;
@@ -764,6 +760,23 @@ public:
 #if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
     Vector<RetainPtr<id>> modelElementChildren() override;
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    struct InlineTextPrediction {
+        String text;
+        size_t location { 0 };
+        void reset()
+        {
+            text = ""_s;
+            location = 0;
+        }
+    };
+
+    InlineTextPrediction& lastPresentedTextPrediction() { return m_lastPresentedTextPrediction; }
+    InlineTextPrediction& lastPresentedTextPredictionComplete() { return m_lastPresentedTextPredictionComplete; }
+    void setLastPresentedTextPrediction(Node&, CompositionState, const String&, size_t, bool);
+#endif // PLATFORM(IOS_FAMILY)
+
 protected:
     AccessibilityObject() = default;
 
@@ -828,6 +841,10 @@ private:
     mutable std::optional<SimpleRange> m_cachedVisibleCharacterRange;
     // This is std::nullopt if we haven't cached any input yet.
     mutable std::optional<std::tuple<std::optional<SimpleRange>, FloatRect, IntRect>> m_cachedVisibleCharacterRangeInputs;
+#if PLATFORM(IOS_FAMILY)
+    InlineTextPrediction m_lastPresentedTextPrediction;
+    InlineTextPrediction m_lastPresentedTextPredictionComplete;
+#endif
 protected: // FIXME: Make the data members private.
     // FIXME: This can be replaced by AXAncestorFlags.
     AccessibilityIsIgnoredFromParentData m_isIgnoredFromParentData;

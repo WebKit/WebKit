@@ -168,7 +168,7 @@ static bool hasValue(const ImageBufferBackendHandle& backendHandle)
 {
     return WTF::switchOn(backendHandle,
         [&] (const ShareableBitmap::Handle& handle) {
-            return !handle.isNull();
+            return true;
         },
         [&] (const MachSendRight& machSendRight) {
             return !!machSendRight;
@@ -303,12 +303,17 @@ bool RemoteLayerBackingStore::layerWillBeDisplayed()
 
 void RemoteLayerBackingStore::setNeedsDisplay(const IntRect rect)
 {
-    m_dirtyRegion.unite(rect);
+    m_dirtyRegion.unite(intersection(layerBounds(), rect));
 }
 
 void RemoteLayerBackingStore::setNeedsDisplay()
 {
-    setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_parameters.size)));
+    m_dirtyRegion.unite(layerBounds());
+}
+
+WebCore::IntRect RemoteLayerBackingStore::layerBounds() const
+{
+    return IntRect { { }, expandedIntSize(m_parameters.size) };
 }
 
 bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
@@ -565,10 +570,7 @@ void RemoteLayerBackingStore::paintContents()
         auto& displayListContext = m_displayListBuffer->context();
 
         BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
-        drawInContext(context, [&] {
-            displayListContext.scale(FloatSize(1, -1));
-            displayListContext.translate(0, -m_parameters.size.height());
-        });
+        drawInContext(context);
         return;
     }
 #endif
@@ -577,15 +579,12 @@ void RemoteLayerBackingStore::paintContents()
     drawInContext(context);
 }
 
-void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Function<void()>&& additionalContextSetupCallback)
+void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
 {
     auto markFrontBufferNotCleared = makeScopeExit([&]() {
         m_frontBuffer.isCleared = false;
     });
     GraphicsContextStateSaver stateSaver(context);
-
-    if (additionalContextSetupCallback)
-        additionalContextSetupCallback();
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
@@ -607,7 +606,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
         m_paintingRects.append(scaledRect);
     }
 
-    IntRect layerBounds(IntPoint(), expandedIntSize(m_parameters.size));
+    IntRect layerBounds = this->layerBounds();
     if (RefPtr imageBuffer = m_backBuffer.imageBuffer; !m_dirtyRegion.contains(layerBounds) && imageBuffer) {
         if (!m_previouslyPaintedRect)
             context.drawImageBuffer(*imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
@@ -643,28 +642,28 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
     
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {
-    case PlatformCALayer::LayerTypeSimpleLayer:
-    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+    case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
+    case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
         m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds, paintBehavior);
         break;
-    case PlatformCALayer::LayerTypeWebLayer:
-    case PlatformCALayer::LayerTypeBackdropLayer:
+    case PlatformCALayer::LayerType::LayerTypeWebLayer:
+    case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
         PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, paintBehavior);
         break;
-    case PlatformCALayer::LayerTypeLayer:
-    case PlatformCALayer::LayerTypeTransformLayer:
-    case PlatformCALayer::LayerTypeTiledBackingLayer:
-    case PlatformCALayer::LayerTypePageTiledBackingLayer:
-    case PlatformCALayer::LayerTypeRootLayer:
-    case PlatformCALayer::LayerTypeAVPlayerLayer:
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
-    case PlatformCALayer::LayerTypeShapeLayer:
-    case PlatformCALayer::LayerTypeScrollContainerLayer:
+    case PlatformCALayer::LayerType::LayerTypeLayer:
+    case PlatformCALayer::LayerType::LayerTypeTransformLayer:
+    case PlatformCALayer::LayerType::LayerTypeTiledBackingLayer:
+    case PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer:
+    case PlatformCALayer::LayerType::LayerTypeRootLayer:
+    case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
+    case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer:
+    case PlatformCALayer::LayerType::LayerTypeShapeLayer:
+    case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
 #if ENABLE(MODEL_ELEMENT)
-    case PlatformCALayer::LayerTypeModelLayer:
+    case PlatformCALayer::LayerType::LayerTypeModelLayer:
 #endif
-    case PlatformCALayer::LayerTypeCustom:
-    case PlatformCALayer::LayerTypeHost:
+    case PlatformCALayer::LayerType::LayerTypeCustom:
+    case PlatformCALayer::LayerType::LayerTypeHost:
         ASSERT_NOT_REACHED();
         break;
     };
@@ -765,6 +764,7 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
         if (!replayCGDisplayListsIntoBackingStore) {
             [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
             [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
+            [layer setValue:@(layer.contentsScale) forKeyPath:@"separatedOptions.bifurcationScale"];
         } else
             layer.opaque = m_isOpaque;
         [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<CGDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayCGDisplayListsIntoBackingStore];

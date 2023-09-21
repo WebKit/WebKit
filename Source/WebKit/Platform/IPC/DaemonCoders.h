@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ArgumentCoders.h"
-#include "PushMessageForTesting.h"
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <optional>
 #include <wtf/Forward.h>
@@ -50,10 +49,7 @@ struct EphemeralNonce;
 
 namespace WebKit {
 
-struct WebPushMessage;
-
 namespace WebPushD {
-struct PushMessageForTesting;
 struct WebPushDaemonConnectionConfiguration;
 }
 
@@ -123,18 +119,10 @@ DECLARE_CODER(WebCore::PushSubscriptionData);
 DECLARE_CODER(WebCore::PushSubscriptionIdentifier);
 DECLARE_CODER(WebCore::RegistrableDomain);
 DECLARE_CODER(WebCore::SecurityOriginData);
-DECLARE_CODER(WebKit::WebPushMessage);
 DECLARE_CODER(WebPushD::WebPushDaemonConnectionConfiguration);
 DECLARE_CODER(WTF::WallTime);
 
 #undef DECLARE_CODER
-
-template<> struct Coder<WebPushD::PushMessageForTesting> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const WebPushD::PushMessageForTesting& instance) { instance.encode(encoder); }
-    template<typename Decoder>
-    static std::optional<WebPushD::PushMessageForTesting> decode(Decoder& decoder) { return WebPushD::PushMessageForTesting::decode(decoder); }
-};
 
 template<> struct Coder<WTF::URL> {
     template<typename Encoder>

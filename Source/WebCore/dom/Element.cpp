@@ -242,6 +242,12 @@ static bool shouldAutofocus(const Element& element)
     return true;
 }
 
+static HashMap<CheckedPtr<Element>, ElementIdentifier>& elementIdentifiersMap()
+{
+    static MainThreadNeverDestroyed<HashMap<CheckedPtr<Element>, ElementIdentifier>> map;
+    return map;
+}
+
 Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new Element(tagName, document, CreateElement));
@@ -258,6 +264,7 @@ Element::~Element()
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
 
+    elementIdentifiersMap().remove(this);
     disconnectFromIntersectionObservers();
 
     disconnectFromResizeObservers();
@@ -1242,7 +1249,7 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
     if (!renderer->hasNonVisibleOverflow())
         return;
 
-    auto direction = units < 0 ? ScrollUp : ScrollDown;
+    auto direction = units < 0 ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
     auto* stopElement = this;
     downcast<RenderBox>(*renderer).scroll(direction, granularity, std::abs(units), &stopElement);
 }
@@ -2821,7 +2828,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
         ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
 
-        shadowRoot.setHost(*this);
+        shadowRoot.setHost(this);
         shadowRoot.setParentTreeScope(treeScope());
 
         NodeVector postInsertionNotificationTargets;
@@ -3528,7 +3535,7 @@ void Element::focus(const FocusOptions& options)
 
     document->updateContentRelevancyForScrollIfNeeded(*this);
 
-    RefPtr<Element> newTarget = this;
+    RefPtr newTarget { this };
 
     // If we don't have renderer yet, isFocusable will compute it without style update.
     // FIXME: Expand it to avoid style update in all cases.
@@ -3647,7 +3654,7 @@ void Element::dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement)
 {
     if (!document().hasListenerType(Document::ListenerType::FocusIn))
         return;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusinEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
 }
 
@@ -3655,7 +3662,7 @@ void Element::dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement)
 {
     if (!document().hasListenerType(Document::ListenerType::FocusOut))
         return;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusoutEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
 }
 
@@ -3689,7 +3696,7 @@ bool Element::dispatchMouseForceWillBegin()
     if (!frame)
         return false;
 
-    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap };
+    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), MouseButton::None, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap };
     auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(Ref { *this });
     dispatchEvent(mouseForceWillBeginEvent);
@@ -4510,14 +4517,14 @@ const AnimationCollection* Element::animations(PseudoId pseudoId) const
     return nullptr;
 }
 
-bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, AnimatableProperty property) const
+bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, const AnimatableProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return animationData->completedTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, AnimatableProperty property) const
+bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, const AnimatableProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return animationData->runningTransitionsByProperty().contains(property);
@@ -5308,22 +5315,16 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     return animations;
 }
 
-static WeakHashMap<Element, ElementIdentifier, WeakPtrImplWithEventTargetData>& elementIdentifiersMap()
-{
-    static MainThreadNeverDestroyed<WeakHashMap<Element, ElementIdentifier, WeakPtrImplWithEventTargetData>> map;
-    return map;
-}
-
 ElementIdentifier Element::identifier() const
 {
-    return elementIdentifiersMap().ensure(*this, [] { return ElementIdentifier::generate(); }).iterator->value;
+    return elementIdentifiersMap().ensure(const_cast<Element*>(this), [] { return ElementIdentifier::generate(); }).iterator->value;
 }
 
 Element* Element::fromIdentifier(ElementIdentifier identifier)
 {
-    for (auto [element, elementIdentifier] : elementIdentifiersMap()) {
+    for (auto& [element, elementIdentifier] : elementIdentifiersMap()) {
         if (elementIdentifier == identifier)
-            return &element;
+            return element.get();
     }
     return nullptr;
 }

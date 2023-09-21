@@ -209,6 +209,15 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     case DisplayType::Box:
     case DisplayType::InlineBox:
         return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
+    case DisplayType::RubyBase:
+        return createRenderer<RenderInline>(element, WTFMove(style));
+    case DisplayType::RubyAnnotation:
+        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+    case DisplayType::Ruby:
+        return createRenderer<RenderInline>(element, WTFMove(style));
+    case DisplayType::RubyBlock:
+        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+
     default: {
         if (style.isDisplayTableOrTablePart() && rendererTypeOverride.contains(ConstructBlockLevelRendererFor::TableOrTablePart))
             return createRenderer<RenderBlockFlow>(element, WTFMove(style));
@@ -737,7 +746,7 @@ bool RenderElement::layerCreationAllowedForSubtree() const
     // simply omit the layer creation for any children of a <defs> element (or in general
     // any "hidden container"). For LBSE layers are needed for painting, even if a
     // RenderSVGHiddenContainer is in the render tree ancestor chain -- however they are
-    // never painted directly, only indirectly through the "RenderSVGResourceContainer
+    // never painted directly, only indirectly through the "LegacyRenderSVGResourceContainer
     // elements (such as RenderSVGResourceClipper, RenderSVGResourceMasker, etc.)
     if (document().settings().layerBasedSVGEngineEnabled())
         return true;
@@ -1963,6 +1972,7 @@ void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(con
     auto mayNotBeContainingBlockForDescendantsAnymore = oldStyle.position() != m_style.position()
         || oldStyle.hasTransformRelatedProperty() != m_style.hasTransformRelatedProperty()
         || oldStyle.willChange() != newStyle.willChange()
+        || oldStyle.hasBackdropFilter() != newStyle.hasBackdropFilter()
         || oldStyle.containsLayout() != newStyle.containsLayout()
         || oldStyle.containsSize() != newStyle.containsSize();
     if (!mayNotBeContainingBlockForDescendantsAnymore)

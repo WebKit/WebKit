@@ -69,7 +69,7 @@ InjectedBundleDOMWindowExtension::~InjectedBundleDOMWindowExtension()
     allExtensions().remove(m_coreExtension.get());
 }
 
-WebFrame* InjectedBundleDOMWindowExtension::frame() const
+RefPtr<WebFrame> InjectedBundleDOMWindowExtension::frame() const
 {
     auto* frame = m_coreExtension->frame();
     if (!frame)

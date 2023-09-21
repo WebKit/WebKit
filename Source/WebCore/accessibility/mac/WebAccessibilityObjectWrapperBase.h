@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "AccessibilityObjectInterface.h"
+#import "AXCoreObject.h"
 #import "FontPlatformData.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <variant>

@@ -44,6 +44,8 @@ public:
 
     size_t memoryCost() const final;
 
+    bool isGStreamer() const final { return true; }
+
     GstSample* sample() const { return m_sample.get(); }
     const GstAudioInfo* info() const { return &m_info; }
 
@@ -55,5 +57,9 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PlatformRawAudioDataGStreamer)
+static bool isType(const WebCore::PlatformRawAudioData& data) { return data.isGStreamer(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)

@@ -358,11 +358,12 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     // FIXME: Minimize these transactions if nothing changed.
     Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>> transactions;
     transactions.reserveInitialCapacity(m_rootLayers.size());
+    auto transactionID = takeNextTransactionID();
     for (auto& rootLayer : m_rootLayers) {
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
         
         RemoteLayerTreeTransaction layerTransaction;
-        layerTransaction.setTransactionID(takeNextTransactionID());
+        layerTransaction.setTransactionID(transactionID);
         layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
         
         m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(rootLayer.layer.get()).platformCALayer(), rootLayer.frameID);

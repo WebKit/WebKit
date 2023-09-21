@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MeteringMode.h"
 #include "RealtimeMediaSourceSettings.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/NeverDestroyed.h>
@@ -153,12 +154,13 @@ public:
         ReadWrite = 1,
     };
     
-    RealtimeMediaSourceCapabilities(CapabilityValueOrRange&& width, CapabilityValueOrRange&& height, CapabilityValueOrRange&& aspectRatio, CapabilityValueOrRange&& frameRate, Vector<VideoFacingMode>&& facingMode, CapabilityValueOrRange&& volume, CapabilityValueOrRange&& sampleRate, CapabilityValueOrRange&& sampleSize, EchoCancellation&& echoCancellation, AtomString&& deviceId, AtomString&& groupId, CapabilityValueOrRange&& focusDistance, CapabilityValueOrRange&& zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceCapabilities(CapabilityValueOrRange&& width, CapabilityValueOrRange&& height, CapabilityValueOrRange&& aspectRatio, CapabilityValueOrRange&& frameRate, Vector<VideoFacingMode>&& facingMode, Vector<MeteringMode>&& whiteBalanceModes, CapabilityValueOrRange&& volume, CapabilityValueOrRange&& sampleRate, CapabilityValueOrRange&& sampleSize, EchoCancellation&& echoCancellation, AtomString&& deviceId, AtomString&& groupId, CapabilityValueOrRange&& focusDistance, CapabilityValueOrRange&& zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(WTFMove(width))
         , m_height(WTFMove(height))
         , m_aspectRatio(WTFMove(aspectRatio))
         , m_frameRate(WTFMove(frameRate))
         , m_facingMode(WTFMove(facingMode))
+        , m_whiteBalanceModes(whiteBalanceModes)
         , m_volume(WTFMove(volume))
         , m_sampleRate(WTFMove(sampleRate))
         , m_sampleSize(WTFMove(sampleSize))
@@ -194,6 +196,10 @@ public:
     bool supportsFacingMode() const { return m_supportedConstraints.supportsFacingMode(); }
     const Vector<VideoFacingMode>& facingMode() const { return m_facingMode; }
     void addFacingMode(VideoFacingMode mode) { m_facingMode.append(mode); }
+
+    bool supportsWhiteBalanceMode() const { return m_supportedConstraints.supportsWhiteBalanceMode(); }
+    const Vector<MeteringMode>& whiteBalanceModes() const { return m_whiteBalanceModes; }
+    void setWhiteBalanceModes(Vector<MeteringMode>&& modes) { m_whiteBalanceModes = WTFMove(modes); }
 
     bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
     const CapabilityValueOrRange& aspectRatio() const { return m_aspectRatio; }
@@ -240,6 +246,7 @@ private:
     CapabilityValueOrRange m_aspectRatio;
     CapabilityValueOrRange m_frameRate;
     Vector<VideoFacingMode> m_facingMode;
+    Vector<MeteringMode> m_whiteBalanceModes;
     CapabilityValueOrRange m_volume;
     CapabilityValueOrRange m_sampleRate;
     CapabilityValueOrRange m_sampleSize;

@@ -279,6 +279,11 @@ private:
     ChildNodesLazySnapshot* m_nextSnapshot;
 };
 
+inline RefPtr<ContainerNode> Node::protectedParentNode() const
+{
+    return parentNode();
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ContainerNode)

@@ -517,8 +517,7 @@
         (literal "/private/var/run/syslog"))
 )
 
-(allow mach-lookup
-    (global-name "com.apple.system.notification_center")
+(allow mach-lookup (global-name "com.apple.system.notification_center")
     (apply-message-filter
         (deny mach-message-send)
         (deny mach-message-send (with no-report) (message-number 1023))
@@ -526,7 +525,11 @@
             1002 1011 1012 1016 1017 1018 1021 1025 1026 1028 1029 1030 1031 1032))))
 
 (allow ipc-posix-shm-read*
-       (ipc-posix-name "apple.shm.notification_center"))
+    (ipc-posix-name "apple.shm.notification_center"))
+
+(with-filter (state-flag "EnableExperimentalSandbox")
+    (deny mach-lookup (global-name "com.apple.system.notification_center")))
+
 
 (managed-configuration-read-public)
 
@@ -1102,6 +1105,9 @@
         SYS_getxattr
         SYS_iopolicysys
         SYS_openat_nocancel
+#if ASAN_ENABLED
+        SYS_sigaltstack
+#endif
         SYS_sigprocmask
         SYS_umask
         SYS_unlink
@@ -1109,6 +1115,7 @@
 
 (define (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
     (syscall-number
+        SYS___pthread_kill
         SYS___pthread_sigmask
         SYS___semwait_signal
         SYS_fsync
@@ -1121,17 +1128,11 @@
         SYS_rmdir
         SYS_sendto
         SYS_setrlimit
-        SYS_sigaltstack
 #if PLATFORM(WATCHOS)
         SYS_sigreturn
 #endif
         SYS_thread_selfusage
         SYS_write))
-
-(define (syscall-unix-rarely-in-use-need-backtrace)
-    (syscall-number
-        SYS___pthread_kill
-        ))
 
 (deny syscall-unix (with telemetry))
 (allow syscall-unix
@@ -1145,12 +1146,10 @@
 (allow syscall-unix (syscall-unix-only-in-use-during-launch))
 #endif
 
-(allow syscall-unix
-    (syscall-unix-rarely-in-use)
-    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
-
-(allow syscall-unix (with report)
-    (syscall-unix-rarely-in-use-need-backtrace))
+(with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+    (allow syscall-unix (with report) (with telemetry-backtrace)
+        (syscall-unix-rarely-in-use)
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
 
 (deny syscall-unix (with no-report) (syscall-number
     SYS_connect
@@ -1169,9 +1168,7 @@
     (deny syscall-unix (with telemetry) (with message "Lockdown mode")
         (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
     (deny syscall-unix (with telemetry) (with message "Lockdown mode")
-        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
-    (deny syscall-unix (with telemetry) (with message "Lockdown mode")
-        (syscall-unix-rarely-in-use-need-backtrace)))
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
 
 (deny file-ioctl (with telemetry))
 

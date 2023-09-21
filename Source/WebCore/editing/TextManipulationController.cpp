@@ -958,7 +958,6 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 void TextManipulationController::removeNode(Node& node)
 {
     m_manipulatedNodes.remove(node);
-    m_textNodesWithNewRenderer.remove(node);
 }
 
 } // namespace WebCore

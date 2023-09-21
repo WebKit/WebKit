@@ -25,6 +25,6 @@
     Vector<std::optional<WebKit::WebGPU::RenderPassColorAttachment>> colorAttachments;
     std::optional<WebKit::WebGPU::RenderPassDepthStencilAttachment> depthStencilAttachment;
     std::optional<WebKit::WebGPUIdentifier> occlusionQuerySet;
-    WebKit::WebGPU::RenderPassTimestampWrites timestampWrites;
+    std::optional<WebKit::WebGPU::RenderPassTimestampWrites> timestampWrites;
 };
 #endif

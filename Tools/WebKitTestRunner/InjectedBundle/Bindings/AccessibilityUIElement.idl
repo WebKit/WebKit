@@ -30,10 +30,6 @@
     readonly attribute DOMString domIdentifier;
     readonly attribute boolean isIsolatedObject;
 
-    // Document information
-    readonly attribute DOMString documentEncoding;
-    readonly attribute DOMString documentURI;
-
     // Element access.
     AccessibilityUIElement elementAtPoint(long x, long y);
     AccessibilityUIElement childAtIndex(unsigned long index);

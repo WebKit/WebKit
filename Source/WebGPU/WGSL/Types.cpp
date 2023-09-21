@@ -97,23 +97,97 @@ void Type::dump(PrintStream& out) const
             case Texture::Kind::TextureMultisampled2d:
                 out.print("texture_multisampled_2d");
                 break;
-            case Texture::Kind::TextureStorage1d:
-                out.print("texture_storage_1d");
-                break;
-            case Texture::Kind::TextureStorage2d:
-                out.print("texture_storage_2d");
-                break;
-            case Texture::Kind::TextureStorage2dArray:
-                out.print("texture_storage_2d_array");
-                break;
-            case Texture::Kind::TextureStorage3d:
-                out.print("texture_storage_3d");
-                break;
             }
             out.print("<", *texture.element, ">");
         },
+        [&](const TextureStorage& texture) {
+            switch (texture.kind) {
+            case TextureStorage::Kind::TextureStorage1d:
+                out.print("texture_storage_1d");
+                break;
+            case TextureStorage::Kind::TextureStorage2d:
+                out.print("texture_storage_2d");
+                break;
+            case TextureStorage::Kind::TextureStorage2dArray:
+                out.print("texture_storage_2d_array");
+                break;
+            case TextureStorage::Kind::TextureStorage3d:
+                out.print("texture_storage_3d");
+                break;
+            }
+            out.print("<");
+            switch (texture.format) {
+            case TexelFormat::BGRA8unorm:
+                out.print("bgra8unorm");
+                break;
+            case TexelFormat::RGBA8unorm:
+                out.print("rgba8unorm");
+                break;
+            case TexelFormat::RGBA8snorm:
+                out.print("rbga8snorm");
+                break;
+            case TexelFormat::RGBA8uint:
+                out.print("rgba8uint");
+                break;
+            case TexelFormat::RGBA8sint:
+                out.print("rgba8sint");
+                break;
+            case TexelFormat::RGBA16uint:
+                out.print("rgba16uint");
+                break;
+            case TexelFormat::RGBA16sint:
+                out.print("rgba16sint");
+                break;
+            case TexelFormat::RGBA16float:
+                out.print("rgba16float");
+                break;
+            case TexelFormat::R32uint:
+                out.print("r32uint");
+                break;
+            case TexelFormat::R32sint:
+                out.print("r32sint");
+                break;
+            case TexelFormat::R32float:
+                out.print("r32float");
+                break;
+            case TexelFormat::RG32uint:
+                out.print("rg32uint");
+                break;
+            case TexelFormat::RG32sint:
+                out.print("rg32sint");
+                break;
+            case TexelFormat::RG32float:
+                out.print("rg32float");
+                break;
+            case TexelFormat::RGBA32uint:
+                out.print("rgba32uint");
+                break;
+            case TexelFormat::RGBA32sint:
+                out.print("rgba32sint");
+                break;
+            case TexelFormat::RGBA32float:
+                out.print("rgba32float");
+                break;
+            }
+            out.print(", ");
+            switch (texture.access) {
+            case AccessMode::Read:
+                out.print("read");
+                break;
+            case AccessMode::Write:
+                out.print("write");
+                break;
+            case AccessMode::ReadWrite:
+                out.print("read_write");
+                break;
+            }
+            out.print(">");
+        },
         [&](const Reference& reference) {
             out.print("ref<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
+        },
+        [&](const Pointer& reference) {
+            out.print("ptr<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
         },
         [&](const TypeConstructor& constructor) {
             out.print(constructor.name);
@@ -230,6 +304,9 @@ unsigned Type::size() const
             case Types::Primitive::AbstractFloat:
             case Types::Primitive::Sampler:
             case Types::Primitive::TextureExternal:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -265,7 +342,13 @@ unsigned Type::size() const
         [&](const Texture&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const TextureStorage&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Reference&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Pointer&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) -> unsigned {
@@ -291,6 +374,9 @@ unsigned Type::alignment() const
             case Types::Primitive::AbstractFloat:
             case Types::Primitive::Sampler:
             case Types::Primitive::TextureExternal:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -321,7 +407,13 @@ unsigned Type::alignment() const
         [&](const Texture&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const TextureStorage&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Reference&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Pointer&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) -> unsigned {

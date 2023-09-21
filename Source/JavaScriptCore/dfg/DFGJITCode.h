@@ -52,6 +52,7 @@ class JITCode;
 class JITCompiler;
 
 struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
+    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
     CodeOrigin codeOrigin;
     ScalarRegisterSet usedRegisters;
     CallSiteIndex callSiteIndex;
@@ -186,11 +187,16 @@ public:
     FixedVector<StructureStubInfo>& stubInfos() { return m_stubInfos; }
     FixedVector<OptimizingCallLinkInfo>& callLinkInfos() { return m_callLinkInfos; }
 
+    static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JITData, m_globalObject); }
+    static ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(JITData, m_stackOffset); }
+
 private:
     explicit JITData(const JITCode&, ExitVector&&);
 
     bool tryInitialize(VM&, CodeBlock*, const JITCode&);
 
+    JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
+    intptr_t m_stackOffset { 0 };
     FixedVector<StructureStubInfo> m_stubInfos;
     FixedVector<OptimizingCallLinkInfo> m_callLinkInfos;
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
@@ -204,6 +210,7 @@ public:
     ~JITCode() final;
     
     CommonData* dfgCommon() final;
+    const CommonData* dfgCommon() const final;
     JITCode* dfg() final;
     bool isUnlinked() const { return common.isUnlinked(); }
     

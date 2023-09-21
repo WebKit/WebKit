@@ -73,6 +73,7 @@ set(TestWTF_SOURCES
     Tests/WTF/MetaAllocator.cpp
     Tests/WTF/MoveOnlyLifecycleLogger.cpp
     Tests/WTF/NakedPtr.cpp
+    Tests/WTF/NativePromise.cpp
     Tests/WTF/NeverDestroyed.cpp
     Tests/WTF/OptionSet.cpp
     Tests/WTF/Packed.cpp

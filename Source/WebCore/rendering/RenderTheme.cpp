@@ -1696,6 +1696,9 @@ auto RenderTheme::colorCache(OptionSet<StyleColorOptions> options) const -> Colo
 
 Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOptions> options) const
 {
+    auto useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
+    auto forVisitedLink = options.contains(StyleColorOptions::ForVisitedLink);
+
     switch (cssValueId) {
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-canvas
     // Background of application content or documents.
@@ -1721,7 +1724,7 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
     // Text in active links. For light backgrounds, traditionally red.
     case CSSValueActivetext:
     case CSSValueWebkitActivelink: // Non-standard addition.
-        return Color::red;
+        return useDarkAppearance ? SRGBA<uint8_t> { 255, 158, 158 } : Color::red;
 
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-buttonface
     // The face background color for push buttons.
@@ -1802,8 +1805,11 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
         return Color::black;
 
     // Non-standard addition.
-    case CSSValueWebkitLink:
-        return options.contains(StyleColorOptions::ForVisitedLink) ? SRGBA<uint8_t> { 85, 26, 139 } : SRGBA<uint8_t> { 0, 0, 238 };
+    case CSSValueWebkitLink: {
+        if (useDarkAppearance)
+            return forVisitedLink ? SRGBA<uint8_t> { 208, 173, 240 } : SRGBA<uint8_t> { 158, 158, 255 };
+        return forVisitedLink ? SRGBA<uint8_t> { 85, 26, 139 } : SRGBA<uint8_t> { 0, 0, 238 };
+    }
 
     // Deprecated system-colors:
     // https://drafts.csswg.org/css-color-4/#deprecated-system-colors

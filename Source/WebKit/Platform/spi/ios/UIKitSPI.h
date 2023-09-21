@@ -93,7 +93,6 @@
 #import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
-#import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
 #import <UIKit/_UISheetPresentationController.h>
@@ -108,10 +107,6 @@
 #import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
 #import <UIKit/UIContextMenuInteraction_Private.h>
 #import <UIKit/UIMenu_Private.h>
-#endif
-
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
-#import <UIKit/_UIDatePickerOverlayPresentation.h>
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -229,46 +224,6 @@ WTF_EXTERN_C_END
 @interface UIColor ()
 + (UIColor *)systemBackgroundColor;
 @end
-
-typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
-    UIDatePickerModeYearAndMonth = 4269,
-};
-
-#if HAVE(UIDATEPICKER_STYLE)
-typedef NS_ENUM(NSInteger, UIDatePickerStyle) {
-    UIDatePickerStyleAutomatic = 0
-}
-#endif
-
-@interface UIDatePicker ()
-@property (nonatomic, readonly, getter=_contentWidth) CGFloat contentWidth;
-#if HAVE(UIDATEPICKER_STYLE)
-@property (nonatomic, readwrite, assign) UIDatePickerStyle preferredDatePickerStyle;
-#endif
-- (UIEdgeInsets)_appliedInsetsToEdgeOfContent;
-@end
-
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
-
-typedef NS_ENUM(NSInteger, _UIDatePickerOverlayAnchor) {
-    _UIDatePickerOverlayAnchorSourceRect = 2
-};
-
-@interface _UIDatePickerOverlayPresentation : NSObject
-
-- (instancetype)initWithSourceView:(UIView *)sourceView;
-- (void)presentDatePicker:(UIDatePicker *)datePicker onDismiss:(void(^)(BOOL retargeted))dismissHandler;
-- (void)dismissPresentationAnimated:(BOOL)animated;
-
-@property (nonatomic, weak, readonly) UIView *sourceView;
-@property (nonatomic, assign) CGRect sourceRect;
-@property (nonatomic, assign) _UIDatePickerOverlayAnchor overlayAnchor;
-@property (nonatomic, strong) UIView *accessoryView;
-@property (nonatomic, assign) BOOL accessoryViewIgnoresDefaultInsets;
-
-@end
-
-#endif
 
 @interface UIDevice ()
 - (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
@@ -621,8 +576,6 @@ typedef enum {
 @end
 
 @interface UIViewController ()
-+ (UIViewController *)_viewControllerForFullScreenPresentationFromView:(UIView *)view;
-+ (UIViewController *)viewControllerForView:(UIView *)view;
 - (BOOL)isPerformingModalTransition;
 @end
 
@@ -750,6 +703,15 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @interface UITextSelectionView : UIView
 @end
 
+#if HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
+@interface UITextSelectionRectCustomHandleInfo : NSObject
+@property (nonatomic, readonly) CGPoint bottomLeft;
+@property (nonatomic, readonly) CGPoint topLeft;
+@property (nonatomic, readonly) CGPoint bottomRight;
+@property (nonatomic, readonly) CGPoint topRight;
+@end
+#endif
+
 @class UIContextMenuInteraction;
 @protocol UIContextMenuInteractionDelegate;
 @interface UITextInteractionAssistant (SPI)
@@ -859,17 +821,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @interface _UILookupGestureRecognizer : UIGestureRecognizer
 @end
 
-@interface _UIHighlightView : UIView
-@end
-
-@interface _UIHighlightView ()
-- (void)setColor:(UIColor *)aColor;
-- (void)setCornerRadii:(NSArray *)cornerRadii;
-- (void)setCornerRadius:(CGFloat)aCornerRadius;
-- (void)setFrames:(NSArray *)frames boundaryRect:(CGRect)aBoundarRect;
-- (void)setQuads:(NSArray *)quads boundaryRect:(CGRect)aBoundaryRect;
-@end
-
 @interface _UINavigationParallaxTransition : NSObject <UIViewControllerAnimatedTransitioningEx>
 @end
 
@@ -896,17 +847,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (BOOL)interactiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
 - (BOOL)interactiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition WithTarget:(id)target action:(SEL)action;
-@end
-
-@interface _UISheetDetent : NSObject
-@property (class, nonatomic, readonly) _UISheetDetent *_mediumDetent;
-@property (class, nonatomic, readonly) _UISheetDetent *_largeDetent;
-@end
-
-@interface _UISheetPresentationController : UIPresentationController
-@property (nonatomic, copy, setter=_setDetents:) NSArray<_UISheetDetent *> *_detents;
-@property (nonatomic, setter=_setWantsBottomAttachedInCompactHeight:) BOOL _wantsBottomAttachedInCompactHeight;
-@property (nonatomic, setter=_setWidthFollowsPreferredContentSizeWhenBottomAttached:) BOOL _widthFollowsPreferredContentSizeWhenBottomAttached;
 @end
 
 @class BKSAnimationFenceHandle;
@@ -1083,10 +1023,6 @@ WTF_EXTERN_C_END
 @interface _UIVisualEffectLayerConfig : NSObject
 @end
 
-@interface UIPopoverPresentationController ()
-@property (assign, nonatomic, setter=_setCentersPopoverIfSourceViewNotSet:, getter=_centersPopoverIfSourceViewNotSet) BOOL _centersPopoverIfSourceViewNotSet;
-@end
-
 @interface UIWKDocumentContext : NSObject
 
 @property (nonatomic, copy) NSObject *contextBefore;
@@ -1163,10 +1099,6 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 @property (readonly) NSString *primaryString;
 @property (readonly) NSArray<NSString *> *alternativeStrings;
 @property (readonly) BOOL isLowConfidence;
-@end
-
-@interface UIPointerInteraction ()
-@property (nonatomic, assign, getter=_pausesPointerUpdatesWhilePanning, setter=_setPausesPointerUpdatesWhilePanning:) BOOL pausesPointerUpdatesWhilePanning;
 @end
 
 #if PLATFORM(WATCHOS)
@@ -1398,14 +1330,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @property (nonatomic, copy, setter=_setSuggestedColors:) NSArray<UIColor *> *_suggestedColors;
 @end
 
-#if HAVE(UI_FOCUS_EFFECT)
-@class UIFocusEffect;
-
-@interface UIView (Staging_75759822)
-@property (nonatomic, readwrite, copy) UIFocusEffect *focusEffect;
-@end
-#endif
-
 #if HAVE(UIFINDINTERACTION)
 
 @interface _UIFindInteraction (Staging_84486967)
@@ -1440,7 +1364,6 @@ extern NSString * const UIKeyboardPrivateDidRequestDismissalNotification;
 
 extern NSString * const UIKeyboardIsLocalUserInfoKey;
 
-extern UIApplication *UIApp;
 BOOL _UIApplicationIsExtension(void);
 void _UIApplicationLoadWebKit(void);
 

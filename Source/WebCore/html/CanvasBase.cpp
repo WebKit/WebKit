@@ -300,16 +300,6 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
     return returnBuffer;
 }
 
-GraphicsClient* CanvasBase::graphicsClient() const
-{
-    if (scriptExecutionContext()->isDocument() && downcast<Document>(scriptExecutionContext())->page())
-        return &downcast<Document>(scriptExecutionContext())->page()->chrome();
-    if (is<WorkerGlobalScope>(scriptExecutionContext()))
-        return downcast<WorkerGlobalScope>(scriptExecutionContext())->workerClient();
-
-    return nullptr;
-}
-
 bool CanvasBase::shouldAccelerate(const IntSize& size) const
 {
     auto checkedArea = size.area<RecordOverflow>();
@@ -331,7 +321,7 @@ bool CanvasBase::shouldAccelerate(unsigned area) const
 #endif
 }
 
-RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool avoidBackendSizeCheckForTesting) const
+RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
 {
     auto checkedArea = size().area<RecordOverflow>();
 
@@ -348,14 +338,17 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool avoidBackendSizeCheckFo
     OptionSet<ImageBufferOptions> bufferOptions;
     if (shouldAccelerate(area))
         bufferOptions.add(ImageBufferOptions::Accelerated);
-    if (avoidBackendSizeCheckForTesting)
-        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
-    auto [colorSpace, pixelFormat] = [&] {
-        if (renderingContext())
-            return std::pair { renderingContext()->colorSpace(), renderingContext()->pixelFormat() };
-        return std::pair { DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
-    }();
-    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, graphicsClient());
+
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = PixelFormat::BGRA8;
+
+    if (auto* context = renderingContext()) {
+        bufferOptions = context->adjustImageBufferOptionsForTesting(bufferOptions);
+        colorSpace = context->colorSpace();
+        pixelFormat = context->pixelFormat();
+    }
+
+    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, scriptExecutionContext()->graphicsClient());
 }
 
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const

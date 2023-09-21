@@ -55,14 +55,9 @@ ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
 
 ImageBufferBackend::~ImageBufferBackend() = default;
 
-RefPtr<NativeImage> ImageBufferBackend::copyNativeImageForDrawing(GraphicsContext&)
-{
-    return copyNativeImage(DontCopyBackingStore);
-}
-
 RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
 {
-    return copyNativeImage(DontCopyBackingStore);
+    return createNativeImageReference();
 }
 
 void ImageBufferBackend::convertToLuminanceMask()

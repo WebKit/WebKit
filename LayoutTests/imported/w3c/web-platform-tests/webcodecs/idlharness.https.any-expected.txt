@@ -37,20 +37,24 @@ PASS VideoDecoder interface: operation flush()
 PASS VideoDecoder interface: operation reset()
 PASS VideoDecoder interface: operation close()
 PASS VideoDecoder interface: operation isConfigSupported(VideoDecoderConfig)
-FAIL AudioEncoder interface: existence and properties of interface object assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface object length assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface object name assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: attribute state assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: attribute encodeQueueSize assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation configure(AudioEncoderConfig) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation encode(AudioData) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation flush() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation reset() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation close() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation isConfigSupported(AudioEncoderConfig) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: existence and properties of interface object assert_equals: prototype of self's property "AudioEncoder" is not Function.prototype expected function "function () {
+    [native code]
+}" but got function "function EventTarget() {
+    [native code]
+}"
+PASS AudioEncoder interface object length
+PASS AudioEncoder interface object name
+FAIL AudioEncoder interface: existence and properties of interface prototype object assert_equals: prototype of AudioEncoder.prototype is not Object.prototype expected object "[object Object]" but got object "[object EventTarget]"
+PASS AudioEncoder interface: existence and properties of interface prototype object's "constructor" property
+PASS AudioEncoder interface: existence and properties of interface prototype object's @@unscopables property
+PASS AudioEncoder interface: attribute state
+PASS AudioEncoder interface: attribute encodeQueueSize
+PASS AudioEncoder interface: operation configure(AudioEncoderConfig)
+PASS AudioEncoder interface: operation encode(AudioData)
+PASS AudioEncoder interface: operation flush()
+PASS AudioEncoder interface: operation reset()
+PASS AudioEncoder interface: operation close()
+PASS AudioEncoder interface: operation isConfigSupported(AudioEncoderConfig)
 FAIL VideoEncoder interface: existence and properties of interface object assert_equals: prototype of self's property "VideoEncoder" is not Function.prototype expected function "function () {
     [native code]
 }" but got function "function EventTarget() {

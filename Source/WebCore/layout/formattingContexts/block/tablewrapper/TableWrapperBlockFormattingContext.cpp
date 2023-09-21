@@ -234,7 +234,7 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     formattingState().setUsedVerticalMargin(tableBox, verticalMargin);
 
     auto& boxGeometry = formattingState().boxGeometry(tableBox);
-    boxGeometry.setLogicalTop(verticalPositionWithMargin(tableBox, verticalMargin, constraints.logicalTop()));
+    boxGeometry.setTop(verticalPositionWithMargin(tableBox, verticalMargin, constraints.logicalTop()));
     boxGeometry.setContentBoxHeight(heightAndMargin.contentHeight);
     boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.

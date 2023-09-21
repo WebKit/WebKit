@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,7 +131,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         return;
     }
 
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
         promise.reject(Exception { InvalidStateError, "Document is not fully active"_s });
         return;
@@ -229,6 +229,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         case MediaConstraintType::EchoCancellation:
         case MediaConstraintType::FocusDistance:
         case MediaConstraintType::Zoom:
+        case MediaConstraintType::WhiteBalanceMode:
             // Ignored.
             break;
 
@@ -245,7 +246,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
 
 void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, Promise&& promise)
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return;
 
@@ -335,7 +336,7 @@ String MediaDevices::hashedGroupId(const String& groupId)
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return;
 
@@ -351,7 +352,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
         return;
     }
 
-    controller->enumerateMediaDevices(*document, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise)](auto&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts) mutable {
+    controller->enumerateMediaDevices(*document, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise)](Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts) mutable {
         if (!weakThis)
             return;
         exposeDevices(WTFMove(newDevices), WTFMove(deviceIDHashSalts), WTFMove(promise));
@@ -367,6 +368,7 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
     result.aspectRatio = supported.supportsAspectRatio();
     result.frameRate = supported.supportsFrameRate();
     result.facingMode = supported.supportsFacingMode();
+    result.whiteBalanceMode = supported.supportsWhiteBalanceMode();
     result.volume = supported.supportsVolume();
     result.sampleRate = supported.supportsSampleRate();
     result.sampleSize = supported.supportsSampleSize();
@@ -397,7 +399,7 @@ const char* MediaDevices::activeDOMObjectName() const
 
 void MediaDevices::listenForDeviceChanges()
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
     if (!controller)
         return;

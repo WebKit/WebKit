@@ -91,7 +91,7 @@ ReadableStream& RTCRtpScriptTransformer::readable()
 ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
 {
     if (!m_writable) {
-        auto* context = downcast<WorkerGlobalScope>(scriptExecutionContext());
+        RefPtr context = downcast<WorkerGlobalScope>(scriptExecutionContext());
         if (!context || !context->globalObject())
             return Exception { InvalidStateError };
 
@@ -142,7 +142,7 @@ void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
     m_backend = WTFMove(backend);
 
     auto& context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
-    m_backend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, thread = Ref { context.thread() }](auto&& frame) mutable {
+    m_backend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, thread = Ref { context.thread() }](Ref<RTCRtpTransformableFrame>&& frame) mutable {
         thread->runLoop().postTaskForMode([weakThis, frame = WTFMove(frame)](auto& context) mutable {
             if (weakThis)
                 weakThis->enqueueFrame(context, WTFMove(frame));
@@ -193,7 +193,7 @@ void RTCRtpScriptTransformer::enqueueFrame(ScriptExecutionContext& context, Ref<
 
 void RTCRtpScriptTransformer::generateKeyFrame(Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context || !m_backend || m_backend->side() != RTCRtpTransformBackend::Side::Sender || m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video) {
         promise->reject(Exception { InvalidStateError, "Not attached to a valid video sender"_s });
         return;
@@ -207,7 +207,7 @@ void RTCRtpScriptTransformer::generateKeyFrame(Ref<DeferredPromise>&& promise)
 
 void RTCRtpScriptTransformer::sendKeyFrameRequest(Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context || !m_backend || m_backend->side() != RTCRtpTransformBackend::Side::Receiver || m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video) {
         promise->reject(Exception { InvalidStateError, "Not attached to a valid video receiver"_s });
         return;

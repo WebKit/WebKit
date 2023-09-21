@@ -900,9 +900,9 @@ void RenderFlexibleBox::initializeMarginTrimState()
     auto marginTrim = style().marginTrim();
     auto isRowsFlexbox = isHorizontalFlow();
     if (auto child = firstInFlowChildBox(); child && marginTrim.contains(MarginTrimType::InlineStart))
-        isRowsFlexbox ? m_marginTrimItems.m_itemsAtFlexLineStart.add(child) : m_marginTrimItems.m_itemsOnFirstFlexLine.add(child);
+        isRowsFlexbox ? m_marginTrimItems.m_itemsAtFlexLineStart.add(*child) : m_marginTrimItems.m_itemsOnFirstFlexLine.add(*child);
     if (auto child = lastInFlowChildBox(); child && marginTrim.contains(MarginTrimType::InlineEnd))
-        isRowsFlexbox ? m_marginTrimItems.m_itemsAtFlexLineEnd.add(child) : m_marginTrimItems.m_itemsOnLastFlexLine.add(child);
+        isRowsFlexbox ? m_marginTrimItems.m_itemsAtFlexLineEnd.add(*child) : m_marginTrimItems.m_itemsOnLastFlexLine.add(*child);
 }
 
 LayoutUnit RenderFlexibleBox::mainAxisMarginExtentForChild(const RenderBox& child) const
@@ -942,8 +942,8 @@ bool RenderFlexibleBox::isChildEligibleForMarginTrim(MarginTrimType marginTrimTy
         return marginTrimType == MarginTrimType::InlineStart || marginTrimType == MarginTrimType::InlineEnd;
     };
     if (isMarginParallelWithMainAxis(marginTrimType))
-        return (marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::InlineStart) ? m_marginTrimItems.m_itemsOnFirstFlexLine.contains(&child) : m_marginTrimItems.m_itemsOnLastFlexLine.contains(&child);
-    return (marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::InlineStart) ? m_marginTrimItems.m_itemsAtFlexLineStart.contains(&child) : m_marginTrimItems.m_itemsAtFlexLineEnd.contains(&child);
+        return (marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::InlineStart) ? m_marginTrimItems.m_itemsOnFirstFlexLine.contains(child) : m_marginTrimItems.m_itemsOnLastFlexLine.contains(child);
+    return (marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::InlineStart) ? m_marginTrimItems.m_itemsAtFlexLineStart.contains(child) : m_marginTrimItems.m_itemsAtFlexLineEnd.contains(child);
 }
 
 bool RenderFlexibleBox::shouldTrimMainAxisMarginStart() const
@@ -982,7 +982,7 @@ void RenderFlexibleBox::trimMainAxisMarginStart(const FlexItem& flexItem)
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::InlineStart);
     else
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::BlockStart);
-    m_marginTrimItems.m_itemsAtFlexLineStart.add(&flexItem.box);
+    m_marginTrimItems.m_itemsAtFlexLineStart.add(flexItem.box);
 }
 
 void RenderFlexibleBox::trimMainAxisMarginEnd(const FlexItem& flexItem)
@@ -993,7 +993,7 @@ void RenderFlexibleBox::trimMainAxisMarginEnd(const FlexItem& flexItem)
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::InlineEnd);
     else
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::BlockEnd);
-    m_marginTrimItems.m_itemsAtFlexLineEnd.add(&flexItem.box);
+    m_marginTrimItems.m_itemsAtFlexLineEnd.add(flexItem.box);
 }
 
 void RenderFlexibleBox::trimCrossAxisMarginStart(const FlexItem& flexItem)
@@ -1002,7 +1002,7 @@ void RenderFlexibleBox::trimCrossAxisMarginStart(const FlexItem& flexItem)
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::BlockStart);
     else
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::InlineStart);
-    m_marginTrimItems.m_itemsOnFirstFlexLine.add(&flexItem.box);
+    m_marginTrimItems.m_itemsOnFirstFlexLine.add(flexItem.box);
 }
 
 void RenderFlexibleBox::trimCrossAxisMarginEnd(const FlexItem& flexItem)
@@ -1011,7 +1011,7 @@ void RenderFlexibleBox::trimCrossAxisMarginEnd(const FlexItem& flexItem)
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::BlockEnd);
     else
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::InlineEnd);
-    m_marginTrimItems.m_itemsOnLastFlexLine.add(&flexItem.box);
+    m_marginTrimItems.m_itemsOnLastFlexLine.add(flexItem.box);
 }
 
 LayoutUnit RenderFlexibleBox::crossAxisScrollbarExtent() const
@@ -1211,7 +1211,7 @@ void RenderFlexibleBox::cacheChildMainSize(const RenderBox& child)
     }
   
     m_intrinsicSizeAlongMainAxis.set(&child, mainSize);
-    m_relaidOutChildren.add(&child);
+    m_relaidOutChildren.add(child);
 }
 
 void RenderFlexibleBox::clearCachedMainSizeForChild(const RenderBox& child)
@@ -2198,7 +2198,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Flex
         }
         // We may have already forced relayout for orthogonal flowing children in
         // computeInnerFlexBaseSizeForChild.
-        bool forceChildRelayout = relayoutChildren && !m_relaidOutChildren.contains(&child);
+        bool forceChildRelayout = relayoutChildren && !m_relaidOutChildren.contains(child);
         if (!forceChildRelayout && childHasPercentHeightDescendants(child)) {
             // Have to force another relayout even though the child is sized
             // correctly, because its descendants are not sized correctly yet. Our
@@ -2210,7 +2210,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Flex
         if (!child.needsLayout())
             child.markForPaginationRelayoutIfNeeded();
         if (child.needsLayout())
-            m_relaidOutChildren.add(&child);
+            m_relaidOutChildren.add(child);
         child.layoutIfNeeded();
         if (!flexItem.everHadLayout && child.checkForRepaintDuringLayout()) {
             child.repaint();
@@ -2491,7 +2491,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
         
         // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         bool childNeedsRelayout = desiredLogicalHeight != child.logicalHeight();
-        if (child.isRenderBlock() && downcast<RenderBlock>(child).hasPercentHeightDescendants() && m_relaidOutChildren.contains(&child)) {
+        if (child.isRenderBlock() && downcast<RenderBlock>(child).hasPercentHeightDescendants() && m_relaidOutChildren.contains(child)) {
             // Have to force another relayout even though the child is sized
             // correctly, because its descendants are not sized correctly yet. Our
             // previous layout of the child was done without an override height set.

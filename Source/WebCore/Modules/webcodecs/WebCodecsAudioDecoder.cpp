@@ -110,7 +110,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
         }
 
         m_isMessageQueueBlocked = true;
-        AudioDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = WeakPtr { *this }](auto&& task) {
+        AudioDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = WeakPtr { *this }](Function<void()>&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
                 if (!weakThis)
                     return;
@@ -118,7 +118,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
             });
         };
 
-        AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [this](auto&& result) {
+        AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [this](AudioDecoder::CreateResult&& result) {
             if (!result.has_value()) {
                 closeDecoder(Exception { NotSupportedError, WTFMove(result.error()) });
                 return;
@@ -160,7 +160,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::decode(Ref<WebCodecsEncodedAudioChunk>&
         --m_decodeQueueSize;
         scheduleDequeueEvent();
 
-        m_internalDecoder->decode({ { chunk->data(), chunk->byteLength() }, chunk->type() == WebCodecsEncodedAudioChunkType::Key, chunk->timestamp(), chunk->duration() }, [this](auto&& result) {
+        m_internalDecoder->decode({ { chunk->data(), chunk->byteLength() }, chunk->type() == WebCodecsEncodedAudioChunkType::Key, chunk->timestamp(), chunk->duration() }, [this](String&& result) {
             --m_beingDecodedQueueSize;
             if (!result.isNull())
                 closeDecoder(Exception { EncodingError, WTFMove(result) });

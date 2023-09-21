@@ -27,8 +27,12 @@
 
 #include "GPUOrigin2DDict.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
 #include "ImageBitmap.h"
+#include "ImageData.h"
 #include "OffscreenCanvas.h"
+#include "WebCodecsVideoFrame.h"
 #include "WebGPUImageCopyExternalImage.h"
 #include <optional>
 #include <variant>
@@ -37,11 +41,14 @@
 namespace WebCore {
 
 struct GPUImageCopyExternalImage {
-#if ENABLE(OFFSCREEN_CANVAS)
-    using SourceType = std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
-#else
-    using SourceType = std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>>;
+    using SourceType = std::variant<RefPtr<ImageBitmap>,
+#if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+    RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<WebCodecsVideoFrame>,
 #endif
+#if ENABLE(OFFSCREEN_CANVAS)
+    RefPtr<OffscreenCanvas>,
+#endif
+    RefPtr<HTMLCanvasElement>>;
 
     WebGPU::ImageCopyExternalImage convertToBacking() const
     {

@@ -183,7 +183,9 @@ void Font::platformInit()
 #endif
 
     // Compute line spacing before the line metrics hacks are applied.
-    float lineSpacing = lroundf(ascent) + lroundf(descent) + lroundf(lineGap);
+#if !PLATFORM(IOS_FAMILY)
+    float lineSpacing = std::lround(ascent) + std::lround(descent) + std::lround(lineGap);
+#endif
 
 #if PLATFORM(MAC)
     // Hack Hiragino line metrics to allow room for marked text underlines.
@@ -201,7 +203,7 @@ void Font::platformInit()
     CGFloat adjustment = shouldUseAdjustment(m_platformData.font()) ? ceil((ascent + descent) * kLineHeightAdjustment) : 0;
 
     lineGap = ceilf(lineGap);
-    lineSpacing = ceil(ascent) + adjustment + ceil(descent) + lineGap;
+    float lineSpacing = std::ceil(ascent) + adjustment + std::ceil(descent) + lineGap;
     ascent = ceilf(ascent + adjustment);
     descent = ceilf(descent);
 
@@ -281,7 +283,6 @@ void Font::platformCharWidthInit()
 
 bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) const
 {
-#if (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS) || PLATFORM(MAC)
     switch (fontVariantCaps) {
     case FontVariantCaps::Small:
         return supportsSmallCaps();
@@ -295,21 +296,8 @@ bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) con
         // Synthesis only supports the variant-caps values listed above.
         return true;
     }
-#else
-    switch (fontVariantCaps) {
-    case FontVariantCaps::Small:
-    case FontVariantCaps::Petite:
-    case FontVariantCaps::AllSmall:
-    case FontVariantCaps::AllPetite:
-        return false;
-    default:
-        // Synthesis only supports the variant-caps values listed above.
-        return true;
-    }
-#endif
 }
 
-#if (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS) || PLATFORM(MAC)
 static RetainPtr<CFDictionaryRef> smallCapsOpenTypeDictionary(CFStringRef key, int rawValue)
 {
     RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue));
@@ -400,7 +388,6 @@ bool Font::supportsAllPetiteCaps() const
     }
     return m_supportsAllPetiteCaps == SupportsFeature::Yes;
 }
-#endif
 
 static RefPtr<Font> createDerivativeFont(CTFontRef font, float size, FontOrientation orientation, CTFontSymbolicTraits fontTraits, bool syntheticBold, bool syntheticItalic, FontWidthVariant fontWidthVariant, TextRenderingMode textRenderingMode, const FontCustomPlatformData* customPlatformData)
 {

@@ -5,8 +5,8 @@ EVENT(canplaythrough)
 
 ** Check in-band kind attributes
 EXPECTED (video.audioTracks.length == '2') OK
-EXPECTED (video.audioTracks.getTrackById('A0').language == 'en') OK
-EXPECTED (video.audioTracks.getTrackById('A1').language == 'la') OK
+EXPECTED (video.audioTracks[0].language == 'en') OK
+EXPECTED (video.audioTracks[1].language == 'la') OK
 
 END OF TEST
 

@@ -66,7 +66,7 @@ void RemoteCDMInstanceSessionProxy::setLogIdentifier(uint64_t logIdentifier)
 #endif
 }
 
-void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&& completion)
+void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, AtomString initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&& completion)
 {
     if (!initData) {
         completion({ }, emptyString(), false, false);
@@ -79,7 +79,7 @@ void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString 
         return;
     }
 
-    m_session->requestLicense(type, initDataType, initData.releaseNonNull(), [completion = WTFMove(completion)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+    m_session->requestLicense(type, keyGroupingStrategy, initDataType, initData.releaseNonNull(), [completion = WTFMove(completion)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
         completion(WTFMove(message), sessionId, needsIndividualization, succeeded == CDMInstanceSession::Succeeded);
     });
 }

@@ -670,7 +670,6 @@ protected:
     bool m_isGLES2Compliant;
     bool m_isDepthStencilSupported;
 
-    bool m_synthesizedErrorsToConsole { true };
     int m_numGLErrorsToConsoleAllowed;
 
     bool m_preventBufferClearForInspector { false };

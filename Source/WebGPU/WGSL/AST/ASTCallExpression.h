@@ -36,6 +36,8 @@ namespace WGSL::AST {
 class CallExpression final : public Expression {
     WGSL_AST_BUILDER_NODE(CallExpression);
 public:
+    using Ref = std::reference_wrapper<CallExpression>;
+
     NodeKind kind() const override;
     Expression& target() { return m_target.get(); }
     Expression::List& arguments() { return m_arguments; }

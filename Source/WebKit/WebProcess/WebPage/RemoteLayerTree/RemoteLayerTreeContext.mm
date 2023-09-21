@@ -59,20 +59,26 @@ RemoteLayerTreeContext::~RemoteLayerTreeContext()
     for (auto& layer : m_livePlatformLayers.values())
         layer->clearContext();
 
+
     auto graphicsLayers = m_liveGraphicsLayers;
     for (auto& layer : graphicsLayers)
-        layer->clearContext();
+        RefPtr { layer.get() }->clearContext();
+
+    // Make sure containers are empty before destruction to avoid hitting the assertion in CanMakeCheckedPtr.
+    m_livePlatformLayers.clear();
+    m_liveGraphicsLayers.clear();
+    m_layersWithAnimations.clear();
 }
 
 void RemoteLayerTreeContext::adoptLayersFromContext(RemoteLayerTreeContext& oldContext)
 {
     auto& platformLayers = oldContext.m_livePlatformLayers;
     while (!platformLayers.isEmpty())
-        platformLayers.begin()->value->moveToContext(*this);
+        RefPtr { platformLayers.begin()->value.get() }->moveToContext(*this);
 
     auto& graphicsLayers = oldContext.m_liveGraphicsLayers;
     while (!graphicsLayers.isEmpty())
-        (*graphicsLayers.begin())->moveToContext(*this);
+        RefPtr { (*graphicsLayers.begin()).get() }->moveToContext(*this);
 }
 
 float RemoteLayerTreeContext::deviceScaleFactor() const
@@ -214,14 +220,14 @@ void RemoteLayerTreeContext::animationDidStart(WebCore::PlatformLayerIdentifier 
 {
     auto it = m_layersWithAnimations.find(layerID);
     if (it != m_layersWithAnimations.end())
-        it->value->animationStarted(key, startTime);
+        RefPtr { it->value.get() }->animationStarted(key, startTime);
 }
 
 void RemoteLayerTreeContext::animationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
 {
     auto it = m_layersWithAnimations.find(layerID);
     if (it != m_layersWithAnimations.end())
-        it->value->animationEnded(key);
+        RefPtr { it->value.get() }->animationEnded(key);
 }
 
 RemoteRenderingBackendProxy& RemoteLayerTreeContext::ensureRemoteRenderingBackendProxy()

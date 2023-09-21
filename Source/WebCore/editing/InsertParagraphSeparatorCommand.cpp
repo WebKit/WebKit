@@ -218,10 +218,10 @@ static bool isPhrasingContent(const Node* node)
 
 static bool isEditableRootPhrasingContent(Position position)
 {
-    auto* editableRoot = highestEditableRoot(position);
+    auto editableRoot = highestEditableRoot(position);
     if (!editableRoot)
         return false;
-    return enclosingNodeOfType(firstPositionInOrBeforeNode(editableRoot), isPhrasingContent);
+    return enclosingNodeOfType(firstPositionInOrBeforeNode(editableRoot.get()), isPhrasingContent);
 }
 
 void InsertParagraphSeparatorCommand::doApply()
@@ -241,7 +241,7 @@ void InsertParagraphSeparatorCommand::doApply()
     }
     
     // FIXME: The parentAnchoredEquivalent conversion needs to be moved into enclosingBlock.
-    RefPtr<Element> startBlock = enclosingBlock(insertionPosition.parentAnchoredEquivalent().containerNode());
+    RefPtr<Element> startBlock = enclosingBlock(insertionPosition.parentAnchoredEquivalent().protectedContainerNode());
     Position canonicalPos = VisiblePosition(insertionPosition).deepEquivalent();
     if (!startBlock
         || !startBlock->nonShadowBoundaryParentNode()
@@ -429,9 +429,9 @@ void InsertParagraphSeparatorCommand::doApply()
     // FIXME: leadingWhitespacePosition is returning the position before preserved newlines for positions
     // after the preserved newline, causing the newline to be turned into a nbsp.
     if (is<Text>(leadingWhitespace.deprecatedNode())) {
-        Text& textNode = downcast<Text>(*leadingWhitespace.deprecatedNode());
-        ASSERT(!textNode.renderer() || textNode.renderer()->style().collapseWhiteSpace());
-        replaceTextInNodePreservingMarkers(textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        auto textNode = downcast<Text>(leadingWhitespace.protectedDeprecatedNode().releaseNonNull());
+        ASSERT(!textNode->renderer() || textNode->renderer()->style().collapseWhiteSpace());
+        replaceTextInNodePreservingMarkers(textNode.get(), leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
     
     // Split at pos if in the middle of a text node.

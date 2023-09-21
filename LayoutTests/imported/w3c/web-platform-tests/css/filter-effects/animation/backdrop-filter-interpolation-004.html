@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>backdrop-filter interpolation</title>
+    <title>-webkit-backdrop-filter interpolation</title>
     <link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
     <meta name="assert" content="Default value when omitted matches spec.">
     <script src="/resources/testharness.js"></script>
@@ -19,7 +19,7 @@
       'use strict';
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'blur()', // Default value when omitted is 0px.
         to: 'blur(10px)'
       }, [
@@ -31,7 +31,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'brightness(0)',
         to: 'brightness()' // Default value when omitted is 1.
       }, [
@@ -43,7 +43,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'contrast(0)',
         to: 'contrast()' // Default value when omitted is 1.
       }, [
@@ -55,7 +55,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'drop-shadow(0px 0px)', // The default value for omitted values is missing length values set to 0 and the missing used color is taken from the color property.
         to: 'drop-shadow(20px 10px 30px green)'
       }, [
@@ -67,7 +67,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'grayscale(0)',
         to: 'grayscale()' // Default value when omitted is 1.
       }, [
@@ -79,7 +79,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'hue-rotate()', // Default value when omitted is 0deg.
         to: 'hue-rotate(360deg)'
       }, [
@@ -91,7 +91,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'invert(0)',
         to: 'invert()' // Default value when omitted is 1.
       }, [
@@ -103,7 +103,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'opacity(0)',
         to: 'opacity()' // Default value when omitted is 1.
       }, [
@@ -115,7 +115,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'saturate(0)',
         to: 'saturate()' // Default value when omitted is 1.
       }, [
@@ -127,7 +127,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'sepia(0)',
         to: 'sepia()' // Default value when omitted is 1.
       }, [

@@ -119,8 +119,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         auto scaleFactor = destinationRect.size() / sourceRect.size();
         sourceRectScaled.scale(scaleFactor * context.scaleFactor());
 
-        // Draw the ImageBuffer to destinationRect in the destination context.
-        imageBuffer->draw(context, destinationRect, sourceRectScaled, { });
+        context.drawImageBuffer(*imageBuffer, destinationRect, sourceRectScaled, { });
         return true;
     };
 

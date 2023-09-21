@@ -583,7 +583,7 @@ struct SVGResourcesMap {
 
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResources;
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResourcesForRemoval;
-    MemoryCompactRobinHoodHashMap<AtomString, RenderSVGResourceContainer*> resources;
+    MemoryCompactRobinHoodHashMap<AtomString, LegacyRenderSVGResourceContainer*> resources;
 };
 
 SVGResourcesMap& TreeScope::svgResourcesMap() const
@@ -593,7 +593,7 @@ SVGResourcesMap& TreeScope::svgResourcesMap() const
     return *m_svgResourcesMap;
 }
 
-void TreeScope::addSVGResource(const AtomString& id, RenderSVGResourceContainer& resource)
+void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
 {
     if (id.isEmpty())
         return;
@@ -610,7 +610,7 @@ void TreeScope::removeSVGResource(const AtomString& id)
     svgResourcesMap().resources.remove(id);
 }
 
-RenderSVGResourceContainer* TreeScope::svgResourceById(const AtomString& id) const
+LegacyRenderSVGResourceContainer* TreeScope::svgResourceById(const AtomString& id) const
 {
     if (id.isEmpty())
         return nullptr;

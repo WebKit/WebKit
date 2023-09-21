@@ -1553,10 +1553,8 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAc
         auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType)]);
         [result setObject:element.get() forKey:WebActionElementKey];
 
-        if (mouseEventData->isTrusted)
-            [result setObject:@(mouseEventData->button) forKey:WebActionButtonKey];
-        else
-            [result setObject:@(WebCore::NoButton) forKey:WebActionButtonKey];
+        auto button = enumToUnderlyingType(mouseEventData->isTrusted ? mouseEventData->button : MouseButton::None);
+        [result setObject:@(button) forKey:WebActionButtonKey];
     }
 
     if (formState)

@@ -1391,7 +1391,7 @@ void NavigationState::didChangeIsLoading()
     if (webView && webView->_page->pageLoadState().isLoading()) {
 #if PLATFORM(IOS_FAMILY)
         // We do not start a network activity if a load starts after the screen has been locked.
-        if ([UIApp isSuspendedUnderLock])
+        if (UIApplication.sharedApplication.isSuspendedUnderLock)
             return;
 #endif
 

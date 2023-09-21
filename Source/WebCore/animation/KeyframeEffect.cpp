@@ -948,29 +948,30 @@ const HashSet<AnimatableProperty>& KeyframeEffect::animatedProperties()
     return m_animatedProperties;
 }
 
-bool KeyframeEffect::animatesProperty(AnimatableProperty property) const
+bool KeyframeEffect::animatesProperty(const AnimatableProperty& property) const
 {
     if (!m_blendingKeyframes.isEmpty())
         return m_blendingKeyframes.containsProperty(property);
 
-    return m_parsedKeyframes.findIf([&](const auto& keyframe) {
-        return WTF::switchOn(property,
-            [&](CSSPropertyID cssProperty) {
+    return WTF::switchOn(property,
+        [&](CSSPropertyID cssProperty) {
+            return m_parsedKeyframes.findIf([&](const auto& keyframe) {
                 for (auto keyframeProperty : keyframe.styleStrings.keys()) {
                     if (keyframeProperty == cssProperty)
                         return true;
                 }
                 return false;
-            },
-            [&](const AtomString& customProperty) {
+            });
+        },
+        [&](const AtomString& customProperty) {
+            return m_parsedKeyframes.findIf([&](const auto& keyframe) {
                 for (auto keyframeProperty : keyframe.customStyleStrings.keys()) {
                     if (keyframeProperty == customProperty)
                         return true;
                 }
                 return false;
-            }
-        );
-    }) != notFound;
+            });
+        }) != notFound;
 }
 
 bool KeyframeEffect::forceLayoutIfNeeded()

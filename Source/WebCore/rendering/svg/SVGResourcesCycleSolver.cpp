@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-bool SVGResourcesCycleSolver::resourceContainsCycles(RenderSVGResourceContainer& resource,
-    WeakHashSet<RenderSVGResourceContainer>& activeResources, WeakHashSet<RenderSVGResourceContainer>& acyclicResources)
+bool SVGResourcesCycleSolver::resourceContainsCycles(LegacyRenderSVGResourceContainer& resource,
+    WeakHashSet<LegacyRenderSVGResourceContainer>& activeResources, WeakHashSet<LegacyRenderSVGResourceContainer>& acyclicResources)
 {
     if (acyclicResources.contains(resource))
         return false;
@@ -53,7 +53,7 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderSVGResourceContainer&
         }
         if (is<RenderElement>(*node)) {
             if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(downcast<RenderElement>(*node))) {
-                WeakHashSet<RenderSVGResourceContainer> resourceSet;
+                WeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
                 resources->buildSetOfResources(resourceSet);
 
                 for (auto& resource : resourceSet) {
@@ -72,14 +72,14 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderSVGResourceContainer&
 
 void SVGResourcesCycleSolver::resolveCycles(RenderElement& renderer, SVGResources& resources)
 {
-    WeakHashSet<RenderSVGResourceContainer> localResources;
+    WeakHashSet<LegacyRenderSVGResourceContainer> localResources;
     resources.buildSetOfResources(localResources);
 
-    WeakHashSet<RenderSVGResourceContainer> activeResources;
-    WeakHashSet<RenderSVGResourceContainer> acyclicResources;
+    WeakHashSet<LegacyRenderSVGResourceContainer> activeResources;
+    WeakHashSet<LegacyRenderSVGResourceContainer> acyclicResources;
 
-    if (is<RenderSVGResourceContainer>(renderer))
-        activeResources.add(downcast<RenderSVGResourceContainer>(renderer));
+    if (is<LegacyRenderSVGResourceContainer>(renderer))
+        activeResources.add(downcast<LegacyRenderSVGResourceContainer>(renderer));
 
     // The job of this function is to determine wheter any of the 'resources' associated with the given 'renderer'
     // references us (or whether any of its kids references us) -> that's a cycle, we need to find and break it.
@@ -89,7 +89,7 @@ void SVGResourcesCycleSolver::resolveCycles(RenderElement& renderer, SVGResource
     }
 }
 
-void SVGResourcesCycleSolver::breakCycle(RenderSVGResourceContainer& resourceLeadingToCycle, SVGResources& resources)
+void SVGResourcesCycleSolver::breakCycle(LegacyRenderSVGResourceContainer& resourceLeadingToCycle, SVGResources& resources)
 {
     if (&resourceLeadingToCycle == resources.linkedResource()) {
         resources.resetLinkedResource();

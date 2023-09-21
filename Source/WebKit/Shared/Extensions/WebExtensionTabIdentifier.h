@@ -32,11 +32,13 @@ namespace WebKit {
 struct WebExtensionTabIdentifierType;
 using WebExtensionTabIdentifier = ObjectIdentifier<WebExtensionTabIdentifierType>;
 
-struct WebExtensionTabConstants {
+namespace WebExtensionTabConstants {
+
     static constexpr double None { -1 };
 
     static constexpr const WebExtensionTabIdentifier NoneIdentifier { std::numeric_limits<uint64_t>::max() - 1 };
-};
+
+}
 
 inline bool isNone(WebExtensionTabIdentifier identifier)
 {

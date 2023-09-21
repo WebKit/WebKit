@@ -55,7 +55,7 @@ Ref<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Doc
 SVGCursorElement::~SVGCursorElement()
 {
     for (auto& client : m_clients)
-        client->cursorElementRemoved(*this);
+        client.cursorElementRemoved(*this);
 }
 
 void SVGCursorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -76,12 +76,12 @@ void SVGCursorElement::attributeChanged(const QualifiedName& name, const AtomStr
 
 void SVGCursorElement::addClient(StyleCursorImage& value)
 {
-    m_clients.add(&value);
+    m_clients.add(value);
 }
 
 void SVGCursorElement::removeClient(StyleCursorImage& value)
 {
-    m_clients.remove(&value);
+    m_clients.remove(value);
 }
 
 void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -89,7 +89,7 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         for (auto& client : m_clients)
-            client->cursorElementChanged(*this);
+            client.cursorElementChanged(*this);
         return;
     }
 

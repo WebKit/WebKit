@@ -29,6 +29,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ struct ResourceLoaderOptions;
 
 typedef const void* WrappedImagePtr;
 
-class StyleImage : public RefCounted<StyleImage> {
+class StyleImage : public RefCounted<StyleImage>, public CanMakeWeakPtr<StyleImage> {
 public:
     virtual ~StyleImage() = default;
 

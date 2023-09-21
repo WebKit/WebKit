@@ -990,6 +990,7 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
             else {
                 isGenericFamily = true;
                 family = CSSPropertyParserHelpers::genericFontFamily(contentValue.valueID());
+                ASSERT(!family.isEmpty());
             }
             if (family.isNull())
                 continue;

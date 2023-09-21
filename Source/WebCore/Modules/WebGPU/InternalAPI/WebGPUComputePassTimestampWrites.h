@@ -34,12 +34,10 @@ namespace WebCore::WebGPU {
 
 class QuerySet;
 
-struct ComputePassTimestampWrite {
-    QuerySet& querySet;
-    Size32 queryIndex { 0 };
-    ComputePassTimestampLocation location { ComputePassTimestampLocation::Beginning };
+struct ComputePassTimestampWrites {
+    QuerySet* querySet { nullptr };
+    Size32 beginningOfPassWriteIndex { 0 };
+    Size32 endOfPassWriteIndex { 0 };
 };
-
-using ComputePassTimestampWrites = Vector<ComputePassTimestampWrite>;
 
 } // namespace WebCore::WebGPU

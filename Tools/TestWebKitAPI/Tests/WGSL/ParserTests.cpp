@@ -902,8 +902,7 @@ TEST(WGSLParserTests, RelationalExpression)
     testBinaryExpressionXY("x != y"_s, WGSL::AST::BinaryOperation::NotEqual,     { "x"_s, "y"_s });
     testBinaryExpressionXY("x > y"_s,  WGSL::AST::BinaryOperation::GreaterThan,  { "x"_s, "y"_s });
     testBinaryExpressionXY("x >= y"_s, WGSL::AST::BinaryOperation::GreaterEqual, { "x"_s, "y"_s });
-    // FIXME: implement template disambiguation
-    // testBinaryExpressionXY("x < y"_s, WGSL::AST::BinaryOperation::LessThan, { "x"_s, "y"_s });
+    testBinaryExpressionXY("x < y"_s, WGSL::AST::BinaryOperation::LessThan, { "x"_s, "y"_s });
     testBinaryExpressionXY("x <= y"_s, WGSL::AST::BinaryOperation::LessEqual,    { "x"_s, "y"_s });
 }
 

@@ -68,6 +68,7 @@
 #import "WKQuickboardViewControllerDelegate.h"
 #import "WKSelectMenuListViewController.h"
 #import "WKSyntheticFlagsChangedWebEvent.h"
+#import "WKTapHighlightView.h"
 #import "WKTextInputListViewController.h"
 #import "WKTextPlaceholder.h"
 #import "WKTextSelectionRect.h"
@@ -1134,7 +1135,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _needsDeferredEndScrollingSelectionUpdate = NO;
     [_formInputSession invalidate];
     _formInputSession = nil;
-    [_highlightView removeFromSuperview];
+    [_tapHighlightView removeFromSuperview];
     _lastOutstandingPositionInformationRequest = std::nullopt;
     _isWaitingOnPositionInformation = NO;
 
@@ -1654,7 +1655,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
             // a view underneath this view controller; however, there doesn't seem to be any way of doing
             // so at the moment. In lieu of this, we can at least check that the web view itself isn't
             // inside the popover.
-            auto *controller = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+            auto controller = self._wk_viewControllerForFullScreenPresentation;
             return [self isDescendantOfView:controller.viewIfLoaded] || controller.modalPresentationStyle != UIModalPresentationPopover;
         }
 #endif // PLATFORM(MACCATALYST)
@@ -2088,17 +2089,19 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
         || gesture == _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
 }
 
-static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius, CGFloat borderRadiusScale)
+static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize borderRadii, CGFloat borderRadiusScale)
 {
-    return [NSValue valueWithCGSize:CGSizeMake((borderRadius.width() * borderRadiusScale) + minimumTapHighlightRadius, (borderRadius.height() * borderRadiusScale) + minimumTapHighlightRadius)];
+    auto inflatedSize = borderRadii * borderRadiusScale;
+    inflatedSize.expand(minimumTapHighlightRadius, minimumTapHighlightRadius);
+    return inflatedSize;
 }
 
 - (void)_updateTapHighlight
 {
-    if (![_highlightView superview])
+    if (![_tapHighlightView superview])
         return;
 
-    [_highlightView setColor:cocoaColor(_tapHighlightInformation.color).get()];
+    [_tapHighlightView setColor:cocoaColor(_tapHighlightInformation.color).get()];
 
     auto& highlightedQuads = _tapHighlightInformation.quads;
     bool allRectilinear = true;
@@ -2118,7 +2121,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
             boundingBox.inflate(minimumTapHighlightRadius);
             return [NSValue valueWithCGRect:encloseRectToDevicePixels(boundingBox, deviceScaleFactor)];
         });
-        [_highlightView setFrames:rects.get() boundaryRect:_page->exposedContentRect()];
+        [_tapHighlightView setFrames:highlightedQuads.map([&](auto& quad) {
+            auto boundingBox = quad.boundingBox();
+            boundingBox.scale(selfScale);
+            boundingBox.inflate(minimumTapHighlightRadius);
+            return boundingBox;
+        })];
     } else {
         auto quads = adoptNS([[NSMutableArray alloc] initWithCapacity:highlightedQuads.size() * 4]);
         for (auto quad : highlightedQuads) {
@@ -2129,20 +2137,25 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p3()]];
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p4()]];
         }
-        [_highlightView setQuads:quads.get() boundaryRect:_page->exposedContentRect()];
+
+        auto inflatedHighlightQuads = highlightedQuads.map([&](auto quad) {
+            quad.scale(selfScale);
+            return inflateQuad(quad, minimumTapHighlightRadius);
+        });
+        [_tapHighlightView setQuads:WTFMove(inflatedHighlightQuads) boundaryRect:_page->exposedContentRect()];
     }
 
-    [_highlightView setCornerRadii:@[
-        nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.topLeftRadius, selfScale),
-        nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.topRightRadius, selfScale),
-        nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.bottomLeftRadius, selfScale),
-        nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.bottomRightRadius, selfScale),
-    ]];
+    [_tapHighlightView setCornerRadii:WebCore::FloatRoundedRect::Radii {
+        tapHighlightBorderRadius(_tapHighlightInformation.topLeftRadius, selfScale),
+        tapHighlightBorderRadius(_tapHighlightInformation.topRightRadius, selfScale),
+        tapHighlightBorderRadius(_tapHighlightInformation.bottomLeftRadius, selfScale),
+        tapHighlightBorderRadius(_tapHighlightInformation.bottomRightRadius, selfScale)
+    }];
 }
 
 - (CGRect)tapHighlightViewRect
 {
-    return [_highlightView frame];
+    return [_tapHighlightView frame];
 }
 
 - (UIGestureRecognizer *)imageAnalysisGestureRecognizer
@@ -2179,14 +2192,14 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!shouldPaintTapHighlight(_page->unobscuredContentRect()) && !_showDebugTapHighlightsForFastClicking)
         return;
 
-    if (!_highlightView) {
-        _highlightView = adoptNS([[_UIHighlightView alloc] initWithFrame:CGRectZero]);
-        [_highlightView setUserInteractionEnabled:NO];
-        [_highlightView setOpaque:NO];
-        [_highlightView setCornerRadius:minimumTapHighlightRadius];
+    if (!_tapHighlightView) {
+        _tapHighlightView = adoptNS([[WKTapHighlightView alloc] initWithFrame:CGRectZero]);
+        [_tapHighlightView setUserInteractionEnabled:NO];
+        [_tapHighlightView setOpaque:NO];
+        [_tapHighlightView setMinimumCornerRadius:minimumTapHighlightRadius];
     }
-    [_highlightView layer].opacity = 1;
-    [_interactionViewsContainerView addSubview:_highlightView.get()];
+    [_tapHighlightView setAlpha:1];
+    [_interactionViewsContainerView addSubview:_tapHighlightView.get()];
     [self _updateTapHighlight];
 }
 
@@ -2998,7 +3011,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_cancelInteraction
 {
     _isTapHighlightIDValid = NO;
-    [_highlightView removeFromSuperview];
+    [_tapHighlightView removeFromSuperview];
 }
 
 - (void)_finishInteraction
@@ -3009,18 +3022,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_fadeTapHighlightViewIfNeeded
 {
-    if (![_highlightView superview] || _isTapHighlightFading)
+    if (![_tapHighlightView superview] || _isTapHighlightFading)
         return;
 
     _isTapHighlightFading = YES;
     CGFloat tapHighlightFadeDuration = _showDebugTapHighlightsForFastClicking ? 0.25 : 0.1;
     [UIView animateWithDuration:tapHighlightFadeDuration
         animations:^{
-            [_highlightView layer].opacity = 0;
+            [_tapHighlightView setAlpha:0];
         }
         completion:^(BOOL finished) {
             if (finished)
-                [_highlightView removeFromSuperview];
+                [_tapHighlightView removeFromSuperview];
             _isTapHighlightFading = NO;
         }];
 }
@@ -4874,14 +4887,19 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
             return;
         }
 
-        strongSelf->_page->requestImageBitmap(context, [context, completion = WTFMove(completion), weakSelf = WTFMove(weakSelf)](auto&& imageData, auto& sourceMIMEType) mutable {
+        strongSelf->_page->requestImageBitmap(context, [context, completion = WTFMove(completion), weakSelf = WTFMove(weakSelf)](std::optional<WebKit::ShareableBitmapHandle>&& imageData, auto& sourceMIMEType) mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
                 completion();
                 return;
             }
 
-            auto imageBitmap = WebKit::ShareableBitmap::create(WTFMove(imageData));
+            if (!imageData) {
+                completion();
+                return;
+            }
+
+            auto imageBitmap = WebKit::ShareableBitmap::create(WTFMove(*imageData));
             if (!imageBitmap) {
                 completion();
                 return;
@@ -6108,6 +6126,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case WebCore::AutofillFieldName::Username:
     case WebCore::AutofillFieldName::WebAuthn:
         return UITextContentTypeUsername;
+    case WebCore::AutofillFieldName::OneTimeCode:
+        return UITextContentTypeOneTimeCode;
     case WebCore::AutofillFieldName::None:
     case WebCore::AutofillFieldName::NewPassword:
     case WebCore::AutofillFieldName::CurrentPassword:
@@ -7596,7 +7616,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     [self dismissAllInputViewControllers:NO];
 
     _shouldRestoreFirstResponderStatusAfterLosingFocus = self.isFirstResponder;
-    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    auto presentingViewController = self._wk_viewControllerForFullScreenPresentation;
 
     ASSERT(!_presentedFullScreenInputViewController);
 
@@ -8476,7 +8496,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
             // Prevent tap-and-hold and panning.
             if (shouldCancelAllTouches)
-                [UIApp _cancelAllTouches];
+                [UIApplication.sharedApplication _cancelAllTouches];
 
             return YES;
         }
@@ -10454,8 +10474,6 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 - (void)setUpPointerInteraction
 {
     _pointerInteraction = adoptNS([[UIPointerInteraction alloc] initWithDelegate:self]);
-    [_pointerInteraction _setPausesPointerUpdatesWhilePanning:NO];
-
     [self addInteraction:_pointerInteraction.get()];
 }
 
@@ -11024,7 +11042,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     _visualSearchPreviewImageBounds = imageBounds;
 
-    UIViewController *currentPresentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    auto currentPresentingViewController = self._wk_viewControllerForFullScreenPresentation;
     [currentPresentingViewController presentViewController:_visualSearchPreviewController.get() animated:YES completion:nil];
 }
 
@@ -11194,7 +11212,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)updateImageAnalysisForContextMenuPresentation:(CocoaImageAnalysis *)analysis
 {
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-    analysis.presentingViewControllerForMrcAction = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    analysis.presentingViewControllerForMrcAction = self._wk_viewControllerForFullScreenPresentation;
 #endif
 }
 

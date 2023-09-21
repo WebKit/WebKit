@@ -94,6 +94,8 @@ public:
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     void suspend() final;
     void resume() final;
+    GraphicsClient* graphicsClient() final;
+
 
     using EventTarget::weakPtrFactory;
     using EventTarget::WeakValueType;

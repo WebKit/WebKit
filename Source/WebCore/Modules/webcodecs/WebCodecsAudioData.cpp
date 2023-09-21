@@ -45,6 +45,9 @@ ExceptionOr<Ref<WebCodecsAudioData>> WebCodecsAudioData::create(ScriptExecutionC
     auto rawData = init.data.span();
     auto data = PlatformRawAudioData::create(WTFMove(rawData), init.format, init.sampleRate, init.timestamp, init.numberOfFrames, init.numberOfChannels);
 
+    if (!data)
+        return Exception { NotSupportedError, "AudioData creation failed"_s };
+
     return adoptRef(*new WebCodecsAudioData(context, WebCodecsAudioInternalData { WTFMove(data) }));
 }
 

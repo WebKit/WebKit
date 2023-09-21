@@ -33,7 +33,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUBufferDescriptor.h
     Modules/WebGPU/GPUBufferMapState.h
     Modules/WebGPU/GPUBufferUsage.h
-    Modules/WebGPU/GPUCanvasCompositingAlphaMode.h
+    Modules/WebGPU/GPUCanvasAlphaMode.h
     Modules/WebGPU/GPUCanvasConfiguration.h
     Modules/WebGPU/GPUColorDict.h
     Modules/WebGPU/GPUColorTargetState.h
@@ -49,7 +49,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUComputePassDescriptor.h
     Modules/WebGPU/GPUComputePassEncoder.h
     Modules/WebGPU/GPUComputePassTimestampLocation.h
-    Modules/WebGPU/GPUComputePassTimestampWrite.h
+    Modules/WebGPU/GPUComputePassTimestampWrites.h
     Modules/WebGPU/GPUComputePipeline.h
     Modules/WebGPU/GPUComputePipelineDescriptor.h
     Modules/WebGPU/GPUCullMode.h
@@ -107,7 +107,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPURenderPassEncoder.h
     Modules/WebGPU/GPURenderPassLayout.h
     Modules/WebGPU/GPURenderPassTimestampLocation.h
-    Modules/WebGPU/GPURenderPassTimestampWrite.h
+    Modules/WebGPU/GPURenderPassTimestampWrites.h
     Modules/WebGPU/GPURenderPipeline.h
     Modules/WebGPU/GPURenderPipelineDescriptor.h
     Modules/WebGPU/GPURequestAdapterOptions.h
@@ -193,7 +193,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPUBufferBindingType.h
     Modules/WebGPU/InternalAPI/WebGPUBufferDescriptor.h
     Modules/WebGPU/InternalAPI/WebGPUBufferUsage.h
-    Modules/WebGPU/InternalAPI/WebGPUCanvasCompositingAlphaMode.h
+    Modules/WebGPU/InternalAPI/WebGPUCanvasAlphaMode.h
     Modules/WebGPU/InternalAPI/WebGPUCanvasConfiguration.h
     Modules/WebGPU/InternalAPI/WebGPUColor.h
     Modules/WebGPU/InternalAPI/WebGPUColorTargetState.h
@@ -476,6 +476,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/MediaStreamTrack.h
     Modules/mediastream/MediaTrackCapabilities.h
     Modules/mediastream/MediaTrackConstraints.h
+    Modules/mediastream/MeteringMode.h
     Modules/mediastream/RTCController.h
     Modules/mediastream/RTCDataChannel.h
     Modules/mediastream/RTCDataChannelRemoteHandler.h
@@ -531,6 +532,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/push-api/PushDatabase.h
     Modules/push-api/PushMessageCrypto.h
     Modules/push-api/PushPermissionState.h
+    Modules/push-api/PushStrategy.h
     Modules/push-api/PushSubscriptionData.h
     Modules/push-api/PushSubscriptionIdentifier.h
 
@@ -635,6 +637,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/websockets/WebSocketIdentifier.h
     Modules/websockets/WebSocketHandshake.h
 
+    accessibility/AXCoreObject.h
     accessibility/AXGeometryManager.h
     accessibility/AXLogger.h
     accessibility/AXObjectCache.h
@@ -646,7 +649,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/AccessibilityMockObject.h
     accessibility/AccessibilityNodeObject.h
     accessibility/AccessibilityObject.h
-    accessibility/AccessibilityObjectInterface.h
     accessibility/AccessibilityRenderObject.h
     accessibility/AccessibilityScrollView.h
     accessibility/ForcedAccessibilityValue.h
@@ -1307,6 +1309,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/display/InlineDisplayLine.h
 
+    layout/formattingContexts/inline/ruby/RubyFormattingContext.h
+
     layout/formattingContexts/inline/text/TextUtil.h
 
     layout/integration/LayoutIntegrationBoxTree.h
@@ -1478,6 +1482,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FrameView.h
     page/GlobalFrameIdentifier.h
     page/GlobalWindowIdentifier.h
+    page/HandleMouseEventResult.h
     page/ImageAnalysisQueue.h
     page/InteractionRegion.h
     page/LayoutMilestone.h
@@ -1518,6 +1523,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteFrame.h
     page/RemoteFrameClient.h
     page/RemoteFrameView.h
+    page/RemoteMouseEventData.h
     page/RenderingUpdateScheduler.h
     page/ScreenOrientationLockType.h
     page/ScreenOrientationType.h
@@ -1942,6 +1948,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Model.h
     platform/graphics/NativeImage.h
     platform/graphics/NullGraphicsContext.h
+    platform/graphics/NullImageBufferBackend.h
     platform/graphics/Path.h
     platform/graphics/PathElement.h
     platform/graphics/PathImpl.h
@@ -2257,7 +2264,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/EventRegion.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
-    rendering/HighlightData.h
     rendering/HitTestLocation.h
     rendering/HitTestRequest.h
     rendering/HitTestResult.h
@@ -2293,6 +2299,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderFlexibleBox.h
     rendering/RenderFrame.h
     rendering/RenderFrameBase.h
+    rendering/RenderHighlight.h
     rendering/RenderImage.h
     rendering/RenderImageResource.h
     rendering/RenderInline.h
@@ -2310,7 +2317,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderOverflow.h
     rendering/RenderPtr.h
     rendering/RenderReplaced.h
-    rendering/RenderSelectionInfo.h
+    rendering/RenderSelection.h
+    rendering/RenderSelectionGeometry.h
     rendering/RenderText.h
     rendering/RenderTextControl.h
     rendering/RenderTextLineBoxes.h
@@ -2321,7 +2329,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderVideo.h
     rendering/RenderView.h
     rendering/RenderWidget.h
-    rendering/SelectionRangeData.h
     rendering/TextBoxSelectableRange.h
 
     rendering/line/LineWidth.h

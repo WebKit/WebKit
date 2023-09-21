@@ -81,8 +81,8 @@ public:
         return adoptRef(*new PointerEvent);
     }
 
-    static RefPtr<PointerEvent> create(short button, const MouseEvent&, PointerID, const String& pointerType);
-    static Ref<PointerEvent> create(const AtomString& type, short button, const MouseEvent&, PointerID, const String& pointerType);
+    static RefPtr<PointerEvent> create(MouseButton, const MouseEvent&, PointerID, const String& pointerType);
+    static Ref<PointerEvent> create(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType);
     static Ref<PointerEvent> create(const AtomString& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
@@ -121,7 +121,7 @@ private:
     static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
     static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
 #if PLATFORM(WPE)
-    static short buttonForType(const AtomString& type) { return type == eventNames().pointermoveEvent ? -1 : 0; }
+    static MouseButton buttonForType(const AtomString& type) { return type == eventNames().pointermoveEvent ? MouseButton::PointerMove : MouseButton::Left; }
     static unsigned short buttonsForType(const AtomString& type)
     {
         // We have contact with the touch surface for most events except when we've released the touch or canceled it.
@@ -132,7 +132,7 @@ private:
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&);
-    PointerEvent(const AtomString& type, short button, const MouseEvent&, PointerID, const String& pointerType);
+    PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType);
     PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
     PointerEvent(const AtomString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });

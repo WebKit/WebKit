@@ -219,12 +219,12 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
     // FIXME: This will produce unexpected results for a selection that starts just before a
     // table and ends inside the first cell, selectionForParagraphIteration should probably
     // be renamed and deployed inside setEndingSelection().
-    Node* selectionNode = endingSelection().start().deprecatedNode();
-    Node* listChildNode = enclosingListChild(selectionNode);
+    auto selectionNode = endingSelection().start().protectedDeprecatedNode();
+    RefPtr listChildNode = enclosingListChild(selectionNode.get());
     bool switchListType = false;
     if (listChildNode) {
         // Remove the list child.
-        RefPtr<HTMLElement> listNode = enclosingList(listChildNode);
+        RefPtr<HTMLElement> listNode = enclosingList(listChildNode.get());
         if (!listNode) {
             RefPtr<HTMLElement> listElement = fixOrphanedListChild(*listChildNode);
             if (!listElement || !listElement->isConnected())
@@ -280,7 +280,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
             return;
         }
         
-        unlistifyParagraph(endingSelection().visibleStart(), *listNode, listChildNode);
+        unlistifyParagraph(endingSelection().visibleStart(), *listNode, listChildNode.get());
     }
 
     if (!listChildNode || switchListType || forceCreateList)
@@ -353,7 +353,7 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
 
 static RefPtr<Element> adjacentEnclosingList(const VisiblePosition& pos, const VisiblePosition& adjacentPos, const QualifiedName& listTag)
 {
-    RefPtr<Element> listNode = outermostEnclosingList(adjacentPos.deepEquivalent().deprecatedNode());
+    RefPtr<Element> listNode = outermostEnclosingList(adjacentPos.deepEquivalent().protectedDeprecatedNode().get());
 
     if (!listNode)
         return nullptr;
@@ -364,7 +364,7 @@ static RefPtr<Element> adjacentEnclosingList(const VisiblePosition& pos, const V
     if (!listNode->hasTagName(listTag)
         || listNode->contains(pos.deepEquivalent().deprecatedNode())
         || previousCell != currentCell
-        || enclosingList(listNode.get()) != enclosingList(pos.deepEquivalent().deprecatedNode()))
+        || enclosingList(listNode.get()) != enclosingList(pos.deepEquivalent().protectedDeprecatedNode().get()))
         return nullptr;
 
     return listNode;

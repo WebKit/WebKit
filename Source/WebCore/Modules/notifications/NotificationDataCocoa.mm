@@ -28,6 +28,7 @@
 
 #import "NotificationDirection.h"
 
+static NSString * const WebNotificationDefaultActionURLKey = @"WebNotificationDefaultActionURLKey";
 static NSString * const WebNotificationTitleKey = @"WebNotificationTitleKey";
 static NSString * const WebNotificationBodyKey = @"WebNotificationBodyKey";
 static NSString * const WebNotificationIconURLKey = @"WebNotificationIconURLKey";
@@ -54,6 +55,7 @@ static std::optional<bool> nsValueToOptionalBool(id value)
 
 std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *dictionary)
 {
+    NSString *defaultActionURL = dictionary[WebNotificationDefaultActionURLKey];
     NSString *title = dictionary[WebNotificationTitleKey];
     NSString *body = dictionary[WebNotificationBodyKey];
     NSString *iconURL = dictionary[WebNotificationIconURLKey];
@@ -87,13 +89,14 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
         return std::nullopt;
     }
 
-    NotificationData data { title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, { static_cast<const uint8_t*>(notificationData.bytes), notificationData.length }, nsValueToOptionalBool(dictionary[WebNotificationSilentKey]) };
+    NotificationData data { URL { String { defaultActionURL } }, title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, { static_cast<const uint8_t*>(notificationData.bytes), notificationData.length }, nsValueToOptionalBool(dictionary[WebNotificationSilentKey]) };
     return WTFMove(data);
 }
 
 NSDictionary *NotificationData::dictionaryRepresentation() const
 {
     NSMutableDictionary *result = @{
+        WebNotificationDefaultActionURLKey : (NSString *)defaultActionURL.string(),
         WebNotificationTitleKey : (NSString *)title,
         WebNotificationBodyKey : (NSString *)body,
         WebNotificationIconURLKey : (NSString *)iconURL,

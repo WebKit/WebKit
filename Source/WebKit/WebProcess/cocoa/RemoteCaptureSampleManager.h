@@ -76,7 +76,7 @@ private:
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
     void videoFrameAvailableCV(WebCore::RealtimeMediaSourceIdentifier, RetainPtr<CVPixelBufferRef>&&, WebCore::VideoFrameRotation, bool mirrored, MediaTime, WebCore::VideoFrameTimeMetadata);
 
-    void setConnection(IPC::Connection*);
+    void setConnection(RefPtr<IPC::Connection>&&);
 
     class RemoteAudio {
         WTF_MAKE_FAST_ALLOCATED;

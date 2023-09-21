@@ -31,7 +31,7 @@ messages -> WebPageProxy {
     MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::UserData userData)
 
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
-    DidReceiveEvent(enum:int8_t WebKit::WebEventType eventType, bool handled)
+    DidReceiveEvent(enum:uint8_t WebKit::WebEventType eventType, bool handled)
     SetCursor(WebCore::Cursor cursor)
     SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     SetStatusText(String statusText)
@@ -309,7 +309,7 @@ messages -> WebPageProxy {
     SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::Handle imageHandle, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::Handle archiveHandle, String originIdentifier)
 #endif
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
-    StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, WebKit::ShareableBitmap::Handle dragImage, WebCore::IntPoint dragImageHotspot)
+    StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, std::optional<WebKit::ShareableBitmap::Handle> dragImage, WebCore::IntPoint dragImageHotspot)
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -627,4 +627,6 @@ messages -> WebPageProxy {
 
     DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
     BroadcastFrameRemovalToOtherProcesses(WebCore::FrameIdentifier frameID)
+
+    DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 }

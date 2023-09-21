@@ -368,10 +368,10 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
         return;
 
     auto handle = selectionSnapshot->createHandle();
-    if (handle.isNull())
+    if (!handle)
         return;
 
-    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(selectionSnapshot->parameters(), WTFMove(handle), matchIndex));
+    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(selectionSnapshot->parameters(), WTFMove(*handle), matchIndex));
 }
 
 void FindController::selectFindMatch(uint32_t matchIndex)

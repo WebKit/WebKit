@@ -198,6 +198,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRayValue>(*this));
     case RectClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRectValue>(*this));
+    case RectShapeClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRectShapeValue>(*this));
     case ReflectClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSReflectValue>(*this));
     case ShadowClass:

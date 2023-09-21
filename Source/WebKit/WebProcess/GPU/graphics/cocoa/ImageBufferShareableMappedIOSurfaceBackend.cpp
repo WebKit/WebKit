@@ -80,12 +80,12 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), 0, nullptr } };
 }
 
-ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
+std::optional<ImageBufferBackendHandle> ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
 {
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
 
-RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(BackingStoreCopy copyBehavior)
+RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage()
 {
     auto currentSeed = m_surface->seed();
 
@@ -94,7 +94,7 @@ RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(
     if (std::exchange(m_lastSeedWhenCopyingImage, currentSeed) != currentSeed)
         invalidateCachedNativeImage();
 
-    return ImageBufferIOSurfaceBackend::copyNativeImage(copyBehavior);
+    return ImageBufferIOSurfaceBackend::copyNativeImage();
 }
 
 String ImageBufferShareableMappedIOSurfaceBackend::debugDescription() const

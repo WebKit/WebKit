@@ -55,7 +55,7 @@ layer at (0.89,2.92) size 6x0
       chunk 1 text run 1 at (4.75,3.20) startOffset 0 endOffset 1 width 0.08: " "
     RenderSVGTSpan {tspan} at (0,0) size 2x1
       RenderSVGInlineText {#text} at (3,0) size 1x1
-        chunk 1 text run 1 at (4.82,3.20) startOffset 0 endOffset 8 width 0.97: "posture,"
+        chunk 1 text run 1 at (4.82,3.20) startOffset 0 endOffset 8 width 0.98: "posture,"
     RenderSVGInlineText {#text} at (4,0) size 1x1
       chunk 1 text run 1 at (5.80,3.20) startOffset 0 endOffset 5 width 0.58: " and "
     RenderSVGTSpan {tspan} at (0,0) size 2x1
@@ -87,7 +87,7 @@ layer at (0.89,4.73) size 6x1
         chunk 1 text run 1 at (5.74,5.00) startOffset 0 endOffset 9 width 1.06: "overline,"
     RenderSVGInlineText {#text} at (5,0) size 1x1
       chunk 1 text run 1 at (6.80,5.00) startOffset 0 endOffset 4 width 0.51: " and"
-layer at (0.89,5.13) size 6x0
+layer at (0.89,5.11) size 6x0
   RenderSVGText {text} at (0,5) size 7x2 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 2x1
       RenderSVGInlineText {#text} at (0,0) size 2x1
@@ -95,12 +95,12 @@ layer at (0.89,5.13) size 6x0
     RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGTSpan {tspan} at (0,0) size 2x1
       RenderSVGInlineText {#text} at (1,0) size 1x1
-        chunk 1 text run 1 at (2.75,5.40) startOffset 0 endOffset 5 width 0.47: "Super"
+        chunk 1 text run 1 at (2.75,5.30) startOffset 0 endOffset 5 width 0.47: "Super"
     RenderSVGInlineText {#text} at (2,0) size 1x1
       chunk 1 text run 1 at (3.22,5.40) startOffset 0 endOffset 5 width 0.58: " and "
     RenderSVGTSpan {tspan} at (0,0) size 2x1
       RenderSVGInlineText {#text} at (2,0) size 1x1
-        chunk 1 text run 1 at (3.80,5.40) startOffset 0 endOffset 3 width 0.28: "sub"
+        chunk 1 text run 1 at (3.80,5.50) startOffset 0 endOffset 3 width 0.28: "sub"
     RenderSVGInlineText {#text} at (3,0) size 3x1
       chunk 1 text run 1 at (4.08,5.40) startOffset 0 endOffset 23 width 2.53: " scripts are available."
 layer at (0.89,5.92) size 7x0
@@ -144,11 +144,11 @@ layer at (0.89,7.23) size 6x1
       RenderSVGInlineText {#text} at (0,0) size 3x1
         chunk 1 text run 1 at (0.90,7.90) startOffset 0 endOffset 21 width 2.54: "and placed on a path."
 layer at (0,-0.73) size 3x1 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 2.61x0.94
+  RenderSVGTransformableContainer {g} at (0,0) size 2.58x0.94
 layer at (0,-0.73) size 3x1 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,0) size 3x1 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 3x1
-      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 2.60: "Shadow"
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 2.58: "Shadow"
 layer at (0,-0.73) size 3x1 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,0) size 3x1 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 3x1

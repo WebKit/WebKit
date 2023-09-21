@@ -20,8 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-header: "WebPushDaemonConnectionConfiguration.h"
-[CustomHeader] struct WebKit::WebPushD::WebPushDaemonConnectionConfiguration {
+webkit_platform_headers: "ArgumentCoders.h" "WebPushDaemonConnectionConfiguration.h"
+
+[CustomHeader, WebKitPlatform] struct WebKit::WebPushD::WebPushDaemonConnectionConfiguration {
     bool useMockBundlesForTesting;
     std::optional<Vector<uint8_t>> hostAppAuditTokenData;
     String pushPartitionString;

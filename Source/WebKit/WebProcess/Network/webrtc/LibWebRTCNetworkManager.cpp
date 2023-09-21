@@ -39,7 +39,7 @@ using namespace WebCore;
 
 LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExecutionContextIdentifier identifier)
 {
-    auto* document = Document::allDocumentsMap().get(identifier);
+    RefPtr document = Document::allDocumentsMap().get(identifier);
     if (!document)
         return nullptr;
 

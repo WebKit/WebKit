@@ -189,8 +189,15 @@ void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 
     resetSP();
 
+#if USE(JSVALUE32_64)
     emitGetVirtualRegister(bytecode.m_thisValue, thisValueJSR);
     emitGetVirtualRegisterPayload(bytecode.m_scope, scopeGPR);
+#else
+    emitGetVirtualRegisters({
+        { bytecode.m_thisValue, thisValueJSR },
+        { bytecode.m_scope, JSValueRegs { scopeGPR } }
+    });
+#endif
     callOperation(bytecode.m_ecmaMode.isStrict() ? operationCallDirectEvalStrict : operationCallDirectEvalSloppy, calleeFrameGPR, scopeGPR, thisValueJSR);
     addSlowCase(branchIfEmpty(returnValueJSR));
 
@@ -472,6 +479,7 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
     addSlowCase();
     m_getByIds.append(gen);
 
+    setFastPathResumePoint();
     emitValueProfilingSite(bytecode, resultJSR);
     emitPutVirtualRegister(bytecode.m_next, resultJSR);
 
@@ -498,28 +506,14 @@ void JIT::emitSlow_op_iterator_open(const JSInstruction* instruction, Vector<Slo
     notObject.append(branchIfNotCell(baseJSR));
     notObject.append(branchIfNotObject(baseJSR.payloadGPR()));
 
-    VirtualRegister nextVReg = bytecode.m_next;
-
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-
-    Label coldPathBegin = label();
-
-    using SlowOperation = decltype(operationGetByIdOptimize);
-    loadGlobalObject(globalObjectGPR);
-    callOperationWithProfile<SlowOperation>(
-        bytecode,
-        Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
-        nextVReg,
-        baseJSR, globalObjectGPR, stubInfoGPR);
-    gen.reportSlowPathCall(coldPathBegin, Call());
-
-    auto done = jump();
+    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
+    jump().linkTo(fastPathResumePoint(), this);
 
     notObject.link(this);
     loadGlobalObject(argumentGPR0);
     callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
-
-    done.link(this);
 }
 
 void JIT::emit_op_iterator_next(const JSInstruction* instruction)
@@ -536,7 +530,6 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
-    using BaselineJITRegisters::GetById::dontClobberJSR;
     using BaselineJITRegisters::GetById::stubInfoGPR;
 
     constexpr JSValueRegs nextJSR = baseJSR; // Used as temporary register
@@ -557,20 +550,16 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     // call result ({ done, value } JSObject) in regT0  (regT1/regT0 or 32-bit)
     static_assert(noOverlap(resultJSR, stubInfoGPR));
 
-    constexpr JSValueRegs iterCallResultJSR = dontClobberJSR;
     moveValueRegs(returnValueJSR, baseJSR);
-    moveValueRegs(returnValueJSR, iterCallResultJSR);
 
+    addSlowCase(branchIfNotCell(baseJSR));
+    addSlowCase(branchIfNotObject(baseJSR.payloadGPR()));
     {
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         loadConstant(stubInfoIndex, stubInfoGPR);
 
-        emitJumpSlowCaseIfNotJSCell(baseJSR);
-
-        auto preservedRegs = RegisterSetBuilder::stubUnavailableRegisters();
-        preservedRegs.add(iterCallResultJSR, IgnoreVectors);
         JITGetByIdGenerator gen(
-            nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
+            nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSetBuilder::stubUnavailableRegisters(),
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
 
         gen.generateBaselineDataICFastPath(*this);
@@ -578,13 +567,14 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         addSlowCase();
         m_getByIds.append(gen);
 
-        emitValueProfilingSite(bytecode, resultJSR);
-        emitPutVirtualRegister(bytecode.m_done, resultJSR);
+        BytecodeIndex bytecodeIndex = m_bytecodeIndex;
         advanceToNextCheckpoint();
+        emitValueProfilingSite(bytecode, bytecodeIndex, resultJSR);
+        emitPutVirtualRegister(bytecode.m_done, resultJSR);
     }
 
     {
-        auto usedRegisters = RegisterSetBuilder(resultJSR, iterCallResultJSR).buildAndValidate();
+        auto usedRegisters = RegisterSetBuilder(resultJSR).buildAndValidate();
         ScratchRegisterAllocator scratchAllocator(usedRegisters);
         GPRReg scratch1 = scratchAllocator.allocateScratchGPR();
         GPRReg scratch2 = scratchAllocator.allocateScratchGPR();
@@ -593,7 +583,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         loadGlobalObject(globalGPR);
         JumpList iterationDone = branchIfTruthy(vm(), resultJSR, scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, globalGPR);
 
-        moveValueRegs(iterCallResultJSR, baseJSR);
+        emitGetVirtualRegister(bytecode.m_value, baseJSR);
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         loadConstant(stubInfoIndex, stubInfoGPR);
 
@@ -606,6 +596,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         addSlowCase();
         m_getByIds.append(gen);
 
+        setFastPathResumePoint();
         emitValueProfilingSite(bytecode, resultJSR);
         emitPutVirtualRegister(bytecode.m_value, resultJSR);
 
@@ -628,57 +619,24 @@ void JIT::emitSlow_op_iterator_next(const JSInstruction* instruction, Vector<Slo
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::globalObjectGPR;
-    using BaselineJITRegisters::GetById::dontClobberJSR;
     using BaselineJITRegisters::GetById::stubInfoGPR;
 
-    constexpr JSValueRegs iterCallResultJSR = dontClobberJSR;
+    linkAllSlowCases(iter);
+    loadGlobalObject(argumentGPR0);
+    callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
 
     {
-        VirtualRegister doneVReg = bytecode.m_done;
-
-        linkAllSlowCases(iter);
-        JumpList notObject;
-        notObject.append(branchIfNotCell(baseJSR));
-
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-        
-        Label coldPathBegin = label();
-
-        notObject.append(branchIfNotObject(baseJSR.payloadGPR()));
-
-        using SlowOperation = decltype(operationGetByIdOptimize);
-        loadGlobalObject(globalObjectGPR);
-        callOperationWithProfile<SlowOperation>(
-            bytecode,
-            Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
-            doneVReg,
-            baseJSR, globalObjectGPR, stubInfoGPR);
-        gen.reportSlowPathCall(coldPathBegin, Call());
-
-        emitGetVirtualRegister(bytecode.m_value, iterCallResultJSR);
+        emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+        static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
         emitJumpSlowToHotForCheckpoint(jump());
-
-        notObject.link(this);
-        loadGlobalObject(argumentGPR0);
-        callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
     }
 
     {
         linkAllSlowCases(iter);
-        VirtualRegister valueVReg = bytecode.m_value;
-
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-
-        Label coldPathBegin = label();
-
-        using SlowOperation = decltype(operationGetByIdOptimize);
-        loadGlobalObject(globalObjectGPR);
-        callOperationWithProfile<SlowOperation>(
-            bytecode,
-            Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
-            valueVReg,
-            baseJSR, globalObjectGPR, stubInfoGPR);
-        gen.reportSlowPathCall(coldPathBegin, Call());
+        emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+        static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
     }
 }
 

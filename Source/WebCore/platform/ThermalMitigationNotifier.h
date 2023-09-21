@@ -43,6 +43,7 @@ public:
     WEBCORE_EXPORT ~ThermalMitigationNotifier();
 
     WEBCORE_EXPORT bool thermalMitigationEnabled() const;
+    WEBCORE_EXPORT static bool isThermalMitigationEnabled();
 
 private:
 #if HAVE(APPLE_THERMAL_MITIGATION_SUPPORT)

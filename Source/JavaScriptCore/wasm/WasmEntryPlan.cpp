@@ -121,6 +121,7 @@ void EntryPlan::prepare()
 
     m_unlinkedWasmToWasmCalls.resize(functions.size());
 
+#if ENABLE(JIT)
     for (unsigned importIndex = 0; importIndex < m_moduleInformation->imports.size(); ++importIndex) {
         Import* import = &m_moduleInformation->imports[importIndex];
         if (import->kind != ExternalKind::Function)
@@ -139,6 +140,7 @@ void EntryPlan::prepare()
         }
         m_wasmToWasmExitStubs.uncheckedAppend(binding.value());
     }
+#endif
 
     const uint32_t importFunctionCount = m_moduleInformation->importFunctionCount();
     for (const auto& exp : m_moduleInformation->exports) {

@@ -104,7 +104,7 @@ void CachedSubimage::draw(GraphicsContext& context, const FloatRect& destination
     auto scaleFactor = destinationRect.size() / sourceRect.size();
     sourceRectScaled.scale(scaleFactor * context.scaleFactor());
 
-    m_imageBuffer->draw(context, destinationRect, sourceRectScaled, { });
+    context.drawImageBuffer(m_imageBuffer.get(), destinationRect, sourceRectScaled, { });
 }
 
 } // namespace WebCore

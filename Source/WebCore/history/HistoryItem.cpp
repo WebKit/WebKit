@@ -49,34 +49,14 @@ int64_t HistoryItem::generateSequenceNumber()
     return ++next;
 }
 
-static void defaultNotifyHistoryItemChanged(HistoryItem&)
-{
-}
-
-void (*notifyHistoryItemChanged)(HistoryItem&) = defaultNotifyHistoryItemChanged;
-
-HistoryItem::HistoryItem()
-    : HistoryItem({ }, { })
-{
-}
-
-HistoryItem::HistoryItem(const String& urlString, const String& title)
-    : HistoryItem(urlString, title, { })
-{
-}
-
-HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle)
-    : HistoryItem(urlString, title, alternateTitle, BackForwardItemIdentifier::generate())
-{
-}
-
-HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle, BackForwardItemIdentifier BackForwardItemIdentifier)
+HistoryItem::HistoryItem(Client& client, const String& urlString, const String& title, const String& alternateTitle, std::optional<BackForwardItemIdentifier> identifier)
     : m_urlString(urlString)
     , m_originalURLString(urlString)
     , m_title(title)
     , m_displayTitle(alternateTitle)
     , m_pruningReason(PruningReason::None)
-    , m_identifier(BackForwardItemIdentifier)
+    , m_identifier(identifier ? *identifier : BackForwardItemIdentifier::generate())
+    , m_client(client)
 {
 }
 
@@ -85,7 +65,7 @@ HistoryItem::~HistoryItem()
     ASSERT(!m_cachedPage);
 }
 
-inline HistoryItem::HistoryItem(const HistoryItem& item)
+HistoryItem::HistoryItem(const HistoryItem& item)
     : RefCounted<HistoryItem>()
     , m_urlString(item.m_urlString)
     , m_originalURLString(item.m_originalURLString)
@@ -109,6 +89,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_scaleIsInitial(item.m_scaleIsInitial)
 #endif
     , m_identifier(item.m_identifier)
+    , m_client(item.m_client)
 {
 }
 
@@ -477,7 +458,7 @@ bool HistoryItem::isCurrentDocument(Document& document) const
 
 void HistoryItem::notifyChanged()
 {
-    notifyHistoryItemChanged(*this);
+    m_client->historyItemChanged(*this);
 }
 
 #ifndef NDEBUG

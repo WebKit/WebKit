@@ -92,6 +92,8 @@
 
 - (CGFloat)pageScaleForMenuItemTag:(NSInteger)tag;
 
+- (void)updateTitleForBadgeChange;
+
 @property (nonatomic, assign, getter=isEditable) BOOL editable;
 - (IBAction)toggleEditable:(id)sender;
 

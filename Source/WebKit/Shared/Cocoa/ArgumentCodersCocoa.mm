@@ -180,8 +180,8 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    auto selfPtr = adoptNS([super initWithString:@""]);
-    if (!selfPtr)
+    self = [super initWithString:@""];
+    if (!self)
         return nil;
 
     NSUInteger length;
@@ -194,7 +194,7 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
     if (!m_wrappedURL)
         m_wrappedURL = [NSURL URLWithString:@""];
 
-    return selfPtr.leakRef();
+    return self;
 }
 
 - (instancetype)initWithURL:(NSURL *)url
@@ -231,14 +231,14 @@ static constexpr NSString *innerColorKey = @"WK.CocoaColor";
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    auto selfPtr = adoptNS([super init]);
-    if (!selfPtr)
+    self = [super init];
+    if (!self)
         return nil;
 
     RetainPtr<WebCore::CocoaColor> color = static_cast<WebCore::CocoaColor *>([coder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:innerColorKey]);
     m_wrappedColor = color.get().CGColor;
 
-    return selfPtr.leakRef();
+    return self;
 }
 
 - (instancetype)initWithCGColor:(CGColorRef)color

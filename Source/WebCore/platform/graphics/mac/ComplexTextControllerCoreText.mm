@@ -251,11 +251,11 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                     runFont = FontCache::forCurrentThread().fontForPlatformData(runFontPlatformData).ptr();
                 }
                 if (m_fallbackFonts && runFont != &m_font.primaryFont())
-                    m_fallbackFonts->add(runFont);
+                    m_fallbackFonts->add(*runFont);
             }
         }
         if (m_fallbackFonts && runFont != &m_font.primaryFont())
-            m_fallbackFonts->add(font);
+            m_fallbackFonts->add(*font);
 
         LOG_WITH_STREAM(TextShaping, stream << "Run " << r << ":");
 

@@ -187,73 +187,24 @@
 
 <script src="resources/grid-item-column-row-parsing-utils.js"></script>
 <script>
-  testColumnRowCSSParsing("GridUniqueColumnB", "b / b", "auto / auto");
-  testColumnRowCSSParsing("GridUniqueRowE", "auto / auto", "e / e");
-  testColumnRowCSSParsing("GridUniqueColumnBStart", "b-start / b-start", "auto / auto");
-  testColumnRowCSSParsing("GridUniqueRowGStart", "auto / auto", "g-start / g-start");
+  testColumnCSSParsing("GridUniqueColumnBD", "b / d"); 
+  testRowCSSParsing("GridUniqueRowGH", "g / h");
 
-  testColumnRowCSSParsing("GridUniqueColumnBD", "b / d", "auto / auto");
-  testColumnRowCSSParsing("GridUniqueRowGH", "auto / auto", "g / h");
-  testColumnRowCSSParsing("GridUniqueColumnCRowF", "c / c", "f / f");
+  testColumnCSSParsing("GridUniqueColumnBInteger", "b / 4");
+  testRowCSSParsing("GridUniqueRowIntegerH", "3 / h");
 
-  testColumnRowCSSParsing("GridUniqueColumnBInteger", "b / 4", "auto / auto");
-  testColumnRowCSSParsing("GridUniqueRowIntegerH", "auto / auto", "3 / h");
-  testColumnRowCSSParsing("GridUniqueColumnIntegerRowG", "2 / auto", "g / g");
-  testColumnRowCSSParsing("GridUniqueColumnARowInteger", "a / a", "2 / auto");
+  testColumnCSSParsing("GridAreasNamedLineAfterColumnStartAStart", "a-start / auto");
+  testRowCSSParsing("GridAreasNamedLineAfterRowStartCStart", "c-start / auto");
 
-  testColumnRowCSSParsing("GridUniqueColumnCStart", "c-start / c-start", "auto / auto");
-  testColumnRowCSSParsing("GridUniqueRowFStart", "auto / auto", "f-start / f-start");
-  testColumnRowCSSParsing("GridUniqueColumnCStartRowFEnd", "c-start / c-start", "f-end / f-end");
-  testColumnRowCSSParsing("GridUniqueColumnBEndRowHStart", "b-end / b-end", "h-start / h-start");
+  testColumnCSSParsing("GridAreasNamedLineBeforeColumnStartDStart", "d-start / auto");
+  testRowCSSParsing("GridAreasNamedLineBeforeRowStartDStart", "d-start / auto");
 
-  testColumnRowCSSParsing("GridAreasNoNamesColumnAStartRowDStart", "a-start / a-start", "d-start / d-start");
-  testColumnRowCSSParsing("GridAreasNoNamesColumnAStartRowD", "a-start / a-start", "d / d");
-  testColumnRowCSSParsing("GridAreasNoNamesColumnDStartRowCStart", "d-start / d-start", "c-start / c-start");
+  testColumnCSSParsing("GridAreasNoNamesColumnAAStartRowDStart", "a / a-start");
+  testColumnCSSParsing("GridAreasNoNamesColumnDDStartRowCStart", "d / d-start");
+  testRowCSSParsing("GridAreasNoNamesColumnCRowAAStart", "a / a-start");
+  testRowCSSParsing("GridAreasNoNamesColumnDRowCCStart", "c / c-start");
 
-  testColumnRowCSSParsing("GridAreasNoNamesColumnD", "d / d", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNoNamesRowD", "auto / auto", "d / d");
-  testColumnRowCSSParsing("GridAreasNoNamesColumnC", "c / c", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNoNamesRowC", "auto / auto", "c / c");
-
-  testColumnRowCSSParsing("GridAreasNoNamesColumnA", "a / a", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNoNamesRowA", "auto / auto", "a / a");
-  testColumnRowCSSParsing("GridAreasNoNamesColumnARowA", "a / a", "a / a");
-
-  testColumnRowCSSParsing("GridAreasNamedLineAfterColumnD", "d / d", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNamedLineAfterRowD", "auto / auto", "d / d");
-  testColumnRowCSSParsing("GridAreasNamedLineAfterColumnC", "c / c", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNamedLineAfterRowC", "auto / auto", "c / c");
-
-  testColumnRowCSSParsing("GridAreasNamedLineAfterColumnStartAStart", "a-start / auto", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNamedLineAfterRowStartCStart", "auto / auto", "c-start / auto");
-
-  testColumnRowCSSParsing("GridAreasNamedLineAfterColumnA", "a / a", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNamedLineAfterColumnARowD", "a / a", "d / d");
-
-  testColumnRowCSSParsing("GridAreasNamedLineBeforeColumnD", "d / d", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNamedLineBeforeRowD", "auto / auto", "d / d");
-  testColumnRowCSSParsing("GridAreasNamedLineBeforeColumnC", "c / c", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNamedLineBeforeRowC", "auto / auto", "c / c");
-
-  testColumnRowCSSParsing("GridAreasNamedLineBeforeColumnStartDStart", "d-start / auto", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNamedLineBeforeRowStartDStart", "auto / auto", "d-start / auto");
-
-  testColumnRowCSSParsing("GridAreasNamedLineBeforeColumnA", "a / a", "auto / auto");
-  testColumnRowCSSParsing("GridAreasNamedLineBeforeColumnARowD", "a / a", "d / d");
-
-  testColumnRowCSSParsing("GridAreasNoNamesColumnAAStartRowDStart", "a / a-start", "d-start / d-start");
-  testColumnRowCSSParsing("GridAreasNoNamesColumnDDStartRowCStart", "d / d-start", "c-start / c-start");
-  testColumnRowCSSParsing("GridAreasNoNamesColumnCRowAAStart", "c / c", "a / a-start");
-  testColumnRowCSSParsing("GridAreasNoNamesColumnDRowCCStart", "d / d", "c / c-start");
-
-  testColumnRowCSSParsing("GridAreasEnd", "a / a", "auto / auto");
-  testColumnRowCSSParsing("GridAreasEndColumnARowC", "a / a", "c / c");
-  testColumnRowCSSParsing("GridAreasEndRowD", "auto / auto", "d / d");
-  testColumnRowCSSParsing("GridAreasEndColumnARowD", "a / a", "d / d");
-
-  testColumnRowCSSParsing("GridAreasRepeatColumnDRowC", "d / d", "c / c");
   testColumnRowCSSParsing("GridAreasRepeatColumnDStartDEndRowCStartCEnd", "d-start / d-end", "c-start / c-end");
-  testColumnRowCSSParsing("GridAreasRepeatColumnCRowD", "c / c", "d / d");
 </script>
 </body>
 </html>

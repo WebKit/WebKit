@@ -67,6 +67,7 @@ public:
     StringView(const LChar*, unsigned length);
     StringView(const UChar*, unsigned length);
     StringView(const char*, unsigned length);
+    StringView(const void*, unsigned length, bool is8bit);
     StringView(ASCIILiteral);
     ALWAYS_INLINE StringView(std::span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
     ALWAYS_INLINE StringView(std::span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
@@ -94,6 +95,7 @@ public:
     bool is8Bit() const;
     const LChar* characters8() const;
     const UChar* characters16() const;
+    const void* rawCharacters() const { return m_characters; }
     std::span<const LChar> span8() const { return { characters8(), length() }; }
     std::span<const UChar> span16() const { return { characters16(), length() }; }
 
@@ -392,6 +394,13 @@ inline StringView::StringView(const char* characters)
 inline StringView::StringView(const char* characters, unsigned length)
 {
     initialize(reinterpret_cast<const LChar*>(characters), length);
+}
+
+inline StringView::StringView(const void* characters, unsigned length, bool is8bit)
+    : m_characters(characters)
+    , m_length(length)
+    , m_is8Bit(is8bit)
+{
 }
 
 inline StringView::StringView(ASCIILiteral string)

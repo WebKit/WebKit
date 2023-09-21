@@ -54,6 +54,7 @@ private:
     void applyProperties(int firstProperty, int lastProperty);
     void applyDeferredProperties();
     void applyCustomProperties();
+    void applyCustomPropertyImpl(const AtomString&, const PropertyCascade::Property&);
 
     enum CustomPropertyCycleTracking { Enabled = 0, Disabled };
     template<CustomPropertyCycleTracking trackCycles>

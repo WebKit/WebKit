@@ -50,7 +50,7 @@ public:
     bool operator==(const SVGRenderStyle&) const;
 
     // Initial values for all the properties
-    static AlignmentBaseline initialAlignmentBaseline() { return AlignmentBaseline::Auto; }
+    static AlignmentBaseline initialAlignmentBaseline() { return AlignmentBaseline::Baseline; }
     static DominantBaseline initialDominantBaseline() { return DominantBaseline::Auto; }
     static BaselineShift initialBaselineShift() { return BaselineShift::Baseline; }
     static VectorEffect initialVectorEffect() { return VectorEffect::None; }

@@ -36,11 +36,11 @@ class CSSStyleDeclaration;
 class DOMSetAdapter;
 class PropertySetCSSStyleDeclaration;
 
-class HighlightRangeData : public RefCounted<HighlightRangeData>, public CanMakeWeakPtr<HighlightRangeData> {
+class HighlightRange : public RefCounted<HighlightRange>, public CanMakeWeakPtr<HighlightRange> {
 public:
-    static Ref<HighlightRangeData> create(Ref<AbstractRange>&& range)
+    static Ref<HighlightRange> create(Ref<AbstractRange>&& range)
     {
-        return adoptRef(*new HighlightRangeData(WTFMove(range)));
+        return adoptRef(*new HighlightRange(WTFMove(range)));
     }
 
     AbstractRange& range() const { return m_range.get(); }
@@ -50,7 +50,7 @@ public:
     void setEndPosition(Position&& endPosition) { m_endPosition = WTFMove(endPosition); }
 
 private:
-    explicit HighlightRangeData(Ref<AbstractRange>&& range)
+    explicit HighlightRange(Ref<AbstractRange>&& range)
         : m_range(WTFMove(range))
     {
     }
@@ -76,13 +76,12 @@ public:
     void setPriority(int);
 
     void repaint();
-    const Vector<Ref<HighlightRangeData>>& rangesData() const { return m_rangesData; }
+    const Vector<Ref<HighlightRange>>& highlightRanges() const { return m_highlightRanges; }
 
-    // FIXME: Add WEBCORE_EXPORT CSSStyleDeclaration& style();
 private:
     explicit Highlight(FixedVector<std::reference_wrapper<AbstractRange>>&&);
 
-    Vector<Ref<HighlightRangeData>> m_rangesData;
+    Vector<Ref<HighlightRange>> m_highlightRanges;
     Type m_type { Type::Highlight };
     int m_priority { 0 };
 };

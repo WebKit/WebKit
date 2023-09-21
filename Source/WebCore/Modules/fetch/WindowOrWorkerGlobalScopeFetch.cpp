@@ -61,7 +61,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
     }
 
     FetchResponse::fetch(scope, request.get(), [promise = WTFMove(promise), scope = Ref { scope }, userGestureToken = UserGestureIndicator::currentUserGesture()](auto&& result) mutable {
-        scope->eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise), userGestureToken = WTFMove(userGestureToken), result = WTFMove(result)]() mutable {
+        scope->eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise), userGestureToken = WTFMove(userGestureToken), result = std::forward<decltype(result)>(result)]() mutable {
             if (!userGestureToken || userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !userGestureToken->processingUserGesture()) {
                 promise.settle(WTFMove(result));
                 return;
@@ -74,7 +74,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
 
 void WindowOrWorkerGlobalScopeFetch::fetch(LocalDOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
-    auto* document = window.document();
+    RefPtr document = window.document();
     if (!document) {
         promise->reject(InvalidStateError);
         return;

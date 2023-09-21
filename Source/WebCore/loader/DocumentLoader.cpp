@@ -615,7 +615,7 @@ void DocumentLoader::redirectReceived(ResourceRequest&& request, const ResourceR
         unregisterReservedServiceWorkerClient();
     }
 
-    willSendRequest(WTFMove(request), redirectResponse, [completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }, this] (auto&& request) mutable {
+    willSendRequest(WTFMove(request), redirectResponse, [completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }, this] (ResourceRequest&& request) mutable {
         ASSERT(!m_substituteData.isValid());
         if (request.isNull() || !m_mainDocumentError.isNull() || !m_frame) {
             completionHandler({ });
@@ -742,7 +742,9 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (topFrame && topFrame != m_frame) {
         // We shouldn't check for mixed content against the current frame when navigating; we only need to be concerned with the ancestor frames.
         auto* parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
-        ASSERT(parentFrame && topFrame);
+        if (!parentFrame)
+            return completionHandler(WTFMove(newRequest));
+
         if (!MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(*parentFrame, MixedContentChecker::ContentType::Active, newRequest.url())) {
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return completionHandler(WTFMove(newRequest));

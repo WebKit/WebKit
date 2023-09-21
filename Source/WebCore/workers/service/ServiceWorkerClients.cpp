@@ -57,7 +57,7 @@ void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id
     callOnMainThread([promiseIdentifier = addPendingPromise(WTFMove(promise)), serviceWorkerIdentifier, id = id.isolatedCopy()] () {
         auto connection = SWContextManager::singleton().connection();
         connection->findClientByVisibleIdentifier(serviceWorkerIdentifier, id, [promiseIdentifier, serviceWorkerIdentifier] (auto&& clientData) {
-            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, data = crossThreadCopy(WTFMove(clientData))] (auto& context) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, data = crossThreadCopy(std::forward<decltype(clientData)>(clientData))] (auto& context) mutable {
                 if (auto promise = context.clients().takePendingPromise(promiseIdentifier))
                     didFinishGetRequest(context, *promise, WTFMove(data));
             });
@@ -68,7 +68,7 @@ void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id
 
 static inline void matchAllCompleted(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, Vector<ServiceWorkerClientData>&& clientsData)
 {
-    auto clients = WTF::map(clientsData, [&] (auto&& clientData) {
+    auto clients = WTF::map(WTFMove(clientsData), [&] (ServiceWorkerClientData&& clientData) {
         return ServiceWorkerClient::create(scope, WTFMove(clientData));
     });
     std::sort(clients.begin(), clients.end(), [&] (auto& a, auto& b) {
@@ -83,7 +83,7 @@ void ServiceWorkerClients::matchAll(ScriptExecutionContext& context, const Clien
 
     callOnMainThread([promiseIdentifier = addPendingPromise(WTFMove(promise)), serviceWorkerIdentifier, options] () mutable {
         auto connection = SWContextManager::singleton().connection();
-        connection->matchAll(serviceWorkerIdentifier, options, [promiseIdentifier, serviceWorkerIdentifier] (auto&& clientsData) mutable {
+        connection->matchAll(serviceWorkerIdentifier, options, [promiseIdentifier, serviceWorkerIdentifier] (Vector<ServiceWorkerClientData>&& clientsData) mutable {
             SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, clientsData = crossThreadCopy(WTFMove(clientsData))] (auto& scope) mutable {
                 if (auto promise = scope.clients().takePendingPromise(promiseIdentifier))
                     matchAllCompleted(scope, *promise, WTFMove(clientsData));
@@ -116,7 +116,7 @@ void ServiceWorkerClients::openWindow(ScriptExecutionContext& context, const Str
     callOnMainThread([promiseIdentifier = addPendingPromise(WTFMove(promise)), serviceWorkerIdentifier, url = url.isolatedCopy()] () mutable {
         auto connection = SWContextManager::singleton().connection();
         connection->openWindow(serviceWorkerIdentifier, url, [promiseIdentifier, serviceWorkerIdentifier] (auto&& result) mutable {
-            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(WTFMove(result))] (ServiceWorkerGlobalScope& scope) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(std::forward<decltype(result)>(result))] (ServiceWorkerGlobalScope& scope) mutable {
                 LOG(ServiceWorker, "WebProcess %i finished ServiceWorkerClients::openWindow call result is %d.", getpid(), !result.hasException());
 
                 auto promise = scope.clients().takePendingPromise(promiseIdentifier);
@@ -151,7 +151,7 @@ void ServiceWorkerClients::claim(ScriptExecutionContext& context, Ref<DeferredPr
 
     callOnMainThread([promiseIdentifier = addPendingPromise(WTFMove(promise)), serviceWorkerIdentifier] () mutable {
         auto connection = SWContextManager::singleton().connection();
-        connection->claim(serviceWorkerIdentifier, [promiseIdentifier, serviceWorkerIdentifier](auto&& result) mutable {
+        connection->claim(serviceWorkerIdentifier, [promiseIdentifier, serviceWorkerIdentifier](ExceptionOr<void>&& result) mutable {
             SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
                 if (auto promise = scope.clients().takePendingPromise(promiseIdentifier)) {
                     DOMPromiseDeferred<void> pendingPromise { promise.releaseNonNull() };

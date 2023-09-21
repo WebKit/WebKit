@@ -50,20 +50,20 @@ RemoteLayerBackingStoreCollection::~RemoteLayerBackingStoreCollection() = defaul
 
 void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLayerTreeTransaction& transaction)
 {
-    for (auto* backingStore : m_backingStoresNeedingDisplay) {
-        backingStore->prepareToDisplay();
-        backingStore->layer()->properties().notePropertiesChanged(LayerChange::BackingStoreChanged);
-        transaction.layerPropertiesChanged(*backingStore->layer());
+    for (auto& backingStore : m_backingStoresNeedingDisplay) {
+        backingStore.prepareToDisplay();
+        backingStore.layer()->properties().notePropertiesChanged(LayerChange::BackingStoreChanged);
+        transaction.layerPropertiesChanged(*backingStore.layer());
     }
 }
 
 bool RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
 {
     bool anyNonEmptyDirtyRegion = false;
-    for (auto* backingStore : m_backingStoresNeedingDisplay) {
-        if (!backingStore->hasEmptyDirtyRegion())
+    for (auto& backingStore : m_backingStoresNeedingDisplay) {
+        if (!backingStore.hasEmptyDirtyRegion())
             anyNonEmptyDirtyRegion = true;
-        backingStore->paintContents();
+        backingStore.paintContents();
     }
     return anyNonEmptyDirtyRegion;
 }
@@ -83,7 +83,7 @@ void RemoteLayerBackingStoreCollection::willCommitLayerTree(RemoteLayerTreeTrans
     Vector<WebCore::PlatformLayerIdentifier> newlyUnreachableLayerIDs;
     for (auto& backingStore : m_liveBackingStore) {
         if (!m_reachableBackingStoreInLatestFlush.contains(backingStore))
-            newlyUnreachableLayerIDs.append(backingStore->layer()->layerID());
+            newlyUnreachableLayerIDs.append(backingStore.layer()->layerID());
     }
 
     transaction.setLayerIDsWithNewlyUnreachableBackingStore(newlyUnreachableLayerIDs);
@@ -117,13 +117,13 @@ Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackin
 
 bool RemoteLayerBackingStoreCollection::updateUnreachableBackingStores()
 {
-    Vector<RemoteLayerBackingStore*> newlyUnreachableBackingStore;
-    for (auto* backingStore : m_liveBackingStore) {
+    Vector<WeakPtr<RemoteLayerBackingStore>> newlyUnreachableBackingStore;
+    for (auto& backingStore : m_liveBackingStore) {
         if (!m_reachableBackingStoreInLatestFlush.contains(backingStore))
             newlyUnreachableBackingStore.append(backingStore);
     }
 
-    for (auto* backingStore : newlyUnreachableBackingStore)
+    for (auto& backingStore : newlyUnreachableBackingStore)
         backingStoreBecameUnreachable(*backingStore);
 
     return !newlyUnreachableBackingStore.isEmpty();
@@ -131,30 +131,30 @@ bool RemoteLayerBackingStoreCollection::updateUnreachableBackingStores()
 
 void RemoteLayerBackingStoreCollection::backingStoreWasCreated(RemoteLayerBackingStore& backingStore)
 {
-    m_liveBackingStore.add(&backingStore);
+    m_liveBackingStore.add(backingStore);
 }
 
 void RemoteLayerBackingStoreCollection::backingStoreWillBeDestroyed(RemoteLayerBackingStore& backingStore)
 {
-    m_liveBackingStore.remove(&backingStore);
-    m_unparentedBackingStore.remove(&backingStore);
+    m_liveBackingStore.remove(backingStore);
+    m_unparentedBackingStore.remove(backingStore);
 }
 
 bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerBackingStore& backingStore)
 {
     ASSERT(m_inLayerFlush);
-    m_reachableBackingStoreInLatestFlush.add(&backingStore);
+    m_reachableBackingStoreInLatestFlush.add(backingStore);
 
-    auto backingStoreIter = m_unparentedBackingStore.find(&backingStore);
+    auto backingStoreIter = m_unparentedBackingStore.find(backingStore);
     bool wasUnparented = backingStoreIter != m_unparentedBackingStore.end();
 
     if (backingStore.needsDisplay() || wasUnparented)
-        m_backingStoresNeedingDisplay.add(&backingStore);
+        m_backingStoresNeedingDisplay.add(backingStore);
 
     if (!wasUnparented)
         return false;
 
-    m_liveBackingStore.add(&backingStore);
+    m_liveBackingStore.add(backingStore);
     m_unparentedBackingStore.remove(backingStoreIter);
     return true;
 }
@@ -181,7 +181,7 @@ bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBack
     if (!backingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Back))
         successfullyMadeBackingStoreVolatile = false;
 
-    if (!m_reachableBackingStoreInLatestFlush.contains(&backingStore) || markingBehavior.contains(VolatilityMarkingBehavior::IgnoreReachability)) {
+    if (!m_reachableBackingStoreInLatestFlush.contains(backingStore) || markingBehavior.contains(VolatilityMarkingBehavior::IgnoreReachability)) {
         if (!backingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Front))
             successfullyMadeBackingStoreVolatile = false;
     }
@@ -193,11 +193,11 @@ void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLaye
 {
     ASSERT(backingStore.layer());
 
-    auto backingStoreIter = m_liveBackingStore.find(&backingStore);
+    auto backingStoreIter = m_liveBackingStore.find(backingStore);
     if (backingStoreIter == m_liveBackingStore.end())
         return;
 
-    m_unparentedBackingStore.add(&backingStore);
+    m_unparentedBackingStore.add(backingStore);
     m_liveBackingStore.remove(backingStoreIter);
 
     // This will not succeed in marking all buffers as volatile, because the commit unparenting the layer hasn't
@@ -215,11 +215,11 @@ bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatile(OptionSet<Vo
     bool successfullyMadeBackingStoreVolatile = true;
     auto now = MonotonicTime::now();
 
-    for (auto* backingStore : m_liveBackingStore)
-        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, liveBackingStoreMarkingBehavior, now);
+    for (auto& backingStore : m_liveBackingStore)
+        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(backingStore, liveBackingStoreMarkingBehavior, now);
 
-    for (auto* backingStore : m_unparentedBackingStore)
-        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, unparentedBackingStoreMarkingBehavior, now);
+    for (auto& backingStore : m_unparentedBackingStore)
+        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(backingStore, unparentedBackingStoreMarkingBehavior, now);
 
     return successfullyMadeBackingStoreVolatile;
 }
@@ -233,7 +233,7 @@ void RemoteLayerBackingStoreCollection::tryMarkAllBackingStoreVolatile(Completio
 void RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer()
 {
     bool successfullyMadeBackingStoreVolatile = markAllBackingStoreVolatile(VolatilityMarkingBehavior::ConsiderTimeSinceLastDisplay, { });
-    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer() - live " << m_liveBackingStore.size() << ", unparented " << m_unparentedBackingStore.size() << "; successfullyMadeBackingStoreVolatile " << successfullyMadeBackingStoreVolatile);
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer() - live " << m_liveBackingStore.computeSize() << ", unparented " << m_unparentedBackingStore.computeSize() << "; successfullyMadeBackingStoreVolatile " << successfullyMadeBackingStoreVolatile);
 
     if (successfullyMadeBackingStoreVolatile)
         m_volatilityTimer.stop();

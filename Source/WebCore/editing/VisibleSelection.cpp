@@ -294,7 +294,7 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
             VisiblePosition wordEnd(endOfWord(originalEnd, side));
             VisiblePosition end(wordEnd);
             
-            if (isEndOfParagraph(originalEnd) && !isEmptyTableCell(m_start.deprecatedNode())) {
+            if (isEndOfParagraph(originalEnd) && !isEmptyTableCell(m_start.protectedDeprecatedNode().get())) {
                 // Select the paragraph break (the space from the end of a paragraph to the start of 
                 // the next one) to match TextEdit.
                 end = wordEnd.next();
@@ -559,11 +559,11 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
     if (m_base == m_start && m_base == m_end)
         return;
 
-    auto* baseRoot = highestEditableRoot(m_base);
-    auto* startRoot = highestEditableRoot(m_start);
-    auto* endRoot = highestEditableRoot(m_end);
+    auto baseRoot = highestEditableRoot(m_base);
+    auto startRoot = highestEditableRoot(m_start);
+    auto endRoot = highestEditableRoot(m_end);
     
-    auto* baseEditableAncestor = lowestEditableAncestor(m_base.containerNode());
+    auto* baseEditableAncestor = lowestEditableAncestor(m_base.protectedContainerNode().get());
     
     // The base, start and end are all in the same region.  No adjustment necessary.
     if (baseRoot == startRoot && baseRoot == endRoot)
@@ -575,7 +575,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
         // If the start is in non-editable content that is inside the base's editable root, put it
         // at the first editable position after start inside the base's editable root.
         if (startRoot != baseRoot) {
-            VisiblePosition first = firstEditablePositionAfterPositionInRoot(m_start, baseRoot);
+            VisiblePosition first = firstEditablePositionAfterPositionInRoot(m_start, baseRoot.get());
             m_start = first.deepEquivalent();
             if (m_start.isNull()) {
                 ASSERT_NOT_REACHED();
@@ -586,7 +586,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
         // If the end is in non-editable content that is inside the base's root, put it
         // at the last editable position before the end inside the base's root.
         if (endRoot != baseRoot) {
-            VisiblePosition last = lastEditablePositionBeforePositionInRoot(m_end, baseRoot);
+            VisiblePosition last = lastEditablePositionBeforePositionInRoot(m_end, baseRoot.get());
             m_end = last.deepEquivalent();
             if (m_end.isNull())
                 m_end = m_start;

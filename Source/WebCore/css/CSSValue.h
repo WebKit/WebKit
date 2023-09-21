@@ -122,6 +122,7 @@ public:
     bool isRadialGradientValue() const { return m_classType == RadialGradientClass; }
     bool isRayValue() const { return m_classType == RayClass; }
     bool isRect() const { return m_classType == RectClass; }
+    bool isRectShape() const { return m_classType == RectShapeClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
     bool isShadowValue() const { return m_classType == ShadowClass; }
     bool isSpringTimingFunctionValue() const { return m_classType == SpringTimingFunctionClass; }
@@ -251,6 +252,7 @@ protected:
         QuadClass,
         RayClass,
         RectClass,
+        RectShapeClass,
         ReflectClass,
         ShadowClass,
         UnicodeRangeClass,

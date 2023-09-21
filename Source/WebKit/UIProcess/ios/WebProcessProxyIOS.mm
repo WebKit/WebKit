@@ -28,10 +28,12 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "APIUIClient.h"
 #import "AccessibilitySupportSPI.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WKMouseDeviceObserver.h"
 #import "WKStylusDeviceObserver.h"
+#import "WebPageProxy.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <pal/system/cocoa/SleepDisablerCocoa.h>

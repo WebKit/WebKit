@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>backdrop-filter interpolation</title>
+    <title>-webkit-backdrop-filter interpolation</title>
     <link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
     <meta name="assert" content="Partially matching lists interpolate.">
     <script src="/resources/testharness.js"></script>
@@ -19,7 +19,7 @@
       'use strict';
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'none',
         to: 'opacity(0.5) hue-rotate(180deg)',
       }, [
@@ -31,7 +31,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'blur(6px)',
         to: 'blur(10px) hue-rotate(180deg)'
       }, [
@@ -44,7 +44,7 @@
 
       // Mismatched lists:
       test_no_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'grayscale(0) blur(0px)',
         to: 'blur(10px)'
       });

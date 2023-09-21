@@ -65,28 +65,23 @@ unsigned ImageBufferCairoSurfaceBackend::bytesPerRow() const
     return cairo_image_surface_get_stride(m_surface.get());
 }
 
-RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::copyNativeImage(BackingStoreCopy copyBehavior)
+RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::copyNativeImage()
 {
-    switch (copyBehavior) {
-    case CopyBackingStore: {
-        auto copy = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-        cairo_image_surface_get_width(m_surface.get()),
-        cairo_image_surface_get_height(m_surface.get())));
+    auto copy = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+    cairo_image_surface_get_width(m_surface.get()),
+    cairo_image_surface_get_height(m_surface.get())));
 
-        auto cr = adoptRef(cairo_create(copy.get()));
-        cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
-        cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
-        cairo_paint(cr.get());
+    auto cr = adoptRef(cairo_create(copy.get()));
+    cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
+    cairo_paint(cr.get());
 
-        return NativeImage::create(WTFMove(copy));
-    }
+    return NativeImage::create(WTFMove(copy));
+}
 
-    case DontCopyBackingStore:
-        return NativeImage::create(RefPtr { m_surface.get() });
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
+RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::createNativeImageReference()
+{
+    return NativeImage::create(RefPtr { m_surface.get() });
 }
 
 RefPtr<cairo_surface_t> ImageBufferCairoSurfaceBackend::createCairoSurface()
@@ -96,12 +91,9 @@ RefPtr<cairo_surface_t> ImageBufferCairoSurfaceBackend::createCairoSurface()
 
 RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::cairoSurfaceCoerceToImage()
 {
-    BackingStoreCopy copyBehavior;
     if (cairo_surface_get_type(m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE && cairo_surface_get_content(m_surface.get()) == CAIRO_CONTENT_COLOR_ALPHA)
-        copyBehavior = DontCopyBackingStore;
-    else
-        copyBehavior = CopyBackingStore;
-    return copyNativeImage(copyBehavior);
+        return createNativeImageReference();
+    return copyNativeImage();
 }
 
 void ImageBufferCairoSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)

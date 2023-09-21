@@ -90,11 +90,11 @@ DOMWindowIndexedDatabase* DOMWindowIndexedDatabase::from(LocalDOMWindow& window)
 
 IDBFactory* DOMWindowIndexedDatabase::indexedDB()
 {
-    auto* window = this->window();
+    RefPtr window = this->window();
     if (!window)
         return nullptr;
 
-    auto* document = window->document();
+    RefPtr document = window->document();
     if (!document)
         return nullptr;
 

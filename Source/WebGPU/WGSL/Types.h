@@ -51,6 +51,26 @@ enum class AccessMode : uint8_t {
     ReadWrite,
 };
 
+enum class TexelFormat : uint8_t {
+    BGRA8unorm,
+    RGBA8unorm,
+    RGBA8snorm,
+    RGBA8uint,
+    RGBA8sint,
+    RGBA16uint,
+    RGBA16sint,
+    RGBA16float,
+    R32uint,
+    R32sint,
+    R32float,
+    RG32uint,
+    RG32sint,
+    RG32float,
+    RGBA32uint,
+    RGBA32sint,
+    RGBA32float,
+};
+
 namespace Types {
 
 #define FOR_EACH_PRIMITIVE_TYPE(f) \
@@ -63,6 +83,9 @@ namespace Types {
     f(Bool, "bool") \
     f(Sampler, "sampler") \
     f(TextureExternal, "texture_external") \
+    f(AccessMode, "access_mode") \
+    f(TexelFormat, "texel_format") \
+    f(AddressSpace, "address_space") \
 
 struct Primitive {
     enum Kind : uint8_t {
@@ -83,14 +106,23 @@ struct Texture {
         TextureCube,
         TextureCubeArray,
         TextureMultisampled2d,
-        TextureStorage1d,
+    };
+
+    const Type* element;
+    Kind kind;
+};
+
+struct TextureStorage {
+    enum class Kind : uint8_t {
+        TextureStorage1d = 1,
         TextureStorage2d,
         TextureStorage2dArray,
         TextureStorage3d,
     };
 
-    const Type* element;
     Kind kind;
+    TexelFormat format;
+    AccessMode access;
 };
 
 struct Vector {
@@ -125,6 +157,12 @@ struct Reference {
     const Type* element;
 };
 
+struct Pointer {
+    AddressSpace addressSpace;
+    AccessMode accessMode;
+    const Type* element;
+};
+
 struct TypeConstructor {
     ASCIILiteral name;
     std::function<const Type*(AST::ElaboratedTypeExpression&)> construct;
@@ -143,7 +181,9 @@ struct Type : public std::variant<
     Types::Struct,
     Types::Function,
     Types::Texture,
+    Types::TextureStorage,
     Types::Reference,
+    Types::Pointer,
     Types::TypeConstructor,
     Types::Bottom
 > {
@@ -155,7 +195,9 @@ struct Type : public std::variant<
         Types::Struct,
         Types::Function,
         Types::Texture,
+        Types::TextureStorage,
         Types::Reference,
+        Types::Pointer,
         Types::TypeConstructor,
         Types::Bottom
         >::variant;

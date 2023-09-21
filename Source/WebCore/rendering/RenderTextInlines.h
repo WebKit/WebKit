@@ -30,7 +30,7 @@ inline LayoutUnit RenderText::marginLeft() const { return minimumValueForLength(
 inline LayoutUnit RenderText::marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
 
 template <typename MeasureTextCallback>
-float RenderText::measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, MeasureTextCallback&& callback)
+float RenderText::measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace& wordTrailingSpace, WeakHashSet<const Font>& fallbackFonts, MeasureTextCallback&& callback)
 {
     std::optional<float> wordTrailingSpaceWidth;
     if (currentCharacterIsSpace)

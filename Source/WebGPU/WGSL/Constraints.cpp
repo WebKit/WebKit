@@ -32,6 +32,9 @@ namespace WGSL {
 
 bool satisfies(const Type* type, Constraint constraint)
 {
+    if (constraint == Constraints::None)
+        return true;
+
     auto* primitive = std::get_if<Types::Primitive>(type);
     if (!primitive) {
         if (auto* reference = std::get_if<Types::Reference>(type))
@@ -58,12 +61,18 @@ bool satisfies(const Type* type, Constraint constraint)
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
     case Types::Primitive::TextureExternal:
+    case Types::Primitive::AccessMode:
+    case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         return false;
     }
 }
 
 const Type* satisfyOrPromote(const Type* type, Constraint constraint, const TypeStore& types)
 {
+    if (constraint == Constraints::None)
+        return type;
+
     auto* primitive = std::get_if<Types::Primitive>(type);
     if (!primitive) {
         if (auto* reference = std::get_if<Types::Reference>(type))
@@ -126,8 +135,54 @@ const Type* satisfyOrPromote(const Type* type, Constraint constraint, const Type
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
     case Types::Primitive::TextureExternal:
+    case Types::Primitive::AccessMode:
+    case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         return nullptr;
     }
+}
+
+const Type* concretize(const Type* type, TypeStore& types)
+{
+    using namespace Types;
+
+    return WTF::switchOn(*type,
+        [&](const Primitive&) -> const Type* {
+            return satisfyOrPromote(type, Constraints::ConcreteScalar, types);
+        },
+        [&](const Vector& vector) -> const Type* {
+            return types.vectorType(concretize(vector.element, types), vector.size);
+        },
+        [&](const Matrix& matrix) -> const Type* {
+            return types.matrixType(concretize(matrix.element, types), matrix.columns, matrix.rows);
+        },
+        [&](const Array& array) -> const Type* {
+            return types.arrayType(concretize(array.element, types), array.size);
+        },
+        [&](const Struct&) -> const Type* {
+            return type;
+        },
+        [&](const Pointer&) -> const Type* {
+            return type;
+        },
+        [&](const Bottom&) -> const Type* {
+            return type;
+        },
+        [&](const Function&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Texture&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureStorage&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Reference&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TypeConstructor&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
 }
 
 } // namespace WGSL

@@ -188,7 +188,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone()
 
     // If loading, let's create a stream so that data is teed on both clones.
     if (isLoading() && !m_readableStreamSource) {
-        auto* context = scriptExecutionContext();
+        RefPtr context = scriptExecutionContext();
 
         auto* globalObject = context ? context->globalObject() : nullptr;
         if (!globalObject)

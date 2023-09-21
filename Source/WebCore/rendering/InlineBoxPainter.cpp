@@ -95,7 +95,7 @@ void InlineBoxPainter::paint()
             // paint us atomically.
             containingBlock->addContinuationWithOutline(downcast<RenderInline>(renderer().element()->renderer()));
         } else if (!inlineFlow.isContinuation())
-            m_paintInfo.outlineObjects->add(&inlineFlow);
+            m_paintInfo.outlineObjects->add(inlineFlow);
 
         return;
     }

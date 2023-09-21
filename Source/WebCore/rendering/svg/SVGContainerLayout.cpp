@@ -55,7 +55,7 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 {
     bool layoutSizeChanged = layoutSizeOfNearestViewportChanged();
     bool transformChanged = transformToRootChanged(&m_container);
-    HashSet<RenderElement*> elementsThatDidNotReceiveLayout;
+    WeakHashSet<RenderElement> elementsThatDidNotReceiveLayout;
 
     m_positionedChildren.clear();
     for (auto& child : childrenOfType<RenderObject>(m_container)) {
@@ -103,7 +103,7 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
                 layoutDifferentRootIfNeeded(element);
                 element.layout();
             } else if (layoutSizeChanged)
-                elementsThatDidNotReceiveLayout.add(&element);
+                elementsThatDidNotReceiveLayout.add(element);
 
             if (!childEverHadLayout && element.checkForRepaintDuringLayout())
                 child.repaint();
@@ -114,10 +114,10 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 
     if (layoutSizeChanged) {
         // If the layout size changed, invalidate all resources of all children that didn't go through the layout() code path.
-        for (auto* element : elementsThatDidNotReceiveLayout)
-            invalidateResourcesOfChildren(*element);
+        for (auto& element : elementsThatDidNotReceiveLayout)
+            invalidateResourcesOfChildren(element);
     } else
-        ASSERT(elementsThatDidNotReceiveLayout.isEmpty());
+        ASSERT(elementsThatDidNotReceiveLayout.isEmptyIgnoringNullReferences());
 }
 
 void SVGContainerLayout::positionChildrenRelativeToContainer()

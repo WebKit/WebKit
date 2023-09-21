@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-inheritance-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/long-variable-reference-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-in-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-layer-in-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/test_variable_legal_values.html
@@ -431,6 +432,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-border-shorthand-serialize.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-font-shorthand-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-font-shorthand-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/whitespace-in-fallback-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-002.html

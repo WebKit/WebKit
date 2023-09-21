@@ -794,7 +794,8 @@ BeaconAPIEnabled:
 
 BlobRegistryTopOriginPartitioningEnabled:
   type: bool
-  status: unstable
+  status: preview
+  category: security
   humanReadableName: "Partition Blob URL Registry"
   humanReadableDescription: "Partition Blob URL Registry by Top-Level Origin"
   defaultValue:
@@ -862,6 +863,21 @@ BroadcastChannelOriginPartitioningEnabled:
     WebCore:
       default: true
 
+BuiltInCDMKeyGroupingStrategyEnabled:
+  type: bool
+  status: unstable
+  category: media
+  humanReadableName: "Built-in CDM key grouping strategy"
+  humanReadableDescription: "Enable built-in CDM key grouping strategy"
+  condition: ENABLE(ENCRYPTED_MEDIA)
+  defaultValue:
+    WebCore:
+      default: false
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+
 BuiltInNotificationsEnabled:
   type: bool
   status: unstable
@@ -889,6 +905,20 @@ CFNetworkNetworkLoaderEnabled:
     WebKit:
       default: false
 
+CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
+  type: bool
+  status: preview
+  category: css
+  humanReadableName: "CSS 3D Transform Interoperability for backface-visibility"
+  humanReadableDescription: "Enable 3D transform behavior for backface-visibility that is specification-compliant but backwards incompatible"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSS3DTransformInteroperabilityEnabled:
   type: bool
   status: stable
@@ -902,6 +932,20 @@ CSS3DTransformInteroperabilityEnabled:
       default: true
     WebCore:
       default: true
+
+CSSBasedRubyEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "CSS based Ruby implementation in IFC"
+  humanReadableDescription: "CSS based Ruby implementation in IFC"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 CSSCascadeLayersEnabled:
   type: bool
@@ -2120,6 +2164,22 @@ DeclarativeShadowDOMInDOMParserEnabled:
   category: dom
   humanReadableName: "DOMParser support for Declarative Shadow DOM"
   humanReadableDescription: "Enable Declarative Shadow DOM in DOMParser"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+DeclarativeWebPush:
+  type: bool
+  status: unstable
+  category: dom
+  defaultsOverridable: true
+  condition: ENABLE(DECLARATIVE_WEB_PUSH)
+  humanReadableName: "Declarative Web Push"
+  humanReadableDescription: "Enable Declarative Web Push"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -5358,7 +5418,7 @@ ReportingEnabled:
 
 RequestIdleCallbackEnabled:
   type: bool
-  status: stable
+  status: preview
   category: dom
   humanReadableName: "requestIdleCallback"
   humanReadableDescription: "Enable requestIdleCallback support"
@@ -5366,7 +5426,6 @@ RequestIdleCallbackEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(CF)": true
       default: false
     WebCore:
       default: false
@@ -7740,7 +7799,7 @@ WebRTCMediaPipelineAdditionalLoggingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
 

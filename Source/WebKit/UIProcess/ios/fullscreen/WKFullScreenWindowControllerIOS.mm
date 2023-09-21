@@ -607,7 +607,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 {
     NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
     if (!signature)
-        signature = [(NSObject *)_originalDelegate methodSignatureForSelector:aSelector];
+        signature = [(NSObject *)_originalDelegate.get() methodSignatureForSelector:aSelector];
     return signature;
 }
 

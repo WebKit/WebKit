@@ -274,10 +274,10 @@ void RemoteMediaPlayerProxy::prepareForRendering()
     m_player->prepareForRendering();
 }
 
-void RemoteMediaPlayerProxy::setPageIsVisible(bool visible)
+void RemoteMediaPlayerProxy::setPageIsVisible(bool visible, String&& sceneIdentifier)
 {
     ALWAYS_LOG(LOGIDENTIFIER, visible);
-    m_player->setPageIsVisible(visible);
+    m_player->setPageIsVisible(visible, WTFMove(sceneIdentifier));
 }
 
 void RemoteMediaPlayerProxy::setShouldMaintainAspectRatio(bool maintainRatio)

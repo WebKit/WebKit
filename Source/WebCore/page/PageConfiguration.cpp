@@ -90,6 +90,7 @@ PageConfiguration::PageConfiguration(
     UniqueRef<StorageProvider>&& storageProvider,
     UniqueRef<ModelPlayerProvider>&& modelPlayerProvider,
     Ref<BadgeClient>&& badgeClient,
+    Ref<HistoryItemClient>&& historyItemClient,
 #if ENABLE(CONTEXT_MENUS)
     UniqueRef<ContextMenuClient>&& contextMenuClient,
 #endif
@@ -122,6 +123,7 @@ PageConfiguration::PageConfiguration(
     , storageProvider(WTFMove(storageProvider))
     , modelPlayerProvider(WTFMove(modelPlayerProvider))
     , badgeClient(WTFMove(badgeClient))
+    , historyItemClient(WTFMove(historyItemClient))
 {
 }
 

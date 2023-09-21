@@ -127,12 +127,6 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
         m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
     return m_pixelBuffer.get();
 }
-
-VideoFrame::ResourceIdentifier RemoteVideoFrameProxy::resourceIdentifier() const
-{
-    auto ref = newReadReference();
-    return std::make_pair(ref.identifier().toUInt64(), ref.version());
-}
 #endif
 
 TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& properties)

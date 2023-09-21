@@ -106,17 +106,6 @@ LayoutSize FloatingObject::translationOffsetToAncestor() const
     return locationOffsetOfBorderBox() - renderer().locationOffset();
 }
 
-#if ASSERT_ENABLED
-
-bool FloatingObject::isLowestPlacedFloatBottomInBlockFormattingContext() const
-{
-    if (auto bfcRoot = m_renderer->blockFormattingContextRoot())
-        return bfcRoot->lowestFloatLogicalBottom() == bfcRoot->logicalBottomForFloat(*this);
-    return false;
-}
-
-#endif
-
 #if ENABLE(TREE_DEBUGGING)
 
 TextStream& operator<<(TextStream& stream, const FloatingObject& object)

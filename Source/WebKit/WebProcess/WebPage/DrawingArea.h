@@ -191,7 +191,7 @@ protected:
     template<typename T> bool send(T&& message)
     {
         Ref webPage = m_webPage.get();
-        return webPage->send(WTFMove(message), m_identifier.toUInt64(), { });
+        return webPage->send(std::forward<T>(message), m_identifier.toUInt64(), { });
     }
 
     const DrawingAreaType m_type;

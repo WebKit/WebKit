@@ -65,6 +65,7 @@ protected:
     explicit EditCommand(Document&, EditAction = EditAction::Unspecified);
     EditCommand(Document&, const VisibleSelection&, const VisibleSelection&);
 
+    Ref<Document> protectedDocument() const { return m_document.copyRef(); }
     const Document& document() const { return m_document; }
     Document& document() { return m_document; }
     CompositeEditCommand* parent() const { return m_parent.get(); }

@@ -20,9 +20,9 @@
 #pragma once
 
 #if USE(ATSPI)
+#include "AXCoreObject.h"
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
-#include "AccessibilityObjectInterface.h"
 #include "IntRect.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>

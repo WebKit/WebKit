@@ -138,15 +138,15 @@ public:
             return false;
 
         auto backendHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
-        ASSERT(std::holds_alternative<MachSendRight>(backendHandle));
+        ASSERT(backendHandle && std::holds_alternative<MachSendRight>(*backendHandle));
 
         {
             Locker locker { m_surfaceLock };
-            m_surfaceSendRight = MachSendRight { std::get<MachSendRight>(backendHandle) };
+            m_surfaceSendRight = MachSendRight { std::get<MachSendRight>(*backendHandle) };
             m_surfaceIdentifier = clone->renderingResourceIdentifier();
         }
 
-        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(m_layerID, WTFMove(backendHandle), clone->renderingResourceIdentifier()), m_drawingArea.toUInt64());
+        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(m_layerID, WTFMove(*backendHandle), clone->renderingResourceIdentifier()), m_drawingArea.toUInt64());
 
         return true;
     }

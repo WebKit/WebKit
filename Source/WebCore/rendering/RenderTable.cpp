@@ -152,7 +152,7 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
 
     // If border was changed, invalidate collapsed borders cache.
-    if (oldStyle && oldStyle->border() != style().border())
+    if (oldStyle && !oldStyle->borderIsEquivalentForPainting(style()))
         invalidateCollapsedBorders();
 }
 

@@ -36,6 +36,7 @@
 #include "Types.h"
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
+#include <wtf/SortedArrayMap.h>
 
 namespace WGSL {
 
@@ -73,6 +74,7 @@ public:
 
     // Statements
     void visit(AST::AssignmentStatement&) override;
+    void visit(AST::CallStatement&) override;
     void visit(AST::CompoundAssignmentStatement&) override;
     void visit(AST::DecrementIncrementStatement&) override;
     void visit(AST::IfStatement&) override;
@@ -131,6 +133,11 @@ private:
 
     template<typename TargetConstructor, typename... Arguments>
     void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, Arguments&&...);
+    void allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind);
+
+    std::optional<AccessMode> accessMode(AST::Expression&);
+    std::optional<TexelFormat> texelFormat(AST::Expression&);
+    std::optional<AddressSpace> addressSpace(AST::Expression&);
 
     template<typename CallArguments>
     const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
@@ -155,6 +162,58 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceType(AST::Identifier::make("sampler"_s), m_types.samplerType());
     introduceType(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
 
+    introduceType(AST::Identifier::make("ptr"_s), m_types.typeConstructorType(
+        "ptr"_s,
+        [this](AST::ElaboratedTypeExpression& type) -> const Type* {
+            auto argumentCount = type.arguments().size();
+            if (argumentCount < 2) {
+                typeError(InferBottom::No, type.span(), "'ptr' requires at least 2 template argument");
+                return m_types.bottomType();
+            }
+
+            if (argumentCount > 3) {
+                typeError(InferBottom::No, type.span(), "'ptr' requires at most 3 template argument");
+                return m_types.bottomType();
+            }
+
+            auto maybeAddressSpace = addressSpace(type.arguments()[0]);
+            if (!maybeAddressSpace)
+                return m_types.bottomType();
+
+            auto* elementType = resolve(type.arguments()[1]);
+            if (isBottom(elementType))
+                return m_types.bottomType();
+
+            AccessMode accessMode;
+            if (argumentCount > 2) {
+                if (*maybeAddressSpace != AddressSpace::Storage) {
+                    typeError(InferBottom::No, type.arguments()[2].span(), "only pointers in <storage> address space may specify an access mode");
+                    return m_types.bottomType();
+                }
+
+                auto maybeAccessMode = this->accessMode(type.arguments()[2]);
+                if (!maybeAccessMode)
+                    return m_types.bottomType();
+                accessMode = *maybeAccessMode;
+            } else {
+                switch (*maybeAddressSpace) {
+                case AddressSpace::Function:
+                case AddressSpace::Private:
+                case AddressSpace::Workgroup:
+                    accessMode = AccessMode::ReadWrite;
+                    break;
+                case AddressSpace::Uniform:
+                case AddressSpace::Storage:
+                case AddressSpace::Handle:
+                    accessMode = AccessMode::Read;
+                    break;
+                }
+            }
+
+            return m_types.pointerType(*maybeAddressSpace, elementType, accessMode);
+        }
+    ));
+
     allocateSimpleConstructor("vec2"_s, &TypeStore::vectorType, 2);
     allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, 3);
     allocateSimpleConstructor("vec4"_s, &TypeStore::vectorType, 4);
@@ -175,10 +234,39 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     allocateSimpleConstructor("texture_cube"_s, &TypeStore::textureType, Types::Texture::Kind::TextureCube);
     allocateSimpleConstructor("texture_cube_array"_s, &TypeStore::textureType, Types::Texture::Kind::TextureCubeArray);
     allocateSimpleConstructor("texture_multisampled_2d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureMultisampled2d);
-    allocateSimpleConstructor("texture_storage_1d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureStorage1d);
-    allocateSimpleConstructor("texture_storage_2d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureStorage2d);
-    allocateSimpleConstructor("texture_storage_2d_array"_s, &TypeStore::textureType, Types::Texture::Kind::TextureStorage2dArray);
-    allocateSimpleConstructor("texture_storage_3d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureStorage3d);
+
+    allocateTextureStorageConstructor("texture_storage_1d"_s, Types::TextureStorage::Kind::TextureStorage1d);
+    allocateTextureStorageConstructor("texture_storage_2d"_s, Types::TextureStorage::Kind::TextureStorage2d);
+    allocateTextureStorageConstructor("texture_storage_2d_array"_s, Types::TextureStorage::Kind::TextureStorage2dArray);
+    allocateTextureStorageConstructor("texture_storage_3d"_s, Types::TextureStorage::Kind::TextureStorage3d);
+
+    introduceValue(AST::Identifier::make("read"_s), m_types.accessModeType());
+    introduceValue(AST::Identifier::make("write"_s), m_types.accessModeType());
+    introduceValue(AST::Identifier::make("read_write"_s), m_types.accessModeType());
+
+    introduceValue(AST::Identifier::make("bgra8unorm"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("r32float"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("r32sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("r32uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rg32float"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rg32sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rg32uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba16float"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba16sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba16uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba32float"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba32sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba32uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba8sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba8snorm"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba8uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba8unorm"_s), m_types.texelFormatType());
+
+    introduceValue(AST::Identifier::make("function"_s), m_types.addressSpaceType());
+    introduceValue(AST::Identifier::make("private"_s), m_types.addressSpaceType());
+    introduceValue(AST::Identifier::make("workgroup"_s), m_types.addressSpaceType());
+    introduceValue(AST::Identifier::make("uniform"_s), m_types.addressSpaceType());
+    introduceValue(AST::Identifier::make("storage"_s), m_types.addressSpaceType());
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
@@ -243,9 +331,12 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             variable.maybeInitializer()->m_inferredType = initializerType;
         }
 
-        if (!result)
-            result = initializerType;
-        else if (unify(result, initializerType))
+        if (!result) {
+            if (variable.flavor() == AST::VariableFlavor::Const)
+                result = initializerType;
+            else
+                result = concretize(initializerType, m_types);
+        } else if (unify(result, initializerType))
             variable.maybeInitializer()->m_inferredType = result;
         else
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
@@ -403,6 +494,13 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
         typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *reference->element, "'");
 }
 
+void TypeChecker::visit(AST::CallStatement& statement)
+{
+    auto* result = infer(statement.call());
+    // FIXME: this should check if the function has a must_use attribute
+    UNUSED_PARAM(result);
+}
+
 void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
 {
     // FIXME: Implement type checking - infer is called to avoid ASSERT in
@@ -476,6 +574,7 @@ void TypeChecker::visit(AST::CompoundStatement& statement)
 
 void TypeChecker::visit(AST::ForStatement& statement)
 {
+    ContextScope forScope(this);
     if (auto* initializer = statement.maybeInitializer())
         AST::Visitor::visit(*initializer);
 
@@ -660,6 +759,11 @@ void TypeChecker::visit(AST::CallExpression& call)
                     default:
                         RELEASE_ASSERT_NOT_REACHED();
                     }
+                }
+
+                if (auto* matrixType = std::get_if<Types::Matrix>(targetBinding->type)) {
+                    typeArguments.append(matrixType->element);
+                    targetName = makeString("mat", String::number(matrixType->columns), "x", String::number(matrixType->rows));
                 }
             }
 
@@ -1113,6 +1217,109 @@ void TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor
             return (m_types.*constructor)(elementType, arguments...);
         }
     ));
+}
+
+void TypeChecker::allocateTextureStorageConstructor(ASCIILiteral name, Types::TextureStorage::Kind kind)
+{
+    introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
+        name,
+        [this, kind](AST::ElaboratedTypeExpression& type) -> const Type* {
+            if (type.arguments().size() != 2) {
+                typeError(InferBottom::No, type.span(), "'", type.base(), "' requires 2 template argument");
+                return m_types.bottomType();
+            }
+
+            auto maybeFormat = texelFormat(type.arguments()[0]);
+            if (!maybeFormat)
+                return m_types.bottomType();
+
+            auto maybeAccess = accessMode(type.arguments()[1]);
+            if (!maybeAccess)
+                return m_types.bottomType();
+            return m_types.textureStorageType(kind, *maybeFormat, *maybeAccess);
+        }
+    ));
+}
+
+std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
+{
+    auto* formatType = infer(expression);
+    if (!unify(formatType, m_types.texelFormatType())) {
+        typeError(InferBottom::No, expression.span(), "cannot use '", *formatType, "' as texel format");
+        return std::nullopt;
+    }
+
+    ASSERT(is<AST::IdentifierExpression>(expression));
+    auto& formatName = downcast<AST::IdentifierExpression>(expression).identifier();
+
+    static constexpr std::pair<ComparableASCIILiteral, TexelFormat> texelFormatMappings[] {
+        { "bgra8unorm", TexelFormat::BGRA8unorm },
+        { "r32float", TexelFormat::R32float },
+        { "r32sint", TexelFormat::R32sint },
+        { "r32uint", TexelFormat::R32uint },
+        { "rg32float", TexelFormat::RG32float },
+        { "rg32sint", TexelFormat::RG32sint },
+        { "rg32uint", TexelFormat::RG32uint },
+        { "rgba16float", TexelFormat::RGBA16float },
+        { "rgba16sint", TexelFormat::RGBA16sint },
+        { "rgba16uint", TexelFormat::RGBA16uint },
+        { "rgba32float", TexelFormat::RGBA32float },
+        { "rgba32sint", TexelFormat::RGBA32sint },
+        { "rgba32uint", TexelFormat::RGBA32uint },
+        { "rgba8sint", TexelFormat::RGBA8sint },
+        { "rgba8snorm", TexelFormat::RGBA8snorm },
+        { "rgba8uint", TexelFormat::RGBA8uint },
+        { "rgba8unorm", TexelFormat::RGBA8unorm },
+    };
+    static constexpr SortedArrayMap texelFormats { texelFormatMappings };
+
+    return { texelFormats.get(formatName.id()) };
+}
+
+std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
+{
+    auto* accessType = infer(expression);
+    if (!unify(accessType, m_types.accessModeType())) {
+        typeError(InferBottom::No, expression.span(), "cannot use '", *accessType, "' as access mode");
+        return std::nullopt;
+    }
+
+    ASSERT(is<AST::IdentifierExpression>(expression));
+    auto& accessName = downcast<AST::IdentifierExpression>(expression).identifier();
+
+    static constexpr std::pair<ComparableASCIILiteral, AccessMode> accessModeMappings[] {
+        { "read", AccessMode::Read },
+        { "read_write", AccessMode::ReadWrite },
+        { "write", AccessMode::Write },
+    };
+    static constexpr SortedArrayMap accessModes { accessModeMappings };
+
+    return { accessModes.get(accessName.id()) };
+}
+
+std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expression)
+{
+    auto* addressSpaceType = infer(expression);
+    if (!unify(addressSpaceType, m_types.addressSpaceType())) {
+        typeError(InferBottom::No, expression.span(), "cannot use '", *addressSpaceType, "' as address space");
+        return std::nullopt;
+    }
+
+    ASSERT(is<AST::IdentifierExpression>(expression));
+    auto& addressSpaceName = downcast<AST::IdentifierExpression>(expression).identifier();
+
+    static constexpr std::pair<ComparableASCIILiteral, AddressSpace> addressSpaceMappings[] {
+        { "function", AddressSpace::Function },
+        { "handle", AddressSpace::Handle },
+        { "private", AddressSpace::Private },
+        { "storage", AddressSpace::Storage },
+        { "uniform", AddressSpace::Uniform },
+        { "workgroup", AddressSpace::Workgroup },
+
+    };
+    static constexpr SortedArrayMap addressSpaces { addressSpaceMappings };
+
+    return { addressSpaces.get(addressSpaceName.id()) };
 }
 
 } // namespace WGSL

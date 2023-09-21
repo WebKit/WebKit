@@ -102,7 +102,7 @@ void WorkerFileSystemStorageConnection::isSameEntry(FileSystemHandleIdentifier i
     m_sameEntryCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, otherIdentifier]() mutable {
-        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto&& result) mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](ExceptionOr<bool>&& result) mutable {
             workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
                 if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
                     connection->didIsSameEntry(callbackIdentifier, WTFMove(result));
@@ -390,8 +390,8 @@ std::optional<uint64_t> WorkerFileSystemStorageConnection::requestNewCapacityFor
     BinarySemaphore semaphore;
     std::optional<uint64_t> grantedCapacity;
     callOnMainThread([mainThreadConnection = m_mainThreadConnection, identifier, accessHandleIdentifier, newCapacity, &grantedCapacity, &semaphore]() {
-        auto mainThreadCallback = [&grantedCapacity, &semaphore](auto&& result) {
-            grantedCapacity = WTFMove(result);
+        auto mainThreadCallback = [&grantedCapacity, &semaphore](auto result) {
+            grantedCapacity = result;
             semaphore.signal();
         };
         mainThreadConnection->requestNewCapacityForSyncAccessHandle(identifier, accessHandleIdentifier, newCapacity, WTFMove(mainThreadCallback));

@@ -55,6 +55,7 @@
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #endif
 
 static bool didReceiveMessage;
@@ -412,7 +413,7 @@ constexpr auto WebKitLockdownModeAlertShownKey = @"WebKitCaptivePortalModeAlertS
 
 TEST(WebKit, LockdownModeDefaultFirstUseMessage)
 {
-    ClassMethodSwizzler swizzler(UIViewController.class, @selector(_viewControllerForFullScreenPresentationFromView:), reinterpret_cast<IMP>(overrideViewControllerForFullscreenPresentation));
+    InstanceMethodSwizzler swizzler(UIView.class, @selector(_wk_viewControllerForFullScreenPresentation), reinterpret_cast<IMP>(overrideViewControllerForFullscreenPresentation));
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
@@ -453,7 +454,7 @@ static bool showedNoFirstUseMessage;
 
 TEST(WebKit, LockdownModeNoFirstUseMessage)
 {
-    ClassMethodSwizzler swizzler(UIViewController.class, @selector(_viewControllerForFullScreenPresentationFromView:), reinterpret_cast<IMP>(overrideViewControllerForFullscreenPresentation));
+    InstanceMethodSwizzler swizzler(UIView.class, @selector(_wk_viewControllerForFullScreenPresentation), reinterpret_cast<IMP>(overrideViewControllerForFullscreenPresentation));
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
@@ -507,7 +508,7 @@ static bool requestFutureFirstUseMessage;
 
 TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
 {
-    ClassMethodSwizzler swizzler(UIViewController.class, @selector(_viewControllerForFullScreenPresentationFromView:), reinterpret_cast<IMP>(overrideViewControllerForFullscreenPresentation));
+    InstanceMethodSwizzler swizzler(UIView.class, @selector(_wk_viewControllerForFullScreenPresentation), reinterpret_cast<IMP>(overrideViewControllerForFullscreenPresentation));
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);

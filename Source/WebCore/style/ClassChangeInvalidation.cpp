@@ -119,7 +119,9 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
         case MatchElement::AnySibling:
         case MatchElement::ParentAnySibling:
         case MatchElement::AncestorAnySibling:
-        case MatchElement::HasNonSubjectOrScopeBreaking:
+        case MatchElement::HasAnySibling:
+        case MatchElement::HasNonSubject:
+        case MatchElement::HasScopeBreaking:
             return true;
         case MatchElement::Subject:
         case MatchElement::Parent:

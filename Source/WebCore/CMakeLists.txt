@@ -126,6 +126,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/layout/formattingContexts/inline"
     "${WEBCORE_DIR}/layout/formattingContexts/inline/display"
     "${WEBCORE_DIR}/layout/formattingContexts/inline/invalidation"
+    "${WEBCORE_DIR}/layout/formattingContexts/inline/ruby"
     "${WEBCORE_DIR}/layout/formattingContexts/inline/text"
     "${WEBCORE_DIR}/layout/integration"
     "${WEBCORE_DIR}/layout/integration/flex"
@@ -175,6 +176,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/rendering/shapes"
     "${WEBCORE_DIR}/rendering/style"
     "${WEBCORE_DIR}/rendering/svg"
+    "${WEBCORE_DIR}/rendering/svg/legacy"
     "${WEBCORE_DIR}/rendering/updating"
     "${WEBCORE_DIR}/replay"
     "${WEBCORE_DIR}/storage"
@@ -449,6 +451,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/MediaTrackCapabilities.idl
     Modules/mediastream/MediaTrackConstraints.idl
     Modules/mediastream/MediaTrackSupportedConstraints.idl
+    Modules/mediastream/MeteringMode.idl
     Modules/mediastream/Navigator+MediaDevices.idl
     Modules/mediastream/OverconstrainedError.idl
     Modules/mediastream/OverconstrainedErrorEvent.idl
@@ -568,6 +571,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/pictureinpicture/PictureInPictureEvent.idl
     Modules/pictureinpicture/PictureInPictureWindow.idl
 
+    Modules/push-api/NavigatorPush.idl
     Modules/push-api/PushEncryptionKeyName.idl
     Modules/push-api/PushEvent.idl
     Modules/push-api/PushEventInit.idl
@@ -735,11 +739,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/ResidentKeyRequirement.idl
     Modules/webauthn/UserVerificationRequirement.idl
 
+    Modules/webcodecs/AacEncoderConfig.idl
     Modules/webcodecs/AudioSampleFormat.idl
     Modules/webcodecs/AvcEncoderConfig.idl
     Modules/webcodecs/BitrateMode.idl
+    Modules/webcodecs/FlacEncoderConfig.idl
     Modules/webcodecs/HardwareAcceleration.idl
     Modules/webcodecs/LatencyMode.idl
+    Modules/webcodecs/OpusEncoderConfig.idl
     Modules/webcodecs/PlaneLayout.idl
     Modules/webcodecs/VideoColorPrimaries.idl
     Modules/webcodecs/VideoColorSpace.idl
@@ -753,8 +760,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webcodecs/WebCodecsAudioDecoder.idl
     Modules/webcodecs/WebCodecsAudioDecoderConfig.idl
     Modules/webcodecs/WebCodecsAudioDecoderSupport.idl
+    Modules/webcodecs/WebCodecsAudioEncoder.idl
+    Modules/webcodecs/WebCodecsAudioEncoderConfig.idl
+    Modules/webcodecs/WebCodecsAudioEncoderSupport.idl
     Modules/webcodecs/WebCodecsCodecState.idl
     Modules/webcodecs/WebCodecsEncodedAudioChunk.idl
+    Modules/webcodecs/WebCodecsEncodedAudioChunkMetadata.idl
+    Modules/webcodecs/WebCodecsEncodedAudioChunkOutputCallback.idl
     Modules/webcodecs/WebCodecsEncodedAudioChunkType.idl
     Modules/webcodecs/WebCodecsEncodedVideoChunk.idl
     Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl
@@ -1689,7 +1701,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferDescriptor.idl
     Modules/WebGPU/GPUBufferMapState.idl
     Modules/WebGPU/GPUBufferUsage.idl
-    Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
+    Modules/WebGPU/GPUCanvasAlphaMode.idl
     Modules/WebGPU/GPUCanvasConfiguration.idl
     Modules/WebGPU/GPUColorDict.idl
     Modules/WebGPU/GPUColorTargetState.idl
@@ -1706,7 +1718,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUComputePassDescriptor.idl
     Modules/WebGPU/GPUComputePassEncoder.idl
     Modules/WebGPU/GPUComputePassTimestampLocation.idl
-    Modules/WebGPU/GPUComputePassTimestampWrite.idl
+    Modules/WebGPU/GPUComputePassTimestampWrites.idl
     Modules/WebGPU/GPUComputePipeline.idl
     Modules/WebGPU/GPUComputePipelineDescriptor.idl
     Modules/WebGPU/GPUCullMode.idl
@@ -1772,7 +1784,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPURenderPassEncoder.idl
     Modules/WebGPU/GPURenderPassLayout.idl
     Modules/WebGPU/GPURenderPassTimestampLocation.idl
-    Modules/WebGPU/GPURenderPassTimestampWrite.idl
+    Modules/WebGPU/GPURenderPassTimestampWrites.idl
     Modules/WebGPU/GPURenderPipeline.idl
     Modules/WebGPU/GPURenderPipelineDescriptor.idl
     Modules/WebGPU/GPURequestAdapterOptions.idl
@@ -1836,6 +1848,7 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/popover.css
     ${WEBCORE_DIR}/css/quirks.css
+    ${WEBCORE_DIR}/css/ruby.css
     ${WEBCORE_DIR}/css/svg.css
     ${WEBCORE_DIR}/html/shadow/attachmentElementShadow.css
     ${WEBCORE_DIR}/html/shadow/imageOverlay.css
@@ -2750,21 +2763,35 @@ WEBKIT_COMPUTE_SOURCES(WebCore)
 target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    Modules/WebGPU/InternalAPI/WebGPU.serialization.in
+
+    Modules/indexeddb/IndexedDB.serialization.in
+
     page/ActivityState.serialization.in
     page/DragActions.serialization.in
     page/LayoutMilestones.serialization.in
     page/MediaProducer.serialization.in
 
+    platform/graphics/ca/PlatformCALayer.messages.in
+
     platform/PlatformEvent.serialization.in
     platform/PlatformScreen.serialization.in
+    platform/PlatformWheelEvent.serialization.in
+    platform/ScrollTypes.serialization.in
 
     platform/audio/PlatformMediaSession.serialization.in
+
+    platform/cocoa/PlaybackSessionModel.serialization.in
 
     platform/graphics/cocoa/MediaPlaybackTargetContext.serialization.in
 
     platform/graphics/InbandTextTrackPrivate.serialization.in
 
     platform/mediastream/MDNSRegisterError.serialization.in
+
+    platform/network/ProtectionSpaceBase.serialization.in
+
+    platform/network/soup/SoupNetworkProxySettings.serialization.in
 )
 
 WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders

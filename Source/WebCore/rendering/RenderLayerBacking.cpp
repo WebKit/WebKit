@@ -289,48 +289,45 @@ void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
         compositor().layerTiledBackingUsageChanged(layer, false);
 }
 
-static void clearBackingSharingLayerProviders(const Vector<WeakPtr<RenderLayer>>& sharingLayers, const RenderLayer& providerLayer)
+static void clearBackingSharingLayerProviders(WeakListHashSet<RenderLayer>& sharingLayers, const RenderLayer& providerLayer)
 {
-    for (auto& layerWeakPtr : sharingLayers) {
-        if (!layerWeakPtr)
-            continue;
-        if (layerWeakPtr->backingProviderLayer() == &providerLayer)
-            layerWeakPtr->setBackingProviderLayer(nullptr);
+    for (auto& layer : sharingLayers) {
+        if (layer.backingProviderLayer() == &providerLayer)
+            layer.setBackingProviderLayer(nullptr);
     }
 }
 
-void RenderLayerBacking::setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&& sharingLayers)
+void RenderLayerBacking::setBackingSharingLayers(WeakListHashSet<RenderLayer>&& sharingLayers)
 {
-    bool sharingLayersChanged = m_backingSharingLayers != sharingLayers;
-    if (sharingLayersChanged) {
-        // For layers that used to share and no longer do, and are not composited, recompute repaint rects.
-        for (auto& oldSharingLayer : m_backingSharingLayers) {
-            // Layers that go from shared to composited have their repaint rects recomputed in RenderLayerCompositor::updateBacking().
-            // FIXME: Two O(n^2) traversals in this funtion. Probably OK because sharing lists are usually small, but still.
-            if (!sharingLayers.contains(oldSharingLayer) && !oldSharingLayer->isComposited())
-                oldSharingLayer->computeRepaintRectsIncludingDescendants();
+    bool sharingLayersChanged = m_backingSharingLayers.computeSize() != sharingLayers.computeSize();
+    // For layers that used to share and no longer do, and are not composited, recompute repaint rects.
+    for (auto& oldSharingLayer : m_backingSharingLayers) {
+        // Layers that go from shared to composited have their repaint rects recomputed in RenderLayerCompositor::updateBacking().
+        if (!sharingLayers.contains(oldSharingLayer)) {
+            sharingLayersChanged = true;
+            if (!oldSharingLayer.isComposited())
+                oldSharingLayer.computeRepaintRectsIncludingDescendants();
         }
     }
 
     clearBackingSharingLayerProviders(m_backingSharingLayers, m_owningLayer);
 
-    ASSERT(sharingLayersChanged == (m_backingSharingLayers != sharingLayers));
     if (sharingLayersChanged) {
-        if (sharingLayers.size())
+        if (!sharingLayers.isEmptyIgnoringNullReferences())
             setRequiresOwnBackingStore(true);
         setContentsNeedDisplay(); // This could be optimized to only repaint rects for changed layers.
     }
 
     auto oldSharingLayers = std::exchange(m_backingSharingLayers, WTFMove(sharingLayers));
 
-    for (auto& layerWeakPtr : m_backingSharingLayers)
-        layerWeakPtr->setBackingProviderLayer(&m_owningLayer);
+    for (auto& layer : m_backingSharingLayers)
+        layer.setBackingProviderLayer(&m_owningLayer);
 
     if (sharingLayersChanged) {
         // For layers that are newly sharing, recompute repaint rects.
         for (auto& currentSharingLayer : m_backingSharingLayers) {
             if (!oldSharingLayers.contains(currentSharingLayer))
-                currentSharingLayer->computeRepaintRectsIncludingDescendants();
+                currentSharingLayer.computeRepaintRectsIncludingDescendants();
         }
     }
 }
@@ -338,8 +335,7 @@ void RenderLayerBacking::setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&& 
 void RenderLayerBacking::removeBackingSharingLayer(RenderLayer& layer)
 {
     layer.setBackingProviderLayer(nullptr);
-    m_backingSharingLayers.removeFirst(&layer);
-    ASSERT(!m_backingSharingLayers.contains(&layer));
+    m_backingSharingLayers.remove(layer);
 }
 
 void RenderLayerBacking::clearBackingSharingLayers()
@@ -928,11 +924,11 @@ bool RenderLayerBacking::updateCompositedBounds()
 
     // If the backing provider has overflow:clip, we know all sharing layers are affected by the clip because they are containing-block descendants.
     if (!renderer().hasNonVisibleOverflow()) {
-        for (auto& layerWeakPtr : m_backingSharingLayers) {
+        for (auto& layer : m_backingSharingLayers) {
             auto* boundsRootLayer = &m_owningLayer;
-            ASSERT(layerWeakPtr->isDescendantOf(m_owningLayer));
-            auto offset = layerWeakPtr->offsetFromAncestor(&m_owningLayer);
-            auto bounds = layerWeakPtr->calculateLayerBounds(boundsRootLayer, offset, RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
+            ASSERT(layer.isDescendantOf(m_owningLayer));
+            auto offset = layer.offsetFromAncestor(&m_owningLayer);
+            auto bounds = layer.calculateLayerBounds(boundsRootLayer, offset, RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
             layerBounds.unite(bounds);
         }
     }
@@ -3502,8 +3498,8 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         if (is<EventRegionContext>(regionContext))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
-        for (auto& layerWeakPtr : m_backingSharingLayers)
-            paintOneLayer(*layerWeakPtr, sharingLayerPaintFlags);
+        for (auto& layer : m_backingSharingLayers)
+            paintOneLayer(layer, sharingLayerPaintFlags);
     }
 
     if (!regionContext)
@@ -3928,11 +3924,13 @@ void RenderLayerBacking::verifyNotPainting()
 
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)
 {
+    bool shouldApplyAnimationsToTargetRenderer = renderer().isBox() || renderer().isSVGLayerAwareRenderer();
+
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
-    bool hasRotate = renderer().isBox() && keyframes.containsProperty(CSSPropertyRotate);
-    bool hasScale = renderer().isBox() && keyframes.containsProperty(CSSPropertyScale);
-    bool hasTranslate = renderer().isBox() && keyframes.containsProperty(CSSPropertyTranslate);
-    bool hasTransform = renderer().isBox() && keyframes.containsProperty(CSSPropertyTransform);
+    bool hasRotate = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyRotate);
+    bool hasScale = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyScale);
+    bool hasTranslate = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyTranslate);
+    bool hasTransform = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyTransform);
     bool hasFilter = keyframes.containsProperty(CSSPropertyFilter);
 
     bool hasBackdropFilter = false;
@@ -3991,16 +3989,20 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 
     bool didAnimate = false;
 
-    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    auto referenceBoxRect = renderer().transformReferenceBoxRect(renderer().style());
+    if (!renderer().isSVGLayerAwareRenderer())
+        referenceBoxRect = snappedIntRect(LayoutRect(referenceBoxRect));
+
+    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))

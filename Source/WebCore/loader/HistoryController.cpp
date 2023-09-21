@@ -435,9 +435,10 @@ void FrameLoader::HistoryController::updateForRedirectWithLockedBackForwardList(
         // The client redirect replaces the current history item.
         updateCurrentItem();
     } else {
+        auto* page = m_frame.page();
         auto* parentFrame = dynamicDowncast<LocalFrame>(m_frame.tree().parent());
-        if (parentFrame && parentFrame->loader().history().currentItem())
-            parentFrame->loader().history().currentItem()->setChildItem(createItem());
+        if (page && parentFrame && parentFrame->loader().history().currentItem())
+            parentFrame->loader().history().currentItem()->setChildItem(createItem(page->historyItemClient()));
     }
 
     if (!historyURL.isEmpty() && !usesEphemeralSession) {
@@ -692,9 +693,9 @@ void FrameLoader::HistoryController::initializeItem(HistoryItem& item)
     item.setFormInfoFromRequest(documentLoader->request());
 }
 
-Ref<HistoryItem> FrameLoader::HistoryController::createItem()
+Ref<HistoryItem> FrameLoader::HistoryController::createItem(HistoryItemClient& client)
 {
-    Ref<HistoryItem> item = HistoryItem::create();
+    Ref<HistoryItem> item = HistoryItem::create(client);
     initializeItem(item);
     
     // Set the item for which we will save document state
@@ -703,9 +704,9 @@ Ref<HistoryItem> FrameLoader::HistoryController::createItem()
     return item;
 }
 
-Ref<HistoryItem> FrameLoader::HistoryController::createItemTree(LocalFrame& targetFrame, bool clipAtTarget)
+Ref<HistoryItem> FrameLoader::HistoryController::createItemTree(HistoryItemClient& client, LocalFrame& targetFrame, bool clipAtTarget)
 {
-    Ref<HistoryItem> bfItem = createItem();
+    Ref<HistoryItem> bfItem = createItem(client);
     if (!m_frameLoadComplete)
         saveScrollPositionAndViewStateToItem(m_previousItem.get());
 
@@ -735,7 +736,7 @@ Ref<HistoryItem> FrameLoader::HistoryController::createItemTree(LocalFrame& targ
             // to be ignored on reload.
             
             if (!(!hasChildLoaded && localChild->ownerElement() && is<HTMLObjectElement>(localChild->ownerElement())))
-                bfItem->addChildItem(childLoader.history().createItemTree(targetFrame, clipAtTarget));
+                bfItem->addChildItem(childLoader.history().createItemTree(client, targetFrame, clipAtTarget));
         }
     }
     // FIXME: Eliminate the isTargetItem flag in favor of itemSequenceNumber.
@@ -843,7 +844,7 @@ void FrameLoader::HistoryController::updateBackForwardListClippedAtTarget(bool d
 
     FrameLoader& frameLoader = localFrame->loader();
 
-    Ref<HistoryItem> topItem = frameLoader.history().createItemTree(m_frame, doClip);
+    Ref<HistoryItem> topItem = frameLoader.history().createItemTree(page->historyItemClient(), m_frame, doClip);
     LOG(History, "HistoryController %p updateBackForwardListClippedAtTarget: Adding backforward item %p in frame %p (main frame %d) %s", this, topItem.ptr(), &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader()->url().string().utf8().data());
 
     page->backForward().addItem(WTFMove(topItem));
@@ -878,8 +879,11 @@ void FrameLoader::HistoryController::pushState(RefPtr<SerializedScriptValue>&& s
     if (!m_currentItem)
         return;
 
-    Page* page = m_frame.page();
-    ASSERT(page);
+    auto* page = m_frame.page();
+    if (!page) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     bool shouldRestoreScrollPosition = m_currentItem->shouldRestoreScrollPosition();
 
@@ -888,7 +892,7 @@ void FrameLoader::HistoryController::pushState(RefPtr<SerializedScriptValue>&& s
     if (!localFrame)
         return;
 
-    Ref<HistoryItem> topItem = localFrame->loader().history().createItemTree(m_frame, false);
+    Ref<HistoryItem> topItem = localFrame->loader().history().createItemTree(page->historyItemClient(), m_frame, false);
 
     auto* document = m_frame.document();
     if (document && !document->hasRecentUserInteractionForNavigationFromJS())

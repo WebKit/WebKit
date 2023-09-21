@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-static inline WebEventType webEventTypeForNSEvent(NSEvent *event)
+static inline std::optional<WebEventType> webEventTypeForNSEvent(NSEvent *event)
 {
     switch (event.phase) {
     case NSEventPhaseBegan:
@@ -47,7 +47,7 @@ static inline WebEventType webEventTypeForNSEvent(NSEvent *event)
     default:
         break;
     }
-    return WebEventType::NoType;
+    return std::nullopt;
 }
 
 static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
@@ -58,9 +58,17 @@ static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
     return location;
 }
 
-NativeWebGestureEvent::NativeWebGestureEvent(NSEvent *event, NSView *view)
+std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(NSEvent *event, NSView *view)
+{
+    auto type = webEventTypeForNSEvent(event);
+    if (!type)
+        return std::nullopt;
+    return { NativeWebGestureEvent { *type, event, view } };
+}
+
+NativeWebGestureEvent::NativeWebGestureEvent(WebEventType type, NSEvent *event, NSView *view)
     : WebGestureEvent(
-        { webEventTypeForNSEvent(event), OptionSet<WebEventModifier> { }, WebCore::eventTimeStampSince1970(event.timestamp) },
+        { type, OptionSet<WebEventModifier> { }, WebCore::eventTimeStampSince1970(event.timestamp) },
         WebCore::IntPoint(pointForEvent(event, view)),
         event.type == NSEventTypeMagnify ? event.magnification : 0,
         event.type == NSEventTypeRotate ? event.rotation : 0)

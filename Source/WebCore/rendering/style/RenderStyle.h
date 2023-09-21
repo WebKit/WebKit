@@ -486,6 +486,8 @@ public:
     float borderStartWidth() const;
     float borderEndWidth() const;
 
+    inline bool borderIsEquivalentForPainting(const RenderStyle&) const;
+
     float outlineSize() const { return std::max<float>(0, outlineWidth() + outlineOffset()); }
     float outlineWidth() const;
     inline bool hasOutline() const;

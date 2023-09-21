@@ -493,6 +493,89 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
     localReferenceBarrier();
 }
 
+TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        auto listenerID = decoder.decode<uint64_t>();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        encoder.get() << decoder.destinationID();
+        a()->sendSyncReply(WTFMove(encoder));
+        return true;
+    });
+    HashSet<uint64_t> replies;
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t i = 100u; i < 160u; ++i) {
+            b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, i)->then(runLoop, __func__,
+                [&, j = i] (uint64_t value) {
+                    if (!value)
+                        WTFLogAlways("GOT: %llu", j);
+                    EXPECT_GE(value, 100u);
+                    replies.add(value);
+                },
+                [] {
+                    // There should never be a connection failure in this case.
+                    EXPECT_TRUE(false);
+                });
+        }
+        while (replies.size() < 60u)
+            RunLoop::current().cycle();
+        b()->invalidate();
+    });
+
+    for (uint64_t i = 100u; i < 160u; ++i)
+        EXPECT_TRUE(replies.contains(i));
+    localReferenceBarrier();
+}
+
+// Ensure that replies are received in the right order.
+TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOrder)
+{
+    using Promise = MockTestMessageWithAsyncReply1::Promise;
+
+    ASSERT_TRUE(openA());
+    uint64_t replyID = 0;
+    aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        auto listenerID = decoder.decode<uint64_t>();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        encoder.get() << replyID++;
+        a()->sendSyncReply(WTFMove(encoder));
+        return true;
+    });
+    Vector<uint64_t> replies;
+    constexpr size_t counter = 50;
+    replies.reserveInitialCapacity(counter);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t i = 0; i < counter; ++i) {
+            if (!(i % 2)) {
+                b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(runLoop, __func__, [&, i] (Promise::Result result) {
+                    EXPECT_TRUE(result.has_value());
+                    EXPECT_EQ(result.value(), i);
+                    replies.uncheckedAppend(i);
+                });
+            } else {
+                b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, i] (uint64_t value) {
+                    EXPECT_EQ(value, i);
+                    replies.uncheckedAppend(i);
+                }, 100);
+            }
+        }
+        while (replies.size() < counter)
+            RunLoop::current().cycle();
+        b()->invalidate();
+    });
+
+    for (uint64_t i = 0u; i < counter; ++i)
+        EXPECT_EQ(replies[i], i);
+    localReferenceBarrier();
+}
+
 // This API contract does not make sense. Not only that, but there is no good way currently
 // to capture this in a thread-safe way (construct completion handler in a thread-safe way
 // so that it would assert that it would execute in the run loop thread). This is disabled

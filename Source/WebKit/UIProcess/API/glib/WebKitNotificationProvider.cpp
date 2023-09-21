@@ -49,9 +49,10 @@ public:
     }
 
 private:
-    void show(WebPageProxy* page, WebNotification& notification, RefPtr<WebCore::NotificationResources>&& resources) override
+    bool show(WebPageProxy* page, WebNotification& notification, RefPtr<WebCore::NotificationResources>&& resources) override
     {
         m_provider.show(page, notification, WTFMove(resources));
+        return true;
     }
 
     void cancel(WebNotification& notification) override

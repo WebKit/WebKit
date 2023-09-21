@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-bool WebExtensionAPINamespace::isPropertyAllowed(String name, WebPage*)
+bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
     // This property is only allowed in testing contexts.
     if (name == "test"_s)
@@ -44,7 +44,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(String name, WebPage*)
 
     // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.
     auto *permissions = objectForKey<NSArray>(extensionContext().manifest(), @"permissions", true, NSString.class);
-    return [permissions containsObject:static_cast<NSString *>(name)];
+    return [permissions containsObject:name.createNSString().get()];
 }
 
 WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
@@ -92,6 +92,16 @@ WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
         m_runtime = WebExtensionAPIRuntime::create(forMainWorld(), extensionContext());
 
     return *m_runtime;
+}
+
+WebExtensionAPIScripting& WebExtensionAPINamespace::scripting()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting
+
+    if (!m_scripting)
+        m_scripting = WebExtensionAPIScripting::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_scripting;
 }
 
 WebExtensionAPITabs& WebExtensionAPINamespace::tabs()

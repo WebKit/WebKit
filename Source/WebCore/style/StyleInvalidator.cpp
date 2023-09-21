@@ -50,12 +50,12 @@ static bool shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
         if (is<StyleRuleMedia>(rule)) {
-            if (shouldDirtyAllStyle(downcast<StyleRuleMedia>(rule).childRules()))
+            if (shouldDirtyAllStyle(downcast<StyleRuleMedia>(rule.get()).childRules()))
                 return true;
             continue;
         }
         if (is<StyleRuleWithNesting>(rule)) {
-            if (shouldDirtyAllStyle(downcast<StyleRuleWithNesting>(rule).nestedRules()))
+            if (shouldDirtyAllStyle(downcast<StyleRuleWithNesting>(rule.get()).nestedRules()))
                 return true;
             continue;
         }
@@ -344,7 +344,7 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
-    case MatchElement::HasSibling: {
+    case MatchElement::HasSibling:
         if (auto* sibling = element.previousElementSibling()) {
             SelectorMatchingState selectorMatchingState;
             if (RefPtr parent = element.parentElement())
@@ -353,6 +353,13 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
             for (; sibling; sibling = sibling->previousElementSibling())
                 invalidateIfNeeded(*sibling, &selectorMatchingState);
         }
+        break;
+    case MatchElement::HasAnySibling: {
+        SelectorMatchingState selectorMatchingState;
+        if (auto* parent = element.parentElement())
+            selectorMatchingState.selectorFilter.pushParentInitializingIfNeeded(*parent);
+        for (auto& sibling : childrenOfType<Element>(*element.parentNode()))
+            invalidateIfNeeded(sibling, &selectorMatchingState);
         break;
     }
     case MatchElement::HasSiblingDescendant: {
@@ -371,7 +378,8 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
-    case MatchElement::HasNonSubjectOrScopeBreaking: {
+    case MatchElement::HasNonSubject:
+    case MatchElement::HasScopeBreaking: {
         SelectorMatchingState selectorMatchingState;
         invalidateStyleForDescendants(*element.document().documentElement(), &selectorMatchingState);
         break;
@@ -461,6 +469,13 @@ void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const Mat
         Invalidator invalidator(matchElementAndRuleSet.value);
         invalidator.invalidateStyleWithMatchElement(element, matchElementAndRuleSet.key);
     }
+}
+
+void Invalidator::invalidateWithScopeBreakingHasPseudoClassRuleSet(Element& element, const RuleSet* ruleSet)
+{
+    SetForScope isInvalidating(element.styleResolver().ruleSets().isInvalidatingStyleWithRuleSets(), true);
+    Invalidator invalidator({ ruleSet });
+    invalidator.invalidateStyleWithMatchElement(element, MatchElement::HasScopeBreaking);
 }
 
 void Invalidator::invalidateAllStyle(Scope& scope)

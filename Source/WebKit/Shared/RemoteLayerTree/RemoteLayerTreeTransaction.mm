@@ -290,14 +290,14 @@ String RemoteLayerTreeTransaction::description() const
             TextStream::GroupScope group(ts);
             ts << createdLayer.type <<" " << createdLayer.layerID;
             switch (createdLayer.type) {
-            case WebCore::PlatformCALayer::LayerTypeAVPlayerLayer:
+            case WebCore::PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
                 ts << " (context-id " << createdLayer.hostingContextID() << ")";
                 break;
-            case WebCore::PlatformCALayer::LayerTypeCustom:
+            case WebCore::PlatformCALayer::LayerType::LayerTypeCustom:
                 ts << " (context-id " << createdLayer.hostingContextID() << ")";
                 break;
 #if ENABLE(MODEL_ELEMENT)
-            case WebCore::PlatformCALayer::LayerTypeModelLayer:
+            case WebCore::PlatformCALayer::LayerType::LayerTypeModelLayer:
                 if (auto* model = std::get_if<Ref<WebCore::Model>>(&createdLayer.additionalData))
                     ts << " (model " << model->get() << ")";
                 break;

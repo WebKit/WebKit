@@ -50,7 +50,7 @@ public:
 
     virtual void updateCellStates(const FloatRect&, const ControlStyle&) { }
 
-    virtual FloatSize sizeForBounds(const FloatRect& bounds) const { return bounds.size(); }
+    virtual FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&) const { return bounds.size(); }
 
     virtual FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const { return bounds; }
 

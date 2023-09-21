@@ -3767,7 +3767,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Web
     if (!document)
         return;
     
-    document->setFocusedElement(0);
+    document->setFocusedElement(nullptr);
 }
 
 - (BOOL)isOpaque
@@ -4602,7 +4602,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
         return YES;
 
     if (auto* document = frame->document())
-        document->setFocusedElement(0);
+        document->setFocusedElement(nullptr);
     page->focusController().setInitialFocus(direction == NSSelectingNext ? WebCore::FocusDirection::Forward : WebCore::FocusDirection::Backward,
                                              currentKeyboardEvent(frame).get());
     return YES;

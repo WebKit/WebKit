@@ -126,6 +126,7 @@ class WebPageProxy;
 @class WKHighlightLongPressGestureRecognizer;
 @class WKImageAnalysisGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
+@class WKTapHighlightView;
 @class WKTargetedPreviewContainer;
 @class WKTextRange;
 @class _WKTextInputContext;
@@ -138,7 +139,6 @@ class WebPageProxy;
 @class UIPointerRegion;
 @class UITargetedPreview;
 @class _UILookupGestureRecognizer;
-@class _UIHighlightView;
 
 #if HAVE(PEPPER_UI_CORE)
 @class PUICQuickboardViewController;
@@ -345,7 +345,7 @@ struct ImageAnalysisContextMenuActionData {
 
     RetainPtr<UITextInputTraits> _traits;
     RetainPtr<UIWebFormAccessory> _formAccessoryView;
-    RetainPtr<_UIHighlightView> _highlightView;
+    RetainPtr<WKTapHighlightView> _tapHighlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
     RetainPtr<WKTargetedPreviewContainer> _contextMenuHintContainerView;
     WeakObjCPtr<UIScrollView> _scrollViewForTargetedPreview;

@@ -92,6 +92,15 @@ using IMLangFontLinkType = IMLangFontLink2;
 using IMLangFontLinkType = IMLangFontLink;
 #endif
 
+struct FontCachePrewarmInformation {
+    Vector<String> seenFamilies;
+    Vector<String> fontNamesRequiringSystemFallback;
+
+    bool isEmpty() const;
+    FontCachePrewarmInformation isolatedCopy() const & { return { crossThreadCopy(seenFamilies), crossThreadCopy(fontNamesRequiringSystemFallback) }; }
+    FontCachePrewarmInformation isolatedCopy() && { return { crossThreadCopy(WTFMove(seenFamilies)), crossThreadCopy(WTFMove(fontNamesRequiringSystemFallback)) }; }
+};
+
 class FontCache {
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -164,17 +173,8 @@ public:
 
     std::unique_ptr<FontPlatformData> createFontPlatformDataForTesting(const FontDescription&, const AtomString& family);
 
-    struct PrewarmInformation {
-        Vector<String> seenFamilies;
-        Vector<String> fontNamesRequiringSystemFallback;
+    using PrewarmInformation = FontCachePrewarmInformation;
 
-        bool isEmpty() const;
-        PrewarmInformation isolatedCopy() const & { return { crossThreadCopy(seenFamilies), crossThreadCopy(fontNamesRequiringSystemFallback) }; }
-        PrewarmInformation isolatedCopy() && { return { crossThreadCopy(WTFMove(seenFamilies)), crossThreadCopy(WTFMove(fontNamesRequiringSystemFallback)) }; }
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<PrewarmInformation> decode(Decoder&);
-    };
     PrewarmInformation collectPrewarmInformation() const;
     void prewarm(PrewarmInformation&&);
     static void prewarmGlobally();
@@ -272,28 +272,9 @@ inline void FontCache::platformPurgeInactiveFontData()
 
 #endif
 
-inline bool FontCache::PrewarmInformation::isEmpty() const
+inline bool FontCachePrewarmInformation::isEmpty() const
 {
     return seenFamilies.isEmpty() && fontNamesRequiringSystemFallback.isEmpty();
-}
-
-template<class Encoder>
-void FontCache::PrewarmInformation::encode(Encoder& encoder) const
-{
-    encoder << seenFamilies;
-    encoder << fontNamesRequiringSystemFallback;
-}
-
-template<class Decoder>
-std::optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::decode(Decoder& decoder)
-{
-    PrewarmInformation prewarmInformation;
-    if (!decoder.decode(prewarmInformation.seenFamilies))
-        return { };
-    if (!decoder.decode(prewarmInformation.fontNamesRequiringSystemFallback))
-        return { };
-
-    return prewarmInformation;
 }
 
 }

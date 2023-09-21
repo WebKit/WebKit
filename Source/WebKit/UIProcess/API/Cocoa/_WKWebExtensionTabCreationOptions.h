@@ -65,23 +65,20 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, nullable, readonly, copy) NSURL *desiredURL;
 
 /*!
- @abstract Indicates whether the new tab should be selected.
- @discussion If this property is set to `YES`, and if `shouldExtendSelection` is also `YES`, the new tab
- should be added to the current selection without altering the frontmost tab. If `shouldExtendSelection` is `NO`,
- the previous selection should be cleared and the new tab should be the only one selected. If `shouldSelect` is `NO`,
- this tab should not be part of the selection regardless of the `shouldExtendSelection` value.
- @seealso shouldExtendSelection
+ @abstract Indicates whether the new tab should become the active tab.
+ @discussion If this property is set to `YES`, the new tab should be made active in the window, ensuring it is
+ the frontmost tab. Being active implies the tab is also selected. If this property is set to `NO`,  the new tab shouldn't
+ affect the currently active tab.
  */
-@property (nonatomic, readonly) BOOL shouldSelect;
+@property (nonatomic, readonly) BOOL shouldActivate;
 
 /*!
- @abstract Indicates whether the new tab's selection should extend the current selection.
- @discussion If this property is set to `YES`, and if `shouldSelect` is also `YES`, the new tab should be added
- to the current selection without altering the frontmost tab. If this property is set to `NO`, or if `shouldSelect` is `NO`,
- the current selection state of other tabs should not be affected by the creation of the new tab.
- @seealso shouldSelect
+ @abstract Indicates whether the new tab should be added to the current tab selection.
+ @discussion If this property is set to `YES`, the new tab should be part of the current selection, but not necessarily
+ become the active tab unless `shouldActivate` is also `YES`. If this property is set to `NO`, the new tab shouldn't
+ be part of the current selection.
  */
-@property (nonatomic, readonly) BOOL shouldExtendSelection;
+@property (nonatomic, readonly) BOOL shouldSelect;
 
 /*! @abstract Indicates whether the new tab should be pinned. */
 @property (nonatomic, readonly) BOOL shouldPin;

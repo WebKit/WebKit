@@ -162,7 +162,7 @@ void WorkerCacheStorageConnection::retrieveRecords(DOMCacheIdentifier cacheIdent
 
     callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, options = WTFMove(options).isolatedCopy()]() mutable {
         mainThreadConnection->retrieveRecords(cacheIdentifier, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier](auto&& result) mutable {
-            workerThread->runLoop().postTaskForMode([result = isolatedCopyCrossThreadRecordsOrError(WTFMove(result)), requestIdentifier] (auto& scope) mutable {
+            workerThread->runLoop().postTaskForMode([result = isolatedCopyCrossThreadRecordsOrError(std::forward<decltype(result)>(result)), requestIdentifier] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().retrieveRecordsCompleted(requestIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         });

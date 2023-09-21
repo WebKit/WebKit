@@ -14,11 +14,10 @@ struct S {
 @compute @workgroup_size(1)
 fn main()
 {
-    _ = helper();
+    helper();
 }
 
-fn helper() -> i32
+fn helper()
 {
     _ = T(S(y));
-    return 0;
 }

@@ -237,9 +237,8 @@ void ServiceWorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLe
 
 CookieStore& ServiceWorkerGlobalScope::cookieStore()
 {
-    // FIXME: Should not pass nullptr. Should instead add service worker supported context.
     if (!m_cookieStore)
-        m_cookieStore = CookieStore::create(nullptr);
+        m_cookieStore = CookieStore::create(this);
     return *m_cookieStore;
 }
 

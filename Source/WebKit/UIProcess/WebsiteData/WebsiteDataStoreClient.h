@@ -40,6 +40,7 @@ class SecurityOriginData;
 namespace WebKit {
 
 class WebPageProxy;
+class WebsiteDataStore;
 
 class WebsiteDataStoreClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -89,7 +90,11 @@ public:
     virtual void workerUpdatedAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>)
     {
     }
-    
+
+    virtual void navigationToNotificationActionURL(const URL&)
+    {
+    }
+
     virtual void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler)
     {
         UNUSED_PARAM(topOrigin);

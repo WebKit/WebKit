@@ -247,6 +247,8 @@ public:
     void incrementPtrCount() const { ++m_count; }
     void decrementPtrCount() const { ASSERT(m_count); --m_count; }
 
+    friend bool operator==(const CanMakeCheckedPtrBase&, const CanMakeCheckedPtrBase&) { return true; }
+
 private:
     mutable StorageType m_count { 0 };
 };

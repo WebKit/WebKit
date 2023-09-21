@@ -86,15 +86,13 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& d
         if (destContext.drawLuminanceMask())
             imageBuffer->convertToLuminanceMask();
 
-        m_cachedImage = ImageBuffer::sinkIntoImage(WTFMove(imageBuffer), PreserveResolution::Yes);
+        m_cachedImage = ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
         if (!m_cachedImage)
             return;
     }
 
     destContext.setDrawLuminanceMask(false);
-
-    // Tile the image buffer into the context.
-    m_cachedImage->drawPattern(destContext, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
+    destContext.drawPattern(*m_cachedImage, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
 
 }
 

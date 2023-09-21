@@ -333,6 +333,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)becomeFirstResponder
 {
+#if PLATFORM(VISION)
+    if (_page)
+        _page->setSceneIdentifier(self.window.windowScene.session.persistentIdentifier);
+#endif
     UIView *currentContentView = self._currentContentView;
     if (currentContentView == _contentView && [_contentView superview])
         return [_contentView becomeFirstResponderForWebView] || [super becomeFirstResponder];
@@ -725,7 +729,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
 - (UIEdgeInsets)_contentInsetsFromSystemMinimumLayoutMargins
 {
-    if (auto controller = [UIViewController _viewControllerForFullScreenPresentationFromView:self]) {
+    if (auto controller = self._wk_viewControllerForFullScreenPresentation) {
         auto margins = controller.systemMinimumLayoutMargins;
         auto insets = UIEdgeInsetsMake(margins.top, margins.leading, margins.bottom, margins.trailing);
         if (_page && _page->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL)
@@ -3346,7 +3350,7 @@ static bool isLockdownModeWarningNeeded()
 
             [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Lockdown Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
 
-            UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:protectedSelf.get()];
+            auto presentationViewController = [protectedSelf _wk_viewControllerForFullScreenPresentation];
             [presentationViewController presentViewController:alert.get() animated:YES completion:nil];
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitLockdownModeAlertShownKey];
         });
@@ -4082,11 +4086,11 @@ static bool isLockdownModeWarningNeeded()
         return;
     }
 
-    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [completionHandler = makeBlockPtr(completionHandler)](WebKit::ShareableBitmap::Handle&& imageHandle) {
-        if (imageHandle.isNull())
+    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [completionHandler = makeBlockPtr(completionHandler)](std::optional<WebKit::ShareableBitmap::Handle>&& imageHandle) {
+        if (!imageHandle)
             return completionHandler(nil);
 
-        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
+        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
 
         if (!bitmap)
             return completionHandler(nil);
@@ -4392,7 +4396,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_page || !_perProcessState.committedFindLayerID)
         return nil;
 
-    return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(_perProcessState.committedFindLayerID);
+    if (auto* drawingArea = _page->drawingArea())
+        return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).remoteLayerTreeHost().layerForID(_perProcessState.committedFindLayerID);
+
+    return nil;
 }
 
 #endif // HAVE(UIFINDINTERACTION)

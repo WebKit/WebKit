@@ -61,7 +61,7 @@ inline WheelEvent::WheelEvent(const AtomString& type, const Init& initializer)
 
 inline WheelEvent::WheelEvent(const PlatformWheelEvent& event, RefPtr<WindowProxy>&& view, IsCancelable isCancelable)
     : MouseEvent(eventNames().wheelEvent, CanBubble::Yes, isCancelable, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0,
-        event.globalPosition(), event.position() , 0, 0, event.modifiers(), 0, 0, nullptr, 0, SyntheticClickType::NoTap, IsSimulated::No, IsTrusted::Yes)
+        event.globalPosition(), event.position() , 0, 0, event.modifiers(), MouseButton::Left, 0, nullptr, 0, SyntheticClickType::NoTap, IsSimulated::No, IsTrusted::Yes)
     , m_wheelDelta(event.wheelTicksX() * TickMultiplier, event.wheelTicksY() * TickMultiplier)
     , m_deltaX(-event.deltaX())
     , m_deltaY(-event.deltaY())
@@ -90,7 +90,7 @@ void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, RefPtr<Windo
     if (isBeingDispatched())
         return;
     
-    initMouseEvent(eventNames().wheelEvent, true, true, WTFMove(view), 0, screenX, screenY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, 0, nullptr);
+    initMouseEvent(eventNames().wheelEvent, true, true, WTFMove(view), 0, screenX, screenY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, enumToUnderlyingType(MouseButton::Left), nullptr);
 
     // Normalize to 120 multiple for compatibility with IE.
     m_wheelDelta = { rawDeltaX * TickMultiplier, rawDeltaY * TickMultiplier };

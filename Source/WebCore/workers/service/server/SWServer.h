@@ -211,8 +211,6 @@ public:
     std::optional<ExceptionData> claim(SWServerWorker&);
     WEBCORE_EXPORT void terminateContextConnectionWhenPossible(const RegistrableDomain&, ProcessIdentifier);
 
-    WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
-
     enum class IsBeingCreatedClient : bool { No, Yes };
     WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent, IsBeingCreatedClient);
     WEBCORE_EXPORT void unregisterServiceWorkerClient(const ClientOrigin&, ScriptExecutionContextIdentifier);

@@ -48,6 +48,7 @@ private:
     using MatchingHasSelectors = HashSet<const CSSSelector*>;
     enum class ChangedElementRelation : uint8_t { SelfOrDescendant, Sibling };
     void invalidateForChangedElement(Element&, MatchingHasSelectors&, ChangedElementRelation);
+    void invalidateForChangeOutsideHasScope();
 
     template<typename Function> void traverseRemovedElements(Function&&);
     template<typename Function> void traverseAddedElements(Function&&);

@@ -39,22 +39,27 @@ namespace WTF {
 
 template<typename T>
 struct LogArgument {
-    template<typename U = T> static typename std::enable_if<std::is_same<U, bool>::value, String>::type toString(bool argument) { return argument ? "true"_s : "false"_s; }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, int>::value, String>::type toString(int argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned>::value, String>::type toString(unsigned argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned long>::value, String>::type toString(unsigned long argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, long>::value, String>::type toString(long argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned long long>::value, String>::type toString(unsigned long long argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, long long>::value, String>::type toString(long long argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned short>::value, String>::type toString(unsigned short argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, short>::value, String>::type toString(short argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_enum<U>::value, String>::type toString(U argument) { return String::number(static_cast<typename std::underlying_type<U>::type>(argument)); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, float>::value, String>::type toString(float argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, double>::value, String>::type toString(double argument) { return String::number(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, AtomString>::value, String>::type toString(const AtomString& argument) { return argument.string(); }
-    template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, String>::value, String>::type toString(String argument) { return argument; }
-    template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, StringBuilder*>::value, String>::type toString(StringBuilder* argument) { return argument->toString(); }
-    template<typename U = T> static typename std::enable_if<std::is_same<U, const char*>::value, String>::type toString(const char* argument) { return String::fromLatin1(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, bool>, String> toString(bool argument) { return argument ? "true"_s : "false"_s; }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, int>, String> toString(int argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, unsigned>, String> toString(unsigned argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, unsigned long>, String> toString(unsigned long argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, long>, String> toString(long argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, unsigned long long>, String> toString(unsigned long long argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, long long>, String> toString(long long argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, unsigned short>, String> toString(unsigned short argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, short>, String> toString(short argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_enum_v<U>, String> toString(U argument) { return String::number(static_cast<typename std::underlying_type<U>::type>(argument)); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, float>, String> toString(float argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, double>, String> toString(double argument) { return String::number(argument); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<typename std::remove_reference_t<U>, AtomString>, String> toString(const AtomString& argument) { return argument.string(); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<typename std::remove_reference_t<U>, String>, String> toString(String argument) { return argument; }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<typename std::remove_reference_t<U>, StringBuilder*>, String> toString(StringBuilder* argument) { return argument->toString(); }
+    template<typename U = T> static std::enable_if_t<std::is_same_v<U, const char*>, String> toString(const char* argument) { return String::fromLatin1(argument); }
+#ifdef __OBJC__
+    template<typename U = T> static std::enable_if_t<std::is_base_of_v<NSError, std::remove_pointer_t<U>>, String> toString(NSError *argument) { return String(argument.localizedDescription); }
+    template<typename U = T> static std::enable_if_t<std::is_base_of_v<NSObject, std::remove_pointer_t<U>>, String> toString(NSObject *argument) { return String(argument.description); }
+    template<typename U = T> static std::enable_if_t<std::is_base_of_v<NSProxy, std::remove_pointer_t<U>>, String> toString(NSProxy *argument) { return String(argument.description); }
+#endif
     template<size_t length> static String toString(const char (&argument)[length]) { return String::fromLatin1(argument); }
 };
 
@@ -382,6 +387,17 @@ template<> struct LogArgument<Logger::LogSiteIdentifier> {
 template<> struct LogArgument<const void*> {
     WTF_EXPORT_PRIVATE static String toString(const void*);
 };
+
+#ifdef __OBJC__
+template<> struct LogArgument<id> {
+    static String toString(id argument)
+    {
+        if ([argument respondsToSelector:@selector(description)])
+            return String([argument description]);
+        return LogArgument<const void*>::toString((__bridge const void*)argument);
+    }
+};
+#endif
 
 } // namespace WTF
 

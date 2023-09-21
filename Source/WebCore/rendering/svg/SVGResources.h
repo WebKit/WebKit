@@ -31,10 +31,10 @@
 namespace WebCore {
 
 class Document;
+class LegacyRenderSVGResourceContainer;
 class RenderElement;
 class RenderObject;
 class RenderStyle;
-class RenderSVGResourceContainer;
 class LegacyRenderSVGRoot;
 class SVGRenderStyle;
 
@@ -57,18 +57,18 @@ public:
     RenderSVGResourceFilter* filter() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->filter.get() : nullptr; }
 
     // Paint servers
-    RenderSVGResourceContainer* fill() const { return m_fillStrokeData ? m_fillStrokeData->fill.get() : nullptr; }
-    RenderSVGResourceContainer* stroke() const { return m_fillStrokeData ? m_fillStrokeData->stroke.get() : nullptr; }
+    LegacyRenderSVGResourceContainer* fill() const { return m_fillStrokeData ? m_fillStrokeData->fill.get() : nullptr; }
+    LegacyRenderSVGResourceContainer* stroke() const { return m_fillStrokeData ? m_fillStrokeData->stroke.get() : nullptr; }
 
     // Chainable resources - linked through xlink:href
-    RenderSVGResourceContainer* linkedResource() const { return m_linkedResource.get(); }
+    LegacyRenderSVGResourceContainer* linkedResource() const { return m_linkedResource.get(); }
 
-    void buildSetOfResources(WeakHashSet<RenderSVGResourceContainer>&);
+    void buildSetOfResources(WeakHashSet<LegacyRenderSVGResourceContainer>&);
 
     // Methods operating on all cached resources
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) const;
     // Returns true if the resource-to-be-destroyed is one of our resources.
-    bool resourceDestroyed(RenderSVGResourceContainer&);
+    bool resourceDestroyed(LegacyRenderSVGResourceContainer&);
 
 #if ENABLE(TREE_DEBUGGING)
     void dump(const RenderObject*);
@@ -95,9 +95,9 @@ private:
     bool setMarkerMid(RenderSVGResourceMarker*);
     bool setMarkerEnd(RenderSVGResourceMarker*);
     bool setMasker(RenderSVGResourceMasker*);
-    bool setFill(RenderSVGResourceContainer*);
-    bool setStroke(RenderSVGResourceContainer*);
-    bool setLinkedResource(RenderSVGResourceContainer*);
+    bool setFill(LegacyRenderSVGResourceContainer*);
+    bool setStroke(LegacyRenderSVGResourceContainer*);
+    bool setLinkedResource(LegacyRenderSVGResourceContainer*);
     
     bool isEmpty() const { return !m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource; }
 
@@ -134,14 +134,14 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         FillStrokeData() = default;
-        WeakPtr<RenderSVGResourceContainer> fill;
-        WeakPtr<RenderSVGResourceContainer> stroke;
+        WeakPtr<LegacyRenderSVGResourceContainer> fill;
+        WeakPtr<LegacyRenderSVGResourceContainer> stroke;
     };
 
     std::unique_ptr<ClipperFilterMaskerData> m_clipperFilterMaskerData;
     std::unique_ptr<MarkerData> m_markerData;
     std::unique_ptr<FillStrokeData> m_fillStrokeData;
-    WeakPtr<RenderSVGResourceContainer> m_linkedResource;
+    WeakPtr<LegacyRenderSVGResourceContainer> m_linkedResource;
 };
 
 } // namespace WebCore

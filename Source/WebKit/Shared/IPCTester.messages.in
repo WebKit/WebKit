@@ -34,8 +34,8 @@ messages -> IPCTester NotRefCounted {
     SendSameSemaphoreBack(IPC::Semaphore semaphore)
     SendSemaphoreBackAndSignalProtocol(IPC::Semaphore semaphore)
 
-    AsyncPing() -> ()
-    SyncPing() -> () Synchronous
+    AsyncPing(uint32_t value) -> (uint32_t nextValue)
+    SyncPing(uint32_t value) -> (uint32_t nextValue) Synchronous
 
     SendAsyncMessageToReceiver(uint32_t arg0)
 }

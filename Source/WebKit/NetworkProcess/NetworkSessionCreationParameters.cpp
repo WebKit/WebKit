@@ -109,6 +109,9 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << serviceWorkerProcessTerminationDelayEnabled << inspectionForServiceWorkersAllowed;
 #endif
     encoder << resourceLoadStatisticsParameters;
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    encoder << isDeclarativeWebPushEnabled;
+#endif
 }
 
 std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
@@ -459,6 +462,13 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!resourceLoadStatisticsParameters)
         return std::nullopt;
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    std::optional<bool> isDeclarativeWebPushEnabled;
+    decoder >> isDeclarativeWebPushEnabled;
+    if (!isDeclarativeWebPushEnabled)
+        return std::nullopt;
+#endif
+
     return {{
         *sessionID
         , WTFMove(*dataStoreIdentifier)
@@ -537,6 +547,9 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle)
         , *serviceWorkerProcessTerminationDelayEnabled
         , *inspectionForServiceWorkersAllowed
+#endif
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+        , *isDeclarativeWebPushEnabled
 #endif
         , WTFMove(*resourceLoadStatisticsParameters)
     }};

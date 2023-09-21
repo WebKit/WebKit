@@ -110,6 +110,8 @@ static NSDictionary *toWebAPI(const WebExtensionWindowParameters& parameters)
     ASSERT(parameters.focused);
     ASSERT(parameters.privateBrowsing);
 
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/Window
+
     NSMutableDictionary *result = [@{
         idKey: @(toWebAPI(parameters.identifier.value())),
         stateKey: toWebAPI(parameters.state.value()),
@@ -179,15 +181,11 @@ static inline std::optional<WebExtensionWindow::State> toStateImpl(NSString *sta
 
 bool WebExtensionAPIWindows::parsePopulateTabs(NSDictionary *options, PopulateTabs& populate, NSString *sourceKey, NSString **outExceptionString)
 {
-    static NSArray<NSString *> *optionalKeys = @[
-        populateKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         populateKey: @YES.class,
     };
 
-    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
     populate = objectForKey<NSNumber>(options, populateKey).boolValue ? PopulateTabs::Yes : PopulateTabs::No;
@@ -200,15 +198,11 @@ bool WebExtensionAPIWindows::parseWindowTypesFilter(NSDictionary *options, Optio
     // All windows match by default.
     windowTypeFilter = WindowTypeFilter::All;
 
-    static NSArray<NSString *> *optionalKeys = @[
-        windowTypesKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         windowTypesKey: @[ NSString.class ],
     };
 
-    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
     NSArray<NSString *> *windowTypes = objectForKey<NSArray>(options, windowTypesKey, false, NSString.class);
@@ -260,13 +254,6 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
     if (!parseWindowUpdateOptions(options, parameters, sourceKey, outExceptionString))
         return false;
 
-    static NSArray<NSString *> *optionalKeys = @[
-        typeKey,
-        incognitoKey,
-        urlKey,
-        tabIdKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         typeKey: NSString.class,
         incognitoKey: @YES.class,
@@ -274,7 +261,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
         tabIdKey: NSNumber.class,
     };
 
-    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
     if (NSString *type = objectForKey<NSString>(options, typeKey))
@@ -326,15 +313,6 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
 
 bool WebExtensionAPIWindows::parseWindowUpdateOptions(NSDictionary *options, WebExtensionWindowParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
-    static NSArray<NSString *> *optionalKeys = @[
-        stateKey,
-        focusedKey,
-        topKey,
-        leftKey,
-        widthKey,
-        heightKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         stateKey: NSString.class,
         focusedKey: @YES.class,
@@ -344,11 +322,17 @@ bool WebExtensionAPIWindows::parseWindowUpdateOptions(NSDictionary *options, Web
         heightKey: NSNumber.class,
     };
 
-    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
-    if (NSString *state = objectForKey<NSString>(options, stateKey, true))
+    if (NSString *state = objectForKey<NSString>(options, stateKey, true)) {
         parameters.state = toStateImpl(state);
+
+        if (!parameters.state) {
+            *outExceptionString = toErrorString(nil, stateKey, @"it must specify 'normal', 'minimized', 'maximized', or 'fullscreen'");
+            return false;
+        }
+    }
 
     if (NSNumber *focused = objectForKey<NSNumber>(options, focusedKey))
         parameters.focused = focused.boolValue;
@@ -360,7 +344,7 @@ bool WebExtensionAPIWindows::parseWindowUpdateOptions(NSDictionary *options, Web
 
     if (left || top || width || height) {
         if (parameters.state && parameters.state.value() != WebExtensionWindow::State::Normal) {
-            *outExceptionString = toErrorString(nil, sourceKey, @"when 'top', 'left', 'width', or 'height' are specified, 'state' must be 'normal'.");
+            *outExceptionString = toErrorString(nil, sourceKey, @"when 'top', 'left', 'width', or 'height' are specified, 'state' must specify 'normal'.");
             return false;
         }
 
@@ -392,14 +376,14 @@ bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **
     return true;
 }
 
-bool WebExtensionAPIWindows::isPropertyAllowed(String propertyName, WebPage*)
+bool WebExtensionAPIWindows::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
 #if PLATFORM(MAC)
     return true;
 #else
-    // Opening, closing, and updating a window in not supported on iOS or visionOS.
-    static NSSet<NSString *> *unsupportedWindowProperties = [NSSet setWithObjects:@"create", @"remove", @"update", nil];
-    return ![unsupportedWindowProperties containsObject:(NSString *)propertyName];
+    // Opening, closing, and updating a window in not supported on iOS, iPadOS, or visionOS.
+    static NeverDestroyed<HashSet<AtomString>> unsupported { HashSet { AtomString("create"_s), AtomString("remove"_s), AtomString("update"_s) } };
+    return !unsupported.get().contains(name);
 #endif
 }
 

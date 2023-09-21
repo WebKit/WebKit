@@ -43,19 +43,6 @@ class InitialContainingBlock;
 class LayoutState;
 class TreeBuilder;
 
-struct RubyAdjustments {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-    LayoutUnit annotationAbove;
-    LayoutUnit annotationBelow;
-    struct Overhang {
-        LayoutUnit start;
-        LayoutUnit end;
-    };
-    Overhang firstLineOverhang;
-    Overhang overhang;
-};
-
 class Box : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
@@ -130,9 +117,13 @@ public:
     bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }
     bool isLayoutContainmentBox() const;
     bool isSizeContainmentBox() const;
+    bool isInternalRubyBox() const;
+    bool isRubyAnnotationBox() const;
 
     bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
     bool isBodyBox() const { return m_nodeType == NodeType::Body; }
+    bool isRuby() const { return style().display() == DisplayType::Ruby; }
+    bool isRubyBase() const { return style().display() == DisplayType::RubyBase; }
     bool isTableWrapperBox() const { return m_nodeType == NodeType::TableWrapperBox; }
     bool isTableBox() const { return m_nodeType == NodeType::TableBox; }
     bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }
@@ -148,7 +139,6 @@ public:
     bool isFlexItem() const;
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
     bool isImage() const { return m_nodeType == NodeType::Image; }
-    bool isInternalRubyBox() const { return false; }
     bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
     bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
     bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
@@ -195,8 +185,7 @@ public:
     const Shape* shape() const;
     void setShape(RefPtr<const Shape>);
 
-    const RubyAdjustments* rubyAdjustments() const;
-    void setRubyAdjustments(std::unique_ptr<RubyAdjustments>);
+    const ElementBox* associatedRubyAnnotationBox() const;
 
     bool canCacheForLayoutState(const LayoutState&) const;
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
@@ -222,7 +211,6 @@ private:
         std::optional<LayoutUnit> columnWidth;
         std::unique_ptr<RenderStyle> firstLineStyle;
         RefPtr<const Shape> shape;
-        std::unique_ptr<RubyAdjustments> rubyAdjustments;
     };
 
     bool hasRareData() const { return m_hasRareData; }

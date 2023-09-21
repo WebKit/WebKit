@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-class WTF::URL {
+[WebKitPlatform] class WTF::URL {
     String string()
 }
 
@@ -47,7 +47,21 @@ header: <wtf/text/AtomString.h>
     String string()
 }
 
-class WTF::UUID {
+[WebKitPlatform] class WTF::UUID {
     uint64_t high();
     [Validator='((static_cast<UInt128>(*high) << 64) | *low) != WTF::UUID::deletedValue'] uint64_t low();
 }
+
+#if OS(WINDOWS)
+using WTF::ProcessID = int;
+#else
+using WTF::ProcessID = pid_t;
+#endif
+
+enum class WTFLogLevel : uint8_t {
+    Always,
+    Error,
+    Warning,
+    Info,
+    Debug
+};

@@ -320,7 +320,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         if (error) {
             errorCode = LegacyCDM::DomainError;
             systemCode = mediaKeyErrorSystemCode(error);
-            ERROR_LOG(LOGIDENTIFIER, "error: ", String(error.localizedDescription));
+            ERROR_LOG(LOGIDENTIFIER, "error: ", error);
             return false;
         }
 

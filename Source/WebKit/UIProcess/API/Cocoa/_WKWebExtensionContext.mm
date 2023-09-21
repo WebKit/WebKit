@@ -477,7 +477,7 @@ static inline id<_WKWebExtensionWindow> toAPI(const RefPtr<WebKit::WebExtensionW
     return window ? window->delegate() : nil;
 }
 
-static inline NSArray *toAPI(const Vector<Ref<WebKit::WebExtensionWindow>>& windows)
+static inline NSArray *toAPI(const WebKit::WebExtensionContext::WindowVector& windows)
 {
     if (windows.isEmpty())
         return [NSArray array];
@@ -502,7 +502,7 @@ static inline NSArray *toAPI(const Vector<Ref<WebKit::WebExtensionWindow>>& wind
     return toAPI(_webExtensionContext->focusedWindow());
 }
 
-static inline NSSet *toAPI(const HashSet<Ref<WebKit::WebExtensionTab>>& tabs)
+static inline NSSet *toAPI(const WebKit::WebExtensionContext::TabMapValueIterator& tabs)
 {
     if (tabs.isEmpty())
         return [NSSet set];
@@ -581,18 +581,27 @@ static inline WebKit::WebExtensionContext::TabSet toImpl(NSSet<id<_WKWebExtensio
     _webExtensionContext->didCloseTab(toImpl(closedTab, *_webExtensionContext), windowIsClosing ? WebKit::WebExtensionContext::WindowIsClosing::Yes : WebKit::WebExtensionContext::WindowIsClosing::No);
 }
 
-- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab previousActiveTab:(id<_WKWebExtensionTab>)previousTab
 {
     NSParameterAssert([activatedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+    if (previousTab)
+        NSParameterAssert([previousTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 
-    _webExtensionContext->didActivateTab(toImpl(activatedTab, *_webExtensionContext));
+    _webExtensionContext->didActivateTab(toImpl(activatedTab, *_webExtensionContext), previousTab ? toImpl(previousTab, *_webExtensionContext).ptr() : nullptr);
 }
 
 - (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
 {
     NSParameterAssert([selectedTabs isKindOfClass:NSSet.class]);
 
-    _webExtensionContext->didSelectTabs(toImpl(selectedTabs, *_webExtensionContext));
+    _webExtensionContext->didSelectOrDeselectTabs(toImpl(selectedTabs, *_webExtensionContext));
+}
+
+- (void)didDeselectTabs:(NSSet<id<_WKWebExtensionTab>> *)deselectedTabs
+{
+    NSParameterAssert([deselectedTabs isKindOfClass:NSSet.class]);
+
+    _webExtensionContext->didSelectOrDeselectTabs(toImpl(deselectedTabs, *_webExtensionContext));
 }
 
 - (void)didMoveTab:(id<_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(id<_WKWebExtensionWindow>)oldWindow
@@ -931,11 +940,15 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 {
 }
 
-- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab previousActiveTab:(id<_WKWebExtensionTab>)previousTab
 {
 }
 
 - (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
+{
+}
+
+- (void)didDeselectTabs:(NSSet<id<_WKWebExtensionTab>> *)deselectedTabs
 {
 }
 

@@ -39,6 +39,20 @@ namespace IPC {
 
 class StreamConnectionWorkQueue;
 
+struct StreamServerConnectionHandle {
+    WTF_MAKE_NONCOPYABLE(StreamServerConnectionHandle);
+    StreamServerConnectionHandle() = default;
+    StreamServerConnectionHandle(Connection::Handle&& connection, StreamConnectionBuffer::Handle&& bufferHandle)
+        : outOfStreamConnection(WTFMove(connection))
+        , buffer(WTFMove(bufferHandle))
+    { }
+    StreamServerConnectionHandle(StreamServerConnectionHandle&&) = default;
+    StreamServerConnectionHandle& operator=(StreamServerConnectionHandle&&) = default;
+
+    Connection::Handle outOfStreamConnection;
+    StreamConnectionBuffer::Handle buffer;
+};
+
 // StreamServerConnection represents the connection between stream client and server, as used by the server.
 //
 // StreamServerConnection:
@@ -53,21 +67,8 @@ class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerCon
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
 public:
     using AsyncReplyID = Connection::AsyncReplyID;
-    struct Handle {
-        WTF_MAKE_NONCOPYABLE(Handle);
-        Handle() = default;
-        Handle(Connection::Handle&& connection, StreamConnectionBuffer::Handle&& bufferHandle)
-            : outOfStreamConnection(WTFMove(connection))
-            , buffer(WTFMove(bufferHandle))
-        { }
-        Handle(Handle&&) = default;
-        Handle& operator=(Handle&&) = default;
+    using Handle = StreamServerConnectionHandle;
 
-        Connection::Handle outOfStreamConnection;
-        StreamConnectionBuffer::Handle buffer;
-        void encode(Encoder&) &&;
-        static std::optional<Handle> decode(Decoder&);
-    };
     static RefPtr<StreamServerConnection> tryCreate(Handle&&);
     ~StreamServerConnection() final;
 
@@ -132,7 +133,7 @@ private:
 template<typename T>
 Error StreamServerConnection::send(T&& message, const ObjectIdentifierGenericBase& destinationID)
 {
-    return m_connection->send(WTFMove(message), destinationID);
+    return m_connection->send(std::forward<T>(message), destinationID);
 }
 
 template<typename T, typename... Arguments>
@@ -161,20 +162,6 @@ void StreamServerConnection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments
     auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID.toUInt64());
     (encoder.get() << ... << std::forward<Arguments>(arguments));
     m_connection->sendSyncReply(WTFMove(encoder));
-}
-
-inline void StreamServerConnection::Handle::encode(Encoder& encoder) &&
-{
-    encoder << WTFMove(outOfStreamConnection) << WTFMove(buffer);
-}
-
-inline std::optional<StreamServerConnection::Handle> StreamServerConnection::Handle::decode(Decoder& decoder)
-{
-    auto outOfStreamConnection = decoder.decode<Connection::Handle>();
-    auto buffer = decoder.decode<StreamConnectionBuffer::Handle>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    return Handle(WTFMove(*outOfStreamConnection), WTFMove(*buffer));
 }
 
 }

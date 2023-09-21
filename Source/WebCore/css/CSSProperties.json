@@ -476,6 +476,7 @@
             "codegen-properties": {
                 "high-priority": true,
                 "parser-function": "consumeDisplay",
+                "parser-function-requires-context-mode": true,
                 "parser-grammar-unused": "[ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy> | <-webkit-display>",
                 "parser-grammar-unused-reason": "Needs support for '||' groups and '&& groups."
             },
@@ -1388,7 +1389,6 @@
         },
         "alignment-baseline": {
             "values": [
-                "auto",
                 "baseline",
                 "before-edge",
                 "text-before-edge",

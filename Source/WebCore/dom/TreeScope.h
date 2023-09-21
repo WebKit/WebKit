@@ -51,10 +51,10 @@ class HTMLImageElement;
 class HTMLLabelElement;
 class HTMLMapElement;
 class LayoutPoint;
+class LegacyRenderSVGResourceContainer;
 class IdTargetObserverRegistry;
 class Node;
 class RadioButtonGroups;
-class RenderSVGResourceContainer;
 class SVGElement;
 class ShadowRoot;
 class WeakPtrImplWithEventTargetData;
@@ -130,9 +130,9 @@ public:
     std::span<const RefPtr<CSSStyleSheet>> adoptedStyleSheets() const;
     ExceptionOr<void> setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&&);
 
-    void addSVGResource(const AtomString& id, RenderSVGResourceContainer&);
+    void addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
     void removeSVGResource(const AtomString& id);
-    RenderSVGResourceContainer* svgResourceById(const AtomString& id) const;
+    LegacyRenderSVGResourceContainer* svgResourceById(const AtomString& id) const;
 
     void addPendingSVGResource(const AtomString& id, SVGElement&);
     bool isIdOfPendingSVGResource(const AtomString& id) const;

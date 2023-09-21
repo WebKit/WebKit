@@ -49,7 +49,8 @@ static NSDictionary *messageDictionary(NSData *data, NSURL *registration)
     return @{
         @"WebKitPushData" : data,
         @"WebKitPushRegistrationURL" : registration,
-        @"WebKitPushPartition" : @"TestWebKitAPI"
+        @"WebKitPushPartition" : @"TestWebKitAPI",
+        @"WebKitNotificationPayload" : [NSNull null]
     };
 }
 

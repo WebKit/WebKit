@@ -145,10 +145,10 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUExternalTexture
     return descriptor;
 }
 
-static void addDescriptor(NSMutableArray<MTLArgumentDescriptor *> *arguments, MTLArgumentDescriptor *descriptor)
+static void addDescriptor(NSMutableArray<MTLArgumentDescriptor *> *arguments, MTLArgumentDescriptor *descriptor, NSUInteger index)
 {
     MTLArgumentDescriptor *stageDescriptor = [descriptor copy];
-    stageDescriptor.index = arguments.count;
+    stageDescriptor.index = index;
     [arguments addObject:stageDescriptor];
 }
 
@@ -216,8 +216,8 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
 
         for (uint32_t stage = 0; stage < stageCount; ++stage) {
             if (containsStage(entry.visibility, stage)) {
-                indicesForBinding.add(makeKey(entry.binding, stage), std::make_pair(arguments[stage].count, descriptor.access));
-                addDescriptor(arguments[stage], descriptor);
+                indicesForBinding.add(makeKey(entry.binding, stage), descriptor.access);
+                addDescriptor(arguments[stage], descriptor, entry.binding);
             }
         }
 
@@ -231,7 +231,15 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     auto label = fromAPI(descriptor.label);
     id<MTLArgumentEncoder> argumentEncoders[stageCount];
     for (size_t stage = 0; stage < stageCount; ++stage) {
-        argumentEncoders[stage] = arguments[stage].count ? [m_device newArgumentEncoderWithArguments:arguments[stage]] : nil;
+        NSArray<MTLArgumentDescriptor *> *sortedArray = [arguments[stage] sortedArrayUsingComparator:^NSComparisonResult(MTLArgumentDescriptor *a, MTLArgumentDescriptor *b) {
+            if (a.index < b.index)
+                return NSOrderedAscending;
+            if (a.index == b.index)
+                return NSOrderedSame;
+
+            return NSOrderedDescending;
+        }];
+        argumentEncoders[stage] = arguments[stage].count ? [m_device newArgumentEncoderWithArguments:sortedArray] : nil;
         argumentEncoders[stage].label = label;
         if (arguments[stage].count && !argumentEncoders[stage])
             return BindGroupLayout::createInvalid(*this);
@@ -276,7 +284,7 @@ NSUInteger BindGroupLayout::encodedLength(ShaderStage shaderStage) const
     }
 }
 
-std::optional<BindGroupLayout::StageMapValue> BindGroupLayout::indexForBinding(uint32_t bindingIndex, ShaderStage shaderStage) const
+std::optional<BindGroupLayout::StageMapValue> BindGroupLayout::bindingAccessForBindingIndex(uint32_t bindingIndex, ShaderStage shaderStage) const
 {
     auto it = m_indicesForBinding.find(makeKey(bindingIndex, shaderStage));
     if (it == m_indicesForBinding.end())

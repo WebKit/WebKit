@@ -96,7 +96,7 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     } else {
         activate();
 
-        auto* context = scriptExecutionContext();
+        RefPtr context = scriptExecutionContext();
         ASSERT(context);
 
         context->eventLoop().runAtEndOfMicrotaskCheckpoint([protectedThis = Ref { *this }] {
@@ -897,7 +897,7 @@ void IDBTransaction::iterateCursorOnServer(IDBClient::TransactionOperation& oper
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(operation.idbRequest());
 
-    auto* cursor = operation.idbRequest()->pendingCursor();
+    RefPtr cursor = operation.idbRequest()->pendingCursor();
     ASSERT(cursor);
 
     if (data.keyData.isNull() && data.primaryKeyData.isNull()) {
@@ -1466,10 +1466,8 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
     m_abortQueue.clear();
     m_transactionOperationMap.clear();
 
-    m_idbError = error;
     m_domError = error.toDOMException();
-    m_database->didAbortTransaction(*this);
-    fireOnAbort();
+    didAbort(error);
 }
 
 template<typename Visitor>

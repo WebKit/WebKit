@@ -106,7 +106,7 @@ class SpeculativeLoadManager;
 struct MappedBody {
 #if ENABLE(SHAREABLE_RESOURCE)
     RefPtr<ShareableResource> shareableResource;
-    ShareableResource::Handle shareableResourceHandle;
+    std::optional<ShareableResource::Handle> shareableResourceHandle;
 #endif
 };
 

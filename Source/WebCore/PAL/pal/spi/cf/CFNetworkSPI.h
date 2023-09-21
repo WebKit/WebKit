@@ -229,7 +229,6 @@ typedef enum {
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 @property (setter=_setUseEnhancedPrivacyMode:) BOOL _useEnhancedPrivacyMode;
 @property (setter=_setBlockTrackers:) BOOL _blockTrackers;
-@property (setter=_setPrivacyProxyFailClosedForUnreachableHosts:) BOOL _privacyProxyFailClosedForUnreachableHosts;
 #endif
 @end
 
@@ -256,6 +255,9 @@ typedef enum {
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
 @property (setter=_setPrivacyProxyFailClosed:) BOOL _privacyProxyFailClosed;
 @property (readonly) BOOL _useEnhancedPrivacyMode;
+#endif
+#if HAVE(PRIVACY_PROXY_FAIL_CLOSED_FOR_UNREACHABLE_HOSTS)
+@property (readonly) BOOL _privacyProxyFailClosedForUnreachableNonMainHosts;
 #endif
 @end
 

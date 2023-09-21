@@ -45,8 +45,8 @@ public:
 
     virtual void didCreatePage(WebKit::InjectedBundle&, WebKit::WebPage&) { }
     virtual void willDestroyPage(WebKit::InjectedBundle&, WebKit::WebPage&) { }
-    virtual void didReceiveMessage(WebKit::InjectedBundle&, const WTF::String&, API::Object*) { }
-    virtual void didReceiveMessageToPage(WebKit::InjectedBundle&, WebKit::WebPage&, const WTF::String&, API::Object*) { }
+    virtual void didReceiveMessage(WebKit::InjectedBundle&, const WTF::String&, RefPtr<API::Object>&&) { }
+    virtual void didReceiveMessageToPage(WebKit::InjectedBundle&, WebKit::WebPage&, const WTF::String&, RefPtr<API::Object>&&) { }
 };
 
 } // namespace InjectedBundle

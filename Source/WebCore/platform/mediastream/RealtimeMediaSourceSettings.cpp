@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,24 +38,6 @@
 
 namespace WebCore {
 
-String RealtimeMediaSourceSettings::facingMode(VideoFacingMode mode)
-{
-    static const NeverDestroyed<String> values[] = {
-        MAKE_STATIC_STRING_IMPL("unknown"),
-        MAKE_STATIC_STRING_IMPL("user"),
-        MAKE_STATIC_STRING_IMPL("environment"),
-        MAKE_STATIC_STRING_IMPL("left"),
-        MAKE_STATIC_STRING_IMPL("right"),
-    };
-    static_assert(static_cast<size_t>(VideoFacingMode::Unknown) == 0, "VideoFacingMode::Unknown is not 0 as expected");
-    static_assert(static_cast<size_t>(VideoFacingMode::User) == 1, "VideoFacingMode::User is not 1 as expected");
-    static_assert(static_cast<size_t>(VideoFacingMode::Environment) == 2, "VideoFacingMode::Environment is not 2 as expected");
-    static_assert(static_cast<size_t>(VideoFacingMode::Left) == 3, "VideoFacingMode::Left is not 3 as expected");
-    static_assert(static_cast<size_t>(VideoFacingMode::Right) == 4, "VideoFacingMode::Right is not 4 as expected");
-    ASSERT(static_cast<size_t>(mode) < std::size(values));
-    return values[static_cast<size_t>(mode)];
-}
-
 VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(const String& mode)
 {
     if (mode == "user"_s)
@@ -91,6 +73,9 @@ String RealtimeMediaSourceSettings::convertFlagsToString(const OptionSet<Realtim
             break;
         case RealtimeMediaSourceSettings::FacingMode:
             builder.append("FacingMode");
+            break;
+        case RealtimeMediaSourceSettings::WhiteBalanceMode:
+            builder.append("WhiteBalanceMode");
             break;
         case RealtimeMediaSourceSettings::Volume:
             builder.append("Volume");
@@ -168,11 +153,11 @@ OptionSet<RealtimeMediaSourceSettings::Flag> RealtimeMediaSourceSettings::differ
 String convertEnumerationToString(VideoFacingMode enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
-        MAKE_STATIC_STRING_IMPL("Unknown"),
-        MAKE_STATIC_STRING_IMPL("User"),
-        MAKE_STATIC_STRING_IMPL("Environment"),
-        MAKE_STATIC_STRING_IMPL("Left"),
-        MAKE_STATIC_STRING_IMPL("Right"),
+        MAKE_STATIC_STRING_IMPL("unknown"),
+        MAKE_STATIC_STRING_IMPL("user"),
+        MAKE_STATIC_STRING_IMPL("environment"),
+        MAKE_STATIC_STRING_IMPL("left"),
+        MAKE_STATIC_STRING_IMPL("right"),
     };
     static_assert(static_cast<size_t>(VideoFacingMode::Unknown) == 0, "VideoFacingMode::Unknown is not 0 as expected");
     static_assert(static_cast<size_t>(VideoFacingMode::User) == 1, "VideoFacingMode::User is not 1 as expected");

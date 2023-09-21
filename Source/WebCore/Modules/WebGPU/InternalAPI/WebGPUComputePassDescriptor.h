@@ -31,7 +31,7 @@
 namespace WebCore::WebGPU {
 
 struct ComputePassDescriptor : public ObjectDescriptorBase {
-    ComputePassTimestampWrites timestampWrites;
+    std::optional<ComputePassTimestampWrites> timestampWrites;
 };
 
 } // namespace WebCore::WebGPU

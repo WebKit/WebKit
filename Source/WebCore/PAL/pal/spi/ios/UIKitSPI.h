@@ -161,10 +161,6 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 
 @end
 
-@interface UIViewController ()
-+ (UIViewController *)viewControllerForView:(UIView *)view;
-@end
-
 @interface NSURL ()
 @property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end

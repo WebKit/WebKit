@@ -50,6 +50,7 @@ public:
     bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession", false); }
     std::string additionalSupportedImageTypes() const { return stringTestRunnerFeatureValue("additionalSupportedImageTypes", { }); }
     std::string jscOptions() const { return stringTestRunnerFeatureValue("jscOptions", { }); }
+    std::string captionDisplayMode() const { return stringTestRunnerFeatureValue("captionDisplayMode", { }); }
 
     const auto& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }
     const auto& doubleWebPreferenceFeatures() const { return m_features.doubleWebPreferenceFeatures; }

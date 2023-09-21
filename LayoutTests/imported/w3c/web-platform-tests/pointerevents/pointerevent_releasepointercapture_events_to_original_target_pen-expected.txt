@@ -13,6 +13,7 @@ PASS pen gotpointercapture.toElement value is null
 FAIL pen gotpointercapture.isTrusted value is true assert_equals: expected true but got false
 FAIL pen gotpointercapture.composed value is valid assert_equals: expected true but got false
 PASS pen gotpointercapture.bubbles value is valid
+PASS pen gotpointercapture.cancelable value is valid
 PASS pen gotpointercapture.pressure value is valid
 PASS pen gotpointercapture properties for pointerType = mouse
 FAIL pen lostpointercapture.pointerType is correct. assert_equals: expected "pen" but got "mouse"
@@ -22,6 +23,7 @@ PASS pen lostpointercapture.toElement value is null
 FAIL pen lostpointercapture.isTrusted value is true assert_equals: expected true but got false
 FAIL pen lostpointercapture.composed value is valid assert_equals: expected true but got false
 PASS pen lostpointercapture.bubbles value is valid
+PASS pen lostpointercapture.cancelable value is valid
 PASS pen lostpointercapture.pressure value is valid
 PASS pen lostpointercapture properties for pointerType = mouse
 PASS pen pointerout/leave should not be received unless the target just lost the capture.

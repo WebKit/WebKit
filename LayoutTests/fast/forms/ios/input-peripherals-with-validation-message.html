@@ -24,7 +24,7 @@ addEventListener("load", async () => {
     debug("Tap on submit button with an empty required date input.");
     await UIHelper.activateElementAndWaitForInputSession(submit);
 
-    isShowingValidationMessage = await UIHelper.isShowingPopover();
+    isShowingValidationMessage = await UIHelper.isShowingFormValidationBubble();
 
     shouldBe("document.activeElement", "date");
     shouldBeTrue("isShowingValidationMessage");
@@ -37,7 +37,7 @@ addEventListener("load", async () => {
     await UIHelper.waitForPopoverToDismiss();
     await UIHelper.activateElementAndWaitForInputSession(date);
 
-    isShowingValidationMessage = await UIHelper.isShowingPopover();
+    isShowingValidationMessage = await UIHelper.isShowingFormValidationBubble();
     shouldBe("document.activeElement", "date");
     shouldBeFalse("isShowingValidationMessage");
 
@@ -53,7 +53,7 @@ addEventListener("load", async () => {
     debug("\nTap on submit button with an empty required text input.");
     await UIHelper.activateElementAndWaitForInputSession(submit);
 
-    isShowingValidationMessage = await UIHelper.isShowingPopover();
+    isShowingValidationMessage = await UIHelper.isShowingFormValidationBubble();
     shouldBe("document.activeElement", "text");
     shouldBeTrue("isShowingValidationMessage");
 

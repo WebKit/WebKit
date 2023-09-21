@@ -49,8 +49,7 @@ class WebPlaybackSessionChangeObserver;
 
 class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit
     : public PlaybackSessionModelClient
-    , public RefCounted<PlaybackSessionInterfaceAVKit>
-    , public CanMakeWeakPtr<PlaybackSessionInterfaceAVKit> {
+    , public RefCounted<PlaybackSessionInterfaceAVKit> {
 
 public:
     static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel& model)

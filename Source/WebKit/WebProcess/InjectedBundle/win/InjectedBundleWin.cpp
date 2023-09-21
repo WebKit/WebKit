@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-bool InjectedBundle::initialize(const WebProcessCreationParameters&, API::Object* initializationUserData)
+bool InjectedBundle::initialize(const WebProcessCreationParameters&, RefPtr<API::Object>&& initializationUserData)
 {
     HMODULE lib = ::LoadLibrary(m_path.wideCharacters().data());
     if (!lib)
@@ -41,7 +41,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters&, API::Object
     if (!proc)
         return false;
 
-    proc(toAPI(this), toAPI(initializationUserData));
+    proc(toAPI(this), toAPI(initializationUserData.get()));
     return true;
 }
 

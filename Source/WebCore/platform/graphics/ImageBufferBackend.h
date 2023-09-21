@@ -115,10 +115,8 @@ public:
 
     virtual IntSize backendSize() const { return { }; }
 
-    virtual void finalizeDrawIntoContext(GraphicsContext&) { }
-    virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) = 0;
-
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(GraphicsContext& destination);
+    virtual RefPtr<NativeImage> copyNativeImage() = 0;
+    virtual RefPtr<NativeImage> createNativeImageReference() = 0;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
 
     WEBCORE_EXPORT void convertToLuminanceMask();
@@ -126,8 +124,6 @@ public:
 
     virtual void getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination) = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
-
-    virtual bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) { return false; }
 
 #if USE(CAIRO)
     virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }

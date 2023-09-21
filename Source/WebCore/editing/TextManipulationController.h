@@ -101,8 +101,6 @@ private:
     std::optional<ManipulationFailure::Type> replace(const ManipulationItemData&, const Vector<TextManipulationToken>&, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement);
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithNewRenderer;
-    WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_textNodesWithNewRenderer;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodes;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodesWithNewContent;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_addedOrNewlyRenderedNodes;

@@ -29,6 +29,7 @@
 
 #import "ValidationBubble.h"
 
+#import "UIViewControllerUtilities.h"
 #import <UIKit/UIGeometry.h>
 #import <objc/message.h>
 #import <pal/ios/UIKitSoftLink.h>
@@ -205,9 +206,11 @@ void ValidationBubble::show()
 
 static UIViewController *fallbackViewController(UIView *view)
 {
+    // FIXME: This logic to find a fallback view controller should move out of WebCore,
+    // and into the client layer.
     for (UIView *currentView = view; currentView; currentView = currentView.superview) {
-        if (UIViewController *viewController = [PAL::getUIViewControllerClass() viewControllerForView:currentView])
-            return viewController;
+        if (auto controller = viewController(currentView))
+            return controller;
     }
     NSLog(@"Failed to find a view controller to show form validation popover");
     return nil;

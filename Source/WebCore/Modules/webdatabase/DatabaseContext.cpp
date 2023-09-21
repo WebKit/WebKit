@@ -176,7 +176,7 @@ bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* synchronizer)
 
 bool DatabaseContext::allowDatabaseAccess() const
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (is<Document>(*context)) {
         auto& document = downcast<Document>(*context);
         if (!document.page() || (document.page()->usesEphemeralSession() && !LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document.securityOrigin().protocol())))
@@ -190,7 +190,7 @@ bool DatabaseContext::allowDatabaseAccess() const
 
 void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails details)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (is<Document>(*context)) {
         auto& document = downcast<Document>(*context);
         if (Page* page = document.page())

@@ -37,8 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readwrite, setter=_setDesiredIndex:) NSUInteger desiredIndex;
 @property (readwrite, setter=_setDesiredParentTab:) id <_WKWebExtensionTab> desiredParentTab;
 @property (readwrite, setter=_setDesiredURL:) NSURL *desiredURL;
+@property (readwrite, setter=_setShouldActivate:) BOOL shouldActivate;
 @property (readwrite, setter=_setShouldSelect:) BOOL shouldSelect;
-@property (readwrite, setter=_setShouldExtendSelection:) BOOL shouldExtendSelection;
 @property (readwrite, setter=_setShouldPin:) BOOL shouldPin;
 @property (readwrite, setter=_setShouldMute:) BOOL shouldMute;
 @property (readwrite, setter=_setShouldShowReaderMode:) BOOL shouldShowReaderMode;

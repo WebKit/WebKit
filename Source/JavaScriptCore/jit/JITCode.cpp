@@ -101,6 +101,12 @@ DFG::CommonData* JITCode::dfgCommon()
     return nullptr;
 }
 
+const DFG::CommonData* JITCode::dfgCommon() const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 DFG::JITCode* JITCode::dfg()
 {
     RELEASE_ASSERT_NOT_REACHED();
@@ -158,7 +164,7 @@ JITCodeWithCodeRef::JITCodeWithCodeRef(CodeRef<JSEntryPtrTag> ref, JITType jitTy
 
 JITCodeWithCodeRef::~JITCodeWithCodeRef()
 {
-    if ((Options::dumpDisassembly() || (isOptimizingJIT(jitType()) && Options::dumpDFGDisassembly()))
+    if ((Options::dumpDisassembly() || ((jitType() == JITType::BaselineJIT) && Options::dumpBaselineDisassembly()) || (isOptimizingJIT(jitType()) && Options::dumpDFGDisassembly()))
         && m_executableMemory)
         dataLog("Destroying JIT code at ", pointerDump(m_executableMemory.get()), "\n");
 }

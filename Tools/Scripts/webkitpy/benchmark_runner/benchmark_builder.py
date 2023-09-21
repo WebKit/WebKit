@@ -138,6 +138,7 @@ class BenchmarkBuilder(object):
             shutil.copytree(os.path.join(temp_extract_path, relpath_in_repo), self._dest)
 
     def _apply_patch(self, patch):
+        _log.info('Applying patch %s' % (patch))
         old_working_directory = os.getcwd()
         os.chdir(self._dest)
         error_code = subprocess.call(['patch', '-p1', '-f', '-i', get_path_from_project_root(patch)])

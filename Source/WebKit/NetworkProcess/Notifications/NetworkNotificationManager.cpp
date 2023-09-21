@@ -32,6 +32,7 @@
 #include "DaemonEncoder.h"
 #include "Logging.h"
 #include "NetworkSession.h"
+#include "PushClientConnectionMessages.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
 #include <WebCore/SecurityOriginData.h>
@@ -64,7 +65,7 @@ void NetworkNotificationManager::setPushAndNotificationsEnabledForOrigin(const S
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::SetPushAndNotificationsEnabledForOrigin>(WTFMove(completionHandler), origin.toString(), enabled);
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetPushAndNotificationsEnabledForOrigin(origin.toString(), enabled), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::deletePushAndNotificationRegistration(const SecurityOriginData& origin, CompletionHandler<void(const String&)>&& completionHandler)
@@ -74,7 +75,7 @@ void NetworkNotificationManager::deletePushAndNotificationRegistration(const Sec
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::DeletePushAndNotificationRegistration>(WTFMove(completionHandler), origin.toString());
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::DeletePushAndNotificationRegistration(origin.toString()), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)
@@ -84,7 +85,7 @@ void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(c
         completionHandler(WTFMove(messages));
     };
 
-    sendMessageWithReply<WebPushD::MessageType::GetPendingPushMessages>(WTFMove(replyHandler));
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPendingPushMessages(), WTFMove(replyHandler));
 }
 
 void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<NotificationResources>&&, CompletionHandler<void()>&& callback)
@@ -127,7 +128,7 @@ void NetworkNotificationManager::subscribeToPushService(URL&& scopeURL, Vector<u
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::SubscribeToPushService>(WTFMove(completionHandler), WTFMove(scopeURL), WTFMove(applicationServerKey));
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SubscribeToPushService(WTFMove(scopeURL), WTFMove(applicationServerKey)), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, std::optional<PushSubscriptionIdentifier> pushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
@@ -137,7 +138,7 @@ void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, std:
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::UnsubscribeFromPushService>(WTFMove(completionHandler), WTFMove(scopeURL), pushSubscriptionIdentifier);
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::UnsubscribeFromPushService(WTFMove(scopeURL), pushSubscriptionIdentifier), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
@@ -152,7 +153,7 @@ void NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionH
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::GetPushSubscription>(WTFMove(completionHandler), WTFMove(scopeURL));
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushSubscription(WTFMove(scopeURL)), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::getPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
@@ -167,7 +168,7 @@ void NetworkNotificationManager::getPushPermissionState(URL&& scopeURL, Completi
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::GetPushPermissionState>(WTFMove(completionHandler), WTFMove(scopeURL));
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WTFMove(scopeURL)), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::incrementSilentPushCount(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& completionHandler)
@@ -177,7 +178,7 @@ void NetworkNotificationManager::incrementSilentPushCount(WebCore::SecurityOrigi
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::IncrementSilentPushCount>(WTFMove(completionHandler), WTFMove(origin));
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::IncrementSilentPushCount(WTFMove(origin)), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&& completionHandler)
@@ -187,7 +188,7 @@ void NetworkNotificationManager::removeAllPushSubscriptions(CompletionHandler<vo
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::RemoveAllPushSubscriptions>(WTFMove(completionHandler));
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RemoveAllPushSubscriptions(), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& completionHandler)
@@ -197,156 +198,7 @@ void NetworkNotificationManager::removePushSubscriptionsForOrigin(WebCore::Secur
         return;
     }
 
-    sendMessageWithReply<WebPushD::MessageType::RemovePushSubscriptionsForOrigin>(WTFMove(completionHandler), WTFMove(origin));
-}
-
-template<WebPushD::MessageType messageType, typename... Args>
-void NetworkNotificationManager::sendMessage(Args&&... args) const
-{
-    RELEASE_ASSERT(m_connection);
-
-    Daemon::Encoder encoder;
-    encoder.encode(std::forward<Args>(args)...);
-    m_connection->send(messageType, encoder.takeBuffer());
-}
-
-template<typename... Args> struct ReplyCaller;
-template<> struct ReplyCaller<> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void()>&& completionHandler)
-    {
-        completionHandler();
-    }
-};
-
-template<> struct ReplyCaller<String> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(String&&)>&& completionHandler)
-    {
-        std::optional<String> string;
-        decoder >> string;
-        if (!string)
-            return completionHandler({ });
-        completionHandler(WTFMove(*string));
-    }
-};
-
-template<> struct ReplyCaller<const String&> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(const String&)>&& completionHandler)
-    {
-        std::optional<String> string;
-        decoder >> string;
-        if (!string)
-            return completionHandler({ });
-        completionHandler(WTFMove(*string));
-    }
-};
-
-template<> struct ReplyCaller<bool> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        std::optional<bool> boolean;
-        decoder >> boolean;
-        if (!boolean)
-            return completionHandler(false);
-        completionHandler(*boolean);
-    }
-};
-
-template<> struct ReplyCaller<unsigned> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        std::optional<int> value;
-        decoder >> value;
-        if (!value)
-            return completionHandler(0);
-        completionHandler(*value);
-    }
-};
-
-template<> struct ReplyCaller<Vector<String>&&> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-    {
-        std::optional<Vector<String>> strings;
-        decoder >> strings;
-        if (!strings)
-            return completionHandler({ });
-        completionHandler(WTFMove(*strings));
-    }
-};
-
-template<> struct ReplyCaller<Vector<WebPushMessage>&&> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Vector<WebPushMessage>&&)>&& completionHandler)
-    {
-        std::optional<Vector<WebPushMessage>> messages;
-        decoder >> messages;
-        if (!messages)
-            return completionHandler({ });
-        completionHandler(WTFMove(*messages));
-    }
-};
-
-template<> struct ReplyCaller<Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
-    {
-        std::optional<Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>> data;
-        decoder >> data;
-
-        if (!data)
-            completionHandler(makeUnexpected(ExceptionData { AbortError, "Couldn't decode message"_s }));
-        else
-            completionHandler(WTFMove(*data));
-    }
-};
-
-template<> struct ReplyCaller<Expected<bool, WebCore::ExceptionData>&&> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
-    {
-        std::optional<Expected<bool, WebCore::ExceptionData>> data;
-        decoder >> data;
-
-        if (!data)
-            completionHandler(makeUnexpected(ExceptionData { AbortError, "Couldn't decode message"_s }));
-        else
-            completionHandler(WTFMove(*data));
-    }
-};
-
-template<> struct ReplyCaller<Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
-    {
-        std::optional<Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>> data;
-        decoder >> data;
-
-        if (!data)
-            completionHandler(makeUnexpected(ExceptionData { AbortError, "Couldn't decode message"_s }));
-        else
-            completionHandler(WTFMove(*data));
-    }
-};
-
-template<> struct ReplyCaller<Expected<uint8_t, WebCore::ExceptionData>&&> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
-    {
-        std::optional<Expected<uint8_t, WebCore::ExceptionData>> data;
-        decoder >> data;
-
-        if (!data)
-            completionHandler(makeUnexpected(ExceptionData { AbortError, "Couldn't decode message"_s }));
-        else
-            completionHandler(WTFMove(*data));
-    }
-};
-
-template<WebPushD::MessageType messageType, typename... Args, typename... ReplyArgs>
-void NetworkNotificationManager::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& completionHandler, Args&&... args) const
-{
-    RELEASE_ASSERT(m_connection);
-
-    Daemon::Encoder encoder;
-    encoder.encode(std::forward<Args>(args)...);
-    m_connection->sendWithReply(messageType, encoder.takeBuffer(), [completionHandler = WTFMove(completionHandler)] (auto replyBuffer) mutable {
-        Daemon::Decoder decoder(WTFMove(replyBuffer));
-        ReplyCaller<ReplyArgs...>::callReply(WTFMove(decoder), WTFMove(completionHandler));
-    });
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RemovePushSubscriptionsForOrigin(WTFMove(origin)), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

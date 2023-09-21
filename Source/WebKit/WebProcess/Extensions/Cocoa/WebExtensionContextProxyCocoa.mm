@@ -35,8 +35,6 @@
 #include "CocoaHelpers.h"
 #include "WKNSData.h"
 #include "WebExtensionAPINamespace.h"
-#include "WebExtensionAPIPermissions.h"
-#include "WebExtensionAPIWebNavigation.h"
 #include "_WKWebExtensionLocalization.h"
 #include <WebCore/ProcessQualified.h>
 #include <wtf/ObjectIdentifier.h>

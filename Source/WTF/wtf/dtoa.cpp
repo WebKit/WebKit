@@ -38,6 +38,14 @@ const char* numberToString(double d, NumberToStringBuffer& buffer)
     return builder.Finalize();
 }
 
+const char* numberToStringWithTrailingPoint(double d, NumberToStringBuffer& buffer)
+{
+    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
+    auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverterWithTrailingPoint();
+    converter.ToShortest(d, &builder);
+    return builder.Finalize();
+}
+
 static inline void truncateTrailingZeros(const char* buffer, double_conversion::StringBuilder& builder)
 {
     size_t length = builder.position();

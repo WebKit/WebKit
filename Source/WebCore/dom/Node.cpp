@@ -125,9 +125,9 @@ struct SameSizeAsNode : public EventTarget {
 static_assert(sizeof(Node) == sizeof(SameSizeAsNode), "Node should stay small");
 
 #if DUMP_NODE_STATISTICS
-static WeakHashSet<Node, WeakPtrImplWithEventTargetData>& liveNodeSet()
+static HashSet<HashSet<Node>>& liveNodeSet()
 {
-    static NeverDestroyed<WeakHashSet<Node, WeakPtrImplWithEventTargetData>> liveNodes;
+    static NeverDestroyed<HashSet<CheckedPtr<Node>>> liveNodes;
     return liveNodes;
 }
 
@@ -221,7 +221,8 @@ void Node::dumpStatistics()
     HashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
     size_t mixedRareDataUseCount = 0;
 
-    for (auto& node : liveNodeSet()) {
+    for (auto& nodePtr : liveNodeSet()) {
+        auto& node = *nodePtr.get();
         if (node.hasRareData()) {
             ++nodesWithRareData;
             if (is<Element>(node)) {
@@ -303,7 +304,7 @@ void Node::dumpStatistics()
         }
     }
 
-    printf("Number of Nodes: %d\n\n", liveNodeSet().computeSize());
+    printf("Number of Nodes: %d\n\n", liveNodeSet().size());
     printf("Number of Nodes with RareData: %zu\n", nodesWithRareData);
     printf("  Mixed use: %zu\n", mixedRareDataUseCount);
     for (auto it : rareDataSingleUseTypeCounts)
@@ -373,7 +374,7 @@ void Node::trackForDebugging()
 #endif
 
 #if DUMP_NODE_STATISTICS
-    liveNodeSet().add(*this);
+    liveNodeSet().add(this);
 #endif
 }
 
@@ -419,7 +420,7 @@ Node::~Node()
 #endif
 
 #if DUMP_NODE_STATISTICS
-    liveNodeSet().remove(*this);
+    liveNodeSet().remove(this);
 #endif
 
     ASSERT(!renderer());
@@ -575,12 +576,12 @@ static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashS
     return nullptr;
 }
 
-Vector<Ref<Node>, 1> Node::convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&& nodeOrStringVector)
+ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     if (nodeOrStringVector.isEmpty())
-        return { };
+        return nullptr;
 
-    Vector<Ref<Node>, 1> nodes;
+    Vector<Ref<Node>> nodes;
     nodes.reserveInitialCapacity(nodeOrStringVector.size());
     for (auto& variant : nodeOrStringVector) {
         WTF::switchOn(variant,
@@ -589,19 +590,11 @@ Vector<Ref<Node>, 1> Node::convertNodesOrStringsIntoNodeVector(FixedVector<NodeO
         );
     }
 
-    return nodes;
-}
-
-ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&& nodeOrStringVector)
-{
-    auto nodeVector = convertNodesOrStringsIntoNodeVector(WTFMove(nodeOrStringVector));
-    if (nodeVector.isEmpty())
-        return nullptr;
-    if (nodeVector.size() == 1)
-        return RefPtr<Node> { WTFMove(nodeVector[0]) };
+    if (nodes.size() == 1)
+        return RefPtr<Node> { WTFMove(nodes.first()) };
 
     auto nodeToReturn = DocumentFragment::create(document());
-    for (auto& node : nodeVector) {
+    for (auto& node : nodes) {
         auto appendResult = nodeToReturn->appendChild(node);
         if (appendResult.hasException())
             return appendResult.releaseException();
@@ -2517,7 +2510,7 @@ void Node::defaultEventHandler(Event& event)
         }
 #if ENABLE(PAN_SCROLLING)
     } else if (eventType == eventNames.mousedownEvent && is<MouseEvent>(event)) {
-        if (downcast<MouseEvent>(event).button() == MiddleButton) {
+        if (downcast<MouseEvent>(event).button() == MouseButton::Middle) {
             if (enclosingLinkEventParentOrSelf())
                 return;
 

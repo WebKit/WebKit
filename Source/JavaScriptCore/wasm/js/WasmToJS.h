@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
 
 #include "JITCompilation.h"
 #include "WasmBinding.h"
@@ -49,4 +49,4 @@ void emitThrowWasmToJSException(CCallHelpers&, GPRReg wasmInstance, Wasm::Except
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY) && ENABLE(JIT)

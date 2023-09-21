@@ -270,13 +270,13 @@ void FrameSelection::moveWithoutValidationTo(const Position& base, const Positio
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
 {
-    if (Node* node = m_position.deepEquivalent().deprecatedNode())
-        invalidateCaretRect(node);
+    if (auto node = m_position.deepEquivalent().protectedDeprecatedNode())
+        invalidateCaretRect(node.get());
     m_position = position;
     setCaretRectNeedsUpdate();
     Document* document = nullptr;
-    if (Node* node = m_position.deepEquivalent().deprecatedNode()) {
-        invalidateCaretRect(node);
+    if (auto node = m_position.deepEquivalent().protectedDeprecatedNode()) {
+        invalidateCaretRect(node.get());
         document = &node->document();
     }
     if (m_position.isNull() || m_position.isOrphan())
@@ -2352,14 +2352,12 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility, ShouldUpdate
 
 // Helper function that tells whether a particular node is an element that has an entire
 // Frame and FrameView, a <frame>, <iframe>, or <object>.
-static bool isFrameElement(const Node* n)
+static bool isFrameElement(const Node& node)
 {
-    if (!n)
+    auto* renderer = dynamicDowncast<RenderWidget>(node.renderer());
+    if (!renderer)
         return false;
-    RenderObject* renderer = n->renderer();
-    if (!is<RenderWidget>(renderer))
-        return false;
-    Widget* widget = downcast<RenderWidget>(*renderer).widget();
+    auto* widget = renderer->widget();
     return widget && widget->isLocalFrameView();
 }
 
@@ -2377,14 +2375,14 @@ void FrameSelection::setFocusedElementIfNeeded()
         }
     }
 
-    if (Element* target = m_selection.rootEditableElement()) {
+    if (RefPtr target = m_selection.rootEditableElement()) {
         // Walk up the DOM tree to search for an element to focus.
         while (target) {
             // We don't want to set focus on a subframe when selecting in a parent frame,
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
-            if (target->isMouseFocusable() && !isFrameElement(target)) {
-                CheckedRef(m_document->page()->focusController())->setFocusedElement(target, *m_document->frame());
+            if (target->isMouseFocusable() && !isFrameElement(*target)) {
+                CheckedRef(m_document->page()->focusController())->setFocusedElement(target.get(), *m_document->frame());
                 return;
             }
             target = target->parentOrShadowHostElement();
@@ -2951,8 +2949,8 @@ void FrameSelection::updateFromAssociatedLiveRange()
         disassociateLiveRange();
     else {
         // Don't use VisibleSelection's constructor that takes a SimpleRange, because it uses makeDeprecatedLegacyPosition instead of makeContainerOffsetPosition.
-        auto start = makeContainerOffsetPosition(&m_associatedLiveRange->startContainer(), m_associatedLiveRange->startOffset());
-        auto end = makeContainerOffsetPosition(&m_associatedLiveRange->endContainer(), m_associatedLiveRange->endOffset());
+        auto start = makeContainerOffsetPosition(m_associatedLiveRange->protectedStartContainer(), m_associatedLiveRange->startOffset());
+        auto end = makeContainerOffsetPosition(m_associatedLiveRange->protectedEndContainer(), m_associatedLiveRange->endOffset());
         setSelection({ start, end });
     }
 }

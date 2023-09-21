@@ -37,8 +37,10 @@ using GPUDepthBias = int32_t;
 
 using GPUSize64 = uint64_t;
 using GPUIntegerCoordinate = uint32_t;
+using GPUIntegerCoordinateOut = uint32_t;
 using GPUIndex32 = uint32_t;
 using GPUSize32 = uint32_t;
+using GPUSize32Out = uint32_t;
 using GPUSignedOffset32 = int32_t;
 
 using GPUFlagsConstant = uint32_t;

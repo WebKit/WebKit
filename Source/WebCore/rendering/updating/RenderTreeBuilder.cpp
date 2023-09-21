@@ -317,6 +317,11 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
+    if (parent.style().display() == DisplayType::Ruby || parent.style().display() == DisplayType::RubyBlock) {
+        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForStyleBasedRubyChild(parent, *child, beforeChild));
+        return;
+    }
+
     if (is<RenderBlockFlow>(parent)) {
         blockFlowBuilder().attach(downcast<RenderBlockFlow>(parent), WTFMove(child), beforeChild);
         return;

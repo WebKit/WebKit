@@ -219,10 +219,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler;
 @end
 
-@interface UIViewController ()
-+ (UIViewController *)_viewControllerForFullScreenPresentationFromView:(UIView *)view;
-@end
-
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 
 @interface UIWebBrowserView : UIView <UIKeyInput>
@@ -264,6 +260,15 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 @interface UIScrollView (SPI)
 @property (nonatomic, getter=_isAutomaticContentOffsetAdjustmentEnabled, setter=_setAutomaticContentOffsetAdjustmentEnabled:) BOOL isAutomaticContentOffsetAdjustmentEnabled;
 @end
+
+typedef NS_ENUM(NSUInteger, UIScrollPhase) {
+    UIScrollPhaseNone,
+    UIScrollPhaseMayBegin,
+    UIScrollPhaseBegan,
+    UIScrollPhaseChanged,
+    UIScrollPhaseEnded,
+    UIScrollPhaseCancelled
+};
 
 @interface UIScrollEvent : UIEvent
 @end

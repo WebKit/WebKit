@@ -108,9 +108,6 @@ inline bool opInByVal(JSGlobalObject* globalObject, JSValue baseVal, JSValue pro
     }
 
     JSObject* baseObj = asObject(baseVal);
-    if (arrayProfile)
-        arrayProfile->observeStructure(baseObj->structure());
-
     uint32_t i;
     if (propName.getUInt32(i)) {
         if (arrayProfile)

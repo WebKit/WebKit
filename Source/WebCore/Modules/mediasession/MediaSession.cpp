@@ -147,7 +147,7 @@ MediaSession::MediaSession(Navigator& navigator)
     m_logIdentifier = nextLogIdentifier();
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    auto* frame = navigator.frame();
+    RefPtr frame = navigator.frame();
     auto* page = frame ? frame->page() : nullptr;
     if (page && page->mediaSessionCoordinator())
         m_coordinator->setMediaSessionCoordinatorPrivate(*page->mediaSessionCoordinator());
@@ -404,11 +404,11 @@ void MediaSession::notifyActionHandlerObservers()
 
 RefPtr<HTMLMediaElement> MediaSession::activeMediaElement() const
 {
-    auto* doc = document();
-    if (!doc)
+    RefPtr document = this->document();
+    if (!document)
         return nullptr;
 
-    return HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::MediaSession, doc);
+    return HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::MediaSession, document.get());
 }
 
 void MediaSession::updateReportedPosition()

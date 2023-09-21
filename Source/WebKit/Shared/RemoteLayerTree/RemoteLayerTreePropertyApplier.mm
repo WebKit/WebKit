@@ -117,11 +117,11 @@ static RetainPtr<CGColorRef> cgColorFromColor(const Color& color)
 static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 {
     switch (type) {
-    case PlatformCALayer::Linear:
+    case PlatformCALayer::FilterType::Linear:
         return kCAFilterLinear;
-    case PlatformCALayer::Nearest:
+    case PlatformCALayer::FilterType::Nearest:
         return kCAFilterNearest;
-    case PlatformCALayer::Trilinear:
+    case PlatformCALayer::FilterType::Trilinear:
         return kCAFilterTrilinear;
     };
 

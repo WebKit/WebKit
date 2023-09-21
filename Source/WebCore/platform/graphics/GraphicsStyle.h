@@ -46,7 +46,8 @@ struct GraphicsDropShadow {
     FloatSize offset;
     float radius;
     Color color;
-    ShadowRadiusMode radiusMode;
+    ShadowRadiusMode radiusMode { ShadowRadiusMode::Default };
+    float opacity { 1 };
 
     bool isVisible() const { return color.isVisible(); }
     bool isBlurred() const { return isVisible() && radius; }
@@ -95,6 +96,8 @@ void GraphicsDropShadow::encode(Encoder& encoder) const
     encoder << offset;
     encoder << radius;
     encoder << color;
+    encoder << radiusMode;
+    encoder << opacity;
 }
 
 template<class Decoder>
@@ -115,13 +118,17 @@ std::optional<GraphicsDropShadow> GraphicsDropShadow::decode(Decoder& decoder)
     if (!color)
         return std::nullopt;
 
-
     std::optional<ShadowRadiusMode> radiusMode;
     decoder >> radiusMode;
     if (!radius)
         return std::nullopt;
 
-    return GraphicsDropShadow { *offset, *radius, *color, *radiusMode };
+    std::optional<float> opacity;
+    decoder >> opacity;
+    if (!opacity)
+        return std::nullopt;
+
+    return GraphicsDropShadow { *offset, *radius, *color, *radiusMode, *opacity };
 }
 
 template<class Encoder>

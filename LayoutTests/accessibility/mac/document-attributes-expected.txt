@@ -36,7 +36,6 @@ AXLoadingProgress: 1
 AXURL: LayoutTests/accessibility/mac/document-attributes.html
 AXCaretBrowsingEnabled: 0
 AXPreventKeyboardDOMEventDispatch: 0
-AXWebSessionID: 2
 AXElementBusy: 0
 
 PASS successfullyParsed is true

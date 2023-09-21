@@ -46,9 +46,9 @@ class ArrayBuffer;
 namespace WebCore {
 
 class PushSubscriptionOptions;
+class PushSubscriptionOwner;
 class ScriptExecutionContext;
 class ServiceWorkerContainer;
-class ServiceWorkerRegistration;
 
 class PushSubscription : public RefCounted<PushSubscription> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(PushSubscription, WEBCORE_EXPORT);
@@ -70,10 +70,10 @@ public:
     PushSubscriptionJSON toJSON() const;
 
 private:
-    WEBCORE_EXPORT explicit PushSubscription(PushSubscriptionData&&, RefPtr<ServiceWorkerRegistration>&& = nullptr);
+    WEBCORE_EXPORT explicit PushSubscription(PushSubscriptionData&&, RefPtr<PushSubscriptionOwner>&& = nullptr);
 
     PushSubscriptionData m_data;
-    RefPtr<ServiceWorkerRegistration> m_serviceWorkerRegistration;
+    RefPtr<PushSubscriptionOwner> m_pushSubscriptionOwner;
     mutable RefPtr<PushSubscriptionOptions> m_options;
 };
 

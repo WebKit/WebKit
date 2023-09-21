@@ -55,6 +55,7 @@ namespace WebCore {
 class CertificateInfo;
 class Frame;
 class HTMLFrameOwnerElement;
+class HandleMouseEventResult;
 class IntPoint;
 class IntRect;
 class LocalFrame;
@@ -93,7 +94,7 @@ public:
 
     WebPage* page() const;
 
-    static WebFrame* fromCoreFrame(const WebCore::Frame&);
+    static RefPtr<WebFrame> fromCoreFrame(const WebCore::Frame&);
     WebCore::LocalFrame* coreLocalFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreFrame() const;
@@ -134,7 +135,7 @@ public:
     WebCore::CertificateInfo certificateInfo() const;
     String innerText() const;
     bool isFrameSet() const;
-    WebFrame* parentFrame() const;
+    RefPtr<WebFrame> parentFrame() const;
     Ref<API::Array> childFrames();
     JSGlobalContextRef jsContext();
     JSGlobalContextRef jsContextForWorld(WebCore::DOMWrapperWorld&);
@@ -167,8 +168,8 @@ public:
     void stopLoading();
     void setAccessibleName(const AtomString&);
 
-    static WebFrame* frameForContext(JSContextRef);
-    static WebFrame* contentFrameForWindowOrFrameElement(JSContextRef, JSValueRef);
+    static RefPtr<WebFrame> frameForContext(JSContextRef);
+    static RefPtr<WebFrame> contentFrameForWindowOrFrameElement(JSContextRef, JSValueRef);
 
     JSValueRef jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
@@ -229,7 +230,7 @@ public:
     OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const;
 
     bool handleContextMenuEvent(const WebCore::PlatformMouseEvent&);
-    bool handleMouseEvent(const WebMouseEvent&);
+    WebCore::HandleMouseEventResult handleMouseEvent(const WebMouseEvent&);
     bool handleKeyEvent(const WebKeyboardEvent&);
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);

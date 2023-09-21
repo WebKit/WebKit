@@ -46,6 +46,10 @@ private:
     WebCore::MediaStrategy* createMediaStrategy() override;
     WebCore::BlobRegistry* createBlobRegistry() override;
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    WebCore::PushStrategy* createPushStrategy() override { return nullptr; }
+#endif
+
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS_FAMILY)
     void writeToPasteboard(const WebCore::PasteboardURL&, const String& pasteboardName, const WebCore::PasteboardContext*) override;

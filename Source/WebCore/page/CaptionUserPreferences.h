@@ -167,6 +167,19 @@ template<> struct EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode
         WebCore::CaptionUserPreferences::CaptionDisplayMode::AlwaysOn,
         WebCore::CaptionUserPreferences::CaptionDisplayMode::Manual
     >;
+
+    static std::optional<WebCore::CaptionUserPreferences::CaptionDisplayMode> fromString(const String& mode)
+    {
+        if (equalLettersIgnoringASCIICase(mode, "forcedonly"_s))
+            return WebCore::CaptionUserPreferences::CaptionDisplayMode::ForcedOnly;
+        if (equalLettersIgnoringASCIICase(mode, "manual"_s))
+            return WebCore::CaptionUserPreferences::CaptionDisplayMode::Manual;
+        if (equalLettersIgnoringASCIICase(mode, "automatic"_s))
+            return WebCore::CaptionUserPreferences::CaptionDisplayMode::Automatic;
+        if (equalLettersIgnoringASCIICase(mode, "alwayson"_s))
+            return WebCore::CaptionUserPreferences::CaptionDisplayMode::AlwaysOn;
+        return std::nullopt;
+    }
 };
 
 } // namespace WTF

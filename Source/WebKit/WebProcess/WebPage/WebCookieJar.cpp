@@ -36,6 +36,8 @@
 #include <WebCore/CookieStoreGetOptions.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
+#include <WebCore/EmptyFrameLoaderClient.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/LocalFrame.h>
@@ -278,11 +280,12 @@ void WebCookieJar::deleteCookie(const WebCore::Document& document, const URL& ur
 
 void WebCookieJar::getCookiesAsync(WebCore::Document& document, const URL& url, const WebCore::CookieStoreGetOptions& options, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&& completionHandler) const
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
-    if (!webFrame || !webFrame->page()) {
+    RefPtr frame = document.frame();
+    if (!frame) {
         completionHandler({ });
         return;
     }
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
 
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
 #if ENABLE(TRACKING_PREVENTION)
@@ -294,19 +297,20 @@ void WebCookieJar::getCookiesAsync(WebCore::Document& document, const URL& url, 
 
     auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     auto includeSecureCookies = CookieJar::shouldIncludeSecureCookies(document, url);
-    auto frameID = webFrame->frameID();
-    auto pageID = webFrame->page()->identifier();
+    auto frameID = webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt;
+    auto pageID = webFrame ? std::make_optional(webFrame->page()->identifier()) : std::nullopt;
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CookiesForDOMAsync(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame.get()), options), WTFMove(completionHandler));
 }
 
 void WebCookieJar::setCookieAsync(WebCore::Document& document, const URL& url, const WebCore::Cookie& cookie, CompletionHandler<void(bool)>&& completionHandler) const
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
-    if (!webFrame || !webFrame->page()) {
+    RefPtr frame = document.frame();
+    if (!frame) {
         completionHandler(false);
         return;
     }
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
 
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
 #if ENABLE(TRACKING_PREVENTION)
@@ -317,8 +321,8 @@ void WebCookieJar::setCookieAsync(WebCore::Document& document, const URL& url, c
 #endif
 
     auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
-    auto frameID = webFrame->frameID();
-    auto pageID = webFrame->page()->identifier();
+    auto frameID = webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt;
+    auto pageID = webFrame ? std::make_optional(webFrame->page()->identifier()) : std::nullopt;
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetCookieFromDOMAsync(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame.get()), cookie), WTFMove(completionHandler));
 }

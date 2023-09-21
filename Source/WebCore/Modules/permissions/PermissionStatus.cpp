@@ -66,7 +66,7 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
     , m_state(state)
     , m_descriptor(descriptor)
 {
-    auto* origin = context.securityOrigin();
+    RefPtr origin = context.securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
     ClientOrigin clientOrigin { context.topOrigin().data(), WTFMove(originData) };
 
@@ -93,11 +93,11 @@ void PermissionStatus::stateChanged(PermissionState newState)
     if (m_state == newState)
         return;
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
-    auto* document = dynamicDowncast<Document>(context);
+    RefPtr document = dynamicDowncast<Document>(context.get());
     if (document && !document->isFullyActive())
         return;
 
@@ -115,9 +115,8 @@ bool PermissionStatus::virtualHasPendingActivity() const
     if (!m_hasChangeEventListener)
         return false;
 
-    auto* context = scriptExecutionContext();
-    if (is<Document>(context))
-        return downcast<Document>(*context).hasBrowsingContext();
+    if (WeakPtr document = dynamicDowncast<Document>(scriptExecutionContext()))
+        return document->hasBrowsingContext();
 
     return true;
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSMeteringMode.h"
 #include "JSOverconstrainedError.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -98,8 +99,8 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
 
     auto& settings = m_private->settings();
     if (settings.supportsGroupId()) {
-        auto* window = downcast<Document>(context).domWindow();
-        if (auto* mediaDevices = window ? NavigatorMediaDevices::mediaDevices(window->navigator()) : nullptr)
+        RefPtr window = downcast<Document>(context).domWindow();
+        if (RefPtr mediaDevices = window ? NavigatorMediaDevices::mediaDevices(window->navigator()) : nullptr)
             m_groupId = mediaDevices->hashedGroupId(settings.groupId());
     }
 
@@ -272,7 +273,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
     if (settings.supportsFrameRate())
         result.frameRate = settings.frameRate();
     if (settings.supportsFacingMode())
-        result.facingMode = RealtimeMediaSourceSettings::facingMode(settings.facingMode());
+        result.facingMode = convertEnumerationToString(settings.facingMode());
+    if (settings.supportsWhiteBalanceMode())
+        result.whiteBalanceMode = convertEnumerationToString(settings.whiteBalanceMode());
     if (settings.supportsVolume())
         result.volume = settings.volume();
     if (settings.supportsSampleRate())
@@ -342,7 +345,7 @@ MediaProducerMediaStateFlags MediaStreamTrack::mediaState() const
     if (m_ended || !isCaptureTrack())
         return MediaProducer::IsNotPlaying;
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context || !is<Document>(context) || !downcast<Document>(context)->page())
         return MediaProducer::IsNotPlaying;
 
@@ -396,7 +399,7 @@ MediaProducerMediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
 MediaProducerMediaStateFlags MediaStreamTrack::captureState(Document& document)
 {
     MediaProducerMediaStateFlags state;
-    for (auto* captureTrack : allCaptureTracks()) {
+    for (RefPtr captureTrack : allCaptureTracks()) {
         if (captureTrack->scriptExecutionContext() != &document || captureTrack->ended())
             continue;
         state.add(sourceCaptureState(captureTrack->source()));
@@ -406,7 +409,7 @@ MediaProducerMediaStateFlags MediaStreamTrack::captureState(Document& document)
 
 void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 {
-    for (auto* captureTrack : allCaptureTracks()) {
+    for (RefPtr captureTrack : allCaptureTracks()) {
         if (captureTrack->scriptExecutionContext() == &document && !captureTrack->ended())
             captureTrack->updateToPageMutedState();
     }
@@ -415,8 +418,8 @@ void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 void MediaStreamTrack::updateVideoCaptureAccordingMicrophoneInterruption(Document& document, bool isMicrophoneInterrupted)
 {
     auto* page = document.page();
-    for (auto* captureTrack : allCaptureTracks()) {
-        auto* context = captureTrack->scriptExecutionContext();
+    for (RefPtr captureTrack : allCaptureTracks()) {
+        RefPtr context = captureTrack->scriptExecutionContext();
         if (!context || downcast<Document>(context)->page() != page)
             continue;
         auto& source = captureTrack->source();
@@ -428,7 +431,7 @@ void MediaStreamTrack::updateVideoCaptureAccordingMicrophoneInterruption(Documen
 void MediaStreamTrack::updateToPageMutedState()
 {
     ASSERT(isCaptureTrack());
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
 
     if (!context)
         return;
@@ -486,8 +489,8 @@ static MediaProducerMediaCaptureKind trackTypeForMediaProducerCaptureKind(Captur
 void MediaStreamTrack::endCapture(Document& document, MediaProducerMediaCaptureKind kind)
 {
     bool didEndCapture = false;
-    for (auto* captureTrack : allCaptureTracks()) {
-        auto* trackDocument = downcast<Document>(captureTrack->scriptExecutionContext());
+    for (RefPtr captureTrack : allCaptureTracks()) {
+        RefPtr trackDocument = downcast<Document>(captureTrack->scriptExecutionContext());
         if (trackDocument != &document)
             continue;
         if (kind != MediaProducerMediaCaptureKind::EveryKind && kind != trackTypeForMediaProducerCaptureKind(captureTrack->privateTrack().deviceType()))
@@ -543,12 +546,12 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     
 void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (scriptExecutionContext()->activeDOMObjectsAreStopped() || m_ended)
         return;
 
     Function<void()> updateMuted = [this, muted = m_private->muted()] {
-        auto* context = scriptExecutionContext();
+        RefPtr context = scriptExecutionContext();
         if (!context || context ->activeDOMObjectsAreStopped())
             return;
 
@@ -593,7 +596,7 @@ void MediaStreamTrack::trackEnabledChanged(MediaStreamTrackPrivate&)
 
 void MediaStreamTrack::configureTrackRendering()
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context || !is<Document>(context))
         return;
 

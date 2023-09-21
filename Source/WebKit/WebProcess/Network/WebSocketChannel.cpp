@@ -198,7 +198,7 @@ template<typename T> void WebSocketChannel::sendMessage(T&& message, size_t byte
     CompletionHandler<void()> completionHandler = [this, protectedThis = Ref { *this }, byteLength] {
         decreaseBufferedAmount(byteLength);
     };
-    sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler));
+    sendWithAsyncReply(std::forward<T>(message), WTFMove(completionHandler));
 }
 
 WebSocketChannel::SendResult WebSocketChannel::send(CString&& message)

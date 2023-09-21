@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "IPCEvent.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include "ShareableBitmap.h"
 #include "StreamMessageReceiver.h"
@@ -60,16 +61,18 @@ private:
     void getPixelBuffer(WebCore::PixelBufferFormat, WebCore::IntRect srcRect, CompletionHandler<void()>&&);
     void getPixelBufferWithNewMemory(SharedMemory::Handle&&, WebCore::PixelBufferFormat, WebCore::IntRect, CompletionHandler<void()>&&);
     void putPixelBuffer(Ref<WebCore::PixelBuffer>, WebCore::IntRect srcRect, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat);
-    void getShareableBitmap(WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
-    void getFilteredImage(Ref<WebCore::Filter>, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void getShareableBitmap(WebCore::PreserveResolution, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    void getFilteredImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
     void convertToLuminanceMask();
     void transformToColorSpace(const WebCore::DestinationColorSpace&);
-    void flushContext(IPC::Semaphore&&);
+    void setFlushSignal(IPC::Signal&&);
+    void flushContext();
     void flushContextSync(CompletionHandler<void()>&&);
 
     RefPtr<RemoteRenderingBackend> m_backend;
     Ref<WebCore::ImageBuffer> m_imageBuffer;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest { ScopedRenderingResourcesRequest::acquire() };
+    std::optional<IPC::Signal> m_flushSignal;
 };
 
 } // namespace WebKit

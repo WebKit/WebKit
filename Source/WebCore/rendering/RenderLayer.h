@@ -243,6 +243,9 @@ public:
 
     bool willCompositeClipPath() const;
 
+    // Convert a point in absolute coords into layer coords, taking transforms into account
+    LayoutPoint absoluteToContents(const LayoutPoint&) const;
+
 protected:
     void destroy();
 
@@ -691,6 +694,7 @@ public:
         IncludeCompositedDescendants            = 1 << 6,
         UseFragmentBoxesExcludingCompositing    = 1 << 7,
         UseFragmentBoxesIncludingCompositing    = 1 << 8,
+        IncludeRootBackgroundPaintingArea       = 1 << 9,
     };
     static constexpr OptionSet<CalculateLayerBoundsFlag> defaultCalculateLayerBoundsFlags() { return { IncludeSelfTransform, UseLocalClipRectIfPossible, IncludePaintedFilterOutsets, UseFragmentBoxesExcludingCompositing }; }
 
@@ -774,7 +778,7 @@ public:
     }
 
     bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isCSSStackingContext(); }
-    
+
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
     bool hasNotIsolatedBlendingDescendantsStatusDirty() const { return m_hasNotIsolatedBlendingDescendantsStatusDirty; }
@@ -896,7 +900,7 @@ private:
     bool setIsNormalFlowOnly(bool);
 
     bool setIsCSSStackingContext(bool);
-    
+
     void isStackingContextChanged();
 
     bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
@@ -1170,9 +1174,6 @@ private:
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
 
     RenderLayer* enclosingTransformedAncestor() const;
-
-    // Convert a point in absolute coords into layer coords, taking transforms into account
-    LayoutPoint absoluteToContents(const LayoutPoint&) const;
 
     inline bool hasNonOpacityTransparency() const;
 

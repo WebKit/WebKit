@@ -154,7 +154,7 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
 
     auto requestStart = MonotonicTime::now();
     queryCache(WTFMove(resourceRequest), options, ShouldRetrieveResponses::Yes, [this, promise = WTFMove(promise), requestStart](auto&& result) mutable {
-        queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, promise = WTFMove(promise), result = WTFMove(result), requestStart]() mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, promise = WTFMove(promise), result = std::forward<decltype(result)>(result), requestStart]() mutable {
             if (result.hasException()) {
                 promise.reject(result.releaseException());
                 return;
@@ -498,7 +498,7 @@ void DOMCache::queryCache(ResourceRequest&& request, const CacheQueryOptions& op
             return;
         }
 
-        auto records = WTF::map(result.value(), [](auto&& record) {
+        auto records = WTF::map(WTFMove(result).value(), [](CrossThreadRecord&& record) {
             return fromCrossThreadRecord(WTFMove(record));
         });
         callback(WTFMove(records));
@@ -551,7 +551,7 @@ void DOMCache::batchPutOperation(const FetchRequest& request, FetchResponse& res
 
 void DOMCache::batchPutOperation(Vector<Record>&& records, CompletionHandler<void(ExceptionOr<void>&&)>&& callback)
 {
-    auto crossThreadRecords = WTF::map(records, [](auto&& record) {
+    auto crossThreadRecords = WTF::map(WTFMove(records), [](Record&& record) {
         return toCrossThreadRecord(WTFMove(record));
     });
     m_connection->batchPutOperation(m_identifier, WTFMove(crossThreadRecords), [this, pendingActivity = makePendingActivity(*this), callback = WTFMove(callback)](auto&& result) mutable {

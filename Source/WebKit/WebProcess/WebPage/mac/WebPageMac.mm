@@ -453,27 +453,27 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     
     if (!frame->eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()) {
         if (selector == "moveUp:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Line);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Line);
         else if (selector == "moveToBeginningOfParagraph:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Page);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Page);
         else if (selector == "moveToBeginningOfDocument:"_s) {
-            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Document);
-            didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollGranularity::Document);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Document);
+            didPerformAction |= scroll(m_page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Document);
         } else if (selector == "moveDown:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Line);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Line);
         else if (selector == "moveToEndOfParagraph:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Page);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Page);
         else if (selector == "moveToEndOfDocument:"_s) {
-            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Document);
-            didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollGranularity::Document);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Document);
+            didPerformAction |= scroll(m_page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Document);
         } else if (selector == "moveLeft:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollGranularity::Line);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Line);
         else if (selector == "moveWordLeft:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollGranularity::Page);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Page);
         else if (selector == "moveRight:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollRight, ScrollGranularity::Line);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollRight, ScrollGranularity::Line);
         else if (selector == "moveWordRight:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollRight, ScrollGranularity::Page);
+            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollRight, ScrollGranularity::Page);
     }
 
     if (selector == "moveToLeftEndOfLine:"_s)
@@ -938,9 +938,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
             auto lookupResult = pluginView->lookupTextAtLocation(locationInViewCoordinates, immediateActionResult);
             if (auto lookupText = std::get<String>(lookupResult); !lookupText.isEmpty()) {
                 // FIXME (144030): Focus does not seem to get set to the PDF when invoking the menu.
-                Ref document = element->document();
-                if (is<PluginDocument>(document))
-                    downcast<PluginDocument>(document).setFocusedElement(element.get());
+                if (RefPtr pluginDocument = dynamicDowncast<PluginDocument>(element->document()))
+                    pluginDocument->setFocusedElement(element.get());
 
                 auto selection = std::get<PDFSelection *>(lookupResult);
                 auto options = std::get<NSDictionary *>(lookupResult);

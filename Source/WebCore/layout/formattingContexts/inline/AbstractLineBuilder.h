@@ -41,7 +41,7 @@ public:
     virtual LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) = 0;
     virtual ~AbstractLineBuilder() { };
 
-    void setIntrinsicWidthMode(IntrinsicWidthMode intrinsicWidthMode) { m_intrinsicWidthMode = intrinsicWidthMode; }
+    void setIntrinsicWidthMode(IntrinsicWidthMode);
 
 protected:
     std::optional<InlineLayoutUnit> eligibleOverflowWidthAsLeading(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result&, bool) const;
@@ -49,7 +49,10 @@ protected:
     std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
     bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 
+    InlineContentBreaker& inlineContentBreaker() { return m_inlineContentBreaker; }
+
 private:
+    InlineContentBreaker m_inlineContentBreaker;
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
 
 };

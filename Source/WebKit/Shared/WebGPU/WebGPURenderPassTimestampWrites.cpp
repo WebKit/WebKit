@@ -34,48 +34,25 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderPassTimestampWrite> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassTimestampWrite& renderPassTimestampWrite)
+std::optional<RenderPassTimestampWrites> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassTimestampWrites& renderPassTimestampWrite)
 {
-    auto querySet = convertToBacking(renderPassTimestampWrite.querySet);
+    if (!renderPassTimestampWrite.querySet)
+        return std::nullopt;
+
+    auto querySet = convertToBacking(*renderPassTimestampWrite.querySet);
     if (!querySet)
         return std::nullopt;
 
-    return { { querySet, renderPassTimestampWrite.queryIndex, renderPassTimestampWrite.location } };
+    return { { querySet, renderPassTimestampWrite.beginningOfPassWriteIndex, renderPassTimestampWrite.endOfPassWriteIndex } };
 }
 
-std::optional<RenderPassTimestampWrites> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassTimestampWrites& renderPassTimestampWrites)
-{
-    Vector<RenderPassTimestampWrite> timestampWrites;
-    timestampWrites.reserveInitialCapacity(renderPassTimestampWrites.size());
-    for (const auto& timestampWrite : renderPassTimestampWrites) {
-        auto convertedTimestampWrite = convertToBacking(timestampWrite);
-        if (!convertedTimestampWrite)
-            return std::nullopt;
-        timestampWrites.uncheckedAppend(WTFMove(*convertedTimestampWrite));
-    }
-    return timestampWrites;
-}
-
-std::optional<WebCore::WebGPU::RenderPassTimestampWrite> ConvertFromBackingContext::convertFromBacking(const RenderPassTimestampWrite& renderPassTimestampWrite)
+std::optional<WebCore::WebGPU::RenderPassTimestampWrites> ConvertFromBackingContext::convertFromBacking(const RenderPassTimestampWrites& renderPassTimestampWrite)
 {
     auto* querySet = convertQuerySetFromBacking(renderPassTimestampWrite.querySet);
     if (!querySet)
         return std::nullopt;
 
-    return { { *querySet, renderPassTimestampWrite.queryIndex, renderPassTimestampWrite.location } };
-}
-
-std::optional<WebCore::WebGPU::RenderPassTimestampWrites> ConvertFromBackingContext::convertFromBacking(const RenderPassTimestampWrites& renderPassTimestampWrites)
-{
-    Vector<WebCore::WebGPU::RenderPassTimestampWrite> timestampWrites;
-    timestampWrites.reserveInitialCapacity(renderPassTimestampWrites.size());
-    for (const auto& backingTimestampWrite : renderPassTimestampWrites) {
-        auto timestampWrite = convertFromBacking(backingTimestampWrite);
-        if (!timestampWrite)
-            return std::nullopt;
-        timestampWrites.uncheckedAppend(WTFMove(*timestampWrite));
-    }
-    return timestampWrites;
+    return { { querySet, renderPassTimestampWrite.beginningOfPassWriteIndex, renderPassTimestampWrite.endOfPassWriteIndex } };
 }
 
 } // namespace WebKit

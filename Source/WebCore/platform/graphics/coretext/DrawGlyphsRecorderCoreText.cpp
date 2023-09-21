@@ -226,7 +226,7 @@ void DrawGlyphsRecorder::updateShadow(CGStyleRef style)
     auto shadowOffset = FloatSize(std::cos(rad), std::sin(rad)) * shadowStyle.height;
     auto shadowRadius = static_cast<float>(shadowStyle.radius);
     auto shadowColor = CGStyleGetColor(style);
-    updateShadow({ { shadowOffset, shadowRadius, Color::createAndPreserveColorSpace(shadowColor), ShadowRadiusMode::Default } }, ShadowsIgnoreTransforms::Yes);
+    updateShadow({ { shadowOffset, shadowRadius, Color::createAndPreserveColorSpace(shadowColor) } }, ShadowsIgnoreTransforms::Yes);
 }
 
 void DrawGlyphsRecorder::recordBeginLayer(CGRenderingStateRef, CGGStateRef gstate, CGRect)

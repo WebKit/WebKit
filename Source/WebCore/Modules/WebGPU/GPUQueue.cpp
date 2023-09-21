@@ -31,10 +31,14 @@
 #include "GPUImageCopyExternalImage.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "JSDOMPromiseDeferred.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
+#include "WebCodecsVideoFrame.h"
 
 namespace WebCore {
 
@@ -110,6 +114,21 @@ static ImageBuffer* imageBufferForSource(const auto& source)
 {
     return WTF::switchOn(source, [](const RefPtr<ImageBitmap>& imageBitmap) {
         return imageBitmap->buffer();
+#if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+    }, [](const RefPtr<ImageData>) -> ImageBuffer* {
+        // FIXME: Support these formats - https://bugs.webkit.org/show_bug.cgi?id=261567
+        ASSERT(0 && "not implemented");
+        return nullptr;
+    }, [](const RefPtr<HTMLImageElement>) -> ImageBuffer* {
+        ASSERT(0 && "not implemented");
+        return nullptr;
+    }, [](const RefPtr<HTMLVideoElement>) -> ImageBuffer* {
+        ASSERT(0 && "not implemented");
+        return nullptr;
+    }, [](const RefPtr<WebCodecsVideoFrame>) -> ImageBuffer* {
+        ASSERT(0 && "not implemented");
+        return nullptr;
+#endif
     }, [](const RefPtr<HTMLCanvasElement>& canvasElement) {
         return canvasElement->buffer();
     }
@@ -153,6 +172,7 @@ static PixelFormat toPixelFormat(GPUTextureFormat textureFormat)
         return PixelFormat::BGRA8;
         
     case GPUTextureFormat::Rgb9e5ufloat:
+    case GPUTextureFormat::Rgb10a2uint:
     case GPUTextureFormat::Rgb10a2unorm:
     case GPUTextureFormat::Rg11b10ufloat:
     case GPUTextureFormat::Rg32uint:

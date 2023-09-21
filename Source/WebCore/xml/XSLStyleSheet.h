@@ -106,7 +106,7 @@ private:
 
     void clearXSLStylesheetDocument();
 
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_ownerNode;
+    CheckedPtr<Node> m_ownerNode;
     String m_originalURL;
     URL m_finalURL;
     bool m_isDisabled { false };

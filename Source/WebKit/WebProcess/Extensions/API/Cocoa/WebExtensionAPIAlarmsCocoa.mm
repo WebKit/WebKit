@@ -85,19 +85,13 @@ void WebExtensionAPIAlarms::createAlarm(NSString *name, NSDictionary *alarmInfo,
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/create
 
-    static NSArray<NSString *> *optionalKeys = @[
-        whenKey,
-        delayInMinutesKey,
-        periodInMinutesKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         whenKey: NSNumber.class,
         delayInMinutesKey: NSNumber.class,
         periodInMinutesKey: NSNumber.class,
     };
 
-    if (!validateDictionary(alarmInfo, @"info", nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(alarmInfo, @"info", nil, types, outExceptionString))
         return;
 
     auto *whenNumber = objectForKey<NSNumber>(alarmInfo, whenKey);

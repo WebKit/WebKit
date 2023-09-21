@@ -108,7 +108,7 @@ MediaStream::~MediaStream()
     // mediaState(), are short circuited.
     m_isActive = false;
     m_private->removeObserver(*this);
-    if (auto* document = this->document()) {
+    if (WeakPtr document = this->document()) {
         if (m_isWaitingUntilMediaCanStart)
             document->removeMediaCanStartListener(*this);
     }
@@ -317,7 +317,7 @@ MediaProducerMediaStateFlags MediaStream::mediaState() const
 
 void MediaStream::statusDidChange()
 {
-    if (auto* document = this->document()) {
+    if (RefPtr document = this->document()) {
         if (!m_isActive)
             return;
         document->updateIsPlayingMedia();

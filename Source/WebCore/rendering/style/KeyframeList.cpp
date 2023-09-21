@@ -247,13 +247,13 @@ bool KeyframeList::usesContainerUnits() const
     return false;
 }
 
-void KeyframeList::addProperty(AnimatableProperty property)
+void KeyframeList::addProperty(const AnimatableProperty& property)
 {
     ASSERT(!std::holds_alternative<CSSPropertyID>(property) || std::get<CSSPropertyID>(property) != CSSPropertyCustom);
     m_properties.add(property);
 }
 
-bool KeyframeList::containsProperty(AnimatableProperty property) const
+bool KeyframeList::containsProperty(const AnimatableProperty& property) const
 {
     return m_properties.contains(property);
 }
@@ -310,13 +310,13 @@ void KeyframeList::updatePropertiesMetadata(const StyleProperties& properties)
     }
 }
 
-void KeyframeValue::addProperty(AnimatableProperty property)
+void KeyframeValue::addProperty(const AnimatableProperty& property)
 {
     ASSERT(!std::holds_alternative<CSSPropertyID>(property) || std::get<CSSPropertyID>(property) != CSSPropertyCustom);
     m_properties.add(property);
 }
 
-bool KeyframeValue::containsProperty(AnimatableProperty property) const
+bool KeyframeValue::containsProperty(const AnimatableProperty& property) const
 {
     return m_properties.contains(property);
 }

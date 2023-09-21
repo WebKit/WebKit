@@ -80,18 +80,37 @@ void MeterMac::updateCellStates(const FloatRect& rect, const ControlStyle& style
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-FloatSize MeterMac::sizeForBounds(const FloatRect& bounds) const
+FloatSize MeterMac::sizeForBounds(const FloatRect& bounds, const ControlStyle& style) const
 {
+    auto isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
+
+    auto logicalSize = isVerticalWritingMode ? bounds.size().transposedSize() : bounds.size();
+
     // Makes enough room for cell's intrinsic size.
-    NSSize cellSize = [m_levelIndicatorCell cellSizeForBounds:IntRect({ }, IntSize(bounds.size()))];
-    return { std::max<float>(bounds.width(), cellSize.width), std::max<float>(bounds.height(), cellSize.height) };
+    NSSize cellSize = [m_levelIndicatorCell cellSizeForBounds:IntRect({ }, IntSize(logicalSize))];
+    logicalSize = { std::max<float>(logicalSize.width(), cellSize.width), std::max<float>(logicalSize.height(), cellSize.height) };
+
+    return isVerticalWritingMode ? logicalSize.transposedSize() : logicalSize;
 }
 
 void MeterMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    drawCell(context, borderRect.rect(), deviceScaleFactor, style, m_levelIndicatorCell.get());
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto rect = borderRect.rect();
+
+    if (style.states.contains(ControlStyle::State::VerticalWritingMode)) {
+        rect.setSize(rect.size().transposedSize());
+
+        context.translate(rect.height(), 0);
+        context.translate(rect.location());
+        context.rotate(piOverTwoFloat);
+        context.translate(-rect.location());
+    }
+
+    drawCell(context, rect, deviceScaleFactor, style, m_levelIndicatorCell.get());
 }
 
 } // namespace WebCore

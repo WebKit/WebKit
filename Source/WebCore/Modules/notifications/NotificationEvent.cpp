@@ -36,10 +36,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(NotificationEvent);
 
 Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto* notification = init.notification.get();
+    auto notification = init.notification;
     ASSERT(notification);
     auto action = init.action;
-    return adoptRef(*new NotificationEvent(type, WTFMove(init), notification, action, isTrusted));
+    return adoptRef(*new NotificationEvent(type, WTFMove(init), notification.get(), action, isTrusted));
 }
 
 Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Notification* notification, const String& action, IsTrusted isTrusted)

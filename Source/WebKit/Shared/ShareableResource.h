@@ -40,19 +40,17 @@ namespace WebKit {
 class ShareableResourceHandle {
     WTF_MAKE_NONCOPYABLE(ShareableResourceHandle);
 public:
-    ShareableResourceHandle();
     ShareableResourceHandle(ShareableResourceHandle&&) = default;
+    ShareableResourceHandle(SharedMemory::Handle&&, unsigned, unsigned);
+
     ShareableResourceHandle& operator=(ShareableResourceHandle&&) = default;
 
-    bool isNull() const { return m_handle.isNull(); }
     unsigned size() const { return m_size; }
-
-    void encode(IPC::Encoder&) &&;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ShareableResourceHandle&);
 
     RefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() &&;
 
 private:
+    friend struct IPC::ArgumentCoder<ShareableResourceHandle, void>;
     friend class ShareableResource;
 
     SharedMemory::Handle m_handle;

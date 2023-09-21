@@ -268,9 +268,7 @@ PASS serialization round-trip - @font-feature-values bongo, super bongo, bongo t
 PASS basic parse tests - @font-feature-values bongo,, super bongo { @styleset { blah: 1; } }
 PASS basic parse tests - @font-feature-values bongo,* { @styleset { blah: 1; } }
 PASS basic parse tests - @font-feature-values bongo, sans-serif { @styleset { blah: 1; } }
-PASS serialization round-trip - @font-feature-values bongo, sans-serif { @styleset { blah: 1; } }
 PASS basic parse tests - @font-feature-values serif, sans-serif { @styleset { blah: 1; } }
-PASS serialization round-trip - @font-feature-values serif, sans-serif { @styleset { blah: 1; } }
 PASS basic parse tests - @font-feature-values 'serif', 'sans-serif' { @styleset { blah: 1; } }
 PASS serialization check - @font-feature-values 'serif', 'sans-serif' { @styleset { blah: 1; } }
 PASS serialization round-trip - @font-feature-values 'serif', 'sans-serif' { @styleset { blah: 1; } }

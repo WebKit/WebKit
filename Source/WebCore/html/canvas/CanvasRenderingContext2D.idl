@@ -23,6 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum RenderingMode {
+    "Unaccelerated",
+    "Accelerated",
+};
+
 [
     CustomIsReachable,
     JSGenerateToJSObject,
@@ -72,6 +77,8 @@
     undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, optional unrestricted float alpha = 1);
     undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
     undefined clearShadow();
+
+    [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode? getEffectiveRenderingModeForTesting();
 };
 
 CanvasRenderingContext2D includes CanvasState;

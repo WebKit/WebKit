@@ -31,6 +31,7 @@
 #include <variant>
 #include <wtf/BitVector.h>
 #include <wtf/Hasher.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)
@@ -73,7 +74,7 @@ bool fontHasEitherTable(CTFontRef, unsigned tableTag1, unsigned tableTag2);
 #endif
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
-class Font : public RefCounted<Font> {
+class Font : public RefCounted<Font>, public CanMakeWeakPtr<Font> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font);
 public:
     // Used to create platform fonts.
@@ -186,7 +187,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
 #endif
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
     CTFontRef getCTFont() const { return m_platformData.font(); }
     RetainPtr<CFDictionaryRef> getCFStringAttributes(bool enableKerning, FontOrientation, const AtomString& locale) const;
     bool supportsSmallCaps() const;

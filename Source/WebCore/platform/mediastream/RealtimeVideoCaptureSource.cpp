@@ -70,7 +70,7 @@ const Vector<VideoPreset>& RealtimeVideoCaptureSource::presets()
 
 void RealtimeVideoCaptureSource::setSupportedPresets(Vector<VideoPresetData>&& presetData)
 {
-    auto presets = WTF::map(WTFMove(presetData), [](auto&& data) {
+    auto presets = WTF::map(WTFMove(presetData), [](VideoPresetData&& data) {
         return VideoPreset  { WTFMove(data) };
     });
     setSupportedPresets(WTFMove(presets));

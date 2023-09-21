@@ -30,9 +30,8 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebBadgeClient::setAppBadge(Page* page, const SecurityOriginData& origin, std::optional<uint64_t> badge)
 {

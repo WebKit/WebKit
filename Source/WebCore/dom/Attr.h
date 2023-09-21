@@ -78,7 +78,7 @@ private:
 
     // Attr wraps either an element/name, or a name/value pair (when it's a standalone Node.)
     // Note that m_name is always set, but m_element/m_standaloneValue may be null.
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
+    CheckedPtr<Element> m_element;
     QualifiedName m_name;
     AtomString m_standaloneValue;
 

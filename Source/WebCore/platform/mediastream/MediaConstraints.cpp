@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,6 +213,8 @@ void MediaTrackConstraintSetMap::filter(const Function<bool(const MediaConstrain
 
     if (m_facingMode && !m_facingMode->isEmpty() && callback(*m_facingMode))
         return;
+    if (m_whiteBalanceMode && !m_whiteBalanceMode->isEmpty() && callback(*m_whiteBalanceMode))
+        return;
     if (m_deviceId && !m_deviceId->isEmpty() && callback(*m_deviceId))
         return;
     if (m_groupId && !m_groupId->isEmpty() && callback(*m_groupId))
@@ -246,6 +248,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Zoom:
+    case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -279,6 +282,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -310,6 +314,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::GroupId:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Zoom:
+    case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -321,6 +326,9 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     switch (constraintType) {
     case MediaConstraintType::FacingMode:
         m_facingMode = WTFMove(constraint);
+        break;
+    case MediaConstraintType::WhiteBalanceMode:
+        m_whiteBalanceMode = WTFMove(constraint);
         break;
     case MediaConstraintType::DeviceId:
         if (constraint)

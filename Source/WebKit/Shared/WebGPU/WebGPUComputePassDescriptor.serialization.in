@@ -22,6 +22,6 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ComputePassDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    WebKit::WebGPU::ComputePassTimestampWrites timestampWrites;
+    std::optional<WebKit::WebGPU::ComputePassTimestampWrites> timestampWrites;
 };
 #endif

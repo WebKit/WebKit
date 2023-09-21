@@ -33,6 +33,7 @@
 #include "OrderIterator.h"
 #include "RenderBlock.h"
 #include "RenderStyleInlines.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -277,17 +278,17 @@ private:
     // need an additional layout pass for correct stretch alignment handling, as
     // the first layout likely did not use the correct value for percentage
     // sizing of children.
-    HashSet<const RenderBox*> m_relaidOutChildren;
+    WeakHashSet<const RenderBox> m_relaidOutChildren;
 
     mutable OrderIterator m_orderIterator { *this };
     std::optional<size_t> m_numberOfInFlowChildrenOnFirstLine { };
     std::optional<size_t> m_numberOfInFlowChildrenOnLastLine { };
 
     struct MarginTrimItems {
-        HashSet<const RenderBox*> m_itemsAtFlexLineStart;
-        HashSet<const RenderBox*> m_itemsAtFlexLineEnd;
-        HashSet<const RenderBox*> m_itemsOnFirstFlexLine;
-        HashSet<const RenderBox*> m_itemsOnLastFlexLine;
+        WeakHashSet<const RenderBox> m_itemsAtFlexLineStart;
+        WeakHashSet<const RenderBox> m_itemsAtFlexLineEnd;
+        WeakHashSet<const RenderBox> m_itemsOnFirstFlexLine;
+        WeakHashSet<const RenderBox> m_itemsOnLastFlexLine;
     } m_marginTrimItems;
 
     // This is SizeIsUnknown outside of layoutBlock()

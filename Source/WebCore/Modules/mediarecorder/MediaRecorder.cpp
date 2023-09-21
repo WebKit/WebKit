@@ -214,7 +214,7 @@ void MediaRecorder::stopRecording()
     updateBitRates();
 
     stopRecordingInternal();
-    fetchData([this](auto&& buffer, auto& mimeType, auto timeCode) {
+    fetchData([this](RefPtr<FragmentedSharedBuffer>&& buffer, auto& mimeType, auto timeCode) {
         if (!m_isActive)
             return;
 
@@ -297,7 +297,7 @@ void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder 
     if (takeRecorder == TakePrivateRecorder::Yes)
         takenPrivateRecorder = WTFMove(m_private);
 
-    auto fetchDataCallback = [this, privateRecorder = WTFMove(takenPrivateRecorder), callback = WTFMove(callback)](auto&& buffer, auto& mimeType, auto timeCode) mutable {
+    auto fetchDataCallback = [this, privateRecorder = WTFMove(takenPrivateRecorder), callback = WTFMove(callback)](RefPtr<FragmentedSharedBuffer>&& buffer, auto& mimeType, auto timeCode) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [buffer = WTFMove(buffer), mimeType, timeCode, callback = WTFMove(callback)]() mutable {
             callback(WTFMove(buffer), mimeType, timeCode);
         });
@@ -309,7 +309,7 @@ void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder 
     }
 
     m_isFetchingData = true;
-    privateRecorder.fetchData([this, pendingActivity = makePendingActivity(*this), callback = WTFMove(fetchDataCallback)](auto&& buffer, auto& mimeType, auto timeCode) mutable {
+    privateRecorder.fetchData([this, pendingActivity = makePendingActivity(*this), callback = WTFMove(fetchDataCallback)](RefPtr<FragmentedSharedBuffer>&& buffer, auto& mimeType, auto timeCode) mutable {
         m_isFetchingData = false;
         callback(WTFMove(buffer), mimeType, timeCode);
         for (auto& task : std::exchange(m_pendingFetchDataTasks, { }))

@@ -80,7 +80,7 @@ void WebExtensionContext::alarmsClearAll(CompletionHandler<void()>&& completionH
 
 void WebExtensionContext::fireAlarmsEventIfNeeded(const WebExtensionAlarm& alarm)
 {
-    auto type = WebExtensionEventListenerType::AlarmsOnAlarm;
+    constexpr auto type = WebExtensionEventListenerType::AlarmsOnAlarm;
     wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchAlarmsEvent(alarm.parameters()));
     });

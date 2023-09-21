@@ -70,7 +70,7 @@ public:
     enum class MayBeAboveLastFloat : bool { No, Yes };
     Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat) const;
 
-    FloatingState::FloatItem toFloatItem(const Box& floatBox, const BoxGeometry&) const;
+    FloatingState::FloatItem makeFloatItem(const Box& floatBox, const BoxGeometry&, std::optional<size_t> line = { }) const;
 
     bool isLogicalLeftPositioned(const Box& floatBox) const;
 

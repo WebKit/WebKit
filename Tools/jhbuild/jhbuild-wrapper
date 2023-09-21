@@ -24,7 +24,7 @@ import shlex
 import subprocess
 import sys
 
-jhbuild_revision = 'acb52b03594989cfb45173841b318fccf557fefb'
+jhbuild_revision = '048920f64d82779eef88158455bfd1d160a3be1a'
 
 def determine_platform():
     if '--gtk' in sys.argv:
@@ -76,16 +76,22 @@ def update_jhbuild():
 
 
 def clone_jhbuild():
+    JHBUILD_GIT_URLS = [
+        'https://gitlab.gnome.org/GNOME/jhbuild.git',
+        'https://github.com/GNOME/jhbuild.git',
+    ]
     if not os.path.exists(source_path):
         os.makedirs(source_path)
     if not os.path.exists(installation_prefix):
         os.makedirs(installation_prefix)
 
     # Use only 1 thread to workaround a QEMU bug - see http://webkit.org/b/143095 for details.
-    process = subprocess.Popen(['git', 'clone', '--config', 'pack.threads=1', 'https://git.gnome.org/browse/jhbuild'], cwd=source_path)
-    process.wait()
-    if process.returncode != 0:
-        raise Exception('jhbuild git clone failed with return code: %i' % process.returncode)
+    for url in JHBUILD_GIT_URLS:
+        process = subprocess.Popen(['git', 'clone', '--config', 'pack.threads=1', url], cwd=source_path)
+        process.wait()
+        if process.returncode == 0:
+            return
+    raise Exception('Could not clone jhbuild git repository')
 
 
 def install_jhbuild():
