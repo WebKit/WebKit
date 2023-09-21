@@ -34,6 +34,11 @@ namespace IPC {
 class StreamConnectionBuffer;
 }
 
+namespace WTF {
+template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
+class NativePromise;
+} // namespace WTF
+
 namespace Messages {
 namespace TestWithStreamBuffer {
 

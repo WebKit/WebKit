@@ -32,6 +32,11 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 
+namespace WTF {
+template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
+class NativePromise;
+} // namespace WTF
+
 namespace Messages {
 namespace TestWithSemaphore {
 
@@ -75,6 +80,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
+    using Promise = WTF::NativePromise<IPC::Semaphore, IPC::Error, true>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);

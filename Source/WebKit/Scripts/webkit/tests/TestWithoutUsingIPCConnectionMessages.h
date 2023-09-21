@@ -32,6 +32,11 @@
 #include <wtf/text/WTFString.h>
 
 
+namespace WTF {
+template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
+class NativePromise;
+} // namespace WTF
+
 namespace Messages {
 namespace TestWithoutUsingIPCConnection {
 
@@ -70,6 +75,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
+    using Promise = WTF::NativePromise<void, IPC::Error, true>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);
@@ -91,6 +97,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<String>;
+    using Promise = WTF::NativePromise<String, IPC::Error, true>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);
@@ -135,6 +142,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
+    using Promise = WTF::NativePromise<void, IPC::Error, true>;
     explicit MessageWithArgumentAndEmptyReply(const String& argument)
         : m_arguments(argument)
     {
@@ -161,6 +169,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<String>;
+    using Promise = WTF::NativePromise<String, IPC::Error, true>;
     explicit MessageWithArgumentAndReplyWithArgument(const String& argument)
         : m_arguments(argument)
     {

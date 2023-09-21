@@ -931,4 +931,48 @@ TEST(NativePromise, ChainTo)
     });
 }
 
+TEST(NativePromise, RunSynchronouslyOnTarget)
+{
+    // Check that the callback is executed immediately when the promise is resolved.
+    runInCurrentRunLoop([](auto& runLoop) {
+        GenericPromise::Producer producer(__func__, PromiseDispatchMode::RunSynchronouslyOnTarget);
+        int result = 0;
+        producer.resolve(__func__);
+        producer->whenSettled(runLoop, __func__, [&] {
+            result = 42;
+        });
+        EXPECT_EQ(result, 42);
+    });
+    // Check that the callback is executed immediately when using chained promise and that itself is set to RunSynchronouslyOnTarget
+    runInCurrentRunLoop([](auto& runLoop) {
+        GenericPromise::Producer producer(__func__, PromiseDispatchMode::RunSynchronouslyOnTarget);
+        int result = 0;
+        producer->whenSettled(runLoop, __func__, [&] {
+            // We need to configure this promise too as RunSynchronouslyOnTarget
+            GenericPromise::Producer producer(__func__, PromiseDispatchMode::RunSynchronouslyOnTarget);
+            producer.resolve(__func__);
+            return producer;
+        })->whenSettled(runLoop, __func__, [&] {
+            result = 42;
+        });
+        producer.resolve(__func__);
+        EXPECT_EQ(result, 42);
+    });
+    // Check that the callback will still run on the proper target queue, even if RunSynchronouslyOnTarget is set.
+    runInCurrentRunLoop([](auto& runLoop) {
+        GenericPromise::Producer producer(__func__, PromiseDispatchMode::RunSynchronouslyOnTarget);
+        int result = 0;
+        producer.resolve(__func__);
+        {
+            AutoWorkQueue awq;
+            producer->whenSettled(awq.queue().get(), __func__, [&, queue = awq.queue()] {
+                assertIsCurrent(queue);
+                result = 42;
+                queue->beginShutdown();
+            });
+        }
+        EXPECT_EQ(result, 42);
+    });
+}
+
 } // namespace TestWebKitAPI

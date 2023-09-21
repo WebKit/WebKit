@@ -197,6 +197,12 @@ class ConvertibleToNativePromise { };
 template<typename T>
 class NativePromiseRequest;
 
+enum class PromiseDispatchMode : uint8_t {
+    Default, // ResolveRejectCallbacks will be dispatched on the target thread.
+    RunSynchronouslyOnTarget, // ResolveRejectCallbacks will be run synchronously if target thread is current.
+
+};
+
 template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
 class NativePromise final : public NativePromiseBase, public ConvertibleToNativePromise {
 public:
@@ -332,7 +338,7 @@ private:
         PROMISE_LOG("%s resolving NativePromise (%p created at %s)", resolveSite, this, m_creationSite);
         ASSERT(isNothing());
         m_result = std::forward<ResolveValueType_>(resolveValue);
-        dispatchAll();
+        dispatchAll(lock);
     }
 
     template<typename = std::enable_if<std::is_void_v<ResolveValueT>>>
@@ -345,7 +351,7 @@ private:
         PROMISE_LOG("%s resolving NativePromise (%p created at %s)", resolveSite, this, m_creationSite);
         ASSERT(isNothing());
         m_result = Result { };
-        dispatchAll();
+        dispatchAll(lock);
     }
 
     template<typename RejectValueType_>
@@ -356,7 +362,7 @@ private:
         PROMISE_LOG("%s rejecting NativePromise (%p created at %s)", rejectSite, this, m_creationSite);
         ASSERT(isNothing());
         m_result = Unexpected<RejectValueT>(std::forward<RejectValueType_>(rejectValue));
-        dispatchAll();
+        dispatchAll(lock);
     }
 
     template<typename ResolveOrRejectValue_>
@@ -366,7 +372,16 @@ private:
         ASSERT(isNothing());
         PROMISE_LOG("%s resolveOrRejecting NativePromise (%p created at %s)", site, this, m_creationSite);
         m_result = std::forward<ResolveOrRejectValue_>(result);
-        dispatchAll();
+        dispatchAll(lock);
+    }
+
+    void setDispatchMode(PromiseDispatchMode dispatchMode, const char* site)
+    {
+        static_assert(IsExclusive, "setDispatchMode can only be used with exclusive promises");
+        Locker lock { m_lock };
+        PROMISE_LOG("%s runSynchronouslyOnTarget NativePromise (%p created at %s)", site, this, m_creationSite);
+        ASSERT(isNothing(), "A Promise must not have been already resolved or rejected to set dispatch state");
+        m_dispatchMode = dispatchMode;
     }
 
     // We can't move the Result object with non-exclusive promise.
@@ -527,16 +542,29 @@ private:
 #endif
         }
 
-        void dispatch(NativePromise& promise)
+        void dispatch(NativePromise& promise, Locker<Lock>& lock)
         {
             assertIsHeld(promise.m_lock);
 
             ASSERT(!promise.isNothing());
 
+            if (UNLIKELY(promise.m_dispatchMode == PromiseDispatchMode::RunSynchronouslyOnTarget) && m_targetQueue->isCurrent()) {
+                PROMISE_LOG("%s synchronous then() call made from %s [promise:%p, callback:%p]", promise.m_result ? "Resolving" : "Rejecting", m_callSite, &promise, this);
+                if (m_disconnected) {
+                    PROMISE_LOG("ThenCallback disconnected aborting [this:%p, callSite:%s]", this, m_callSite);
+                    return;
+                }
+                {
+                    // Holding the lock is unnecessary while running the resolve/reject callback and we don't want to hold the lock for too long.
+                    DropLockForScope unlocker(lock);
+                    processResult(promise.result());
+                }
+                return;
+            }
             m_targetQueue->dispatch([this, strongThis = Ref { *this }, promise = Ref { promise }, operation = *promise.m_result ? "Resolving" : "Rejecting"] () mutable {
                 PROMISE_LOG("%s then() call made from %s [promise:%p, callback:%p]", operation, m_callSite, &promise, this);
                 if (m_disconnected) {
-                    PROMISE_LOG("ThenCallback::resolveOrReject disconnected aborting [this:%p, callSite:%s]", this, m_callSite);
+                    PROMISE_LOG("ThenCallback disconnected aborting [this:%p, callSite:%s]", this, m_callSite);
                     return;
                 }
                 processResult(promise->result());
@@ -638,7 +666,7 @@ private:
         m_haveRequest = true;
         PROMISE_LOG("%s invoking then() [this:%p, callback:%p, isNothing:%d]", callSite, this, thenCallback.ptr(), isNothing());
         if (!isNothing())
-            thenCallback->dispatch(*this);
+            thenCallback->dispatch(*this, lock);
         else
             m_thenCallbacks.append(WTFMove(thenCallback));
     }
@@ -852,6 +880,9 @@ public:
         m_haveRequest = true;
         PROMISE_LOG("%s invoking chainTo() [this:%p, chainedPromise:%p, isNothing:%d]", callSite, this, static_cast<Ref<NativePromise>>(chainedPromise).ptr(), isNothing());
 
+        if constexpr (IsExclusive)
+            chainedPromise.setDispatchMode(m_dispatchMode, callSite);
+
         if (isNothing())
             m_chainedPromises.append(WTFMove(chainedPromise));
         else
@@ -895,16 +926,18 @@ private:
         return *m_result;
     }
 
-    void dispatchAll()
+    void dispatchAll(Locker<Lock>& lock)
     {
         assertIsHeld(m_lock);
-        for (auto& thenCallback : m_thenCallbacks)
-            thenCallback->dispatch(*this);
-        m_thenCallbacks.clear();
+        // We move m_thenCallbacks and m_chainedPromises while holding the lock
+        // As dispatch() may release the lock when in synchronous run mode.
+        auto thenCallbacks = std::exchange(m_thenCallbacks, { });
+        auto chainedPromises = std::exchange(m_chainedPromises, { });
+        for (auto& thenCallback : thenCallbacks)
+            thenCallback->dispatch(*this, lock);
 
-        for (auto&& chainedPromise : m_chainedPromises)
+        for (auto&& chainedPromise : chainedPromises)
             resolveOrReject(WTFMove(chainedPromise));
-        m_chainedPromises.clear();
     }
 
     void resolveOrReject(typename NativePromise::Producer&& other)
@@ -929,6 +962,7 @@ private:
     Vector<Ref<ThenCallbackBase>, IsExclusive ? 1 : 3> m_thenCallbacks WTF_GUARDED_BY_LOCK(m_lock);
     Vector<typename NativePromise::Producer> m_chainedPromises WTF_GUARDED_BY_LOCK(m_lock);
     bool m_haveRequest WTF_GUARDED_BY_LOCK(m_lock) { false };
+    std::atomic<PromiseDispatchMode> m_dispatchMode { PromiseDispatchMode::Default };
 };
 
 template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
@@ -938,10 +972,12 @@ public:
     // used by IsConvertibleToNativePromise to determine how to cast the result.
     using PromiseType = NativePromise<ResolveValueT, RejectValueT, IsExclusive>;
 
-    explicit Producer(const char* creationSite)
+    explicit Producer(const char* creationSite, PromiseDispatchMode dispatchMode = PromiseDispatchMode::Default)
         : m_promise(adoptRef(new PromiseType(creationSite)))
         , m_creationSite(creationSite)
     {
+        if constexpr (IsExclusive)
+            m_promise->setDispatchMode(dispatchMode, creationSite);
     }
 
     Producer(Producer&& other) = default;
@@ -1015,13 +1051,13 @@ public:
 
     // Allow calling then() again by converting the ThenCommand to Ref<NativePromise>
     template<typename... Ts>
-    auto then(Ts&&... args)
+    auto then(Ts&&... args) const
     {
         return static_cast<Ref<PromiseType>>(*this)->then(std::forward<Ts>(args)...);
     }
 
     template<typename... Ts>
-    auto whenSettled(Ts&&... args)
+    auto whenSettled(Ts&&... args) const
     {
         return static_cast<Ref<PromiseType>>(*this)->whenSettled(std::forward<Ts>(args)...);
     }
@@ -1032,7 +1068,13 @@ public:
     }
 
 private:
-    friend PromiseType;
+    void setDispatchMode(PromiseDispatchMode dispatchMode, const char* callSite) const
+    {
+        ASSERT(m_promise, "used after move");
+        m_promise->setDispatchMode(dispatchMode, callSite);
+    }
+
+friend PromiseType;
     Producer() = default;
 
     void assertIsDead() const

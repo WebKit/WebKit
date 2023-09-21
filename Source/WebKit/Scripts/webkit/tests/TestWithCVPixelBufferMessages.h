@@ -35,6 +35,11 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 
+namespace WTF {
+template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
+class NativePromise;
+} // namespace WTF
+
 namespace Messages {
 namespace TestWithCVPixelBuffer {
 
@@ -81,6 +86,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
+    using Promise = WTF::NativePromise<RetainPtr<CVPixelBufferRef>, IPC::Error, true>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);

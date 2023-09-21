@@ -33,6 +33,11 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 
+namespace WTF {
+template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
+class NativePromise;
+} // namespace WTF
+
 namespace Messages {
 namespace TestWithImageData {
 
@@ -76,6 +81,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
+    using Promise = WTF::NativePromise<RefPtr<WebCore::ImageData>, IPC::Error, true>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);
