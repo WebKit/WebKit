@@ -1,3 +1,0 @@
-
-FAIL Testing baselines assert_equals: ctx.measureText('A').ideographicBaseline === 6.25 (got -13[number], expected 6.25[number]) expected 6.25 but got -13
-

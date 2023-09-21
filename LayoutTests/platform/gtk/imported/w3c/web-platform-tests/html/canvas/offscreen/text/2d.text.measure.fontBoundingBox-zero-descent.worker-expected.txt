@@ -1,3 +1,0 @@
-
-PASS Testing fontBoundingBox for OffscreenCanvas with zero descent metric
-

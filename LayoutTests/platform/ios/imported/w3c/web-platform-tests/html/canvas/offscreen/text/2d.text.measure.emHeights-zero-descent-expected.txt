@@ -1,7 +1,0 @@
-2d.text.measure.emHeights-zero-descent
-
-Testing emHeights with zero descent metric
-
-
-FAIL Testing emHeights with zero descent metric assert_equals: ctx.measureText('A').emHeightAscent === 40 (got 69[number], expected 40[number]) expected 40 but got 69
-
