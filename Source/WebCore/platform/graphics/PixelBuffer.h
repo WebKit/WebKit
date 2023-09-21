@@ -52,7 +52,7 @@ public:
     virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
     bool setRange(const uint8_t* data, size_t dataByteLength, size_t byteOffset);
-    WEBCORE_EXPORT bool zeroRange(size_t byteOffset, size_t rangeByteLength);
+    bool zeroRange(size_t byteOffset, size_t rangeByteLength);
     void zeroFill() { zeroRange(0, sizeInBytes()); }
 
     WEBCORE_EXPORT uint8_t item(size_t index) const;

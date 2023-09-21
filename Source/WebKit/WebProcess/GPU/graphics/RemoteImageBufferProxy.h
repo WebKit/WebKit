@@ -70,7 +70,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     // Messages
-    void didCreateBackend(std::optional<ImageBufferBackendHandle>);
+    void didCreateBackend(ImageBufferBackendHandle&&);
 
 private:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());

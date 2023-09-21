@@ -2869,7 +2869,8 @@ OptionSet<ImageBufferOptions> CanvasRenderingContext2DBase::adjustImageBufferOpt
 std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContext2DBase::getEffectiveRenderingModeForTesting()
 {
     if (auto* buffer = canvasBase().buffer()) {
-        buffer->ensureBackendCreated();
+        bool success = buffer->ensureBackendCreated(); // FIXME: Ensure we get the response for now, since the backend might change (!).
+        ASSERT_UNUSED(success, success);
         return buffer->renderingMode();
     }
     return std::nullopt;

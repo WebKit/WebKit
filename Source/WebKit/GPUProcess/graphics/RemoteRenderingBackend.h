@@ -93,6 +93,8 @@ public:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
+    void didCreateImageBuffer(Ref<WebCore::ImageBuffer>);
+
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
 
@@ -159,9 +161,6 @@ private:
     void releaseRemoteFaceDetector(ShapeDetectionIdentifier);
     void createRemoteTextDetector(ShapeDetectionIdentifier);
     void releaseRemoteTextDetector(ShapeDetectionIdentifier);
-
-    void didFailCreateImageBuffer(WebCore::RenderingResourceIdentifier) WTF_REQUIRES_CAPABILITY(workQueue());
-    void didCreateImageBuffer(Ref<WebCore::ImageBuffer>) WTF_REQUIRES_CAPABILITY(workQueue());
 
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     Ref<IPC::StreamServerConnection> m_streamConnection;

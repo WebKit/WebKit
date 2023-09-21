@@ -148,7 +148,6 @@ def types_that_must_be_moved():
         'WebKit::ConsumerSharedCARingBuffer::Handle',
         'WebKit::GPUProcessConnectionParameters',
         'WebKit::ImageBufferBackendHandle',
-        'std::optional<WebKit::ImageBufferBackendHandle>',
         'WebKit::ShareableBitmap::Handle',
         'WebKit::ShareableResource::Handle',
         'WebKit::SharedMemory::Handle',

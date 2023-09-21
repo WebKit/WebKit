@@ -52,7 +52,6 @@
 #include "SwapBuffersDisplayRequirement.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/HTMLCanvasElement.h>
-#include <WebCore/NullImageBufferBackend.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RunLoop.h>
@@ -164,25 +163,16 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-void RemoteRenderingBackend::didFailCreateImageBuffer(RenderingResourceIdentifier imageBufferIdentifier)
-{
-    // On failure to create a remote image buffer we still create a null display list recorder.
-    // Commands to draw to the failed image might have already be issued and we must process
-    // them.
-    auto errorImage = ImageBuffer::create<NullImageBufferBackend>({ 0, 0 }, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::Unspecified, { }, imageBufferIdentifier);
-    RELEASE_ASSERT(errorImage);
-    m_remoteDisplayLists.add(imageBufferIdentifier, RemoteDisplayListRecorder::create(*errorImage, imageBufferIdentifier, *this));
-    m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(errorImage.releaseNonNull(), *this));
-    send(Messages::RemoteImageBufferProxy::DidCreateBackend(std::nullopt), imageBufferIdentifier);
-}
-
 void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
 {
+    assertIsCurrent(workQueue());
     auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
+    auto remoteDisplayList = RemoteDisplayListRecorder::create(imageBuffer.get(), imageBufferIdentifier, *this);
+    m_remoteDisplayLists.add(imageBufferIdentifier, WTFMove(remoteDisplayList));
     auto* sharing = imageBuffer->backend()->toBackendSharing();
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
-    m_remoteDisplayLists.add(imageBufferIdentifier, RemoteDisplayListRecorder::create(imageBuffer.get(), imageBufferIdentifier, *this));
-    m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(WTFMove(imageBuffer), *this));
+    auto remoteImageBuffer = RemoteImageBuffer::create(WTFMove(imageBuffer), *this);
+    m_remoteImageBuffers.add(imageBufferIdentifier, WTFMove(remoteImageBuffer));
     send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(*handle)), imageBufferIdentifier);
 }
 
@@ -237,15 +227,16 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
 #endif
         if (!imageBuffer)
             imageBuffer = ImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
-    } else
+    }
+
+    if (!imageBuffer)
         imageBuffer = ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
 
-    if (imageBuffer)
-        didCreateImageBuffer(imageBuffer.releaseNonNull());
-    else {
-        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackend::createImageBuffer - failed to allocate image buffer %" PRIu64, m_renderingBackendIdentifier.toUInt64(), imageBufferIdentifier.toUInt64());
-        didFailCreateImageBuffer(imageBufferIdentifier);
+    if (!imageBuffer) {
+        ASSERT_NOT_REACHED();
+        return;
     }
+    didCreateImageBuffer(imageBuffer.releaseNonNull());
 }
 
 void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)

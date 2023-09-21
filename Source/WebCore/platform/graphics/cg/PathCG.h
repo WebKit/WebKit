@@ -29,12 +29,9 @@
 
 #include "PathImpl.h"
 #include "PlatformPath.h"
-#include "WindRule.h"
-#include <wtf/Function.h>
 
 namespace WebCore {
 
-class GraphicsContext;
 class PathStream;
 
 class PathCG final : public PathImpl {
