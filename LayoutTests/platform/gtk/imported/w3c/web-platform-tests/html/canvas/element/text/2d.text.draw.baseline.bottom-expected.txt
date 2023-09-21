@@ -1,0 +1,8 @@
+2d.text.draw.baseline.bottom
+textBaseline bottom is the bottom of the em square (not the bounding box)
+Actual output:
+Expected output:
+
+
+PASS textBaseline bottom is the bottom of the em square (not the bounding box)
+

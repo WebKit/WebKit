@@ -126,6 +126,14 @@
     ctx.font = '1em sans-serif';
     @assert ctx.font === '10px sans-serif';
 
+- name: 2d.text.font.weight
+  code: |
+    ctx.font = 'italic 400 12px serif';
+    @assert ctx.font === 'italic 12px serif';
+
+    ctx.font = 'italic 300 12px serif';
+    @assert ctx.font === 'italic 300 12px serif';
+
 - name: 2d.text.align.valid
   code: |
     ctx.textAlign = 'start';
@@ -1052,15 +1060,14 @@
   - CanvasTest
   code: |
     {{ load_font }}
-    ctx.font = '50px CanvasTest';
+    ctx.font = '40px CanvasTest';
     ctx.direction = 'ltr';
     ctx.align = 'left'
-    // approx_equals because font metrics may be rounded slightly differently by different platforms/browsers.
-    assert_approx_equals(ctx.measureText('A').fontBoundingBoxAscent, 50 * 1745 / 1024, 1, "unexpected fontBoundingBoxAscent");
-    assert_approx_equals(ctx.measureText('A').fontBoundingBoxDescent, 50 * 805 / 1024, 1, "unexpected fontBoundingBoxDescent");
+    @assert ctx.measureText('A').fontBoundingBoxAscent === 30;
+    @assert ctx.measureText('A').fontBoundingBoxDescent === 10;
 
-    assert_approx_equals(ctx.measureText('ABCD').fontBoundingBoxAscent, 50 * 1745 / 1024, 1, "unexpected fontBoundingBoxAscent");
-    assert_approx_equals(ctx.measureText('ABCD').fontBoundingBoxDescent, 50 * 805 / 1024, 1, "unexpected fontBoundingBoxDescent");
+    @assert ctx.measureText('ABCD').fontBoundingBoxAscent === 30;
+    @assert ctx.measureText('ABCD').fontBoundingBoxDescent === 10;
   variants: *load-font-variant-definition
 
 - name: 2d.text.measure.fontBoundingBox.ahem
@@ -1079,6 +1086,40 @@
     @assert ctx.measureText('ABCD').fontBoundingBoxDescent === 10;
   variants: *load-font-variant-definition
 
+- name: 2d.text.measure.fontBoundingBox-reduced-ascent
+  desc: Testing fontBoundingBox for OffscreenCanvas with reduced ascent metric
+  test_type: promise
+  fonts:
+  - CanvasTest-ascent256
+  code: |
+    {{ load_font }}
+    ctx.font = '40px CanvasTest-ascent256';
+    ctx.direction = 'ltr';
+    ctx.align = 'left'
+    @assert ctx.measureText('A').fontBoundingBoxAscent === 10;
+    @assert ctx.measureText('A').fontBoundingBoxDescent === 10;
+
+    @assert ctx.measureText('ABCD').fontBoundingBoxAscent === 10;
+    @assert ctx.measureText('ABCD').fontBoundingBoxDescent === 10;
+  variants: *load-font-variant-definition
+
+- name: 2d.text.measure.fontBoundingBox-zero-descent
+  desc: Testing fontBoundingBox for OffscreenCanvas with zero descent metric
+  test_type: promise
+  fonts:
+  - CanvasTest-descent0
+  code: |
+    {{ load_font }}
+    ctx.font = '40px CanvasTest-descent0';
+    ctx.direction = 'ltr';
+    ctx.align = 'left'
+    @assert ctx.measureText('A').fontBoundingBoxAscent === 30;
+    @assert ctx.measureText('A').fontBoundingBoxDescent === 0;
+
+    @assert ctx.measureText('ABCD').fontBoundingBoxAscent === 30;
+    @assert ctx.measureText('ABCD').fontBoundingBoxDescent === 0;
+  variants: *load-font-variant-definition
+
 - name: 2d.text.measure.emHeights
   desc: Testing emHeights
   test_type: promise
@@ -1086,16 +1127,54 @@
   - CanvasTest
   code: |
     {{ load_font }}
-    ctx.font = '50px CanvasTest';
+    ctx.font = '40px CanvasTest';
     ctx.direction = 'ltr';
     ctx.align = 'left'
-    @assert ctx.measureText('A').emHeightAscent === 37.5;
-    @assert ctx.measureText('A').emHeightDescent === 12.5;
-    @assert ctx.measureText('A').emHeightDescent + ctx.measureText('A').emHeightAscent === 50;
+    @assert ctx.measureText('A').emHeightAscent === 30;
+    @assert ctx.measureText('A').emHeightDescent === 10;
+    @assert ctx.measureText('A').emHeightDescent + ctx.measureText('A').emHeightAscent === 40;
 
-    @assert ctx.measureText('ABCD').emHeightAscent === 37.5;
-    @assert ctx.measureText('ABCD').emHeightDescent === 12.5;
-    @assert ctx.measureText('ABCD').emHeightDescent + ctx.measureText('ABCD').emHeightAscent === 50;
+    @assert ctx.measureText('ABCD').emHeightAscent === 30;
+    @assert ctx.measureText('ABCD').emHeightDescent === 10;
+    @assert ctx.measureText('ABCD').emHeightDescent + ctx.measureText('ABCD').emHeightAscent === 40;
+  variants: *load-font-variant-definition
+
+- name: 2d.text.measure.emHeights-low-ascent
+  desc: Testing emHeights with reduced ascent metric
+  test_type: promise
+  fonts:
+  - CanvasTest-ascent256
+  code: |
+    {{ load_font }}
+    ctx.font = '40px CanvasTest-ascent256';
+    ctx.direction = 'ltr';
+    ctx.align = 'left'
+    @assert ctx.measureText('A').emHeightAscent === 20;
+    @assert ctx.measureText('A').emHeightDescent === 20;
+    @assert ctx.measureText('A').emHeightDescent + ctx.measureText('A').emHeightAscent === 40;
+
+    @assert ctx.measureText('ABCD').emHeightAscent === 20;
+    @assert ctx.measureText('ABCD').emHeightDescent === 20;
+    @assert ctx.measureText('ABCD').emHeightDescent + ctx.measureText('ABCD').emHeightAscent === 40;
+  variants: *load-font-variant-definition
+
+- name: 2d.text.measure.emHeights-zero-descent
+  desc: Testing emHeights with zero descent metric
+  test_type: promise
+  fonts:
+  - CanvasTest-descent0
+  code: |
+    {{ load_font }}
+    ctx.font = '40px CanvasTest-descent0';
+    ctx.direction = 'ltr';
+    ctx.align = 'left'
+    @assert ctx.measureText('A').emHeightAscent === 40;
+    @assert ctx.measureText('A').emHeightDescent === 0;
+    @assert ctx.measureText('A').emHeightDescent + ctx.measureText('A').emHeightAscent === 40;
+
+    @assert ctx.measureText('ABCD').emHeightAscent === 40;
+    @assert ctx.measureText('ABCD').emHeightDescent === 0;
+    @assert ctx.measureText('ABCD').emHeightDescent + ctx.measureText('ABCD').emHeightAscent === 40;
   variants: *load-font-variant-definition
 
 - name: 2d.text.measure.baselines
@@ -1191,7 +1270,6 @@
     @assert ctx.letterSpacing === '0px';
     @assert ctx.wordSpacing === '0px';
     var width_normal = ctx.measureText('Hello World').width;
-    var ch_width = width_normal / 11;
 
     function test_letter_spacing(value, difference_spacing, epsilon) {
       ctx.letterSpacing = value;
@@ -1212,7 +1290,6 @@
                  ['1em', 110, 0.1],
                  ['-0.1em', -11, 0.1],
                  ['1in', 1056, 0.1],
-                 ['1ch', 11 * ch_width, 0.1],
                  ['-0.1cm', -41.65, 0.2],
                  ['-0.6mm', -24,95, 0.2]]
 
@@ -1226,7 +1303,6 @@
     @assert ctx.letterSpacing === '0px';
     @assert ctx.wordSpacing === '0px';
     var width_normal = ctx.measureText('Hello World, again').width;
-    var ch_width = width_normal / 18;
 
     function test_word_spacing(value, difference_spacing, epsilon) {
       ctx.wordSpacing = value;
@@ -1247,7 +1323,6 @@
                  ['1em', 20, 0.1],
                  ['-0.5em', -10, 0.1],
                  ['1in', 192, 0.1],
-                 ['1ch', 2 * ch_width, 0.1],
                  ['-0.1cm', -7.57, 0.2],
                  ['-0.6mm', -4.54, 0.2]]
 
@@ -1526,5 +1601,75 @@
 
     ctx.fontStretch = "abcd";
     @assert ctx.fontStretch === "ultra-expanded";
+
+- name: 2d.text.fontVariantCaps1
+  desc: Testing small caps setting in fontVariant
+  code: |
+    ctx.font = "32px serif";
+    ctx.fontVariantCaps = "small-caps";
+    // This should render the same as font = "small-caps 32px serif".
+    ctx.fillText("Hello World", 20, 100);
+  reference: |
+    ctx.font = "small-caps 32px serif";
+    ctx.fillText("Hello World", 20, 100);
+
+- name: 2d.text.fontVariantCaps2
+  desc: Testing small caps setting in fontVariant
+  code: |
+    ctx.font = "small-caps 32px serif";
+    // "mismatch" test, to verify that small-caps does change the rendering.
+    smallCaps_len = ctx.measureText("Hello World").width;
+
+    ctx.font = "32px serif";
+    normalCaps_len = ctx.measureText("Hello World").width;
+    @assert smallCaps_len != normalCaps_len;
+
+- name: 2d.text.fontVariantCaps3
+  desc: Testing small caps setting in fontVariant
+  code: |
+    ctx.font = "32px serif";
+    ctx.fontVariantCaps = "all-small-caps";
+    // This should render the same as using font = "small-caps 32px serif"
+    // with all the underlying text in lowercase.
+    ctx.fillText("Hello World", 20, 100);
+  reference: |
+    ctx.font = "small-caps 32px serif";
+    ctx.fillText("hello world", 20, 100);
+
+- name: 2d.text.fontVariantCaps4
+  desc: Testing small caps setting in fontVariant
+  code: |
+    ctx.font = "small-caps 32px serif";
+    // fontVariantCaps overrides the small-caps setting from the font attribute
+    // (spec unclear, cf. https://github.com/whatwg/html/issues/8103)
+    ctx.fontVariantCaps = "all-small-caps";
+    ctx.fillText("Hello World", 20, 100);
+  reference: |
+    ctx.font = "small-caps 32px serif";
+    ctx.fillText("hello world", 20, 100);
+
+- name: 2d.text.fontVariantCaps5
+  desc: Testing small caps setting in fontVariant
+  code: |
+    ctx.font = "small-caps 32px serif";
+    // fontVariantCaps 'normal' does not override the setting from the font attribute.
+    // (spec unclear, cf. https://github.com/whatwg/html/issues/8103)
+    ctx.fontVariantCaps = "normal";
+    ctx.fillText("Hello World", 20, 100);
+  reference: |
+    ctx.font = "small-caps 32px serif";
+    ctx.fillText("Hello World", 20, 100);
+
+- name: 2d.text.fontVariantCaps6
+  desc: Testing small caps setting in fontVariant
+  code: |
+    // fontVariantCaps is reset when the font attribute is set.
+    // (spec unclear, cf. https://github.com/whatwg/html/issues/8103)
+    ctx.fontVariantCaps = "all-small-caps";
+    ctx.font = "32px serif";
+    ctx.fillText("Hello World", 20, 100);
+  reference: |
+    ctx.font = "32px serif";
+    ctx.fillText("Hello World", 20, 100);
 
 # TODO: shadows, alpha, composite, clip
