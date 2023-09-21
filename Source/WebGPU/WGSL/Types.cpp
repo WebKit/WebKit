@@ -186,6 +186,9 @@ void Type::dump(PrintStream& out) const
         [&](const Reference& reference) {
             out.print("ref<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
         },
+        [&](const Pointer& reference) {
+            out.print("ptr<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
+        },
         [&](const TypeConstructor& constructor) {
             out.print(constructor.name);
         },
@@ -303,6 +306,7 @@ unsigned Type::size() const
             case Types::Primitive::TextureExternal:
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -344,6 +348,9 @@ unsigned Type::size() const
         [&](const Reference&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const Pointer&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const TypeConstructor&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
@@ -369,6 +376,7 @@ unsigned Type::alignment() const
             case Types::Primitive::TextureExternal:
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -403,6 +411,9 @@ unsigned Type::alignment() const
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Reference&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Pointer&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) -> unsigned {

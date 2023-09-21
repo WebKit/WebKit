@@ -85,6 +85,7 @@ namespace Types {
     f(TextureExternal, "texture_external") \
     f(AccessMode, "access_mode") \
     f(TexelFormat, "texel_format") \
+    f(AddressSpace, "address_space") \
 
 struct Primitive {
     enum Kind : uint8_t {
@@ -156,6 +157,12 @@ struct Reference {
     const Type* element;
 };
 
+struct Pointer {
+    AddressSpace addressSpace;
+    AccessMode accessMode;
+    const Type* element;
+};
+
 struct TypeConstructor {
     ASCIILiteral name;
     std::function<const Type*(AST::ElaboratedTypeExpression&)> construct;
@@ -176,6 +183,7 @@ struct Type : public std::variant<
     Types::Texture,
     Types::TextureStorage,
     Types::Reference,
+    Types::Pointer,
     Types::TypeConstructor,
     Types::Bottom
 > {
@@ -189,6 +197,7 @@ struct Type : public std::variant<
         Types::Texture,
         Types::TextureStorage,
         Types::Reference,
+        Types::Pointer,
         Types::TypeConstructor,
         Types::Bottom
         >::variant;

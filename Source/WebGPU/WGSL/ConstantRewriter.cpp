@@ -283,6 +283,7 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
             case Primitive::TextureExternal:
             case Primitive::AccessMode:
             case Primitive::TexelFormat:
+            case Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -299,6 +300,9 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
             // Do not materialize complex types
         },
         [&](const Reference&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Pointer&) {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Function&) {

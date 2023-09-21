@@ -48,6 +48,7 @@ public:
         Texture,
         TextureStorage,
         Reference,
+        Pointer,
     };
 
     using EncodedKey = std::tuple<uint8_t, uint8_t, uint16_t, uint32_t, uintptr_t>;
@@ -80,6 +81,7 @@ public:
     const Type* textureExternalType() const { return m_textureExternal; }
     const Type* accessModeType() const { return m_accessMode; }
     const Type* texelFormatType() const { return m_texelFormat; }
+    const Type* addressSpaceType() const { return m_addressSpace; }
 
     const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
     const Type* arrayType(const Type*, std::optional<unsigned>);
@@ -89,6 +91,7 @@ public:
     const Type* textureStorageType(Types::TextureStorage::Kind, TexelFormat, AccessMode);
     const Type* functionType(Vector<const Type*>&&, const Type*);
     const Type* referenceType(AddressSpace, const Type*, AccessMode);
+    const Type* pointerType(AddressSpace, const Type*, AccessMode);
     const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
 
 private:
@@ -110,6 +113,7 @@ private:
     const Type* m_textureExternal;
     const Type* m_accessMode;
     const Type* m_texelFormat;
+    const Type* m_addressSpace;
 };
 
 } // namespace WGSL

@@ -135,6 +135,10 @@ private:
     void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, Arguments&&...);
     void allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind);
 
+    std::optional<AccessMode> accessMode(AST::Expression&);
+    std::optional<TexelFormat> texelFormat(AST::Expression&);
+    std::optional<AddressSpace> addressSpace(AST::Expression&);
+
     template<typename CallArguments>
     const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
@@ -157,6 +161,58 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceType(AST::Identifier::make("f32"_s), m_types.f32Type());
     introduceType(AST::Identifier::make("sampler"_s), m_types.samplerType());
     introduceType(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
+
+    introduceType(AST::Identifier::make("ptr"_s), m_types.typeConstructorType(
+        "ptr"_s,
+        [this](AST::ElaboratedTypeExpression& type) -> const Type* {
+            auto argumentCount = type.arguments().size();
+            if (argumentCount < 2) {
+                typeError(InferBottom::No, type.span(), "'ptr' requires at least 2 template argument");
+                return m_types.bottomType();
+            }
+
+            if (argumentCount > 3) {
+                typeError(InferBottom::No, type.span(), "'ptr' requires at most 3 template argument");
+                return m_types.bottomType();
+            }
+
+            auto maybeAddressSpace = addressSpace(type.arguments()[0]);
+            if (!maybeAddressSpace)
+                return m_types.bottomType();
+
+            auto* elementType = resolve(type.arguments()[1]);
+            if (isBottom(elementType))
+                return m_types.bottomType();
+
+            AccessMode accessMode;
+            if (argumentCount > 2) {
+                if (*maybeAddressSpace != AddressSpace::Storage) {
+                    typeError(InferBottom::No, type.arguments()[2].span(), "only pointers in <storage> address space may specify an access mode");
+                    return m_types.bottomType();
+                }
+
+                auto maybeAccessMode = this->accessMode(type.arguments()[2]);
+                if (!maybeAccessMode)
+                    return m_types.bottomType();
+                accessMode = *maybeAccessMode;
+            } else {
+                switch (*maybeAddressSpace) {
+                case AddressSpace::Function:
+                case AddressSpace::Private:
+                case AddressSpace::Workgroup:
+                    accessMode = AccessMode::ReadWrite;
+                    break;
+                case AddressSpace::Uniform:
+                case AddressSpace::Storage:
+                case AddressSpace::Handle:
+                    accessMode = AccessMode::Read;
+                    break;
+                }
+            }
+
+            return m_types.pointerType(*maybeAddressSpace, elementType, accessMode);
+        }
+    ));
 
     allocateSimpleConstructor("vec2"_s, &TypeStore::vectorType, 2);
     allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, 3);
@@ -205,6 +261,12 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceValue(AST::Identifier::make("rgba8snorm"_s), m_types.texelFormatType());
     introduceValue(AST::Identifier::make("rgba8uint"_s), m_types.texelFormatType());
     introduceValue(AST::Identifier::make("rgba8unorm"_s), m_types.texelFormatType());
+
+    introduceValue(AST::Identifier::make("function"_s), m_types.addressSpaceType());
+    introduceValue(AST::Identifier::make("private"_s), m_types.addressSpaceType());
+    introduceValue(AST::Identifier::make("workgroup"_s), m_types.addressSpaceType());
+    introduceValue(AST::Identifier::make("uniform"_s), m_types.addressSpaceType());
+    introduceValue(AST::Identifier::make("storage"_s), m_types.addressSpaceType());
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
@@ -1167,56 +1229,97 @@ void TypeChecker::allocateTextureStorageConstructor(ASCIILiteral name, Types::Te
                 return m_types.bottomType();
             }
 
-            auto* formatType = infer(type.arguments()[0]);
-            if (!unify(formatType, m_types.texelFormatType())) {
-                typeError(InferBottom::No, type.span(), "cannot use '", *formatType, "' as texel format");
+            auto maybeFormat = texelFormat(type.arguments()[0]);
+            if (!maybeFormat)
                 return m_types.bottomType();
-            }
 
-            auto* accessType = infer(type.arguments()[1]);
-            if (!unify(accessType, m_types.accessModeType())) {
-                typeError(InferBottom::No, type.span(), "cannot use '", *accessType, "' as access mode");
+            auto maybeAccess = accessMode(type.arguments()[1]);
+            if (!maybeAccess)
                 return m_types.bottomType();
-            }
-
-            ASSERT(is<AST::IdentifierExpression>(type.arguments()[0]));
-            ASSERT(is<AST::IdentifierExpression>(type.arguments()[1]));
-            auto& formatName = downcast<AST::IdentifierExpression>(type.arguments()[0]).identifier();
-            auto& accessName = downcast<AST::IdentifierExpression>(type.arguments()[1]).identifier();
-
-            static constexpr std::pair<ComparableASCIILiteral, TexelFormat> texelFormatMappings[] {
-                { "bgra8unorm", TexelFormat::BGRA8unorm },
-                { "r32float", TexelFormat::R32float },
-                { "r32sint", TexelFormat::R32sint },
-                { "r32uint", TexelFormat::R32uint },
-                { "rg32float", TexelFormat::RG32float },
-                { "rg32sint", TexelFormat::RG32sint },
-                { "rg32uint", TexelFormat::RG32uint },
-                { "rgba16float", TexelFormat::RGBA16float },
-                { "rgba16sint", TexelFormat::RGBA16sint },
-                { "rgba16uint", TexelFormat::RGBA16uint },
-                { "rgba32float", TexelFormat::RGBA32float },
-                { "rgba32sint", TexelFormat::RGBA32sint },
-                { "rgba32uint", TexelFormat::RGBA32uint },
-                { "rgba8sint", TexelFormat::RGBA8sint },
-                { "rgba8snorm", TexelFormat::RGBA8snorm },
-                { "rgba8uint", TexelFormat::RGBA8uint },
-                { "rgba8unorm", TexelFormat::RGBA8unorm },
-            };
-            static constexpr SortedArrayMap texelFormats { texelFormatMappings };
-
-            static constexpr std::pair<ComparableASCIILiteral, AccessMode> accessModeMappings[] {
-                { "read", AccessMode::Read },
-                { "read_write", AccessMode::ReadWrite },
-                { "write", AccessMode::Write },
-            };
-            static constexpr SortedArrayMap accessModes { accessModeMappings };
-
-            auto format = texelFormats.get(formatName.id());
-            auto access = accessModes.get(accessName.id());
-            return m_types.textureStorageType(kind, format, access);
+            return m_types.textureStorageType(kind, *maybeFormat, *maybeAccess);
         }
     ));
+}
+
+std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
+{
+    auto* formatType = infer(expression);
+    if (!unify(formatType, m_types.texelFormatType())) {
+        typeError(InferBottom::No, expression.span(), "cannot use '", *formatType, "' as texel format");
+        return std::nullopt;
+    }
+
+    ASSERT(is<AST::IdentifierExpression>(expression));
+    auto& formatName = downcast<AST::IdentifierExpression>(expression).identifier();
+
+    static constexpr std::pair<ComparableASCIILiteral, TexelFormat> texelFormatMappings[] {
+        { "bgra8unorm", TexelFormat::BGRA8unorm },
+        { "r32float", TexelFormat::R32float },
+        { "r32sint", TexelFormat::R32sint },
+        { "r32uint", TexelFormat::R32uint },
+        { "rg32float", TexelFormat::RG32float },
+        { "rg32sint", TexelFormat::RG32sint },
+        { "rg32uint", TexelFormat::RG32uint },
+        { "rgba16float", TexelFormat::RGBA16float },
+        { "rgba16sint", TexelFormat::RGBA16sint },
+        { "rgba16uint", TexelFormat::RGBA16uint },
+        { "rgba32float", TexelFormat::RGBA32float },
+        { "rgba32sint", TexelFormat::RGBA32sint },
+        { "rgba32uint", TexelFormat::RGBA32uint },
+        { "rgba8sint", TexelFormat::RGBA8sint },
+        { "rgba8snorm", TexelFormat::RGBA8snorm },
+        { "rgba8uint", TexelFormat::RGBA8uint },
+        { "rgba8unorm", TexelFormat::RGBA8unorm },
+    };
+    static constexpr SortedArrayMap texelFormats { texelFormatMappings };
+
+    return { texelFormats.get(formatName.id()) };
+}
+
+std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
+{
+    auto* accessType = infer(expression);
+    if (!unify(accessType, m_types.accessModeType())) {
+        typeError(InferBottom::No, expression.span(), "cannot use '", *accessType, "' as access mode");
+        return std::nullopt;
+    }
+
+    ASSERT(is<AST::IdentifierExpression>(expression));
+    auto& accessName = downcast<AST::IdentifierExpression>(expression).identifier();
+
+    static constexpr std::pair<ComparableASCIILiteral, AccessMode> accessModeMappings[] {
+        { "read", AccessMode::Read },
+        { "read_write", AccessMode::ReadWrite },
+        { "write", AccessMode::Write },
+    };
+    static constexpr SortedArrayMap accessModes { accessModeMappings };
+
+    return { accessModes.get(accessName.id()) };
+}
+
+std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expression)
+{
+    auto* addressSpaceType = infer(expression);
+    if (!unify(addressSpaceType, m_types.addressSpaceType())) {
+        typeError(InferBottom::No, expression.span(), "cannot use '", *addressSpaceType, "' as address space");
+        return std::nullopt;
+    }
+
+    ASSERT(is<AST::IdentifierExpression>(expression));
+    auto& addressSpaceName = downcast<AST::IdentifierExpression>(expression).identifier();
+
+    static constexpr std::pair<ComparableASCIILiteral, AddressSpace> addressSpaceMappings[] {
+        { "function", AddressSpace::Function },
+        { "handle", AddressSpace::Handle },
+        { "private", AddressSpace::Private },
+        { "storage", AddressSpace::Storage },
+        { "uniform", AddressSpace::Uniform },
+        { "workgroup", AddressSpace::Workgroup },
+
+    };
+    static constexpr SortedArrayMap addressSpaces { addressSpaceMappings };
+
+    return { addressSpaces.get(addressSpaceName.id()) };
 }
 
 } // namespace WGSL

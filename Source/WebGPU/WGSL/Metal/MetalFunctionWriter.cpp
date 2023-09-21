@@ -396,6 +396,7 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         RELEASE_ASSERT_NOT_REACHED();
     }
     return true;
@@ -582,6 +583,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 break;
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -718,6 +720,35 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(addressSpace, " ");
             visit(reference.element);
             m_stringBuilder.append("&");
+        },
+        [&](const Pointer& pointer) {
+            const char* addressSpace = nullptr;
+            switch (pointer.addressSpace) {
+            case AddressSpace::Function:
+                addressSpace = "thread";
+                break;
+            case AddressSpace::Workgroup:
+                addressSpace = "threadgroup";
+                break;
+            case AddressSpace::Uniform:
+                addressSpace = "constant";
+                break;
+            case AddressSpace::Storage:
+                addressSpace = "device";
+                break;
+            case AddressSpace::Handle:
+            case AddressSpace::Private:
+                break;
+            }
+            if (!addressSpace) {
+                visit(pointer.element);
+                return;
+            }
+            if (pointer.accessMode == AccessMode::Read)
+                m_stringBuilder.append("const ");
+            m_stringBuilder.append(addressSpace, " ");
+            visit(pointer.element);
+            m_stringBuilder.append("*");
         },
         [&](const Function&) {
             RELEASE_ASSERT_NOT_REACHED();

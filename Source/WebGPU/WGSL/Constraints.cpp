@@ -60,6 +60,7 @@ bool satisfies(const Type* type, Constraint constraint)
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         return false;
     }
 }
@@ -130,6 +131,7 @@ const Type* satisfyOrPromote(const Type* type, Constraint constraint, const Type
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         return nullptr;
     }
 }
@@ -154,6 +156,12 @@ const Type* concretize(const Type* type, TypeStore& types)
         [&](const Struct&) -> const Type* {
             return type;
         },
+        [&](const Pointer&) -> const Type* {
+            return type;
+        },
+        [&](const Bottom&) -> const Type* {
+            return type;
+        },
         [&](const Function&) -> const Type* {
             RELEASE_ASSERT_NOT_REACHED();
         },
@@ -168,9 +176,6 @@ const Type* concretize(const Type* type, TypeStore& types)
         },
         [&](const TypeConstructor&) -> const Type* {
             RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Bottom&) -> const Type* {
-            return type;
         });
 }
 

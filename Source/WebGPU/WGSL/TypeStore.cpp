@@ -78,6 +78,14 @@ struct ReferenceKey {
     TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
 };
 
+struct PointerKey {
+    const Type* elementType;
+    AddressSpace addressSpace;
+    AccessMode accessMode;
+
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
+};
+
 template<typename Key>
 const Type* TypeCache::find(const Key& key) const
 {
@@ -108,6 +116,7 @@ TypeStore::TypeStore()
     m_textureExternal = allocateType<Primitive>(Primitive::TextureExternal);
     m_accessMode = allocateType<Primitive>(Primitive::AccessMode);
     m_texelFormat = allocateType<Primitive>(Primitive::TexelFormat);
+    m_addressSpace = allocateType<Primitive>(Primitive::AddressSpace);
 }
 
 const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, const Type*>&& fields)
@@ -182,6 +191,17 @@ const Type* TypeStore::referenceType(AddressSpace addressSpace, const Type* elem
     if (type)
         return type;
     type = allocateType<Reference>(addressSpace, accessMode, element);
+    m_cache.insert(key, type);
+    return type;
+}
+
+const Type* TypeStore::pointerType(AddressSpace addressSpace, const Type* element, AccessMode accessMode)
+{
+    PointerKey key { element, addressSpace, accessMode };
+    const Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Pointer>(addressSpace, accessMode, element);
     m_cache.insert(key, type);
     return type;
 }

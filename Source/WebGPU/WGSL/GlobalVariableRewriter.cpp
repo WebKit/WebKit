@@ -623,6 +623,7 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             return ExternalTextureBindingLayout { };
         case Types::Primitive::AccessMode:
         case Types::Primitive::TexelFormat:
+        case Types::Primitive::AddressSpace:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }, [&](const Vector& vector) -> BindGroupLayoutEntry::BindingMember {
@@ -709,6 +710,8 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         };
     }, [&](const Reference&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
+    }, [&](const Pointer&) -> BindGroupLayoutEntry::BindingMember {
+        RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Function&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const TypeConstructor&) -> BindGroupLayoutEntry::BindingMember {
@@ -794,6 +797,7 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         RELEASE_ASSERT_NOT_REACHED();
     }
     m_entryPointInformation->specializationConstants.add(variable.name(), Reflection::SpecializationConstant { String(), constantType });
