@@ -63,8 +63,8 @@ private:
     // WebCore::ImageBufferCGBackend
     WebCore::IntSize backendSize() const final;
     unsigned bytesPerRow() const final;
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;
-    RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::GraphicsContext&) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage() final;
+    RefPtr<WebCore::NativeImage> createNativeImageReference() final;
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
     bool isInUse() const final;
     void releaseGraphicsContext() final;

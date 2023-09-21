@@ -150,11 +150,13 @@ public:
     size_t externalMemoryCost() const { return m_backendInfo.externalMemoryCost; }
     const ImageBufferBackend::Info& backendInfo() { return m_backendInfo; }
 
-    WEBCORE_EXPORT static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
+    // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage() const;
 
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(GraphicsContext& destination) const;
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
+    // Returns NativeImage referencing the back buffer. Changes to ImageBuffer might be reflected to the NativeImage.
+    // Useful when caller can guarantee the use of the NativeImage ends "immediately", before the next draw to this ImageBuffer.
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> createNativeImageReference() const;
+
     WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
     WEBCORE_EXPORT virtual RefPtr<Image> filteredImage(Filter&);
     RefPtr<Image> filteredImage(Filter&, std::function<void(GraphicsContext&)> drawCallback);
@@ -163,12 +165,17 @@ public:
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
+    // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
+    // Caller is responsible for ensuring that the passed reference is the only reference to the ImageBuffer.
+    // Has better performance than:
+    //     RefPtr<ImageBuffer> buffer = ..;
+    //     ASSERT(buffer.hasOneRef());
+    //     auto nativeImage = buffer.copyNativeImage();
+    //     buffer = nullptr;
     static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
     WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(RefPtr<ImageBuffer>, PreserveResolution = PreserveResolution::No);
-
     static RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer>);
-
-    WEBCORE_EXPORT virtual void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
+    static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
 
     WEBCORE_EXPORT virtual void convertToLuminanceMask();
     WEBCORE_EXPORT virtual void transformToColorSpace(const DestinationColorSpace& newColorSpace);
@@ -201,6 +208,7 @@ public:
 protected:
     WEBCORE_EXPORT ImageBuffer(const ImageBufferBackend::Parameters&, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread();
     WEBCORE_EXPORT virtual std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer();
 

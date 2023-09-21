@@ -85,7 +85,7 @@ std::optional<ImageBufferBackendHandle> ImageBufferShareableMappedIOSurfaceBacke
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
 
-RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(BackingStoreCopy copyBehavior)
+RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage()
 {
     auto currentSeed = m_surface->seed();
 
@@ -94,7 +94,7 @@ RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(
     if (std::exchange(m_lastSeedWhenCopyingImage, currentSeed) != currentSeed)
         invalidateCachedNativeImage();
 
-    return ImageBufferIOSurfaceBackend::copyNativeImage(copyBehavior);
+    return ImageBufferIOSurfaceBackend::copyNativeImage();
 }
 
 String ImageBufferShareableMappedIOSurfaceBackend::debugDescription() const

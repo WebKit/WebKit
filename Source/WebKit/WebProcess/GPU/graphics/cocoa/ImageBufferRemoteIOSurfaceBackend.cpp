@@ -112,7 +112,13 @@ unsigned ImageBufferRemoteIOSurfaceBackend::bytesPerRow() const
     return ImageBufferIOSurfaceBackend::calculateBytesPerRow(backendSize);
 }
 
-RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage(BackingStoreCopy)
+RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage()
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::createNativeImageReference()
 {
     RELEASE_ASSERT_NOT_REACHED();
     return { };

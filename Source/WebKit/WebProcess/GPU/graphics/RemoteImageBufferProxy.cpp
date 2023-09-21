@@ -226,11 +226,11 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
     return m_backend.get();
 }
 
-RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
 {
     if (canMapBackingStore()) {
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        return ImageBuffer::copyNativeImage(copyBehavior);
+        return ImageBuffer::copyNativeImage();
     }
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return { };
@@ -241,13 +241,13 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(BackingStoreCopy cop
     return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore));
 }
 
-RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(GraphicsContext& destination) const
+RefPtr<NativeImage> RemoteImageBufferProxy::createNativeImageReference() const
 {
     if (canMapBackingStore()) {
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        return ImageBuffer::copyNativeImageForDrawing(destination);
+        return ImageBuffer::createNativeImageReference();
     }
-    return copyNativeImage(DontCopyBackingStore);
+    return copyNativeImage();
 }
 
 RefPtr<NativeImage> RemoteImageBufferProxy::sinkIntoNativeImage()

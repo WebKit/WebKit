@@ -99,7 +99,9 @@ GraphicsContext& WebImage::context() const
 
 RefPtr<NativeImage> WebImage::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    return m_buffer->copyNativeImage(copyBehavior);
+    if (copyBehavior == CopyBackingStore)
+        return m_buffer->copyNativeImage();
+    return m_buffer->createNativeImageReference();
 }
 
 RefPtr<ShareableBitmap> WebImage::bitmap() const

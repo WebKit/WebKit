@@ -193,8 +193,16 @@ static RenderingMode renderingModeForCGContext(CGContextRef cgContext, GraphicsC
     return RenderingMode::Unaccelerated;
 }
 
+static GraphicsContext::IsDeferred isDeferredForCGContext(CGContextRef cgContext)
+{
+    if (!cgContext || CGContextGetType(cgContext) == kCGContextTypeBitmap)
+        return GraphicsContext::IsDeferred::No;
+    // Other CGContexts are deferred (iosurface, display list) or potentially deferred.
+    return GraphicsContext::IsDeferred::Yes;
+}
+
 GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource source, std::optional<RenderingMode> knownRenderingMode)
-    : GraphicsContext(GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
+    : GraphicsContext(isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
     , m_cgContext(cgContext)
     , m_renderingMode(knownRenderingMode.value_or(renderingModeForCGContext(cgContext, source)))
     , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)
@@ -1031,7 +1039,7 @@ void GraphicsContextCG::clipPath(const Path& path, WindRule clipRule)
 
 void GraphicsContextCG::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
 {
-    auto nativeImage = imageBuffer.copyNativeImage(DontCopyBackingStore);
+    auto nativeImage = imageBuffer.createNativeImageReference();
     if (!nativeImage)
         return;
 

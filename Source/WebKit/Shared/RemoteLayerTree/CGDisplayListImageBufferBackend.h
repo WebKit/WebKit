@@ -51,7 +51,8 @@ public:
     void releaseGraphicsContext() final;
 
     // NOTE: These all ASSERT_NOT_REACHED().
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage() final;
+    RefPtr<WebCore::NativeImage> createNativeImageReference() final;
     void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 

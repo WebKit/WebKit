@@ -45,13 +45,15 @@
 
 namespace WebCore {
 
-GraphicsContext::GraphicsContext(const GraphicsContextState::ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
+GraphicsContext::GraphicsContext(IsDeferred isDeferred, const GraphicsContextState::ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
     : m_state(changeFlags, imageInterpolationQuality)
+    , m_isDeferred(isDeferred)
 {
 }
 
-GraphicsContext::GraphicsContext(const GraphicsContextState& state)
+GraphicsContext::GraphicsContext(IsDeferred isDeferred, const GraphicsContextState& state)
     : m_state(state)
+    , m_isDeferred(isDeferred)
 {
 }
 
@@ -327,6 +329,13 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
     return image.drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, options.compositeOperator());
 }
 
+RefPtr<NativeImage> GraphicsContext::nativeImageForDrawing(ImageBuffer& imageBuffer)
+{
+    if (m_isDeferred == IsDeferred::Yes || &imageBuffer.context() == this)
+        return imageBuffer.copyNativeImage();
+    return imageBuffer.createNativeImageReference();
+}
+
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
     drawImageBuffer(image, FloatRect(destination, image.logicalSize()), FloatRect({ }, image.logicalSize()), imagePaintingOptions);
@@ -340,7 +349,10 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
 {
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
-    image.draw(*this, destination, source, options);
+    FloatRect sourceScaled = source;
+    sourceScaled.scale(image.resolutionScale());
+    if (auto nativeImage = nativeImageForDrawing(image))
+        drawNativeImageInternal(*nativeImage, image.backendSize(), destination, sourceScaled, options);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)

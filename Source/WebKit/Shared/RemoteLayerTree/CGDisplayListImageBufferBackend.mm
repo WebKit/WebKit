@@ -150,7 +150,13 @@ void CGDisplayListImageBufferBackend::releaseGraphicsContext()
     m_context = nullptr;
 }
 
-RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::copyNativeImage(WebCore::BackingStoreCopy)
+RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::copyNativeImage()
+{
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::createNativeImageReference()
 {
     ASSERT_NOT_REACHED();
     return nullptr;

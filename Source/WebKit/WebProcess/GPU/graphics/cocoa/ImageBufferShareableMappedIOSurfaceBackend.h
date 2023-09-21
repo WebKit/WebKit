@@ -52,7 +52,7 @@ private:
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage() final;
 
     String debugDescription() const final;
 

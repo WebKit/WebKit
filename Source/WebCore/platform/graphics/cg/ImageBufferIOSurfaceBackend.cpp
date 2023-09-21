@@ -170,22 +170,17 @@ void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
     CGContextFillRect(ensurePlatformContext(), CGRect { });
 }
 
-RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy)
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage()
 {
     return NativeImage::create(createImage());
 }
 
-RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(GraphicsContext& destination)
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::createNativeImageReference()
 {
-    if (destination.hasPlatformContext() && CGContextGetType(destination.platformContext()) == kCGContextTypeBitmap) {
-        // The destination backend is not deferred, so we can return a reference.
-        // The destination backend needs to read the actual pixels. Returning non-refence will
-        // copy the pixels and but still cache the image to the context. This means we must
-        // return the reference or cleanup later if we return the non-reference.
-        return NativeImage::create(createImageReference());
-    }
-    // Other backends are deferred (iosurface, display list) or potentially deferred. Must copy for drawing.
-    return ImageBufferIOSurfaceBackend::copyNativeImage(CopyBackingStore);
+    // The destination backend needs to read the actual pixels. Returning non-refence will
+    // copy the pixels and but still cache the image to the context. This means we must
+    // return the reference or cleanup later if we return the non-reference.
+    return NativeImage::create(createImageReference());
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()

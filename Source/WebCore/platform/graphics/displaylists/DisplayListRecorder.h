@@ -58,13 +58,18 @@ public:
         DeconstructUsingDrawDecomposedGlyphsCommands,
     };
 
-    WEBCORE_EXPORT Recorder(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode = DrawGlyphsMode::Normal);
+    Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& transform, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode = DrawGlyphsMode::Normal)
+        : Recorder(IsDeferred::Yes, state, initialClip, transform, colorSpace, drawGlyphsMode)
+    {
+    }
     WEBCORE_EXPORT virtual ~Recorder();
 
     // Records possible pending commands. Should be used when recording is known to end.
     WEBCORE_EXPORT void commitRecording();
 
 protected:
+    WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode);
+
     virtual void recordSave() = 0;
     virtual void recordRestore() = 0;
     virtual void recordTranslate(float x, float y) = 0;

@@ -71,8 +71,14 @@ class GraphicsContext {
     friend class NativeImage;
     friend class ImageBuffer;
 public:
-    WEBCORE_EXPORT GraphicsContext(const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
-    WEBCORE_EXPORT GraphicsContext(const GraphicsContextState&);
+    // Indicates if draw operations read the sources such as NativeImage backing stores immediately
+    // during draw operations.
+    enum class IsDeferred {
+        No,
+        Yes
+    };
+    WEBCORE_EXPORT GraphicsContext(IsDeferred = IsDeferred::No, const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
+    WEBCORE_EXPORT GraphicsContext(IsDeferred, const GraphicsContextState&);
     WEBCORE_EXPORT virtual ~GraphicsContext();
 
     virtual bool hasPlatformContext() const { return false; }
@@ -364,10 +370,12 @@ public:
     void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend); // The passed in HDC should be the one handed back by getWindowsContext.
 #endif
 
+    IsDeferred deferred() const { return m_isDeferred; }
 private:
     virtual void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) = 0;
 
 protected:
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForDrawing(ImageBuffer&);
     WEBCORE_EXPORT void fillEllipseAsPath(const FloatRect&);
     WEBCORE_EXPORT void strokeEllipseAsPath(const FloatRect&);
 
@@ -379,6 +387,7 @@ protected:
     Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const;
 
     GraphicsContextState m_state;
+    const IsDeferred m_isDeferred;
 
 private:
     Vector<GraphicsContextState, 1> m_stack;

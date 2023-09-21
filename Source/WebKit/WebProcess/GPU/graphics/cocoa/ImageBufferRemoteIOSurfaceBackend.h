@@ -60,7 +60,8 @@ public:
 
 private:
     WebCore::IntSize backendSize() const final;
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage() final;
+    RefPtr<WebCore::NativeImage> createNativeImageReference() final;
 
     void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;

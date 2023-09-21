@@ -222,7 +222,9 @@ static RefPtr<NativeImage> copyImageBufferToNativeImage(Ref<ImageBuffer> source,
     if (source->resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
         if (source->hasOneRef())
             return ImageBuffer::sinkIntoNativeImage(WTFMove(source));
-        return source->copyNativeImage(copyBehavior);
+        if (copyBehavior == CopyBackingStore)
+            return source->copyNativeImage();
+        return source->createNativeImageReference();
     }
     auto copyBuffer = copyImageBuffer(WTFMove(source), preserveResolution);
     if (!copyBuffer)
@@ -291,17 +293,17 @@ IntSize ImageBuffer::backendSize() const
     return { };
 }
 
-RefPtr<NativeImage> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBuffer::copyNativeImage() const
 {
     if (auto* backend = ensureBackendCreated())
-        return backend->copyNativeImage(copyBehavior);
+        return backend->copyNativeImage();
     return nullptr;
 }
 
-RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(GraphicsContext& destination) const
+RefPtr<NativeImage> ImageBuffer::createNativeImageReference() const
 {
     if (auto* backend = ensureBackendCreated())
-        return backend->copyNativeImageForDrawing(destination);
+        return backend->createNativeImageReference();
     return nullptr;
 }
 
@@ -420,24 +422,6 @@ RefPtr<Image> ImageBuffer::sinkIntoImage(RefPtr<ImageBuffer> source, PreserveRes
     if (!image)
         return nullptr;
     return BitmapImage::create(image.releaseNonNull());
-}
-
-void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
-{
-    FloatRect srcRectScaled = srcRect;
-    srcRectScaled.scale(resolutionScale());
-
-    if (auto* backend = ensureBackendCreated()) {
-        if (&destContext == &context()) {
-            if (auto image = copyNativeImage(CopyBackingStore))
-                destContext.drawNativeImageInternal(*image, backendSize(), destRect, srcRectScaled, options);
-        } else {
-            if (auto image = copyNativeImageForDrawing(destContext)) {
-                destContext.drawNativeImageInternal(*image, backendSize(), destRect, srcRectScaled, options);
-                backend->finalizeDrawIntoContext(destContext);
-            }
-        }
-    }
 }
 
 void ImageBuffer::convertToLuminanceMask()

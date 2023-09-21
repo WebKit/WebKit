@@ -46,8 +46,8 @@
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
-    : GraphicsContext(state)
+Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
+    : GraphicsContext(isDeferred, state)
     , m_initialScale(initialCTM.xScale())
     , m_colorSpace(colorSpace)
     , m_drawGlyphsMode(drawGlyphsMode)
