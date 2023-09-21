@@ -2203,6 +2203,8 @@ webkit.org/b/207586 css3/filters/effect-combined-hw.html [ ImageOnlyFailure ]
 webkit.org/b/207586 css3/filters/effect-drop-shadow-hw.html [ ImageOnlyFailure ]
 webkit.org/b/207586 css3/filters/effect-drop-shadow.html [ ImageOnlyFailure ]
 
+webkit.org/b/261667 css3/masking/mask-reference-png-fragment.html [ ImageOnlyFailure ]
+
 webkit.org/b/142175 js/promises-tests/promises-tests-2-1-2.html [ Pass Timeout ]
 
 webkit.org/b/139840 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Pass Failure ]
@@ -2390,26 +2392,24 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-x
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3f.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3g.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3h.html [ ImageOnlyFailure ]
 
 webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/clip/clip-filter-order.html [ ImageOnlyFailure ]
-webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask.html [ ImageOnlyFailure ]
-webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-remote-mask.html [ ImageOnlyFailure ]
 
 webkit.org/b/233543 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split.html [ ImageOnlyFailure ]
 webkit.org/b/233543 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split-2.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-2.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-1c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-2c.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-1c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3i.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-6.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-to-mask-type.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1d.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-3.html [ ImageOnlyFailure ]
 
 # A support file for a test

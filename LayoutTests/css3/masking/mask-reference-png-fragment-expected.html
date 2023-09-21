@@ -1,0 +1,32 @@
+ <style>
+    .container {
+        display: inline-block;
+        border: 1px solid black;
+    }
+    .box {
+        position: relative;
+        background-color: green;
+        width: 100px;
+        height: 100px;
+    }
+    .green-background {
+        background-color: green;
+    }
+    .blue-background {
+        background-color: blue;
+    }
+    .clip-path-top-half {
+        clip-path: inset(50px 0px 0px 0px);
+    }
+    .clip-path-bottom-half {
+        clip-path: inset(0px 0px 50px 0px);
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="box green-background clip-path-top-half"></div>
+    </div>
+    <div class="container">
+        <div class="box blue-background clip-path-bottom-half"></div>
+    </div>
+</body>

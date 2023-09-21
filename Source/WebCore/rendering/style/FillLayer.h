@@ -150,7 +150,7 @@ public:
     bool operator==(const FillLayer&) const;
 
     bool containsImage(StyleImage&) const;
-    bool imagesAreLoaded() const;
+    bool imagesAreLoaded(const RenderElement*) const;
     bool hasImage() const { return m_next ? hasImageInAnyLayer() : m_image; }
     bool hasImageWithAttachment(FillAttachment) const;
     bool hasOpaqueImage(const RenderElement&) const;
