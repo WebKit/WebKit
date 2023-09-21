@@ -29,84 +29,27 @@
 #include "AsyncAudioDecoder.h"
 
 #include "AudioBuffer.h"
-#include "AudioBufferCallback.h"
-#include "ExceptionOr.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
-#include <wtf/MainThread.h>
+#include <wtf/NativePromise.h>
 
 namespace WebCore {
 
 AsyncAudioDecoder::AsyncAudioDecoder()
-{
-    // Start worker thread.
-    Locker locker { m_threadCreationMutex };
-    m_thread = Thread::create("Audio Decoder", [this] {
-        runLoop();
-    }, ThreadType::Audio);
-}
-
-AsyncAudioDecoder::~AsyncAudioDecoder()
-{
-    m_queue.kill();
-    
-    // Stop thread.
-    m_thread->waitForCompletion();
-}
-
-void AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRate, Function<void(ExceptionOr<Ref<AudioBuffer>>&&)>&& callback)
-{
-    ASSERT(isMainThread());
-
-    auto decodingTask = makeUnique<DecodingTask>(WTFMove(audioData), sampleRate, WTFMove(callback));
-    m_queue.append(WTFMove(decodingTask)); // note that ownership of the task is effectively taken by the queue.
-}
-
-void AsyncAudioDecoder::runLoop()
-{
-    ASSERT(!isMainThread());
-
-    {
-        // Wait for until we have m_thread established before starting the run loop.
-        Locker locker { m_threadCreationMutex };
-    }
-
-    // Keep running decoding tasks until we're killed.
-    while (auto decodingTask = m_queue.waitForMessage()) {
-        // Let the task take care of its own ownership.
-        // See DecodingTask::notifyComplete() for cleanup.
-        decodingTask.release()->decode();
-    }
-}
-
-AsyncAudioDecoder::DecodingTask::DecodingTask(Ref<ArrayBuffer>&& audioData, float sampleRate, Function<void(ExceptionOr<Ref<AudioBuffer>>&&)>&& callback)
-    : m_audioData(WTFMove(audioData))
-    , m_sampleRate(sampleRate)
-    , m_callback(WTFMove(callback))
+    : m_runLoop(RunLoop::create("Audio Decoder", ThreadType::Audio))
 {
 }
 
-void AsyncAudioDecoder::DecodingTask::decode()
+Ref<DecodingTaskPromise> AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRate)
 {
-    // Do the actual decoding and invoke the callback.
-    m_audioBuffer = AudioBuffer::createFromAudioFileData(m_audioData->data(), m_audioData->byteLength(), false, sampleRate());
-    
-    // Decoding is finished, but we need to do the callbacks on the main thread.
-    callOnMainThread([this] {
-        notifyComplete();
+    return WTF::invokeAsync(m_runLoop, __func__, [audioData = WTFMove(audioData), sampleRate] () mutable {
+        auto audioBuffer = AudioBuffer::createFromAudioFileData(audioData->data(), audioData->byteLength(), false, sampleRate);
+        // The ArrayBuffer must be deleted on the main thread, send it back there to be derefed.
+        callOnMainThread([audioData = WTFMove(audioData)] { });
+        if (!audioBuffer)
+            return DecodingTaskPromise::createAndReject(EncodingError, __func__);
+        return DecodingTaskPromise::createAndResolve(audioBuffer.releaseNonNull(), __func__);
     });
-}
-
-void AsyncAudioDecoder::DecodingTask::notifyComplete()
-{
-    if (RefPtr audioBuffer = this->audioBuffer())
-        callback()(audioBuffer.releaseNonNull());
-    else
-        callback()(Exception { EncodingError, "Decoding failed"_s });
-
-    // Our ownership was given up in AsyncAudioDecoder::runLoop()
-    // Make sure to clean up here.
-    delete this;
 }
 
 } // namespace WebCore

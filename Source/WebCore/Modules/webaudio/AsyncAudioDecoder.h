@@ -24,62 +24,38 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
-#include <memory>
-#include <wtf/Forward.h>
-#include <wtf/MessageQueue.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
+#include "ExceptionCode.h"
+#include <wtf/Ref.h>
+#include <wtf/RunLoop.h>
 
 namespace JSC {
 class ArrayBuffer;
 }
 
-namespace WebCore {
+namespace WTF {
+template<typename TypeResolve, typename TypeReject, bool IsExclusive>
+class NativePromise;
+}
 
+namespace WebCore {
 class AudioBuffer;
-class AudioBufferCallback;
 
 // AsyncAudioDecoder asynchronously decodes audio file data from an ArrayBuffer in a worker thread.
-// Upon successful decoding, a completion callback will be invoked with the decoded PCM data in an AudioBuffer.
+// Upon successful decoding, the DecodingTaskPromise will be resolved with the decoded AudioBuffer
+// otherwise an ExceptionCode will be returned.
+using DecodingTaskPromise = WTF::NativePromise<Ref<WebCore::AudioBuffer>, ExceptionCode, true /* isExclusive */>;
 
 class AsyncAudioDecoder final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AsyncAudioDecoder);
 public:
     AsyncAudioDecoder();
-    ~AsyncAudioDecoder();
 
     // Must be called on the main thread.
-    void decodeAsync(Ref<JSC::ArrayBuffer>&& audioData, float sampleRate, Function<void(ExceptionOr<Ref<AudioBuffer>>&&)>&&);
+    Ref<DecodingTaskPromise> decodeAsync(Ref<JSC::ArrayBuffer>&& audioData, float sampleRate);
 
 private:
-    class DecodingTask {
-        WTF_MAKE_NONCOPYABLE(DecodingTask);
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        DecodingTask(Ref<JSC::ArrayBuffer>&& audioData, float sampleRate, Function<void(ExceptionOr<Ref<AudioBuffer>>&&)>&& callback);
-        void decode();
-        
-    private:
-        JSC::ArrayBuffer& audioData() { return m_audioData; }
-        float sampleRate() const { return m_sampleRate; }
-        Function<void(ExceptionOr<Ref<AudioBuffer>>&&)>& callback() { return m_callback; }
-        AudioBuffer* audioBuffer() { return m_audioBuffer.get(); }
-
-        void notifyComplete();
-
-        Ref<JSC::ArrayBuffer> m_audioData;
-        float m_sampleRate;
-        Function<void(ExceptionOr<Ref<AudioBuffer>>&&)> m_callback;
-        RefPtr<AudioBuffer> m_audioBuffer;
-    };
-    
-    void runLoop();
-
-    RefPtr<Thread> m_thread;
-    Lock m_threadCreationMutex;
-    MessageQueue<DecodingTask> m_queue;
+    Ref<RunLoop> m_runLoop;
 };
 
 } // namespace WebCore

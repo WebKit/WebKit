@@ -83,6 +83,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
 #include <wtf/text/WTFString.h>
@@ -298,16 +299,17 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
     if (!m_audioDecoder)
         m_audioDecoder = makeUnique<AsyncAudioDecoder>();
 
-    m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate(), [this, activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)](ExceptionOr<Ref<AudioBuffer>>&& result) mutable {
+    auto p = m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate());
+    p->whenSettled(RunLoop::main(), __func__, [this, activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)] (DecodingTaskPromise::Result&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise), result = WTFMove(result)]() mutable {
-            if (result.hasException()) {
+            if (!result) {
                 if (promise)
-                    promise.value()->reject(result.releaseException());
+                    promise.value()->reject(Exception { result.error(), "Decoding failed"_s });
                 if (errorCallback)
                     errorCallback->handleEvent(nullptr);
                 return;
             }
-            auto audioBuffer = result.releaseReturnValue();
+            auto audioBuffer = WTFMove(result.value());
             if (promise)
                 promise.value()->resolve<IDLInterface<AudioBuffer>>(audioBuffer.get());
             if (successCallback)
