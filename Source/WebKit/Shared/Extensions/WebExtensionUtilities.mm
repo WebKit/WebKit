@@ -50,6 +50,7 @@ static NSString *classToClassString(Class classType, bool plural = false)
         [classTypeToSingularClassString setObject:@"a boolean" forKey:@YES.class];
         [classTypeToSingularClassString setObject:@"a number" forKey:NSNumber.class];
         [classTypeToSingularClassString setObject:@"a string" forKey:NSString.class];
+        [classTypeToSingularClassString setObject:@"a value" forKey:JSValue.class];
         [classTypeToSingularClassString setObject:@"null" forKey:NSNull.class];
         [classTypeToSingularClassString setObject:@"an array" forKey:NSArray.class];
         [classTypeToSingularClassString setObject:@"an object" forKey:NSDictionary.class];
@@ -58,6 +59,7 @@ static NSString *classToClassString(Class classType, bool plural = false)
         [classTypeToPluralClassString setObject:@"booleans" forKey:@YES.class];
         [classTypeToPluralClassString setObject:@"numbers" forKey:NSNumber.class];
         [classTypeToPluralClassString setObject:@"strings" forKey:NSString.class];
+        [classTypeToPluralClassString setObject:@"values" forKey:JSValue.class];
         [classTypeToPluralClassString setObject:@"null values" forKey:NSNull.class];
         [classTypeToPluralClassString setObject:@"arrays" forKey:NSArray.class];
         [classTypeToPluralClassString setObject:@"objects" forKey:NSDictionary.class];

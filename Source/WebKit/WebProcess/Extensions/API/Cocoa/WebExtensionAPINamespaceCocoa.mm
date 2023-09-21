@@ -94,6 +94,16 @@ WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
     return *m_runtime;
 }
 
+WebExtensionAPIScripting& WebExtensionAPINamespace::scripting()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting
+
+    if (!m_scripting)
+        m_scripting = WebExtensionAPIScripting::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_scripting;
+}
+
 WebExtensionAPITabs& WebExtensionAPINamespace::tabs()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs

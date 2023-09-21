@@ -38,6 +38,8 @@
 
     [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
 
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIScripting scripting;
+
     [MainWorldOnly] readonly attribute WebExtensionAPITabs tabs;
 
     [MainWorldOnly] readonly attribute WebExtensionAPIWindows windows;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,33 +27,36 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPIPermissions.h"
-#include "WebExtensionAPIEvent.h"
+#include "JSWebExtensionAPIScripting.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionMatchPattern.h"
+
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSObject;
+OBJC_CLASS NSString;
 
 namespace WebKit {
 
-class WebExtensionAPIPermissions : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIPermissions, permissions);
+class WebExtensionAPIScripting;
+
+class WebExtensionAPIScripting : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIScripting, scripting);
 
 public:
 #if PLATFORM(COCOA)
-    void getAll(Ref<WebExtensionCallbackHandler>&&);
-    void contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
-    void request(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
-    void remove(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
+    void executeScript(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void insertCSS(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void removeCSS(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    WebExtensionAPIEvent& onAdded();
-    WebExtensionAPIEvent& onRemoved();
+    void registerContentScripts(NSObject *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getRegisteredContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void updateContentScripts(NSObject *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void unregisterContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
 private:
-    RefPtr<WebExtensionAPIEvent> m_onAdded;
-    RefPtr<WebExtensionAPIEvent> m_onRemoved;
+    bool validateScript(NSDictionary *, NSString **outExceptionString);
+    bool validateTarget(NSDictionary *, NSString **outExceptionString);
+    bool validateCSS(NSDictionary *, NSString **outExceptionString);
 
-    bool parseDetailsDictionary(NSDictionary *, HashSet<String>& permissions, HashSet<String>& origins, NSString *callingAPIName, NSString **outExceptionString);
-    bool verifyRequestedPermissions(HashSet<String>& permissions, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString);
-    bool validatePermissionsDetails(HashSet<String>& permissions, HashSet<String>& origins, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString);
 #endif
 };
 
