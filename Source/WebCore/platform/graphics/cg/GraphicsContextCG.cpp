@@ -1134,6 +1134,8 @@ void GraphicsContextCG::setCGShadow(const GraphicsDropShadow& shadow, bool shado
     if (renderingMode() != RenderingMode::Accelerated)
         applyShadowOffsetWorkaroundIfNeeded(context, xOffset, yOffset);
 
+    CGContextSetAlpha(context, shadow.opacity);
+
 #if HAVE(CGSTYLE_CREATE_SHADOW2)
     auto style = adoptCF(CGStyleCreateShadow2(CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(shadow.color).get()));
     CGContextSetStyle(context, style.get());
