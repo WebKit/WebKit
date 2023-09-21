@@ -334,6 +334,11 @@ enum class DimensionsCheck : uint8_t {
     All = 1 << 2, // FIXME: This is probably meant to be Width | Height instead.
 };
 
+enum class LayoutOptions : uint8_t {
+    RunPostLayoutTasksSynchronously = 1 << 0,
+    IgnorePendingStylesheets = 1 << 1,
+};
+
 enum class HttpEquivPolicy {
     Enabled,
     DisabledBySettings,
@@ -666,12 +671,11 @@ public:
     bool needsStyleRecalc() const;
     unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }
 
-    WEBCORE_EXPORT void updateLayout();
+    WEBCORE_EXPORT void updateLayout(OptionSet<LayoutOptions> = { });
     
     // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
     // so calling this may cause a flash of unstyled content (FOUC).
-    enum class RunPostLayoutTasks : bool { Asynchronously, Synchronously };
-    WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
+    void updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> = { });
 
     std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, PseudoId = PseudoId::None);
 

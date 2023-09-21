@@ -130,7 +130,7 @@ RenderWidget* HTMLPlugInElement::renderWidgetLoadingPlugin() const
         // Needs to load the plugin immediatedly because this function is called
         // when JavaScript code accesses the plugin.
         // FIXME: <rdar://16893708> Check if dispatching events here is safe.
-        document().updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
+        document().updateLayout({ LayoutOptions::IgnorePendingStylesheets, LayoutOptions::RunPostLayoutTasksSynchronously });
     }
     return renderWidget(); // This will return nullptr if the renderer is not a RenderWidget.
 }

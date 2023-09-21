@@ -1891,7 +1891,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
                 continue;
             auto *document = localFrame->document();
             if (document)
-                document->updateLayoutIgnorePendingStylesheets();
+                document->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
         }
     });
 }

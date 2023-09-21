@@ -2304,8 +2304,26 @@ bool Document::updateStyleIfNeeded()
     return true;
 }
 
-void Document::updateLayout()
+void Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> layoutOptions)
 {
+    layoutOptions.add(LayoutOptions::IgnorePendingStylesheets);
+    updateLayout(layoutOptions);
+}
+
+void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions)
+{
+    bool oldIgnore = m_ignorePendingStylesheets;
+
+    if (layoutOptions.contains(LayoutOptions::IgnorePendingStylesheets)) {
+        if (!haveStylesheetsLoaded()) {
+            m_ignorePendingStylesheets = true;
+            // FIXME: This should just invalidate elements with missing styles.
+            if (m_hasNodesWithMissingStyle)
+                scheduleFullStyleRebuild();
+        }
+        updateRelevancyOfContentVisibilityElements();
+    }
+
     ASSERT(isMainThread());
 
     RefPtr frameView = view();
@@ -2315,40 +2333,22 @@ void Document::updateLayout()
         return;
     }
 
-    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    {
+        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (RefPtr owner = ownerElement())
-        owner->document().updateLayout();
+        if (RefPtr owner = ownerElement())
+            owner->document().updateLayout();
 
-    updateStyleIfNeeded();
+        updateStyleIfNeeded();
 
-    StackStats::LayoutCheckPoint layoutCheckPoint;
+        StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    if (!frameView || !renderView())
-        return;
-    if (!frameView->layoutContext().isLayoutPending() && !renderView()->needsLayout())
-        return;
-
-    frameView->layoutContext().layout();
-}
-
-void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks runPostLayoutTasks)
-{
-    bool oldIgnore = m_ignorePendingStylesheets;
-
-    if (!haveStylesheetsLoaded()) {
-        m_ignorePendingStylesheets = true;
-        // FIXME: This should just invalidate elements with missing styles.
-        if (m_hasNodesWithMissingStyle)
-            scheduleFullStyleRebuild();
+        if (frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()))
+            frameView->layoutContext().layout();
     }
 
-    updateRelevancyOfContentVisibilityElements();
-
-    updateLayout();
-
-    if (runPostLayoutTasks == RunPostLayoutTasks::Synchronously && view())
+    if (layoutOptions.contains(LayoutOptions::RunPostLayoutTasksSynchronously) && view())
         view()->flushAnyPendingPostLayoutTasks();
 
     m_ignorePendingStylesheets = oldIgnore;
