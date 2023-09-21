@@ -2163,3 +2163,5 @@ webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer
 [ Sonoma+ ] fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
+
+webkit.org/b/261906 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last [ Slow ]
