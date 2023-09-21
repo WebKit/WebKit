@@ -1,5 +1,5 @@
-PASS postMessage received
 PASS successfullyParsed is true
 
 TEST COMPLETE
+PASS received 'iframe received hello'
 

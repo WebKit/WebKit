@@ -1,3 +1,5 @@
 <script>
-window.parent.postMessage("message", "*");
+addEventListener("message", (event) => {
+    window.parent.postMessage("iframe received " + event.data, "*")
+});
 </script>
