@@ -3666,11 +3666,14 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
     ENABLE_ADDITIONAL_ARGUMENTS = False
     FAILURE_MSG_IN_STRESS_MODE = 'Found test failures in stress mode'
 
-    def __init__(self, num_iterations=100):
+    def __init__(self, num_iterations=100, layout_test_class=RunWebKitTests):
         self.num_iterations = num_iterations
+        self.layout_test_class = layout_test_class
         super().__init__()
 
     def setLayoutTestCommand(self):
+        if self.layout_test_class == RunWebKit1Tests:
+            self.setProperty('use-dump-render-tree', True)
         RunWebKitTests.setLayoutTestCommand(self)
 
         self.setCommand(self.command + ['--iterations', self.num_iterations])
