@@ -2200,13 +2200,12 @@
 #endif
         )))
 
-(define (syscall-mach-common) (machtrap-number
+(define (syscall-mach-in-use) (machtrap-number
     MSC__kernelrpc_mach_port_allocate_trap
     MSC__kernelrpc_mach_port_construct_trap
     MSC__kernelrpc_mach_port_deallocate_trap
     MSC__kernelrpc_mach_port_destruct_trap
     MSC__kernelrpc_mach_port_extract_member_trap
-    MSC__kernelrpc_mach_port_get_attributes_trap
     MSC__kernelrpc_mach_port_guard_trap
     MSC__kernelrpc_mach_port_insert_member_trap
     MSC__kernelrpc_mach_port_insert_right_trap
@@ -2220,21 +2219,24 @@
     MSC__kernelrpc_mach_vm_protect_trap
     MSC__kernelrpc_mach_vm_purgable_control_trap
     MSC_host_self_trap
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
-    MSC_iokit_user_client_trap
-#endif
     MSC_mach_generate_activity_id
     MSC_mk_timer_arm
     MSC_mk_timer_cancel
     MSC_mk_timer_create
     MSC_mk_timer_destroy
-    MSC_pid_for_task
     MSC_semaphore_signal_trap
     MSC_semaphore_timedwait_trap
-    MSC_semaphore_wait_trap
     MSC_syscall_thread_switch
-    MSC_task_name_for_pid
     MSC_thread_get_special_reply_port))
+
+(define (syscall-mach-possibly-in-use) (machtrap-number
+    MSC__kernelrpc_mach_port_get_attributes_trap
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
+    MSC_iokit_user_client_trap
+#endif
+    MSC_pid_for_task
+    MSC_semaphore_wait_trap
+    MSC_task_name_for_pid))
 
 (define (syscall-mach-blocked-in-lockdown-mode) (machtrap-number
     MSC_host_create_mach_voucher_trap
@@ -2246,10 +2248,11 @@
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach)
-    (allow syscall-mach (syscall-mach-common))
+    (allow syscall-mach (syscall-mach-in-use))
+    (allow syscall-mach (with report) (with telemetry) (syscall-mach-possibly-in-use))
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
     (with-filter (require-not (lockdown-mode))
-        (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode)))
+        (allow syscall-mach (with report) (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
     (with-filter (lockdown-mode)
         (deny syscall-mach (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
 #else
