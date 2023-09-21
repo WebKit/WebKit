@@ -285,14 +285,11 @@ Testing 1x8192 forced 'Accelerated' (area: 8192)
 PASS imageData.data is red
 PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
 Testing 1x16384 forced 'Accelerated' (area: 16384)
-PASS imageData.data is red
-FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+PASS Context was lost
 Testing 1x32768 forced 'Accelerated' (area: 32768)
-PASS imageData.data is red
-FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+PASS Context was lost
 Testing 1x32769 forced 'Accelerated' (area: 32769)
-PASS imageData.data is red
-FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+PASS Context was lost
 Testing 1000x1 forced 'Accelerated' (area: 1000)
 PASS imageData.data is red
 PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
@@ -309,8 +306,7 @@ Testing 1000x8192 forced 'Accelerated' (area: 8192000)
 PASS imageData.data is red
 PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
 Testing 1000x16384 forced 'Accelerated' (area: 16384000)
-PASS imageData.data is red
-FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+PASS Context was lost
 Testing 1000x32768 forced 'Accelerated' (area: 32768000)
 PASS Context was lost
 Testing 1000x32769 forced 'Accelerated' (area: 32769000)
@@ -376,11 +372,9 @@ PASS Context was lost
 Testing 8192x32769 forced 'Accelerated' (area: 268443648)
 PASS Context was lost
 Testing 16384x1 forced 'Accelerated' (area: 16384)
-PASS imageData.data is red
-FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+PASS Context was lost
 Testing 16384x1000 forced 'Accelerated' (area: 16384000)
-PASS imageData.data is red
-FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+PASS Context was lost
 Testing 16384x2048 forced 'Accelerated' (area: 33554432)
 PASS Context was lost
 Testing 16384x4096 forced 'Accelerated' (area: 67108864)
@@ -394,8 +388,7 @@ PASS Context was lost
 Testing 16384x32769 forced 'Accelerated' (area: 536887296)
 PASS Context was lost
 Testing 32768x1 forced 'Accelerated' (area: 32768)
-PASS imageData.data is red
-FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+PASS Context was lost
 Testing 32768x1000 forced 'Accelerated' (area: 32768000)
 PASS Context was lost
 Testing 32768x2048 forced 'Accelerated' (area: 67108864)
@@ -411,8 +404,7 @@ PASS Context was lost
 Testing 32768x32769 forced 'Accelerated' (area: 1073774592)
 PASS Context was lost
 Testing 32769x1 forced 'Accelerated' (area: 32769)
-PASS imageData.data is red
-FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+PASS Context was lost
 Testing 32769x1000 forced 'Accelerated' (area: 32769000)
 PASS Context was lost
 Testing 32769x2048 forced 'Accelerated' (area: 67110912)

@@ -466,21 +466,22 @@ Vector<uint8_t> ImageBuffer::toData(Ref<ImageBuffer> source, const String& mimeT
 
 RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, const ImageBufferAllocator& allocator) const
 {
-    auto* backend = ensureBackendCreated();
-    if (!backend)
-        return nullptr;
     ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));
     auto sourceRectScaled = sourceRect;
     sourceRectScaled.scale(resolutionScale());
     auto destination = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
     if (!destination)
         return nullptr;
-    backend->getPixelBuffer(sourceRectScaled, *destination);
+    if (auto* backend = ensureBackendCreated())
+        backend->getPixelBuffer(sourceRectScaled, *destination);
+    else
+        destination->zeroFill();
     return destination;
 }
 
 void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationFormat)
 {
+    ASSERT(resolutionScale() == 1);
     auto* backend = ensureBackendCreated();
     if (!backend)
         return;
