@@ -186,6 +186,23 @@ fn testComparison() {
   }
 }
 
+fn testAddressOf()
+{
+    var x = 1;
+    testPointerDeference(&x);
+
+    let y: ptr<function, i32> = &x;
+    testPointerDeference(y);
+
+    let z = &x;
+    testPointerDeference(z);
+}
+
+fn testPointerDeference(x: ptr<function, i32>) -> i32
+{
+    return *x;
+}
+
 // 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
 
 fn testLogicalNegation()

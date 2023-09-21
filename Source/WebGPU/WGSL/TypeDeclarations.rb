@@ -42,6 +42,10 @@ operator :-, {
 }
 
 operator :*, {
+    # unary
+    [AS, T, AM].(Ptr[AS, T, AM]) => Ref[AS, T, AM],
+
+    # binary
     [T < Number].(T, T) => T,
 
     # vector scaling
@@ -111,6 +115,10 @@ operator :'|', {
 }
 
 operator :'&', {
+    # unary
+    [AS, T, AM].(Ref[AS, T, AM]) => Ptr[AS, T, AM],
+
+    # binary
     [].(Bool, Bool) => Bool,
     [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
 }

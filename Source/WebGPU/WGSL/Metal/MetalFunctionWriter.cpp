@@ -725,6 +725,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             const char* addressSpace = nullptr;
             switch (pointer.addressSpace) {
             case AddressSpace::Function:
+            case AddressSpace::Private:
                 addressSpace = "thread";
                 break;
             case AddressSpace::Workgroup:
@@ -737,16 +738,12 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 addressSpace = "device";
                 break;
             case AddressSpace::Handle:
-            case AddressSpace::Private:
-                break;
-            }
-            if (!addressSpace) {
-                visit(pointer.element);
-                return;
+                RELEASE_ASSERT_NOT_REACHED();
             }
             if (pointer.accessMode == AccessMode::Read)
                 m_stringBuilder.append("const ");
-            m_stringBuilder.append(addressSpace, " ");
+            if (addressSpace)
+                m_stringBuilder.append(addressSpace, " ");
             visit(pointer.element);
             m_stringBuilder.append("*");
         },
@@ -1025,11 +1022,11 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
     case AST::UnaryOperation::Not:
         m_stringBuilder.append("!");
         break;
-
     case AST::UnaryOperation::AddressOf:
+        m_stringBuilder.append("&");
+        break;
     case AST::UnaryOperation::Dereference:
-        // FIXME: Implement these
-        RELEASE_ASSERT_NOT_REACHED();
+        m_stringBuilder.append("*");
         break;
     }
     visit(unary.expression());

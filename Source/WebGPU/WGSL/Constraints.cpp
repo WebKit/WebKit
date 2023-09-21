@@ -32,6 +32,9 @@ namespace WGSL {
 
 bool satisfies(const Type* type, Constraint constraint)
 {
+    if (constraint == Constraints::None)
+        return true;
+
     auto* primitive = std::get_if<Types::Primitive>(type);
     if (!primitive) {
         if (auto* reference = std::get_if<Types::Reference>(type))
@@ -67,6 +70,9 @@ bool satisfies(const Type* type, Constraint constraint)
 
 const Type* satisfyOrPromote(const Type* type, Constraint constraint, const TypeStore& types)
 {
+    if (constraint == Constraints::None)
+        return type;
+
     auto* primitive = std::get_if<Types::Primitive>(type);
     if (!primitive) {
         if (auto* reference = std::get_if<Types::Reference>(type))
