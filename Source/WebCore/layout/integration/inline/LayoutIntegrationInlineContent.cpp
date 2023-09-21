@@ -52,6 +52,10 @@ IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const Layou
     auto& lines = m_displayContent.lines;
     auto& boxes = m_displayContent.boxes;
 
+    // FIXME: Do the flips.
+    if (formattingContextRoot().style().isFlippedBlocksWritingMode())
+        return { &boxes.first(), &boxes.last() + 1 };
+
     if (lines.first().inkOverflow().maxY() > rect.y() && lines.last().inkOverflow().y() < rect.maxY())
         return { &boxes.first(), &boxes.last() + 1 };
 

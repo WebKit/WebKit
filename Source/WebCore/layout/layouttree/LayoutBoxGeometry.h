@@ -147,7 +147,7 @@ public:
     void setVerticalSpaceForScrollbar(LayoutUnit scrollbarHeight) { m_verticalSpaceForScrollbar = scrollbarHeight; }
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
 
-    BoxGeometry geometryForWritingModeAndDirection(bool isHorizontalWritingMode, bool isLeftToRightDirection, LayoutUnit containerLogicalWidth) const;
+    BoxGeometry geometryForWritingModeAndDirection(WritingMode, bool isLeftToRightDirection, LayoutUnit containerLogicalWidth) const;
 
 private:
     LayoutUnit top() const;
@@ -451,8 +451,11 @@ inline LayoutUnit BoxGeometry::borderEnd() const
     return m_border.horizontal.right;
 }
 
-inline BoxGeometry BoxGeometry::geometryForWritingModeAndDirection(bool isHorizontalWritingMode, bool isLeftToRightDirection, LayoutUnit containerLogicalWidth) const
+inline BoxGeometry BoxGeometry::geometryForWritingModeAndDirection(WritingMode writingMode, bool isLeftToRightDirection, LayoutUnit containerLogicalWidth) const
 {
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+    auto isFlippedBlocksWritingMode = WebCore::isFlippedWritingMode(writingMode);
+
     if (isHorizontalWritingMode && isLeftToRightDirection)
         return *this;
 
@@ -472,7 +475,7 @@ inline BoxGeometry BoxGeometry::geometryForWritingModeAndDirection(bool isHorizo
     visualGeometry.m_contentBoxWidth = m_contentBoxHeight;
     visualGeometry.m_contentBoxHeight = m_contentBoxWidth;
 
-    visualGeometry.m_horizontalMargin = { m_verticalMargin.after, m_verticalMargin.before };
+    visualGeometry.m_horizontalMargin = !isFlippedBlocksWritingMode ? HorizontalMargin { m_verticalMargin.after, m_verticalMargin.before } : HorizontalMargin { m_verticalMargin.before, m_verticalMargin.after };
     visualGeometry.m_verticalMargin = { m_horizontalMargin.start, m_horizontalMargin.end };
 
     auto left = isLeftToRightDirection ? m_topLeft.x() : containerLogicalWidth - (m_topLeft.x() + borderBoxWidth());

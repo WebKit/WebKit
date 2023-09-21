@@ -599,8 +599,17 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
     auto& blockFlow = flow();
     auto& rootStyle = blockFlow.style();
     auto isLeftToRightFloatingStateInlineDirection = m_blockFormattingState.floatingState().isLeftToRightDirection();
-    auto isHorizontalWritingMode = rootStyle.isHorizontalWritingMode();
-    auto isFlippedBlocksWritingMode = rootStyle.isFlippedBlocksWritingMode();
+    auto writingMode = rootStyle.writingMode();
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+
+    auto visualAdjustmentOffset = [&](auto lineIndex) {
+        if (lineAdjustments.isEmpty())
+            return LayoutSize { };
+        if (!isHorizontalWritingMode)
+            return LayoutSize { lineAdjustments[lineIndex].offset, 0_lu };
+        return LayoutSize { 0_lu, lineAdjustments[lineIndex].offset };
+    };
+
     for (auto& box : m_inlineContent->displayContent().boxes) {
         if (box.isInlineBox() || box.isText())
             continue;
@@ -615,10 +624,9 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
         auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
+        auto adjustmentOffset = visualAdjustmentOffset(box.lineIndex());
 
-        auto logicalOffset = lineAdjustments.isEmpty() ? LayoutSize { } : LayoutSize { 0_lu, lineAdjustments[box.lineIndex()].offset };
-
-        renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft() + logicalOffset);
+        renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft() + adjustmentOffset);
     }
 
     HashMap<CheckedRef<const Layout::Box>, LayoutSize> floatPaginationOffsetMap;
@@ -626,8 +634,8 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         for (auto& floatItem : m_blockFormattingState.floatingState().floats()) {
             if (!floatItem.layoutBox() || !floatItem.placedByLine())
                 continue;
-            auto offset = LayoutSize { 0_lu, lineAdjustments[*floatItem.placedByLine()].offset };
-            floatPaginationOffsetMap.add(*floatItem.layoutBox(), offset);
+            auto adjustmentOffset = visualAdjustmentOffset(*floatItem.placedByLine());
+            floatPaginationOffsetMap.add(*floatItem.layoutBox(), adjustmentOffset);
         }
     }
 
@@ -646,32 +654,23 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
 
             ASSERT(m_inlineContentConstraints);
             auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
-            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(isHorizontalWritingMode, isLeftToRightFloatingStateInlineDirection, rootBorderBoxWidth);
+
+            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(writingMode, isLeftToRightFloatingStateInlineDirection, rootBorderBoxWidth);
             auto visualMarginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(visualGeometry) };
             auto visualBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(visualGeometry) };
 
             auto paginationOffset = floatPaginationOffsetMap.getOptional(layoutBox);
-
             if (paginationOffset) {
                 visualMarginBoxRect.move(*paginationOffset);
                 visualBorderBoxRect.move(*paginationOffset);
             }
 
             floatingObject.setFrameRect(visualMarginBoxRect);
-
-            auto marginLeft = !isFlippedBlocksWritingMode ? visualGeometry.marginStart() : visualGeometry.marginEnd();
-            auto marginTop = visualGeometry.marginBefore();
-            floatingObject.setMarginOffset({ marginLeft, marginTop });
+            floatingObject.setMarginOffset({ visualGeometry.marginStart(), visualGeometry.marginBefore() });
             floatingObject.setIsPlaced(true);
 
             auto oldRect = renderer.frameRect();
             renderer.setLocation(visualBorderBoxRect.location());
-
-            if (paginationOffset) {
-                // Float content may be affected by the new position.
-                renderer.markForPaginationRelayoutIfNeeded();
-                renderer.layoutIfNeeded();
-            }
 
             if (renderer.checkForRepaintDuringLayout()) {
                 auto hasMoved = oldRect.location() != renderer.location();
@@ -680,6 +679,13 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
                 else
                     renderer.repaint();
             }
+
+            if (paginationOffset) {
+                // Float content may be affected by the new position.
+                renderer.markForPaginationRelayoutIfNeeded();
+                renderer.layoutIfNeeded();
+            }
+
             continue;
         }
 

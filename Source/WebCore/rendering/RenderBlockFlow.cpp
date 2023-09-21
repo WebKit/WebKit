@@ -1893,7 +1893,7 @@ static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderSty
 
         // FIXME: Paginating using line overflow isn't all fine. See FIXME in
         // adjustLinePositionForPagination() for more details.
-        lineTop = std::min(line->logicalTop(), line->inkOverflowTop());
+        lineTop = std::min(line->logicalTop(), line->inkOverflowLogicalTop());
     }
     return lineBottom - lineTop;
 }
@@ -1960,8 +1960,8 @@ RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustment
         return std::pair { lineTop, lineBottom };
     };
 
-    auto logicalOverflowTop = LayoutUnit { lineBox->inkOverflowTop() };
-    auto logicalOverflowBottom = LayoutUnit { lineBox->inkOverflowBottom() };
+    auto logicalOverflowTop = LayoutUnit { lineBox->inkOverflowLogicalTop() };
+    auto logicalOverflowBottom = LayoutUnit { lineBox->inkOverflowLogicalBottom() };
     auto logicalOverflowHeight = logicalOverflowBottom - logicalOverflowTop;
     auto logicalTop = LayoutUnit { lineBox->logicalTop() };
     auto logicalOffset = std::min(logicalTop, logicalOverflowTop);
@@ -2028,7 +2028,7 @@ RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustment
                 return { };
 
             auto firstLineBox = InlineIterator::firstLineBoxFor(*this);
-            auto firstLineBoxOverflowTop = LayoutUnit { firstLineBox ? firstLineBox->inkOverflowTop() : 0 };
+            auto firstLineBoxOverflowTop = LayoutUnit { firstLineBox ? firstLineBox->inkOverflowLogicalTop() : 0 };
             auto firstLineUpperOverhang = std::max(-firstLineBoxOverflowTop, 0_lu);
             setPaginationStrut(remainingLogicalHeight + logicalOffset + firstLineUpperOverhang);
 
@@ -4026,8 +4026,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         repaintLogicalBottom = std::max(std::max(oldBorderBoxBottom, newBorderBoxBottom), LayoutUnit { lastLineBox->contentLogicalBottom() });
         if (layoutFormattingContextLineLayout.hasVisualOverflow()) {
             for (auto lineBox = firstLineBox; lineBox; lineBox.traverseNext()) {
-                repaintLogicalTop = std::min(repaintLogicalTop, LayoutUnit { lineBox->inkOverflowTop() });
-                repaintLogicalBottom = std::max(repaintLogicalBottom, LayoutUnit { lineBox->inkOverflowBottom() });
+                repaintLogicalTop = std::min(repaintLogicalTop, LayoutUnit { lineBox->inkOverflowLogicalTop() });
+                repaintLogicalBottom = std::max(repaintLogicalBottom, LayoutUnit { lineBox->inkOverflowLogicalBottom() });
             }
         }
     };

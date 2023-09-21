@@ -2306,7 +2306,6 @@ imported/blink/fast/pagination/div-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/div-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/viewport-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/viewport-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
-fast/multicol/newmulticol/hide-box-vertical-lr.html [ ImageOnlyFailure ]
 
 # Failing tests related to picture element
 webkit.org/b/152141 fast/picture/image-picture-1x.html [ Skip ]

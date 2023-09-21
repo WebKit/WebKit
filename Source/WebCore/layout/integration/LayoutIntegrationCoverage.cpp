@@ -104,9 +104,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasLineSnap:
         stream << "-webkit-line-snap property";
         break;
-    case AvoidanceReason::MultiColumnFlowHasUnsupportedWritingMode:
-        stream << "column has unsupported writing mode";
-        break;
     case AvoidanceReason::MultiColumnFlowHasOutOfFlowChild:
         stream << "column with out-of-flow boxes";
         break;
@@ -263,10 +260,6 @@ static OptionSet<AvoidanceReason> canUseForBlockStyle(const RenderBlockFlow& blo
 
     OptionSet<AvoidanceReason> reasons;
     auto& style = blockContainer.style();
-    if (blockContainer.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
-        if (!style.isHorizontalWritingMode() || style.blockFlowDirection() == BlockFlowDirection::BottomToTop)
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasUnsupportedWritingMode, reasons, includeReasons);
-    }
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnap::None)
