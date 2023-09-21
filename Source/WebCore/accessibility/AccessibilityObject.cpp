@@ -1688,17 +1688,26 @@ static RenderListItem* renderListItemContainerForNode(Node* node)
     return nullptr;
 }
 
-// Returns the text representing a list marker if node is contained within a list item.
-StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& visiblePositionStart)
+// Returns the text representing a list marker.
+static StringView listMarkerText(RenderListItem& listItem, const VisiblePosition& startVisiblePosition)
+{
+    // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
+    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(&listItem.element())))
+        return { };
+    return listItem.markerTextWithSuffix();
+}
+
+StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Position&& startPosition)
 {
     auto* listItem = renderListItemContainerForNode(node);
-    if (!listItem)
-        return { };
+    // Constructing a VisiblePosition from a Position can be expensive, so only do it if we have a list item.
+    return listItem ? listMarkerText(*listItem, WTFMove(startPosition)) : StringView();
+}
 
-    // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
-    if (!isStartOfLine(visiblePositionStart) || !inSameLine(visiblePositionStart, firstPositionInNode(&listItem->element())))
-        return { };
-    return listItem->markerTextWithSuffix();
+StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& startVisiblePosition)
+{
+    auto* listItem = renderListItemContainerForNode(node);
+    return listItem ? listMarkerText(*listItem, startVisiblePosition) : StringView();
 }
 
 String AccessibilityObject::stringForRange(const SimpleRange& range) const
