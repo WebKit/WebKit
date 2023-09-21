@@ -48,7 +48,7 @@ from webkitcorepy.null_context import NullContext
 from webkitcorepy.filtered_call import filtered_call
 from webkitcorepy.partial_proxy import PartialProxy
 
-version = Version(0, 16, 3)
+version = Version(0, 16, 4)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -88,7 +88,11 @@ if sys.version_info >= (3, 12):
 else:
     AutoInstall.register(Package('requests', Version(2, 24)))
 
-AutoInstall.register(Package('setuptools_scm', Version(5, 0, 2), pypi_name='setuptools-scm'))
+if sys.version_info >= (3, 0):
+    AutoInstall.register(Package('tomli', Version(2, 0, 1), wheel=True))
+    AutoInstall.register(Package('setuptools_scm', Version(6, 4, 2), pypi_name='setuptools-scm', implicit_deps=['tomli']))
+else:
+    AutoInstall.register(Package('setuptools_scm', Version(5, 0, 2), pypi_name='setuptools-scm'))
 AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
 AutoInstall.register(Package('six', Version(1, 15, 0)))
 AutoInstall.register(Package('tblib', Version(1, 7, 0)))
