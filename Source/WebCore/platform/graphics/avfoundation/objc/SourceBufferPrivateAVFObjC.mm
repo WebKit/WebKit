@@ -146,6 +146,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [layer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nullptr];
     [layer addObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection" options:NSKeyValueObservingOptionNew context:nullptr];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
 }
 
 - (void)stopObservingLayer:(AVSampleBufferDisplayLayer*)layer
@@ -240,6 +241,20 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     callOnMainThread([parent = _parent, layer = WTFMove(layer), error = retainPtr([[note userInfo] valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey])] {
         if (auto strongParent = RefPtr { parent.get() })
             strongParent->layerDidReceiveError(layer.get(), error.get());
+    });
+}
+
+- (void)layerRequiresFlushToResumeDecodingChanged:(NSNotification *)note
+{
+    RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)[note object];
+    if (!_layers.contains(layer.get()))
+        return;
+
+    bool requiresFlush = [layer requiresFlushToResumeDecoding];
+
+    callOnMainThread([parent = _parent, layer = WTFMove(layer), requiresFlush] {
+        if (auto strongParent = RefPtr { parent.get() })
+            strongParent->layerRequiresFlushToResumeDecodingChanged(layer.get(), requiresFlush);
     });
 }
 
@@ -969,6 +984,16 @@ void SourceBufferPrivateAVFObjC::attemptToDecrypt()
 #endif
 }
 
+bool SourceBufferPrivateAVFObjC::requiresFlush() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (m_displayLayerWasInterrupted)
+        return true;
+#endif
+
+    return m_layerRequiresFlush;
+}
+
 void SourceBufferPrivateAVFObjC::flush()
 {
     if (m_videoTracks.size())
@@ -981,13 +1006,15 @@ void SourceBufferPrivateAVFObjC::flush()
         flushAudio(renderer.get());
 }
 
-#if PLATFORM(IOS_FAMILY)
 void SourceBufferPrivateAVFObjC::flushIfNeeded()
 {
-    if (!m_displayLayerWasInterrupted)
+    if (!requiresFlush())
         return;
 
+#if PLATFORM(IOS_FAMILY)
     m_displayLayerWasInterrupted = false;
+#endif
+    m_layerRequiresFlush = false;
     if (m_videoTracks.size())
         flushVideo();
 
@@ -1000,7 +1027,6 @@ void SourceBufferPrivateAVFObjC::flushIfNeeded()
 
     reenqueSamples(AtomString::number(m_enabledVideoTrackID));
 }
-#endif
 
 void SourceBufferPrivateAVFObjC::registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient* client)
 {
@@ -1094,6 +1120,15 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
     if (anyIgnored)
         return;
+}
+
+void SourceBufferPrivateAVFObjC::layerRequiresFlushToResumeDecodingChanged(AVSampleBufferDisplayLayer *layer, bool requiresFlush)
+{
+    if (layer != m_displayLayer || m_layerRequiresFlush == requiresFlush)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, requiresFlush);
+    m_layerRequiresFlush = requiresFlush;
 }
 
 void SourceBufferPrivateAVFObjC::flush(const AtomString& trackIDString)
@@ -1312,10 +1347,8 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackID
 {
     auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     if (trackID == m_enabledVideoTrackID) {
-#if PLATFORM(IOS_FAMILY)
-        if (m_displayLayerWasInterrupted)
+        if (requiresFlush())
             return false;
-#endif
 
         if (m_decompressionSession)
             return m_decompressionSession->isReadyForMoreMediaData();
