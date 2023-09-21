@@ -996,6 +996,11 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         CONSUME_TYPE(Semicolon);
         RETURN_ARENA_NODE(ContinueStatement);
     }
+    case TokenType::KeywordDiscard: {
+        consume();
+        CONSUME_TYPE(Semicolon);
+        RETURN_ARENA_NODE(DiscardStatement);
+    }
     case TokenType::Underbar : {
         consume();
         CONSUME_TYPE(Equal);

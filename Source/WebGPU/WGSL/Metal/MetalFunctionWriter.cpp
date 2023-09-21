@@ -93,6 +93,7 @@ public:
     void visit(AST::CompoundAssignmentStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::DecrementIncrementStatement&) override;
+    void visit(AST::DiscardStatement&) override;
     void visit(AST::IfStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
@@ -1246,6 +1247,11 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
         m_stringBuilder.append("--");
         break;
     }
+}
+
+void FunctionDefinitionWriter::visit(AST::DiscardStatement&)
+{
+    m_stringBuilder.append("discard_fragment()");
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)
