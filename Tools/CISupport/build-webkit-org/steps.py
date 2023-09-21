@@ -46,6 +46,7 @@ S3URL = 'https://s3-us-west-2.amazonaws.com/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
+MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}'
 
 
 class CustomFlagsMixin(object):
@@ -388,9 +389,10 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
 
     def handleExcessiveLogging(self):
         build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
-        print(f'Stopping build due to excessive logging: {build_url}\n\n')
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
         self.cancelled_due_to_huge_logs = True
-        self.build.stopBuild(reason=f'Stopped due to excessive logging. Log limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}', results=FAILURE)
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -407,10 +409,10 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
         return rc
 
     def getResultSummary(self):
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
         if self.results == FAILURE:
             return {'step': f'Failed {self.name}'}
-        if self.results == CANCELLED and self.cancelled_due_to_huge_logs:
-            return {'step': 'Cancelled step due to huge logs', 'build': 'Cancelled build due to huge logs'}
         return shell.Compile.getResultSummary(self)
 
 
@@ -725,6 +727,8 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin):
         ('missing results', re.compile(r'Regressions: Unexpected missing results\s+\((\d+)\)')),
         ('failures', re.compile(r'Regressions: Unexpected.+\((\d+)\)')),
     ]
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
@@ -761,6 +765,11 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin):
         return line
 
     def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
+
         if r'Exiting early' in line or r'leaks found' in line:
             self.incorrectLayoutLines.append(self._strip_python_logging_prefix(line))
             return
@@ -801,12 +810,18 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin):
         return result
 
     def getResultSummary(self):
-        status = self.name
-
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
         if self.results != SUCCESS and self.incorrectLayoutLines:
-            status = ' '.join(self.incorrectLayoutLines)
-            return {'step': status}
-        return super(RunWebKitTests, self).getResultSummary()
+            return {'step': ' '.join(self.incorrectLayoutLines)}
+        return super().getResultSummary()
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
 
 class RunDashboardTests(RunWebKitTests):
@@ -1150,10 +1165,10 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
 
     def getResultSummary(self):
         # TODO: Parse logs to count number of failures and unexpected passes. https://webkit.org/b/261698
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
         if self.results == FAILURE:
             return {'step': f'Failed {self.name}'}
-        if self.results == CANCELLED and self.cancelled_due_to_huge_logs:
-            return {'step': 'Cancelled step due to huge logs', 'build': 'Cancelled build due to huge logs'}
         return super().getResultSummary()
 
     def parseOutputLine(self, line):
@@ -1164,9 +1179,10 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
 
     def handleExcessiveLogging(self):
         build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
-        print(f'Stopping build due to excessive logging: {build_url}\n\n')
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
         self.cancelled_due_to_huge_logs = True
-        self.build.stopBuild(reason=f'Stopped due to excessive logging. Log limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}', results=FAILURE)
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
 
 class RunWebKit1Tests(RunWebKitTests):
