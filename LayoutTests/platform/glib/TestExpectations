@@ -3455,9 +3455,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPoi
 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.scaleddashes.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.worker.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-1.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-3.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-4.html [ ImageOnlyFailure ]
 
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.w.html [ Timeout ]
 
