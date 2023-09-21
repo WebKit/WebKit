@@ -174,14 +174,24 @@ void BorderPainter::calculateBorderStyleColor(BorderStyle style, BoxSide side, C
 
     Operation operation = (side == BoxSide::Top || side == BoxSide::Left) == (style == BorderStyle::Inset) ? Darken : Lighten;
 
-    // Here we will darken the border decoration color when needed. This will yield a similar behavior as in FF.
-    if (operation == Darken) {
-        if (color.luminance() > baseDarkColorLuminance)
-            color = color.darkened();
-    } else {
-        if (color.luminance() < baseLightColorLuminance)
-            color = color.lightened();
+    bool isVeryDarkColor = color.luminance() <= baseDarkColorLuminance;
+    bool isVeryLightColor = color.luminance() > baseLightColorLuminance;
+
+    // Special case very dark colors to give them extra contrast.
+    if (isVeryDarkColor) {
+        color = operation == Darken ? color.lightened() : color.lightened().lightened();
+        return;
     }
+
+    // Here we will darken the border decoration color when needed.
+    if (operation == Darken) {
+        color = color.darkened();
+        return;
+    }
+
+    ASSERT(operation == Lighten);
+
+    color = isVeryLightColor ? color : color.lightened();
 }
 
 // This assumes that we draw in order: top, bottom, left, right.
