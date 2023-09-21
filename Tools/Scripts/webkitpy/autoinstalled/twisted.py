@@ -30,7 +30,7 @@ AutoInstall.install(Package('constantly', Version(15, 1, 0), pypi_name='constant
 if sys.version_info >= (3, 0):
     AutoInstall.install(Package('hyperlink', Version(21, 0, 0), pypi_name='hyperlink'))
     AutoInstall.install(Package('incremental', Version(21, 3, 0), pypi_name='incremental'))
-    AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted'))
+    AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
 
     AutoInstall.install(Package('pyOpenSSL', Version(20, 0, 0)))
     # There are no prebuilt binaries for arm-32 of 'bcrypt' and building it requires cargo/rust
@@ -45,7 +45,7 @@ if sys.version_info >= (3, 0):
 else:
     AutoInstall.install(Package('hyperlink', Version(17, 3, 0), pypi_name='hyperlink'))
     AutoInstall.install(Package('incremental', Version(17, 5, 0), pypi_name='incremental'))
-    AutoInstall.install(Package('twisted', Version(17, 5, 0), pypi_name='Twisted'))
+    AutoInstall.install(Package('twisted', Version(17, 5, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
 
     AutoInstall.install(Package('pyOpenSSL', Version(17, 2, 0)))
     AutoInstall.install(Package('pycparser', Version(2, 18)))
