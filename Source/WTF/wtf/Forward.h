@@ -122,6 +122,7 @@ template<typename Key, typename Value, typename Extractor, typename HashFunction
 template<typename Value, typename = DefaultHash<Value>, typename = HashTraits<Value>> class HashCountedSet;
 template<typename KeyArg, typename MappedArg, typename = DefaultHash<KeyArg>, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>, typename = HashTableTraits> class HashMap;
 template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTraits<ValueArg>, typename = HashTableTraits> class HashSet;
+template<typename ResolveValueT, typename RejectValueT, bool IsExclusive> class NativePromise;
 
 }
 
@@ -155,6 +156,7 @@ using WTF::Logger;
 using WTF::MachSendRight;
 using WTF::makeUniqueRef;
 using WTF::MonotonicTime;
+using WTF::NativePromise;
 using WTF::NeverDestroyed;
 using WTF::ObjectIdentifier;
 using WTF::ObjectIdentifierGeneric;

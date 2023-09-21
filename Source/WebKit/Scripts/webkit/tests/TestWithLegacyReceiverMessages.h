@@ -54,11 +54,6 @@ class WebPreferencesStore;
 class WebTouchEvent;
 }
 
-namespace WTF {
-template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
-class NativePromise;
-} // namespace WTF
-
 namespace Messages {
 namespace TestWithLegacyReceiver {
 

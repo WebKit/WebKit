@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "Utilities.h"
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace TestWebKitAPI {
 

@@ -547,8 +547,6 @@ def generate_messages_header(receiver):
     result.append(forward_declarations)
     result.append('\n')
 
-    result.append('namespace WTF {\ntemplate<typename ResolveValueT, typename RejectValueT, bool IsExclusive>\nclass NativePromise;\n} // namespace WTF\n\n')
-
     result.append('namespace Messages {\nnamespace %s {\n' % receiver.name)
     result.append('\n')
     result.append('static inline IPC::ReceiverName messageReceiverName()\n')
