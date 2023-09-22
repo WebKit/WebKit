@@ -54,8 +54,6 @@
  * through many bytes to find their target, constants are stored in LEB128, and a myriad of other reasons.
  * For IPInt, we design metadata to act as "supporting information" for the interpreter, allowing it to quickly
  * find important values such as constants, indices, and branch targets.
- *
- * FIXME: We should consider not aligning on Apple ARM64 cores since they don't typically have a penatly for unaligned loads/stores.
  * 
  * 2. Metadata Structure
  * ---------------------
@@ -714,7 +712,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::setGlobal(uint32_t index, Expre
 
 // Loads and Stores
 
-// Implementation status: DONE.
+// Implementation status: UNIMPLEMENTED
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::load(LoadOpType, ExpressionType, ExpressionType&, uint32_t offset)
 {
@@ -729,20 +727,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::store(StoreOpType, ExpressionTy
 
 // Memories
 
-// Implementation status: DONE.
+// Implementation status: UNIMPLEMENTED
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addGrowMemory(ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCurrentMemory(ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addMemoryFill(ExpressionType, ExpressionType, ExpressionType)
-{
-    m_metadata->addLength(getCurrentInstructionLength());
-    return { };
-}
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addMemoryCopy(ExpressionType, ExpressionType, ExpressionType)
-{
-    m_metadata->addLength(getCurrentInstructionLength());
-    return { };
-}
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addMemoryFill(ExpressionType, ExpressionType, ExpressionType) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addMemoryCopy(ExpressionType, ExpressionType, ExpressionType) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addMemoryInit(unsigned dataIndex, ExpressionType, ExpressionType, ExpressionType)
 {
     m_metadata->addLEB128ConstantInt32AndLength(dataIndex, getCurrentInstructionLength());
@@ -756,49 +746,15 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDataDrop(unsigned dataIndex)
 
 // Atomics
 
-// Implementation status: DONE.
+// Implementation status: UNIMPLEMENTED
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t offset)
-{
-    m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t offset)
-{
-    m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset)
-{
-    m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset)
-{
-    m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset)
-{
-    m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset)
-{
-    m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicFence(ExtAtomicOpType, uint8_t)
-{
-    m_metadata->addLength(getCurrentInstructionLength());
-    return { };
-}
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicFence(ExtAtomicOpType, uint8_t) { return { }; }
 
 // GC
 
@@ -979,11 +935,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncSF32(ExpressionType,
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncUF64(ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncUF32(ExpressionType, ExpressionType&) { return { }; }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type)
-{
-    m_metadata->addLength(getCurrentInstructionLength());
-    return { };
-}
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type) { return { }; }
 
 // Conversions
 

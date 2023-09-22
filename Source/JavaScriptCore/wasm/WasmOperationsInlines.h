@@ -571,9 +571,10 @@ static inline int32_t waitImpl(VM& vm, ValueType* pointer, ValueType expectedVal
     return static_cast<int32_t>(WaiterListManager::singleton().waitSync(vm, pointer, expectedValue, timeout));
 }
 
-inline int32_t memoryAtomicWait32(Instance* instance, uint64_t offsetInMemory, int32_t value, int64_t timeoutInNanoseconds)
+inline int32_t memoryAtomicWait32(Instance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds)
 {
     VM& vm = instance->vm();
+    uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
     if (offsetInMemory & (0x4 - 1))
         return -1;
     if (!instance->memory())
@@ -588,14 +589,10 @@ inline int32_t memoryAtomicWait32(Instance* instance, uint64_t offsetInMemory, i
     return waitImpl<int32_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-inline int32_t memoryAtomicWait32(Instance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds)
-{
-    return memoryAtomicWait32(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds);
-}
-
-inline int32_t memoryAtomicWait64(Instance* instance, uint64_t offsetInMemory, int64_t value, int64_t timeoutInNanoseconds)
+inline int32_t memoryAtomicWait64(Instance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds)
 {
     VM& vm = instance->vm();
+    uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
     if (offsetInMemory & (0x8 - 1))
         return -1;
     if (!instance->memory())
@@ -608,11 +605,6 @@ inline int32_t memoryAtomicWait64(Instance* instance, uint64_t offsetInMemory, i
         return -1;
     int64_t* pointer = bitwise_cast<int64_t*>(bitwise_cast<uint8_t*>(instance->memory()->basePointer()) + offsetInMemory);
     return waitImpl<int64_t>(vm, pointer, value, timeoutInNanoseconds);
-}
-
-inline int32_t memoryAtomicWait64(Instance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds)
-{
-    return memoryAtomicWait64(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds);
 }
 
 inline int32_t memoryAtomicNotify(Instance* instance, unsigned base, unsigned offset, int32_t countValue)

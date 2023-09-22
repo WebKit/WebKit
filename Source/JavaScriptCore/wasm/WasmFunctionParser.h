@@ -508,7 +508,7 @@ auto FunctionParser<Context>::truncSaturated(Ext1OpType op, Type returnType, Typ
     TypedExpression value;
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "unary");
 
-    WASM_VALIDATOR_FAIL_IF(value.type() != operandType, "trunc-saturated value type mismatch. Expected: ", operandType, " but expression stack has ", value.type());
+    WASM_VALIDATOR_FAIL_IF(value.type() != operandType, "trunc-saturated value type mismatch");
 
     ExpressionType result;
     WASM_TRY_ADD_TO_CONTEXT(truncSaturated(op, value, result, returnType, operandType));
