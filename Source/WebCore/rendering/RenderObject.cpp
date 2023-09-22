@@ -113,15 +113,19 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 struct SameSizeAsRenderObject : CanMakeWeakPtr<SameSizeAsRenderObject> {
     virtual ~SameSizeAsRenderObject() = default; // Allocate vtable pointer.
 #if ASSERT_ENABLED
-    WeakHashSet<void*> cachedResourceClientAssociatedResources;
+    WeakHashSet<void*> cachedResourceClientAssociatedResources; // CachedImageClient.
 #endif
-    CheckedRef<Node> node;
-    void* pointers[3];
-    CheckedPtr<Layout::Box> layoutBox;
+    uint32_t m_checkedPtrCount; // CanMakeCheckedPtr.
+#if ASSERT_ENABLED && !USE(WEB_THREAD)
+    Ref<Thread> m_thread; // CanMakeCheckedPtr.
+#endif
 #if ASSERT_ENABLED
     unsigned m_debugBitfields : 2;
 #endif
     unsigned m_bitfields;
+    CheckedRef<Node> node;
+    void* pointers[3];
+    CheckedPtr<Layout::Box> layoutBox;
 };
 
 #if CPU(ADDRESS64)
@@ -137,15 +141,15 @@ void RenderObjectDeleter::operator() (RenderObject* renderer) const
 
 RenderObject::RenderObject(Node& node)
     : CachedImageClient()
-    , m_node(node)
-    , m_parent(nullptr)
-    , m_previous(nullptr)
-    , m_next(nullptr)
 #if ASSERT_ENABLED
     , m_hasAXObject(false)
     , m_setNeedsLayoutForbidden(false)
 #endif
     , m_bitfields(node)
+    , m_node(node)
+    , m_parent(nullptr)
+    , m_previous(nullptr)
+    , m_next(nullptr)
 {
     if (RenderView* renderView = node.document().renderView())
         renderView->didCreateRenderer();

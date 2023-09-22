@@ -105,9 +105,10 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderElement);
 
 struct SameSizeAsRenderElement : public RenderObject {
-    unsigned bitfields : 25;
-    void* firstChild;
-    void* lastChild;
+    PackedPtr<RenderObject> firstChild;
+    unsigned bitfields1 : 12;
+    PackedPtr<RenderObject> lastChild;
+    unsigned bitfields2 : 13;
     RenderStyle style;
 };
 
@@ -115,6 +116,7 @@ static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderE
 
 inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderObject(elementOrDocument)
+    , m_firstChild(nullptr)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
@@ -122,6 +124,7 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_hasPausedImageAnimations(false)
     , m_hasCounterNodeMap(false)
     , m_hasContinuationChainNode(false)
+    , m_lastChild(nullptr)
     , m_isContinuation(false)
     , m_isFirstLetter(false)
     , m_renderBlockHasMarginBeforeQuirk(false)
@@ -132,8 +135,6 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_isRegisteredForVisibleInViewportCallback(false)
     , m_visibleInViewportState(static_cast<unsigned>(VisibleInViewportState::Unknown))
     , m_didContributeToVisuallyNonEmptyPixelCount(false)
-    , m_firstChild(nullptr)
-    , m_lastChild(nullptr)
     , m_style(WTFMove(style))
 {
 }
@@ -589,7 +590,7 @@ RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> chil
     }
     if (m_lastChild)
         m_lastChild->setNextSibling(child.get());
-    child->setPreviousSibling(m_lastChild);
+    child->setPreviousSibling(m_lastChild.get());
     m_lastChild = child.get();
     return child.release();
 }

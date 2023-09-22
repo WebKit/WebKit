@@ -25,6 +25,7 @@
 #include "HitTestRequest.h"
 #include "LengthFunctions.h"
 #include "RenderObject.h"
+#include <wtf/Packed.h>
 
 namespace WebCore {
 
@@ -86,8 +87,8 @@ public:
     Element* nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
     Element* generatingElement() const;
 
-    RenderObject* firstChild() const { return m_firstChild; }
-    RenderObject* lastChild() const { return m_lastChild; }
+    RenderObject* firstChild() const { return m_firstChild.get(); }
+    RenderObject* lastChild() const { return m_lastChild.get(); }
     RenderObject* firstInFlowChild() const;
     RenderObject* lastInFlowChild() const;
 
@@ -387,6 +388,7 @@ private:
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();
 
+    PackedPtr<RenderObject> m_firstChild;
     unsigned m_baseTypeFlags : 6;
     unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
@@ -395,6 +397,9 @@ private:
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuationChainNode : 1;
+
+    PackedPtr<RenderObject> m_lastChild;
+
     unsigned m_isContinuation : 1;
     unsigned m_isFirstLetter : 1;
 
@@ -408,9 +413,6 @@ private:
     unsigned m_visibleInViewportState : 2;
 
     unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1;
-
-    RenderObject* m_firstChild;
-    RenderObject* m_lastChild;
 
     RenderStyle m_style;
 };

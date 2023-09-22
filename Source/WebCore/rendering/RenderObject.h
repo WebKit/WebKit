@@ -96,7 +96,7 @@ class PseudoElementRequest;
 }
 
 // Base class for all rendering tree objects.
-class RenderObject : public CachedImageClient {
+class RenderObject : public CachedImageClient, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(RenderObject);
     friend class RenderBlock;
     friend class RenderBlockFlow;
@@ -863,14 +863,6 @@ private:
     void checkBlockPositionedObjectsNeedLayout();
 #endif
 
-    CheckedRef<Node> m_node;
-
-    RenderElement* m_parent;
-    RenderObject* m_previous;
-    RenderObject* m_next;
-
-    CheckedPtr<Layout::Box> m_layoutBox;
-
 #if ASSERT_ENABLED
     bool m_hasAXObject : 1;
     mutable bool m_setNeedsLayoutForbidden : 1;
@@ -991,6 +983,14 @@ private:
     };
 
     RenderObjectBitfields m_bitfields;
+
+    CheckedRef<Node> m_node;
+
+    RenderElement* m_parent;
+    RenderObject* m_previous;
+    RenderObject* m_next;
+
+    CheckedPtr<Layout::Box> m_layoutBox;
 
     // FIXME: This should be RenderElementRareData.
     class RenderObjectRareData {
