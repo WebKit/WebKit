@@ -29,7 +29,7 @@
 
 #import "RemoteLayerTreeViews.h"
 
-@interface WKVideoView : WKCompositingView <WKNativelyInteractible>
+@interface WKVideoView : WKCompositingView
 @end
 
 #endif
