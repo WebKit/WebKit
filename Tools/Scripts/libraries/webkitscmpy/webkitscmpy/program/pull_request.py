@@ -314,10 +314,11 @@ class PullRequest(Command):
         return branch_point
 
     @classmethod
-    def find_existing_pull_request(cls, repository, remote):
+    def find_existing_pull_request(cls, repository, remote, branch=None):
+        branch = branch or repository.branch
         existing_pr = None
         user, _ = remote.credentials(required=False)
-        for pr in remote.pull_requests.find(opened=None, head=repository.branch):
+        for pr in remote.pull_requests.find(opened=None, head=branch):
             existing_pr = pr
             if not existing_pr.opened:
                 continue
