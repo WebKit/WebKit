@@ -28,6 +28,7 @@
 #if HAVE(AVASSETREADER)
 
 #include "ImageDecoder.h"
+#include "ProcessIdentity.h"
 #include "SampleMap.h"
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
@@ -53,7 +54,7 @@ class WebCoreDecompressionSession;
 
 class ImageDecoderAVFObjC : public ImageDecoder {
 public:
-    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner);
     virtual ~ImageDecoderAVFObjC();
 
     WEBCORE_EXPORT static bool supportsMediaType(MediaType);
@@ -94,7 +95,7 @@ public:
     WEBCORE_EXPORT Vector<ImageDecoder::FrameInfo> frameInfos() const;
 
 private:
-    ImageDecoderAVFObjC(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    ImageDecoderAVFObjC(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner);
 
     AVAssetTrack *firstEnabledTrack();
     void readSamples();
@@ -120,6 +121,7 @@ private:
     Lock m_sampleGeneratorLock;
     bool m_isAllDataReceived { false };
     std::optional<IntSize> m_size;
+    ProcessIdentity m_resourceOwner;
 };
 
 }
