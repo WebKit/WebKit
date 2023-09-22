@@ -338,8 +338,8 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
         RangeBoundaryPoint originalEnd(m_end);
 
         // what is the highest node that partially selects the start / end of the range?
-        RefPtr partialStart = highestAncestorUnderCommonRoot(&originalStart.container(), commonRoot.get());
-        RefPtr partialEnd = highestAncestorUnderCommonRoot(&originalEnd.container(), commonRoot.get());
+        RefPtr partialStart = highestAncestorUnderCommonRoot(originalStart.protectedContainer().ptr(), commonRoot.get());
+        RefPtr partialEnd = highestAncestorUnderCommonRoot(originalEnd.protectedContainer().ptr(), commonRoot.get());
 
         // Start and end containers are different.
         // There are three possibilities here:
@@ -615,7 +615,7 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
                     if (result.hasException())
                         return result.releaseException();
                 } else {
-                    auto result = clonedContainer->insertBefore(child, clonedContainer->firstChild());
+                    auto result = clonedContainer->insertBefore(child, clonedContainer->protectedFirstChild());
                     if (result.hasException())
                         return result.releaseException();
                 }
@@ -626,7 +626,7 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
                     if (result.hasException())
                         return result.releaseException();
                 } else {
-                    auto result = clonedContainer->insertBefore(child->cloneNode(true), clonedContainer->firstChild());
+                    auto result = clonedContainer->insertBefore(child->cloneNode(true), clonedContainer->protectedFirstChild());
                     if (result.hasException())
                         return result.releaseException();
                 }
@@ -699,7 +699,7 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
     else
         ++newOffset;
 
-    auto insertResult = parent->insertBefore(node, referenceNode.get());
+    auto insertResult = parent->insertBefore(node, WTFMove(referenceNode));
     if (insertResult.hasException())
         return insertResult.releaseException();
 
@@ -920,7 +920,7 @@ static inline void boundaryNodeWillBeRemoved(RangeBoundaryPoint& boundary, Node&
 {
     if (boundary.childBefore() == &nodeToBeRemoved)
         boundary.childBeforeWillBeRemoved();
-    else if (nodeToBeRemoved.contains(&boundary.container()))
+    else if (nodeToBeRemoved.contains(boundary.protectedContainer().ptr()))
         boundary.setToBeforeNode(nodeToBeRemoved);
 }
 

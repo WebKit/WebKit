@@ -84,6 +84,7 @@ public:
 
     // This is null for anonymous renderers.
     Element* element() const { return downcast<Element>(RenderObject::node()); }
+    RefPtr<Element> protectedElement() const { return element(); }
     Element* nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
     Element* generatingElement() const;
 

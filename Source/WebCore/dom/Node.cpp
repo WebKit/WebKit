@@ -518,11 +518,11 @@ Element* Node::nextElementSibling() const
     return ElementTraversal::nextSibling(*this);
 }
 
-ExceptionOr<void> Node::insertBefore(Node& newChild, Node* refChild)
+ExceptionOr<void> Node::insertBefore(Node& newChild, RefPtr<Node>&& refChild)
 {
     if (!is<ContainerNode>(*this))
         return Exception { HierarchyRequestError };
-    return downcast<ContainerNode>(*this).insertBefore(newChild, refChild);
+    return downcast<ContainerNode>(*this).insertBefore(newChild, WTFMove(refChild));
 }
 
 ExceptionOr<void> Node::replaceChild(Node& newChild, Node& oldChild)
@@ -623,7 +623,7 @@ ExceptionOr<void> Node::before(FixedVector<NodeOrString>&& nodeOrStringVector)
     else
         viablePreviousSibling = parent->firstChild();
 
-    return parent->insertBefore(*node, viablePreviousSibling.get());
+    return parent->insertBefore(*node, WTFMove(viablePreviousSibling));
 }
 
 ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
@@ -642,7 +642,7 @@ ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
     if (!node)
         return { };
 
-    return parent->insertBefore(*node, viableNextSibling.get());
+    return parent->insertBefore(*node, WTFMove(viableNextSibling));
 }
 
 ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrString>&& nodeOrStringVector)
@@ -665,7 +665,7 @@ ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrString>&& nodeOrStringVect
     }
 
     if (auto node = result.releaseReturnValue())
-        return parent->insertBefore(*node, viableNextSibling.get());
+        return parent->insertBefore(*node, WTFMove(viableNextSibling));
     return { };
 }
 
@@ -1316,8 +1316,8 @@ TreeScope& Node::treeScopeForSVGReferences() const
 {
     if (auto* shadowRoot = containingShadowRoot(); shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent) {
         if (shadowRoot->host() && shadowRoot->host()->elementName() == ElementNames::SVG::use) {
-            ASSERT(m_treeScope->parentTreeScope());
-            return *m_treeScope->parentTreeScope();
+            ASSERT(treeScope().parentTreeScope());
+            return *treeScope().parentTreeScope();
         }
     }
     return treeScope();
@@ -2491,21 +2491,21 @@ void Node::defaultEventHandler(Event& event)
     auto& eventNames = WebCore::eventNames();
     if (eventType == eventNames.keydownEvent || eventType == eventNames.keypressEvent || eventType == eventNames.keyupEvent) {
         if (is<KeyboardEvent>(event)) {
-            if (auto* frame = document().frame())
+            if (RefPtr frame = document().frame())
                 frame->eventHandler().defaultKeyboardEventHandler(downcast<KeyboardEvent>(event));
         }
     } else if (eventType == eventNames.clickEvent) {
         dispatchDOMActivateEvent(event);
 #if ENABLE(CONTEXT_MENUS)
     } else if (eventType == eventNames.contextmenuEvent) {
-        if (auto* frame = document().frame()) {
+        if (RefPtr frame = document().frame()) {
             if (auto* page = frame->page())
                 page->contextMenuController().handleContextMenuEvent(event);
         }
 #endif
     } else if (eventType == eventNames.textInputEvent) {
         if (is<TextEvent>(event)) {
-            if (auto* frame = document().frame())
+            if (RefPtr frame = document().frame())
                 frame->eventHandler().defaultTextInputEventHandler(downcast<TextEvent>(event));
         }
 #if ENABLE(PAN_SCROLLING)
@@ -2519,7 +2519,7 @@ void Node::defaultEventHandler(Event& event)
                 renderer = renderer->parent();
 
             if (renderer) {
-                if (auto* frame = document().frame())
+                if (RefPtr frame = document().frame())
                     frame->eventHandler().startPanScrolling(downcast<RenderBox>(*renderer));
             }
         }
@@ -2532,7 +2532,7 @@ void Node::defaultEventHandler(Event& event)
             startNode = startNode->parentOrShadowHostNode();
         
         if (startNode && startNode->renderer()) {
-            if (auto* frame = document().frame())
+            if (RefPtr frame = document().frame())
                 frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
         }
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
@@ -2553,8 +2553,10 @@ void Node::defaultEventHandler(Event& event)
             renderer = renderer->parent();
 
         if (renderer && renderer->node()) {
-            if (auto* frame = document().frame())
-                frame->eventHandler().defaultTouchEventHandler(*renderer->node(), downcast<TouchEvent>(event));
+            if (RefPtr frame = document().frame()) {
+                RefPtr rendererNode = renderer->node();
+                frame->eventHandler().defaultTouchEventHandler(*rendererNode, downcast<TouchEvent>(event));
+            }
         }
 #endif
     }

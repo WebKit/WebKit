@@ -240,7 +240,7 @@ ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element,
     );
 
 
-    return insertBefore(toInsert, beforeElement.get());
+    return insertBefore(toInsert, WTFMove(beforeElement));
 }
 
 void HTMLSelectElement::remove(int optionIndex)

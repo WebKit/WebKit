@@ -136,6 +136,8 @@ public:
 private:
     void enforceEndInvariant();
 
+    RefPtr<Node> protectedNode() const { return m_node; }
+
     RefPtr<Node> m_node;
     RefPtr<Node> m_pastLastNode;
 };

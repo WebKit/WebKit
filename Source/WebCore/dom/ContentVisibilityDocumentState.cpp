@@ -71,14 +71,16 @@ private:
 
 void ContentVisibilityDocumentState::observe(Element& element)
 {
-    auto& state = element.document().contentVisibilityDocumentState();
-    if (auto* intersectionObserver = state.intersectionObserver(element.document()))
+    Ref document = element.document();
+    auto& state = document->contentVisibilityDocumentState();
+    if (auto* intersectionObserver = state.intersectionObserver(document))
         intersectionObserver->observe(element);
 }
 
 void ContentVisibilityDocumentState::unobserve(Element& element)
 {
-    auto& state = element.document().contentVisibilityDocumentState();
+    Ref document = element.document();
+    auto& state = document->contentVisibilityDocumentState();
     if (auto& intersectionObserver = state.m_observer) {
         intersectionObserver->unobserve(element);
         state.removeViewportProximity(element);

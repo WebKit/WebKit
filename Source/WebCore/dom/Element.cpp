@@ -635,7 +635,7 @@ Ref<Attr> Element::detachAttribute(unsigned index)
     if (attrNode)
         detachAttrNodeFromElementWithValue(attrNode.get(), attribute.value());
     else
-        attrNode = Attr::create(document(), attribute.name(), attribute.value());
+        attrNode = Attr::create(protectedDocument(), attribute.name(), attribute.value());
 
     removeAttributeInternal(index, InSynchronizationOfLazyAttribute::No);
     return attrNode.releaseNonNull();
@@ -1697,7 +1697,7 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
         for (auto* positionedBox : *viewPositionedObjects) {
             if (positionedBox == &renderBox)
                 continue;
-            if (positionedBox->isFixedPositioned() && renderBox.element()->contains(positionedBox->element()))
+            if (positionedBox->isFixedPositioned() && renderBox.element()->contains(positionedBox->protectedElement().get()))
                 return false;
         }
     }
@@ -1713,7 +1713,7 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
             for (auto* positionedBox : *positionedObjects) {
                 if (positionedBox == &renderBox)
                     continue;
-                if (renderBox.element()->contains(positionedBox->element()))
+                if (renderBox.protectedElement()->contains(positionedBox->protectedElement().get()))
                     return false;
             }
         }
@@ -2655,7 +2655,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     if (parentOfInsertedTree.isInTreeScope()) {
         bool becomeConnected = insertionType.connectedToDocument;
         auto* newScope = &parentOfInsertedTree.treeScope();
-        auto* newDocument = becomeConnected ? dynamicDowncast<HTMLDocument>(newScope->documentScope()) : nullptr;
+        RefPtr newDocument = becomeConnected ? dynamicDowncast<HTMLDocument>(newScope->documentScope()) : nullptr;
         if (!insertionType.treeScopeChanged)
             newScope = nullptr;
 
@@ -3231,7 +3231,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), attribute.value());
         else
-            oldAttrNode = Attr::create(document(), attrNode.qualifiedName(), attribute.value());
+            oldAttrNode = Attr::create(protectedDocument(), attrNode.qualifiedName(), attribute.value());
 
         attachAttributeNodeIfNeeded(attrNode);
 
@@ -3272,7 +3272,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
             if (oldAttrNode)
                 detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData.attributeAt(index).value());
             else
-                oldAttrNode = Attr::create(document(), attrNode.qualifiedName(), elementData.attributeAt(index).value());
+                oldAttrNode = Attr::create(protectedDocument(), attrNode.qualifiedName(), elementData.attributeAt(index).value());
         }
     }
 
@@ -4752,7 +4752,7 @@ inline void Element::updateId(const AtomString& oldId, const AtomString& newId, 
         return;
     if (!is<HTMLDocument>(document()))
         return;
-    updateIdForDocument(downcast<HTMLDocument>(document()), oldId, newId, HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute);
+    updateIdForDocument(downcast<HTMLDocument>(protectedDocument()), oldId, newId, HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute);
 }
 
 void Element::updateIdForTreeScope(TreeScope& scope, const AtomString& oldId, const AtomString& newId, NotifyObservers notifyObservers)
@@ -4821,27 +4821,27 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomString& o
     if (auto recipients = MutationObserverInterestGroup::createForAttributesMutation(*this, name))
         recipients->enqueueMutationRecord(MutationRecord::createAttributes(*this, name, oldValue));
 
-    InspectorInstrumentation::willModifyDOMAttr(document(), *this, oldValue, newValue);
+    InspectorInstrumentation::willModifyDOMAttr(protectedDocument(), *this, oldValue, newValue);
 }
 
 void Element::didAddAttribute(const QualifiedName& name, const AtomString& value)
 {
     notifyAttributeChanged(name, nullAtom(), value);
-    InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.toAtomString(), value);
+    InspectorInstrumentation::didModifyDOMAttr(protectedDocument(), *this, name.toAtomString(), value);
     dispatchSubtreeModifiedEvent();
 }
 
 void Element::didModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
 {
     notifyAttributeChanged(name, oldValue, newValue);
-    InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.toAtomString(), newValue);
+    InspectorInstrumentation::didModifyDOMAttr(protectedDocument(), *this, name.toAtomString(), newValue);
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
 void Element::didRemoveAttribute(const QualifiedName& name, const AtomString& oldValue)
 {
     notifyAttributeChanged(name, oldValue, nullAtom());
-    InspectorInstrumentation::didRemoveDOMAttr(document(), *this, name.toAtomString());
+    InspectorInstrumentation::didRemoveDOMAttr(protectedDocument(), *this, name.toAtomString());
     dispatchSubtreeModifiedEvent();
 }
 
@@ -5129,7 +5129,7 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
     }
 
     if (equalLettersIgnoringASCIICase(where, "afterbegin"_s)) {
-        auto result = insertBefore(newChild, firstChild());
+        auto result = insertBefore(newChild, protectedFirstChild());
         if (result.hasException())
             return result.releaseException();
         return newChild.ptr();
@@ -5146,7 +5146,7 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
         auto* parent = this->parentNode();
         if (!parent)
             return nullptr;
-        auto result = parent->insertBefore(newChild, nextSibling());
+        auto result = parent->insertBefore(newChild, protectedNextSibling());
         if (result.hasException())
             return result.releaseException();
         return newChild.ptr();

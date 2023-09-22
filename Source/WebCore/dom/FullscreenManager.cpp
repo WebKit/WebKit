@@ -90,7 +90,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         m_fullscreenErrorEventTargetQueue.append(WTFMove(element));
         if (promise)
             promise->reject(Exception { TypeError });
-        m_document.eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
+        protectedDocument()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
             if (weakThis)
                 weakThis->notifyAboutFullscreenChangeOrError();
         });
@@ -166,7 +166,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
     // We cache the top document here, so we still have the correct one when we exit fullscreen after navigation.
     m_topDocument = document().topDocument();
 
-    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, element = WTFMove(element), promise = WTFMove(promise), checkType, hasKeyboardAccess, failedPreflights, identifier] () mutable {
+    protectedDocument()->eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, element = WTFMove(element), promise = WTFMove(promise), checkType, hasKeyboardAccess, failedPreflights, identifier] () mutable {
         if (!weakThis) {
             if (promise)
                 promise->reject(Exception { TypeError });
@@ -189,7 +189,8 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         }
 
         // Don't allow fullscreen if document is hidden.
-        if (document().hidden()) {
+        auto document = protectedDocument();
+        if (document->hidden()) {
             ERROR_LOG(identifier, "task - document hidden; failing.");
             failedPreflights(WTFMove(element), WTFMove(promise));
             return;
@@ -211,7 +212,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
 
         // The context object's node document, or an ancestor browsing context's document does not have
         // the fullscreen enabled flag set.
-        if (checkType == EnforceIFrameAllowFullscreenRequirement && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, document())) {
+        if (checkType == EnforceIFrameAllowFullscreenRequirement && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, document)) {
             ERROR_LOG(identifier, "task - ancestor document does not enable fullscreen; failing.");
             failedPreflights(WTFMove(element), WTFMove(promise));
             return;
@@ -237,7 +238,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         // 5. Return, and run the remaining steps asynchronously.
         // 6. Optionally, perform some animation.
         m_areKeysEnabledInFullscreen = hasKeyboardAccess;
-        m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WTFMove(weakThis), promise = WTFMove(promise), element = WTFMove(element), failedPreflights = WTFMove(failedPreflights), identifier] () mutable {
+        document->eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WTFMove(weakThis), promise = WTFMove(promise), element = WTFMove(element), failedPreflights = WTFMove(failedPreflights), identifier] () mutable {
             if (!weakThis) {
                 if (promise)
                     promise->reject(Exception { TypeError });
@@ -245,7 +246,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
             }
 
             auto page = this->page();
-            if (!page || document().hidden() || m_pendingFullscreenElement != element.ptr() || !element->isConnected()) {
+            if (!page || this->document().hidden() || m_pendingFullscreenElement != element.ptr() || !element->isConnected()) {
                 ERROR_LOG(identifier, "task - page, document, or element mismatch; failing.");
                 failedPreflights(WTFMove(element), WTFMove(promise));
                 return;
@@ -289,7 +290,7 @@ void FullscreenManager::cancelFullscreen()
 
     m_pendingExitFullscreen = true;
 
-    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, topDocument = WTFMove(topDocument), identifier = LOGIDENTIFIER] {
+    protectedDocument()->eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, topDocument = WTFMove(topDocument), identifier = LOGIDENTIFIER] {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -356,7 +357,7 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
     m_pendingExitFullscreen = true;
 
     // Return promise, and run the remaining steps in parallel.
-    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, promise = WTFMove(promise), weakThis = WeakPtr { *this }, mode, identifier = LOGIDENTIFIER] () mutable {
+    exitingDocument->eventLoop().queueTask(TaskSource::MediaElement, [this, promise = WTFMove(promise), weakThis = WeakPtr { *this }, mode, identifier = LOGIDENTIFIER] () mutable {
         if (!weakThis) {
             if (promise)
                 promise->resolve();
@@ -393,7 +394,7 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
         if (mode == ExitMode::Resize)
             page->chrome().client().exitFullScreenForElement(m_fullscreenElement.get());
         else {
-            finishExitFullscreen(document(), ExitMode::NoResize);
+            finishExitFullscreen(protectedDocument(), ExitMode::NoResize);
 
             m_pendingFullscreenElement = fullscreenElement();
             if (m_pendingFullscreenElement)
@@ -457,7 +458,7 @@ bool FullscreenManager::isFullscreenEnabled() const
     // browsing context's documents have their fullscreen enabled flag set, or false otherwise.
 
     // Top-level browsing contexts are implied to have their allowFullscreen attribute set.
-    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, document());
+    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, protectedDocument());
 }
 
 static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution)

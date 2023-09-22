@@ -78,6 +78,7 @@ public:
     inline NodeListInvalidationType invalidationType() const;
     inline CollectionType type() const;
     inline ContainerNode& ownerNode() const;
+    inline Ref<ContainerNode> protectedOwnerNode() const;
     inline ContainerNode& rootNode() const;
     inline void invalidateCacheForAttribute(const QualifiedName& attributeName);
     WEBCORE_EXPORT virtual void invalidateCacheForDocument(Document&);
@@ -120,6 +121,11 @@ inline size_t CollectionNamedElementCache::memoryCost() const
 }
 
 inline ContainerNode& HTMLCollection::ownerNode() const
+{
+    return m_ownerNode;
+}
+
+inline Ref<ContainerNode> HTMLCollection::protectedOwnerNode() const
 {
     return m_ownerNode;
 }

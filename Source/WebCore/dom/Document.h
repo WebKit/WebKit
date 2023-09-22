@@ -1622,6 +1622,7 @@ public:
 #endif
 
     Logger& logger();
+    const Logger& logger() const { return const_cast<Document&>(*this).logger(); }
     WEBCORE_EXPORT static const Logger& sharedLogger();
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.

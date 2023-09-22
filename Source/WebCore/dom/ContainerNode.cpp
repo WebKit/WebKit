@@ -100,9 +100,9 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         ASSERT(!weakPtrFactory().isInitialized());
 #endif
         bool hadElementChild = false;
-        while (RefPtr<Node> child = m_firstChild) {
+        while (RefPtr child = m_firstChild) {
             hadElementChild |= is<Element>(*child);
-            removeBetween(nullptr, child->nextSibling(), *child);
+            removeBetween(nullptr, child->protectedNextSibling().get(), *child);
         }
         document().incDOMTreeVersion();
         return hadElementChild ? DidRemoveElements::Yes : DidRemoveElements::No;
@@ -141,7 +141,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
 
         document().nodeChildrenWillBeRemoved(*this);
 
-        while (RefPtr<Node> child = m_firstChild) {
+        while (RefPtr child = m_firstChild) {
             if (is<Element>(*child))
                 hadElementChild = true;
 
@@ -467,14 +467,14 @@ static inline ExceptionOr<void> checkPreReplacementValidity(ContainerNode& newPa
     return checkAcceptChild(newParent, newChild, &oldChild, Document::AcceptChildOperation::Replace, shouldValidateChildParent);
 }
 
-ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, Node* refChild)
+ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& refChild)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
     // Make sure adding the new child is OK.
-    auto validityCheckResult = ensurePreInsertionValidity(newChild, refChild);
+    auto validityCheckResult = ensurePreInsertionValidity(newChild, refChild.get());
     if (validityCheckResult.hasException())
         return validityCheckResult.releaseException();
 
@@ -486,7 +486,7 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, Node* refChild)
         return appendChildWithoutPreInsertionValidityCheck(newChild);
 
     Ref<ContainerNode> protectedThis(*this);
-    Ref<Node> next(*refChild);
+    Ref next = refChild.releaseNonNull();
 
     NodeVector targets;
     auto removeResult = removeSelfOrChildNodesForInsertion(newChild, targets);
@@ -556,9 +556,9 @@ void ContainerNode::appendChildCommon(Node& child)
 
     child.setParentNode(this);
 
-    if (m_lastChild) {
-        child.setPreviousSibling(m_lastChild);
-        m_lastChild->setNextSibling(&child);
+    if (auto lastChild = protectedLastChild()) {
+        child.setPreviousSibling(lastChild.get());
+        lastChild->setNextSibling(&child);
     } else
         m_firstChild = &child;
 
@@ -1080,7 +1080,7 @@ ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrString>&& vector)
     if (!node)
         return { };
 
-    return insertBefore(*node, firstChild());
+    return insertBefore(*node, protectedFirstChild());
 }
 
 // https://dom.spec.whatwg.org/#dom-parentnode-replacechildren

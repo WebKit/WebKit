@@ -669,7 +669,10 @@ void TextFieldInputType::updatePlaceholderText()
     }
     if (!m_placeholder) {
         m_placeholder = TextControlPlaceholderElement::create(element()->document());
-        element()->userAgentShadowRoot()->insertBefore(*m_placeholder, m_container ? m_container.get() : innerTextElement().get());
+        if (m_container)
+            element()->userAgentShadowRoot()->insertBefore(*m_placeholder, m_container.copyRef());
+        else
+            element()->userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement());
     }
     m_placeholder->setInnerText(WTFMove(placeholderText));
 }

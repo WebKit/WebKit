@@ -41,8 +41,10 @@ public:
     virtual ~ContainerNode();
 
     Node* firstChild() const { return m_firstChild; }
+    RefPtr<Node> protectedFirstChild() const { return m_firstChild; }
     static ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
     Node* lastChild() const { return m_lastChild; }
+    RefPtr<Node> protectedLastChild() const { return m_lastChild; }
     static ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
     bool hasChildNodes() const { return m_firstChild; }
     bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
@@ -53,7 +55,7 @@ public:
     WEBCORE_EXPORT unsigned countChildNodes() const;
     WEBCORE_EXPORT Node* traverseToChildAt(unsigned) const;
 
-    ExceptionOr<void> insertBefore(Node& newChild, Node* refChild);
+    ExceptionOr<void> insertBefore(Node& newChild, RefPtr<Node>&& refChild);
     ExceptionOr<void> replaceChild(Node& newChild, Node& oldChild);
     WEBCORE_EXPORT ExceptionOr<void> removeChild(Node& child);
     WEBCORE_EXPORT ExceptionOr<void> appendChild(Node& newChild);
@@ -278,6 +280,13 @@ private:
     Vector<RefPtr<Node>> m_snapshot; // Lazily instantiated.
     ChildNodesLazySnapshot* m_nextSnapshot;
 };
+
+inline void Node::setParentNode(ContainerNode* parent)
+{
+    ASSERT(isMainThread());
+    m_parentNode = parent;
+    m_refCountAndParentBit = (m_refCountAndParentBit & s_refCountMask) | !!parent;
+}
 
 inline RefPtr<ContainerNode> Node::protectedParentNode() const
 {

@@ -150,7 +150,8 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
             items.append(DataTransferItem::create(*this, lowercasedType));
     }
 
-    for (auto& file : m_dataTransfer.files(document()).files())
+    RefPtr document { this->document() };
+    for (auto& file : m_dataTransfer.files(*document).files())
         items.append(DataTransferItem::create(*this, file->type(), file.copyRef()));
 
     m_items = WTFMove(items);

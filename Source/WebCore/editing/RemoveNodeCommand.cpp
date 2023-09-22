@@ -62,7 +62,7 @@ void RemoveNodeCommand::doUnapply()
     if (!parent || !parent->hasEditableStyle())
         return;
 
-    parent->insertBefore(m_node, refChild.get());
+    parent->insertBefore(m_node, WTFMove(refChild));
 }
 
 #ifndef NDEBUG

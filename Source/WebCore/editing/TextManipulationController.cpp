@@ -939,7 +939,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         auto parentContainer = insertion.parentIfDifferentFromCommonAncestor;
         if (!parentContainer) {
             parentContainer = commonAncestor;
-            parentContainer->insertBefore(insertion.child, insertionPointNode.get());
+            parentContainer->insertBefore(insertion.child, insertionPointNode.copyRef());
         } else
             parentContainer->appendChild(insertion.child);
 

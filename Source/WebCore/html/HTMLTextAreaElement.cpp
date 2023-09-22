@@ -519,7 +519,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
     }
     if (!m_placeholder) {
         m_placeholder = TextControlPlaceholderElement::create(document());
-        userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->nextSibling());
+        userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->protectedNextSibling());
     }
     m_placeholder->setInnerText(String { placeholderText });
 }

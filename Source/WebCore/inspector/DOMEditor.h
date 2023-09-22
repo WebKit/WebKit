@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class ContainerNode;
 class Element;
 class InspectorHistory;
 class Node;
@@ -47,18 +48,18 @@ public:
     explicit DOMEditor(InspectorHistory&);
     ~DOMEditor();
 
-    ExceptionOr<void> insertBefore(Node& parentNode, Ref<Node>&&, Node* anchorNode);
-    ExceptionOr<void> removeChild(Node& parentNode, Node&);
+    ExceptionOr<void> insertBefore(ContainerNode& parentNode, Ref<Node>&&, Node* anchorNode);
+    ExceptionOr<void> removeChild(ContainerNode& parentNode, Node&);
     ExceptionOr<void> setAttribute(Element&, const AtomString& name, const AtomString& value);
     ExceptionOr<void> removeAttribute(Element&, const AtomString& name);
     ExceptionOr<void> setOuterHTML(Node&, const String& html, Node*& newNode);
     ExceptionOr<void> replaceWholeText(Text&, const String& text);
-    ExceptionOr<void> replaceChild(Node& parentNode, Ref<Node>&& newNode, Node& oldNode);
-    ExceptionOr<void> setNodeValue(Node& parentNode, const String& value);
+    ExceptionOr<void> replaceChild(ContainerNode& parentNode, Ref<Node>&& newNode, Node& oldNode);
+    ExceptionOr<void> setNodeValue(Node&, const String& value);
     ExceptionOr<void> insertAdjacentHTML(Element&, const String& where, const String& html);
 
-    bool insertBefore(Node& parentNode, Ref<Node>&&, Node* anchorNode, ErrorString&);
-    bool removeChild(Node& parentNode, Node&, ErrorString&);
+    bool insertBefore(ContainerNode& parentNode, Ref<Node>&&, Node* anchorNode, ErrorString&);
+    bool removeChild(ContainerNode& parentNode, Node&, ErrorString&);
     bool setAttribute(Element&, const AtomString& name, const AtomString& value, ErrorString&);
     bool removeAttribute(Element&, const AtomString& name, ErrorString&);
     bool setOuterHTML(Node&, const String& html, Node*& newNode, ErrorString&);

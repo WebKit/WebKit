@@ -1129,7 +1129,7 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
 
 Ref<DocumentFragment> Document::createDocumentFragment()
 {
-    return DocumentFragment::create(document());
+    return DocumentFragment::create(*this);
 }
 
 Ref<Text> Document::createTextNode(String&& data)
@@ -1835,8 +1835,9 @@ void Document::setTitle(String&& title)
     RefPtr element = documentElement();
     if (is<SVGSVGElement>(element)) {
         if (!m_titleElement) {
-            m_titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
-            element->insertBefore(*m_titleElement, element->firstChild());
+            auto titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
+            m_titleElement = titleElement.copyRef();
+            element->insertBefore(titleElement, element->protectedFirstChild());
         }
         // insertBefore above may have ran scripts which removed m_titleElement.
         if (m_titleElement)
@@ -6868,7 +6869,8 @@ bool Document::isSecureContext() const
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (!isDocumentSecure(*localFrame->document()))
+        Ref<Document> ancestorDocument = *localFrame->document();
+        if (!isDocumentSecure(ancestorDocument))
             return false;
     }
 
