@@ -124,6 +124,24 @@ RubyFormattingContext::OverUnder RubyFormattingContext::annotationExtent(const B
     return { { }, annotationBoxLogicalHeight };
 }
 
+InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineDisplay::Boxes& boxes)
+{
+    UNUSED_PARAM(rubyBaseLayoutBox);
+    UNUSED_PARAM(rubyBaseContentStartIndex);
+    UNUSED_PARAM(boxes);
+
+    return { };
+}
+
+InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, size_t rubyBaseContentEndIndex, const InlineDisplay::Boxes& boxes)
+{
+    UNUSED_PARAM(rubyBaseLayoutBox);
+    UNUSED_PARAM(rubyBaseContentEndIndex);
+    UNUSED_PARAM(boxes);
+
+    return { };
+}
+
 void RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth)
 {
     // https://drafts.csswg.org/css-ruby/#interlinear-inline

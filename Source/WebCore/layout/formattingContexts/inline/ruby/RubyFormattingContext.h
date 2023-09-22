@@ -44,6 +44,9 @@ public:
     OverUnder annotationExtent(const Box& rubyBaseLayoutBox);
     InlineLayoutPoint annotationPosition(const Box& rubyBaseLayoutBox);
 
+    InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineDisplay::Boxes&);
+    InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, size_t rubyBaseContentEndIndex, const InlineDisplay::Boxes&);
+
 private:
     size_t layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart, const InlineItems&);
     void applyRubyAlign(Line&, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth);
