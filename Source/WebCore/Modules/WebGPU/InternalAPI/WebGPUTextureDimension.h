@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -37,16 +36,3 @@ enum class TextureDimension : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::TextureDimension> {
-    using values = EnumValues<
-        WebCore::WebGPU::TextureDimension,
-        WebCore::WebGPU::TextureDimension::_1d,
-        WebCore::WebGPU::TextureDimension::_2d,
-        WebCore::WebGPU::TextureDimension::_3d
-    >;
-};
-
-} // namespace WTF

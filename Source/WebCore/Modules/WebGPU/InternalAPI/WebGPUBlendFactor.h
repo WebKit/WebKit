@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -47,26 +46,3 @@ enum class BlendFactor : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::BlendFactor> {
-    using values = EnumValues<
-        WebCore::WebGPU::BlendFactor,
-        WebCore::WebGPU::BlendFactor::Zero,
-        WebCore::WebGPU::BlendFactor::One,
-        WebCore::WebGPU::BlendFactor::Src,
-        WebCore::WebGPU::BlendFactor::OneMinusSrc,
-        WebCore::WebGPU::BlendFactor::SrcAlpha,
-        WebCore::WebGPU::BlendFactor::OneMinusSrcAlpha,
-        WebCore::WebGPU::BlendFactor::Dst,
-        WebCore::WebGPU::BlendFactor::OneMinusDst,
-        WebCore::WebGPU::BlendFactor::DstAlpha,
-        WebCore::WebGPU::BlendFactor::OneMinusDstAlpha,
-        WebCore::WebGPU::BlendFactor::SrcAlphaSaturated,
-        WebCore::WebGPU::BlendFactor::Constant,
-        WebCore::WebGPU::BlendFactor::OneMinusConstant
-    >;
-};
-
-} // namespace WTF

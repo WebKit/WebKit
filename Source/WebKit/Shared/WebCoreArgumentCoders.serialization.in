@@ -2854,7 +2854,7 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
     VeryHigh,
 };
 
-[Nested] enum class WebCore::ResourceResponseBase::Type : uint8_t {
+[Nested] enum class WebCore::ResourceResponseBaseType : uint8_t {
     Basic,
     Cors,
     Default,
@@ -2863,14 +2863,14 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
     Opaqueredirect
 };
 
-[Nested] enum class WebCore::ResourceResponseBase::Tainting : uint8_t {
+[Nested] enum class WebCore::ResourceResponseBaseTainting : uint8_t {
     Basic,
     Cors,
     Opaque,
     Opaqueredirect
 };
 
-[Nested] enum class WebCore::ResourceResponseBase::Source : uint8_t {
+[Nested] enum class WebCore::ResourceResponseBaseSource : uint8_t {
     Unknown,
     Network,
     DiskCache,
@@ -2882,6 +2882,10 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
     DOMCache,
     InspectorOverride
 };
+
+using WebCore::ResourceResponseBase::Type = WebCore::ResourceResponseBaseType;
+using WebCore::ResourceResponseBase::Tainting = WebCore::ResourceResponseBaseTainting;
+using WebCore::ResourceResponseBase::Source = WebCore::ResourceResponseBaseSource;
 
 [Nested] struct WebCore::ResourceResponseBase::ResponseData {
     URL m_url;
@@ -2914,7 +2918,7 @@ class WebCore::ResourceResponse : WebCore::ResourceResponseBase {
 }
 
 header: <WebCore/ResourceResponseBase.h>
-[Nested] struct WebCore::ResourceResponseBase::CrossThreadData {
+[CustomHeader] struct WebCore::ResourceResponseBaseCrossThreadData {
     URL url;
     String mimeType;
     long long expectedContentLength;
@@ -2933,6 +2937,8 @@ header: <WebCore/ResourceResponseBase.h>
     bool isRangeRequested;
     std::optional<WebCore::CertificateInfo> certificateInfo;
 };
+
+using WebCore::ResourceResponseBase::CrossThreadData = WebCore::ResourceResponseBaseCrossThreadData;
 
 enum class WebCore::ReferrerPolicy : uint8_t {
     EmptyString,
@@ -5922,6 +5928,7 @@ struct WebCore::PrewarmInformation {
 };
 
 using WebCore::PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<WebCore::PlatformLayerIdentifierType>>;
+using WebCore::ScriptExecutionContextIdentifier = ProcessQualified<WTF::UUID>;
 
 header: <WebCore/FontSelectionAlgorithm.h>
 using WebCore::FontSelectionValue::BackingType = int16_t;

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -37,16 +36,3 @@ enum class CompilationMessageType : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::CompilationMessageType> {
-    using values = EnumValues<
-        WebCore::WebGPU::CompilationMessageType,
-        WebCore::WebGPU::CompilationMessageType::Error,
-        WebCore::WebGPU::CompilationMessageType::Warning,
-        WebCore::WebGPU::CompilationMessageType::Info
-    >;
-};
-
-} // namespace WTF

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -36,15 +35,3 @@ enum class VertexStepMode : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::VertexStepMode> {
-    using values = EnumValues<
-        WebCore::WebGPU::VertexStepMode,
-        WebCore::WebGPU::VertexStepMode::Vertex,
-        WebCore::WebGPU::VertexStepMode::Instance
-    >;
-};
-
-} // namespace WTF

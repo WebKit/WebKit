@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -37,16 +36,3 @@ enum class BufferBindingType : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::BufferBindingType> {
-    using values = EnumValues<
-        WebCore::WebGPU::BufferBindingType,
-        WebCore::WebGPU::BufferBindingType::Uniform,
-        WebCore::WebGPU::BufferBindingType::Storage,
-        WebCore::WebGPU::BufferBindingType::ReadOnlyStorage
-    >;
-};
-
-} // namespace WTF
