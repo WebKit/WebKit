@@ -4,19 +4,19 @@ PASS circle(50px at 50% 50%) - inline
 PASS circle(50% at 50% 50%) - inline
 PASS circle(closest-side at 50% 50%) - inline
 PASS circle(farthest-side at 50% 50%) - inline
-FAIL circle() - inline assert_equals: expected "circle()" but got "circle(at 50% 50%)"
-FAIL circle(50px) - inline assert_equals: expected "circle(50px)" but got "circle(50px at 50% 50%)"
-FAIL circle(50%) - inline assert_equals: expected "circle(50%)" but got "circle(50% at 50% 50%)"
-FAIL circle(closest-side) - inline assert_equals: expected "circle()" but got "circle(at 50% 50%)"
-FAIL circle(farthest-side) - inline assert_equals: expected "circle(farthest-side)" but got "circle(farthest-side at 50% 50%)"
+PASS circle() - inline
+PASS circle(50px) - inline
+PASS circle(50%) - inline
+PASS circle(closest-side) - inline
+PASS circle(farthest-side) - inline
 PASS circle(at 50% 50%) - computed
 PASS circle(50px at 50% 50%) - computed
 PASS circle(50% at 50% 50%) - computed
 PASS circle(closest-side at 50% 50%) - computed
 PASS circle(farthest-side at 50% 50%) - computed
-FAIL circle() - computed assert_equals: expected "circle()" but got "circle(at 50% 50%)"
-FAIL circle(50px) - computed assert_equals: expected "circle(50px)" but got "circle(50px at 50% 50%)"
-FAIL circle(50%) - computed assert_equals: expected "circle(50%)" but got "circle(50% at 50% 50%)"
-FAIL circle(closest-side) - computed assert_equals: expected "circle()" but got "circle(at 50% 50%)"
-FAIL circle(farthest-side) - computed assert_equals: expected "circle(farthest-side)" but got "circle(farthest-side at 50% 50%)"
+PASS circle() - computed
+PASS circle(50px) - computed
+PASS circle(50%) - computed
+PASS circle(closest-side) - computed
+PASS circle(farthest-side) - computed
 

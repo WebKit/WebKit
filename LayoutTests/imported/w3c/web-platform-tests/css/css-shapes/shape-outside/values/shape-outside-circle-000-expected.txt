@@ -1,10 +1,10 @@
 
-FAIL No arguments - inline assert_equals: expected "circle()" but got "circle(at 50% 50%)"
-FAIL Radial argument only - inline assert_equals: expected "circle(50px)" but got "circle(50px at 50% 50%)"
+PASS No arguments - inline
+PASS Radial argument only - inline
 PASS Position argument only - inline
 PASS Radial and position argument - inline
-FAIL No arguments - computed assert_equals: expected "circle()" but got "circle(at 50% 50%)"
-FAIL Radial argument only - computed assert_equals: expected "circle(50px)" but got "circle(50px at 50% 50%)"
+PASS No arguments - computed
+PASS Radial argument only - computed
 PASS Position argument only - computed
 PASS Radial and position argument - computed
 

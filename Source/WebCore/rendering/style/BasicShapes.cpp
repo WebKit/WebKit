@@ -169,7 +169,8 @@ bool BasicShapeCircle::operator==(const BasicShape& other) const
     auto& otherCircle = downcast<BasicShapeCircle>(other);
     return m_centerX == otherCircle.m_centerX
         && m_centerY == otherCircle.m_centerY
-        && m_radius == otherCircle.m_radius;
+        && m_radius == otherCircle.m_radius
+        && positionWasOmitted() == otherCircle.positionWasOmitted();
 }
 
 float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight, FloatPoint center) const
@@ -214,6 +215,7 @@ Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, const BlendingC
     result->setCenterX(m_centerX.blend(otherCircle.centerX(), context));
     result->setCenterY(m_centerY.blend(otherCircle.centerY(), context));
     result->setRadius(m_radius.blend(otherCircle.radius(), context));
+    result->setPositionWasOmitted(positionWasOmitted() && otherCircle.positionWasOmitted());
     return result;
 }
 
@@ -255,7 +257,8 @@ bool BasicShapeEllipse::operator==(const BasicShape& other) const
     return m_centerX == otherEllipse.m_centerX
         && m_centerY == otherEllipse.m_centerY
         && m_radiusX == otherEllipse.m_radiusX
-        && m_radiusY == otherEllipse.m_radiusY;
+        && m_radiusY == otherEllipse.m_radiusY
+        && positionWasOmitted() == otherEllipse.positionWasOmitted();
 }
 
 float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius, float center, float boxWidthOrHeight) const
@@ -312,6 +315,7 @@ Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, const Blending
     result->setCenterY(m_centerY.blend(otherEllipse.centerY(), context));
     result->setRadiusX(m_radiusX.blend(otherEllipse.radiusX(), context));
     result->setRadiusY(m_radiusY.blend(otherEllipse.radiusY(), context));
+    result->setPositionWasOmitted(positionWasOmitted() && otherEllipse.positionWasOmitted());
     return result;
 }
 

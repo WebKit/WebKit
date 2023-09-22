@@ -111,7 +111,10 @@ String CSSCircleValue::customCSSText() const
     if (m_radius && m_radius->valueID() != CSSValueClosestSide)
         radius = m_radius->cssText();
 
-    // FIXME: We should serialize without "at 50% 50%".
+    if (!m_centerX) {
+        ASSERT(!m_centerY);
+        return makeString("circle("_s, radius, ')');
+    }
 
     auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
     auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
@@ -177,7 +180,11 @@ String CSSEllipseValue::customCSSText() const
             radiusY = m_radiusY->cssText();
         }
     }
-    // FIXME: We should serialize without "at 50% 50%".
+    if (!m_centerX) {
+        ASSERT(!m_centerY);
+        return buildEllipseString(radiusX, radiusY, nullString(), nullString());
+    }
+
     auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
     auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
     return buildEllipseString(radiusX, radiusY, serializePositionOffset(x, y), serializePositionOffset(y, x));
