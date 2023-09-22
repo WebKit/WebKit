@@ -62,7 +62,7 @@ private:
     void getPixelBufferWithNewMemory(SharedMemory::Handle&&, WebCore::PixelBufferFormat, WebCore::IntRect, CompletionHandler<void()>&&);
     void putPixelBuffer(Ref<WebCore::PixelBuffer>, WebCore::IntRect srcRect, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat);
     void getShareableBitmap(WebCore::PreserveResolution, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
-    void getFilteredImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    void filteredNativeImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
     void convertToLuminanceMask();
     void transformToColorSpace(const WebCore::DestinationColorSpace&);
     void setFlushSignal(IPC::Signal&&);

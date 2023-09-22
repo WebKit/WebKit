@@ -132,22 +132,22 @@ void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveR
     completionHandler(WTFMove(handle));
 }
 
-void RemoteImageBuffer::getFilteredImage(Ref<WebCore::Filter> filter, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
+void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     std::optional<ShareableBitmap::Handle> handle;
     [&]() {
-        auto image = m_imageBuffer->filteredImage(filter);
+        auto image = m_imageBuffer->filteredNativeImage(filter);
         if (!image)
             return;
         auto imageSize = image->size();
-        auto bitmap = ShareableBitmap::create({ IntSize(imageSize), m_imageBuffer->colorSpace() });
+        auto bitmap = ShareableBitmap::create({ imageSize, m_imageBuffer->colorSpace() });
         if (!bitmap)
             return;
         auto context = bitmap->createGraphicsContext();
         if (!context)
             return;
-        context->drawImage(*image, FloatPoint());
+        context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
         handle = bitmap->createHandle();
     }();
     completionHandler(WTFMove(handle));

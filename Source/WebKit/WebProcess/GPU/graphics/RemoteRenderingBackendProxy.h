@@ -98,7 +98,6 @@ public:
     bool getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, std::span<uint8_t> result);
     void putPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat);
     RefPtr<ShareableBitmap> getShareableBitmap(WebCore::RenderingResourceIdentifier, WebCore::PreserveResolution);
-    RefPtr<WebCore::Image> getFilteredImage(WebCore::RenderingResourceIdentifier, WebCore::Filter&);
     void cacheNativeImage(ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheFont(const WebCore::Font::Attributes&, const WebCore::FontPlatformData::Attributes&, std::optional<WebCore::RenderingResourceIdentifier>);
     void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&);

@@ -250,21 +250,6 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
     return ShareableBitmap::create(WTFMove(*handle));
 }
 
-RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
-{
-    auto sendResult = sendSync(Messages::RemoteImageBuffer::GetFilteredImage(filter), imageBuffer);
-    auto [handle] = sendResult.takeReply();
-    if (!handle)
-        return { };
-
-    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
-    auto bitmap = ShareableBitmap::create(WTFMove(*handle));
-    if (!bitmap)
-        return { };
-
-    return bitmap->createImage();
-}
-
 void RemoteRenderingBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     send(Messages::RemoteRenderingBackend::CacheNativeImage(WTFMove(handle), renderingResourceIdentifier));

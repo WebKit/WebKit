@@ -33,6 +33,7 @@
 #include "ProcessIdentity.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
+#include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -157,8 +158,8 @@ public:
     WEBCORE_EXPORT virtual RefPtr<NativeImage> createNativeImageReference() const;
 
     WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
-    WEBCORE_EXPORT virtual RefPtr<Image> filteredImage(Filter&);
-    RefPtr<Image> filteredImage(Filter&, std::function<void(GraphicsContext&)> drawCallback);
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> filteredNativeImage(Filter&);
+    RefPtr<NativeImage> filteredNativeImage(Filter&, Function<void(GraphicsContext&)> drawCallback);
 
 #if USE(CAIRO)
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();

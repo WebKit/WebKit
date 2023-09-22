@@ -319,7 +319,7 @@ RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread()
     return this;
 }
 
-RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)
+RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter)
 {
     ASSERT(!filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
 
@@ -336,10 +336,10 @@ RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)
     if (!imageBuffer)
         return nullptr;
 
-    return imageBuffer->copyImage();
+    return copyImageBufferToNativeImage(*imageBuffer, CopyBackingStore, PreserveResolution::No);
 }
 
-RefPtr<Image> ImageBuffer::filteredImage(Filter& filter, std::function<void(GraphicsContext&)> drawCallback)
+RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<void(GraphicsContext&)> drawCallback)
 {
     std::unique_ptr<FilterTargetSwitcher> targetSwitcher;
 
@@ -355,10 +355,10 @@ RefPtr<Image> ImageBuffer::filteredImage(Filter& filter, std::function<void(Grap
     if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
         ASSERT(targetSwitcher);
         targetSwitcher->endDrawSourceImage(context());
-        return copyImage();
+        return copyImageBufferToNativeImage(*this, CopyBackingStore, PreserveResolution::No);
     }
 
-    return filteredImage(filter);
+    return filteredNativeImage(filter);
 }
 
 #if USE(CAIRO)
