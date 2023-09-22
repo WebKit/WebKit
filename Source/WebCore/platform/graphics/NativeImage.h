@@ -45,6 +45,8 @@ class NativeImage final : public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    // Creates a NativeImage that is intended to be drawn once or only few times. Signals the platform to avoid generating any caches for the image.
+    static WEBCORE_EXPORT RefPtr<NativeImage> createTransient(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 #if USE(CAIRO)
     static RefPtr<NativeImage> create(Ref<PixelBuffer>&&, bool premultipliedAlpha);
 #endif
