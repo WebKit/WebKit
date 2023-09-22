@@ -171,6 +171,19 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
 
 void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, bool respectTransforms)
 {
+    if (!ancestorLayer) {
+        ASSERT(!m_mapping.size());
+        pushMappingsToAncestor(&layer->renderer().view(), nullptr);
+
+        SetForScope positionChange(m_insertionPosition, m_mapping.size());
+        while (layer->parent()) {
+            pushMappingsToAncestor(layer, layer->parent(), respectTransforms);
+            layer = layer->parent();
+        }
+        ASSERT(m_mapping[0].m_renderer->isRenderView());
+        return;
+    }
+
     OptionSet<MapCoordinatesMode> newFlags = m_mapCoordinatesFlags;
     if (!respectTransforms)
         newFlags.remove(UseTransforms);
@@ -181,9 +194,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
 
     // We have to visit all the renderers to detect flipped blocks. This might defeat the gains
     // from mapping via layers.
-    bool canConvertInLayerTree = ancestorLayer ? canMapBetweenRenderersViaLayers(layer->renderer(), ancestorLayer->renderer()) : false;
-
-    if (canConvertInLayerTree) {
+    if (canMapBetweenRenderersViaLayers(renderer, ancestorLayer->renderer())) {
         LayoutSize layerOffset = layer->offsetFromAncestor(ancestorLayer);
         
         // The RenderView must be pushed first.
@@ -196,7 +207,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
         push(&renderer, layerOffset, /*accumulatingTransform*/ true, /*isNonUniform*/ false, /*isFixedPosition*/ false, /*hasTransform*/ false);
         return;
     }
-    const RenderLayerModelObject* ancestorRenderer = ancestorLayer ? &ancestorLayer->renderer() : nullptr;
+    const RenderLayerModelObject* ancestorRenderer = &ancestorLayer->renderer();
     pushMappingsToAncestor(&renderer, ancestorRenderer);
 }
 
