@@ -327,6 +327,12 @@ module DSL
         Read = AbstractValue.new(:"AccessMode::Read")
         ReadWrite = AbstractValue.new(:"AccessMode::ReadWrite")
 
+        texture_depth_2d = PrimitiveType.new(:TextureDepth2d)
+        texture_depth_2d_array = PrimitiveType.new(:TextureDepth2dArray)
+        texture_depth_cube = PrimitiveType.new(:TextureDepthCube)
+        texture_depth_cube_array = PrimitiveType.new(:TextureDepthCubeArray)
+        texture_depth_multisampled_2d = PrimitiveType.new(:TextureDepthMultisampled2d)
+
         Bool = PrimitiveType.new(:Bool)
         I32 = PrimitiveType.new(:I32)
         U32 = PrimitiveType.new(:U32)
@@ -335,7 +341,6 @@ module DSL
         TextureExternal = PrimitiveType.new(:TextureExternal)
         AbstractInt = PrimitiveType.new(:AbstractInt)
         AbstractFloat = PrimitiveType.new(:AbstractFloat)
-
 
         S = Variable.new(:S, @TypeVariable)
         T = Variable.new(:T, @TypeVariable)

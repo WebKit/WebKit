@@ -574,32 +574,68 @@ operator :trunc, {
 
 # 16.7.1
 operator :textureDimensions, {
-    # FIXME: add declarations for texture storage and texture depth
+    # ST is i32, u32, or f32
+    # F is a texel format
+    # A is an access mode
+    # T is texture_1d<ST> or texture_storage_1d<F,A>
+    # @must_use fn textureDimensions(t: T) -> u32
     [S < Concrete32BitNumber].(Texture[S, Texture1d]) => U32,
+    # FIXME: add declarations for texture storage
 
+    # ST is i32, u32, or f32
+    # T is texture_1d<ST>
+    # L is i32, or u32
+    # @must_use fn textureDimensions(t: T, level: L) -> u32
     [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture1d], T) => U32,
 
+    # ST is i32, u32, or f32
+    # F is a texel format
+    # A is an access mode
+    # T is texture_2d<ST>, texture_2d_array<ST>, texture_cube<ST>, texture_cube_array<ST>, texture_multisampled_2d<ST>, texture_depth_2d, texture_depth_2d_array, texture_depth_cube, texture_depth_cube_array, texture_depth_multisampled_2d, texture_storage_2d<F,A>, texture_storage_2d_array<F,A>, or texture_external
+    # @must_use fn textureDimensions(t: T) -> vec2<u32>
     [S < Concrete32BitNumber].(Texture[S, Texture2d]) => Vector[U32, 2],
     [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => Vector[U32, 2],
     [S < Concrete32BitNumber].(Texture[S, TextureCube]) => Vector[U32, 2],
     [S < Concrete32BitNumber].(Texture[S, TextureCubeArray]) => Vector[U32, 2],
     [S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d]) => Vector[U32, 2],
+    [].(texture_depth_2d) => Vector[U32, 2],
+    [].(texture_depth_2d_array) => Vector[U32, 2],
+    [].(texture_depth_cube) => Vector[U32, 2],
+    [].(texture_depth_cube_array) => Vector[U32, 2],
+    [].(texture_depth_multisampled_2d) => Vector[U32, 2],
+    # FIXME: add declarations for texture storage
     [].(TextureExternal) => Vector[U32, 2],
 
+    # ST is i32, u32, or f32
+    # T is texture_2d<ST>, texture_2d_array<ST>, texture_cube<ST>, texture_cube_array<ST>, texture_depth_2d, texture_depth_2d_array, texture_depth_cube, or texture_depth_cube_array
+    # L is i32, or u32
+    # @must_use fn textureDimensions(t: T, level: L) -> vec2<u32>
     [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture2d], T) => Vector[U32, 2],
     [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture2dArray], T) => Vector[U32, 2],
     [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, TextureCube], T) => Vector[U32, 2],
     [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, TextureCubeArray], T) => Vector[U32, 2],
+    [T < ConcreteInteger].(texture_depth_2d, T) => Vector[U32, 2],
+    [T < ConcreteInteger].(texture_depth_2d_array, T) => Vector[U32, 2],
+    [T < ConcreteInteger].(texture_depth_cube, T) => Vector[U32, 2],
+    [T < ConcreteInteger].(texture_depth_cube_array, T) => Vector[U32, 2],
 
+    # ST is i32, u32, or f32
+    # F is a texel format
+    # A is an access mode
+    # T is texture_3d<ST> or texture_storage_3d<F,A>
+    # @must_use fn textureDimensions(t: T) -> vec3<u32>
     [S < Concrete32BitNumber].(Texture[S, Texture3d]) => Vector[U32, 3],
+    # FIXME: add declarations for texture storage
 
+    # ST is i32, u32, or f32
+    # T is texture_3d<ST>
+    # L is i32, or u32
+    # @must_use fn textureDimensions(t: T, level: L) -> vec3<u32>
     [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture3d], T) => Vector[U32, 3],
 }
 
 # 16.7.2
-
 operator :textureGather, {
-    # FIXME: add declarations for texture depth
     [T < ConcreteInteger, S < Concrete32BitNumber].(T, Texture[S, Texture2d], Sampler, Vector[F32, 2]) => Vector[S, 4],
 
     [T < ConcreteInteger, S < Concrete32BitNumber].(T, Texture[S, Texture2d], Sampler, Vector[F32, 2], Vector[I32, 2]) => Vector[S, 4],
@@ -611,10 +647,31 @@ operator :textureGather, {
     [T < ConcreteInteger, S < Concrete32BitNumber].(T, Texture[S, TextureCube], Sampler, Vector[F32, 3]) => Vector[S, 4],
 
     [T < ConcreteInteger, S < Concrete32BitNumber, U < ConcreteInteger].(T, Texture[S, TextureCubeArray], Sampler, Vector[F32, 3], U) => Vector[S, 4],
+
+    # @must_use fn textureGather(t: texture_depth_2d, s: sampler, coords: vec2<f32>) -> vec4<f32>
+    [].(texture_depth_2d, Sampler, Vector[F32, 2]) => Vector[F32, 4],
+
+    # @must_use fn textureGather(t: texture_depth_2d, s: sampler, coords: vec2<f32>, offset: vec2<i32>) -> vec4<f32>
+    [].(texture_depth_2d, Sampler, Vector[F32, 2], Vector[I32, 2]) => Vector[F32, 4],
+
+    # @must_use fn textureGather(t: texture_depth_cube, s: sampler, coords: vec3<f32>) -> vec4<f32>
+    [].(texture_depth_cube, Sampler, Vector[F32, 3]) => Vector[F32, 4],
+
+    # A is i32, or u32
+    # @must_use fn textureGather(t: texture_depth_2d_array, s: sampler, coords: vec2<f32>, array_index: A) -> vec4<f32>
+    [U < ConcreteInteger].(texture_depth_2d_array, Sampler, Vector[F32, 2], U) => Vector[F32, 4],
+
+    # A is i32, or u32
+    # @must_use fn textureGather(t: texture_depth_2d_array, s: sampler, coords: vec2<f32>, array_index: A, offset: vec2<i32>) -> vec4<f32>
+    [U < ConcreteInteger].(texture_depth_2d_array, Sampler, Vector[F32, 2], U, Vector[I32, 2]) => Vector[F32, 4],
+
+    # A is i32, or u32
+    # @must_use fn textureGather(t: texture_depth_cube_array, s: sampler, coords: vec3<f32>, array_index: A) -> vec4<f32>
+    [U < ConcreteInteger].(texture_depth_cube_array, Sampler, Vector[F32, 3], U) => Vector[F32, 4],
 }
 
 # 16.7.3 textureGatherCompare
-# FIXME: this only applies to texture_depth, implement
+# FIXME: Implement sampler_comparison
 
 # 16.7.4
 operator :textureLoad, {
@@ -624,34 +681,64 @@ operator :textureLoad, {
     [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture3d], Vector[T, 3], U) => Vector[S, 4],
     [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d], Vector[T, 2], U) => Vector[S, 4],
 
-    [T < ConcreteInteger].(TextureExternal, Vector[T, 2]) => Vector[F32, 4],
 
-    # FIXME: add overloads for texture_depth
-    # https://bugs.webkit.org/show_bug.cgi?id=254515
+    # C is i32, or u32
+    # L is i32, or u32
+    # @must_use fn textureLoad(t: texture_depth_2d, coords: vec2<C>, level: L) -> f32
+    [T < ConcreteInteger, U < ConcreteInteger].(texture_depth_2d, Vector[T, 2], U) => F32,
+
+    # C is i32, or u32
+    # A is i32, or u32
+    # L is i32, or u32
+    # @must_use fn textureLoad(t: texture_depth_2d_array, coords: vec2<C>, array_index: A, level: L) -> f32
+    [T < ConcreteInteger, S < ConcreteInteger, U < ConcreteInteger].(texture_depth_2d_array, Vector[T, 2], S, U) => F32,
+
+    # C is i32, or u32
+    # S is i32, or u32
+    # @must_use fn textureLoad(t: texture_depth_multisampled_2d, coords: vec2<C>, sample_index: S)-> f32
+    [T < ConcreteInteger, U < ConcreteInteger].(texture_depth_multisampled_2d, Vector[T, 2], U) => F32,
+
+    [T < ConcreteInteger].(TextureExternal, Vector[T, 2]) => Vector[F32, 4],
 }
 
 # 16.7.5
 operator :textureNumLayers, {
-    # FIXME: add declarations for texture storage and texture depth
+    # F is a texel format
+    # A is an access mode
+    # ST is i32, u32, or f32
+    # T is texture_2d_array<ST>, texture_cube_array<ST>, texture_depth_2d_array, texture_depth_cube_array, or texture_storage_2d_array<F,A>
+    # @must_use fn textureNumLayers(t: T) -> u32
     [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => U32,
     [S < Concrete32BitNumber].(Texture[S, TextureCubeArray]) => U32,
+    [].(texture_depth_2d_array) => U32,
+    [].(texture_depth_cube_array) => U32,
+    # FIXME: add declarations for texture storage
 }
 
 # 16.7.6
 operator :textureNumLevels, {
-    # FIXME: add declarations for texture depth
+    # ST is i32, u32, or f32
+    # T is texture_1d<ST>, texture_2d<ST>, texture_2d_array<ST>, texture_3d<ST>, texture_cube<ST>, texture_cube_array<ST>, texture_depth_2d, texture_depth_2d_array, texture_depth_cube, or texture_depth_cube_array
+    # @must_use fn textureNumLevels(t: T) -> u32
     [S < Concrete32BitNumber].(Texture[S, Texture1d]) => U32,
     [S < Concrete32BitNumber].(Texture[S, Texture2d]) => U32,
     [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => U32,
     [S < Concrete32BitNumber].(Texture[S, Texture3d]) => U32,
     [S < Concrete32BitNumber].(Texture[S, TextureCube]) => U32,
     [S < Concrete32BitNumber].(Texture[S, TextureCubeArray]) => U32,
+    [].(texture_depth_2d) => U32,
+    [].(texture_depth_2d_array) => U32,
+    [].(texture_depth_cube) => U32,
+    [].(texture_depth_cube_array) => U32,
 }
 
 # 16.7.7
 operator :textureNumSamples, {
-    # FIXME: add declarations for texture depth
+    # ST is i32, u32, or f32
+    # T is texture_multisampled_2d<ST> or texture_depth_multisampled_2d
+    # @must_use fn textureNumSamples(t: T) -> u32
     [S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d]) => U32,
+    [].(texture_depth_multisampled_2d) => U32,
 }
 
 # 16.7.8
@@ -673,8 +760,26 @@ operator :textureSample, {
 
     [T < ConcreteInteger].(Texture[F32, TextureCubeArray], Sampler, Vector[F32, 3], T) => Vector[F32, 4],
 
-    # FIXME: add overloads for texture_depth
-    # https://bugs.webkit.org/show_bug.cgi?id=254515
+    # @must_use fn textureSample(t: texture_depth_2d, s: sampler, coords: vec2<f32>) -> f32
+    [].(texture_depth_2d, Sampler, Vector[F32, 2]) => F32,
+
+    # @must_use fn textureSample(t: texture_depth_2d, s: sampler, coords: vec2<f32>, offset: vec2<i32>) -> f32
+    [].(texture_depth_2d, Sampler, Vector[F32, 2], Vector[I32, 2]) => F32,
+
+    # A is i32, or u32
+    # @must_use fn textureSample(t: texture_depth_2d_array, s: sampler, coords: vec2<f32>, array_index: A) -> f32
+    [T < ConcreteInteger].(texture_depth_2d_array, Sampler, Vector[F32, 2], T) => F32,
+
+    # A is i32, or u32
+    # @must_use fn textureSample(t: texture_depth_2d_array, s: sampler, coords: vec2<f32>, array_index: A, offset: vec2<i32>) -> f32
+    [T < ConcreteInteger].(texture_depth_2d_array, Sampler, Vector[F32, 2], T, Vector[I32, 2]) => F32,
+
+    # @must_use fn textureSample(t: texture_depth_cube, s: sampler, coords: vec3<f32>) -> f32
+    [].(texture_depth_cube, Sampler, Vector[F32, 3]) => F32,
+
+    # A is i32, or u32
+    # @must_use fn textureSample(t: texture_depth_cube_array, s: sampler, coords: vec3<f32>, array_index: A) -> f32
+    [T < ConcreteInteger].(texture_depth_cube_array, Sampler, Vector[F32, 3], T) => F32,
 }
 
 # 16.7.9
@@ -696,10 +801,10 @@ operator :textureSampleBias, {
 }
 
 # 16.7.10 textureSampleCompare
-# FIXME: this only applies to texture_depth, implement
+# FIXME: Implement sampler_comparison
 
 # 16.7.11 textureSampleCompareLevel
-# FIXME: this only applies to texture_depth, implement
+# FIXME: Implement sampler_comparison
 
 # 16.7.12
 operator :textureSampleGrad, {
@@ -721,7 +826,6 @@ operator :textureSampleGrad, {
 
 # 16.7.13
 operator :textureSampleLevel, {
-    # FIXME: add declarations for texture depth
     [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
 
     [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32, Vector[I32, 2]) => Vector[F32, 4],
@@ -736,6 +840,33 @@ operator :textureSampleLevel, {
     [].(Texture[F32, Texture3d], Sampler, Vector[F32, 3], F32, Vector[I32, 3]) => Vector[F32, 4],
 
     [T < ConcreteInteger].(Texture[F32, TextureCubeArray], Sampler, Vector[F32, 3], T, F32) => Vector[F32, 4],
+
+    # L is i32, or u32
+    # @must_use fn textureSampleLevel(t: texture_depth_2d, s: sampler, coords: vec2<f32>, level: L) -> f32
+    [T < ConcreteInteger].(texture_depth_2d, Sampler, Vector[F32, 2], T) => F32,
+
+    # L is i32, or u32
+    # @must_use fn textureSampleLevel(t: texture_depth_2d, s: sampler, coords: vec2<f32>, level: L, offset: vec2<i32>) -> f32
+    [T < ConcreteInteger].(texture_depth_2d, Sampler, Vector[F32, 2], T, Vector[I32, 2]) => F32,
+
+    # A is i32, or u32
+    # L is i32, or u32
+    # @must_use fn textureSampleLevel(t: texture_depth_2d_array, s: sampler, coords: vec2<f32>, array_index: A, level: L) -> f32
+    [S < ConcreteInteger, T < ConcreteInteger].(texture_depth_2d_array, Sampler, Vector[F32, 2], S, T) => F32,
+
+    # A is i32, or u32
+    # L is i32, or u32
+    # @must_use fn textureSampleLevel(t: texture_depth_2d_array, s: sampler, coords: vec2<f32>, array_index: A, level: L, offset: vec2<i32>) -> f32
+    [S < ConcreteInteger, T < ConcreteInteger].(texture_depth_2d_array, Sampler, Vector[F32, 2], S, T, Vector[I32, 2]) => F32,
+
+    # L is i32, or u32
+    # @must_use fn textureSampleLevel(t: texture_depth_cube, s: sampler, coords: vec3<f32>, level: L) -> f32
+    [T < ConcreteInteger].(texture_depth_cube, Sampler, Vector[F32, 3], T) => F32,
+
+    # A is i32, or u32
+    # L is i32, or u32
+    # @must_use fn textureSampleLevel(t: texture_depth_cube_array, s: sampler, coords: vec3<f32>, array_index: A, level: L) -> f32
+    [S < ConcreteInteger, T < ConcreteInteger].(texture_depth_cube_array, Sampler, Vector[F32, 3], S, T) => F32,
 }
 
 # 16.7.14
