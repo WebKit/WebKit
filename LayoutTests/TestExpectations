@@ -2745,6 +2745,10 @@ imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/po
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-025.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-056.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-052.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-032.html [ ImageOnlyFailure Pass ]
+
 webkit.org/b/261955 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-margin-box-border-radius-007.html [ Skip ]
 webkit.org/b/261955 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-margin-box-border-radius-008.html [ Skip ]
 
