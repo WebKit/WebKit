@@ -939,7 +939,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     for (auto& entry : varDeclarations) {
         ASSERT(entry.value.isVar());
         ASSERT(entry.key->isAtom() || entry.key->isSymbol());
-        if (entry.value.isSloppyModeHoistingCandidate())
+        if (entry.value.isSloppyModeHoistedFunction())
             hoistedFunctions.append(Identifier::fromUid(m_vm, entry.key.get()));
         else if (!entry.value.isFunction())
             variables.append(Identifier::fromUid(m_vm, entry.key.get()));
@@ -2196,9 +2196,10 @@ void BytecodeGenerator::initializeBlockScopedFunctions(VariableEnvironment& envi
     }
 }
 
-void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& functionName)
+void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(FunctionMetadataNode* metadata)
 {
-    if (m_scopeNode->hasSloppyModeHoistedFunction(functionName.impl())) {
+    if (metadata->isSloppyModeHoistedFunction()) {
+        const Identifier& functionName = metadata->ident();
         if (codeType() != EvalCode) {
             Variable currentFunctionVariable = variable(functionName);
             RefPtr<RegisterID> currentValue;
