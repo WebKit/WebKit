@@ -323,7 +323,6 @@ public:
     void layerTiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/);
     
     bool acceleratedDrawingEnabled() const { return m_acceleratedDrawingEnabled; }
-    bool displayListDrawingEnabled() const { return m_displayListDrawingEnabled; }
 
     void deviceOrPageScaleFactorChanged();
 
@@ -583,7 +582,6 @@ private:
     bool m_showDebugBorders { false };
     bool m_showRepaintCounter { false };
     bool m_acceleratedDrawingEnabled { false };
-    bool m_displayListDrawingEnabled { false };
 
     bool m_compositing { false };
     bool m_flushingLayers { false };

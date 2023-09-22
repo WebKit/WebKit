@@ -511,7 +511,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences._legacyLineLayoutVisualCoverageEnabled = settings.legacyLineLayoutVisualCoverageEnabled;
     preferences._acceleratedDrawingEnabled = settings.acceleratedDrawingEnabled;
     preferences._resourceUsageOverlayVisible = settings.resourceUsageOverlayVisible;
-    preferences._displayListDrawingEnabled = settings.displayListDrawingEnabled;
     preferences._largeImageAsyncDecodingEnabled = settings.largeImageAsyncDecodingEnabled;
     preferences._animatedImageAsyncDecodingEnabled = settings.animatedImageAsyncDecodingEnabled;
     preferences._colorFilterEnabled = settings.appleColorFilterEnabled;

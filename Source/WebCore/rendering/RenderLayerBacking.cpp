@@ -354,7 +354,6 @@ Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, G
 
 #if PLATFORM(COCOA) && USE(CA)
     graphicsLayer->setAcceleratesDrawing(compositor().acceleratedDrawingEnabled());
-    graphicsLayer->setUsesDisplayListDrawing(compositor().displayListDrawingEnabled());
 #endif
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

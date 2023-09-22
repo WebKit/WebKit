@@ -1733,16 +1733,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:enabled forKey:WebKitAcceleratedDrawingEnabledPreferenceKey];
 }
 
-- (BOOL)displayListDrawingEnabled
-{
-    return [self _boolValueForKey:WebKitDisplayListDrawingEnabledPreferenceKey];
-}
-
-- (void)setDisplayListDrawingEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitDisplayListDrawingEnabledPreferenceKey];
-}
-
 - (BOOL)resourceLoadStatisticsEnabled
 {
     return [self _boolValueForKey:WebKitResourceLoadStatisticsEnabledPreferenceKey];
@@ -3349,5 +3339,13 @@ static RetainPtr<NSString>& classIBCreatorID()
     return NO;
 }
 
+- (BOOL)displayListDrawingEnabled
+{
+    return NO;
+}
+
+- (void)setDisplayListDrawingEnabled:(BOOL)enabled
+{
+}
 
 @end

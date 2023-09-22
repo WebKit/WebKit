@@ -61,15 +61,6 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
         creationContext.displayID = graphicsClient->displayID();
 #endif
 
-    // Give UseDisplayList a higher precedence since it is a debug option.
-    if (options.contains(ImageBufferOptions::UseDisplayList)) {
-        if (options.contains(ImageBufferOptions::Accelerated))
-            imageBuffer = DisplayList::ImageBuffer::create<AcceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-
-        if (!imageBuffer)
-            imageBuffer = DisplayList::ImageBuffer::create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-    }
-
     if (graphicsClient && !imageBuffer) {
         auto renderingMode = options.contains(ImageBufferOptions::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
         bool avoidBackendSizeCheckForTesting = options.contains(ImageBufferOptions::AvoidBackendSizeCheckForTesting);

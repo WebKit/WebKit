@@ -392,16 +392,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
 }
 
-- (BOOL)_displayListDrawingEnabled
-{
-    return _preferences->displayListDrawingEnabled();
-}
-
-- (void)_setDisplayListDrawingEnabled:(BOOL)displayListDrawingEnabled
-{
-    _preferences->setDisplayListDrawingEnabled(displayListDrawingEnabled);
-}
-
 - (BOOL)_largeImageAsyncDecodingEnabled
 {
     return _preferences->largeImageAsyncDecodingEnabled();
@@ -1780,5 +1770,14 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return NO;
 }
 #endif
+
+- (BOOL)_displayListDrawingEnabled
+{
+    return NO;
+}
+
+- (void)_setDisplayListDrawingEnabled:(BOOL)displayListDrawingEnabled
+{
+}
 
 @end
