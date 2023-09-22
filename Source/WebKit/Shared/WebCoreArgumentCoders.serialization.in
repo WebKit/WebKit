@@ -5969,3 +5969,51 @@ struct WebCore::LinkDecorationFilteringData {
     std::optional<bool> silent;
 };
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
+class WebCore::NetworkLoadMetrics {
+    MonotonicTime redirectStart;
+    MonotonicTime fetchStart;
+    MonotonicTime domainLookupStart;
+    MonotonicTime domainLookupEnd;
+    MonotonicTime connectStart;
+    MonotonicTime secureConnectionStart;
+    MonotonicTime connectEnd;
+    MonotonicTime requestStart;
+    MonotonicTime responseStart;
+    MonotonicTime responseEnd;
+    MonotonicTime workerStart;
+
+    String protocol;
+
+    uint16_t redirectCount;
+
+    bool isComplete();
+    bool isCellular();
+    bool isExpensive();
+    bool isConstrained();
+    bool isMultipath();
+    bool reusedConnection();
+    bool doesFailTAOCheck();
+    bool crossOriginRedirect();
+
+    WebCore::PrivacyStance privacyStance;
+
+    uint64_t responseBodyBytesReceived;
+    uint64_t responseBodyDecodedSize;
+
+    RefPtr<WebCore::AdditionalNetworkLoadMetricsForWebInspector> additionalNetworkLoadMetricsForWebInspector;
+}
+
+header: <WebCore/NetworkLoadMetrics.h>
+[RefCounted, CustomHeader] struct WebCore::AdditionalNetworkLoadMetricsForWebInspector {
+    WebCore::NetworkLoadPriority priority;
+    String remoteAddress;
+    String connectionIdentifier;
+    String tlsProtocol;
+    String tlsCipher;
+    WebCore::HTTPHeaderMap requestHeaders;
+    uint64_t requestHeaderBytesSent;
+    uint64_t responseHeaderBytesReceived;
+    uint64_t requestBodyBytesSent;
+    bool isProxyConnection;
+}
