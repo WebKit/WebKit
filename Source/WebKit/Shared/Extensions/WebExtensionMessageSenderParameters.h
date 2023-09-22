@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionContext.h"
 #include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionTabParameters.h"
 #include <wtf/Forward.h>
@@ -34,8 +35,11 @@
 namespace WebKit {
 
 struct WebExtensionMessageSenderParameters {
+    std::optional<String> extensionUniqueIdentifier;
     std::optional<WebExtensionTabParameters> tabParameters;
     std::optional<WebExtensionFrameIdentifier> frameIdentifier;
+    WebPageProxyIdentifier pageProxyIdentifier;
+    WebExtensionContentWorldType contentWorldType;
     URL url;
 };
 

@@ -68,9 +68,9 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
     };
 }
 
-bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExtensionEventListenerType type) const
+bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
 {
-    auto pagesEntry = m_eventListenerPages.find(type);
+    auto pagesEntry = m_eventListenerPages.find({ type, contentWorldType });
     if (pagesEntry == m_eventListenerPages.end())
         return false;
 
@@ -80,9 +80,9 @@ bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExten
     return page.process().canSendMessage();
 }
 
-WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(WebExtensionEventListenerType type) const
+WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
 {
-    auto pagesEntry = m_eventListenerPages.find(type);
+    auto pagesEntry = m_eventListenerPages.find({ type, contentWorldType });
     if (pagesEntry == m_eventListenerPages.end())
         return { };
 

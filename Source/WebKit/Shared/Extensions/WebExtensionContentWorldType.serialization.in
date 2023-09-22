@@ -22,13 +22,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-struct WebKit::WebExtensionMessageSenderParameters {
-    std::optional<String> extensionUniqueIdentifier;
-    std::optional<WebKit::WebExtensionTabParameters> tabParameters;
-    std::optional<WebKit::WebExtensionFrameIdentifier> frameIdentifier;
-    WebKit::WebPageProxyIdentifier pageProxyIdentifier;
-    WebKit::WebExtensionContentWorldType contentWorldType;
-    URL url;
-};
+headers: "WebExtensionContentWorldType.h"
+
+enum class WebKit::WebExtensionContentWorldType : bool;
 
 #endif

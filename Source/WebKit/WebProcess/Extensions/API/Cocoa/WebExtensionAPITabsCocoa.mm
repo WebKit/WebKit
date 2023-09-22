@@ -881,8 +881,11 @@ void WebExtensionAPITabs::sendMessage(WebFrame *frame, double tabID, NSString *m
         return;
 
     WebExtensionMessageSenderParameters sender {
+        extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
         toWebExtensionFrameIdentifier(*frame),
+        frame->page()->webPageProxyIdentifier(),
+        contentWorldType(),
         frame->url(),
     };
 

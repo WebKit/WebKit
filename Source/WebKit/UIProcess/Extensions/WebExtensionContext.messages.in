@@ -34,14 +34,17 @@ messages -> WebExtensionContext {
     AlarmsClearAll() -> ();
 
     // Event APIs
-    AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type);
-    RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type);
+    AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);
+    RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);
 
     // Permissions APIs
     PermissionsGetAll() -> (Vector<String> permissions, Vector<String> origins);
     PermissionsContains(HashSet<String> permissions, HashSet<String> origins) -> (bool containsPermissions);
     PermissionsRequest(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
     PermissionsRemove(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
+
+    // Runtime APIs
+    RuntimeSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> replyJSON, std::optional<String> error);
 
     // Tabs APIs
     TabsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);

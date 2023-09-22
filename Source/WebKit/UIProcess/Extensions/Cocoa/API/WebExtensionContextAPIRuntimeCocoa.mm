@@ -32,57 +32,42 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WebExtensionAlarm.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionMessageSenderParameters.h"
+#import "WebExtensionUtilities.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
-void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval)
+void WebExtensionContext::runtimeSendMessage(String extensionID, String messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)
 {
-    m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [&](const WebExtensionAlarm& alarm) {
-        fireAlarmsEventIfNeeded(alarm);
-    }));
-}
+    if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
+        completionHandler(std::nullopt, toErrorString(@"runtime.sendMessage()", @"extensionID", @"cross extension messaging is not supported"));
+        return;
+    }
 
-void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>)>&& completionHandler)
-{
-    if (auto* alarm = m_alarmMap.get(name))
-        completionHandler(alarm->parameters());
-    else
-        completionHandler(std::nullopt);
-}
+    WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
+    if (auto tab = getTab(senderParameters.pageProxyIdentifier))
+        completeSenderParameters.tabParameters = tab->parameters();
 
-void WebExtensionContext::alarmsClear(const String& name, CompletionHandler<void()>&& completionHandler)
-{
-    m_alarmMap.remove(name);
+    auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnMessage, WebExtensionContentWorldType::Main);
+    if (mainWorldProcesses.isEmpty()) {
+        completionHandler(std::nullopt, std::nullopt);
+        return;
+    }
 
-    completionHandler();
-}
+    bool sentReply = false;
 
-void WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&& completionHandler)
-{
-    Vector<WebExtensionAlarmParameters> alarms;
-    alarms.reserveInitialCapacity(m_alarmMap.size());
+    auto handleReply = [&sentReply, completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }](std::optional<String> replyJSON) mutable {
+        if (sentReply)
+            return;
 
-    for (auto& alarm : m_alarmMap.values())
-        alarms.uncheckedAppend(alarm->parameters());
+        sentReply = true;
+        completionHandler(replyJSON, std::nullopt);
+    };
 
-    completionHandler(WTFMove(alarms));
-}
-
-void WebExtensionContext::alarmsClearAll(CompletionHandler<void()>&& completionHandler)
-{
-    m_alarmMap.clear();
-
-    completionHandler();
-}
-
-void WebExtensionContext::fireAlarmsEventIfNeeded(const WebExtensionAlarm& alarm)
-{
-    constexpr auto type = WebExtensionEventListenerType::AlarmsOnAlarm;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchAlarmsEvent(alarm.parameters()));
-    });
+    for (auto& process : mainWorldProcesses)
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMainWorldMessageEvent(messageJSON, completeSenderParameters), handleReply, identifier());
 }
 
 } // namespace WebKit

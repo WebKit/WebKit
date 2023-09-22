@@ -430,14 +430,14 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
         return;
     }
 
-    WebProcessProxySet processes = tab->processes(WebExtensionEventListenerType::RuntimeOnMessage);
-    if (processes.isEmpty()) {
+    auto contentScriptProcesses = tab->processes(WebExtensionEventListenerType::RuntimeOnMessage, WebExtensionContentWorldType::ContentScript);
+    if (contentScriptProcesses.isEmpty()) {
         completionHandler(std::nullopt, std::nullopt);
         return;
     }
 
-    ASSERT(processes.size() == 1);
-    auto process = processes.takeAny();
+    ASSERT(contentScriptProcesses.size() == 1);
+    auto process = contentScriptProcesses.takeAny();
 
     process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeContentScriptMessageEvent(messageJSON, frameIdentifier, senderParameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](std::optional<String> replyJSON) mutable {
         completionHandler(replyJSON, std::nullopt);

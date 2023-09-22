@@ -68,6 +68,8 @@ public:
 
     JSValueRef lastError();
 
+    void sendMessage(WebFrame *, NSString *extensionID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+
     WebExtensionAPIEvent& onMessage();
 
 private:

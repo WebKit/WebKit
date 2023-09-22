@@ -853,7 +853,7 @@ void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
     }];
 }
 
-WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEventListenerType type, MainWebViewOnly mainWebViewOnly) const
+WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType, MainWebViewOnly mainWebViewOnly) const
 {
     if (!isValid())
         return { };
@@ -862,7 +862,7 @@ WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEvent
 
     WebProcessProxySet result;
     for (WKWebView *webView in webViews) {
-        if (!extensionContext()->pageListensForEvent(*webView._page, type))
+        if (!extensionContext()->pageListensForEvent(*webView._page, type, contentWorldType))
             continue;
 
         Ref process = webView._page->process();

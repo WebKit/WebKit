@@ -158,7 +158,7 @@ public:
 
     void close(CompletionHandler<void(Error)>&&);
 
-    WebProcessProxySet processes(WebExtensionEventListenerType, MainWebViewOnly = MainWebViewOnly::Yes) const;
+    WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType, MainWebViewOnly = MainWebViewOnly::Yes) const;
 
 #ifdef __OBJC__
     _WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }

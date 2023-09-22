@@ -84,14 +84,16 @@ public:
 
     bool inTestingMode() { return m_testingMode; }
 
+    static WebCore::DOMWrapperWorld& mainWorld() { return WebCore::mainThreadNormalWorld(); }
+
     WebCore::DOMWrapperWorld& contentScriptWorld() { return *m_contentScriptWorld; }
     void setContentScriptWorld(WebCore::DOMWrapperWorld* world) { m_contentScriptWorld = world; }
 
     void addFrameWithExtensionContent(WebFrame&);
 
-    void enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>&, WebCore::DOMWrapperWorld& = WebCore::mainThreadNormalWorld());
+    void enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>&, WebCore::DOMWrapperWorld& = mainWorld());
 
-    void enumerateNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>& function, WebCore::DOMWrapperWorld& = WebCore::mainThreadNormalWorld())
+    void enumerateNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>& function, WebCore::DOMWrapperWorld& = mainWorld())
     {
         enumerateFramesAndNamespaceObjects([&](WebFrame&, WebExtensionAPINamespace& namespaceObject) {
             function(namespaceObject);
@@ -111,6 +113,7 @@ private:
 
     // Runtime
     void dispatchRuntimeMessageEvent(WebCore::DOMWrapperWorld&, String messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
+    void dispatchRuntimeMainWorldMessageEvent(String, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
     void dispatchRuntimeContentScriptMessageEvent(String, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
 
     // Permissions

@@ -798,8 +798,7 @@ TEST(WKWebExtensionAPITabs, ReplacedEvent)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager load];
-    [manager run];
+    [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Replace Tab");
 
@@ -835,8 +834,7 @@ TEST(WKWebExtensionAPITabs, MovedEvent)
     auto *tabToMove = [manager.get().defaultWindow openNewTab];
     [manager.get().defaultWindow openNewTab];
 
-    [manager load];
-    [manager run];
+    [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Move Tab");
 
@@ -883,8 +881,7 @@ TEST(WKWebExtensionAPITabs, DetachedAndAttachedEvent)
     EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2ul);
     EXPECT_EQ(secondWindow.tabs.count, 1ul);
 
-    [manager load];
-    [manager run];
+    [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Move Tab");
 
@@ -986,8 +983,20 @@ TEST(WKWebExtensionAPITabs, SendMessage)
 
     auto *contentScript = Util::constructScript(@[
         @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
-        @"    browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
-        @"    sendResponse({ content: 'Received' })",
+        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.url, 'string', 'sender.url should be a string')",
+        @"  browser.test.assertEq(typeof sender.origin, 'string', 'sender.origin should be a string')",
+
+        @"  browser.test.assertTrue(sender.url.startsWith('webkit-extension://'), 'sender.url should start with webkit-extension://')",
+        @"  browser.test.assertTrue(sender.origin.startsWith('webkit-extension://'), 'sender.origin should start with webkit-extension://')",
+
+        @"  browser.test.assertEq(sender.tab, undefined, 'sender.tab should be undefined')",
+        @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
+
+        @"  sendResponse({ content: 'Received' })",
         @"})"
     ]);
 
@@ -1020,8 +1029,20 @@ TEST(WKWebExtensionAPITabs, SendMessageWithPromiseReply)
 
     auto *contentScript = Util::constructScript(@[
         @"browser.runtime.onMessage.addListener((message, sender) => {",
-        @"    browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
-        @"    return Promise.resolve({ content: 'Received' })",
+        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.url, 'string', 'sender.url should be a string')",
+        @"  browser.test.assertEq(typeof sender.origin, 'string', 'sender.origin should be a string')",
+
+        @"  browser.test.assertTrue(sender.url.startsWith('webkit-extension://'), 'sender.url should start with webkit-extension://')",
+        @"  browser.test.assertTrue(sender.origin.startsWith('webkit-extension://'), 'sender.origin should start with webkit-extension://')",
+
+        @"  browser.test.assertEq(sender.tab, undefined, 'sender.tab should be undefined')",
+        @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
+
+        @"  return Promise.resolve({ content: 'Received' })",
         @"})"
     ]);
 
@@ -1053,8 +1074,19 @@ TEST(WKWebExtensionAPITabs, SendMessageWithoutReply)
     ]);
 
     auto *contentScript = Util::constructScript(@[
-        @"browser.runtime.onMessage.addListener((message) => {",
-        @"    browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+        @"browser.runtime.onMessage.addListener((message, sender) => {",
+        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.url, 'string', 'sender.url should be a string')",
+        @"  browser.test.assertEq(typeof sender.origin, 'string', 'sender.origin should be a string')",
+
+        @"  browser.test.assertTrue(sender.url.startsWith('webkit-extension://'), 'sender.url should start with webkit-extension://')",
+        @"  browser.test.assertTrue(sender.origin.startsWith('webkit-extension://'), 'sender.origin should start with webkit-extension://')",
+
+        @"  browser.test.assertEq(sender.tab, undefined, 'sender.tab should be undefined')",
+        @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
         @"})"
     ]);
 

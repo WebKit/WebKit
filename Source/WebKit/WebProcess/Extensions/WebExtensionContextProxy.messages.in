@@ -33,6 +33,7 @@ messages -> WebExtensionContextProxy {
     DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
 
     // Runtime
+    DispatchRuntimeMainWorldMessageEvent(String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> replyJSON)
     DispatchRuntimeContentScriptMessageEvent(String messageJSON, std::optional<WebKit::WebExtensionFrameIdentifier> targetFrameIdentifier, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> replyJSON)
 
     // Tabs Events
