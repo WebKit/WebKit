@@ -1,488 +1,146 @@
 
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.32941177 0.36078432 0.23921569)
-Expected: color(srgb 0.33 0.36 0.24).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.33 +/- 0.0001, expected 0.33 but got 0.32941177
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.4392157 0.41568628 0.2627451)
-Expected: color(srgb 0.4375 0.415625 0.2625).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4375 +/- 0.0001, expected 0.4375 but got 0.4392157
-FAIL Property color value 'color-mix(in hsl, 25% hsl(120deg 10% 20%), hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.4392157 0.41568628 0.2627451)
-Expected: color(srgb 0.4375 0.415625 0.2625).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4375 +/- 0.0001, expected 0.4375 but got 0.4392157
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), 25% hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.23921569 0.28627452 0.21176471)
-Expected: color(srgb 0.240625 0.2875 0.2125).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.240625 +/- 0.0001, expected 0.240625 but got 0.23921569
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%) 25%)' Colors do not match.
-Actual:   color(srgb 0.23921569 0.28627452 0.21176471)
-Expected: color(srgb 0.240625 0.2875 0.2125).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.240625 +/- 0.0001, expected 0.240625 but got 0.23921569
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%) 75%)' Colors do not match.
-Actual:   color(srgb 0.4392157 0.41568628 0.2627451)
-Expected: color(srgb 0.4375 0.415625 0.2625).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4375 +/- 0.0001, expected 0.4375 but got 0.4392157
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 30%, hsl(30deg 30% 40%) 90%)' Colors do not match.
-Actual:   color(srgb 0.4392157 0.41568628 0.2627451)
-Expected: color(srgb 0.4375 0.415625 0.2625).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4375 +/- 0.0001, expected 0.4375 but got 0.4392157
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 12.5%, hsl(30deg 30% 40%) 37.5%)' Colors do not match.
-Actual:   color(srgb 0.4392157 0.41568628 0.2627451 / 0.5019608)
-Expected: color(srgb 0.4375 0.415625 0.2625 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.4375 +/- 0.0001, expected 0.4375 but got 0.4392157
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 0%, hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.52156866 0.4 0.2784314)
-Expected: color(srgb 0.52 0.4 0.28).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.52 +/- 0.0001, expected 0.52 but got 0.52156866
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.37254903 0.4117647 0.25490198 / 0.6)
-Expected: color(srgb 0.372222 0.411111 0.255556 / 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.372222 +/- 0.0001, expected 0.372222 but got 0.37254903
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.42352942 0.40392157 0.25882354 / 0.8509804)
-Expected: color(srgb 0.42346 0.402889 0.258893 / 0.85).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.402889 +/- 0.0001, expected 0.402889 but got 0.40392157
-FAIL Property color value 'color-mix(in hsl, 25% hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.4745098 0.44705883 0.27058825 / 0.7019608)
-Expected: color(srgb 0.472245 0.447041 0.270612 / 0.7).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.472245 +/- 0.0001, expected 0.472245 but got 0.4745098
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), 25% hsl(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.26666668 0.32941177 0.23137255 / 0.5019608)
-Expected: color(srgb 0.2674 0.3304 0.2296 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2674 +/- 0.0001, expected 0.2674 but got 0.26666668
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8) 25%)' Colors do not match.
-Actual:   color(srgb 0.26666668 0.32941177 0.23137255 / 0.5019608)
-Expected: color(srgb 0.2674 0.3304 0.2296 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.2674 +/- 0.0001, expected 0.2674 but got 0.26666668
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 25%, hsl(30deg 30% 40% / .8) 75%)' Colors do not match.
-Actual:   color(srgb 0.4745098 0.44705883 0.27058825 / 0.7019608)
-Expected: color(srgb 0.472245 0.447041 0.270612 / 0.7).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.472245 +/- 0.0001, expected 0.472245 but got 0.4745098
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 30%, hsl(30deg 30% 40% / .8) 90%)' Colors do not match.
-Actual:   color(srgb 0.4745098 0.44705883 0.27058825 / 0.7019608)
-Expected: color(srgb 0.472245 0.447041 0.270612 / 0.7).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.472245 +/- 0.0001, expected 0.472245 but got 0.4745098
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 12.5%, hsl(30deg 30% 40% / .8) 37.5%)' Colors do not match.
-Actual:   color(srgb 0.4745098 0.44705883 0.27058825 / 0.34901962)
-Expected: color(srgb 0.472245 0.447041 0.270612 / 0.35).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.472245 +/- 0.0001, expected 0.472245 but got 0.4745098
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 0%, hsl(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.52156866 0.4 0.2784314 / 0.8)
-Expected: color(srgb 0.52 0.4 0.28 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.52 +/- 0.0001, expected 0.52 but got 0.52156866
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hsl, 25% hsl(120deg 10% 20%), hsl(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), 25% hsl(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%) 25%)'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%) 75%)'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 30%, hsl(30deg 30% 40%) 90%)'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 12.5%, hsl(30deg 30% 40%) 37.5%)'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 0%, hsl(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40% / .8))'
+PASS Property color value 'color-mix(in hsl, 25% hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), 25% hsl(30deg 30% 40% / .8))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8) 25%)'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 25%, hsl(30deg 30% 40% / .8) 75%)'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 30%, hsl(30deg 30% 40% / .8) 90%)'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 12.5%, hsl(30deg 30% 40% / .8) 37.5%)'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 0%, hsl(30deg 30% 40% / .8))'
 FAIL Property color value 'color-mix(in hsl, transparent, hsl(30deg 30% 40%))' Colors do not match.
 Actual:   color(srgb 0.52156866 0.34117648 0.2784314 / 0.5019608)
 Expected: color(srgb 0.52 0.4 0.28 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.52 +/- 0.0001, expected 0.52 but got 0.52156866
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.4 +/- 0.01, expected 0.4 but got 0.34117648
 FAIL Property color value 'color-mix(in hsl, transparent 10%, hsl(30deg 30% 40%))' Colors do not match.
 Actual:   color(srgb 0.52156866 0.3882353 0.2784314 / 0.9019608)
 Expected: color(srgb 0.52 0.4 0.28 / 0.9).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.52 +/- 0.0001, expected 0.52 but got 0.52156866
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0), hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.4627451 0.52156866 0.2784314 / 0.5019608)
-Expected: color(srgb 0.46 0.52 0.28 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.46 +/- 0.0001, expected 0.46 but got 0.4627451
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0) 10%, hsl(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.52156866 0.43529412 0.2784314 / 0.9019608)
-Expected: color(srgb 0.52 0.436 0.28 / 0.9).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.52 +/- 0.0001, expected 0.52 but got 0.52156866
-FAIL Property color value 'color-mix(in hsl, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.6666667 0.2509804)
-Expected: color(srgb 0.75 0.666667 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.6666667 0.2509804)
-Expected: color(srgb 0.75 0.666667 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.33333334 0.2509804)
-Expected: color(srgb 0.75 0.333333 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.33333334 0.2509804)
-Expected: color(srgb 0.75 0.333333 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.2509804 0.33333334)
-Expected: color(srgb 0.75 0.25 0.333333).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.2509804 0.33333334)
-Expected: color(srgb 0.75 0.25 0.333333).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl shorter hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.6666667 0.2509804)
-Expected: color(srgb 0.75 0.666667 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl shorter hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.6666667 0.2509804)
-Expected: color(srgb 0.75 0.666667 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl shorter hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.33333334 0.2509804)
-Expected: color(srgb 0.75 0.333333 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl shorter hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.33333334 0.2509804)
-Expected: color(srgb 0.75 0.333333 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl shorter hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.2509804 0.33333334)
-Expected: color(srgb 0.75 0.25 0.333333).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl shorter hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.2509804 0.33333334)
-Expected: color(srgb 0.75 0.25 0.333333).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl longer hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.33333334 0.7490196)
-Expected: color(srgb 0.25 0.333333 0.75).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl longer hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.33333334 0.7490196)
-Expected: color(srgb 0.25 0.333333 0.75).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl longer hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.6666667 0.7490196)
-Expected: color(srgb 0.25 0.666667 0.75).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl longer hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.6666667 0.7490196)
-Expected: color(srgb 0.25 0.666667 0.75).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl longer hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.7490196 0.6666667)
-Expected: color(srgb 0.25 0.75 0.666667).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl longer hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.7490196 0.6666667)
-Expected: color(srgb 0.25 0.75 0.666667).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl increasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.6666667 0.2509804)
-Expected: color(srgb 0.75 0.666667 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl increasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.33333334 0.7490196)
-Expected: color(srgb 0.25 0.333333 0.75).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl increasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.6666667 0.7490196)
-Expected: color(srgb 0.25 0.666667 0.75).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl increasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.33333334 0.2509804)
-Expected: color(srgb 0.75 0.333333 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl increasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.7490196 0.6666667)
-Expected: color(srgb 0.25 0.75 0.666667).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl increasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.2509804 0.33333334)
-Expected: color(srgb 0.75 0.25 0.333333).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.33333334 0.7490196)
-Expected: color(srgb 0.25 0.333333 0.75).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.6666667 0.2509804)
-Expected: color(srgb 0.75 0.666667 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.33333334 0.2509804)
-Expected: color(srgb 0.75 0.333333 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.6666667 0.7490196)
-Expected: color(srgb 0.25 0.666667 0.75).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
-FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.7490196 0.2509804 0.33333334)
-Expected: color(srgb 0.75 0.25 0.333333).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.75 +/- 0.0001, expected 0.75 but got 0.7490196
-FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' Colors do not match.
-Actual:   color(srgb 0.2509804 0.7490196 0.6666667)
-Expected: color(srgb 0.25 0.75 0.666667).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.25 +/- 0.0001, expected 0.25 but got 0.2509804
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.4 +/- 0.01, expected 0.4 but got 0.3882353
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0), hsl(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0) 10%, hsl(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hsl, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl shorter hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl shorter hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl shorter hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl shorter hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl shorter hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl shorter hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl longer hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl longer hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl longer hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl longer hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl longer hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl longer hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl increasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl increasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl increasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl increasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl increasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl increasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl decreasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl decreasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl decreasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl decreasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl decreasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
+PASS Property color value 'color-mix(in hsl decreasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
 FAIL Property color value 'color-mix(in hsl, hsl(none none none), hsl(none none none))' Colors do not match.
 Actual:   color(srgb 0 0 0)
 Expected: color(srgb none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 3
-FAIL Property color value 'color-mix(in hsl, hsl(none none none), hsl(30deg 40% 80%))' Colors do not match.
-Actual:   color(srgb 0.8784314 0.8 0.72156864)
-Expected: color(srgb 0.88 0.8 0.72).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.88 +/- 0.0001, expected 0.88 but got 0.8784314
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(none none none))' Colors do not match.
-Actual:   color(srgb 0.32156864 0.47843137 0.32156864)
-Expected: color(srgb 0.32 0.48 0.32).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.32 +/- 0.0001, expected 0.32 but got 0.32156864
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 20% none), hsl(30deg 40% 60%))' Colors do not match.
-Actual:   color(srgb 0.65882355 0.72156864 0.47843137)
-Expected: color(srgb 0.66 0.72 0.48).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.66 +/- 0.0001, expected 0.66 but got 0.65882355
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(30deg 20% none))' Colors do not match.
-Actual:   color(srgb 0.4392157 0.47843137 0.32156864)
-Expected: color(srgb 0.44 0.48 0.32).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.44 +/- 0.0001, expected 0.44 but got 0.4392157
-FAIL Property color value 'color-mix(in hsl, hsl(none 20% 40%), hsl(30deg none 80%))' Colors do not match.
-Actual:   color(srgb 0.6784314 0.6 0.52156866)
-Expected: color(srgb 0.68 0.6 0.52).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.68 +/- 0.0001, expected 0.68 but got 0.6784314
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40%))' Colors do not match.
-Actual:   color(srgb 0.56078434 0.56078434 0.23921569)
-Expected: color(srgb 0.56 0.56 0.24).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.56 +/- 0.0001, expected 0.56 but got 0.56078434
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / 0.5))' Colors do not match.
-Actual:   color(srgb 0.56078434 0.56078434 0.23921569 / 0.5019608)
-Expected: color(srgb 0.56 0.56 0.24 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.56 +/- 0.0001, expected 0.56 but got 0.56078434
+PASS Property color value 'color-mix(in hsl, hsl(none none none), hsl(30deg 40% 80%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(none none none))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 20% none), hsl(30deg 40% 60%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(30deg 20% none))'
+PASS Property color value 'color-mix(in hsl, hsl(none 20% 40%), hsl(30deg none 80%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40%))'
+PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / 0.5))'
 FAIL Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / none))' Colors do not match.
 Actual:   color(srgb 0.56078434 0.56078434 0.23921569 / 0)
 Expected: color(srgb 0.56 0.56 0.24 / none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.5764706 0.7019608 0.20392157)
-Expected: color(srgb 0.575 0.7 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.575 +/- 0.0001, expected 0.575 but got 0.5764706
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6509804 0.6 0.2509804)
-Expected: color(srgb 0.65 0.6 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.65 +/- 0.0001, expected 0.65 but got 0.6509804
-FAIL Property color value 'color-mix(in hwb, 25% hwb(120deg 10% 20%), hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6509804 0.6 0.2509804)
-Expected: color(srgb 0.65 0.6 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.65 +/- 0.0001, expected 0.65 but got 0.6509804
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3764706 0.7490196 0.15294118)
-Expected: color(srgb 0.375 0.75 0.15).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.375 +/- 0.0001, expected 0.375 but got 0.3764706
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%) 25%)' Colors do not match.
-Actual:   color(srgb 0.3764706 0.7490196 0.15294118)
-Expected: color(srgb 0.375 0.75 0.15).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.375 +/- 0.0001, expected 0.375 but got 0.3764706
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%) 75%)' Colors do not match.
-Actual:   color(srgb 0.6509804 0.6 0.2509804)
-Expected: color(srgb 0.65 0.6 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.65 +/- 0.0001, expected 0.65 but got 0.6509804
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 30%, hwb(30deg 30% 40%) 90%)' Colors do not match.
-Actual:   color(srgb 0.6509804 0.6 0.2509804)
-Expected: color(srgb 0.65 0.6 0.25).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.65 +/- 0.0001, expected 0.65 but got 0.6509804
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 12.5%, hwb(30deg 30% 40%) 37.5%)' Colors do not match.
-Actual:   color(srgb 0.6509804 0.6 0.2509804 / 0.5019608)
-Expected: color(srgb 0.65 0.6 0.25 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.65 +/- 0.0001, expected 0.65 but got 0.6509804
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 0%, hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.4509804 0.3019608)
-Expected: color(srgb 0.6 0.45 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.45 +/- 0.0001, expected 0.45 but got 0.4509804
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.56078434 0.6666667 0.23529412 / 0.6)
-Expected: color(srgb 0.558333 0.666667 0.233333 / 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.558333 +/- 0.0001, expected 0.558333 but got 0.56078434
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 25%, hwb(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.627451 0.58431375 0.27450982 / 0.7019608)
-Expected: color(srgb 0.628571 0.583929 0.271429 / 0.7).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.628571 +/- 0.0001, expected 0.628571 but got 0.627451
-FAIL Property color value 'color-mix(in hwb, 25% hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.627451 0.58431375 0.27450982 / 0.7019608)
-Expected: color(srgb 0.628571 0.583929 0.271429 / 0.7).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.628571 +/- 0.0001, expected 0.628571 but got 0.627451
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.37254903 0.75686276 0.14509805 / 0.9490196)
-Expected: color(srgb 0.373026 0.757895 0.142105 / 0.95).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.373026 +/- 0.0001, expected 0.373026 but got 0.37254903
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8) 25%)' Colors do not match.
-Actual:   color(srgb 0.38431373 0.72156864 0.18039216 / 0.5019608)
-Expected: color(srgb 0.3825 0.72 0.18 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3825 +/- 0.0001, expected 0.3825 but got 0.38431373
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 25%, hwb(30deg 30% 40% / .8) 75%)' Colors do not match.
-Actual:   color(srgb 0.627451 0.58431375 0.27450982 / 0.7019608)
-Expected: color(srgb 0.628571 0.583929 0.271429 / 0.7).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.628571 +/- 0.0001, expected 0.628571 but got 0.627451
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 30%, hwb(30deg 30% 40% / .8) 90%)' Colors do not match.
-Actual:   color(srgb 0.627451 0.58431375 0.27450982 / 0.7019608)
-Expected: color(srgb 0.628571 0.583929 0.271429 / 0.7).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.628571 +/- 0.0001, expected 0.628571 but got 0.627451
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 12.5%, hwb(30deg 30% 40% / .8) 37.5%)' Colors do not match.
-Actual:   color(srgb 0.627451 0.58431375 0.27450982 / 0.34901962)
-Expected: color(srgb 0.628571 0.583929 0.271429 / 0.35).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.628571 +/- 0.0001, expected 0.628571 but got 0.627451
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 0%, hwb(30deg 30% 40% / .8))' Colors do not match.
-Actual:   color(srgb 0.6 0.4509804 0.3019608 / 0.8)
-Expected: color(srgb 0.6 0.45 0.3 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.45 +/- 0.0001, expected 0.45 but got 0.4509804
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, 25% hwb(120deg 10% 20%), hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%) 25%)'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%) 75%)'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 30%, hwb(30deg 30% 40%) 90%)'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 12.5%, hwb(30deg 30% 40%) 37.5%)'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 0%, hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 25%, hwb(30deg 30% 40% / .8))'
+PASS Property color value 'color-mix(in hwb, 25% hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40% / .8))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8) 25%)'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 25%, hwb(30deg 30% 40% / .8) 75%)'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 30%, hwb(30deg 30% 40% / .8) 90%)'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 12.5%, hwb(30deg 30% 40% / .8) 37.5%)'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 0%, hwb(30deg 30% 40% / .8))'
 FAIL Property color value 'color-mix(in hwb, transparent, hwb(30deg 30% 40%))' Colors do not match.
 Actual:   color(srgb 0.6 0.3764706 0.3019608 / 0.5019608)
 Expected: color(srgb 0.6 0.45 0.3 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.45 +/- 0.0001, expected 0.45 but got 0.3764706
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.45 +/- 0.01, expected 0.45 but got 0.3764706
 FAIL Property color value 'color-mix(in hwb, transparent 10%, hwb(30deg 30% 40%))' Colors do not match.
 Actual:   color(srgb 0.6 0.43529412 0.3019608 / 0.9019608)
 Expected: color(srgb 0.6 0.45 0.3 / 0.9).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.45 +/- 0.0001, expected 0.45 but got 0.43529412
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0), hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.5254902 0.6 0.3019608 / 0.5019608)
-Expected: color(srgb 0.525 0.6 0.3 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.525 +/- 0.0001, expected 0.525 but got 0.5254902
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0) 10%, hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.49411765 0.3019608 / 0.9019608)
-Expected: color(srgb 0.6 0.495 0.3 / 0.9).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.495 +/- 0.0001, expected 0.495 but got 0.49411765
-FAIL Property color value 'color-mix(in hwb, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.5529412 0.3019608)
-Expected: color(srgb 0.6 0.55 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.55 +/- 0.0001, expected 0.55 but got 0.5529412
-FAIL Property color value 'color-mix(in hwb, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.5529412 0.3019608)
-Expected: color(srgb 0.6 0.55 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.55 +/- 0.0001, expected 0.55 but got 0.5529412
-FAIL Property color value 'color-mix(in hwb, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.34901962 0.3019608)
-Expected: color(srgb 0.6 0.35 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.35 +/- 0.0001, expected 0.35 but got 0.34901962
-FAIL Property color value 'color-mix(in hwb, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.34901962 0.3019608)
-Expected: color(srgb 0.6 0.35 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.35 +/- 0.0001, expected 0.35 but got 0.34901962
-FAIL Property color value 'color-mix(in hwb, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.3019608 0.34901962)
-Expected: color(srgb 0.6 0.3 0.35).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.3019608 0.34901962)
-Expected: color(srgb 0.6 0.3 0.35).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb shorter hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.5529412 0.3019608)
-Expected: color(srgb 0.6 0.55 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.55 +/- 0.0001, expected 0.55 but got 0.5529412
-FAIL Property color value 'color-mix(in hwb shorter hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.5529412 0.3019608)
-Expected: color(srgb 0.6 0.55 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.55 +/- 0.0001, expected 0.55 but got 0.5529412
-FAIL Property color value 'color-mix(in hwb shorter hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.34901962 0.3019608)
-Expected: color(srgb 0.6 0.35 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.35 +/- 0.0001, expected 0.35 but got 0.34901962
-FAIL Property color value 'color-mix(in hwb shorter hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.34901962 0.3019608)
-Expected: color(srgb 0.6 0.35 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.35 +/- 0.0001, expected 0.35 but got 0.34901962
-FAIL Property color value 'color-mix(in hwb shorter hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.3019608 0.34901962)
-Expected: color(srgb 0.6 0.3 0.35).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb shorter hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.3019608 0.34901962)
-Expected: color(srgb 0.6 0.3 0.35).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb longer hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.34901962 0.6)
-Expected: color(srgb 0.3 0.35 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb longer hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.34901962 0.6)
-Expected: color(srgb 0.3 0.35 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb longer hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.5529412 0.6)
-Expected: color(srgb 0.3 0.55 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb longer hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.5529412 0.6)
-Expected: color(srgb 0.3 0.55 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb longer hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.6 0.5529412)
-Expected: color(srgb 0.3 0.6 0.55).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb longer hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.6 0.5529412)
-Expected: color(srgb 0.3 0.6 0.55).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb increasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.5529412 0.3019608)
-Expected: color(srgb 0.6 0.55 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.55 +/- 0.0001, expected 0.55 but got 0.5529412
-FAIL Property color value 'color-mix(in hwb increasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.34901962 0.6)
-Expected: color(srgb 0.3 0.35 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb increasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.5529412 0.6)
-Expected: color(srgb 0.3 0.55 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb increasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.34901962 0.3019608)
-Expected: color(srgb 0.6 0.35 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.35 +/- 0.0001, expected 0.35 but got 0.34901962
-FAIL Property color value 'color-mix(in hwb increasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.6 0.5529412)
-Expected: color(srgb 0.3 0.6 0.55).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb increasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.3019608 0.34901962)
-Expected: color(srgb 0.6 0.3 0.35).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.34901962 0.6)
-Expected: color(srgb 0.3 0.35 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.5529412 0.3019608)
-Expected: color(srgb 0.6 0.55 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.55 +/- 0.0001, expected 0.55 but got 0.5529412
-FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.34901962 0.3019608)
-Expected: color(srgb 0.6 0.35 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.35 +/- 0.0001, expected 0.35 but got 0.34901962
-FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.5529412 0.6)
-Expected: color(srgb 0.3 0.55 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.3019608 0.34901962)
-Expected: color(srgb 0.6 0.3 0.35).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
-FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.3019608 0.6 0.5529412)
-Expected: color(srgb 0.3 0.6 0.55).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.3 +/- 0.0001, expected 0.3 but got 0.3019608
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.45 +/- 0.01, expected 0.45 but got 0.43529412
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0), hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0) 10%, hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb shorter hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb shorter hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb shorter hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb shorter hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb shorter hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb shorter hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb longer hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb longer hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb longer hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb longer hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb longer hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb longer hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb increasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb increasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb increasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb increasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb increasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb increasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb decreasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb decreasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb decreasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb decreasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb decreasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb decreasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
 FAIL Property color value 'color-mix(in hwb, hwb(none none none), hwb(none none none))' Colors do not match.
 Actual:   color(srgb 1 0 0)
 Expected: color(srgb none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 3
-FAIL Property color value 'color-mix(in hwb, hwb(none none none), hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.6 0.4509804 0.3019608)
-Expected: color(srgb 0.6 0.45 0.3).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.45 +/- 0.0001, expected 0.45 but got 0.4509804
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(none none none))' Colors do not match.
-Actual:   color(srgb 0.101960786 0.8 0.101960786)
-Expected: color(srgb 0.1 0.8 0.1).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.1 +/- 0.0001, expected 0.1 but got 0.101960786
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% none), hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.5019608 0.6 0.2)
-Expected: color(srgb 0.5 0.6 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.5 +/- 0.0001, expected 0.5 but got 0.5019608
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% none))' Colors do not match.
-Actual:   color(srgb 0.6509804 0.8 0.2)
-Expected: color(srgb 0.65 0.8 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.65 +/- 0.0001, expected 0.65 but got 0.6509804
-FAIL Property color value 'color-mix(in hwb, hwb(none 10% 20%), hwb(30deg none 40%))' Colors do not match.
-Actual:   color(srgb 0.7019608 0.4 0.101960786)
-Expected: color(srgb 0.7 0.4 0.1).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.7 +/- 0.0001, expected 0.7 but got 0.7019608
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40%))' Colors do not match.
-Actual:   color(srgb 0.5764706 0.7019608 0.2)
-Expected: color(srgb 0.575 0.7 0.2).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.575 +/- 0.0001, expected 0.575 but got 0.5764706
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / 0.5))' Colors do not match.
-Actual:   color(srgb 0.5764706 0.7019608 0.2 / 0.5019608)
-Expected: color(srgb 0.575 0.7 0.2 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.575 +/- 0.0001, expected 0.575 but got 0.5764706
+PASS Property color value 'color-mix(in hwb, hwb(none none none), hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(none none none))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% none), hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% none))'
+PASS Property color value 'color-mix(in hwb, hwb(none 10% 20%), hwb(30deg none 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40%))'
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / 0.5))'
 FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / none))' Colors do not match.
 Actual:   color(srgb 0.5764706 0.7019608 0.2 / 0)
 Expected: color(srgb 0.575 0.7 0.2 / none).
@@ -508,11 +166,11 @@ PASS Property color value 'color-mix(in lch, lch(10 20 30deg / .4) 0%, lch(50 60
 FAIL Property color value 'color-mix(in lch, transparent, lch(0.3 0.4 30deg))' Colors do not match.
 Actual:   lch(0.3 0.4 15 / 0.5)
 Expected: lch(0.3 0.4 30 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 30 +/- 0.0001, expected 30 but got 15
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 30 +/- 0.01, expected 30 but got 15
 FAIL Property color value 'color-mix(in lch, transparent 10%, lch(0.3 0.4 30deg))' Colors do not match.
 Actual:   lch(0.3 0.40000004 27 / 0.9)
 Expected: lch(0.3 0.4 30 / 0.9).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 30 +/- 0.0001, expected 30 but got 27
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 30 +/- 0.01, expected 30 but got 27
 PASS Property color value 'color-mix(in lch, lch(0.1 0.2 120deg / 0), lch(0.3 0.4 30deg))'
 PASS Property color value 'color-mix(in lch, lch(0.1 0.2 120deg / 0) 10%, lch(0.3 0.4 30deg))'
 PASS Property color value 'color-mix(in lch, lch(100 0 40deg), lch(100 0 60deg))'
@@ -575,11 +233,11 @@ PASS Property color value 'color-mix(in oklch, oklch(0.1 0.2 30deg / .4) 0%, okl
 FAIL Property color value 'color-mix(in oklch, transparent, oklch(0.3 40 30deg))' Colors do not match.
 Actual:   oklch(0.3 40 15 / 0.5)
 Expected: oklch(0.3 40 30 / 0.5).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 30 +/- 0.0001, expected 30 but got 15
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 30 +/- 0.01, expected 30 but got 15
 FAIL Property color value 'color-mix(in oklch, transparent 10%, oklch(0.3 40 30deg))' Colors do not match.
 Actual:   oklch(0.3 40 27 / 0.9)
 Expected: oklch(0.3 40 30 / 0.9).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 30 +/- 0.0001, expected 30 but got 27
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 30 +/- 0.01, expected 30 but got 27
 PASS Property color value 'color-mix(in oklch, oklch(0.1 20 120deg / 0), oklch(0.3 40 30deg))'
 PASS Property color value 'color-mix(in oklch, oklch(0.1 20 120deg / 0) 10%, oklch(0.3 40 30deg))'
 PASS Property color value 'color-mix(in oklch, oklch(1 0 40deg), oklch(1 0 60deg))'
