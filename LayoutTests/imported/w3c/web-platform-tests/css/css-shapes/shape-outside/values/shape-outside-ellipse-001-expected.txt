@@ -1,38 +1,74 @@
 
-PASS ellipse() - inline
-PASS ellipse(50px 100px) - inline
-PASS ellipse(100px 100px) - inline
-PASS ellipse(25% 50%) - inline
-PASS ellipse(50px 25%) - inline
-PASS ellipse(25% 50px) - inline
-PASS ellipse(25% closest-side) - inline
-PASS ellipse(25px closest-side) - inline
-PASS ellipse(closest-side 75%) - inline
-PASS ellipse(closest-side 75px) - inline
-PASS ellipse(25% farthest-side) - inline
-PASS ellipse(25px farthest-side) - inline
-PASS ellipse(farthest-side 75%) - inline
-PASS ellipse(farthest-side 75px) - inline
-PASS ellipse(closest-side closest-side) - inline
-PASS ellipse(farthest-side farthest-side) - inline
-PASS ellipse(closest-side farthest-side) - inline
-PASS ellipse(farthest-side closest-side) - inline
-PASS ellipse() - computed
-PASS ellipse(50px 100px) - computed
-PASS ellipse(100px 100px) - computed
-PASS ellipse(25% 50%) - computed
-PASS ellipse(50px 25%) - computed
-PASS ellipse(25% 50px) - computed
-PASS ellipse(25% closest-side) - computed
-PASS ellipse(25px closest-side) - computed
-PASS ellipse(closest-side 75%) - computed
-PASS ellipse(closest-side 75px) - computed
-PASS ellipse(25% farthest-side) - computed
-PASS ellipse(25px farthest-side) - computed
-PASS ellipse(farthest-side 75%) - computed
-PASS ellipse(farthest-side 75px) - computed
-PASS ellipse(closest-side closest-side) - computed
-PASS ellipse(farthest-side farthest-side) - computed
-PASS ellipse(closest-side farthest-side) - computed
-PASS ellipse(farthest-side closest-side) - computed
+PASS ellipse(at 50% 50%) - inline
+PASS ellipse(50px 100px at 50% 50%) - inline
+PASS ellipse(100px 100px at 50% 50%) - inline
+PASS ellipse(25% 50% at 50% 50%) - inline
+PASS ellipse(50px 25% at 50% 50%) - inline
+PASS ellipse(25% 50px at 50% 50%) - inline
+PASS ellipse(25% closest-side at 50% 50%) - inline
+PASS ellipse(25px closest-side at 50% 50%) - inline
+PASS ellipse(closest-side 75% at 50% 50%) - inline
+PASS ellipse(closest-side 75px at 50% 50%) - inline
+PASS ellipse(25% farthest-side at 50% 50%) - inline
+PASS ellipse(25px farthest-side at 50% 50%) - inline
+PASS ellipse(farthest-side 75% at 50% 50%) - inline
+PASS ellipse(farthest-side 75px at 50% 50%) - inline
+PASS ellipse(closest-side closest-side at 50% 50%) - inline
+PASS ellipse(farthest-side farthest-side at 50% 50%) - inline
+PASS ellipse(closest-side farthest-side at 50% 50%) - inline
+PASS ellipse(farthest-side closest-side at 50% 50%) - inline
+FAIL ellipse() - inline assert_equals: expected "ellipse()" but got "ellipse(at 50% 50%)"
+FAIL ellipse(50px 100px) - inline assert_equals: expected "ellipse(50px 100px)" but got "ellipse(50px 100px at 50% 50%)"
+FAIL ellipse(100px 100px) - inline assert_equals: expected "ellipse(100px 100px)" but got "ellipse(100px 100px at 50% 50%)"
+FAIL ellipse(25% 50%) - inline assert_equals: expected "ellipse(25% 50%)" but got "ellipse(25% 50% at 50% 50%)"
+FAIL ellipse(50px 25%) - inline assert_equals: expected "ellipse(50px 25%)" but got "ellipse(50px 25% at 50% 50%)"
+FAIL ellipse(25% 50px) - inline assert_equals: expected "ellipse(25% 50px)" but got "ellipse(25% 50px at 50% 50%)"
+FAIL ellipse(25% closest-side) - inline assert_equals: expected "ellipse(25% closest-side)" but got "ellipse(25% closest-side at 50% 50%)"
+FAIL ellipse(25px closest-side) - inline assert_equals: expected "ellipse(25px closest-side)" but got "ellipse(25px closest-side at 50% 50%)"
+FAIL ellipse(closest-side 75%) - inline assert_equals: expected "ellipse(closest-side 75%)" but got "ellipse(closest-side 75% at 50% 50%)"
+FAIL ellipse(closest-side 75px) - inline assert_equals: expected "ellipse(closest-side 75px)" but got "ellipse(closest-side 75px at 50% 50%)"
+FAIL ellipse(25% farthest-side) - inline assert_equals: expected "ellipse(25% farthest-side)" but got "ellipse(25% farthest-side at 50% 50%)"
+FAIL ellipse(25px farthest-side) - inline assert_equals: expected "ellipse(25px farthest-side)" but got "ellipse(25px farthest-side at 50% 50%)"
+FAIL ellipse(farthest-side 75%) - inline assert_equals: expected "ellipse(farthest-side 75%)" but got "ellipse(farthest-side 75% at 50% 50%)"
+FAIL ellipse(farthest-side 75px) - inline assert_equals: expected "ellipse(farthest-side 75px)" but got "ellipse(farthest-side 75px at 50% 50%)"
+FAIL ellipse(closest-side closest-side) - inline assert_equals: expected "ellipse()" but got "ellipse(at 50% 50%)"
+FAIL ellipse(farthest-side farthest-side) - inline assert_equals: expected "ellipse(farthest-side farthest-side)" but got "ellipse(farthest-side farthest-side at 50% 50%)"
+FAIL ellipse(closest-side farthest-side) - inline assert_equals: expected "ellipse(closest-side farthest-side)" but got "ellipse(closest-side farthest-side at 50% 50%)"
+FAIL ellipse(farthest-side closest-side) - inline assert_equals: expected "ellipse(farthest-side closest-side)" but got "ellipse(farthest-side closest-side at 50% 50%)"
+PASS ellipse(at 50% 50%) - computed
+PASS ellipse(50px 100px at 50% 50%) - computed
+PASS ellipse(100px 100px at 50% 50%) - computed
+PASS ellipse(25% 50% at 50% 50%) - computed
+PASS ellipse(50px 25% at 50% 50%) - computed
+PASS ellipse(25% 50px at 50% 50%) - computed
+PASS ellipse(25% closest-side at 50% 50%) - computed
+PASS ellipse(25px closest-side at 50% 50%) - computed
+PASS ellipse(closest-side 75% at 50% 50%) - computed
+PASS ellipse(closest-side 75px at 50% 50%) - computed
+PASS ellipse(25% farthest-side at 50% 50%) - computed
+PASS ellipse(25px farthest-side at 50% 50%) - computed
+PASS ellipse(farthest-side 75% at 50% 50%) - computed
+PASS ellipse(farthest-side 75px at 50% 50%) - computed
+PASS ellipse(closest-side closest-side at 50% 50%) - computed
+PASS ellipse(farthest-side farthest-side at 50% 50%) - computed
+PASS ellipse(closest-side farthest-side at 50% 50%) - computed
+PASS ellipse(farthest-side closest-side at 50% 50%) - computed
+FAIL ellipse() - computed assert_equals: expected "ellipse()" but got "ellipse(at 50% 50%)"
+FAIL ellipse(50px 100px) - computed assert_equals: expected "ellipse(50px 100px)" but got "ellipse(50px 100px at 50% 50%)"
+FAIL ellipse(100px 100px) - computed assert_equals: expected "ellipse(100px 100px)" but got "ellipse(100px 100px at 50% 50%)"
+FAIL ellipse(25% 50%) - computed assert_equals: expected "ellipse(25% 50%)" but got "ellipse(25% 50% at 50% 50%)"
+FAIL ellipse(50px 25%) - computed assert_equals: expected "ellipse(50px 25%)" but got "ellipse(50px 25% at 50% 50%)"
+FAIL ellipse(25% 50px) - computed assert_equals: expected "ellipse(25% 50px)" but got "ellipse(25% 50px at 50% 50%)"
+FAIL ellipse(25% closest-side) - computed assert_equals: expected "ellipse(25% closest-side)" but got "ellipse(25% closest-side at 50% 50%)"
+FAIL ellipse(25px closest-side) - computed assert_equals: expected "ellipse(25px closest-side)" but got "ellipse(25px closest-side at 50% 50%)"
+FAIL ellipse(closest-side 75%) - computed assert_equals: expected "ellipse(closest-side 75%)" but got "ellipse(closest-side 75% at 50% 50%)"
+FAIL ellipse(closest-side 75px) - computed assert_equals: expected "ellipse(closest-side 75px)" but got "ellipse(closest-side 75px at 50% 50%)"
+FAIL ellipse(25% farthest-side) - computed assert_equals: expected "ellipse(25% farthest-side)" but got "ellipse(25% farthest-side at 50% 50%)"
+FAIL ellipse(25px farthest-side) - computed assert_equals: expected "ellipse(25px farthest-side)" but got "ellipse(25px farthest-side at 50% 50%)"
+FAIL ellipse(farthest-side 75%) - computed assert_equals: expected "ellipse(farthest-side 75%)" but got "ellipse(farthest-side 75% at 50% 50%)"
+FAIL ellipse(farthest-side 75px) - computed assert_equals: expected "ellipse(farthest-side 75px)" but got "ellipse(farthest-side 75px at 50% 50%)"
+FAIL ellipse(closest-side closest-side) - computed assert_equals: expected "ellipse()" but got "ellipse(at 50% 50%)"
+FAIL ellipse(farthest-side farthest-side) - computed assert_equals: expected "ellipse(farthest-side farthest-side)" but got "ellipse(farthest-side farthest-side at 50% 50%)"
+FAIL ellipse(closest-side farthest-side) - computed assert_equals: expected "ellipse(closest-side farthest-side)" but got "ellipse(closest-side farthest-side at 50% 50%)"
+FAIL ellipse(farthest-side closest-side) - computed assert_equals: expected "ellipse(farthest-side closest-side)" but got "ellipse(farthest-side closest-side at 50% 50%)"
 

@@ -1,10 +1,10 @@
 
-PASS No arguments - inline
-PASS Radial arguments - inline
+FAIL No arguments - inline assert_equals: expected "ellipse()" but got "ellipse(at 50% 50%)"
+FAIL Radial arguments - inline assert_equals: expected "ellipse(50px 50px)" but got "ellipse(50px 50px at 50% 50%)"
 PASS Position argument - inline
 PASS Radial and position argument - inline
-PASS No arguments - computed
-PASS Radial arguments - computed
+FAIL No arguments - computed assert_equals: expected "ellipse()" but got "ellipse(at 50% 50%)"
+FAIL Radial arguments - computed assert_equals: expected "ellipse(50px 50px)" but got "ellipse(50px 50px at 50% 50%)"
 PASS Position argument - computed
 PASS Radial and position argument - computed
 

@@ -10,6 +10,7 @@
         <link rel="help" href="http://www.w3.org/TR/css3-values/#calc-notation">
         <meta name="assert" content="A circle's arguments may be in calc() values.">
         <meta name="flags" content="ahem dom">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1">
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
         <script src="support/parsing-utils.js"></script>
@@ -19,7 +20,7 @@
         <script type="text/javascript">
             var circle_calc_tests = [];
             ParsingUtils.calcTestValues.forEach(function(value) {
-                testCase = ['circle('+ value[0] +')', 'circle('+ value[1] + ' at 50% 50%)'];
+                testCase = ['circle('+ value[0] + ' at 50% 50%)', 'circle('+ value[1] + ' at 50% 50%)'];
                 if(Object.prototype.toString.call( value[2] ) === '[object Array]' && value[2].length == 2) {
                     testCase.push([ 'circle('+ value[2][0] + ' at 50% 50%)', 'circle('+ value[2][1] + ' at 50% 50%)']);
                 } else {
