@@ -339,7 +339,7 @@ void FTPDirectoryDocumentParser::createBasicDocument()
 
     bodyElement->appendChild(*m_tableElement);
 
-    document.processViewport("width=device-width"_s, ViewportArguments::ViewportMeta);
+    document.processViewport("width=device-width"_s, ViewportArguments::Type::ViewportMeta);
 }
 
 void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)

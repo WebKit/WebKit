@@ -1728,6 +1728,48 @@ header: <WebCore/RectEdges.h>
     float left()
 };
 
+[Alias=class RectEdges<bool>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::BoolBoxExtent {
+    bool top();
+    bool right();
+    bool bottom();
+    bool left();
+}
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::Path {
+    Vector<WebCore::PathSegment> segments();
+}
+
+#if ENABLE(META_VIEWPORT)
+
+[Nested] enum class WebCore::ViewportArguments::Type : uint8_t {
+    Implicit,
+#if PLATFORM(IOS_FAMILY)
+    PluginDocument,
+    ImageDocument,
+#endif
+    ViewportMeta,
+    CSSDeviceAdaptation
+};
+
+struct WebCore::ViewportArguments {
+    WebCore::ViewportArguments::Type type;
+    float width;
+    float minWidth;
+    float maxWidth;
+    float height;
+    float minHeight;
+    float maxHeight;
+    float zoom;
+    float minZoom;
+    float maxZoom;
+    float userZoom;
+    float orientation;
+    float shrinkToFit;
+    WebCore::ViewportFit viewportFit;
+    bool widthWasExplicit;
+};
+#endif // ENABLE(META_VIEWPORT)
+
 header: <WebCore/DisplayListItems.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineFillColor {
     uint8_t colorData().resolved().red

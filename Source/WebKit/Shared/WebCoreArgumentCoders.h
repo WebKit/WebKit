@@ -119,7 +119,6 @@ class Font;
 class FontPlatformData;
 class FragmentedSharedBuffer;
 class LightSource;
-class Path;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
 class ResourceError;
@@ -154,18 +153,6 @@ template<> struct ArgumentCoder<WebCore::DOMCacheEngine::Record> {
     static void encode(Encoder&, const WebCore::DOMCacheEngine::Record&);
     static std::optional<WebCore::DOMCacheEngine::Record> decode(Decoder&);
 };
-
-template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
-    static void encode(Encoder&, const WebCore::RectEdges<bool>&);
-    static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
-};
-
-#if ENABLE(META_VIEWPORT)
-template<> struct ArgumentCoder<WebCore::ViewportArguments> {
-    static void encode(Encoder&, const WebCore::ViewportArguments&);
-    static std::optional<WebCore::ViewportArguments> decode(Decoder&);
-};
-#endif
 
 template<> struct ArgumentCoder<WebCore::Length> {
     static void encode(Encoder&, const WebCore::Length&);
@@ -430,12 +417,6 @@ template<> struct ArgumentCoder<WebCore::Filter> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::Filter&);
     static std::optional<Ref<WebCore::Filter>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::Path> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::Path&);
-    static std::optional<WebCore::Path> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

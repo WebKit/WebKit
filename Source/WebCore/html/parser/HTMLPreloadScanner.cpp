@@ -141,7 +141,7 @@ public:
         }
 
         if (m_metaIsViewport && !m_metaContent.isNull())
-            document->processViewport(m_metaContent, ViewportArguments::ViewportMeta);
+            document->processViewport(m_metaContent, ViewportArguments::Type::ViewportMeta);
 
         if (m_metaIsDisabledAdaptations && !m_metaContent.isNull())
             document->processDisabledAdaptations(m_metaContent);
