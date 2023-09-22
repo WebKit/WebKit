@@ -110,7 +110,6 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
     FloatSize adjustment = computeOffset(*renderBox) - m_lastOffsetForAnchorElement;
     if (!adjustment.isZero()) {
         auto newScrollPosition = frameView().scrollPosition() + IntPoint(adjustment.width(), adjustment.height());
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollAnchoringController::adjustScrollPositionForAnchoring() for frame: " << m_frameView << " adjusting from: " << frameView().scrollPosition() << " to: " << newScrollPosition);
         auto options = ScrollPositionChangeOptions::createProgrammatic();
         options.originalScrollDelta = adjustment;
         m_frameView.setScrollPosition(newScrollPosition, options);
