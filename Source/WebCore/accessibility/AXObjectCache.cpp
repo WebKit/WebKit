@@ -75,6 +75,7 @@
 #include "ElementRareData.h"
 #include "FocusController.h"
 #include "HTMLAreaElement.h"
+#include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLImageElement.h"
@@ -820,6 +821,8 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     if (node->renderer())
         return getOrCreate(node->renderer());
 
+    Ref protectedNode { *node };
+
     if (!node->parentElement())
         return nullptr;
 
@@ -845,11 +848,11 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
 
     bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*node->parentElement()).first();
     bool insideMeterElement = is<HTMLMeterElement>(*node->parentElement());
-    bool hasDisplayContents = is<Element>(*node) && downcast<Element>(*node).hasDisplayContents();
-    if (!inCanvasSubtree && !insideMeterElement && !hasDisplayContents && !isNodeAriaVisible(node))
+    auto* element = dynamicDowncast<Element>(node);
+    bool hasDisplayContents = element && element->hasDisplayContents();
+    bool isPopover = element && element->hasAttributeWithoutSynchronization(popoverAttr);
+    if (!inCanvasSubtree && !insideMeterElement && !hasDisplayContents && !isPopover && !isNodeAriaVisible(node))
         return nullptr;
-
-    Ref protectedNode { *node };
 
     // Fallback content is only focusable as long as the canvas is displayed and visible.
     // Update the style before Element::isFocusable() gets called.
@@ -1623,9 +1626,14 @@ void AXObjectCache::onFocusChange(Node* oldNode, Node* newNode)
         handleFocusedUIElementChanged(oldNode, newNode);
 }
 
-void AXObjectCache::onPopoverTargetToggle(const HTMLFormControlElement& popoverInvokerElement)
+void AXObjectCache::onPopoverToggle(const HTMLElement& popover)
 {
-    postNotification(get(const_cast<HTMLFormControlElement*>(&popoverInvokerElement)), &document(), AXExpandedChanged);
+    RefPtr axPopover = get(const_cast<HTMLElement*>(&popover));
+    if (!axPopover)
+        return;
+    // There may be multiple elements with popovertarget attributes that point at |popover|.
+    for (const auto& invoker : axPopover->controllers())
+        postNotification(dynamicDowncast<AccessibilityObject>(invoker.get()), &document(), AXExpandedChanged);
 }
 
 void AXObjectCache::deferMenuListValueChange(Element* element)
@@ -2436,7 +2444,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     } else if (attrName == colspanAttr) {
         postNotification(element, AXColumnSpanChanged);
         recomputeParentTableProperties(element, TableProperty::CellSlots);
-    }
+    } else if (attrName == popovertargetAttr)
+        postNotification(element, AXPopoverTargetChanged);
 
     if (!attrName.localName().string().startsWith("aria-"_s))
         return;
@@ -4125,6 +4134,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXPositionInSetChanged:
             tree->updateNodeProperties(*notification.first, { AXPropertyName::PosInSet, AXPropertyName::SupportsPosInSet });
             break;
+        case AXPopoverTargetChanged:
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::SupportsExpanded, AXPropertyName::IsExpanded });
+            break;
         case AXSortDirectionChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
             break;
@@ -4459,7 +4471,7 @@ AXRelationType AXObjectCache::attributeToRelationType(const QualifiedName& attri
 {
     if (attribute == aria_activedescendantAttr)
         return AXRelationType::ActiveDescendant;
-    if (attribute == aria_controlsAttr)
+    if (attribute == aria_controlsAttr || attribute == popovertargetAttr)
         return AXRelationType::ControllerFor;
     if (attribute == aria_describedbyAttr)
         return AXRelationType::DescribedBy;
@@ -4683,6 +4695,10 @@ void AXObjectCache::updateRelations(Element& origin, const QualifiedName& attrib
         ASSERT_NOT_REACHED();
         return;
     }
+
+    // `popovertarget` is only valid for input and button elements.
+    if (UNLIKELY(attribute == popovertargetAttr) && !is<HTMLInputElement>(origin) && !is<HTMLButtonElement>(origin))
+        return;
 
     removeRelations(origin, relationType);
     addRelations(origin, attribute);
