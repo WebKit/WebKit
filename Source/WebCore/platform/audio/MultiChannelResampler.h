@@ -49,7 +49,7 @@ public:
     void process(AudioBus* destination, size_t framesToProcess);
 
 private:
-    void provideInputForChannel(float* buffer, size_t framesToProcess, unsigned channelIndex);
+    void provideInputForChannel(std::span<float> buffer, size_t framesToProcess, unsigned channelIndex);
 
     // FIXME: the mac port can have a more highly optimized implementation based on CoreAudio
     // instead of SincResampler. For now the default implementation will be used on all ports.
