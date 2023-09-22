@@ -125,6 +125,18 @@ struct TextureStorage {
     AccessMode access;
 };
 
+struct TextureDepth {
+    enum class Kind : uint8_t {
+        TextureDepth2d = 1,
+        TextureDepth2dArray,
+        TextureDepthCube,
+        TextureDepthCubeArray,
+        TextureDepthMultisampled2d,
+    };
+
+    Kind kind;
+};
+
 struct Vector {
     const Type* element;
     uint8_t size;
@@ -182,6 +194,7 @@ struct Type : public std::variant<
     Types::Function,
     Types::Texture,
     Types::TextureStorage,
+    Types::TextureDepth,
     Types::Reference,
     Types::Pointer,
     Types::TypeConstructor,
@@ -196,6 +209,7 @@ struct Type : public std::variant<
         Types::Function,
         Types::Texture,
         Types::TextureStorage,
+        Types::TextureDepth,
         Types::Reference,
         Types::Pointer,
         Types::TypeConstructor,

@@ -83,6 +83,12 @@ public:
     const Type* texelFormatType() const { return m_texelFormat; }
     const Type* addressSpaceType() const { return m_addressSpace; }
 
+    const Type* textureDepth2dType() const { return m_textureDepth2d; }
+    const Type* textureDepth2dArrayType() const { return m_textureDepthArray2d; }
+    const Type* textureDepthCubeType() const { return m_textureDepthCube; }
+    const Type* textureDepthCubeArrayType() const { return m_textureDepthArrayCube; }
+    const Type* textureDepthMultisampled2dType() const { return m_textureDepthMultisampled2d; }
+
     const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
     const Type* arrayType(const Type*, std::optional<unsigned>);
     const Type* vectorType(const Type*, uint8_t);
@@ -114,6 +120,11 @@ private:
     const Type* m_accessMode;
     const Type* m_texelFormat;
     const Type* m_addressSpace;
+    const Type* m_textureDepth2d;
+    const Type* m_textureDepthArray2d;
+    const Type* m_textureDepthCube;
+    const Type* m_textureDepthArrayCube;
+    const Type* m_textureDepthMultisampled2d;
 };
 
 } // namespace WGSL

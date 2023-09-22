@@ -708,6 +708,33 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         return StorageTextureBindingLayout {
             .viewDimension = viewDimension
         };
+    }, [&](const TextureDepth& texture) -> BindGroupLayoutEntry::BindingMember {
+        TextureViewDimension viewDimension;
+        bool multisampled = false;
+        switch (texture.kind) {
+        case Types::TextureDepth::Kind::TextureDepth2d:
+            viewDimension = TextureViewDimension::TwoDimensional;
+            break;
+        case Types::TextureDepth::Kind::TextureDepth2dArray:
+            viewDimension = TextureViewDimension::TwoDimensionalArray;
+            break;
+        case Types::TextureDepth::Kind::TextureDepthCube:
+            viewDimension = TextureViewDimension::Cube;
+            break;
+        case Types::TextureDepth::Kind::TextureDepthCubeArray:
+            viewDimension = TextureViewDimension::CubeArray;
+            break;
+        case Types::TextureDepth::Kind::TextureDepthMultisampled2d:
+            viewDimension = TextureViewDimension::TwoDimensional;
+            multisampled = true;
+            break;
+        }
+
+        return TextureBindingLayout {
+            .sampleType = TextureSampleType::Depth,
+            .viewDimension = viewDimension,
+            .multisampled = multisampled
+        };
     }, [&](const Reference&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Pointer&) -> BindGroupLayoutEntry::BindingMember {

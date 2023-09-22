@@ -183,6 +183,25 @@ void Type::dump(PrintStream& out) const
             }
             out.print(">");
         },
+        [&](const TextureDepth& texture) {
+            switch (texture.kind) {
+            case TextureDepth::Kind::TextureDepth2d:
+                out.print("texture_depth_2d");
+                break;
+            case TextureDepth::Kind::TextureDepth2dArray:
+                out.print("texture_depth_2d_array");
+                break;
+            case TextureDepth::Kind::TextureDepthCube:
+                out.print("texture_depth_cube");
+                break;
+            case TextureDepth::Kind::TextureDepthCubeArray:
+                out.print("texture_depth_cube_array");
+                break;
+            case TextureDepth::Kind::TextureDepthMultisampled2d:
+                out.print("texture_depth_multisampled_2d");
+                break;
+            }
+        },
         [&](const Reference& reference) {
             out.print("ref<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
         },
@@ -344,6 +363,9 @@ unsigned Type::size() const
         [&](const TextureStorage&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const TextureDepth&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Reference&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
@@ -407,6 +429,9 @@ unsigned Type::alignment() const
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TextureStorage&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureDepth&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Reference&) -> unsigned {

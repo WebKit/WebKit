@@ -693,6 +693,27 @@ void FunctionDefinitionWriter::visit(const Type* type)
             }
             m_stringBuilder.append(base, "<", type, ", access::", mode, ">");
         },
+        [&](const TextureDepth& texture) {
+            const char* base;
+            switch (texture.kind) {
+            case TextureDepth::Kind::TextureDepth2d:
+                base = "depth2d";
+                break;
+            case TextureDepth::Kind::TextureDepth2dArray:
+                base = "depth2d_array";
+                break;
+            case TextureDepth::Kind::TextureDepthCube:
+                base = "depthcube";
+                break;
+            case TextureDepth::Kind::TextureDepthCubeArray:
+                base = "depthcube_array";
+                break;
+            case TextureDepth::Kind::TextureDepthMultisampled2d:
+                base = "depth2d_ms";
+                break;
+            }
+            m_stringBuilder.append(base, "<float>");
+        },
         [&](const Reference& reference) {
             const char* addressSpace = nullptr;
             switch (reference.addressSpace) {

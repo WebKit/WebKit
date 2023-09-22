@@ -162,6 +162,12 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceType(AST::Identifier::make("sampler"_s), m_types.samplerType());
     introduceType(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
 
+    introduceType(AST::Identifier::make("texture_depth_2d"_s), m_types.textureDepth2dType());
+    introduceType(AST::Identifier::make("texture_depth_2d_array"_s), m_types.textureDepth2dArrayType());
+    introduceType(AST::Identifier::make("texture_depth_cube"_s), m_types.textureDepthCubeType());
+    introduceType(AST::Identifier::make("texture_depth_cube_array"_s), m_types.textureDepthCubeArrayType());
+    introduceType(AST::Identifier::make("texture_depth_multisampled_2d"_s), m_types.textureDepthMultisampled2dType());
+
     introduceType(AST::Identifier::make("ptr"_s), m_types.typeConstructorType(
         "ptr"_s,
         [this](AST::ElaboratedTypeExpression& type) -> const Type* {
