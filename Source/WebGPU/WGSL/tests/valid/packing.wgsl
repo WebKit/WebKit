@@ -396,6 +396,18 @@ fn testCall() -> i32
     return 0;
 }
 
+struct S {
+    @size(16) x: i32,
+    @align(32) y: array<i32>,
+}
+@group(0) @binding(6) var<storage, read_write> s: S;
+
+fn testRuntimeArray()
+{
+    s.x = 0;
+    s.y[0] = 0;
+}
+
 @compute @workgroup_size(1)
 fn main()
 {
@@ -406,4 +418,5 @@ fn main()
     _ = testBinaryOperations();
     _ = testUnaryOperations();
     _ = testCall();
+    _ = testRuntimeArray();
 }

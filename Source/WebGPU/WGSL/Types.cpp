@@ -322,8 +322,7 @@ unsigned Type::size() const
             return matrix.columns * WTF::roundUpToMultipleOf(rowAlignment, rowSize);
         },
         [&](const Array& array) -> unsigned {
-            ASSERT(array.size.has_value());
-            return *array.size * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            return array.size.value_or(1) * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
         },
         [&](const Struct& structure) -> unsigned {
             unsigned alignment = 0;
