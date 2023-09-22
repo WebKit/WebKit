@@ -1604,7 +1604,7 @@ webkit.org/b/239568 [ Monterey Release ] imported/w3c/web-platform-tests/content
 
 webkit.org/b/239577 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Pass Failure ]
 
-webkit.org/b/239574 [ Monterey Release ] webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html [ Pass Failure ]
+webkit.org/b/261919 webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html [ Pass Failure ] # old: webkit.org/b/239574
 
 webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass ImageOnlyFailure ]
 
