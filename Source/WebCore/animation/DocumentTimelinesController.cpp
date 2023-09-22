@@ -118,6 +118,9 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
         timelinesToUpdate.append(timeline.copyRef());
 
         for (auto& animation : copyToVector(timeline->relevantAnimations())) {
+            if (animation->isSkippedContentAnimation())
+                continue;
+
             if (animation->timeline() != timeline.ptr()) {
                 ASSERT(!animation->timeline());
                 continue;

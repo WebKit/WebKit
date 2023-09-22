@@ -814,6 +814,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (contentVisibilityChanged) {
             if (oldStyle->contentVisibility() == ContentVisibility::Auto)
                 ContentVisibilityDocumentState::unobserve(*element());
+            ContentVisibilityDocumentState::skippedContentStateDidChange(*element(), oldStyle->contentVisibility() == ContentVisibility::Hidden, newStyle.contentVisibility() == ContentVisibility::Visible);
         }
         if ((contentVisibilityChanged || !oldStyle) && newStyle.contentVisibility() == ContentVisibility::Auto)
             ContentVisibilityDocumentState::observe(*element());
