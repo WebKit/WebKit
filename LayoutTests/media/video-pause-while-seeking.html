@@ -50,7 +50,7 @@
                 consoleWrite("");
                 consoleWrite("<br><em>++ Playing the video");
                 consoleWrite("");
-                run("video.play()");
+                run("video.play().catch((error)=>{})");
                 waitForEventOnce('play', play);
             }
         </script>

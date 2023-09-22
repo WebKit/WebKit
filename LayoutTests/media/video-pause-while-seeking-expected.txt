@@ -8,7 +8,7 @@ Verify that the video is paused when seek finishes.
 
 ++ Playing the video
 
-RUN(video.play())
+RUN(video.play().catch((error)=>{}))
 EVENT(play)
 
 ++ Video started to play, seeking
