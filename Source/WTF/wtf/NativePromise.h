@@ -359,6 +359,9 @@ private:
     {
         static_assert(std::is_convertible_v<RejectValueType_, RejectValueT>, "reject() argument must be implicitly convertible to NativePromise's RejectValueT");
         Locker lock { m_lock };
+#if LOG_DISABLED && RELEASE_LOG_DISABLED
+        UNUSED_PARAM(rejectSite);
+#endif
         PROMISE_LOG("%s rejecting NativePromise (%p created at %s)", rejectSite, this, m_creationSite);
         ASSERT(isNothing());
         m_result = Unexpected<RejectValueT>(std::forward<RejectValueType_>(rejectValue));
@@ -370,6 +373,9 @@ private:
     {
         Locker lock { m_lock };
         ASSERT(isNothing());
+#if LOG_DISABLED && RELEASE_LOG_DISABLED
+        UNUSED_PARAM(site);
+#endif
         PROMISE_LOG("%s resolveOrRejecting NativePromise (%p created at %s)", site, this, m_creationSite);
         m_result = std::forward<ResolveOrRejectValue_>(result);
         dispatchAll(lock);
@@ -379,6 +385,9 @@ private:
     {
         static_assert(IsExclusive, "setDispatchMode can only be used with exclusive promises");
         Locker lock { m_lock };
+#if LOG_DISABLED && RELEASE_LOG_DISABLED
+        UNUSED_PARAM(site);
+#endif
         PROMISE_LOG("%s runSynchronouslyOnTarget NativePromise (%p created at %s)", site, this, m_creationSite);
         ASSERT(isNothing(), "A Promise must not have been already resolved or rejected to set dispatch state");
         m_dispatchMode = dispatchMode;
@@ -664,6 +673,9 @@ private:
         Locker lock { m_lock };
         ASSERT(!IsExclusive || !m_haveRequest, "Using an exclusive promise in a non-exclusive fashion");
         m_haveRequest = true;
+#if LOG_DISABLED && RELEASE_LOG_DISABLED
+        UNUSED_PARAM(callSite);
+#endif
         PROMISE_LOG("%s invoking then() [this:%p, callback:%p, isNothing:%d]", callSite, this, thenCallback.ptr(), isNothing());
         if (!isNothing())
             thenCallback->dispatch(*this, lock);
