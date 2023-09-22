@@ -1922,7 +1922,7 @@ String GraphicsContextGLANGLE::getProgramInfoLog(PlatformGLObject program)
     Vector<GLchar> info(length);
     GL_GetProgramInfoLog(program, length, &size, info.data());
 
-    GCGLsizei count;
+    GCGLsizei count = 0;
     PlatformGLObject shaders[2];
     getAttachedShaders(program, 2, &count, shaders);
 
