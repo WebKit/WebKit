@@ -3247,13 +3247,13 @@ CharacterOffset AXObjectCache::previousCharacterOffset(const CharacterOffset& ch
     return characterOffsetForNodeAndOffset(*characterOffset.node, previousOffset, TraverseOptionIncludeStart);
 }
 
-CharacterOffset AXObjectCache::startCharacterOffsetOfWord(const CharacterOffset& characterOffset, EWordSide side)
+CharacterOffset AXObjectCache::startCharacterOffsetOfWord(const CharacterOffset& characterOffset, WordSide side)
 {
     if (characterOffset.isNull())
         return CharacterOffset();
     
     CharacterOffset c = characterOffset;
-    if (side == RightWordIfOnBoundary) {
+    if (side == WordSide::RightWordIfOnBoundary) {
         CharacterOffset endOfParagraph = endCharacterOffsetOfParagraph(c);
         if (c.isEqual(endOfParagraph))
             return c;
@@ -3269,13 +3269,13 @@ CharacterOffset AXObjectCache::startCharacterOffsetOfWord(const CharacterOffset&
     return previousBoundary(c, startWordBoundary);
 }
 
-CharacterOffset AXObjectCache::endCharacterOffsetOfWord(const CharacterOffset& characterOffset, EWordSide side)
+CharacterOffset AXObjectCache::endCharacterOffsetOfWord(const CharacterOffset& characterOffset, WordSide side)
 {
     if (characterOffset.isNull())
         return CharacterOffset();
     
     CharacterOffset c = characterOffset;
-    if (side == LeftWordIfOnBoundary) {
+    if (side == WordSide::LeftWordIfOnBoundary) {
         CharacterOffset startOfParagraph = startCharacterOffsetOfParagraph(c);
         if (c.isEqual(startOfParagraph))
             return c;
@@ -3301,7 +3301,7 @@ CharacterOffset AXObjectCache::previousWordStartCharacterOffset(const CharacterO
     if (previousOffset.isNull())
         return CharacterOffset();
     
-    return startCharacterOffsetOfWord(previousOffset, RightWordIfOnBoundary);
+    return startCharacterOffsetOfWord(previousOffset, WordSide::RightWordIfOnBoundary);
 }
 
 CharacterOffset AXObjectCache::nextWordEndCharacterOffset(const CharacterOffset& characterOffset)
@@ -3313,19 +3313,19 @@ CharacterOffset AXObjectCache::nextWordEndCharacterOffset(const CharacterOffset&
     if (nextOffset.isNull())
         return CharacterOffset();
     
-    return endCharacterOffsetOfWord(nextOffset, LeftWordIfOnBoundary);
+    return endCharacterOffsetOfWord(nextOffset, WordSide::LeftWordIfOnBoundary);
 }
 
 std::optional<SimpleRange> AXObjectCache::leftWordRange(const CharacterOffset& characterOffset)
 {
-    CharacterOffset start = startCharacterOffsetOfWord(characterOffset, LeftWordIfOnBoundary);
+    CharacterOffset start = startCharacterOffsetOfWord(characterOffset, WordSide::LeftWordIfOnBoundary);
     CharacterOffset end = endCharacterOffsetOfWord(start);
     return rangeForUnorderedCharacterOffsets(start, end);
 }
 
 std::optional<SimpleRange> AXObjectCache::rightWordRange(const CharacterOffset& characterOffset)
 {
-    CharacterOffset start = startCharacterOffsetOfWord(characterOffset, RightWordIfOnBoundary);
+    CharacterOffset start = startCharacterOffsetOfWord(characterOffset, WordSide::RightWordIfOnBoundary);
     CharacterOffset end = endCharacterOffsetOfWord(start);
     return rangeForUnorderedCharacterOffsets(start, end);
 }

@@ -283,13 +283,13 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
             // last word to the line break (also RightWordIfOnBoundary);
             VisiblePosition start = VisiblePosition(m_start, m_affinity);
             VisiblePosition originalEnd(m_end, m_affinity);
-            EWordSide side = RightWordIfOnBoundary;
+            WordSide side = WordSide::RightWordIfOnBoundary;
             if (isEndOfEditableOrNonEditableContent(start) || (isEndOfLine(start) && !isStartOfLine(start) && !isEndOfParagraph(start)))
-                side = LeftWordIfOnBoundary;
+                side = WordSide::LeftWordIfOnBoundary;
             m_start = startOfWord(start, side).deepEquivalent();
-            side = RightWordIfOnBoundary;
+            side = WordSide::RightWordIfOnBoundary;
             if (isEndOfEditableOrNonEditableContent(originalEnd) || (isEndOfLine(originalEnd) && !isStartOfLine(originalEnd) && !isEndOfParagraph(originalEnd)))
-                side = LeftWordIfOnBoundary;
+                side = WordSide::LeftWordIfOnBoundary;
 
             VisiblePosition wordEnd(endOfWord(originalEnd, side));
             VisiblePosition end(wordEnd);

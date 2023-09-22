@@ -1175,8 +1175,8 @@ static inline bool didApplyAutocorrection(Document& document, AlternativeTextCon
     auto selection = document.selection().selection();
     auto startOfSelection = selection.start();
 
-    auto wordStart = startOfWord(startOfSelection, LeftWordIfOnBoundary);
-    auto wordEnd = endOfWord(startOfSelection, LeftWordIfOnBoundary);
+    auto wordStart = startOfWord(startOfSelection, WordSide::LeftWordIfOnBoundary);
+    auto wordEnd = endOfWord(startOfSelection, WordSide::LeftWordIfOnBoundary);
 
     if (auto range = makeSimpleRange(wordStart, wordEnd)) {
         if (document.markers().hasMarkers(*range, DocumentMarker::CorrectionIndicator))
@@ -2697,7 +2697,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
     if (!textCheckingOptions.contains(TextCheckingType::Spelling))
         return;
 
-    auto adjacentWords = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary));
+    auto adjacentWords = VisibleSelection(startOfWord(wordStart, WordSide::LeftWordIfOnBoundary), endOfWord(wordStart, WordSide::RightWordIfOnBoundary));
     auto adjacentWordRange = adjacentWords.toNormalizedRange();
 
 #if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
@@ -2790,7 +2790,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
         if (!spellCheckingRange)
             return;
 
-        auto adjacentWordRange = intersection(VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary)).toNormalizedRange(), fullSentenceRange);
+        auto adjacentWordRange = intersection(VisibleSelection(startOfWord(wordStart, WordSide::LeftWordIfOnBoundary), endOfWord(wordStart, WordSide::RightWordIfOnBoundary)).toNormalizedRange(), fullSentenceRange);
         if (!adjacentWordRange)
             return;
 
@@ -2808,7 +2808,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
         return;
 
     // Check spelling of one word
-    auto misspellingRange = markMisspellings(VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary)));
+    auto misspellingRange = markMisspellings(VisibleSelection(startOfWord(wordStart, WordSide::LeftWordIfOnBoundary), endOfWord(wordStart, WordSide::RightWordIfOnBoundary)));
 
     // Autocorrect the misspelled word.
     if (!misspellingRange)
@@ -3245,20 +3245,20 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     if (startOfSelection.isNull())
         return;
     // First word is the word that ends after or on the start of selection.
-    VisiblePosition startOfFirstWord = startOfWord(startOfSelection, LeftWordIfOnBoundary);
-    VisiblePosition endOfFirstWord = endOfWord(startOfSelection, LeftWordIfOnBoundary);
+    VisiblePosition startOfFirstWord = startOfWord(startOfSelection, WordSide::LeftWordIfOnBoundary);
+    VisiblePosition endOfFirstWord = endOfWord(startOfSelection, WordSide::LeftWordIfOnBoundary);
     // Last word is the word that begins before or on the end of selection
-    VisiblePosition startOfLastWord = startOfWord(endOfSelection, RightWordIfOnBoundary);
-    VisiblePosition endOfLastWord = endOfWord(endOfSelection, RightWordIfOnBoundary);
+    VisiblePosition startOfLastWord = startOfWord(endOfSelection, WordSide::RightWordIfOnBoundary);
+    VisiblePosition endOfLastWord = endOfWord(endOfSelection, WordSide::RightWordIfOnBoundary);
 
     if (startOfFirstWord.isNull()) {
-        startOfFirstWord = startOfWord(startOfSelection, RightWordIfOnBoundary);
-        endOfFirstWord = endOfWord(startOfSelection, RightWordIfOnBoundary);
+        startOfFirstWord = startOfWord(startOfSelection, WordSide::RightWordIfOnBoundary);
+        endOfFirstWord = endOfWord(startOfSelection, WordSide::RightWordIfOnBoundary);
     }
     
     if (endOfLastWord.isNull()) {
-        startOfLastWord = startOfWord(endOfSelection, LeftWordIfOnBoundary);
-        endOfLastWord = endOfWord(endOfSelection, LeftWordIfOnBoundary);
+        startOfLastWord = startOfWord(endOfSelection, WordSide::LeftWordIfOnBoundary);
+        endOfLastWord = endOfWord(endOfSelection, WordSide::LeftWordIfOnBoundary);
     }
 
     auto originalEndOfFirstWord = endOfFirstWord;
@@ -3268,7 +3268,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     // we choose next word as the first word.
     if (doNotRemoveIfSelectionAtWordBoundary && endOfFirstWord == startOfSelection) {
         startOfFirstWord = nextWordPosition(startOfFirstWord);
-        endOfFirstWord = endOfWord(startOfFirstWord, RightWordIfOnBoundary);
+        endOfFirstWord = endOfWord(startOfFirstWord, WordSide::RightWordIfOnBoundary);
         if (startOfFirstWord == originalStartOfLastWord)
             return;
     }
@@ -3277,7 +3277,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     // we choose previous word as the last word.
     if (doNotRemoveIfSelectionAtWordBoundary && startOfLastWord == endOfSelection) {
         startOfLastWord = previousWordPosition(startOfLastWord);
-        endOfLastWord = endOfWord(startOfLastWord, RightWordIfOnBoundary);
+        endOfLastWord = endOfWord(startOfLastWord, WordSide::RightWordIfOnBoundary);
         if (endOfLastWord == originalEndOfFirstWord)
             return;
     }
@@ -4008,18 +4008,18 @@ void Editor::editorUIUpdateTimerFired()
         if (document->selection().selection().isContentEditable() || caretBrowsing) {
             VisiblePosition newStart(document->selection().selection().visibleStart());
 #if !PLATFORM(IOS_FAMILY)
-            newAdjacentWords = VisibleSelection(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
+            newAdjacentWords = VisibleSelection(startOfWord(newStart, WordSide::LeftWordIfOnBoundary), endOfWord(newStart, WordSide::RightWordIfOnBoundary));
 #else
             // If this bug gets fixed, this PLATFORM(IOS_FAMILY) code could be removed:
             // <rdar://problem/7259611> Word boundary code on iPhone gives different results than desktop
-            EWordSide startWordSide = LeftWordIfOnBoundary;
+            WordSide startWordSide = WordSide::LeftWordIfOnBoundary;
             UChar32 c = newStart.characterBefore();
             // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
             // way as TextIterator, so we do an isStartOfParagraph check here.
             if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isStartOfParagraph(newStart)) {
-                startWordSide = RightWordIfOnBoundary;
+                startWordSide = WordSide::RightWordIfOnBoundary;
             }
-            newAdjacentWords = VisibleSelection(startOfWord(newStart, startWordSide), endOfWord(newStart, RightWordIfOnBoundary));
+            newAdjacentWords = VisibleSelection(startOfWord(newStart, startWordSide), endOfWord(newStart, WordSide::RightWordIfOnBoundary));
 #endif // !PLATFORM(IOS_FAMILY)
             if (isContinuousGrammarCheckingEnabled)
                 newSelectedSentence = VisibleSelection(startOfSentence(newStart), endOfSentence(newStart));
@@ -4030,7 +4030,7 @@ void Editor::editorUIUpdateTimerFired()
         // oldSelection may no longer be in the document.
         if (m_editorUIUpdateTimerShouldCheckSpellingAndGrammar && oldSelection.isContentEditable() && oldSelection.start().deprecatedNode() && oldSelection.start().anchorNode()->isConnected()) {
             VisiblePosition oldStart(oldSelection.visibleStart());
-            VisibleSelection oldAdjacentWords = VisibleSelection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));
+            VisibleSelection oldAdjacentWords = VisibleSelection(startOfWord(oldStart, WordSide::LeftWordIfOnBoundary), endOfWord(oldStart, WordSide::RightWordIfOnBoundary));
             if (oldAdjacentWords != newAdjacentWords) {
                 if (isContinuousGrammarCheckingEnabled) {
                     VisibleSelection oldSelectedSentence = VisibleSelection(startOfSentence(oldStart), endOfSentence(oldStart));

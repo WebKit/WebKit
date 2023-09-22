@@ -461,8 +461,8 @@ void TypingCommand::markMisspellingsAfterTyping(Type commandType)
     VisiblePosition previous = start.previous();
     if (previous.isNotNull()) {
 #if !PLATFORM(IOS_FAMILY)
-        VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
-        VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
+        VisiblePosition p1 = startOfWord(previous, WordSide::LeftWordIfOnBoundary);
+        VisiblePosition p2 = startOfWord(start, WordSide::LeftWordIfOnBoundary);
         if (p1 != p2) {
             auto range = makeSimpleRange(p1, p2);
             String trimmedPreviousWord;
@@ -475,12 +475,12 @@ void TypingCommand::markMisspellingsAfterTyping(Type commandType)
         UNUSED_PARAM(commandType);
         // If this bug gets fixed, this PLATFORM(IOS_FAMILY) code could be removed:
         // <rdar://problem/7259611> Word boundary code on iPhone gives different results than desktop
-        EWordSide startWordSide = LeftWordIfOnBoundary;
+        WordSide startWordSide = WordSide::LeftWordIfOnBoundary;
         UChar32 c = previous.characterAfter();
         // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
         // way as TextIterator, so we do an isEndOfParagraph check here.
         if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isEndOfParagraph(previous)) {
-            startWordSide = RightWordIfOnBoundary;
+            startWordSide = WordSide::RightWordIfOnBoundary;
         }
         VisiblePosition p1 = startOfWord(previous, startWordSide);
         VisiblePosition p2 = startOfWord(start, startWordSide);
