@@ -1,19 +1,27 @@
 This tests that expanded notifications will be sent when the appropriate changes occur.
-Initial expanded status: false
-Received notification: AXExpandedChanged
-Expanded status: true
-Received notification: AXExpandedChanged
-Expanded status: false
-PASS: accessibilityController.accessibleElementById('show-popover-btn').isExpanded === false
-PASS: accessibilityController.accessibleElementById('hide-popover-btn').isExpanded === false
-Received notification: AXExpandedChanged
-Expanded status: true
-PASS: accessibilityController.accessibleElementById('hide-popover-btn').isExpanded === true
-Received notification: AXExpandedChanged
-Expanded status: false
-PASS: accessibilityController.accessibleElementById('show-popover-btn').isExpanded === false
+Initial #button expanded status: false
+Received AXExpandedChanged for #button
+element.isExpanded: true
+Received AXExpandedChanged for #button
+element.isExpanded: false
+PASS: showPopoverButton.isExpanded === false
+PASS: hidePopoverButton.isExpanded === false
+document.getElementById('show-popover-btn').click()
+PASS: hidePopoverButton.isExpanded === true
+PASS: showPopoverButton.isExpanded === true
+document.getElementById('hide-popover-btn').click()
+PASS: showPopoverButton.isExpanded === false
+PASS: hidePopoverButton.isExpanded === false
+document.getElementById('show-popover-btn').click()
+PASS: showPopoverButton.isExpanded === true
+document.getElementById('show-popover-btn').setAttribute('popovertarget', 'non-existent')
+PASS: showPopoverButton.isExpanded === false
+PASS: showPopoverButton.isAttributeSupported('AXExpanded') === false
+document.getElementById('show-popover-btn').setAttribute('popovertarget', 'mypopover')
+PASS: showPopoverButton.isExpanded === true
+PASS: showPopoverButton.isAttributeSupported('AXExpanded') === true
 
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Show popover Hide popover
+Show popover Hide popover Popover content
