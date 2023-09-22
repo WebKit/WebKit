@@ -65,14 +65,6 @@ public:
         , m_videoFrameObjectHeap(WTFMove(videoFrameObjectHeap))
     {
         m_source->addObserver(*this);
-        switch (m_source->type()) {
-        case RealtimeMediaSource::Type::Audio:
-            m_source->addAudioSampleObserver(*this);
-            break;
-        case RealtimeMediaSource::Type::Video:
-            m_source->addVideoFrameObserver(*this);
-            break;
-        }
     }
 
     ~SourceProxy()
@@ -86,6 +78,21 @@ public:
             break;
         }
         m_source->removeObserver(*this);
+    }
+
+    void observeMedia()
+    {
+        switch (m_source->type()) {
+        case RealtimeMediaSource::Type::Audio:
+            m_source->addAudioSampleObserver(*this);
+            break;
+        case RealtimeMediaSource::Type::Video:
+            if (m_widthConstraint || m_heightConstraint || m_frameRateConstraint)
+                m_source->addVideoFrameObserver(*this, { m_widthConstraint, m_heightConstraint }, m_frameRateConstraint);
+            else
+                m_source->addVideoFrameObserver(*this);
+            break;
+        }
     }
 
     RealtimeMediaSource& source() { return m_source; }
@@ -427,6 +434,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     Ref connection = m_connectionProxy->connection();
     RefPtr remoteVideoFrameObjectHeap = shouldUseGPUProcessRemoteFrames ? m_connectionProxy->remoteVideoFrameObjectHeap() : nullptr;
     auto proxy = makeUnique<SourceProxy>(id, WTFMove(connection), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(source), WTFMove(remoteVideoFrameObjectHeap));
+    proxy->observeMedia();
 
     if (constraints && proxy->source().type() == RealtimeMediaSource::Type::Video) {
         if (auto result = proxy->applyConstraints(*constraints)) {
@@ -508,6 +516,7 @@ void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID,
         RefPtr remoteVideoFrameObjectHeap = m_connectionProxy->remoteVideoFrameObjectHeap();
         auto cloneProxy = makeUnique<SourceProxy>(newSourceID, WTFMove(connection), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(sourceClone), WTFMove(remoteVideoFrameObjectHeap));
         cloneProxy->copySettings(*proxy);
+        cloneProxy->observeMedia();
         m_proxies.add(newSourceID, WTFMove(cloneProxy));
     }
 }
