@@ -18,10 +18,7 @@
                 track = video.textTracks[0];
                 track.mode = 'showing';
 
-                await Promise.all([
-                    waitFor(video, 'playing'),
-                    waitFor(track, 'cuechange')
-                ]);
+                await waitFor(track, 'cuechange')
                 await testExpectedEventually('track.cues.length', 5, '===', 4000);
 
                 consoleWrite('');
