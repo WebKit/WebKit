@@ -1798,8 +1798,6 @@ webkit.org/b/259160 http/tests/privateClickMeasurement/attribution-conversion-th
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html [ Pass Failure ]
 
-webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]
-
 webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Failure ]
 
 webkit.org/b/259464 [ Monterey+ ] fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]

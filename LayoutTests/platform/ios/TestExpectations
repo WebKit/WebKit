@@ -4374,8 +4374,6 @@ imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-tex
 
 webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
 
-webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]
-
 # rdar://102857582 (iOS17-iOS-Simulator queues timing out before finishing layout tests)
 fast/events/ios/rotation/ [ Skip ]
 
