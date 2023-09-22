@@ -362,7 +362,7 @@ PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, Pay
 
 PaymentRequest::~PaymentRequest()
 {
-    ASSERT(!hasPendingActivity());
+    ASSERT(!hasPendingActivity() || isContextStopped());
     ASSERT(!m_activePaymentHandler);
 }
 
@@ -471,7 +471,9 @@ void PaymentRequest::closeActivePaymentHandler()
 void PaymentRequest::stop()
 {
     closeActivePaymentHandler();
-    settleShowPromise(Exception { AbortError });
+    queueTaskKeepingObjectAlive(*this, TaskSource::Payment, [this] {
+        settleShowPromise(Exception { AbortError });
+    });
 }
 
 void PaymentRequest::suspend(ReasonForSuspension reason)
