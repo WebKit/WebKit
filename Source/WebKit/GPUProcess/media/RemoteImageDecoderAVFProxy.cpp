@@ -129,26 +129,18 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
     if (!m_imageDecoders.contains(identifier))
         return;
 
-    auto frameImage = m_imageDecoders.get(identifier)->createFrameImageAtIndex(index);
-    if (!frameImage)
+    auto nativeImage = NativeImage::createTransient(m_imageDecoders.get(identifier)->createFrameImageAtIndex(index));
+    if (!nativeImage)
         return;
-
-    size_t width = CGImageGetWidth(frameImage.get());
-    size_t height = CGImageGetHeight(frameImage.get());
-    if (width > std::numeric_limits<int>::max() || height > std::numeric_limits<int>::max())
-        return;
-    DestinationColorSpace colorSpace { CGImageGetColorSpace(frameImage.get()) };
     bool isOpaque = false;
-
-    auto bitmap = ShareableBitmap::create({ IntSize(width, height), WTFMove(colorSpace), isOpaque });
+    auto imageSize = nativeImage->size();
+    auto bitmap = ShareableBitmap::create({ imageSize, nativeImage->colorSpace(), isOpaque });
     if (!bitmap)
         return;
     auto context = bitmap->createGraphicsContext();
     if (!context)
         return;
 
-    auto nativeImage = NativeImage::create(frameImage.get());
-    FloatSize imageSize { float(width), float(height) };
     FloatRect imageRect { { }, imageSize };
     context->drawNativeImage(*nativeImage, imageSize, imageRect, imageRect, { CompositeOperator::Copy });
     imageHandle = bitmap->createHandle();
