@@ -54,6 +54,8 @@ public:
 
     void updateViewportProximity(const Element&, ViewportProximity);
 
+    static void skippedContentStateDidChange(const Element&, bool wasSkipped, bool becameUnskipped);
+
 private:
     bool checkRelevancyOfContentVisibilityElement(Element&, OptionSet<ContentRelevancy>) const;
 

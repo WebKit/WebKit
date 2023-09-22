@@ -27,6 +27,8 @@
 #include "ContentVisibilityDocumentState.h"
 
 #include "ContentVisibilityAutoStateChangeEvent.h"
+#include "DeclarativeAnimation.h"
+#include "DocumentTimeline.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
@@ -139,6 +141,7 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
         return false;
     target.setContentRelevancy(newRelevancy);
     target.invalidateStyle();
+    skippedContentStateDidChange(target, oldRelevancy->isEmpty(), !newRelevancy.isEmpty());
     if (target.isConnected()) {
         ContentVisibilityAutoStateChangeEvent::Init init;
         init.skipped = newRelevancy.isEmpty();
@@ -228,6 +231,24 @@ void ContentVisibilityDocumentState::updateViewportProximity(const Element& elem
 void ContentVisibilityDocumentState::removeViewportProximity(const Element& element)
 {
     m_elementViewportProximities.remove(element);
+}
+
+void ContentVisibilityDocumentState::skippedContentStateDidChange(const Element& element, bool wasSkipped, bool becomesUnskipped)
+{
+    if (!wasSkipped || !becomesUnskipped)
+        return;
+    for (auto* animation : WebAnimation::instances()) {
+        if (!animation->isDeclarativeAnimation())
+            continue;
+
+        auto& declarativeAnimation = downcast<DeclarativeAnimation>(*animation);
+        auto owningElement = declarativeAnimation.owningElement();
+        if (!owningElement || !owningElement->element.isDescendantOrShadowDescendantOf(&element))
+            continue;
+
+        if (auto* timeline = declarativeAnimation.timeline())
+            timeline->animationTimingDidChange(declarativeAnimation);
+    }
 }
 
 }

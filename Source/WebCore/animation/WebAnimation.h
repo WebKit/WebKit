@@ -68,6 +68,8 @@ public:
     virtual bool isCSSAnimation() const { return false; }
     virtual bool isCSSTransition() const { return false; }
 
+    bool isSkippedContentAnimation() const;
+
     const String& id() const { return m_id; }
     void setId(String&&);
 
