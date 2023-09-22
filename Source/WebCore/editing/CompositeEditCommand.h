@@ -130,7 +130,7 @@ public:
     virtual RefPtr<DataTransfer> inputEventDataTransfer() const;
 
 protected:
-    explicit CompositeEditCommand(Document&, EditAction = EditAction::Unspecified);
+    explicit CompositeEditCommand(Ref<Document>&&, EditAction = EditAction::Unspecified);
 
     // If willApplyCommand returns false, we won't proceed with applying the command.
     virtual bool willApplyCommand();

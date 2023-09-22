@@ -598,7 +598,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
     
         // The selection ends in editable content or non-editable content inside a different editable ancestor, 
         // move backward until non-editable content inside the same lowest editable ancestor is reached.
-        auto* endEditableAncestor = lowestEditableAncestor(m_end.containerNode());
+        auto* endEditableAncestor = lowestEditableAncestor(m_end.protectedContainerNode().get());
         if (endRoot || endEditableAncestor != baseEditableAncestor) {
             
             Position p = previousVisuallyDistinctCandidate(m_end);

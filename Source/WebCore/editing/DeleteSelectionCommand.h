@@ -33,9 +33,9 @@ class EditingStyle;
 
 class DeleteSelectionCommand : public CompositeEditCommand { 
 public:
-    static Ref<DeleteSelectionCommand> create(Document& document, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false, bool sanitizeMarkup = true, EditAction editingAction = EditAction::Delete)
+    static Ref<DeleteSelectionCommand> create(Ref<Document>&& document, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false, bool sanitizeMarkup = true, EditAction editingAction = EditAction::Delete)
     {
-        return adoptRef(*new DeleteSelectionCommand(document, smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements, sanitizeMarkup, editingAction));
+        return adoptRef(*new DeleteSelectionCommand(WTFMove(document), smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements, sanitizeMarkup, editingAction));
     }
     static Ref<DeleteSelectionCommand> create(const VisibleSelection& selection, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false, bool sanitizeMarkup = true, EditAction editingAction = EditAction::Delete)
     {
@@ -43,7 +43,7 @@ public:
     }
 
 protected:
-    DeleteSelectionCommand(Document&, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool santizeMarkup, EditAction = EditAction::Delete);
+    DeleteSelectionCommand(Ref<Document>&&, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool santizeMarkup, EditAction = EditAction::Delete);
 
 private:
     DeleteSelectionCommand(const VisibleSelection&, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup, EditAction);

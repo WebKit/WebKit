@@ -121,8 +121,8 @@ Ref<HTMLElement> createStyleSpanElement(Document& document)
     return createHTMLElement(document, spanTag);
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, EditAction editingAction, PropertyLevel propertyLevel)
-    : CompositeEditCommand(document, editingAction)
+ApplyStyleCommand::ApplyStyleCommand(Ref<Document>&& document, const EditingStyle* style, EditAction editingAction, PropertyLevel propertyLevel)
+    : CompositeEditCommand(WTFMove(document), editingAction)
     , m_style(style->copy())
     , m_propertyLevel(propertyLevel)
     , m_start(endingSelection().start().downstream())
@@ -132,8 +132,8 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
 {
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, const Position& start, const Position& end, EditAction editingAction, PropertyLevel propertyLevel)
-    : CompositeEditCommand(document, editingAction)
+ApplyStyleCommand::ApplyStyleCommand(Ref<Document>&& document, const EditingStyle* style, const Position& start, const Position& end, EditAction editingAction, PropertyLevel propertyLevel)
+    : CompositeEditCommand(WTFMove(document), editingAction)
     , m_style(style->copy())
     , m_propertyLevel(propertyLevel)
     , m_start(start)
@@ -154,8 +154,8 @@ ApplyStyleCommand::ApplyStyleCommand(Ref<Element>&& element, bool removeOnly, Ed
 {
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction editingAction)
-    : CompositeEditCommand(document, editingAction)
+ApplyStyleCommand::ApplyStyleCommand(Ref<Document>&& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction editingAction)
+    : CompositeEditCommand(WTFMove(document), editingAction)
     , m_style(style->copy())
     , m_start(endingSelection().start().downstream())
     , m_end(endingSelection().end().upstream())

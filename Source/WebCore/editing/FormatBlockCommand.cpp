@@ -48,8 +48,8 @@ static inline bool isElementForFormatBlock(Node* node)
     return is<Element>(*node) && isElementForFormatBlock(downcast<Element>(*node).tagQName());
 }
 
-FormatBlockCommand::FormatBlockCommand(Document& document, const QualifiedName& tagName)
-    : ApplyBlockElementCommand(document, tagName)
+FormatBlockCommand::FormatBlockCommand(Ref<Document>&& document, const QualifiedName& tagName)
+    : ApplyBlockElementCommand(WTFMove(document), tagName)
     , m_didApply(false)
 {
 }

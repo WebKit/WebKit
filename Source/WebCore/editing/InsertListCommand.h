@@ -36,17 +36,17 @@ class InsertListCommand final : public CompositeEditCommand {
 public:
     enum class Type : uint8_t { OrderedList, UnorderedList };
 
-    static Ref<InsertListCommand> create(Document& document, Type listType)
+    static Ref<InsertListCommand> create(Ref<Document>&& document, Type listType)
     {
-        return adoptRef(*new InsertListCommand(document, listType));
+        return adoptRef(*new InsertListCommand(WTFMove(document), listType));
     }
 
-    static RefPtr<HTMLElement> insertList(Document&, Type);
+    static RefPtr<HTMLElement> insertList(Ref<Document>&&, Type);
     
     bool preservesTypingStyle() const final { return true; }
 
 private:
-    InsertListCommand(Document&, Type);
+    InsertListCommand(Ref<Document>&&, Type);
 
     void doApply() final;
     EditAction editingAction() const final;

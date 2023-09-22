@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-ModifySelectionListLevelCommand::ModifySelectionListLevelCommand(Document& document)
-    : CompositeEditCommand(document)
+ModifySelectionListLevelCommand::ModifySelectionListLevelCommand(Ref<Document>&& document)
+    : CompositeEditCommand(WTFMove(document))
 {
 }
 
@@ -140,8 +140,8 @@ void ModifySelectionListLevelCommand::appendSiblingNodeRange(Node* startNode, No
     ASSERT_NOT_REACHED();
 }
 
-IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand(Document& document, Type listType)
-    : ModifySelectionListLevelCommand(document)
+IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand(Ref<Document>&& document, Type listType)
+    : ModifySelectionListLevelCommand(WTFMove(document))
     , m_listType(listType)
 {
 }
@@ -239,8 +239,8 @@ RefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnorde
     return increaseSelectionListLevel(document, Type::UnorderedList);
 }
 
-DecreaseSelectionListLevelCommand::DecreaseSelectionListLevelCommand(Document& document)
-    : ModifySelectionListLevelCommand(document)
+DecreaseSelectionListLevelCommand::DecreaseSelectionListLevelCommand(Ref<Document>&& document)
+    : ModifySelectionListLevelCommand(WTFMove(document))
 {
 }
 

@@ -143,8 +143,8 @@ static inline bool editActionIsDeleteByTyping(EditAction action)
     }
 }
 
-TypingCommand::TypingCommand(Document& document, Type commandType, const String &textToInsert, OptionSet<Option> options, TextGranularity granularity, TextCompositionType compositionType)
-    : TextInsertionBaseCommand(document, editActionForTypingCommand(commandType, granularity, compositionType, options.contains(Option::IsAutocompletion)))
+TypingCommand::TypingCommand(Ref<Document>&& document, Type commandType, const String &textToInsert, OptionSet<Option> options, TextGranularity granularity, TextCompositionType compositionType)
+    : TextInsertionBaseCommand(WTFMove(document), editActionForTypingCommand(commandType, granularity, compositionType, options.contains(Option::IsAutocompletion)))
     , m_commandType(commandType)
     , m_textToInsert(textToInsert)
     , m_currentTextToInsert(textToInsert)
@@ -163,9 +163,9 @@ TypingCommand::TypingCommand(Document& document, Type commandType, const String 
     updatePreservesTypingStyle(m_commandType);
 }
 
-void TypingCommand::deleteSelection(Document& document, OptionSet<Option> options, TextCompositionType compositionType)
+void TypingCommand::deleteSelection(Ref<Document>&& document, OptionSet<Option> options, TextCompositionType compositionType)
 {
-    if (!document.selection().isRange())
+    if (!document->selection().isRange())
         return;
 
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
@@ -176,10 +176,10 @@ void TypingCommand::deleteSelection(Document& document, OptionSet<Option> option
         return;
     }
 
-    TypingCommand::create(document, Type::DeleteSelection, emptyString(), options, compositionType)->apply();
+    TypingCommand::create(WTFMove(document), Type::DeleteSelection, emptyString(), options, compositionType)->apply();
 }
 
-void TypingCommand::deleteKeyPressed(Document& document, OptionSet<Option> options, TextGranularity granularity)
+void TypingCommand::deleteKeyPressed(Ref<Document>&& document, OptionSet<Option> options, TextGranularity granularity)
 {
     if (granularity == TextGranularity::CharacterGranularity) {
         if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
@@ -192,10 +192,10 @@ void TypingCommand::deleteKeyPressed(Document& document, OptionSet<Option> optio
         }
     }
 
-    TypingCommand::create(document, Type::DeleteKey, emptyString(), options, granularity)->apply();
+    TypingCommand::create(WTFMove(document), Type::DeleteKey, emptyString(), options, granularity)->apply();
 }
 
-void TypingCommand::forwardDeleteKeyPressed(Document& document, OptionSet<Option> options, TextGranularity granularity)
+void TypingCommand::forwardDeleteKeyPressed(Ref<Document>&& document, OptionSet<Option> options, TextGranularity granularity)
 {
     // FIXME: Forward delete in TextEdit appears to open and close a new typing command.
     if (granularity == TextGranularity::CharacterGranularity) {
@@ -209,7 +209,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document& document, OptionSet<Option
         }
     }
 
-    TypingCommand::create(document, Type::ForwardDeleteKey, emptyString(), options, granularity)->apply();
+    TypingCommand::create(WTFMove(document), Type::ForwardDeleteKey, emptyString(), options, granularity)->apply();
 }
 
 void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand* typingCommand, Document& document)
@@ -222,20 +222,21 @@ void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand
     typingCommand->setEndingSelection(currentSelection);
 }
 
-void TypingCommand::insertText(Document& document, const String& text, OptionSet<Option> options, TextCompositionType composition)
+void TypingCommand::insertText(Ref<Document>&& document, const String& text, OptionSet<Option> options, TextCompositionType composition)
 {
     if (!text.isEmpty())
-        document.editor().updateMarkersForWordsAffectedByEditing(deprecatedIsSpaceOrNewline(text[0]));
+        document->editor().updateMarkersForWordsAffectedByEditing(deprecatedIsSpaceOrNewline(text[0]));
     
-    insertText(document, text, document.selection().selection(), options, composition);
+    auto& selection = document->selection().selection();
+    insertText(WTFMove(document), text, selection, options, composition);
 }
 
 // FIXME: We shouldn't need to take selectionForInsertion. It should be identical to FrameSelection's current selection.
-void TypingCommand::insertText(Document& document, const String& text, const VisibleSelection& selectionForInsertion, OptionSet<Option> options, TextCompositionType compositionType)
+void TypingCommand::insertText(Ref<Document>&& document, const String& text, const VisibleSelection& selectionForInsertion, OptionSet<Option> options, TextCompositionType compositionType)
 {
     LOG(Editing, "TypingCommand::insertText (text %s)", text.utf8().data());
 
-    VisibleSelection currentSelection = document.selection().selection();
+    VisibleSelection currentSelection = document->selection().selection();
 
     String newText = dispatchBeforeTextInsertedEvent(text, selectionForInsertion, compositionType == TextCompositionType::Pending);
 
@@ -261,11 +262,12 @@ void TypingCommand::insertText(Document& document, const String& text, const Vis
         return;
     }
 
-    auto cmd = TypingCommand::create(document, Type::InsertText, newText, options, compositionType);
-    applyTextInsertionCommand(document.frame(), cmd.get(), selectionForInsertion, currentSelection);
+    RefPtr frame = document->frame();
+    auto cmd = TypingCommand::create(WTFMove(document), Type::InsertText, newText, options, compositionType);
+    applyTextInsertionCommand(frame.get(), cmd.get(), selectionForInsertion, currentSelection);
 }
 
-void TypingCommand::insertLineBreak(Document& document, OptionSet<Option> options)
+void TypingCommand::insertLineBreak(Ref<Document>&& document, OptionSet<Option> options)
 {
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
         lastTypingCommand->setIsAutocompletion(options.contains(Option::IsAutocompletion));
@@ -275,10 +277,10 @@ void TypingCommand::insertLineBreak(Document& document, OptionSet<Option> option
         return;
     }
 
-    TypingCommand::create(document, Type::InsertLineBreak, emptyString(), options)->apply();
+    TypingCommand::create(WTFMove(document), Type::InsertLineBreak, emptyString(), options)->apply();
 }
 
-void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
+void TypingCommand::insertParagraphSeparatorInQuotedContent(Ref<Document>&& document)
 {
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
         lastTypingCommand->setIsAutocompletion(false);
@@ -287,10 +289,10 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
         return;
     }
 
-    TypingCommand::create(document, Type::InsertParagraphSeparatorInQuotedContent)->apply();
+    TypingCommand::create(WTFMove(document), Type::InsertParagraphSeparatorInQuotedContent)->apply();
 }
 
-void TypingCommand::insertParagraphSeparator(Document& document, OptionSet<Option> options)
+void TypingCommand::insertParagraphSeparator(Ref<Document>&& document, OptionSet<Option> options)
 {
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
         lastTypingCommand->setIsAutocompletion(options.contains(Option::IsAutocompletion));
@@ -300,7 +302,7 @@ void TypingCommand::insertParagraphSeparator(Document& document, OptionSet<Optio
         return;
     }
 
-    TypingCommand::create(document, Type::InsertParagraphSeparator, emptyString(), options)->apply();
+    TypingCommand::create(WTFMove(document), Type::InsertParagraphSeparator, emptyString(), options)->apply();
 }
 
 RefPtr<TypingCommand> TypingCommand::lastTypingCommandIfStillOpenForTyping(Document& document)

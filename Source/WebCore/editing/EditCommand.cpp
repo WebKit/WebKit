@@ -135,16 +135,16 @@ bool isInputMethodComposingForEditingAction(EditAction action)
     return false;
 }
 
-EditCommand::EditCommand(Document& document, EditAction editingAction)
-    : m_document { document }
+EditCommand::EditCommand(Ref<Document>&& document, EditAction editingAction)
+    : m_document { WTFMove(document) }
     , m_startingSelection { m_document->selection().selection() }
     , m_endingSelection { m_startingSelection }
     , m_editingAction { editingAction }
 {
 }
 
-EditCommand::EditCommand(Document& document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection)
-    : m_document { document }
+EditCommand::EditCommand(Ref<Document>&& document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection)
+    : m_document { WTFMove(document) }
     , m_startingSelection { startingSelection }
     , m_endingSelection { endingSelection }
 {
@@ -219,8 +219,8 @@ void EditCommand::postTextStateChangeNotification(AXTextEditType type, const Str
     cache->postTextStateChangeNotification(node.get(), type, text, position);
 }
 
-SimpleEditCommand::SimpleEditCommand(Document& document, EditAction editingAction)
-    : EditCommand(document, editingAction)
+SimpleEditCommand::SimpleEditCommand(Ref<Document>&& document, EditAction editingAction)
+    : EditCommand(WTFMove(document), editingAction)
 {
 }
 

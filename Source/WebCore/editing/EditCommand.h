@@ -62,8 +62,8 @@ public:
     virtual void doApply() = 0;
 
 protected:
-    explicit EditCommand(Document&, EditAction = EditAction::Unspecified);
-    EditCommand(Document&, const VisibleSelection&, const VisibleSelection&);
+    explicit EditCommand(Ref<Document>&&, EditAction = EditAction::Unspecified);
+    EditCommand(Ref<Document>&&, const VisibleSelection&, const VisibleSelection&);
 
     Ref<Document> protectedDocument() const { return m_document.copyRef(); }
     const Document& document() const { return m_document; }
@@ -100,7 +100,7 @@ public:
 #endif
 
 protected:
-    explicit SimpleEditCommand(Document&, EditAction = EditAction::Unspecified);
+    explicit SimpleEditCommand(Ref<Document>&&, EditAction = EditAction::Unspecified);
 
 #ifndef NDEBUG
     void addNodeAndDescendants(Node*, HashSet<Ref<Node>>&);

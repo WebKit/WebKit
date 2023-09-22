@@ -38,16 +38,16 @@
 
 namespace WebCore {
 
-DictationCommandIOS::DictationCommandIOS(Document& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
-    : CompositeEditCommand(document, EditAction::Dictation)
+DictationCommandIOS::DictationCommandIOS(Ref<Document>&& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
+    : CompositeEditCommand(WTFMove(document), EditAction::Dictation)
     , m_dictationPhrases(WTFMove(dictationPhrases))
     , m_metadata(metadata)
 {
 }
 
-Ref<DictationCommandIOS> DictationCommandIOS::create(Document& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
+Ref<DictationCommandIOS> DictationCommandIOS::create(Ref<Document>&& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
 {
-    return adoptRef(*new DictationCommandIOS(document, WTFMove(dictationPhrases), metadata));
+    return adoptRef(*new DictationCommandIOS(WTFMove(document), WTFMove(dictationPhrases), metadata));
 }
 
 void DictationCommandIOS::doApply()

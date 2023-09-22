@@ -33,15 +33,15 @@ namespace WebCore {
 class IndentOutdentCommand : public ApplyBlockElementCommand {
 public:
     enum EIndentType { Indent, Outdent };
-    static Ref<IndentOutdentCommand> create(Document& document, EIndentType type)
+    static Ref<IndentOutdentCommand> create(Ref<Document>&& document, EIndentType type)
     {
-        return adoptRef(*new IndentOutdentCommand(document, type));
+        return adoptRef(*new IndentOutdentCommand(WTFMove(document), type));
     }
 
     bool preservesTypingStyle() const override { return true; }
 
 private:
-    IndentOutdentCommand(Document&, EIndentType);
+    IndentOutdentCommand(Ref<Document>&&, EIndentType);
 
     EditAction editingAction() const override { return m_typeOfAction == Indent ? EditAction::Indent : EditAction::Outdent; }
 
