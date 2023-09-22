@@ -19,4 +19,10 @@ PASS e.style['color'] = "hsl(120 100% 50% / none)" should set the property value
 PASS e.style['color'] = "hsl(120 100% 50% / 0)" should set the property value
 PASS e.style['color'] = "hsl(none 100% 50%)" should set the property value
 PASS e.style['color'] = "hsl(0 100% 50%)" should set the property value
+FAIL e.style['color'] = "hsl(calc(infinity) 100% 50%)" should set the property value assert_equals: serialization should be canonical expected "rgb(255, 0, 0)" but got "rgb(0, 0, 0)"
+FAIL e.style['color'] = "hsl(calc(-infinity) 100% 50%)" should set the property value assert_equals: serialization should be canonical expected "rgb(255, 0, 0)" but got "rgb(0, 0, 0)"
+PASS e.style['color'] = "hsl(calc(0 / 0) 100% 50%)" should set the property value
+PASS e.style['color'] = "hsl(90 50% 50% / calc(infinity))" should set the property value
+PASS e.style['color'] = "hsl(90 50% 50% / calc(-infinity))" should set the property value
+PASS e.style['color'] = "hsl(90 50% 50% / calc(0 / 0))" should set the property value
 
