@@ -56,13 +56,13 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
 
 unsigned SVGTextContentElement::getNumberOfChars()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     return SVGTextQuery(renderer()).numberOfCharacters();
 }
 
 float SVGTextContentElement::getComputedTextLength()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     return SVGTextQuery(renderer()).textLength();
 }
 
@@ -110,7 +110,7 @@ ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
 
 int SVGTextContentElement::getCharNumAtPosition(DOMPointInit&& pointInit)
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     FloatPoint transformPoint {static_cast<float>(pointInit.x), static_cast<float>(pointInit.y)};
     return SVGTextQuery(renderer()).characterNumberAtPosition(transformPoint);
 }

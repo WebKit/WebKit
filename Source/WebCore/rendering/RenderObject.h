@@ -805,6 +805,7 @@ public:
     bool isSkippedContent() const;
 
     bool isSkippedContentRoot() const;
+    bool isSkippedContentForLayout() const;
 
 protected:
     //////////////////////////////////////////

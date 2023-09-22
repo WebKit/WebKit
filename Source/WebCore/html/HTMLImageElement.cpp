@@ -531,7 +531,7 @@ void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
 unsigned HTMLImageElement::width()
 {
     if (inRenderedDocument())
-        document().updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
@@ -554,7 +554,7 @@ unsigned HTMLImageElement::width()
 unsigned HTMLImageElement::height()
 {
     if (inRenderedDocument())
-        document().updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
@@ -695,7 +695,7 @@ void HTMLImageElement::setWidth(unsigned value)
 
 int HTMLImageElement::x() const
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     auto renderer = this->renderer();
     if (!renderer)
         return 0;
@@ -706,7 +706,7 @@ int HTMLImageElement::x() const
 
 int HTMLImageElement::y() const
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     auto renderer = this->renderer();
     if (!renderer)
         return 0;
