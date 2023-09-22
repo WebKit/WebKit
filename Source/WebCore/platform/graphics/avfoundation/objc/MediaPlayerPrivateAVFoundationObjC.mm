@@ -2796,6 +2796,12 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 RefPtr<VideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime()
 {
+    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
+        return nullptr;
+
+    if (!m_lastPixelBuffer && !videoOutputHasAvailableFrame())
+        waitForVideoOutputMediaDataWillChange();
+
     updateLastPixelBuffer();
     if (!m_lastPixelBuffer)
         return nullptr;
