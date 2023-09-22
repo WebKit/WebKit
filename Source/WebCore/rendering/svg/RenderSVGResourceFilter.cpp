@@ -94,7 +94,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         }
         
         ASSERT(filterData->targetSwitcher);
-        if (!filterData->targetSwitcher->needsRedrawSourceImage())
+        if (filterData->targetSwitcher->hasSourceImage())
             return false;
 
         filterData->targetSwitcher->beginDrawSourceImage(*context);

@@ -62,9 +62,9 @@ bool RenderLayerFilters::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
     return m_filter && m_filter->hasFilterThatShouldBeRestrictedBySecurityOrigin();
 }
 
-bool RenderLayerFilters::needsRedrawSourceImage() const
+bool RenderLayerFilters::hasSourceImage() const
 {
-    return m_targetSwitcher && m_targetSwitcher->needsRedrawSourceImage();
+    return m_targetSwitcher && m_targetSwitcher->hasSourceImage();
 }
 
 void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetrics&)
@@ -178,7 +178,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
 
     if (!filter.hasFilterThatMovesPixels())
         m_repaintRect = dirtyRect;
-    else if (hasUpdatedBackingStore || needsRedrawSourceImage())
+    else if (hasUpdatedBackingStore || !hasSourceImage())
         m_repaintRect = filterRegion;
     else {
         m_repaintRect = dirtyRect;
