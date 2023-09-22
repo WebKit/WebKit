@@ -264,6 +264,14 @@ operator :select, {
     [T < Scalar, N].(Vector[T, N], Vector[T, N], Vector[Bool, N]) => Vector[T, N],
 }
 
+# 16.4. Array Built-in Functions
+
+# 16.4.1.
+operator :arrayLength, {
+  [T].(Ptr[Storage, Array[T], Read]) => U32,
+  [T].(Ptr[Storage, Array[T], ReadWrite]) => U32,
+}
+
 # 17.5. Numeric Built-in Functions (https://www.w3.org/TR/WGSL/#numeric-builtin-functions)
 
 # Trigonometric

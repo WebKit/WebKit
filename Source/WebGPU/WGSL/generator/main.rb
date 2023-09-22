@@ -49,7 +49,15 @@ class Variable
     end
 
     def to_cpp
-        to_s
+        if @kind == DSL::type_variable
+            "allocateAbstractType(#{@name.to_s})"
+        else
+            @name.to_s
+        end
+    end
+
+    def is_abstract?
+        @kind != nil
     end
 
     def declaration(context)
@@ -68,11 +76,15 @@ class Variable
     end
 end
 
-class NumericValue
+class AbstractValue
     attr_reader :value
 
     def initialize(value)
         @value = value
+    end
+
+    def is_abstract?
+        false
     end
 
     def to_s
@@ -80,7 +92,7 @@ class NumericValue
     end
 
     def to_cpp
-        "AbstractValue { #{value}u }"
+        "AbstractValue { static_cast<unsigned>(#{value}) }"
     end
 end
 
@@ -92,17 +104,29 @@ class AbstractType
     end
 
     def [](*arguments)
+        arguments.map! do |argument|
+            if argument.is_a? Integer
+                AbstractValue.new(argument)
+            else
+                argument
+            end
+        end
+
         # This is a bit hacky, but the idea is that types such as Vector can
         # either become:
         # 1) An AbstractType, if it receives a variable. This AbstractType will
         #    later be promoted to a concrete type once an overload is chosen.
         # 2) A concrete type if it's given a concrete type. Since there are no
         #    variables involved, we can immediately construct a concrete type.
-        if arguments.any? do |arg| arg.is_a?(Variable) && !arg.kind.nil? end
+        if arguments.any? do |arg| arg.is_abstract? end
             ParameterizedAbstractType.new(self, arguments)
         else
-            Constructor.new(@name.downcase)[*arguments]
+            Constructor.new(@name.downcase, arguments)
         end
+    end
+
+    def is_abstract?
+        true
     end
 
     def to_s
@@ -113,24 +137,25 @@ end
 class Constructor
     attr_reader :name, :arguments
 
-    def initialize(name, arguments = nil)
+    def initialize(name, arguments)
         @name = name
         @arguments = arguments
-    end
-
-    def [](*arguments)
-        return Constructor.new(@name, arguments)
     end
 
     def to_s
         "#{name.to_s}[#{arguments.map(&:to_s).join(", ")}]"
     end
 
-    def concrete_type
-        "m_types.#{name}Type(#{arguments.map { |a| a.respond_to? :to_cpp and a.to_cpp or a}.join ", "})"
+    def is_abstract?
+        false
     end
+
+    def concrete_type
+        "m_types.#{name}Type(#{arguments.map { |a| a.respond_to? :concrete_type and a.concrete_type or a}.join ", "})"
+    end
+
     def to_cpp
-        "AbstractType { #{concrete_type} }"
+        "allocateAbstractType(#{concrete_type})"
     end
 end
 
@@ -145,8 +170,16 @@ class PrimitiveType
         @name.to_s
     end
 
-    def to_cpp
+    def is_abstract?
+        false
+    end
+
+    def concrete_type
         "m_types.#{name[0].downcase}#{name[1..]}Type()"
+    end
+
+    def to_cpp
+        "allocateAbstractType(#{concrete_type})"
     end
 end
 
@@ -155,16 +188,11 @@ class ParameterizedAbstractType
 
     def initialize(base, arguments)
         @base = base
-        @arguments = arguments.map { |a| normalize_argument(a) }
+        @arguments = arguments
     end
 
-    def normalize_argument(argument)
-        return argument if argument.is_a? Variable
-        return argument if argument.is_a? PrimitiveType
-
-        raise "Expected an Integer, found a: #{argument.class}" unless argument.is_a? Integer
-
-        NumericValue.new(argument)
+    def is_abstract?
+        true
     end
 
     def to_s
@@ -172,7 +200,7 @@ class ParameterizedAbstractType
     end
 
     def to_cpp
-        "Abstract#{base} { #{arguments.map(&:to_cpp).join ", "} }"
+        "allocateAbstractType(Abstract#{base} { #{arguments.map(&:to_cpp).join ", "} })"
     end
 end
 
@@ -228,8 +256,6 @@ module DSL
     @operators = {}
     @TypeVariable = VariableKind.new(:TypeVariable)
     @ValueVariable = VariableKind.new(:ValueVariable)
-    @AddressSpace = VariableKind.new(:AddressSpace)
-    @AccessMode = VariableKind.new(:AccessMode)
 
     def self.type_variable
         @TypeVariable
@@ -264,10 +290,17 @@ module DSL
             out << "introduceType(AST::Identifier::make(\"#{name}\"_s), #{type.concrete_type});"
         end
 
+        out << ""
+
         @operators.each do |name, overloads|
-            out << "m_overloadedOperations.add(\"#{name}\"_s, Vector<OverloadCandidate>({"
-            overloads.each { |function| out << "#{function.to_cpp(name)}," }
-            out << "}));"
+            out << "{"
+            out << "auto result = m_overloadedOperations.add(\"#{name}\"_s, Vector<OverloadCandidate>());"
+            out << "ASSERT_UNUSED(result, result.isNewEntry);"
+            overloads.each do |function|
+                out << "result.iterator->value.append(#{function.to_cpp(name)});"
+            end
+            out << "}"
+            out << ""
         end
         out << "" # xcode compilation fails if there's not newline at the end of the file
         out.join "\n"
@@ -289,6 +322,10 @@ module DSL
         Texture3d = Variable.new(:"Types::Texture::Kind::Texture3d", nil)
         TextureCube = Variable.new(:"Types::Texture::Kind::TextureCube", nil)
         TextureCubeArray = Variable.new(:"Types::Texture::Kind::TextureCubeArray", nil)
+
+        Storage = AbstractValue.new(:"AddressSpace::Storage")
+        Read = AbstractValue.new(:"AccessMode::Read")
+        ReadWrite = AbstractValue.new(:"AccessMode::ReadWrite")
 
         Bool = PrimitiveType.new(:Bool)
         I32 = PrimitiveType.new(:I32)
