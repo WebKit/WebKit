@@ -173,7 +173,7 @@ class Pickable(Command):
                     if rel.commit in commits_story:
                         already_picked.add(ref)
                         filtered_in.remove(ref)
-                    break
+                        break
 
                 # This commit is a revert of something from our base branch
                 if rel.type in Relationship.UNDO and rel.commit in commits_story:
