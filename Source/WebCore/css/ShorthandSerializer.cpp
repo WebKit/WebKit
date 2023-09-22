@@ -623,17 +623,13 @@ String ShorthandSerializer::serializeLayered() const
                 // The previous property is X.
                 ASSERT(j >= 1);
                 ASSERT(longhandProperty(j - 1) == CSSPropertyBackgroundPositionX || longhandProperty(j - 1) == CSSPropertyWebkitMaskPositionX);
-                if (layerValues.valueID(j - 1) == CSSValueCenter && layerValues.isValueID(j)) {
-                    layerValues.skip(j - 1) = true;
-                    layerValues.skip(j) = false;
-                } else if (layerValues.valueID(j) == CSSValueCenter && !layerValues.isPair(j - 1)) {
-                    layerValues.skip(j - 1) = false;
-                    layerValues.skip(j) = true;
-                } else if (length() == 2) {
+                if (length() == 2) {
                     ASSERT(j == 1);
                     layerValues.skip(0) = false;
                     layerValues.skip(1) = false;
                 } else {
+                    // Always serialize positions to at least 2 values.
+                    // https://drafts.csswg.org/css-values-4/#position-serialization
                     if (!layerValues.skip(j - 1))
                         layerValues.skip(j) = false;
                 }

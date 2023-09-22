@@ -3520,7 +3520,7 @@ std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRang
 RefPtr<CSSValue> consumePosition(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, PositionSyntax positionSyntax)
 {
     if (auto coordinates = consumePositionCoordinates(range, parserMode, unitless, positionSyntax))
-        return CSSValuePair::create(WTFMove(coordinates->x), WTFMove(coordinates->y));
+        return CSSValuePair::createNoncoalescing(WTFMove(coordinates->x), WTFMove(coordinates->y));
     return nullptr;
 }
 
