@@ -45,7 +45,7 @@ struct SameSizeAsFloatingObject {
 static_assert(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), "FloatingObject should stay small");
 #if !ASSERT_ENABLED
 static_assert(sizeof(WeakPtr<RenderBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
-static_assert(sizeof(WeakPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
+static_assert(sizeof(CheckedPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
 FloatingObject::FloatingObject(RenderBox& renderer)

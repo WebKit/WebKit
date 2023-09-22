@@ -199,7 +199,7 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     if (m_floatingObjects)
         m_floatingObjects->setHorizontalWritingMode(isHorizontalWritingMode());
 
-    HashSet<RenderBox*> oldIntrudingFloatSet;
+    HashSet<CheckedPtr<RenderBox>> oldIntrudingFloatSet;
     if (!childrenInline() && m_floatingObjects) {
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         auto end = floatingObjectSet.end();
@@ -937,7 +937,7 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
     }
 
     bool shouldUpdateOverflow = false;
-    ListHashSet<LegacyRootInlineBox*> lineBoxes;
+    ListHashSet<CheckedPtr<LegacyRootInlineBox>> lineBoxes;
     for (InlineWalker walker(*this); !walker.atEnd(); walker.advance()) {
         RenderObject& renderer = *walker.current();
         if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrInlineBlock() || renderer.isFloating())) {
@@ -959,8 +959,8 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
     }
 
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-    for (auto it = lineBoxes.begin(), end = lineBoxes.end(); it != end; ++it) {
-        LegacyRootInlineBox* box = *it;
+    for (auto& lineBox : lineBoxes) {
+        auto* box = lineBox.get();
         box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
     }
 }
