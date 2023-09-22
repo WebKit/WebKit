@@ -562,6 +562,34 @@ end
 end
 
 
+
+macro decodeLEBVarUInt32(offset, dst, scratch1, scratch2, scratch3, scratch4)
+    # if it's a single byte, fastpath it
+    const tempPC = scratch4
+    leap offset[PC], tempPC
+    loadb [PB, tempPC], dst
+
+    bbb dst, 0x80, .fastpath
+    # otherwise, set up for second iteration
+    # next shift is 7
+    move 7, scratch1
+    # take off high bit
+    subi 0x80, dst
+.loop:
+    addp 1, tempPC
+    loadb [PB, tempPC], scratch2
+    # scratch3 = high bit 7
+    # leave scratch2 with low bits 6-0
+    move 0x80, scratch3
+    andi scratch2, scratch3
+    xori scratch3, scratch2
+    lshifti scratch1, scratch2
+    addi 7, scratch1
+    ori scratch2, dst
+    bbneq scratch3, 0, .loop
+.fastpath:
+end
+
 ########################
 # In-Place Interpreter #
 ########################
@@ -3207,7 +3235,7 @@ reservedOpcode(0xf9)
 reservedOpcode(0xfa)
 reservedOpcode(0xfb)
 instructionLabel(_fc_block)
-    loadb 1[PB, PC], t0
+    decodeLEBVarUInt32(1, t0, t1, t2, t3, ws1)
     # Security guarantee: always less than 18 (0x00 -> 0x11)
     biaeq t0, 18, .ipint_fc_nonexistent
     if ARM64 or ARM64E
@@ -3227,7 +3255,7 @@ instructionLabel(_fc_block)
 instructionLabel(_simd)
     # TODO: for relaxed SIMD, handle parsing the value.
     # Metadata? Could just hardcode loading two bytes though
-    loadb 1[PB, PC], t0
+    decodeLEBVarUInt32(1, t0, t1, t2, t3, ws1)
     if ARM64 or ARM64E
         pcrtoaddr _ipint_simd_v128_load_mem, t1
         emit "add x0, x1, x0, lsl 8"
@@ -3240,7 +3268,7 @@ instructionLabel(_simd)
     end
 
 instructionLabel(_atomic)
-    loadb 1[PB, PC], t0
+    decodeLEBVarUInt32(1, t0, t1, t2, t3, ws1)
     # Security guarantee: always less than 78 (0x00 -> 0x4e)
     biaeq t0, 0x4f, .ipint_atomic_nonexistent
     if ARM64 or ARM64E
@@ -3276,26 +3304,38 @@ instructionLabel(_i32_trunc_sat_f32_s)
 
     truncatef2is ft0, t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f32_s_outOfBoundsTruncSatMinOrNaN:
     bfeq ft0, ft0, .outOfBoundsTruncSatMin
     move 0, t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f32_s_outOfBoundsTruncSatMax:
     move (constexpr INT32_MAX), t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f32_s_outOfBoundsTruncSatMin:
     move (constexpr INT32_MIN), t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_i32_trunc_sat_f32_u)
@@ -3311,19 +3351,28 @@ instructionLabel(_i32_trunc_sat_f32_u)
 
     truncatef2i ft0, t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f32_u_outOfBoundsTruncSatMin:
     move 0, t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f32_u_outOfBoundsTruncSatMax:
     move (constexpr UINT32_MAX), t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_i32_trunc_sat_f64_s)
@@ -3339,26 +3388,38 @@ instructionLabel(_i32_trunc_sat_f64_s)
 
     truncated2is ft0, t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f64_s_outOfBoundsTruncSatMinOrNaN:
     bdeq ft0, ft0, .ipint_i32_trunc_sat_f64_s_outOfBoundsTruncSatMin
     move 0, t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f64_s_outOfBoundsTruncSatMax:
     move (constexpr INT32_MAX), t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f64_s_outOfBoundsTruncSatMin:
     move (constexpr INT32_MIN), t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_i32_trunc_sat_f64_u)
@@ -3374,19 +3435,28 @@ instructionLabel(_i32_trunc_sat_f64_u)
 
     truncated2i ft0, t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f64_u_outOfBoundsTruncSatMin:
     move 0, t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i32_trunc_sat_f64_u_outOfBoundsTruncSatMax:
     move (constexpr UINT32_MAX), t0
     pushInt32(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_i64_trunc_sat_f32_s)
@@ -3402,20 +3472,29 @@ instructionLabel(_i64_trunc_sat_f32_s)
 
     truncatef2qs ft0, t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i64_trunc_sat_f32_s_outOfBoundsTruncSatMinOrNaN:
     bfeq ft0, ft0, .outOfBoundsTruncSatMin
     move 0, t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i64_trunc_sat_f32_s_outOfBoundsTruncSatMax:
     move (constexpr INT64_MAX), t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_i64_trunc_sat_f32_u)
@@ -3431,19 +3510,28 @@ instructionLabel(_i64_trunc_sat_f32_u)
 
     truncatef2q ft0, t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i64_trunc_sat_f32_u_outOfBoundsTruncSatMin:
     move 0, t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i64_trunc_sat_f32_u_outOfBoundsTruncSatMax:
     move (constexpr UINT64_MAX), t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_i64_trunc_sat_f64_s)
@@ -3458,26 +3546,38 @@ instructionLabel(_i64_trunc_sat_f64_s)
 
     truncated2qs ft0, t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .outOfBoundsTruncSatMinOrNaN:
     bdeq ft0, ft0, .outOfBoundsTruncSatMin
     move 0, t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .outOfBoundsTruncSatMax:
     move (constexpr INT64_MAX), t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .outOfBoundsTruncSatMin:
     move (constexpr INT64_MIN), t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_i64_trunc_sat_f64_u)
@@ -3493,19 +3593,28 @@ instructionLabel(_i64_trunc_sat_f64_u)
 
     truncated2q ft0, t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i64_trunc_sat_f64_u_outOfBoundsTruncSatMin:
     move 0, t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 .ipint_i64_trunc_sat_f64_u_outOfBoundsTruncSatMax:
     move (constexpr UINT64_MAX), t0
     pushInt64(t0)
-    advancePC(2)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_memory_init)
@@ -3538,7 +3647,10 @@ instructionLabel(_memory_copy)
     popQuad(a2, t0) # s
     popQuad(a1, t0) # d
     operationCallMayThrow(macro() cCall4(_ipint_extern_memory_copy) end)
-    advancePC(4)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_memory_fill)
@@ -3547,7 +3659,10 @@ instructionLabel(_memory_fill)
     popQuad(a2, t0) # val
     popQuad(a1, t0) # d
     operationCallMayThrow(macro() cCall4(_ipint_extern_memory_fill) end)
-    advancePC(3)
+
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_table_init)
@@ -6112,6 +6227,6 @@ reservedOpcode(0xfa)
 reservedOpcode(0xfb)
 unimplementedInstruction(_fc_block)
 unimplementedInstruction(_simd)
-reservedOpcode(0xfe)
+unimplementedInstruction(_atomic)
 reservedOpcode(0xff)
 end
