@@ -336,5 +336,19 @@ SubtreeLayoutStateMaintainer::~SubtreeLayoutStateMaintainer()
     }
 }
 
+ContentVisibilityForceLayoutScope::ContentVisibilityForceLayoutScope(RenderView& layoutRoot, const Element* context)
+{
+    if (context) {
+        m_context = &layoutRoot.frameView().layoutContext();
+        m_context->setNeedsSkippedContentLayout(true);
+    }
+}
+
+ContentVisibilityForceLayoutScope::~ContentVisibilityForceLayoutScope()
+{
+    if (m_context)
+        m_context->setNeedsSkippedContentLayout(false);
+}
+
 } // namespace WebCore
 

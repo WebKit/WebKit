@@ -1346,7 +1346,7 @@ int Element::offsetLeftForBindings()
 
 int Element::offsetLeft()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
         return adjustOffsetForZoomAndSubpixelLayout(*renderer, renderer->offsetLeft());
     return 0;
@@ -1375,7 +1375,7 @@ int Element::offsetTopForBindings()
 
 int Element::offsetTop()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
         return adjustOffsetForZoomAndSubpixelLayout(*renderer, renderer->offsetTop());
     return 0;
@@ -1413,7 +1413,7 @@ Element* Element::offsetParentForBindings()
 
 Element* Element::offsetParent()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     auto renderer = this->renderer();
     if (!renderer)
         return nullptr;
@@ -1425,7 +1425,7 @@ Element* Element::offsetParent()
 
 int Element::clientLeft()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (auto* renderer = renderBox()) {
         auto clientLeft = LayoutUnit { roundToInt(renderer->clientLeft()) };
@@ -1436,7 +1436,7 @@ int Element::clientLeft()
 
 int Element::clientTop()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (auto* renderer = renderBox()) {
         auto clientTop = LayoutUnit { roundToInt(renderer->clientTop()) };
@@ -1520,7 +1520,7 @@ ALWAYS_INLINE LocalFrame* Element::documentFrameWithNonNullView() const
 
 int Element::scrollLeft()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (document().scrollingElement() == this) {
         if (auto* frame = documentFrameWithNonNullView())
@@ -1535,7 +1535,7 @@ int Element::scrollLeft()
 
 int Element::scrollTop()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (document().scrollingElement() == this) {
         if (auto* frame = documentFrameWithNonNullView())
@@ -1550,7 +1550,7 @@ int Element::scrollTop()
 
 void Element::setScrollLeft(int newLeft)
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     auto options = ScrollPositionChangeOptions::createProgrammatic();
     options.animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
@@ -1573,7 +1573,7 @@ void Element::setScrollLeft(int newLeft)
 
 void Element::setScrollTop(int newTop)
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     auto options = ScrollPositionChangeOptions::createProgrammatic();
     options.animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
@@ -1830,9 +1830,10 @@ static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundin
 
 Ref<DOMRectList> Element::getClientRects()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     RenderObject* renderer = this->renderer();
+
     Vector<FloatQuad> quads;
 
     if (shouldObtainBoundsFromSVGModel(this)) {
@@ -1874,7 +1875,7 @@ std::optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRect
 
 FloatRect Element::boundingClientRect()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
         return { };

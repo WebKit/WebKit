@@ -953,6 +953,12 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
 
 void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
+    if (isSkippedContentRoot()) {
+        r.clearNeedsLayoutForDescendants();
+        r.clearNeedsLayout();
+        return;
+    }
+
     estimateFragmentRangeForBoxChild(r);
 
     // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So

@@ -203,6 +203,7 @@
 #include "RenderChildIterator.h"
 #include "RenderInline.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -2304,13 +2305,13 @@ bool Document::updateStyleIfNeeded()
     return true;
 }
 
-void Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> layoutOptions)
+void Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> layoutOptions, const Element* context)
 {
     layoutOptions.add(LayoutOptions::IgnorePendingStylesheets);
-    updateLayout(layoutOptions);
+    updateLayout(layoutOptions, context);
 }
 
-void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions)
+void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Element* context)
 {
     bool oldIgnore = m_ignorePendingStylesheets;
 
@@ -2338,14 +2339,24 @@ void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions)
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         if (RefPtr owner = ownerElement())
-            owner->document().updateLayout();
+            owner->document().updateLayout(layoutOptions, context);
 
         updateStyleIfNeeded();
 
         StackStats::LayoutCheckPoint layoutCheckPoint;
 
-        if (frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()))
-            frameView->layoutContext().layout();
+        if (frameView && renderView()) {
+            if (context && layoutOptions.contains(LayoutOptions::ContentVisibilityForceLayout)) {
+                if (context->renderer() && context->renderer()->style().skippedContentReason().has_value())
+                    context->renderer()->setNeedsLayout();
+                else
+                    context = nullptr;
+            }
+            if (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()) {
+                ContentVisibilityForceLayoutScope scope(*renderView(), context);
+                frameView->layoutContext().layout();
+            }
+        }
     }
 
     if (layoutOptions.contains(LayoutOptions::RunPostLayoutTasksSynchronously) && view())
@@ -2495,7 +2506,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     // Only do a layout if changes have occurred that make it necessary.
     if (requireFullLayout)
-        updateLayout();
+        updateLayout({ }, &element);
 
     return requireFullLayout;
 }
