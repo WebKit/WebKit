@@ -3637,6 +3637,9 @@ webkit.org/b/237955 imported/w3c/web-platform-tests/css/css-contain/content-visi
 
 webkit.org/b/239625 imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002.html [ ImageOnlyFailure ]
+
 webkit.org/b/239567 tables/mozilla/bugs/bug26178.html [ Pass Failure ]
 
 webkit.org/b/240037 css3/background/background-repeat-space-content.html [ Pass ImageOnlyFailure ]
