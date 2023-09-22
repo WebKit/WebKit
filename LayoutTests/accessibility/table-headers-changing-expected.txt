@@ -1,0 +1,14 @@
+Cell B should have 1 rowHeaders (has 1) and 0 columnHeaders (has 0)
+Cell E should have 1 rowHeader (has 1) and 1 columnHeader (has 1)
+Move row in <thead> to <tbody>:
+Cell B should have 1 rowHeader (has 1) and 0 columnHeaders (has 0)
+Cell E should have 1 rowHeader (has 1) and 0 columnHeaders (has 0)
+Add header above E:
+Cell E should have 1 rowHeaders (has 1) and 1 columnHeader (has 1)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+A	J	B	C
+D	E	F
+G	H	I

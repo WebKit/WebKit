@@ -893,6 +893,12 @@ public:
     // Table cell support.
     virtual bool isTableCell() const = 0;
     virtual bool isExposedTableCell() const = 0;
+    virtual bool isColumnHeader() const { return false; }
+    virtual bool isRowHeader() const { return false; }
+    bool isTableCellInSameRowGroup(AXCoreObject*);
+    bool isTableCellInSameColGroup(AXCoreObject*);
+    virtual AXID rowGroupAncestorID() const { return { }; }
+    virtual String cellScope() const { return { }; }
     // Returns the start location and row span of the cell.
     virtual std::pair<unsigned, unsigned> rowIndexRange() const = 0;
     // Returns the start location and column span of the cell.
@@ -908,6 +914,7 @@ public:
     // Table row support.
     virtual bool isTableRow() const = 0;
     virtual unsigned rowIndex() const = 0;
+    virtual AXCoreObject* rowHeader() { return nullptr; }
 
     // ARIA tree/grid row support.
     virtual bool isARIATreeGridRow() const = 0;

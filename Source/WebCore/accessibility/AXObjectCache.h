@@ -366,6 +366,7 @@ public:
         AXRoleDescriptionChanged,
         AXRowIndexChanged,
         AXRowSpanChanged,
+        AXCellScopeChanged,
         AXSelectedChildrenChanged,
         AXSelectedCellsChanged,
         AXSelectedStateChanged,
