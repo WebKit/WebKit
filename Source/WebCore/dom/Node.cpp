@@ -125,7 +125,7 @@ struct SameSizeAsNode : public EventTarget {
 static_assert(sizeof(Node) == sizeof(SameSizeAsNode), "Node should stay small");
 
 #if DUMP_NODE_STATISTICS
-static HashSet<HashSet<Node>>& liveNodeSet()
+static HashSet<CheckedPtr<Node>>& liveNodeSet()
 {
     static NeverDestroyed<HashSet<CheckedPtr<Node>>> liveNodes;
     return liveNodes;
