@@ -1,20 +1,36 @@
 
-PASS circle(+10px) - inline
-PASS circle(+10.00px) - inline
-PASS circle(+20.340px) - inline
-PASS circle(+30.5px) - inline
-PASS circle(+10%) - inline
-PASS circle(+10.00%) - inline
-PASS circle(+20.350%) - inline
-PASS circle(+30.5%) - inline
-PASS circle(+10px) - computed
-PASS circle(+10.00px) - computed
-PASS circle(+20.340px) - computed
-PASS circle(+30.5px) - computed
-PASS circle(+10%) - computed
-PASS circle(+10.00%) - computed
-PASS circle(+20.350%) - computed
-PASS circle(+30.5%) - computed
+PASS circle(+10px at 50% 50%) - inline
+PASS circle(+10.00px at 50% 50%) - inline
+PASS circle(+20.340px at 50% 50%) - inline
+PASS circle(+30.5px at 50% 50%) - inline
+PASS circle(+10% at 50% 50%) - inline
+PASS circle(+10.00% at 50% 50%) - inline
+PASS circle(+20.350% at 50% 50%) - inline
+PASS circle(+30.5% at 50% 50%) - inline
+FAIL circle(+10px) - inline assert_equals: expected "circle(10px)" but got "circle(10px at 50% 50%)"
+FAIL circle(+10.00px) - inline assert_equals: expected "circle(10px)" but got "circle(10px at 50% 50%)"
+FAIL circle(+20.340px) - inline assert_equals: expected "circle(20.34px)" but got "circle(20.34px at 50% 50%)"
+FAIL circle(+30.5px) - inline assert_equals: expected "circle(30.5px)" but got "circle(30.5px at 50% 50%)"
+FAIL circle(+10%) - inline assert_equals: expected "circle(10%)" but got "circle(10% at 50% 50%)"
+FAIL circle(+10.00%) - inline assert_equals: expected "circle(10%)" but got "circle(10% at 50% 50%)"
+FAIL circle(+20.350%) - inline assert_equals: expected "circle(20.35%)" but got "circle(20.35% at 50% 50%)"
+FAIL circle(+30.5%) - inline assert_equals: expected "circle(30.5%)" but got "circle(30.5% at 50% 50%)"
+PASS circle(+10px at 50% 50%) - computed
+PASS circle(+10.00px at 50% 50%) - computed
+PASS circle(+20.340px at 50% 50%) - computed
+PASS circle(+30.5px at 50% 50%) - computed
+PASS circle(+10% at 50% 50%) - computed
+PASS circle(+10.00% at 50% 50%) - computed
+PASS circle(+20.350% at 50% 50%) - computed
+PASS circle(+30.5% at 50% 50%) - computed
+FAIL circle(+10px) - computed assert_equals: expected "circle(10px)" but got "circle(10px at 50% 50%)"
+FAIL circle(+10.00px) - computed assert_equals: expected "circle(10px)" but got "circle(10px at 50% 50%)"
+FAIL circle(+20.340px) - computed assert_equals: expected "circle(20.34px)" but got "circle(20.34px at 50% 50%)"
+FAIL circle(+30.5px) - computed assert_equals: expected "circle(30.5px)" but got "circle(30.5px at 50% 50%)"
+FAIL circle(+10%) - computed assert_equals: expected "circle(10%)" but got "circle(10% at 50% 50%)"
+FAIL circle(+10.00%) - computed assert_equals: expected "circle(10%)" but got "circle(10% at 50% 50%)"
+FAIL circle(+20.350%) - computed assert_equals: expected "circle(20.35%)" but got "circle(20.35% at 50% 50%)"
+FAIL circle(+30.5%) - computed assert_equals: expected "circle(30.5%)" but got "circle(30.5% at 50% 50%)"
 PASS circle(-20px) - invalid
 PASS circle(-20.340px) - invalid
 

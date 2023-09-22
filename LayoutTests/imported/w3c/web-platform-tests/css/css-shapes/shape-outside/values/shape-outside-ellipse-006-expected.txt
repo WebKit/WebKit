@@ -1,28 +1,52 @@
 
-PASS ellipse(+10px +20px) - inline
-PASS ellipse(+30px 40px) - inline
-PASS ellipse(50px +60px) - inline
-PASS ellipse(+10.00px +20.230px) - inline
-PASS ellipse(+30.00px 40.567px) - inline
-PASS ellipse(50.10px +60.7px) - inline
-PASS ellipse(+10% +20%) - inline
-PASS ellipse(+30% 40%) - inline
-PASS ellipse(+50% +60%) - inline
-PASS ellipse(+10.00% +20.230%) - inline
-PASS ellipse(+30.00% 40.567%) - inline
-PASS ellipse(50.10% +60.7%) - inline
-PASS ellipse(+10px +20px) - computed
-PASS ellipse(+30px 40px) - computed
-PASS ellipse(50px +60px) - computed
-PASS ellipse(+10.00px +20.230px) - computed
-PASS ellipse(+30.00px 40.567px) - computed
-PASS ellipse(50.10px +60.7px) - computed
-PASS ellipse(+10% +20%) - computed
-PASS ellipse(+30% 40%) - computed
-PASS ellipse(+50% +60%) - computed
-PASS ellipse(+10.00% +20.230%) - computed
-PASS ellipse(+30.00% 40.567%) - computed
-PASS ellipse(50.10% +60.7%) - computed
+FAIL ellipse(+10px +20px) - inline assert_equals: expected "ellipse(10px 20px)" but got "ellipse(10px 20px at 50% 50%)"
+FAIL ellipse(+30px 40px) - inline assert_equals: expected "ellipse(30px 40px)" but got "ellipse(30px 40px at 50% 50%)"
+FAIL ellipse(50px +60px) - inline assert_equals: expected "ellipse(50px 60px)" but got "ellipse(50px 60px at 50% 50%)"
+FAIL ellipse(+10.00px +20.230px) - inline assert_equals: expected "ellipse(10px 20.23px)" but got "ellipse(10px 20.23px at 50% 50%)"
+FAIL ellipse(+30.00px 40.567px) - inline assert_equals: expected "ellipse(30px 40.567px)" but got "ellipse(30px 40.567px at 50% 50%)"
+FAIL ellipse(50.10px +60.7px) - inline assert_equals: expected "ellipse(50.1px 60.7px)" but got "ellipse(50.1px 60.7px at 50% 50%)"
+FAIL ellipse(+10% +20%) - inline assert_equals: expected "ellipse(10% 20%)" but got "ellipse(10% 20% at 50% 50%)"
+FAIL ellipse(+30% 40%) - inline assert_equals: expected "ellipse(30% 40%)" but got "ellipse(30% 40% at 50% 50%)"
+FAIL ellipse(+50% +60%) - inline assert_equals: expected "ellipse(50% 60%)" but got "ellipse(50% 60% at 50% 50%)"
+FAIL ellipse(+10.00% +20.230%) - inline assert_equals: expected "ellipse(10% 20.23%)" but got "ellipse(10% 20.23% at 50% 50%)"
+FAIL ellipse(+30.00% 40.567%) - inline assert_equals: expected "ellipse(30% 40.567%)" but got "ellipse(30% 40.567% at 50% 50%)"
+FAIL ellipse(50.10% +60.7%) - inline assert_equals: expected "ellipse(50.1% 60.7%)" but got "ellipse(50.1% 60.7% at 50% 50%)"
+PASS ellipse(+10px +20px at 50% 50%) - inline
+PASS ellipse(+30px 40px at 50% 50%) - inline
+PASS ellipse(50px +60px at 50% 50%) - inline
+PASS ellipse(+10.00px +20.230px at 50% 50%) - inline
+PASS ellipse(+30.00px 40.567px at 50% 50%) - inline
+PASS ellipse(50.10px +60.7px at 50% 50%) - inline
+PASS ellipse(+10% +20% at 50% 50%) - inline
+PASS ellipse(+30% 40% at 50% 50%) - inline
+PASS ellipse(+50% +60% at 50% 50%) - inline
+PASS ellipse(+10.00% +20.230% at 50% 50%) - inline
+PASS ellipse(+30.00% 40.567% at 50% 50%) - inline
+PASS ellipse(50.10% +60.7% at 50% 50%) - inline
+FAIL ellipse(+10px +20px) - computed assert_equals: expected "ellipse(10px 20px)" but got "ellipse(10px 20px at 50% 50%)"
+FAIL ellipse(+30px 40px) - computed assert_equals: expected "ellipse(30px 40px)" but got "ellipse(30px 40px at 50% 50%)"
+FAIL ellipse(50px +60px) - computed assert_equals: expected "ellipse(50px 60px)" but got "ellipse(50px 60px at 50% 50%)"
+FAIL ellipse(+10.00px +20.230px) - computed assert_equals: expected "ellipse(10px 20.23px)" but got "ellipse(10px 20.23px at 50% 50%)"
+FAIL ellipse(+30.00px 40.567px) - computed assert_equals: expected "ellipse(30px 40.567px)" but got "ellipse(30px 40.567px at 50% 50%)"
+FAIL ellipse(50.10px +60.7px) - computed assert_equals: expected "ellipse(50.1px 60.7px)" but got "ellipse(50.1px 60.7px at 50% 50%)"
+FAIL ellipse(+10% +20%) - computed assert_equals: expected "ellipse(10% 20%)" but got "ellipse(10% 20% at 50% 50%)"
+FAIL ellipse(+30% 40%) - computed assert_equals: expected "ellipse(30% 40%)" but got "ellipse(30% 40% at 50% 50%)"
+FAIL ellipse(+50% +60%) - computed assert_equals: expected "ellipse(50% 60%)" but got "ellipse(50% 60% at 50% 50%)"
+FAIL ellipse(+10.00% +20.230%) - computed assert_equals: expected "ellipse(10% 20.23%)" but got "ellipse(10% 20.23% at 50% 50%)"
+FAIL ellipse(+30.00% 40.567%) - computed assert_equals: expected "ellipse(30% 40.567%)" but got "ellipse(30% 40.567% at 50% 50%)"
+FAIL ellipse(50.10% +60.7%) - computed assert_equals: expected "ellipse(50.1% 60.7%)" but got "ellipse(50.1% 60.7% at 50% 50%)"
+PASS ellipse(+10px +20px at 50% 50%) - computed
+PASS ellipse(+30px 40px at 50% 50%) - computed
+PASS ellipse(50px +60px at 50% 50%) - computed
+PASS ellipse(+10.00px +20.230px at 50% 50%) - computed
+PASS ellipse(+30.00px 40.567px at 50% 50%) - computed
+PASS ellipse(50.10px +60.7px at 50% 50%) - computed
+PASS ellipse(+10% +20% at 50% 50%) - computed
+PASS ellipse(+30% 40% at 50% 50%) - computed
+PASS ellipse(+50% +60% at 50% 50%) - computed
+PASS ellipse(+10.00% +20.230% at 50% 50%) - computed
+PASS ellipse(+30.00% 40.567% at 50% 50%) - computed
+PASS ellipse(50.10% +60.7% at 50% 50%) - computed
 PASS ellipse(-10px -20px) - invalid
 PASS ellipse(-30px 40px) - invalid
 PASS ellipse(50px -60px) - invalid

@@ -5,12 +5,12 @@ PASS Serialization of basic shapes 2
 PASS Serialization of basic shapes 3
 PASS Serialization of basic shapes 4
 PASS Serialization of basic shapes 5
-PASS Serialization of basic shapes 6
-PASS Serialization of basic shapes 7
-PASS Serialization of basic shapes 8
-PASS Serialization of basic shapes 9
-PASS Serialization of basic shapes 10
-PASS Serialization of basic shapes 11
+FAIL Serialization of basic shapes 6 assert_equals: circle() expected "circle()" but got "circle(at 50% 50%)"
+FAIL Serialization of basic shapes 7 assert_equals: circle(0px) expected "circle(0px)" but got "circle(0px at 50% 50%)"
+FAIL Serialization of basic shapes 8 assert_equals: circle(closest-side) expected "circle()" but got "circle(at 50% 50%)"
+FAIL Serialization of basic shapes 9 assert_equals: circle(farthest-side) expected "circle(farthest-side)" but got "circle(farthest-side at 50% 50%)"
+FAIL Serialization of basic shapes 10 assert_equals: ellipse() expected "ellipse()" but got "ellipse(at 50% 50%)"
+FAIL Serialization of basic shapes 11 assert_equals: ellipse(closest-side farthest-side) expected "ellipse(closest-side farthest-side)" but got "ellipse(closest-side farthest-side at 50% 50%)"
 PASS Serialization of basic shapes 12
 PASS Serialization of basic shapes 13
 PASS Serialization of basic shapes 14
