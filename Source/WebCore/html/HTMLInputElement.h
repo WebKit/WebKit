@@ -450,6 +450,8 @@ private:
 
     void updateUserAgentShadowTree() final;
 
+    bool dirAutoUsesValue() const final;
+
     AtomString m_name;
     String m_valueIfDirty;
     unsigned m_size { defaultSize };

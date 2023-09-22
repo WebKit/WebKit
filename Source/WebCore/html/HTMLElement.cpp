@@ -834,8 +834,7 @@ std::optional<TextDirection> HTMLElement::directionalityIfDirIsAuto() const
 auto HTMLElement::computeDirectionalityFromText() const -> TextDirectionWithStrongDirectionalityNode
 {
     if (auto* textControl = dynamicDowncast<HTMLTextFormControlElement>(const_cast<HTMLElement*>(this))) {
-        auto* inputElement = dynamicDowncast<HTMLInputElement>(textControl);
-        if (!inputElement || (inputElement->isTextType() && !inputElement->isPasswordField())) {
+        if (textControl->dirAutoUsesValue()) {
             auto direction = textControl->value().defaultWritingDirection();
             if (!direction)
                 return { TextDirection::LTR, nullptr };
@@ -960,7 +959,7 @@ void HTMLElement::updateEffectiveDirectionalityOfDirAuto()
         invalidateStyleForSubtree();
 }
 
-void HTMLElement::updateTextDirectionalityAfterTelephoneInputTypeChange()
+void HTMLElement::updateTextDirectionalityAfterInputTypeChange()
 {
     dirAttributeChanged(attributeWithoutSynchronization(dirAttr));
 }

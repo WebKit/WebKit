@@ -1006,6 +1006,11 @@ bool InputType::supportsSelectionAPI() const
     return false;
 }
 
+bool InputType::dirAutoUsesValue() const
+{
+    return false;
+}
+
 unsigned InputType::height() const
 {
     return 0;
