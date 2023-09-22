@@ -411,10 +411,13 @@ def parse_args(args):
     'Tools/Scripts/export-w3c-test-changes -c -g HEAD -b XYZ' will do the following:
     - Clone web-platform-tests repository if not done already and set it up for pushing branches.
     - Gather WebKit bug id XYZ bug and changes to apply to web-platform-tests repository based on the HEAD commit
-    - Create a remote branch named webkit-XYZ on https://github.com/USERNAME/%s.git repository based on the locally applied patch.
-    -    USERNAME may be set using the environment variable GITHUB_USERNAME or as a command line option. It is then stored in git config as github.username.
-    -    Github credential may be set using the environment variable GITHUB_TOKEN or as a command line option. (Please provide a valid GitHub 'Personal access token' with 'repo' as scope). It is then stored in git config as github.token.
-    - Make the related pull request on %s.git repository.
+    - Create a remote branch named webkit-XYZ on https://github.com/USERNAME/%(wpt_name)s.git repository based on the locally applied patch.
+       * USERNAME may be set using the environment variable GITHUB_USERNAME or as a command line option. It is then stored in git config as github.username.
+       * %(wpt_url)s.git should have already been cloned to https://github.com/USERNAME/%(wpt_name)s.git.
+       * Github credential may be set using the environment variable GITHUB_TOKEN or as a command line option.
+         (Please provide a valid GitHub 'Personal access token' with 'repo' as scope, it may be generated at https://github.com/settings/tokens).
+         It is then stored in git config as github.token.
+    - Make the related pull request on %(wpt_url)s.git repository.
     - Clean the local Git repository
     Notes:
     - It is safer to provide a bug id using -b option (bug id from a git commit is not always working).
@@ -423,7 +426,7 @@ def parse_args(args):
     FIXME:
     - The script is not yet able to update an existing pull request
     - Need a way to monitor the progress of the pul request so that status of all pending pull requests can be done at import time.
-    """ % (WPT_GH_REPO_NAME, WPT_GH_URL)
+    """ % {"wpt_name": WPT_GH_REPO_NAME, "wpt_url": WPT_GH_URL}
     parser = argparse.ArgumentParser(prog='export-w3c-test-changes ...', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-g', '--git-commit', dest='git_commit', default=None, help='Git commit to apply')
