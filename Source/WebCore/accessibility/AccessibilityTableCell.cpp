@@ -144,9 +144,9 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
 
     if (!isExposedTableCell())
         return defaultRole;
-    if (isColumnHeaderCell())
+    if (isColumnHeader())
         return AccessibilityRole::ColumnHeader;
-    if (isRowHeaderCell())
+    if (isRowHeader())
         return AccessibilityRole::RowHeader;
 
     return AccessibilityRole::Cell;
@@ -173,7 +173,7 @@ bool AccessibilityTableCell::isTableHeaderCell() const
     return false;
 }
 
-bool AccessibilityTableCell::isColumnHeaderCell() const
+bool AccessibilityTableCell::isColumnHeader() const
 {
     const AtomString& scope = getAttribute(scopeAttr);
     if (scope == "col"_s || scope == "colgroup"_s)
@@ -201,7 +201,7 @@ bool AccessibilityTableCell::isColumnHeaderCell() const
     return false;
 }
 
-bool AccessibilityTableCell::isRowHeaderCell() const
+bool AccessibilityTableCell::isRowHeader() const
 {
     const AtomString& scope = getAttribute(scopeAttr);
     if (scope == "row"_s || scope == "rowgroup"_s)
@@ -226,32 +226,16 @@ bool AccessibilityTableCell::isRowHeaderCell() const
     }
     return false;
 }
-
-bool AccessibilityTableCell::isTableCellInSameRowGroup(AXCoreObject* otherTableCell)
-{
-    Node* parentNode = node();
-    for ( ; parentNode; parentNode = parentNode->parentNode()) {
-        if (parentNode->hasTagName(theadTag) || parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tfootTag))
-            break;
-    }
     
-    Node* otherParentNode = otherTableCell->node();
-    for ( ; otherParentNode; otherParentNode = otherParentNode->parentNode()) {
-        if (otherParentNode->hasTagName(theadTag) || otherParentNode->hasTagName(tbodyTag) || otherParentNode->hasTagName(tfootTag))
-            break;
-    }
-    
-    return otherParentNode == parentNode;
-}
-
-bool AccessibilityTableCell::isTableCellInSameColGroup(AXCoreObject* tableCell)
+AXID AccessibilityTableCell::rowGroupAncestorID() const
 {
-    auto colRange = columnIndexRange();
-    auto otherColRange = tableCell->columnIndexRange();
+    auto* rowGroup = Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
+        return ancestor.hasTagName(theadTag) || ancestor.hasTagName(tbodyTag) || ancestor.hasTagName(tfootTag);
+    });
+    if (!rowGroup)
+        return { };
 
-    if (colRange.first <= (otherColRange.first + otherColRange.second))
-        return true;
-    return false;
+    return rowGroup->objectID();
 }
     
 String AccessibilityTableCell::expandedTextValue() const
@@ -285,10 +269,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
             continue;
 
         ASSERT(is<AccessibilityObject>(tableCell));
-        const AtomString& scope = downcast<AccessibilityObject>(tableCell)->getAttribute(scopeAttr);
-        if (scope == "colgroup"_s && isTableCellInSameColGroup(tableCell))
+        if (tableCell->cellScope() == "colgroup"_s && isTableCellInSameColGroup(tableCell))
             headers.append(tableCell);
-        else if (downcast<AccessibilityObject>(tableCell)->isColumnHeaderCell())
+        else if (downcast<AccessibilityObject>(tableCell)->isColumnHeader())
             headers.append(tableCell);
     }
 
@@ -309,11 +292,10 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
         auto* tableCell = parent->cellForColumnAndRow(column, rowRange.first);
         if (!tableCell || tableCell == this || headers.contains(tableCell))
             continue;
-        
-        const AtomString& scope = downcast<AccessibilityObject>(tableCell)->getAttribute(scopeAttr);
-        if (scope == "rowgroup"_s && isTableCellInSameRowGroup(tableCell))
+
+        if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(tableCell))
             headers.append(tableCell);
-        else if (downcast<AccessibilityObject>(tableCell)->isRowHeaderCell())
+        else if (downcast<AccessibilityObject>(tableCell)->isRowHeader())
             headers.append(tableCell);
     }
 

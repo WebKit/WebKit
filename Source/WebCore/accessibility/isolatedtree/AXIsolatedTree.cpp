@@ -531,6 +531,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
             propertyMap.set(AXPropertyName::IsChecked, axObject.isChecked());
             propertyMap.set(AXPropertyName::ButtonState, axObject.checkboxOrRadioValue());
             break;
+        case AXPropertyName::IsColumnHeader:
+            propertyMap.set(AXPropertyName::IsColumnHeader, axObject.isColumnHeader());
+            break;
         case AXPropertyName::IsEnabled:
             propertyMap.set(AXPropertyName::IsEnabled, axObject.isEnabled());
             break;
@@ -542,6 +545,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
             break;
         case AXPropertyName::IsSelected:
             propertyMap.set(AXPropertyName::IsSelected, axObject.isSelected());
+            break;
+        case AXPropertyName::IsRowHeader:
+            propertyMap.set(AXPropertyName::IsRowHeader, axObject.isRowHeader());
             break;
         case AXPropertyName::MaxValueForRange:
             propertyMap.set(AXPropertyName::MaxValueForRange, axObject.maxValueForRange());
@@ -560,6 +566,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
             break;
         case AXPropertyName::AXRowIndex:
             propertyMap.set(AXPropertyName::AXRowIndex, axObject.axRowIndex());
+            break;
+        case AXPropertyName::CellScope:
+            propertyMap.set(AXPropertyName::CellScope, axObject.cellScope().isolatedCopy());
             break;
         case AXPropertyName::SetSize:
             propertyMap.set(AXPropertyName::SetSize, axObject.setSize());

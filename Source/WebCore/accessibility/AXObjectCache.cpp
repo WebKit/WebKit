@@ -2446,6 +2446,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         recomputeParentTableProperties(element, TableProperty::CellSlots);
     } else if (attrName == popovertargetAttr)
         postNotification(element, AXPopoverTargetChanged);
+    else if (attrName == scopeAttr)
+        postNotification(element, AXCellScopeChanged);
 
     if (!attrName.localName().string().startsWith("aria-"_s))
         return;
@@ -4154,6 +4156,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             break;
         case AXRowIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXRowIndex);
+            break;
+        case AXCellScopeChanged:
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::CellScope, AXPropertyName::IsColumnHeader, AXPropertyName::IsRowHeader });
             break;
         //  FIXME: Contrary to the name "AXSelectedCellsChanged", this notification can be posted on a cell
         //  who has changed selected state, not just on table or grid who has changed its selected cells.

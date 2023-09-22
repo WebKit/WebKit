@@ -643,6 +643,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXRowSpanChanged:
         stream << "AXRowSpanChanged";
         break;
+    case AXObjectCache::AXNotification::AXCellScopeChanged:
+        stream << "AXCellScopeChanged";
+        break;
     case AXObjectCache::AXNotification::AXSelectedChildrenChanged:
         stream << "AXSelectedChildrenChanged";
         break;

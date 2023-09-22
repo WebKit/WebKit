@@ -204,6 +204,10 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXPropertyName::RowIndexRange, object.rowIndexRange());
         setProperty(AXPropertyName::AXColumnIndex, object.axColumnIndex());
         setProperty(AXPropertyName::AXRowIndex, object.axRowIndex());
+        setProperty(AXPropertyName::IsColumnHeader, object.isColumnHeader());
+        setProperty(AXPropertyName::IsRowHeader, object.isRowHeader());
+        setProperty(AXPropertyName::CellScope, object.cellScope().isolatedCopy());
+        setProperty(AXPropertyName::RowGroupAncestorID, object.rowGroupAncestorID());
     }
 
     if (object.isTableColumn()) {
@@ -220,6 +224,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setObjectVectorProperty(AXPropertyName::DisclosedRows, object.disclosedRows());
         setObjectProperty(AXPropertyName::DisclosedByRow, object.disclosedByRow());
     }
+
+    if (object.isARIATreeGridRow() || object.isTableRow())
+        setObjectProperty(AXPropertyName::RowHeader, object.rowHeader());
 
     if (object.isTreeItem()) {
         setProperty(AXPropertyName::IsTreeItem, true);
@@ -899,17 +906,11 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
             });
             break;
         }
-        case AXPropertyName::ColumnHeaders:
-            value = axIDs(axObject->columnHeaders());
-            break;
         case AXPropertyName::InnerHTML:
             value = axObject->innerHTML().isolatedCopy();
             break;
         case AXPropertyName::OuterHTML:
             value = axObject->outerHTML().isolatedCopy();
-            break;
-        case AXPropertyName::RowHeaders:
-            value = axIDs(axObject->rowHeaders());
             break;
         default:
             break;
@@ -1793,7 +1794,40 @@ std::optional<String> AXIsolatedObject::attributeValue(const String& attributeNa
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::columnHeaders()
 {
-    return tree()->objectsForIDs(const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AXID>>(AXPropertyName::ColumnHeaders));
+    AccessibilityChildrenVector headers;
+    if (isTable()) {
+        auto columnsCopy = columns();
+        for (const auto& column : columnsCopy) {
+            if (auto* header = column->columnHeader())
+                headers.append(header);
+        }
+    } else if (isExposedTableCell()) {
+        auto* parent = exposedTableAncestor();
+        if (!parent)
+            return { };
+
+        // Choose columnHeaders as the place where the "headers" attribute is reported.
+        headers = relatedObjects(AXRelationType::Headers);
+        // If the headers attribute returned valid values, then do not further search for column headers.
+        if (!headers.isEmpty())
+            return headers;
+
+        auto rowRange = rowIndexRange();
+        auto colRange = columnIndexRange();
+
+        for (unsigned row = 0; row < rowRange.first; row++) {
+            auto* tableCell = parent->cellForColumnAndRow(colRange.first, row);
+            if (!tableCell || tableCell == this || headers.contains(tableCell))
+                continue;
+
+            if (tableCell->cellScope() == "colgroup"_s && isTableCellInSameColGroup(tableCell))
+                headers.append(tableCell);
+            else if (tableCell->isColumnHeader())
+                headers.append(tableCell);
+        }
+    }
+
+    return headers;
 }
 
 String AXIsolatedObject::innerHTML() const
@@ -1808,7 +1842,33 @@ String AXIsolatedObject::outerHTML() const
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::rowHeaders()
 {
-    return tree()->objectsForIDs(const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AXID>>(AXPropertyName::RowHeaders));
+    AccessibilityChildrenVector headers;
+    if (isTable()) {
+        auto rowsCopy = rows();
+        for (const auto& row : rowsCopy) {
+            if (auto* header = row->rowHeader())
+                headers.append(header);
+        }
+    } else if (isExposedTableCell()) {
+        auto* parent = exposedTableAncestor();
+        if (!parent)
+            return { };
+
+        auto rowRange = rowIndexRange();
+        auto colRange = columnIndexRange();
+        for (unsigned column = 0; column < colRange.first; column++) {
+            auto* tableCell = parent->cellForColumnAndRow(column, rowRange.first);
+            if (!tableCell || tableCell == this || headers.contains(tableCell))
+                continue;
+
+            if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(tableCell))
+                headers.append(tableCell);
+            else if (tableCell->isRowHeader())
+                headers.append(tableCell);
+        }
+    }
+
+    return headers;
 }
 
 #if !PLATFORM(MAC)

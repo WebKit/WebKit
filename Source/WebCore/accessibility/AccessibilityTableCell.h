@@ -44,8 +44,10 @@ public:
 
     bool isExposedTableCell() const final;
     bool isTableHeaderCell() const;
-    bool isColumnHeaderCell() const override;
-    bool isRowHeaderCell() const override;
+    bool isColumnHeader() const override;
+    bool isRowHeader() const override;
+
+    AXID rowGroupAncestorID() const final;
 
     virtual AccessibilityTable* parentTable() const;
 
@@ -93,8 +95,6 @@ private:
     AccessibilityTableRow* ariaOwnedByParent() const;
     void ensureIndexesUpToDate() const;
 
-    bool isTableCellInSameRowGroup(AXCoreObject*);
-    bool isTableCellInSameColGroup(AXCoreObject*);
 };
 
 } // namespace WebCore 

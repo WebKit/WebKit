@@ -276,6 +276,26 @@ unsigned AXCoreObject::tableLevel() const
     return level;
 }
 
+bool AXCoreObject::isTableCellInSameRowGroup(AXCoreObject* otherTableCell)
+{
+    if (!otherTableCell)
+        return false;
+
+    AXID ancestorID = rowGroupAncestorID();
+    return ancestorID.isValid() && ancestorID == otherTableCell->rowGroupAncestorID();
+}
+
+bool AXCoreObject::isTableCellInSameColGroup(AXCoreObject* tableCell)
+{
+    if (!tableCell)
+        return false;
+
+    auto columnRange = columnIndexRange();
+    auto otherColumnRange = tableCell->columnIndexRange();
+
+    return columnRange.first <= otherColumnRange.first + otherColumnRange.second;
+}
+
 String AXCoreObject::ariaLandmarkRoleDescription() const
 {
     switch (roleValue()) {

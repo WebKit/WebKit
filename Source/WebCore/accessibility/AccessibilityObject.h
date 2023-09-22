@@ -151,6 +151,7 @@ public:
     AccessibilityChildrenVector columnHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector rowHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector visibleRows() override { return AccessibilityChildrenVector(); }
+    String cellScope() const final { return getAttribute(HTMLNames::scopeAttr); }
     AXCoreObject* headerContainer() override { return nullptr; }
     int axColumnCount() const override { return 0; }
     int axRowCount() const override { return 0; }
@@ -163,8 +164,6 @@ public:
     std::pair<unsigned, unsigned> rowIndexRange() const override { return { 0, 1 }; }
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const override { return { 0, 1 }; }
-    virtual bool isColumnHeaderCell() const { return false; }
-    virtual bool isRowHeaderCell() const { return false; }
     int axColumnIndex() const override { return -1; }
     int axRowIndex() const override { return -1; }
 
