@@ -32,23 +32,33 @@ namespace WebCore {
 
 class Element;
 
+enum class CandidateExaminationResult {
+    Exclude, Select, Descend, Skip
+};
+
 class ScrollAnchoringController final : public CanMakeWeakPtr<ScrollAnchoringController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ScrollAnchoringController(LocalFrameView& frameView)
         : m_frameView(frameView)
     { }
+
     void invalidateAnchorElement();
     void adjustScrollPositionForAnchoring();
     void selectAnchorElement();
-    void chooseAnchorElement();
+    void chooseAnchorElement(Document&);
     void updateAnchorElement();
     LocalFrameView& frameView() { return m_frameView; }
 
 private:
+    Element* findAnchorElementRecursive(Element*);
+    CandidateExaminationResult examineCandidate(Element&);
+    bool didFindPriorityCandidate(Document&);
+    ScrollOffset computeOffset(RenderObject& candidate);
+
+    // TODO: add owning scrollable area
     LocalFrameView& m_frameView;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_anchorElement;
-    ScrollOffset computeOffset(RenderBox& candidate);
     ScrollOffset m_lastOffsetForAnchorElement;
     bool m_midUpdatingScrollPositionForAnchorElement { false };
     bool m_isQueuedForScrollPositionUpdate { false };

@@ -112,6 +112,7 @@ namespace WebCore {
     M(ResourceLoadObserver) \
     M(ResourceLoadStatistics) \
     M(ScrollAnimations) \
+    M(ScrollAnchoring) \
     M(ScrollSnap) \
     M(Scrolling) \
     M(ScrollingTree) \

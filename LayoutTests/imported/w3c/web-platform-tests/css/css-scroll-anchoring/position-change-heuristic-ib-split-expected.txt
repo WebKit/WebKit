@@ -2,5 +2,5 @@ Some title
 Sticky header
 Some actual content.
 
-FAIL Scroll offset adjustments are correctly suppressed when changing the position of an inline assert_equals: Element should become and remain fixed expected "fixed" but got "static"
+PASS Scroll offset adjustments are correctly suppressed when changing the position of an inline
 
