@@ -9,21 +9,27 @@ bar
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 28.00)
-          (bounds 120.00 120.00)
+          (bounds 800.00 600.00)
           (drawsContent 1)
-          (mask layer)
+          (children 1
             (GraphicsLayer
+              (position 8.00 28.00)
               (bounds 120.00 120.00)
               (drawsContent 1)
+              (mask layer)
+                (GraphicsLayer
+                  (bounds 120.00 120.00)
+                  (drawsContent 1)
+                )
+              (structural layer
+                (position 68.00 88.00)
+                (bounds 120.00 120.00)
+              )
+              (backdrop layer
+                (position 0.00 0.00)
+                (bounds 120.00 120.00)
+              )
             )
-          (structural layer
-            (position 68.00 88.00)
-            (bounds 120.00 120.00)
-          )
-          (backdrop layer
-            (position 0.00 0.00)
-            (bounds 120.00 120.00)
           )
         )
       )

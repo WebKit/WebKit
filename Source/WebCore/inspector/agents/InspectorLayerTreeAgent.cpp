@@ -325,6 +325,9 @@ Protocol::ErrorStringOr<Ref<Protocol::LayerTree::CompositingReasons>> InspectorL
     if (reasons.contains(CompositingReason::Root))
         compositingReasons->setRoot(true);
 
+    if (reasons.contains(CompositingReason::BackdropRoot))
+        compositingReasons->setBackdropRoot(true);
+
     return compositingReasons;
 }
 
