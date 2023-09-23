@@ -2837,7 +2837,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
         functionDeclaration.second->appendFunction(metadata);
         // FIXME: This convoluted condition is only temporary until Annex B hoisting for global scope is implemented.
         // https://bugs.webkit.org/show_bug.cgi?id=163209
-        bool isSloppyModeHoistingCandidate = m_statementDepth != 1 && !strictMode() && (currentScope()->isFunction() || closestParentOrdinaryFunctionNonLexicalScope()->isEvalContext());
+        bool isSloppyModeHoistingCandidate = m_statementDepth != 1 && !strictMode() && m_parseMode == SourceParseMode::NormalFunctionMode && (currentScope()->isFunction() || closestParentOrdinaryFunctionNonLexicalScope()->isEvalContext());
         if (isSloppyModeHoistingCandidate)
             functionDeclaration.second->addSloppyModeFunctionHoistingCandidate<Scope::NeedsDuplicateDeclarationCheck::No>(metadata);
     }
