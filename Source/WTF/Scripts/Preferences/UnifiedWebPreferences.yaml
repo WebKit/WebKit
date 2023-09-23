@@ -6780,6 +6780,20 @@ UndoManagerAPIEnabled:
     WebCore:
       default: false
 
+UnifiedPDFEnabled:
+  type: bool
+  status: internal
+  category: security
+  humanReadableName: "Unified PDF Viewer"
+  humanReadableDescription: "Enable Unified PDF Viewer"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UnprefixedFullscreenAPIEnabled:
   type: bool
   status: stable
