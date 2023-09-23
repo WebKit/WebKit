@@ -56,8 +56,8 @@ class Encoder;
 
 #define DECLARE_CODER(class) \
 template<> struct Coder<class> { \
-    WEBCORE_EXPORT static void encode(Encoder&, const class&); \
-    WEBCORE_EXPORT static std::optional<class> decode(Decoder&); \
+    WEBCORE_EXPORT static void encodeForPersistence(Encoder&, const class&); \
+    WEBCORE_EXPORT static std::optional<class> decodeForPersistence(Decoder&); \
 }
 
 #if ENABLE(APP_HIGHLIGHTS)

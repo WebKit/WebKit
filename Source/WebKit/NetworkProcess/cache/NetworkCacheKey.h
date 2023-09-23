@@ -40,12 +40,12 @@ struct DataKey {
     String type;
     SHA1::Digest identifier;
 
-    template <class Encoder> void encode(Encoder& encoder) const
+    template <class Encoder> void encodeForPersistence(Encoder& encoder) const
     {
         encoder << partition << type << identifier;
     }
 
-    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, DataKey& dataKey)
+    template <class Decoder> static WARN_UNUSED_RETURN bool decodeForPersistence(Decoder& decoder, DataKey& dataKey)
     {
         return decoder.decode(dataKey.partition) && decoder.decode(dataKey.type) && decoder.decode(dataKey.identifier);
     }

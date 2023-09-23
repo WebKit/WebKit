@@ -549,8 +549,8 @@ class Decoder;
 class Encoder;
 
 template<> struct Coder<WebCore::ResourceResponseBase::CrossThreadData> {
-    WEBCORE_EXPORT static void encode(Encoder&, const WebCore::ResourceResponseBase::CrossThreadData&);
-    WEBCORE_EXPORT static std::optional<WebCore::ResourceResponseBase::CrossThreadData> decode(Decoder&);
+    WEBCORE_EXPORT static void encodeForPersistence(Encoder&, const WebCore::ResourceResponseBase::CrossThreadData&);
+    WEBCORE_EXPORT static std::optional<WebCore::ResourceResponseBase::CrossThreadData> decodeForPersistence(Decoder&);
 };
 
 } // namespace Persistence
