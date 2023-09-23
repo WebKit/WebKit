@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            var audio = null;
+            async function start() {
+                audio = mediaElement = document.getElementsByTagName('audio')[0];
+
+                testExpected("audio.canPlayType('audio/webm; codecs=opus')", "probably");
+                waitForEvent('error', failTest);
+                run('audio.src = "content/opus_variable.webm"');
+                await waitFor(audio, 'loadedmetadata');
+                testExpected('audio.duration', '0.98', '>=');
+                run('audio.play()');
+                await waitFor(audio, 'ended');
+                testExpected('audio.currentTime', '0.98', '>=');
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <audio controls></audio>
+        <p>Check that an opus file made of two concatenated segments, one encoded with 40ms packets and the other 20ms can play continously.</p>
+    </body>
+</html>

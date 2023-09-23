@@ -1292,6 +1292,8 @@ media/video-supports-fullscreen.html [ Skip ]
 
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
 media/video-with-alpha.html [ Skip ]
+# WebM support is only enabled on iOS, macOS and glib
+media/media-webm-opus-variable-length.html [ Fail ]
 
 # accent-color is currently only supported on Cocoa platforms
 fast/css/accent-color/button.html [ ImageOnlyFailure ]

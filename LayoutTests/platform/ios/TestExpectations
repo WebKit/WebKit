@@ -2480,6 +2480,7 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 media/audio-mpeg-supported.html [ Failure ]
 media/event-attributes.html [ Failure ]
 media/media-can-play-webm.html [ Failure ]
+media/media-webm-opus-variable-length.html [ Pass ]
 media/media-higher-prio-audio-stream.html [ Failure ]
 media/progress-events-generated-correctly.html [ Failure ]
 media/restore-from-page-cache.html [ Failure ]
@@ -2937,7 +2938,7 @@ fast/block/basic/quirk-mode-percent-height.html [ Failure ]
 webkit.org/b/186714 fast/forms/datalist/datalist-textinput-keydown.html [ Skip ]
 webkit.org/b/190613 fast/forms/datalist/update-range-with-datalist.html [ Skip ]
 
-# We are only accepting GLSL3 for macOS. 
+# We are only accepting GLSL3 for macOS.
 webkit.org/b/187982 webgl/2.0.0/conformance2/glsl3 [ Skip ]
 
 # Audio session does not have a "none" category on iOS [ Skip ]
@@ -3399,9 +3400,9 @@ http/tests/media/video-webm-stall.html [ Skip ]
 
 webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]
 
-#rdar://82146367 ([Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure) imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Failure ] 
+#rdar://82146367 ([Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure) imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Failure ]
 
-#rdar://82147623 ([iOS] 3 imported/w3c/web-platform-tests/css/css-typed-om/ tests are flaky failure) 
+#rdar://82147623 ([iOS] 3 imported/w3c/web-platform-tests/css/css-typed-om/ tests are flaky failure)
 imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em.html [ Pass Failure ]
@@ -3529,7 +3530,7 @@ webkit.org/b/237680 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/237987 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea.html [ Pass Failure ]
 
-# webkit.org/b/237603 
+# webkit.org/b/237603
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html [ Pass Failure ]
 
