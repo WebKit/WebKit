@@ -123,6 +123,7 @@ public:
     virtual void clearNodesWithUserScrollInProgress() { }
     virtual void hasNodeWithAnimatedScrollChanged(bool) { }
     virtual void setRootNodeIsInUserScroll(bool) { }
+    virtual void setRubberBandingInProgressForNode(WebCore::ScrollingNodeID, bool isRubberBanding) { }
 
     virtual void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) { }
     virtual void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) { }

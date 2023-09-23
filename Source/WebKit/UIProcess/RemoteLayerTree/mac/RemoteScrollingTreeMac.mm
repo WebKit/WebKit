@@ -189,6 +189,16 @@ void RemoteScrollingTreeMac::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAn
     });
 }
 
+void RemoteScrollingTreeMac::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bool isRubberBanding)
+{
+    ScrollingTree::setRubberBandingInProgressForNode(nodeID, isRubberBanding);
+
+    RunLoop::main().dispatch([strongThis = Ref { *this }, nodeID, isRubberBanding] {
+        if (auto* scrollingCoordinatorProxy = strongThis->scrollingCoordinatorProxy())
+            scrollingCoordinatorProxy->setRubberBandingInProgressForNode(nodeID, isRubberBanding);
+    });
+}
+
 void RemoteScrollingTreeMac::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction action)
 {
     ScrollingTree::scrollingTreeNodeDidScroll(node, action);

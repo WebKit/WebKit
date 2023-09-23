@@ -78,6 +78,8 @@ private:
     void removeWheelEventTestCompletionDeferralForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
 
     void hasNodeWithAnimatedScrollChanged(bool) override;
+    void setRubberBandingInProgressForNode(WebCore::ScrollingNodeID, bool) override;
+
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
 
     void lockLayersForHitTesting() final WTF_ACQUIRES_LOCK(m_layerHitTestMutex);
