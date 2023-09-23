@@ -367,7 +367,12 @@ TEST(WebKit, QuotaDelegate)
     NSLog(@"QuotaDelegate 6");
 }
 
-TEST(WebKit, QuotaDelegateReload)
+// FIXME when rdar://115919262 is resolved.
+#if PLATFORM(IOS)
+TEST(WebPushD, DISABLED_QuotaDelegateReload)
+#else
+(TEST(WebPushD, QuotaDelegateReload)
+#endif
 {
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
