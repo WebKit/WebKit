@@ -87,7 +87,7 @@ public:
     WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps> = { });
 
     bool isRubberBandInProgressForNode(ScrollingNodeID);
-    void setRubberBandingInProgressForNode(ScrollingNodeID, bool);
+    WEBCORE_EXPORT virtual void setRubberBandingInProgressForNode(ScrollingNodeID, bool);
 
     bool isUserScrollInProgressForNode(ScrollingNodeID);
     void setUserScrollInProgressForNode(ScrollingNodeID, bool);

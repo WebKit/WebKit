@@ -117,6 +117,16 @@ void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool h
 #endif
 }
 
+void RemoteScrollingCoordinatorProxyMac::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bool isRubberBanding)
+{
+    if (isRubberBanding)
+        m_uiState.addNodeWithActiveRubberband(nodeID);
+    else
+        m_uiState.removeNodeWithActiveRubberband(nodeID);
+
+    sendUIStateChangedIfNecessary();
+}
+
 void RemoteScrollingCoordinatorProxyMac::clearNodesWithUserScrollInProgress()
 {
     m_uiState.clearNodesWithActiveUserScroll();

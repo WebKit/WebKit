@@ -87,4 +87,5 @@ header: "RemoteScrollingUIState.h"
 [OptionSet] enum class WebKit::RemoteScrollingUIStateChanges : uint8_t {
     ScrollSnapNodes
     UserScrollNodes
+    RubberbandingNodes
 };
