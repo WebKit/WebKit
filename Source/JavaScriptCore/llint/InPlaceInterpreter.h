@@ -218,8 +218,7 @@ extern "C" void ipint_entry_simd();
     m(0xd1, ref_is_null) \
     m(0xd2, ref_func) \
     m(0xfc, fc_block) \
-    m(0xfd, simd) \
-    m(0xfe, atomic)
+    m(0xfd, simd)
 
 #define FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(m) \
     m(0x00, i32_trunc_sat_f32_s) \
@@ -479,81 +478,11 @@ extern "C" void ipint_entry_simd();
     m(0xfe, simd_f64x2_convert_low_i32x4_s) \
     m(0xff, simd_f64x2_convert_low_i32x4_u)
 
-#define FOR_EACH_IPINT_ATOMIC_OPCODE(m) \
-    m(0x00, memory_atomic_notify) \
-    m(0x01, memory_atomic_wait32) \
-    m(0x02, memory_atomic_wait64) \
-    m(0x03, atomic_fence) \
-    m(0x10, i32_atomic_load) \
-    m(0x11, i64_atomic_load) \
-    m(0x12, i32_atomic_load8_u) \
-    m(0x13, i32_atomic_load16_u) \
-    m(0x14, i64_atomic_load8_u) \
-    m(0x15, i64_atomic_load16_u) \
-    m(0x16, i64_atomic_load32_u) \
-    m(0x17, i32_atomic_store) \
-    m(0x18, i64_atomic_store) \
-    m(0x19, i32_atomic_store8_u) \
-    m(0x1a, i32_atomic_store16_u) \
-    m(0x1b, i64_atomic_store8_u) \
-    m(0x1c, i64_atomic_store16_u) \
-    m(0x1d, i64_atomic_store32_u) \
-    m(0x1e, i32_atomic_rmw_add) \
-    m(0x1f, i64_atomic_rmw_add) \
-    m(0x20, i32_atomic_rmw8_add_u) \
-    m(0x21, i32_atomic_rmw16_add_u) \
-    m(0x22, i64_atomic_rmw8_add_u) \
-    m(0x23, i64_atomic_rmw16_add_u) \
-    m(0x24, i64_atomic_rmw32_add_u) \
-    m(0x25, i32_atomic_rmw_sub) \
-    m(0x26, i64_atomic_rmw_sub) \
-    m(0x27, i32_atomic_rmw8_sub_u) \
-    m(0x28, i32_atomic_rmw16_sub_u) \
-    m(0x29, i64_atomic_rmw8_sub_u) \
-    m(0x2a, i64_atomic_rmw16_sub_u) \
-    m(0x2b, i64_atomic_rmw32_sub_u) \
-    m(0x2c, i32_atomic_rmw_and) \
-    m(0x2d, i64_atomic_rmw_and) \
-    m(0x2e, i32_atomic_rmw8_and_u) \
-    m(0x2f, i32_atomic_rmw16_and_u) \
-    m(0x30, i64_atomic_rmw8_and_u) \
-    m(0x31, i64_atomic_rmw16_and_u) \
-    m(0x32, i64_atomic_rmw32_and_u) \
-    m(0x33, i32_atomic_rmw_or) \
-    m(0x34, i64_atomic_rmw_or) \
-    m(0x35, i32_atomic_rmw8_or_u) \
-    m(0x36, i32_atomic_rmw16_or_u) \
-    m(0x37, i64_atomic_rmw8_or_u) \
-    m(0x38, i64_atomic_rmw16_or_u) \
-    m(0x39, i64_atomic_rmw32_or_u) \
-    m(0x3a, i32_atomic_rmw_xor) \
-    m(0x3b, i64_atomic_rmw_xor) \
-    m(0x3c, i32_atomic_rmw8_xor_u) \
-    m(0x3d, i32_atomic_rmw16_xor_u) \
-    m(0x3e, i64_atomic_rmw8_xor_u) \
-    m(0x3f, i64_atomic_rmw16_xor_u) \
-    m(0x40, i64_atomic_rmw32_xor_u) \
-    m(0x41, i32_atomic_rmw_xchg) \
-    m(0x42, i64_atomic_rmw_xchg) \
-    m(0x43, i32_atomic_rmw8_xchg_u) \
-    m(0x44, i32_atomic_rmw16_xchg_u) \
-    m(0x45, i64_atomic_rmw8_xchg_u) \
-    m(0x46, i64_atomic_rmw16_xchg_u) \
-    m(0x47, i64_atomic_rmw32_xchg_u) \
-    m(0x48, i32_atomic_rmw_cmpxchg) \
-    m(0x49, i64_atomic_rmw_cmpxchg) \
-    m(0x4a, i32_atomic_rmw8_cmpxchg_u) \
-    m(0x4b, i32_atomic_rmw16_cmpxchg_u) \
-    m(0x4c, i64_atomic_rmw8_cmpxchg_u) \
-    m(0x4d, i64_atomic_rmw16_cmpxchg_u) \
-    m(0x4e, i64_atomic_rmw32_cmpxchg_u) \
-
-
 #if !ENABLE(C_LOOP) && CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
 FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_SIMD_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
-FOR_EACH_IPINT_ATOMIC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
+
 #endif
 
 namespace JSC { namespace IPInt {

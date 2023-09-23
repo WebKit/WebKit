@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
+void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType)
 {
     auto page = WebProcessProxy::webPage(identifier);
     if (!page)
@@ -49,11 +49,11 @@ void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExte
     if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier)
         m_backgroundContentEventListeners.add(type);
 
-    auto result = m_eventListenerPages.add(type, WeakPageCountedSet { });
+    auto result = m_eventListenerPages.add({ type, contentWorldType }, WeakPageCountedSet { });
     result.iterator->value.add(*page);
 }
 
-void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
+void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType)
 {
     auto page = WebProcessProxy::webPage(identifier);
     if (!page)
@@ -62,7 +62,7 @@ void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebE
     if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier)
         m_backgroundContentEventListeners.remove(type);
 
-    auto iterator = m_eventListenerPages.find(type);
+    auto iterator = m_eventListenerPages.find({ type, contentWorldType });
     if (iterator == m_eventListenerPages.end())
         return;
 

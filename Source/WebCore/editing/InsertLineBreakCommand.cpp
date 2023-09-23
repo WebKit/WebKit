@@ -44,8 +44,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-InsertLineBreakCommand::InsertLineBreakCommand(Document& document)
-    : CompositeEditCommand(document)
+InsertLineBreakCommand::InsertLineBreakCommand(Ref<Document>&& document)
+    : CompositeEditCommand(WTFMove(document))
 {
 }
 
@@ -85,14 +85,15 @@ void InsertLineBreakCommand::doApply()
     if (!isEditablePosition(position))
         return;
 
+    Ref document = protectedDocument();
     RefPtr<Node> nodeToInsert;
     if (shouldUseBreakElement(position))
-        nodeToInsert = HTMLBRElement::create(document());
+        nodeToInsert = HTMLBRElement::create(document);
     else
-        nodeToInsert = document().createTextNode("\n"_s);
+        nodeToInsert = document->createTextNode("\n"_s);
     
     // FIXME: Need to merge text nodes when inserting just after or before text.
-    document().updateLayoutIgnorePendingStylesheets();
+    document->updateLayoutIgnorePendingStylesheets();
     if (isEndOfParagraph(caret) && !lineBreakExistsAtVisiblePosition(caret)) {
         bool needExtraLineBreak = !is<HTMLHRElement>(*position.deprecatedNode()) && !is<HTMLTableElement>(*position.deprecatedNode());
 
@@ -124,7 +125,7 @@ void InsertLineBreakCommand::doApply()
         Position endingPosition = firstPositionInNode(textNode.ptr());
         
         // Handle whitespace that occurs after the split
-        document().updateLayoutIgnorePendingStylesheets();
+        document->updateLayoutIgnorePendingStylesheets();
         if (!endingPosition.isRenderedCharacter()) {
             Position positionBeforeTextNode(positionInParentBeforeNode(textNode.ptr()));
             // Clear out all whitespace and insert one non-breaking space
@@ -134,7 +135,7 @@ void InsertLineBreakCommand::doApply()
             if (textNode->isConnected())
                 insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
             else {
-                auto nbspNode = document().createTextNode(String { nonBreakingSpaceString() });
+                auto nbspNode = document->createTextNode(String { nonBreakingSpaceString() });
                 auto* nbspNodePtr = nbspNode.ptr();
                 insertNodeAt(WTFMove(nbspNode), positionBeforeTextNode);
                 endingPosition = firstPositionInNode(nbspNodePtr);
@@ -146,7 +147,7 @@ void InsertLineBreakCommand::doApply()
 
     // Handle the case where there is a typing style.
 
-    RefPtr<EditingStyle> typingStyle = document().selection().typingStyle();
+    RefPtr<EditingStyle> typingStyle = document->selection().typingStyle();
 
     if (typingStyle && !typingStyle->isEmpty()) {
         // Apply the typing style to the inserted line break, so that if the selection

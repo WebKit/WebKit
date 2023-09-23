@@ -337,6 +337,7 @@ enum class DimensionsCheck : uint8_t {
 enum class LayoutOptions : uint8_t {
     RunPostLayoutTasksSynchronously = 1 << 0,
     IgnorePendingStylesheets = 1 << 1,
+    ContentVisibilityForceLayout = 1 << 2,
 };
 
 enum class HttpEquivPolicy {
@@ -671,11 +672,11 @@ public:
     bool needsStyleRecalc() const;
     unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }
 
-    WEBCORE_EXPORT void updateLayout(OptionSet<LayoutOptions> = { });
-    
+    WEBCORE_EXPORT void updateLayout(OptionSet<LayoutOptions> = { }, const Element* = nullptr);
+
     // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
     // so calling this may cause a flash of unstyled content (FOUC).
-    void updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> = { });
+    void updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> = { }, const Element* = nullptr);
 
     std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, PseudoId = PseudoId::None);
 
@@ -1621,6 +1622,7 @@ public:
 #endif
 
     Logger& logger();
+    const Logger& logger() const { return const_cast<Document&>(*this).logger(); }
     WEBCORE_EXPORT static const Logger& sharedLogger();
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.

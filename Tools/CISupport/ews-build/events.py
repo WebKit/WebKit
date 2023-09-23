@@ -49,7 +49,8 @@ class Events(service.BuildbotService):
     EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix)
     MAX_GITHUB_DESCRIPTION = 140
     STEPS_TO_REPORT = [
-        'configuration', 'checkout-pull-request', 'apply-patch',
+        'analyze-api-tests-results', 'analyze-compile-webkit-results', 'analyze-jsc-tests-results',
+        'analyze-layout-tests-results', 'configuration', 'checkout-pull-request', 'apply-patch',
         'compile-webkit', 'compile-webkit-without-change', 'compile-jsc', 'compile-jsc-without-change',
         'layout-tests', 'layout-tests-repeat-failures', 're-run-layout-tests',
         'run-layout-tests-without-change', 'layout-tests-repeat-failures-without-change',

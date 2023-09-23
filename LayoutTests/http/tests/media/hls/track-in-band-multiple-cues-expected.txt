@@ -2,7 +2,6 @@
 Test that multiple cues in a sample buffer are parsed correctly.
 
 EVENT(addtrack)
-EVENT(playing)
 EVENT(cuechange)
 EXPECTED (track.cues.length === '5') OK
 

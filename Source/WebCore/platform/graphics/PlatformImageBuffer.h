@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DisplayListImageBuffer.h"
 #include "ImageBuffer.h"
 
 #if USE(CG)

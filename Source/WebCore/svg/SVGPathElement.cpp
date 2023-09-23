@@ -129,7 +129,7 @@ unsigned SVGPathElement::getPathSegAtLength(float length) const
 FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 {
     if (styleUpdateStrategy == AllowStyleUpdate)
-        document().updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     // FIXME: Eventually we should support getBBox for detached elements.
     // FIXME: If the path is null it means we're calling getBBox() before laying out this element,

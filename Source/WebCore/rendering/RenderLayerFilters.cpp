@@ -62,6 +62,11 @@ bool RenderLayerFilters::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
     return m_filter && m_filter->hasFilterThatShouldBeRestrictedBySecurityOrigin();
 }
 
+bool RenderLayerFilters::hasSourceImage() const
+{
+    return m_targetSwitcher && m_targetSwitcher->hasSourceImage();
+}
+
 void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetrics&)
 {
     // FIXME: This really shouldn't have to invalidate layer composition,
@@ -173,7 +178,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
 
     if (!filter.hasFilterThatMovesPixels())
         m_repaintRect = dirtyRect;
-    else if (hasUpdatedBackingStore)
+    else if (hasUpdatedBackingStore || !hasSourceImage())
         m_repaintRect = filterRegion;
     else {
         m_repaintRect = dirtyRect;

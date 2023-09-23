@@ -90,8 +90,6 @@ public:
 
     WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN const uint8_t* bufferPointerForDirectRead(size_t numBytes);
 
-    static constexpr bool isIPCDecoder = false;
-
 private:
     WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContain(size_t) const;
     template<typename Type> Decoder& decodeNumber(std::optional<Type>&);

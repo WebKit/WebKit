@@ -233,29 +233,31 @@ int Position::offsetForPositionAfterAnchor() const
 {
     ASSERT(m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren);
     ASSERT(!m_isLegacyEditingPosition);
-    ASSERT(m_anchorNode);
-    return m_anchorNode ? lastOffsetForEditing(*m_anchorNode) : 0;
+    auto anchorNode = protectedAnchorNode();
+    ASSERT(anchorNode);
+    return anchorNode ? lastOffsetForEditing(*anchorNode) : 0;
 }
 
 // Neighbor-anchored positions are invalid DOM positions, so they need to be
 // fixed up before handing them off to the Range object.
 Position Position::parentAnchoredEquivalent() const
 {
-    if (!m_anchorNode)
+    auto anchorNode = protectedAnchorNode();
+    if (!anchorNode)
         return { };
     
     // FIXME: This should only be necessary for legacy positions, but is also needed for positions before and after Tables
     if (!m_offset && (m_anchorType != PositionIsAfterAnchor && m_anchorType != PositionIsAfterChildren)) {
-        if (m_anchorNode->parentNode() && (editingIgnoresContent(*m_anchorNode) || isRenderedTable(m_anchorNode.get())))
-            return positionInParentBeforeNode(m_anchorNode.get());
-        return Position(m_anchorNode.get(), 0, PositionIsOffsetInAnchor);
+        if (anchorNode->parentNode() && (editingIgnoresContent(*anchorNode) || isRenderedTable(anchorNode.get())))
+            return positionInParentBeforeNode(anchorNode.get());
+        return Position(anchorNode.get(), 0, PositionIsOffsetInAnchor);
     }
 
-    if (!m_anchorNode->isCharacterDataNode()
-        && (m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || static_cast<unsigned>(m_offset) == m_anchorNode->countChildNodes())
-        && (editingIgnoresContent(*m_anchorNode) || isRenderedTable(m_anchorNode.get()))
+    if (!anchorNode->isCharacterDataNode()
+        && (m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || static_cast<unsigned>(m_offset) == anchorNode->countChildNodes())
+        && (editingIgnoresContent(*anchorNode) || isRenderedTable(anchorNode.get()))
         && containerNode()) {
-        return positionInParentAfterNode(m_anchorNode.get());
+        return positionInParentAfterNode(anchorNode.get());
     }
 
     return { containerNode(), static_cast<unsigned>(computeOffsetInContainerNode()), PositionIsOffsetInAnchor };
@@ -469,7 +471,7 @@ bool Position::atFirstEditingPositionForNode() const
         return true;
     case PositionIsAfterChildren:
     case PositionIsAfterAnchor:
-        return !lastOffsetForEditing(*deprecatedNode());
+        return !lastOffsetForEditing(*protectedDeprecatedNode());
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -480,7 +482,7 @@ bool Position::atLastEditingPositionForNode() const
     if (isNull())
         return true;
     // FIXME: Position after anchor shouldn't be considered as at the first editing position for node since that position resides outside of the node.
-    return m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || m_offset >= static_cast<unsigned>(lastOffsetForEditing(*deprecatedNode()));
+    return m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || m_offset >= static_cast<unsigned>(lastOffsetForEditing(*protectedDeprecatedNode()));
 }
 
 // A position is considered at editing boundary if one of the following is true:
@@ -540,7 +542,7 @@ bool Position::atStartOfTree() const
     case PositionIsBeforeChildren:
         return true;
     case PositionIsAfterChildren:
-        return !lastOffsetForEditing(*m_anchorNode);
+        return !lastOffsetForEditing(*protectedAnchorNode());
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -557,13 +559,13 @@ bool Position::atEndOfTree() const
 
     switch (m_anchorType) {
     case PositionIsOffsetInAnchor:
-        return m_offset >= static_cast<unsigned>(lastOffsetForEditing(*m_anchorNode));
+        return m_offset >= static_cast<unsigned>(lastOffsetForEditing(*protectedAnchorNode()));
     case PositionIsBeforeAnchor:
         return false;
     case PositionIsAfterAnchor:
         return !m_anchorNode->nextSibling();
     case PositionIsBeforeChildren:
-        return !lastOffsetForEditing(*m_anchorNode);
+        return !lastOffsetForEditing(*protectedAnchorNode());
     case PositionIsAfterChildren:
         return true;
     }

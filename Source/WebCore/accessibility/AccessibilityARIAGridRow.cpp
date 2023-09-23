@@ -147,7 +147,7 @@ AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
     }));
 }
 
-AXCoreObject* AccessibilityARIAGridRow::headerObject()
+AXCoreObject* AccessibilityARIAGridRow::rowHeader()
 {
     for (const auto& child : children()) {
         if (child->roleValue() == AccessibilityRole::RowHeader)

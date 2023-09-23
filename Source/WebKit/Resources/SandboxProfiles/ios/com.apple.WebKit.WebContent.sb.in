@@ -1067,6 +1067,7 @@
         SYS_sysctl
         SYS_thread_selfid
         SYS_ulock_wait
+        SYS_ulock_wait2 ;; <rdar://problem/58743778>
         SYS_ulock_wake
         SYS_workq_kernreturn
         SYS_write_nocancel))
@@ -1096,8 +1097,7 @@
     SYS_sem_close
     SYS_sem_open
     SYS_shared_region_map_and_slide_2_np ;; <rdar://problem/60294880>
-    SYS_sysctlbyname
-    SYS_ulock_wait2)) ;; <rdar://problem/58743778>
+    SYS_sysctlbyname))
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number

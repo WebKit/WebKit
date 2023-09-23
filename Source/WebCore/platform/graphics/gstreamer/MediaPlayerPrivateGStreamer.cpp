@@ -2242,6 +2242,12 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     if (webkitGstCheckVersion(1, 22, 0) && g_str_has_prefix(elementName.get(), "urisourcebin") && (isMediaSource() || isMediaStreamPlayer()))
         g_object_set(element, "use-buffering", FALSE, "parse-streams", FALSE, nullptr);
 
+    // In case of playbin3 with <video ... preload="auto">, instantiate
+    // downloadbuffer element, otherwise the playbin3 would instantiate
+    // a queue element instead .
+    if (g_str_has_prefix(elementName.get(), "urisourcebin") && !m_isLegacyPlaybin && !isMediaSource() && !isMediaStreamPlayer() && m_preload == MediaPlayer::Preload::Auto)
+        g_object_set(element, "download", TRUE, nullptr);
+
     // Collect processing time metrics for video decoders and converters.
     if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s) && !classifiers.contains("Sink"_s))
         webkitGstTraceProcessingTimeForElement(element);

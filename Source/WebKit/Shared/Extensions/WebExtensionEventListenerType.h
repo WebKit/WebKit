@@ -27,6 +27,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionContentWorldType.h"
+
 namespace WebKit {
 
 // If you are adding a new event, you will also need to increase 'currentBackgroundPageListenerStateVersion'
@@ -91,6 +93,15 @@ enum class WebExtensionEventListenerType : uint8_t {
     DownloadsOnChanged,
 };
 
+using WebExtensionEventListenerTypeWorldPair = std::pair<WebExtensionEventListenerType, WebExtensionContentWorldType>;
+
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct DefaultHash<WebKit::WebExtensionEventListenerType> : IntHash<WebKit::WebExtensionEventListenerType> { };
+template<> struct HashTraits<WebKit::WebExtensionEventListenerType> : StrongEnumHashTraits<WebKit::WebExtensionEventListenerType> { };
+
+} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

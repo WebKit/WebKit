@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -43,7 +44,7 @@ class InjectedBundleNodeHandle;
 class InjectedBundleScriptWorld;
 class WebImage;
 
-class InjectedBundleRangeHandle : public API::ObjectImpl<API::Object::Type::BundleRangeHandle> {
+class InjectedBundleRangeHandle : public API::ObjectImpl<API::Object::Type::BundleRangeHandle>, public CanMakeCheckedPtr {
 public:
     static RefPtr<InjectedBundleRangeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static RefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);

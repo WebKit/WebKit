@@ -46,6 +46,7 @@
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/VisibleSelection.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -56,7 +57,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using DOMRangeHandleCache = HashMap<WebCore::Range*, InjectedBundleRangeHandle*>;
+using DOMRangeHandleCache = HashMap<CheckedPtr<WebCore::Range>, CheckedPtr<InjectedBundleRangeHandle>>;
 
 static DOMRangeHandleCache& domRangeHandleCache()
 {
@@ -75,7 +76,7 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(WebCore
         return nullptr;
     auto result = domRangeHandleCache().add(range, nullptr);
     if (!result.isNewEntry)
-        return result.iterator->value;
+        return result.iterator->value.get();
     auto rangeHandle = adoptRef(*new InjectedBundleRangeHandle(*range));
     result.iterator->value = rangeHandle.ptr();
     return rangeHandle;

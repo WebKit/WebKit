@@ -20,7 +20,6 @@ fast/images/mac/animation-context-menu-items-presence.html [ Skip ]
 
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
 scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html [ Pass Failure ]
-fast/mediastream/video-srcObject-set-twice.html [ Pass ImageOnlyFailure ]
 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLTimeElement.html [ Pass Timeout ]

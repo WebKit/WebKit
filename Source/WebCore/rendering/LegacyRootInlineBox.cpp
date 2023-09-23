@@ -47,10 +47,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRootInlineBox);
 
-struct SameSizeAsLegacyRootInlineBox : public LegacyInlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox> {
-    unsigned variables[7];
+struct SameSizeAsLegacyRootInlineBox : LegacyInlineFlowBox, CanMakeWeakPtr<LegacyRootInlineBox>, CanMakeCheckedPtr {
+    unsigned lineBreakPos;
     WeakPtr<RenderObject> lineBreakObj;
-    void* pointers[2];
+    void* lineBreakContext;
+    int layoutUnits[6];
+    void* floats;
 };
 
 static_assert(sizeof(LegacyRootInlineBox) == sizeof(SameSizeAsLegacyRootInlineBox), "LegacyRootInlineBox should stay small");

@@ -44,7 +44,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         return;
 
     bool chosePlainText;
-    auto fragment = pasteboard->documentFragment(*m_document.frame(), *range, options.contains(PasteOption::AllowPlainText), chosePlainText);
+    auto fragment = pasteboard->documentFragment(*document().frame(), *range, options.contains(PasteOption::AllowPlainText), chosePlainText);
 
     if (fragment && options.contains(PasteOption::AsQuotation))
         quoteFragmentForPasting(*fragment);
@@ -79,9 +79,9 @@ static RefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData&
 RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, const SimpleRange&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
 {
     if (COMPtr<IDataObject> platformDragData = pasteboard.dataObject())
-        return createFragmentFromPlatformData(*platformDragData, *m_document.frame());
+        return createFragmentFromPlatformData(*platformDragData, *document().frame());
 
-    return createFragmentFromPlatformData(pasteboard.dragDataMap(), *m_document.frame());
+    return createFragmentFromPlatformData(pasteboard.dragDataMap(), *document().frame());
 }
 
 } // namespace WebCore

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebPageInspectorTarget.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,7 +54,7 @@ public:
 private:
     WebPage& m_page;
     WebPageInspectorTarget m_pageTarget;
-    HashMap<String, Inspector::InspectorTarget*> m_targets;
+    HashMap<String, WeakPtr<Inspector::InspectorTarget>> m_targets;
 };
 
 } // namespace WebKit

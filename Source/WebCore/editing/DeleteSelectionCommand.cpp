@@ -158,8 +158,8 @@ static std::pair<Position, RefPtr<HTMLElement>> positionAfterContainingSpecialEl
     return { result, WTFMove(element) };
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(Document& document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup, EditAction editingAction)
-    : CompositeEditCommand(document, editingAction)
+DeleteSelectionCommand::DeleteSelectionCommand(Ref<Document>&& document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup, EditAction editingAction)
+    : CompositeEditCommand(WTFMove(document), editingAction)
     , m_hasSelectionToDelete(false)
     , m_smartDelete(smartDelete)
     , m_mergeBlocksAfterDelete(mergeBlocksAfterDelete)
@@ -526,7 +526,7 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
     if (!node.parentNode())
         return;
 
-    Ref<Node> protectedNode = node;
+    Ref protectedNode { node };
     if (m_startRoot != m_endRoot && !(node.isDescendantOf(m_startRoot.get()) && node.isDescendantOf(m_endRoot.get()))) {
         // If a node is not in both the start and end editable roots, remove it only if its inside an editable region.
         if (!node.parentNode()->hasEditableStyle()) {
@@ -552,24 +552,24 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
     if (shouldRemoveContentOnly(node)) {
         // Do not remove an element of table structure; remove its contents.
         // Likewise for the root editable element.
-        RefPtr child { NodeTraversal::next(node, &node) };
+        RefPtr child { NodeTraversal::next(node, protectedNode.ptr()) };
         while (child) {
             if (shouldRemoveContentOnly(*child)) {
-                child = NodeTraversal::next(*child, &node);
+                child = NodeTraversal::next(*child, protectedNode.ptr());
                 continue;
             }
-            RefPtr nextChild { NodeTraversal::nextSkippingChildren(*child, &node) };
+            RefPtr nextChild { NodeTraversal::nextSkippingChildren(*child, protectedNode.ptr()) };
             removeNodeUpdatingStates(*child, shouldAssumeContentIsAlwaysEditable);
             child = WTFMove(nextChild);
         }
         
         ASSERT(is<Element>(node));
-        auto& element = downcast<Element>(node);
+        auto element = downcast<Element>(WTFMove(protectedNode));
         document().updateLayoutIgnorePendingStylesheets();
         // Check if we need to insert a placeholder for descendant table cells.
-        RefPtr descendant { ElementTraversal::next(element, &element) };
+        RefPtr descendant { ElementTraversal::next(element, element.ptr()) };
         while (descendant) {
-            RefPtr nextDescendant { ElementTraversal::next(*descendant, &element) };
+            RefPtr nextDescendant { ElementTraversal::next(*descendant, element.ptr()) };
             insertBlockPlaceholderForTableCellIfNeeded(*descendant);
             descendant = WTFMove(nextDescendant);
         }
@@ -740,8 +740,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
                         if (n)
                             offset = n->computeNodeIndex() + 1;
                     }
-                    removeChildrenInRange(*m_downstreamEnd.deprecatedNode(), offset, m_downstreamEnd.deprecatedEditingOffset());
-                    m_downstreamEnd = makeDeprecatedLegacyPosition(m_downstreamEnd.deprecatedNode(), offset);
+                    removeChildrenInRange(*m_downstreamEnd.protectedDeprecatedNode(), offset, m_downstreamEnd.deprecatedEditingOffset());
+                    m_downstreamEnd = makeDeprecatedLegacyPosition(m_downstreamEnd.protectedDeprecatedNode(), offset);
                 }
             }
         }

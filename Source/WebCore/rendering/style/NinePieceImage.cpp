@@ -203,7 +203,7 @@ void NinePieceImage::paint(GraphicsContext& graphicsContext, const RenderElement
 {
     StyleImage* styleImage = image();
     ASSERT(styleImage);
-    ASSERT(styleImage->isLoaded());
+    ASSERT(styleImage->isLoaded(renderer));
 
     LayoutBoxExtent sourceSlices = computeSlices(source, imageSlices(), styleImage->imageScaleFactor());
     LayoutBoxExtent destinationSlices = computeSlices(destination.size(), borderSlices(), style.borderWidth(), sourceSlices);

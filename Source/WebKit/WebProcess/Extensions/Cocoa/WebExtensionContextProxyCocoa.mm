@@ -27,35 +27,76 @@
 #error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
 #endif
 
-#include "config.h"
-#include "WebExtensionContextProxy.h"
+#import "config.h"
+#import "WebExtensionContextProxy.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "CocoaHelpers.h"
-#include "WKNSData.h"
-#include "WebExtensionAPINamespace.h"
-#include "_WKWebExtensionLocalization.h"
-#include <WebCore/ProcessQualified.h>
-#include <wtf/ObjectIdentifier.h>
+#import "CocoaHelpers.h"
+#import "WebExtensionAPINamespace.h"
+#import "WebExtensionContextMessages.h"
+#import "WebExtensionContextProxyMessages.h"
+#import "WebProcess.h"
+#import "_WKWebExtensionLocalization.h"
+#import <wtf/HashMap.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-using namespace WebCore;
-
-RetainPtr<NSDictionary> WebExtensionContextProxy::parseJSON(API::Data& json)
+static HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>& webExtensionContextProxies()
 {
-    return dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:wrapper(json) options:0 error:nullptr]);
+    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>> contexts;
+    return contexts;
 }
 
-RetainPtr<_WKWebExtensionLocalization> WebExtensionContextProxy::parseLocalization(API::Data& json)
+RefPtr<WebExtensionContextProxy> WebExtensionContextProxy::get(WebExtensionContextIdentifier identifier)
 {
-    NSDictionary *localizedDictionary = parseJSON(json).get();
+    return webExtensionContextProxies().get(identifier).get();
+}
+
+WebExtensionContextProxy::WebExtensionContextProxy(const WebExtensionContextParameters& parameters)
+    : m_identifier(parameters.identifier)
+{
+    ASSERT(!webExtensionContextProxies().contains(m_identifier));
+    webExtensionContextProxies().add(m_identifier, this);
+
+    WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
+}
+
+WebExtensionContextProxy::~WebExtensionContextProxy()
+{
+    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
+}
+
+Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExtensionContextParameters& parameters)
+{
+    auto updateProperties = [&](WebExtensionContextProxy& context) {
+        context.m_baseURL = parameters.baseURL;
+        context.m_uniqueIdentifier = parameters.uniqueIdentifier;
+        context.m_localization = parseLocalization(parameters.localizationJSON.get());
+        context.m_manifest = parseJSON(parameters.manifestJSON.get());
+        context.m_manifestVersion = parameters.manifestVersion;
+        context.m_testingMode = parameters.testingMode;
+    };
+
+    if (auto context = webExtensionContextProxies().get(parameters.identifier)) {
+        updateProperties(*context);
+        return *context;
+    }
+
+    auto result = adoptRef(new WebExtensionContextProxy(parameters));
+    updateProperties(*result);
+    return result.releaseNonNull();
+}
+
+_WKWebExtensionLocalization *WebExtensionContextProxy::parseLocalization(API::Data& json)
+{
+    NSDictionary *localizedDictionary = parseJSON(json);
     if (!localizedDictionary)
         return nil;
 
-    _WKWebExtensionLocalization *localization = [[_WKWebExtensionLocalization alloc] initWithRegionalLocalization:localizedDictionary languageLocalization:nil defaultLocalization:nil withBestLocale:localizedDictionary[@"@@ui_locale"][@"message"] uniqueIdentifier:nil];
-    return localization;
+    return [[_WKWebExtensionLocalization alloc] initWithRegionalLocalization:localizedDictionary languageLocalization:nil defaultLocalization:nil withBestLocale:localizedDictionary[@"@@ui_locale"][@"message"] uniqueIdentifier:nil];
 }
 
 } // namespace WebKit

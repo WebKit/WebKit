@@ -48,8 +48,8 @@ namespace {
 
 struct SelectionContext {
     
-    using RendererMap = HashMap<RenderObject*, std::unique_ptr<RenderSelectionGeometry>>;
-    using RenderBlockMap = HashMap<const RenderBlock*, std::unique_ptr<RenderBlockSelectionGeometry>>;
+    using RendererMap = HashMap<CheckedPtr<RenderObject>, std::unique_ptr<RenderSelectionGeometry>>;
+    using RenderBlockMap = HashMap<CheckedPtr<const RenderBlock>, std::unique_ptr<RenderBlockSelectionGeometry>>;
 
     unsigned startOffset;
     unsigned endOffset;
@@ -141,7 +141,7 @@ void RenderSelection::clear()
 
 void RenderSelection::repaint() const
 {
-    HashSet<RenderBlock*> processedBlocks;
+    HashSet<CheckedPtr<RenderBlock>> processedBlocks;
     RenderObject* end = nullptr;
     if (m_renderRange.end())
         end = rendererAfterOffset(*m_renderRange.end(), m_renderRange.endOffset());
@@ -218,8 +218,8 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
 {
     auto oldSelectionData = collectSelectionData(m_renderRange, blockRepaintMode == RepaintMode::NewXOROld);
     // Remove current selection.
-    for (auto* renderer : oldSelectionData.renderers.keys())
-        renderer->setSelectionStateIfNeeded(RenderObject::HighlightState::None);
+    for (auto& renderer : oldSelectionData.renderers.keys())
+        renderer.get()->setSelectionStateIfNeeded(RenderObject::HighlightState::None);
     m_renderRange = newSelection;
     auto* selectionStart = m_renderRange.start();
     // Update the selection status of all objects between selectionStart and selectionEnd
@@ -282,16 +282,16 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
     
     // Have any of the old selected objects changed compared to the new selection?
     for (auto& selectedRendererInfo : oldSelectionData.renderers) {
-        auto* renderer = selectedRendererInfo.key;
-        auto* newInfo = newSelectedRenderers.get(renderer);
+        auto& renderer = selectedRendererInfo.key;
+        auto* newInfo = newSelectedRenderers.get(renderer.get());
         auto* oldInfo = selectedRendererInfo.value.get();
         if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state()
-            || (m_renderRange.start() == renderer && oldSelectionData.startOffset != m_renderRange.startOffset())
-            || (m_renderRange.end() == renderer && oldSelectionData.endOffset != m_renderRange.endOffset())) {
+            || (m_renderRange.start() == renderer.get() && oldSelectionData.startOffset != m_renderRange.startOffset())
+            || (m_renderRange.end() == renderer.get() && oldSelectionData.endOffset != m_renderRange.endOffset())) {
             oldInfo->repaint();
             if (newInfo) {
                 newInfo->repaint();
-                newSelectedRenderers.remove(renderer);
+                newSelectedRenderers.remove(renderer.get());
             }
         }
     }
@@ -302,14 +302,14 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
     
     // Have any of the old blocks changed?
     for (auto& selectedBlockInfo : oldSelectionData.blocks) {
-        auto* block = selectedBlockInfo.key;
-        auto* newInfo = newSelectedBlocks.get(block);
+        auto& block = selectedBlockInfo.key;
+        auto* newInfo = newSelectedBlocks.get(block.get());
         auto* oldInfo = selectedBlockInfo.value.get();
         if (!newInfo || oldInfo->rects() != newInfo->rects() || oldInfo->state() != newInfo->state()) {
             oldInfo->repaint();
             if (newInfo) {
                 newInfo->repaint();
-                newSelectedBlocks.remove(block);
+                newSelectedBlocks.remove(block.get());
             }
         }
     }

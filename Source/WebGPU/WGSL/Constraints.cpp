@@ -177,6 +177,9 @@ const Type* concretize(const Type* type, TypeStore& types)
         [&](const TextureStorage&) -> const Type* {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const TextureDepth&) -> const Type* {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Reference&) -> const Type* {
             RELEASE_ASSERT_NOT_REACHED();
         },

@@ -33,7 +33,6 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "WebExtensionAlarm.h"
-#import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
 
 namespace WebKit {

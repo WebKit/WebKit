@@ -404,12 +404,6 @@ void HTMLFormControlElement::handlePopoverTargetAction() const
         target->hidePopover();
     else if (shouldShow)
         target->showPopover(this);
-
-    if (shouldHide || shouldShow) {
-        // Accessibility needs to know that the invoker (this) toggled popover visibility state.
-        if (auto* cache = document().existingAXObjectCache())
-            cache->onPopoverTargetToggle(*this);
-    }
 }
 
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.

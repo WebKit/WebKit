@@ -343,6 +343,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool m_hasAvailableVideoFrame { false };
     bool m_allRenderersHaveAvailableSamples { false };
     bool m_visible { false };
+    bool m_flushingActiveSourceBuffersDueToVisibilityChange { false };
     RetainPtr<CVOpenGLTextureRef> m_lastTexture;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;

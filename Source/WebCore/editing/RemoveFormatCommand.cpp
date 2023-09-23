@@ -41,8 +41,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RemoveFormatCommand::RemoveFormatCommand(Document& document)
-    : CompositeEditCommand(document)
+RemoveFormatCommand::RemoveFormatCommand(Ref<Document>&& document)
+    : CompositeEditCommand(WTFMove(document))
 {
 }
 

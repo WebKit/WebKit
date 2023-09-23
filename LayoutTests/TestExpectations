@@ -2203,6 +2203,8 @@ webkit.org/b/207586 css3/filters/effect-combined-hw.html [ ImageOnlyFailure ]
 webkit.org/b/207586 css3/filters/effect-drop-shadow-hw.html [ ImageOnlyFailure ]
 webkit.org/b/207586 css3/filters/effect-drop-shadow.html [ ImageOnlyFailure ]
 
+webkit.org/b/261667 css3/masking/mask-reference-png-fragment.html [ ImageOnlyFailure ]
+
 webkit.org/b/142175 js/promises-tests/promises-tests-2-1-2.html [ Pass Timeout ]
 
 webkit.org/b/139840 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Pass Failure ]
@@ -2390,26 +2392,24 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-x
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3f.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3g.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3h.html [ ImageOnlyFailure ]
 
 webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/clip/clip-filter-order.html [ ImageOnlyFailure ]
-webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask.html [ ImageOnlyFailure ]
-webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-remote-mask.html [ ImageOnlyFailure ]
 
 webkit.org/b/233543 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split.html [ ImageOnlyFailure ]
 webkit.org/b/233543 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split-2.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-2.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-1c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-2c.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-1c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3i.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-6.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-to-mask-type.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1d.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-3.html [ ImageOnlyFailure ]
 
 # A support file for a test
@@ -2711,6 +2711,46 @@ webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/172537 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass Failure ]
 imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure ]
 webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass Crash ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-008.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-011.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-content-box-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-padding-box-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-034.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-035.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-049.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-051.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-052.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-053.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-055.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-034.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-035.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-046.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-047.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-048.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-049.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-050.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-051.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-021.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-022.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-025.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-026.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-027.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-031.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-019.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-021.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-023.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-024.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-025.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-056.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-052.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-032.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/261955 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-margin-box-border-radius-007.html [ Skip ]
+webkit.org/b/261955 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-margin-box-border-radius-008.html [ Skip ]
 
 # Temporary failure until we start using ANGLE as a WebGL backend
 webkit.org/b/163924 fast/canvas/webgl/bufferData-offset-length.html [ Pass Failure ]
@@ -4627,13 +4667,33 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sam
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-021.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-022.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-023.html [ ImageOnlyFailure ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial.html [ ImageOnlyFailure ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ ImageOnlyFailure ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-preferred.html [ ImageOnlyFailure ]
+
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/lch-009.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/lch-010.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-009.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-010.html [ ImageOnlyFailure ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial.html [ ImageOnlyFailure ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ ImageOnlyFailure ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-preferred.html [ ImageOnlyFailure ]
+webkit.org/b/261898 imported/w3c/web-platform-tests/css/css-color/oklab-l-over-1-2.html [ ImageOnlyFailure ]
+
+# currentColor support in relative color syntax.
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-a98rgb-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-displayp3-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-hsl-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-hsl-02.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-hwb-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-lab-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-lch-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-oklab-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-oklch-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-prophoto-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rec2020-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rec2020-02.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rgb-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rgb-02.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-xyzd50-01.html [ ImageOnlyFailure ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-xyzd65-01.html [ ImageOnlyFailure ]
 
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle-negative.html [ ImageOnlyFailure ]
@@ -4927,8 +4987,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
-# forced layout
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
 
 # Style containment
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html [ ImageOnlyFailure ]
@@ -6421,8 +6479,6 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shad
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html [ ImageOnlyFailure ]
-
 # Flaky test that sometimes passes and sometimes fails.
 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure ]
 
@@ -6685,3 +6741,5 @@ imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-l
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-003.html [ Pass Failure ]
 
 webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
+
+webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]

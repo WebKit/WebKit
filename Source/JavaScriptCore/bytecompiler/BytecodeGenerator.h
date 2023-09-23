@@ -640,7 +640,7 @@ namespace JSC {
             return emitNodeForProperty(n);
         }
 
-        void hoistSloppyModeFunctionIfNecessary(const Identifier& functionName);
+        void hoistSloppyModeFunctionIfNecessary(FunctionMetadataNode*);
 
         ForInContext* findForInContext(RegisterID* property);
 
@@ -1315,9 +1315,6 @@ namespace JSC {
         Vector<Ref<Label>> m_optionalChainTargetStack;
 
         int m_nextConstantOffset { 0 };
-
-        typedef HashMap<FunctionMetadataNode*, unsigned> FunctionOffsetMap;
-        FunctionOffsetMap m_functionOffsets;
         
         // Constant pool
         IdentifierMap m_identifierMap;

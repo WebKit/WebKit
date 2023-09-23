@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ public:
 
     virtual GraphicsContext* drawingContext(GraphicsContext& destinationContext) const { return &destinationContext; }
 
-    virtual bool needsRedrawSourceImage() const { return false; }
+    virtual bool hasSourceImage() const { return false; }
 
     virtual void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&) { beginDrawSourceImage(destinationContext); }
     virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext) { endDrawSourceImage(destinationContext); }

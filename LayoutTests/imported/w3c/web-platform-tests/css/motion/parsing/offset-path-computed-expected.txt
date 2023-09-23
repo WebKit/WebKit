@@ -28,15 +28,15 @@ PASS Property offset-path value 'inset(0px round 0 1px)'
 PASS Property offset-path value 'inset(0px round 0px 1px 2%)'
 PASS Property offset-path value 'inset(0px round 0px 1px 2% 3em)'
 PASS Property offset-path value 'inset(10px round 20% / 0px 1px 2% 3px)'
-FAIL Property offset-path value 'circle()' assert_equals: expected "circle()" but got "circle(at 50% 50%)"
-FAIL Property offset-path value 'circle(100px)' assert_equals: expected "circle(100px)" but got "circle(100px at 50% 50%)"
-FAIL Property offset-path value 'circle(closest-side)' assert_equals: expected "circle()" but got "circle(at 50% 50%)"
+PASS Property offset-path value 'circle()'
+PASS Property offset-path value 'circle(100px)'
+PASS Property offset-path value 'circle(closest-side)'
 PASS Property offset-path value 'circle(at 50% 50%)'
 PASS Property offset-path value 'circle(100px at 50% 50%)'
 PASS Property offset-path value 'circle(farthest-side at center top)'
 PASS Property offset-path value 'circle(4% at top right)'
-FAIL Property offset-path value 'ellipse()' assert_equals: expected "ellipse()" but got "ellipse(at 50% 50%)"
-FAIL Property offset-path value 'ellipse(1px closest-side)' assert_equals: expected "ellipse(1px closest-side)" but got "ellipse(1px closest-side at 50% 50%)"
+PASS Property offset-path value 'ellipse()'
+PASS Property offset-path value 'ellipse(1px closest-side)'
 PASS Property offset-path value 'ellipse(at 50% 50%)'
 PASS Property offset-path value 'ellipse(closest-side closest-side at 10% 20%)'
 PASS Property offset-path value 'ellipse(farthest-side 4% at bottom left)'

@@ -1299,21 +1299,6 @@ WASM_SLOW_PATH_DECL(memory_atomic_wait32)
     WASM_RETURN(result);
 }
 
-
-WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait32, uint64_t pointerWithOffset, uint32_t value, uint64_t timeout)
-{
-#if CPU(ARM64) || CPU(X86_64)
-    int32_t result = Wasm::memoryAtomicWait32(instance, pointerWithOffset, value, timeout);
-    WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<intptr_t>(result)), nullptr);
-#else
-    UNUSED_PARAM(instance);
-    UNUSED_PARAM(pointerWithOffset);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(timeout);
-    RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
-#endif
-}
-
 WASM_SLOW_PATH_DECL(memory_atomic_wait64)
 {
     auto instruction = pc->as<WasmMemoryAtomicWait64>();
@@ -1327,20 +1312,6 @@ WASM_SLOW_PATH_DECL(memory_atomic_wait64)
     WASM_RETURN(result);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait64, uint64_t pointerWithOffset, uint64_t value, uint64_t timeout)
-{
-#if CPU(ARM64) || CPU(X86_64)
-    int32_t result = Wasm::memoryAtomicWait64(instance, pointerWithOffset, value, timeout);
-    WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<intptr_t>(result)), nullptr);
-#else
-    UNUSED_PARAM(instance);
-    UNUSED_PARAM(pointerWithOffset);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(timeout);
-    RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
-#endif
-}
-
 WASM_SLOW_PATH_DECL(memory_atomic_notify)
 {
     auto instruction = pc->as<WasmMemoryAtomicNotify>();
@@ -1351,20 +1322,6 @@ WASM_SLOW_PATH_DECL(memory_atomic_notify)
     if (result < 0)
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     WASM_RETURN(result);
-}
-
-WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_notify, unsigned base, unsigned offset, int32_t count)
-{
-#if CPU(ARM64) || CPU(X86_64)
-    int32_t result = Wasm::memoryAtomicNotify(instance, base, offset, count);
-    WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<intptr_t>(result)), nullptr);
-#else
-    UNUSED_PARAM(instance);
-    UNUSED_PARAM(base);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(count);
-    RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
-#endif
 }
 
 WASM_SLOW_PATH_DECL(throw)

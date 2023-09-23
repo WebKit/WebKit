@@ -27,11 +27,12 @@
 
 #include "IdentifierTypes.h"
 #include <WebCore/DatabaseProvider.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
 
-class WebDatabaseProvider final : public WebCore::DatabaseProvider {
+class WebDatabaseProvider final : public WebCore::DatabaseProvider, public CanMakeCheckedPtr {
 public:
     static Ref<WebDatabaseProvider> getOrCreate(PageGroupIdentifier);
     virtual ~WebDatabaseProvider();

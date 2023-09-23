@@ -42,6 +42,10 @@ OBJC_CLASS NSUUID;
     if (UNLIKELY(!(condition))) \
         [NSException raise:NSInternalInconsistencyException format:message]
 
+namespace API {
+class Data;
+}
+
 namespace WebKit {
 
 template<typename T> T *filterObjects(T *container, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
@@ -81,13 +85,16 @@ T *objectForKey(const RetainPtr<NSDictionary>& dictionary, id key, bool returnin
     return objectForKey<T>(dictionary.get(), key, returningNilIfEmpty, containingObjectsOfClass);
 }
 
-// MARK: NSDictionary helper methods.
+NSDictionary *parseJSON(NSString *, NSError ** = nullptr);
+NSDictionary *parseJSON(NSData *, NSError ** = nullptr);
+NSDictionary *parseJSON(API::Data&, NSError ** = nullptr);
+
+NSString *encodeJSONString(NSDictionary *, NSError ** = nullptr);
+NSData *encodeJSONData(NSDictionary *, NSError ** = nullptr);
 
 NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *);
 NSDictionary *mergeDictionaries(NSDictionary *, NSDictionary *);
 NSDictionary *mergeDictionariesAndSetValues(NSDictionary *, NSDictionary *);
-
-// MARK: NSError helper methods.
 
 NSString *privacyPreservingDescription(NSError *);
 

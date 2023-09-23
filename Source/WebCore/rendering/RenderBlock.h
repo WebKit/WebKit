@@ -39,7 +39,7 @@ class RenderText;
 struct BidiRun;
 struct PaintInfo;
 
-typedef ListHashSet<RenderBox*> TrackedRendererListHashSet;
+using TrackedRendererListHashSet = ListHashSet<RenderBox*>;
 
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
@@ -83,7 +83,7 @@ public:
     TrackedRendererListHashSet* positionedObjects() const;
     bool hasPositionedObjects() const
     {
-        TrackedRendererListHashSet* objects = positionedObjects();
+        auto* objects = positionedObjects();
         return objects && !objects->isEmpty();
     }
 
@@ -92,7 +92,7 @@ public:
     TrackedRendererListHashSet* percentHeightDescendants() const;
     bool hasPercentHeightDescendants() const
     {
-        TrackedRendererListHashSet* objects = percentHeightDescendants();
+        auto* objects = percentHeightDescendants();
         return objects && !objects->isEmpty();
     }
     static bool hasPercentHeightContainerMap();

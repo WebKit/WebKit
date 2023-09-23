@@ -9,6 +9,7 @@
         <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shape-outside-property">
         <meta name="assert" content="An elliptical basic shape has two optional components, radii (2) and a position.">
         <meta name="flags" content="ahem dom">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1">
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
         <script src="support/parsing-utils.js"></script>
@@ -20,14 +21,14 @@
                 {
                   "name": "No arguments",
                   "actual": "ellipse()",
-                  "expected_inline": "ellipse(at 50% 50%)",
-                  "expected_computed": "ellipse(at 50% 50%)"
+                  "expected_inline": "ellipse()",
+                  "expected_computed": "ellipse()"
                 },
                 {
                   "name": "Radial arguments",
                   "actual": "ellipse(50px 50px)",
-                  "expected_inline": "ellipse(50px 50px at 50% 50%)",
-                  "expected_computed": "ellipse(50px 50px at 50% 50%)"
+                  "expected_inline": "ellipse(50px 50px)",
+                  "expected_computed": "ellipse(50px 50px)"
                 },
                 {
                    "name": "Position argument",

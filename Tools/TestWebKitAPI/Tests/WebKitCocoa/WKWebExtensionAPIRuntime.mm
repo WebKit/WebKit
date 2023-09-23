@@ -27,18 +27,40 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
 #import "WebExtensionUtilities.h"
 
 namespace TestWebKitAPI {
 
-static auto *manifest = @{
+static auto *runtimeManifest = @{
     @"manifest_version": @3,
+
     @"background": @{
         @"scripts": @[ @"background.js" ],
         @"type": @"module",
-        @"persistent": @NO
+        @"persistent": @NO,
     },
-    @"unused" : [NSNull null]
+
+    @"unused" : [NSNull null],
+};
+
+static auto *runtimeContentScriptManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Tabs Test",
+    @"description": @"Tabs Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"content_scripts": @[ @{
+        @"js": @[ @"content.js" ],
+        @"matches": @[ @"*://localhost/*" ],
+    } ],
 };
 
 TEST(WKWebExtensionAPIRuntime, GetURL)
@@ -79,7 +101,7 @@ TEST(WKWebExtensionAPIRuntime, GetURL)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
@@ -95,11 +117,10 @@ TEST(WKWebExtensionAPIRuntime, Id)
     auto *backgroundScript = Util::constructScript(@[
         [NSString stringWithFormat:@"browser.test.assertEq(browser.runtime.id, '%@')", uniqueIdentifier],
 
-        // Finish
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set an uniqueIdentifier so it is a known value and not the default random one.
@@ -113,11 +134,10 @@ TEST(WKWebExtensionAPIRuntime, GetManifest)
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertDeepEq(browser.runtime.getManifest(), { manifest_version: 3, background: { persistent: false, scripts: [ 'background.js' ], type: 'module' }, unused: null })",
 
-        // Finish
         @"browser.test.notifyPass()"
     ]);
 
-    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+    Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPIRuntime, GetPlatformInfo)
@@ -139,11 +159,10 @@ TEST(WKWebExtensionAPIRuntime, GetPlatformInfo)
         [NSString stringWithFormat:@"browser.test.assertDeepEq(await browser.runtime.getPlatformInfo(), %@)", expectedInfo],
         [NSString stringWithFormat:@"browser.test.assertEq(browser.runtime.getPlatformInfo((info) => browser.test.assertDeepEq(info, %@)), undefined)", expectedInfo],
 
-        // Finish
         @"browser.test.notifyPass()"
     ]);
 
-    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+    Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPIRuntime, LastError)
@@ -154,11 +173,176 @@ TEST(WKWebExtensionAPIRuntime, LastError)
 
         // FIXME: <https://webkit.org/b/248156> Need test cases for lastError
 
-        // Finish
         @"browser.test.notifyPass()"
     ]);
 
-    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+    Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *urlString = urlRequest.URL.absoluteString;
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const expectedURL = '%@'", urlString],
+        [NSString stringWithFormat:@"const expectedOrigin = '%@'", [urlString substringToIndex:urlString.length - 1]],
+
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message from the content script')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+
+        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+
+        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  sendResponse({ content: 'Received' })",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
+
+        @"  browser.test.assertEq(response.content, 'Received', 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithPromiseReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *urlString = urlRequest.URL.absoluteString;
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const expectedURL = '%@'", urlString],
+        [NSString stringWithFormat:@"const expectedOrigin = '%@'", [urlString substringToIndex:urlString.length - 1]],
+
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message from the content script')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+
+        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+
+        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  return Promise.resolve({ content: 'Received' })",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
+
+        @"  browser.test.assertEq(response.content, 'Received', 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithNoReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *urlString = urlRequest.URL.absoluteString;
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const expectedURL = '%@'", urlString],
+        [NSString stringWithFormat:@"const expectedOrigin = '%@'", [urlString substringToIndex:urlString.length - 1]],
+
+        @"browser.runtime.onMessage.addListener((message, sender) => {",
+        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message from the content script')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+
+        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+
+        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
+
+        @"  browser.test.assertEq(response, undefined, 'Should get no response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 } // namespace TestWebKitAPI

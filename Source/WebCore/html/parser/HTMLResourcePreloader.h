@@ -28,6 +28,7 @@
 #include "CachedResource.h"
 #include "CachedResourceRequest.h"
 #include "ScriptType.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -87,7 +88,9 @@ public:
     void preload(std::unique_ptr<PreloadRequest>);
 
 private:
-    Document& m_document;
+    Ref<Document> protectedDocument() const { return m_document.get(); }
+
+    CheckedRef<Document> m_document;
 };
 
 } // namespace WebCore

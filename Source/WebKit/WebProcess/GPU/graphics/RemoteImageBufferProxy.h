@@ -81,7 +81,7 @@ private:
 
     RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread() final;
 
-    RefPtr<WebCore::Image> filteredImage(WebCore::Filter&) final;
+    RefPtr<WebCore::NativeImage> filteredNativeImage(WebCore::Filter&) final;
 
     WebCore::GraphicsContext& context() const final;
 
@@ -99,7 +99,7 @@ private:
 
     void assertDispatcherIsCurrent() const;
     template<typename T> void send(T&& message);
-    template<typename T> void sendSync(T&& message);
+    template<typename T> auto sendSync(T&& message);
 
     IPC::StreamClientConnection& streamConnection() const;
 

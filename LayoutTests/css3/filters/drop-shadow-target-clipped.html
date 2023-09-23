@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ GraphicsContextFiltersEnabled=true ] -->
+<style>
+    .box {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        background-color: black;
+    }
+    .drop-shadow-red {
+        top: -1000px;
+        left: -1000px;
+        filter: drop-shadow(1000px 1000px 0 red);
+    }
+    .drop-shadow-green {
+        top: -1000px;
+        left: -1000px;
+        filter: drop-shadow(900px 900px 0 green);
+    }
+    .drop-shadow-blue {
+        top: -1000px;
+        left: -1000px;
+        filter: drop-shadow(800px 800px 0 blue);
+    }
+</style>
+<body>
+    Three overlapping boxes should be displayed.
+    <div class="box drop-shadow-red"></div>
+    <div class="box drop-shadow-green"></div>
+    <div class="box drop-shadow-blue"></div>
+</body>

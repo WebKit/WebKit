@@ -82,14 +82,15 @@ void HTMLResourcePreloader::preload(PreloadRequestStream requests)
 
 void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
 {
-    ASSERT(m_document.frame());
-    ASSERT(m_document.renderView());
+    Ref document = protectedDocument();
+    ASSERT(document->frame());
+    ASSERT(document->renderView());
 
-    auto queries = MQ::MediaQueryParser::parse(preload->media(), { m_document });
-    if (!MQ::MediaQueryEvaluator { screenAtom(), m_document, m_document.renderStyle() }.evaluate(queries))
+    auto queries = MQ::MediaQueryParser::parse(preload->media(), { document.get() });
+    if (!MQ::MediaQueryEvaluator { screenAtom(), document, document->renderStyle() }.evaluate(queries))
         return;
 
-    m_document.cachedResourceLoader().preload(preload->resourceType(), preload->resourceRequest(m_document));
+    document->cachedResourceLoader().preload(preload->resourceType(), preload->resourceRequest(document));
 }
 
 }

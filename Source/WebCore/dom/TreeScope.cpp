@@ -359,12 +359,13 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
 
 RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)
 {
-    auto absolutePoint = absolutePointIfNotClipped(documentScope(), clientPoint);
+    Ref document = protectedDocumentScope();
+    auto absolutePoint = absolutePointIfNotClipped(document, clientPoint);
     if (!absolutePoint)
         return nullptr;
 
     HitTestResult result(absolutePoint.value());
-    documentScope().hitTest(HitTestRequest(), result);
+    document->hitTest(HitTestRequest(), result);
     if (localPoint)
         *localPoint = result.localPoint();
     return result.innerNode();
@@ -395,8 +396,8 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
 {
     Vector<RefPtr<Element>> elements;
 
-    Document& document = documentScope();
-    if (!document.hasLivingRenderTree())
+    Ref document = protectedDocumentScope();
+    if (!document->hasLivingRenderTree())
         return elements;
 
     auto absolutePoint = absolutePointIfNotClipped(document, LayoutPoint(clientX, clientY));
@@ -405,7 +406,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::CollectMultipleElements, HitTestRequest::Type::IncludeAllElementsUnderPoint };
     HitTestResult result { absolutePoint.value() };
-    documentScope().hitTest(hitType, result);
+    document->hitTest(hitType, result);
 
     RefPtr<Node> lastNode;
     auto& nodeSet = result.listBasedTestResult();
@@ -484,13 +485,13 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* curren
 
 Element* TreeScope::focusedElementInScope()
 {
-    Document& document = documentScope();
-    Element* element = document.focusedElement();
+    Ref document = protectedDocumentScope();
+    RefPtr element = document->focusedElement();
 
-    if (!element && document.page())
-        element = focusedFrameOwnerElement(document.page()->focusController().focusedFrame(), document.frame());
+    if (!element && document->page())
+        element = focusedFrameOwnerElement(document->page()->focusController().focusedFrame(), document->frame());
 
-    return ancestorElementInThisScope(element);
+    return ancestorElementInThisScope(element.get());
 }
 
 #if ENABLE(POINTER_LOCK)
@@ -735,6 +736,11 @@ RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(co
         svgResourcesMap().pendingResourcesForRemoval.remove(id);
 
     return firstElement;
+}
+
+Ref<Document> TreeScope::protectedDocumentScope() const
+{
+    return m_documentScope.get();
 }
 
 } // namespace WebCore

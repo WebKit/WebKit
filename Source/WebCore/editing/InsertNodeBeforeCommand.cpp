@@ -53,7 +53,7 @@ void InsertNodeBeforeCommand::doApply()
         return;
     ASSERT(isEditableNode(*parent));
 
-    parent->insertBefore(m_insertChild, m_refChild.ptr());
+    parent->insertBefore(m_insertChild, m_refChild.copyRef());
 }
 
 void InsertNodeBeforeCommand::doUnapply()

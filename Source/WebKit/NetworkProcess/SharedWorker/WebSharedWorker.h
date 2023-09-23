@@ -32,6 +32,7 @@
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerInitializationData.h>
 #include <WebCore/WorkerOptions.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -44,7 +45,7 @@ namespace WebKit {
 class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;
 
-class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker> {
+class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);

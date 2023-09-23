@@ -69,7 +69,7 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
     dispatchModifiedEvent(oldData);
 
     if (auto* parent = parentNode()) {
-        auto insertResult = parent->insertBefore(newText, nextSibling());
+        auto insertResult = parent->insertBefore(newText, protectedNextSibling());
         if (insertResult.hasException())
             return insertResult.releaseException();
     }

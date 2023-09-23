@@ -1443,7 +1443,7 @@ webkit.org/b/228528 [ BigSur Debug arm64 ] fast/text/emoji-overlap.html [ Pass I
 [ Monterey arm64 ] fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
 [ Monterey arm64 ] fast/text/canvas-color-fonts/stroke-gradient-COLR-5.html [ ImageOnlyFailure ]
 
-webkit.org/b/228591 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html [ Pass Failure ]
+webkit.org/b/261922 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html [ Pass Failure Timeout ] # old: webkit.org/b/228591
 
 webkit.org/b/229156 [ Monterey+ ] webrtc/video-addTrack.html [ Pass Failure ]
 
@@ -1604,7 +1604,7 @@ webkit.org/b/239568 [ Monterey Release ] imported/w3c/web-platform-tests/content
 
 webkit.org/b/239577 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Pass Failure ]
 
-webkit.org/b/239574 [ Monterey Release ] webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html [ Pass Failure ]
+webkit.org/b/261919 webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html [ Pass Failure ] # old: webkit.org/b/239574
 
 webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass ImageOnlyFailure ]
 
@@ -1771,8 +1771,6 @@ webkit.org/b/256217 [ Debug ] imported/w3c/web-platform-tests/background-fetch/p
 
 webkit.org/b/238749 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html [ Pass Failure ]
 
-webkit.org/b/258325 [ Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Crash ]
-
 # webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS (258328)
 [ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ]
@@ -1799,8 +1797,6 @@ webkit.org/b/259160 http/tests/privateClickMeasurement/attribution-conversion-th
 webkit.org/b/259160 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral.html [ Pass Failure ]
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html [ Pass Failure ]
-
-webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]
 
 webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Failure ]
 
@@ -2100,8 +2096,6 @@ editing/input/caret-at-the-edge-of-contenteditable.html [ Pass ImageOnlyFailure 
 
 webkit.org/b/261005 swipe/pushState-cached-back-swipe.html [ Pass Failure Timeout ]
 
-webkit.org/b/261041 accessibility/mac/basic-embed-pdf-accessibility.html [ Failure ]
-
 webkit.org/b/227761 imported/w3c/web-platform-tests/beacon/beacon-cors.https.window.html [ Pass Failure ]
 
 webkit.org/b/261215 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout Failure ]
@@ -2163,3 +2157,5 @@ webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer
 [ Sonoma+ ] fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
+
+webkit.org/b/261906 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last [ Slow ]

@@ -36,6 +36,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -65,10 +66,10 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 #endif
 
-static HashMap<WebPageProxyIdentifier, ViewGestureController*>& viewGestureControllersForAllPages()
+static HashMap<WebPageProxyIdentifier, CheckedPtr<ViewGestureController>>& viewGestureControllersForAllPages()
 {
     // The key in this map is the associated page ID.
-    static NeverDestroyed<HashMap<WebPageProxyIdentifier, ViewGestureController*>> viewGestureControllers;
+    static NeverDestroyed<HashMap<WebPageProxyIdentifier, CheckedPtr<ViewGestureController>>> viewGestureControllers;
     return viewGestureControllers.get();
 }
 
@@ -120,9 +121,9 @@ ViewGestureController* ViewGestureController::controllerForGesture(WebPageProxyI
     auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
     if (gestureControllerIter == viewGestureControllersForAllPages().end())
         return nullptr;
-    if (gestureControllerIter->value->m_currentGestureID != gestureID)
+    if (gestureControllerIter->value.get()->m_currentGestureID != gestureID)
         return nullptr;
-    return gestureControllerIter->value;
+    return gestureControllerIter->value.get();
 }
 
 ViewGestureController::GestureID ViewGestureController::takeNextGestureID()

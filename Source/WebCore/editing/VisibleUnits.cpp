@@ -650,12 +650,12 @@ unsigned startWordBoundary(StringView text, unsigned offset, BoundarySearchConte
     return start;
 }
 
-VisiblePosition startOfWord(const VisiblePosition& c, EWordSide side)
+VisiblePosition startOfWord(const VisiblePosition& c, WordSide side)
 {
     // FIXME: This returns a null VP for c at the start of the document
     // and side == LeftWordIfOnBoundary
     VisiblePosition p = c;
-    if (side == RightWordIfOnBoundary) {
+    if (side == WordSide::RightWordIfOnBoundary) {
         // at paragraph end, the startofWord is the current position
         if (isEndOfParagraph(c))
             return c;
@@ -680,10 +680,10 @@ unsigned endWordBoundary(StringView text, unsigned offset, BoundarySearchContext
     return end;
 }
 
-VisiblePosition endOfWord(const VisiblePosition& c, EWordSide side)
+VisiblePosition endOfWord(const VisiblePosition& c, WordSide side)
 {
     VisiblePosition p = c;
-    if (side == LeftWordIfOnBoundary) {
+    if (side == WordSide::LeftWordIfOnBoundary) {
         if (isStartOfParagraph(c))
             return c;
             
@@ -728,7 +728,7 @@ VisiblePosition nextWordPosition(const VisiblePosition& position)
 
 bool isStartOfWord(const VisiblePosition& p)
 {
-    return p.isNotNull() && p == startOfWord(p, RightWordIfOnBoundary);
+    return p.isNotNull() && p == startOfWord(p, WordSide::RightWordIfOnBoundary);
 }
 
 // ---------
@@ -1503,7 +1503,7 @@ bool atBoundaryOfGranularity(const VisiblePosition& vp, TextGranularity granular
             return false;
 
         // Note that "Left" and "Right" in this context apparently mean "upstream/previous" and "downstream/next".
-        boundary = useDownstream ? endOfWord(vp, LeftWordIfOnBoundary) : startOfWord(vp, RightWordIfOnBoundary);
+        boundary = useDownstream ? endOfWord(vp, WordSide::LeftWordIfOnBoundary) : startOfWord(vp, WordSide::RightWordIfOnBoundary);
         break;
 
     case TextGranularity::SentenceGranularity: {
@@ -1553,11 +1553,11 @@ bool withinTextUnitOfGranularity(const VisiblePosition& vp, TextGranularity gran
     switch (granularity) {
     case TextGranularity::WordGranularity:
         // Note that "Left" and "Right" in this context apparently mean "upstream/previous" and "downstream/next".
-        prevBoundary = startOfWord(vp, (useDownstream ? RightWordIfOnBoundary : LeftWordIfOnBoundary));
-        nextBoundary = endOfWord(vp, (useDownstream ? RightWordIfOnBoundary : LeftWordIfOnBoundary));
-    
+        prevBoundary = startOfWord(vp, (useDownstream ? WordSide::RightWordIfOnBoundary : WordSide::LeftWordIfOnBoundary));
+        nextBoundary = endOfWord(vp, (useDownstream ? WordSide::RightWordIfOnBoundary : WordSide::LeftWordIfOnBoundary));
+
         // Workaround for <rdar://problem/7259611> Word boundary code on iPhone gives different results than desktop
-        if (endOfWord(prevBoundary, RightWordIfOnBoundary) != nextBoundary)
+        if (endOfWord(prevBoundary, WordSide::RightWordIfOnBoundary) != nextBoundary)
             return false;
 
         break;
@@ -1614,16 +1614,16 @@ static VisiblePosition nextWordBoundaryInDirection(const VisiblePosition& vp, Se
     
     if (useDownstream) {
         if (withinUnitOfGranularity)
-            result = endOfWord(vp, RightWordIfOnBoundary);
+            result = endOfWord(vp, WordSide::RightWordIfOnBoundary);
         else {
-            VisiblePosition start = startOfWord(vp, RightWordIfOnBoundary);
+            VisiblePosition start = startOfWord(vp, WordSide::RightWordIfOnBoundary);
             if (start > vp && start != endOfWord(start))
                 result = start;
             else {
                 // Do same thing as backwards traveling below.
                 start = vp;
                 while (true) {
-                    result = startOfWord(nextWordPosition(start), RightWordIfOnBoundary);
+                    result = startOfWord(nextWordPosition(start), WordSide::RightWordIfOnBoundary);
 
                     if (result == start)
                         break;
@@ -1646,18 +1646,18 @@ static VisiblePosition nextWordBoundaryInDirection(const VisiblePosition& vp, Se
         }
     } else {
         if (withinUnitOfGranularity)
-            result = startOfWord(vp, LeftWordIfOnBoundary);
+            result = startOfWord(vp, WordSide::LeftWordIfOnBoundary);
         else {
             // This is complicated because:
             //   When given "Blah blah.|", endOfWord is "Blah blah|.", and previousWordPosition is "Blah| blah."
             //   When given "Blah blah. |", endOfWord is "Blah blah.| ", and previousWordPosition is "Blah |blah. ".
-            VisiblePosition end = endOfWord(vp, LeftWordIfOnBoundary);
+            VisiblePosition end = endOfWord(vp, WordSide::LeftWordIfOnBoundary);
             if (end < vp && end != startOfWord(end))
                 result = end;
             else {
                 end = vp;
                 while (true) {
-                    result = endOfWord(previousWordPosition(end), RightWordIfOnBoundary);
+                    result = endOfWord(previousWordPosition(end), WordSide::RightWordIfOnBoundary);
 
                     if (result == end)
                         break;
@@ -1776,11 +1776,11 @@ std::optional<SimpleRange> enclosingTextUnitOfGranularity(const VisiblePosition&
         case TextGranularity::WordGranularity:
             // NB: "Left" and "Right" in this context apparently mean "upstream/previous" and "downstream/next".
             if (useDownstream) {
-                prevBoundary = startOfWord(vp, RightWordIfOnBoundary);
-                nextBoundary = endOfWord(vp, RightWordIfOnBoundary);
+                prevBoundary = startOfWord(vp, WordSide::RightWordIfOnBoundary);
+                nextBoundary = endOfWord(vp, WordSide::RightWordIfOnBoundary);
             } else {
-                prevBoundary = startOfWord(vp, LeftWordIfOnBoundary);
-                nextBoundary = endOfWord(vp, LeftWordIfOnBoundary);
+                prevBoundary = startOfWord(vp, WordSide::LeftWordIfOnBoundary);
+                nextBoundary = endOfWord(vp, WordSide::LeftWordIfOnBoundary);
             }
             break;
 

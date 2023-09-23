@@ -1728,6 +1728,48 @@ header: <WebCore/RectEdges.h>
     float left()
 };
 
+[Alias=class RectEdges<bool>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::BoolBoxExtent {
+    bool top();
+    bool right();
+    bool bottom();
+    bool left();
+}
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::Path {
+    Vector<WebCore::PathSegment> segments();
+}
+
+#if ENABLE(META_VIEWPORT)
+
+[Nested] enum class WebCore::ViewportArguments::Type : uint8_t {
+    Implicit,
+#if PLATFORM(IOS_FAMILY)
+    PluginDocument,
+    ImageDocument,
+#endif
+    ViewportMeta,
+    CSSDeviceAdaptation
+};
+
+struct WebCore::ViewportArguments {
+    WebCore::ViewportArguments::Type type;
+    float width;
+    float minWidth;
+    float maxWidth;
+    float height;
+    float minHeight;
+    float maxHeight;
+    float zoom;
+    float minZoom;
+    float maxZoom;
+    float userZoom;
+    float orientation;
+    float shrinkToFit;
+    WebCore::ViewportFit viewportFit;
+    bool widthWasExplicit;
+};
+#endif // ENABLE(META_VIEWPORT)
+
 header: <WebCore/DisplayListItems.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineFillColor {
     uint8_t colorData().resolved().red
@@ -2812,7 +2854,7 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
     VeryHigh,
 };
 
-[Nested] enum class WebCore::ResourceResponseBase::Type : uint8_t {
+[Nested] enum class WebCore::ResourceResponseBaseType : uint8_t {
     Basic,
     Cors,
     Default,
@@ -2821,14 +2863,14 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
     Opaqueredirect
 };
 
-[Nested] enum class WebCore::ResourceResponseBase::Tainting : uint8_t {
+[Nested] enum class WebCore::ResourceResponseBaseTainting : uint8_t {
     Basic,
     Cors,
     Opaque,
     Opaqueredirect
 };
 
-[Nested] enum class WebCore::ResourceResponseBase::Source : uint8_t {
+[Nested] enum class WebCore::ResourceResponseBaseSource : uint8_t {
     Unknown,
     Network,
     DiskCache,
@@ -2840,6 +2882,10 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
     DOMCache,
     InspectorOverride
 };
+
+using WebCore::ResourceResponseBase::Type = WebCore::ResourceResponseBaseType;
+using WebCore::ResourceResponseBase::Tainting = WebCore::ResourceResponseBaseTainting;
+using WebCore::ResourceResponseBase::Source = WebCore::ResourceResponseBaseSource;
 
 [Nested] struct WebCore::ResourceResponseBase::ResponseData {
     URL m_url;
@@ -2872,7 +2918,7 @@ class WebCore::ResourceResponse : WebCore::ResourceResponseBase {
 }
 
 header: <WebCore/ResourceResponseBase.h>
-[Nested] struct WebCore::ResourceResponseBase::CrossThreadData {
+[CustomHeader] struct WebCore::ResourceResponseBaseCrossThreadData {
     URL url;
     String mimeType;
     long long expectedContentLength;
@@ -2891,6 +2937,8 @@ header: <WebCore/ResourceResponseBase.h>
     bool isRangeRequested;
     std::optional<WebCore::CertificateInfo> certificateInfo;
 };
+
+using WebCore::ResourceResponseBase::CrossThreadData = WebCore::ResourceResponseBaseCrossThreadData;
 
 enum class WebCore::ReferrerPolicy : uint8_t {
     EmptyString,
@@ -5880,6 +5928,7 @@ struct WebCore::PrewarmInformation {
 };
 
 using WebCore::PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<WebCore::PlatformLayerIdentifierType>>;
+using WebCore::ScriptExecutionContextIdentifier = ProcessQualified<WTF::UUID>;
 
 header: <WebCore/FontSelectionAlgorithm.h>
 using WebCore::FontSelectionValue::BackingType = int16_t;
@@ -5927,3 +5976,51 @@ struct WebCore::LinkDecorationFilteringData {
     std::optional<bool> silent;
 };
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
+class WebCore::NetworkLoadMetrics {
+    MonotonicTime redirectStart;
+    MonotonicTime fetchStart;
+    MonotonicTime domainLookupStart;
+    MonotonicTime domainLookupEnd;
+    MonotonicTime connectStart;
+    MonotonicTime secureConnectionStart;
+    MonotonicTime connectEnd;
+    MonotonicTime requestStart;
+    MonotonicTime responseStart;
+    MonotonicTime responseEnd;
+    MonotonicTime workerStart;
+
+    String protocol;
+
+    uint16_t redirectCount;
+
+    bool isComplete();
+    bool isCellular();
+    bool isExpensive();
+    bool isConstrained();
+    bool isMultipath();
+    bool reusedConnection();
+    bool doesFailTAOCheck();
+    bool crossOriginRedirect();
+
+    WebCore::PrivacyStance privacyStance;
+
+    uint64_t responseBodyBytesReceived;
+    uint64_t responseBodyDecodedSize;
+
+    RefPtr<WebCore::AdditionalNetworkLoadMetricsForWebInspector> additionalNetworkLoadMetricsForWebInspector;
+}
+
+header: <WebCore/NetworkLoadMetrics.h>
+[RefCounted, CustomHeader] struct WebCore::AdditionalNetworkLoadMetricsForWebInspector {
+    WebCore::NetworkLoadPriority priority;
+    String remoteAddress;
+    String connectionIdentifier;
+    String tlsProtocol;
+    String tlsCipher;
+    WebCore::HTTPHeaderMap requestHeaders;
+    uint64_t requestHeaderBytesSent;
+    uint64_t responseHeaderBytesReceived;
+    uint64_t requestBodyBytesSent;
+    bool isProxyConnection;
+}

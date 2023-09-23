@@ -111,6 +111,7 @@ public:
     WEBCORE_EXPORT Node* computeNodeAfterPosition() const;
 
     Node* anchorNode() const { return m_anchorNode.get(); }
+    RefPtr<Node> protectedAnchorNode() const { return m_anchorNode; }
 
     // FIXME: Callers should be moved off of node(), node() is not always the container for this position.
     // For nodes which editingIgnoresContent(node()) returns true, positions like [ignoredNode, 0]

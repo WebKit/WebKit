@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-TextInsertionBaseCommand::TextInsertionBaseCommand(Document& document, EditAction editingAction)
-    : CompositeEditCommand(document, editingAction)
+TextInsertionBaseCommand::TextInsertionBaseCommand(Ref<Document>&& document, EditAction editingAction)
+    : CompositeEditCommand(WTFMove(document), editingAction)
 {
 }
 

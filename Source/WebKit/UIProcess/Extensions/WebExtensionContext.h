@@ -37,6 +37,7 @@
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionController.h"
 #include "WebExtensionEventListenerType.h"
+#include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionMatchPattern.h"
 #include "WebExtensionTab.h"
 #include "WebExtensionTabIdentifier.h"
@@ -108,9 +109,9 @@ public:
     using InjectedContentVector = WebExtension::InjectedContentVector;
 
     using WeakPageCountedSet = WeakHashCountedSet<WebPageProxy>;
-    using EventListenerTypeCountedSet = HashCountedSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
-    using EventListenerTypePageMap = HashMap<WebExtensionEventListenerType, WeakPageCountedSet, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
-    using EventListenerTypeSet = HashSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
+    using EventListenerTypeCountedSet = HashCountedSet<WebExtensionEventListenerType>;
+    using EventListenerTypePageMap = HashMap<WebExtensionEventListenerTypeWorldPair, WeakPageCountedSet>;
+    using EventListenerTypeSet = HashSet<WebExtensionEventListenerType>;
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
     using WindowIdentifierMap = HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
@@ -122,6 +123,8 @@ public:
 
     using PopulateTabs = WebExtensionWindow::PopulateTabs;
     using WindowTypeFilter = WebExtensionWindow::TypeFilter;
+
+    using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
@@ -276,8 +279,17 @@ public:
 
     void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
 
+    HashSet<Ref<WebProcessProxy>> processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
+    bool pageListensForEvent(const WebPageProxy&, WebExtensionEventListenerType, WebExtensionContentWorldType) const;
+
+    template<typename T>
+    void sendToProcesses(const WebProcessProxySet&, const T& message);
+
     template<typename T>
     void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message);
+
+    template<typename T>
+    void sendToContentScriptProcessesForEvent(WebExtensionEventListenerType, const T& message);
 
 #ifdef __OBJC__
     _WKWebExtensionContext *wrapper() const { return (_WKWebExtensionContext *)API::ObjectImpl<API::Object::Type::WebExtensionContext>::wrapper(); }
@@ -345,8 +357,8 @@ private:
     void fireAlarmsEventIfNeeded(const WebExtensionAlarm&);
 
     // Event APIs
-    void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType);
-    void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType);
+    void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
+    void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
 
     // Permissions APIs
     void permissionsGetAll(CompletionHandler<void(Vector<String> permissions, Vector<String> origins)>&&);
@@ -354,6 +366,9 @@ private:
     void permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
     void permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
     void firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType, const PermissionsSet&, const MatchPatternSet&);
+
+    // Runtime APIs
+    void runtimeSendMessage(String extensionID, String message, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
 
     // Tabs APIs
     void tabsCreate(WebPageProxyIdentifier, const WebExtensionTabParameters&, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
@@ -368,6 +383,7 @@ private:
     void tabsDetectLanguage(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, WebExtensionTab::Error)>&&);
     void tabsCaptureVisibleTab(WebPageProxyIdentifier, std::optional<WebExtensionWindowIdentifier>, WebExtensionTab::ImageFormat, uint8_t imageQuality, CompletionHandler<void(std::optional<URL>, WebExtensionTab::Error)>&&);
     void tabsToggleReaderMode(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
+    void tabsSendMessage(WebExtensionTabIdentifier, String messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, WebExtensionTab::Error)>&&);
     void tabsGetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<double>, WebExtensionTab::Error)>&&);
     void tabsSetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, double, CompletionHandler<void(WebExtensionTab::Error)>&&);
     void tabsRemove(Vector<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
@@ -392,8 +408,6 @@ private:
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    WeakHashSet<WebProcessProxy> processes(WebExtensionEventListenerType) const;
 
     WebExtensionContextIdentifier m_identifier;
 
@@ -459,10 +473,22 @@ private:
 };
 
 template<typename T>
+void WebExtensionContext::sendToProcesses(const WebProcessProxySet& processes, const T& message)
+{
+    for (auto& process : processes)
+        process->send(T(message), identifier());
+}
+
+template<typename T>
 void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType type, const T& message)
 {
-    for (auto& process : processes(type))
-        process.send(T(message), identifier());
+    sendToProcesses(processes(type, WebExtensionContentWorldType::Main), message);
+}
+
+template<typename T>
+void WebExtensionContext::sendToContentScriptProcessesForEvent(WebExtensionEventListenerType type, const T& message)
+{
+    sendToProcesses(processes(type, WebExtensionContentWorldType::ContentScript), message);
 }
 
 } // namespace WebKit

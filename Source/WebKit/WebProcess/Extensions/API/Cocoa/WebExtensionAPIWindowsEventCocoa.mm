@@ -66,7 +66,7 @@ void WebExtensionAPIWindowsEvent::addListener(WebPage* page, RefPtr<WebExtension
     if (!page)
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(page->webPageProxyIdentifier(), m_type), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(page->webPageProxyIdentifier(), m_type, contentWorldType()), extensionContext().identifier());
 }
 
 void WebExtensionAPIWindowsEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
@@ -78,7 +78,7 @@ void WebExtensionAPIWindowsEvent::removeListener(WebPage* page, RefPtr<WebExtens
     if (!page)
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(page->webPageProxyIdentifier(), m_type), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(page->webPageProxyIdentifier(), m_type, contentWorldType()), extensionContext().identifier());
 }
 
 bool WebExtensionAPIWindowsEvent::hasListener(RefPtr<WebExtensionCallbackHandler> listener)

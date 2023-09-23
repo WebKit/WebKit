@@ -31,15 +31,15 @@ namespace WebCore {
 
 class CreateLinkCommand : public CompositeEditCommand {
 public:
-    static Ref<CreateLinkCommand> create(Document& document, const String& linkURL)
+    static Ref<CreateLinkCommand> create(Ref<Document>&& document, const String& linkURL)
     {
-        return adoptRef(*new CreateLinkCommand(document, linkURL));
+        return adoptRef(*new CreateLinkCommand(WTFMove(document), linkURL));
     }
 
     bool isCreateLinkCommand() const override { return true; }
 
 private:
-    CreateLinkCommand(Document&, const String& linkURL);
+    CreateLinkCommand(Ref<Document>&&, const String& linkURL);
 
     void doApply() override;
     EditAction editingAction() const override { return EditAction::CreateLink; }

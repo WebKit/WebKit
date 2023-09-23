@@ -326,7 +326,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
             m_preloadScanner = makeUnique<HTMLPreloadScanner>(m_options, document()->url(), document()->deviceScaleFactor());
             m_preloadScanner->appendToEnd(m_input.current());
         }
-        m_preloadScanner->scan(*m_preloader, *document());
+        m_preloadScanner->scan(*m_preloader, Ref { *document() });
     }
     // The viewport definition is known here, so we can load link preloads with media attributes.
     if (document()->loader())

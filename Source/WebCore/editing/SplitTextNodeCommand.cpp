@@ -97,7 +97,7 @@ void SplitTextNodeCommand::doReapply()
 
 void SplitTextNodeCommand::insertText1AndTrimText2()
 {
-    if (m_text2->parentNode()->insertBefore(*m_text1, m_text2.ptr()).hasException())
+    if (m_text2->parentNode()->insertBefore(*m_text1, m_text2.copyRef()).hasException())
         return;
     m_text2->deleteData(0, m_offset);
 }

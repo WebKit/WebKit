@@ -88,7 +88,6 @@ private:
 
     void addBlankSpace(uint32_t size);
     void addRawValue(uint64_t value);
-    void addLength(uint32_t length);
     void addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length);
     void addCondensedLocalIndexAndLength(uint32_t index, uint32_t length);
     void addLEB128ConstantAndLengthForType(Type, uint64_t value, uint32_t length);

@@ -371,6 +371,8 @@ invalid("for (let i = 20 in b) { }");
 invalid("for (const i = 20 in b) { }");
 invalid("for (const {i} = 20 in b) { }");
 invalid("for (let {i} = 20 in b) { }");
+invalid("{ for (a in []) }");
+invalid("{ for (a of []) }");
 valid("function x(i) { for (let i in {}) { } }");
 valid("function x(i) { for (let i of []) { } }");
 valid("function x(i) { for (let i of []) { } }");

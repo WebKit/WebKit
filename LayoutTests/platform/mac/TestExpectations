@@ -1460,6 +1460,7 @@ imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes.html?t
 imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes_under_load.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouseevent_key_pressed.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action_two-finger_interaction.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html?mouse [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html?pen [ Skip ]
@@ -2730,8 +2731,6 @@ webkit.org/b/252322 [ X86_64 ] media/media-source/media-source-video-renders.htm
 
 webkit.org/b/259712 [ Monterey+ ] media/media-source/media-source-paint-after-display-none.html [ Skip ]
 
-webkit.org/b/259489 [ Monterey+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Pass Failure ]
-
 # rdar://110876540 ASSERTION FAILED: firstChild(): [ macOS ] (258183)
 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
 
@@ -2791,10 +2790,6 @@ fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 
 # rdar://105307989 (REGRESSION ( Sonoma ): [ Sonoma ] svg/custom/hidpi-masking-clipping.svg is a consistent failure)
 svg/custom/hidpi-masking-clipping.svg [ Pass ImageOnlyFailure ]
-
-# rdar://110029481 (REGRESSION ( Sonoma ): [ Sonoma ] Two accessibility/mac/ tests are a consistent failure)
-accessibility/mac/basic-embed-pdf-accessibility.html [ Timeout ]
-[ Sonoma+ ] accessibility/mac/iframe-pdf.html [ Timeout ]
 
 # rdar://111077813 (REGRESSION ( Sonoma ): [ Sonoma ] css3/color-filters/color-filter-caret-color.html is a consistent image failure)
 css3/color-filters/color-filter-caret-color.html [ ImageOnlyFailure ]
@@ -2878,3 +2873,7 @@ webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transfo
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ ImageOnlyFailure ]
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ ImageOnlyFailure ]
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-no-perspective.html [ ImageOnlyFailure ]
+
+webkit.org/b/261911 media/media-source/media-managedmse-seek.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/261958 [ Release ] inspector/console/timestamp.html [ Pass Failure ]

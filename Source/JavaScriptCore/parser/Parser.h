@@ -374,7 +374,7 @@ public:
         return result;
     }
 
-    DeclarationResultMask declareFunction(const Identifier* ident, bool declareAsVar, bool isSloppyModeHoistingCandidate)
+    DeclarationResultMask declareFunction(const Identifier* ident, bool declareAsVar)
     {
         ASSERT(m_allowsVarDeclarations || m_allowsLexicalDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
@@ -383,8 +383,6 @@ public:
             result |= DeclarationResult::InvalidStrictMode;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         auto addResult = declareAsVar ? m_declaredVariables.add(ident->impl()) : m_lexicalVariables.add(ident->impl());
-        if (isSloppyModeHoistingCandidate)
-            addResult.iterator->value.setIsSloppyModeHoistingCandidate();
         if (declareAsVar) {
             addResult.iterator->value.setIsVar();
             if (m_lexicalVariables.contains(ident->impl()))
@@ -393,7 +391,7 @@ public:
             addResult.iterator->value.setIsLet();
             ASSERT_WITH_MESSAGE(!m_declaredVariables.size(), "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed. I.e, in strict mode and not at the top-level scope of a function or program.");
             if (!addResult.isNewEntry) {
-                if (!isSloppyModeHoistingCandidate || !addResult.iterator->value.isFunction())
+                if (strictMode() || !addResult.iterator->value.isFunction())
                     result |= DeclarationResult::InvalidDuplicateDeclaration;
             }
         }
@@ -409,10 +407,13 @@ public:
         m_variablesBeingHoisted.add(ident->impl());
     }
 
-    void addSloppyModeHoistableFunctionCandidate(const Identifier* ident)
+    enum class NeedsDuplicateDeclarationCheck : bool { No, Yes };
+    template<NeedsDuplicateDeclarationCheck needsCheck>
+    void addSloppyModeFunctionHoistingCandidate(FunctionMetadataNode* node)
     {
-        ASSERT(m_allowsVarDeclarations);
-        m_sloppyModeHoistableFunctionCandidates.add(ident->impl());
+        ASSERT(node);
+        ASSERT(!strictMode());
+        m_sloppyModeFunctionHoistingCandidates.set(node, needsCheck);
     }
 
     void appendFunction(FunctionMetadataNode* node)
@@ -711,23 +712,38 @@ public:
         m_innerArrowFunctionFeatures = m_innerArrowFunctionFeatures | arrowFunctionCodeFeatures;
     }
     
-    void getSloppyModeHoistedFunctions(UniquedStringImplPtrSet& sloppyModeHoistedFunctions)
+    void finalizeSloppyModeFunctionHoisting()
     {
-        for (UniquedStringImpl* function : m_sloppyModeHoistableFunctionCandidates) {
+        ASSERT(allowsVarDeclarations());
+        ASSERT(!isSimpleCatchParameterScope());
+
+        for (const auto& iter : m_sloppyModeFunctionHoistingCandidates) {
             // ES6 Annex B.3.3. The only time we can't hoist a function is if a syntax error would
             // be caused by declaring a var with that function's name or if we have a parameter with
             // that function's name. Note that we would only cause a syntax error if we had a let/const/class
             // variable with the same name.
+            FunctionMetadataNode* metadata = iter.key;
+            auto* function = metadata->ident().impl();
             if (!m_lexicalVariables.contains(function)) {
                 auto addResult = m_declaredVariables.add(function);
                 if (addResult.isNewEntry)
-                    addResult.iterator->value.setIsSloppyModeHoistingCandidate();
+                    addResult.iterator->value.setIsSloppyModeHoistedFunction();
                 else if (addResult.iterator->value.isParameter())
                     continue;
 
                 addResult.iterator->value.setIsVar();
-                sloppyModeHoistedFunctions.add(function);
+                metadata->setIsSloppyModeHoistedFunction();
             }
+        }
+    }
+
+    NEVER_INLINE void bubbleSloppyModeFunctionHoistingCandidates(Scope* parentScope)
+    {
+        for (const auto& iter : m_sloppyModeFunctionHoistingCandidates) {
+            FunctionMetadataNode* metadata = iter.key;
+            bool needsCheck = iter.value == NeedsDuplicateDeclarationCheck::Yes;
+            if (!needsCheck || !m_lexicalVariables.contains(metadata->ident().impl()) || isSimpleCatchParameterScope())
+                parentScope->addSloppyModeFunctionHoistingCandidate<NeedsDuplicateDeclarationCheck::Yes>(metadata);
         }
     }
 
@@ -756,6 +772,8 @@ public:
         m_hasNonSimpleParameterList = true;
     }
     bool hasNonSimpleParameterList() const { return m_hasNonSimpleParameterList; }
+
+    bool hasSloppyModeFunctionHoistingCandidates() const { return !m_sloppyModeFunctionHoistingCandidates.isEmpty(); }
 
     void copyCapturedVariablesToVector(const UniquedStringImplPtrSet& usedVariables, Vector<UniquedStringImpl*, 8>& vector)
     {
@@ -934,7 +952,7 @@ private:
     VariableEnvironment m_lexicalVariables;
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
     UniquedStringImplPtrSet m_variablesBeingHoisted;
-    UniquedStringImplPtrSet m_sloppyModeHoistableFunctionCandidates;
+    HashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
     HashSet<UniquedStringImpl*> m_closedVariableCandidates;
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };
@@ -1342,16 +1360,21 @@ private:
 
         // Finalize lexical variables.
         lastScope.finalizeLexicalEnvironment();
-        m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&lastScope, shouldTrackClosedVariables);
         
+        Scope& parentScope = m_scopeStack[m_scopeStack.size() - 2];
+        parentScope.collectFreeVariables(&lastScope, shouldTrackClosedVariables);
+
+        if (lastScope.hasSloppyModeFunctionHoistingCandidates())
+            lastScope.bubbleSloppyModeFunctionHoistingCandidates(&parentScope);
+
         if (lastScope.isArrowFunction())
             lastScope.setInnerArrowFunctionUsesEvalAndUseArgumentsIfNeeded();
         
         if (!(lastScope.isFunctionBoundary() && !lastScope.isArrowFunctionBoundary()))
-            m_scopeStack[m_scopeStack.size() - 2].mergeInnerArrowFunctionFeatures(lastScope.innerArrowFunctionFeatures());
+            parentScope.mergeInnerArrowFunctionFeatures(lastScope.innerArrowFunctionFeatures());
 
         if (!lastScope.isFunctionBoundary() && lastScope.needsFullActivation())
-            m_scopeStack[m_scopeStack.size() - 2].setNeedsFullActivation();
+            parentScope.setNeedsFullActivation();
         std::tuple result { lastScope.takeLexicalEnvironment(), lastScope.takeFunctionDeclarations() };
         m_scopeStack.removeLast();
         return result;
@@ -1419,9 +1442,8 @@ private:
             // for backwards compatibility. This allows us to declare functions with the same name more than once.
             // In sloppy mode, we always declare functions as vars.
             bool declareAsVar = true;
-            bool isSloppyModeHoistingCandidate = false;
             ScopeRef variableScope = currentVariableScope();
-            return std::make_pair(variableScope->declareFunction(ident, declareAsVar, isSloppyModeHoistingCandidate), variableScope);
+            return std::make_pair(variableScope->declareFunction(ident, declareAsVar), variableScope);
         }
 
         bool declareAsVar = false;
@@ -1440,15 +1462,10 @@ private:
             // there are is a let/class/const with the same name). Note that this mean we only do the "var" hoisting 
             // binding if the block evaluates. For example, this means we wont won't perform the binding if it's inside
             // the untaken branch of an if statement.
-            bool isSloppyModeHoistingCandidate = true;
-            ScopeRef varScope = currentVariableScope();
-            varScope->addSloppyModeHoistableFunctionCandidate(ident);
-            ASSERT(varScope != lexicalVariableScope);
-            return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar, isSloppyModeHoistingCandidate), lexicalVariableScope);
+            return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar), lexicalVariableScope);
         }
 
-        bool isSloppyModeHoistingCandidate = false;
-        return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar, isSloppyModeHoistingCandidate), lexicalVariableScope);
+        return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar), lexicalVariableScope);
     }
 
     NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
@@ -1508,7 +1525,6 @@ private:
         DeclarationStacks::FunctionStack functionDeclarations;
         VariableEnvironment varDeclarations;
         VariableEnvironment lexicalVariables;
-        UniquedStringImplPtrSet sloppyModeHoistedFunctions;
         CodeFeatures features;
         int numConstants;
     };
@@ -2184,7 +2200,6 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     WTFMove(parseResult.value().varDeclarations),
                                     WTFMove(parseResult.value().functionDeclarations),
                                     WTFMove(parseResult.value().lexicalVariables),
-                                    WTFMove(parseResult.value().sloppyModeHoistedFunctions),
                                     parseResult.value().parameters,
                                     *m_source,
                                     parseResult.value().features,

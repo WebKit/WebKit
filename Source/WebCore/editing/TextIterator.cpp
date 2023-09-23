@@ -498,21 +498,24 @@ void TextIterator::advance()
 
         // find a new current node to handle in depth-first manner,
         // calling exitNode() as we come back thru a parent node
-        RefPtr next = m_handledChildren ? nullptr : firstChild(m_behaviors, *m_currentNode);
+
+        RefPtr next = m_handledChildren ? nullptr : firstChild(m_behaviors, *protectedCurrentNode());
         m_offset = 0;
         if (!next) {
-            next = nextSibling(m_behaviors, *m_currentNode);
+            auto currentNode = protectedCurrentNode();
+            next = nextSibling(m_behaviors, *currentNode);
             if (!next) {
-                bool pastEnd = nextNode(m_behaviors, *m_currentNode) == m_pastEndNode;
-                RefPtr parentNode = parentNodeOrShadowHost(m_behaviors, *m_currentNode);
+                bool pastEnd = nextNode(m_behaviors, *currentNode) == m_pastEndNode;
+                RefPtr parentNode = parentNodeOrShadowHost(m_behaviors, *currentNode);
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer.get()) || isDescendantOf(m_behaviors, *m_endContainer, *parentNode))
                         return;
-                    bool haveRenderer = isRendererVisible(m_currentNode->renderer(), m_behaviors);
-                    RefPtr exitedNode = m_currentNode.get();
-                    m_currentNode = parentNode;
+                    bool haveRenderer = isRendererVisible(currentNode->renderer(), m_behaviors);
+                    RefPtr exitedNode = WTFMove(currentNode);
+                    m_currentNode = WTFMove(parentNode);
+                    currentNode = m_currentNode;
                     m_fullyClippedStack.pop();
-                    parentNode = parentNodeOrShadowHost(m_behaviors, *m_currentNode);
+                    parentNode = parentNodeOrShadowHost(m_behaviors, *currentNode);
                     if (haveRenderer)
                         exitNode(exitedNode.get());
                     if (m_positionNode) {
@@ -520,17 +523,17 @@ void TextIterator::advance()
                         m_handledChildren = true;
                         return;
                     }
-                    next = nextSibling(m_behaviors, *m_currentNode);
-                    if (next && isRendererVisible(m_currentNode->renderer(), m_behaviors))
-                        exitNode(protectedCurrentNode().get());
+                    next = nextSibling(m_behaviors, *currentNode);
+                    if (next && isRendererVisible(currentNode->renderer(), m_behaviors))
+                        exitNode(currentNode.get());
                 }
             }
             m_fullyClippedStack.pop();            
         }
 
         // set the new current node
-        m_currentNode = next;
-        if (RefPtr currentNode = m_currentNode.get())
+        m_currentNode = WTFMove(next);
+        if (auto currentNode = protectedCurrentNode())
             pushFullyClippedState(m_fullyClippedStack, *currentNode);
         m_handledNode = false;
         m_handledChildren = false;
@@ -558,7 +561,7 @@ static bool hasVisibleTextNode(RenderText& renderer)
 
 bool TextIterator::handleTextNode()
 {
-    Ref textNode = downcast<Text>(*m_currentNode);
+    Ref textNode = downcast<Text>(protectedCurrentNode().releaseNonNull());
 
     if (m_fullyClippedStack.top() && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
         return false;
@@ -615,8 +618,8 @@ bool TextIterator::handleTextNode()
 }
 
 void TextIterator::handleTextRun()
-{    
-    Ref textNode = downcast<Text>(*m_currentNode);
+{
+    Ref textNode = downcast<Text>(protectedCurrentNode().releaseNonNull());
 
     auto& renderer = m_firstLetterText ? *m_firstLetterText : *textNode->renderer();
     if (renderer.style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility)) {
@@ -1024,7 +1027,7 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     // The currPos.isNotNull() check is needed because positions in non-HTML content
     // (like SVG) do not have visible positions, and we don't want to emit for them either.
     VisiblePosition startPos = VisiblePosition(Position(m_startContainer.get(), m_startOffset, Position::PositionIsOffsetInAnchor));
-    VisiblePosition currPos = VisiblePosition(positionBeforeNode(m_currentNode.get()));
+    VisiblePosition currPos = VisiblePosition(positionBeforeNode(protectedCurrentNode().get()));
     return startPos.isNotNull() && currPos.isNotNull() && !inSameLine(startPos, currPos);
 }
 

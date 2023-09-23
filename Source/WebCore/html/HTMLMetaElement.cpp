@@ -173,7 +173,7 @@ void HTMLMetaElement::process()
         return;
 
     if (equalLettersIgnoringASCIICase(nameValue, "viewport"_s))
-        document().processViewport(contentValue, ViewportArguments::ViewportMeta);
+        document().processViewport(contentValue, ViewportArguments::Type::ViewportMeta);
     else if (document().settings().disabledAdaptationsMetaTagEnabled() && equalLettersIgnoringASCIICase(nameValue, "disabled-adaptations"_s))
         document().processDisabledAdaptations(contentValue);
 #if ENABLE(DARK_MODE_CSS)

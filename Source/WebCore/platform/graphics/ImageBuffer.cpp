@@ -61,15 +61,6 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
         creationContext.displayID = graphicsClient->displayID();
 #endif
 
-    // Give UseDisplayList a higher precedence since it is a debug option.
-    if (options.contains(ImageBufferOptions::UseDisplayList)) {
-        if (options.contains(ImageBufferOptions::Accelerated))
-            imageBuffer = DisplayList::ImageBuffer::create<AcceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-
-        if (!imageBuffer)
-            imageBuffer = DisplayList::ImageBuffer::create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-    }
-
     if (graphicsClient && !imageBuffer) {
         auto renderingMode = options.contains(ImageBufferOptions::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
         bool avoidBackendSizeCheckForTesting = options.contains(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
@@ -328,7 +319,7 @@ RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread()
     return this;
 }
 
-RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)
+RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter)
 {
     ASSERT(!filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
 
@@ -345,10 +336,10 @@ RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)
     if (!imageBuffer)
         return nullptr;
 
-    return imageBuffer->copyImage();
+    return copyImageBufferToNativeImage(*imageBuffer, CopyBackingStore, PreserveResolution::No);
 }
 
-RefPtr<Image> ImageBuffer::filteredImage(Filter& filter, std::function<void(GraphicsContext&)> drawCallback)
+RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<void(GraphicsContext&)> drawCallback)
 {
     std::unique_ptr<FilterTargetSwitcher> targetSwitcher;
 
@@ -364,10 +355,10 @@ RefPtr<Image> ImageBuffer::filteredImage(Filter& filter, std::function<void(Grap
     if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
         ASSERT(targetSwitcher);
         targetSwitcher->endDrawSourceImage(context());
-        return copyImage();
+        return copyImageBufferToNativeImage(*this, CopyBackingStore, PreserveResolution::No);
     }
 
-    return filteredImage(filter);
+    return filteredNativeImage(filter);
 }
 
 #if USE(CAIRO)

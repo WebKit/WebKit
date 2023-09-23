@@ -741,7 +741,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::rowHeaders()
     // Sometimes m_rows can be reset during the iteration, we cache it here to be safe.
     AccessibilityChildrenVector rowsCopy = m_rows;
     for (const auto& row : rowsCopy) {
-        if (auto* header = downcast<AccessibilityTableRow>(*row).headerObject())
+        if (auto* header = downcast<AccessibilityTableRow>(*row).rowHeader())
             headers.append(header);
     }
 

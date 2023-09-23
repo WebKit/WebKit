@@ -83,6 +83,7 @@ public:
     void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
 
     Element* host() const { return m_host.get(); }
+    RefPtr<Element> protectedHost() const { return m_host.get(); }
     void setHost(CheckedPtr<Element>&& host) { m_host = WTFMove(host); }
 
     String innerHTML() const;

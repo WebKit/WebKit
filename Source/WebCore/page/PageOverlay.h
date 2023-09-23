@@ -29,6 +29,7 @@
 #include "FloatPoint.h"
 #include "IntRect.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
@@ -42,7 +43,7 @@ class Page;
 class PageOverlayController;
 class PlatformMouseEvent;
 
-class PageOverlay final : public RefCounted<PageOverlay> {
+class PageOverlay final : public RefCounted<PageOverlay>, public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(PageOverlay);
     WTF_MAKE_FAST_ALLOCATED;
 public:

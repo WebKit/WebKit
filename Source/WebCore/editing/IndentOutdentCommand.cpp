@@ -49,8 +49,8 @@ static bool isListOrIndentBlockquote(const Node* node)
     return node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(blockquoteTag));
 }
 
-IndentOutdentCommand::IndentOutdentCommand(Document& document, EIndentType typeOfAction)
-    : ApplyBlockElementCommand(document, blockquoteTag, "margin: 0 0 0 40px; border: none; padding: 0px;"_s)
+IndentOutdentCommand::IndentOutdentCommand(Ref<Document>&& document, EIndentType typeOfAction)
+    : ApplyBlockElementCommand(WTFMove(document), blockquoteTag, "margin: 0 0 0 40px; border: none; padding: 0px;"_s)
     , m_typeOfAction(typeOfAction)
 {
 }
@@ -143,11 +143,11 @@ void IndentOutdentCommand::outdentParagraph()
     // Use InsertListCommand to remove the selection from the list
     auto document = protectedDocument();
     if (enclosingNode->hasTagName(olTag)) {
-        applyCommandToComposite(InsertListCommand::create(document, InsertListCommand::Type::OrderedList));
+        applyCommandToComposite(InsertListCommand::create(WTFMove(document), InsertListCommand::Type::OrderedList));
         return;        
     }
     if (enclosingNode->hasTagName(ulTag)) {
-        applyCommandToComposite(InsertListCommand::create(document, InsertListCommand::Type::UnorderedList));
+        applyCommandToComposite(InsertListCommand::create(WTFMove(document), InsertListCommand::Type::UnorderedList));
         return;
     }
     

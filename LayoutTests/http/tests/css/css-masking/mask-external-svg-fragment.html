@@ -1,0 +1,32 @@
+<meta name="fuzzy" content="maxDifference=1-32; totalPixels=94-8183" />
+<style>
+    .container {
+        display: inline-block;
+        border: 1px solid black;
+    }
+    .box {
+        background-color: green;
+        width: 100px;
+        height: 100px;
+    }
+    .blue-green-background {
+        background-image: linear-gradient(blue 0%, blue 50%, green 50%, green 100%);
+    }
+    .red-orange-background {
+        background-image: linear-gradient(red 0%, red 50%, orange 50%, orange 100%);
+    }
+    .mask-external-svg-fragment-star {
+        mask-image: url(resources/star-heart-fragments.svg#star);
+    }
+    .mask-external-svg-fragment-heart {
+        mask-image: url(resources/star-heart-fragments.svg#heart);
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="box blue-green-background mask-external-svg-fragment-star"></div>
+    </div>
+    <div class="container">
+        <div class="box red-orange-background mask-external-svg-fragment-heart"></div>
+    </div>
+</body>

@@ -32,6 +32,7 @@
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/ImageDecoderAVFObjC.h>
 #include <WebCore/ImageDecoderIdentifier.h>
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
@@ -67,6 +68,7 @@ private:
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     HashMap<WebCore::ImageDecoderIdentifier, RefPtr<WebCore::ImageDecoderAVFObjC>> m_imageDecoders;
+    WebCore::ProcessIdentity m_resourceOwner;
 };
 
 }

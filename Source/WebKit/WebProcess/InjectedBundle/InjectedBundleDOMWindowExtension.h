@@ -27,6 +27,7 @@
 #define InjectedBundleDOMWindowExtension_h
 
 #include "APIObject.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ namespace WebKit {
 class InjectedBundleScriptWorld;
 class WebFrame;
 
-class InjectedBundleDOMWindowExtension : public API::ObjectImpl<API::Object::Type::BundleDOMWindowExtension> {
+class InjectedBundleDOMWindowExtension : public API::ObjectImpl<API::Object::Type::BundleDOMWindowExtension>, public CanMakeCheckedPtr {
 public:
     static Ref<InjectedBundleDOMWindowExtension> create(WebFrame*, InjectedBundleScriptWorld*);
     static InjectedBundleDOMWindowExtension* get(WebCore::DOMWindowExtension*);

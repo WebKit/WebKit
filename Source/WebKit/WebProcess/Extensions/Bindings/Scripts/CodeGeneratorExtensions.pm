@@ -185,6 +185,8 @@ EOF
 
 namespace WebKit {
 
+using namespace WTF;
+
 class ${implementationClassName};
 
 class ${className} : public ${parentClassName} {
@@ -582,7 +584,7 @@ EOF
 
                     push(@contents, "        JSValueRef currentArgument = nullptr;\n");
 
-                    push(@contents, "        const size_t allowedOptionalArgumentCount = argumentCount - requiredArgumentCount;\n") if $requiredArgumentCount;
+                    push(@contents, "        size_t allowedOptionalArgumentCount = argumentCount - requiredArgumentCount;\n") if $requiredArgumentCount;
                     push(@contents, "        size_t processedOptionalArgumentCount = 0;\n") if $requiredArgumentCount;
                     push(@contents, "        argumentIndex = argumentCount - 1;\n") unless $processArgumentsLeftToRight;
                     push(@contents, "        argumentIndex = 0;\n") if $processArgumentsLeftToRight;
@@ -677,10 +679,10 @@ EOF
             unshift(@parameters, "context") if $needsScriptContext;
 
             unshift(@methodSignatureNames, "page") if $needsPage;
-            unshift(@parameters, "toWebPage(context)") if $needsPage;
+            unshift(@parameters, "toWebPage(context).get()") if $needsPage;
 
             unshift(@methodSignatureNames, "frame") if $needsFrame;
-            unshift(@parameters, "toWebFrame(context)") if $needsFrame;
+            unshift(@parameters, "toWebFrame(context).get()") if $needsFrame;
 
             push(@methodSignatureNames, "outExceptionString") if $needsExceptionString;
             push(@parameters, "&exceptionString") if $needsExceptionString;
@@ -817,10 +819,10 @@ EOF
             push(@parameters, "context") if $attribute->extendedAttributes->{"NeedsScriptContext"};
 
             push(@methodSignatureNames, "page") if $attribute->extendedAttributes->{"NeedsPage"};
-            push(@parameters, "toWebPage(context)") if $attribute->extendedAttributes->{"NeedsPage"};
+            push(@parameters, "toWebPage(context).get()") if $attribute->extendedAttributes->{"NeedsPage"};
 
             push(@methodSignatureNames, "frame") if $attribute->extendedAttributes->{"NeedsFrame"};
-            push(@parameters, "toWebFrame(context)") if $attribute->extendedAttributes->{"NeedsFrame"};
+            push(@parameters, "toWebFrame(context).get()") if $attribute->extendedAttributes->{"NeedsFrame"};
 
             my $getterExpression = $self->_functionCall($attribute, \@methodSignatureNames, \@parameters, $interface, $getterName);
 
@@ -1428,7 +1430,7 @@ sub _returnExpression
     return "JSValueMakeUndefined(context)" if $returnIDLTypeName eq "void";
     return "JSValueMakeBoolean(context, ${expression})" if $returnIDLTypeName eq "boolean";
     return "JSValueMakeNumber(context, ${expression})" if $$self{codeGenerator}->IsPrimitiveType($returnIDLType);
-    return "toJS(context, WTF::getPtr(${expression}))";
+    return "toJS(context, getPtr(${expression}))";
 }
 
 sub _setterName
@@ -1578,7 +1580,7 @@ EOF
         my @conditions = ();
         push(@conditions, "isForMainWorld") if $interface->extendedAttributes->{"MainWorldOnly"};
         push(@conditions, $middleCondition) if $middleCondition;
-        push(@conditions, "impl->isPropertyAllowed(\"${name}\"_s, toWebPage(context))") if $interface->extendedAttributes->{"Dynamic"};
+        push(@conditions, "impl->isPropertyAllowed(\"${name}\"_s, toWebPage(context).get())") if $interface->extendedAttributes->{"Dynamic"};
         return join(" && ", @conditions);
     };
 

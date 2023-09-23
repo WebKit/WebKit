@@ -34,10 +34,10 @@ namespace WebCore {
 
 class DictationCommandIOS final : public CompositeEditCommand {
 public:
-    static Ref<DictationCommandIOS> create(Document&, Vector<Vector<String>>&& dictationPhrases, id metadata);
+    static Ref<DictationCommandIOS> create(Ref<Document>&&, Vector<Vector<String>>&& dictationPhrases, id metadata);
 
 private:
-    DictationCommandIOS(Document&, Vector<Vector<String>>&& dictationPhrases, id metadata);
+    DictationCommandIOS(Ref<Document>&&, Vector<Vector<String>>&& dictationPhrases, id metadata);
 
     void doApply() final;
 

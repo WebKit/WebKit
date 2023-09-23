@@ -105,9 +105,10 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderElement);
 
 struct SameSizeAsRenderElement : public RenderObject {
-    unsigned bitfields : 25;
-    void* firstChild;
-    void* lastChild;
+    PackedPtr<RenderObject> firstChild;
+    unsigned bitfields1 : 12;
+    PackedPtr<RenderObject> lastChild;
+    unsigned bitfields2 : 13;
     RenderStyle style;
 };
 
@@ -115,6 +116,7 @@ static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderE
 
 inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderObject(elementOrDocument)
+    , m_firstChild(nullptr)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
@@ -122,6 +124,7 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_hasPausedImageAnimations(false)
     , m_hasCounterNodeMap(false)
     , m_hasContinuationChainNode(false)
+    , m_lastChild(nullptr)
     , m_isContinuation(false)
     , m_isFirstLetter(false)
     , m_renderBlockHasMarginBeforeQuirk(false)
@@ -132,8 +135,6 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_isRegisteredForVisibleInViewportCallback(false)
     , m_visibleInViewportState(static_cast<unsigned>(VisibleInViewportState::Unknown))
     , m_didContributeToVisuallyNonEmptyPixelCount(false)
-    , m_firstChild(nullptr)
-    , m_lastChild(nullptr)
     , m_style(WTFMove(style))
 {
 }
@@ -589,7 +590,7 @@ RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> chil
     }
     if (m_lastChild)
         m_lastChild->setNextSibling(child.get());
-    child->setPreviousSibling(m_lastChild);
+    child->setPreviousSibling(m_lastChild.get());
     m_lastChild = child.get();
     return child.release();
 }
@@ -813,6 +814,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (contentVisibilityChanged) {
             if (oldStyle->contentVisibility() == ContentVisibility::Auto)
                 ContentVisibilityDocumentState::unobserve(*element());
+            ContentVisibilityDocumentState::skippedContentStateDidChange(*element(), oldStyle->contentVisibility() == ContentVisibility::Hidden, newStyle.contentVisibility() == ContentVisibility::Visible);
         }
         if ((contentVisibilityChanged || !oldStyle) && newStyle.contentVisibility() == ContentVisibility::Auto)
             ContentVisibilityDocumentState::observe(*element());
@@ -1408,7 +1410,7 @@ bool RenderElement::borderImageIsLoadedAndCanBeRendered() const
     ASSERT(style().hasBorder());
 
     StyleImage* borderImage = style().borderImage().image();
-    return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded();
+    return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded(this);
 }
 
 bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewportRect) const
@@ -2298,5 +2300,22 @@ bool RenderElement::hasEligibleContainmentForSizeQuery() const
     return false;
 }
 
+void RenderElement::clearNeedsLayoutForDescendants()
+{
+    for (auto& descendant : descendantsOfType<RenderObject>(*this))
+        descendant.clearNeedsLayout();
+}
+
+void RenderElement::layoutIfNeeded()
+{
+    if (!needsLayout())
+        return;
+    if (isSkippedContentForLayout()) {
+        clearNeedsLayoutForDescendants();
+        clearNeedsLayout();
+        return;
+    }
+    layout();
+}
 
 }

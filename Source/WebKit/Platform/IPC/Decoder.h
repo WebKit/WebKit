@@ -149,8 +149,6 @@ public:
 
     std::optional<Attachment> takeLastAttachment();
 
-    static constexpr bool isIPCDecoder = true;
-
 private:
     Decoder(DataReference buffer, BufferDeallocator&&, Vector<Attachment>&&);
 

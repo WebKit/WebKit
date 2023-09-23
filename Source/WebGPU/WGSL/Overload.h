@@ -45,47 +45,50 @@ struct AbstractMatrix;
 struct AbstractTexture;
 struct AbstractReference;
 struct AbstractPointer;
-using AbstractType = std::variant<
+struct AbstractArray;
+
+using AbstractTypeImpl = std::variant<
     AbstractVector,
     AbstractMatrix,
     AbstractTexture,
     AbstractReference,
     AbstractPointer,
+    AbstractArray,
     TypeVariable,
     const Type*
 >;
-
-using AbstractScalarType = std::variant<
-    TypeVariable,
-    const Type*
->;
+using AbstractType = std::unique_ptr<AbstractTypeImpl>;
 
 struct AbstractVector {
-    AbstractScalarType element;
+    AbstractType element;
     AbstractValue size;
 };
 
 struct AbstractMatrix {
-    AbstractScalarType element;
+    AbstractType element;
     AbstractValue columns;
     AbstractValue rows;
 };
 
 struct AbstractTexture {
-    AbstractScalarType element;
+    AbstractType element;
     Types::Texture::Kind kind;
 };
 
 struct AbstractReference {
     AbstractValue addressSpace;
-    AbstractScalarType element;
+    AbstractType element;
     AbstractValue accessMode;
 };
 
 struct AbstractPointer {
     AbstractValue addressSpace;
-    AbstractScalarType element;
+    AbstractType element;
     AbstractValue accessMode;
+};
+
+struct AbstractArray {
+    AbstractType element;
 };
 
 struct OverloadCandidate {
@@ -102,6 +105,18 @@ struct SelectedOverload {
 
 std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments);
 
+template<typename T>
+static AbstractType allocateAbstractType(const T& type)
+{
+    return std::unique_ptr<AbstractTypeImpl>(new AbstractTypeImpl(type));
+}
+
+template<typename T>
+static AbstractType allocateAbstractType(T&& type)
+{
+    return std::unique_ptr<AbstractTypeImpl>(new AbstractTypeImpl(WTFMove(type)));
+}
+
 } // namespace WGSL
 
 namespace WTF {
@@ -109,7 +124,6 @@ void printInternal(PrintStream&, const WGSL::ValueVariable&);
 void printInternal(PrintStream&, const WGSL::AbstractValue&);
 void printInternal(PrintStream&, const WGSL::TypeVariable&);
 void printInternal(PrintStream&, const WGSL::AbstractType&);
-void printInternal(PrintStream&, const WGSL::AbstractScalarType&);
 void printInternal(PrintStream&, const WGSL::OverloadCandidate&);
 void printInternal(PrintStream&, WGSL::Types::Texture::Kind);
 } // namespace WTF

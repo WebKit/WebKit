@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -36,15 +35,3 @@ enum class FrontFace : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::FrontFace> {
-    using values = EnumValues<
-        WebCore::WebGPU::FrontFace,
-        WebCore::WebGPU::FrontFace::CCW,
-        WebCore::WebGPU::FrontFace::CW
-    >;
-};
-
-} // namespace WTF

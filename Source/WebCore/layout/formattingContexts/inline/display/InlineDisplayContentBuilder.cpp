@@ -105,6 +105,8 @@ InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineLayoutResult& 
         processNonBidiContent(lineLayoutResult, lineBox, boxes);
     processFloatBoxes(lineLayoutResult);
 
+    applyRubyOverhang(boxes);
+
     collectInkOverflowForTextDecorations(boxes);
     collectInkOverflowForInlineBoxes(boxes);
     return boxes;
@@ -387,8 +389,11 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , isFirstLastBox(inlineBox)
     });
 
-    if (layoutBox.isRubyBase())
+    if (layoutBox.isRubyBase()) {
+        if (layoutBox.associatedRubyAnnotationBox())
+            m_rubyColumnRangeList.append({ boxes.size() - 1, boxes.size() });
         appendAssociatedRubyAnnotationBoxIfNeeded(layoutBox, boxes);
+    }
 }
 
 void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, bool linehasContent, InlineDisplay::Boxes& boxes)
@@ -396,6 +401,8 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
     ASSERT(lineRun.layoutBox().isInlineBox());
     ASSERT(inlineBox.isInlineBox());
     ASSERT(!inlineBox.isFirstBox());
+    // We don't break inside bases yet.
+    ASSERT(!lineRun.layoutBox().isRubyBase());
 
     if (!linehasContent) {
         // When a spanning inline box (e.g. <div>text<span><br></span></div>) lands on an empty line
@@ -426,9 +433,18 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
         , isLineFullyTruncatedInBlockDirection()
         , isFirstLastBox(inlineBox)
     });
+}
 
-    if (layoutBox.isRubyBase())
-        appendAssociatedRubyAnnotationBoxIfNeeded(layoutBox, boxes);
+void InlineDisplayContentBuilder::handleInlineBoxEnd(const Line::Run& lineRun, const InlineDisplay::Boxes& boxes)
+{
+    if (lineRun.layoutBox().isRubyBase()) {
+        if (m_rubyColumnRangeList.isEmpty()) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        if (lineRun.layoutBox().associatedRubyAnnotationBox())
+            m_rubyColumnRangeList.last() = { m_rubyColumnRangeList.last().begin(), boxes.size() - 1 };
+    }
 }
 
 void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box& layoutBox, InlineDisplay::Boxes& boxes)
@@ -545,7 +561,11 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 blockLevelOutOfFlowBoxList.append(index);
             continue;
         }
-        ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity());
+        if (lineRun.isInlineBoxEnd()) {
+            handleInlineBoxEnd(lineRun, boxes);
+            continue;
+        }
+        ASSERT(lineRun.isWordBreakOpportunity());
     }
     setGeometryForBlockLevelOutOfFlowBoxes(blockLevelOutOfFlowBoxList, lineBox, lineLayoutResult.inlineContent);
 }
@@ -1017,6 +1037,49 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
             };
             displayBox.adjustInkOverflow(inflatedVisualOverflowRect());
         }
+    }
+}
+
+void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes) const
+{
+    // Shift content starting from the annotation box to left
+    if (m_rubyColumnRangeList.isEmpty())
+        return;
+
+    auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
+    auto accumulatedShift = InlineLayoutUnit { };
+    size_t currentRubyBaseIndex = 0;
+
+    for (auto index = m_rubyColumnRangeList[0].begin(); index < boxes.size(); ++index) {
+
+        if (currentRubyBaseIndex == m_rubyColumnRangeList.size()) {
+            boxes[index].moveHorizontally(-accumulatedShift);
+            continue;
+        }
+
+        auto handleOverhangBefore = [&] {
+            if (index != m_rubyColumnRangeList[currentRubyBaseIndex].begin())
+                return;
+            auto& rubyBaseLayoutBox = boxes[index].layoutBox();
+            ASSERT(rubyBaseLayoutBox.isRubyBase());
+            ASSERT(rubyBaseLayoutBox.associatedRubyAnnotationBox());
+            accumulatedShift += rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, index, boxes);
+            auto& annotationBoxGeometry = formattingState().boxGeometry(*rubyBaseLayoutBox.associatedRubyAnnotationBox());
+            annotationBoxGeometry.moveHorizontally(LayoutUnit { -accumulatedShift });
+        };
+        handleOverhangBefore();
+
+        boxes[index].moveHorizontally(-accumulatedShift);
+
+        auto handleOverhangAfter = [&] {
+            if (index != m_rubyColumnRangeList[currentRubyBaseIndex].end())
+                return;
+            auto& rubyBaseLayoutBox = boxes[m_rubyColumnRangeList[currentRubyBaseIndex].begin()].layoutBox();
+            ASSERT(rubyBaseLayoutBox.isRubyBase());
+            accumulatedShift += rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, index, boxes);
+            ++currentRubyBaseIndex;
+        };
+        handleOverhangAfter();
     }
 }
 

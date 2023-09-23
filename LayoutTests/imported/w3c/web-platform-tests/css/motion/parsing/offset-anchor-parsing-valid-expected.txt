@@ -1,7 +1,7 @@
 
 PASS e.style['offset-anchor'] = "auto" should set the property value
 PASS e.style['offset-anchor'] = "left bottom" should set the property value
-FAIL e.style['offset-anchor'] = "center center" should set the property value assert_equals: serialization should be canonical expected "center center" but got "center"
+PASS e.style['offset-anchor'] = "center center" should set the property value
 PASS e.style['offset-anchor'] = "right center" should set the property value
 PASS e.style['offset-anchor'] = "center top" should set the property value
 PASS e.style['offset-anchor'] = "center bottom" should set the property value

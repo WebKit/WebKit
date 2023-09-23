@@ -493,7 +493,7 @@ private:
 
     bool isIncomingMessagesThrottlingEnabled() const { return m_incomingMessagesThrottlingLevel.has_value(); }
 
-    static HashMap<IPC::Connection::UniqueID, Connection*>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock);
+    static HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock);
 
     DecoderOrError waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
 
@@ -693,7 +693,7 @@ template<typename T>
 Error Connection::send(UniqueID connectionID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
     Locker locker { s_connectionMapLock };
-    RefPtr connection = connectionMap().get(connectionID);
+    RefPtr connection = connectionMap().get(connectionID).get();
     if (!connection)
         return Error::NoConnectionForIdentifier;
     return connection->send(std::forward<T>(message), destinationID, sendOptions, qos);

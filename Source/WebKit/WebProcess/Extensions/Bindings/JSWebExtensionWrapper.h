@@ -29,6 +29,7 @@
 
 #include "Logging.h"
 #include "WebFrame.h"
+#include "WebPage.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <wtf/WeakPtr.h>
@@ -104,7 +105,7 @@ inline RefPtr<WebFrame> toWebFrame(JSContextRef context)
     return WebFrame::frameForContext(JSContextGetGlobalContext(context));
 }
 
-inline WebPage* toWebPage(JSContextRef context)
+inline RefPtr<WebPage> toWebPage(JSContextRef context)
 {
     ASSERT(context);
     auto frame = toWebFrame(context);

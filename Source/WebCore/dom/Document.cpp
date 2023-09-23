@@ -203,6 +203,7 @@
 #include "RenderChildIterator.h"
 #include "RenderInline.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -1128,7 +1129,7 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
 
 Ref<DocumentFragment> Document::createDocumentFragment()
 {
-    return DocumentFragment::create(document());
+    return DocumentFragment::create(*this);
 }
 
 Ref<Text> Document::createTextNode(String&& data)
@@ -1834,8 +1835,9 @@ void Document::setTitle(String&& title)
     RefPtr element = documentElement();
     if (is<SVGSVGElement>(element)) {
         if (!m_titleElement) {
-            m_titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
-            element->insertBefore(*m_titleElement, element->firstChild());
+            auto titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
+            m_titleElement = titleElement.copyRef();
+            element->insertBefore(titleElement, element->protectedFirstChild());
         }
         // insertBefore above may have ran scripts which removed m_titleElement.
         if (m_titleElement)
@@ -2304,13 +2306,13 @@ bool Document::updateStyleIfNeeded()
     return true;
 }
 
-void Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> layoutOptions)
+void Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> layoutOptions, const Element* context)
 {
     layoutOptions.add(LayoutOptions::IgnorePendingStylesheets);
-    updateLayout(layoutOptions);
+    updateLayout(layoutOptions, context);
 }
 
-void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions)
+void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Element* context)
 {
     bool oldIgnore = m_ignorePendingStylesheets;
 
@@ -2338,18 +2340,33 @@ void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions)
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         if (RefPtr owner = ownerElement())
-            owner->document().updateLayout();
+            owner->document().updateLayout(layoutOptions, context);
 
         updateStyleIfNeeded();
 
         StackStats::LayoutCheckPoint layoutCheckPoint;
 
-        if (frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()))
-            frameView->layoutContext().layout();
+        if (frameView && renderView()) {
+            if (context && layoutOptions.contains(LayoutOptions::ContentVisibilityForceLayout)) {
+                if (context->renderer() && context->renderer()->style().skippedContentReason().has_value())
+                    context->renderer()->setNeedsLayout();
+                else
+                    context = nullptr;
+            }
+            if (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()) {
+                ContentVisibilityForceLayoutScope scope(*renderView(), context);
+                frameView->layoutContext().layout();
+            }
+        }
     }
 
     if (layoutOptions.contains(LayoutOptions::RunPostLayoutTasksSynchronously) && view())
         view()->flushAnyPendingPostLayoutTasks();
+
+    if (layoutOptions.contains(LayoutOptions::IgnorePendingStylesheets)) {
+        if (RefPtr frameView = view())
+            frameView->updateScrollAnchoringPositionForScrollableAreas();
+    }
 
     m_ignorePendingStylesheets = oldIgnore;
 }
@@ -2490,7 +2507,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     // Only do a layout if changes have occurred that make it necessary.
     if (requireFullLayout)
-        updateLayout();
+        updateLayout({ }, &element);
 
     return requireFullLayout;
 }
@@ -4634,6 +4651,9 @@ void Document::runScrollSteps()
         }
         if (scrollAnimationsInProgress)
             page()->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+
+        frameView->updateScrollAnchoringElement();
+        frameView->updateScrollAnchoringPositionForScrollableAreas();
     }
 
     // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/66.
@@ -6849,7 +6869,8 @@ bool Document::isSecureContext() const
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (!isDocumentSecure(*localFrame->document()))
+        Ref<Document> ancestorDocument = *localFrame->document();
+        if (!isDocumentSecure(ancestorDocument))
             return false;
     }
 

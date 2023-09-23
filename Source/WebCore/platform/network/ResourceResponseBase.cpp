@@ -88,7 +88,7 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseBase::R
 {
 }
 
-ResourceResponseBase::CrossThreadData ResourceResponseBase::CrossThreadData::isolatedCopy() const
+ResourceResponseBaseCrossThreadData ResourceResponseBaseCrossThreadData::isolatedCopy() const
 {
     ResourceResponseBase::CrossThreadData result;
     result.url = url.isolatedCopy();

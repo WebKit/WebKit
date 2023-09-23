@@ -41,8 +41,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-BreakBlockquoteCommand::BreakBlockquoteCommand(Document& document)
-    : CompositeEditCommand(document)
+BreakBlockquoteCommand::BreakBlockquoteCommand(Ref<Document>&& document)
+    : CompositeEditCommand(WTFMove(document))
 {
 }
 

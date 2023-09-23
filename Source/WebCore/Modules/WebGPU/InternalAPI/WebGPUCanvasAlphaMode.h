@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -36,15 +35,3 @@ enum class CanvasAlphaMode : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::CanvasAlphaMode> {
-    using values = EnumValues<
-        WebCore::WebGPU::CanvasAlphaMode,
-        WebCore::WebGPU::CanvasAlphaMode::Opaque,
-        WebCore::WebGPU::CanvasAlphaMode::Premultiplied
-    >;
-};
-
-} // namespace WTF

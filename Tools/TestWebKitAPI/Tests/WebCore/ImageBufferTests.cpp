@@ -132,13 +132,9 @@ TEST(ImageBufferTests, ImageBufferSubTypeCreateCreatesSubtypes)
     float scale = 1.f;
     RefPtr<ImageBuffer> unaccelerated = ImageBuffer::create(size, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
     RefPtr<ImageBuffer> accelerated = ImageBuffer::create(size, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
-    RefPtr<ImageBuffer> displayListAccelerated = ImageBuffer::create(size, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::UseDisplayList });
-    RefPtr<ImageBuffer> displayListUnaccelerated = ImageBuffer::create(size, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated, ImageBufferOptions::UseDisplayList });
 
     EXPECT_NE(nullptr, accelerated);
     EXPECT_NE(nullptr, unaccelerated);
-    EXPECT_NE(nullptr, displayListAccelerated);
-    EXPECT_NE(nullptr, displayListUnaccelerated);
 }
 
 TEST(ImageBufferTests, ImageBufferSubPixelDrawing)

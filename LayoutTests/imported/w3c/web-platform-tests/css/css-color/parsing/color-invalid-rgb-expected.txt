@@ -24,4 +24,5 @@ PASS e.style['color'] = "rgba(0, 0, 0, 0, 0)" should not set the property value
 PASS e.style['color'] = "rgba(0%)" should not set the property value
 PASS e.style['color'] = "rgba(0%, 0%)" should not set the property value
 PASS e.style['color'] = "rgba(0%, 0%, 0%, 0%, 0%)" should not set the property value
+PASS e.style['color'] = "rgb(257, 0, 5 / 0)" should not set the property value
 

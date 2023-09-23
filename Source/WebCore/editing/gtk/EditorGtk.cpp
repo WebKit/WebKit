@@ -116,14 +116,14 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     PasteboardWebContent pasteboardContent;
     pasteboardContent.canSmartCopyOrDelete = canSmartCopyOrDelete();
     pasteboardContent.text = selectedTextForDataTransfer();
-    pasteboardContent.markup = serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes);
-    pasteboardContent.contentOrigin = m_document.originIdentifierForPasteboard();
+    pasteboardContent.markup = serializePreservingVisualAppearance(document().selection().selection(), ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes);
+    pasteboardContent.contentOrigin = document().originIdentifierForPasteboard();
     pasteboard.write(pasteboardContent);
 }
 
 RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, const SimpleRange& context, bool allowPlainText, bool& chosePlainText)
 {
-    WebContentReader reader(*m_document.frame(), context, allowPlainText);
+    WebContentReader reader(*document().frame(), context, allowPlainText);
     pasteboard.read(reader);
     chosePlainText = reader.madeFragmentFromPlainText;
     return WTFMove(reader.fragment);

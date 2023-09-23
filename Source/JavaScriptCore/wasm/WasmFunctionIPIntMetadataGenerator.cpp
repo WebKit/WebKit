@@ -54,13 +54,6 @@ void FunctionIPIntMetadataGenerator::addRawValue(uint64_t value)
     WRITE_TO_METADATA(m_metadata.data() + size, value, uint64_t);
 }
 
-void FunctionIPIntMetadataGenerator::addLength(uint32_t length)
-{
-    size_t size = m_metadata.size();
-    m_metadata.resize(size + 1);
-    WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
-}
-
 void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length)
 {
     size_t size = m_metadata.size();

@@ -160,6 +160,10 @@ private:
     std::pair<unsigned, unsigned> columnIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::ColumnIndexRange); }
     int axColumnIndex() const override { return intAttributeValue(AXPropertyName::AXColumnIndex); }
     int axRowIndex() const override { return intAttributeValue(AXPropertyName::AXRowIndex); }
+    bool isColumnHeader() const final { return boolAttributeValue(AXPropertyName::IsColumnHeader); }
+    bool isRowHeader() const final { return boolAttributeValue(AXPropertyName::IsRowHeader); }
+    String cellScope() const final { return stringAttributeValue(AXPropertyName::CellScope); }
+    AXID rowGroupAncestorID() const final { return propertyValue<AXID>(AXPropertyName::RowGroupAncestorID); }
 
     // Table column support.
     bool isTableColumn() const override { return boolAttributeValue(AXPropertyName::IsTableColumn); }
@@ -169,6 +173,7 @@ private:
     // Table row support.
     bool isTableRow() const override { return boolAttributeValue(AXPropertyName::IsTableRow); }
     unsigned rowIndex() const override { return unsignedAttributeValue(AXPropertyName::RowIndex); }
+    AXCoreObject* rowHeader() final { return objectAttributeValue(AXPropertyName::RowHeader); };
 
     // ARIA tree/grid row support.
     bool isARIATreeGridRow() const override { return boolAttributeValue(AXPropertyName::IsARIATreeGridRow); }

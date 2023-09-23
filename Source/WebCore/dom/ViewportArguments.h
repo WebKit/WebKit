@@ -63,7 +63,7 @@ struct ViewportAttributes {
 
 struct ViewportArguments {
 
-    enum Type {
+    enum class Type : uint8_t {
         // These are ordered in increasing importance.
         Implicit,
 #if PLATFORM(IOS_FAMILY)
@@ -80,8 +80,27 @@ struct ViewportArguments {
     static constexpr int ValuePortrait = -4;
     static constexpr int ValueLandscape = -5;
 
-    explicit ViewportArguments(Type type = Implicit)
+    explicit ViewportArguments(Type type = Type::Implicit)
         : type(type)
+    {
+    }
+
+    ViewportArguments(Type type, float width, float minWidth, float maxWidth, float height, float minHeight, float maxHeight, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, ViewportFit viewportFit, bool widthWasExplicit)
+        : type(type)
+        , width(width)
+        , minWidth(minWidth)
+        , maxWidth(maxWidth)
+        , height(height)
+        , minHeight(minHeight)
+        , maxHeight(maxHeight)
+        , zoom(zoom)
+        , minZoom(minZoom)
+        , maxZoom(maxZoom)
+        , userZoom(userZoom)
+        , orientation(orientation)
+        , shrinkToFit(shrinkToFit)
+        , viewportFit(viewportFit)
+        , widthWasExplicit(widthWasExplicit)
     {
     }
 

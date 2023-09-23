@@ -26,6 +26,7 @@
 
 #include "AbstractRange.h"
 #include "RangeBoundaryPoint.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class Text;
 
 struct SimpleRange;
 
-class Range final : public AbstractRange, public CanMakeWeakPtr<Range> {
+class Range final : public AbstractRange, public CanMakeWeakPtr<Range>, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Range);
 public:
     WEBCORE_EXPORT static Ref<Range> create(Document&);

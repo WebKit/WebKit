@@ -157,10 +157,10 @@ ALWAYS_INLINE void RemoteImageBufferProxy::send(T&& message)
 }
 
 template<typename T>
-ALWAYS_INLINE void RemoteImageBufferProxy::sendSync(T&& message)
+ALWAYS_INLINE auto RemoteImageBufferProxy::sendSync(T&& message)
 {
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
-        return;
+        return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
 
     auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
@@ -169,9 +169,8 @@ ALWAYS_INLINE void RemoteImageBufferProxy::sendSync(T&& message)
         RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteDisplayListRecorderProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error));
     }
-#else
-    UNUSED_VARIABLE(result);
 #endif
+    return result;
 }
 
 void RemoteImageBufferProxy::backingStoreWillChange()
@@ -274,11 +273,21 @@ RefPtr<ImageBuffer> RemoteImageBufferProxy::sinkIntoBufferForDifferentThread()
     return copyBuffer;
 }
 
-RefPtr<Image> RemoteImageBufferProxy::filteredImage(Filter& filter)
+RefPtr<NativeImage> RemoteImageBufferProxy::filteredNativeImage(Filter& filter)
 {
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
-        return { };
-    return m_remoteRenderingBackendProxy->getFilteredImage(m_renderingResourceIdentifier, filter);
+        return nullptr;
+    auto sendResult = sendSync(Messages::RemoteImageBuffer::FilteredNativeImage(filter));
+    if (!sendResult.succeeded())
+        return nullptr;
+    auto [handle] = sendResult.takeReply();
+    if (!handle)
+        return nullptr;
+    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+    auto bitmap = ShareableBitmap::create(WTFMove(*handle));
+    if (!bitmap)
+        return nullptr;
+    return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::No));
 }
 
 RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, const ImageBufferAllocator& allocator) const

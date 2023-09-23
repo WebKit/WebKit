@@ -276,13 +276,11 @@ void MediaSourcePrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSess
         m_sourceBufferWithSelectedVideo->setDecompressionSession(decompressionSession);
 }
 
-#if PLATFORM(IOS_FAMILY)
 void MediaSourcePrivateAVFObjC::flushActiveSourceBuffersIfNeeded()
 {
     for (auto* sourceBuffer : m_activeSourceBuffers)
         sourceBuffer->flushIfNeeded();
 }
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaSourcePrivateAVFObjC::cdmInstanceAttached(CDMInstance& instance)

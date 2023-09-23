@@ -52,6 +52,7 @@ public:
         ~ElementRecord();
 
         Element& element() const { return m_item.element(); }
+        Ref<Element> protectedElement() const { return m_item.element(); }
         ContainerNode& node() const { return m_item.node(); }
         ElementName elementName() const { return m_item.elementName(); }
         HTMLStackItem& stackItem() { return m_item; }

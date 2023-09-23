@@ -39,15 +39,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-ApplyBlockElementCommand::ApplyBlockElementCommand(Document& document, const QualifiedName& tagName, const AtomString& inlineStyle)
-    : CompositeEditCommand(document)
+ApplyBlockElementCommand::ApplyBlockElementCommand(Ref<Document>&& document, const QualifiedName& tagName, const AtomString& inlineStyle)
+    : CompositeEditCommand(WTFMove(document))
     , m_tagName(tagName)
     , m_inlineStyle(inlineStyle)
 {
 }
 
-ApplyBlockElementCommand::ApplyBlockElementCommand(Document& document, const QualifiedName& tagName)
-    : CompositeEditCommand(document)
+ApplyBlockElementCommand::ApplyBlockElementCommand(Ref<Document>&& document, const QualifiedName& tagName)
+    : CompositeEditCommand(WTFMove(document))
     , m_tagName(tagName)
 {
 }

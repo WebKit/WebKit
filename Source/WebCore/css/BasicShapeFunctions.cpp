@@ -89,14 +89,25 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
     switch (basicShape.type()) {
     case BasicShape::Type::Circle: {
         auto& circle = downcast<BasicShapeCircle>(basicShape);
-        return CSSCircleValue::create(basicShapeRadiusToCSSValue(style, circle.radius()),
+        RefPtr radius = basicShapeRadiusToCSSValue(style, circle.radius());
+
+        if (circle.positionWasOmitted())
+            return CSSCircleValue::create(WTFMove(radius), nullptr, nullptr);
+
+        return CSSCircleValue::create(WTFMove(radius),
             valueForCenterCoordinate(style, circle.centerX(), BoxOrient::Horizontal),
             valueForCenterCoordinate(style, circle.centerY(), BoxOrient::Vertical));
     }
     case BasicShape::Type::Ellipse: {
         auto& ellipse = downcast<BasicShapeEllipse>(basicShape);
-        return CSSEllipseValue::create(basicShapeRadiusToCSSValue(style, ellipse.radiusX()),
-            basicShapeRadiusToCSSValue(style, ellipse.radiusY()),
+        RefPtr radiusX = basicShapeRadiusToCSSValue(style, ellipse.radiusX());
+        RefPtr radiusY = basicShapeRadiusToCSSValue(style, ellipse.radiusY());
+
+        if (ellipse.positionWasOmitted())
+            return CSSEllipseValue::create(WTFMove(radiusX), WTFMove(radiusY), nullptr, nullptr);
+
+        return CSSEllipseValue::create(
+            WTFMove(radiusX), WTFMove(radiusY),
             valueForCenterCoordinate(style, ellipse.centerX(), BoxOrient::Horizontal),
             valueForCenterCoordinate(style, ellipse.centerY(), BoxOrient::Vertical));
     }

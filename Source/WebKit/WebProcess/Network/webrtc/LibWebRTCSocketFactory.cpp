@@ -142,8 +142,8 @@ void LibWebRTCSocketFactory::removeSocket(LibWebRTCSocket& socket)
 void LibWebRTCSocketFactory::forSocketInGroup(ScriptExecutionContextIdentifier contextIdentifier, const Function<void(LibWebRTCSocket&)>& callback)
 {
     ASSERT(!WTF::isMainRunLoop());
-    for (auto* socket : m_sockets.values()) {
-        if (socket->contextIdentifier() == contextIdentifier)
+    for (auto& socket : m_sockets.values()) {
+        if (socket.get()->contextIdentifier() == contextIdentifier)
             callback(*socket);
     }
 }

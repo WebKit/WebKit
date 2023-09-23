@@ -39,9 +39,9 @@ class VisiblePosition;
 
 class FormatBlockCommand : public ApplyBlockElementCommand {
 public:
-    static Ref<FormatBlockCommand> create(Document& document, const QualifiedName& tagName)
+    static Ref<FormatBlockCommand> create(Ref<Document>&& document, const QualifiedName& tagName)
     {
-        return adoptRef(*new FormatBlockCommand(document, tagName));
+        return adoptRef(*new FormatBlockCommand(WTFMove(document), tagName));
     }
     
     bool preservesTypingStyle() const override { return true; }
@@ -50,7 +50,7 @@ public:
     bool didApply() const { return m_didApply; }
 
 private:
-    FormatBlockCommand(Document&, const QualifiedName& tagName);
+    FormatBlockCommand(Ref<Document>&&, const QualifiedName& tagName);
 
     void formatSelection(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection) override;
     void formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>&) override;

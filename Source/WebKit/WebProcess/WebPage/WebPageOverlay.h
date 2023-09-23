@@ -29,6 +29,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/SimpleRange.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/RetainPtr.h>
 
 #if HAVE(SECURE_ACTION_CONTEXT)
@@ -48,7 +49,7 @@ namespace WebKit {
 class WebFrame;
 class WebPage;
 
-class WebPageOverlay : public API::ObjectImpl<API::Object::Type::BundlePageOverlay>, private WebCore::PageOverlay::Client {
+class WebPageOverlay : public API::ObjectImpl<API::Object::Type::BundlePageOverlay>, private WebCore::PageOverlay::Client, public CanMakeCheckedPtr {
 public:
     struct ActionContext;
 

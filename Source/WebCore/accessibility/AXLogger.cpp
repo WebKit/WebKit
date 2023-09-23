@@ -625,6 +625,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXPageScrolled:
         stream << "AXPageScrolled";
         break;
+    case AXObjectCache::AXNotification::AXPopoverTargetChanged:
+        stream << "AXPopoverTargetChanged";
+        break;
     case AXObjectCache::AXNotification::AXPositionInSetChanged:
         stream << "AXPositionInSetChanged";
         break;
@@ -639,6 +642,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXRowSpanChanged:
         stream << "AXRowSpanChanged";
+        break;
+    case AXObjectCache::AXNotification::AXCellScopeChanged:
+        stream << "AXCellScopeChanged";
         break;
     case AXObjectCache::AXNotification::AXSelectedChildrenChanged:
         stream << "AXSelectedChildrenChanged";

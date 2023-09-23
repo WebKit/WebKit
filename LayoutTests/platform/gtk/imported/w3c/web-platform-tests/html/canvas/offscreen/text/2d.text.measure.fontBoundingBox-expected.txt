@@ -1,7 +1,0 @@
-2d.text.measure.fontBoundingBox
-
-Testing fontBoundingBox measurements
-
-
-PASS Testing fontBoundingBox measurements
-

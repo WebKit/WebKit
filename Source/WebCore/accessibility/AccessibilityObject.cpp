@@ -1455,13 +1455,13 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositi
 
 VisiblePositionRange AccessibilityObject::positionOfLeftWord(const VisiblePosition& visiblePos) const
 {
-    auto start = startOfWord(visiblePos, LeftWordIfOnBoundary);
+    auto start = startOfWord(visiblePos, WordSide::LeftWordIfOnBoundary);
     return { start, endOfWord(start) };
 }
 
 VisiblePositionRange AccessibilityObject::positionOfRightWord(const VisiblePosition& visiblePos) const
 {
-    auto start = startOfWord(visiblePos, RightWordIfOnBoundary);
+    auto start = startOfWord(visiblePos, WordSide::RightWordIfOnBoundary);
     return { start, endOfWord(start) };
 }
 

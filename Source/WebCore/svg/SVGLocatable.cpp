@@ -68,7 +68,7 @@ FloatRect SVGLocatable::getBBox(SVGElement* element, StyleUpdateStrategy styleUp
 {
     ASSERT(element);
     if (styleUpdateStrategy == AllowStyleUpdate)
-        element->document().updateLayoutIgnorePendingStylesheets();
+        element->document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, element);
 
     // FIXME: Eventually we should support getBBox for detached elements.
     if (!element->renderer())
@@ -81,7 +81,7 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
 {
     ASSERT(element);
     if (styleUpdateStrategy == AllowStyleUpdate)
-        element->document().updateLayoutIgnorePendingStylesheets();
+        element->document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, element);
 
     SVGElement* stopAtElement = mode == NearestViewportScope ? nearestViewportElement(element) : nullptr;
 

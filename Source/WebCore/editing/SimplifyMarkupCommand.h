@@ -31,13 +31,13 @@ namespace WebCore {
 
 class SimplifyMarkupCommand : public CompositeEditCommand {
 public:
-    static Ref<SimplifyMarkupCommand> create(Document& document, Node* firstNode, Node* nodeAfterLast)
+    static Ref<SimplifyMarkupCommand> create(Ref<Document>&& document, Node* firstNode, Node* nodeAfterLast)
     {
-        return adoptRef(*new SimplifyMarkupCommand(document, firstNode, nodeAfterLast));
+        return adoptRef(*new SimplifyMarkupCommand(WTFMove(document), firstNode, nodeAfterLast));
     }
 
 private:
-    SimplifyMarkupCommand(Document&, Node* firstNode, Node* nodeAfterLast);
+    SimplifyMarkupCommand(Ref<Document>&&, Node* firstNode, Node* nodeAfterLast);
 
     void doApply() override;
     int pruneSubsequentAncestorsToRemove(Vector<Ref<Node>>& nodesToRemove, size_t startNodeIndex);

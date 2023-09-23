@@ -147,7 +147,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, setter=_setForceFTPDirectoryListings:) BOOL _forceFTPDirectoryListings;
 @property (nonatomic, setter=_setLocalStorageDatabasePath:) NSString *_localStorageDatabasePath;
 @property (nonatomic) BOOL acceleratedDrawingEnabled;
-@property (nonatomic) BOOL displayListDrawingEnabled;
 @property (nonatomic) BOOL resourceLoadStatisticsEnabled;
 @property (nonatomic) BOOL canvasUsesAcceleratedDrawing;
 @property (nonatomic) BOOL acceleratedCompositingEnabled;
@@ -356,6 +355,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL subpixelAntialiasedLayerTextEnabled;
 @property (nonatomic) BOOL webGL2Enabled;
 @property (nonatomic) BOOL loadsSiteIconsIgnoringImageLoadingPreference;
+@property (nonatomic) BOOL displayListDrawingEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

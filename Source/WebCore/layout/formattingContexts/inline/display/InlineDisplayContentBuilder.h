@@ -28,6 +28,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineLineBuilder.h"
 #include "LayoutUnits.h"
+#include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
@@ -63,6 +64,8 @@ private:
     void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, InlineDisplay::Boxes&);
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, InlineDisplay::Boxes&);
     void appendAssociatedRubyAnnotationBoxIfNeeded(const Box&, InlineDisplay::Boxes&);
+    void handleInlineBoxEnd(const Line::Run&, const InlineDisplay::Boxes&);
+    void applyRubyOverhang(InlineDisplay::Boxes&) const;
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
     void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
@@ -94,6 +97,7 @@ private:
     // FIXME: This should take DisplayLine::isTruncatedInBlockDirection() for non-prefixed line-clamp.
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
+    Vector<WTF::Range<size_t>> m_rubyColumnRangeList;
 };
 
 }

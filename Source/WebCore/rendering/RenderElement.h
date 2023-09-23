@@ -25,6 +25,7 @@
 #include "HitTestRequest.h"
 #include "LengthFunctions.h"
 #include "RenderObject.h"
+#include <wtf/Packed.h>
 
 namespace WebCore {
 
@@ -83,11 +84,12 @@ public:
 
     // This is null for anonymous renderers.
     Element* element() const { return downcast<Element>(RenderObject::node()); }
+    RefPtr<Element> protectedElement() const { return element(); }
     Element* nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
     Element* generatingElement() const;
 
-    RenderObject* firstChild() const { return m_firstChild; }
-    RenderObject* lastChild() const { return m_lastChild; }
+    RenderObject* firstChild() const { return m_firstChild.get(); }
+    RenderObject* lastChild() const { return m_lastChild.get(); }
     RenderObject* firstInFlowChild() const;
     RenderObject* lastInFlowChild() const;
 
@@ -159,7 +161,7 @@ public:
     virtual void layout();
 
     /* This function performs a layout only if one is needed. */
-    void layoutIfNeeded() { if (needsLayout()) layout(); }
+    void layoutIfNeeded();
 
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
@@ -291,6 +293,8 @@ public:
 
     bool isSkippedContentRoot() const;
 
+    void clearNeedsLayoutForDescendants();
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
@@ -387,6 +391,7 @@ private:
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();
 
+    PackedPtr<RenderObject> m_firstChild;
     unsigned m_baseTypeFlags : 6;
     unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
@@ -395,6 +400,9 @@ private:
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuationChainNode : 1;
+
+    PackedPtr<RenderObject> m_lastChild;
+
     unsigned m_isContinuation : 1;
     unsigned m_isFirstLetter : 1;
 
@@ -408,9 +416,6 @@ private:
     unsigned m_visibleInViewportState : 2;
 
     unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1;
-
-    RenderObject* m_firstChild;
-    RenderObject* m_lastChild;
 
     RenderStyle m_style;
 };

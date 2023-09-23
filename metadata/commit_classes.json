@@ -9,6 +9,12 @@
 		"paths": ["Configurations/Version.xcconfig"]
 	},
 	{
+		"name": "Poison",
+		"pickable": false,
+		"headers": ["Poisoned commit"],
+		"paths": ["metadata/poison.txt"]
+	},
+	{
 		"name": "Build-fix",
 		"pickable": false,
 		"headers": [

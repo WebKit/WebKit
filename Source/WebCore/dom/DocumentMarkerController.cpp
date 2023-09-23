@@ -499,7 +499,8 @@ void DocumentMarkerController::forEachOfTypes(OptionSet<DocumentMarker::MarkerTy
             if (!types.contains(marker.type()))
                 continue;
 
-            function(*nodeMarkers.key, marker);
+            Ref node { *nodeMarkers.key };
+            function(node, marker);
         }
     }
 }

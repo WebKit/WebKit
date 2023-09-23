@@ -220,7 +220,6 @@ LocalFrameView::LocalFrameView(LocalFrame& frame)
 #endif
     if (frame.document() && frame.document()->settings().cssScrollAnchoringEnabled())
         m_scrollAnchoringController = WTF::makeUnique<ScrollAnchoringController>(*this);
-
 }
 
 Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame)
@@ -1333,7 +1332,7 @@ void LocalFrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
         m_firstLayoutCallbackPending = true;
     }
     adjustScrollbarsForLayout(firstLayout);
-        
+
     auto oldSize = m_lastUsedSizeForLayout;
     auto newSize = layoutSize();
     if (oldSize != newSize) {
@@ -2848,8 +2847,6 @@ void LocalFrameView::didChangeScrollOffset()
     if (auto* page = m_frame->page())
         page->pageOverlayController().didScrollFrame(m_frame.get());
     m_frame->loader().client().didChangeScrollOffset();
-    if (m_scrollAnchoringController)
-        m_scrollAnchoringController->invalidateAnchorElement();
 }
 
 void LocalFrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& oldOffset, const ScrollOffset& newOffset)
@@ -2890,6 +2887,7 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
     }
 
     LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView " << this << " scrollPositionChanged from " << oldPosition << " to " << newPosition << " (scale " << frameScaleFactor() << " )");
+
     updateLayoutViewport();
     viewportContentsChanged();
 
@@ -2897,6 +2895,9 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
         if (auto* layer = renderView->layer())
             m_frame->editor().renderLayerDidScroll(*layer);
     }
+
+    invalidateScrollAnchoringElement();
+    updateScrollAnchoringElement();
 }
 
 void LocalFrameView::applyRecursivelyWithVisibleRect(const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>& apply)
@@ -3866,6 +3867,41 @@ void LocalFrameView::performPostLayoutTasks()
     m_frame->document()->scheduleDeferredAXObjectCacheUpdate();
 }
 
+void LocalFrameView::invalidateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->invalidateAnchorElement();
+}
+
+void LocalFrameView::updateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->updateAnchorElement();
+}
+
+void LocalFrameView::updateScrollPositionForScrollAnchoringController()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->adjustScrollPositionForAnchoring();
+}
+
+void LocalFrameView::dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableArea& scrollableArea)
+{
+    m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate.remove(scrollableArea);
+}
+
+void LocalFrameView::queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea& scrollableArea)
+{
+    m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate.add(scrollableArea);
+}
+
+void LocalFrameView::updateScrollAnchoringPositionForScrollableAreas()
+{
+    auto scrollableAreasNeedingUpdate = std::exchange(m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate, { });
+    for (auto& scrollableArea : scrollableAreasNeedingUpdate)
+        scrollableArea.updateScrollPositionForScrollAnchoringController();
+}
+
 IntSize LocalFrameView::sizeForResizeEvent() const
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3918,6 +3954,10 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
         FRAMEVIEW_RELEASE_LOG(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
         return;
     }
+
+    // TODO: move this to a method called for all scrollable areas
+    invalidateScrollAnchoringElement();
+    updateScrollAnchoringElement();
 
     LOG_WITH_STREAM(Events, stream << "LocalFrameView " << this << " scheduleResizeEventIfNeeded scheduling resize event for document" << document << ", size " << currentSize);
     document->setNeedsDOMWindowResizeEvent();

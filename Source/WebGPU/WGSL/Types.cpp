@@ -183,6 +183,25 @@ void Type::dump(PrintStream& out) const
             }
             out.print(">");
         },
+        [&](const TextureDepth& texture) {
+            switch (texture.kind) {
+            case TextureDepth::Kind::TextureDepth2d:
+                out.print("texture_depth_2d");
+                break;
+            case TextureDepth::Kind::TextureDepth2dArray:
+                out.print("texture_depth_2d_array");
+                break;
+            case TextureDepth::Kind::TextureDepthCube:
+                out.print("texture_depth_cube");
+                break;
+            case TextureDepth::Kind::TextureDepthCubeArray:
+                out.print("texture_depth_cube_array");
+                break;
+            case TextureDepth::Kind::TextureDepthMultisampled2d:
+                out.print("texture_depth_multisampled_2d");
+                break;
+            }
+        },
         [&](const Reference& reference) {
             out.print("ref<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
         },
@@ -322,8 +341,7 @@ unsigned Type::size() const
             return matrix.columns * WTF::roundUpToMultipleOf(rowAlignment, rowSize);
         },
         [&](const Array& array) -> unsigned {
-            ASSERT(array.size.has_value());
-            return *array.size * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            return array.size.value_or(1) * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
         },
         [&](const Struct& structure) -> unsigned {
             unsigned alignment = 0;
@@ -343,6 +361,9 @@ unsigned Type::size() const
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TextureStorage&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureDepth&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Reference&) -> unsigned {
@@ -408,6 +429,9 @@ unsigned Type::alignment() const
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TextureStorage&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureDepth&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Reference&) -> unsigned {

@@ -59,6 +59,9 @@ JSObjectRef toJSError(JSContextRef, NSString *callingAPIName, NSString *sourceKe
 
 NSString *toWebAPI(NSLocale *);
 
+/// This matches the maximum message length enforced by Chromium in its `MessageFromJSONString()` function.
+constexpr size_t webExtensionMaxMessageLength = 1024 * 1024 * 64;
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -291,29 +291,6 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
     return {{ WTFMove(identifier), WTFMove(updateResponseCounter), WTFMove(requestHeadersGuard), WTFMove(request), WTFMove(options.value()), WTFMove(referrer), WTFMove(responseHeadersGuard), WTFMove(response), WTFMove(responseBody), responseBodySize }};
 }
 
-void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bool>& boxEdges)
-{
-    SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
-}
-    
-std::optional<RectEdges<bool>> ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder)
-{
-    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder);
-}
-
-#if ENABLE(META_VIEWPORT)
-void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportArguments& viewportArguments)
-{
-    SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
-}
-
-std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decoder& decoder)
-{
-    return SimpleArgumentCoder<ViewportArguments>::decode(decoder);
-}
-
-#endif // ENABLE(META_VIEWPORT)
-
 void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 {
     encoder << length.type() << length.hasQuirk();
@@ -2064,46 +2041,6 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
     (*filter)->setFilterRegion(*filterRegion);
 
     return filter;
-}
-
-template<typename Encoder>
-void ArgumentCoder<Path>::encode(Encoder& encoder, const Path& path)
-{
-    if (auto segment = path.singleSegment())
-        encoder << false << *segment;
-    else if (auto* segments = path.segmentsIfExists())
-        encoder << true << *segments;
-    else
-        encoder << true << path.segments();
-}
-
-template
-void ArgumentCoder<Path>::encode<Encoder>(Encoder&, const Path&);
-template
-void ArgumentCoder<Path>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Path&);
-
-std::optional<Path> ArgumentCoder<Path>::decode(Decoder& decoder)
-{
-    std::optional<bool> hasVector;
-    decoder >> hasVector;
-    if (!hasVector)
-        return std::nullopt;
-
-    if (!*hasVector) {
-        std::optional<PathSegment> segment;
-        decoder >> segment;
-        if (!segment)
-            return std::nullopt;
-
-        return Path(WTFMove(*segment));
-    }
-
-    std::optional<Vector<PathSegment>> segments;
-    decoder >> segments;
-    if (!segments)
-        return std::nullopt;
-
-    return Path(WTFMove(*segments));
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)

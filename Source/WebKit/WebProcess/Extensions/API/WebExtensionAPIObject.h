@@ -29,6 +29,7 @@
 
 #include "JSWebExtensionWrappable.h"
 #include "JSWebExtensionWrapper.h"
+#include "WebExtensionContentWorldType.h"
 #include "WebExtensionContextProxy.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -58,6 +59,8 @@ public:
 
     ForMainWorld forMainWorld() const { return m_forMainWorld; }
     bool isForMainWorld() const { return m_forMainWorld == ForMainWorld::Yes; }
+
+    WebExtensionContentWorldType contentWorldType() const { return isForMainWorld() ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript; }
 
     virtual WebExtensionAPIRuntimeBase& runtime() { return *m_runtime; }
     WebExtensionContextProxy& extensionContext() { return *m_extensionContext; }

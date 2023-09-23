@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LocalDOMWindow.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -35,7 +36,7 @@ namespace WebCore {
 class DOMWrapperWorld;
 class LocalFrame;
 
-class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public LocalDOMWindow::Observer {
+class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public LocalDOMWindow::Observer, public CanMakeCheckedPtr {
 public:
     static Ref<DOMWindowExtension> create(LocalDOMWindow* window, DOMWrapperWorld& world)
     {

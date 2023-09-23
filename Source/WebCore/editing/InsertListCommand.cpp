@@ -49,9 +49,9 @@ static Node* enclosingListChild(Node* node, Node* listNode)
     return listChild;
 }
 
-RefPtr<HTMLElement> InsertListCommand::insertList(Document& document, Type type)
+RefPtr<HTMLElement> InsertListCommand::insertList(Ref<Document>&& document, Type type)
 {
-    RefPtr<InsertListCommand> insertCommand = create(document, type);
+    RefPtr<InsertListCommand> insertCommand = create(WTFMove(document), type);
     insertCommand->apply();
     return insertCommand->m_listElement;
 }
@@ -110,8 +110,8 @@ bool InsertListCommand::selectionHasListOfType(const VisibleSelection& selection
     return true;
 }
 
-InsertListCommand::InsertListCommand(Document& document, Type type)
-    : CompositeEditCommand(document)
+InsertListCommand::InsertListCommand(Ref<Document>&& document, Type type)
+    : CompositeEditCommand(WTFMove(document))
     , m_type(type)
 {
 }

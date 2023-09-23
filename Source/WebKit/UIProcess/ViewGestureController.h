@@ -31,6 +31,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -96,7 +97,7 @@ class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
 
-class ViewGestureController : private IPC::MessageReceiver {
+class ViewGestureController : private IPC::MessageReceiver, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ViewGestureController);
 public:

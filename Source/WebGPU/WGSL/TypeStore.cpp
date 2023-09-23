@@ -117,6 +117,11 @@ TypeStore::TypeStore()
     m_accessMode = allocateType<Primitive>(Primitive::AccessMode);
     m_texelFormat = allocateType<Primitive>(Primitive::TexelFormat);
     m_addressSpace = allocateType<Primitive>(Primitive::AddressSpace);
+    m_textureDepth2d = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepth2d);
+    m_textureDepthArray2d = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepth2dArray);
+    m_textureDepthCube = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepthCube);
+    m_textureDepthArrayCube = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepthCubeArray);
+    m_textureDepthMultisampled2d = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepthMultisampled2d);
 }
 
 const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, const Type*>&& fields)

@@ -650,7 +650,7 @@ ScratchRegisterAllocator InlineCacheCompiler::makeDefaultScratchAllocator(GPRReg
 }
 
 #if CPU(X86_64) && OS(WINDOWS)
-static constexpr size_t prologueSizeInBytesDataIC = 4;
+static constexpr size_t prologueSizeInBytesDataIC = 5;
 #elif CPU(X86_64)
 static constexpr size_t prologueSizeInBytesDataIC = 1;
 #elif CPU(ARM64E)

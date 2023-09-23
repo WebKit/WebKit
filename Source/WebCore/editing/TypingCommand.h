@@ -56,14 +56,14 @@ public:
         IsAutocompletion = 1 << 5,
     };
 
-    static void deleteSelection(Document&, OptionSet<Option> = { }, TextCompositionType = TextCompositionType::None);
-    static void deleteKeyPressed(Document&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
-    static void forwardDeleteKeyPressed(Document&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
-    static void insertText(Document&, const String&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
-    static void insertText(Document&, const String&, const VisibleSelection&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
-    static void insertLineBreak(Document&, OptionSet<Option>);
-    static void insertParagraphSeparator(Document&, OptionSet<Option>);
-    static void insertParagraphSeparatorInQuotedContent(Document&);
+    static void deleteSelection(Ref<Document>&&, OptionSet<Option> = { }, TextCompositionType = TextCompositionType::None);
+    static void deleteKeyPressed(Ref<Document>&&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
+    static void forwardDeleteKeyPressed(Ref<Document>&&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
+    static void insertText(Ref<Document>&&, const String&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
+    static void insertText(Ref<Document>&&, const String&, const VisibleSelection&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
+    static void insertLineBreak(Ref<Document>&&, OptionSet<Option>);
+    static void insertParagraphSeparator(Ref<Document>&&, OptionSet<Option>);
+    static void insertParagraphSeparatorInQuotedContent(Ref<Document>&&);
     static void closeTyping(Document&);
 #if PLATFORM(IOS_FAMILY)
     static void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Document&, const VisibleSelection&);
@@ -85,17 +85,17 @@ public:
 #endif
 
 private:
-    static Ref<TypingCommand> create(Document& document, Type command, const String& text = emptyString(), OptionSet<Option> options = { }, TextGranularity granularity = TextGranularity::CharacterGranularity, TextCompositionType compositionType = TextCompositionType::None)
+    static Ref<TypingCommand> create(Ref<Document>&& document, Type command, const String& text = emptyString(), OptionSet<Option> options = { }, TextGranularity granularity = TextGranularity::CharacterGranularity, TextCompositionType compositionType = TextCompositionType::None)
     {
-        return adoptRef(*new TypingCommand(document, command, text, options, granularity, compositionType));
+        return adoptRef(*new TypingCommand(WTFMove(document), command, text, options, granularity, compositionType));
     }
 
-    static Ref<TypingCommand> create(Document& document, Type command, const String& text, OptionSet<Option> options, TextCompositionType compositionType)
+    static Ref<TypingCommand> create(Ref<Document>&& document, Type command, const String& text, OptionSet<Option> options, TextCompositionType compositionType)
     {
-        return adoptRef(*new TypingCommand(document, command, text, options, TextGranularity::CharacterGranularity, compositionType));
+        return adoptRef(*new TypingCommand(WTFMove(document), command, text, options, TextGranularity::CharacterGranularity, compositionType));
     }
 
-    TypingCommand(Document&, Type, const String& text, OptionSet<Option>, TextGranularity, TextCompositionType);
+    TypingCommand(Ref<Document>&&, Type, const String& text, OptionSet<Option>, TextGranularity, TextCompositionType);
 
     bool smartDelete() const { return m_smartDelete; }
     void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }

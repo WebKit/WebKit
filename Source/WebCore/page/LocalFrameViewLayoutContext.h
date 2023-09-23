@@ -93,6 +93,9 @@ public:
     bool isInRenderTreeLayout() const { return layoutPhase() == LayoutPhase::InRenderTreeLayout; }
     bool inPaintableState() const { return layoutPhase() != LayoutPhase::InRenderTreeLayout && layoutPhase() != LayoutPhase::InViewSizeAdjust && (layoutPhase() != LayoutPhase::InPostLayout || inAsynchronousTasks()); }
 
+    bool needsSkippedContentLayout() const { return m_needsSkippedContentLayout; }
+    void setNeedsSkippedContentLayout(bool needsSkippedContentLayout) { m_needsSkippedContentLayout = needsSkippedContentLayout; }
+
     unsigned layoutCount() const { return m_layoutCount; }
 
     RenderElement* subtreeLayoutRoot() const;
@@ -182,6 +185,7 @@ private:
     bool m_needsFullRepaint { true };
     bool m_inAsynchronousTasks { false };
     bool m_setNeedsLayoutWasDeferred { false };
+    bool m_needsSkippedContentLayout { false };
     LayoutPhase m_layoutPhase { LayoutPhase::OutsideLayout };
     enum class LayoutNestedState : uint8_t  { NotInLayout, NotNested, Nested };
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };

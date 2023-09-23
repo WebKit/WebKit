@@ -35,6 +35,8 @@
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "Logging.h"
+#import "WebExtensionAPITabs.h"
+#import "WebExtensionMessageSenderParameters.h"
 #import <objc/runtime.h>
 
 namespace WebKit {

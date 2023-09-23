@@ -502,7 +502,6 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     bool showDebugBorders = settings.showDebugBorders();
     bool showRepaintCounter = settings.showRepaintCounter();
     bool acceleratedDrawingEnabled = settings.acceleratedDrawingEnabled();
-    bool displayListDrawingEnabled = settings.displayListDrawingEnabled();
 
     // forceCompositingMode for subframes can only be computed after layout.
     bool forceCompositingMode = m_forceCompositingMode;
@@ -522,7 +521,6 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     m_showDebugBorders = showDebugBorders;
     m_showRepaintCounter = showRepaintCounter;
     m_acceleratedDrawingEnabled = acceleratedDrawingEnabled;
-    m_displayListDrawingEnabled = displayListDrawingEnabled;
     
     if (debugBordersChanged) {
         if (m_layerForHorizontalScrollbar)

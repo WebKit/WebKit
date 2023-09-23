@@ -1422,6 +1422,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     auto scrollViewInsets = [_scrollView adjustedContentInset];
     WebCore::FloatPoint minimumContentOffset(-scrollViewInsets.left, -scrollViewInsets.top);
+    if (_haveSetObscuredInsets) {
+        minimumContentOffset.move(_obscuredInsets.left, _obscuredInsets.top);
+        minimumContentOffset = minimumContentOffset.constrainedBetween(minimumContentOffset, WebCore::FloatPoint());
+    }
 
     // Center the target rect in the scroll view.
     // If the target doesn't fit in the scroll view, center on the gesture location instead.
@@ -4128,7 +4132,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     if (!viewportArgumentPairs)
         return std::nullopt;
 
-    WebCore::ViewportArguments viewportArguments(WebCore::ViewportArguments::ViewportMeta);
+    WebCore::ViewportArguments viewportArguments(WebCore::ViewportArguments::Type::ViewportMeta);
 
     [viewportArgumentPairs enumerateKeysAndObjectsUsingBlock:makeBlockPtr([&] (NSString *key, NSString *value, BOOL* stop) {
         if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]])

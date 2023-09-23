@@ -11,6 +11,18 @@ PASS ellipse(+50% +60%) - inline
 PASS ellipse(+10.00% +20.230%) - inline
 PASS ellipse(+30.00% 40.567%) - inline
 PASS ellipse(50.10% +60.7%) - inline
+PASS ellipse(+10px +20px at 50% 50%) - inline
+PASS ellipse(+30px 40px at 50% 50%) - inline
+PASS ellipse(50px +60px at 50% 50%) - inline
+PASS ellipse(+10.00px +20.230px at 50% 50%) - inline
+PASS ellipse(+30.00px 40.567px at 50% 50%) - inline
+PASS ellipse(50.10px +60.7px at 50% 50%) - inline
+PASS ellipse(+10% +20% at 50% 50%) - inline
+PASS ellipse(+30% 40% at 50% 50%) - inline
+PASS ellipse(+50% +60% at 50% 50%) - inline
+PASS ellipse(+10.00% +20.230% at 50% 50%) - inline
+PASS ellipse(+30.00% 40.567% at 50% 50%) - inline
+PASS ellipse(50.10% +60.7% at 50% 50%) - inline
 PASS ellipse(+10px +20px) - computed
 PASS ellipse(+30px 40px) - computed
 PASS ellipse(50px +60px) - computed
@@ -23,6 +35,18 @@ PASS ellipse(+50% +60%) - computed
 PASS ellipse(+10.00% +20.230%) - computed
 PASS ellipse(+30.00% 40.567%) - computed
 PASS ellipse(50.10% +60.7%) - computed
+PASS ellipse(+10px +20px at 50% 50%) - computed
+PASS ellipse(+30px 40px at 50% 50%) - computed
+PASS ellipse(50px +60px at 50% 50%) - computed
+PASS ellipse(+10.00px +20.230px at 50% 50%) - computed
+PASS ellipse(+30.00px 40.567px at 50% 50%) - computed
+PASS ellipse(50.10px +60.7px at 50% 50%) - computed
+PASS ellipse(+10% +20% at 50% 50%) - computed
+PASS ellipse(+30% 40% at 50% 50%) - computed
+PASS ellipse(+50% +60% at 50% 50%) - computed
+PASS ellipse(+10.00% +20.230% at 50% 50%) - computed
+PASS ellipse(+30.00% 40.567% at 50% 50%) - computed
+PASS ellipse(50.10% +60.7% at 50% 50%) - computed
 PASS ellipse(-10px -20px) - invalid
 PASS ellipse(-30px 40px) - invalid
 PASS ellipse(50px -60px) - invalid

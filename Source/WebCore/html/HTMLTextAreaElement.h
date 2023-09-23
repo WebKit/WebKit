@@ -53,6 +53,8 @@ public:
 
     bool shouldSaveAndRestoreFormControlState() const final { return true; }
 
+    bool dirAutoUsesValue() const final { return true; }
+
 private:
     HTMLTextAreaElement(Document&, HTMLFormElement*);
 

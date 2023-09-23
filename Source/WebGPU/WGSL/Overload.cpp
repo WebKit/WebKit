@@ -65,16 +65,13 @@ private:
     FixedVector<std::optional<ViableOverload>> considerCandidates();
     std::optional<ViableOverload> considerCandidate(const OverloadCandidate&);
     ConversionRank calculateRank(const AbstractType&, const Type*);
-    ConversionRank calculateRank(const AbstractScalarType&, const Type*);
     ConversionRank conversionRank(const Type*, const Type*) const;
 
     bool unify(const TypeVariable*, const Type*);
     bool unify(const AbstractType&, const Type*);
-    bool unify(const AbstractScalarType&, const Type*);
     bool assign(TypeVariable, const Type*);
     const Type* resolve(TypeVariable) const;
     const Type* materialize(const AbstractType&) const;
-    const Type* materialize(const AbstractScalarType&) const;
 
     bool unify(const AbstractValue&, unsigned);
     void assign(ValueVariable, unsigned);
@@ -141,7 +138,7 @@ std::optional<SelectedOverload> OverloadResolver::resolve()
 
 const Type* OverloadResolver::materialize(const AbstractType& abstractType) const
 {
-    return WTF::switchOn(abstractType,
+    return WTF::switchOn(*abstractType,
         [&](const Type* type) -> const Type* {
             return type;
         },
@@ -188,22 +185,11 @@ const Type* OverloadResolver::materialize(const AbstractType& abstractType) cons
                 return m_types.pointerType(static_cast<AddressSpace>(addressSpace), element, static_cast<AccessMode>(accessMode));
             }
             return nullptr;
-        });
-}
-
-const Type* OverloadResolver::materialize(const AbstractScalarType& abstractScalarType) const
-{
-    return WTF::switchOn(abstractScalarType,
-        [&](const Type* type) -> const Type* {
-            return type;
         },
-        [&](TypeVariable variable) -> const Type* {
-            const Type* type = resolve(variable);
-            if (!type)
-                return nullptr;
-            type = satisfyOrPromote(type, variable.constraints, m_types);
-            RELEASE_ASSERT(type);
-            return type;
+        [&](const AbstractArray& array) -> const Type* {
+            if (auto* element = materialize(array.element))
+                return m_types.arrayType(element, std::nullopt);
+            return nullptr;
         });
 }
 
@@ -293,18 +279,18 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
 
 ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, const Type* argumentType)
 {
-    if (auto* variable = std::get_if<TypeVariable>(&parameter)) {
+    if (auto* variable = std::get_if<TypeVariable>(parameter.get())) {
         auto* resolvedType = resolve(*variable);
         ASSERT(resolvedType);
         return conversionRank(argumentType, resolvedType);
     }
 
-    if (auto* referenceParameter = std::get_if<AbstractReference>(&parameter)) {
+    if (auto* referenceParameter = std::get_if<AbstractReference>(parameter.get())) {
         auto& referenceArgument = std::get<Types::Reference>(*argumentType);
         return calculateRank(referenceParameter->element, referenceArgument.element);
     }
 
-    if (auto* pointerParameter = std::get_if<AbstractPointer>(&parameter)) {
+    if (auto* pointerParameter = std::get_if<AbstractPointer>(parameter.get())) {
         auto& pointerArgument = std::get<Types::Pointer>(*argumentType);
         return calculateRank(pointerParameter->element, pointerArgument.element);
     }
@@ -314,34 +300,27 @@ ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, co
         return calculateRank(parameter, reference->element);
     }
 
-    if (auto* vectorParameter = std::get_if<AbstractVector>(&parameter)) {
+    if (auto* vectorParameter = std::get_if<AbstractVector>(parameter.get())) {
         auto& vectorArgument = std::get<Types::Vector>(*argumentType);
         return calculateRank(vectorParameter->element, vectorArgument.element);
     }
 
-    if (auto* matrixParameter = std::get_if<AbstractMatrix>(&parameter)) {
+    if (auto* matrixParameter = std::get_if<AbstractMatrix>(parameter.get())) {
         auto& matrixArgument = std::get<Types::Matrix>(*argumentType);
         return calculateRank(matrixParameter->element, matrixArgument.element);
     }
 
-    if (auto* textureParameter = std::get_if<AbstractTexture>(&parameter)) {
+    if (auto* textureParameter = std::get_if<AbstractTexture>(parameter.get())) {
         auto& textureArgument = std::get<Types::Texture>(*argumentType);
         return calculateRank(textureParameter->element, textureArgument.element);
     }
 
-    auto* parameterType = std::get<const Type*>(parameter);
-    return conversionRank(argumentType, parameterType);
-}
-
-ConversionRank OverloadResolver::calculateRank(const AbstractScalarType& parameter, const Type* argumentType)
-{
-    if (auto* variable = std::get_if<TypeVariable>(&parameter)) {
-        auto* resolvedType = resolve(*variable);
-        ASSERT(resolvedType);
-        return conversionRank(argumentType, resolvedType);
+    if (auto* arrayParameter = std::get_if<AbstractArray>(parameter.get())) {
+        auto& arrayArgument = std::get<Types::Array>(*argumentType);
+        return calculateRank(arrayParameter->element, arrayArgument.element);
     }
 
-    auto* parameterType = std::get<const Type*>(parameter);
+    auto* parameterType = std::get<const Type*>(*parameter);
     return conversionRank(argumentType, parameterType);
 }
 
@@ -391,10 +370,10 @@ bool OverloadResolver::unify(const TypeVariable* variable, const Type* argumentT
 bool OverloadResolver::unify(const AbstractType& parameter, const Type* argumentType)
 {
     logLn("unify parameter type '", parameter, "' with argument '", *argumentType, "'");
-    if (auto* variable = std::get_if<TypeVariable>(&parameter))
+    if (auto* variable = std::get_if<TypeVariable>(parameter.get()))
         return unify(variable, argumentType);
 
-    if (auto* referenceParameter = std::get_if<AbstractReference>(&parameter)) {
+    if (auto* referenceParameter = std::get_if<AbstractReference>(parameter.get())) {
         auto* referenceArgument = std::get_if<Types::Reference>(argumentType);
         if (!referenceArgument)
             return false;
@@ -405,7 +384,7 @@ bool OverloadResolver::unify(const AbstractType& parameter, const Type* argument
         return unify(referenceParameter->element, referenceArgument->element);
     }
 
-    if (auto* pointerParameter = std::get_if<AbstractPointer>(&parameter)) {
+    if (auto* pointerParameter = std::get_if<AbstractPointer>(parameter.get())) {
         auto* pointerArgument = std::get_if<Types::Pointer>(argumentType);
         if (!pointerArgument)
             return false;
@@ -422,7 +401,7 @@ bool OverloadResolver::unify(const AbstractType& parameter, const Type* argument
         return unify(parameter, reference->element);
     }
 
-    if (auto* vectorParameter = std::get_if<AbstractVector>(&parameter)) {
+    if (auto* vectorParameter = std::get_if<AbstractVector>(parameter.get())) {
         auto* vectorArgument = std::get_if<Types::Vector>(argumentType);
         if (!vectorArgument)
             return false;
@@ -431,7 +410,7 @@ bool OverloadResolver::unify(const AbstractType& parameter, const Type* argument
         return unify(vectorParameter->size, vectorArgument->size);
     }
 
-    if (auto* matrixParameter = std::get_if<AbstractMatrix>(&parameter)) {
+    if (auto* matrixParameter = std::get_if<AbstractMatrix>(parameter.get())) {
         auto* matrixArgument = std::get_if<Types::Matrix>(argumentType);
         if (!matrixArgument)
             return false;
@@ -442,7 +421,7 @@ bool OverloadResolver::unify(const AbstractType& parameter, const Type* argument
         return unify(matrixParameter->rows, matrixArgument->rows);
     }
 
-    if (auto* textureParameter = std::get_if<AbstractTexture>(&parameter)) {
+    if (auto* textureParameter = std::get_if<AbstractTexture>(parameter.get())) {
         auto* textureArgument = std::get_if<Types::Texture>(argumentType);
         if (!textureArgument)
             return false;
@@ -451,17 +430,17 @@ bool OverloadResolver::unify(const AbstractType& parameter, const Type* argument
         return unify(textureParameter->element, textureArgument->element);
     }
 
-    auto* parameterType = std::get<const Type*>(parameter);
-    return !!conversionRank(argumentType, parameterType);
-}
+    if (auto* arrayParameter = std::get_if<AbstractArray>(parameter.get())) {
+        auto* arrayArgument = std::get_if<Types::Array>(argumentType);
+        if (!arrayArgument)
+            return false;
+        // For now, we only support dynamic arrays
+        if (arrayArgument->size.has_value())
+            return false;
+        return unify(arrayParameter->element, arrayArgument->element);
+    }
 
-bool OverloadResolver::unify(const AbstractScalarType& parameter, const Type* argumentType)
-{
-    logLn("unify parameter type '", parameter, "' with argument '", *argumentType, "'");
-    if (auto* variable = std::get_if<TypeVariable>(&parameter))
-        return unify(variable, argumentType);
-
-    auto* parameterType = std::get<const Type*>(parameter);
+    auto* parameterType = std::get<const Type*>(*parameter);
     return !!conversionRank(argumentType, parameterType);
 }
 
@@ -553,7 +532,7 @@ void printInternal(PrintStream& out, const WGSL::TypeVariable& variable)
 
 void printInternal(PrintStream& out, const WGSL::AbstractType& type)
 {
-    WTF::switchOn(type,
+    WTF::switchOn(*type,
         [&](const WGSL::Type* type) {
             printInternal(out, *type);
         },
@@ -599,17 +578,11 @@ void printInternal(PrintStream& out, const WGSL::AbstractType& type)
             out.print(", ");
             printInternal(out, pointer.accessMode);
             out.print(">");
-        });
-}
-
-void printInternal(PrintStream& out, const WGSL::AbstractScalarType& type)
-{
-    WTF::switchOn(type,
-        [&](const WGSL::Type* type) {
-            printInternal(out, *type);
         },
-        [&](WGSL::TypeVariable variable) {
-            printInternal(out, variable);
+        [&](const WGSL::AbstractArray& array) {
+            out.print("array<");
+            printInternal(out, array.element);
+            out.print(">");
         });
 }
 

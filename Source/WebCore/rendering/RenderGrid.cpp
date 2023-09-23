@@ -1417,6 +1417,12 @@ bool RenderGrid::hasStaticPositionForChild(const RenderBox& child, GridTrackSizi
 
 void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
+    if (isSkippedContentRoot()) {
+        child.clearNeedsLayoutForDescendants();
+        child.clearNeedsLayout();
+        return;
+    }
+
     LayoutUnit columnBreadth = gridAreaBreadthForOutOfFlowChild(child, ForColumns);
     LayoutUnit rowBreadth = gridAreaBreadthForOutOfFlowChild(child, ForRows);
 

@@ -1,3 +1,3 @@
 
-FAIL Anchoring combined with scroll bounds clamping in the document. assert_equals: expected 100 but got 1600
+PASS Anchoring combined with scroll bounds clamping in the document.
 

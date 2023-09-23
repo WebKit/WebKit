@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPIRuntime.h"
+#include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 
 OBJC_CLASS NSDictionary;
@@ -59,15 +60,20 @@ public:
     WebExtensionAPIRuntime& runtime() final { return *this; }
 
 #if PLATFORM(COCOA)
-    NSURL *getURL(NSString *resourcePath, NSString **errorString);
-
+    NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
     NSDictionary *getManifest();
+    void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
 
     NSString *runtimeIdentifier();
 
-    void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
-
     JSValueRef lastError();
+
+    void sendMessage(WebFrame *, NSString *extensionID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+
+    WebExtensionAPIEvent& onMessage();
+
+private:
+    RefPtr<WebExtensionAPIEvent> m_onMessage;
 #endif
 };
 

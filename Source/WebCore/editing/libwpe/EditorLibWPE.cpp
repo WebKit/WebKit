@@ -66,7 +66,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
     PasteboardWebContent pasteboardContent;
     pasteboardContent.text = selectedTextForDataTransfer();
-    pasteboardContent.markup = serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes);
+    pasteboardContent.markup = serializePreservingVisualAppearance(document().selection().selection(), ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes);
     pasteboard.write(pasteboardContent);
 }
 
@@ -82,7 +82,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         return;
 
     bool chosePlainText;
-    auto fragment = createFragmentFromPasteboardData(*pasteboard, *m_document.frame(), *range, options.contains(PasteOption::AllowPlainText), chosePlainText);
+    auto fragment = createFragmentFromPasteboardData(*pasteboard, *document().frame(), *range, options.contains(PasteOption::AllowPlainText), chosePlainText);
 
     if (fragment && options.contains(PasteOption::AsQuotation))
         quoteFragmentForPasting(*fragment);

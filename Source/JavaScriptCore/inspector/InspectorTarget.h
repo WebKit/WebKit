@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InspectorFrontendChannel.h"
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -38,7 +39,7 @@ enum class InspectorTargetType : uint8_t {
     ServiceWorker,
 };
 
-class JS_EXPORT_PRIVATE InspectorTarget {
+class JS_EXPORT_PRIVATE InspectorTarget : public CanMakeWeakPtr<InspectorTarget> {
 public:
     virtual ~InspectorTarget() = default;
 

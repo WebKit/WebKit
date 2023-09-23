@@ -147,9 +147,8 @@ WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
     : m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
     ASSERT(manifest);
-    ASSERT([NSJSONSerialization isValidJSONObject:manifest]);
 
-    NSData *manifestData = [NSJSONSerialization dataWithJSONObject:manifest options:0 error:nullptr];
+    NSData *manifestData = encodeJSONData(manifest);
     RELEASE_ASSERT(manifestData);
 
     [m_resources setObject:manifestData forKey:@"manifest.json"];
@@ -171,7 +170,7 @@ bool WebExtension::manifestParsedSuccessfully()
 bool WebExtension::parseManifest(NSData *manifestData)
 {
     NSError *parseError;
-    m_manifest = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:manifestData options:0 error:&parseError]);
+    m_manifest = parseJSON(manifestData, &parseError);
     if (!m_manifest) {
         recordError(createError(Error::InvalidManifest, nil, parseError));
         return false;
@@ -211,7 +210,7 @@ NSDictionary *WebExtension::manifest()
 
 Ref<API::Data> WebExtension::serializeManifest()
 {
-    return API::Data::createWithoutCopying([NSJSONSerialization dataWithJSONObject:manifest() options:0 error:nullptr]);
+    return API::Data::createWithoutCopying(encodeJSONData(manifest()));
 }
 
 double WebExtension::manifestVersion()
@@ -223,7 +222,7 @@ double WebExtension::manifestVersion()
 
 Ref<API::Data> WebExtension::serializeLocalization()
 {
-    return API::Data::createWithoutCopying([NSJSONSerialization dataWithJSONObject:m_localization.get().localizationDictionary options:0 error:nullptr]);
+    return API::Data::createWithoutCopying(encodeJSONData(m_localization.get().localizationDictionary));
 }
 
 #if PLATFORM(MAC)
@@ -353,7 +352,7 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
         return [cachedString dataUsingEncoding:NSUTF8StringEncoding];
 
     if (NSDictionary *cachedDictionary = objectForKey<NSDictionary>(m_resources, path))
-        return [NSJSONSerialization dataWithJSONObject:cachedDictionary options:0 error:nullptr];
+        return encodeJSONData(cachedDictionary);
 
     if ([path isEqualToString:generatedBackgroundPageFilename])
         return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];

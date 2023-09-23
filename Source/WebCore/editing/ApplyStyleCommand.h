@@ -47,28 +47,28 @@ public:
     enum class AddStyledElement : bool { No, Yes };
     typedef bool (*IsInlineElementToRemoveFunction)(const Element*);
 
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, EditAction action = EditAction::ChangeAttributes, PropertyLevel level = PropertyLevel::Default)
+    static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, EditAction action = EditAction::ChangeAttributes, PropertyLevel level = PropertyLevel::Default)
     {
-        return adoptRef(*new ApplyStyleCommand(document, style, action, level));
+        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, action, level));
     }
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, const Position& start, const Position& end, EditAction action = EditAction::ChangeAttributes, PropertyLevel level = PropertyLevel::Default)
+    static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, const Position& start, const Position& end, EditAction action = EditAction::ChangeAttributes, PropertyLevel level = PropertyLevel::Default)
     {
-        return adoptRef(*new ApplyStyleCommand(document, style, start, end, action, level));
+        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, start, end, action, level));
     }
     static Ref<ApplyStyleCommand> create(Ref<Element>&& element, bool removeOnly = false, EditAction action = EditAction::ChangeAttributes)
     {
         return adoptRef(*new ApplyStyleCommand(WTFMove(element), removeOnly, action));
     }
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditAction::ChangeAttributes)
+    static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditAction::ChangeAttributes)
     {
-        return adoptRef(*new ApplyStyleCommand(document, style, isInlineElementToRemoveFunction, action));
+        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, isInlineElementToRemoveFunction, action));
     }
 
 private:
-    ApplyStyleCommand(Document&, const EditingStyle*, EditAction, PropertyLevel);
-    ApplyStyleCommand(Document&, const EditingStyle*, const Position& start, const Position& end, EditAction, PropertyLevel);
+    ApplyStyleCommand(Ref<Document>&&, const EditingStyle*, EditAction, PropertyLevel);
+    ApplyStyleCommand(Ref<Document>&&, const EditingStyle*, const Position& start, const Position& end, EditAction, PropertyLevel);
     ApplyStyleCommand(Ref<Element>&&, bool removeOnly, EditAction);
-    ApplyStyleCommand(Document&, const EditingStyle*, bool (*isInlineElementToRemove)(const Element*), EditAction);
+    ApplyStyleCommand(Ref<Document>&&, const EditingStyle*, bool (*isInlineElementToRemove)(const Element*), EditAction);
 
     void doApply() override;
     bool shouldDispatchInputEvents() const final { return false; }

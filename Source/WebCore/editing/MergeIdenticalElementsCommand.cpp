@@ -50,7 +50,7 @@ void MergeIdenticalElementsCommand::doApply()
         children.append(*child);
 
     for (auto& child : children)
-        m_element2->insertBefore(child, m_atChild.get());
+        m_element2->insertBefore(child, m_atChild.copyRef());
 
     m_element1->remove();
 }
@@ -63,7 +63,7 @@ void MergeIdenticalElementsCommand::doUnapply()
     if (!parent || !parent->hasEditableStyle())
         return;
 
-    if (parent->insertBefore(m_element1, m_element2.ptr()).hasException())
+    if (parent->insertBefore(m_element1, m_element2.copyRef()).hasException())
         return;
 
     Vector<Ref<Node>> children;

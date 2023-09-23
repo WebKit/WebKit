@@ -108,7 +108,7 @@ public:
     void removeUpdatingBookmark(Element&, Bookmark&);
 
     Bookmark bookmarkFor(Element&);
-    void swapTo(Element& oldElement, HTMLStackItem&& newItem, const Bookmark&);
+    void swapTo(Ref<Element> oldElement, HTMLStackItem&& newItem, const Bookmark&);
 
     void appendMarker();
     // clearToLastMarker also clears the marker (per the HTML5 spec).
