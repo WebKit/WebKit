@@ -33,13 +33,14 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/LocalFrame.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-typedef HashMap<WebCore::DOMWindowExtension*, InjectedBundleDOMWindowExtension*> ExtensionMap;
+using ExtensionMap = HashMap<CheckedPtr<WebCore::DOMWindowExtension>, CheckedPtr<InjectedBundleDOMWindowExtension>>;
 static ExtensionMap& allExtensions()
 {
     static NeverDestroyed<ExtensionMap> map;

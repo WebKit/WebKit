@@ -50,6 +50,8 @@ GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage
 {
 }
 
+GeolocationPermissionRequestManager::~GeolocationPermissionRequestManager() = default;
+
 void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation& geolocation)
 {
     auto* frame = geolocation.frame();
@@ -86,10 +88,10 @@ void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocatio
 
 void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geolocationID, const String& authorizationToken)
 {
-    Geolocation* geolocation = m_idToGeolocationMap.take(geolocationID);
+    RefPtr geolocation = m_idToGeolocationMap.take(geolocationID).get();
     if (!geolocation)
         return;
-    m_geolocationToIDMap.remove(geolocation);
+    m_geolocationToIDMap.remove(geolocation.get());
 
     geolocation->setIsAllowed(!authorizationToken.isNull(), authorizationToken);
 }

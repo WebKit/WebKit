@@ -29,15 +29,16 @@
 #include "NetworkProcessConnection.h"
 #include "WebIDBConnectionToServer.h"
 #include "WebProcess.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<PageGroupIdentifier, WebDatabaseProvider*>& databaseProviders()
+static HashMap<PageGroupIdentifier, CheckedPtr<WebDatabaseProvider>>& databaseProviders()
 {
-    static NeverDestroyed<HashMap<PageGroupIdentifier, WebDatabaseProvider*>> databaseProviders;
+    static NeverDestroyed<HashMap<PageGroupIdentifier, CheckedPtr<WebDatabaseProvider>>> databaseProviders;
 
     return databaseProviders;
 }

@@ -28,20 +28,21 @@
 
 #include "ContentWorldShared.h"
 #include "WebUserContentControllerProxy.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
 namespace API {
 
-static HashMap<WTF::String, ContentWorld*>& sharedWorldNameMap()
+static HashMap<WTF::String, CheckedPtr<ContentWorld>>& sharedWorldNameMap()
 {
-    static NeverDestroyed<HashMap<WTF::String, ContentWorld*>> sharedMap;
+    static NeverDestroyed<HashMap<WTF::String, CheckedPtr<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 
-static HashMap<WebKit::ContentWorldIdentifier, ContentWorld*>& sharedWorldIdentifierMap()
+static HashMap<WebKit::ContentWorldIdentifier, CheckedPtr<ContentWorld>>& sharedWorldIdentifierMap()
 {
-    static NeverDestroyed<HashMap<WebKit::ContentWorldIdentifier, ContentWorld*>> sharedMap;
+    static NeverDestroyed<HashMap<WebKit::ContentWorldIdentifier, CheckedPtr<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 
@@ -77,7 +78,7 @@ Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name)
     auto result = sharedWorldNameMap().add(name, nullptr);
     if (result.isNewEntry) {
         result.iterator->value = new ContentWorld(name);
-        return adoptRef(*result.iterator->value);
+        return adoptRef(*result.iterator->value.get());
     }
 
     return *result.iterator->value;
@@ -100,15 +101,15 @@ ContentWorld::~ContentWorld()
     ASSERT(m_identifier != WebKit::pageContentWorldIdentifier());
 
     auto result = sharedWorldIdentifierMap().take(m_identifier);
-    ASSERT_UNUSED(result, result == this || m_identifier == WebKit::pageContentWorldIdentifier());
+    ASSERT_UNUSED(result, result.get() == this || m_identifier == WebKit::pageContentWorldIdentifier());
 
     if (!name().isNull()) {
         auto taken = sharedWorldNameMap().take(name());
-        ASSERT_UNUSED(taken, taken == this);
+        ASSERT_UNUSED(taken, taken.get() == this);
     }
 
-    for (auto& proxy : m_associatedContentControllerProxies)
-        Ref { proxy }->contentWorldDestroyed(*this);
+    for (Ref proxy : m_associatedContentControllerProxies)
+        proxy->contentWorldDestroyed(*this);
 }
 
 void ContentWorld::addAssociatedUserContentControllerProxy(WebKit::WebUserContentControllerProxy& proxy)

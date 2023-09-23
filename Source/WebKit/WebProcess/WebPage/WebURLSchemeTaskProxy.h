@@ -27,6 +27,7 @@
 
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceRequest.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
 
@@ -42,7 +43,7 @@ namespace WebKit {
 class WebFrame;
 class WebURLSchemeHandlerProxy;
 
-class WebURLSchemeTaskProxy : public RefCounted<WebURLSchemeTaskProxy> {
+class WebURLSchemeTaskProxy : public RefCounted<WebURLSchemeTaskProxy>, public CanMakeCheckedPtr {
 public:
     static Ref<WebURLSchemeTaskProxy> create(WebURLSchemeHandlerProxy& handler, WebCore::ResourceLoader& loader, WebFrame& webFrame)
     {

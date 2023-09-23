@@ -29,13 +29,14 @@
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/CSSStyleDeclaration.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-typedef HashMap<CSSStyleDeclaration*, InjectedBundleCSSStyleDeclarationHandle*> DOMStyleDeclarationHandleCache;
+using DOMStyleDeclarationHandleCache = HashMap<CheckedPtr<CSSStyleDeclaration>, CheckedPtr<InjectedBundleCSSStyleDeclarationHandle>>;
 
 static DOMStyleDeclarationHandleCache& domStyleDeclarationHandleCache()
 {
@@ -56,7 +57,7 @@ RefPtr<InjectedBundleCSSStyleDeclarationHandle> InjectedBundleCSSStyleDeclaratio
 
     DOMStyleDeclarationHandleCache::AddResult result = domStyleDeclarationHandleCache().add(styleDeclaration, nullptr);
     if (!result.isNewEntry)
-        return result.iterator->value;
+        return result.iterator->value.get();
 
     auto styleDeclarationHandle = adoptRef(*new InjectedBundleCSSStyleDeclarationHandle(*styleDeclaration));
     result.iterator->value = styleDeclarationHandle.ptr();

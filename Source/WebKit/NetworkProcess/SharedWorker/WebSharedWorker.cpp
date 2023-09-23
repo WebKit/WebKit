@@ -28,16 +28,17 @@
 
 #include "WebSharedWorkerServer.h"
 #include "WebSharedWorkerServerToContextConnection.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
-static HashMap<WebCore::SharedWorkerIdentifier, WebSharedWorker*>& allWorkers()
+static HashMap<WebCore::SharedWorkerIdentifier, CheckedPtr<WebSharedWorker>>& allWorkers()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashMap<WebCore::SharedWorkerIdentifier, WebSharedWorker*>> allWorkers;
+    static NeverDestroyed<HashMap<WebCore::SharedWorkerIdentifier, CheckedPtr<WebSharedWorker>>> allWorkers;
     return allWorkers;
 }
 

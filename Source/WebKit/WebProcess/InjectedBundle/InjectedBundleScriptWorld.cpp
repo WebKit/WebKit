@@ -28,6 +28,7 @@
 
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/ScriptController.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenate.h>
@@ -36,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-typedef HashMap<DOMWrapperWorld*, InjectedBundleScriptWorld*> WorldMap;
+typedef HashMap<CheckedPtr<DOMWrapperWorld>, CheckedPtr<InjectedBundleScriptWorld>> WorldMap;
 
 static WorldMap& allWorlds()
 {
@@ -65,7 +66,7 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapper
     if (&world == &mainThreadNormalWorld())
         return normalWorld();
 
-    if (InjectedBundleScriptWorld* existingWorld = allWorlds().get(&world))
+    if (auto existingWorld = allWorlds().get(&world))
         return *existingWorld;
 
     return adoptRef(*new InjectedBundleScriptWorld(world, uniqueWorldName()));
@@ -73,9 +74,9 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapper
 
 InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
 {
-    for (auto* world : allWorlds().values()) {
-        if (world->name() == name)
-            return world;
+    for (auto& world : allWorlds().values()) {
+        if (world.get()->name() == name)
+            return world.get();
     }
     return nullptr;
 }

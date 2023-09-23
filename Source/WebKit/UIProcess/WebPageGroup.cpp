@@ -34,13 +34,14 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebUserContentControllerProxy.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebKit {
 
-typedef HashMap<PageGroupIdentifier, WebPageGroup*> WebPageGroupMap;
+using WebPageGroupMap = HashMap<PageGroupIdentifier, CheckedPtr<WebPageGroup>>;
 
 static WebPageGroupMap& webPageGroupMap()
 {
@@ -60,11 +61,11 @@ WebPageGroup* WebPageGroup::get(PageGroupIdentifier pageGroupID)
 
 void WebPageGroup::forEach(Function<void(WebPageGroup&)>&& function)
 {
-    auto allGroups = copyToVectorOf<RefPtr<WebPageGroup>>(webPageGroupMap().values());
-    for (auto& group : allGroups) {
-        if (group)
-            function(*group);
-    }
+    auto allGroups = WTF::map(webPageGroupMap().values(), [](auto&& group) -> Ref<WebPageGroup> {
+        return *group;
+    });
+    for (auto& group : allGroups)
+        function(group);
 }
 
 static WebPageGroupData pageGroupData(const String& identifier)

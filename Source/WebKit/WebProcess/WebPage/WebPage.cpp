@@ -7705,7 +7705,7 @@ void WebPage::registerURLSchemeHandler(WebURLSchemeHandlerIdentifier handlerIden
 
 void WebPage::urlSchemeTaskWillPerformRedirection(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, ResourceResponse&& response, ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
+    RefPtr handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
 
     auto actualNewRequest = request;
@@ -7714,7 +7714,7 @@ void WebPage::urlSchemeTaskWillPerformRedirection(WebURLSchemeHandlerIdentifier 
 
 void WebPage::urlSchemeTaskDidPerformRedirection(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, ResourceResponse&& response, ResourceRequest&& request)
 {
-    auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
+    RefPtr handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
 
     handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request), [] (ResourceRequest&&) {});
@@ -7722,7 +7722,7 @@ void WebPage::urlSchemeTaskDidPerformRedirection(WebURLSchemeHandlerIdentifier h
     
 void WebPage::urlSchemeTaskDidReceiveResponse(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceResponse& response)
 {
-    auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
+    RefPtr handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
 
     handler->taskDidReceiveResponse(taskIdentifier, response);
@@ -7730,7 +7730,7 @@ void WebPage::urlSchemeTaskDidReceiveResponse(WebURLSchemeHandlerIdentifier hand
 
 void WebPage::urlSchemeTaskDidReceiveData(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, Ref<WebCore::SharedBuffer>&& data)
 {
-    auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
+    RefPtr handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
 
     handler->taskDidReceiveData(taskIdentifier, WTFMove(data));
@@ -7738,7 +7738,7 @@ void WebPage::urlSchemeTaskDidReceiveData(WebURLSchemeHandlerIdentifier handlerI
 
 void WebPage::urlSchemeTaskDidComplete(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceError& error)
 {
-    auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
+    RefPtr handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
 
     handler->taskDidComplete(taskIdentifier, error);

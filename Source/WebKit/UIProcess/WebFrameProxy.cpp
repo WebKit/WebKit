@@ -51,6 +51,7 @@
 #include <WebCore/Image.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <stdio.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
@@ -61,10 +62,10 @@ using namespace WebCore;
 
 class WebPageProxy;
 
-static HashMap<FrameIdentifier, WebFrameProxy*>& allFrames()
+static HashMap<FrameIdentifier, CheckedPtr<WebFrameProxy>>& allFrames()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashMap<FrameIdentifier, WebFrameProxy*>> map;
+    static NeverDestroyed<HashMap<FrameIdentifier, CheckedPtr<WebFrameProxy>>> map;
     return map.get();
 }
 

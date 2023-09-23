@@ -54,6 +54,7 @@
 #include <WebCore/SimpleRange.h>
 #include <WebCore/Text.h>
 #include <WebCore/VisiblePosition.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
@@ -62,7 +63,7 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-typedef HashMap<Node*, InjectedBundleNodeHandle*> DOMNodeHandleCache;
+using DOMNodeHandleCache = HashMap<CheckedPtr<Node>, CheckedPtr<InjectedBundleNodeHandle>>;
 
 static DOMNodeHandleCache& domNodeHandleCache()
 {
@@ -86,7 +87,7 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node* nod
 
 Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node& node)
 {
-    if (auto* existingHandle = domNodeHandleCache().get(&node))
+    if (auto existingHandle = domNodeHandleCache().get(&node))
         return Ref<InjectedBundleNodeHandle>(*existingHandle);
 
     auto nodeHandle = InjectedBundleNodeHandle::create(node);

@@ -32,6 +32,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -72,7 +73,7 @@ public:
 
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.
-    HashMap<WebCore::LibWebRTCSocketIdentifier, LibWebRTCSocket*> m_sockets;
+    HashMap<WebCore::LibWebRTCSocketIdentifier, CheckedPtr<LibWebRTCSocket>> m_sockets;
     
     // We can own resolvers as we control their Destroy method.
     HashMap<LibWebRTCResolverIdentifier, std::unique_ptr<LibWebRTCResolver>> m_resolvers;

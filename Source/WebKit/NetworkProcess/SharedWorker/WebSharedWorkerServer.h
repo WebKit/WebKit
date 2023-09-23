@@ -32,6 +32,7 @@
 #include <WebCore/SharedWorkerKey.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace PAL {
@@ -84,7 +85,7 @@ private:
 
     NetworkSession& m_session;
     HashMap<WebCore::ProcessIdentifier, std::unique_ptr<WebSharedWorkerServerConnection>> m_connections;
-    HashMap<WebCore::RegistrableDomain, WebSharedWorkerServerToContextConnection*> m_contextConnections;
+    HashMap<WebCore::RegistrableDomain, CheckedPtr<WebSharedWorkerServerToContextConnection>> m_contextConnections;
     HashSet<WebCore::RegistrableDomain> m_pendingContextConnectionDomains;
     HashMap<WebCore::SharedWorkerKey, std::unique_ptr<WebSharedWorker>> m_sharedWorkers;
 };

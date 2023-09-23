@@ -588,7 +588,7 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
         return;
     }
 
-    if (auto task = m_urlSchemeTasks.take(resourceLoader->identifier())) {
+    if (RefPtr task = m_urlSchemeTasks.take(resourceLoader->identifier()).get()) {
         ASSERT(!m_internallyFailedResourceLoaders.contains(resourceLoader));
         task->stopLoading();
         return;
