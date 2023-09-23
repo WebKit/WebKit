@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/mouse-pointer-boundary-events-for-shadowdom.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_rightbutton.html
