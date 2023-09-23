@@ -49,6 +49,7 @@ private:
     bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
     bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override;
     void hasNodeWithAnimatedScrollChanged(bool) override;
+    void setRubberBandingInProgressForNode(WebCore::ScrollingNodeID, bool isRubberBanding) override;
 
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;

@@ -42,6 +42,7 @@ namespace WebKit {
 enum class RemoteScrollingUIStateChanges : uint8_t {
     ScrollSnapNodes     = 1 << 0,
     UserScrollNodes     = 1 << 1,
+    RubberbandingNodes  = 1 << 2,
 };
 
 class RemoteScrollingUIState {
@@ -66,10 +67,16 @@ public:
     void removeNodeWithActiveUserScroll(WebCore::ScrollingNodeID);
     void clearNodesWithActiveUserScroll();
 
+    const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveRubberband() const { return m_nodesWithActiveRubberband; }
+    void addNodeWithActiveRubberband(WebCore::ScrollingNodeID);
+    void removeNodeWithActiveRubberband(WebCore::ScrollingNodeID);
+    void clearNodesWithActiveRubberband();
+
 private:
     OptionSet<RemoteScrollingUIStateChanges> m_changes;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveScrollSnap;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveUserScrolls;
+    HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveRubberband;
 };
 
 } // namespace WebKit

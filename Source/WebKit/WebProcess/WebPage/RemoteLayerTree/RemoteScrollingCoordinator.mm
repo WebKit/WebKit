@@ -144,6 +144,9 @@ void RemoteScrollingCoordinator::scrollingStateInUIProcessChanged(const RemoteSc
 
     if (uiState.changes().contains(RemoteScrollingUIStateChanges::UserScrollNodes))
         m_nodesWithActiveUserScrolls = uiState.nodesWithActiveUserScrolls();
+
+    if (uiState.changes().contains(RemoteScrollingUIStateChanges::RubberbandingNodes))
+        m_nodesWithActiveRubberBanding = uiState.nodesWithActiveRubberband();
 }
 
 void RemoteScrollingCoordinator::addNodeWithActiveRubberBanding(ScrollingNodeID nodeID)
