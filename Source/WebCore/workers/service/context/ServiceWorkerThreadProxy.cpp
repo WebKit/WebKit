@@ -360,28 +360,33 @@ void ServiceWorkerThreadProxy::didSaveScriptsToDisk(ScriptBuffer&& script, HashM
     });
 }
 
-void ServiceWorkerThreadProxy::firePushEvent(std::optional<Vector<uint8_t>>&& data, CompletionHandler<void(bool)>&& callback)
+void ServiceWorkerThreadProxy::firePushEvent(std::optional<Vector<uint8_t>>&& data, std::optional<NotificationPayload>&& proposedPayload, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
     ASSERT(isMainThread());
 
-    if (m_ongoingFunctionalEventTasks.isEmpty())
-        thread().startFunctionalEventMonitoring();
+    if (m_ongoingNotificationPayloadFunctionalEventTasks.isEmpty())
+        thread().startNotificationPayloadFunctionalEventMonitoring();
 
     auto identifier = ++m_functionalEventTasksCounter;
-    ASSERT(!m_ongoingFunctionalEventTasks.contains(identifier));
-    m_ongoingFunctionalEventTasks.add(identifier, WTFMove(callback));
-    bool isPosted = postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, identifier, data = WTFMove(data)](auto&) mutable {
-        thread().queueTaskToFirePushEvent(WTFMove(data), [this, protectedThis = WTFMove(protectedThis), identifier](bool result) mutable {
-            callOnMainThread([this, protectedThis = WTFMove(protectedThis), identifier, result]() mutable {
-                if (auto callback = m_ongoingFunctionalEventTasks.take(identifier))
-                    callback(result);
-                if (m_ongoingFunctionalEventTasks.isEmpty())
-                    thread().stopFunctionalEventMonitoring();
+    ASSERT(!m_ongoingNotificationPayloadFunctionalEventTasks.contains(identifier));
+    m_ongoingNotificationPayloadFunctionalEventTasks.add(identifier, WTFMove(callback));
+
+    std::optional<NotificationPayload> payloadCopy;
+    if (proposedPayload)
+        payloadCopy = *proposedPayload;
+
+    bool isPosted = postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, identifier, data = crossThreadCopy(WTFMove(data)), proposedPayload = crossThreadCopy(WTFMove(proposedPayload))](auto&) mutable {
+        thread().queueTaskToFirePushEvent(WTFMove(data), WTFMove(proposedPayload), [this, protectedThis = WTFMove(protectedThis), identifier](bool result, std::optional<NotificationPayload> resultPayload) mutable {
+            callOnMainThread([this, protectedThis = WTFMove(protectedThis), identifier, result, resultPayload = crossThreadCopy(WTFMove(resultPayload))]() mutable {
+                if (auto callback = m_ongoingNotificationPayloadFunctionalEventTasks.take(identifier))
+                    callback(result, WTFMove(resultPayload));
+                if (m_ongoingNotificationPayloadFunctionalEventTasks.isEmpty())
+                    thread().stopNotificationPayloadFunctionalEventMonitoring();
             });
         });
     }, WorkerRunLoop::defaultMode());
     if (!isPosted)
-        m_ongoingFunctionalEventTasks.take(identifier)(false);
+        m_ongoingNotificationPayloadFunctionalEventTasks.take(identifier)(false, WTFMove(payloadCopy));
 }
 
 void ServiceWorkerThreadProxy::firePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)

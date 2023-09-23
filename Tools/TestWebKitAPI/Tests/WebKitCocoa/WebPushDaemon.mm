@@ -69,12 +69,21 @@ static bool alertReceived = false;
     RetainPtr<NSURL> _mostRecentActionURL;
     std::optional<uint64_t> _mostRecentAppBadge;
 }
+-(void)clearMostRecents;
+
 @property (nonatomic, readonly) RetainPtr<_WKNotificationData> mostRecentNotification;
 @property (nonatomic, readonly) RetainPtr<NSURL> mostRecentActionURL;
 @property (nonatomic, readonly) std::optional<uint64_t> mostRecentAppBadge;
 @end
 
 @implementation PushNotificationDelegate
+
+-(void)clearMostRecents
+{
+    _mostRecentNotification = nullptr;
+    _mostRecentActionURL = nullptr;
+    _mostRecentAppBadge = std::nullopt;
+}
 
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler
 {
@@ -115,6 +124,7 @@ static RetainPtr<NSURL> testWebPushDaemonLocation()
 }
 
 enum LaunchOnlyOnce : BOOL { No, Yes };
+enum class InstallDataStoreDelegate : bool { No, Yes };
 
 static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation, LaunchOnlyOnce launchOnlyOnce)
 {
@@ -504,6 +514,31 @@ self.addEventListener("message", (event) => {
     }
 });
 
+self.addEventListener("pushnotification", async (event) => {
+    // If the tag is empty, do nothing
+    if (!event.proposedNotification.tag)
+        return;
+
+    var optionsFromTag = event.proposedNotification.tag.split(" ");
+    var newTitle;
+    var newBadge;
+    if (optionsFromTag[0] == "titleandbadge") {
+        newTitle = optionsFromTag[1];
+        newBadge = optionsFromTag[2];
+    } else if (optionsFromTag[0] == "title")
+        newTitle = optionsFromTag[1];
+    else if (optionsFromTag[0] == "badge")
+        newBadge = optionsFromTag[1]
+    else if (optionsFromTag[0] == "datatotitle")
+        newTitle = event.proposedNotification.data;
+
+    if (newTitle)
+        self.registration.showNotification(newTitle);
+
+    if (newBadge)
+        navigator.setAppBadge(newBadge);
+});
+
 self.addEventListener("push", async (event) => {
     try {
         if (showNotifications) {
@@ -528,7 +563,7 @@ self.addEventListener("notificationclick", () => {
 class WebPushDTestWebView {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html)
+    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate)
         : m_pushPartition(pushPartition)
         , m_dataStoreIdentifier(dataStoreIdentifier)
         , m_notificationProvider(notificationProvider)
@@ -568,6 +603,12 @@ public:
         [[NSFileManager defaultManager] removeItemAtURL:[dataStoreConfiguration _resourceLoadStatisticsDirectory] error:nil];
 
         m_dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+        if (installDataStoreDelegate == InstallDataStoreDelegate::Yes) {
+            m_delegate = adoptNS([[PushNotificationDelegate alloc] init]);
+            m_dataStore.get()._delegate = m_delegate.get();
+        }
+
         [m_dataStore _setResourceLoadStatisticsEnabled:YES];
         clearWebsiteDataStore(m_dataStore.get());
 
@@ -585,6 +626,7 @@ public:
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [configuration setProcessPool:processPool];
         [configuration setWebsiteDataStore:m_dataStore.get()];
+        configuration.get().preferences._appBadgeEnabled = YES;
 
         auto userContentController = [configuration userContentController];
         [userContentController addScriptMessageHandler:m_testMessageHandler.get() name:@"test"];
@@ -604,8 +646,7 @@ public:
 
         m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-        auto uiDelegate = adoptNS([[PushNotificationDelegate alloc] init]);
-        [m_webView setUIDelegate:uiDelegate.get()];
+        [m_webView setUIDelegate:m_delegate.get()];
 
         auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
         navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
@@ -691,6 +732,48 @@ public:
     void setPermission(bool value)
     {
         m_notificationProvider.setPermission(m_origin, value);
+    }
+
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    void injectDeclarativePushMessage(ASCIILiteral json, ASCIILiteral url = "https://example.com"_s)
+    {
+        WebKit::WebPushD::PushMessageForTesting message;
+        message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
+        message.registrationURL = URL(url);
+        message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
+        message.payload = json;
+
+        auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+        auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+        __block bool done = false;
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
+            if (!error.isEmpty())
+                NSLog(@"ERROR: %s", error.utf8().data());
+            done = true;
+        });
+        TestWebKitAPI::Util::run(&done);
+    }
+#endif
+
+    void clearMostRecents()
+    {
+        [m_delegate clearMostRecents];
+    }
+
+    _WKNotificationData *mostRecentNotification()
+    {
+        return m_delegate.get().mostRecentNotification.get();
+    }
+
+    NSURL *mostRecentActionURL()
+    {
+        return m_delegate.get().mostRecentActionURL.get();
+    }
+
+    std::optional<uint64_t> mostRecentAppBadge()
+    {
+        return m_delegate.get().mostRecentAppBadge;
     }
 
     void injectPushMessage(NSDictionary *apsUserInfo)
@@ -809,12 +892,22 @@ public:
         ASSERT_EQ([messages count], 0u) << "Unexpected push event injection success after advancing ITP timer by " << daysToAdvance << " days; missing ITP cleanup?";
     }
 
+    void processPushMessage(NSDictionary *pushMessage)
+    {
+        __block bool done = false;
+        [m_dataStore _processPushMessage:pushMessage completionHandler:^(bool result) {
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    }
+
 private:
     String m_pushPartition;
     Markable<WTF::UUID> m_dataStoreIdentifier;
     String m_origin;
     RetainPtr<NSURL> m_url;
     RetainPtr<WKWebsiteDataStore> m_dataStore;
+    RetainPtr<PushNotificationDelegate> m_delegate;
     RetainPtr<TestMessageHandler> m_testMessageHandler;
     std::unique_ptr<TestWebKitAPI::HTTPServer> m_server;
     TestNotificationProvider& m_notificationProvider;
@@ -823,8 +916,9 @@ private:
 
 class WebPushDTest : public ::testing::Test {
 public:
-    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes, ASCIILiteral html = htmlSource)
+    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes, ASCIILiteral html = htmlSource, InstallDataStoreDelegate installDataStoreDelegate = InstallDataStoreDelegate::No)
         : m_html(html)
+        , m_installDataStoreDelegate(installDataStoreDelegate)
     {
         m_tempDirectory = retainPtr(setUpTestWebPushD(launchOnlyOnce));
     }
@@ -836,19 +930,19 @@ public:
 
         m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [processPool _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
 
-        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider, m_html);
+        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
         m_webViews.append(WTFMove(webView));
 
-        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider, m_html);
+        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
         m_webViews.append(WTFMove(webViewWithIdentifier1));
 
-        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html);
+        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
         m_webViews.append(WTFMove(webViewWithIdentifier2));
 
-        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html);
+        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
         m_webViews.append(WTFMove(webViewWithPartition));
 
-        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html);
+        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
         m_webViews.append(WTFMove(webViewWithPartitionAndIdentifier));
     }
 
@@ -883,6 +977,7 @@ protected:
     std::unique_ptr<TestWebKitAPI::TestNotificationProvider> m_notificationProvider;
     Vector<UniqueRef<WebPushDTestWebView>> m_webViews;
     ASCIILiteral m_html;
+    InstallDataStoreDelegate m_installDataStoreDelegate { InstallDataStoreDelegate::No };
 };
 
 class WebPushDMultipleLaunchTest : public WebPushDTest {
@@ -1655,7 +1750,71 @@ static constexpr ASCIILiteral json38 = R"JSONRESOURCE(
     "mutable": true
 }
 )JSONRESOURCE"_s;
-
+static constexpr ASCIILiteral json39 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true,
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json40 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true,
+    "options": {
+        "tag": "title Gotcha!"
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json41 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true,
+    "options": {
+        "tag": "badge 1024"
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json42 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true,
+    "options": {
+        "tag": "titleandbadge ThisRules 4096"
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json43 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Test the data object",
+    "mutable": true,
+    "options": {
+        "tag": "datatotitle",
+        "data": "Raw string"
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json44 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Test the data object",
+    "mutable": true,
+    "options": {
+        "tag": "datatotitle",
+        "data": { "key": "value" }
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
 static constexpr ASCIILiteral errors[] = {
     "does not contain valid JSON"_s,
     "top level JSON value is not an object"_s,
@@ -1718,6 +1877,12 @@ static std::pair<ASCIILiteral, ASCIILiteral> jsonAndErrors[] = {
     { json36, errors[18] },
     { json37, errors[18] },
     { json38, { " "_s } },
+    { json39, { " "_s } },
+    { json40, { " "_s } },
+    { json41, { " "_s } },
+    { json42, { " "_s } },
+    { json43, { " "_s } },
+    { json44, { " "_s } },
 
     { { }, { } }
 };
@@ -1842,6 +2007,74 @@ TEST(WebPushD, DeclarativeWebPushHandling)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+class WebPushDPushNotificationEventTest : public WebPushDTest {
+public:
+    WebPushDPushNotificationEventTest()
+        : WebPushDTest(LaunchOnlyOnce::Yes, htmlSource, InstallDataStoreDelegate::Yes)
+    {
+    }
+
+    void prep()
+    {
+        webViews().first()->subscribe();
+    }
+
+    void runTest(ASCIILiteral jsonMessage)
+    {
+        webViews().first()->clearMostRecents();
+        webViews().first()->injectDeclarativePushMessage(jsonMessage);
+
+        auto messages = webViews().first()->fetchPushMessages();
+        ASSERT_EQ([messages count], 1u);
+        webViews().first()->processPushMessage([messages firstObject]);
+    }
+
+    void checkLastNotificationTitle(NSString *title)
+    {
+        NSString *recentTitle = webViews().first()->mostRecentNotification().userInfo[@"WebNotificationTitleKey"];
+        EXPECT_TRUE([recentTitle isEqualToString:title]);
+    }
+
+    void checkLastActionURL(NSString *url)
+    {
+        NSURL *recentActionURL = webViews().first()->mostRecentActionURL();
+        EXPECT_TRUE([url isEqualToString:recentActionURL.absoluteString]);
+    }
+
+    void checkLastAppBadge(std::optional<uint64_t> badge)
+    {
+        EXPECT_EQ(badge, webViews().first()->mostRecentAppBadge());
+    }
+};
+
+TEST_F(WebPushDPushNotificationEventTest, Basic)
+{
+    prep();
+    runTest(json39);
+    checkLastNotificationTitle(@"Hello world!");
+    checkLastAppBadge(12);
+
+    runTest(json40);
+    checkLastNotificationTitle(@"Gotcha!");
+    checkLastAppBadge(12);
+
+    runTest(json41);
+    checkLastNotificationTitle(@"Hello world!");
+    checkLastAppBadge(1024);
+
+    runTest(json42);
+    checkLastNotificationTitle(@"ThisRules");
+    checkLastAppBadge(4096);
+
+    runTest(json43);
+    checkLastNotificationTitle(@"Raw string");
+    checkLastAppBadge(12);
+
+    runTest(json44);
+    checkLastNotificationTitle(@"[object Object]");
+    checkLastAppBadge(12);
 }
 
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)

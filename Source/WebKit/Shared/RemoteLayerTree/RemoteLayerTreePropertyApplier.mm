@@ -273,6 +273,9 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::CustomAppearanceChanged)
         updateCustomAppearance(layer, properties.customAppearance);
 
+    if (properties.changedProperties & LayerChange::BackdropRootChanged)
+        layer.shouldRasterize = properties.backdropRoot;
+
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (properties.changedProperties & LayerChange::SeparatedChanged) {
         layer.separated = properties.isSeparated;

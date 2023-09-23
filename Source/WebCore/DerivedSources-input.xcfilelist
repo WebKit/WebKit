@@ -794,6 +794,8 @@ $(PROJECT_DIR)/Modules/push-api/PushEvent.idl
 $(PROJECT_DIR)/Modules/push-api/PushEventInit.idl
 $(PROJECT_DIR)/Modules/push-api/PushManager.idl
 $(PROJECT_DIR)/Modules/push-api/PushMessageData.idl
+$(PROJECT_DIR)/Modules/push-api/PushNotificationEvent.idl
+$(PROJECT_DIR)/Modules/push-api/PushNotificationEventInit.idl
 $(PROJECT_DIR)/Modules/push-api/PushPermissionState.idl
 $(PROJECT_DIR)/Modules/push-api/PushSubscription.idl
 $(PROJECT_DIR)/Modules/push-api/PushSubscriptionChangeEvent.idl

@@ -75,7 +75,8 @@
                 { "name": "preserve3D", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"transform-style: preserve-3d\" style." },
                 { "name": "willChange", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"will-change\" style." },
                 { "name": "root", "type": "boolean", "optional": true, "description": "Composition due to association with the root element." },
-                { "name": "blending", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"blend-mode\" style." }
+                { "name": "blending", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"blend-mode\" style." },
+                { "name": "backdropRoot", "type": "boolean", "optional": true, "description": "Composition due to association with an element that is a backdrop root" }
             ]
         }
     ],

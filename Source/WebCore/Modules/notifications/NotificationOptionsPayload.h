@@ -24,8 +24,6 @@
  */
 #pragma once
 
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-
 #include "NotificationDirection.h"
 
 OBJC_CLASS NSDictionary;
@@ -41,12 +39,25 @@ struct NotificationOptionsPayload {
     String dataJSONString;
     std::optional<bool> silent;
 
+    NotificationOptionsPayload isolatedCopy() &&
+    {
+        return NotificationOptionsPayload {
+            dir,
+            WTFMove(lang).isolatedCopy(),
+            WTFMove(body).isolatedCopy(),
+            WTFMove(tag).isolatedCopy(),
+            WTFMove(icon).isolatedCopy(),
+            WTFMove(dataJSONString).isolatedCopy(),
+            silent
+        };
+    }
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
 #if PLATFORM(COCOA)
     static std::optional<NotificationOptionsPayload> fromDictionary(NSDictionary *);
     NSDictionary *dictionaryRepresentation() const;
 #endif
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DECLARATIVE_WEB_PUSH)

@@ -298,12 +298,13 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
     }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-    connection.broadcastDebugMessage(makeString("Injected a test push message for ", message.targetAppCodeSigningIdentifier, " at ", message.registrationURL.string()));
-    connection.broadcastDebugMessage(message.payload);
-
     auto addResult = m_testingPushMessages.ensure(message.targetAppCodeSigningIdentifier, [] {
         return Deque<PushMessageForTesting> { };
     });
+
+    connection.broadcastDebugMessage(makeString("Injected a test push message for ", message.targetAppCodeSigningIdentifier, " at ", message.registrationURL.string(), ", there are now ", addResult.iterator->value.size() + 1, " pending messages"));
+    connection.broadcastDebugMessage(message.payload);
+
     addResult.iterator->value.append(WTFMove(message));
 
     notifyClientPushMessageIsAvailable(PushSubscriptionSetIdentifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString });
@@ -416,7 +417,7 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
 #if ENABLE(DECLARATIVE_WEB_PUSH)
             resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) });
 #else
-            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL });
+            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, { } });
 #endif
         }
         m_testingPushMessages.remove(iterator);

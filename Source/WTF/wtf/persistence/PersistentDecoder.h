@@ -63,7 +63,7 @@ public:
     template<typename T, std::enable_if_t<!std::is_arithmetic<typename std::remove_const<T>>::value && !std::is_enum<T>::value>* = nullptr>
     Decoder& operator>>(std::optional<T>& result)
     {
-        result = Coder<T>::decode(*this);
+        result = Coder<T>::decodeForPersistence(*this);
         return *this;
     }
 

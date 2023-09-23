@@ -43,6 +43,7 @@ PopStateEvent
 ProgressEvent
 PromiseRejectionEvent
 PushEvent conditional=SERVICE_WORKER
+PushNotificationEvent conditional=DECLARATIVE_WEB_PUSH
 PushSubscriptionChangeEvent conditional=SERVICE_WORKER
 SubmitEvent
 ToggleEvent

@@ -5359,18 +5359,12 @@ void WebPageProxy::didCreateSubframe(WebCore::FrameIdentifier parentID, WebCore:
 
 void WebPageProxy::didDestroyFrame(FrameIdentifier frameID)
 {
-    // If the page is closed before it has had the chance to send the DidCreateMainFrame message
-    // back to the UIProcess, then the frameDestroyed message will still be received because it
-    // gets sent directly to the WebProcessProxy.
-    ASSERT(WebFrameProxyMap::isValidKey(frameID));
-    auto* frame = WebFrameProxy::webFrame(frameID);
 #if ENABLE(WEB_AUTHN)
-    if (auto* page = frame ? frame->page() : nullptr)
-        page->websiteDataStore().authenticatorManager().cancelRequest(page->webPageID(), frameID);
+    websiteDataStore().authenticatorManager().cancelRequest(webPageID(), frameID);
 #endif
     if (auto* automationSession = process().processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
-    if (frame)
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->disconnect();
 }
 

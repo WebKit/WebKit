@@ -30,6 +30,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
+#include "NotificationPayload.h"
 #include "ServiceWorkerGlobalScope.h"
 #include <wtf/WTFProcess.h>
 
@@ -120,16 +121,16 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
     serviceWorker->fireActivateEvent();
 }
 
-void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::optional<Vector<uint8_t>>&& data, CompletionHandler<void(bool)>&& callback)
+void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::optional<Vector<uint8_t>>&& data, std::optional<NotificationPayload>&& proposedPayload, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::firePushEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
-        callback(false);
+        callback(false, WTFMove(proposedPayload));
         return;
     }
 
-    serviceWorker->firePushEvent(WTFMove(data), WTFMove(callback));
+    serviceWorker->firePushEvent(WTFMove(data), WTFMove(proposedPayload), WTFMove(callback));
 }
 
 void SWContextManager::firePushSubscriptionChangeEvent(ServiceWorkerIdentifier identifier, std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)

@@ -124,22 +124,51 @@ RubyFormattingContext::OverUnder RubyFormattingContext::annotationExtent(const B
     return { { }, annotationBoxLogicalHeight };
 }
 
-InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineDisplay::Boxes& boxes)
+static inline InlineLayoutUnit halfOfAFullWidthCharacter(const Box& annotationBox)
 {
-    UNUSED_PARAM(rubyBaseLayoutBox);
-    UNUSED_PARAM(rubyBaseContentStartIndex);
-    UNUSED_PARAM(boxes);
+    return annotationBox.style().computedFontSize() / 2.f;
+}
 
-    return { };
+InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStartIndex, const InlineDisplay::Boxes& boxes)
+{
+    // [root inline box][ruby container][ruby base][ruby annotation]
+    ASSERT(rubyBaseStartIndex >= 2);
+    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
+    if (!annotationBox || rubyBaseStartIndex <= 2)
+        return { };
+    auto overhangValue = halfOfAFullWidthCharacter(*annotationBox);
+    auto wouldAnnotationOverlap = [&] {
+        // Check of adjacent (previous) content for overlapping.
+        auto annotationMarginBoxRect = BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*annotationBox));
+        auto overhangingRect = InlineLayoutRect { annotationMarginBoxRect.left() - overhangValue, annotationMarginBoxRect.top(), annotationMarginBoxRect.width(), annotationMarginBoxRect.height() };
+
+        for (size_t index = rubyBaseStartIndex - 1; index > 0; --index) {
+            if (auto wouldOverlap = annotationOverlapCheck(boxes[index], overhangingRect))
+                return *wouldOverlap;
+        }
+        return true;
+    };
+    return wouldAnnotationOverlap() ? 0.f : overhangValue;
 }
 
 InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, size_t rubyBaseContentEndIndex, const InlineDisplay::Boxes& boxes)
 {
-    UNUSED_PARAM(rubyBaseLayoutBox);
-    UNUSED_PARAM(rubyBaseContentEndIndex);
-    UNUSED_PARAM(boxes);
+    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
+    if (!annotationBox || rubyBaseContentEndIndex == boxes.size() - 1)
+        return { };
+    auto overhangValue = halfOfAFullWidthCharacter(*annotationBox);
+    auto wouldAnnotationOverlap = [&] {
+        // Check of adjacent (previous) content for overlapping.
+        auto annotationMarginBoxRect = BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*annotationBox));
+        auto overhangingRect = InlineLayoutRect { annotationMarginBoxRect.left(), annotationMarginBoxRect.top(), annotationMarginBoxRect.width() + overhangValue, annotationMarginBoxRect.height() };
 
-    return { };
+        for (size_t index = rubyBaseContentEndIndex + 1; index < boxes.size(); ++index) {
+            if (auto wouldOverlap = annotationOverlapCheck(boxes[index], overhangingRect))
+                return *wouldOverlap;
+        }
+        return true;
+    };
+    return wouldAnnotationOverlap() ? 0.f : overhangValue;
 }
 
 void RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth)
@@ -169,6 +198,21 @@ void RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<size_t> baseRu
         line.moveRunsBy(baseRunRange.begin(), centerOffset);
         line.expandBy(baseRunRange.begin(), centerOffset);
     }
+}
+
+std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox, const InlineLayoutRect& overhangingRect) const
+{
+    // We are in the middle of a line, should not see any line breaks or ellipsis boxes here.
+    ASSERT(adjacentDisplayBox.isText() || adjacentDisplayBox.isAtomicInlineLevelBox() || adjacentDisplayBox.isInlineBox() || adjacentDisplayBox.isGenericInlineLevelBox() || adjacentDisplayBox.isWordSeparator());
+    // Skip empty content like <span></span>
+    if (adjacentDisplayBox.visualRectIgnoringBlockDirection().isEmpty())
+        return { };
+    if (adjacentDisplayBox.inkOverflow().intersects(overhangingRect))
+        return true;
+    // Check if there might be some inline box (end decoration) overlapping as previous content.
+    if (adjacentDisplayBox.layoutBox().parent() == parentFormattingContext().root())
+        return false;
+    return { };
 }
 
 }

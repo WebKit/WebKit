@@ -292,7 +292,7 @@ void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier id
     });
 }
 
-void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identifier, const std::optional<IPC::DataReference>& ipcData, CompletionHandler<void(bool)>&& callback)
+void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identifier, const std::optional<IPC::DataReference>& ipcData, std::optional<NotificationPayload>&& proposedPayload, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
     assertIsCurrent(m_queue.get());
 
@@ -300,14 +300,14 @@ void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identi
     if (ipcData)
         data = Vector<uint8_t> { ipcData->data(), ipcData->size() };
 
-    auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result) mutable {
-        queue->dispatch([result, callback = WTFMove(callback)]() mutable {
-            callback(result);
+    auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result, std::optional<NotificationPayload>&& resultPayload) mutable {
+        queue->dispatch([result, resultPayload = crossThreadCopy(WTFMove(resultPayload)), callback = WTFMove(callback)]() mutable {
+            callback(result, WTFMove(resultPayload));
         });
     };
 
-    callOnMainRunLoop([identifier, data = WTFMove(data), callback = WTFMove(inQueueCallback)]() mutable {
-        SWContextManager::singleton().firePushEvent(identifier, WTFMove(data), WTFMove(callback));
+    callOnMainRunLoop([identifier, data = WTFMove(data), proposedPayload = crossThreadCopy(WTFMove(proposedPayload)), callback = WTFMove(inQueueCallback)]() mutable {
+        SWContextManager::singleton().firePushEvent(identifier, WTFMove(data), WTFMove(proposedPayload), WTFMove(callback));
     });
 }
 

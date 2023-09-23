@@ -54,7 +54,7 @@ public:
     template<typename T, std::enable_if_t<!std::is_enum<T>::value && !std::is_arithmetic<typename std::remove_const<T>>::value>* = nullptr>
     Encoder& operator<<(const T& t)
     {
-        Coder<T>::encode(*this, t);
+        Coder<T>::encodeForPersistence(*this, t);
         return *this;
     }
 

@@ -5957,7 +5957,6 @@ struct WebCore::LinkDecorationFilteringData {
     String linkDecoration;
 };
 
-#if ENABLE(DECLARATIVE_WEB_PUSH)
 [WebKitPlatform] struct WebCore::NotificationPayload {
     URL defaultActionURL;
     String title;
@@ -5975,7 +5974,6 @@ struct WebCore::LinkDecorationFilteringData {
     String dataJSONString;
     std::optional<bool> silent;
 };
-#endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
 class WebCore::NetworkLoadMetrics {
     MonotonicTime redirectStart;

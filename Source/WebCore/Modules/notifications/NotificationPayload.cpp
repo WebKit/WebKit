@@ -45,6 +45,13 @@ ExceptionOr<NotificationPayload> NotificationPayload::parseJSON(const String& js
     return NotificationJSONParser::parseNotificationPayload(*object);
 }
 
+NotificationPayload NotificationPayload::fromNotificationData(const NotificationData& data)
+{
+    NotificationOptionsPayload options { data.direction, data.language, data.body, data.tag, data.iconURL, { }, data.silent };
+
+    return { data.defaultActionURL, data.title, std::nullopt, WTFMove(options), false };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)

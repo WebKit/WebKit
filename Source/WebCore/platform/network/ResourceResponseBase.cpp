@@ -910,7 +910,7 @@ std::optional<ResourceResponseBase::ResponseData> ResourceResponseBase::getRespo
 
 namespace WTF::Persistence {
 
-void Coder<WebCore::ResourceResponseBase::CrossThreadData>::encode(Encoder& encoder, const WebCore::ResourceResponseBase::CrossThreadData& data)
+void Coder<WebCore::ResourceResponseBase::CrossThreadData>::encodeForPersistence(Encoder& encoder, const WebCore::ResourceResponseBase::CrossThreadData& data)
 {
     encoder << data.url;
     encoder << data.mimeType;
@@ -930,7 +930,7 @@ void Coder<WebCore::ResourceResponseBase::CrossThreadData>::encode(Encoder& enco
     encoder << data.isRangeRequested;
 }
 
-std::optional<WebCore::ResourceResponseBase::CrossThreadData> Coder<WebCore::ResourceResponseBase::CrossThreadData>::decode(Decoder& decoder)
+std::optional<WebCore::ResourceResponseBase::CrossThreadData> Coder<WebCore::ResourceResponseBase::CrossThreadData>::decodeForPersistence(Decoder& decoder)
 {
     std::optional<URL> url;
     decoder >> url;

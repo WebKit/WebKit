@@ -32,14 +32,14 @@
 
 namespace WTF::Persistence {
 
-void Coder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
+void Coder<AtomString>::encodeForPersistence(Encoder& encoder, const AtomString& atomString)
 {
     encoder << atomString.string();
 }
 
 // FIXME: Constructing a String and then looking it up in the AtomStringTable is inefficient.
 // Ideally, we wouldn't need to allocate a String when it is already in the AtomStringTable.
-std::optional<AtomString> Coder<AtomString>::decode(Decoder& decoder)
+std::optional<AtomString> Coder<AtomString>::decodeForPersistence(Decoder& decoder)
 {
     std::optional<String> string;
     decoder >> string;
@@ -49,7 +49,7 @@ std::optional<AtomString> Coder<AtomString>::decode(Decoder& decoder)
     return { AtomString { WTFMove(*string) } };
 }
 
-void Coder<CString>::encode(Encoder& encoder, const CString& string)
+void Coder<CString>::encodeForPersistence(Encoder& encoder, const CString& string)
 {
     // Special case the null string.
     if (string.isNull()) {
@@ -62,7 +62,7 @@ void Coder<CString>::encode(Encoder& encoder, const CString& string)
     encoder.encodeFixedLengthData({ string.dataAsUInt8Ptr(), length });
 }
 
-std::optional<CString> Coder<CString>::decode(Decoder& decoder)
+std::optional<CString> Coder<CString>::decodeForPersistence(Decoder& decoder)
 {
     std::optional<uint32_t> length;
     decoder >> length;
@@ -86,7 +86,7 @@ std::optional<CString> Coder<CString>::decode(Decoder& decoder)
     return string;
 }
 
-void Coder<String>::encode(Encoder& encoder, const String& string)
+void Coder<String>::encodeForPersistence(Encoder& encoder, const String& string)
 {
     // Special case the null string.
     if (string.isNull()) {
@@ -120,7 +120,7 @@ static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t 
     return string;
 }
 
-std::optional<String> Coder<String>::decode(Decoder& decoder)
+std::optional<String> Coder<String>::decodeForPersistence(Decoder& decoder)
 {
     std::optional<uint32_t> length;
     decoder >> length;
@@ -142,12 +142,12 @@ std::optional<String> Coder<String>::decode(Decoder& decoder)
     return decodeStringText<UChar>(decoder, *length);
 }
 
-void Coder<URL>::encode(Encoder& encoder, const URL& url)
+void Coder<URL>::encodeForPersistence(Encoder& encoder, const URL& url)
 {
     encoder << url.string();
 }
 
-std::optional<URL> Coder<URL>::decode(Decoder& decoder)
+std::optional<URL> Coder<URL>::decodeForPersistence(Decoder& decoder)
 {
     std::optional<String> string;
     decoder >> string;
@@ -156,12 +156,12 @@ std::optional<URL> Coder<URL>::decode(Decoder& decoder)
     return URL(WTFMove(*string));
 }
 
-void Coder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
+void Coder<SHA1::Digest>::encodeForPersistence(Encoder& encoder, const SHA1::Digest& digest)
 {
     encoder.encodeFixedLengthData({ digest.data(), sizeof(digest) });
 }
 
-std::optional<SHA1::Digest> Coder<SHA1::Digest>::decode(Decoder& decoder)
+std::optional<SHA1::Digest> Coder<SHA1::Digest>::decodeForPersistence(Decoder& decoder)
 {
     SHA1::Digest tmp;
     if (!decoder.decodeFixedLengthData({ tmp.data(), sizeof(tmp) }))
@@ -169,12 +169,12 @@ std::optional<SHA1::Digest> Coder<SHA1::Digest>::decode(Decoder& decoder)
     return tmp;
 }
 
-void Coder<WallTime>::encode(Encoder& encoder, const WallTime& time)
+void Coder<WallTime>::encodeForPersistence(Encoder& encoder, const WallTime& time)
 {
     encoder << time.secondsSinceEpoch().value();
 }
 
-std::optional<WallTime> Coder<WallTime>::decode(Decoder& decoder)
+std::optional<WallTime> Coder<WallTime>::decodeForPersistence(Decoder& decoder)
 {
     std::optional<double> value;
     decoder >> value;
@@ -184,12 +184,12 @@ std::optional<WallTime> Coder<WallTime>::decode(Decoder& decoder)
     return WallTime::fromRawSeconds(*value);
 }
 
-void Coder<Seconds>::encode(Encoder& encoder, const Seconds& seconds)
+void Coder<Seconds>::encodeForPersistence(Encoder& encoder, const Seconds& seconds)
 {
     encoder << seconds.value();
 }
 
-std::optional<Seconds> Coder<Seconds>::decode(Decoder& decoder)
+std::optional<Seconds> Coder<Seconds>::decodeForPersistence(Decoder& decoder)
 {
     std::optional<double> value;
     decoder >> value;

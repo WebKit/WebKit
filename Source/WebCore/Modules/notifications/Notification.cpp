@@ -45,6 +45,7 @@
 #include "NotificationClient.h"
 #include "NotificationData.h"
 #include "NotificationEvent.h"
+#include "NotificationPayload.h"
 #include "NotificationPermissionCallback.h"
 #include "NotificationResourcesLoader.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -125,10 +126,33 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, Notifica
     return notification;
 }
 
-Notification::Notification(ScriptExecutionContext& context, WTF::UUID identifier, String&& title, Options&& options, Ref<SerializedScriptValue>&& dataForBindings)
+Ref<Notification> Notification::create(ScriptExecutionContext& context, const URL& registrationURL, const NotificationPayload& payload)
+{
+    Options options;
+    if (payload.options)
+        options = { payload.options->dir, payload.options->lang, payload.options->body, payload.options->tag, payload.options->icon, JSC::jsNull(), nullptr, nullptr, payload.options->silent };
+
+    RefPtr<SerializedScriptValue> dataScriptValue;
+    if (payload.options && !payload.options->dataJSONString.isEmpty() && context.globalObject()) {
+        auto value = JSONParse(context.globalObject(), payload.options->dataJSONString);
+        dataScriptValue = SerializedScriptValue::convert(*context.globalObject(), value);
+    }
+
+    if (!dataScriptValue)
+        dataScriptValue = SerializedScriptValue::nullValue();
+
+    auto notification = adoptRef(*new Notification(context, WTF::UUID::createVersion4(), payload.title, WTFMove(options), dataScriptValue.releaseNonNull()));
+
+    notification->suspendIfNeeded();
+    notification->m_serviceWorkerRegistrationURL = registrationURL;
+    addNotificationToMapIfNecessary(notification);
+    return notification;
+}
+
+Notification::Notification(ScriptExecutionContext& context, WTF::UUID identifier, const String& title, Options&& options, Ref<SerializedScriptValue>&& dataForBindings)
     : ActiveDOMObject(&context)
     , m_identifier(identifier)
-    , m_title(WTFMove(title).isolatedCopy())
+    , m_title(title.isolatedCopy())
     , m_direction(options.dir)
     , m_lang(WTFMove(options.lang).isolatedCopy())
     , m_body(WTFMove(options.body).isolatedCopy())

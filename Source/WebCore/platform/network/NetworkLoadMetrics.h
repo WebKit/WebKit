@@ -70,9 +70,6 @@ public:
 
     WEBCORE_EXPORT NetworkLoadMetrics isolatedCopy() const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<NetworkLoadMetrics> decode(Decoder&);
-
     bool isComplete() const { return complete; }
     bool isCellular() const { return cellular; }
     bool isExpensive() const { return expensive; }

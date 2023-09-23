@@ -1042,7 +1042,7 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
 
 void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes) const
 {
-    // Shift content starting from the annotation box to left
+    // FIXME: We are only supposed to apply overhang when annotation box is wider than base, but at this point we can't tell (this needs to be addressed together with annotation box sizing).
     if (m_rubyColumnRangeList.isEmpty())
         return;
 

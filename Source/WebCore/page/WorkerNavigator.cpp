@@ -28,6 +28,8 @@
 #include "WorkerNavigator.h"
 
 #include "JSDOMPromiseDeferred.h"
+#include "PushNotificationEvent.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "WorkerBadgeProxy.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
@@ -60,6 +62,15 @@ GPU* WorkerNavigator::gpu()
 #if ENABLE(BADGING)
 void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    if (is<ServiceWorkerGlobalScope>(scriptExecutionContext())) {
+        if (RefPtr pushNotificationEvent = downcast<ServiceWorkerGlobalScope>(scriptExecutionContext())->pushNotificationEvent()) {
+            pushNotificationEvent->setUpdatedAppBadge(WTFMove(badge));
+            return;
+        }
+    }
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
     auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
     if (!scope) {
         promise->reject(InvalidStateError);

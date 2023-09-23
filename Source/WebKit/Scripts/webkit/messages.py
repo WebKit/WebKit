@@ -401,6 +401,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::MediaAccessDenialReason',
         'WebCore::ModalContainerControlType',
         'WebCore::NativeImageReference',
+        'WebCore::NotificationPayload',
         'WebCore::PathArc',
         'WebCore::PathDataBezierCurve',
         'WebCore::PathDataLine',

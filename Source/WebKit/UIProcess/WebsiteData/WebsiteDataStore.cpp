@@ -2512,21 +2512,37 @@ void WebsiteDataStore::removePage(WebPageProxy& page)
 void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    if (pushMessage.notificationPayload && !pushMessage.notificationPayload->isMutable && m_configuration->isDeclarativeWebPushEnabled()) {
-        RELEASE_LOG(Push, "Handling immutable declarative web push message for scope %" SENSITIVE_LOG_STRING, pushMessage.registrationURL.string().utf8().data());
+    bool isDeclarative = !!pushMessage.notificationPayload;
+    auto innerHandler = [this, protectedThis = Ref { *this }, isDeclarative, pushMessageCopy = pushMessage, completionHandler = WTFMove(completionHandler)](bool handled, std::optional<WebCore::NotificationPayload>&& resultPayload) mutable {
+        if (!isDeclarative || !m_configuration->isDeclarativeWebPushEnabled()) {
+            completionHandler(handled);
+            return;
+        }
 
-        bool handled = showPersistentNotification(nullptr, pushMessage.notificationPayloadToCoreData());
+        // There was a proposed payload going in, so we require there be one to display now.
+        RELEASE_ASSERT(resultPayload);
+        pushMessageCopy.notificationPayload = WTFMove(*resultPayload);
 
-        if (pushMessage.notificationPayload->appBadge)
-            m_client->workerUpdatedAppBadge(WebCore::SecurityOriginData::fromURL(pushMessage.registrationURL), *pushMessage.notificationPayload->appBadge);
+        handled = showPersistentNotification(nullptr, pushMessageCopy.notificationPayloadToCoreData());
 
+        if (pushMessageCopy.notificationPayload->appBadge)
+            m_client->workerUpdatedAppBadge(WebCore::SecurityOriginData::fromURL(pushMessageCopy.registrationURL), *pushMessageCopy.notificationPayload->appBadge);
         completionHandler(handled);
+    };
+
+    // For immutable, declarative push messages, display the payload right now.
+    if (pushMessage.notificationPayload && !pushMessage.notificationPayload->isMutable && m_configuration->isDeclarativeWebPushEnabled()) {
+        innerHandler(true, WTFMove(pushMessage.notificationPayload));
         return;
     }
-#endif
+#else
+    auto innerHandler = [completionHandler = WTFMove(completionHandler)] (bool handled, std::optional<WebCore::NotificationPayload>&&) mutable {
+        completionHandler(handled);
+    };
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-    RELEASE_LOG(Push, "Sending push message for scope %" SENSITIVE_LOG_STRING " to network process to handle", pushMessage.registrationURL.string().utf8().data());
-    networkProcess().processPushMessage(sessionID(), WTFMove(pushMessage), WTFMove(completionHandler));
+    RELEASE_LOG(Push, "Sending push message to network process to handle");
+    networkProcess().processPushMessage(sessionID(), WTFMove(pushMessage), WTFMove(innerHandler));
 }
 
 } // namespace WebKit
