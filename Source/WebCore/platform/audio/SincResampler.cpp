@@ -207,11 +207,11 @@ void SincResampler::processBuffer(std::span<const float> source, std::span<float
     SincResampler resampler(scaleFactor, AudioUtilities::renderQuantumSize, [&source](std::span<float> buffer, size_t framesToProcess) mutable {
         // Clamp to number of frames available and zero-pad.
         size_t framesToCopy = std::min(source.size(), framesToProcess);
-        memcpySpan(buffer.subspan(0, framesToCopy), source.subspan(0, framesToCopy));
+        WTF::memcpySpan(buffer.subspan(0, framesToCopy), source.subspan(0, framesToCopy));
 
         // Zero-pad if necessary.
         if (framesToCopy < framesToProcess)
-            memsetSpan(buffer.subspan(framesToCopy, framesToProcess - framesToCopy), 0);
+            WTF::memsetSpan(buffer.subspan(framesToCopy, framesToProcess - framesToCopy), 0);
 
         source = source.subspan(framesToCopy);
     });
@@ -275,7 +275,7 @@ void SincResampler::process(std::span<float> destination, size_t framesToProcess
 
         // Step (3) Copy r3 to r1.
         // This wraps the last input frames back to the start of the buffer.
-        memcpySpan(m_r1.subspan(0, kernelSize), m_r3.subspan(0, kernelSize));
+        WTF::memcpySpan(m_r1.subspan(0, kernelSize), m_r3.subspan(0, kernelSize));
 
         // Step (4) -- Reinitialize regions if necessary.
         if (m_r0.data() == m_r2.data())
