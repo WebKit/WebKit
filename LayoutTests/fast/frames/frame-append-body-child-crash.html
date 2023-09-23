@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest() {
+    document.body.appendChild(testFrame);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>This test passes if it doesn't crash.</p>
+<iframe id="testFrame" name="testFrameName"></iframe>
+<form id="testForm" target="testFrameName" method="GET">
+    <input type=hidden id="runInput" name="run" value="1">
+</form>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (run = urlParams.get("run"))
+        document.getElementById("runInput").setAttribute("value", Number.parseInt(run) + 1);
+    else {
+        setTimeout(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 3000);
+    }
+       
+    if (run < 2) {
+        testForm.submit();
+        var video = document.createElement("video");
+        video.src = "data:";
+        testFrame.appendChild(document.createElement("body"));
+    } else if (window.testRunner)
+        testRunner.notifyDone();
+</script>
+</body>
+</html>
+
