@@ -70,29 +70,10 @@ template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struc
 };
 
 template<bool, bool> struct VirtualTableAndRefCountOverhead;
-template<> struct VirtualTableAndRefCountOverhead<true, true> {
+template<> struct VirtualTableAndRefCountOverhead<true, true> : public RefCounted<VirtualTableAndRefCountOverhead<true, true>> {
     virtual ~VirtualTableAndRefCountOverhead() { }
-    unsigned refCount;
-#if ASSERT_ENABLED
-    bool m_isOwnedByMainThread;
-    bool m_areThreadingChecksEnabled;
-#endif
-#if CHECK_REF_COUNTED_LIFECYCLE
-    bool m_deletionHasBegun;
-    bool m_adoptionIsRequired;
-#endif
 };
-template<> struct VirtualTableAndRefCountOverhead<false, true> {
-    unsigned refCount;
-#if ASSERT_ENABLED
-    bool m_isOwnedByMainThread;
-    bool m_areThreadingChecksEnabled;
-#endif
-#if CHECK_REF_COUNTED_LIFECYCLE
-    bool m_deletionHasBegun;
-    bool m_adoptionIsRequired;
-#endif
-};
+template<> struct VirtualTableAndRefCountOverhead<false, true> : public RefCounted<VirtualTableAndRefCountOverhead<false, true>> { };
 template<> struct VirtualTableAndRefCountOverhead<true, false> {
     virtual ~VirtualTableAndRefCountOverhead() { }
 };
