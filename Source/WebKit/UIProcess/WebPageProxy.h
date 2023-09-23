@@ -2280,7 +2280,6 @@ private:
 
     bool shouldForceForegroundPriorityForClientNavigation() const;
 
-    using WebFrameProxyMap = HashMap<WebCore::FrameIdentifier, Ref<WebFrameProxy>>;
     bool canCreateFrame(WebCore::FrameIdentifier) const;
 
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&, WebCore::FrameLoadType);
