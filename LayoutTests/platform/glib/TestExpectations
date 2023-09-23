@@ -186,9 +186,6 @@ imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-005.h
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html [ Pass ]
 
-# Passing since r260062.
-imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass ]
-
 # css-values passing for us.
 imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-004.html [ Pass ]

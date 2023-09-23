@@ -10294,6 +10294,7 @@
         },
         "<shape-box>": {
             "grammar": "<box> | margin-box",
+            "exported": true,
             "specification": {
                 "category": "css-shapes",
                 "url": "https://www.w3.org/TR/css-shapes-1/#typedef-shape-box"
