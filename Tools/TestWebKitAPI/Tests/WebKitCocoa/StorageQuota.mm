@@ -371,7 +371,7 @@ TEST(WebKit, QuotaDelegate)
 #if PLATFORM(IOS)
 TEST(WebPushD, DISABLED_QuotaDelegateReload)
 #else
-(TEST(WebPushD, QuotaDelegateReload)
+TEST(WebPushD, QuotaDelegateReload)
 #endif
 {
     done = false;
