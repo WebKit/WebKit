@@ -1,0 +1,13 @@
+done
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT pointer events from touch received before/after child attached at pointerdown Test timed out
+NOTRUN pointer events from touch received before/after child attached at pointerup
+NOTRUN pointer events from touch received before/after child moved at pointerdown
+NOTRUN pointer events from touch received before/after child moved at pointerup
+NOTRUN mouse events from touch received before/after child attached at pointerdown
+NOTRUN mouse events from touch received before/after child attached at pointerup
+NOTRUN mouse events from touch received before/after child moved at pointerdown
+NOTRUN mouse events from touch received before/after child moved at pointerup
+
