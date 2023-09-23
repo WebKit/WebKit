@@ -3734,7 +3734,6 @@ webkit.org/b/242467 imported/w3c/web-platform-tests/css/css-values/calc-text-ind
 
 # wpt css-sizing failures
 webkit.org/b/203509 imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos.html [ ImageOnlyFailure ]
-webkit.org/b/203510 imported/w3c/web-platform-tests/css/css-sizing/clone-intrinsic-size.html [ ImageOnlyFailure ]
 webkit.org/b/203512 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-004.html [ ImageOnlyFailure ]
 webkit.org/b/203512 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-005.html [ ImageOnlyFailure ]
 webkit.org/b/203513 imported/w3c/web-platform-tests/css/css-sizing/percentage-height-replaced-content-in-auto-cb.html [ Pass Failure ]
