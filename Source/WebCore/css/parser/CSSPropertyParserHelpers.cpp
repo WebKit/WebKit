@@ -7222,17 +7222,19 @@ RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CSSParser
     if (auto imageValue = consumeImageOrNone(range, context))
         return imageValue;
     CSSValueListBuilder list;
-    if (auto boxValue = consumeIdent<CSSValueContentBox, CSSValuePaddingBox, CSSValueBorderBox, CSSValueMarginBox>(range))
-        list.append(boxValue.releaseNonNull());
+    auto boxValue = CSSPropertyParsing::consumeShapeBox(range);
+    bool hasShapeValue = false;
     if (auto shapeValue = consumeBasicShape(range, context)) {
         if (shapeValue->isPath())
             return nullptr;
         list.append(shapeValue.releaseNonNull());
-        if (list.size() < 2) {
-            if (auto boxValue = consumeIdent<CSSValueContentBox, CSSValuePaddingBox, CSSValueBorderBox, CSSValueMarginBox>(range))
-                list.append(boxValue.releaseNonNull());
-        }
+        hasShapeValue = true;
     }
+    if (!boxValue)
+        boxValue = CSSPropertyParsing::consumeShapeBox(range);
+    // margin-box is the default.
+    if (boxValue && (boxValue->valueID() != CSSValueMarginBox || !hasShapeValue))
+        list.append(boxValue.releaseNonNull());
     if (list.isEmpty())
         return nullptr;
     return CSSValueList::createSpaceSeparated(WTFMove(list));
