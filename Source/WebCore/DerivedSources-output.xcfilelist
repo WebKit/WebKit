@@ -2209,6 +2209,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushMessageData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushMessageData.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushNotificationEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushNotificationEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushNotificationEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushNotificationEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushPermissionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushPermissionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscription.cpp

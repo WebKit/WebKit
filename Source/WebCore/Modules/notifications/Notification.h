@@ -36,6 +36,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "NotificationDirection.h"
+#include "NotificationPayload.h"
 #include "NotificationPermission.h"
 #include "NotificationResources.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -77,6 +78,7 @@ public:
 
     static ExceptionOr<Ref<Notification>> createForServiceWorker(ScriptExecutionContext&, String&& title, Options&&, const URL&);
     static Ref<Notification> create(ScriptExecutionContext&, NotificationData&&);
+    static Ref<Notification> create(ScriptExecutionContext&, const URL& registrationURL, const NotificationPayload&);
 
     WEBCORE_EXPORT virtual ~Notification();
 
@@ -123,7 +125,7 @@ public:
     WEBCORE_EXPORT static void ensureOnNotificationThread(const NotificationData&, Function<void(Notification*)>&&);
 
 private:
-    Notification(ScriptExecutionContext&, WTF::UUID, String&& title, Options&&, Ref<SerializedScriptValue>&&);
+    Notification(ScriptExecutionContext&, WTF::UUID, const String& title, Options&&, Ref<SerializedScriptValue>&&);
 
     NotificationClient* clientFromContext();
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }

@@ -231,6 +231,7 @@ namespace WebCore {
     macro(processorerror) \
     macro(progress) \
     macro(push) \
+    macro(pushnotification) \
     macro(pushsubscriptionchange) \
     macro(qualitychange) \
     macro(ratechange) \

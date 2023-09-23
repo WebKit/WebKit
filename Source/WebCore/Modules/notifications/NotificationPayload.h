@@ -25,16 +25,17 @@
 
 #pragma once
 
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-
 #include "ExceptionOr.h"
 #include "NotificationOptionsPayload.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSDictionary;
 
 namespace WebCore {
+
+struct NotificationData;
 
 struct NotificationPayload {
     URL defaultActionURL;
@@ -43,14 +44,27 @@ struct NotificationPayload {
     std::optional<NotificationOptionsPayload> options;
     bool isMutable { false };
 
+    NotificationPayload isolatedCopy() &&
+    {
+        return NotificationPayload {
+            WTFMove(defaultActionURL).isolatedCopy(),
+            WTFMove(title).isolatedCopy(),
+            appBadge,
+            crossThreadCopy(WTFMove(options)),
+            isMutable
+        };
+    }
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
     WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseJSON(const String&);
+    NotificationPayload static fromNotificationData(const NotificationData&);
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static std::optional<NotificationPayload> fromDictionary(NSDictionary *);
     WEBCORE_EXPORT NSDictionary *dictionaryRepresentation() const;
 #endif
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(DECLARATIVE_WEB_PUSH)

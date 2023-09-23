@@ -38,6 +38,7 @@
 #include "JSWebCodecsAudioEncoderSupport.h"
 #include "Logging.h"
 #include "OpusEncoderConfig.h"
+#include "SecurityOrigin.h"
 #include "WebCodecsAudioData.h"
 #include "WebCodecsAudioEncoderConfig.h"
 #include "WebCodecsEncodedAudioChunk.h"

@@ -51,6 +51,7 @@ class FetchLoaderClient;
 class PageConfiguration;
 class NotificationClient;
 class ServiceWorkerInspectorProxy;
+struct NotificationPayload;
 struct ServiceWorkerContextData;
 enum class WorkerThreadMode : bool;
 
@@ -87,7 +88,7 @@ public:
 
     void fireInstallEvent();
     void fireActivateEvent();
-    void firePushEvent(std::optional<Vector<uint8_t>>&&, CompletionHandler<void(bool)>&&);
+    void firePushEvent(std::optional<Vector<uint8_t>>&&, std::optional<NotificationPayload>&&, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&&);
     void firePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData);
     void fireNotificationEvent(NotificationData&&, NotificationEventType, CompletionHandler<void(bool)>&&);
     void fireBackgroundFetchEvent(BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
@@ -132,6 +133,7 @@ private:
     ServiceWorkerInspectorProxy m_inspectorProxy;
     uint64_t m_functionalEventTasksCounter { 0 };
     HashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingFunctionalEventTasks;
+    HashMap<uint64_t, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>> m_ongoingNotificationPayloadFunctionalEventTasks;
 
     // Accessed in worker thread.
     HashMap<std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>> m_ongoingFetchTasks;

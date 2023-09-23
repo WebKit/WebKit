@@ -69,7 +69,7 @@ std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dicti
 
     WebPushMessage message { { }, String { pushPartition }, URL { url }, WTFMove(payload) };
 #else
-    WebPushMessage message { { }, String { pushPartition }, URL { url } };
+    WebPushMessage message { { }, String { pushPartition }, URL { url }, { } };
 #endif
 
     if (isData) {

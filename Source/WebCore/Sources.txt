@@ -310,6 +310,7 @@ Modules/push-api/PushDatabase.cpp
 Modules/push-api/PushEvent.cpp
 Modules/push-api/PushMessageCrypto.cpp
 Modules/push-api/PushMessageData.cpp
+Modules/push-api/PushNotificationEvent.cpp
 Modules/push-api/PushSubscription.cpp
 Modules/push-api/PushSubscriptionChangeEvent.cpp
 Modules/push-api/PushSubscriptionData.cpp
@@ -3980,6 +3981,8 @@ JSPushEvent.cpp
 JSPushEventInit.cpp
 JSPushManager.cpp
 JSPushMessageData.cpp
+JSPushNotificationEvent.cpp
+JSPushNotificationEventInit.cpp
 JSPushPermissionState.cpp
 JSPushSubscription.cpp
 JSPushSubscriptionChangeEvent.cpp

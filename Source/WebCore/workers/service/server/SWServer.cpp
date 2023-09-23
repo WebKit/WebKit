@@ -1471,12 +1471,12 @@ void SWServer::softUpdate(SWServerRegistration& registration)
     scheduleJob(WTFMove(jobData));
 }
 
-void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& registrationURL, CompletionHandler<void(bool)>&& callback)
+void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, std::optional<NotificationPayload>&& notificationPayload, URL&& registrationURL, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
-    whenImportIsCompletedIfNeeded([this, weakThis = WeakPtr { *this }, data = WTFMove(data), registrationURL = WTFMove(registrationURL), callback = WTFMove(callback)]() mutable {
+    whenImportIsCompletedIfNeeded([this, weakThis = WeakPtr { *this }, data = WTFMove(data), notificationPayload = WTFMove(notificationPayload), registrationURL = WTFMove(registrationURL), callback = WTFMove(callback)]() mutable {
         LOG(Push, "ServiceWorker import is complete, can handle push message now");
         if (!weakThis) {
-            callback(false);
+            callback(false, WTFMove(notificationPayload));
             return;
         }
 
@@ -1485,22 +1485,21 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
         auto registration = m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
             RELEASE_LOG_ERROR(Push, "Cannot process push message: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().data());
-            callback(true);
+            callback(true, WTFMove(notificationPayload));
             return;
         }
 
         auto* worker = registration->activeWorker();
         if (!worker) {
             RELEASE_LOG_ERROR(Push, "Cannot process push message: No active worker for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().data());
-            callback(true);
+            callback(true, WTFMove(notificationPayload));
             return;
         }
 
-        RELEASE_LOG(Push, "Firing Push event");
-
-        fireFunctionalEvent(*registration, [worker = Ref { *worker }, weakThis = WTFMove(weakThis), data = WTFMove(data), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
+        RELEASE_LOG(Push, "Firing push event");
+        fireFunctionalEvent(*registration, [worker = Ref { *worker }, weakThis = WTFMove(weakThis), data = WTFMove(data), notificationPayload = WTFMove(notificationPayload), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
             if (!connectionOrStatus.has_value()) {
-                callback(connectionOrStatus.error() == ShouldSkipEvent::Yes);
+                callback(connectionOrStatus.error() == ShouldSkipEvent::Yes, WTFMove(notificationPayload));
                 return;
             }
 
@@ -1508,11 +1507,11 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
 
             worker->incrementFunctionalEventCounter();
             auto terminateWorkerTimer = makeUnique<Timer>([worker] {
-                RELEASE_LOG_ERROR(ServiceWorker, "Service worker is taking too much time to process a push event");
+                RELEASE_LOG_ERROR(ServiceWorker, "Service worker is taking too much time to process a `push` event");
                 worker->decrementFunctionalEventCounter();
             });
             terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
-            connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
+            connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, WTFMove(notificationPayload), [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded, std::optional<NotificationPayload>&& resultPayload) mutable {
                 if (!succeeded)
                     RELEASE_LOG(Push, "Push event was not successfully handled");
                 if (terminateWorkerTimer->isActive()) {
@@ -1520,7 +1519,7 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
                     terminateWorkerTimer->stop();
                 }
 
-                callback(succeeded);
+                callback(succeeded, WTFMove(resultPayload));
             });
         });
     });

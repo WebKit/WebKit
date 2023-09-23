@@ -1818,7 +1818,7 @@ void NetworkProcessProxy::getPendingPushMessages(PAL::SessionID sessionID, Compl
     sendWithAsyncReply(Messages::NetworkProcess::GetPendingPushMessages { sessionID }, WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const WebPushMessage& pushMessage, CompletionHandler<void(bool wasProcessed)>&& callback)
+void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const WebPushMessage& pushMessage, CompletionHandler<void(bool wasProcessed, std::optional<WebCore::NotificationPayload>&&)>&& callback)
 {
     auto permission = PushPermissionState::Prompt;
     HashMap<String, bool> permissions;
@@ -1843,8 +1843,8 @@ void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const Web
     static constexpr Seconds pushEventTimeout = 20_s;
     assertionTimer->startOneShot(pushEventTimeout);
 
-    auto innerCallback = [callback = WTFMove(callback), assertionTimer = WTFMove(assertionTimer)] (bool wasProcessed) mutable {
-        callback(wasProcessed);
+    auto innerCallback = [callback = WTFMove(callback), assertionTimer = WTFMove(assertionTimer)] (bool wasProcessed, std::optional<WebCore::NotificationPayload>&& resultPayload) mutable {
+        callback(wasProcessed, WTFMove(resultPayload));
     };
     sendWithAsyncReply(Messages::NetworkProcess::ProcessPushMessage { sessionID, pushMessage, permission }, WTFMove(innerCallback));
 }
