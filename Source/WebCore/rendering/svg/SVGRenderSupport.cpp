@@ -347,6 +347,7 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
     case CSSBoxType::BorderBox:
     case CSSBoxType::MarginBox:
     case CSSBoxType::StrokeBox:
+    case CSSBoxType::BoxMissing:
         // FIXME: strokeBoundingBox() takes dasharray into account but shouldn't.
         referenceBox = renderer.strokeBoundingBox();
         break;
@@ -361,7 +362,6 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
     case CSSBoxType::ContentBox:
     case CSSBoxType::FillBox:
     case CSSBoxType::PaddingBox:
-    case CSSBoxType::BoxMissing:
         referenceBox = renderer.objectBoundingBox();
         break;
     }

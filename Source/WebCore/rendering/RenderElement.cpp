@@ -2261,11 +2261,11 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
     };
 
     switch (boxType) {
-    case CSSBoxType::BoxMissing:
     case CSSBoxType::ContentBox:
     case CSSBoxType::PaddingBox:
     case CSSBoxType::FillBox:
         return alignReferenceBox(objectBoundingBox());
+    case CSSBoxType::BoxMissing:
     case CSSBoxType::BorderBox:
     case CSSBoxType::MarginBox:
     case CSSBoxType::StrokeBox:
