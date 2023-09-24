@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WKDeferringGestureRecognizer.h"
 #import "WKWebViewIOS.h"
 #import "WebPage.h"
@@ -415,8 +416,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 - (void)_setContentSizePreservingContentOffsetDuringRubberband:(CGSize)contentSize
 {
     CGSize currentContentSize = [self contentSize];
-
-    BOOL mightBeRubberbanding = self.isDragging || self.isVerticalBouncing || self.isHorizontalBouncing || self.refreshControl;
+    BOOL mightBeRubberbanding = self.isDragging || (self.scrollEnabled && self._wk_isScrolledBeyondExtents) || self.refreshControl;
     if (!mightBeRubberbanding || CGSizeEqualToSize(currentContentSize, CGSizeZero) || CGSizeEqualToSize(currentContentSize, contentSize) || ((self.zoomScale < self.minimumZoomScale) && !WebKit::scalesAreEssentiallyEqual(self.zoomScale, self.minimumZoomScale))) {
         // FIXME: rdar://problem/65277759 Find out why iOS Mail needs this call even when the contentSize has not changed.
         [self setContentSize:contentSize];

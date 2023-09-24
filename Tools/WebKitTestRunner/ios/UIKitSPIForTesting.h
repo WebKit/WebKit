@@ -28,22 +28,18 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIKit.h>
-#import <wtf/RetainPtr.h>
 
-@interface UIScrollView (WebKitInternal)
-@property (readonly, nonatomic) BOOL _wk_isInterruptingDeceleration;
-@property (readonly, nonatomic) BOOL _wk_isScrolledBeyondExtents;
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <UIKit/UIScrollView_Private.h>
+
+#else
+
+@interface UIScrollView ()
+@property (nonatomic, readonly, getter=_isVerticalBouncing) BOOL isVerticalBouncing;
+@property (nonatomic, readonly, getter=_isHorizontalBouncing) BOOL isHorizontalBouncing;
 @end
 
-@interface UIView (WebKitInternal)
-@property (nonatomic, readonly) UIViewController *_wk_viewControllerForFullScreenPresentation;
-@end
-
-namespace WebKit {
-
-RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message);
-UIScrollView *scrollViewForTouches(NSSet<UITouch *> *);
-
-} // namespace WebKit
+#endif
 
 #endif // PLATFORM(IOS_FAMILY)
