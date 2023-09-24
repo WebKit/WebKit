@@ -428,18 +428,18 @@ AlternateFullScreenControlDesignEnabled:
 
 AlternateWebMPlayerEnabled:
   type: bool
-  status: stable
+  status: unstable
   category: media
   humanReadableName: "Alternate WebM Player"
   humanReadableDescription: "Enable Alternate WebM Player"
-  condition: ENABLE(ALTERNATE_WEBM_PLAYER) && ENABLE(MEDIA_SOURCE)
+  condition: ENABLE(ALTERNATE_WEBM_PLAYER)
   defaultValue:
     WebKitLegacy:
-     default: true
+     default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 AlwaysZoomOnDoubleTap:
   type: bool
