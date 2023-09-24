@@ -58,7 +58,7 @@ namespace Style {
 class Scope;
 }
 
-class CSSStyleSheet final : public StyleSheet {
+class CSSStyleSheet final : public StyleSheet, public CanMakeCheckedPtr {
 public:
     struct Init {
         String baseURL;

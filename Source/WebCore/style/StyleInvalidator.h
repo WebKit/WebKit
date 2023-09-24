@@ -50,7 +50,7 @@ struct SelectorMatchingState;
 
 class Invalidator {
 public:
-    Invalidator(const Vector<StyleSheetContents*>&, const MQ::MediaQueryEvaluator&);
+    Invalidator(const Vector<CheckedRef<StyleSheetContents>>&, const MQ::MediaQueryEvaluator&);
     Invalidator(const InvalidationRuleSetVector&);
 
     ~Invalidator();

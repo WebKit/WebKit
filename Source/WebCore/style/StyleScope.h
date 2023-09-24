@@ -99,7 +99,7 @@ public:
     bool usesStyleBasedEditability() const { return m_usesStyleBasedEditability; }
     bool usesHasPseudoClass() const { return m_usesHasPseudoClass; }
 
-    bool activeStyleSheetsContains(const CSSStyleSheet*) const;
+    bool activeStyleSheetsContains(const CSSStyleSheet&) const;
 
     void evaluateMediaQueriesForViewportChange();
     void evaluateMediaQueriesForAccessibilitySettingsChange();
@@ -139,7 +139,7 @@ public:
     static Scope* forOrdinal(Element&, ScopeOrdinal);
 
     struct QueryContainerUpdateContext {
-        HashSet<Element*> invalidatedContainers;
+        HashSet<CheckedRef<Element>> invalidatedContainers;
     };
     bool updateQueryContainerState(QueryContainerUpdateContext&);
 
@@ -179,7 +179,7 @@ private:
     };
     struct StyleSheetChange {
         ResolverUpdateType resolverUpdateType;
-        Vector<StyleSheetContents*> addedSheets { };
+        Vector<CheckedRef<StyleSheetContents>> addedSheets { };
     };
     StyleSheetChange analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets);
     void invalidateStyleAfterStyleSheetChange(const StyleSheetChange&);
@@ -210,7 +210,7 @@ private:
 
     Timer m_pendingUpdateTimer;
 
-    mutable HashSet<const CSSStyleSheet*> m_weakCopyOfActiveStyleSheetListForFastLookup;
+    mutable HashSet<CheckedRef<const CSSStyleSheet>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 
     // Track the currently loading top-level stylesheets needed for rendering.
     // Sheets loaded using the @import directive are not included in this count.
