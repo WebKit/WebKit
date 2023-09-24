@@ -1,3 +1,0 @@
-
-FAIL regions, id null is not an object (evaluating 'region3.lines')
-

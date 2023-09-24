@@ -849,17 +849,6 @@ void WKBundlePageClearApplicationCache(WKBundlePageRef page)
     WebKit::toImpl(page)->corePage()->applicationCacheStorage().deleteAllEntries();
 }
 
-void WKBundlePageSetCaptionDisplayTestingMode(WKBundlePageRef page, bool flag)
-{
-#if ENABLE(VIDEO)
-    auto& captionPreferences = WebKit::toImpl(page)->corePage()->group().ensureCaptionPreferences();
-    captionPreferences.setTestingMode(flag);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(flag);
-#endif
-}
-
 void WKBundleSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
 {
 #if ENABLE(VIDEO)
