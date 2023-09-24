@@ -216,7 +216,7 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
             }
         }
         if (inlineBox.layoutBox().isRubyBase()) {
-            auto [over, under] = RubyFormattingContext { formattingContext() }.annotationExtent(inlineBox.layoutBox());
+            auto [over, under] = RubyFormattingContext { formattingContext() }.annotationVerticalExtent(inlineBox.layoutBox());
             ascent += over;
             descent += under;
         }

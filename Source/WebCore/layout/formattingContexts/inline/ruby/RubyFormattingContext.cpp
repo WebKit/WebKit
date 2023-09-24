@@ -104,19 +104,27 @@ InlineLayoutPoint RubyFormattingContext::annotationPosition(const Box& rubyBaseL
         ASSERT_NOT_REACHED();
         return { };
     }
+    auto annotationPosition = annotationBox->style().rubyPosition();
+    if (annotationPosition == RubyPosition::InterCharacter) {
+        auto rubyBaseMarginBox = BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(rubyBaseLayoutBox));
+        return { rubyBaseMarginBox.right(), { } };
+    }
     auto annotationMarginBoxHeight = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxHeight() };
-    if (annotationBox->style().rubyPosition() == RubyPosition::Before)
+    if (annotationPosition == RubyPosition::Before)
         return { { }, -annotationMarginBoxHeight };
     return { { }, parentFormattingContext().geometryForBox(rubyBaseLayoutBox).marginBoxHeight() };
 }
 
-RubyFormattingContext::OverUnder RubyFormattingContext::annotationExtent(const Box& rubyBaseLayoutBox)
+RubyFormattingContext::OverUnder RubyFormattingContext::annotationVerticalExtent(const Box& rubyBaseLayoutBox)
 {
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!annotationBox)
         return { };
+    auto rubyPosition = annotationBox->style().rubyPosition();
+    if (rubyPosition == RubyPosition::InterCharacter)
+        return { };
     auto annotationBoxLogicalHeight = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxHeight() };
-    if (annotationBox->style().rubyPosition() == RubyPosition::Before)
+    if (rubyPosition == RubyPosition::Before)
         return { annotationBoxLogicalHeight, { } };
     return { { }, annotationBoxLogicalHeight };
 }
@@ -131,7 +139,7 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
     // [root inline box][ruby container][ruby base][ruby annotation]
     ASSERT(rubyBaseStartIndex >= 2);
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!annotationBox || rubyBaseStartIndex <= 2)
+    if (!annotationBox || annotationBox->style().rubyPosition() == RubyPosition::InterCharacter || rubyBaseStartIndex <= 2)
         return { };
     auto overhangValue = halfOfAFullWidthCharacter(*annotationBox);
     auto wouldAnnotationOverlap = [&] {
@@ -151,7 +159,7 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
 InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, size_t rubyBaseContentEndIndex, const InlineDisplay::Boxes& boxes)
 {
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!annotationBox || rubyBaseContentEndIndex == boxes.size() - 1)
+    if (!annotationBox || annotationBox->style().rubyPosition() == RubyPosition::InterCharacter || rubyBaseContentEndIndex == boxes.size() -1)
         return { };
     auto overhangValue = halfOfAFullWidthCharacter(*annotationBox);
     auto wouldAnnotationOverlap = [&] {
