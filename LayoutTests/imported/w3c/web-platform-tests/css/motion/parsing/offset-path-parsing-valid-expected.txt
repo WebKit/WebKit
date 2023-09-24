@@ -59,9 +59,9 @@ PASS e.style['offset-path'] = "rect(0px 100% auto 4em round 0px 1px 2% 3em)" sho
 PASS e.style['offset-path'] = "content-box" should set the property value
 PASS e.style['offset-path'] = "border-box" should set the property value
 PASS e.style['offset-path'] = "view-box" should set the property value
-FAIL e.style['offset-path'] = "inset(10% 20% 30% 40%) border-box" should set the property value assert_equals: serialization should be canonical expected "inset(10% 20% 30% 40%)" but got "inset(10% 20% 30% 40%) border-box"
-FAIL e.style['offset-path'] = "fill-box ellipse(50% 60%)" should set the property value assert_equals: serialization should be canonical expected "ellipse(50% 60%) fill-box" but got "fill-box ellipse(50% 60%)"
-FAIL e.style['offset-path'] = "content-box ellipse(50% 60% at 50% 50%)" should set the property value assert_equals: serialization should be canonical expected "ellipse(50% 60% at 50% 50%) content-box" but got "content-box ellipse(50% 60% at 50% 50%)"
+PASS e.style['offset-path'] = "inset(10% 20% 30% 40%) border-box" should set the property value
+PASS e.style['offset-path'] = "fill-box ellipse(50% 60%)" should set the property value
+PASS e.style['offset-path'] = "content-box ellipse(50% 60% at 50% 50%)" should set the property value
 PASS e.style['offset-path'] = "ray(0deg) stroke-box" should set the property value
 PASS e.style['offset-path'] = "path(\"m 20 0 h -100\") view-box" should set the property value
 
