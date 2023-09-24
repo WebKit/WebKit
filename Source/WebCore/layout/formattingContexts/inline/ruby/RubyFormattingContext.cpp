@@ -206,9 +206,17 @@ std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDi
         return { };
     if (adjacentDisplayBox.inkOverflow().intersects(overhangingRect))
         return true;
+    auto& adjacentLayoutBox = adjacentDisplayBox.layoutBox();
     // Check if there might be some inline box (end decoration) overlapping as previous content.
-    if (adjacentDisplayBox.layoutBox().parent() == parentFormattingContext().root())
+    if (&adjacentLayoutBox.parent() == &parentFormattingContext().root())
         return false;
+    if (adjacentLayoutBox.isRubyBase() && adjacentLayoutBox.associatedRubyAnnotationBox()) {
+        auto annotationMarginBoxRect = InlineLayoutRect { BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*adjacentLayoutBox.associatedRubyAnnotationBox())) };
+        if (annotationMarginBoxRect.intersects(overhangingRect))
+            return true;
+    }
+    // FIXME: We should not let the neighboring content overlap with the base content either (currently base is sized to the annotation if shorter as we don't have the
+    // inline box equivalent of ruby column).
     return { };
 }
 
