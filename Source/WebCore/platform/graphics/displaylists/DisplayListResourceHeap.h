@@ -92,15 +92,14 @@ public:
         add<FontCustomPlatformData>(renderingResourceIdentifier, WTFMove(customPlatformData), m_customPlatformDataCount);
     }
 
-    ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<ImageBuffer> getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
         return get<ImageBuffer>(renderingResourceIdentifier);
     }
 
-    NativeImage* getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<NativeImage> getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
-        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        return dynamicDowncast<NativeImage>(renderingResource);
+        return dynamicDowncast<NativeImage>(get<RenderingResource>(renderingResourceIdentifier));
     }
 
     std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier renderingResourceIdentifier) const
@@ -114,30 +113,27 @@ public:
         return std::nullopt;
     }
 
-    DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<DecomposedGlyphs> getDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
-        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        return dynamicDowncast<DecomposedGlyphs>(renderingResource);
+        return dynamicDowncast<DecomposedGlyphs>(get<RenderingResource>(renderingResourceIdentifier));
     }
 
-    Gradient* getGradient(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<Gradient> getGradient(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
-        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        return dynamicDowncast<Gradient>(renderingResource);
+        return dynamicDowncast<Gradient>(get<RenderingResource>(renderingResourceIdentifier));
     }
 
-    Filter* getFilter(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<Filter> getFilter(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
-        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        return dynamicDowncast<Filter>(renderingResource);
+        return dynamicDowncast<Filter>(get<RenderingResource>(renderingResourceIdentifier));
     }
 
-    Font* getFont(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<Font> getFont(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
         return get<Font>(renderingResourceIdentifier);
     }
 
-    FontCustomPlatformData* getFontCustomPlatformData(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<FontCustomPlatformData> getFontCustomPlatformData(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
         return get<FontCustomPlatformData>(renderingResourceIdentifier);
     }
@@ -225,7 +221,7 @@ private:
     }
 
     template <typename T>
-    T* get(RenderingResourceIdentifier renderingResourceIdentifier) const
+    RefPtr<T> get(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
         checkInvariants();
 

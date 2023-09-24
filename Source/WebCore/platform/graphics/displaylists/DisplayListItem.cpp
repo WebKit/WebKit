@@ -54,7 +54,7 @@ template<class T>
 inline static std::optional<RenderingResourceIdentifier> applyImageBufferItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const T& item)
 {
     auto resourceIdentifier = item.imageBufferIdentifier();
-    if (auto* imageBuffer = resourceHeap.getImageBuffer(resourceIdentifier)) {
+    if (RefPtr imageBuffer = resourceHeap.getImageBuffer(resourceIdentifier)) {
         item.apply(context, *imageBuffer);
         return std::nullopt;
     }
@@ -65,7 +65,7 @@ template<class T>
 inline static std::optional<RenderingResourceIdentifier> applyNativeImageItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const T& item)
 {
     auto resourceIdentifier = item.imageIdentifier();
-    if (auto* image = resourceHeap.getNativeImage(resourceIdentifier)) {
+    if (RefPtr image = resourceHeap.getNativeImage(resourceIdentifier)) {
         item.apply(context, *image);
         return std::nullopt;
     }
@@ -111,7 +111,7 @@ inline static std::optional<RenderingResourceIdentifier> applySetStateItem(Graph
 inline static std::optional<RenderingResourceIdentifier> applyDrawGlyphs(GraphicsContext& context, const ResourceHeap& resourceHeap, const DrawGlyphs& item)
 {
     auto resourceIdentifier = item.fontIdentifier();
-    if (auto* font = resourceHeap.getFont(resourceIdentifier)) {
+    if (RefPtr font = resourceHeap.getFont(resourceIdentifier)) {
         item.apply(context, *font);
         return std::nullopt;
     }
@@ -121,12 +121,12 @@ inline static std::optional<RenderingResourceIdentifier> applyDrawGlyphs(Graphic
 inline static std::optional<RenderingResourceIdentifier> applyDrawDecomposedGlyphs(GraphicsContext& context, const ResourceHeap& resourceHeap, const DrawDecomposedGlyphs& item)
 {
     auto fontIdentifier = item.fontIdentifier();
-    auto* font = resourceHeap.getFont(fontIdentifier);
+    RefPtr font = resourceHeap.getFont(fontIdentifier);
     if (!font)
         return fontIdentifier;
 
     auto drawGlyphsIdentifier = item.decomposedGlyphsIdentifier();
-    auto* decomposedGlyphs = resourceHeap.getDecomposedGlyphs(drawGlyphsIdentifier);
+    RefPtr decomposedGlyphs = resourceHeap.getDecomposedGlyphs(drawGlyphsIdentifier);
     if (!decomposedGlyphs)
         return drawGlyphsIdentifier;
 
