@@ -84,11 +84,8 @@ size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& ru
         auto& rubyBaseInlineItem = inlineItems[index];
         if (&rubyBaseInlineItem.layoutBox() == &rubyBaseLayoutBox) {
             auto baseRunCount = line.runs().size() - baseRunStart;
-            if (!baseRunCount) {
-                ASSERT_NOT_REACHED();
-                return { };
-            }
-            applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
+            if (baseRunCount)
+                applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
             return index - rubyBaseContentStartIndex;
         }
         auto logicalWidth = formattingGeometry.inlineItemWidth(rubyBaseInlineItem, lineLogicalRight + baseContentLogicalWidth, { });
