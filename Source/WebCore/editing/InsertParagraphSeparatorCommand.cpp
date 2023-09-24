@@ -147,12 +147,12 @@ Ref<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock(const 
     return parent.releaseNonNull();
 }
 
-static bool isPhrasingContent(const Node* node)
+static bool isPhrasingContent(const Node& node)
 {
-    if (!node || !is<Element>(*node))
+    if (!is<Element>(node))
         return false;
 
-    switch (downcast<Element>(*node).elementName()) {
+    switch (downcast<Element>(node).elementName()) {
     case ElementNames::HTML::a:
     case ElementNames::HTML::abbr:
     case ElementNames::HTML::area:
@@ -247,7 +247,7 @@ void InsertParagraphSeparatorCommand::doApply()
         || !startBlock->nonShadowBoundaryParentNode()
         || isEditableRootPhrasingContent(insertionPosition)
         || isRenderedTable(startBlock.get())
-        || isTableCell(startBlock.get())
+        || isTableCell(*startBlock)
         || is<HTMLFormElement>(*startBlock)
         // FIXME: If the node is hidden, we don't have a canonical position so we will do the wrong thing for tables and <hr>. https://bugs.webkit.org/show_bug.cgi?id=40342
         || (!canonicalPos.isNull() && canonicalPos.deprecatedNode()->renderer() && canonicalPos.deprecatedNode()->renderer()->isTable())
@@ -316,8 +316,8 @@ void InsertParagraphSeparatorCommand::doApply()
             // We can get here if we pasted a copied portion of a blockquote with a newline at the end and are trying to paste it
             // into an unquoted area. We then don't want the newline within the blockquote or else it will also be quoted.
             if (m_pasteBlockqutoeIntoUnquotedArea) {
-                if (Node* highestBlockquote = highestEnclosingNodeOfType(canonicalPos, &isMailBlockquote))
-                    startBlock = downcast<Element>(highestBlockquote);
+                if (RefPtr highestBlockquote = highestEnclosingNodeOfType(canonicalPos, &isMailBlockquote))
+                    startBlock = downcast<Element>(WTFMove(highestBlockquote));
             }
 
             // Most of the time we want to stay at the nesting level of the startBlock (e.g., when nesting within lists).  However,

@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static Node* enclosingBlockToSplitTreeTo(Node* startNode);
+static RefPtr<Node> enclosingBlockToSplitTreeTo(Node* startNode);
 static bool isElementForFormatBlock(const QualifiedName& tagName);
 
 static inline bool isElementForFormatBlock(Node* node)
@@ -64,7 +64,7 @@ void FormatBlockCommand::formatSelection(const VisiblePosition& startOfSelection
 
 void FormatBlockCommand::formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>& blockNode)
 {
-    Node* nodeToSplitTo = enclosingBlockToSplitTreeTo(start.deprecatedNode());
+    RefPtr nodeToSplitTo = enclosingBlockToSplitTreeTo(start.deprecatedNode());
     ASSERT(nodeToSplitTo);
     RefPtr<Node> outerBlock = (start.deprecatedNode() == nodeToSplitTo) ? start.deprecatedNode() : splitTreeToNode(*start.deprecatedNode(), *nodeToSplitTo);
     if (!outerBlock)
@@ -156,18 +156,21 @@ bool isElementForFormatBlock(const QualifiedName& tagName)
     return false;
 }
 
-Node* enclosingBlockToSplitTreeTo(Node* startNode)
+RefPtr<Node> enclosingBlockToSplitTreeTo(Node* startNode)
 {
-    Node* lastBlock = startNode;
-    for (Node* n = startNode; n; n = n->parentNode()) {
+    RefPtr lastBlock = startNode;
+    for (RefPtr n = startNode; n; n = n->parentNode()) {
         if (!n->hasEditableStyle())
             return lastBlock;
-        if (isTableCell(n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->hasEditableStyle() || isElementForFormatBlock(n))
+        if (isTableCell(*n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->hasEditableStyle() || isElementForFormatBlock(n.get()))
             return n;
-        if (isBlock(n))
+        if (isBlock(*n))
             lastBlock = n;
-        if (isListHTMLElement(n))
-            return n->parentNode()->hasEditableStyle() ? n->parentNode() : n;
+        if (isListHTMLElement(n.get())) {
+            if (n->parentNode()->hasEditableStyle())
+                return n->parentNode();
+            return n;
+        }
     }
     return lastBlock;
 }

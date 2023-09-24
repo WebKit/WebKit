@@ -312,14 +312,14 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
 
 // FIXME: The function name, comment, and code say three different things here!
 // Whether or not content before and after this node will collapse onto the same line as it.
-bool isBlock(const Node* node)
+bool isBlock(const Node& node)
 {
-    return node && node->renderer() && !node->renderer()->isInline() && !node->renderer()->isRubyText();
+    return node.renderer() && !node.renderer()->isInline() && !node.renderer()->isRubyText();
 }
 
-bool isInline(const Node* node)
+bool isInline(const Node& node)
 {
-    return node && node->renderer() && node->renderer()->isInline();
+    return node.renderer() && node.renderer()->isInline();
 }
 
 // FIXME: Deploy this in all of the places where enclosingBlockFlow/enclosingBlockFlowOrTableElement are used.
@@ -399,9 +399,9 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
     return rebalancedString.toString();
 }
 
-bool isTableStructureNode(const Node* node)
+bool isTableStructureNode(const Node& node)
 {
-    auto* renderer = node->renderer();
+    auto* renderer = node.renderer();
     return renderer && (renderer->isTableCell() || renderer->isTableRow() || renderer->isTableSection() || renderer->isRenderTableCol());
 }
 
@@ -486,9 +486,9 @@ bool isListHTMLElement(Node* node)
     return node && (is<HTMLUListElement>(*node) || is<HTMLOListElement>(*node) || is<HTMLDListElement>(*node));
 }
 
-bool isListItem(const Node* node)
+bool isListItem(const Node& node)
 {
-    return node && (isListHTMLElement(node->parentNode()) || (node->renderer() && node->renderer()->isListItem()));
+    return isListHTMLElement(node.parentNode()) || (node.renderer() && node.renderer()->isListItem());
 }
 
 Element* enclosingElementWithTag(const Position& position, const QualifiedName& tagName)
@@ -507,7 +507,7 @@ Element* enclosingElementWithTag(const Position& position, const QualifiedName& 
     return nullptr;
 }
 
-RefPtr<Node> enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule)
+RefPtr<Node> enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule rule)
 {
     // FIXME: support CanSkipCrossEditingBoundary
     ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
@@ -517,7 +517,7 @@ RefPtr<Node> enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(
         // the callers from editing will no doubt want to perform editing inside the returned node.
         if (root && !n->hasEditableStyle())
             continue;
-        if (nodeIsOfType(n.get()))
+        if (nodeIsOfType(*n))
             return n;
         if (n == root)
             return nullptr;
@@ -525,14 +525,14 @@ RefPtr<Node> enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(
     return nullptr;
 }
 
-Node* highestEnclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule, Node* stayWithin)
+RefPtr<Node> highestEnclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule rule, Node* stayWithin)
 {
-    Node* highest = nullptr;
+    RefPtr<Node> highest;
     auto root = rule == CannotCrossEditingBoundary ? highestEditableRoot(position) : nullptr;
     for (RefPtr<Node> n = position.containerNode(); n && n != stayWithin; n = n->parentNode()) {
         if (root && !n->hasEditableStyle())
             continue;
-        if (nodeIsOfType(n.get()))
+        if (nodeIsOfType(*n))
             highest = n.get();
         if (n == root)
             break;
@@ -612,7 +612,7 @@ Node* enclosingListChild(Node* node)
     for (RefPtr n = node; n && n->parentNode(); n = n->parentNode()) {
         if (is<HTMLLIElement>(*n) || (isListHTMLElement(n->parentNode()) && n != root))
             return n.get();
-        if (n == root || isTableCell(n.get()))
+        if (n == root || isTableCell(*n))
             return nullptr;
     }
 
@@ -719,11 +719,11 @@ bool isRenderedTable(const Node* node)
     return renderer && renderer->isTable();
 }
 
-bool isTableCell(const Node* node)
+bool isTableCell(const Node& node)
 {
-    auto* renderer = node->renderer();
+    auto* renderer = node.renderer();
     if (!renderer)
-        return node->hasTagName(tdTag) || node->hasTagName(thTag);
+        return node.hasTagName(tdTag) || node.hasTagName(thTag);
     return renderer->isTableCell();
 }
 
@@ -828,7 +828,7 @@ unsigned numEnclosingMailBlockquotes(const Position& position)
 {
     unsigned count = 0;
     for (auto node = position.protectedDeprecatedNode(); node; node = node->parentNode()) {
-        if (isMailBlockquote(node.get()))
+        if (isMailBlockquote(*node))
             ++count;
     }
     return count;
@@ -864,12 +864,11 @@ void updatePositionForNodeRemoval(Position& position, Node& node)
     }
 }
 
-bool isMailBlockquote(const Node* node)
+bool isMailBlockquote(const Node& node)
 {
-    ASSERT(node);
-    if (!node->hasTagName(blockquoteTag))
+    if (!node.hasTagName(blockquoteTag))
         return false;
-    return downcast<HTMLElement>(*node).attributeWithoutSynchronization(typeAttr) == "cite"_s;
+    return downcast<HTMLElement>(node).attributeWithoutSynchronization(typeAttr) == "cite"_s;
 }
 
 int caretMinOffset(const Node& node)

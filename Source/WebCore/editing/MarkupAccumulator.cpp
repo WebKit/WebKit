@@ -185,7 +185,7 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax)
+MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax)
     : m_nodes(nodes)
     , m_resolveURLs(resolveURLs)
     , m_serializationSyntax(serializationSyntax)
@@ -278,7 +278,7 @@ void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespa
         appendNonElementNode(m_markup, node, namespaces);
 
     if (m_nodes)
-        m_nodes->append(const_cast<Node*>(&node));
+        m_nodes->append(const_cast<Node&>(node));
 }
 
 void MarkupAccumulator::appendEndTag(StringBuilder& result, const Element& element)

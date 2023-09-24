@@ -54,24 +54,24 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isTableRow(const Node* node)
+static bool isTableRow(const Node& node)
 {
-    return node && node->hasTagName(trTag);
+    return node.hasTagName(trTag);
 }
 
-static bool isTableCellEmpty(Node* cell)
+static bool isTableCellEmpty(Node& cell)
 {
     ASSERT(isTableCell(cell));
-    return VisiblePosition(firstPositionInNode(cell)) == VisiblePosition(lastPositionInNode(cell));
+    return VisiblePosition(firstPositionInNode(&cell)) == VisiblePosition(lastPositionInNode(&cell));
 }
 
-static bool isTableRowEmpty(Node* row)
+static bool isTableRowEmpty(const Node& row)
 {
     if (!isTableRow(row))
         return false;
 
-    for (RefPtr child = row->firstChild(); child; child = child->nextSibling()) {
-        if (isTableCell(child.get()) && !isTableCellEmpty(child.get()))
+    for (RefPtr child = row.firstChild(); child; child = child->nextSibling()) {
+        if (isTableCell(*child) && !isTableCellEmpty(*child))
             return false;
     }
 
@@ -518,7 +518,7 @@ void DeleteSelectionCommand::removeNodeUpdatingStates(Node& node, ShouldAssumeCo
     
 static inline bool shouldRemoveContentOnly(const Node& node)
 {
-    return isTableStructureNode(&node) || node.isRootEditableElement();
+    return isTableStructureNode(node) || node.isRootEditableElement();
 }
 
 void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
@@ -866,7 +866,7 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
         RefPtr row { m_endTableRow->previousSibling() };
         while (row && row != m_startTableRow) {
             RefPtr previousRow { row->previousSibling() };
-            if (isTableRowEmpty(row.get()))
+            if (isTableRowEmpty(*row))
                 removeNodeUpdatingStates(*row, DoNotAssumeContentIsAlwaysEditable);
             row = WTFMove(previousRow);
         }
@@ -877,14 +877,14 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
         RefPtr row { m_startTableRow->nextSibling() };
         while (row && row != m_endTableRow) {
             RefPtr nextRow { row->nextSibling() };
-            if (isTableRowEmpty(row.get()))
+            if (isTableRowEmpty(*row))
                 removeNodeUpdatingStates(*row, DoNotAssumeContentIsAlwaysEditable);
             row = WTFMove(nextRow);
         }
     }
 
     if (m_endTableRow && m_endTableRow->isConnected() && m_endTableRow != m_startTableRow) {
-        if (isTableRowEmpty(m_endTableRow.get())) {
+        if (isTableRowEmpty(*m_endTableRow)) {
             // Don't remove m_endTableRow if it's where we're putting the ending selection.
             if (!m_endingPosition.deprecatedNode()->isDescendantOf(*m_endTableRow)) {
                 // FIXME: We probably shouldn't remove m_endTableRow unless it's fully selected, even if it is empty.

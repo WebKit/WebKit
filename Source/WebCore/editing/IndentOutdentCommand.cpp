@@ -44,9 +44,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isListOrIndentBlockquote(const Node* node)
+static bool isListOrIndentBlockquote(const Node& node)
 {
-    return node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(blockquoteTag));
+    return node.hasTagName(ulTag) || node.hasTagName(olTag) || node.hasTagName(blockquoteTag);
 }
 
 IndentOutdentCommand::IndentOutdentCommand(Ref<Document>&& document, EIndentType typeOfAction)

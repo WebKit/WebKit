@@ -61,7 +61,7 @@ private:
 
     enum MainResourceStatus { Subresource, MainResource };
 
-    static RefPtr<LegacyWebArchive> create(const String& markupString, LocalFrame&, const Vector<Node*>& nodes, Function<bool(LocalFrame&)>&& frameFilter);
+    static RefPtr<LegacyWebArchive> create(const String& markupString, LocalFrame&, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter);
     static RefPtr<ArchiveResource> createResource(CFDictionaryRef);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);
