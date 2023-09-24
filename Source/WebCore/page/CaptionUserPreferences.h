@@ -100,6 +100,13 @@ public:
     String primaryAudioTrackLanguageOverride() const;
 
     virtual bool testingMode() const { return m_testingModeCount; }
+    void setTestingMode(bool flag)
+    {
+        if (flag)
+            incrementTestingModeCount();
+        else
+            decrementTestingModeCount();
+    }
 
     friend class CaptionUserPreferencesTestingModeToken;
     UniqueRef<CaptionUserPreferencesTestingModeToken> createTestingModeToken() { return makeUniqueRef<CaptionUserPreferencesTestingModeToken>(*this); }

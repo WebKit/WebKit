@@ -227,6 +227,10 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
             TestRunner::removeAllWebNotificationPermissions();
 
             InjectedBundle::page()->resetAfterTest();
+
+#if ENABLE(VIDEO)
+            WKBundlePageSetCaptionDisplayTestingMode(InjectedBundle::page()->page(), false);
+#endif
         }
         return;
     }
@@ -580,6 +584,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     clearResourceLoadStatistics();
 
 #if ENABLE(VIDEO)
+    WKBundlePageSetCaptionDisplayTestingMode(page()->page(), true);
     WKBundleSetCaptionDisplayMode(page()->page(), stringValue(settings, "CaptionDisplayMode"));
 #endif
     // [WK2] REGRESSION(r128623): It made layout tests extremely slow
