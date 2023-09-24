@@ -5031,10 +5031,6 @@ webkit.org/b/224902 [ Debug ] imported/w3c/web-platform-tests/css/css-will-chang
 webkit.org/b/139128 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-offset-path-1.html [ ImageOnlyFailure ]
 webkit.org/b/139128 imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-offset-path-1.html [ ImageOnlyFailure ]
 
-# Needs -webkit-backdrop-filter to be unprefixed
-webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1.html [ ImageOnlyFailure ]
-webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-003.html [ ImageOnlyFailure ]
-webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html [ ImageOnlyFailure ]
 webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html [ ImageOnlyFailure ]
 
 webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.html [ Skip ]

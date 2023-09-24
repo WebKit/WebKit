@@ -7399,6 +7399,7 @@
         },
         "-webkit-backdrop-filter": {
             "codegen-properties": {
+                "related-property": "backdrop-filter",
                 "conditional-converter": "FilterOperations",
                 "enable-if": "ENABLE_FILTERS_LEVEL_2",
                 "parser-function": "consumeFilter",
@@ -7406,6 +7407,26 @@
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
                 "parser-grammar-unused": "none | <filter-value-list>",
                 "parser-grammar-unused-reason": "Needs support for functional syntax groupings and '+' multipliers."
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-filters",
+                "url": "https://drafts.fxtf.org/filters-2/#BackdropFilterProperty"
+            }
+        },
+        "backdrop-filter": {
+            "codegen-properties": {
+                "related-property": "-webkit-backdrop-filter",
+                "conditional-converter": "FilterOperations",
+                "enable-if": "ENABLE_FILTERS_LEVEL_2",
+                "parser-function": "consumeFilter",
+                "parser-function-requires-context": true,
+                "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
+                "parser-grammar-unused": "none | <filter-value-list>",
+                "parser-grammar-unused-reason": "Needs support for functional syntax groupings and '+' multipliers.",
+                "settings-flag": "cssUnprefixedBackdropFilterEnabled"
             },
             "status": {
                 "status": "experimental"

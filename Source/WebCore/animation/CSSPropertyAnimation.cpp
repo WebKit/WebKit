@@ -1470,6 +1470,7 @@ private:
     {
         return property() == CSSPropertyFilter
 #if ENABLE(FILTERS_LEVEL_2)
+            || property() == CSSPropertyBackdropFilter
             || property() == CSSPropertyWebkitBackdropFilter
 #endif
             ;
@@ -3672,6 +3673,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new PropertyWrapperFilter(CSSPropertyFilter, &RenderStyle::filter, &RenderStyle::setFilter),
 #if ENABLE(FILTERS_LEVEL_2)
+        new PropertyWrapperFilter(CSSPropertyBackdropFilter, &RenderStyle::backdropFilter, &RenderStyle::setBackdropFilter),
         new PropertyWrapperFilter(CSSPropertyWebkitBackdropFilter, &RenderStyle::backdropFilter, &RenderStyle::setBackdropFilter),
 #endif
         new PropertyWrapperFilter(CSSPropertyAppleColorFilter, &RenderStyle::appleColorFilter, &RenderStyle::setAppleColorFilter),

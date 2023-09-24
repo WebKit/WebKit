@@ -3293,6 +3293,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
                 && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyFilter)
 #if ENABLE(FILTERS_LEVEL_2)
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyBackdropFilter)
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyWebkitBackdropFilter)
 #endif
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyTranslate)

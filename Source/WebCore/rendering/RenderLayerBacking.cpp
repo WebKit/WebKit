@@ -3952,7 +3952,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 
     bool hasBackdropFilter = false;
 #if ENABLE(FILTERS_LEVEL_2)
-    hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter);
+    hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter) || keyframes.containsProperty(CSSPropertyBackdropFilter);
 #endif
 
     if (!hasOpacity && !hasRotate && !hasScale && !hasTranslate && !hasTransform && !hasFilter && !hasBackdropFilter)
@@ -3996,7 +3996,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
             filterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->filter(), tf));
 
 #if ENABLE(FILTERS_LEVEL_2)
-        if (currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter))
+        if (currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.containsProperty(CSSPropertyBackdropFilter))
             backdropFilterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->backdropFilter(), tf));
 #endif
     }
@@ -4214,6 +4214,7 @@ AnimatedProperty RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cs
     case CSSPropertyFilter:
         return AnimatedProperty::Filter;
 #if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return AnimatedProperty::WebkitBackdropFilter;
 #endif
