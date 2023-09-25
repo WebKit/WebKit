@@ -154,7 +154,7 @@ public:
     void addDescendant(const RenderBlock& containingBlock, RenderBox& positionedDescendant)
     {
         // Protect against double insert where a descendant would end up with multiple containing blocks.
-        auto previousContainingBlock = m_containerMap.get(positionedDescendant);
+        auto previousContainingBlock = m_containerMap.get(&positionedDescendant);
         if (previousContainingBlock && previousContainingBlock != &containingBlock) {
             if (auto* descendants = m_descendantsMap.get(previousContainingBlock.get()))
                 descendants->remove(&positionedDescendant);
@@ -187,15 +187,15 @@ public:
         }
 
         if (!isNewEntry) {
-            ASSERT(m_containerMap.contains(positionedDescendant));
+            ASSERT(m_containerMap.contains(&positionedDescendant));
             return;
         }
-        m_containerMap.set(positionedDescendant, containingBlock);
+        m_containerMap.set(&positionedDescendant, containingBlock);
     }
 
     void removeDescendant(const RenderBox& positionedDescendant)
     {
-        auto containingBlock = m_containerMap.take(positionedDescendant);
+        auto containingBlock = m_containerMap.take(&positionedDescendant);
         if (!containingBlock)
             return;
 
@@ -219,7 +219,7 @@ public:
             return;
 
         for (auto* renderer : *descendants)
-            m_containerMap.remove(*renderer);
+            m_containerMap.remove(renderer);
     }
     
     TrackedRendererListHashSet* positionedRenderers(const RenderBlock& containingBlock) const
@@ -229,7 +229,7 @@ public:
 
 private:
     using DescendantsMap = HashMap<CheckedPtr<const RenderBlock>, std::unique_ptr<TrackedRendererListHashSet>>;
-    using ContainerMap = WeakHashMap<const RenderBox, WeakPtr<const RenderBlock>>;
+    using ContainerMap = HashMap<const RenderBox*, WeakPtr<const RenderBlock>>;
     
     DescendantsMap m_descendantsMap;
     ContainerMap m_containerMap;

@@ -10,9 +10,14 @@ clip-path
 (GraphicsLayer
 (bounds 800.00 600.00)
 (contentsOpaque 1)
-(children 2
+(children 3
 (GraphicsLayer
 (position 8.00 8.00)
+(bounds 784.00 18.00)
+(drawsContent 1)
+)
+(GraphicsLayer
+(position 8.00 44.00)
 (bounds 784.00 18.00)
 (drawsContent 1)
 )

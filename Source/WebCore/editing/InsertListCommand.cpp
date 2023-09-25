@@ -396,13 +396,16 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
         listElement = createHTMLElement(document(), listTag);
         appendNode(WTFMove(listItemElement), *listElement);
 
-        if (start == end && isBlock(start.deepEquivalent().deprecatedNode())) {
-            // Inserting the list into an empty paragraph that isn't held open 
-            // by a br or a '\n', will invalidate start and end.  Insert 
-            // a placeholder and then recompute start and end.
-            auto blockPlaceholder = insertBlockPlaceholder(start.deepEquivalent());
-            start = positionBeforeNode(blockPlaceholder.get());
-            end = start;
+        if (start == end) {
+            RefPtr node = start.deepEquivalent().deprecatedNode();
+            if (node && isBlock(*node)) {
+                // Inserting the list into an empty paragraph that isn't held open
+                // by a br or a '\n', will invalidate start and end. Insert
+                // a placeholder and then recompute start and end.
+                auto blockPlaceholder = insertBlockPlaceholder(start.deepEquivalent());
+                start = positionBeforeNode(blockPlaceholder.get());
+                end = start;
+            }
         }
 
         // Insert the list at a position visually equivalent to start of the

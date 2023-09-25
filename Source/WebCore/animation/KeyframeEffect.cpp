@@ -2603,7 +2603,7 @@ void KeyframeEffect::computeHasReferenceFilter()
             if (m_blendingKeyframes.containsProperty(CSSPropertyFilter))
                 return true;
 #if ENABLE(FILTERS_LEVEL_2)
-            if (m_blendingKeyframes.containsProperty(CSSPropertyWebkitBackdropFilter))
+            if (m_blendingKeyframes.containsProperty(CSSPropertyWebkitBackdropFilter) || m_blendingKeyframes.containsProperty(CSSPropertyBackdropFilter))
                 return true;
 #endif
             return false;
@@ -2736,6 +2736,7 @@ static bool acceleratedPropertyDidChange(AnimatableProperty property, const Rend
     case CSSPropertyFilter:
         return previousStyle.filter() != currentStyle.filter();
 #if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return previousStyle.backdropFilter() != currentStyle.backdropFilter();
 #endif

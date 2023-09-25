@@ -79,6 +79,7 @@ bool WillChangeData::createsContainingBlockForOutOfFlowPositioned(bool isRootEle
         // CSS filter & backdrop-filter
         // FIXME: exclude root element for those properties (bug 225034)
 #if ENABLE(FILTERS_LEVEL_2)
+        || (containsProperty(CSSPropertyBackdropFilter) && !isRootElement)
         || (containsProperty(CSSPropertyWebkitBackdropFilter) && !isRootElement)
 #endif
         || containsProperty(CSSPropertyFilter);
@@ -88,6 +89,7 @@ bool WillChangeData::canBeBackdropRoot() const
 {
     return containsProperty(CSSPropertyOpacity)
 #if ENABLE(FILTERS_LEVEL_2)
+        || containsProperty(CSSPropertyBackdropFilter)
         || containsProperty(CSSPropertyWebkitBackdropFilter)
 #endif
         || containsProperty(CSSPropertyClipPath)
@@ -121,6 +123,7 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
 #endif
     case CSSPropertyFilter:
 #if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
 #endif
     case CSSPropertyMaskImage:
@@ -142,6 +145,7 @@ static bool propertyTriggersCompositing(CSSPropertyID property)
     case CSSPropertyOpacity:
     case CSSPropertyFilter:
 #if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
 #endif
         return true;

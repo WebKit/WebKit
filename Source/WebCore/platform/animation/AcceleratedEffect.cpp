@@ -92,6 +92,7 @@ static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatablePr
     case CSSPropertyFilter:
         return AcceleratedEffectProperty::Filter;
 #if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return AcceleratedEffectProperty::BackdropFilter;
 #endif

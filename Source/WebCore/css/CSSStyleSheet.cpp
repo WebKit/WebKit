@@ -232,7 +232,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
     ASSERT(m_contents->hasOneClient());
 
     forEachStyleScope([&](Style::Scope& scope) {
-        if ((mutationType == RuleInsertion || mutationType == RuleReplace) && !contentsWereClonedForMutation && !scope.activeStyleSheetsContains(this)) {
+        if ((mutationType == RuleInsertion || mutationType == RuleReplace) && !contentsWereClonedForMutation && !scope.activeStyleSheetsContains(*this)) {
             if (insertedKeyframesRule) {
                 if (auto* resolver = scope.resolverIfExists())
                     resolver->addKeyframeStyle(*insertedKeyframesRule);

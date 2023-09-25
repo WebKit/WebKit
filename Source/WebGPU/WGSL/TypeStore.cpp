@@ -140,7 +140,7 @@ const Type* TypeStore::arrayType(const Type* elementType, std::optional<unsigned
     return type;
 }
 
-const Type* TypeStore::vectorType(const Type* elementType, uint8_t size)
+const Type* TypeStore::vectorType(uint8_t size, const Type* elementType)
 {
     VectorKey key { elementType, size };
     const Type* type = m_cache.find(key);
@@ -151,7 +151,7 @@ const Type* TypeStore::vectorType(const Type* elementType, uint8_t size)
     return type;
 }
 
-const Type* TypeStore::matrixType(const Type* elementType, uint8_t columns, uint8_t rows)
+const Type* TypeStore::matrixType(uint8_t columns, uint8_t rows, const Type* elementType)
 {
     MatrixKey key { elementType, columns, rows };
     const Type* type = m_cache.find(key);
@@ -162,7 +162,7 @@ const Type* TypeStore::matrixType(const Type* elementType, uint8_t columns, uint
     return type;
 }
 
-const Type* TypeStore::textureType(const Type* elementType, Texture::Kind kind)
+const Type* TypeStore::textureType(Texture::Kind kind, const Type* elementType)
 {
     TextureKey key { elementType, kind };
     const Type* type = m_cache.find(key);

@@ -371,7 +371,7 @@ public:
 
     // A programmatic way to set a name on an AccessibleObject.
     void setAccessibleName(const AtomString&) override { }
-    bool hasAttributesRequiredForInclusion() const override;
+    virtual bool hasAttributesRequiredForInclusion() const;
 
     String title() const override { return { }; }
     String description() const override { return { }; }
@@ -601,8 +601,6 @@ public:
 
     // Used by an ARIA tree to get all its rows.
     void ariaTreeRows(AccessibilityChildrenVector&) override;
-    // Used by an ARIA tree item to get only its content, and not its child tree items and groups.
-    AccessibilityChildrenVector ariaTreeItemContent() override;
 
     // ARIA live-region features.
     AccessibilityObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }

@@ -819,7 +819,7 @@ static bool shouldEmitTabBeforeNode(Node& node)
     auto* renderer = node.renderer();
     
     // Table cells are delimited by tabs.
-    if (!renderer || !isTableCell(&node))
+    if (!renderer || !isTableCell(node))
         return false;
     
     // Want a tab before every cell other than the first one.
@@ -880,7 +880,7 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
     
     // Need to make an exception for table cells, because they are blocks, but we
     // want them tab-delimited rather than having newlines before and after.
-    if (isTableCell(&node))
+    if (isTableCell(node))
         return false;
     
     // Need to make an exception for table row elements, because they are neither

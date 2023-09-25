@@ -2696,8 +2696,6 @@ rendering/style/RenderStyle.cpp
 rendering/style/RenderStyleConstants.cpp
 rendering/style/SVGRenderStyle.cpp
 rendering/style/SVGRenderStyleDefs.cpp
-rendering/style/ScrollbarColor.cpp
-rendering/style/ScrollbarGutter.cpp
 rendering/style/ShadowData.cpp
 rendering/style/ShapeValue.cpp
 rendering/style/StyleBackgroundData.cpp
@@ -2728,6 +2726,8 @@ rendering/style/StyleNonInheritedData.cpp
 rendering/style/StylePaintImage.cpp
 rendering/style/StyleRareInheritedData.cpp
 rendering/style/StyleRareNonInheritedData.cpp
+rendering/style/ScrollbarColor.cpp
+rendering/style/ScrollbarGutter.cpp
 rendering/style/StyleSelfAlignmentData.cpp
 rendering/style/StyleSurroundData.cpp
 rendering/style/StyleTransformData.cpp
@@ -2996,7 +2996,6 @@ svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp
 svg/graphics/SVGImageCache.cpp
 svg/graphics/SVGImageForContainer.cpp
-svg/graphics/SVGResourceImage.cpp
 svg/graphics/filters/SVGFilter.cpp
 svg/properties/SVGAnimatedProperty.cpp
 svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp

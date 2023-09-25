@@ -37,6 +37,22 @@
     return self.decelerating && self.tracking;
 }
 
+- (BOOL)_wk_isScrolledBeyondExtents
+{
+    auto contentOffset = self.contentOffset;
+    auto inset = self.adjustedContentInset;
+    if (contentOffset.x < -inset.left || contentOffset.y < -inset.top)
+        return YES;
+
+    auto contentSize = self.contentSize;
+    auto boundsSize = self.bounds.size;
+    auto maxScrollExtent = CGPointMake(
+        contentSize.width + inset.right - std::min<CGFloat>(boundsSize.width, contentSize.width + inset.left + inset.right),
+        contentSize.height + inset.bottom - std::min<CGFloat>(boundsSize.height, contentSize.height + inset.top + inset.bottom)
+    );
+    return contentOffset.x > maxScrollExtent.x || contentOffset.y > maxScrollExtent.y;
+}
+
 @end
 
 @implementation UIView (WebKitInternal)

@@ -4720,6 +4720,13 @@
    },
    {
       "emails" : [
+         "kohei.ueno119@gmail.com"
+      ],
+      "github" : "cola119",
+      "name" : "Kohei Ueno"
+   },
+   {
+      "emails" : [
          "kojih@chromium.org"
       ],
       "name" : "Koji Hara",

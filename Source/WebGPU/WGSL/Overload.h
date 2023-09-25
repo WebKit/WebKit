@@ -60,19 +60,19 @@ using AbstractTypeImpl = std::variant<
 using AbstractType = std::unique_ptr<AbstractTypeImpl>;
 
 struct AbstractVector {
-    AbstractType element;
     AbstractValue size;
+    AbstractType element;
 };
 
 struct AbstractMatrix {
-    AbstractType element;
     AbstractValue columns;
     AbstractValue rows;
+    AbstractType element;
 };
 
 struct AbstractTexture {
-    AbstractType element;
     Types::Texture::Kind kind;
+    AbstractType element;
 };
 
 struct AbstractReference {

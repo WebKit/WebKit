@@ -2668,10 +2668,8 @@ static inline bool hasVisibleBoxDecorations(const RenderStyle& style)
     return style.hasVisibleBorder() || style.hasBorderRadius() || style.hasOutline() || style.hasEffectiveAppearance() || style.boxShadow() || style.hasFilter();
 }
 
-static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& renderer)
+static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& style)
 {
-    const RenderStyle& style = renderer.style();
-
     if (!GraphicsLayer::supportsContentsTiling())
         return false;
 
@@ -2679,7 +2677,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& r
     if (fillLayer.next())
         return false;
 
-    if (!fillLayer.imagesAreLoaded(&renderer))
+    if (!fillLayer.imagesAreLoaded())
         return false;
 
     if (fillLayer.attachment() != FillAttachment::ScrollBackground)
@@ -2702,17 +2700,15 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& r
     return true;
 }
 
-static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderElement& renderer)
+static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderStyle& style)
 {
-    const RenderStyle& style = renderer.style();
-
     if (hasVisibleBoxDecorations(style))
         return true;
 
     if (!style.hasBackgroundImage())
         return false;
 
-    return !canDirectlyCompositeBackgroundBackgroundImage(renderer);
+    return !canDirectlyCompositeBackgroundBackgroundImage(style);
 }
 
 static inline bool hasPerspectiveOrPreserves3D(const RenderStyle& style)
@@ -2850,7 +2846,7 @@ static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObjec
     if (renderer.hasClip())
         return false;
 
-    if (hasPaintedBoxDecorationsOrBackgroundImage(renderer))
+    if (hasPaintedBoxDecorationsOrBackgroundImage(style))
         return false;
 
     // FIXME: We can't create a directly composited background if this
@@ -3177,7 +3173,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     }
 #endif
 
-    if ((changeType == BackgroundImageChanged) && canDirectlyCompositeBackgroundBackgroundImage(renderer()))
+    if ((changeType == BackgroundImageChanged) && canDirectlyCompositeBackgroundBackgroundImage(renderer().style()))
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
     if ((changeType == MaskImageChanged) && m_maskLayer)
@@ -3952,7 +3948,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 
     bool hasBackdropFilter = false;
 #if ENABLE(FILTERS_LEVEL_2)
-    hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter);
+    hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter) || keyframes.containsProperty(CSSPropertyBackdropFilter);
 #endif
 
     if (!hasOpacity && !hasRotate && !hasScale && !hasTranslate && !hasTransform && !hasFilter && !hasBackdropFilter)
@@ -3996,7 +3992,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
             filterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->filter(), tf));
 
 #if ENABLE(FILTERS_LEVEL_2)
-        if (currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter))
+        if (currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.containsProperty(CSSPropertyBackdropFilter))
             backdropFilterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->backdropFilter(), tf));
 #endif
     }
@@ -4214,6 +4210,7 @@ AnimatedProperty RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cs
     case CSSPropertyFilter:
         return AnimatedProperty::Filter;
 #if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return AnimatedProperty::WebkitBackdropFilter;
 #endif

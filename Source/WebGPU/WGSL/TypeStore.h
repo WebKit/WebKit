@@ -91,9 +91,9 @@ public:
 
     const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
     const Type* arrayType(const Type*, std::optional<unsigned>);
-    const Type* vectorType(const Type*, uint8_t);
-    const Type* matrixType(const Type*, uint8_t columns, uint8_t rows);
-    const Type* textureType(const Type*, Types::Texture::Kind);
+    const Type* vectorType(uint8_t, const Type*);
+    const Type* matrixType(uint8_t columns, uint8_t rows, const Type*);
+    const Type* textureType(Types::Texture::Kind, const Type*);
     const Type* textureStorageType(Types::TextureStorage::Kind, TexelFormat, AccessMode);
     const Type* functionType(Vector<const Type*>&&, const Type*);
     const Type* referenceType(AddressSpace, const Type*, AccessMode);

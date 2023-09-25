@@ -50,7 +50,7 @@ struct SimpleRange;
 
 RefPtr<ContainerNode> highestEditableRoot(const Position&, EditableType = ContentIsEditable);
 
-Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = nullptr);
+RefPtr<Node> highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = nullptr);
 Node* highestNodeToRemoveInPruning(Node*);
 Element* lowestEditableAncestor(Node*);
 
@@ -60,7 +60,7 @@ RefPtr<Element> enclosingTableCell(const Position&);
 Node* enclosingEmptyListItem(const VisiblePosition&);
 Element* enclosingAnchorElement(const Position&);
 Element* enclosingElementWithTag(const Position&, const QualifiedName&);
-RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 HTMLSpanElement* tabSpanNode(const Node*);
 Element* isLastPositionBeforeTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 Element* isFirstPositionAfterTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
@@ -85,18 +85,18 @@ bool editingIgnoresContent(const Node&);
 bool canHaveChildrenForEditing(const Node&);
 bool isAtomicNode(const Node*);
 
-bool isBlock(const Node*);
+bool isBlock(const Node&);
 bool isBlockFlowElement(const Node&);
-bool isInline(const Node*);
+bool isInline(const Node&);
 bool isTabSpanNode(const Node*);
 bool isTabSpanTextNode(const Node*);
-bool isMailBlockquote(const Node*);
+bool isMailBlockquote(const Node&);
 bool isRenderedTable(const Node*);
-bool isTableCell(const Node*);
+bool isTableCell(const Node&);
 bool isEmptyTableCell(const Node*);
-bool isTableStructureNode(const Node*);
+bool isTableStructureNode(const Node&);
 bool isListHTMLElement(Node*);
-bool isListItem(const Node*);
+bool isListItem(const Node&);
 bool isNodeRendered(const Node&);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
 bool isNonTableCellHTMLBlockElement(const Node*);

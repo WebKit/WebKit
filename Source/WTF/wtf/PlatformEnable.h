@@ -626,6 +626,9 @@
 #define ENABLE_CFPREFS_DIRECT_MODE 0
 #endif
 
+#if !defined(ENABLE_UNPREFIXED_BACKDROP_FILTER)
+#define ENABLE_UNPREFIXED_BACKDROP_FILTER 0
+#endif
 
 
 /* FIXME: This section of the file has not been cleaned up yet and needs major work. */

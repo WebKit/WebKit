@@ -32,6 +32,7 @@
 
 @interface UIScrollView (WebKitInternal)
 @property (readonly, nonatomic) BOOL _wk_isInterruptingDeceleration;
+@property (readonly, nonatomic) BOOL _wk_isScrolledBeyondExtents;
 @end
 
 @interface UIView (WebKitInternal)

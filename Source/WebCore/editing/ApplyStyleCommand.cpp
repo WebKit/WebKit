@@ -795,7 +795,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
             continue;
         }
         
-        if (isBlock(node.get()))
+        if (isBlock(*node))
             continue;
         
         if (node->hasChildNodes()) {
@@ -810,7 +810,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
         auto runStart = node;
         auto runEnd = node;
         RefPtr sibling { node->nextSibling() };
-        while (sibling && sibling != pastEndNode && !sibling->contains(pastEndNode) && (!isBlock(sibling.get()) || sibling->hasTagName(brTag)) && !containsNonEditableRegion(*sibling)) {
+        while (sibling && sibling != pastEndNode && !sibling->contains(pastEndNode) && (!isBlock(*sibling) || sibling->hasTagName(brTag)) && !containsNonEditableRegion(*sibling)) {
             runEnd = sibling;
             sibling = runEnd->nextSibling();
         }

@@ -151,10 +151,10 @@ const Type* concretize(const Type* type, TypeStore& types)
             return satisfyOrPromote(type, Constraints::ConcreteScalar, types);
         },
         [&](const Vector& vector) -> const Type* {
-            return types.vectorType(concretize(vector.element, types), vector.size);
+            return types.vectorType(vector.size, concretize(vector.element, types));
         },
         [&](const Matrix& matrix) -> const Type* {
-            return types.matrixType(concretize(matrix.element, types), matrix.columns, matrix.rows);
+            return types.matrixType(matrix.columns, matrix.rows, concretize(matrix.element, types));
         },
         [&](const Array& array) -> const Type* {
             return types.arrayType(concretize(array.element, types), array.size);

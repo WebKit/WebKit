@@ -21,12 +21,12 @@
 #pragma once
 
 #include "CSSParserContext.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -45,7 +45,7 @@ class StyleRuleNamespace;
 
 enum class CachePolicy : uint8_t;
 
-class StyleSheetContents final : public RefCounted<StyleSheetContents>, public CanMakeWeakPtr<StyleSheetContents> {
+class StyleSheetContents final : public RefCounted<StyleSheetContents>, public CanMakeCheckedPtr {
 public:
     static Ref<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(HTMLStandardMode))
     {
@@ -161,7 +161,7 @@ private:
 
     void clearCharsetRule();
 
-    StyleRuleImport* m_ownerRule;
+    StyleRuleImport* m_ownerRule { nullptr };
 
     String m_originalURL;
 

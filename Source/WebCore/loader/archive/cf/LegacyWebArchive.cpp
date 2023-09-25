@@ -425,13 +425,13 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
         tagNamesToFilter->append(HTMLNames::noscriptTag);
     }
 
-    Vector<Node*> nodeList;
+    Vector<Ref<Node>> nodeList;
     String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::No, tagNamesToFilter.get());
     auto nodeType = node.nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = documentTypeString(node.document()) + markupString;
 
-    return create(markupString, *frame, nodeList, WTFMove(frameFilter));
+    return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter));
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
@@ -464,24 +464,24 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
         return nullptr;
 
     // FIXME: This is always "for interchange". Is that right?
-    Vector<Node*> nodeList;
+    Vector<Ref<Node>> nodeList;
     String markupString = documentTypeString(document) + serializePreservingVisualAppearance(range, &nodeList, AnnotateForInterchange::Yes);
-    return create(markupString, *frame, nodeList, nullptr);
+    return create(markupString, *frame, WTFMove(nodeList), nullptr);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, const Vector<Node*>& nodes, Vector<Ref<ArchiveResource>>& subresources)
+static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, const Vector<Ref<Node>>& nodes, Vector<Ref<ArchiveResource>>& subresources)
 {
     if (!DeprecatedGlobalSettings::attachmentElementEnabled())
         return;
 
     Vector<String> identifiers;
-    for (auto* node : nodes) {
+    for (auto& node : nodes) {
         if (!is<HTMLAttachmentElement>(node))
             continue;
 
-        auto uniqueIdentifier = downcast<HTMLAttachmentElement>(*node).uniqueIdentifier();
+        auto uniqueIdentifier = downcast<HTMLAttachmentElement>(node.get()).uniqueIdentifier();
         if (uniqueIdentifier.isEmpty())
             continue;
 
@@ -505,7 +505,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, c
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, const Vector<Node*>& nodes, Function<bool(LocalFrame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -523,11 +523,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
     Vector<Ref<ArchiveResource>> subresources;
     HashSet<URL> uniqueSubresources;
 
-    for (auto& nodePtr : nodes) {
-        Node& node = *nodePtr;
-        LocalFrame* childFrame;
+    for (auto& node : nodes) {
+        RefPtr<LocalFrame> childFrame;
         if ((is<HTMLFrameElementBase>(node) || is<HTMLObjectElement>(node))
-            && (childFrame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(node).contentFrame()))) {
+            && (childFrame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(node.get()).contentFrame()))) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;
             if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter)))
@@ -537,7 +536,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
 
         } else {
             ListHashSet<URL> subresourceURLs;
-            node.getSubresourceURLs(subresourceURLs);
+            node->getSubresourceURLs(subresourceURLs);
 
             ASSERT(frame.loader().documentLoader());
             auto& documentLoader = *frame.loader().documentLoader();
@@ -598,10 +597,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(LocalFrame* frame
     StringBuilder builder;
     builder.append(documentTypeString(*document));
 
-    Vector<Node*> nodeList;
+    Vector<Ref<Node>> nodeList;
     builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes, &nodeList));
 
-    auto archive = create(builder.toString(), *frame, nodeList, nullptr);
+    auto archive = create(builder.toString(), *frame, WTFMove(nodeList), nullptr);
     if (!archive)
         return nullptr;
 

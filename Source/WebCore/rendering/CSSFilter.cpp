@@ -177,7 +177,8 @@ static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperat
 
 static SVGFilterElement* referenceFilterElement(const ReferenceFilterOperation& filterOperation, RenderElement& renderer)
 {
-    auto* filterElement = ReferencedSVGResources::referencedFilterElement(renderer.treeScopeForSVGReferences(), filterOperation);
+    auto& referencedSVGResources = renderer.ensureReferencedSVGResources();
+    auto* filterElement = referencedSVGResources.referencedFilterElement(renderer.treeScopeForSVGReferences(), filterOperation);
 
     if (!filterElement) {
         LOG_WITH_STREAM(Filters, stream << " buildReferenceFilter: failed to find filter renderer, adding pending resource " << filterOperation.fragment());

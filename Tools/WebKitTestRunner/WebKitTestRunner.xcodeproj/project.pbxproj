@@ -168,6 +168,7 @@
 		F44A531821B899E500DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531621B899DA00DBB99C /* InstanceMethodSwizzler.mm */; };
 		F46240B1217013E500917B16 /* UIScriptControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */; };
 		F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */; };
+		F4C80D4E2ABFBCB500DEB820 /* UIKitSPIForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C80D4D2ABFBCB500DEB820 /* UIKitSPIForTesting.h */; };
 		F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */; };
 /* End PBXBuildFile section */
 
@@ -450,6 +451,7 @@
 		F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIScriptControllerCocoa.mm; sourceTree = "<group>"; };
 		F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestSpellChecker.mm; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.mm; sourceTree = "<group>"; };
 		F4C3578B20E8444000FA0748 /* LayoutTestSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutTestSpellChecker.h; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.h; sourceTree = "<group>"; };
+		F4C80D4D2ABFBCB500DEB820 /* UIKitSPIForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPIForTesting.h; sourceTree = "<group>"; };
 		F4FED3212358215E003C139C /* NSPasteboardAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSPasteboardAdditions.h; path = ../TestRunnerShared/mac/NSPasteboardAdditions.h; sourceTree = "<group>"; };
 		F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NSPasteboardAdditions.mm; path = ../TestRunnerShared/mac/NSPasteboardAdditions.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -756,6 +758,7 @@
 				0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */,
 				2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */,
 				2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */,
+				F4C80D4D2ABFBCB500DEB820 /* UIKitSPIForTesting.h */,
 				F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */,
 				F415C22B27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.mm */,
 				2D0BEE1722EAD1360092B738 /* UIScriptControllerIOS.h */,
@@ -1002,6 +1005,7 @@
 				0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */,
 				2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */,
 				2904FA1E265CC5D900A7EBC9 /* StringFunctionsCocoa.h in Headers */,
+				F4C80D4E2ABFBCB500DEB820 /* UIKitSPIForTesting.h in Headers */,
 				F415C22C27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h in Headers */,
 				2D058E0922E2EE2200E4C145 /* UIScriptControllerCocoa.h in Headers */,
 				2D058E0B22E2EF6D00E4C145 /* UIScriptControllerMac.h in Headers */,

@@ -1139,7 +1139,7 @@ Node* findStartOfParagraph(Node* startNode, Node* highestRoot, Node* startBlock,
             continue;
         }
         
-        if (r->isBR() || isBlock(n))
+        if (r->isBR() || isBlock(*n))
             break;
 
         if (is<RenderText>(*r) && downcast<RenderText>(*r).hasRenderedText()) {
@@ -1199,7 +1199,7 @@ Node* findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayInsideBlo
         }
         
         // FIXME: This is wrong when startNode is a block. We should return a position after the block.
-        if (r->isBR() || is<HTMLBRElement>(n) || isBlock(n))
+        if (r->isBR() || is<HTMLBRElement>(*n) || isBlock(*n))
             break;
 
         // FIXME: We avoid returning a position where the renderer can't accept the caret.

@@ -333,7 +333,7 @@ void ReplacementFragment::removeUnrenderedNodes(Node* holder)
     Vector<Ref<Node>> unrendered;
 
     for (RefPtr node = holder->firstChild(); node; node = NodeTraversal::next(*node, holder)) {
-        if (!isNodeRendered(*node) && !isTableStructureNode(node.get()))
+        if (!isNodeRendered(*node) && !isTableStructureNode(*node))
             unrendered.append(*node);
     }
 
@@ -518,22 +518,19 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
         && shouldMerge(endOfInsertedContent, next);
 }
 
-static bool isMailPasteAsQuotationNode(const Node* node)
+static bool isMailPasteAsQuotationNode(const Node& node)
 {
-    return node && node->hasTagName(blockquoteTag) && downcast<Element>(node)->attributeWithoutSynchronization(classAttr) == ApplePasteAsQuotation;
+    return node.hasTagName(blockquoteTag) && downcast<Element>(node).attributeWithoutSynchronization(classAttr) == ApplePasteAsQuotation;
 }
 
-static bool isHeaderElement(const Node* a)
+static bool isHeaderElement(const Node& a)
 {
-    if (!a)
-        return false;
-        
-    return a->hasTagName(h1Tag)
-        || a->hasTagName(h2Tag)
-        || a->hasTagName(h3Tag)
-        || a->hasTagName(h4Tag)
-        || a->hasTagName(h5Tag)
-        || a->hasTagName(h6Tag);
+    return a.hasTagName(h1Tag)
+        || a.hasTagName(h2Tag)
+        || a.hasTagName(h3Tag)
+        || a.hasTagName(h4Tag)
+        || a.hasTagName(h5Tag)
+        || a.hasTagName(h6Tag);
 }
 
 static bool haveSameTagName(Node* a, Node* b)
@@ -552,13 +549,13 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
     RefPtr destinationBlock { enclosingBlock(destinationNode.get()) };
     return !enclosingNodeOfType(source.deepEquivalent(), &isMailPasteAsQuotationNode)
         && sourceBlock
-        && (!sourceBlock->hasTagName(blockquoteTag) || isMailBlockquote(sourceBlock.get()))
+        && (!sourceBlock->hasTagName(blockquoteTag) || isMailBlockquote(*sourceBlock))
         && enclosingListChild(sourceBlock.get()) == enclosingListChild(destinationNode.get())
         && enclosingTableCell(source.deepEquivalent()) == enclosingTableCell(destination.deepEquivalent())
-        && (!isHeaderElement(sourceBlock.get()) || haveSameTagName(sourceBlock.get(), destinationBlock.get()))
+        && (!isHeaderElement(*sourceBlock) || haveSameTagName(sourceBlock.get(), destinationBlock.get()))
         // Don't merge to or from a position before or after a block because it would
         // be a no-op and cause infinite recursion.
-        && !isBlock(sourceNode.get()) && !isBlock(destinationNode.get());
+        && !isBlock(*sourceNode) && !isBlock(*destinationNode);
 }
 
 static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const Position& insertionPos)
@@ -679,7 +676,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             auto hasBlockquoteNode = [&]() -> bool {
                 if (!context)
                     return false;
-                if (isMailPasteAsQuotationNode(context.get()))
+                if (isMailPasteAsQuotationNode(*context))
                     return true;
                 return enclosingNodeOfType(firstPositionInNode(context.get()), isMailBlockquote, CanCrossEditingBoundary);
             };
@@ -727,7 +724,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             // in quirks mode (which Mail.app is always in). We should look for an alternative.
 
             // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
-            if (isBlock(element))
+            if (isBlock(*element))
                 element->cssomStyle().setPropertyInternal(CSSPropertyDisplay, "inline"_s, false);
             if (element->renderer() && element->renderer()->style().isFloating())
                 element->cssomStyle().setPropertyInternal(CSSPropertyFloat, noneAtom(), false);
@@ -820,7 +817,7 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
             }
         }
 
-        if (isHeaderElement(node.get())) {
+        if (isHeaderElement(*node)) {
             if (RefPtr headerElement = highestEnclosingNodeOfType(positionInParentBeforeNode(node.get()), isHeaderElement)) {
                 if (headerElement->parentNode() && headerElement->parentNode()->isContentRichlyEditable())
                     moveNodeOutOfAncestor(*node, *headerElement, insertedNodes);
@@ -924,10 +921,12 @@ VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent() cons
 static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const Position& insertionPos)
 {
     RefPtr topNode { fragment.firstChild() };
+    if (!topNode)
+        return false;
 
     // Handling the case where we are doing Paste as Quotation or pasting into quoted content is more complicated (see handleStyleSpans)
     // and doesn't receive the optimization.
-    if (isMailPasteAsQuotationNode(topNode.get()) || enclosingNodeOfType(firstPositionInOrBeforeNode(topNode.get()), isMailBlockquote, CanCrossEditingBoundary))
+    if (isMailPasteAsQuotationNode(*topNode) || enclosingNodeOfType(firstPositionInOrBeforeNode(topNode.get()), isMailBlockquote, CanCrossEditingBoundary))
         return false;
 
     // Either there are no style spans in the fragment or a WebKit client has added content to the fragment
@@ -980,7 +979,7 @@ void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
     // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
     // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
     RefPtr<Node> blockquoteNode;
-    if (isMailPasteAsQuotationNode(context.get()))
+    if (context && isMailPasteAsQuotationNode(*context))
         blockquoteNode = context;
     else
         blockquoteNode = enclosingNodeOfType(firstPositionInNode(context.get()), isMailBlockquote, CanCrossEditingBoundary);
@@ -1069,28 +1068,28 @@ static RefPtr<Node> enclosingInline(Node* node)
     return currentNode;
 }
 
-static bool isInlineNodeWithStyle(const Node* node)
+static bool isInlineNodeWithStyle(const Node& node)
 {
     // We don't want to skip over any block elements.
     if (isBlock(node))
         return false;
 
-    if (!node->isHTMLElement())
+    if (!node.isHTMLElement())
         return false;
 
     // We can skip over elements whose class attribute is
     // one of our internal classes.
-    const HTMLElement* element = static_cast<const HTMLElement*>(node);
-    const AtomString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
+    auto& element = downcast<HTMLElement>(node);
+    const AtomString& classAttributeValue = element.attributeWithoutSynchronization(classAttr);
     if (classAttributeValue == AppleTabSpanClass
         || classAttributeValue == AppleConvertedSpace ""_s
         || classAttributeValue == ApplePasteAsQuotation)
         return true;
 
-    return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(*element);
+    return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(element);
 }
 
-inline Node* nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(const Position& insertionPos)
+inline RefPtr<Node> nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(const Position& insertionPos)
 {
     auto containingBlock = enclosingBlock(insertionPos.protectedContainerNode());
     return highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle, CannotCrossEditingBoundary, containingBlock.get());
@@ -1157,7 +1156,7 @@ void ReplaceSelectionCommand::doApply()
     RefPtr currentRoot { selection.rootEditableElement() };
 
     if ((selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph && !shouldHandleMailBlockquote)
-        || startBlock == currentRoot || isListItem(startBlock.get()) || selectionIsPlainText)
+        || startBlock == currentRoot || (startBlock && isListItem(*startBlock)) || selectionIsPlainText)
         m_preventNesting = false;
     
     if (selection.isRange()) {
@@ -1236,7 +1235,7 @@ void ReplaceSelectionCommand::doApply()
     
     // Adjust insertionPos to prevent nesting.
     // If the start was in a Mail blockquote, we will have already handled adjusting insertionPos above.
-    if (m_preventNesting && insertionBlock && !isTableCell(insertionBlock.get()) && !shouldHandleMailBlockquote) {
+    if (m_preventNesting && insertionBlock && !isTableCell(*insertionBlock) && !shouldHandleMailBlockquote) {
         ASSERT(insertionBlock != currentRoot);
         VisiblePosition visibleInsertionPos(insertionPos);
         if (isEndOfBlock(visibleInsertionPos) && !(isStartOfBlock(visibleInsertionPos) && fragment.hasInterchangeNewlineAtEnd()))
@@ -1446,7 +1445,7 @@ void ReplaceSelectionCommand::doApply()
             if (!isStartOfParagraph(endOfInsertedContent)) {
                 setEndingSelection(endOfInsertedContent);
                 RefPtr enclosingNode = enclosingBlock(endOfInsertedContent.deepEquivalent().protectedDeprecatedNode());
-                if (isListItem(enclosingNode.get())) {
+                if (enclosingNode && isListItem(*enclosingNode)) {
                     auto newListItem = HTMLLIElement::create(document());
                     insertNodeAfter(newListItem.copyRef(), *enclosingNode);
                     setEndingSelection(VisiblePosition(firstPositionInNode(newListItem.ptr())));
