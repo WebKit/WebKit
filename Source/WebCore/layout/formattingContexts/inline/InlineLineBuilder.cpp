@@ -614,29 +614,15 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     }
 
     auto appendRubyContainerIfApplicable = [&] {
-        if (softWrapOpportunityIndex > currentInlineItemIndex || isLeadingPartiaContent)
+        auto isRubyContent = currentInlineItemIndex < layoutRange.endIndex() && (m_inlineItems[currentInlineItemIndex].layoutBox().isRuby() || m_inlineItems[currentInlineItemIndex].layoutBox().isRubyBase());
+        if (!isRubyContent)
             return false;
-        // We must be at a ruby container and we should let the ruby formatting context handle the rest of the ruby content.
-        ASSERT(m_inlineItems[currentInlineItemIndex].layoutBox().isRuby());
+        // We must be at a ruby container/base and we should let the ruby formatting context handle the rest of the ruby content.
+        ASSERT(m_inlineItems[softWrapOpportunityIndex - 1].isInlineBoxEnd() && m_inlineItems[softWrapOpportunityIndex - 1].layoutBox().isRuby());
         // Ruby base content is handled as one atomic line candidate where ruby formatting context takes care of the internal details.
         // Note that ruby content is placed on the line as regualar inline content by the ruby formatting context.
-        size_t nestingLevel = 1;
-        for (size_t index = softWrapOpportunityIndex + 1; index < layoutRange.endIndex(); ++index) {
-            auto& inlineItem = m_inlineItems[index];
-            if (!inlineItem.layoutBox().isRuby())
-                continue;
-            ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
-            nestingLevel += inlineItem.isInlineBoxEnd() ?  -1 : 1;
-            if (!nestingLevel) {
-                ASSERT(&m_inlineItems[softWrapOpportunityIndex].layoutBox() == &m_inlineItems[index].layoutBox());
-                lineCandidate.inlineContent.appendRubyContainerRange({ { softWrapOpportunityIndex, { } }, { index + 1, { } } });
-                return true;
-            }
-        }
-        ASSERT_NOT_REACHED();
-        // Let's just skip this corrupt ruby container and treat it as regular inline content.
-        ++softWrapOpportunityIndex;
-        return false;
+        lineCandidate.inlineContent.appendRubyContainerRange({ { currentInlineItemIndex, { } }, { softWrapOpportunityIndex, { } } });
+        return true;
     };
     if (appendRubyContainerIfApplicable())
         return;
@@ -1114,9 +1100,8 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(const LineCandidate& 
 
 LineBuilder::Result LineBuilder::handleRubyContent(const InlineItemRange& rubyContainerRange, InlineLayoutUnit availableWidthForCandidateContent)
 {
-    ASSERT(m_inlineItems[rubyContainerRange.startIndex()].layoutBox().isRuby());
-    RubyFormattingContext { formattingContext() }.layoutInlineAxis(rubyContainerRange, m_inlineItems, m_line, availableWidthForCandidateContent);
-    return { InlineContentBreaker::IsEndOfLine::No, { rubyContainerRange.endIndex() - rubyContainerRange.startIndex(), false } };
+    auto result = RubyFormattingContext { formattingContext() }.layoutInlineAxis(rubyContainerRange, m_inlineItems, m_line, availableWidthForCandidateContent);
+    return { result.isEndOfLine, { result.committedCount, false } };
 }
 
 void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList& runs, const InlineContentBreaker::Result::PartialTrailingContent& partialTrailingContent)

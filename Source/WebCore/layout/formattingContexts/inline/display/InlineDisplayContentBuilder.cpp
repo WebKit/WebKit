@@ -439,7 +439,7 @@ void InlineDisplayContentBuilder::handleInlineBoxEnd(const Line::Run& lineRun, c
 {
     if (lineRun.layoutBox().isRubyBase()) {
         if (m_rubyColumnRangeList.isEmpty()) {
-            ASSERT_NOT_REACHED();
+            ASSERT(!lineRun.layoutBox().associatedRubyAnnotationBox());
             return;
         }
         if (lineRun.layoutBox().associatedRubyAnnotationBox())

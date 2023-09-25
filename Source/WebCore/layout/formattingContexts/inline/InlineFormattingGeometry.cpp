@@ -38,6 +38,7 @@
 #include "LayoutElementBox.h"
 #include "LengthFunctions.h"
 #include "RenderStyleInlines.h"
+#include "RubyFormattingContext.h"
 
 namespace WebCore {
 namespace Layout {
@@ -461,10 +462,8 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             return index;
         }
         if (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) {
-            if (currentItem.layoutBox().isRuby()) {
-                // Should be able to break _before_ <ruby>.
-                return index;
-            }
+            if (auto nextWrapOpportunityForRuby = RubyFormattingContext::nextWrapOpportunity(index, previousInlineItemIndex, layoutRange, inlineItems))
+                return *nextWrapOpportunityForRuby;
             // Need to see what comes next to decide.
             continue;
         }

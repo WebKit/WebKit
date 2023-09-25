@@ -35,7 +35,11 @@ class RubyFormattingContext {
 public:
     RubyFormattingContext(const InlineFormattingContext& parentFormattingContext);
 
-    void layoutInlineAxis(const InlineItemRange&, const InlineItems&, Line&, InlineLayoutUnit availableWidth);
+    struct InlineLayoutResult {
+        InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };
+        size_t committedCount { 0 };
+    };
+    InlineLayoutResult layoutInlineAxis(const InlineItemRange&, const InlineItems&, Line&, InlineLayoutUnit availableWidth);
 
     struct OverUnder {
         InlineLayoutUnit over { 0.f };
@@ -47,10 +51,14 @@ public:
     InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineDisplay::Boxes&);
     InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, size_t rubyBaseContentEndIndex, const InlineDisplay::Boxes&);
 
+    static std::optional<size_t> nextWrapOpportunity(size_t inlineItemIndex, std::optional<size_t> previousInlineItemIndex, const InlineItemRange&, const InlineItems&);
+
 private:
     size_t layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart, const InlineItems&);
     void applyRubyAlign(Line&, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth);
     std::optional<bool> annotationOverlapCheck(const InlineDisplay::Box&, const InlineLayoutRect& overhangingRect) const;
+    void placeRubyContent(WTF::Range<size_t> candidateRange, const InlineItems&, Line&);
+    InlineLayoutUnit logicaWidthForRubyRange(WTF::Range<size_t> candidateRange, const InlineItems&, InlineLayoutUnit lineContentLogicalRight) const;
 
     const InlineFormattingContext& parentFormattingContext() const { return m_parentFormattingContext; }
 
