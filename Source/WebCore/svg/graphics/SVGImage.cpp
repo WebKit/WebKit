@@ -83,7 +83,7 @@ SVGImage::~SVGImage()
     }
 }
 
-RefPtr<SVGSVGElement> SVGImage::rootElement() const
+inline RefPtr<SVGSVGElement> SVGImage::rootElement() const
 {
     if (!m_page)
         return nullptr;

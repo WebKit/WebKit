@@ -2638,7 +2638,11 @@ css3/masking/mask-repeat-space-content.html [ Pass ImageOnlyFailure ]
 # rdar://105915702 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] Nine imported/w3c/web-platform-tests/css/css tests are a consistent failure)
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3f.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3g.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-4a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-4b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-size-cover.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-002.html [ ImageOnlyFailure ]
 

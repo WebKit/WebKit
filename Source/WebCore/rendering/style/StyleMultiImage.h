@@ -61,7 +61,7 @@ private:
     bool canRender(const RenderElement*, float multiplier) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    bool isLoaded(const RenderElement*) const final;
+    bool isLoaded() const final;
     bool errorOccurred() const final;
     FloatSize imageSize(const RenderElement*, float multiplier) const final;
     bool imageHasRelativeWidth() const final;

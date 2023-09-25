@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,13 +26,8 @@
 
 #include "CSSImageValue.h"
 #include "CachedImage.h"
-#include "ReferencedSVGResources.h"
 #include "RenderElement.h"
 #include "RenderView.h"
-#include "SVGImage.h"
-#include "SVGResourceImage.h"
-#include "SVGSVGElement.h"
-#include "SVGURIReference.h"
 
 namespace WebCore {
 
@@ -88,31 +83,6 @@ URL StyleCachedImage::reresolvedURL(const Document& document) const
     return m_cssValue->reresolvedURL(document);
 }
 
-LegacyRenderSVGResourceContainer* StyleCachedImage::renderSVGResource(const RenderElement* renderer) const
-{
-    if (!renderer)
-        return nullptr;
-
-    auto& document = renderer->document();
-    auto reresolvedURL = this->reresolvedURL(document);
-
-    if (!m_cachedImage) {
-        auto fragmentIdentifier = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), document);
-        return ReferencedSVGResources::referencedRenderResource(renderer->treeScopeForSVGReferences(), fragmentIdentifier);
-    }
-
-    auto image = dynamicDowncast<SVGImage>(m_cachedImage->image());
-    if (!image)
-        return nullptr;
-
-    auto rootElement = image->rootElement();
-    if (!rootElement)
-        return nullptr;
-
-    auto fragmentIdentifier = reresolvedURL.fragmentIdentifier();
-    return ReferencedSVGResources::referencedRenderResource(rootElement->treeScopeForSVGReferences(), fragmentIdentifier.toAtomString());
-}
-
 void StyleCachedImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
     ASSERT(m_isPending);
@@ -132,8 +102,6 @@ Ref<CSSValue> StyleCachedImage::computedStyleValue(const RenderStyle&) const
 
 bool StyleCachedImage::canRender(const RenderElement* renderer, float multiplier) const
 {
-    if (renderSVGResource(renderer))
-        return true;
     if (!m_cachedImage)
         return false;
     return m_cachedImage->canRender(renderer, multiplier);
@@ -144,10 +112,8 @@ bool StyleCachedImage::isPending() const
     return m_isPending;
 }
 
-bool StyleCachedImage::isLoaded(const RenderElement* renderer) const
+bool StyleCachedImage::isLoaded() const
 {
-    if (renderSVGResource(renderer))
-        return true;
     if (!m_cachedImage)
         return false;
     return m_cachedImage->isLoaded();
@@ -162,11 +128,11 @@ bool StyleCachedImage::errorOccurred() const
 
 FloatSize StyleCachedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
-    if (renderSVGResource(renderer))
-        return m_containerSize;
     if (!m_cachedImage)
         return { };
-    return m_cachedImage->imageSizeForRenderer(renderer, multiplier) / m_scaleFactor;
+    FloatSize size = m_cachedImage->imageSizeForRenderer(renderer, multiplier);
+    size.scale(1 / m_scaleFactor);
+    return size;
 }
 
 bool StyleCachedImage::imageHasRelativeWidth() const
@@ -183,20 +149,10 @@ bool StyleCachedImage::imageHasRelativeHeight() const
     return m_cachedImage->imageHasRelativeHeight();
 }
 
-void StyleCachedImage::computeIntrinsicDimensions(const RenderElement* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void StyleCachedImage::computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
-    // In case of an SVG resource, we should return the container size.
-    if (renderSVGResource(renderer)) {
-        FloatSize size = floorSizeToDevicePixels(LayoutSize(m_containerSize), renderer ? renderer->document().deviceScaleFactor() : 1);
-        intrinsicWidth = Length(size.width(), LengthType::Fixed);
-        intrinsicHeight = Length(size.height(), LengthType::Fixed);
-        intrinsicRatio = size;
-        return;
-    }
-
     if (!m_cachedImage)
         return;
-
     m_cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
@@ -209,7 +165,6 @@ bool StyleCachedImage::usesImageContainerSize() const
 
 void StyleCachedImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom)
 {
-    m_containerSize = containerSize;
     if (!m_cachedImage)
         return;
     m_cachedImage->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, imageURL());
@@ -249,13 +204,8 @@ bool StyleCachedImage::hasImage() const
 RefPtr<Image> StyleCachedImage::image(const RenderElement* renderer, const FloatSize&, bool) const
 {
     ASSERT(!m_isPending);
-
-    if (auto renderSVGResource = this->renderSVGResource(renderer))
-        return SVGResourceImage::create(*renderSVGResource, reresolvedURL(renderer->document()));
-
     if (!m_cachedImage)
         return nullptr;
-
     return m_cachedImage->imageForRenderer(renderer);
 }
 
@@ -274,4 +224,4 @@ bool StyleCachedImage::usesDataProtocol() const
     return m_cssValue->imageURL().protocolIsData();
 }
 
-} // namespace WebCore
+}
