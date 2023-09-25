@@ -32,6 +32,7 @@
 #include "LLIntCLoop.h"
 #include "LLIntData.h"
 #include "LinkBuffer.h"
+#include "ProtoCallFrame.h"
 #include "VMEntryRecord.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
@@ -488,9 +489,14 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, Pt
 {
     CCallHelpers jit;
 
+    assertIsTaggedWith<OperationPtrTag>(pointer);
+
     jit.call(GPRInfo::regT5, tag);
-    jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT5);
-    jit.farJump(GPRInfo::regT5, OperationPtrTag);
+    jit.move(CCallHelpers::TrustedImmPtr(OperationPtrTag), GPRInfo::regT5);
+    jit.move(GPRInfo::regT5, MacroAssembler::stackPointerRegister);
+    jit.move(CCallHelpers::TrustedImm64(bitwise_cast<uint64_t>(pointer)), GPRInfo::regT5);
+    jit.move(GPRInfo::regT5, MacroAssembler::linkRegister);
+    jit.m_assembler.retaa();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt %s call gate thunk", name);

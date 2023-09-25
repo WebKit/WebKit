@@ -383,7 +383,19 @@ macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
     elsif ARM64E
         move entry, t5
         leap _g_config, a7
-        jmp JSCConfigGateMapOffset + (constexpr Gate::vmEntryToJavaScript) * PtrSize[a7], NativeToJITGatePtrTag # JSEntryPtrTag
+        move sp, temp1
+
+        move BytecodePtrTag, temp2
+        tagCodePtr temp2, temp1
+
+        storep temp1, ProtoCallFrame::jitCageSavedSP[protoCallFrame]
+        call JSCConfigGateMapOffset + (constexpr Gate::vmEntryToJavaScript) * PtrSize[a7], NativeToJITGatePtrTag # JSEntryPtrTag
+
+        loadp ProtoCallFrame::jitCageSavedSP[protoCallFrame], temp1
+        move BytecodePtrTag, temp2
+        untagArrayPtr temp2, temp1
+        move temp1, sp
+
         global _vmEntryToJavaScriptTrampoline
         _vmEntryToJavaScriptTrampoline:
         call t5, JSEntryPtrTag
