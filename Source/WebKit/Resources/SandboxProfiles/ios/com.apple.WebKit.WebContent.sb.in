@@ -930,9 +930,13 @@
             "com.apple.iphone.axserver-systemwide"
             "com.apple.mobileassetd.v2"
             "com.apple.mobilegestalt.xpc"
-            "com.apple.tccd"
-            "com.apple.webinspector"
-)))
+            "com.apple.tccd")))
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (system-attribute apple-internal)
+        (global-name "com.apple.webinspector")))
 
 ;; Silence warnings about these connections if we have decided not to extend access to them:
 (deny mach-lookup (with no-report)
