@@ -4539,6 +4539,20 @@ bool Element::hasRunningTransitions(PseudoId pseudoId) const
     return false;
 }
 
+const AnimatablePropertyToTransitionMap* Element::completedTransitionsByProperty(PseudoId pseudoId) const
+{
+    if (auto* animationData = animationRareData(pseudoId))
+        return &animationData->completedTransitionsByProperty();
+    return nullptr;
+}
+
+const AnimatablePropertyToTransitionMap* Element::runningTransitionsByProperty(PseudoId pseudoId) const
+{
+    if (auto* animationData = animationRareData(pseudoId))
+        return &animationData->runningTransitionsByProperty();
+    return nullptr;
+}
+
 AnimationCollection& Element::ensureAnimations(PseudoId pseudoId)
 {
     return ensureAnimationRareData(pseudoId).animations();

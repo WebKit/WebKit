@@ -182,6 +182,8 @@ public:
     bool hasStroke() const { return strokePaintType() != SVGPaintType::None; }
     bool hasFill() const { return fillPaintType() != SVGPaintType::None; }
 
+    void conservativelyCollectChangedAnimatableProperties(const SVGRenderStyle&, CSSPropertiesBitSet&) const;
+
 private:
     SVGRenderStyle();
     SVGRenderStyle(const SVGRenderStyle&);
@@ -213,9 +215,9 @@ private:
                 unsigned alignmentBaseline : 4; // AlignmentBaseline
                 unsigned dominantBaseline : 4; // DominantBaseline
                 unsigned baselineShift : 2; // BaselineShift
-                unsigned vectorEffect: 1; // VectorEffect
-                unsigned bufferedRendering: 2; // BufferedRendering
-                unsigned maskType: 1; // MaskType
+                unsigned vectorEffect : 1; // VectorEffect
+                unsigned bufferedRendering : 2; // BufferedRendering
+                unsigned maskType : 1; // MaskType
                 // 18 bits unused
             } flagBits;
             uint32_t flags;

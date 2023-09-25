@@ -568,6 +568,9 @@ public:
     bool hasRunningTransitions(PseudoId) const;
     AnimationCollection& ensureAnimations(PseudoId);
 
+    const AnimatablePropertyToTransitionMap* completedTransitionsByProperty(PseudoId) const;
+    const AnimatablePropertyToTransitionMap* runningTransitionsByProperty(PseudoId) const;
+
     AnimatablePropertyToTransitionMap& ensureCompletedTransitionsByProperty(PseudoId);
     AnimatablePropertyToTransitionMap& ensureRunningTransitionsByProperty(PseudoId);
     CSSAnimationCollection& animationsCreatedByMarkup(PseudoId);

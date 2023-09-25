@@ -2411,6 +2411,18 @@ class GenerationContext:
         to.write(f"}}")
         to.newline()
 
+    def generate_property_id_bit_set(self, *, to, name, iterable, mapping_to_property=lambda p: p):
+        to.write(f"const WTF::BitSet<numCSSProperties> {name} = ([]() -> WTF::BitSet<numCSSProperties> {{")
+
+        with to.indent():
+            to.write(f"WTF::BitSet<numCSSProperties> result;")
+
+            for item in iterable:
+                to.write(f"result.set({mapping_to_property(item).id});")
+
+            to.write(f"return result;")
+        to.write(f"}})();")
+        to.newline()
 
 # Generates `CSSPropertyNames.h` and `CSSPropertyNames.cpp`.
 class GenerateCSSPropertyNames:
@@ -2839,10 +2851,23 @@ class GenerateCSSPropertyNames:
                 default="return { };"
             )
 
-            self.generation_context.generate_property_id_switch_function_bool(
+            self.generation_context.generate_property_id_bit_set(
                 to=writer,
-                signature="bool CSSProperty::isColorProperty(CSSPropertyID id)",
+                name="CSSProperty::colorProperties",
                 iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.color_property)
+            )
+
+            physical_properties = []
+            for _, property_group in sorted(self.generation_context.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
+                kind = property_group["kind"]
+                destinations = LogicalPropertyGroup.logical_property_group_resolvers["physical"][kind]
+                for property in [property_group["physical"][a_destination] for a_destination in destinations]:
+                    physical_properties.append(property)
+
+            self.generation_context.generate_property_id_bit_set(
+                to=writer,
+                name="CSSProperty::physicalProperties",
+                iterable=sorted(list(set(physical_properties)), key=lambda x: x.id)
             )
 
             self.generation_context.generate_property_id_switch_function(
