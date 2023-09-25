@@ -43,7 +43,6 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMathMLBlock.h"
-#include "RenderMultiColumnFlow.h"
 #include "RenderSVGBlock.h"
 #include "RenderStyleInlines.h"
 #include "RenderTable.h"
@@ -103,9 +102,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowHasLineSnap:
         stream << "-webkit-line-snap property";
-        break;
-    case AvoidanceReason::MultiColumnFlowHasOutOfFlowChild:
-        stream << "column with out-of-flow boxes";
         break;
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
@@ -267,7 +263,7 @@ static OptionSet<AvoidanceReason> canUseForBlockStyle(const RenderBlockFlow& blo
     return reasons;
 }
 
-static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
 
@@ -275,11 +271,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         if (child.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
         return reasons;
-    }
-
-    if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
-        if (child.isOutOfFlowPositioned())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasOutOfFlowChild, reasons, includeReasons);
     }
 
     if (is<RenderLineBreak>(child))
@@ -338,7 +329,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
-        if (auto childReasons = canUseForChild(flow, child, includeReasons))
+        if (auto childReasons = canUseForChild(child, includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
     }
     auto styleReasons = canUseForBlockStyle(flow, includeReasons);

@@ -44,7 +44,6 @@ enum class AvoidanceReason : uint64_t {
     FlowHasLineAlignEdges                        = 1LLU  << 20,
     FlowHasLineSnap                              = 1LLU  << 21,
     FeatureIsDisabled                            = 1LLU  << 41,
-    MultiColumnFlowHasOutOfFlowChild             = 1LLU  << 50,
     ContentIsSVG                                 = 1LLU  << 56,
     EndOfReasons                                 = 1LLU  << 62
 };
