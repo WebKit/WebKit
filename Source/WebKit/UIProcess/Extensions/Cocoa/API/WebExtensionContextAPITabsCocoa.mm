@@ -422,7 +422,7 @@ void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPagePro
     tab->toggleReaderMode(WTFMove(completionHandler));
 }
 
-void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, String messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, WebExtensionTab::Error)>&& completionHandler)
+void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, WebExtensionTab::Error)>&& completionHandler)
 {
     auto tab = getTab(tabIdentifier);
     if (!tab) {
@@ -439,9 +439,42 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
     ASSERT(contentScriptProcesses.size() == 1);
     auto process = contentScriptProcesses.takeAny();
 
-    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeContentScriptMessageEvent(messageJSON, frameIdentifier, senderParameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](std::optional<String> replyJSON) mutable {
+    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::ContentScript, messageJSON, frameIdentifier, senderParameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](std::optional<String> replyJSON) mutable {
         completionHandler(replyJSON, std::nullopt);
     }, identifier());
+}
+
+void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    // Add 1 for the starting port here so disconnect will balance with a decrement.
+    constexpr auto sourceContentWorldType = WebExtensionContentWorldType::Main;
+    addPorts(sourceContentWorldType, channelIdentifier, 1);
+
+    auto tab = getTab(tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"tabs.connect()", nil, @"tab not found"));
+        return;
+    }
+
+    constexpr auto targetContentWorldType = WebExtensionContentWorldType::ContentScript;
+
+    auto contentScriptProcesses = tab->processes(WebExtensionEventListenerType::RuntimeOnConnect, targetContentWorldType);
+    if (contentScriptProcesses.isEmpty()) {
+        completionHandler(toErrorString(@"tabs.connect()", nil, @"no runtime.onConnect listeners found"));
+        return;
+    }
+
+    ASSERT(contentScriptProcesses.size() == 1);
+    auto process = contentScriptProcesses.takeAny();
+
+    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, frameIdentifier, senderParameters), [=, protectedThis = Ref { *this }](size_t firedEventCount) mutable {
+        protectedThis->addPorts(targetContentWorldType, channelIdentifier, firedEventCount);
+        protectedThis->fireQueuedPortMessageEventIfNeeded(*process, targetContentWorldType, channelIdentifier);
+        protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+        protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+    }, identifier());
+
+    completionHandler(std::nullopt);
 }
 
 void WebExtensionContext::tabsGetZoom(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<double>, WebExtensionTab::Error)>&& completionHandler)

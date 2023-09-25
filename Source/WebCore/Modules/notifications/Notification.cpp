@@ -117,8 +117,11 @@ ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecut
 
 Ref<Notification> Notification::create(ScriptExecutionContext& context, NotificationData&& data)
 {
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull(), nullptr, nullptr, data.silent, { }, WTFMove(data.defaultActionURL) };
+#else
     Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull(), nullptr, nullptr, data.silent };
-
+#endif
     auto notification = adoptRef(*new Notification(context, data.notificationID, WTFMove(data.title), WTFMove(options), SerializedScriptValue::createFromWireBytes(WTFMove(data.data))));
     notification->suspendIfNeeded();
     notification->m_serviceWorkerRegistrationURL = WTFMove(data.serviceWorkerRegistrationURL);
@@ -129,8 +132,14 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, Notifica
 Ref<Notification> Notification::create(ScriptExecutionContext& context, const URL& registrationURL, const NotificationPayload& payload)
 {
     Options options;
-    if (payload.options)
+    if (payload.options) {
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+        options = { payload.options->dir, payload.options->lang, payload.options->body, payload.options->tag, payload.options->icon, JSC::jsNull(), nullptr, nullptr, payload.options->silent, { }, { } };
+        options.defaultActionURL = payload.defaultActionURL;
+#else
         options = { payload.options->dir, payload.options->lang, payload.options->body, payload.options->tag, payload.options->icon, JSC::jsNull(), nullptr, nullptr, payload.options->silent };
+#endif
+    }
 
     RefPtr<SerializedScriptValue> dataScriptValue;
     if (payload.options && !payload.options->dataJSONString.isEmpty() && context.globalObject()) {
@@ -170,8 +179,18 @@ Notification::Notification(ScriptExecutionContext& context, WTF::UUID identifier
     else
         RELEASE_ASSERT_NOT_REACHED();
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    if (options.defaultActionURL.isValid())
+        m_defaultActionURL = WTFMove(options.defaultActionURL).isolatedCopy();
+    else if (!options.defaultAction.isEmpty()) {
+        auto defaultActionURL = context.completeURL(WTFMove(options.defaultAction).isolatedCopy());
+        if (defaultActionURL.isValid())
+            m_defaultActionURL = WTFMove(defaultActionURL);
+    }
+#endif
+
     if (!options.icon.isEmpty()) {
-        auto iconURL = context.completeURL(options.icon);
+        auto iconURL = context.completeURL(WTFMove(options.icon).isolatedCopy());
         if (iconURL.isValid())
             m_icon = iconURL;
     }
@@ -432,7 +451,11 @@ NotificationData Notification::data() const
     RELEASE_ASSERT(sessionID);
 
     return {
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+        m_defaultActionURL,
+#else
         { },
+#endif
         m_title,
         m_body,
         m_icon.string(),

@@ -27,12 +27,24 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include <wtf/text/WTFString.h>
+
 namespace WebKit {
 
-enum class WebExtensionContentWorldType : bool {
+enum class WebExtensionContentWorldType : uint8_t {
     Main,
     ContentScript,
 };
+
+inline String toDebugString(WebExtensionContentWorldType contentWorldType)
+{
+    switch (contentWorldType) {
+    case WebExtensionContentWorldType::Main:
+        return "main"_s;
+    case WebExtensionContentWorldType::ContentScript:
+        return "content script"_s;
+    }
+}
 
 } // namespace WebKit
 

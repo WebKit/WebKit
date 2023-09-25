@@ -561,7 +561,7 @@ public:
 #if ASAN_ENABLED
     void* endOfBuffer()
     {
-        ASSERT(buffer());
+        ASSERT_WITH_SECURITY_IMPLICATION(buffer());
 
         IGNORE_GCC_WARNINGS_BEGIN("invalid-offsetof")
         static_assert((offsetof(VectorBuffer, m_inlineBuffer) + sizeof(m_inlineBuffer)) % 8 == 0, "Inline buffer end needs to be on 8 byte boundary for ASan annotations to work.");
@@ -632,8 +632,8 @@ private:
         if (left == right)
             return;
         
-        ASSERT(leftSize <= inlineCapacity);
-        ASSERT(rightSize <= inlineCapacity);
+        ASSERT_WITH_SECURITY_IMPLICATION(leftSize <= inlineCapacity);
+        ASSERT_WITH_SECURITY_IMPLICATION(rightSize <= inlineCapacity);
         
         size_t swapBound = std::min(leftSize, rightSize);
         for (unsigned i = 0; i < swapBound; ++i)
@@ -659,7 +659,7 @@ private:
 struct UnsafeVectorOverflow {
     static NO_RETURN_DUE_TO_ASSERT void overflowed()
     {
-        ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED_WITH_SECURITY_IMPLICATION();
     }
 };
 
@@ -940,8 +940,8 @@ private:
     template<size_t position, typename U>
     void uncheckedInitialize(U&& value)
     {
-        ASSERT(position < size());
-        ASSERT(position < capacity());
+        ASSERT_WITH_SECURITY_IMPLICATION(position < size());
+        ASSERT_WITH_SECURITY_IMPLICATION(position < capacity());
         new (NotNull, begin() + position) T(std::forward<U>(value));
     }
 
@@ -1221,7 +1221,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::resizeToFi
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::shrink(size_t size)
 {
-    ASSERT(size <= m_size);
+    ASSERT_WITH_SECURITY_IMPLICATION(size <= m_size);
     TypeOperations::destruct(begin() + size, end());
     asanBufferSizeWillChangeTo(size);
     m_size = size;
@@ -1230,7 +1230,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::shrink(siz
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::grow(size_t size)
 {
-    ASSERT(size >= m_size);
+    ASSERT_WITH_SECURITY_IMPLICATION(size >= m_size);
     if (size > capacity())
         expandCapacity<FailureAction::Crash>(size);
     asanBufferSizeWillChangeTo(size);
@@ -1317,7 +1317,7 @@ template<FailureAction action>
 inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reserveInitialCapacity(size_t initialCapacity)
 {
     static_assert(action == FailureAction::Crash || action == FailureAction::Report);
-    ASSERT(!m_size);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_size);
     ASSERT(capacity() == inlineCapacity);
     if (initialCapacity <= inlineCapacity)
         return true;
@@ -1410,7 +1410,7 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
     if (!dataSize)
         return true;
 
-    ASSERT(size() < capacity());
+    ASSERT_WITH_SECURITY_IMPLICATION((Checked<size_t>(size()) + dataSize) <= capacity());
 
     size_t newSize = m_size + dataSize;
     asanBufferSizeWillChangeTo(newSize);
@@ -1453,7 +1453,7 @@ template<FailureAction action, typename U>
 bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendSlowCase(U&& value)
 {
     static_assert(action == FailureAction::Crash || action == FailureAction::Report);
-    ASSERT(size() == capacity());
+    ASSERT_WITH_SECURITY_IMPLICATION(size() == capacity());
 
     auto ptr = const_cast<std::remove_cvref_t<U>*>(std::addressof(value));
     ptr = expandCapacity<action>(size() + 1, ptr);
@@ -1474,7 +1474,7 @@ template<FailureAction action, typename... Args>
 bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::constructAndAppendSlowCase(Args&&... args)
 {
     static_assert(action == FailureAction::Crash || action == FailureAction::Report);
-    ASSERT(size() == capacity());
+    ASSERT_WITH_SECURITY_IMPLICATION(size() == capacity());
 
     bool success = expandCapacity<action>(size() + 1);
     if constexpr (action == FailureAction::Report) {
@@ -1497,7 +1497,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename U>
 ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::uncheckedAppend(U&& value)
 {
-    ASSERT(size() < capacity());
+    ASSERT_WITH_SECURITY_IMPLICATION(size() < capacity());
 
     asanBufferSizeWillChangeTo(m_size + 1);
 
@@ -1509,7 +1509,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename... Args>
 ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::uncheckedConstructAndAppend(Args&&... args)
 {
-    ASSERT(size() < capacity());
+    ASSERT_WITH_SECURITY_IMPLICATION(size() < capacity());
 
     asanBufferSizeWillChangeTo(m_size + 1);
 
@@ -1742,7 +1742,7 @@ inline MallocPtr<T, Malloc> Vector<T, inlineCapacity, OverflowHandler, minCapaci
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::checkConsistency()
 {
-#if ASSERT_ENABLED
+#if ENABLE(SECURITY_ASSERTIONS)
     for (size_t i = 0; i < size(); ++i)
         ValueCheck<T>::checkConsistency(at(i));
 #endif
@@ -1763,7 +1763,7 @@ bool operator==(const Vector<T, inlineCapacityA, OverflowHandlerA, minCapacityA,
     return VectorTypeOperations<T>::compare(a.data(), b.data(), a.size());
 }
 
-#if ASSERT_ENABLED
+#if ENABLE(SECURITY_ASSERTIONS)
 template<typename T> struct ValueCheck<Vector<T>> {
     typedef Vector<T> TraitType;
     static void checkConsistency(const Vector<T>& v)
@@ -1771,7 +1771,7 @@ template<typename T> struct ValueCheck<Vector<T>> {
         v.checkConsistency();
     }
 };
-#endif // ASSERT_ENABLED
+#endif // ENABLE(SECURITY_ASSERTIONS)
 
 template<typename VectorType, typename Func>
 size_t removeRepeatedElements(VectorType& vector, const Func& func)

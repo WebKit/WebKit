@@ -83,8 +83,6 @@ public: \
         return adoptRef(*new ImplClass(std::forward<Args>(args)...)); \
     } \
 \
-    virtual ~ImplClass() = default; \
-\
 private: \
     explicit ImplClass(ForMainWorld forMainWorld, WebExtensionContextProxy& context) \
         : WebExtensionAPIObject(forMainWorld, context) \

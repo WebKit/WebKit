@@ -2529,13 +2529,14 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
     looking_for_semicolon = False
     line_offset = 0
     in_preprocessor_directive = False
+    initializer_re = re.compile(r'^\s+[:,] m_[a-zA-Z][a-zA-Z0-9_]* { .+ }$')
     for current_line in clean_lines.elided[line_number + 1:]:
         line_offset += 1
         if not current_line.strip():
             continue
         if not current_indentation_level:
             if not (in_preprocessor_directive or looking_for_semicolon):
-                if not match(r'\S', current_line) and not file_state.did_inside_namespace_indent_warning():
+                if not match(r'\S', current_line) and not initializer_re.match(current_line) and not file_state.did_inside_namespace_indent_warning():
                     file_state.set_did_inside_namespace_indent_warning()
                     error(line_number + line_offset, 'whitespace/indent', 4,
                           'Code inside a namespace should not be indented.')

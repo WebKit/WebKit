@@ -39,6 +39,7 @@
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionMatchPattern.h"
+#include "WebExtensionPortChannelIdentifier.h"
 #include "WebExtensionTab.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionWindow.h"
@@ -125,6 +126,10 @@ public:
     using WindowTypeFilter = WebExtensionWindow::TypeFilter;
 
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
+
+    using PortWorldPair = std::pair<WebExtensionContentWorldType, WebExtensionPortChannelIdentifier>;
+    using PortCountedSet = HashCountedSet<PortWorldPair>;
+    using PortQueuedMessageMap = HashMap<PortWorldPair, Vector<String>>;
 
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
@@ -358,7 +363,7 @@ private:
 
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
-    void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
+    void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType, size_t removedCount);
 
     // Permissions APIs
     void permissionsGetAll(CompletionHandler<void(Vector<String> permissions, Vector<String> origins)>&&);
@@ -367,8 +372,18 @@ private:
     void permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
     void firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType, const PermissionsSet&, const MatchPatternSet&);
 
+    // Port APIs
+    void portPostMessage(WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier, const String& messageJSON);
+    void portDisconnect(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
+    void addPorts(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, size_t totalPortObjects);
+    bool isPortConnected(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
+    void clearQueuedPortMessages(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
+    void fireQueuedPortMessageEventIfNeeded(WebProcessProxy&, WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
+    void firePortDisconnectEventIfNeeded(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
+
     // Runtime APIs
-    void runtimeSendMessage(String extensionID, String message, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
+    void runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
+    void runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> error)>&&);
 
     // Tabs APIs
     void tabsCreate(WebPageProxyIdentifier, const WebExtensionTabParameters&, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
@@ -383,7 +398,8 @@ private:
     void tabsDetectLanguage(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, WebExtensionTab::Error)>&&);
     void tabsCaptureVisibleTab(WebPageProxyIdentifier, std::optional<WebExtensionWindowIdentifier>, WebExtensionTab::ImageFormat, uint8_t imageQuality, CompletionHandler<void(std::optional<URL>, WebExtensionTab::Error)>&&);
     void tabsToggleReaderMode(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
-    void tabsSendMessage(WebExtensionTabIdentifier, String messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, WebExtensionTab::Error)>&&);
+    void tabsSendMessage(WebExtensionTabIdentifier, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, WebExtensionTab::Error)>&&);
+    void tabsConnect(WebExtensionTabIdentifier, WebExtensionPortChannelIdentifier, String name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(WebExtensionTab::Error)>&&);
     void tabsGetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<double>, WebExtensionTab::Error)>&&);
     void tabsSetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, double, CompletionHandler<void(WebExtensionTab::Error)>&&);
     void tabsRemove(Vector<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
@@ -464,6 +480,9 @@ private:
     HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
 
     HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
+
+    PortCountedSet m_ports;
+    PortQueuedMessageMap m_portQueuedMessages;
 
     WindowIdentifierMap m_windowMap;
     Vector<WebExtensionWindowIdentifier> m_openWindowIdentifiers;

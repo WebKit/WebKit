@@ -459,38 +459,22 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
     }
 }
 
-void WebProcessProxy::addProvisionalFrameProxy(ProvisionalFrameProxy& provisionalFrame)
+void WebProcessProxy::addRemotePageProxy(RemotePageProxy& remotePage)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(Loading, "addProvisionalFrameProxy: provisionalFrame=%p", &provisionalFrame);
+    WEBPROCESSPROXY_RELEASE_LOG(Loading, "addRemotePageProxy: remotePage=%p", &remotePage);
 
     ASSERT(!m_isInProcessCache);
-    ASSERT(!m_provisionalFrames.contains(provisionalFrame));
+    ASSERT(!m_remotePages.contains(remotePage));
+    m_remotePages.add(remotePage);
     markProcessAsRecentlyUsed();
-    m_provisionalFrames.add(provisionalFrame);
-    updateRegistrationWithDataStore();
 }
 
-void WebProcessProxy::removeProvisionalFrameProxy(ProvisionalFrameProxy& provisionalFrame)
+void WebProcessProxy::removeRemotePageProxy(RemotePageProxy& remotePage)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeProvisionalFrameProxy: provisionalFrame=%p", &provisionalFrame);
-
-    ASSERT(m_provisionalFrames.contains(provisionalFrame));
-    m_provisionalFrames.remove(provisionalFrame);
-    updateRegistrationWithDataStore();
-    if (m_provisionalFrames.isEmptyIgnoringNullReferences())
+    WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeRemotePageProxy: remotePage=%p", &remotePage);
+    m_remotePages.remove(remotePage);
+    if (m_remotePages.isEmptyIgnoringNullReferences())
         maybeShutDown();
-}
-
-void WebProcessProxy::provisionalFrameCommitted(WebFrameProxy& frame)
-{
-    ASSERT(!m_frameMap.contains(frame.frameID()));
-    m_frameMap.set(frame.frameID(), WeakPtr { frame });
-}
-
-void WebProcessProxy::removeFrameWithRemoteFrameProcess(WebFrameProxy& frame)
-{
-    ASSERT(m_frameMap.contains(frame.frameID()));
-    m_frameMap.remove(frame.frameID());
 }
 
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -1448,10 +1432,9 @@ void WebProcessProxy::maybeShutDown()
 bool WebProcessProxy::canTerminateAuxiliaryProcess()
 {
     if (!m_pageMap.isEmpty()
-        || !m_frameMap.isEmpty()
+        || !m_remotePages.isEmptyIgnoringNullReferences()
         || !m_suspendedPages.isEmptyIgnoringNullReferences()
         || !m_provisionalPages.isEmptyIgnoringNullReferences()
-        || !m_provisionalFrames.isEmptyIgnoringNullReferences()
         || m_isInProcessCache
         || m_shutdownPreventingScopeCounter.value()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canTerminateAuxiliaryProcess: returns false (pageCount=%u, provisionalPageCount=%u, suspendedPageCount=%u, m_isInProcessCache=%d, m_shutdownPreventingScopeCounter=%lu)", m_pageMap.size(), m_provisionalPages.computeSize(), m_suspendedPages.computeSize(), m_isInProcessCache, m_shutdownPreventingScopeCounter.value());

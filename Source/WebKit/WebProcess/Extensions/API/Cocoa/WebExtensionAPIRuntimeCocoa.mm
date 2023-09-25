@@ -37,6 +37,7 @@
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPIEvent.h"
 #import "WebExtensionAPINamespace.h"
+#import "WebExtensionAPIPort.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionUtilities.h"
@@ -49,33 +50,64 @@ static NSString * const frameIdKey = @"frameId";
 static NSString * const tabKey = @"tab";
 static NSString * const urlKey = @"url";
 static NSString * const originKey = @"origin";
+static NSString * const nameKey = @"name";
 
 namespace WebKit {
 
-void WebExtensionAPIRuntimeBase::reportErrorForCallbackHandler(WebExtensionCallbackHandler& callback, NSString *errorMessage, JSGlobalContextRef contextRef)
+JSValue *WebExtensionAPIRuntimeBase::reportError(NSString *errorMessage, JSGlobalContextRef contextRef, Function<void()>&& handler)
 {
     ASSERT(errorMessage.length);
     ASSERT(contextRef);
 
-    RELEASE_LOG_ERROR(Extensions, "Callback error reported: %{public}@", errorMessage);
+    RELEASE_LOG_ERROR(Extensions, "Runtime error reported: %{public}@", errorMessage);
 
     JSContext *context = [JSContext contextWithJSGlobalContextRef:contextRef];
 
-    m_lastErrorAccessed = false;
-    m_lastError = [JSValue valueWithNewErrorFromMessage:errorMessage inContext:context];
+    auto *result = [JSValue valueWithNewErrorFromMessage:errorMessage inContext:context];
 
-    callback.call();
+    m_lastErrorAccessed = false;
+    m_lastError = result;
+
+    if (handler) {
+        errorMessage = [@"Unchecked runtime.lastError: " stringByAppendingString:errorMessage];
+        handler();
+    }
 
     if (!m_lastErrorAccessed) {
         // Log the error to the console if it wasn't checked in the callback.
         JSValue *consoleErrorFunction = context.globalObject[@"console"][@"error"];
-        [consoleErrorFunction callWithArguments:@[ [JSValue valueWithNewErrorFromMessage:[NSString stringWithFormat:@"Unchecked runtime.lastError: %@", errorMessage] inContext:context] ]];
+        [consoleErrorFunction callWithArguments:@[[JSValue valueWithNewErrorFromMessage:errorMessage inContext:context]]];
 
-        RELEASE_LOG_DEBUG(Extensions, "Unchecked runtime.lastError");
+        if (handler)
+            RELEASE_LOG_DEBUG(Extensions, "Unchecked runtime.lastError");
     }
 
     m_lastErrorAccessed = false;
     m_lastError = nil;
+
+    return result;
+}
+
+JSValue *WebExtensionAPIRuntimeBase::reportError(NSString *errorMessage, WebExtensionCallbackHandler& callback)
+{
+    return reportError(errorMessage, callback.globalContext(), [&]() {
+        callback.call();
+    });
+}
+
+bool WebExtensionAPIRuntime::parseConnectOptions(NSDictionary *options, std::optional<String>& name, NSString *sourceKey, NSString **outExceptionString)
+{
+    static NSDictionary<NSString *, id> *types = @{
+        nameKey: NSString.class,
+    };
+
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
+        return false;
+
+    if (NSString *nameString = options[nameKey])
+        name = nameString;
+
+    return true;
 }
 
 NSURL *WebExtensionAPIRuntime::getURL(NSString *resourcePath, NSString **errorString)
@@ -120,11 +152,11 @@ void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& 
     callback->call(platformInfo);
 }
 
-JSValueRef WebExtensionAPIRuntime::lastError()
+JSValue *WebExtensionAPIRuntime::lastError()
 {
     m_lastErrorAccessed = true;
 
-    return m_lastError.get().JSValueRef;
+    return m_lastError.get();
 }
 
 void WebExtensionAPIRuntime::sendMessage(WebFrame *frame, NSString *extensionID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -158,8 +190,40 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame *frame, NSString *extensionID,
             return;
         }
 
-        callback->call(parseJSON(replyJSON.value()));
+        callback->call(parseJSON(replyJSON.value(), { JSONOptions::FragmentsAllowed }));
     }, extensionContext().identifier());
+}
+
+RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame* frame, JSContextRef context, NSString *extensionID, NSDictionary *options, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
+
+    std::optional<String> name;
+    if (!parseConnectOptions(options, name, @"options", outExceptionString))
+        return nullptr;
+
+    String resolvedName = name.value_or(nullString());
+
+    WebExtensionMessageSenderParameters sender {
+        extensionContext().uniqueIdentifier(),
+        std::nullopt, // tabParameters
+        toWebExtensionFrameIdentifier(*frame),
+        frame->page()->webPageProxyIdentifier(),
+        contentWorldType(),
+        frame->url(),
+    };
+
+    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), WebExtensionContentWorldType::Main, resolvedName, sender);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnect(extensionID, port->channelIdentifier(), resolvedName, sender), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
+        if (!error)
+            return;
+
+        port->setError(protectedThis->runtime().reportError(error.value(), globalContext.get()));
+        port->disconnect();
+    }, extensionContext().identifier());
+
+    return port;
 }
 
 WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessage()
@@ -172,7 +236,17 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessage()
     return *m_onMessage;
 }
 
-static NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnect()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onConnect
+
+    if (!m_onConnect)
+        m_onConnect = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::RuntimeOnConnect);
+
+    return *m_onConnect;
+}
+
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
 {
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
 
@@ -194,9 +268,9 @@ static NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& paramet
     return [result copy];
 }
 
-void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebCore::DOMWrapperWorld& world, String messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebCore::DOMWrapperWorld& world, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
 {
-    auto *message = parseJSON(messageJSON);
+    id message = parseJSON(messageJSON, { JSONOptions::FragmentsAllowed });
     auto *senderInfo = toWebAPI(senderParameters);
 
     __block bool anyListenerHandledMessage = false;
@@ -210,7 +284,7 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebCore::DOMWrapperWo
         if (JSValue *value = dynamic_objc_cast<JSValue>(replyMessage))
             replyMessageJSON = value._toJSONString;
         else
-            replyMessageJSON = encodeJSONString(replyMessage);
+            replyMessageJSON = encodeJSONString(replyMessage, { JSONOptions::FragmentsAllowed });
 
         if (replyMessageJSON.length > webExtensionMaxMessageLength)
             replyMessageJSON = nil;
@@ -224,7 +298,7 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebCore::DOMWrapperWo
         if (frameIdentifier && !matchesFrame(frameIdentifier.value(), frame))
             return;
 
-        // Don't send the message back to the sender.
+        // Don't send the message to any listeners in the sender's page.
         if (senderParameters.pageProxyIdentifier == frame.page()->webPageProxyIdentifier())
             return;
 
@@ -257,14 +331,62 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebCore::DOMWrapperWo
         handleReply(nil);
 }
 
-void WebExtensionContextProxy::dispatchRuntimeMainWorldMessageEvent(String messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
 {
-    dispatchRuntimeMessageEvent(mainWorld(), messageJSON, std::nullopt, senderParameters, WTFMove(completionHandler));
+    switch (contentWorldType) {
+    case WebExtensionContentWorldType::Main:
+        ASSERT(!frameIdentifier);
+        internalDispatchRuntimeMessageEvent(mainWorld(), messageJSON, std::nullopt, senderParameters, WTFMove(completionHandler));
+        return;
+
+    case WebExtensionContentWorldType::ContentScript:
+        internalDispatchRuntimeMessageEvent(contentScriptWorld(), messageJSON, frameIdentifier, senderParameters, WTFMove(completionHandler));
+        return;
+    }
 }
 
-void WebExtensionContextProxy::dispatchRuntimeContentScriptMessageEvent(String messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebCore::DOMWrapperWorld& world, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(size_t firedEventCount)>&& completionHandler)
 {
-    dispatchRuntimeMessageEvent(contentScriptWorld(), messageJSON, frameIdentifier, senderParameters, WTFMove(completionHandler));
+    size_t firedEventCount = 0;
+    auto targetContentWorldType = senderParameters.contentWorldType;
+
+    enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
+        // Skip all frames that don't match if a target frame identifier is specified.
+        if (frameIdentifier && !matchesFrame(frameIdentifier.value(), frame))
+            return;
+
+        // Don't send the event to any listeners in the sender's page.
+        if (senderParameters.pageProxyIdentifier == frame.page()->webPageProxyIdentifier())
+            return;
+
+        auto& onConnect = namespaceObject.runtime().onConnect();
+        if (onConnect.listeners().isEmpty())
+            return;
+
+        firedEventCount += onConnect.listeners().size();
+
+        auto globalContext = frame.jsContextForWorld(world);
+        for (auto& listener : onConnect.listeners()) {
+            auto port = WebExtensionAPIPort::create(namespaceObject.forMainWorld(), namespaceObject.runtime(), *this, targetContentWorldType, channelIdentifier, name, senderParameters);
+            listener->call(toJSValue(globalContext, toJS(globalContext, port.ptr())));
+        }
+    }, world);
+
+    completionHandler(firedEventCount);
+}
+
+void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(size_t firedEventCount)>&& completionHandler)
+{
+    switch (contentWorldType) {
+    case WebExtensionContentWorldType::Main:
+        ASSERT(!frameIdentifier);
+        internalDispatchRuntimeConnectEvent(mainWorld(), channelIdentifier, name, std::nullopt, senderParameters, WTFMove(completionHandler));
+        return;
+
+    case WebExtensionContentWorldType::ContentScript:
+        internalDispatchRuntimeConnectEvent(contentScriptWorld(), channelIdentifier, name, frameIdentifier, senderParameters, WTFMove(completionHandler));
+        return;
+    }
 }
 
 } // namespace WebKit

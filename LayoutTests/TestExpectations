@@ -6248,6 +6248,7 @@ imported/w3c/web-platform-tests/streams/readable-byte-streams/general.any.worker
 imported/w3c/web-platform-tests/svg/animations/beginevents-1.html [ Skip ]
 imported/w3c/web-platform-tests/svg/linking/scripted/href-animate-element.html [ Skip ]
 imported/w3c/web-platform-tests/svg/linking/scripted/href-mpath-element.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/mouse/cancel-mousedown-in-subframe.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/mouse/mouse_buttons_back_forward.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus-management-expectations.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]

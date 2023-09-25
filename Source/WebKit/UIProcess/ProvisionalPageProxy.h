@@ -92,7 +92,6 @@ public:
     ProcessSwapRequestedByClient processSwapRequestedByClient() const { return m_processSwapRequestedByClient; }
     uint64_t navigationID() const { return m_navigationID; }
     const URL& provisionalURL() const { return m_provisionalLoadURL; }
-    std::optional<HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>>> takeRemotePageMap();
 
     bool isProcessSwappingOnNavigationResponse() const { return m_isProcessSwappingOnNavigationResponse; }
 
@@ -208,7 +207,6 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
-    std::optional<HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>>> m_remotePageMap;
 };
 
 } // namespace WebKit

@@ -56,6 +56,13 @@ public:
     void removeListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 
+    void removeAllListeners();
+
+    virtual ~WebExtensionAPIWebNavigationEvent()
+    {
+        removeAllListeners();
+    }
+
 private:
     explicit WebExtensionAPIWebNavigationEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
         : WebExtensionAPIObject(forMainWorld, runtime, context)
@@ -63,6 +70,7 @@ private:
     {
     }
 
+    WebPageProxyIdentifier m_pageProxyIdentifier;
     WebExtensionEventListenerType m_type;
     ListenerVector m_listeners;
 };

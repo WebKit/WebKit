@@ -364,6 +364,7 @@ def serialized_identifiers():
         'WebKit::WebExtensionContextIdentifier',
         'WebKit::WebExtensionControllerIdentifier',
         'WebKit::WebExtensionFrameIdentifier',
+        'WebKit::WebExtensionPortChannelIdentifier',
         'WebKit::WebExtensionTabIdentifier',
         'WebKit::WebExtensionWindowIdentifier',
         'WebKit::WebGPUIdentifier',

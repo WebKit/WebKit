@@ -4785,6 +4785,16 @@ class WebKitStyleTest(CppStyleTestBase):
             '  [whitespace/indent] [4]',
             'foo.cpp')
         self.assert_multi_line_lint(
+            'namespace IPC {\n'
+            'Decoder::Decoder(DataReference buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)\n'
+            '    : m_buffer { buffer }\n'
+            '    , m_bufferPosition { m_buffer.begin() }\n'
+            '    , m_bufferDeallocator { WTFMove(bufferDeallocator) }\n'
+            '    , m_attachments { WTFMove(attachments) }\n'
+            '{ }',
+            '',
+            'Decoder.cpp')
+        self.assert_multi_line_lint(
             'namespace WebCore {\n'
             '#define abc(x) x; \\\n'
             '    x\n'
@@ -6551,12 +6561,13 @@ class WebKitStyleTest(CppStyleTestBase):
         'Should be indented on a separate line, with the colon or comma first on that line.'
         '  [whitespace/indent] [4]')
 
-        self.assert_multi_line_lint((
+        self.assert_multi_line_lint(
             'MyClass::MyClass(Document* doc)\n'
             '    : m_myMember(b ? bar() : baz())\n'
             '    , MySuperClass()\n'
             '    , m_doc(0)\n'
-            '{ }'), '')
+            '{ }',
+            '')
 
         self.assert_multi_line_lint('''\
         MyClass::MyClass(Document* doc) : MySuperClass()

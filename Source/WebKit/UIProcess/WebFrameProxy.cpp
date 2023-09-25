@@ -432,7 +432,6 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        m_provisionalFrame->process().provisionalFrameCommitted(*this);
         m_process->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
         m_process = m_provisionalFrame->process();
         m_remotePageProxy = m_provisionalFrame->takeRemotePageProxy();
@@ -502,6 +501,13 @@ FrameTreeCreationParameters WebFrameProxy::frameTreeCreationParameters() const
 RefPtr<RemotePageProxy> WebFrameProxy::remotePageProxy()
 {
     return m_remotePageProxy;
+}
+
+void WebFrameProxy::removeRemotePagesForSuspension()
+{
+    m_remotePageProxy = nullptr;
+    for (auto& child : m_childFrames)
+        child->removeRemotePagesForSuspension();
 }
 
 } // namespace WebKit

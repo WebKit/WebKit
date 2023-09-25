@@ -56,6 +56,8 @@ void WebExtensionAPIWebNavigationEvent::invokeListenersWithArgument(id argument,
 
 void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
 {
+    ASSERT(page);
+
     _WKWebExtensionWebNavigationURLFilter *parsedFilter;
     if (filter) {
         parsedFilter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filter outErrorMessage:outExceptionString];
@@ -63,24 +65,26 @@ void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExt
             return;
     }
 
+    m_pageProxyIdentifier = page->webPageProxyIdentifier();
     m_listeners.append({ listener, parsedFilter });
 
-    if (!page)
-        return;
-
-    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(page->webPageProxyIdentifier(), m_type, contentWorldType()), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(m_pageProxyIdentifier, m_type, contentWorldType()), extensionContext().identifier());
 }
 
 void WebExtensionAPIWebNavigationEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
 {
-    m_listeners.removeAllMatching([&](auto& entry) {
+    ASSERT(page);
+
+    auto removedCount = m_listeners.removeAllMatching([&](auto& entry) {
         return entry.first->callbackFunction() == listener->callbackFunction();
     });
 
-    if (!page)
+    if (!removedCount)
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(page->webPageProxyIdentifier(), m_type, contentWorldType()), extensionContext().identifier());
+    ASSERT(page->webPageProxyIdentifier() == m_pageProxyIdentifier);
+
+    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), removedCount), extensionContext().identifier());
 }
 
 bool WebExtensionAPIWebNavigationEvent::hasListener(RefPtr<WebExtensionCallbackHandler> listener)
@@ -88,6 +92,16 @@ bool WebExtensionAPIWebNavigationEvent::hasListener(RefPtr<WebExtensionCallbackH
     return m_listeners.containsIf([&](auto& entry) {
         return entry.first->callbackFunction() == listener->callbackFunction();
     });
+}
+
+void WebExtensionAPIWebNavigationEvent::removeAllListeners()
+{
+    if (m_listeners.isEmpty())
+        return;
+
+    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), m_listeners.size()), extensionContext().identifier());
+
+    m_listeners.clear();
 }
 
 } // namespace WebKit

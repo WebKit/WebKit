@@ -111,11 +111,11 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_contextIDForVisibilityPropagationInGPUProcess(page.contextIDForVisibilityPropagationInGPUProcess())
 #endif
 #endif
-    , m_remotePageMap(page.takeRemotePageMap())
 {
     allSuspendedPages().add(*this);
     m_process->addSuspendedPageProxy(*this);
     m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this);
+    m_mainFrame->removeRemotePagesForSuspension();
     m_suspensionTimeoutTimer.startOneShot(suspensionTimeout);
     send(Messages::WebPage::SetIsSuspended(true));
 }
@@ -142,11 +142,6 @@ SuspendedPageProxy::~SuspendedPageProxy()
 Ref<WebPageProxy> SuspendedPageProxy::protectedPage() const
 {
     return m_page.get();
-}
-
-HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> SuspendedPageProxy::takeRemotePageMap()
-{
-    return std::exchange(m_remotePageMap, { });
 }
 
 void SuspendedPageProxy::didDestroyNavigation(uint64_t navigationID)

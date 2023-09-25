@@ -102,7 +102,7 @@ void WebExtensionCallbackHandler::reportError(NSString *message)
         return;
 
     if (m_runtime) {
-        m_runtime->reportErrorForCallbackHandler(*this, message, m_globalContext.get());
+        m_runtime->reportError(message, *this);
         return;
     }
 

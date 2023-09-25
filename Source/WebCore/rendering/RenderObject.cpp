@@ -1129,7 +1129,7 @@ std::optional<FloatRect> RenderObject::computeFloatVisibleRectInContainer(const 
 static void outputRenderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, hasLayer(S)crollableArea, (C)omposited, (+)Dirty style, (+)Dirty layout";
+    stream << "(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, hasLayer(S)crollableArea, (C)omposited, Content-visibility:(H)idden/(A)uto, (S)kipped content, (+)Dirty style, (+)Dirty layout";
     stream.nextLine();
 }
 
@@ -1266,6 +1266,19 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
 
     if (isComposited())
         stream << "C";
+    else
+        stream << "-";
+
+    auto contentVisibility = style().contentVisibility();
+    if (contentVisibility == ContentVisibility::Hidden)
+        stream << "H";
+    else if (contentVisibility == ContentVisibility::Auto)
+        stream << "A";
+    else
+        stream << "-";
+
+    if (isSkippedContent())
+        stream << "S";
     else
         stream << "-";
 

@@ -58,6 +58,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPINamespace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPINamespace.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIPermissions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIPermissions.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIPort.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIPort.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIRuntime.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIRuntime.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIScripting.h
@@ -141,6 +143,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PluginProcessProxyMessageReceiver.cp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PluginProcessProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PluginProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PluginProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PushClientConnectionMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PushClientConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RTCDataChannelRemoteManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RTCDataChannelRemoteManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
@@ -468,8 +472,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebProcessPoolMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebProcessPoolMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebProcessProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebProcessProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PushClientConnectionMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PushClientConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebRTCMonitorMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebRTCMonitorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebRTCResolverMessageReceiver.cpp
@@ -517,7 +519,4 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.mac.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.relocatable.mac.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebProcess.sb
-<<<<<<< ours
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/module.private.modulemap
-=======
->>>>>>> theirs

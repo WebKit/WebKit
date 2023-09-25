@@ -1422,6 +1422,676 @@ bool RenderStyle::diffRequiresLayerRepaint(const RenderStyle& style, bool isComp
     return false;
 }
 
+void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderStyle& other, CSSPropertiesBitSet& changingProperties) const
+{
+    // FIXME: Consider auto-generating this function from CSSProperties.json.
+
+    // This function conservatively answers what CSS properties we should visit for CSS transitions.
+    // We do not need to precisely check equivalence before saying "this property needs to be visited".
+    // Right now, we are designing this based on Speedometer3.0 data.
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaInheritedFlags = [&](auto& first, auto& second) {
+        if (first.emptyCells != second.emptyCells)
+            changingProperties.m_properties.set(CSSPropertyEmptyCells);
+        if (first.captionSide != second.captionSide)
+            changingProperties.m_properties.set(CSSPropertyCaptionSide);
+        if (first.listStylePosition != second.listStylePosition)
+            changingProperties.m_properties.set(CSSPropertyListStylePosition);
+        if (first.visibility != second.visibility)
+            changingProperties.m_properties.set(CSSPropertyVisibility);
+        if (first.textAlign != second.textAlign)
+            changingProperties.m_properties.set(CSSPropertyTextAlign);
+        if (first.textTransform != second.textTransform)
+            changingProperties.m_properties.set(CSSPropertyTextTransform);
+        if (first.textDecorationLines != second.textDecorationLines)
+            changingProperties.m_properties.set(CSSPropertyTextDecorationLine);
+        if (first.cursor != second.cursor)
+            changingProperties.m_properties.set(CSSPropertyCursor);
+        if (first.whiteSpaceCollapse != second.whiteSpaceCollapse)
+            changingProperties.m_properties.set(CSSPropertyWhiteSpaceCollapse);
+        if (first.textWrap != second.textWrap)
+            changingProperties.m_properties.set(CSSPropertyTextWrap);
+        if (first.borderCollapse != second.borderCollapse)
+            changingProperties.m_properties.set(CSSPropertyBorderCollapse);
+        if (first.printColorAdjust != second.printColorAdjust)
+            changingProperties.m_properties.set(CSSPropertyPrintColorAdjust);
+        if (first.pointerEvents != second.pointerEvents)
+            changingProperties.m_properties.set(CSSPropertyPointerEvents);
+
+        // direction and writingMode changes conversion of logical -> pysical properties.
+        // Thus we need to list up all physical properties.
+        if (first.direction != second.direction || first.writingMode != second.writingMode) {
+            changingProperties.m_properties.merge(CSSProperty::physicalProperties);
+            if (first.writingMode != second.writingMode)
+                changingProperties.m_properties.set(CSSPropertyTextEmphasisStyle);
+        }
+
+        // insideLink changes visited / non-visited colors.
+        // Thus we need to list up all color properties.
+        if (first.insideLink != second.insideLink)
+            changingProperties.m_properties.merge(CSSProperty::colorProperties);
+
+        // Non animated styles are followings.
+        // cursorVisibility
+        // boxDirection
+        // rtlOrdering
+        // insideDefaultButton
+        // autosizeStatus
+        // hasExplicitlySetColor
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedFlags = [&](auto& first, auto& second) {
+        if (first.overflowX != second.overflowX)
+            changingProperties.m_properties.set(CSSPropertyOverflowX);
+        if (first.overflowY != second.overflowY)
+            changingProperties.m_properties.set(CSSPropertyOverflowY);
+        if (first.verticalAlign != second.verticalAlign)
+            changingProperties.m_properties.set(CSSPropertyVerticalAlign);
+        if (first.clear != second.clear)
+            changingProperties.m_properties.set(CSSPropertyClear);
+        if (first.position != second.position)
+            changingProperties.m_properties.set(CSSPropertyPosition);
+        if (first.floating != second.floating)
+            changingProperties.m_properties.set(CSSPropertyFloat);
+        if (first.tableLayout != second.tableLayout)
+            changingProperties.m_properties.set(CSSPropertyTableLayout);
+        if (first.textDecorationLine != second.textDecorationLine)
+            changingProperties.m_properties.set(CSSPropertyTextDecorationLine);
+
+        // Non animated styles are followings.
+        // effectiveDisplay
+        // originalDisplay
+        // unicodeBidi
+        // hasExplicitlySetDirection
+        // hasExplicitlySetWritingMode
+        // hasExplicitlySetColorScheme
+        // usesViewportUnits
+        // usesContainerUnits
+        // hasExplicitlyInheritedProperties
+        // disallowsFastPathInheritance
+        // hasContentNone
+        // isUnique
+        // emptyState
+        // firstChildState
+        // lastChildState
+        // isLink
+        // styleType
+        // pseudoBits
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaTransformData = [&](auto& first, auto& second) {
+        if (first.x != second.x)
+            changingProperties.m_properties.set(CSSPropertyTransformOriginX);
+        if (first.y != second.y)
+            changingProperties.m_properties.set(CSSPropertyTransformOriginY);
+        if (first.z != second.z)
+            changingProperties.m_properties.set(CSSPropertyTransformOriginZ);
+        if (first.transformBox != second.transformBox)
+            changingProperties.m_properties.set(CSSPropertyTransformBox);
+        if (first.operations != second.operations)
+            changingProperties.m_properties.set(CSSPropertyTransform);
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedBoxData = [&](auto& first, auto& second) {
+        if (first.width() != second.width())
+            changingProperties.m_properties.set(CSSPropertyWidth);
+        if (first.height() != second.height())
+            changingProperties.m_properties.set(CSSPropertyHeight);
+        if (first.minWidth() != second.minWidth())
+            changingProperties.m_properties.set(CSSPropertyMinWidth);
+        if (first.maxWidth() != second.maxWidth())
+            changingProperties.m_properties.set(CSSPropertyMaxWidth);
+        if (first.minHeight() != second.minHeight())
+            changingProperties.m_properties.set(CSSPropertyMinHeight);
+        if (first.maxHeight() != second.maxHeight())
+            changingProperties.m_properties.set(CSSPropertyMaxHeight);
+        if (first.verticalAlign() != second.verticalAlign())
+            changingProperties.m_properties.set(CSSPropertyVerticalAlign);
+        if (first.specifiedZIndex() != second.specifiedZIndex() || first.hasAutoSpecifiedZIndex() != second.hasAutoSpecifiedZIndex())
+            changingProperties.m_properties.set(CSSPropertyZIndex);
+        if (first.boxSizing() != second.boxSizing())
+            changingProperties.m_properties.set(CSSPropertyBoxSizing);
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+        if (first.boxDecorationBreak() != second.boxDecorationBreak())
+            changingProperties.m_properties.set(CSSPropertyWebkitBoxDecorationBreak);
+#endif
+        // Non animated styles are followings.
+        // usedZIndex
+        // hasAutoUsedZIndex
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedBackgroundData = [&](auto& first, auto& second) {
+        if (first.background != second.background) {
+            changingProperties.m_properties.set(CSSPropertyBackgroundImage);
+            changingProperties.m_properties.set(CSSPropertyBackgroundPositionX);
+            changingProperties.m_properties.set(CSSPropertyBackgroundPositionY);
+            changingProperties.m_properties.set(CSSPropertyBackgroundSize);
+            changingProperties.m_properties.set(CSSPropertyBackgroundAttachment);
+            changingProperties.m_properties.set(CSSPropertyBackgroundClip);
+            changingProperties.m_properties.set(CSSPropertyBackgroundOrigin);
+            changingProperties.m_properties.set(CSSPropertyBackgroundRepeat);
+#if ENABLE(CSS_COMPOSITING)
+            changingProperties.m_properties.set(CSSPropertyBackgroundBlendMode);
+#endif
+        }
+        if (first.color != second.color)
+            changingProperties.m_properties.set(CSSPropertyBackgroundColor);
+        if (first.outline != second.outline) {
+            changingProperties.m_properties.set(CSSPropertyOutlineColor);
+            changingProperties.m_properties.set(CSSPropertyOutlineStyle);
+            changingProperties.m_properties.set(CSSPropertyOutlineWidth);
+            changingProperties.m_properties.set(CSSPropertyOutlineOffset);
+        }
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedSurroundData = [&](auto& first, auto& second) {
+        if (first.offset.top() != second.offset.top())
+            changingProperties.m_properties.set(CSSPropertyTop);
+        if (first.offset.left() != second.offset.left())
+            changingProperties.m_properties.set(CSSPropertyLeft);
+        if (first.offset.bottom() != second.offset.bottom())
+            changingProperties.m_properties.set(CSSPropertyBottom);
+        if (first.offset.right() != second.offset.right())
+            changingProperties.m_properties.set(CSSPropertyRight);
+
+        if (first.margin.top() != second.margin.top())
+            changingProperties.m_properties.set(CSSPropertyMarginTop);
+        if (first.margin.left() != second.margin.left())
+            changingProperties.m_properties.set(CSSPropertyMarginLeft);
+        if (first.margin.bottom() != second.margin.bottom())
+            changingProperties.m_properties.set(CSSPropertyMarginBottom);
+        if (first.margin.right() != second.margin.right())
+            changingProperties.m_properties.set(CSSPropertyMarginRight);
+
+        if (first.padding.top() != second.padding.top())
+            changingProperties.m_properties.set(CSSPropertyPaddingTop);
+        if (first.padding.left() != second.padding.left())
+            changingProperties.m_properties.set(CSSPropertyPaddingLeft);
+        if (first.padding.bottom() != second.padding.bottom())
+            changingProperties.m_properties.set(CSSPropertyPaddingBottom);
+        if (first.padding.right() != second.padding.right())
+            changingProperties.m_properties.set(CSSPropertyPaddingRight);
+
+        if (first.border != second.border) {
+            if (first.border.top() != second.border.top()) {
+                changingProperties.m_properties.set(CSSPropertyBorderTopWidth);
+                changingProperties.m_properties.set(CSSPropertyBorderTopColor);
+                changingProperties.m_properties.set(CSSPropertyBorderTopStyle);
+            }
+            if (first.border.left() != second.border.left()) {
+                changingProperties.m_properties.set(CSSPropertyBorderLeftWidth);
+                changingProperties.m_properties.set(CSSPropertyBorderLeftColor);
+                changingProperties.m_properties.set(CSSPropertyBorderLeftStyle);
+            }
+            if (first.border.bottom() != second.border.bottom()) {
+                changingProperties.m_properties.set(CSSPropertyBorderBottomWidth);
+                changingProperties.m_properties.set(CSSPropertyBorderBottomColor);
+                changingProperties.m_properties.set(CSSPropertyBorderBottomStyle);
+            }
+            if (first.border.right() != second.border.right()) {
+                changingProperties.m_properties.set(CSSPropertyBorderRightWidth);
+                changingProperties.m_properties.set(CSSPropertyBorderRightColor);
+                changingProperties.m_properties.set(CSSPropertyBorderRightStyle);
+            }
+            if (first.border.image() != second.border.image()) {
+                changingProperties.m_properties.set(CSSPropertyBorderImageSlice);
+                changingProperties.m_properties.set(CSSPropertyBorderImageWidth);
+                changingProperties.m_properties.set(CSSPropertyBorderImageRepeat);
+                changingProperties.m_properties.set(CSSPropertyBorderImageSource);
+                changingProperties.m_properties.set(CSSPropertyBorderImageOutset);
+            }
+            if (first.border.topLeftRadius() != second.border.topLeftRadius())
+                changingProperties.m_properties.set(CSSPropertyBorderTopLeftRadius);
+            if (first.border.topRightRadius() != second.border.topRightRadius())
+                changingProperties.m_properties.set(CSSPropertyBorderTopRightRadius);
+            if (first.border.bottomLeftRadius() != second.border.bottomLeftRadius())
+                changingProperties.m_properties.set(CSSPropertyBorderBottomLeftRadius);
+            if (first.border.bottomRightRadius() != second.border.bottomRightRadius())
+                changingProperties.m_properties.set(CSSPropertyBorderBottomRightRadius);
+        }
+
+        // Non animated styles are followings.
+        // hasExplicitlySetBorderBottomLeftRadius
+        // hasExplicitlySetBorderBottomRightRadius
+        // hasExplicitlySetBorderTopLeftRadius
+        // hasExplicitlySetBorderTopRightRadius
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedMiscData = [&](auto& first, auto& second) {
+        if (first.opacity != second.opacity)
+            changingProperties.m_properties.set(CSSPropertyOpacity);
+
+        if (first.flexibleBox != second.flexibleBox) {
+            changingProperties.m_properties.set(CSSPropertyFlexBasis);
+            changingProperties.m_properties.set(CSSPropertyFlexDirection);
+            changingProperties.m_properties.set(CSSPropertyFlexGrow);
+            changingProperties.m_properties.set(CSSPropertyFlexShrink);
+            changingProperties.m_properties.set(CSSPropertyFlexWrap);
+        }
+
+        if (first.multiCol != second.multiCol) {
+            changingProperties.m_properties.set(CSSPropertyColumnFill);
+            changingProperties.m_properties.set(CSSPropertyColumnWidth);
+            changingProperties.m_properties.set(CSSPropertyColumnCount);
+            changingProperties.m_properties.set(CSSPropertyColumnRuleColor);
+            changingProperties.m_properties.set(CSSPropertyColumnRuleStyle);
+            changingProperties.m_properties.set(CSSPropertyColumnRuleWidth);
+        }
+
+        if (first.filter != second.filter)
+            changingProperties.m_properties.set(CSSPropertyFilter);
+
+        if (first.mask != second.mask) {
+            changingProperties.m_properties.set(CSSPropertyMaskImage);
+            changingProperties.m_properties.set(CSSPropertyMaskClip);
+            changingProperties.m_properties.set(CSSPropertyMaskComposite);
+            changingProperties.m_properties.set(CSSPropertyMaskMode);
+            changingProperties.m_properties.set(CSSPropertyMaskOrigin);
+            changingProperties.m_properties.set(CSSPropertyWebkitMaskPositionX);
+            changingProperties.m_properties.set(CSSPropertyWebkitMaskPositionY);
+            changingProperties.m_properties.set(CSSPropertyMaskSize);
+            changingProperties.m_properties.set(CSSPropertyMaskRepeat);
+        }
+
+        if (first.visitedLinkColor.ptr() != second.visitedLinkColor.ptr()) {
+            if (first.visitedLinkColor->background != second.visitedLinkColor->background)
+                changingProperties.m_properties.set(CSSPropertyBackgroundColor);
+            if (first.visitedLinkColor->borderLeft != second.visitedLinkColor->borderLeft)
+                changingProperties.m_properties.set(CSSPropertyBorderLeftColor);
+            if (first.visitedLinkColor->borderRight != second.visitedLinkColor->borderRight)
+                changingProperties.m_properties.set(CSSPropertyBorderRightColor);
+            if (first.visitedLinkColor->borderTop != second.visitedLinkColor->borderTop)
+                changingProperties.m_properties.set(CSSPropertyBorderTopColor);
+            if (first.visitedLinkColor->borderBottom != second.visitedLinkColor->borderBottom)
+                changingProperties.m_properties.set(CSSPropertyBorderBottomColor);
+            if (first.visitedLinkColor->textDecoration != second.visitedLinkColor->textDecoration)
+                changingProperties.m_properties.set(CSSPropertyTextDecorationColor);
+            if (first.visitedLinkColor->outline != second.visitedLinkColor->outline)
+                changingProperties.m_properties.set(CSSPropertyOutlineColor);
+        }
+
+        if (first.content != second.content)
+            changingProperties.m_properties.set(CSSPropertyContent);
+
+        if (first.boxShadow != second.boxShadow) {
+            changingProperties.m_properties.set(CSSPropertyBoxShadow);
+            changingProperties.m_properties.set(CSSPropertyWebkitBoxShadow);
+        }
+
+        if (first.aspectRatioWidth != second.aspectRatioWidth || first.aspectRatioHeight != second.aspectRatioHeight || first.aspectRatioType != second.aspectRatioType)
+            changingProperties.m_properties.set(CSSPropertyAspectRatio);
+
+        if (first.alignContent != second.alignContent)
+            changingProperties.m_properties.set(CSSPropertyAlignContent);
+        if (first.justifyContent != second.justifyContent)
+            changingProperties.m_properties.set(CSSPropertyJustifyContent);
+        if (first.alignItems != second.alignItems)
+            changingProperties.m_properties.set(CSSPropertyAlignItems);
+        if (first.alignSelf != second.alignSelf)
+            changingProperties.m_properties.set(CSSPropertyAlignSelf);
+        if (first.justifyItems != second.justifyItems)
+            changingProperties.m_properties.set(CSSPropertyJustifyItems);
+        if (first.justifySelf != second.justifySelf)
+            changingProperties.m_properties.set(CSSPropertyJustifySelf);
+        if (first.order != second.order)
+            changingProperties.m_properties.set(CSSPropertyOrder);
+        if (first.objectPosition != second.objectPosition)
+            changingProperties.m_properties.set(CSSPropertyObjectPosition);
+        if (first.textOverflow != second.textOverflow)
+            changingProperties.m_properties.set(CSSPropertyTextOverflow);
+        if (first.resize != second.resize)
+            changingProperties.m_properties.set(CSSPropertyResize);
+        if (first.objectFit != second.objectFit)
+            changingProperties.m_properties.set(CSSPropertyObjectFit);
+
+        if (first.transform.ptr() != second.transform.ptr())
+            conservativelyCollectChangedAnimatablePropertiesViaTransformData(*first.transform, *second.transform);
+
+        // Non animated styles are followings.
+        // deprecatedFlexibleBox
+        // hasAttrContent
+        // appearance
+        // effectiveAppearance
+        // userDrag
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedRareData = [&](auto& first, auto& second) {
+        if (first.containIntrinsicWidth != second.containIntrinsicWidth || first.containIntrinsicWidthType != second.containIntrinsicWidthType)
+            changingProperties.m_properties.set(CSSPropertyContainIntrinsicWidth);
+        if (first.containIntrinsicHeight != second.containIntrinsicHeight || first.containIntrinsicHeightType != second.containIntrinsicHeightType)
+            changingProperties.m_properties.set(CSSPropertyContainIntrinsicHeight);
+        if (first.perspectiveOriginX != second.perspectiveOriginX)
+            changingProperties.m_properties.set(CSSPropertyPerspectiveOriginX);
+        if (first.perspectiveOriginY != second.perspectiveOriginY)
+            changingProperties.m_properties.set(CSSPropertyPerspectiveOriginY);
+        if (first.initialLetter != second.initialLetter)
+            changingProperties.m_properties.set(CSSPropertyWebkitInitialLetter);
+#if ENABLE(FILTERS_LEVEL_2)
+        if (first.backdropFilter != second.backdropFilter)
+            changingProperties.m_properties.set(CSSPropertyWebkitBackdropFilter);
+#endif
+        if (first.grid != second.grid) {
+            changingProperties.m_properties.set(CSSPropertyGridAutoColumns);
+            changingProperties.m_properties.set(CSSPropertyGridAutoFlow);
+            changingProperties.m_properties.set(CSSPropertyGridAutoRows);
+            changingProperties.m_properties.set(CSSPropertyGridTemplateColumns);
+            changingProperties.m_properties.set(CSSPropertyGridTemplateRows);
+            changingProperties.m_properties.set(CSSPropertyGridTemplateAreas);
+        }
+        if (first.gridItem != second.gridItem) {
+            changingProperties.m_properties.set(CSSPropertyGridColumnStart);
+            changingProperties.m_properties.set(CSSPropertyGridColumnEnd);
+            changingProperties.m_properties.set(CSSPropertyGridRowStart);
+            changingProperties.m_properties.set(CSSPropertyGridRowEnd);
+        }
+        if (first.clip != second.clip)
+            changingProperties.m_properties.set(CSSPropertyClip);
+        if (first.counterDirectives.map != second.counterDirectives.map) {
+            changingProperties.m_properties.set(CSSPropertyCounterIncrement);
+            changingProperties.m_properties.set(CSSPropertyCounterReset);
+            changingProperties.m_properties.set(CSSPropertyCounterSet);
+        }
+        if (first.maskBorder != second.maskBorder) {
+            changingProperties.m_properties.set(CSSPropertyMaskBorderSource);
+            changingProperties.m_properties.set(CSSPropertyMaskBorderSlice);
+            changingProperties.m_properties.set(CSSPropertyMaskBorderWidth);
+            changingProperties.m_properties.set(CSSPropertyMaskBorderOutset);
+            changingProperties.m_properties.set(CSSPropertyMaskBorderRepeat);
+        }
+        if (!arePointingToEqualData(first.shapeOutside, second.shapeOutside))
+            changingProperties.m_properties.set(CSSPropertyShapeOutside);
+        if (first.shapeMargin != second.shapeMargin)
+            changingProperties.m_properties.set(CSSPropertyShapeMargin);
+        if (first.shapeImageThreshold != second.shapeImageThreshold)
+            changingProperties.m_properties.set(CSSPropertyShapeImageThreshold);
+        if (first.perspective != second.perspective)
+            changingProperties.m_properties.set(CSSPropertyPerspective);
+        if (!arePointingToEqualData(first.clipPath, second.clipPath))
+            changingProperties.m_properties.set(CSSPropertyClipPath);
+        if (first.textDecorationColor != second.textDecorationColor)
+            changingProperties.m_properties.set(CSSPropertyTextDecorationColor);
+        if (!arePointingToEqualData(first.rotate, second.rotate))
+            changingProperties.m_properties.set(CSSPropertyRotate);
+        if (!arePointingToEqualData(first.scale, second.scale))
+            changingProperties.m_properties.set(CSSPropertyScale);
+        if (!arePointingToEqualData(first.translate, second.translate))
+            changingProperties.m_properties.set(CSSPropertyTranslate);
+        if (!arePointingToEqualData(first.offsetPath, second.offsetPath))
+            changingProperties.m_properties.set(CSSPropertyOffsetPath);
+        if (first.columnGap != second.columnGap)
+            changingProperties.m_properties.set(CSSPropertyColumnGap);
+        if (first.rowGap != second.rowGap)
+            changingProperties.m_properties.set(CSSPropertyRowGap);
+        if (first.offsetDistance != second.offsetDistance)
+            changingProperties.m_properties.set(CSSPropertyOffsetDistance);
+        if (first.offsetPosition != second.offsetPosition)
+            changingProperties.m_properties.set(CSSPropertyOffsetPosition);
+        if (first.offsetAnchor != second.offsetAnchor)
+            changingProperties.m_properties.set(CSSPropertyOffsetAnchor);
+        if (first.offsetRotate != second.offsetRotate)
+            changingProperties.m_properties.set(CSSPropertyOffsetRotate);
+        if (first.textDecorationThickness != second.textDecorationThickness)
+            changingProperties.m_properties.set(CSSPropertyTextDecorationThickness);
+        if (first.touchActions != second.touchActions)
+            changingProperties.m_properties.set(CSSPropertyTouchAction);
+        if (first.marginTrim != second.marginTrim)
+            changingProperties.m_properties.set(CSSPropertyMarginTrim);
+        if (first.scrollbarGutter != second.scrollbarGutter)
+            changingProperties.m_properties.set(CSSPropertyScrollbarGutter);
+        if (first.scrollbarWidth != second.scrollbarWidth)
+            changingProperties.m_properties.set(CSSPropertyScrollbarWidth);
+        if (first.transformStyle3D != second.transformStyle3D)
+            changingProperties.m_properties.set(CSSPropertyTransformStyle);
+        if (first.backfaceVisibility != second.backfaceVisibility)
+            changingProperties.m_properties.set(CSSPropertyBackfaceVisibility);
+        if (first.useSmoothScrolling != second.useSmoothScrolling)
+            changingProperties.m_properties.set(CSSPropertyScrollBehavior);
+        if (first.textDecorationStyle != second.textDecorationStyle)
+            changingProperties.m_properties.set(CSSPropertyTextDecorationStyle);
+        if (first.textGroupAlign != second.textGroupAlign)
+            changingProperties.m_properties.set(CSSPropertyTextGroupAlign);
+#if ENABLE(CSS_COMPOSITING)
+        if (first.effectiveBlendMode != second.effectiveBlendMode)
+            changingProperties.m_properties.set(CSSPropertyMixBlendMode);
+        if (first.isolation != second.isolation)
+            changingProperties.m_properties.set(CSSPropertyIsolation);
+#endif
+        if (first.breakAfter != second.breakAfter)
+            changingProperties.m_properties.set(CSSPropertyBreakAfter);
+        if (first.breakBefore != second.breakBefore)
+            changingProperties.m_properties.set(CSSPropertyBreakBefore);
+        if (first.breakInside != second.breakInside)
+            changingProperties.m_properties.set(CSSPropertyBreakInside);
+        if (first.textBoxTrim != second.textBoxTrim)
+            changingProperties.m_properties.set(CSSPropertyTextBoxTrim);
+        if (first.overflowAnchor != second.overflowAnchor)
+            changingProperties.m_properties.set(CSSPropertyOverflowAnchor);
+        if (first.hasClip != second.hasClip)
+            changingProperties.m_properties.set(CSSPropertyClip);
+
+        // Non animated styles are followings.
+        // customProperties
+        // customPaintWatchedProperties
+        // zoom
+        // contain
+        // containerNames
+        // scrollMargin
+        // scrollPadding
+        // lineClamp
+        // willChange
+        // marquee
+        // boxReflect
+        // pageSize
+        // pageSizeType
+        // scrollSnapType
+        // scrollSnapAlign
+        // scrollSnapStop
+        // blockStepSize
+        // blockStepInsert
+        // overscrollBehaviorX
+        // overscrollBehaviorY
+        // applePayButtonStyle
+        // applePayButtonType
+        // contentVisibility
+        // inputSecurity
+        // containerType
+        // transformStyleForcedToFlat
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaInheritedData = [&](auto& first, auto& second) {
+        if (first.lineHeight != second.lineHeight)
+            changingProperties.m_properties.set(CSSPropertyLineHeight);
+
+#if ENABLE(TEXT_AUTOSIZING)
+        if (first.specifiedLineHeight != second.specifiedLineHeight)
+            changingProperties.m_properties.set(CSSPropertyLineHeight);
+#endif
+
+        if (first.fontCascade != second.fontCascade) {
+            changingProperties.m_properties.set(CSSPropertyWordSpacing);
+            changingProperties.m_properties.set(CSSPropertyLetterSpacing);
+            changingProperties.m_properties.set(CSSPropertyTextRendering);
+            changingProperties.m_properties.set(CSSPropertyTextSpacingTrim);
+            changingProperties.m_properties.set(CSSPropertyTextAutospace);
+            changingProperties.m_properties.set(CSSPropertyFontStyle);
+            changingProperties.m_properties.set(CSSPropertyFontVariationSettings);
+            changingProperties.m_properties.set(CSSPropertyFontWeight);
+            changingProperties.m_properties.set(CSSPropertyFontSizeAdjust);
+            changingProperties.m_properties.set(CSSPropertyFontFamily);
+            changingProperties.m_properties.set(CSSPropertyFontFeatureSettings);
+            changingProperties.m_properties.set(CSSPropertyFontVariantEastAsian);
+            changingProperties.m_properties.set(CSSPropertyFontVariantLigatures);
+            changingProperties.m_properties.set(CSSPropertyFontVariantNumeric);
+            changingProperties.m_properties.set(CSSPropertyFontSize);
+            changingProperties.m_properties.set(CSSPropertyFontStretch);
+            changingProperties.m_properties.set(CSSPropertyFontPalette);
+            changingProperties.m_properties.set(CSSPropertyFontKerning);
+            changingProperties.m_properties.set(CSSPropertyFontSynthesisWeight);
+            changingProperties.m_properties.set(CSSPropertyFontSynthesisStyle);
+            changingProperties.m_properties.set(CSSPropertyFontSynthesisSmallCaps);
+            changingProperties.m_properties.set(CSSPropertyFontVariantAlternates);
+            changingProperties.m_properties.set(CSSPropertyFontVariantPosition);
+            changingProperties.m_properties.set(CSSPropertyFontVariantCaps);
+            changingProperties.m_properties.set(CSSPropertyFontVariantEmoji);
+        }
+
+        if (first.horizontalBorderSpacing != second.horizontalBorderSpacing)
+            changingProperties.m_properties.set(CSSPropertyWebkitBorderHorizontalSpacing);
+
+        if (first.verticalBorderSpacing != second.verticalBorderSpacing)
+            changingProperties.m_properties.set(CSSPropertyWebkitBorderVerticalSpacing);
+
+        if (first.color != second.color || first.visitedLinkColor != second.visitedLinkColor)
+            changingProperties.m_properties.set(CSSPropertyColor);
+    };
+
+    auto conservativelyCollectChangedAnimatablePropertiesViaRareInheritedData = [&](auto& first, auto& second) {
+        if (first.textStrokeColor != second.textStrokeColor || first.visitedLinkTextStrokeColor != second.visitedLinkTextStrokeColor)
+            changingProperties.m_properties.set(CSSPropertyWebkitTextStrokeColor);
+        if (first.textFillColor != second.textFillColor || first.visitedLinkTextFillColor != second.visitedLinkTextFillColor)
+            changingProperties.m_properties.set(CSSPropertyWebkitTextFillColor);
+        if (first.textEmphasisColor != second.textEmphasisColor || first.visitedLinkTextEmphasisColor != second.visitedLinkTextEmphasisColor)
+            changingProperties.m_properties.set(CSSPropertyTextEmphasisColor);
+        if (first.caretColor != second.caretColor || first.visitedLinkCaretColor != second.visitedLinkCaretColor || first.hasAutoCaretColor != second.hasAutoCaretColor || first.hasVisitedLinkAutoCaretColor != second.hasVisitedLinkAutoCaretColor)
+            changingProperties.m_properties.set(CSSPropertyCaretColor);
+        if (first.accentColor != second.accentColor || first.hasAutoAccentColor != second.hasAutoAccentColor)
+            changingProperties.m_properties.set(CSSPropertyAccentColor);
+        if (!arePointingToEqualData(first.textShadow, second.textShadow))
+            changingProperties.m_properties.set(CSSPropertyTextShadow);
+        if (first.indent != second.indent || first.textIndentLine != second.textIndentLine || first.textIndentType != second.textIndentType)
+            changingProperties.m_properties.set(CSSPropertyTextIndent);
+        if (first.textUnderlineOffset != second.textUnderlineOffset)
+            changingProperties.m_properties.set(CSSPropertyTextUnderlineOffset);
+        if (first.wordSpacing != second.wordSpacing)
+            changingProperties.m_properties.set(CSSPropertyWordSpacing);
+        if (first.miterLimit != second.miterLimit)
+            changingProperties.m_properties.set(CSSPropertyStrokeMiterlimit);
+        if (first.widows != second.widows || first.hasAutoWidows != second.hasAutoWidows)
+            changingProperties.m_properties.set(CSSPropertyWidows);
+        if (first.orphans != second.orphans || first.hasAutoOrphans != second.hasAutoOrphans)
+            changingProperties.m_properties.set(CSSPropertyOrphans);
+        if (first.wordBreak != second.wordBreak)
+            changingProperties.m_properties.set(CSSPropertyWordBreak);
+        if (first.overflowWrap != second.overflowWrap)
+            changingProperties.m_properties.set(CSSPropertyOverflowWrap);
+        if (first.lineBreak != second.lineBreak)
+            changingProperties.m_properties.set(CSSPropertyLineBreak);
+        if (first.hyphens != second.hyphens)
+            changingProperties.m_properties.set(CSSPropertyHyphens);
+        if (first.textEmphasisPosition != second.textEmphasisPosition)
+            changingProperties.m_properties.set(CSSPropertyTextEmphasisPosition);
+#if ENABLE(DARK_MODE_CSS)
+        if (first.colorScheme != second.colorScheme)
+            changingProperties.m_properties.set(CSSPropertyColorScheme);
+#endif
+        if (first.textEmphasisFill != second.textEmphasisFill || first.textEmphasisMark != second.textEmphasisMark)
+            changingProperties.m_properties.set(CSSPropertyTextEmphasisStyle);
+        if (!arePointingToEqualData(first.quotes, second.quotes))
+            changingProperties.m_properties.set(CSSPropertyQuotes);
+        if (first.appleColorFilter != second.appleColorFilter)
+            changingProperties.m_properties.set(CSSPropertyAppleColorFilter);
+        if (first.tabSize != second.tabSize)
+            changingProperties.m_properties.set(CSSPropertyTabSize);
+        if (first.imageOrientation != second.imageOrientation)
+            changingProperties.m_properties.set(CSSPropertyImageOrientation);
+        if (first.textAlignLast != second.textAlignLast)
+            changingProperties.m_properties.set(CSSPropertyTextAlignLast);
+        if (first.textJustify != second.textJustify)
+            changingProperties.m_properties.set(CSSPropertyTextJustify);
+        if (first.textDecorationSkipInk != second.textDecorationSkipInk)
+            changingProperties.m_properties.set(CSSPropertyTextDecorationSkipInk);
+        if (first.rubyPosition != second.rubyPosition)
+            changingProperties.m_properties.set(CSSPropertyWebkitRubyPosition);
+        if (first.paintOrder != second.paintOrder)
+            changingProperties.m_properties.set(CSSPropertyPaintOrder);
+        if (first.capStyle != second.capStyle)
+            changingProperties.m_properties.set(CSSPropertyStrokeLinecap);
+        if (first.joinStyle != second.joinStyle)
+            changingProperties.m_properties.set(CSSPropertyStrokeLinejoin);
+        if (first.hasSetStrokeWidth != second.hasSetStrokeWidth || first.strokeWidth != second.strokeWidth)
+            changingProperties.m_properties.set(CSSPropertyStrokeWidth);
+        if (!arePointingToEqualData(first.listStyleImage, second.listStyleImage))
+            changingProperties.m_properties.set(CSSPropertyListStyleImage);
+        if (first.scrollbarColor != second.scrollbarColor)
+            changingProperties.m_properties.set(CSSPropertyScrollbarColor);
+        if (first.listStyleType != second.listStyleType)
+            changingProperties.m_properties.set(CSSPropertyListStyleType);
+
+        // customProperties is handled separately.
+        // Non animated styles are followings.
+        //
+        // textStrokeWidth
+        // mathStyle
+        // hyphenationLimitBefore
+        // hyphenationLimitAfter
+        // hyphenationLimitLines
+        // hyphenationString
+        // tapHighlightColor
+        // nbspMode
+        // useTouchOverflowScrolling
+        // textSizeAdjust
+        // userSelect
+        // isInSubtreeWithBlendMode
+        // effectiveTouchActions
+        // eventListenerRegionTypes
+        // effectiveInert
+        // effectiveSkippedContent
+        // strokeColor
+        // visitedLinkStrokeColor
+        // hasSetStrokeColor
+        // effectiveZoom
+        // textBoxEdge
+        // textSecurity
+        // userModify
+        // speakAs
+        // textCombine
+        // textOrientation
+        // lineBoxContain
+        // touchCalloutEnabled
+        // lineGrid
+        // imageRendering
+        // textUnderlinePosition
+        // textZoom
+        // lineSnap
+        // lineAlign
+        // hangingPunctuation
+        // cursorData
+        // textEmphasisCustomMark
+    };
+
+    if (m_inheritedFlags != other.m_inheritedFlags)
+        conservativelyCollectChangedAnimatablePropertiesViaInheritedFlags(m_inheritedFlags, other.m_inheritedFlags);
+
+    if (m_nonInheritedFlags != other.m_nonInheritedFlags)
+        conservativelyCollectChangedAnimatablePropertiesViaNonInheritedFlags(m_nonInheritedFlags, other.m_nonInheritedFlags);
+
+    if (m_nonInheritedData.ptr() != other.m_nonInheritedData.ptr()) {
+        if (m_nonInheritedData->boxData.ptr() != other.m_nonInheritedData->boxData.ptr())
+            conservativelyCollectChangedAnimatablePropertiesViaNonInheritedBoxData(*m_nonInheritedData->boxData, *other.m_nonInheritedData->boxData);
+
+        if (m_nonInheritedData->backgroundData.ptr() != other.m_nonInheritedData->backgroundData.ptr())
+            conservativelyCollectChangedAnimatablePropertiesViaNonInheritedBackgroundData(*m_nonInheritedData->backgroundData, *other.m_nonInheritedData->backgroundData);
+
+        if (m_nonInheritedData->surroundData.ptr() != other.m_nonInheritedData->surroundData.ptr())
+            conservativelyCollectChangedAnimatablePropertiesViaNonInheritedSurroundData(*m_nonInheritedData->surroundData, *other.m_nonInheritedData->surroundData);
+
+        if (m_nonInheritedData->miscData.ptr() != other.m_nonInheritedData->miscData.ptr())
+            conservativelyCollectChangedAnimatablePropertiesViaNonInheritedMiscData(*m_nonInheritedData->miscData, *other.m_nonInheritedData->miscData);
+
+        if (m_nonInheritedData->rareData.ptr() != other.m_nonInheritedData->rareData.ptr())
+            conservativelyCollectChangedAnimatablePropertiesViaNonInheritedRareData(*m_nonInheritedData->rareData, *other.m_nonInheritedData->rareData);
+    }
+
+    if (m_rareInheritedData.ptr() != other.m_rareInheritedData.ptr())
+        conservativelyCollectChangedAnimatablePropertiesViaRareInheritedData(*m_rareInheritedData, *other.m_rareInheritedData);
+
+    if (m_inheritedData.ptr() != other.m_inheritedData.ptr())
+        conservativelyCollectChangedAnimatablePropertiesViaInheritedData(*m_inheritedData, *other.m_inheritedData);
+
+    if (m_svgStyle.ptr() != other.m_svgStyle.ptr())
+        m_svgStyle->conservativelyCollectChangedAnimatableProperties(*other.m_svgStyle, changingProperties);
+}
+
 void RenderStyle::setClip(Length&& top, Length&& right, Length&& bottom, Length&& left)
 {
     auto& data = m_nonInheritedData.access().rareData.access();
