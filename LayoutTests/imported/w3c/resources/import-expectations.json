@@ -461,7 +461,6 @@
     "web-platform-tests/webvr": "skip",
     "web-platform-tests/webvtt": "skip",
     "web-platform-tests/webvtt/api": "import",
-    "web-platform-tests/webvtt/parsing": "import",
     "web-platform-tests/webxr": "import",
     "web-platform-tests/workers": "import",
     "web-platform-tests/worklets": "import",
