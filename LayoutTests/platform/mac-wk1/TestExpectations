@@ -830,7 +830,7 @@ accessibility/page-reload-deadlock.html [ Skip ]
 # Skip because WK1 doesn't seem to support Element::setAttribute.
 accessibility/dynamic-rowspan.html [ Skip ]
 accessibility/dynamic-colspan.html [ Skip ]
-accessibility/dynamic-table-descendants.html [ Skip ] 
+accessibility/dynamic-table-descendants.html [ Skip ]
 
 # Missing AccessibilityUIElement::isIndeterminate() implementation.
 accessibility/progress-indeterminate-value.html [ Skip ]
@@ -941,12 +941,12 @@ http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py [ Sk
 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py [ Skip ]
 http/tests/security/referrer-policy-header.html [ Skip ]
 http/tests/security/referrer-policy-header-multipart.html [ Skip ]
-http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
-http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
+http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ]
+http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ]
 http/tests/navigation/ping-attribute/secure-anchor-cross-origin.html [ Skip ]
-http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ] 
-http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ] 
-http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ] 
+http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
+http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ]
+http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
 http/tests/referrer-policy-img/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http-http.html [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https.html [ Skip ]
@@ -1009,6 +1009,11 @@ media/now-playing-status-without-media.html [ Skip ]
 
 # WebM not supported in WK1 on macOS.
 http/tests/media/video-webm-stall.html
+media/W3C/video/canPlayType/canPlayType_codecs_order_1.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_two_implies_one_1.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_two_implies_one_2.html [ Failure ]
+media/media-can-play-webm.html [ Failure ]
 
 # Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
 webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
@@ -1615,7 +1620,7 @@ webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 # rdar://92764272 ([ Ventura wk1 ] 18 X fast/html/details (layout-tests) are flaky text failures)
 fast/html/details-add-summary-1-and-click.html [ Pass Failure ]
 fast/html/details-add-summary-10-and-click.html [ Pass Failure ]
-fast/html/details-add-summary-2-and-click.html [ Pass Failure ] 
+fast/html/details-add-summary-2-and-click.html [ Pass Failure ]
 fast/html/details-add-summary-3-and-click.html [ Pass Failure ]
 fast/html/details-add-summary-4-and-click.html [ Pass Failure ]
 fast/html/details-add-summary-5-and-click.html [ Pass Failure ]
@@ -2322,20 +2327,20 @@ webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/show-modal-focusing-steps.html [ Skip ]
 
-# webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1. 
+# webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1.
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
-imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ] 
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ]
 
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 
-# webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.  
+# webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.
 [ Monterey+ release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
 [ Monterey+ release ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 # Push subscription tests don't work without service worker support.
 http/tests/push-api [ Skip ]
 
-# webkit.org/b/236128 [ Mac wk1 ] 7X imported/w3c/web-platform-tests/pointerevents/pointerevent (layout-tests) are flaky text failures 
+# webkit.org/b/236128 [ Mac wk1 ] 7X imported/w3c/web-platform-tests/pointerevents/pointerevent (layout-tests) are flaky text failures
 imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_at_implicit_release_hoverable_pointers.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_click_during_capture.html [ Pass Failure ]

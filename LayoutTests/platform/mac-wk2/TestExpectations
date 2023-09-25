@@ -2159,3 +2159,6 @@ webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer
 [ Sonoma+ ] fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
 
 webkit.org/b/261906 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last [ Slow ]
+
+webkit.org/b/262019 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-replaced.html [ Failure ]
+webkit.org/b/262020 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
