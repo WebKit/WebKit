@@ -522,18 +522,34 @@ self.addEventListener("pushnotification", async (event) => {
     var optionsFromTag = event.proposedNotification.tag.split(" ");
     var newTitle;
     var newBadge;
+    var newActionURL;
     if (optionsFromTag[0] == "titleandbadge") {
         newTitle = optionsFromTag[1];
         newBadge = optionsFromTag[2];
     } else if (optionsFromTag[0] == "title")
         newTitle = optionsFromTag[1];
     else if (optionsFromTag[0] == "badge")
-        newBadge = optionsFromTag[1]
+        newBadge = optionsFromTag[1];
     else if (optionsFromTag[0] == "datatotitle")
         newTitle = event.proposedNotification.data;
+    else if (optionsFromTag[0] == "defaultactionurl")
+        newActionURL = optionsFromTag[1];
+    else if (optionsFromTag[0] == "emptydefaultactionurl") {
+        self.registration.showNotification("Missing default action").then((value) => {
+            globalPort.postMessage("showNotification succeeded");
+        }, (exception) => {
+            globalPort.postMessage("showNotification failed: " + exception);
+        });
+    }
 
-    if (newTitle)
-        self.registration.showNotification(newTitle);
+    if (newTitle || newActionURL) {
+        if (!newTitle)
+            newTitle = event.proposedNotification.title;
+        if (!newActionURL)
+            newActionURL = event.proposedNotification.defaultAction;
+
+        self.registration.showNotification(newTitle, { "defaultAction": newActionURL });
+    }
 
     if (newBadge)
         navigator.setAppBadge(newBadge);
@@ -901,6 +917,18 @@ public:
         TestWebKitAPI::Util::run(&done);
     }
 
+    void captureAllMessages()
+    {
+        [m_testMessageHandler setWildcardMessageHandler:^(NSString *message){
+            m_mostRecentMessage = message;
+        }];
+    }
+
+    const String& mostRecentMessage() const
+    {
+        return m_mostRecentMessage;
+    }
+
 private:
     String m_pushPartition;
     Markable<WTF::UUID> m_dataStoreIdentifier;
@@ -912,6 +940,7 @@ private:
     std::unique_ptr<TestWebKitAPI::HTTPServer> m_server;
     TestNotificationProvider& m_notificationProvider;
     RetainPtr<WKWebView> m_webView;
+    String m_mostRecentMessage;
 };
 
 class WebPushDTest : public ::testing::Test {
@@ -1815,6 +1844,29 @@ static constexpr ASCIILiteral json44 = R"JSONRESOURCE(
     "app_badge": "12"
 }
 )JSONRESOURCE"_s;
+static constexpr ASCIILiteral json45 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Test a default action URL override",
+    "mutable": true,
+    "options": {
+        "tag": "defaultactionurl https://webkit.org/"
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json46 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Test a missing default action URL override",
+    "mutable": true,
+    "options": {
+        "tag": "emptydefaultactionurl"
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+
 static constexpr ASCIILiteral errors[] = {
     "does not contain valid JSON"_s,
     "top level JSON value is not an object"_s,
@@ -1883,7 +1935,8 @@ static std::pair<ASCIILiteral, ASCIILiteral> jsonAndErrors[] = {
     { json42, { " "_s } },
     { json43, { " "_s } },
     { json44, { " "_s } },
-
+    { json45, { " "_s } },
+    { json46, { " "_s } },
     { { }, { } }
 };
 
@@ -2028,13 +2081,29 @@ public:
 
         auto messages = webViews().first()->fetchPushMessages();
         ASSERT_EQ([messages count], 1u);
+
+        webViews().first()->captureAllMessages();
         webViews().first()->processPushMessage([messages firstObject]);
+    }
+
+    void waitForMessageAndVerify(NSString *message)
+    {
+        while (webViews().first()->mostRecentMessage().isEmpty())
+            TestWebKitAPI::Util::runFor(0.05_s);
+
+        EXPECT_TRUE([(NSString *)webViews().first()->mostRecentMessage() isEqualToString:message]);
     }
 
     void checkLastNotificationTitle(NSString *title)
     {
         NSString *recentTitle = webViews().first()->mostRecentNotification().userInfo[@"WebNotificationTitleKey"];
         EXPECT_TRUE([recentTitle isEqualToString:title]);
+    }
+
+    void checkLastNotificationDefaultActionURL(NSString *actionURL)
+    {
+        NSString *notificationActionURL = webViews().first()->mostRecentNotification().userInfo[@"WebNotificationDefaultActionURLKey"];
+        EXPECT_TRUE([notificationActionURL isEqualToString:actionURL]);
     }
 
     void checkLastActionURL(NSString *url)
@@ -2075,6 +2144,16 @@ TEST_F(WebPushDPushNotificationEventTest, Basic)
     runTest(json44);
     checkLastNotificationTitle(@"[object Object]");
     checkLastAppBadge(12);
+
+    runTest(json45);
+    checkLastNotificationTitle(@"Test a default action URL override");
+    checkLastNotificationDefaultActionURL(@"https://webkit.org/");
+    checkLastAppBadge(12);
+
+    runTest(json46);
+    checkLastNotificationTitle(@"Test a missing default action URL override");
+    checkLastNotificationDefaultActionURL(@"https://example.com/");
+    waitForMessageAndVerify(@"showNotification failed: TypeError: Call to showNotification() while handling a `pushnotification` event did not include NotificationOptions that specify a valid defaultAction url");
 }
 
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)

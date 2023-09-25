@@ -319,6 +319,11 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
 #if ENABLE(DECLARATIVE_WEB_PUSH)
         if (RefPtr pushNotificationEvent = serviceWorkerGlobalScope->pushNotificationEvent()) {
             auto notification = notificationResult.releaseReturnValue();
+            if (!notification->defaultAction().isValid()) {
+                promise->reject(Exception { TypeError, "Call to showNotification() while handling a `pushnotification` event did not include NotificationOptions that specify a valid defaultAction url"_s });
+                return;
+            }
+
             pushNotificationEvent->setUpdatedNotificationData(notification->data());
             return;
         }

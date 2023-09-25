@@ -26,6 +26,7 @@
 [
     Conditional=NOTIFICATIONS
 ] dictionary NotificationOptions {
+    [Conditional=DECLARATIVE_WEB_PUSH, EnabledBySetting=DeclarativeWebPush] USVString defaultAction = "";
     NotificationDirection dir = "auto";
     DOMString lang = "";
     DOMString body = "";

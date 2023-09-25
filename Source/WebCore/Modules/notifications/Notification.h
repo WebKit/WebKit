@@ -72,6 +72,10 @@ public:
         RefPtr<SerializedScriptValue> serializedData;
         RefPtr<JSON::Value> jsonData;
         std::optional<bool> silent;
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+        String defaultAction;
+        URL defaultActionURL;
+#endif
     };
     // For JS constructor only.
     static ExceptionOr<Ref<Notification>> create(ScriptExecutionContext&, String&& title, Options&&);
@@ -85,6 +89,9 @@ public:
     void show(CompletionHandler<void()>&& = [] { });
     void close();
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    const URL& defaultAction() const { return m_defaultActionURL; }
+#endif
     const String& title() const { return m_title; }
     Direction dir() const { return m_direction; }
     const String& body() const { return m_body; }
@@ -145,6 +152,9 @@ private:
 
     WTF::UUID m_identifier;
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    URL m_defaultActionURL;
+#endif
     String m_title;
     Direction m_direction;
     String m_lang;
