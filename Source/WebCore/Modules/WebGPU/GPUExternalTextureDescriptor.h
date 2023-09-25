@@ -45,6 +45,7 @@ using GPUVideoSource = RefPtr<HTMLVideoElement>;
 
 struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 
+#if ENABLE(VIDEO)
     static WebGPU::VideoSourceIdentifier mediaIdentifierForSource(const GPUVideoSource& videoSource, CVPixelBufferRef& outPixelBuffer)
     {
 #if ENABLE(WEB_CODECS)
@@ -72,11 +73,16 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
         return WebGPU::HTMLVideoElementIdentifier { playerIdentifier ? playerIdentifier->toUInt64() : 0 };
 #endif
     }
+#endif
 
     WebGPU::ExternalTextureDescriptor convertToBacking() const
     {
         CVPixelBufferRef pixelBuffer = nullptr;
+#if ENABLE(VIDEO)
         auto mediaIdentifier = mediaIdentifierForSource(source, pixelBuffer);
+#else
+        auto mediaIdentifier = WebGPU::HTMLVideoElementIdentifier { 0 };
+#endif
         return {
             { label },
             mediaIdentifier,
@@ -85,7 +91,9 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
+#if ENABLE(VIDEO)
     GPUVideoSource source;
+#endif
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
 };
 
