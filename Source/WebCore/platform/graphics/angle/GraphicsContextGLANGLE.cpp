@@ -1923,7 +1923,7 @@ String GraphicsContextGLANGLE::getProgramInfoLog(PlatformGLObject program)
     GL_GetProgramInfoLog(program, length, &size, info.data());
 
     GCGLsizei count = 0;
-    PlatformGLObject shaders[2];
+    PlatformGLObject shaders[2] = { 0u, 0u };
     getAttachedShaders(program, 2, &count, shaders);
 
     return getUnmangledInfoLog(shaders, count, String(info.data(), size));
