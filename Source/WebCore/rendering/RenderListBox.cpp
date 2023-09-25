@@ -185,7 +185,7 @@ void RenderListBox::layout()
         m_vBar->setProportion(numVisibleItems(), numItems());
         if (!enabled) {
             scrollToOffsetWithoutAnimation(ScrollbarOrientation::Vertical, 0);
-            m_indexOffset = 0;
+            m_scrollPosition = { };
         }
     }
 
@@ -295,7 +295,7 @@ LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffse
     LayoutUnit x = additionalOffset.x() + borderLeft() + paddingLeft();
     if (shouldPlaceVerticalScrollbarOnLeft() && m_vBar)
         x += m_vBar->occupiedWidth();
-    LayoutUnit y = additionalOffset.y() + borderTop() + paddingTop() + itemHeight() * (index - m_indexOffset);
+    LayoutUnit y = additionalOffset.y() + borderTop() + paddingTop() + itemHeight() * (index - indexOffset());
     return LayoutRect(x, y, contentWidth(), itemHeight());
 }
 
@@ -349,7 +349,7 @@ std::optional<LayoutRect> RenderListBox::localBoundsOfOptGroup(const HTMLOptGrou
 void RenderListBox::paintItem(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const PaintFunction& paintFunction)
 {
     int listItemsSize = numItems();
-    int firstVisibleItem = m_indexOfFirstVisibleItemInsidePaddingTopArea.value_or(m_indexOffset);
+    int firstVisibleItem = m_indexOfFirstVisibleItemInsidePaddingTopArea.value_or(indexOffset());
     int endIndex = firstVisibleItem + numVisibleItems(ConsiderPadding::Yes);
     for (int i = firstVisibleItem; i < listItemsSize && i < endIndex; ++i)
         paintFunction(paintInfo, paintOffset, i);
@@ -558,7 +558,7 @@ int RenderListBox::listIndexAtOffset(const LayoutSize& offset) const
     if (!shouldPlaceVerticalScrollbarOnLeft() && (offset.width() < borderLeft() + paddingLeft() || offset.width() > width() - borderRight() - paddingRight() - scrollbarWidth))
         return -1;
 
-    int newOffset = (offset.height() - borderTop() - paddingTop()) / itemHeight() + m_indexOffset;
+    int newOffset = (offset.height() - borderTop() - paddingTop()) / itemHeight() + indexOffset();
     return newOffset < numItems() ? newOffset : -1;
 }
 
@@ -614,7 +614,7 @@ int RenderListBox::scrollToward(const IntPoint& destination)
     IntSize positionOffset = roundedIntSize(destination - absPos);
 
     int rows = numVisibleItems();
-    int offset = m_indexOffset;
+    int offset = indexOffset();
     
     if (positionOffset.height() < borderTop() + paddingTop() && scrollToRevealElementAtListIndex(offset - 1))
         return offset - 1;
@@ -659,7 +659,7 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
         return false;
 
     int newOffset;
-    if (index < m_indexOffset)
+    if (index < indexOffset())
         newOffset = index;
     else
         newOffset = index - numVisibleItems() + 1;
@@ -671,10 +671,10 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
 
 bool RenderListBox::listIndexIsVisible(int index)
 {
-    int firstIndex = m_indexOfFirstVisibleItemInsidePaddingTopArea.value_or(m_indexOffset);
+    int firstIndex = m_indexOfFirstVisibleItemInsidePaddingTopArea.value_or(indexOffset());
     int endIndex = m_indexOfFirstVisibleItemInsidePaddingBottomArea
         ? m_indexOfFirstVisibleItemInsidePaddingBottomArea.value() + numberOfVisibleItemsInPaddingBottom()
-        : m_indexOffset + numVisibleItems();
+        : indexOffset() + numVisibleItems();
 
     return index >= firstIndex && index < endIndex;
 }
@@ -689,24 +689,30 @@ bool RenderListBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranul
     return ScrollableArea::scroll(logicalToPhysical(direction, style().isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, stepCount);
 }
 
+int RenderListBox::indexOffset() const
+{
+    // FIXME: This does not account for vertical writing mode.
+    return std::abs(scrollPosition().y());
+}
+
 ScrollPosition RenderListBox::scrollPosition() const
 {
-    return { 0, m_indexOffset };
+    return m_scrollPosition;
 }
 
 ScrollPosition RenderListBox::minimumScrollPosition() const
 {
-    return { 0, 0 };
+    return scrollPositionFromOffset(ScrollOffset());
 }
 
 ScrollPosition RenderListBox::maximumScrollPosition() const
 {
-    return { 0, numItems() - numVisibleItems() };
+    return scrollPositionFromOffset(ScrollOffset(0, numItems() - numVisibleItems()));
 }
 
 void RenderListBox::setScrollOffset(const ScrollOffset& offset)
 {
-    scrollTo(offset.y());
+    scrollTo(scrollPositionFromOffset(offset));
 }
 
 int RenderListBox::maximumNumberOfItemsThatFitInPaddingBottomArea() const
@@ -719,7 +725,7 @@ int RenderListBox::numberOfVisibleItemsInPaddingTop() const
     if (!m_indexOfFirstVisibleItemInsidePaddingTopArea)
         return 0;
 
-    return m_indexOffset - m_indexOfFirstVisibleItemInsidePaddingTopArea.value();
+    return indexOffset() - m_indexOfFirstVisibleItemInsidePaddingTopArea.value();
 }
 
 int RenderListBox::numberOfVisibleItemsInPaddingBottom() const
@@ -727,7 +733,7 @@ int RenderListBox::numberOfVisibleItemsInPaddingBottom() const
     if (!m_indexOfFirstVisibleItemInsidePaddingBottomArea)
         return 0;
 
-    return std::min(maximumNumberOfItemsThatFitInPaddingBottomArea(), numItems() - m_indexOffset - numVisibleItems());
+    return std::min(maximumNumberOfItemsThatFitInPaddingBottomArea(), numItems() - indexOffset() - numVisibleItems());
 }
 
 void RenderListBox::computeFirstIndexesVisibleInPaddingTopBottomAreas()
@@ -737,22 +743,22 @@ void RenderListBox::computeFirstIndexesVisibleInPaddingTopBottomAreas()
 
     int maximumNumberOfItemsThatFitInPaddingTopArea = paddingTop() / itemHeight();
     if (maximumNumberOfItemsThatFitInPaddingTopArea) {
-        if (m_indexOffset)
-            m_indexOfFirstVisibleItemInsidePaddingTopArea = std::max(0, m_indexOffset - maximumNumberOfItemsThatFitInPaddingTopArea);
+        if (indexOffset())
+            m_indexOfFirstVisibleItemInsidePaddingTopArea = std::max(0, indexOffset() - maximumNumberOfItemsThatFitInPaddingTopArea);
     }
 
     if (maximumNumberOfItemsThatFitInPaddingBottomArea()) {
-        if (numItems() > (m_indexOffset + numVisibleItems()))
-            m_indexOfFirstVisibleItemInsidePaddingBottomArea = m_indexOffset + numVisibleItems();
+        if (numItems() > (indexOffset() + numVisibleItems()))
+            m_indexOfFirstVisibleItemInsidePaddingBottomArea = indexOffset() + numVisibleItems();
     }
 }
 
-void RenderListBox::scrollTo(int newOffset)
+void RenderListBox::scrollTo(const ScrollPosition& position)
 {
-    if (newOffset == m_indexOffset)
+    if (position == m_scrollPosition)
         return;
 
-    m_indexOffset = newOffset;
+    m_scrollPosition = position;
 
     computeFirstIndexesVisibleInPaddingTopBottomAreas();
 
@@ -794,7 +800,7 @@ void RenderListBox::setScrollLeft(int, const ScrollPositionChangeOptions&)
 
 int RenderListBox::scrollTop() const
 {
-    return m_indexOffset * itemHeight();
+    return indexOffset() * itemHeight();
 }
 
 static void setupWheelEventTestMonitor(RenderListBox& renderer)
@@ -810,7 +816,7 @@ void RenderListBox::setScrollTop(int newTop, const ScrollPositionChangeOptions&)
     // Determine an index and scroll to it.
     int index = newTop / itemHeight();
     index = std::clamp(index, 0, std::max(0, numItems() - 1));
-    if (index == m_indexOffset)
+    if (index == indexOffset())
         return;
 
     setupWheelEventTestMonitor(*this);
@@ -1011,37 +1017,6 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
 
     if (m_vBar)
         m_vBar->styleChanged();
-}
-
-bool RenderListBox::scrolledToTop() const
-{
-    if (Scrollbar* vbar = verticalScrollbar())
-    return vbar->value() <= 0;
-
-    return true;
-}
-
-bool RenderListBox::scrolledToBottom() const
-{
-    Scrollbar* vbar = verticalScrollbar();
-    if (!vbar)
-        return true;
-
-    return vbar->value() >= vbar->maximum();
-}
-
-bool RenderListBox::scrolledToLeft() const
-{
-    // We do not scroll horizontally in a select element, so always report
-    // that we are at the full extent of the scroll.
-    return true;
-}
-
-bool RenderListBox::scrolledToRight() const
-{
-    // We do not scroll horizontally in a select element, so always report
-    // that we are at the full extent of the scroll.
-    return true;
 }
 
 float RenderListBox::deviceScaleFactor() const

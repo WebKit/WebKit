@@ -66,11 +66,6 @@ public:
     int size() const;
 
     bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
-
-    bool scrolledToTop() const final;
-    bool scrolledToBottom() const final;
-    bool scrolledToLeft() const final;
-    bool scrolledToRight() const final;
     
 private:
     bool isVisibleToHitTesting() const final;
@@ -154,7 +149,7 @@ private:
     void didStartScrollAnimation() final;
 
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
-    void scrollTo(int newOffset);
+    void scrollTo(const ScrollPosition&);
 
     using PaintFunction = Function<void(PaintInfo&, const LayoutPoint&, int listItemIndex)>;
     void paintItem(PaintInfo&, const LayoutPoint&, const PaintFunction&);
@@ -188,6 +183,8 @@ private:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const final { return RenderBlockFlow::shouldPlaceVerticalScrollbarOnLeft(); }
 
+    int indexOffset() const;
+
     bool m_optionsChanged { true };
     bool m_scrollToRevealSelectionAfterLayout { false };
     bool m_inAutoscroll { false };
@@ -195,7 +192,8 @@ private:
 
     RefPtr<Scrollbar> m_vBar;
 
-    int m_indexOffset { 0 };
+    // Note: This is based on item index rather than a pixel offset.
+    ScrollPosition m_scrollPosition;
 
     std::optional<int> m_indexOfFirstVisibleItemInsidePaddingTopArea;
     std::optional<int> m_indexOfFirstVisibleItemInsidePaddingBottomArea;
