@@ -224,7 +224,7 @@ std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pa
         if (is<BasicShapeCircleOrEllipse>(shape)) {
             auto& centerCoordShape = downcast<BasicShapeCircleOrEllipse>(shape);
             if (centerCoordShape.positionWasOmitted())
-                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, currentOffsetForData(*motionPathData));
+                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, motionPathData->usedStartingPosition);
         }
         return pathOperation.pathForReferenceRect(containingBlockRect);
     }
