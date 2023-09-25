@@ -65,6 +65,8 @@ public:
         return is<JSEventListener>(listener) && downcast<JSEventListener>(listener).wasCreatedFromMarkup();
     }
 
+    bool isWindowOnError() const { return m_isWindowOnError; }
+
 private:
     virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const;
 
@@ -79,13 +81,14 @@ private:
 protected:
     enum class CreatedFromMarkup : bool { No, Yes };
 
-    JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, CreatedFromMarkup, DOMWrapperWorld&);
+    JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, CreatedFromMarkup, DOMWrapperWorld&, bool isWindowOnError);
     void handleEvent(ScriptExecutionContext&, Event&) override;
     void setWrapperWhenInitializingJSFunction(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
 
 private:
     bool m_isAttribute : 1;
     bool m_wasCreatedFromMarkup : 1;
+    const bool m_isWindowOnError;
 
     mutable bool m_isInitialized : 1;
     mutable JSC::Weak<JSC::JSObject> m_jsFunction;

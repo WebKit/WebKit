@@ -50,6 +50,7 @@ struct JSLazyEventListener::CreationArguments {
     WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> node;
     JSObject* wrapper;
     bool shouldUseSVGEventName;
+    bool isFromWindow;
 };
 
 static const String& eventParameterName(bool shouldUseSVGEventName)
@@ -69,7 +70,7 @@ static TextPosition convertZeroToOne(const TextPosition& position)
 }
 
 JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const URL& sourceURL, const TextPosition& sourcePosition)
-    : JSEventListener(nullptr, arguments.wrapper, true, CreatedFromMarkup::Yes, mainThreadNormalWorld())
+    : JSEventListener(nullptr, arguments.wrapper, true, CreatedFromMarkup::Yes, mainThreadNormalWorld(), arguments.attributeName == "onerror"_s && arguments.isFromWindow)
     , m_functionName(arguments.attributeName.localName().string())
     , m_eventParameterName(eventParameterName(arguments.shouldUseSVGEventName))
     , m_code(arguments.attributeValue)
@@ -156,6 +157,14 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 
     MarkedArgumentBuffer args;
     args.append(jsNontrivialString(vm, m_eventParameterName));
+
+    if (isWindowOnError()) {
+        args.append(jsNontrivialString(vm, "source"_s));
+        args.append(jsNontrivialString(vm, "lineno"_s));
+        args.append(jsNontrivialString(vm, "colno"_s));
+        args.append(jsNontrivialString(vm, "error"_s));
+    }
+
     args.append(jsStringWithCache(vm, m_code));
     ASSERT(!args.hasOverflowed());
 
@@ -210,14 +219,14 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& argu
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Element& element, const QualifiedName& attributeName, const AtomString& attributeValue)
 {
-    return create({ attributeName, attributeValue, element.document(), element, nullptr, element.isSVGElement() });
+    return create({ attributeName, attributeValue, element.document(), element, nullptr, element.isSVGElement(), false });
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Document& document, const QualifiedName& attributeName, const AtomString& attributeValue)
 {
     // FIXME: This always passes false for "shouldUseSVGEventName". Is that correct for events dispatched to SVG documents?
     // This has been this way for a long time, but became more obvious when refactoring to separate the Element and Document code paths.
-    return create({ attributeName, attributeValue, document, document, nullptr, false });
+    return create({ attributeName, attributeValue, document, document, nullptr, false, false });
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(LocalDOMWindow& window, const QualifiedName& attributeName, const AtomString& attributeValue)
@@ -225,7 +234,7 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(LocalDOMWindow& window, 
     ASSERT(window.document());
     auto& document = *window.document();
     ASSERT(document.frame());
-    return create({ attributeName, attributeValue, document, nullptr, toJSLocalDOMWindow(document.frame(), mainThreadNormalWorld()), document.isSVGDocument() });
+    return create({ attributeName, attributeValue, document, nullptr, toJSLocalDOMWindow(document.frame(), mainThreadNormalWorld()), document.isSVGDocument(), true });
 }
 
 } // namespace WebCore
