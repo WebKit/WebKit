@@ -50,7 +50,7 @@ unsigned TileControllerMemoryHandler::totalUnparentedTiledLayers() const
 {
     unsigned totalUnparentedLayers = 0;
     for (auto& tileController : m_tileControllers)
-        totalUnparentedLayers += tileController.get()->numberOfUnparentedTiles();
+        totalUnparentedLayers += tileController->numberOfUnparentedTiles();
     return totalUnparentedLayers;
 }
 
@@ -73,7 +73,7 @@ void TileControllerMemoryHandler::tileControllerGainedUnparentedTiles(TileContro
 void TileControllerMemoryHandler::trimUnparentedTilesToTarget(int target)
 {
     while (!m_tileControllers.isEmpty()) {
-        m_tileControllers.first().get()->removeUnparentedTilesNow();
+        m_tileControllers.first()->removeUnparentedTilesNow();
         m_tileControllers.removeFirst();
 
         if (target > 0 && totalUnparentedTiledLayers() < static_cast<unsigned>(target))

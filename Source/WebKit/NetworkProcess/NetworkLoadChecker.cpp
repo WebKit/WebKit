@@ -304,7 +304,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
         contentSecurityPolicy->setClient(nullptr);
     });
 
-    auto preRedirectURL = m_networkResourceLoader ? m_networkResourceLoader.get()->originalRequest().url() : URL();
+    auto preRedirectURL = m_networkResourceLoader ? m_networkResourceLoader->originalRequest().url() : URL();
     auto redirectResponseReceived = isRedirected() ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
     switch (m_options.destination) {
     case FetchOptions::Destination::Audioworklet:

@@ -6088,7 +6088,7 @@ void LocalFrameView::updateWidgetPositionsTimerFired()
 void LocalFrameView::notifyWidgets(WidgetNotification notification)
 {
     for (auto& widget : collectAndProtectWidgets(m_widgetsInRenderTree))
-        widget.get()->notifyWidget(notification);
+        widget->notifyWidget(notification);
 }
 
 void LocalFrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect)

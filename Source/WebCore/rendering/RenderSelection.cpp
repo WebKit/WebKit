@@ -219,7 +219,7 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
     auto oldSelectionData = collectSelectionData(m_renderRange, blockRepaintMode == RepaintMode::NewXOROld);
     // Remove current selection.
     for (auto& renderer : oldSelectionData.renderers.keys())
-        renderer.get()->setSelectionStateIfNeeded(RenderObject::HighlightState::None);
+        renderer->setSelectionStateIfNeeded(RenderObject::HighlightState::None);
     m_renderRange = newSelection;
     auto* selectionStart = m_renderRange.start();
     // Update the selection status of all objects between selectionStart and selectionEnd

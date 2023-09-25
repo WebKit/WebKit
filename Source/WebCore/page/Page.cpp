@@ -251,7 +251,7 @@ static void networkStateChanged(bool isOnLine)
 
     // Get all the frames of all the pages in all the page groups
     for (auto& page : allPages()) {
-        for (auto* frame = &page.get()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -477,7 +477,7 @@ void Page::firstTimeInitialization()
 void Page::clearPreviousItemFromAllPages(HistoryItem* item)
 {
     for (auto& page : allPages()) {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(page.get()->mainFrame());
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
         if (!localMainFrame)
             return;
 
@@ -757,7 +757,7 @@ void Page::updateStyleAfterChangeInEnvironment()
 void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 {
     for (auto& page : allPages())
-        page.get()->updateStyleAfterChangeInEnvironment();
+        page->updateStyleAfterChangeInEnvironment();
 }
 
 void Page::setNeedsRecalcStyleInAllFrames()
@@ -773,7 +773,7 @@ void Page::refreshPlugins(bool reload)
     HashSet<PluginInfoProvider*> pluginInfoProviders;
 
     for (auto& page : allPages())
-        pluginInfoProviders.add(&page.get()->pluginInfoProvider());
+        pluginInfoProviders.add(&page->pluginInfoProvider());
 
     for (auto& pluginInfoProvider : pluginInfoProviders)
         pluginInfoProvider->refresh(reload);

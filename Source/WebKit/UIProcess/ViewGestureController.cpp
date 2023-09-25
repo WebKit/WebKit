@@ -121,7 +121,7 @@ ViewGestureController* ViewGestureController::controllerForGesture(WebPageProxyI
     auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
     if (gestureControllerIter == viewGestureControllersForAllPages().end())
         return nullptr;
-    if (gestureControllerIter->value.get()->m_currentGestureID != gestureID)
+    if (gestureControllerIter->value->m_currentGestureID != gestureID)
         return nullptr;
     return gestureControllerIter->value.get();
 }

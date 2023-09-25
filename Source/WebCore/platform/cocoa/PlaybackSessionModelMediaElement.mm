@@ -61,7 +61,7 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
     if (m_mediaElement == mediaElement) {
         if (m_mediaElement) {
             for (auto& client : m_clients)
-                client.get()->isPictureInPictureSupportedChanged(isPictureInPictureSupported());
+                client->isPictureInPictureSupportedChanged(isPictureInPictureSupported());
         }
         return;
     }
@@ -109,14 +109,14 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
     updateForEventName(eventNameAll());
 
     for (auto& client : m_clients)
-        client.get()->isPictureInPictureSupportedChanged(isPictureInPictureSupported());
+        client->isPictureInPictureSupportedChanged(isPictureInPictureSupported());
 }
 
 void PlaybackSessionModelMediaElement::mediaEngineChanged()
 {
     bool wirelessVideoPlaybackDisabled = this->wirelessVideoPlaybackDisabled();
     for (auto& client : m_clients)
-        client.get()->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
+        client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
 }
 
 void PlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
@@ -135,19 +135,19 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         || eventName == eventNames().durationchangeEvent) {
         double duration = this->duration();
         for (auto& client : m_clients)
-            client.get()->durationChanged(duration);
+            client->durationChanged(duration);
         // These is no standard event for minFastReverseRateChange; duration change is a reasonable proxy for it.
         // It happens every time a new item becomes ready to play.
         bool canPlayFastReverse = this->canPlayFastReverse();
         for (auto& client : m_clients)
-            client.get()->canPlayFastReverseChanged(canPlayFastReverse);
+            client->canPlayFastReverseChanged(canPlayFastReverse);
     }
 
     if (all
         || eventName == eventNames().playEvent
         || eventName == eventNames().playingEvent) {
         for (auto& client : m_clients)
-            client.get()->playbackStartedTimeChanged(playbackStartedTime());
+            client->playbackStartedTimeChanged(playbackStartedTime());
     }
 
     if (all
@@ -165,7 +165,7 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         double playbackRate =  this->playbackRate();
         double defaultPlaybackRate = this->defaultPlaybackRate();
         for (auto& client : m_clients)
-            client.get()->rateChanged(playbackState, playbackRate, defaultPlaybackRate);
+            client->rateChanged(playbackState, playbackRate, defaultPlaybackRate);
     }
 
     if (all
@@ -173,7 +173,7 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         auto currentTime = this->currentTime();
         auto anchorTime = [[NSProcessInfo processInfo] systemUptime];
         for (auto& client : m_clients)
-            client.get()->currentTimeChanged(currentTime, anchorTime);
+            client->currentTimeChanged(currentTime, anchorTime);
     }
 
     if (all
@@ -183,8 +183,8 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         auto seekableTimeRangesLastModifiedTime = this->seekableTimeRangesLastModifiedTime();
         auto liveUpdateInterval = this->liveUpdateInterval();
         for (auto& client : m_clients) {
-            client.get()->bufferedTimeChanged(bufferedTime);
-            client.get()->seekableRangesChanged(seekableRanges, seekableTimeRangesLastModifiedTime, liveUpdateInterval);
+            client->bufferedTimeChanged(bufferedTime);
+            client->seekableRangesChanged(seekableRanges, seekableTimeRangesLastModifiedTime, liveUpdateInterval);
         }
     }
 
@@ -202,8 +202,8 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         bool wirelessVideoPlaybackDisabled = this->wirelessVideoPlaybackDisabled();
 
         for (auto& client : m_clients) {
-            client.get()->externalPlaybackChanged(enabled, targetType, localizedDeviceName);
-            client.get()->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
+            client->externalPlaybackChanged(enabled, targetType, localizedDeviceName);
+            client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
         }
     }
 
@@ -212,7 +212,7 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         bool isPictureInPictureActive = this->isPictureInPictureActive();
 
         for (auto& client : m_clients)
-            client.get()->pictureInPictureActiveChanged(isPictureInPictureActive);
+            client->pictureInPictureActiveChanged(isPictureInPictureActive);
     }
 
 
@@ -224,8 +224,8 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
     if (all
         || eventName == eventNames().volumechangeEvent) {
         for (auto& client : m_clients) {
-            client.get()->mutedChanged(isMuted());
-            client.get()->volumeChanged(volume());
+            client->mutedChanged(isMuted());
+            client->volumeChanged(volume());
         }
     }
 }
@@ -407,8 +407,8 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
     auto legibleIndex = legibleMediaSelectedIndex();
 
     for (auto& client : m_clients) {
-        client.get()->audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
-        client.get()->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
+        client->audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
+        client->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
     }
 }
 
@@ -418,8 +418,8 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()
     auto legibleIndex = legibleMediaSelectedIndex();
 
     for (auto& client : m_clients) {
-        client.get()->audioMediaSelectionIndexChanged(audioIndex);
-        client.get()->legibleMediaSelectionIndexChanged(legibleIndex);
+        client->audioMediaSelectionIndexChanged(audioIndex);
+        client->legibleMediaSelectionIndexChanged(legibleIndex);
     }
 }
 

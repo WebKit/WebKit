@@ -295,8 +295,8 @@ void BaseAudioSharedUnit::audioSamplesAvailable(const MediaTime& time, const Pla
     ForbidMallocUseForCurrentThreadScope forbidMallocUse;
 
     for (auto& client : m_audioThreadClients) {
-        if (client.get()->isProducingData())
-            client.get()->audioSamplesAvailable(time, data, description, numberOfFrames);
+        if (client->isProducingData())
+            client->audioSamplesAvailable(time, data, description, numberOfFrames);
     }
 }
 

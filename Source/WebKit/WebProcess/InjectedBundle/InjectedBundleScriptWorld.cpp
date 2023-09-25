@@ -75,7 +75,7 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapper
 InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
 {
     for (auto& world : allWorlds().values()) {
-        if (world.get()->name() == name)
+        if (world->name() == name)
             return world.get();
     }
     return nullptr;

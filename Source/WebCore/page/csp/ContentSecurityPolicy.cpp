@@ -460,7 +460,7 @@ bool ContentSecurityPolicy::shouldPerformEarlyCSPCheck() const
     // We perform checks early if strict-dynamic is included in the CSP policy because
     // we have access to necessary information about the script that we do not have later on.
     for (auto& policy : m_policies) {
-        if (policy.get()->strictDynamicIncluded())
+        if (policy->strictDynamicIncluded())
             return true;
     }
     return false;
