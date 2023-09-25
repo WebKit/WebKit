@@ -369,9 +369,9 @@ TEST(WebKit, QuotaDelegate)
 
 // FIXME when rdar://115919262 is resolved.
 #if PLATFORM(IOS)
-TEST(WebPushD, DISABLED_QuotaDelegateReload)
+TEST(WebKit, DISABLED_QuotaDelegateReload)
 #else
-TEST(WebPushD, QuotaDelegateReload)
+TEST(WebKit, QuotaDelegateReload)
 #endif
 {
     done = false;
