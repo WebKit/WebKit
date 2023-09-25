@@ -82,11 +82,6 @@ static ASCIILiteral appBadgeKey()
     return "app_badge"_s;
 }
 
-static ASCIILiteral optionsKey()
-{
-    return "options"_s;
-}
-
 static ASCIILiteral mutableKey()
 {
     return "mutable"_s;
@@ -153,20 +148,11 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
         }
     }
 
-    std::optional<NotificationOptionsPayload> notificationOptions;
-    if (auto value = object.getValue(optionsKey())) {
-        if (value->type() != JSON::Value::Type::Object)
-            return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, optionsKey(), "' member is specified but is not an object"_s) };
+    auto optionsOrException = parseNotificationOptions(object);
+    if (optionsOrException.hasException())
+        return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, optionsOrException.exception().message()) };
 
-        auto optionsObject = value->asObject();
-        RELEASE_ASSERT(optionsObject);
-
-        auto optionsOrException = parseNotificationOptions(*optionsObject);
-        if (optionsOrException.hasException())
-            return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, optionsKey(), "' JSON is not valid: "_s, optionsOrException.exception().message()) };
-
-        notificationOptions = optionsOrException.releaseReturnValue();
-    }
+    std::optional<NotificationOptionsPayload> notificationOptions = optionsOrException.releaseReturnValue();
 
     bool isMutable = false;
     if (auto value = object.getValue(mutableKey())) {
