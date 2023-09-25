@@ -2044,14 +2044,14 @@ fn testTrunc()
 @group(0) @binding(14) var tm2di: texture_multisampled_2d<i32>;
 @group(0) @binding(15) var tm2du: texture_multisampled_2d<u32>;
 
-@group(0) @binding(16) var te: texture_external;
-@group(0) @binding(17) var tc: texture_cube<f32>;
-@group(0) @binding(18) var tca: texture_cube_array<f32>;
+@group(0) @binding(16) var tc: texture_cube<f32>;
+@group(0) @binding(17) var tca: texture_cube_array<f32>;
 
-@group(0) @binding(19) var ts1d: texture_storage_2d<rgba8unorm, read>;
-@group(0) @binding(20) var ts2d: texture_storage_2d<rgba16uint, write>;
-@group(0) @binding(21) var ts2da: texture_storage_2d<r32sint, read_write>;
-@group(0) @binding(22) var ts3d: texture_storage_2d<rgba32float, write>;
+@group(0) @binding(18) var ts1d: texture_storage_2d<rgba8unorm, read>;
+@group(0) @binding(19) var ts2d: texture_storage_2d<rgba16uint, write>;
+@group(0) @binding(20) var ts2da: texture_storage_2d<r32sint, read_write>;
+@group(0) @binding(21) var ts3d: texture_storage_2d<rgba32float, write>;
+@group(0) @binding(22) var te: texture_external;
 
 var td2d: texture_depth_2d;
 var td2da: texture_depth_2d_array;
@@ -2060,6 +2060,8 @@ var tdca: texture_depth_cube_array;
 var tdms2d: texture_depth_multisampled_2d;
 
 // 16.7.1
+// RUN: %metal-compile testTextureDimensions
+@compute @workgroup_size(1)
 fn testTextureDimensions()
 {
     // FIXME: add declarations for texture storage

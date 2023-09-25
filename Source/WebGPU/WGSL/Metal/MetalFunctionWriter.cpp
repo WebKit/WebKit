@@ -149,6 +149,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_stringBuilder.append(m_indent, "texture2d<float> SecondPlane;\n");
             m_stringBuilder.append(m_indent, "float3x2 UVRemapMatrix;\n");
             m_stringBuilder.append(m_indent, "float4x3 ColorSpaceConversionMatrix;\n");
+            m_stringBuilder.append(m_indent, "uint get_width(uint lod = 0) const { return FirstPlane.get_width(lod); }\n");
+            m_stringBuilder.append(m_indent, "uint get_height(uint lod = 0) const { return FirstPlane.get_height(lod); }\n");
         }
         m_stringBuilder.append("};\n\n");
     }
@@ -871,6 +873,33 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
+            { "textureDimensions", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
+                const auto& get = [&](const char* property) {
+                    writer->visit(call.arguments()[0]);
+                    writer->stringBuilder().append(".get_", property, "(");
+                    if (call.arguments().size() > 1)
+                        writer->visit(call.arguments()[1]);
+                    writer->stringBuilder().append(")");
+                };
+
+                const auto* vector = std::get_if<Types::Vector>(call.inferredType());
+                if (!vector) {
+                    get("width");
+                    return;
+                }
+
+                auto size = vector->size;
+                ASSERT(size >= 2 && size <= 3);
+                writer->stringBuilder().append("uint", String::number(size), "(");
+                get("width");
+                writer->stringBuilder().append(", ");
+                get("height");
+                if (size > 2) {
+                    writer->stringBuilder().append(", ");
+                    get("depth");
+                }
+                writer->stringBuilder().append(")");
+            } },
             { "textureLoad", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
                 auto& texture = call.arguments()[0];
                 auto* textureType = texture.inferredType();
