@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2338,7 +2338,7 @@ static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject* globalObject
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer(), decoder.length());
+    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer());
     JSC::JSArrayBuffer* jsArrayBuffer = nullptr;
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
         jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer));
@@ -2864,7 +2864,7 @@ void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
     auto* globalObject = toJS(m_context);
     JSC::JSLockHolder lock(globalObject->vm());
 
-    auto mutableDecoder = IPC::Decoder::create(decoder.buffer(), decoder.length(), { });
+    auto mutableDecoder = IPC::Decoder::create(decoder.buffer(), { });
     auto* description = jsDescriptionFromDecoder(globalObject, *mutableDecoder);
 
     JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
@@ -2881,7 +2881,7 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
     auto* globalObject = toJS(m_context);
     JSC::JSLockHolder lock(globalObject->vm());
 
-    auto decoder = IPC::Decoder::create(encoder.buffer(), encoder.bufferSize(), { });
+    auto decoder = IPC::Decoder::create({ encoder.buffer(), encoder.bufferSize() }, { });
     auto* description = jsDescriptionFromDecoder(globalObject, *decoder);
 
     JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
@@ -2912,7 +2912,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
-    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer(), decoder.length());
+    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer());
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode())) {
         if (auto* jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer))) {
             jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "buffer"_s), jsArrayBuffer);
