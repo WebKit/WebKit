@@ -157,7 +157,10 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (isMainRunLoop())
         WebProcess::singleton().deferNonVisibleProcessEarlyMemoryCleanupTimer();
 
-    if (cachedNativeImage(image.renderingResourceIdentifier()))
+    auto addResult = m_renderingResources.ensure(image.renderingResourceIdentifier(), [&] {
+        return ThreadSafeWeakPtr<RenderingResource> { image };
+    });
+    if (!addResult.isNewEntry)
         return;
 
     auto handle = createShareableBitmapFromNativeImage(image);
@@ -170,8 +173,6 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
             << " ShareableBitmap could not be created; bailing.");
         return;
     }
-
-    m_renderingResources.add(image.renderingResourceIdentifier(), image);
 
     // Set itself as an observer to NativeImage, so releaseNativeImage()
     // gets called when NativeImage is being deleleted.
