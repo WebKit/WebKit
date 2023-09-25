@@ -1382,7 +1382,6 @@
         host_get_io_master
         io_registry_entry_from_path
         io_registry_entry_get_property_bin_buf
-        io_service_get_matching_service_bin
         mach_memory_entry_ownership
         mach_port_extract_right
         mach_port_get_context_from_user
@@ -1406,8 +1405,7 @@
     (kernel-mig-routine
         io_iterator_next
         io_registry_entry_get_property_bytes
-        io_registry_entry_get_registry_entry_id
-        io_service_get_matching_services_bin))
+        io_registry_entry_get_registry_entry_id))
 
 (define (kernel-mig-routine-rarely-used-need-backtrace)
     (kernel-mig-routine
@@ -1463,6 +1461,12 @@
                 (with telemetry)
                 (with message "kernel mig routine used after launch")
                 (kernel-mig-routine-only-in-use-during-launch)))
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+        (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+            (allow mach-message-send
+                io_service_get_matching_service_bin
+                io_service_get_matching_services_bin))
+#endif
 #endif
 
         (with-filter (require-not (lockdown-mode))
