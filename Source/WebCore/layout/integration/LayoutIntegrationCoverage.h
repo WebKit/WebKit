@@ -25,27 +25,24 @@
 
 #pragma once
 
-#include "RenderStyleConstants.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class RenderBlockFlow;
 class RenderFlexibleBox;
-class RenderInline;
 class RenderObject;
 
 namespace LayoutIntegration {
 class LineLayout;
 
-enum class AvoidanceReason : uint64_t {
-    ContentIsRuby                                = 1LLU  << 3,
-    FlowIsInitialContainingBlock                 = 1LLU  << 9,
-    FlowHasLineAlignEdges                        = 1LLU  << 20,
-    FlowHasLineSnap                              = 1LLU  << 21,
-    FeatureIsDisabled                            = 1LLU  << 41,
-    ContentIsSVG                                 = 1LLU  << 56,
-    EndOfReasons                                 = 1LLU  << 62
+enum class AvoidanceReason : uint8_t {
+    ContentIsRuby                = 1 << 0,
+    ContentIsSVG                 = 1 << 1,
+    FlowHasLineAlignEdges        = 1 << 2,
+    FlowHasLineSnap              = 1 << 3,
+    FlowIsInitialContainingBlock = 1 << 4,
+    FeatureIsDisabled            = 1 << 5
 };
 
 bool canUseForLineLayout(const RenderBlockFlow&);
@@ -59,9 +56,6 @@ enum class TypeOfChangeForInvalidation : uint8_t {
 bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& renderer, const LineLayout&, TypeOfChangeForInvalidation);
 
 bool canUseForFlexLayout(const RenderFlexibleBox&);
-
-enum class IncludeReasons { First , All };
-OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow&, IncludeReasons);
 
 }
 }

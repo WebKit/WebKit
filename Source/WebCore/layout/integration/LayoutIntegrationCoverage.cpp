@@ -31,9 +31,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "InlineWalker.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "Logging.h"
 #include "RenderBlockFlow.h"
-#include "RenderChildIterator.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
@@ -47,238 +45,40 @@
 #include "RenderStyleInlines.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
-#include "RenderVTTCue.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
-#include "TextUtil.h"
-#include <pal/Logging.h>
-#include <wtf/OptionSet.h>
-
-#ifndef NDEBUG
-#define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
-        reasons.add(AvoidanceReason::reason); \
-        if (includeReasons == IncludeReasons::First) \
-            return reasons; \
-    }
-#else
-#define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
-        ASSERT_UNUSED(includeReasons, includeReasons == IncludeReasons::First); \
-        reasons.add(AvoidanceReason::reason); \
-        return reasons; \
-    }
-#endif
-
-#ifndef NDEBUG
-#define ADD_REASONS_AND_RETURN_IF_NEEDED(newReasons, reasons, includeReasons) { \
-        reasons.add(newReasons); \
-        if (includeReasons == IncludeReasons::First) \
-            return reasons; \
-    }
-#else
-#define ADD_REASONS_AND_RETURN_IF_NEEDED(newReasons, reasons, includeReasons) { \
-        ASSERT_UNUSED(includeReasons, includeReasons == IncludeReasons::First); \
-        reasons.add(newReasons); \
-        return reasons; \
-    }
-#endif
 
 namespace WebCore {
 namespace LayoutIntegration {
 
-#ifndef NDEBUG
-static void printReason(AvoidanceReason reason, TextStream& stream)
-{
-    switch (reason) {
-    case AvoidanceReason::ContentIsRuby:
-        stream << "ruby";
-        break;
-    case AvoidanceReason::FlowIsInitialContainingBlock:
-        stream << "flow is ICB";
-        break;
-    case AvoidanceReason::FlowHasLineAlignEdges:
-        stream << "-webkit-line-align edges";
-        break;
-    case AvoidanceReason::FlowHasLineSnap:
-        stream << "-webkit-line-snap property";
-        break;
-    case AvoidanceReason::ContentIsSVG:
-        stream << "SVG content";
-        break;
-    default:
-        break;
-    }
-}
-
-static void printReasons(OptionSet<AvoidanceReason> reasons, TextStream& stream)
-{
-    stream << " ";
-    for (auto reason : reasons) {
-        printReason(reason, stream);
-        stream << ", ";
-    }
-}
-
-static void printTextForSubtree(const RenderElement& renderer, unsigned& charactersLeft, TextStream& stream)
-{
-    for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
-        if (is<RenderText>(child)) {
-            String text = downcast<RenderText>(child).text();
-            auto textView = StringView(text).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
-            auto length = std::min(charactersLeft, textView.length());
-            stream << textView.left(length);
-            charactersLeft -= length;
-            continue;
-        }
-        printTextForSubtree(downcast<RenderElement>(child), charactersLeft, stream);
-    }
-}
-
-static unsigned contentLengthForSubtreeStayWithinBlockFlow(const RenderElement& renderer)
-{
-    unsigned textLength = 0;
-    for (auto& child : childrenOfType<RenderObject>(renderer)) {
-        if (is<RenderBlockFlow>(child)) {
-            // Do not descend into nested RenderBlockFlow.
-            continue;
-        }
-        if (is<RenderText>(child)) {
-            textLength += downcast<RenderText>(child).text().length();
-            continue;
-        }
-        textLength += contentLengthForSubtreeStayWithinBlockFlow(downcast<RenderElement>(child));
-    }
-    return textLength;
-}
-
-static unsigned contentLengthForBlockFlow(const RenderBlockFlow& blockFlow)
-{
-    return contentLengthForSubtreeStayWithinBlockFlow(blockFlow);
-}
-
-static Vector<const RenderBlockFlow*> collectRenderBlockFlowsForCurrentPage()
-{
-    Vector<const RenderBlockFlow*> renderFlows;
-    for (const auto* document : Document::allDocuments()) {
-        if (!document->renderView() || document->backForwardCacheState() != Document::NotInBackForwardCache)
-            continue;
-        if (!document->isHTMLDocument() && !document->isXHTMLDocument())
-            continue;
-        for (auto& descendant : descendantsOfType<RenderBlockFlow>(*document->renderView())) {
-            if (descendant.childrenInline())
-                renderFlows.append(&descendant);
-        }
-    }
-    return renderFlows;
-}
-
-static void printModernLineLayoutBlockList(void)
-{
-    auto renderBlockFlows = collectRenderBlockFlowsForCurrentPage();
-    if (!renderBlockFlows.size()) {
-        WTFLogAlways("No text found in this document\n");
-        return;
-    }
-    TextStream stream;
-    stream << "---------------------------------------------------\n";
-    for (auto* flow : renderBlockFlows) {
-        auto reasons = canUseForLineLayoutWithReason(*flow, IncludeReasons::All);
-        if (reasons.isEmpty())
-            continue;
-        unsigned printedLength = 30;
-        stream << "\"";
-        printTextForSubtree(*flow, printedLength, stream);
-        for (;printedLength > 0; --printedLength)
-            stream << " ";
-        stream << "\"(" << contentLengthForBlockFlow(*flow) << "):";
-        printReasons(reasons, stream);
-        stream << "\n";
-    }
-    stream << "---------------------------------------------------\n";
-    WTFLogAlways("%s", stream.release().utf8().data());
-}
-
-static void printModernLineLayoutCoverage(void)
-{
-    auto renderBlockFlows = collectRenderBlockFlowsForCurrentPage();
-    if (!renderBlockFlows.size()) {
-        WTFLogAlways("No text found in this document\n");
-        return;
-    }
-    TextStream stream;
-    HashMap<AvoidanceReason, unsigned, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> flowStatistics;
-    unsigned textLength = 0;
-    unsigned unsupportedTextLength = 0;
-    unsigned numberOfUnsupportedLeafBlocks = 0;
-    unsigned supportedButForcedToLineLayoutTextLength = 0;
-    unsigned numberOfSupportedButForcedToLineLayoutLeafBlocks = 0;
-    for (auto* flow : renderBlockFlows) {
-        auto flowLength = contentLengthForBlockFlow(*flow);
-        textLength += flowLength;
-        auto reasons = canUseForLineLayoutWithReason(*flow, IncludeReasons::All);
-        if (reasons.isEmpty()) {
-            if (flow->lineLayoutPath() == RenderBlockFlow::ForcedLegacyPath) {
-                supportedButForcedToLineLayoutTextLength += flowLength;
-                ++numberOfSupportedButForcedToLineLayoutLeafBlocks;
-            }
-            continue;
-        }
-        ++numberOfUnsupportedLeafBlocks;
-        unsupportedTextLength += flowLength;
-        for (auto reason : reasons) {
-            auto result = flowStatistics.add(static_cast<uint64_t>(reason), flowLength);
-            if (!result.isNewEntry)
-                result.iterator->value += flowLength;
-        }
-    }
-    stream << "---------------------------------------------------\n";
-    if (supportedButForcedToLineLayoutTextLength) {
-        stream << "Modern line layout potential coverage: " << (float)(textLength - unsupportedTextLength) / (float)textLength * 100 << "%\n\n";
-        stream << "Modern line layout actual coverage: " << (float)(textLength - unsupportedTextLength - supportedButForcedToLineLayoutTextLength) / (float)textLength * 100 << "%\nForced line layout blocks: " << numberOfSupportedButForcedToLineLayoutLeafBlocks << " content length: " << supportedButForcedToLineLayoutTextLength << "(" << (float)supportedButForcedToLineLayoutTextLength / (float)textLength * 100 << "%)";
-    } else
-        stream << "Modern line layout coverage: " << (float)(textLength - unsupportedTextLength) / (float)textLength * 100 << "%";
-    stream << "\n\n";
-    stream << "Number of blocks: total(" <<  renderBlockFlows.size() << ") legacy(" << numberOfUnsupportedLeafBlocks << ")\nContent length: total(" <<
-        textLength << ") legacy(" << unsupportedTextLength << ")\n";
-    for (const auto& reasonEntry : flowStatistics) {
-        printReason(static_cast<AvoidanceReason>(reasonEntry.key), stream);
-        stream << ": " << (float)reasonEntry.value / (float)textLength * 100 << "%\n";
-    }
-    stream << "---------------------------------------------------\n";
-    WTFLogAlways("%s", stream.release().utf8().data());
-}
-#endif
-
-static OptionSet<AvoidanceReason> canUseForBlockStyle(const RenderBlockFlow& blockContainer, IncludeReasons includeReasons)
+static std::optional<AvoidanceReason> canUseForBlockStyle(const RenderBlockFlow& blockContainer)
 {
     ASSERT(is<RenderBlockFlow>(blockContainer));
 
-    OptionSet<AvoidanceReason> reasons;
     auto& style = blockContainer.style();
     if (style.lineAlign() != LineAlign::None)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
+        return AvoidanceReason::FlowHasLineAlignEdges;
     if (style.lineSnap() != LineSnap::None)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
-    return reasons;
+        return AvoidanceReason::FlowHasLineSnap;
+    return { };
 }
 
-static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, IncludeReasons includeReasons)
+static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
 {
-    OptionSet<AvoidanceReason> reasons;
-
     if (is<RenderText>(child)) {
         if (child.isSVGInlineText())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
-        return reasons;
+            return AvoidanceReason::ContentIsSVG;
+        return { };
     }
 
     if (is<RenderLineBreak>(child))
-        return reasons;
+        return { };
 
     auto& renderer = downcast<RenderElement>(child);
     if (renderer.isRubyRun())
-        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
+        return AvoidanceReason::ContentIsRuby;
 
     if (is<RenderBlockFlow>(renderer)
         || is<RenderGrid>(renderer)
@@ -291,57 +91,44 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         || is<RenderMathMLBlock>(renderer)
 #endif
         || is<RenderListMarker>(renderer))
-        return reasons;
+        return { };
 
     if (is<RenderInline>(renderer)) {
         if (renderer.isSVGInline())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+            return AvoidanceReason::ContentIsSVG;
         if (renderer.isRubyInline())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-        return reasons;
+            return AvoidanceReason::ContentIsRuby;
+        return { };
     }
 
     ASSERT_NOT_REACHED();
-    return reasons;
+    return { };
 }
 
-OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& flow, IncludeReasons includeReasons)
+static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& flow)
 {
-#ifndef NDEBUG
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.showModernLineLayoutCoverage"_s, Function<void()> { printModernLineLayoutCoverage });
-        PAL::registerNotifyCallback("com.apple.WebKit.showModernLineLayoutReasons"_s, Function<void()> { printModernLineLayoutBlockList });
-    });
-#endif
-    OptionSet<AvoidanceReason> reasons;
-    // FIXME: For tests that disable SLL and expect to get CLL.
     if (!DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled())
-        SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
+        return AvoidanceReason::FeatureIsDisabled;
     if (flow.isRenderView())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInitialContainingBlock, reasons, includeReasons);
+        return AvoidanceReason::FlowIsInitialContainingBlock;
     if (!flow.firstChild()) {
         // Non-SVG code does not call into layoutInlineChildren with no children anymore.
         ASSERT(is<RenderSVGBlock>(flow));
-        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+        return AvoidanceReason::ContentIsSVG;
     }
     if (flow.isRubyText() || flow.isRubyBase())
-        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
+        return AvoidanceReason::ContentIsRuby;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
-        if (auto childReasons = canUseForChild(child, includeReasons))
-            ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
+        if (auto childReason = canUseForChild(child))
+            return *childReason;
     }
-    auto styleReasons = canUseForBlockStyle(flow, includeReasons);
-    if (styleReasons)
-        ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
-
-    return reasons;
+    return canUseForBlockStyle(flow);
 }
 
 bool canUseForLineLayout(const RenderBlockFlow& flow)
 {
-    return canUseForLineLayoutWithReason(flow, IncludeReasons::First).isEmpty();
+    return !canUseForLineLayoutWithReason(flow);
 }
 
 bool canUseForLineLayoutAfterBlockStyleChange(const RenderBlockFlow& blockContainer, StyleDifference diff)
