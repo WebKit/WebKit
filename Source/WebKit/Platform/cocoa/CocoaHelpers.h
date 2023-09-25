@@ -24,6 +24,7 @@
  */
 
 #import <wtf/HashSet.h>
+#import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/UUID.h>
 #import <wtf/WallTime.h>
@@ -85,12 +86,18 @@ T *objectForKey(const RetainPtr<NSDictionary>& dictionary, id key, bool returnin
     return objectForKey<T>(dictionary.get(), key, returningNilIfEmpty, containingObjectsOfClass);
 }
 
-NSDictionary *parseJSON(NSString *, NSError ** = nullptr);
-NSDictionary *parseJSON(NSData *, NSError ** = nullptr);
-NSDictionary *parseJSON(API::Data&, NSError ** = nullptr);
+enum class JSONOptions {
+    FragmentsAllowed = 1 << 0, /// Allows for top-level scalar types, in addition to arrays and dictionaries.
+};
 
-NSString *encodeJSONString(NSDictionary *, NSError ** = nullptr);
-NSData *encodeJSONData(NSDictionary *, NSError ** = nullptr);
+using JSONOptionSet = OptionSet<JSONOptions>;
+
+id parseJSON(NSString *, JSONOptionSet = { }, NSError ** = nullptr);
+id parseJSON(NSData *, JSONOptionSet = { }, NSError ** = nullptr);
+id parseJSON(API::Data&, JSONOptionSet = { }, NSError ** = nullptr);
+
+NSString *encodeJSONString(id, JSONOptionSet = { }, NSError ** = nullptr);
+NSData *encodeJSONData(id, JSONOptionSet = { }, NSError ** = nullptr);
 
 NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *);
 NSDictionary *mergeDictionaries(NSDictionary *, NSDictionary *);

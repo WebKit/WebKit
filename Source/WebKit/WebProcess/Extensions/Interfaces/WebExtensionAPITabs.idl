@@ -59,7 +59,7 @@
     // [RaisesException, Dynamic] void removeCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
 
     [ProcessArgumentsLeftToRight, RaisesException, NeedsFrame] void sendMessage(double tabID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    // [NeedsFrame] WebExtensionAPIPort connect(double tabID, [Optional, NSDictionary] any connectInfo);
+    [RaisesException, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect(double tabID, [Optional, NSDictionary] any options);
 
     [ImplementedAs=tabIdentifierNone] readonly attribute double TAB_ID_NONE;
 

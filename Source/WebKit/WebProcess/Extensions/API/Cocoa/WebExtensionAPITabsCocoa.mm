@@ -36,6 +36,7 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPINamespace.h"
+#import "WebExtensionAPIPort.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
@@ -107,6 +108,7 @@ static NSString * const jpegValue = @"jpeg";
 static NSString * const qualityKey = @"quality";
 
 static NSString * const frameIdKey = @"frameId";
+static NSString * const nameKey = @"name";
 
 static NSString * const emptyURLValue = @"";
 static NSString * const emptyTitleValue = @"";
@@ -449,6 +451,24 @@ bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, std::op
 
         frameIdentifier = identifier.value();
     }
+
+    return true;
+}
+
+bool WebExtensionAPITabs::parseConnectOptions(NSDictionary *options, std::optional<String>& name, std::optional<WebExtensionFrameIdentifier>& frameIdentifier, NSString *sourceKey, NSString **outExceptionString)
+{
+    if (!parseSendMessageOptions(options, frameIdentifier, sourceKey, outExceptionString))
+        return false;
+
+    static NSDictionary<NSString *, id> *types = @{
+        nameKey: NSString.class,
+    };
+
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
+        return false;
+
+    if (NSString *nameString = options[nameKey])
+        name = nameString;
 
     return true;
 }
@@ -900,8 +920,45 @@ void WebExtensionAPITabs::sendMessage(WebFrame *frame, double tabID, NSString *m
             return;
         }
 
-        callback->call(parseJSON(replyJSON.value()));
+        callback->call(parseJSON(replyJSON.value(), { JSONOptions::FragmentsAllowed }));
     }, extensionContext().identifier());
+}
+
+RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame* frame, JSContextRef context, double tabID, NSDictionary *options, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/connect
+
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return nullptr;
+
+    std::optional<String> name;
+    std::optional<WebExtensionFrameIdentifier> targetFrameIdentifier;
+    if (!parseConnectOptions(options, name, targetFrameIdentifier, @"options", outExceptionString))
+        return nullptr;
+
+    String resolvedName = name.value_or(nullString());
+
+    WebExtensionMessageSenderParameters sender {
+        extensionContext().uniqueIdentifier(),
+        std::nullopt, // tabParameters
+        toWebExtensionFrameIdentifier(*frame),
+        frame->page()->webPageProxyIdentifier(),
+        contentWorldType(),
+        frame->url(),
+    };
+
+    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), WebExtensionContentWorldType::ContentScript, resolvedName, sender);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsConnect(tabIdentifer.value(), port->channelIdentifier(), resolvedName, targetFrameIdentifier, sender), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
+        if (!error)
+            return;
+
+        port->setError(protectedThis->runtime().reportError(error.value(), globalContext.get()));
+        port->disconnect();
+    }, extensionContext().identifier());
+
+    return port;
 }
 
 WebExtensionAPIEvent& WebExtensionAPITabs::onActivated()

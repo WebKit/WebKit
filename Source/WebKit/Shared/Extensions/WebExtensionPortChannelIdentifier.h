@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPIRuntime {
+#pragma once
 
-    [URL, ConvertNullStringTo=Null, RaisesException] DOMString getURL(DOMString resourcePath);
+#include <wtf/ObjectIdentifier.h>
 
-    [NSDictionary] any getManifest();
+namespace WebKit {
 
-    [ImplementedAs=runtimeIdentifier] readonly attribute DOMString id;
+struct WebExtensionPortChannelIdentifierType;
+using WebExtensionPortChannelIdentifier = ObjectIdentifier<WebExtensionPortChannelIdentifierType>;
 
-    [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);
-
-    [MainWorldOnly] readonly attribute any lastError;
-
-    [ProcessArgumentsLeftToRight, RaisesException, NeedsFrame] void sendMessage([Optional] DOMString extensionID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect([Optional] DOMString extensionID, [Optional, NSDictionary] any options);
-
-    readonly attribute WebExtensionAPIEvent onConnect;
-    readonly attribute WebExtensionAPIEvent onMessage;
-
-};
+}

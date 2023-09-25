@@ -24,6 +24,9 @@
 
 headers: "WebExtensionContentWorldType.h"
 
-enum class WebKit::WebExtensionContentWorldType : bool;
+enum class WebKit::WebExtensionContentWorldType : uint8_t {
+    Main,
+    ContentScript,
+}
 
 #endif

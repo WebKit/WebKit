@@ -36,8 +36,6 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
-class WebExtensionAPIScripting;
-
 class WebExtensionAPIScripting : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIScripting, scripting);
 
@@ -56,7 +54,6 @@ private:
     bool validateScript(NSDictionary *, NSString **outExceptionString);
     bool validateTarget(NSDictionary *, NSString **outExceptionString);
     bool validateCSS(NSDictionary *, NSString **outExceptionString);
-
 #endif
 };
 

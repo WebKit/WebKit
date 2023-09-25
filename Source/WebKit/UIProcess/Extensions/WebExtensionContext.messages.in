@@ -35,7 +35,7 @@ messages -> WebExtensionContext {
 
     // Event APIs
     AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);
-    RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);
+    RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType, size_t removedCount);
 
     // Permissions APIs
     PermissionsGetAll() -> (Vector<String> permissions, Vector<String> origins);
@@ -43,8 +43,13 @@ messages -> WebExtensionContext {
     PermissionsRequest(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
     PermissionsRemove(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
 
+    // Port APIs
+    PortPostMessage(WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String messageJSON);
+    PortDisconnect(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier);
+
     // Runtime APIs
     RuntimeSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> replyJSON, std::optional<String> error);
+    RuntimeConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> error);
 
     // Tabs APIs
     TabsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);
@@ -60,6 +65,7 @@ messages -> WebExtensionContext {
     TabsToggleReaderMode(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (WebKit::WebExtensionTab::Error error);
     TabsCaptureVisibleTab(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, WebKit::WebExtensionTab::ImageFormat imageFormat, uint8_t imageQuality) -> (std::optional<URL> imageDataURL, WebKit::WebExtensionTab::Error error);
     TabsSendMessage(WebKit::WebExtensionTabIdentifier tabIdentifier, String messageJSON, std::optional<WebKit::WebExtensionFrameIdentifier> targetFrameIdentifier, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> replyJSON, WebKit::WebExtensionTab::Error error);
+    TabsConnect(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, std::optional<WebKit::WebExtensionFrameIdentifier> targetFrameIdentifier, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (WebKit::WebExtensionTab::Error error);
     TabsGetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<double> zoomFactor, WebKit::WebExtensionTab::Error error);
     TabsSetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, double zoomFactor) -> (WebKit::WebExtensionTab::Error error);
     TabsRemove(Vector<WebKit::WebExtensionTabIdentifier> tabIdentifiers) -> (WebKit::WebExtensionWindow::Error error);

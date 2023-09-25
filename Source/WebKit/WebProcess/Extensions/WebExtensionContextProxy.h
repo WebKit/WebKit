@@ -30,11 +30,6 @@
 #include "MessageReceiver.h"
 #include "WebExtensionContext.h"
 #include "WebExtensionContextParameters.h"
-#include "WebExtensionEventListenerType.h"
-#include "WebExtensionFrameIdentifier.h"
-#include "WebExtensionTabIdentifier.h"
-#include "WebExtensionWindowIdentifier.h"
-#include "WebPageProxyIdentifier.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -111,13 +106,18 @@ private:
     // Alarms
     void dispatchAlarmsEvent(const WebExtensionAlarmParameters&);
 
-    // Runtime
-    void dispatchRuntimeMessageEvent(WebCore::DOMWrapperWorld&, String messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
-    void dispatchRuntimeMainWorldMessageEvent(String, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
-    void dispatchRuntimeContentScriptMessageEvent(String, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
-
     // Permissions
     void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
+
+    // Port
+    void dispatchPortMessageEvent(WebExtensionPortChannelIdentifier, const String& messageJSON);
+    void dispatchPortDisconnectEvent(WebExtensionPortChannelIdentifier);
+
+    // Runtime
+    void internalDispatchRuntimeMessageEvent(WebCore::DOMWrapperWorld&, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
+    void internalDispatchRuntimeConnectEvent(WebCore::DOMWrapperWorld&, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
+    void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
+    void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
 
     // Tabs
     void dispatchTabsCreatedEvent(const WebExtensionTabParameters&);

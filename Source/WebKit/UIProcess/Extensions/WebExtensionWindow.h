@@ -58,7 +58,7 @@ public:
 
     explicit WebExtensionWindow(const WebExtensionContext&, _WKWebExtensionWindow*);
 
-    enum class Type : bool {
+    enum class Type : uint8_t {
         Normal,
         Popup,
     };

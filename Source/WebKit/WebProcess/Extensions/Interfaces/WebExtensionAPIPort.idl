@@ -25,23 +25,16 @@
 
 [
     Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPIRuntime {
+] interface WebExtensionAPIPort {
 
-    [URL, ConvertNullStringTo=Null, RaisesException] DOMString getURL(DOMString resourcePath);
+    readonly attribute DOMString name;
+    readonly attribute any sender;
+    readonly attribute any error;
 
-    [NSDictionary] any getManifest();
+    [RaisesException, NeedsFrame] void postMessage([Serialization=JSON] any message);
+    void disconnect();
 
-    [ImplementedAs=runtimeIdentifier] readonly attribute DOMString id;
-
-    [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);
-
-    [MainWorldOnly] readonly attribute any lastError;
-
-    [ProcessArgumentsLeftToRight, RaisesException, NeedsFrame] void sendMessage([Optional] DOMString extensionID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect([Optional] DOMString extensionID, [Optional, NSDictionary] any options);
-
-    readonly attribute WebExtensionAPIEvent onConnect;
+    readonly attribute WebExtensionAPIEvent onDisconnect;
     readonly attribute WebExtensionAPIEvent onMessage;
 
 };

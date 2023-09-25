@@ -39,10 +39,10 @@
 
 namespace WebKit {
 
-void WebExtensionContext::runtimeSendMessage(String extensionID, String messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)
+void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)
 {
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
-        completionHandler(std::nullopt, toErrorString(@"runtime.sendMessage()", @"extensionID", @"cross extension messaging is not supported"));
+        completionHandler(std::nullopt, toErrorString(@"runtime.sendMessage()", @"extensionID", @"cross-extension messaging is not supported"));
         return;
     }
 
@@ -67,8 +67,48 @@ void WebExtensionContext::runtimeSendMessage(String extensionID, String messageJ
     };
 
     for (auto& process : mainWorldProcesses)
-        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMainWorldMessageEvent(messageJSON, completeSenderParameters), handleReply, identifier());
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), handleReply, identifier());
 }
+
+void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    // Add 1 for the starting port here so disconnect will balance with a decrement.
+    const auto sourceContentWorldType = senderParameters.contentWorldType;
+    addPorts(sourceContentWorldType, channelIdentifier, 1);
+
+    if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
+        completionHandler(toErrorString(@"runtime.connect()", @"extensionID", @"cross-extension messaging is not supported"));
+        return;
+    }
+
+    WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
+    if (auto tab = getTab(senderParameters.pageProxyIdentifier))
+        completeSenderParameters.tabParameters = tab->parameters();
+
+    constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
+
+    auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnConnect, targetContentWorldType);
+    if (mainWorldProcesses.isEmpty()) {
+        completionHandler(toErrorString(@"runtime.connect()", nil, @"no runtime.onConnect listeners found"));
+        return;
+    }
+
+    size_t handledCount = 0;
+    size_t totalExpected = mainWorldProcesses.size();
+
+    for (auto& process : mainWorldProcesses) {
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, &handledCount, protectedThis = Ref { *this }](size_t firedEventCount) mutable {
+            protectedThis->addPorts(targetContentWorldType, channelIdentifier, firedEventCount);
+            protectedThis->fireQueuedPortMessageEventIfNeeded(process, targetContentWorldType, channelIdentifier);
+            protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+            if (++handledCount >= totalExpected)
+                protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+        }, identifier());
+    }
+
+    completionHandler(std::nullopt);
+}
+
 
 } // namespace WebKit
 

@@ -345,6 +345,220 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithNoReply)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIRuntime, ConnectFromContentScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port.name, 'testPort', 'Port name should be testPort')",
+        @"  browser.test.assertEq(port.error, null, 'Port error should be null')",
+
+        @"  browser.test.assertEq(typeof port.sender, 'object', 'sender should be an object')",
+        @"  browser.test.assertEq(typeof port.sender.url, 'string', 'sender.url should be a string')",
+        @"  browser.test.assertEq(typeof port.sender.origin, 'string', 'sender.origin should be a string')",
+        @"  browser.test.assertTrue(port.sender.url.startsWith('http'), 'sender.url should start with http')",
+        @"  browser.test.assertTrue(port.sender.origin.startsWith('http'), 'sender.origin should start with http')",
+        @"  browser.test.assertEq(typeof port.sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(port.sender.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello', 'Should receive the correct message content')",
+        @"    port.postMessage('Received')",
+        @"  })",
+        @"})"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"setTimeout(() => {",
+        @"  const port = browser.runtime.connect({ name: 'testPort' })",
+        @"  port.postMessage('Hello')",
+
+        @"  port.onMessage.addListener((response) => {",
+        @"    browser.test.assertEq(response, 'Received', 'Should get the response from the background script')",
+
+        @"    browser.test.notifyPass()",
+        @"  })",
+        @"}, 1000);"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, ConnectFromContentScriptWithMultipleListeners)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port.name, 'testPort', 'Port name should be testPort in first listener')",
+        @"  browser.test.assertEq(port.error, null, 'Port error should be null in first listener')",
+
+        @"  browser.test.assertEq(typeof port.sender, 'object', 'sender should be an object')",
+        @"  browser.test.assertEq(typeof port.sender.url, 'string', 'sender.url should be a string')",
+        @"  browser.test.assertEq(typeof port.sender.origin, 'string', 'sender.origin should be a string')",
+        @"  browser.test.assertTrue(port.sender.url.startsWith('http'), 'sender.url should start with http')",
+        @"  browser.test.assertTrue(port.sender.origin.startsWith('http'), 'sender.origin should start with http')",
+        @"  browser.test.assertEq(typeof port.sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(port.sender.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello', 'Should receive the correct message content in first listener')",
+        @"    port.postMessage('Received')",
+        @"  })",
+        @"})",
+
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port.name, 'testPort', 'Port name should be testPort in second listener')",
+        @"  browser.test.assertEq(port.error, null, 'Port error should be null in second listener')",
+
+        @"  browser.test.assertEq(typeof port.sender, 'object', 'sender should be an object')",
+        @"  browser.test.assertEq(typeof port.sender.url, 'string', 'sender.url should be a string')",
+        @"  browser.test.assertEq(typeof port.sender.origin, 'string', 'sender.origin should be a string')",
+        @"  browser.test.assertTrue(port.sender.url.startsWith('http'), 'sender.url should start with http')",
+        @"  browser.test.assertTrue(port.sender.origin.startsWith('http'), 'sender.origin should start with http')",
+        @"  browser.test.assertEq(typeof port.sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(port.sender.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello', 'Should receive the correct message content in second listener')",
+        @"    port.postMessage('Received')",
+        @"  })",
+        @"})"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"setTimeout(() => {",
+        @"  const port = browser.runtime.connect({ name: 'testPort' })",
+        @"  port.postMessage('Hello')",
+
+        @"  let receivedMessages = 0",
+        @"  port.onMessage.addListener((response) => {",
+        @"    browser.test.assertEq(response, 'Received', 'Should get the response from the background script')",
+
+        @"    if (++receivedMessages === 2)",
+        @"      browser.test.notifyPass()",
+        @"  })",
+        @"}, 1000);"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, PortDisconnectFromContentScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port.name, 'testPort', 'Port name should be testPort')",
+
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello', 'Should receive the correct message content')",
+        @"  })",
+
+        @"  port.onDisconnect.addListener(() => {",
+        @"    browser.test.assertTrue(true, 'Should trigger the onDisconnect event in the background script')",
+
+        @"    browser.test.notifyPass()",
+        @"  })",
+        @"})"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"setTimeout(() => {",
+        @"  const port = browser.runtime.connect({ name: 'testPort' })",
+        @"  port.postMessage('Hello')",
+
+        @"  port.onDisconnect.addListener(() => {",
+        @"    browser.test.assertTrue(true, 'Should trigger the onDisconnect event in the content script')",
+        @"  })",
+
+        @"  port.disconnect()",
+        @"}, 1000);"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, PortDisconnectFromContentScriptWithMultipleListeners)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port.name, 'testPort', 'Port name should be testPort')",
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello', 'Should receive the correct message content')",
+        @"    port.postMessage('Hello')",
+        @"    port.disconnect()",
+        @"  })",
+        @"})",
+
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port.name, 'testPort', 'Port name should be testPort')",
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello', 'Should receive the correct message content')",
+        @"    port.postMessage('Hello')",
+        @"  })",
+        @"})"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"let messagesReceived = 0",
+
+        @"setTimeout(() => {",
+        @"  const port = browser.runtime.connect({ name: 'testPort' })",
+        @"  port.postMessage('Hello')",
+
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello', 'Should receive the correct message content')",
+
+        @"    if (++messagesReceived === 2)",
+        @"      browser.test.notifyPass()",
+        @"  })",
+        @"}, 1000);"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

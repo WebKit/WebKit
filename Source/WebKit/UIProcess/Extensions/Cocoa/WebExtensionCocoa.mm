@@ -170,7 +170,7 @@ bool WebExtension::manifestParsedSuccessfully()
 bool WebExtension::parseManifest(NSData *manifestData)
 {
     NSError *parseError;
-    m_manifest = parseJSON(manifestData, &parseError);
+    m_manifest = parseJSON(manifestData, { }, &parseError);
     if (!m_manifest) {
         recordError(createError(Error::InvalidManifest, nil, parseError));
         return false;

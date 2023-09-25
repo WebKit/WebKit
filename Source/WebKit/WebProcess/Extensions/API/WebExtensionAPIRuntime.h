@@ -37,11 +37,13 @@ OBJC_CLASS NSURL;
 
 namespace WebKit {
 
+class WebExtensionAPIPort;
 class WebExtensionAPIRuntime;
 
 class WebExtensionAPIRuntimeBase : public JSWebExtensionWrappable {
 public:
-    void reportErrorForCallbackHandler(WebExtensionCallbackHandler&, NSString *error, JSGlobalContextRef);
+    JSValue *reportError(NSString *errorMessage, JSGlobalContextRef, Function<void()>&& = nullptr);
+    JSValue *reportError(NSString *errorMessage, WebExtensionCallbackHandler&);
 
 private:
     friend class WebExtensionAPIRuntime;
@@ -66,16 +68,23 @@ public:
 
     NSString *runtimeIdentifier();
 
-    JSValueRef lastError();
+    JSValue *lastError();
 
     void sendMessage(WebFrame *, NSString *extensionID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebFrame*, JSContextRef, NSString *extensionID, NSDictionary *options, NSString **outExceptionString);
 
+    WebExtensionAPIEvent& onConnect();
     WebExtensionAPIEvent& onMessage();
 
 private:
+    static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, NSString *sourceKey, NSString **outExceptionString);
+
+    RefPtr<WebExtensionAPIEvent> m_onConnect;
     RefPtr<WebExtensionAPIEvent> m_onMessage;
 #endif
 };
+
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters&);
 
 } // namespace WebKit
 

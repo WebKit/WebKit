@@ -479,11 +479,11 @@ EOF
             push(@contents, <<EOF);
 
 {
-    RELEASE_LOG_DEBUG(Extensions, "Called function: ${call} (%{public}lu %{public}s)", argumentCount, argumentCount == 1 ? "argument" : "arguments");
-
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
     if (UNLIKELY(${functionEarlyReturnCondition}))
         return ${defaultEarlyReturnValue};
+
+    RELEASE_LOG_DEBUG(Extensions, "Called function ${call} (%{public}lu %{public}s) in %{public}s world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8().data());
 EOF
 
             my @parameters = ();
@@ -561,8 +561,8 @@ EOF
                 }
 
                 if ($hasSimpleOptionalArgumentHandling && $argumentCount > 1) {
-                    push(@contents, "    } else if (argumentCount == " . ($argumentCount - 1) . ") {\n") if $requiredArgumentCount eq ($argumentCount - 1) || !$hasOptionalCallbackHandlerAsLastArgument;
-                    push(@contents, "    } else if (argumentCount == " . ($argumentCount - 1) . " && !(" . $self->_javaScriptTypeCondition($lastParameter, "arguments[0]") . ")) {\n") if $hasOptionalCallbackHandlerAsLastArgument && $requiredArgumentCount ne ($argumentCount - 1);
+                    push(@contents, "    } else if (argumentCount == " . ($argumentCount - 1) . ") {\n") if $requiredArgumentCount eq ($argumentCount - 1) || !$hasOptionalAsLastArgument;
+                    push(@contents, "    } else if (argumentCount == " . ($argumentCount - 1) . " && !(" . $self->_javaScriptTypeCondition($lastParameter, "arguments[0]") . ")) {\n") if $hasOptionalAsLastArgument && $requiredArgumentCount ne ($argumentCount - 1);
 
                     foreach my $i (0..$#specifiedParameters - 1) {
                         my $parameter = $specifiedParameters[$i];
@@ -574,7 +574,7 @@ EOF
                         push(@contents, "        " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "arguments[${i}]", undef, 1) . "\n");
                     }
 
-                    if ($hasOptionalCallbackHandlerAsLastArgument && $requiredArgumentCount ne ($argumentCount - 1)) {
+                    if ($hasOptionalAsLastArgument && $requiredArgumentCount ne ($argumentCount - 1)) {
                         push(@contents, "    } else if (argumentCount == 1) {\n");
                         $self->_installArgumentTypeExceptions(\@contents, $lastParameter, $idlType, "arguments[0]", $lastParameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 2);
                         push(@contents, "        " . $self->_platformTypeVariableDeclaration($lastParameter, $lastParameter->name, "arguments[0]", undef, 1) . "\n");
@@ -845,14 +845,11 @@ EOF
             push(@contents, "    UNUSED_PARAM(propertyName);\n\n");
 
             push(@contents, <<EOF);
-    RELEASE_LOG_DEBUG(Extensions, "Called getter: ${call}");
-
     ${implementationClassName}* impl = to${implementationClassName}(context, object);
     if (UNLIKELY(${getterEarlyReturnCondition}))
         return JSValueMakeUndefined(context);
-EOF
 
-            push(@contents, <<EOF);
+    RELEASE_LOG_DEBUG(Extensions, "Called getter ${call} in %{public}s world", toDebugString(impl->contentWorldType()).utf8().data());
 
     return @{[$self->_returnExpression($attribute, $getterExpression, $interface)]};
 }
@@ -870,11 +867,11 @@ EOF
                 push(@contents, "    UNUSED_PARAM(propertyName);\n\n");
 
                 push(@contents, <<EOF);
-    RELEASE_LOG_DEBUG(Extensions, "Called setter: ${call}");
-
     ${implementationClassName}* impl = to${implementationClassName}(context, object);
     if (UNLIKELY(${setterEarlyReturnCondition}))
         return false;
+
+    RELEASE_LOG_DEBUG(Extensions, "Called setter ${call} in %{public}s world", toDebugString(impl->contentWorldType()).utf8().data());
 
 EOF
 
@@ -1094,13 +1091,18 @@ sub _installAutomaticExceptions
 
     my $hasExceptions = 0;
 
-    if ($signature->extendedAttributes->{"Serialization"} && $signature->extendedAttributes->{"Serialization"} eq "JSON") {
+    if ($signature->type->name eq "any" && $signature->extendedAttributes->{"Serialization"} && $signature->extendedAttributes->{"Serialization"} eq "JSON") {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
 
     if (UNLIKELY(*exception))
         return ${result};
+
+    if (UNLIKELY(!$variable)) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a JSON serializable value is expected");
+        return ${result};
+    }
 EOF
     }
 
@@ -1128,7 +1130,7 @@ EOF
 EOF
     }
 
-    if ($signature->type->name eq "any" && ($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"Serialization"}) && !$signature->extendedAttributes->{"Optional"}) {
+    if ($signature->type->name eq "any" && ($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"NSObject"}) && !$signature->extendedAttributes->{"Optional"}) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -1286,7 +1288,8 @@ sub _javaScriptTypeCondition
     $nullOrUndefined = " || JSValueIsNull(context, ${argument}) || JSValueIsUndefined(context, ${argument})" if $signature->extendedAttributes->{"Optional"};
 
     return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr))) || JSValueIsString(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"DOMString"};
-    return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "any" && ($signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"NSArray"} || $signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"Serialization"});
+    return "(!JSValueIsNull(context, ${argument}) && !JSValueIsUndefined(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"Serialization"};
+    return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "any" && ($signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"NSArray"} || $signature->extendedAttributes->{"NSDictionary"});
     return "JSValueIsObject(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && !$signature->extendedAttributes->{"ValuesAllowed"};
     return "(JSValueIsObject(context, ${argument}) && JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "function";
     return "JSValueIsBoolean(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "boolean";

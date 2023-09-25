@@ -192,37 +192,62 @@ NSSet *objectForKey<NSSet>(NSDictionary *dictionary, id key, bool nilIfEmpty, Cl
 
 // MARK: JSON Helpers
 
-NSDictionary *parseJSON(NSData *json, NSError **error)
+static inline NSJSONReadingOptions toReadingImpl(JSONOptionSet options)
+{
+    NSJSONReadingOptions result = 0;
+    if (options.contains(JSONOptions::FragmentsAllowed))
+        result |= NSJSONReadingFragmentsAllowed;
+    return result;
+}
+
+static inline NSJSONWritingOptions toWritingImpl(JSONOptionSet options)
+{
+    NSJSONWritingOptions result = 0;
+    if (options.contains(JSONOptions::FragmentsAllowed))
+        result |= NSJSONWritingFragmentsAllowed;
+    return result;
+}
+
+id parseJSON(NSData *json, JSONOptionSet options, NSError **error)
 {
     if (!json)
         return nil;
-    return dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:json options:0 error:error]);
+
+    id result = [NSJSONSerialization JSONObjectWithData:json options:toReadingImpl(options) error:error];
+    if (options.contains(JSONOptions::FragmentsAllowed))
+        return result;
+
+    return dynamic_objc_cast<NSDictionary>(result);
 }
 
-NSDictionary *parseJSON(NSString *json, NSError **error)
+id parseJSON(NSString *json, JSONOptionSet options, NSError **error)
 {
-    return parseJSON([json dataUsingEncoding:NSUTF8StringEncoding], error);
+    return parseJSON([json dataUsingEncoding:NSUTF8StringEncoding], options, error);
 }
 
-NSDictionary *parseJSON(API::Data& json, NSError **error)
+id parseJSON(API::Data& json, JSONOptionSet options, NSError **error)
 {
-    return parseJSON(wrapper(json), error);
+    return parseJSON(wrapper(json), options, error);
 }
 
-NSString *encodeJSONString(NSDictionary *dictionary, NSError **error)
+NSString *encodeJSONString(id object, JSONOptionSet options, NSError **error)
 {
-    if (auto *data = encodeJSONData(dictionary, error))
+    if (auto *data = encodeJSONData(object, options, error))
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     return nil;
 }
 
-NSData *encodeJSONData(NSDictionary *dictionary, NSError **error)
+NSData *encodeJSONData(id object, JSONOptionSet options, NSError **error)
 {
-    if (!dictionary)
+    if (!object)
         return nil;
 
-    ASSERT([NSJSONSerialization isValidJSONObject:dictionary]);
-    return [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:error];
+    ASSERT([NSJSONSerialization isValidJSONObject:object]);
+
+    if (!options.contains(JSONOptions::FragmentsAllowed) && ![object isKindOfClass:NSDictionary.class])
+        return nil;
+
+    return [NSJSONSerialization dataWithJSONObject:object options:toWritingImpl(options) error:error];
 }
 
 // MARK: NSDictionary Helpers

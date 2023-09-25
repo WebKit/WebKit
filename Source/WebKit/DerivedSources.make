@@ -686,6 +686,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPILocalization \
     WebExtensionAPINamespace \
     WebExtensionAPIPermissions \
+    WebExtensionAPIPort \
     WebExtensionAPIRuntime \
     WebExtensionAPIScripting \
     WebExtensionAPITabs \
