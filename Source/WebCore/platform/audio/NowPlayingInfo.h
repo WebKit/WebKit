@@ -42,28 +42,7 @@ struct NowPlayingInfoArtwork {
     {
         return src == other.src && mimeType == other.mimeType;
     }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<NowPlayingInfoArtwork> decode(Decoder&);
 };
-
-template<class Encoder> inline void NowPlayingInfoArtwork::encode(Encoder& encoder) const
-{
-    // Encoder of RefPtr<Image> will automatically decode the image and convert it to a BitmapImage/ShareableBitmap.
-    encoder << src << mimeType << image;
-}
-
-template<class Decoder> inline std::optional<NowPlayingInfoArtwork> NowPlayingInfoArtwork::decode(Decoder& decoder)
-{
-    auto src = decoder.template decode<String>();
-    auto mimeType = decoder.template decode<String>();
-    auto image = decoder.template decode<RefPtr<Image>>();
-
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-
-    return { { WTFMove(*src), WTFMove(*mimeType), WTFMove(*image) } };
-}
 
 struct NowPlayingInfo {
     String title;
@@ -80,67 +59,6 @@ struct NowPlayingInfo {
     std::optional<NowPlayingInfoArtwork> artwork;
 
     friend bool operator==(const NowPlayingInfo&, const NowPlayingInfo&) = default;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<NowPlayingInfo> decode(Decoder&);
 };
-
-template<class Encoder> inline void NowPlayingInfo::encode(Encoder& encoder) const
-{
-    encoder << title << artist << album << sourceApplicationIdentifier << duration << currentTime << rate << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility << artwork;
-}
-
-template<class Decoder> inline std::optional<NowPlayingInfo> NowPlayingInfo::decode(Decoder& decoder)
-{
-    String title;
-    if (!decoder.decode(title))
-        return { };
-
-    String artist;
-    if (!decoder.decode(artist))
-        return { };
-
-    String album;
-    if (!decoder.decode(album))
-        return { };
-
-    String sourceApplicationIdentifier;
-    if (!decoder.decode(sourceApplicationIdentifier))
-        return { };
-
-    double duration;
-    if (!decoder.decode(duration))
-        return { };
-
-    double currentTime;
-    if (!decoder.decode(currentTime))
-        return { };
-
-    double rate;
-    if (!decoder.decode(rate))
-        return { };
-
-    bool supportsSeeking;
-    if (!decoder.decode(supportsSeeking))
-        return { };
-
-    MediaUniqueIdentifier uniqueIdentifier;
-    if (!decoder.decode(uniqueIdentifier))
-        return { };
-
-    bool isPlaying;
-    if (!decoder.decode(isPlaying))
-        return { };
-
-    bool allowsNowPlayingControlsVisibility;
-    if (!decoder.decode(allowsNowPlayingControlsVisibility))
-        return { };
-
-    std::optional<NowPlayingInfoArtwork> artwork;
-    if (!decoder.decode(artwork))
-        return { };
-
-    return NowPlayingInfo { WTFMove(title), WTFMove(artist), WTFMove(album), WTFMove(sourceApplicationIdentifier), duration, currentTime, rate, supportsSeeking, uniqueIdentifier, isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
-}
 
 } // namespace WebCore

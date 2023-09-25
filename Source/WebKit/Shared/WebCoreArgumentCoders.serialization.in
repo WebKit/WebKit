@@ -6022,3 +6022,91 @@ header: <WebCore/NetworkLoadMetrics.h>
     uint64_t requestBodyBytesSent;
     bool isProxyConnection;
 }
+
+struct WebCore::DisplayUpdate {
+    unsigned updateIndex;
+    WebCore::FramesPerSecond updatesPerSecond;
+}
+
+struct WebCore::MediaUsageInfo {
+    URL mediaURL;
+    bool hasSource;
+    bool isPlaying;
+    bool canShowControlsManager;
+    bool canShowNowPlayingControls;
+    bool isSuspended;
+    bool isInActiveDocument;
+    bool isFullscreen;
+    bool isMuted;
+    bool isMediaDocumentInMainFrame;
+    bool isVideo;
+    bool isAudio;
+    bool hasVideo;
+    bool hasAudio;
+    bool hasRenderer;
+    bool audioElementWithUserGesture;
+    bool userHasPlayedAudioBefore;
+    bool isElementRectMostlyInMainFrame;
+    bool playbackPermitted;
+    bool pageMediaPlaybackSuspended;
+    bool isMediaDocumentAndNotOwnerElement;
+    bool pageExplicitlyAllowsElementToAutoplayInline;
+    bool requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted;
+    bool isVideoAndRequiresUserGestureForVideoRateChange;
+    bool isAudioAndRequiresUserGestureForAudioRateChange;
+    bool isVideoAndRequiresUserGestureForVideoDueToLowPowerMode;
+    bool noUserGestureRequired;
+    bool requiresPlaybackAndIsNotPlaying;
+    bool hasEverNotifiedAboutPlaying;
+    bool outsideOfFullscreen;
+    bool isLargeEnoughForMainContent;
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+    bool isInViewport;
+#endif
+}
+
+header: <WebCore/NowPlayingInfo.h>
+[CustomHeader] struct WebCore::NowPlayingInfoArtwork {
+    String src;
+    String mimeType;
+    RefPtr<WebCore::Image> image;
+}
+
+struct WebCore::NowPlayingInfo {
+    String title;
+    String artist;
+    String album;
+    String sourceApplicationIdentifier;
+    double duration;
+    double currentTime;
+    double rate;
+    bool supportsSeeking;
+    WebCore::MediaUniqueIdentifier uniqueIdentifier;
+    bool isPlaying;
+    bool allowsNowPlayingControlsVisibility;
+    std::optional<WebCore::NowPlayingInfoArtwork> artwork;
+}
+
+header: <WebCore/PlatformTextTrack.h>
+[CustomHeader] struct WebCore::PlatformTextTrackData {
+    String m_label;
+    String m_language;
+    String m_url;
+    WebCore::PlatformTextTrackData::TrackMode m_mode;
+    WebCore::PlatformTextTrackData::TrackKind m_kind;
+    WebCore::PlatformTextTrackData::TrackType m_type;
+    int m_uniqueId;
+    bool m_isDefault;
+}
+
+struct WebCore::VideoConfiguration {
+    String contentType;
+    uint32_t width;
+    uint32_t height;
+    uint64_t bitrate;
+    double framerate;
+    std::optional<bool> alphaChannel;
+    std::optional<WebCore::ColorGamut> colorGamut;
+    std::optional<WebCore::HdrMetadataType> hdrMetadataType;
+    std::optional<WebCore::TransferFunction> transferFunction;
+}
