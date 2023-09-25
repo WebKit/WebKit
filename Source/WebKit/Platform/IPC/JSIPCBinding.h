@@ -122,7 +122,7 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, O
     return result;
 }
 
-bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject*, JSC::JSArray*, unsigned index, JSC::JSValue, DataReference buffer);
+bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject*, JSC::JSArray*, unsigned index, JSC::JSValue, const uint8_t* buffer, size_t length);
 
 template<typename... Elements>
 std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject*, IPC::Decoder&, JSC::JSArray*, size_t currentIndex, std::tuple<Elements...>*);
@@ -136,7 +136,7 @@ inline std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlo
 template<typename T, typename... Elements>
 std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder, JSC::JSArray* array, size_t currentIndex, std::tuple<T, Elements...>*)
 {
-    auto startingBufferOffset = decoder.currentBufferOffset();
+    auto startingBufferPosition = decoder.currentBufferPosition();
     std::optional<T> value;
     decoder >> value;
     if (!value)
@@ -146,8 +146,8 @@ std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObje
     if (jsValue.isEmpty())
         return jsValue;
 
-    auto span = decoder.buffer().subspan(startingBufferOffset, decoder.currentBufferOffset() - startingBufferOffset);
-    putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(globalObject, array, currentIndex, jsValue, span);
+    putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(globalObject, array, currentIndex, jsValue,
+        decoder.buffer() + startingBufferPosition, decoder.currentBufferPosition() - startingBufferPosition);
 
     std::tuple<Elements...>* dummyArguments = nullptr;
     return putJSValueForDecodeArgumentInArray<Elements...>(globalObject, decoder, array, currentIndex + 1, dummyArguments);
