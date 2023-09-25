@@ -1050,7 +1050,7 @@ const Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::Fie
         return nullptr;
     }
 
-    return m_types.vectorType(vector.element, length);
+    return m_types.vectorType(length, vector.element);
 }
 
 template<typename CallArguments>
@@ -1220,7 +1220,7 @@ void TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor
             if (isBottom(elementType))
                 return m_types.bottomType();
 
-            return (m_types.*constructor)(elementType, arguments...);
+            return (m_types.*constructor)(arguments..., elementType);
         }
     ));
 }

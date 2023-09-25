@@ -153,7 +153,7 @@ const Type* OverloadResolver::materialize(const AbstractType& abstractType) cons
         [&](const AbstractVector& vector) -> const Type* {
             if (auto* element = materialize(vector.element)) {
                 auto size = materialize(vector.size);
-                return m_types.vectorType(element, size);
+                return m_types.vectorType(size, element);
             }
             return nullptr;
         },
@@ -161,13 +161,13 @@ const Type* OverloadResolver::materialize(const AbstractType& abstractType) cons
             if (auto* element = materialize(matrix.element)) {
                 auto columns = materialize(matrix.columns);
                 auto rows = materialize(matrix.rows);
-                return m_types.matrixType(element, columns, rows);
+                return m_types.matrixType(columns, rows, element);
             }
             return nullptr;
         },
         [&](const AbstractTexture& texture) -> const Type* {
             if (auto* element = materialize(texture.element))
-                return m_types.textureType(element, texture.kind);
+                return m_types.textureType(texture.kind, element);
             return nullptr;
         },
         [&](const AbstractReference& reference) -> const Type* {
