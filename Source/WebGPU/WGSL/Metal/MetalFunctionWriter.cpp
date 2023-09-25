@@ -610,6 +610,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Texture& texture) {
             const char* type;
+            const char* access = "sample";
             switch (texture.kind) {
             case Types::Texture::Kind::Texture1d:
                 type = "texture1d";
@@ -631,11 +632,12 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 break;
             case Types::Texture::Kind::TextureMultisampled2d:
                 type = "texture2d_ms";
+                access = "read";
                 break;
             }
             m_stringBuilder.append(type, "<");
             visit(texture.element);
-            m_stringBuilder.append(", access::sample>");
+            m_stringBuilder.append(", access::", access, ">");
         },
         [&](const TextureStorage& texture) {
             const char* base;
@@ -879,7 +881,33 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
                 if (!isExternalTexture) {
                     writer->visit(call.arguments()[0]);
                     writer->stringBuilder().append(".read");
-                    visitArguments(writer, call, 1);
+                    bool first = true;
+                    writer->stringBuilder().append("(");
+                    const char* cast = "uint";
+                    if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
+                        switch (vector->size) {
+                        case 2:
+                            cast = "uint2";
+                            break;
+                        case 3:
+                            cast = "uint3";
+                            break;
+                        default:
+                            RELEASE_ASSERT_NOT_REACHED();
+                        }
+                    }
+                    for (unsigned i = 1; i < call.arguments().size(); ++i) {
+                        if (first) {
+                            writer->stringBuilder().append(cast, "(");
+                            writer->visit(call.arguments()[i]);
+                            writer->stringBuilder().append(")");
+                        } else {
+                            writer->stringBuilder().append(", ");
+                            writer->visit(call.arguments()[i]);
+                        }
+                        first = false;
+                    }
+                    writer->stringBuilder().append(")");
                     return;
                 }
 
@@ -888,16 +916,16 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
                 {
                     IndentationScope scope(writer->indent());
                     {
-                        writer->stringBuilder().append(writer->indent(), "auto __coords = (");
+                        writer->stringBuilder().append(writer->indent(), "auto __coords = uint2((");
                         writer->visit(texture);
-                        writer->stringBuilder().append(".UVRemapMatrix * float3(");
+                        writer->stringBuilder().append(".UVRemapMatrix * float3(float2(");
                         writer->visit(coordinates);
-                        writer->stringBuilder().append(", 1)).xy;\n");
+                        writer->stringBuilder().append("), 1)).xy);\n");
                     }
                     {
                         writer->stringBuilder().append(writer->indent(), "auto __y = float(");
                         writer->visit(texture);
-                        writer->stringBuilder().append(".FirstPlane.read(__cords).r);\n");
+                        writer->stringBuilder().append(".FirstPlane.read(__coords).r);\n");
                     }
                     {
                         writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");

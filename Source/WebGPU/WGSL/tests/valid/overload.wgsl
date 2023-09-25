@@ -2022,36 +2022,36 @@ fn testTrunc()
 
 // 16.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
 
-var s: sampler;
+@group(0) @binding( 0) var s: sampler;
 
-var t1d: texture_1d<f32>;
-var t1di: texture_1d<i32>;
-var t1du: texture_1d<u32>;
+@group(0) @binding( 1) var t1d: texture_1d<f32>;
+@group(0) @binding( 2) var t1di: texture_1d<i32>;
+@group(0) @binding( 3) var t1du: texture_1d<u32>;
 
-var t2d: texture_2d<f32>;
-var t2di: texture_2d<i32>;
-var t2du: texture_2d<u32>;
+@group(0) @binding( 4) var t2d: texture_2d<f32>;
+@group(0) @binding( 5) var t2di: texture_2d<i32>;
+@group(0) @binding( 6) var t2du: texture_2d<u32>;
 
-var t2da: texture_2d_array<f32>;
-var t2dai: texture_2d_array<i32>;
-var t2dau: texture_2d_array<u32>;
+@group(0) @binding( 7) var t2da: texture_2d_array<f32>;
+@group(0) @binding( 8) var t2dai: texture_2d_array<i32>;
+@group(0) @binding( 9) var t2dau: texture_2d_array<u32>;
 
-var t3d: texture_3d<f32>;
-var t3di: texture_3d<i32>;
-var t3du: texture_3d<u32>;
+@group(0) @binding(10) var t3d: texture_3d<f32>;
+@group(0) @binding(11) var t3di: texture_3d<i32>;
+@group(0) @binding(12) var t3du: texture_3d<u32>;
 
-var tm2d: texture_multisampled_2d<f32>;
-var tm2di: texture_multisampled_2d<i32>;
-var tm2du: texture_multisampled_2d<u32>;
+@group(0) @binding(13) var tm2d: texture_multisampled_2d<f32>;
+@group(0) @binding(14) var tm2di: texture_multisampled_2d<i32>;
+@group(0) @binding(15) var tm2du: texture_multisampled_2d<u32>;
 
-var te: texture_external;
-var tc: texture_cube<f32>;
-var tca: texture_cube_array<f32>;
+@group(0) @binding(16) var te: texture_external;
+@group(0) @binding(17) var tc: texture_cube<f32>;
+@group(0) @binding(18) var tca: texture_cube_array<f32>;
 
-var ts1d: texture_storage_2d<rgba8unorm, read>;
-var ts2d: texture_storage_2d<rgba16uint, write>;
-var ts2da: texture_storage_2d<r32sint, read_write>;
-var ts3d: texture_storage_2d<rgba32float, write>;
+@group(0) @binding(19) var ts1d: texture_storage_2d<rgba8unorm, read>;
+@group(0) @binding(20) var ts2d: texture_storage_2d<rgba16uint, write>;
+@group(0) @binding(21) var ts2da: texture_storage_2d<r32sint, read_write>;
+@group(0) @binding(22) var ts3d: texture_storage_2d<rgba32float, write>;
 
 var td2d: texture_depth_2d;
 var td2da: texture_depth_2d_array;
@@ -2163,6 +2163,8 @@ fn testTextureGather()
 // FIXME: this only applies to texture_depth, implement
 
 // 16.7.4
+// RUN: %metal-compile testTextureLoad
+@compute @workgroup_size(1)
 fn testTextureLoad()
 {
     // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture1d], T, U) => Vector[S, 4],
