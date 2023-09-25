@@ -172,6 +172,7 @@ compositing/visibility/visibility-simple-video-layer.html [ Skip ] # Timeout
 fast/canvas/canvas-drawImage-hdr-video.html [ Skip ] # Timeout
 fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
+http/tests/navigation/page-cache-video.html [ Skip ] # Timeout
 media/audio-data-url.html [ Skip ]
 media/audio-mpeg-supported.html [ Skip ]
 media/invalid-media-url-crash.html [ Skip ]
@@ -520,13 +521,6 @@ fast/loader/local-CSS-from-local.html [ Failure ]
 fast/loader/local-JavaScript-from-local.html [ Failure ]
 fast/loader/local-image-from-local.html [ Failure ]
 
-# These are expected mismatches, so they should fail, and the bug is they sometimes pass.
-fast/text/control-characters/visible-control-characters-1.html [ ImageOnlyFailure Pass ]
-fast/text/control-characters/visible-control-characters-2.html [ ImageOnlyFailure Pass ]
-fast/text/control-characters/visible-control-characters-2.xhtml [ Skip ]
-fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
-fast/text/control-characters/visible-control-characters-3.xhtml [ Skip ]
-
 # If this does crash, the test has passed.
 fast/loader/cancel-load-during-port-block-timer.html [ Skip ]
 
@@ -545,44 +539,8 @@ fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 fast/forms/vertical-writing-mode/meter.html [ ImageOnlyFailure ]
 fast/forms/vertical-writing-mode/progress.html [ ImageOnlyFailure ]
 
-[ Debug ] animations/CSSKeyframesRule-name-null.html [ Pass Timeout ]
-
-[ Debug ] css3/filters/filter-property-computed-style.html [ Pass Timeout ]
-[ Debug ] css3/filters/unprefixed.html [ Pass Timeout ]
-[ Debug ] fast/css/first-letter-removed-added.html [ Pass Timeout ]
-[ Debug ] fast/css/html-attr-case-sensitivity.html [ Pass Timeout ]
-[ Debug ] fast/css/large-list-of-rules-crash.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-is-2.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-is-3.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-is-4.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-is-7.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-is-8.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-matches-2.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-matches-3.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-matches-4.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-not-2.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-not-7.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-not-8.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-nth-child-of-1.html [ Pass Timeout ]
-[ Debug ] fast/css/parsing-css-nth-last-child-of-1.html [ Pass Timeout ]
-[ Debug ] fast/css/visited-link-hang.html [ Pass Timeout ]
-
-[ Debug ] editing/selection/extend-selection-character.html [ Pass Timeout ]
-[ Debug ] editing/selection/extend-selection-home-end.html [ Pass Timeout ]
-[ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Pass Timeout ]
-[ Debug ] imported/blink/editing/execCommand/indent-button-crash.html [ Skip ]
-
-[ Debug ] fast/dom/gc-acid3.html [ Pass Timeout ]
-[ Debug ] fast/dom/DOMImplementation/createDocument-with-used-doctype.html [ Pass Timeout ]
-[ Debug ] fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Pass Timeout ]
-[ Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass Timeout ]
-
 # entire directory fails
 dom/svg/level3/xpath [ Skip ]
-
-fast/dom/focus-shift-crash.html [ Pass Timeout ]
-fast/dom/Range/detach-range-during-deletecontents.html [ Pass Timeout ]
-imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Pass Timeout ]
 
 webkit.org/b/205487 fast/text/selection-in-initial-advance-region.html [ Failure ]
 webkit.org/b/206282 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyFailure ]
@@ -742,7 +700,7 @@ http/tests/frame-throttling [ Skip ]
 http/tests/fullscreen [ Skip ]
 
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
-http/tests/globalhistory/history-delegate-basic-visited-links.html [ Pass Failure ]
+http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
 
 http/tests/images/hidpi-srcset-copy.html [ Failure ]
 http/tests/images/image-supports-video.html [ Failure ]
@@ -765,9 +723,6 @@ http/tests/inspector/network/resource-initiatorNode.html [ Failure ]
 http/tests/inspector/network/xhr-response-body.html [ Failure ]
 
 http/tests/inspector/network/intercept-request-main-resource.html [ Skip ] # Timeout
-
-http/tests/inspector/network/copy-as-fetch.html [ Pass Failure ]
-http/tests/inspector/network/resource-mime-type.html [ Pass Failure ]
 
 http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]
 http/tests/loading/oauth.html [ Failure ]
@@ -918,7 +873,6 @@ http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
 # Failure on Buildbot
 http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
 
-http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
 
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Failure ]
@@ -945,7 +899,6 @@ http/tests/xmlhttprequest/origin-header-same-origin-get-async.html [ Failure ]
 http/tests/xmlhttprequest/origin-header-same-origin-get-sync.html [ Failure ]
 http/tests/xmlhttprequest/post-blob-content-type-async.html [ Failure ]
 http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Failure ]
-http/tests/xmlhttprequest/range-test.html [ Pass Failure ]
 http/tests/xmlhttprequest/re-login-async.html [ Failure ]
 http/tests/xmlhttprequest/re-login.html [ Failure ]
 http/tests/xmlhttprequest/redirect-credentials-responseURL.html [ Failure ]
@@ -966,11 +919,6 @@ webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [
 
 http/wpt/service-workers/mac [ Skip ]
 
-http/wpt/service-workers/fetchEvent.https.html [ Pass Failure ]
-http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
-http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
-http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
-
 webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure Pass ]
 webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure Pass ]
 
@@ -979,7 +927,6 @@ http/tests/IndexedDB/storage-limit.https.html [ Failure ]
 http/tests/cookies/document-cookie-after-showModalDialog.html [ Timeout ]
 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Timeout ]
 http/tests/cookies/document-cookie-multiple-cookies.html [ Failure ]
-http/tests/css/css-image-loading.html [ Pass Failure ]
 http/tests/misc/form-post-textplain-cross-site.html [ Failure ]
 http/tests/misc/form-post-textplain.html [ Failure ]
 http/tests/misc/gamepads-insecure.html [ Failure ]
@@ -1022,8 +969,6 @@ http/wpt/service-workers/fetch-service-worker-preload-use-download.https.html [ 
 http/wpt/service-workers/form-data-upload.html [ Failure ]
 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 
-http/tests/workers/service/postmessage-after-sw-process-crash.https.html [ Timeout Pass ]
-
 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 
 http/tests/misc/webtiming-one-redirect.py [ Failure Pass ]
@@ -1054,7 +999,7 @@ webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
-animations/animation-delay-changed.html [ Pass Failure ]
+webkit.org/b/111612 animations/animation-delay-changed.html [ Pass Failure ]
 
 # Unexpected timeouts tracked in webkit.org/b/172437.
 animations/font-variations/font-stretch.html [ Skip ]
@@ -1064,8 +1009,6 @@ animations/font-variations/font-style.html [ Skip ]
 webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Skip ]
 
 webkit.org/b/186807 animations/transition-and-animation-3.html [ Skip ]
-
-animations/resume-after-page-cache.html [ Pass Failure ]
 
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 
@@ -1100,7 +1043,6 @@ webkit.org/b/215041 webgl/webgl-texture-image-buffer-reuse.html [ Skip ]
 ################################   CSS Issues   ################################
 ################################################################################
 
-fast/css/getComputedStyle/getComputedStyle-outline-shorthand.html [ Pass Timeout ]
 webkit.org/b/136484 fast/css-generated-content/initial-letter-first-line-wrapping.html  [ ImageOnlyFailure ]
 webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
@@ -1145,7 +1087,6 @@ css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
 
 fast/css/apple-system-colors.html [ Failure ]
-fast/css/image-rendering-parsing.html [ Failure Pass ]
 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-pagination-raised.html [ ImageOnlyFailure ]
 
@@ -1155,10 +1096,6 @@ webkit.org/b/185076 css3/color-filters [ Skip ]
 # IntersectionObserver is off by default
 webkit.org/b/188613 intersection-observer [ Skip ]
 webkit.org/b/188613 http/tests/intersection-observer [ Skip ]
-
-[ Debug ] css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
-
-fast/css/sticky/sticky-top.html [ Pass ImageOnlyFailure ]
 
 css-custom-properties-api/ [ Skip ]
 fast/css-custom-paint/ [ Skip ]
@@ -1198,7 +1135,7 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Failure ]
 fast/dom/timer-throttling-hidden-page.html [ Skip ] # Timeout
 
 # This test is dependent on DRT being able to open windows.
-fast/dom/Window/new-window-opener.html [ Pass Failure ]
+fast/dom/Window/new-window-opener.html [ Failure ]
 
 # <rdar://5313536> Times out
 fast/dom/frame-loading-via-document-write.html [ Skip ]
@@ -1208,7 +1145,7 @@ fast/dom/Window/child-window-focus.html [ Skip ]
 
 fast/dom/Window/get-set-properties.html [ Failure ]
 fast/dom/Window/open-window-min-size.html [ Skip ]
-webkit.org/b/116564 fast/dom/Window/window-onFocus.html [ Pass Failure ]
+webkit.org/b/116564 fast/dom/Window/window-onFocus.html [ Failure ]
 webkit.org/b/151759 fast/dom/Window/property-access-on-cached-window-after-frame-removed.html [ Skip ]
 
 [ Release ] fast/dom/HTMLDocument/hasFocus.html [ Failure ]
@@ -1230,18 +1167,11 @@ webkit.org/b/224735 fast/dom/Window/post-message-large-array-buffer-should-not-c
 webkit.org/b/203100 editing/async-clipboard [ Skip ]
 
 ###### Selection
-editing/selection/caret-ltr-right.html [ Pass Failure ]
-editing/selection/caret-rtl-right.html [ Pass Failure ]
 editing/selection/context-menu-text-selection-lookup.html [ Failure ]
 editing/selection/drag-start-event-client-x-y.html [ Failure ]
 editing/selection/extend-selection-word.html [ Failure ]
 editing/selection/move-by-word-visually-mac.html [ Failure ]
 editing/selection/move-left-right.html [ Failure ]
-editing/selection/selection-across-shadow-boundaries-readonly-1.html [ Pass ImageOnlyFailure ]
-editing/selection/selection-across-shadow-boundaries-readonly-2.html [ Pass ImageOnlyFailure ]
-editing/selection/selection-across-shadow-boundaries-readonly-3.html [ Pass ImageOnlyFailure ]
-[ Debug ] editing/selection/5057506.html [ Pass Failure ]
-[ Debug ] editing/selection/directionality-after-undo-replace.html [ Pass Failure ]
 
 # Assertion failure in replaySavedEvents
 webkit.org/b/21796 [ Debug ] editing/selection/drag-in-iframe.html [ Skip ]
@@ -1289,8 +1219,7 @@ webkit.org/b/179613 editing/execCommand/underline-selection-containing-image.htm
 
 editing/caret/emoji.html [ Failure ]
 editing/deleting/delete-emoji.html [ Failure ]
-editing/deleting/delete-emoji-9.html [ Pass Failure ]
-editing/input/caret-at-the-edge-of-input.html [ Pass Failure ]
+editing/input/caret-at-the-edge-of-input.html [ Failure ]
 webkit.org/b/150684 editing/input/reveal-caret-of-multiline-contenteditable.html [ Pass Failure ]
 
 webkit.org/b/173281 editing/style/set-foreColor-with-color-filter.html [ Skip ]
@@ -1298,8 +1227,6 @@ webkit.org/b/173281 editing/style/set-backColor-with-color-filter.html [ Skip ]
 webkit.org/b/173281 editing/style/inverse-color-filter.html [ Skip ]
 
 editing/input/press-tab-during-ime-composition.html [ Failure ]
-
-editing/undo/undo-deleteWord.html [ Pass Failure ]
 
 ################################################################################
 ############################   End Editing Issues   ############################
@@ -1312,12 +1239,7 @@ editing/undo/undo-deleteWord.html [ Pass Failure ]
 
 # TODO These tests failures need to be investigated
 
-resize-observer/element-leak.html [ Pass Timeout ]
-resize-observer/resize-observer-entry-keeps-js-wrapper-of-target-alive.html [ Pass Timeout ]
-
-storage/indexeddb/structured-clone.html [ Pass Timeout ]
 storage/indexeddb/wasm-exceptions.html [ Skip ]
-storage/indexeddb/modern/leak-1.html [ Failure Pass ]
 
 storage/indexeddb/IDBKey-create-array-buffer-view-oom.html [ Skip ] # Slow
 storage/indexeddb/cursor-request-cycle-private.html [ Skip ] # Slow
@@ -1326,23 +1248,8 @@ storage/indexeddb/cursor-request-cycle.html [ Skip ] # Slow
 storage/indexeddb/key-type-array-private.html [ Skip ] # Crash by assertion failure
 storage/indexeddb/key-type-array.html [ Skip ] # Crash by assertion failure
 
-storage/indexeddb/modern/transactions-stop-on-navigation.html [ Failure Pass ]
 storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
-storage/indexeddb/value-cursor-cycle.html [ Failure Pass ]
-
-
-# Flaky values in WPT cookie expectations
-imported/w3c/web-platform-tests/cookies/prefix/__secure.header.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/samesite/multiple-samesite-attributes.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-nested.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-subresource.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/samesite/setcookie-lax.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/samesite/setcookie-navigation.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-iframe-subresource.tentative.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-navigation.tentative.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html [ Pass Failure ]
 
 # WPT diff failures that need more investigation
 imported/w3c/web-platform-tests/cookies/domain/domain-attribute-host-with-leading-period.sub.https.html [ Failure ]
@@ -1920,7 +1827,6 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
 [ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Crash Failure ]
 animations/shadow-host-child-change.html [ Skip ]
-animations/steps-transform-rendering-updates.html [ Pass Failure ]
 css1/font_properties/font_family.html [ Failure Pass ]
 css2.1/t1503-c522-font-family-00-b.html [ Failure Pass ]
 css3/flexbox/flexbox-baseline-margins.html [ Failure ]
@@ -1959,9 +1865,8 @@ fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
-fast/css/font-face-multiple-faces.html [ Failure Pass ]
+fast/css/font-face-multiple-faces.html [ Failure ]
 fast/css/font-face-synthetic-bold-italic.html [ Failure ]
-fast/css/stylesheet-layout-with-pending-paint.html [ ImageOnlyFailure Pass ]
 fast/custom-elements/defined-rule.html [ ImageOnlyFailure ]
 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2.html [ Failure ]
@@ -1971,7 +1876,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 fast/events/autoscroll-when-input-is-offscreen.html [ Skip ] # UIScript
 fast/events/autoscroll-with-software-keyboard.html [ Skip ] # UIScript
 fast/events/before-input-prevent-insert-replacement.html [ Skip ] # UIScript
-fast/events/before-input-prevent-paste.html [ Pass Failure ]
 fast/events/clear-drag-state.html [ Failure ]
 fast/events/click-focus-control.html [ Failure ]
 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
@@ -1985,8 +1889,7 @@ fast/events/frame-tab-focus.html [ Failure ]
 fast/events/ime-composition-events-001.html [ Failure ]
 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 fast/events/input-event-insert-replacement.html [ Skip ] # UIScript
-fast/events/input-events-insert-by-drop.html [ Failure Pass ]
-fast/events/input-events-paste-data.html [ Pass Failure ]
+fast/events/input-events-insert-by-drop.html [ Failure ]
 fast/events/key-events-in-input-button.html [ Failure ]
 fast/events/keyboardevent-code.html [ Failure ]
 fast/events/keydown-numpad-keys.html [ Failure ]
@@ -1994,8 +1897,6 @@ fast/events/mouseover-button.html [ Failure ]
 fast/events/mouseup-from-button2.html [ Failure ]
 fast/events/option-tab.html [ Failure ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
-fast/events/selectstart-by-double-triple-clicks.html [ Failure Pass ]
-fast/events/selectstart-by-drag.html [ Failure Pass ]
 fast/events/shadow-event-path-2.html [ Failure ]
 fast/events/shadow-event-path.html [ Failure ]
 fast/events/special-key-events-in-input-text.html [ Failure ]
@@ -2028,7 +1929,6 @@ fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 fast/text/complex-grapheme-cluster-with-initial-advance.html [ ImageOnlyFailure ]
 fast/text/complex-small-caps-non-bmp-capitalize.html [ ImageOnlyFailure ]
-fast/text/design-system-ui-2.html [ ImageOnlyFailure Pass ]
 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 fast/text/emoji-overlap.html [ ImageOnlyFailure ]
 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
@@ -2097,7 +1997,7 @@ fast/text/system-font-fallback-emoji.html [ Failure ]
 fast/text/system-font-japanese-synthetic-italic.html [ ImageOnlyFailure ]
 fast/text/system-font-weight-italic.html [ Failure ]
 fast/text/system-font-weight.html [ Failure ]
-fast/text/tatechuyoko.html [ Failure Pass ]
+fast/text/tatechuyoko.html [ Failure ]
 fast/text/text-transform-turkish-and-azeri.html [ ImageOnlyFailure ]
 fast/text/trak-optimizeLegibility.html [ ImageOnlyFailure ]
 fast/text/updateNewFont.html [ Failure ]
@@ -2115,10 +2015,10 @@ fast/text/whitespace/pre-newline-box-test.html [ Failure ]
 fast/text/whitespace/tab-character-basics.html [ Failure ]
 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
 fast/text/zwj-ligature.html [ ImageOnlyFailure ]
-fast/url/data-url-mediatype.html [ Failure Pass ]
+fast/url/data-url-mediatype.html [ Failure ]
 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
 fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html [ Failure ]
-fonts/fantasy.html [ Failure Pass ]
+fonts/fantasy.html [ Failure ]
 inspector/cpu-profiler/threads.html [ Failure ]
 loader/reload-subresource-when-type-changes.html [ Failure ]
 loader/stateobjects/pushstate-size-iframe.html [ Skip ] # Timeout
@@ -2603,7 +2503,7 @@ animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
 fast/canvas/webgl/move-canvas-in-document-while-clean.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ ImageOnlyFailure ]
-fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
+fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ Skip ] # ImageOnlyFailure
 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 fast/text/international/bdo-bidi-width.html [ ImageOnlyFailure ]
@@ -2662,6 +2562,9 @@ fast/css/css2-system-fonts.html [ Failure Pass ]
 fast/text/atsui-multiple-renderers.html [ Failure Pass ]
 fast/text/international/thai-baht-space.html [ Failure Pass ]
 fast/text/international/thai-line-breaks.html [ Failure Pass ]
+
+# Failing on Buildbot, passing locally
+fast/events/selectstart-by-drag.html [ Failure Pass ]
 
 fast/css/counters/complex-before.html [ Failure ]
 fast/dom/Document/CaretRangeFromPoint/rtl.html [ Failure ]
