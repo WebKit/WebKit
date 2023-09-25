@@ -883,6 +883,4 @@ webkit.org/b/260834 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasI
 
 webkit.org/b/260926 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-button-click.html [ Pass Failure ]
 
-webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Failure ]
-
 webkit.org/b/261920 fast/mediastream/video-srcObject-set-twice.html [ Pass ImageOnlyFailure ]
