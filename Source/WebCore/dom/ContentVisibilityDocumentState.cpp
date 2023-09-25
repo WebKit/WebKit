@@ -141,12 +141,15 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
 
     if (oldRelevancy && oldRelevancy == newRelevancy)
         return false;
+
+    auto wasSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
     target.setContentRelevancy(newRelevancy);
+    auto isSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
     target.invalidateStyle();
-    skippedContentStateDidChange(target, oldRelevancy->isEmpty(), !newRelevancy.isEmpty());
+    updateAnimations(target, wasSkippedContent, isSkippedContent);
     if (target.isConnected()) {
         ContentVisibilityAutoStateChangeEvent::Init init;
-        init.skipped = newRelevancy.isEmpty();
+        init.skipped = isSkippedContent == IsSkippedContent::Yes;
         target.queueTaskToDispatchEvent(TaskSource::DOMManipulation, ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, init));
     }
     return true;
@@ -235,9 +238,9 @@ void ContentVisibilityDocumentState::removeViewportProximity(const Element& elem
     m_elementViewportProximities.remove(element);
 }
 
-void ContentVisibilityDocumentState::skippedContentStateDidChange(const Element& element, bool wasSkipped, bool becomesUnskipped)
+void ContentVisibilityDocumentState::updateAnimations(const Element& element, IsSkippedContent wasSkipped, IsSkippedContent becomesSkipped)
 {
-    if (!wasSkipped || !becomesUnskipped)
+    if (wasSkipped == IsSkippedContent::No || becomesSkipped == IsSkippedContent::Yes)
         return;
     for (auto* animation : WebAnimation::instances()) {
         if (!animation->isDeclarativeAnimation())

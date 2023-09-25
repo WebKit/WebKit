@@ -34,6 +34,7 @@ class Document;
 class Element;
 
 enum class DidUpdateAnyContentRelevancy : bool { No, Yes };
+enum class IsSkippedContent : bool { No, Yes };
 // https://drafts.csswg.org/css-contain/#proximity-to-the-viewport
 enum class ViewportProximity : bool { Far, Near };
 
@@ -54,7 +55,7 @@ public:
 
     void updateViewportProximity(const Element&, ViewportProximity);
 
-    static void skippedContentStateDidChange(const Element&, bool wasSkipped, bool becameUnskipped);
+    static void updateAnimations(const Element&, IsSkippedContent wasSkipped, IsSkippedContent becomesSkipped);
 
 private:
     bool checkRelevancyOfContentVisibilityElement(Element&, OptionSet<ContentRelevancy>) const;
