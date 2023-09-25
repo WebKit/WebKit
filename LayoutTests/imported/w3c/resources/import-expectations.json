@@ -430,6 +430,7 @@
     "web-platform-tests/trusted-types": "skip",
     "web-platform-tests/typedarrays": "skip",
     "web-platform-tests/uievents": "import",
+    "web-platform-tests/uievents/mouse": "import",
     "web-platform-tests/upgrade-insecure-requests": "import",
     "web-platform-tests/url": "import",
     "web-platform-tests/url/tools": "skip",
