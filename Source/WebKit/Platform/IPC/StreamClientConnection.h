@@ -245,7 +245,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
             if (!replySpan)
                 return Connection::DecoderOrError { Error::FailedToAcquireReplyBufferSpan };
 
-            auto decoder = std::unique_ptr<Decoder> { new Decoder(replySpan->data(), replySpan->size(), m_currentDestinationID) };
+            auto decoder = std::unique_ptr<Decoder> { new Decoder(*replySpan, m_currentDestinationID) };
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
                 ASSERT(decoder->messageName() == MessageName::SyncMessageReply);
                 return Connection::DecoderOrError { WTFMove(decoder) };
