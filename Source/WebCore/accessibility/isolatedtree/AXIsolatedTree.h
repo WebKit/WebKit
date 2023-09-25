@@ -52,7 +52,6 @@ class Page;
 enum class AXStreamOptions : uint8_t;
 
 enum class AXPropertyName : uint16_t {
-    ARIATreeItemContent,
     ARIATreeRows,
     AttributedText,
     AXColumnCount,

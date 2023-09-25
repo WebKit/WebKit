@@ -19,6 +19,8 @@ Adding content to #treeitem1 and #treeitem2.
     row 1: AXRole: AXRow, #treeitem2
     row 2: AXRole: AXRow, #treeitem3
     row 3: AXRole: AXRow, #treeitem4
+#treeitem2 childrenCount: 1
+    child: AXRole: AXButton
 
 PASS successfullyParsed is true
 
@@ -26,3 +28,4 @@ TEST COMPLETE
 Button inside treeitem1
 Button inside treeitem3
 Button inside treeitem4
+I am foo button

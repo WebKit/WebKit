@@ -228,7 +228,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
     if (object.isTreeItem()) {
         setProperty(AXPropertyName::IsTreeItem, true);
-        setObjectVectorProperty(AXPropertyName::ARIATreeItemContent, object.ariaTreeItemContent());
         setObjectVectorProperty(AXPropertyName::DisclosedRows, object.disclosedRows());
     }
 
@@ -1703,12 +1702,6 @@ bool AXIsolatedObject::inheritsPresentationalRole() const
 void AXIsolatedObject::setAccessibleName(const AtomString&)
 {
     ASSERT_NOT_REACHED();
-}
-
-bool AXIsolatedObject::hasAttributesRequiredForInclusion() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 String AXIsolatedObject::stringValue() const

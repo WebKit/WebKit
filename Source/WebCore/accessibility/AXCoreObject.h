@@ -25,8 +25,6 @@
 
 #pragma once
 
-// FIXME: Should rename this file AXCoreObject.h.
-
 #include "CharacterRange.h"
 #include "ColorConversion.h"
 #include "HTMLTextFormControlElement.h"
@@ -1130,7 +1128,6 @@ public:
     virtual void accessibilityText(Vector<AccessibilityText>&) const = 0;
     // A programmatic way to set a name on an AccessibleObject.
     virtual void setAccessibleName(const AtomString&) = 0;
-    virtual bool hasAttributesRequiredForInclusion() const = 0;
 
     virtual String title() const = 0;
     virtual String description() const = 0;
@@ -1323,7 +1320,7 @@ public:
     // Used by an ARIA tree to get all its rows.
     virtual void ariaTreeRows(AccessibilityChildrenVector&) = 0;
     // Used by an ARIA tree item to get only its content, and not its child tree items and groups.
-    virtual AccessibilityChildrenVector ariaTreeItemContent() = 0;
+    AccessibilityChildrenVector ariaTreeItemContent();
 
     // ARIA live-region features.
     static bool liveRegionStatusIsEnabled(const AtomString&);

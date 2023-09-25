@@ -261,7 +261,6 @@ private:
     bool isValueAutofillAvailable() const override { return boolAttributeValue(AXPropertyName::IsValueAutofillAvailable); }
     AutoFillButtonType valueAutofillButtonType() const override { return static_cast<AutoFillButtonType>(intAttributeValue(AXPropertyName::ValueAutofillButtonType)); }
     void ariaTreeRows(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::ARIATreeRows, children); }
-    AccessibilityChildrenVector ariaTreeItemContent() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ARIATreeItemContent)); }
     URL url() const override { return urlAttributeValue(AXPropertyName::URL); }
     String accessKey() const override { return stringAttributeValue(AXPropertyName::AccessKey); }
     String localizedActionVerb() const override { return stringAttributeValue(AXPropertyName::LocalizedActionVerb); }
@@ -471,7 +470,6 @@ private:
     AXCoreObject* correspondingControlForLabelElement() const override;
     bool inheritsPresentationalRole() const override;
     void setAccessibleName(const AtomString&) override;
-    bool hasAttributesRequiredForInclusion() const override;
 
     String title() const override { return stringAttributeValue(AXPropertyName::Title); }
     String description() const override { return stringAttributeValue(AXPropertyName::Description); }
