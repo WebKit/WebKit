@@ -1299,6 +1299,13 @@
 			remoteGlobalIDString = 3A15783C28D1505B00142DB1;
 			remoteInfo = TestWGSL;
 		};
+		44134E622AC128AA00D2BFCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
+		};
 		5C9D922122D7DC84008E9266 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -3734,8 +3741,8 @@
 				3AA7856029B6C8AA00C4374A /* TestWebKitAPIPrefix.h */,
 				DDF3A82928930475005920CF /* gtest.xcodeproj */,
 				49AEEF682407276F00C87E4C /* Info.plist */,
-				5C9D922622D7DD7B008E9266 /* Derived Sources */,
 				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
+				5C9D922622D7DD7B008E9266 /* Derived Sources */,
 				5C9D921E22D7DBF8008E9266 /* SourcesCocoa.txt */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				BCB9EB66112366D800A137E0 /* Tests */,
@@ -5843,6 +5850,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				44134E632AC128AA00D2BFCB /* PBXTargetDependency */,
 			);
 			name = TestWTFLibrary;
 			productName = TestWebKitAPILibrary;
@@ -6915,6 +6923,11 @@
 			isa = PBXTargetDependency;
 			target = 3A15783C28D1505B00142DB1 /* TestWGSL */;
 			targetProxy = 3A5DDAFB28D3F2A7004DA950 /* PBXContainerItemProxy */;
+		};
+		44134E632AC128AA00D2BFCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = 44134E622AC128AA00D2BFCB /* PBXContainerItemProxy */;
 		};
 		5C9D922222D7DC84008E9266 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
