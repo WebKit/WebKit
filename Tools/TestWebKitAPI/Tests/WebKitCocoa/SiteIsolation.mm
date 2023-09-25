@@ -60,6 +60,11 @@ static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
     }
 }
 
+static bool processStillRunning(pid_t pid)
+{
+    return !kill(pid, 0);
+}
+
 static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, const ExpectedFrameTree& expectedRoot)
 {
     WKFrameInfo *info = actualRoot.info;
@@ -977,10 +982,11 @@ TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
     __block bool done { false };
+    __block pid_t childFramePid { 0 };
     [webView _frames:^(_WKFrameTreeNode *mainFrame) {
         _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
         pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
+        childFramePid = childFrame.info._processIdentifier;
         EXPECT_NE(mainFramePid, 0);
         EXPECT_NE(childFramePid, 0);
         EXPECT_EQ(mainFramePid, childFramePid);
@@ -995,6 +1001,10 @@ TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
             { { "https://example.com"_s } }
         }
     });
+
+    // FIXME: We ought to be able to use processStillRunning to verify that childFramePid stops running at this point,
+    // but it is currently kept running, probably because we don't delete the WebFrameProxy's m_remotePageProxy when
+    // navigating to the main frame's process.
 }
 
 TEST(SiteIsolation, ChildBeingNavigatedToSameDomainByParent)
@@ -1336,5 +1346,36 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
     EXPECT_WK_STREQ("mouseup,40,40", eventTypes[2]);
 }
 #endif
+
+TEST(SiteIsolation, ShutDownFrameProcessesAfterNavigation)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "hello"_s } },
+        { "/apple"_s, { "hello"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t iframePID = findFramePID(frameTrees(webView.get()).get(), FrameType::Remote);
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s } } }
+    });
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/apple"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), { { "https://apple.com"_s } });
+
+    while (processStillRunning(iframePID))
+        Util::spinRunLoop();
+}
 
 }

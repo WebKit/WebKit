@@ -55,6 +55,9 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
         m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this);
     else
         m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this);
+
+    m_process->addRemotePageProxy(*this);
+
     page.addRemotePageProxy(domain, *this);
 }
 
@@ -81,6 +84,7 @@ void RemotePageProxy::injectPageIntoNewProcess()
 
 RemotePageProxy::~RemotePageProxy()
 {
+    m_process->removeRemotePageProxy(*this);
     if (m_page)
         m_page->removeRemotePageProxy(m_domain);
 }
