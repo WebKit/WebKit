@@ -256,7 +256,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
                 asyncContentsIdentifier = layerTreeNode->asyncContentsIdentifier();
             }
 
-            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayCGDisplayListsIntoBackingStore());
+            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayDynamicContentScalingDisplayListsIntoBackingStore());
         } else
             [layer _web_clearContents];
     }

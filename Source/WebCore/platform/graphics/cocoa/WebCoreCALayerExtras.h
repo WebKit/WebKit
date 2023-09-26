@@ -41,8 +41,8 @@
 - (BOOL)_web_maskMayIntersectRect:(CGRect)rect;
 - (void)_web_clearContents;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-- (void)_web_clearCGDisplayListIfNeeded;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+- (void)_web_clearDynamicContentScalingDisplayListIfNeeded;
 #endif
 
 @end

@@ -5399,10 +5399,10 @@ RemoveBackgroundEnabled:
 ReplayCGDisplayListsIntoBackingStore:
   type: bool
   status: internal
-  humanReadableName: "CG Display Lists: Replay for Testing"
-  humanReadableDescription: "Replay CG Display Lists into layer contents for testing"
+  humanReadableName: "Dynamic Content Scaling: Replay for Testing"
+  humanReadableDescription: "Replay Dynamic Content Scaling Display Lists into layer contents for testing"
   webcoreBinding: none
-  condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+  condition: ENABLE(RE_DYNAMIC_CONTENT_SCALING)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
@@ -6865,25 +6865,13 @@ UseAsyncUIKitInteractions:
     WebCore:
       default: false
 
-UseCGDisplayListImageCache:
-  type: bool
-  status: internal
-  humanReadableName: "CG Display Lists: Image Cache"
-  humanReadableDescription: "Cache and transmit surfaces out-of-line for CG Display List image buffers."
-  webcoreBinding: none
-  condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: true
-
 UseCGDisplayListsForDOMRendering:
   type: bool
   status: internal
-  humanReadableName: "CG Display Lists: DOM Rendering"
-  humanReadableDescription: "Use CG Display Lists for DOM rendering"
+  humanReadableName: "Dynamic Content Scaling: DOM Rendering"
+  humanReadableDescription: "Use Dynamic Content Scaling for DOM rendering"
   webcoreBinding: none
-  condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+  condition: ENABLE(RE_DYNAMIC_CONTENT_SCALING)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:

@@ -719,7 +719,7 @@
 		2D3A65E31A7C3A9300CAC637 /* WKNavigationRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A65E11A7C3A9300CAC637 /* WKNavigationRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3A65E71A7C3AA700CAC637 /* WKFrameInfoRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A65E51A7C3AA700CAC637 /* WKFrameInfoRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3EF4431917646300034184 /* WebMemoryPressureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4411917646300034184 /* WebMemoryPressureHandler.h */; };
-		2D478B91288F33A600F3B73A /* CGDisplayList.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D478B8F288F333500F3B73A /* CGDisplayList.h */; };
+		2D478B91288F33A600F3B73A /* DynamicContentScalingDisplayList.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D478B8F288F333500F3B73A /* DynamicContentScalingDisplayList.h */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
 		2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */; };
 		2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4D2C7F1DF60BF3002EB10C /* InteractionInformationRequest.h */; };
@@ -2005,7 +2005,7 @@
 		BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469501214E6CB000B98EB /* WebFormClient.h */; };
 		BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */; };
 		BCE4695A1214EDF4000B98EB /* WKFormSubmissionListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCE579A62634836700F5C5E9 /* CGDisplayListImageBufferBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE579A42634836700F5C5E9 /* CGDisplayListImageBufferBackend.h */; };
+		BCE579A62634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE579A42634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.h */; };
 		BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE81D8B1319F7EF00241910 /* FontInfo.h */; };
 		BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE7ACC12817988009827DA /* WebProcessProxyMessageReceiver.cpp */; };
 		BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE7ACD12817988009827DA /* WebProcessProxyMessages.h */; };
@@ -4139,8 +4139,8 @@
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitSoftLink.mm; sourceTree = "<group>"; };
 		2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFKitSoftLink.h; sourceTree = "<group>"; };
-		2D478B8F288F333500F3B73A /* CGDisplayList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGDisplayList.h; sourceTree = "<group>"; };
-		2D478B90288F333500F3B73A /* CGDisplayList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CGDisplayList.cpp; sourceTree = "<group>"; };
+		2D478B8F288F333500F3B73A /* DynamicContentScalingDisplayList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamicContentScalingDisplayList.h; sourceTree = "<group>"; };
+		2D478B90288F333500F3B73A /* DynamicContentScalingDisplayList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicContentScalingDisplayList.cpp; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
 		2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrontBoardServicesSPI.h; sourceTree = "<group>"; };
@@ -6908,8 +6908,8 @@
 		BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFormSubmissionListenerProxy.h; sourceTree = "<group>"; };
 		BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFormSubmissionListener.cpp; sourceTree = "<group>"; };
 		BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFormSubmissionListener.h; sourceTree = "<group>"; };
-		BCE579A42634836700F5C5E9 /* CGDisplayListImageBufferBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGDisplayListImageBufferBackend.h; sourceTree = "<group>"; };
-		BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CGDisplayListImageBufferBackend.mm; sourceTree = "<group>"; };
+		BCE579A42634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamicContentScalingImageBufferBackend.h; sourceTree = "<group>"; };
+		BCE579A52634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicContentScalingImageBufferBackend.mm; sourceTree = "<group>"; };
 		BCE81D8A1319F7EF00241910 /* FontInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontInfo.cpp; sourceTree = "<group>"; };
 		BCE81D8B1319F7EF00241910 /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontInfo.h; sourceTree = "<group>"; };
 		BCE9C0CF1485965D00E33D61 /* WebConnectionToUIProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConnectionToUIProcess.cpp; sourceTree = "<group>"; };
@@ -9539,10 +9539,10 @@
 		2D2E04761F5BEC4F00BB25ED /* RemoteLayerTree */ = {
 			isa = PBXGroup;
 			children = (
-				2D478B90288F333500F3B73A /* CGDisplayList.cpp */,
-				2D478B8F288F333500F3B73A /* CGDisplayList.h */,
-				BCE579A42634836700F5C5E9 /* CGDisplayListImageBufferBackend.h */,
-				BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.mm */,
+				2D478B90288F333500F3B73A /* DynamicContentScalingDisplayList.cpp */,
+				2D478B8F288F333500F3B73A /* DynamicContentScalingDisplayList.h */,
+				BCE579A42634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.h */,
+				BCE579A52634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.mm */,
 				5C19EF1A2A6657DA0022B4B3 /* LayerProperties.h */,
 				2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */,
 				2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */,
@@ -14706,8 +14706,6 @@
 				935BF8042936BF1A00B41326 /* CacheStorageRecord.h in Headers */,
 				935BF8072936C9FD00B41326 /* CacheStorageRegistry.h in Headers */,
 				935BF7FF2936BF1A00B41326 /* CacheStorageStore.h in Headers */,
-				2D478B91288F33A600F3B73A /* CGDisplayList.h in Headers */,
-				BCE579A62634836700F5C5E9 /* CGDisplayListImageBufferBackend.h in Headers */,
 				57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */,
 				1C62747D288B4C3E00CED3A2 /* CocoaHelpers.h in Headers */,
 				4482734724528F6000A95493 /* CocoaImage.h in Headers */,
@@ -14755,6 +14753,8 @@
 				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
+				2D478B91288F33A600F3B73A /* DynamicContentScalingDisplayList.h in Headers */,
+				BCE579A62634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.h in Headers */,
 				2DA6731A20C754B1003CB401 /* DynamicViewportSizeUpdate.h in Headers */,
 				EB579C3729AEBD0800894C1C /* EarlyHintsResourceLoader.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,

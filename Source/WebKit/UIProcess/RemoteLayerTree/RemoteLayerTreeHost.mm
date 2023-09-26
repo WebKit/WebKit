@@ -87,9 +87,9 @@ RemoteLayerBackingStoreProperties::LayerContentsType RemoteLayerTreeHost::layerC
 #endif
 }
 
-bool RemoteLayerTreeHost::replayCGDisplayListsIntoBackingStore() const
+bool RemoteLayerTreeHost::replayDynamicContentScalingDisplayListsIntoBackingStore() const
 {
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     return m_drawingArea->page().preferences().replayCGDisplayListsIntoBackingStore();
 #else
     return false;

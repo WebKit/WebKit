@@ -245,10 +245,10 @@ void PlatformCALayerRemote::ensureBackingStore()
     updateBackingStore();
 }
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 RemoteLayerBackingStore::IncludeDisplayList PlatformCALayerRemote::shouldIncludeDisplayListInBackingStore() const
 {
-    if (!m_context->useCGDisplayListsForDOMRendering())
+    if (!m_context->useDynamicContentScalingDisplayListsForDOMRendering())
         return RemoteLayerBackingStore::IncludeDisplayList::No;
     if (owner() && owner()->platformCALayerContainsBitmapOnly(this))
         return RemoteLayerBackingStore::IncludeDisplayList::No;
@@ -278,10 +278,8 @@ void PlatformCALayerRemote::updateBackingStore()
     parameters.deepColor = m_wantsDeepColorBackingStore;
     parameters.isOpaque = m_properties.opaque;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     parameters.includeDisplayList = shouldIncludeDisplayListInBackingStore();
-    if (m_context->useCGDisplayListImageCache())
-        parameters.useCGDisplayListImageCache = UseCGDisplayListImageCache::Yes;
 #endif
 
     m_properties.backingStoreOrProperties.store->ensureBackingStore(parameters);

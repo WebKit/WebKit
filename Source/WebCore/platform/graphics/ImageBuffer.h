@@ -63,10 +63,6 @@ struct ImageBufferCreationContext {
     IOSurfacePool* surfacePool { nullptr };
     PlatformDisplayID displayID { 0 };
 #endif
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    enum class UseCGDisplayListImageCache : bool { No, Yes };
-    UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
-#endif
     WebCore::ProcessIdentity resourceOwner;
 
     ImageBufferCreationContext() = default; // To guarantee order in presence of ifdefs, use individual .property to initialize them.
