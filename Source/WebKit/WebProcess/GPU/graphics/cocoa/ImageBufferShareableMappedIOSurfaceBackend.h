@@ -52,11 +52,7 @@ private:
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
-    RefPtr<WebCore::NativeImage> copyNativeImage() final;
-
     String debugDescription() const final;
-
-    WebCore::IOSurfaceSeed m_lastSeedWhenCopyingImage { 0 };
 };
 
 } // namespace WebKit

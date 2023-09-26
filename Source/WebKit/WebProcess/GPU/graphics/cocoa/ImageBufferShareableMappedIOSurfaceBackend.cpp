@@ -85,18 +85,6 @@ std::optional<ImageBufferBackendHandle> ImageBufferShareableMappedIOSurfaceBacke
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
 
-RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage()
-{
-    auto currentSeed = m_surface->seed();
-
-    // Invalidate the cached image before getting a new one because GPUProcess might
-    // have drawn something to the IOSurface since last time this function was called.
-    if (std::exchange(m_lastSeedWhenCopyingImage, currentSeed) != currentSeed)
-        invalidateCachedNativeImage();
-
-    return ImageBufferIOSurfaceBackend::copyNativeImage();
-}
-
 String ImageBufferShareableMappedIOSurfaceBackend::debugDescription() const
 {
     TextStream stream;
