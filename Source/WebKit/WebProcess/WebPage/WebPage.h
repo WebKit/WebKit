@@ -521,6 +521,7 @@ public:
     void didReplaceMultipartContent(const WebFrame&);
     void didFinishDocumentLoad(WebFrame&);
     void didFinishLoad(WebFrame&);
+    void didSameDocumentNavigationForFrame(WebFrame&);
     void show();
     String userAgent(const URL&) const;
     String platformUserAgent(const URL&) const;

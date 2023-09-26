@@ -424,15 +424,7 @@ void WebLocalFrameLoaderClient::dispatchDidChangeLocationWithinPage()
     if (!webPage)
         return;
 
-    RefPtr<API::Object> userData;
-
-    auto navigationID = static_cast<WebDocumentLoader&>(*m_frame->coreLocalFrame()->loader().documentLoader()).navigationID();
-
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationType::AnchorNavigation, userData);
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), navigationID, SameDocumentNavigationType::AnchorNavigation, m_frame->coreLocalFrame()->document()->url(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->didSameDocumentNavigationForFrame(m_frame);
 }
 
 void WebLocalFrameLoaderClient::dispatchDidChangeMainDocument()
