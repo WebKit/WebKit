@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "MarkedBlock.h"
 #include "WeakSet.h"
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -155,10 +156,15 @@ public:
     
     static constexpr unsigned alignment = MarkedBlock::atomSize;
     static constexpr unsigned halfAlignment = alignment / 2;
-    static constexpr unsigned headerSize() { return ((sizeof(PreciseAllocation) + halfAlignment - 1) & ~(halfAlignment - 1)) | halfAlignment; }
+    static constexpr unsigned cacheLineAdjustment = 2 * halfAlignment;
+
+    // The header size must be packed to full alignment size. Because the cell start address
+    // always begins immediately after the header, this allows isAlignedForPreciseAllocation()
+    // to trivially infer the alignment of the cell from the alignment of the header.
+    static constexpr unsigned headerSize() { return roundUpToMultipleOf<alignment>(sizeof(PreciseAllocation)); }
 
 private:
-    PreciseAllocation(Heap&, size_t, Subspace*, unsigned indexInSpace, bool adjustedAlignment);
+    PreciseAllocation(Heap&, size_t, Subspace*, unsigned indexInSpace, unsigned adjustment);
     
     void* basePointer() const;
     
@@ -166,7 +172,10 @@ private:
     size_t m_cellSize;
     bool m_isNewlyAllocated : 1;
     bool m_hasValidCell : 1;
-    bool m_adjustedAlignment : 1;
+    // Worst case adjustment needed would be halfAlignment + portionOfObjectThatMustFitInCacheLine
+    // which is 8 + 16 -> 24 bytes i.e. will fit in 5 bits. If we need more bits in the future, we
+    // can also encode this number of uintptr_t words to save 3 bits.
+    unsigned m_adjustment : 5;
     Atomic<bool> m_isMarked;
     CellAttributes m_attributes;
     uint8_t m_lowerTierIndex { UINT8_MAX };
@@ -176,10 +185,7 @@ private:
 
 inline void* PreciseAllocation::basePointer() const
 {
-    if (m_adjustedAlignment)
-        return bitwise_cast<char*>(this) - halfAlignment;
-    return bitwise_cast<void*>(this);
+    return bitwise_cast<char*>(this) - m_adjustment;
 }
 
 } // namespace JSC
-
