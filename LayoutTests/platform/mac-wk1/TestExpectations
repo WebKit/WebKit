@@ -2692,3 +2692,5 @@ webkit.org/b/261339 [ Monterey+ Debug ] imported/w3c/web-platform-tests/editing/
 webkit.org/b/261427 [ Ventura+ ] media/track/track-in-band-mode.html [ Pass Crash ]
 
 webkit.org/b/261618 [ Monterey+ Debug ] imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html [ Pass Crash ]
+
+webkit.org/b/262130 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-cross-frame.html [ Pass Failure ]
