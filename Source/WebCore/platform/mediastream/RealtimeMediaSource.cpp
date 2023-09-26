@@ -1176,7 +1176,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
     if (constraints.isEmpty())
         return;
 
-    beginConfiguration();
+    startApplyingConstraints();
 
     auto videoFrameSizeConstraints = extractVideoFrameSizeConstraints(constraints);
 
@@ -1200,7 +1200,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
         applyConstraint(variant);
     }
 
-    commitConfiguration();
+    endApplyingConstraints();
 }
 
 std::optional<RealtimeMediaSource::ApplyConstraintsError> RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints)

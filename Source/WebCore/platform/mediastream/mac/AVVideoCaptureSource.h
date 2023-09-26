@@ -89,8 +89,8 @@ private:
     void stopProducingData() final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     void monitorOrientation(OrientationNotifier&) final;
-    void beginConfiguration() final;
-    void commitConfiguration() final;
+    void startApplyingConstraints() final;
+    void endApplyingConstraints() final;
     bool isCaptureSource() const final { return true; }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
     bool interrupted() const final;
@@ -120,6 +120,10 @@ private:
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "AVVideoCaptureSource"; }
 #endif
+
+    void beginConfiguration();
+    void commitConfiguration();
+    void beginConfigurationForConstraintsIfNeeded();
 
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
@@ -154,6 +158,7 @@ private:
     uint64_t m_beginConfigurationCount { 0 };
     bool m_interrupted { false };
     bool m_isRunning { false };
+    bool m_hasBegunConfigurationForConstraints { false };
 
     static constexpr Seconds verifyCaptureInterval = 30_s;
     static const uint64_t framesToDropWhenStarting = 4;

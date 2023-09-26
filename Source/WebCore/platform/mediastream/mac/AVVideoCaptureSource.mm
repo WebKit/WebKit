@@ -46,6 +46,7 @@
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/Scope.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -269,6 +270,30 @@ void AVVideoCaptureSource::stopProducingData()
 #endif
 }
 
+void AVVideoCaptureSource::startApplyingConstraints()
+{
+    ASSERT(!m_hasBegunConfigurationForConstraints);
+    m_hasBegunConfigurationForConstraints = false;
+}
+
+void AVVideoCaptureSource::endApplyingConstraints()
+{
+    if (!m_hasBegunConfigurationForConstraints)
+        return;
+
+    m_hasBegunConfigurationForConstraints = false;
+    commitConfiguration();
+}
+
+void AVVideoCaptureSource::beginConfigurationForConstraintsIfNeeded()
+{
+    if (m_hasBegunConfigurationForConstraints)
+        return;
+
+    m_hasBegunConfigurationForConstraints = true;
+    beginConfiguration();
+}
+
 void AVVideoCaptureSource::beginConfiguration()
 {
     if (++m_beginConfigurationCount > 1)
@@ -284,10 +309,8 @@ void AVVideoCaptureSource::commitConfiguration()
     if (!m_beginConfigurationCount || --m_beginConfigurationCount > 0)
         return;
 
-    if (!m_session)
-        return;
-
-    [m_session commitConfiguration];
+    if (m_session)
+        [m_session commitConfiguration];
 }
 
 void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
@@ -469,18 +492,30 @@ bool AVVideoCaptureSource::prefersPreset(const VideoPreset& preset)
 
 void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, std::optional<VideoPreset>&& preset)
 {
+    requestedZoom *= m_zoomScaleFactor;
+    if (m_currentFrameRate == requestedFrameRate && m_currentZoom == requestedZoom && preset && m_currentPreset && preset->format() == m_currentPreset->format())
+        return;
+
+    beginConfigurationForConstraintsIfNeeded();
+
     m_currentPreset = WTFMove(preset);
     if (m_currentPreset)
         setIntrinsicSize({ m_currentPreset->size().width(), m_currentPreset->size().height() });
 
     m_currentFrameRate = requestedFrameRate;
-    m_currentZoom = m_zoomScaleFactor * requestedZoom;
+    m_currentZoom = requestedZoom;
 
     setSessionSizeFrameRateAndZoom();
 }
 
+static bool isSameFrameRateRange(AVFrameRateRange* a, AVFrameRateRange* b)
+{
+    return a.minFrameRate == b.minFrameRate && a.maxFrameRate == b.maxFrameRate && !PAL::CMTimeCompare(a.minFrameDuration, b.minFrameDuration) && !PAL::CMTimeCompare(a.maxFrameDuration, b.maxFrameDuration);
+}
+
 void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 {
+    ASSERT(m_beginConfigurationCount);
     if (!m_session)
         return;
 
@@ -492,7 +527,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
     auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
     ASSERT(frameRateRange);
 
-    if (m_appliedPreset && m_appliedPreset->format() == m_currentPreset->format() && m_appliedFrameRateRange.get() == frameRateRange && m_appliedZoom == m_currentZoom) {
+    if (m_appliedPreset && m_appliedPreset->format() == m_currentPreset->format() && isSameFrameRateRange(m_appliedFrameRateRange.get(), frameRateRange) && m_appliedZoom == m_currentZoom) {
         ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, " settings already match");
         return;
     }
@@ -584,7 +619,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void AVVideoCaptureSource::updateWhiteBalanceMode()
 {
-    beginConfiguration();
+    beginConfigurationForConstraintsIfNeeded();
 
     auto mode = whiteBalanceModeFromMeteringMode(whiteBalanceMode());
     NSError *error = nil;
@@ -601,7 +636,6 @@ void AVVideoCaptureSource::updateWhiteBalanceMode()
     }
 
     [device unlockForConfiguration];
-    commitConfiguration();
 }
 
 IntDegrees AVVideoCaptureSource::sensorOrientationFromVideoOutput()
@@ -644,10 +678,7 @@ bool AVVideoCaptureSource::setupSession()
 #endif
     [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
-    beginConfiguration();
     bool success = setupCaptureSession();
-    commitConfiguration();
-
     if (!success)
         captureFailed();
 
@@ -675,6 +706,9 @@ AVFrameRateRange* AVVideoCaptureSource::frameDurationForFrameRate(double rate)
 bool AVVideoCaptureSource::setupCaptureSession()
 {
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+
+    beginConfiguration();
+    auto scopeExit = WTF::makeScopeExit([&] { commitConfiguration(); });
 
     NSError *error = nil;
     RetainPtr<AVCaptureDeviceInput> videoIn = adoptNS([PAL::allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
