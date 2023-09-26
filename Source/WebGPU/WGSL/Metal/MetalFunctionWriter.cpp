@@ -314,7 +314,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 addPadding(finalSize - size);
         }
 
-        if (structDecl.role() == AST::StructureRole::VertexOutput) {
+        if (structDecl.role() == AST::StructureRole::VertexOutput || structDecl.role() == AST::StructureRole::FragmentOutput) {
             m_stringBuilder.append("\n");
             m_stringBuilder.append(m_indent, "template<typename T>\n");
             m_stringBuilder.append(m_indent, structDecl.name(), "(const thread T& other)\n");
@@ -532,6 +532,9 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::ComputeInput:
         case AST::StructureRole::UserDefinedResource:
         case AST::StructureRole::PackedResource:
+            return;
+        case AST::StructureRole::FragmentOutput:
+            m_stringBuilder.append("[[color(", *AST::extractInteger(location.location()), ")]]");
             return;
         case AST::StructureRole::VertexInput:
             m_stringBuilder.append("[[attribute(", *AST::extractInteger(location.location()), ")]]");
