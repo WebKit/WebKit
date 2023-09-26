@@ -2312,6 +2312,8 @@ fn testTextureNumLayers()
 }
 
 // 16.7.6
+// RUN: %metal-compile testTextureNumLevels
+@compute @workgroup_size(1)
 fn testTextureNumLevels()
 {
     // [S < Concrete32BitNumber].(Texture[S, Texture1d]) => U32,

@@ -841,6 +841,161 @@ static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression
     writer->stringBuilder().append(")");
 }
 
+static void emitTextureDimensions(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    const auto& get = [&](const char* property) {
+        writer->visit(call.arguments()[0]);
+        writer->stringBuilder().append(".get_", property, "(");
+        if (call.arguments().size() > 1)
+            writer->visit(call.arguments()[1]);
+        writer->stringBuilder().append(")");
+    };
+
+    const auto* vector = std::get_if<Types::Vector>(call.inferredType());
+    if (!vector) {
+        get("width");
+        return;
+    }
+
+    auto size = vector->size;
+    ASSERT(size >= 2 && size <= 3);
+    writer->stringBuilder().append("uint", String::number(size), "(");
+    get("width");
+    writer->stringBuilder().append(", ");
+    get("height");
+    if (size > 2) {
+        writer->stringBuilder().append(", ");
+        get("depth");
+    }
+    writer->stringBuilder().append(")");
+}
+
+static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    auto& texture = call.arguments()[0];
+    auto* textureType = texture.inferredType();
+
+    // FIXME: this should become isPrimitiveReference once PR#14299 lands
+    auto* primitive = std::get_if<Types::Primitive>(textureType);
+    bool isExternalTexture = primitive && primitive->kind == Types::Primitive::TextureExternal;
+    if (!isExternalTexture) {
+        writer->visit(call.arguments()[0]);
+        writer->stringBuilder().append(".read");
+        bool first = true;
+        writer->stringBuilder().append("(");
+        const char* cast = "uint";
+        if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
+            switch (vector->size) {
+            case 2:
+                cast = "uint2";
+                break;
+            case 3:
+                cast = "uint3";
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+        for (unsigned i = 1; i < call.arguments().size(); ++i) {
+            if (first) {
+                writer->stringBuilder().append(cast, "(");
+                writer->visit(call.arguments()[i]);
+                writer->stringBuilder().append(")");
+            } else {
+                writer->stringBuilder().append(", ");
+                writer->visit(call.arguments()[i]);
+            }
+            first = false;
+        }
+        writer->stringBuilder().append(")");
+        return;
+    }
+
+    auto& coordinates = call.arguments()[1];
+    writer->stringBuilder().append("({\n");
+    {
+        IndentationScope scope(writer->indent());
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __coords = uint2((");
+            writer->visit(texture);
+            writer->stringBuilder().append(".UVRemapMatrix * float3(float2(");
+            writer->visit(coordinates);
+            writer->stringBuilder().append("), 1)).xy);\n");
+        }
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __y = float(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".FirstPlane.read(__coords).r);\n");
+        }
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".SecondPlane.read(__coords).rg);\n");
+        }
+        writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
+        {
+            writer->stringBuilder().append(writer->indent(), "float4(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+        }
+    }
+    writer->stringBuilder().append(writer->indent(), "})");
+}
+
+static void emitTextureSample(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    ASSERT(call.arguments().size() > 1);
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(".sample");
+    visitArguments(writer, call, 1);
+}
+
+static void emitTextureSampleClampToEdge(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    // FIXME: we need to handle `texture2d<T>` here too, not only `texture_external`
+    auto& texture = call.arguments()[0];
+    auto& sampler = call.arguments()[1];
+    auto& coordinates = call.arguments()[2];
+    writer->stringBuilder().append("({\n");
+    {
+        IndentationScope scope(writer->indent());
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __coords = (");
+            writer->visit(texture);
+            writer->stringBuilder().append(".UVRemapMatrix * float3(");
+            writer->visit(coordinates);
+            writer->stringBuilder().append(", 1)).xy;\n");
+        }
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __y = float(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".FirstPlane.sample(");
+            writer->visit(sampler);
+            writer->stringBuilder().append(", __coords).r);\n");
+        }
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".SecondPlane.sample(");
+            writer->visit(sampler);
+            writer->stringBuilder().append(", __coords).rg);\n");
+        }
+        writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
+        {
+            writer->stringBuilder().append(writer->indent(), "float4(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+        }
+    }
+    writer->stringBuilder().append(writer->indent(), "})");
+}
+
+static void emitTextureNumLevels(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(".get_num_mip_levels()");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
@@ -854,19 +1009,15 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         if (isArray)
             arrayElementType = std::get<Types::Array>(*type).element;
 
-        const auto& visitArgument = [&](auto& argument) {
-            if (isStruct)
-                visit(argument);
-            else
-                visit(arrayElementType, argument);
-        };
-
         m_stringBuilder.append("{\n");
         {
             IndentationScope scope(m_indent);
             for (auto& argument : call.arguments()) {
                 m_stringBuilder.append(m_indent);
-                visitArgument(argument);
+                if (isStruct)
+                    visit(argument);
+                else
+                    visit(arrayElementType, argument);
                 m_stringBuilder.append(",\n");
             }
         }
@@ -876,147 +1027,11 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
-            { "textureDimensions", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
-                const auto& get = [&](const char* property) {
-                    writer->visit(call.arguments()[0]);
-                    writer->stringBuilder().append(".get_", property, "(");
-                    if (call.arguments().size() > 1)
-                        writer->visit(call.arguments()[1]);
-                    writer->stringBuilder().append(")");
-                };
-
-                const auto* vector = std::get_if<Types::Vector>(call.inferredType());
-                if (!vector) {
-                    get("width");
-                    return;
-                }
-
-                auto size = vector->size;
-                ASSERT(size >= 2 && size <= 3);
-                writer->stringBuilder().append("uint", String::number(size), "(");
-                get("width");
-                writer->stringBuilder().append(", ");
-                get("height");
-                if (size > 2) {
-                    writer->stringBuilder().append(", ");
-                    get("depth");
-                }
-                writer->stringBuilder().append(")");
-            } },
-            { "textureLoad", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
-                auto& texture = call.arguments()[0];
-                auto* textureType = texture.inferredType();
-
-                // FIXME: this should become isPrimitiveReference once PR#14299 lands
-                auto* primitive = std::get_if<Types::Primitive>(textureType);
-                bool isExternalTexture = primitive && primitive->kind == Types::Primitive::TextureExternal;
-                if (!isExternalTexture) {
-                    writer->visit(call.arguments()[0]);
-                    writer->stringBuilder().append(".read");
-                    bool first = true;
-                    writer->stringBuilder().append("(");
-                    const char* cast = "uint";
-                    if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
-                        switch (vector->size) {
-                        case 2:
-                            cast = "uint2";
-                            break;
-                        case 3:
-                            cast = "uint3";
-                            break;
-                        default:
-                            RELEASE_ASSERT_NOT_REACHED();
-                        }
-                    }
-                    for (unsigned i = 1; i < call.arguments().size(); ++i) {
-                        if (first) {
-                            writer->stringBuilder().append(cast, "(");
-                            writer->visit(call.arguments()[i]);
-                            writer->stringBuilder().append(")");
-                        } else {
-                            writer->stringBuilder().append(", ");
-                            writer->visit(call.arguments()[i]);
-                        }
-                        first = false;
-                    }
-                    writer->stringBuilder().append(")");
-                    return;
-                }
-
-                auto& coordinates = call.arguments()[1];
-                writer->stringBuilder().append("({\n");
-                {
-                    IndentationScope scope(writer->indent());
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __coords = uint2((");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".UVRemapMatrix * float3(float2(");
-                        writer->visit(coordinates);
-                        writer->stringBuilder().append("), 1)).xy);\n");
-                    }
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __y = float(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".FirstPlane.read(__coords).r);\n");
-                    }
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".SecondPlane.read(__coords).rg);\n");
-                    }
-                    writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
-                    {
-                        writer->stringBuilder().append(writer->indent(), "float4(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
-                    }
-                }
-                writer->stringBuilder().append(writer->indent(), "})");
-            } },
-            { "textureSample", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
-                ASSERT(call.arguments().size() > 1);
-                writer->visit(call.arguments()[0]);
-                writer->stringBuilder().append(".sample");
-                visitArguments(writer, call, 1);
-            } },
-            { "textureSampleBaseClampToEdge", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
-                // FIXME: we need to handle `texture2d<T>` here too, not only `texture_external`
-                auto& texture = call.arguments()[0];
-                auto& sampler = call.arguments()[1];
-                auto& coordinates = call.arguments()[2];
-                writer->stringBuilder().append("({\n");
-                {
-                    IndentationScope scope(writer->indent());
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __coords = (");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".UVRemapMatrix * float3(");
-                        writer->visit(coordinates);
-                        writer->stringBuilder().append(", 1)).xy;\n");
-                    }
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __y = float(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".FirstPlane.sample(");
-                        writer->visit(sampler);
-                        writer->stringBuilder().append(", __coords).r);\n");
-                    }
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".SecondPlane.sample(");
-                        writer->visit(sampler);
-                        writer->stringBuilder().append(", __coords).rg);\n");
-                    }
-                    writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
-                    {
-                        writer->stringBuilder().append(writer->indent(), "float4(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
-                    }
-                }
-                writer->stringBuilder().append(writer->indent(), "})");
-            } },
+            { "textureDimensions", emitTextureDimensions },
+            { "textureLoad", emitTextureLoad },
+            { "textureNumLevels", emitTextureNumLevels },
+            { "textureSample", emitTextureSample },
+            { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
         const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();
