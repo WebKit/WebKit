@@ -6851,6 +6851,20 @@ UseARKitForModel:
     WebKit:
       default: true
 
+UseAsyncUIKitInteractions:
+  type: bool
+  status: internal
+  humanReadableName: "Async UIKit Interactions"
+  humanReadableDescription: "Use Async UIKit Interactions"
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UseCGDisplayListImageCache:
   type: bool
   status: internal

@@ -124,6 +124,11 @@
 #import <UIKit/_UITextDragCaretView.h>
 #endif
 
+#if HAVE(UI_ASYNC_DRAG_INTERACTION)
+#import <UIKit/UIDragInteraction_AsyncSupport.h>
+#import <UIKit/_UIAsyncDragInteraction.h>
+#endif
+
 #if HAVE(UIFINDINTERACTION)
 #import <UIKit/UIFindSession_Private.h>
 #import <UIKit/_UIFindInteraction.h>

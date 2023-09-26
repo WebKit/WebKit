@@ -579,6 +579,9 @@ struct ImageAnalysisContextMenuActionData {
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     , WKMouseInteractionDelegate
 #endif
+#if HAVE(UI_ASYNC_DRAG_INTERACTION)
+    , _UIAsyncDragInteractionDelegate
+#endif
 >
 
 @property (nonatomic, readonly) CGPoint lastInteractionLocation;
