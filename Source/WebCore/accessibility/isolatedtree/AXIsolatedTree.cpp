@@ -437,8 +437,10 @@ void AXIsolatedTree::updateNode(AccessibilityObject& axObject)
     // If we update a node as the result of some side effect while collecting node changes (e.g. a role change from
     // AccessibilityRenderObject::updateRoleAfterChildrenCreation), queue the append up to be resolved with the rest
     // of the collected changes. This prevents us from creating two node changes for the same object.
-    if (isCollectingNodeChanges()) {
-        m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnAXThread);
+    if (isCollectingNodeChanges() || !m_unresolvedPendingAppends.isEmpty()) {
+        m_unresolvedPendingAppends.ensure(axObject.objectID(), [] {
+            return AttachWrapper::OnAXThread;
+        });
         return;
     }
 
@@ -757,9 +759,10 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 
 void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<RefPtr<AccessibilityObject>>& axObjects)
 {
-    // FIXME: optimize this method to avoid updating the same object or subtree.
     for (auto& axObject : axObjects)
-        updateChildren(*axObject);
+        updateChildren(*axObject, ResolveNodeChanges::No);
+
+    queueRemovalsAndUnresolvedChanges({ });
 }
 
 void AXIsolatedTree::setPageActivityState(OptionSet<ActivityState> state)
