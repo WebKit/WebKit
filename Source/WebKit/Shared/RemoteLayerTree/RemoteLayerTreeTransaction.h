@@ -54,6 +54,10 @@
 #include <WebCore/AcceleratedEffectValues.h>
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+#include <WebCore/Model.h>
+#endif
+
 namespace WebKit {
 
 struct LayerProperties;

@@ -28,4 +28,53 @@
 
 #if ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
 
+#include "PluginView.h"
+#include "WebFrame.h"
+#include <WebCore/Document.h>
+#include <WebCore/Frame.h>
+#include <WebCore/HTMLPlugInElement.h>
+#include <WebCore/PluginDocument.h>
+
+namespace WebKit {
+using namespace WebCore;
+
+PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
+    : m_frame(*WebFrame::fromCoreFrame(*element.document().frame()))
+{
+}
+
+void PDFPluginBase::setView(PluginView& view)
+{
+    ASSERT(!m_view);
+    m_view = view;
+}
+
+void PDFPluginBase::destroy()
+{
+    ASSERT(!m_isBeingDestroyed);
+    SetForScope scope { m_isBeingDestroyed, true };
+
+    m_hasBeenDestroyed = true;
+    m_documentFinishedLoading = true;
+
+    teardown();
+
+    m_view = nullptr;
+}
+
+bool PDFPluginBase::isFullFramePlugin() const
+{
+    // <object> or <embed> plugins will appear to be in their parent frame, so we have to
+    // check whether our frame's widget is exactly our PluginView.
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return false;
+
+    RefPtr document = m_frame->coreLocalFrame()->document();
+    if (!is<PluginDocument>(document))
+        return false;
+    return downcast<PluginDocument>(*document).pluginWidget() == m_view;
+}
+
+} // namespace WebKit
+
 #endif // ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)

@@ -641,7 +641,7 @@ Ref<PDFPlugin> PDFPlugin::create(HTMLPlugInElement& pluginElement)
 }
 
 PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
-    : m_frame(*WebFrame::fromCoreFrame(*element.document().frame()))
+    : PDFPluginBase(element)
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
     , m_contentLayer(adoptNS([[CALayer alloc] init]))
     , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this shouldFlip:NO]))
@@ -1868,8 +1868,7 @@ void PDFPlugin::calculateSizes()
 
 void PDFPlugin::setView(PluginView& view)
 {
-    ASSERT(!m_view);
-    m_view = view;
+    PDFPluginBase::setView(view);
 
     if (view.isUsingUISideCompositing())
         [m_pdfLayerControllerDelegate setShouldFlipAnnotations:YES];
@@ -1883,14 +1882,8 @@ void PDFPlugin::willDetachRenderer()
         frameView->removeScrollableArea(this);
 }
 
-void PDFPlugin::destroy()
+void PDFPlugin::teardown()
 {
-    ASSERT(!m_isBeingDestroyed);
-    SetForScope scope { m_isBeingDestroyed, true };
-
-    m_hasBeenDestroyed = true;
-    m_documentFinishedLoading = true;
-
 #if HAVE(INCREMENTAL_PDF_APIS)
     // By clearing out the resource data and handling all outstanding range requests,
     // we can force the PDFThread to complete quickly
@@ -1901,7 +1894,7 @@ void PDFPlugin::destroy()
     }
 #endif
 
-    m_pdfLayerController.get().delegate = 0;
+    m_pdfLayerController.get().delegate = nil;
 
     if (auto* frameView = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->view() : nullptr)
         frameView->removeScrollableArea(this);
@@ -1914,8 +1907,6 @@ void PDFPlugin::destroy()
     
     [m_scrollCornerLayer removeFromSuperlayer];
     [m_contentLayer removeFromSuperlayer];
-
-    m_view = nullptr;
 }
 
 void PDFPlugin::updateControlTints(GraphicsContext& graphicsContext)
@@ -2414,17 +2405,6 @@ void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
     [m_scrollCornerLayer setNeedsDisplay];
 }
 
-bool PDFPlugin::isFullFramePlugin() const
-{
-    // <object> or <embed> plugins will appear to be in their parent frame, so we have to
-    // check whether our frame's widget is exactly our PluginView.
-    if (!m_frame || !m_frame->coreLocalFrame())
-        return false;
-    RefPtr document = m_frame->coreLocalFrame()->document();
-    if (!is<PluginDocument>(document))
-        return false;
-    return downcast<PluginDocument>(*document).pluginWidget() == m_view;
-}
 
 bool PDFPlugin::handlesPageScaleFactor() const
 {

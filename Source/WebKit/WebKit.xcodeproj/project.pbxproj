@@ -3111,6 +3111,8 @@
 		0FF7CE892901FDA500EA62D6 /* RemoteScrollingTreeIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingTreeIOS.h; sourceTree = "<group>"; };
 		0FF7CE8A2901FDAC00EA62D6 /* RemoteScrollingTreeMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingTreeMac.h; sourceTree = "<group>"; };
 		0FF7CE8B2901FDAD00EA62D6 /* RemoteScrollingTreeMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteScrollingTreeMac.mm; sourceTree = "<group>"; };
+		0FFACF032AC2453300ED8DB6 /* UnifiedPDFPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedPDFPlugin.mm; sourceTree = "<group>"; };
+		0FFACF042AC2453300ED8DB6 /* UnifiedPDFPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnifiedPDFPlugin.h; sourceTree = "<group>"; };
 		0FFED98C23A3200400EEF459 /* WKWebViewIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebViewIOS.h; sourceTree = "<group>"; };
 		0FFED98D23A3200500EEF459 /* WKWebViewIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewIOS.mm; sourceTree = "<group>"; };
 		0FFED98F23A3203700EEF459 /* WKWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewMac.mm; sourceTree = "<group>"; };
@@ -7982,6 +7984,16 @@
 				0F45A330239D89A100294ABF /* WKWebViewTestingIOS.mm */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		0FFACF022AC2453300ED8DB6 /* UnifiedPDF */ = {
+			isa = PBXGroup;
+			children = (
+				0FFACF042AC2453300ED8DB6 /* UnifiedPDFPlugin.h */,
+				0FFACF032AC2453300ED8DB6 /* UnifiedPDFPlugin.mm */,
+			);
+			name = UnifiedPDF;
+			path = PDF/UnifiedPDF;
 			sourceTree = "<group>";
 		};
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
@@ -14195,6 +14207,7 @@
 		E199875B142BF9CF00BB2DE7 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
+				0FFACF022AC2453300ED8DB6 /* UnifiedPDF */,
 				3574B37F1665932C00859BB7 /* PDFAnnotationTextWidgetDetails.h */,
 				2D2ADF0C16363DEC00197E47 /* PDFLayerControllerSPI.h */,
 				2D0035221BC7414800DA8716 /* PDFPlugin.h */,

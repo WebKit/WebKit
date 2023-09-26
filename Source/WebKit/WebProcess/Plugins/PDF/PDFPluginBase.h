@@ -27,6 +27,117 @@
 
 #if ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
 
+#include <WebCore/AffineTransform.h>
+#include <WebCore/FindOptions.h>
+#include <WebCore/FloatRect.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TypeTraits.h>
+#include <wtf/WeakPtr.h>
 
+// FIXME: These Objective-C classes should only appear in PDFPlugin, not here in the base class.
+OBJC_CLASS NSDictionary;
+OBJC_CLASS PDFDocument;
+OBJC_CLASS PDFSelection;
+
+namespace WebCore {
+class FragmentedSharedBuffer;
+class GraphicsContext;
+class Element;
+class HTMLPlugInElement;
+class ResourceResponse;
+class SharedBuffer;
+}
+
+namespace WebKit {
+
+class PluginView;
+class ShareableBitmap;
+class WebFrame;
+class WebKeyboardEvent;
+class WebMouseEvent;
+class WebWheelEvent;
+struct WebHitTestResultData;
+
+class PDFPluginBase : public ThreadSafeRefCounted<PDFPluginBase> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(PDFPluginBase);
+public:
+    virtual ~PDFPluginBase() = default;
+
+    void destroy();
+
+    virtual bool isUnifiedPDFPlugin() const { return false; }
+    virtual bool isLegacyPDFPlugin() const { return false; }
+
+    virtual void setView(PluginView&);
+
+    virtual void willDetachRenderer() { }
+
+    virtual bool isComposited() const { return false; }
+
+    virtual CGFloat scaleFactor() const = 0;
+
+    // FIXME: Can we use PDFDocument here?
+    virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const = 0;
+    virtual WebCore::FloatSize pdfDocumentSizeForPrinting() const = 0;
+
+    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform) { }
+    virtual void visibilityDidChange(bool) { }
+    virtual void contentsScaleFactorChanged(float) { }
+
+    virtual void updateControlTints(WebCore::GraphicsContext&) { }
+
+    virtual void streamDidReceiveResponse(const WebCore::ResourceResponse&) = 0;
+    virtual void streamDidReceiveData(const WebCore::SharedBuffer&) = 0;
+    virtual void streamDidFinishLoading() = 0;
+    virtual void streamDidFail() = 0;
+
+    virtual RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const = 0;
+
+    virtual bool wantsWheelEvents() const { return false; }
+    virtual bool handleMouseEvent(const WebMouseEvent&) = 0;
+    virtual bool handleWheelEvent(const WebWheelEvent&) = 0;
+    virtual bool handleMouseEnterEvent(const WebMouseEvent&) = 0;
+    virtual bool handleMouseLeaveEvent(const WebMouseEvent&) = 0;
+    virtual bool handleContextMenuEvent(const WebMouseEvent&) = 0;
+    virtual bool handleKeyboardEvent(const WebKeyboardEvent&) = 0;
+    virtual bool handleEditingCommand(StringView commandName) = 0;
+    virtual bool isEditingCommandEnabled(StringView commandName) = 0;
+
+    virtual String getSelectionString() const = 0;
+    virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;
+    virtual WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const = 0;
+
+    virtual unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
+    virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
+
+    virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
+    virtual std::tuple<String, PDFSelection *, NSDictionary *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const = 0;
+
+    virtual RefPtr<ShareableBitmap> snapshot() = 0;
+
+    virtual id accessibilityHitTest(const WebCore::IntPoint&) const = 0;
+    virtual id accessibilityObject() const = 0;
+    virtual id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const = 0;
+
+    bool isBeingDestroyed() const { return m_isBeingDestroyed; }
+
+    bool isFullFramePlugin() const;
+
+protected:
+    explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
+
+    virtual void teardown() = 0;
+
+    WeakPtr<PluginView> m_view;
+    WeakPtr<WebFrame> m_frame;
+
+    bool m_documentFinishedLoading { false };
+    bool m_isBeingDestroyed { false };
+    bool m_hasBeenDestroyed { false };
+};
+
+} // namespace WebKit
 
 #endif // ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
