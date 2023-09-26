@@ -32,4 +32,6 @@
 @interface ResourceLoadDelegate : NSObject <WebResourceLoadDelegate> {
 }
 
+@property (nonatomic, retain) NSURL *mainResourceURL;
+
 @end
