@@ -966,7 +966,7 @@ TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
 TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
 {
     HTTPServer server({
-        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe><script>onload = () => { document.getElementById('webkit_frame').src = 'https://example.com/example_subframe' }</script>"_s } },
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
         { "/example_subframe"_s, { "<script>alert('done')</script>"_s } },
         { "/webkit"_s, { "<html></html>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
@@ -979,22 +979,19 @@ TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+    [navigationDelegate waitForDidFinishNavigation];
 
     __block bool done { false };
     __block pid_t childFramePid { 0 };
     [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_EQ(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
+        childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
+        EXPECT_NE(childFramePid, mainFrame.info._processIdentifier);
         done = true;
     }];
     Util::run(&done);
+
+    [webView evaluateJavaScript:@"document.getElementById('webkit_frame').src = 'https://example.com/example_subframe'" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
     checkFrameTreesInProcesses(webView.get(), {
         { "https://example.com"_s,
@@ -1002,9 +999,8 @@ TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
         }
     });
 
-    // FIXME: We ought to be able to use processStillRunning to verify that childFramePid stops running at this point,
-    // but it is currently kept running, probably because we don't delete the WebFrameProxy's m_remotePageProxy when
-    // navigating to the main frame's process.
+    while (processStillRunning(childFramePid))
+        Util::spinRunLoop();
 }
 
 TEST(SiteIsolation, ChildBeingNavigatedToSameDomainByParent)
