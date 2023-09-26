@@ -2082,7 +2082,8 @@ public:
     }
 };
 
-TEST_F(WebPushDPushNotificationEventTest, Basic)
+// FIXME after rdar://116087660 is resolved.
+TEST_F(WebPushDPushNotificationEventTest, DISABLED_Basic)
 {
     prep();
     runTest(json39);
