@@ -318,9 +318,8 @@ public:
     static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
     static std::span<const ASCIILiteral> supportedMIMETypes();
-    WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create(const ContentType&);
+    WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create();
 
-    SourceBufferParserWebM();
     ~SourceBufferParserWebM();
 
     static bool isAvailable();
@@ -345,6 +344,7 @@ public:
     WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier) final;
 
 private:
+    SourceBufferParserWebM();
     // WebMParser::Callback
     void parsedInitializationData(SourceBufferParser::InitializationSegment&&) final;
     void parsedMediaData(MediaSamplesBlock&&) final;

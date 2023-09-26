@@ -1437,11 +1437,14 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(VP9) || ENABLE(VORBIS) || ENABLE(OPUS)
 }
 
-RefPtr<SourceBufferParserWebM> SourceBufferParserWebM::create(const ContentType& type)
+bool SourceBufferParserWebM::isAvailable()
 {
-    if (isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)
-        return adoptRef(new SourceBufferParserWebM());
-    return nullptr;
+    return isWebmParserAvailable();
+}
+
+RefPtr<SourceBufferParserWebM> SourceBufferParserWebM::create()
+{
+    return isAvailable() ? adoptRef(new SourceBufferParserWebM()) : nullptr;
 }
 
 void WebMParser::provideMediaData(MediaSamplesBlock&& samples)

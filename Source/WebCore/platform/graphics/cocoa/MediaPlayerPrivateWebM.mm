@@ -86,7 +86,7 @@ static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     : m_player(player)
     , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstance() init]))
-    , m_parser(adoptRef(*new SourceBufferParserWebM()))
+    , m_parser(SourceBufferParserWebM::create().releaseNonNull())
     , m_appendQueue(WorkQueue::create("MediaPlayerPrivateWebM data parser queue"))
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
@@ -1563,7 +1563,8 @@ void MediaPlayerPrivateWebM::registerMediaEngine(MediaEngineRegistrar registrar)
 
 bool MediaPlayerPrivateWebM::isAvailable()
 {
-    return PAL::isAVFoundationFrameworkAvailable()
+    return SourceBufferParserWebM::isAvailable()
+        && PAL::isAVFoundationFrameworkAvailable()
         && PAL::isCoreMediaFrameworkAvailable()
         && PAL::getAVSampleBufferAudioRendererClass()
         && PAL::getAVSampleBufferRenderSynchronizerClass()
