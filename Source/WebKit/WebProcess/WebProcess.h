@@ -146,6 +146,7 @@ class WebLoaderStrategy;
 class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
+class WebTransportSession;
 
 struct RemoteWorkerInitializationData;
 struct UserMessage;
@@ -154,11 +155,14 @@ struct WebProcessDataStoreParameters;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
+struct WebTransportSessionIdentifierType;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
 enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
+
+using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
 
 #if PLATFORM(IOS_FAMILY)
 class LayerHostingContext;
@@ -243,6 +247,10 @@ public:
     IPC::Connection::UniqueID networkProcessConnectionID();
     WebLoaderStrategy& webLoaderStrategy();
     WebFileSystemStorageConnection& fileSystemStorageConnection();
+
+    WebTransportSession* webTransportSession(WebTransportSessionIdentifier);
+    void addWebTransportSession(WebTransportSessionIdentifier, WebTransportSession&);
+    void removeWebTransportSession(WebTransportSessionIdentifier);
 
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
@@ -800,6 +808,8 @@ private:
     bool m_imageAnimationEnabled { true };
 
     HashSet<WebCore::RegistrableDomain> m_allowedFirstPartiesForCookies;
+
+    HashMap<WebTransportSessionIdentifier, WeakPtr<WebTransportSession>> m_webTransportSessions;
 };
 
 } // namespace WebKit

@@ -2361,6 +2361,23 @@ bool WebProcess::allowsFirstPartyForCookies(const URL& firstParty)
     });
 }
 
+WebTransportSession* WebProcess::webTransportSession(WebTransportSessionIdentifier identifier)
+{
+    return m_webTransportSessions.get(identifier).get();
+}
+
+void WebProcess::addWebTransportSession(WebTransportSessionIdentifier identifier, WebTransportSession& session)
+{
+    ASSERT(!m_webTransportSessions.contains(identifier));
+    m_webTransportSessions.set(identifier, session);
+}
+
+void WebProcess::removeWebTransportSession(WebTransportSessionIdentifier identifier)
+{
+    ASSERT(m_webTransportSessions.contains(identifier));
+    m_webTransportSessions.remove(identifier);
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

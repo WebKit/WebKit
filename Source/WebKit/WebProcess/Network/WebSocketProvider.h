@@ -35,6 +35,8 @@ public:
     static Ref<WebSocketProvider> create(WebPageProxyIdentifier webPageProxyID) { return adoptRef(*new WebSocketProvider(webPageProxyID)); }
 private:
     RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&) final;
+    void initializeWebTransportSession(WebCore::ScriptExecutionContext&, const URL&, CompletionHandler<void(RefPtr<WebCore::WebTransportSession>&&)>&&) final;
+
     explicit WebSocketProvider(WebPageProxyIdentifier webPageProxyID)
         : m_webPageProxyID(webPageProxyID) { }
     WebPageProxyIdentifier m_webPageProxyID;

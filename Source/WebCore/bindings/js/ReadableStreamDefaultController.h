@@ -43,7 +43,7 @@ class ReadableStreamDefaultController {
 public:
     explicit ReadableStreamDefaultController(JSReadableStreamDefaultController* controller) : m_jsController(controller) { }
 
-    bool enqueue(RefPtr<JSC::ArrayBuffer>&&);
+    WEBCORE_EXPORT bool enqueue(RefPtr<JSC::ArrayBuffer>&&);
     bool enqueue(JSC::JSValue);
     void error(const Exception&);
     void close();

@@ -31,11 +31,19 @@ namespace WebCore {
 
 class DeferredPromise;
 
+struct WebTransportSendStreamStats;
+
 class WebTransportSendStream : public WritableStream {
 public:
+    static ExceptionOr<Ref<WebTransportSendStream>> create(JSDOMGlobalObject&, Ref<WritableStreamSink>&&);
+
     void getStats(Ref<DeferredPromise>&&);
-    std::optional<int64_t> sendOrder();
-    void setSendOrder(std::optional<int64_t>);
+    std::optional<int64_t> sendOrder() { return m_sendOrder; }
+    void setSendOrder(std::optional<int64_t> order) { m_sendOrder = order; }
+private:
+    WebTransportSendStream(Ref<InternalWritableStream>&&);
+
+    std::optional<int64_t> m_sendOrder;
 };
 
 }

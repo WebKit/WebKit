@@ -123,6 +123,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoadParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoader.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketChannel.messages.in
+$(PROJECT_DIR)/NetworkProcess/NetworkTransportChannel.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
@@ -136,6 +137,7 @@ $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCMonitor.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCProvider.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.messages.in
+$(PROJECT_DIR)/NetworkProcess/webtransport/NetworkTransportSession.messages.in
 $(PROJECT_DIR)/Platform/IPC/StreamServerConnection.serialization.in
 $(PROJECT_DIR)/Platform/SharedMemory.serialization.in
 $(PROJECT_DIR)/PluginProcess/PluginControllerProxy.messages.in
@@ -439,6 +441,8 @@ $(PROJECT_DIR)/WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebSocketChannel.messages.in
+$(PROJECT_DIR)/WebProcess/Network/WebTransportChannel.messages.in
+$(PROJECT_DIR)/WebProcess/Network/WebTransportSession.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/LibWebRTCNetwork.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/RTCDataChannelRemoteManager.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/WebMDNSRegister.messages.in

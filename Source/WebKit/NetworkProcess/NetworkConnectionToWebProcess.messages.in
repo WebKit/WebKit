@@ -133,4 +133,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     NavigatorGetPushSubscription(URL scopeURL) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
     NavigatorGetPushPermissionState(URL scopeURL) -> (Expected<uint8_t, WebCore::ExceptionData> result)
 #endif
+
+    InitializeWebTransportSession(URL url) -> (std::optional<WebKit::WebTransportSessionIdentifier> identifier)
+    DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
 }

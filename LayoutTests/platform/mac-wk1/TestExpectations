@@ -781,14 +781,7 @@ imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.sharedworker
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/close.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/close.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/connect.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/connect.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/constructor.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/constructor.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/datagrams.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/datagrams.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/ [ Skip ]
 
 # WebKitLegacy doesn't support https-based WPT
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]

@@ -202,6 +202,11 @@ NetworkProcess/cache/PrefetchCache.cpp
 NetworkProcess/webrtc/NetworkMDNSRegister.cpp
 NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp
 
+NetworkProcess/webtransport/NetworkTransportBidirectionalStream.cpp
+NetworkProcess/webtransport/NetworkTransportSendStream.cpp
+NetworkProcess/webtransport/NetworkTransportSession.cpp
+NetworkProcess/webtransport/NetworkTransportReceiveStream.cpp
+
 Platform/IPC/DaemonCoders.cpp
 
 Shared/AccessibilityPreferences.cpp
@@ -763,6 +768,9 @@ WebProcess/Network/WebResourceLoader.cpp
 WebProcess/Network/WebSocketChannel.cpp @no-unify
 WebProcess/Network/WebSocketChannelManager.cpp
 WebProcess/Network/WebSocketProvider.cpp
+WebProcess/Network/WebTransportReceiveStreamSource.cpp
+WebProcess/Network/WebTransportSendStreamSink.cpp
+WebProcess/Network/WebTransportSession.cpp
 
 WebProcess/Network/webrtc/LibWebRTCNetwork.cpp
 WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp
@@ -870,6 +878,7 @@ IPCStreamTesterProxyMessageReceiver.cpp
 IPCTesterMessageReceiver.cpp
 IPCTesterReceiverMessageReceiver.cpp
 NetworkBroadcastChannelRegistryMessageReceiver.cpp
+NetworkTransportSessionMessageReceiver.cpp
 RTCDataChannelRemoteManagerMessageReceiver.cpp
 RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
 RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessageReceiver.cpp
@@ -921,3 +930,4 @@ WebSharedWorkerContextManagerConnectionMessageReceiver.cpp
 WebSharedWorkerObjectConnectionMessageReceiver.cpp
 WebSharedWorkerServerConnectionMessageReceiver.cpp
 WebSharedWorkerServerToContextConnectionMessageReceiver.cpp
+WebTransportSessionMessageReceiver.cpp

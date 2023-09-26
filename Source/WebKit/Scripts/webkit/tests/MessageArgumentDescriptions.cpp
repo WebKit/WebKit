@@ -92,6 +92,7 @@
 #include "WebExtensionWindowIdentifier.h"
 #include "WebGPUIdentifier.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebTransportSession.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include <WebCore/BackgroundFetchRecordIdentifier.h>
 #include <WebCore/BroadcastChannelIdentifier.h>
@@ -545,6 +546,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionWindowIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebGPUIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebPageProxyIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebTransportSessionIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebTransportStreamIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
         "IPC::AsyncReplyID"_s,
@@ -651,6 +654,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::WebExtensionWindowIdentifier"_s,
         "WebKit::WebGPUIdentifier"_s,
         "WebKit::WebPageProxyIdentifier"_s,
+        "WebKit::WebTransportSessionIdentifier"_s,
+        "WebKit::WebTransportStreamIdentifier"_s,
         "WebKit::WebURLSchemeHandlerIdentifier"_s,
     };
 }

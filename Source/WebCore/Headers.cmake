@@ -569,6 +569,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
+    Modules/streams/WritableStreamSink.h
 
     Modules/system-preview/ARKitBadgeSystemImage.h
 
@@ -638,6 +639,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/websockets/WebSocketFrame.h
     Modules/websockets/WebSocketIdentifier.h
     Modules/websockets/WebSocketHandshake.h
+
+    Modules/webtransport/WebTransportBidirectionalStreamConstructionParameters.h
+    Modules/webtransport/WebTransportReceiveStreamStats.h
+    Modules/webtransport/WebTransportSendStreamStats.h
+    Modules/webtransport/WebTransportSession.h
+    Modules/webtransport/WebTransportSessionClient.h
 
     accessibility/AXCoreObject.h
     accessibility/AXGeometryManager.h

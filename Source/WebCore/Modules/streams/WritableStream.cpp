@@ -63,6 +63,11 @@ InternalWritableStream& WritableStream::internalWritableStream()
     return m_internalWritableStream.get();
 }
 
+ExceptionOr<Ref<InternalWritableStream>> WritableStream::createInternalWritableStream(JSDOMGlobalObject& globalObject, Ref<WritableStreamSink>&& sink)
+{
+    return InternalWritableStream::createFromUnderlyingSink(globalObject, toJSNewlyCreated(&globalObject, &globalObject, WTFMove(sink)), JSC::jsUndefined());
+}
+
 ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& globalObject, JSC::JSValue underlyingSink, JSC::JSValue strategy)
 {
     auto result = InternalWritableStream::createFromUnderlyingSink(*JSC::jsCast<JSDOMGlobalObject*>(&globalObject), underlyingSink, strategy);

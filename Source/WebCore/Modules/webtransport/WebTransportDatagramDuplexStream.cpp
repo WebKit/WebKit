@@ -26,65 +26,102 @@
 #include "config.h"
 #include "WebTransportDatagramDuplexStream.h"
 
+#include "JSDOMPromise.h"
 #include "ReadableStream.h"
 #include "WritableStream.h"
 
 namespace WebCore {
 
-Ref<WebTransportDatagramDuplexStream> WebTransportDatagramDuplexStream::create()
+Ref<WebTransportDatagramDuplexStream> WebTransportDatagramDuplexStream::create(Ref<ReadableStream>&& readable, Ref<WritableStream>&& writable)
 {
-    return adoptRef(*new WebTransportDatagramDuplexStream());
+    return adoptRef(*new WebTransportDatagramDuplexStream(WTFMove(readable), WTFMove(writable)));
 }
 
-ExceptionOr<Ref<ReadableStream>> WebTransportDatagramDuplexStream::readable(JSC::JSGlobalObject& globalObject)
+WebTransportDatagramDuplexStream::WebTransportDatagramDuplexStream(Ref<ReadableStream>&& readable, Ref<WritableStream>&& writable)
+    : m_readable(WTFMove(readable))
+    , m_writable(WTFMove(writable))
 {
-    return ReadableStream::create(globalObject, std::nullopt, std::nullopt);
 }
 
-ExceptionOr<Ref<WritableStream>> WebTransportDatagramDuplexStream::writable(JSC::JSGlobalObject& globalObject)
+WebTransportDatagramDuplexStream::~WebTransportDatagramDuplexStream() = default;
+
+ReadableStream& WebTransportDatagramDuplexStream::readable()
 {
-    return WritableStream::create(globalObject, std::nullopt, std::nullopt);
+    return m_readable.get();
+}
+
+WritableStream& WebTransportDatagramDuplexStream::writable()
+{
+    return m_writable.get();
 }
 
 unsigned WebTransportDatagramDuplexStream::maxDatagramSize()
 {
-    return 0;
+    return m_outgoingMaxDatagramSize;
 }
 
 double WebTransportDatagramDuplexStream::incomingMaxAge()
 {
-    return 0;
+    return m_incomingDatagramsExpirationDuration;
 }
 
 double WebTransportDatagramDuplexStream::outgoingMaxAge()
 {
-    return 0;
+    return m_outgoingDatagramsExpirationDuration;
 }
 
 double WebTransportDatagramDuplexStream::incomingHighWaterMark()
 {
-    return 0;
+    return m_incomingDatagramsHighWaterMark;
 }
 
 double WebTransportDatagramDuplexStream::outgoingHighWaterMark()
 {
-    return 0;
+    return m_outgoingDatagramsHighWaterMark;
 }
 
-void WebTransportDatagramDuplexStream::setIncomingMaxAge(double)
+ExceptionOr<void> WebTransportDatagramDuplexStream::setIncomingMaxAge(double maxAge)
 {
+    // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-incomingmaxage
+    if (std::isnan(maxAge) || maxAge < 0)
+        return Exception { RangeError };
+    if (!maxAge)
+        maxAge = std::numeric_limits<double>::infinity();
+    m_incomingDatagramsExpirationDuration = maxAge;
+    return { };
 }
 
-void WebTransportDatagramDuplexStream::setOutgoingMaxAge(double)
+ExceptionOr<void> WebTransportDatagramDuplexStream::setOutgoingMaxAge(double maxAge)
 {
+    // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-outgoingmaxage
+    if (std::isnan(maxAge) || maxAge < 0)
+        return Exception { RangeError };
+    if (!maxAge)
+        maxAge = std::numeric_limits<double>::infinity();
+    m_outgoingDatagramsExpirationDuration = maxAge;
+    return { };
 }
 
-void WebTransportDatagramDuplexStream::setIncomingHighWaterMark(double)
+ExceptionOr<void> WebTransportDatagramDuplexStream::setIncomingHighWaterMark(double mark)
 {
+    // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-incominghighwatermark
+    if (std::isnan(mark) || mark < 0)
+        return Exception { RangeError };
+    if (mark < 1)
+        mark = 1;
+    m_incomingDatagramsHighWaterMark = mark;
+    return { };
 }
 
-void WebTransportDatagramDuplexStream::setOutgoingHighWaterMark(double)
+ExceptionOr<void> WebTransportDatagramDuplexStream::setOutgoingHighWaterMark(double mark)
 {
+    // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-outgoinghighwatermark
+    if (std::isnan(mark) || mark < 0)
+        return Exception { RangeError };
+    if (mark < 1)
+        mark = 1;
+    m_outgoingDatagramsHighWaterMark = mark;
+    return { };
 }
 
 }

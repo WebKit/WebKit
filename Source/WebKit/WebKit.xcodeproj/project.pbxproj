@@ -7484,6 +7484,12 @@
 		F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentURLPattern.h; sourceTree = "<group>"; };
 		F634445512A885C8000612D8 /* APISecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISecurityOrigin.h; sourceTree = "<group>"; };
 		F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerMac.mm; sourceTree = "<group>"; };
+		FA651BA42AA3CBB500747576 /* NetworkTransportBidirectionalStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportBidirectionalStream.h; sourceTree = "<group>"; };
+		FA651BA52AA3CBB500747576 /* NetworkTransportBidirectionalStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportBidirectionalStream.cpp; sourceTree = "<group>"; };
+		FA651BA62AA3CBB600747576 /* NetworkTransportReceiveStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportReceiveStream.cpp; sourceTree = "<group>"; };
+		FA651BA72AA3CBB600747576 /* NetworkTransportReceiveStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportReceiveStream.h; sourceTree = "<group>"; };
+		FA651BAE2AA3E5FB00747576 /* WebTransportSendStreamSink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebTransportSendStreamSink.h; path = Network/WebTransportSendStreamSink.h; sourceTree = "<group>"; };
+		FA651BAF2AA3E5FB00747576 /* WebTransportSendStreamSink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebTransportSendStreamSink.cpp; path = Network/WebTransportSendStreamSink.cpp; sourceTree = "<group>"; };
 		FA96E4AC2AA90A1E0090C5A3 /* WebHistoryItemClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebHistoryItemClient.cpp; sourceTree = "<group>"; };
 		FA96E4AD2AA90A1E0090C5A3 /* WebHistoryItemClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemClient.h; sourceTree = "<group>"; };
 		FA9CD6332A01B21700EA5CAC /* NetworkOriginAccessPatterns.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkOriginAccessPatterns.cpp; sourceTree = "<group>"; };
@@ -7491,6 +7497,16 @@
 		FAA4E2FE2A1575A3003F5E50 /* WebFrameLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameLoaderClient.cpp; sourceTree = "<group>"; };
 		FAA4E2FF2A1575A4003F5E50 /* WebFrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameLoaderClient.h; sourceTree = "<group>"; };
 		FAC3C3BA2A93E561001E2EB8 /* RemoteScrollingCoordinatorTransaction.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteScrollingCoordinatorTransaction.serialization.in; sourceTree = "<group>"; };
+		FAC849872A9E92B600D407EF /* NetworkTransportSession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportSession.cpp; sourceTree = "<group>"; };
+		FAC849882A9E92B600D407EF /* NetworkTransportSession.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkTransportSession.messages.in; sourceTree = "<group>"; };
+		FAC849892A9E92B600D407EF /* NetworkTransportSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportSession.h; sourceTree = "<group>"; };
+		FAC8498B2A9E92DE00D407EF /* WebTransportSession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebTransportSession.cpp; path = Network/WebTransportSession.cpp; sourceTree = "<group>"; };
+		FAC8498C2A9E92DE00D407EF /* WebTransportSession.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = WebTransportSession.messages.in; path = Network/WebTransportSession.messages.in; sourceTree = "<group>"; };
+		FAC8498E2A9E92DF00D407EF /* WebTransportSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebTransportSession.h; path = Network/WebTransportSession.h; sourceTree = "<group>"; };
+		FAC8499D2AA01B0C00D407EF /* WebTransportReceiveStreamSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebTransportReceiveStreamSource.cpp; path = Network/WebTransportReceiveStreamSource.cpp; sourceTree = "<group>"; };
+		FAC8499E2AA01B0C00D407EF /* WebTransportReceiveStreamSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebTransportReceiveStreamSource.h; path = Network/WebTransportReceiveStreamSource.h; sourceTree = "<group>"; };
+		FAC849A02AA01B7900D407EF /* NetworkTransportSendStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportSendStream.cpp; sourceTree = "<group>"; };
+		FAC849A22AA01B7900D407EF /* NetworkTransportSendStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportSendStream.h; sourceTree = "<group>"; };
 		FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APISerializedScriptValueCocoa.mm; sourceTree = "<group>"; };
 		FEDBDCD41E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorInterruptDispatcherMessageReceiver.cpp; sourceTree = "<group>"; };
 		FEDBDCD51E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInterruptDispatcherMessages.h; sourceTree = "<group>"; };
@@ -10861,6 +10877,13 @@
 				417915B02256C0D600D6F97E /* WebSocketChannelManager.h */,
 				5C7706731D111D8B0012700F /* WebSocketProvider.cpp */,
 				5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */,
+				FAC8499D2AA01B0C00D407EF /* WebTransportReceiveStreamSource.cpp */,
+				FAC8499E2AA01B0C00D407EF /* WebTransportReceiveStreamSource.h */,
+				FA651BAF2AA3E5FB00747576 /* WebTransportSendStreamSink.cpp */,
+				FA651BAE2AA3E5FB00747576 /* WebTransportSendStreamSink.h */,
+				FAC8498B2A9E92DE00D407EF /* WebTransportSession.cpp */,
+				FAC8498E2A9E92DF00D407EF /* WebTransportSession.h */,
+				FAC8498C2A9E92DE00D407EF /* WebTransportSession.messages.in */,
 			);
 			name = Network;
 			sourceTree = "<group>";
@@ -10883,6 +10906,7 @@
 				468386652763FA1B00CF9182 /* SharedWorker */,
 				93085DC226E1BB65000EC6A7 /* storage */,
 				413075971DE84ED70039EC69 /* webrtc */,
+				FA651BA82AA3CBEE00747576 /* webtransport */,
 				41E4C3F529A3E38900EA6B3A /* BackgroundFetchLoad.cpp */,
 				41E4C3F429A3E38800EA6B3A /* BackgroundFetchLoad.h */,
 				5C826D6E26D58A16008AEC91 /* DatabaseUtilities.cpp */,
@@ -14288,6 +14312,22 @@
 				F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */,
 			);
 			path = mac;
+			sourceTree = "<group>";
+		};
+		FA651BA82AA3CBEE00747576 /* webtransport */ = {
+			isa = PBXGroup;
+			children = (
+				FA651BA52AA3CBB500747576 /* NetworkTransportBidirectionalStream.cpp */,
+				FA651BA42AA3CBB500747576 /* NetworkTransportBidirectionalStream.h */,
+				FA651BA62AA3CBB600747576 /* NetworkTransportReceiveStream.cpp */,
+				FA651BA72AA3CBB600747576 /* NetworkTransportReceiveStream.h */,
+				FAC849A02AA01B7900D407EF /* NetworkTransportSendStream.cpp */,
+				FAC849A22AA01B7900D407EF /* NetworkTransportSendStream.h */,
+				FAC849872A9E92B600D407EF /* NetworkTransportSession.cpp */,
+				FAC849892A9E92B600D407EF /* NetworkTransportSession.h */,
+				FAC849882A9E92B600D407EF /* NetworkTransportSession.messages.in */,
+			);
+			path = webtransport;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

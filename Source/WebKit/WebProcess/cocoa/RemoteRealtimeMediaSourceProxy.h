@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include <WebCore/RealtimeMediaSource.h>
+#include <wtf/Deque.h>
 
 namespace IPC {
 class Connection;
