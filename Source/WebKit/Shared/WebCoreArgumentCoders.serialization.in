@@ -2569,6 +2569,15 @@ class WebCore::TransformOperations {
     std::optional<WebCore::SourceBrush::Brush> brush();
 }
 
+header: <WebCore/ThreadSafeDataBuffer.h>
+[RefCounted, CustomHeader] class WebCore::ThreadSafeDataBufferImpl {
+    Vector<uint8_t> m_data;
+};
+
+class WebCore::ThreadSafeDataBuffer {
+    RefPtr<WebCore::ThreadSafeDataBufferImpl> m_impl;
+};
+
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 header: <WebCore/GraphicsContextGLAttributes.h>
 [CustomHeader] enum class WebCore::GraphicsContextGLPowerPreference : uint8_t {
