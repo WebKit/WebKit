@@ -90,7 +90,8 @@ RetainPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&& vector)
 OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)
 {
     __block auto blockEncoder = WTFMove(encoder);
-    auto dispatchData = adoptNS(dispatch_data_create(blockEncoder->buffer(), blockEncoder->bufferSize(), dispatch_get_main_queue(), ^{
+    auto encoderData = blockEncoder->data();
+    auto dispatchData = adoptNS(dispatch_data_create(encoderData.data(), encoderData.size_bytes(), dispatch_get_main_queue(), ^{
         // Explicitly clear out the encoder, destroying it.
         blockEncoder.moveToUniquePtr();
     }));

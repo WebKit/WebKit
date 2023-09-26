@@ -288,7 +288,8 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
     // Write the outgoing message.
 
-    if (::WriteFile(m_connectionPipe, encoder->buffer(), encoder->bufferSize(), 0, &m_writeListener.state())) {
+    auto encoderData = encoder.data();
+    if (::WriteFile(m_connectionPipe, encoderData.data(), encoderData.size_bytes(), 0, &m_writeListener.state())) {
         // We successfully sent this message.
         return true;
     }

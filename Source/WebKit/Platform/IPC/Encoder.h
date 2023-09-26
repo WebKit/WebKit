@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,10 @@
 #pragma once
 
 #include "Attachment.h"
+#include "DataReference.h"
 #include "MessageNames.h"
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Algorithms.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -79,8 +81,7 @@ public:
         return *this;
     }
 
-    uint8_t* buffer() const { return m_buffer; }
-    size_t bufferSize() const { return m_bufferSize; }
+    DataReference data() const { return m_data; }
 
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
@@ -89,7 +90,7 @@ public:
     static constexpr bool isIPCEncoder = true;
 
 private:
-    uint8_t* grow(size_t alignment, size_t);
+    MutableDataReference grow(size_t alignment, size_t);
 
     bool hasAttachments() const;
 
@@ -102,11 +103,8 @@ private:
 
     uint8_t m_inlineBuffer[512];
 
-    uint8_t* m_buffer { m_inlineBuffer };
-    uint8_t* m_bufferPointer { m_inlineBuffer };
-    
-    size_t m_bufferSize { 0 };
-    size_t m_bufferCapacity { sizeof(m_inlineBuffer) };
+    MutableDataReference m_buffer { m_inlineBuffer, sizeof(m_inlineBuffer) / sizeof(m_inlineBuffer[0]) };
+    MutableDataReference m_data { m_buffer.subspan(0, 0) };
 
     Vector<Attachment> m_attachments;
 };
@@ -114,13 +112,11 @@ private:
 template<typename T, size_t Extent>
 inline void Encoder::encodeSpan(const std::span<T, Extent>& span)
 {
-    auto* data = reinterpret_cast<const uint8_t*>(span.data());
-    size_t size = span.size_bytes();
     constexpr size_t alignment = alignof(T);
-    ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
+    RELEASE_ASSERT(!(reinterpret_cast<uintptr_t>(span.data()) % alignment));
 
-    uint8_t* buffer = grow(alignment, size);
-    memcpy(buffer, data, size);
+    auto dataSubspan = grow(alignment, span.size_bytes());
+    memcpySpan(spanReinterpretCast<std::remove_const_t<T>>(dataSubspan), span);
 }
 
 template<typename T>

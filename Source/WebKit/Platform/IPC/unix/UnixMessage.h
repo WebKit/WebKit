@@ -81,8 +81,8 @@ class UnixMessage {
 public:
     UnixMessage(Encoder& encoder)
         : m_attachments(encoder.releaseAttachments())
-        , m_messageInfo(encoder.bufferSize(), m_attachments.size())
-        , m_body(encoder.buffer())
+        , m_messageInfo(encoder.data().size_bytes(), m_attachments.size())
+        , m_body(encoder.data().data())
     {
     }
 
