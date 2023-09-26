@@ -1116,6 +1116,22 @@ TEST(WGSLParserTests, RedFrag)
     EXPECT_EQ(shader->functions().size(), 1u);
 }
 
+TEST(WGSLParserTests, TrailingSemicolon)
+{
+    auto shader = parse(
+        "fn f(){\n"
+        "  ;;;\n"
+        "}\n"
+        ";;;\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+}
+
 TEST(WGSLParserTests, GlobalVarWithoutTypeOrInitializer)
 {
     auto shader = parse("var x;"_s);

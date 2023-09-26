@@ -356,6 +356,11 @@ Result<void> Parser<Lexer>::parseShader()
     disambiguateTemplates();
 
     while (current().type != TokenType::EndOfFile) {
+        if (current().type == TokenType::Semicolon) {
+            consume();
+            continue;
+        }
+
         auto globalExpected = parseGlobalDecl();
         if (!globalExpected)
             return makeUnexpected(globalExpected.error());
@@ -494,9 +499,6 @@ template<typename Lexer>
 Result<void> Parser<Lexer>::parseGlobalDecl()
 {
     START_PARSE();
-
-    while (current().type == TokenType::Semicolon)
-        consume();
 
     if (current().type == TokenType::KeywordConst) {
         PARSE(variable, Variable);
@@ -941,9 +943,6 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
 {
     START_PARSE();
 
-    while (current().type == TokenType::Semicolon)
-        consume();
-
     switch (current().type) {
     case TokenType::BraceLeft: {
         PARSE(compoundStmt, CompoundStatement);
@@ -1022,6 +1021,11 @@ Result<AST::CompoundStatement::Ref> Parser<Lexer>::parseCompoundStatement()
 
     AST::Statement::List statements;
     while (current().type != TokenType::BraceRight) {
+        if (current().type == TokenType::Semicolon) {
+            consume();
+            continue;
+        }
+
         PARSE(stmt, Statement);
         statements.append(WTFMove(stmt));
     }
