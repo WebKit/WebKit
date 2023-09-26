@@ -152,14 +152,22 @@ InlineLayoutPoint RubyFormattingContext::annotationPosition(const Box& rubyBaseL
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!isInterlinearAnnotation(annotationBox)) {
+    if (!annotationBox) {
         ASSERT_NOT_REACHED();
         return { };
     }
-    auto annotationMarginBoxHeight = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxHeight() };
-    if (annotationBox->style().rubyPosition() == RubyPosition::Before)
-        return { { }, -annotationMarginBoxHeight };
-    return { { }, parentFormattingContext().geometryForBox(rubyBaseLayoutBox).marginBoxHeight() };
+    if (isInterlinearAnnotation(annotationBox)) {
+        auto annotationMarginBoxHeight = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxHeight() };
+        if (annotationBox->style().rubyPosition() == RubyPosition::Before)
+            return { { }, -annotationMarginBoxHeight };
+        return { { }, parentFormattingContext().geometryForBox(rubyBaseLayoutBox).marginBoxHeight() };
+    }
+    // Inter-character annotation box is stretched to the size of the base content box and vertically centered.
+    auto& annotationBoxGeometry = parentFormattingContext().geometryForBox(*annotationBox);
+    auto& rubyBaseGeometry = parentFormattingContext().geometryForBox(rubyBaseLayoutBox);
+    auto rubyBaseRight = BoxGeometry::marginBoxRect(rubyBaseGeometry).right();
+
+    return { rubyBaseRight, (rubyBaseGeometry.contentBoxHeight() - annotationBoxGeometry.contentBoxHeight()) / 2 };
 }
 
 RubyFormattingContext::OverUnder RubyFormattingContext::annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox)

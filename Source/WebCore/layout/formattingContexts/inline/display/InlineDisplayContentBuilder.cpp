@@ -299,8 +299,11 @@ void InlineDisplayContentBuilder::appendHardLineBreakDisplayBox(const Line::Run&
 void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::Run& lineRun, const InlineRect& borderBoxRect, InlineDisplay::Boxes& boxes)
 {
     ASSERT(lineRun.layoutBox().isAtomicInlineLevelBox());
-
     auto& layoutBox = lineRun.layoutBox();
+
+    if (layoutBox.isRubyAnnotationBox())
+        return appendIntercharacterRubyAnnotationBox(lineRun, boxes);
+
     auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
     auto isContentful = true;
     auto inkOverflow = [&] {
@@ -454,7 +457,7 @@ void InlineDisplayContentBuilder::handleInlineBoxEnd(const Line::Run& lineRun, c
         m_interlinearRubyColumnRangeList.last() = { m_interlinearRubyColumnRangeList.last().begin(), boxes.size() - 1 };
         return;
     }
-    // FIXME: Add inter-character annotation box placement.
+    m_interCharacterRubyBase = &lineRun.layoutBox();
 }
 
 void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box& layoutBox, InlineDisplay::Boxes& boxes)
@@ -492,6 +495,30 @@ void InlineDisplayContentBuilder::appendInterlinearRubyAnnotationBox(const Box& 
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
         , annotationBox
         , UBIDI_DEFAULT_LTR
+        , annoationBorderBox
+        , annoationBorderBox
+        , { }
+        , { }
+        , true
+        , isLineFullyTruncatedInBlockDirection()
+    });
+}
+
+void InlineDisplayContentBuilder::appendIntercharacterRubyAnnotationBox(const Line::Run& lineRun, InlineDisplay::Boxes& boxes)
+{
+    auto& intercharacterAnnotationBox = lineRun.layoutBox();
+    ASSERT(!intercharacterAnnotationBox.isInterlinearRubyAnnotationBox());
+    auto annotationBoxPosition = RubyFormattingContext { formattingContext() }.annotationPosition(*m_interCharacterRubyBase);
+
+    auto& annotationBoxGeometry = formattingState().boxGeometry(intercharacterAnnotationBox);
+    annotationBoxGeometry.setTopLeft(toLayoutPoint(annotationBoxPosition));
+
+    auto annoationBorderBox = InlineRect { annotationBoxPosition.y(), annotationBoxPosition.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
+
+    boxes.append({ m_lineIndex
+        , InlineDisplay::Box::Type::AtomicInlineLevelBox
+        , intercharacterAnnotationBox
+        , lineRun.bidiLevel()
         , annoationBorderBox
         , annoationBorderBox
         , { }
