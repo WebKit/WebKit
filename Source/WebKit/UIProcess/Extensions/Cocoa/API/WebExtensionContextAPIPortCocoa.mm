@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
 #import "Logging.h"
 #import "WebExtensionContentWorldType.h"
 #import "WebExtensionContextProxyMessages.h"
@@ -65,6 +66,11 @@ void WebExtensionContext::portPostMessage(WebExtensionContentWorldType targetCon
     case WebExtensionContentWorldType::ContentScript:
         sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(channelIdentifier, messageJSON));
         return;
+
+    case WebExtensionContentWorldType::Native:
+        if (auto nativePort = m_nativePortMap.get(channelIdentifier))
+            nativePort->receiveMessage(parseJSON(messageJSON, { JSONOptions::FragmentsAllowed }), std::nullopt);
+        return;
     }
 }
 
@@ -72,8 +78,7 @@ void WebExtensionContext::portDisconnect(WebExtensionContentWorldType sourceCont
 {
     RELEASE_LOG_DEBUG(Extensions, "Port for channel %{public}llu disconnected in %{public}@ world", channelIdentifier.toUInt64(), (NSString *)toDebugString(sourceContentWorldType));
 
-    m_portQueuedMessages.remove({ sourceContentWorldType, channelIdentifier });
-    m_ports.remove({ sourceContentWorldType, channelIdentifier });
+    removePort(sourceContentWorldType, channelIdentifier);
 
     firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
 }
@@ -86,6 +91,26 @@ void WebExtensionContext::addPorts(WebExtensionContentWorldType contentWorldType
 
     for (size_t i = 0; i < totalPortObjects; ++i)
         m_ports.add({ contentWorldType, channelIdentifier });
+}
+
+void WebExtensionContext::removePort(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier)
+{
+    RELEASE_LOG_DEBUG(Extensions, "Removed 1 port for channel %{public}llu in %{public}@ world", channelIdentifier.toUInt64(), (NSString *)toDebugString(contentWorldType));
+
+    m_portQueuedMessages.remove({ contentWorldType, channelIdentifier });
+    m_ports.remove({ contentWorldType, channelIdentifier });
+}
+
+void WebExtensionContext::addNativePort(WebExtensionMessagePort& nativePort)
+{
+    addPorts(WebExtensionContentWorldType::Native, nativePort.channelIdentifier(), 1);
+    m_nativePortMap.add(nativePort.channelIdentifier(), nativePort);
+}
+
+void WebExtensionContext::removeNativePort(WebExtensionMessagePort& nativePort)
+{
+    removePort(WebExtensionContentWorldType::Native, nativePort.channelIdentifier());
+    m_nativePortMap.remove(nativePort.channelIdentifier());
 }
 
 bool WebExtensionContext::isPortConnected(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier)
@@ -106,7 +131,7 @@ bool WebExtensionContext::isPortConnected(WebExtensionContentWorldType sourceCon
     return sourceWorldCount && targetWorldCount;
 }
 
-void WebExtensionContext::fireQueuedPortMessageEventIfNeeded(WebProcessProxy& process, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier)
+void WebExtensionContext::fireQueuedPortMessageEventsIfNeeded(WebProcessProxy& process, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier)
 {
     auto messages = m_portQueuedMessages.get({ targetContentWorldType, channelIdentifier });
     if (messages.isEmpty())
@@ -116,6 +141,28 @@ void WebExtensionContext::fireQueuedPortMessageEventIfNeeded(WebProcessProxy& pr
 
     for (auto& messageJSON : messages)
         process.send(Messages::WebExtensionContextProxy::DispatchPortMessageEvent(channelIdentifier, messageJSON), identifier());
+}
+
+void WebExtensionContext::sendQueuedNativePortMessagesIfNeeded(WebExtensionPortChannelIdentifier channelIdentifier)
+{
+    constexpr auto targetContentWorldType = WebExtensionContentWorldType::Native;
+    auto messages = m_portQueuedMessages.get({ targetContentWorldType, channelIdentifier });
+    if (messages.isEmpty())
+        return;
+
+    auto nativePort = m_nativePortMap.get(channelIdentifier);
+    if (!nativePort)
+        return;
+
+    RELEASE_LOG_DEBUG(Extensions, "Sending %{public}zu queued message(s) to port channel %{public}llu in native world", messages.size(), channelIdentifier.toUInt64());
+
+    for (auto& messageJSON : messages) {
+        id message = parseJSON(messageJSON, { JSONOptions::FragmentsAllowed });
+        nativePort->sendMessage(message, [=](WebExtensionMessagePort::Error error) {
+            if (error)
+                nativePort->disconnect(error);
+        });
+    }
 }
 
 void WebExtensionContext::clearQueuedPortMessages(WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier)
@@ -143,6 +190,11 @@ void WebExtensionContext::firePortDisconnectEventIfNeeded(WebExtensionContentWor
 
     case WebExtensionContentWorldType::ContentScript:
         sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortDisconnectEvent(channelIdentifier));
+        return;
+
+    case WebExtensionContentWorldType::Native:
+        if (auto nativePort = m_nativePortMap.get(channelIdentifier))
+            nativePort->reportDisconnection(std::nullopt);
         return;
     }
 }

@@ -109,6 +109,7 @@
 #import "_WKWebExtensionControllerInternal.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
+#import "_WKWebExtensionMessagePortInternal.h"
 #endif
 
 static const size_t minimumObjectAlignment = alignof(std::aligned_storage<std::numeric_limits<size_t>::max()>::type);
@@ -413,6 +414,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::WebExtensionMatchPattern:
         wrapper = [_WKWebExtensionMatchPattern alloc];
+        break;
+
+    case Type::WebExtensionMessagePort:
+        wrapper = [_WKWebExtensionMessagePort alloc];
         break;
 #endif
 

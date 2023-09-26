@@ -32,9 +32,12 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionMessagePort.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionUtilities.h"
+#import "_WKWebExtensionControllerDelegatePrivate.h"
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
@@ -99,7 +102,7 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
     for (auto& process : mainWorldProcesses) {
         process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, &handledCount, protectedThis = Ref { *this }](size_t firedEventCount) mutable {
             protectedThis->addPorts(targetContentWorldType, channelIdentifier, firedEventCount);
-            protectedThis->fireQueuedPortMessageEventIfNeeded(process, targetContentWorldType, channelIdentifier);
+            protectedThis->fireQueuedPortMessageEventsIfNeeded(process, targetContentWorldType, channelIdentifier);
             protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
             if (++handledCount >= totalExpected)
                 protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
@@ -109,6 +112,65 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
     completionHandler(std::nullopt);
 }
 
+void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)
+{
+    id message = parseJSON(messageJSON, { JSONOptions::FragmentsAllowed });
+
+    auto delegate = extensionController()->delegate();
+    if (![delegate respondsToSelector:@selector(webExtensionController:sendMessage:toApplicationIdentifier:forExtensionContext:replyHandler:)]) {
+        // FIXME: <https://webkit.org/b/262081> Implement default native messaging with NSExtension.
+        completionHandler(std::nullopt, toErrorString(@"runtime.sendNativeMessage()", nil, @"native messaging is not supported"));
+        return;
+    }
+
+    auto *applicationIdentifier = !applicationID.isNull() ? (NSString *)applicationID : nil;
+
+    [delegate webExtensionController:extensionController()->wrapper() sendMessage:message toApplicationIdentifier:applicationIdentifier forExtensionContext:wrapper() replyHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (id replyMessage, NSError *error) mutable {
+        if (error) {
+            completionHandler(std::nullopt, error.localizedDescription);
+            return;
+        }
+
+        if (replyMessage)
+            THROW_UNLESS(isValidJSONObject(replyMessage, { JSONOptions::FragmentsAllowed }), @"Reply message is not JSON-serializable");
+
+        completionHandler(encodeJSONString(replyMessage, { JSONOptions::FragmentsAllowed }), std::nullopt);
+    }).get()];
+}
+
+void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier channelIdentifier, CompletionHandler<void(std::optional<String> error)>&& completionHandler)
+{
+    // Add 1 for the starting port here so disconnect will balance with a decrement.
+    constexpr auto sourceContentWorldType = WebExtensionContentWorldType::Main;
+    addPorts(sourceContentWorldType, channelIdentifier, 1);
+
+    constexpr auto targetContentWorldType = WebExtensionContentWorldType::Native;
+    auto nativePort = WebExtensionMessagePort::create(*this, applicationID, channelIdentifier);
+
+    auto delegate = extensionController()->delegate();
+    if (![delegate respondsToSelector:@selector(webExtensionController:connectUsingMessagePort:forExtensionContext:completionHandler:)]) {
+        // FIXME: <https://webkit.org/b/262081> Implement default native messaging with NSExtension.
+        completionHandler(toErrorString(@"runtime.connectNative()", nil, @"native messaging is not supported"));
+        return;
+    }
+
+    [delegate webExtensionController:extensionController()->wrapper() connectUsingMessagePort:nativePort->wrapper() forExtensionContext:wrapper() completionHandler:makeBlockPtr([=, completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }] (NSError *error) mutable {
+        if (error) {
+            completionHandler(error.localizedDescription);
+            nativePort->disconnect(toWebExtensionMessagePortError(error));
+            protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+            return;
+        }
+
+        protectedThis->addNativePort(nativePort);
+
+        completionHandler(std::nullopt);
+
+        protectedThis->sendQueuedNativePortMessagesIfNeeded(channelIdentifier);
+        protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+        protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+    }).get()];
+}
 
 } // namespace WebKit
 

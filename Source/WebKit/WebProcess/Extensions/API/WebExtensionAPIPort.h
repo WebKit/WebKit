@@ -65,6 +65,15 @@ public:
     WebExtensionAPIEvent& onMessage();
     WebExtensionAPIEvent& onDisconnect();
 
+    explicit WebExtensionAPIPort(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionContentWorldType targetContentWorldType, const String& name)
+        : WebExtensionAPIObject(forMainWorld, runtime, context)
+        , m_targetContentWorldType(targetContentWorldType)
+        , m_channelIdentifier(WebExtensionPortChannelIdentifier::generate())
+        , m_name(name)
+    {
+        add();
+    }
+
     explicit WebExtensionAPIPort(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionContentWorldType targetContentWorldType, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
         : WebExtensionAPIObject(forMainWorld, runtime, context)
         , m_targetContentWorldType(targetContentWorldType)
@@ -105,7 +114,7 @@ private:
 
     String m_name;
     RetainPtr<JSValue> m_error;
-    WebExtensionMessageSenderParameters m_senderParameters;
+    std::optional<WebExtensionMessageSenderParameters> m_senderParameters;
 
     RefPtr<WebExtensionAPIEvent> m_onMessage;
     RefPtr<WebExtensionAPIEvent> m_onDisconnect;

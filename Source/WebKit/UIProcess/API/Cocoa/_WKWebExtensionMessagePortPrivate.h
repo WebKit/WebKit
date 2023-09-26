@@ -23,39 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/_WKWebExtensionMessagePort.h>
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+@interface _WKWebExtensionMessagePort ()
 
-#include <wtf/text/WTFString.h>
-
-namespace WebKit {
-
-enum class WebExtensionContentWorldType : uint8_t {
-    Main,
-    ContentScript,
-    Native,
-};
-
-inline String toDebugString(WebExtensionContentWorldType contentWorldType)
-{
-    switch (contentWorldType) {
-    case WebExtensionContentWorldType::Main:
-        return "main"_s;
-    case WebExtensionContentWorldType::ContentScript:
-        return "content script"_s;
-    case WebExtensionContentWorldType::Native:
-        return "native"_s;
-    }
-}
-
-} // namespace WebKit
-
-namespace WTF {
-
-template<> struct DefaultHash<WebKit::WebExtensionContentWorldType> : IntHash<WebKit::WebExtensionContentWorldType> { };
-template<> struct HashTraits<WebKit::WebExtensionContentWorldType> : StrongEnumHashTraits<WebKit::WebExtensionContentWorldType> { };
-
-} // namespace WTF
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+@end

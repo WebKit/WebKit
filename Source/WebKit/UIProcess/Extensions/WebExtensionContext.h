@@ -39,6 +39,7 @@
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionMatchPattern.h"
+#include "WebExtensionMessagePort.h"
 #include "WebExtensionPortChannelIdentifier.h"
 #include "WebExtensionTab.h"
 #include "WebExtensionTabIdentifier.h"
@@ -87,7 +88,7 @@ class WebExtensionContext : public API::ObjectImpl<API::Object::Type::WebExtensi
 
 public:
     template<typename... Args>
-    static Ref<WebExtension> create(Args&&... args)
+    static Ref<WebExtensionContext> create(Args&&... args)
     {
         return adoptRef(*new WebExtensionContext(std::forward<Args>(args)...));
     }
@@ -130,6 +131,7 @@ public:
     using PortWorldPair = std::pair<WebExtensionContentWorldType, WebExtensionPortChannelIdentifier>;
     using PortCountedSet = HashCountedSet<PortWorldPair>;
     using PortQueuedMessageMap = HashMap<PortWorldPair, Vector<String>>;
+    using NativePortMap = HashMap<WebExtensionPortChannelIdentifier, Ref<WebExtensionMessagePort>>;
 
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
@@ -301,6 +303,8 @@ public:
 #endif
 
 private:
+    friend class WebExtensionMessagePort;
+
     explicit WebExtensionContext();
 
     String stateFilePath() const;
@@ -376,14 +380,20 @@ private:
     void portPostMessage(WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier, const String& messageJSON);
     void portDisconnect(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
     void addPorts(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, size_t totalPortObjects);
+    void removePort(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
+    void addNativePort(WebExtensionMessagePort&);
+    void removeNativePort(WebExtensionMessagePort&);
     bool isPortConnected(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
     void clearQueuedPortMessages(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
-    void fireQueuedPortMessageEventIfNeeded(WebProcessProxy&, WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
+    void fireQueuedPortMessageEventsIfNeeded(WebProcessProxy&, WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
+    void sendQueuedNativePortMessagesIfNeeded(WebExtensionPortChannelIdentifier);
     void firePortDisconnectEventIfNeeded(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
 
     // Runtime APIs
     void runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
     void runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> error)>&&);
+    void runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
+    void runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier, CompletionHandler<void(std::optional<String> error)>&&);
 
     // Tabs APIs
     void tabsCreate(WebPageProxyIdentifier, const WebExtensionTabParameters&, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
@@ -483,6 +493,7 @@ private:
 
     PortCountedSet m_ports;
     PortQueuedMessageMap m_portQueuedMessages;
+    NativePortMap m_nativePortMap;
 
     WindowIdentifierMap m_windowMap;
     Vector<WebExtensionWindowIdentifier> m_openWindowIdentifiers;

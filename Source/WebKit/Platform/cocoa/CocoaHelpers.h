@@ -92,6 +92,8 @@ enum class JSONOptions {
 
 using JSONOptionSet = OptionSet<JSONOptions>;
 
+bool isValidJSONObject(id, JSONOptionSet = { });
+
 id parseJSON(NSString *, JSONOptionSet = { }, NSError ** = nullptr);
 id parseJSON(NSData *, JSONOptionSet = { }, NSError ** = nullptr);
 id parseJSON(API::Data&, JSONOptionSet = { }, NSError ** = nullptr);

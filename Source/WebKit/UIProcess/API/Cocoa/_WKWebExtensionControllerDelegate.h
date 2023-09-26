@@ -32,6 +32,7 @@
 @class _WKWebExtensionContext;
 @class _WKWebExtensionController;
 @class _WKWebExtensionMatchPattern;
+@class _WKWebExtensionMessagePort;
 @class _WKWebExtensionTabCreationOptions;
 @class _WKWebExtensionWindowCreationOptions;
 @protocol _WKWebExtensionTab;
@@ -135,6 +136,34 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  the request is assumed to have been denied.
  */
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionMatchPatterns:in:for:completionHandler:));
+
+/*!
+ @abstract Called when an extension context wants to send a one-time message to an application.
+ @param controller The web extension controller that is managing the extension.
+ @param message The message to be sent.
+ @param applicationIdentifier The unique identifier for the application, or \c nil if none was specified.
+ @param extensionContext The context in which the web extension is running.
+ @param replyHandler A block to be called with a JSON-serializable reply message or an error.
+ @discussion This method should be implemented by the app to handle one-off messages to applications.
+ If not implemented, the default behavior is to pass the message to the app extension handler within the extension's bundle,
+ if the extension was loaded from an app extension bundle; otherwise, no action is performed if not implemented.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller sendMessage:(id)message toApplicationIdentifier:(nullable NSString *)applicationIdentifier forExtensionContext:(_WKWebExtensionContext *)extensionContext replyHandler:(void (^)(id _Nullable replyMessage, NSError * _Nullable error))replyHandler WK_SWIFT_ASYNC(5) NS_SWIFT_NAME(webExtensionController(_:sendMessage:to:for:replyHandler:));
+
+/*!
+ @abstract Called when an extension context wants to establish a persistent connection to an application.
+ @param controller The web extension controller that is managing the extension.
+ @param extensionContext The context in which the web extension is running.
+ @param port A port object for handling the message exchange.
+ @param completionHandler A block to be called when the connection is ready to use, taking an optional error object
+ as a parameter. If the connection is successfully established, the error parameter should be \c nil.
+ @discussion This method should be implemented by the app to handle establishing connections to applications.
+ The provided `WKWebExtensionPort` object can be used to handle message sending, receiving, and disconnection.
+ You should retain the port object for as long as the connection remains active. Releasing the port will disconnect it.
+ If not implemented, the default behavior is to pass the messages to the app extension handler within the extension's bundle,
+ if the extension was loaded from an app extension bundle; otherwise, no action is performed if not implemented.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller connectUsingMessagePort:(_WKWebExtensionMessagePort *)port forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError * _Nullable error))replyHandler NS_SWIFT_NAME(webExtensionController(_:connectUsingMessagePort:for:completionHandler:));
 
 @end
 

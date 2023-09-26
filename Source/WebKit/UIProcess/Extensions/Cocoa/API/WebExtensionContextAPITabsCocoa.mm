@@ -469,7 +469,7 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
 
     process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, frameIdentifier, senderParameters), [=, protectedThis = Ref { *this }](size_t firedEventCount) mutable {
         protectedThis->addPorts(targetContentWorldType, channelIdentifier, firedEventCount);
-        protectedThis->fireQueuedPortMessageEventIfNeeded(*process, targetContentWorldType, channelIdentifier);
+        protectedThis->fireQueuedPortMessageEventsIfNeeded(*process, targetContentWorldType, channelIdentifier);
         protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
         protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
     }, identifier());

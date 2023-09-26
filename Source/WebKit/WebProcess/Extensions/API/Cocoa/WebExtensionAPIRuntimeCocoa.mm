@@ -110,6 +110,18 @@ bool WebExtensionAPIRuntime::parseConnectOptions(NSDictionary *options, std::opt
     return true;
 }
 
+bool WebExtensionAPIRuntime::isPropertyAllowed(ASCIILiteral name, WebPage*)
+{
+    if (name == "connectNative"_s || name == "sendNativeMessage"_s) {
+        // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.
+        auto *permissions = objectForKey<NSArray>(extensionContext().manifest(), @"permissions", true, NSString.class);
+        return [permissions containsObject:@"nativeMessaging"];
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 NSURL *WebExtensionAPIRuntime::getURL(NSString *resourcePath, NSString **errorString)
 {
     URL baseURL = extensionContext().baseURL();
@@ -159,11 +171,11 @@ JSValue *WebExtensionAPIRuntime::lastError()
     return m_lastError.get();
 }
 
-void WebExtensionAPIRuntime::sendMessage(WebFrame *frame, NSString *extensionID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIRuntime::sendMessage(WebFrame *frame, NSString *extensionID, NSString *messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
-    if (message.length > webExtensionMaxMessageLength) {
+    if (messageJSON.length > webExtensionMaxMessageLength) {
         *outExceptionString = toErrorString(nil, @"message", @"it exceeded the maximum allowed length");
         return;
     }
@@ -179,7 +191,7 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame *frame, NSString *extensionID,
         frame->url(),
     };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, message, sender), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, messageJSON, sender), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
         if (error) {
             callback->reportError(error.value());
             return;
@@ -216,6 +228,42 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame* frame, JSC
     auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), WebExtensionContentWorldType::Main, resolvedName, sender);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnect(extensionID, port->channelIdentifier(), resolvedName, sender), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
+        if (!error)
+            return;
+
+        port->setError(protectedThis->runtime().reportError(error.value(), globalContext.get()));
+        port->disconnect();
+    }, extensionContext().identifier());
+
+    return port;
+}
+
+void WebExtensionAPIRuntime::sendNativeMessage(WebFrame* frame, NSString *applicationID, NSString *messageJSON, Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendNativeMessage
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendNativeMessage(applicationID, messageJSON), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!replyJSON) {
+            callback->call();
+            return;
+        }
+
+        callback->call(parseJSON(replyJSON.value(), { JSONOptions::FragmentsAllowed }));
+    }, extensionContext().identifier());
+}
+
+RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebFrame* frame, JSContextRef context, NSString *applicationID)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connectNative
+
+    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), WebExtensionContentWorldType::Native, applicationID);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnectNative(applicationID, port->channelIdentifier()), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
         if (!error)
             return;
 
@@ -342,6 +390,10 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWo
     case WebExtensionContentWorldType::ContentScript:
         internalDispatchRuntimeMessageEvent(contentScriptWorld(), messageJSON, frameIdentifier, senderParameters, WTFMove(completionHandler));
         return;
+
+    case WebExtensionContentWorldType::Native:
+        ASSERT_NOT_REACHED();
+        return;
     }
 }
 
@@ -385,6 +437,10 @@ void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWo
 
     case WebExtensionContentWorldType::ContentScript:
         internalDispatchRuntimeConnectEvent(contentScriptWorld(), channelIdentifier, name, frameIdentifier, senderParameters, WTFMove(completionHandler));
+        return;
+
+    case WebExtensionContentWorldType::Native:
+        ASSERT_NOT_REACHED();
         return;
     }
 }

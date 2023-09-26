@@ -23,39 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "_WKWebExtensionMessagePortPrivate.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include <wtf/text/WTFString.h>
+#import "WKObject.h"
+#import "WebExtensionMessagePort.h"
 
 namespace WebKit {
-
-enum class WebExtensionContentWorldType : uint8_t {
-    Main,
-    ContentScript,
-    Native,
+template<> struct WrapperTraits<WebExtensionMessagePort> {
+    using WrapperClass = _WKWebExtensionMessagePort;
 };
-
-inline String toDebugString(WebExtensionContentWorldType contentWorldType)
-{
-    switch (contentWorldType) {
-    case WebExtensionContentWorldType::Main:
-        return "main"_s;
-    case WebExtensionContentWorldType::ContentScript:
-        return "content script"_s;
-    case WebExtensionContentWorldType::Native:
-        return "native"_s;
-    }
 }
 
-} // namespace WebKit
+@interface _WKWebExtensionMessagePort () <WKObject> {
+@package
+    API::ObjectStorage<WebKit::WebExtensionMessagePort> _webExtensionMessagePort;
+}
 
-namespace WTF {
+@property (nonatomic, readonly) WebKit::WebExtensionMessagePort& _webExtensionMessagePort;
 
-template<> struct DefaultHash<WebKit::WebExtensionContentWorldType> : IntHash<WebKit::WebExtensionContentWorldType> { };
-template<> struct HashTraits<WebKit::WebExtensionContentWorldType> : StrongEnumHashTraits<WebKit::WebExtensionContentWorldType> { };
-
-} // namespace WTF
+@end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

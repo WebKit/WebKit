@@ -29,6 +29,7 @@
 
 #import <WebKit/_WKWebExtensionControllerDelegate.h>
 #import <WebKit/_WKWebExtensionMatchPattern.h>
+#import <WebKit/_WKWebExtensionMessagePort.h>
 #import <WebKit/_WKWebExtensionPermission.h>
 #import <WebKit/_WKWebExtensionTab.h>
 
@@ -42,6 +43,9 @@
 
 @property (nonatomic, copy) void (^promptForPermissions)(id <_WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<_WKWebExtensionPermission> *));
 @property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id <_WKWebExtensionTab>, NSSet<_WKWebExtensionMatchPattern *> *, void (^)(NSSet<_WKWebExtensionMatchPattern *> *));
+
+@property (nonatomic, copy) void (^sendMessage)(id message, NSString *applicationIdentifier, void (^)(id replyMessage, NSError *));
+@property (nonatomic, copy) void (^connectUsingMessagePort)(_WKWebExtensionMessagePort *);
 
 @end
 

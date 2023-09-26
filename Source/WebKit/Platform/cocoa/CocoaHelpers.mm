@@ -208,6 +208,18 @@ static inline NSJSONWritingOptions toWritingImpl(JSONOptionSet options)
     return result;
 }
 
+bool isValidJSONObject(id object, JSONOptionSet options)
+{
+    if (!object)
+        return false;
+
+    if (options.contains(JSONOptions::FragmentsAllowed))
+        return [object isKindOfClass:NSString.class] || [object isKindOfClass:NSNumber.class] || [object isKindOfClass:NSNull.class] || [NSJSONSerialization isValidJSONObject:object];
+
+    // NSJSONSerialization allows top-level arrays, but we only support dictionaries when not using FragmentsAllowed.
+    return [object isKindOfClass:NSDictionary.class] && [NSJSONSerialization isValidJSONObject:object];
+}
+
 id parseJSON(NSData *json, JSONOptionSet options, NSError **error)
 {
     if (!json)
@@ -242,7 +254,7 @@ NSData *encodeJSONData(id object, JSONOptionSet options, NSError **error)
     if (!object)
         return nil;
 
-    ASSERT([NSJSONSerialization isValidJSONObject:object]);
+    ASSERT(isValidJSONObject(object, options));
 
     if (!options.contains(JSONOptions::FragmentsAllowed) && ![object isKindOfClass:NSDictionary.class])
         return nil;
