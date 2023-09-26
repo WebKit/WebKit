@@ -848,6 +848,8 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
         for (auto [binding, globalName] : bindingGlobalMap) {
             if (!usedBindings.contains(binding))
                 continue;
+            if (!m_reads.contains(globalName))
+                continue;
 
             auto it = m_globals.find(globalName);
             RELEASE_ASSERT(it != m_globals.end());
