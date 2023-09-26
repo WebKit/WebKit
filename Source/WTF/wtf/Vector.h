@@ -657,7 +657,7 @@ private:
 };
 
 struct UnsafeVectorOverflow {
-    static NO_RETURN_DUE_TO_ASSERT void overflowed()
+    static NO_RETURN_DUE_TO_ASSERT_WITH_SECURITY_IMPLICATION void overflowed()
     {
         ASSERT_NOT_REACHED_WITH_SECURITY_IMPLICATION();
     }
