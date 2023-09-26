@@ -245,7 +245,7 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
 #elif PLATFORM(MAC)
 
     // There is no picker on systems without ScreenCaptureKit, so share the main screen.
-    completionHandler(CGDisplayStreamScreenCaptureSource::screenCaptureDeviceForMainDisplay());
+    completionHandler(WebCore::CGDisplayStreamScreenCaptureSource::screenCaptureDeviceForMainDisplay());
 
 #endif
 }

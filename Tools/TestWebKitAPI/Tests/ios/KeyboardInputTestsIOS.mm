@@ -39,6 +39,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>
@@ -275,11 +276,6 @@ TEST(KeyboardInputTests, FormNavigationAssistantBarButtonItems)
 
     EXPECT_EQ(2U, [webView lastTrailingBarButtonGroup].barButtonItems.count);
     EXPECT_FALSE([webView lastTrailingBarButtonGroup].hidden);
-
-    if (![UIWebFormAccessory instancesRespondToSelector:@selector(setNextPreviousItemsVisible:)]) {
-        // The rest of this test requires UIWebFormAccessory to be able to show or hide its next and previous items.
-        return;
-    }
 
     [webView _setEditable:YES];
     EXPECT_TRUE([webView lastTrailingBarButtonGroup].hidden);
@@ -796,7 +792,7 @@ TEST(KeyboardInputTests, TestWebViewAccessoryDoneDuringStrongPasswordAssistance)
     [webView synchronouslyLoadHTMLString:@"<input type='password' id='input'>"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('input').focus()"];
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [(id <UIWebFormAccessoryDelegate>)[webView textInputContentView] accessoryDone];
+    [webView dismissFormAccessoryView];
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     EXPECT_TRUE([webView _contentViewIsFirstResponder]);
 }

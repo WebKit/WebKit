@@ -48,7 +48,6 @@
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
-#import <UIKit/UIWebFormAccessory.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
@@ -112,16 +111,6 @@ WTF_EXTERN_C_END
 - (NSDictionary *)_autofillContext;
 - (UIFont *)fontForCaretSelection;
 @end
-
-@interface UIWebFormAccessory : UIInputView
-- (void)setNextPreviousItemsVisible:(BOOL)visible;
-@end
-
-#if !HAVE(UIKIT_BAR_BUTTON_LAYOUT_CUSTOMIZATION)
-@interface UIBarButtonItemGroup ()
-@property (nonatomic, readwrite, assign, getter=_isHidden, setter=_setHidden:) BOOL hidden;
-@end
-#endif
 
 @protocol UITextInputMultiDocument <NSObject>
 @optional
@@ -188,10 +177,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, copy) NSString *contextBeforeSelection;
 @property (nonatomic, copy) NSString *selectedText;
 @property (nonatomic, copy) NSString *contextAfterSelection;
-@end
-
-@protocol UIWebFormAccessoryDelegate
-- (void)accessoryDone;
 @end
 
 typedef NS_ENUM(NSInteger, UIWKGestureType) {

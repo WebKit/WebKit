@@ -2270,6 +2270,7 @@
 		F499BAA32947C1A4001241D6 /* RevealFocusedElementDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = F499BAA12947C1A4001241D6 /* RevealFocusedElementDeferrer.h */; };
 		F4A7B1C128E4DDC30042C75A /* ShareableBitmapHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = F4A7B1C028E4DDC30042C75A /* ShareableBitmapHandle.h */; };
 		F4BA33F225757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */; };
+		F4BCBBEC2AC332AA00C1858D /* WKFormAccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BCBBE62AC3295300C1858D /* WKFormAccessoryView.h */; };
 		F4BE0D7727AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */; };
 		F4C627E72A7AC17B00F546BF /* WKMouseInteraction.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C627E62A7AC17400F546BF /* WKMouseInteraction.h */; };
 		F4CB09E5225D5A0900891487 /* WebsiteMediaSourcePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */; };
@@ -7462,6 +7463,8 @@
 		F4B378D021DDBBAB0095A378 /* WebUndoStepID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebUndoStepID.h; sourceTree = "<group>"; };
 		F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKImageAnalysisGestureRecognizer.h; path = ios/WKImageAnalysisGestureRecognizer.h; sourceTree = "<group>"; };
 		F4BA33F125757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKImageAnalysisGestureRecognizer.mm; path = ios/WKImageAnalysisGestureRecognizer.mm; sourceTree = "<group>"; };
+		F4BCBBE62AC3295300C1858D /* WKFormAccessoryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFormAccessoryView.h;  path = ios/forms/WKFormAccessoryView.h; sourceTree = "<group>"; };
+		F4BCBBE72AC3295300C1858D /* WKFormAccessoryView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormAccessoryView.mm; path = ios/forms/WKFormAccessoryView.mm; sourceTree = "<group>"; };
 		F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		F4C627E52A7AC17300F546BF /* WKMouseInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseInteraction.mm; path = ios/WKMouseInteraction.mm; sourceTree = "<group>"; };
 		F4C627E62A7AC17400F546BF /* WKMouseInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseInteraction.h; path = ios/WKMouseInteraction.h; sourceTree = "<group>"; };
@@ -14021,6 +14024,8 @@
 				A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */,
 				2E16B6CD2017B7AC008996D6 /* WKFocusedFormControlView.h */,
 				2E16B6CC2017B7AB008996D6 /* WKFocusedFormControlView.mm */,
+				F4BCBBE62AC3295300C1858D /* WKFormAccessoryView.h */,
+				F4BCBBE72AC3295300C1858D /* WKFormAccessoryView.mm */,
 				E5CB07DA20E1678F0022C183 /* WKFormColorControl.h */,
 				E5CB07DB20E1678F0022C183 /* WKFormColorControl.mm */,
 				C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */,
@@ -15679,6 +15684,7 @@
 				51489CC32370DBFA0044E68A /* WKFindResult.h in Headers */,
 				51489CC7237237800044E68A /* WKFindResultInternal.h in Headers */,
 				2E16B6CF2017B7AD008996D6 /* WKFocusedFormControlView.h in Headers */,
+				F4BCBBEC2AC332AA00C1858D /* WKFormAccessoryView.h in Headers */,
 				E5CB07DC20E1678F0022C183 /* WKFormColorControl.h in Headers */,
 				C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */,
 				CE70EE5D22442BD000E0AF0F /* WKFormPeripheralBase.h in Headers */,

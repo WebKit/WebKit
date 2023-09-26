@@ -446,6 +446,7 @@ UIProcess/ios/forms/WKDatePickerViewController.mm
 UIProcess/ios/forms/WKDateTimeInputControl.mm
 UIProcess/ios/forms/WKFileUploadPanel.mm
 UIProcess/ios/forms/WKFocusedFormControlView.mm
+UIProcess/ios/forms/WKFormAccessoryView.mm
 UIProcess/ios/forms/WKFormColorControl.mm
 UIProcess/ios/forms/WKFormPeripheralBase.mm
 UIProcess/ios/forms/WKFormPopover.mm

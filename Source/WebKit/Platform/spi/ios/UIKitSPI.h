@@ -87,7 +87,6 @@
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebDocumentView.h>
-#import <UIKit/UIWebFormAccessory.h>
 #import <UIKit/UIWebScrollView.h>
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWindowScene_Private.h>
@@ -793,32 +792,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)startAutoscroll:(CGPoint)point;
 - (void)cancelAutoscroll;
 - (void)scrollSelectionToVisible:(BOOL)animated;
-@end
-
-
-@protocol UIWebFormAccessoryDelegate;
-
-@interface UIWebFormAccessory : UIInputView
-@end
-
-@interface UIWebFormAccessory ()
-- (void)hideAutoFillButton;
-- (void)setClearVisible:(BOOL)flag;
-- (void)setNextPreviousItemsVisible:(BOOL)visible;
-- (void)showAutoFillButtonWithTitle:(NSString *)title;
-@property (nonatomic, retain) UIBarButtonItem *_autofill;
-@property (nonatomic, assign) id <UIWebFormAccessoryDelegate> delegate;
-
-@property (nonatomic, assign, getter=isNextEnabled) BOOL nextEnabled;
-@property (nonatomic, assign, getter=isPreviousEnabled) BOOL previousEnabled;
-- (id)initWithInputAssistantItem:(UITextInputAssistantItem *)inputAssistantItem;
-@end
-
-@protocol UIWebFormAccessoryDelegate
-- (void)accessoryAutoFill;
-- (void)accessoryClear;
-- (void)accessoryDone;
-- (void)accessoryTab:(BOOL)isNext;
 @end
 
 @interface _UILookupGestureRecognizer : UIGestureRecognizer

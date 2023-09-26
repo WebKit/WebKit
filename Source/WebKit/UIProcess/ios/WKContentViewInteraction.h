@@ -48,6 +48,7 @@
 #import <WebKit/WKContactPicker.h>
 #import <WebKit/WKDeferringGestureRecognizer.h>
 #import <WebKit/WKFileUploadPanel.h>
+#import <WebKit/WKFormAccessoryView.h>
 #import <WebKit/WKFormPeripheral.h>
 #import <WebKit/WKKeyboardScrollingAnimator.h>
 #import <WebKit/WKShareSheet.h>
@@ -344,7 +345,7 @@ struct ImageAnalysisContextMenuActionData {
     OptionSet<WebKit::SuppressSelectionAssistantReason> _suppressSelectionAssistantReasons;
 
     RetainPtr<UITextInputTraits> _traits;
-    RetainPtr<UIWebFormAccessory> _formAccessoryView;
+    RetainPtr<WKFormAccessoryView> _formAccessoryView;
     RetainPtr<WKTapHighlightView> _tapHighlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
     RetainPtr<WKTargetedPreviewContainer> _contextMenuHintContainerView;
@@ -562,7 +563,7 @@ struct ImageAnalysisContextMenuActionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, WKTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, _UITextInputTranslationSupport, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKKeyboardScrollViewAnimatorDelegate, WKDeferringGestureRecognizerDelegate
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, WKFormAccessoryViewDelegate, WKTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, _UITextInputTranslationSupport, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKKeyboardScrollViewAnimatorDelegate, WKDeferringGestureRecognizerDelegate
 #if HAVE(CONTACTSUI)
     , WKContactPickerDelegate
 #endif
@@ -591,7 +592,7 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
 @property (nonatomic, readonly) const WebKit::WKAutoCorrectionData& autocorrectionData;
 @property (nonatomic, readonly) const WebKit::FocusedElementInformation& focusedElementInformation;
-@property (nonatomic, readonly) UIWebFormAccessory *formAccessoryView;
+@property (nonatomic, readonly) WKFormAccessoryView *formAccessoryView;
 @property (nonatomic, readonly) UITextInputAssistantItem *inputAssistantItemForWebView;
 @property (nonatomic, readonly) UIView *inputViewForWebView;
 @property (nonatomic, readonly) UIView *inputAccessoryViewForWebView;
@@ -718,9 +719,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)startRelinquishingFirstResponderToFocusedElement;
 - (void)stopRelinquishingFirstResponderToFocusedElement;
 
-// UIWebFormAccessoryDelegate protocol
 - (void)accessoryDone;
 - (void)accessoryOpen;
+- (void)accessoryTab:(BOOL)isNext;
 
 - (void)updateFocusedElementValueAsColor:(UIColor *)value;
 - (void)updateFocusedElementValue:(NSString *)value;
