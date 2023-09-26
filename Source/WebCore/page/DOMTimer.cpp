@@ -170,20 +170,18 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
     , m_userGestureTokenToForward(UserGestureIndicator::currentUserGesture())
 {
     auto& eventLoop = context.eventLoop();
+    m_hasReachedMaxNestingLevel = m_nestingLevel >= (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers);
     if (m_oneShot) {
-        m_timer = eventLoop.scheduleTask(m_currentTimerInterval, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
+        m_timer = eventLoop.scheduleTask(m_currentTimerInterval, context, m_hasReachedMaxNestingLevel ? HasReachedMaxNestingLevel::Yes : HasReachedMaxNestingLevel::No, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
             if (RefPtr strongThis = weakThis.get())
                 strongThis->fired();
         });
     } else {
-        m_timer = eventLoop.scheduleRepeatingTask(m_originalInterval, m_currentTimerInterval, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
+        m_timer = eventLoop.scheduleRepeatingTask(m_originalInterval, m_currentTimerInterval, context, m_hasReachedMaxNestingLevel ? HasReachedMaxNestingLevel::Yes : HasReachedMaxNestingLevel::No, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
             if (RefPtr strongThis = weakThis.get())
                 strongThis->fired();
         });
     }
-    eventLoop.setTimerAlignment(m_timer, context);
-    m_hasReachedMaxNestingLevel = m_nestingLevel >= (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers);
-    eventLoop.setTimerHasReachedMaxNestingLevel(m_timer, m_hasReachedMaxNestingLevel);
 }
 
 DOMTimer::~DOMTimer() = default;

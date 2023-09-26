@@ -91,6 +91,8 @@ private:
     RefPtr<EventLoopTimer> m_timer;
 };
 
+enum class HasReachedMaxNestingLevel : bool { No, Yes };
+
 // https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
 class EventLoop : public RefCounted<EventLoop>, public CanMakeWeakPtr<EventLoop> {
 public:
@@ -99,10 +101,10 @@ public:
     typedef Function<void ()> TaskFunction;
     void queueTask(std::unique_ptr<EventLoopTask>&&);
 
-    EventLoopTimerHandle scheduleTask(Seconds timeout, std::unique_ptr<EventLoopTask>&&);
+    EventLoopTimerHandle scheduleTask(Seconds timeout, TimerAlignment*, HasReachedMaxNestingLevel, std::unique_ptr<EventLoopTask>&&);
     void removeScheduledTimer(EventLoopTimer&);
 
-    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, std::unique_ptr<EventLoopTask>&&);
+    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TimerAlignment*, HasReachedMaxNestingLevel, std::unique_ptr<EventLoopTask>&&);
     void removeRepeatingTimer(EventLoopTimer&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
@@ -213,13 +215,14 @@ public:
     void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
 
     EventLoopTimerHandle scheduleTask(Seconds timeout, TaskSource, EventLoop::TaskFunction&&);
+    EventLoopTimerHandle scheduleTask(Seconds timeout, TimerAlignment&, HasReachedMaxNestingLevel, TaskSource, EventLoop::TaskFunction&&);
     void didExecuteScheduledTask(EventLoopTimer&);
     void removeScheduledTimer(EventLoopTimer&);
 
     EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource, EventLoop::TaskFunction&&);
+    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TimerAlignment&, HasReachedMaxNestingLevel, TaskSource, EventLoop::TaskFunction&&);
     void removeRepeatingTimer(EventLoopTimer&);
 
-    void setTimerAlignment(EventLoopTimerHandle, TimerAlignment&);
     void didChangeTimerAlignmentInterval(EventLoopTimerHandle);
     void setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle, bool);
     void adjustTimerNextFireTime(EventLoopTimerHandle, Seconds delta);
