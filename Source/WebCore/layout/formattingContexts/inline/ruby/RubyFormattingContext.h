@@ -45,7 +45,7 @@ public:
         InlineLayoutUnit over { 0.f };
         InlineLayoutUnit under { 0.f };
     };
-    OverUnder annotationVerticalExtent(const Box& rubyBaseLayoutBox);
+    OverUnder annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox);
     InlineLayoutPoint annotationPosition(const Box& rubyBaseLayoutBox);
 
     InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineDisplay::Boxes&);

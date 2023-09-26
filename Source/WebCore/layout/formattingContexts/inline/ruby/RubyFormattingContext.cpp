@@ -162,7 +162,7 @@ InlineLayoutPoint RubyFormattingContext::annotationPosition(const Box& rubyBaseL
     return { { }, parentFormattingContext().geometryForBox(rubyBaseLayoutBox).marginBoxHeight() };
 }
 
-RubyFormattingContext::OverUnder RubyFormattingContext::annotationVerticalExtent(const Box& rubyBaseLayoutBox)
+RubyFormattingContext::OverUnder RubyFormattingContext::annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox)
 {
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!isInterlinearAnnotation(annotationBox))

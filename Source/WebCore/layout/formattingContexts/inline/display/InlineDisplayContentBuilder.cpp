@@ -394,10 +394,9 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , isFirstLastBox(inlineBox)
     });
 
-    if (layoutBox.isRubyBase()) {
-        if (isInterlinearAnnotationBox(layoutBox.associatedRubyAnnotationBox()))
-            m_interlinearRubyColumnRangeList.append({ boxes.size() - 1, boxes.size() });
-        appendAssociatedRubyAnnotationBoxIfNeeded(layoutBox, boxes);
+    if (layoutBox.isRubyBase() && isInterlinearAnnotationBox(layoutBox.associatedRubyAnnotationBox())) {
+        m_interlinearRubyColumnRangeList.append({ boxes.size() - 1, boxes.size() });
+        appendInterlinearRubyAnnotationBox(layoutBox, boxes);
     }
 }
 
@@ -442,13 +441,20 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
 
 void InlineDisplayContentBuilder::handleInlineBoxEnd(const Line::Run& lineRun, const InlineDisplay::Boxes& boxes)
 {
-    if (isInterlinearAnnotationBox(lineRun.layoutBox().associatedRubyAnnotationBox())) {
+    if (!lineRun.layoutBox().isRubyBase())
+        return;
+    auto* annotationBox = lineRun.layoutBox().associatedRubyAnnotationBox();
+    if (!annotationBox)
+        return;
+    if (isInterlinearAnnotationBox(annotationBox)) {
         if (m_interlinearRubyColumnRangeList.isEmpty()) {
             ASSERT_NOT_REACHED();
             return;
         }
         m_interlinearRubyColumnRangeList.last() = { m_interlinearRubyColumnRangeList.last().begin(), boxes.size() - 1 };
+        return;
     }
+    // FIXME: Add inter-character annotation box placement.
 }
 
 void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box& layoutBox, InlineDisplay::Boxes& boxes)
@@ -468,25 +474,23 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
     });
 }
 
-void InlineDisplayContentBuilder::appendAssociatedRubyAnnotationBoxIfNeeded(const Box& rubyBaseLayoutBox, InlineDisplay::Boxes& boxes)
+void InlineDisplayContentBuilder::appendInterlinearRubyAnnotationBox(const Box& rubyBaseLayoutBox, InlineDisplay::Boxes& boxes)
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
-    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!isInterlinearAnnotationBox(annotationBox))
-        return;
-
+    ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
+    auto& annotationBox = *rubyBaseLayoutBox.associatedRubyAnnotationBox();
     auto annotationBoxPosition = RubyFormattingContext { formattingContext() }.annotationPosition(rubyBaseLayoutBox);
     // Turn ruby-base relatively positioned annotation box to relative to line box.
     annotationBoxPosition.moveBy(BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(rubyBaseLayoutBox)));
 
-    auto& annotationBoxGeometry = formattingState().boxGeometry(*annotationBox);
+    auto& annotationBoxGeometry = formattingState().boxGeometry(annotationBox);
     annotationBoxGeometry.setTopLeft(toLayoutPoint(annotationBoxPosition));
 
     auto annoationBorderBox = InlineRect { annotationBoxPosition.y(), annotationBoxPosition.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
-        , *annotationBox
+        , annotationBox
         , UBIDI_DEFAULT_LTR
         , annoationBorderBox
         , annoationBorderBox

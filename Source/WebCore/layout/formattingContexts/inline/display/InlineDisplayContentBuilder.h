@@ -63,7 +63,7 @@ private:
     void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, InlineDisplay::Boxes&);
     void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, InlineDisplay::Boxes&);
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, InlineDisplay::Boxes&);
-    void appendAssociatedRubyAnnotationBoxIfNeeded(const Box&, InlineDisplay::Boxes&);
+    void appendInterlinearRubyAnnotationBox(const Box&, InlineDisplay::Boxes&);
     void handleInlineBoxEnd(const Line::Run&, const InlineDisplay::Boxes&);
     void applyRubyOverhang(InlineDisplay::Boxes&) const;
 
