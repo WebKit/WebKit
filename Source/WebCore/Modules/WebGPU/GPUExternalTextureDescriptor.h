@@ -63,14 +63,13 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 
     WebGPU::ExternalTextureDescriptor convertToBacking() const
     {
-#if ENABLE(VIDEO)
-        auto mediaIdentifier = mediaIdentifierForSource(source);
-#else
-        auto mediaIdentifier = WebGPU::VideoSourceIdentifier { 0 };
-#endif
         return {
             { label },
+#if ENABLE(VIDEO)
             mediaIdentifierForSource(source),
+#else
+            { 0 },
+#endif
             WebCore::convertToBacking(colorSpace),
         };
     }
