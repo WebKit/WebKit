@@ -95,10 +95,10 @@ private:
     URL urlAttributeValue(AXPropertyName) const;
     uint64_t uint64AttributeValue(AXPropertyName) const;
     Path pathAttributeValue(AXPropertyName) const;
+    std::pair<unsigned, unsigned> indexRangePairAttributeValue(AXPropertyName) const;
     template<typename T> T rectAttributeValue(AXPropertyName) const;
     template<typename T> Vector<T> vectorAttributeValue(AXPropertyName) const;
     template<typename T> OptionSet<T> optionSetAttributeValue(AXPropertyName) const;
-    template<typename T> std::pair<T, T> pairAttributeValue(AXPropertyName) const;
     template<typename T> std::optional<T> optionalAttributeValue(AXPropertyName) const;
     template<typename T> T propertyValue(AXPropertyName) const;
 
@@ -155,9 +155,9 @@ private:
     bool isTableCell() const final;
     bool isExposedTableCell() const final { return boolAttributeValue(AXPropertyName::IsExposedTableCell); }
     // Returns the start location and row span of the cell.
-    std::pair<unsigned, unsigned> rowIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::RowIndexRange); }
+    std::pair<unsigned, unsigned> rowIndexRange() const final { return indexRangePairAttributeValue(AXPropertyName::RowIndexRange); }
     // Returns the start location and column span of the cell.
-    std::pair<unsigned, unsigned> columnIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::ColumnIndexRange); }
+    std::pair<unsigned, unsigned> columnIndexRange() const final { return indexRangePairAttributeValue(AXPropertyName::ColumnIndexRange); }
     int axColumnIndex() const override { return intAttributeValue(AXPropertyName::AXColumnIndex); }
     int axRowIndex() const override { return intAttributeValue(AXPropertyName::AXRowIndex); }
     bool isColumnHeader() const final { return boolAttributeValue(AXPropertyName::IsColumnHeader); }
