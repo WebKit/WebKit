@@ -1186,6 +1186,623 @@ TEST_F(WebPushDTest, NotificationClickExtendsITPCleanupTimerBy30Days)
     EXPECT_FALSE(v->hasPushSubscription());
 }
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+
+static constexpr ASCIILiteral json0 = ""_s;
+static constexpr ASCIILiteral json1 = "not really a string"_s;
+static constexpr ASCIILiteral json2 = "\"a string\""_s;
+static constexpr ASCIILiteral json3 = "4"_s;
+static constexpr ASCIILiteral json4 = "{ }"_s;
+static constexpr ASCIILiteral json5 = R"JSONRESOURCE(
+{
+    "default_action_url": "foo"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json6 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json7 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": ""
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json8 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": 4
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json9 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": ""
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json10 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": -1
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json11 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json12 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": 10
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json13 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": 0
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json14 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json15 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "dir": 0
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json16 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "dir": "auto"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json17 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "dir": "ltr"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json18 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "dir": "rtl"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json19 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "dir": "nonsense"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json20 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "lang": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json21 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "lang": "language"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json22 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "body": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json23 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "body": "world"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json24 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "tag": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json25 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "tag": "world"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json26 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "icon": 0
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json27 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "icon": "world"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json28 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "icon": "https://example.com/icon.png"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json29 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "silent": 0
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json30 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "silent": true
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json31 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "silent": false
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json32 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": "20"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json33 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": "18446744073709551615"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json34 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": "18446744073709551616"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json35 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": 39
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json36 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json37 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": "true"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json38 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json39 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true,
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json40 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true,
+    "tag": "title Gotcha!",
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json41 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true,
+    "tag": "badge 1024",
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json42 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true,
+    "tag": "titleandbadge ThisRules 4096",
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json43 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Test the data object",
+    "mutable": true,
+    "tag": "datatotitle",
+    "data": "Raw string",
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json44 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Test the data object",
+    "mutable": true,
+    "tag": "datatotitle",
+    "data": { "key": "value" },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json45 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Test a default action URL override",
+    "mutable": true,
+    "options": {
+        "tag": "defaultactionurl https://webkit.org/"
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json46 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Test a missing default action URL override",
+    "mutable": true,
+    "options": {
+        "tag": "emptydefaultactionurl"
+    },
+    "app_badge": "12"
+}
+)JSONRESOURCE"_s;
+
+static constexpr ASCIILiteral errors[] = {
+    "does not contain valid JSON"_s,
+    "top level JSON value is not an object"_s,
+    "'default_action_url' member is specified but does not represent a valid URL"_s,
+    "'title' member is missing or is an empty string"_s,
+    "'title' member is specified but is not a string"_s,
+    "'app_badge' member is specified as a string that did not parse to to an unsigned long long"_s,
+    "'app_badge' member is specified as an number but is not a valid unsigned long long"_s,
+    "<intentionally left blank>"_s,
+    "'app_badge' member is specified but is not a string or a number"_s,
+    "'dir' member is specified but is not a valid NotificationDirection"_s,
+    "'dir' member is specified but is not a string"_s,
+    "'lang' member is specified but is not a string"_s,
+    "'body' member is specified but is not a string"_s,
+    "'tag' member is specified but is not a string"_s,
+    "'icon' member is specified but is not a string"_s,
+    "'icon' member is specified but does not represent a valid URL"_s,
+    "'silent' member is specified but is not a boolean"_s,
+    "'app_badge' member is specified as a string that did not parse to a valid unsigned long long"_s,
+    "'mutable' member is specified but is not a boolean"_s
+};
+
+static std::pair<ASCIILiteral, ASCIILiteral> jsonAndErrors[] = {
+    { json0, errors[0] },
+    { json1, errors[0] },
+    { json2, errors[1] },
+    { json3, errors[1] },
+    { json4, errors[2] },
+    { json5, errors[2] },
+    { json6, errors[3] },
+    { json7, errors[3] },
+    { json8, errors[4] },
+    { json9, { " "_s } },
+    { json10, errors[6] },
+    { json11, errors[8] },
+    { json12, { " "_s } },
+    { json13, { " "_s } },
+    { json14, { " "_s } },
+    { json15, errors[10] },
+    { json16, { " "_s } },
+    { json17, { " "_s } },
+    { json18, { " "_s } },
+    { json19, errors[9] },
+    { json20, errors[11] },
+    { json21, { " "_s } },
+    { json22, errors[12] },
+    { json23, { " "_s } },
+    { json24, errors[13] },
+    { json25, { " "_s } },
+    { json26, errors[14] },
+    { json27, errors[15] },
+    { json28, { " "_s } },
+    { json29, errors[16] },
+    { json30, { " "_s } },
+    { json31, { " "_s } },
+    { json32, { " "_s } },
+    { json33, { " "_s } },
+    { json34, errors[17] },
+    { json35, errors[18] },
+    { json36, errors[18] },
+    { json37, errors[18] },
+    { json38, { " "_s } },
+    { json39, { " "_s } },
+    { json40, { " "_s } },
+    { json41, { " "_s } },
+    { json42, { " "_s } },
+    { json43, { " "_s } },
+    { json44, { " "_s } },
+    { json45, { " "_s } },
+    { json46, { " "_s } },
+    { { }, { } }
+};
+
+static size_t expectedSuccessfulMessages()
+{
+    size_t result = 0;
+    for (size_t i = 0; !jsonAndErrors[i].first.isNull(); ++i) {
+        if (!strcmp(jsonAndErrors[i].second, " "))
+            ++result;
+    }
+
+    return result;
+}
+
+// Directly message the daemon to do JSON parsing validation on the declarative message
+TEST(WebPushD, DeclarativeParsing)
+{
+    setUpTestWebPushD();
+
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    clearWebsiteDataStore(dataStore.get());
+
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    static bool done = false;
+
+    WebKit::WebPushD::PushMessageForTesting message;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
+    message.registrationURL = URL("https://example.com"_s);
+    message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
+
+    unsigned i = 0;
+    while (!jsonAndErrors[i].first.isNull()) {
+        message.payload = jsonAndErrors[i].first;
+        done = false;
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](const String& error) {
+            if (!error.isEmpty())
+                EXPECT_TRUE(error.endsWith(jsonAndErrors[i].second));
+            else
+                EXPECT_FALSE(strcmp(jsonAndErrors[i].second, " "));
+
+            done = true;
+        });
+        TestWebKitAPI::Util::run(&done);
+        ++i;
+    }
+
+    // Now retrieve the successfully parsed messages like a client would,
+    // but validate they make sense like you only can in internals.
+    done = false;
+    [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
+        EXPECT_EQ(messages.count, expectedSuccessfulMessages());
+
+        for (NSDictionary *message in messages) {
+            auto webPushMessage = WebKit::WebPushMessage::fromDictionary(message);
+            EXPECT_TRUE(webPushMessage.has_value());
+            EXPECT_TRUE(!!webPushMessage->notificationPayload);
+        }
+
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+// Verifies that handling a declarative web push message - with no service worker even registered - calls
+// back into the client for showing the notification, etc.
+TEST(WebPushD, DeclarativeWebPushHandling)
+{
+    setUpTestWebPushD();
+
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
+    dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    clearWebsiteDataStore(dataStore.get());
+
+    auto delegate = adoptNS([[PushNotificationDelegate alloc] init]);
+    dataStore.get()._delegate = delegate.get();
+
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    static bool done = false;
+
+    WebKit::WebPushD::PushMessageForTesting message;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
+    message.registrationURL = URL("https://example.com"_s);
+    message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
+    message.payload = json33;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](const String& error) {
+        EXPECT_TRUE(error.isEmpty());
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
+        EXPECT_EQ(messages.count, 1u);
+
+        [dataStore _processPushMessage:messages.firstObject completionHandler:^(bool handled) {
+            EXPECT_TRUE(handled);
+            EXPECT_TRUE([delegate.get().mostRecentNotification.get().userInfo[@"WebNotificationDefaultActionURLKey"] isEqualToString:@"https://example.com/"]);
+            EXPECT_EQ(delegate.get().mostRecentAppBadge, 18446744073709551615ULL);
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+
+    // Verify that processing the most recent notification results in its action URL being sent to the data store delegate
+    done = false;
+    [dataStore _processPersistentNotificationClick:delegate.get().mostRecentNotification.get().userInfo completionHandler:^(bool handled) {
+        EXPECT_TRUE(handled);
+        EXPECT_TRUE([delegate.get().mostRecentActionURL.get().absoluteString isEqualToString:@"https://example.com/"]);
+
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+class WebPushDPushNotificationEventTest : public WebPushDTest {
+public:
+    WebPushDPushNotificationEventTest()
+        : WebPushDTest(LaunchOnlyOnce::Yes, htmlSource, InstallDataStoreDelegate::Yes)
+    {
+    }
+
+    void prep()
+    {
+        webViews().first()->subscribe();
+    }
+
+    void runTest(ASCIILiteral jsonMessage)
+    {
+        webViews().first()->clearMostRecents();
+        webViews().first()->injectDeclarativePushMessage(jsonMessage);
+
+        auto messages = webViews().first()->fetchPushMessages();
+        ASSERT_EQ([messages count], 1u);
+
+        webViews().first()->captureAllMessages();
+        webViews().first()->processPushMessage([messages firstObject]);
+    }
+
+    void waitForMessageAndVerify(NSString *message)
+    {
+        while (webViews().first()->mostRecentMessage().isEmpty())
+            TestWebKitAPI::Util::runFor(0.05_s);
+
+        EXPECT_TRUE([(NSString *)webViews().first()->mostRecentMessage() isEqualToString:message]);
+    }
+
+    void checkLastNotificationTitle(NSString *title)
+    {
+        NSString *recentTitle = webViews().first()->mostRecentNotification().userInfo[@"WebNotificationTitleKey"];
+        EXPECT_TRUE([recentTitle isEqualToString:title]);
+
+        if (![recentTitle isEqualToString:title])
+            NSLog(@"Most recent title: %@\nExpected title: %@", recentTitle, title);
+
+    }
+
+    void checkLastNotificationDefaultActionURL(NSString *actionURL)
+    {
+        NSString *notificationActionURL = webViews().first()->mostRecentNotification().userInfo[@"WebNotificationDefaultActionURLKey"];
+        EXPECT_TRUE([notificationActionURL isEqualToString:actionURL]);
+    }
+
+    void checkLastActionURL(NSString *url)
+    {
+        NSURL *recentActionURL = webViews().first()->mostRecentActionURL();
+        EXPECT_TRUE([url isEqualToString:recentActionURL.absoluteString]);
+
+        if (![url isEqualToString:recentActionURL.absoluteString])
+            NSLog(@"Lact action URL: %@\nExpected URL: %@", recentActionURL, url);
+
+    }
+
+    void checkLastAppBadge(std::optional<uint64_t> badge)
+    {
+        EXPECT_EQ(badge, webViews().first()->mostRecentAppBadge());
+    }
+};
+
+// FIXME after rdar://116087660 is resolved.
+TEST_F(WebPushDPushNotificationEventTest, DISABLED_Basic)
+{
+    prep();
+    runTest(json39);
+    checkLastNotificationTitle(@"Hello world!");
+    checkLastAppBadge(12);
+
+    runTest(json40);
+    checkLastNotificationTitle(@"Gotcha!");
+    checkLastAppBadge(12);
+
+    runTest(json41);
+    checkLastNotificationTitle(@"Hello world!");
+    checkLastAppBadge(1024);
+
+    runTest(json42);
+    checkLastNotificationTitle(@"ThisRules");
+    checkLastAppBadge(4096);
+
+    runTest(json43);
+    checkLastNotificationTitle(@"Raw string");
+    checkLastAppBadge(12);
+
+    runTest(json44);
+    checkLastNotificationTitle(@"[object Object]");
+    checkLastAppBadge(12);
+
+    runTest(json45);
+    checkLastNotificationTitle(@"Test a default action URL override");
+    checkLastNotificationDefaultActionURL(@"https://webkit.org/");
+    checkLastAppBadge(12);
+
+    runTest(json46);
+    checkLastNotificationTitle(@"Test a missing default action URL override");
+    checkLastNotificationDefaultActionURL(@"https://example.com/");
+    waitForMessageAndVerify(@"showNotification failed: TypeError: Call to showNotification() while handling a `pushnotification` event did not include NotificationOptions that specify a valid defaultAction url");
+}
+
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && (PLATFORM(MAC)
