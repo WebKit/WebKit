@@ -2435,7 +2435,8 @@ void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
 
 void GraphicsLayerCA::updateBackfaceVisibility()
 {
-    if (m_structuralLayer && structuralLayerPurpose() == StructuralLayerForReplicaFlattening) {
+    if (m_structuralLayer && (structuralLayerPurpose() == StructuralLayerForReplicaFlattening || structuralLayerPurpose() == StructuralLayerForBackdrop)) {
+
         m_structuralLayer->setDoubleSided(m_backfaceVisibility);
 
         if (m_layerClones) {
