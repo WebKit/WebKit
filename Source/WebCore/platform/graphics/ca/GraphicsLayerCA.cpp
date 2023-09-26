@@ -2257,6 +2257,7 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
     appendCustomAndClippingLayers(primaryLayerChildren);
 
     bool clippingLayerHostsChildren = m_contentsRectClipsDescendants && m_contentsClippingLayer;
+    bool structuralLayerHostsChildren = !clippingLayerHostsChildren && m_structuralLayer && structuralLayerPurpose() != StructuralLayerPurpose::StructuralLayerForBackdrop;
     if (m_contentsClippingLayer) {
         PlatformCALayerList clippingChildren;
         if (clippingLayerHostsChildren)
@@ -2269,11 +2270,13 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
         PlatformCALayerList layerList;
         appendStructuralLayerChildren(layerList);
 
-        if (!clippingLayerHostsChildren)
+        if (structuralLayerHostsChildren)
             buildChildLayerList(layerList);
 
         m_structuralLayer->setSublayers(layerList);
-    } else if (!clippingLayerHostsChildren)
+    }
+
+    if (!clippingLayerHostsChildren && !structuralLayerHostsChildren)
         buildChildLayerList(primaryLayerChildren);
 
     m_layer->setSublayers(primaryLayerChildren);
