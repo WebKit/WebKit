@@ -151,7 +151,7 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
 
 - (void)dismissFormAccessoryView
 {
-    [_contentView accessoryDone];
+    [_contentView dismissFormAccessoryView];
 }
 
 - (NSArray<NSString *> *)_filePickerAcceptedTypeIdentifiers

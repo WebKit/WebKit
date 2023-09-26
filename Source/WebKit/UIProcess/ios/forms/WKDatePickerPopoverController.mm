@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
@@ -115,6 +114,7 @@
 @implementation WKDatePickerPopoverController {
     RetainPtr<WKDatePickerPopoverView> _contentView;
     __weak id<WKDatePickerPopoverControllerDelegate> _delegate;
+    BOOL _canSendPopoverControllerDidDismiss;
 }
 
 - (instancetype)initWithDatePicker:(UIDatePicker *)datePicker delegate:(id<WKDatePickerPopoverControllerDelegate>)delegate
@@ -137,9 +137,7 @@
 - (void)dismissDatePicker
 {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:[strongSelf = retainPtr(self)] {
-#if PLATFORM(MACCATALYST)
-        [strongSelf->_delegate datePickerPopoverControllerDidDismiss:strongSelf.get()];
-#endif
+        [strongSelf _dispatchPopoverControllerDidDismissIfNeeded];
     }];
 }
 
@@ -180,6 +178,7 @@
     if (!controller)
         return completion();
 
+    _canSendPopoverControllerDidDismiss = YES;
     // Specifying arrow directions is necessary here because UIKit will prefer to show the popover below the
     // source rect and cover the source rect with the arrow, even if `-canOverlapSourceViewRect` is `NO`.
     // To prevent the popover arrow from covering the element, we force UIKit to choose the direction that
@@ -209,6 +208,12 @@
     [controller presentViewController:self animated:YES completion:completion];
 }
 
+- (void)_dispatchPopoverControllerDidDismissIfNeeded
+{
+    if (std::exchange(_canSendPopoverControllerDidDismiss, NO))
+        [_delegate datePickerPopoverControllerDidDismiss:self];
+}
+
 #pragma mark - UIPopoverPresentationControllerDelegate
 
 - (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(UITraitCollection *)traitCollection
@@ -218,7 +223,7 @@
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
-    [_delegate datePickerPopoverControllerDidDismiss:self];
+    [self _dispatchPopoverControllerDidDismissIfNeeded];
 }
 
 @end

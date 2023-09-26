@@ -53,6 +53,7 @@
 
 - (instancetype)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode;
 
+@property (nonatomic, readonly) WKDatePickerPopoverController *datePickerController;
 @property (nonatomic, readonly) NSString *calendarType;
 @property (nonatomic, readonly) double hour;
 @property (nonatomic, readonly) double minute;
@@ -143,6 +144,11 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
         _datePickerController = nil;
         [_view.webView _didDismissContextMenu];
     }
+}
+
+- (WKDatePickerPopoverController *)datePickerController
+{
+    return _datePickerController.get();
 }
 
 - (void)showDateTimePicker
@@ -314,29 +320,38 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 
 - (void)setTimePickerHour:(NSInteger)hour minute:(NSInteger)minute
 {
-    if ([self.control isKindOfClass:WKDateTimePicker.class])
-        [(WKDateTimePicker *)self.control setHour:hour minute:minute];
+    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control))
+        [picker setHour:hour minute:minute];
 }
 
 - (NSString *)dateTimePickerCalendarType
 {
-    if ([self.control isKindOfClass:WKDateTimePicker.class])
-        return [(WKDateTimePicker *)self.control calendarType];
+    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control))
+        return picker.calendarType;
     return nil;
 }
 
 - (double)timePickerValueHour
 {
-    if ([self.control isKindOfClass:WKDateTimePicker.class])
-        return [(WKDateTimePicker *)self.control hour];
+    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control))
+        return picker.hour;
     return -1;
 }
 
 - (double)timePickerValueMinute
 {
-    if ([self.control isKindOfClass:WKDateTimePicker.class])
-        return [(WKDateTimePicker *)self.control minute];
+    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control))
+        return picker.minute;
     return -1;
+}
+
+- (BOOL)dismissWithAnimation
+{
+    if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control)) {
+        [picker.datePickerController dismissDatePicker];
+        return YES;
+    }
+    return NO;
 }
 
 @end
