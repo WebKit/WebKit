@@ -114,6 +114,8 @@ public:
     RefPtr<Node> fromElement() const final { return nullptr; }
 
     EventInterface eventInterface() const override;
+    static bool typeIsUpOrDown(const AtomString& type);
+    static MouseButton buttonForType(const AtomString& type) { return !typeIsUpOrDown(type) ? MouseButton::PointerHasNotChanged : MouseButton::Left; }
 
 private:
     static bool typeIsEnterOrLeave(const AtomString& type);
@@ -121,7 +123,6 @@ private:
     static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
     static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
 #if PLATFORM(WPE)
-    static MouseButton buttonForType(const AtomString& type) { return type == eventNames().pointermoveEvent ? MouseButton::PointerMove : MouseButton::Left; }
     static unsigned short buttonsForType(const AtomString& type)
     {
         // We have contact with the touch surface for most events except when we've released the touch or canceled it.
@@ -154,6 +155,12 @@ inline bool PointerEvent::typeIsEnterOrLeave(const AtomString& type)
 {
     auto& eventNames = WebCore::eventNames();
     return type == eventNames.pointerenterEvent || type == eventNames.pointerleaveEvent;
+}
+
+inline bool PointerEvent::typeIsUpOrDown(const AtomString& type)
+{
+    auto& eventNames = WebCore::eventNames();
+    return type == eventNames.pointerupEvent || type == eventNames.pointerdownEvent;
 }
 
 } // namespace WebCore

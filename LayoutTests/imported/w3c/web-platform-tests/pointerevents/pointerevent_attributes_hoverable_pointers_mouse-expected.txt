@@ -15,7 +15,7 @@ Harness Error (TIMEOUT), message = null
 
 NOTRUN mouse pointerevent attributes
 PASS mouse pointerover.type should be pointerover
-FAIL mouse pointerover.button is -1 when mouse buttons are in released state. assert_equals: expected -1 but got 0
+PASS mouse pointerover.button is -1 when mouse buttons are in released state.
 PASS mouse pointerover.buttons is 0 when mouse buttons are in released state.
 PASS mouse pointerover.clientX and .clientY attributes are correct.
 PASS mouse pointerover.pointerType is correct.
@@ -30,7 +30,7 @@ PASS mouse pointerover.pressure value is valid
 PASS mouse pointerover properties for pointerType = mouse
 PASS mouse pointerover.isPrimary attribute is true.
 PASS mouse pointerenter.type should be pointerenter
-FAIL mouse pointerenter.button is -1 when mouse buttons are in released state. assert_equals: expected -1 but got 0
+PASS mouse pointerenter.button is -1 when mouse buttons are in released state.
 PASS mouse pointerenter.buttons is 0 when mouse buttons are in released state.
 PASS mouse pointerenter.clientX and .clientY attributes are correct.
 PASS mouse pointerenter.pointerType is correct.
@@ -95,7 +95,7 @@ PASS mouse pointerup properties for pointerup
 PASS mouse pointerup.isPrimary attribute is true.
 PASS mouse pointerup.pointerId should be the same as previous pointer events for this active pointer.
 PASS mouse pointerout.type should be pointerout
-FAIL mouse pointerout.button is -1 when mouse buttons are in released state. assert_equals: expected -1 but got 0
+PASS mouse pointerout.button is -1 when mouse buttons are in released state.
 PASS mouse pointerout.buttons is 0 when mouse buttons are in released state.
 PASS mouse pointerout.clientX and .clientY attributes are correct.
 PASS mouse pointerout.pointerType is correct.
@@ -111,7 +111,7 @@ PASS mouse pointerout properties for pointerType = mouse
 PASS mouse pointerout.isPrimary attribute is true.
 PASS mouse pointerout.pointerId should be the same as previous pointer events for this active pointer.
 PASS mouse pointerleave.type should be pointerleave
-FAIL mouse pointerleave.button is -1 when mouse buttons are in released state. assert_equals: expected -1 but got 0
+PASS mouse pointerleave.button is -1 when mouse buttons are in released state.
 PASS mouse pointerleave.buttons is 0 when mouse buttons are in released state.
 PASS mouse pointerleave.clientX and .clientY attributes are correct.
 PASS mouse pointerleave.pointerType is correct.

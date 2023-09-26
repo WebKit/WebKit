@@ -98,7 +98,7 @@ private:
         bool isPrimary { false };
         bool preventsCompatibilityMouseEvents { false };
         bool pointerIsPressed { false };
-        MouseButton previousMouseButton { MouseButton::PointerMove };
+        MouseButton previousMouseButton { MouseButton::PointerHasNotChanged };
 
     private:
         CapturingData(const String& pointerType)

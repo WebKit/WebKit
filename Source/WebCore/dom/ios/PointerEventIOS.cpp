@@ -51,11 +51,6 @@ static const AtomString& pointerEventType(PlatformTouchPoint::TouchPhaseType pha
     return nullAtom();
 }
 
-static MouseButton buttonForType(const AtomString& type)
-{
-    return type == eventNames().pointermoveEvent ? MouseButton::PointerMove : MouseButton::Left;
-}
-
 static unsigned short buttonsForType(const AtomString& type)
 {
     // We have contact with the touch surface for most events except when we've released the touch or canceled it.
