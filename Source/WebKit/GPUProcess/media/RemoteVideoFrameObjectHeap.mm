@@ -38,10 +38,9 @@ RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameRead
     return m_heap.read(WTFMove(read), 0_s);
 }
 
-void RemoteVideoFrameObjectHeap::createPixelConformerIfNeeded()
+UniqueRef<WebCore::PixelBufferConformerCV> RemoteVideoFrameObjectHeap::createPixelConformer()
 {
-    if (!m_pixelBufferConformer)
-        m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+    return makeUniqueRef<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
 }
 
 }

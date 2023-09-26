@@ -161,7 +161,10 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
     destinationColorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(buffer.get()));
 
     if (CVPixelBufferGetPixelFormatType(buffer.get()) != kCVPixelFormatType_32BGRA) {
-        createPixelConformerIfNeeded();
+        Locker locker { m_pixelBufferConformerLock };
+        if (!m_pixelBufferConformer)
+            m_pixelBufferConformer = createPixelConformer().moveToUniquePtr();
+
         auto convertedBuffer = m_pixelBufferConformer->convert(buffer.get());
         if (!convertedBuffer) {
             RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertFrameBuffer conformer failed");
@@ -190,6 +193,14 @@ void RemoteVideoFrameObjectHeap::setSharedVideoFrameMemory(SharedMemory::Handle&
 }
 
 #endif
+
+void RemoteVideoFrameObjectHeap::lowMemoryHandler()
+{
+#if PLATFORM(COCOA)
+    Locker locker { m_pixelBufferConformerLock };
+    m_pixelBufferConformer = nullptr;
+#endif
+}
 
 }
 

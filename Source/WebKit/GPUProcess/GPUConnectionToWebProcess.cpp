@@ -510,6 +510,9 @@ void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous 
 {
     for (auto& remoteRenderingBackend : m_remoteRenderingBackendMap.values())
         remoteRenderingBackend->lowMemoryHandler(critical, synchronous);
+#if ENABLE(VIDEO)
+    m_videoFrameObjectHeap->lowMemoryHandler();
+#endif
 }
 
 #if ENABLE(WEB_AUDIO)
