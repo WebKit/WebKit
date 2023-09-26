@@ -214,7 +214,8 @@ void MediaPlayerPrivateWebM::loadFailed(const ResourceError& error)
 void MediaPlayerPrivateWebM::loadFinished(const FragmentedSharedBuffer&)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    setNetworkState(MediaPlayer::NetworkState::Idle);
+    if (m_readyState >= MediaPlayer::ReadyState::HaveMetadata)
+        setNetworkState(MediaPlayer::NetworkState::Idle);
     m_loadFinished = true;
 }
 
@@ -512,10 +513,13 @@ void MediaPlayerPrivateWebM::setNaturalSize(FloatSize size)
         INFO_LOG(LOGIDENTIFIER, "was ", oldSize, ", is ", size);
         if (auto player = m_player.get())
             player->sizeChanged();
-        
-        if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
-            setReadyState(MediaPlayer::ReadyState::HaveMetadata);
     }
+
+    if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
+        setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+
+    if (m_loadFinished)
+        setNetworkState(MediaPlayer::NetworkState::Idle);
 }
 
 void MediaPlayerPrivateWebM::setHasAudio(bool hasAudio)
@@ -1130,6 +1134,8 @@ void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObj
 void MediaPlayerPrivateWebM::append(SharedBuffer& buffer)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "data length = ", buffer.size());
+
+    setNetworkState(MediaPlayer::NetworkState::Loading);
 
     m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled.load()] (InitializationSegment&& segment) {
         if (!weakThis || abortCalled != weakThis->m_abortCalled)
