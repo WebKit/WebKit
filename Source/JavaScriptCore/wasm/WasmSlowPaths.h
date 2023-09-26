@@ -118,8 +118,11 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(set_global_64, unsigned, uint64_t);
 
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref_portable_binding);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait32);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait32, uint64_t, uint32_t, uint64_t);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait64);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, uint64_t, uint64_t, uint64_t);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_notify);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, unsigned, unsigned, int32_t);
 WASM_SLOW_PATH_HIDDEN_DECL(throw);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw, CallFrame*, uint32_t);
 WASM_SLOW_PATH_HIDDEN_DECL(rethrow);
