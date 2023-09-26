@@ -37,7 +37,7 @@
 namespace WebCore {
 
 #if PLATFORM(WIN)
-static RefPtr<cairo_t> createCairoContextWithHDC(HDC hdc, bool hasAlpha)
+static RefPtr<cairo_t> createCairoContextWithHDC(HDC hdc)
 {
     // Put the HDC In advanced mode so it will honor affine transforms.
     SetGraphicsMode(hdc, GM_ADVANCED);
@@ -65,8 +65,8 @@ static RefPtr<cairo_t> createCairoContextWithHDC(HDC hdc, bool hasAlpha)
     return context;
 }
 
-GraphicsContextCairo::GraphicsContextCairo(HDC dc, bool hasAlpha)
-    : GraphicsContextCairo(createCairoContextWithHDC(dc, hasAlpha))
+GraphicsContextCairo::GraphicsContextCairo(HDC dc, bool)
+    : GraphicsContextCairo(createCairoContextWithHDC(dc))
 {
 }
 

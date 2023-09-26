@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
+void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType)
 {
     // On Windows, AccessibilityObjects are created when get_accChildCount is
     // called, but they are not wrapped until get_accChild is called, so this

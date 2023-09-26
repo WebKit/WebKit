@@ -87,7 +87,7 @@ public:
         return refCount;
     }
 
-    HRESULT STDMETHODCALLTYPE GetParameters(__RPC__out DWORD *pdwFlags, __RPC__out DWORD *pdwQueue) override
+    HRESULT STDMETHODCALLTYPE GetParameters(__RPC__out DWORD*, __RPC__out DWORD*) override
     {
         // Implementation of this method is optional. Returning E_NOTIMPL gives default values.
         return E_NOTIMPL;
@@ -979,7 +979,7 @@ ULONG MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::Release()
     return refCount;
 }
 
-HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset)
+HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockStart(MFTIME, LONGLONG llClockStartOffset)
 {
     Locker locker { m_lock };
 
@@ -1002,7 +1002,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockStart(MF
     return S_OK;
 }
 
-HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockStop(MFTIME hnsSystemTime)
+HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockStop(MFTIME)
 {
     Locker locker { m_lock };
 
@@ -1018,7 +1018,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockStop(MFT
     return S_OK;
 }
 
-HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockPause(MFTIME hnsSystemTime)
+HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockPause(MFTIME)
 {
     Locker locker { m_lock };
 
@@ -1032,7 +1032,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockPause(MF
     return S_OK;
 }
 
-HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockRestart(MFTIME hnsSystemTime)
+HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockRestart(MFTIME)
 {
     Locker locker { m_lock };
 
@@ -1049,7 +1049,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockRestart(
     return S_OK;
 }
 
-HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockSetRate(MFTIME hnsSystemTime, float rate)
+HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockSetRate(MFTIME, float rate)
 {
     Locker locker { m_lock };
 
@@ -1064,7 +1064,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockSetRate(
     return S_OK;
 }
 
-HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::ProcessMessage(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR ulParam)
+HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::ProcessMessage(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR)
 {
     Locker locker { m_lock };
 
@@ -2580,7 +2580,7 @@ MediaPlayerPrivateMediaFoundation::Direct3DPresenter::Direct3DPresenter()
 
 MediaPlayerPrivateMediaFoundation::Direct3DPresenter::~Direct3DPresenter() = default;
 
-HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::getService(REFGUID guidService, REFIID riid, void** ppv)
+HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::getService(REFGUID, REFIID riid, void** ppv)
 {
     ASSERT(ppv);
 
@@ -2742,7 +2742,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::checkDeviceState(D
     return hr;
 }
 
-HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample(IMFSample* sample, LONGLONG targetPresentationTime)
+HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample(IMFSample* sample, LONGLONG)
 {
     HRESULT hr = S_OK;
 

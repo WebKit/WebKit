@@ -82,7 +82,7 @@ protected:
     virtual void update() { updateOkButton(validate()); }
     virtual bool validate() { return true; }
     virtual void updateOkButton(bool isValid) { setEnabled(IDOK, isValid); }
-    virtual bool command(int wmId) { return false; }
+    virtual bool command(int) { return false; }
     virtual void ok() { }
     virtual void cancel() { }
 

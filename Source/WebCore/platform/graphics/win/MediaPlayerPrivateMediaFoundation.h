@@ -349,58 +349,58 @@ private:
         HRESULT STDMETHODCALLTYPE ShutdownObject() override;
 
         // IMFAttributes
-        HRESULT STDMETHODCALLTYPE GetItem(__RPC__in REFGUID guidKey, __RPC__inout_opt PROPVARIANT *pValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetItemType(__RPC__in REFGUID guidKey, __RPC__out MF_ATTRIBUTE_TYPE *pType) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE CompareItem(__RPC__in REFGUID guidKey, __RPC__in REFPROPVARIANT Value, __RPC__out BOOL *pbResult) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE Compare(__RPC__in_opt IMFAttributes *pTheirs, MF_ATTRIBUTES_MATCH_TYPE MatchType, __RPC__out BOOL *pbResult) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetUINT32(__RPC__in REFGUID guidKey, __RPC__out UINT32 *punValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetUINT64(__RPC__in REFGUID guidKey, __RPC__out UINT64 *punValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetDouble(__RPC__in REFGUID guidKey, __RPC__out double *pfValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetGUID(__RPC__in REFGUID guidKey, __RPC__out GUID *pguidValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetStringLength(__RPC__in REFGUID guidKey, __RPC__out UINT32 *pcchLength) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetString(__RPC__in REFGUID guidKey, __RPC__out_ecount_full(cchBufSize) LPWSTR pwszValue, UINT32 cchBufSize, __RPC__inout_opt UINT32 *pcchLength) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetAllocatedString(__RPC__in REFGUID guidKey, __RPC__deref_out_ecount_full_opt((*pcchLength + 1)) LPWSTR *ppwszValue, __RPC__out UINT32 *pcchLength) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetBlobSize(__RPC__in REFGUID guidKey, __RPC__out UINT32 *pcbBlobSize) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetBlob(__RPC__in REFGUID guidKey, __RPC__out_ecount_full(cbBufSize) UINT8 *pBuf, UINT32 cbBufSize, __RPC__inout_opt UINT32 *pcbBlobSize) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetAllocatedBlob(__RPC__in REFGUID guidKey, __RPC__deref_out_ecount_full_opt(*pcbSize) UINT8 **ppBuf, __RPC__out UINT32 *pcbSize) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetUnknown(__RPC__in REFGUID guidKey, __RPC__in REFIID riid, __RPC__deref_out_opt LPVOID *ppv) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetItem(__RPC__in REFGUID guidKey, __RPC__in REFPROPVARIANT Value) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE DeleteItem(__RPC__in REFGUID guidKey) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetItem(__RPC__in REFGUID, __RPC__inout_opt PROPVARIANT*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetItemType(__RPC__in REFGUID, __RPC__out MF_ATTRIBUTE_TYPE*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE CompareItem(__RPC__in REFGUID, __RPC__in REFPROPVARIANT, __RPC__out BOOL*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE Compare(__RPC__in_opt IMFAttributes*, MF_ATTRIBUTES_MATCH_TYPE, __RPC__out BOOL*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetUINT32(__RPC__in REFGUID, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetUINT64(__RPC__in REFGUID, __RPC__out UINT64*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetDouble(__RPC__in REFGUID, __RPC__out double*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetGUID(__RPC__in REFGUID, __RPC__out GUID*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetStringLength(__RPC__in REFGUID, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetString(__RPC__in REFGUID, __RPC__out_ecount_full(cchBufSize) LPWSTR, UINT32, __RPC__inout_opt UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetAllocatedString(__RPC__in REFGUID, __RPC__deref_out_ecount_full_opt((*pcchLength + 1)) LPWSTR*, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetBlobSize(__RPC__in REFGUID, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetBlob(__RPC__in REFGUID, __RPC__out_ecount_full(cbBufSize) UINT8*, UINT32, __RPC__inout_opt UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetAllocatedBlob(__RPC__in REFGUID, __RPC__deref_out_ecount_full_opt(*pcbSize) UINT8**, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetUnknown(__RPC__in REFGUID, __RPC__in REFIID, __RPC__deref_out_opt LPVOID*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetItem(__RPC__in REFGUID, __RPC__in REFPROPVARIANT) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE DeleteItem(__RPC__in REFGUID) override { return E_NOTIMPL; }
         HRESULT STDMETHODCALLTYPE DeleteAllItems(void) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetUINT32(__RPC__in REFGUID guidKey, UINT32 unValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetUINT64(__RPC__in REFGUID guidKey, UINT64 unValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetDouble(__RPC__in REFGUID guidKey, double fValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetGUID(__RPC__in REFGUID guidKey, __RPC__in REFGUID guidValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetString(__RPC__in REFGUID guidKey, __RPC__in_string LPCWSTR wszValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetBlob(__RPC__in REFGUID guidKey, __RPC__in_ecount_full(cbBufSize) const UINT8 *pBuf, UINT32 cbBufSize) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetUnknown(__RPC__in REFGUID guidKey, __RPC__in_opt IUnknown *pUnknown) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetUINT32(__RPC__in REFGUID, UINT32) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetUINT64(__RPC__in REFGUID, UINT64) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetDouble(__RPC__in REFGUID, double) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetGUID(__RPC__in REFGUID, __RPC__in REFGUID) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetString(__RPC__in REFGUID, __RPC__in_string LPCWSTR) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetBlob(__RPC__in REFGUID, __RPC__in_ecount_full(cbBufSize) const UINT8*, UINT32) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetUnknown(__RPC__in REFGUID, __RPC__in_opt IUnknown*) override { return E_NOTIMPL; }
         HRESULT STDMETHODCALLTYPE LockStore(void) override { return E_NOTIMPL; }
         HRESULT STDMETHODCALLTYPE UnlockStore(void) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetCount(__RPC__out UINT32 *pcItems) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetItemByIndex(UINT32 unIndex, __RPC__out GUID *pguidKey, __RPC__inout_opt PROPVARIANT *pValue) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE CopyAllItems(__RPC__in_opt IMFAttributes *pDest) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetCount(__RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetItemByIndex(UINT32, __RPC__out GUID*, __RPC__inout_opt PROPVARIANT*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE CopyAllItems(__RPC__in_opt IMFAttributes*) override { return E_NOTIMPL; }
 
         // IMFVideoDisplayControl
-        HRESULT STDMETHODCALLTYPE GetNativeVideoSize(SIZE* pszVideo, SIZE* pszARVideo) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetIdealVideoSize(SIZE* pszMin, SIZE* pszMax) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetNativeVideoSize(SIZE*, SIZE*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetIdealVideoSize(SIZE*, SIZE*) override { return E_NOTIMPL; }
         HRESULT STDMETHODCALLTYPE SetVideoPosition(const MFVideoNormalizedRect* pnrcSource, const LPRECT prcDest) override;
         HRESULT STDMETHODCALLTYPE GetVideoPosition(MFVideoNormalizedRect* pnrcSource, LPRECT prcDest) override;
-        HRESULT STDMETHODCALLTYPE SetAspectRatioMode(DWORD dwAspectRatioMode) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetAspectRatioMode(DWORD* pdwAspectRatioMode) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetAspectRatioMode(DWORD) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetAspectRatioMode(DWORD*) override { return E_NOTIMPL; }
         HRESULT STDMETHODCALLTYPE SetVideoWindow(HWND hwndVideo) override;
         HRESULT STDMETHODCALLTYPE GetVideoWindow(HWND* phwndVideo) override;
         HRESULT STDMETHODCALLTYPE RepaintVideo() override;
-        HRESULT STDMETHODCALLTYPE GetCurrentImage(BITMAPINFOHEADER* pBih, BYTE** pDib, DWORD* pcbDib, LONGLONG* pTimeStamp) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetBorderColor(COLORREF Clr) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetBorderColor(COLORREF* pClr) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetRenderingPrefs(DWORD dwRenderFlags) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetRenderingPrefs(DWORD* pdwRenderFlags) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE SetFullscreen(BOOL bFullscreen) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE GetFullscreen(BOOL* pbFullscreen) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetCurrentImage(BITMAPINFOHEADER*, BYTE**, DWORD*, LONGLONG*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetBorderColor(COLORREF) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetBorderColor(COLORREF*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetRenderingPrefs(DWORD) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetRenderingPrefs(DWORD*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetFullscreen(BOOL) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetFullscreen(BOOL*) override { return E_NOTIMPL; }
 
         // IMFAsyncCallback methods
         HRESULT STDMETHODCALLTYPE GetParameters(DWORD*, DWORD*) override { return E_NOTIMPL; }
-        HRESULT STDMETHODCALLTYPE Invoke(IMFAsyncResult* pAsyncResult) override;
+        HRESULT STDMETHODCALLTYPE Invoke(IMFAsyncResult*) override;
 
         // MediaPlayerListener
         void onMediaPlayerDeleted() override;
