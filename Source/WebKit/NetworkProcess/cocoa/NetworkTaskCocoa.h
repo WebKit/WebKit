@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "NetworkDataTask.h"
-#include <WebCore/FrameIdentifier.h>
-#include <WebCore/PageIdentifier.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
-#include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
+#import "NetworkDataTask.h"
+#import <WebCore/FrameIdentifier.h>
+#import <WebCore/PageIdentifier.h>
+#import <WebCore/ResourceRequest.h>
+#import <WebCore/ResourceResponse.h>
+#import <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSString;
