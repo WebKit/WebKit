@@ -444,15 +444,15 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     bool shouldCaptureSomeOfTheThings = shouldEmitDebugHooks() || functionNode->needsActivation() || containsArrowOrEvalButNotInArrowBlock;
 
     bool shouldCaptureAllOfTheThings = shouldEmitDebugHooks() || usesEval();
-    bool needsArguments = ((functionNode->usesArguments() && !codeBlock->isArrowFunction()) || usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction())) && parseMode != SourceParseMode::ClassFieldInitializerMode;
+    m_needsArguments = ((functionNode->usesArguments() && !codeBlock->isArrowFunction()) || usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction())) && parseMode != SourceParseMode::ClassFieldInitializerMode;
 
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
         m_isAsync = true;
         // Generator and AsyncFunction never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
-        needsArguments = false;
+        m_needsArguments = false;
     }
 
-    if (isGeneratorOrAsyncFunctionWrapperParseMode(parseMode) && needsArguments) {
+    if (isGeneratorOrAsyncFunctionWrapperParseMode(parseMode) && m_needsArguments) {
         // Generator does not provide "arguments". Instead, wrapping GeneratorFunction provides "arguments".
         // This is because arguments of a generator should be evaluated before starting it.
         // To workaround it, we evaluate these arguments as arguments of a wrapping generator function, and reference it from a generator.
@@ -476,7 +476,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     auto captures = scopedLambda<bool (UniquedStringImpl*)>([&] (UniquedStringImpl* uid) -> bool {
         if (!shouldCaptureSomeOfTheThings)
             return false;
-        if (needsArguments && uid == propertyNames().arguments.impl()) {
+        if (m_needsArguments && uid == propertyNames().arguments.impl()) {
             // Actually, we only need to capture the arguments object when we "need full activation"
             // because of name scopes. But historically we did it this way, so for now we just preserve
             // the old behavior.
@@ -561,7 +561,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     for (FunctionMetadataNode* function : functionNode->functionStack())
         m_functions.add(function->ident().impl());
     
-    if (needsArguments) {
+    if (m_needsArguments) {
         // Create the arguments object now. We may put the arguments object into the activation if
         // it is captured. Either way, we create two arguments object variables: one is our
         // private variable that is immutable, and another that is the user-visible variable. The
@@ -572,7 +572,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         m_argumentsRegister->ref();
     }
     
-    if (needsArguments && !ecmaMode.isStrict() && isSimpleParameterList) {
+    if (m_needsArguments && !ecmaMode.isStrict() && isSimpleParameterList) {
         // If we captured any formal parameter by name, then we use ScopedArguments. Otherwise we
         // use DirectArguments. With ScopedArguments, we lift all of our arguments into the
         // activation.
@@ -649,7 +649,7 @@ IGNORE_GCC_WARNINGS_END
         }
     }
     
-    if (needsArguments && (ecmaMode.isStrict() || !isSimpleParameterList)) {
+    if (m_needsArguments && (ecmaMode.isStrict() || !isSimpleParameterList)) {
         // Allocate a cloned arguments object.
         OpCreateClonedArguments::emit(this, m_argumentsRegister);
     }
@@ -676,7 +676,7 @@ IGNORE_GCC_WARNINGS_END
     // This is our final act of weirdness. "arguments" is overridden by everything except the
     // callee. We add it to the symbol table if it's not already there and it's not an argument.
     bool shouldCreateArgumentsVariableInParameterScope = false;
-    if (needsArguments) {
+    if (m_needsArguments) {
         // If "arguments" is overridden by a function or destructuring parameter name, then it's
         // OK for us to call createVariable() because it won't change anything. It's also OK for
         // us to them tell BytecodeGenerator::generate() to write to it because it will do so

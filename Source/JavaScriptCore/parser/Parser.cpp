@@ -338,6 +338,8 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
         features |= NonSimpleParameterListFeature;
     if (scope->usesImportMeta())
         features |= ImportMetaFeature;
+    if (m_seenArgumentsDotLength && scope->hasDeclaredGlobalArguments())
+        features |= ArgumentsFeature;
 
 #if ASSERT_ENABLED
     if (m_parsingBuiltin && isProgramParseMode(parseMode)) {
@@ -5033,6 +5035,51 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::createResolveAndU
 }
 
 template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::tryParseArgumentsDotLengthForFastPath(TreeBuilder& context)
+{
+    // There is a fast path for getting `arguments.length` by reading `argumentCountIncludingThis`
+    // directly from CallFrame. In that case, no need to materialize `arguments` object. The fast
+    // path for `arguments.length` is applied by excluding 'arguments.length` pattern for
+    // ArgumentsFeature except for two cases:
+    // 1. 'arguments.length` modifications.
+    // 2. Function level global variable declaration with identifier `arguments`.
+    if (context.hasArgumentsFeature() || !match(IDENT) || !isArgumentsIdentifier())
+        return 0;
+
+    // If semantic checks fail here, then let `parsePrimaryExpression` handle the error thrown.
+    // Note that these checks must align to the checks in `parsePrimaryExpression` under
+    // the clause with token type IDENT.
+    if (UNLIKELY(currentScope()->isStaticBlock()
+        || m_parserState.isParsingClassFieldInitializer
+        || currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext))
+        return 0;
+
+    SavePoint argumentsSavePoint = createSavePoint(context);
+    JSTextPosition primaryStart = tokenStartPosition();
+    JSTokenLocation primaryLocation(tokenLocation());
+    next();
+    if (match(DOT)) {
+        SavePoint argumentsDotSavePoint = createSavePoint(context);
+        next();
+        if (match(IDENT) && *m_token.m_data.ident == m_vm.propertyNames->length) {
+            m_seenArgumentsDotLength = true;
+
+            bool isEval = false;
+            const Identifier* argumentsIdentifier = &m_vm.propertyNames->arguments;
+            currentScope()->useVariable(argumentsIdentifier, isEval);
+            m_parserState.lastIdentifier = argumentsIdentifier;
+
+            bool needToCheckUsesArguments = false;
+            TreeExpression argumentsDotExpression = context.createResolve(primaryLocation, *argumentsIdentifier, primaryStart, lastTokenEndPosition(), needToCheckUsesArguments);
+            restoreSavePoint(context, argumentsDotSavePoint);
+            return argumentsDotExpression;
+        }
+    }
+    restoreSavePoint(context, argumentsSavePoint);
+    return 0;
+}
+
+template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpression(TreeBuilder& context)
 {
     failIfStackOverflow();
@@ -5360,7 +5407,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     } else if (!baseIsNewTarget) {
         const bool isAsync = matchContextualKeyword(m_vm.propertyNames->async);
 
-        base = parsePrimaryExpression(context);
+        if (TreeExpression argumentsDotLengthExpression = tryParseArgumentsDotLengthForFastPath(context))
+            base = argumentsDotLengthExpression;
+        else
+            base = parsePrimaryExpression(context);
         failIfFalse(base, "Cannot parse base expression");
         if (UNLIKELY(isAsync && context.isResolve(base) && !m_lexer->hasLineTerminatorBeforeToken())) {
             if (matchSpecIdentifier()) {

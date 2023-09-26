@@ -451,6 +451,12 @@ public:
         return result;
     }
 
+    ALWAYS_INLINE bool hasDeclaredGlobalArguments()
+    {
+        const Identifier& ident = m_vm.propertyNames->arguments;
+        return hasLexicallyDeclaredVariable(ident) || hasDeclaredVariable(ident) || shadowsArguments();
+    }
+
     ALWAYS_INLINE bool hasDeclaredVariable(const Identifier& ident)
     {
         return hasDeclaredVariable(ident.impl());
@@ -1802,6 +1808,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseUnaryExpression(TreeBuilder&);
     template <class TreeBuilder> NEVER_INLINE TreeExpression parseAwaitExpression(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseMemberExpression(TreeBuilder&);
+    template <class TreeBuilder> ALWAYS_INLINE TreeExpression tryParseArgumentsDotLengthForFastPath(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parsePrimaryExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseArrayLiteral(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseObjectLiteral(TreeBuilder&);
@@ -2150,6 +2157,7 @@ private:
     bool m_isInsideOrdinaryFunction;
     bool m_seenTaggedTemplateInNonReparsingFunctionMode { false };
     bool m_seenPrivateNameUseInNonReparsingFunctionMode { false };
+    bool m_seenArgumentsDotLength { false };
 };
 
 

@@ -367,6 +367,8 @@ namespace JSC {
         bool needsToUpdateArrowFunctionContext() const { return m_needsToUpdateArrowFunctionContext; }
         bool usesEval() const { return m_scopeNode->usesEval(); }
         bool usesThis() const { return m_scopeNode->usesThis(); }
+        bool isFunctionNode() const { return m_scopeNode->isFunctionNode(); }
+        bool hasShadowsArgumentsCodeFeature() const { return m_scopeNode->hasShadowsArgumentsFeature(); }
         LexicalScopeFeatures lexicalScopeFeatures() const { return m_scopeNode->lexicalScopeFeatures(); }
         PrivateBrandRequirement privateBrandRequirement() const { return m_codeBlock->privateBrandRequirement(); }
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
@@ -1234,6 +1236,16 @@ namespace JSC {
         void pushPrivateAccessNames(const PrivateNameEnvironment*);
         void popPrivateAccessNames();
 
+        bool needsArguments() const { return m_needsArguments; };
+        bool shouldGetArgumentsDotLengthFast(ExpressionNode* node) const
+        {
+            return isFunctionNode()
+                && !needsArguments()
+                && !hasShadowsArgumentsCodeFeature()
+                && node->isArgumentsLengthAccess(vm())
+                && !isArrowFunctionParseMode(parseMode())
+                && !isGeneratorOrAsyncFunctionBodyParseMode(parseMode());
+        }
     private:
         OptionSet<CodeGenerationMode> m_codeGenerationMode;
 
@@ -1337,6 +1349,7 @@ namespace JSC {
         bool m_allowTailCallOptimization { false };
         bool m_allowCallIgnoreResultOptimization { false };
         bool m_needsToUpdateArrowFunctionContext : 1;
+        bool m_needsArguments : 1 { false };
         ECMAMode m_ecmaMode;
         DerivedContextType m_derivedContextType { DerivedContextType::None };
 
