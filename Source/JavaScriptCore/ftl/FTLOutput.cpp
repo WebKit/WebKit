@@ -484,7 +484,7 @@ LValue Output::store32As16(LValue value, TypedPointer pointer)
 
 LValue Output::baseIndex(LValue base, LValue index, Scale scale, ptrdiff_t offset)
 {
-    LValue accumulatedOffset;
+    LValue accumulatedOffset = nullptr;
         
     switch (scale) {
     case ScaleOne:

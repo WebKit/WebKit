@@ -108,7 +108,9 @@ void initialize()
         llint_entry(&g_opcodeMap, &g_opcodeMapWide16, &g_opcodeMapWide32);
     
 #if ENABLE(WEBASSEMBLY)
-        wasm_entry(&g_opcodeMap[numOpcodeIDs], &g_opcodeMapWide16[numOpcodeIDs], &g_opcodeMapWide32[numOpcodeIDs]);
+        // This is normally defined by LowLevelInterpreter.asm
+        // WebAssembly is being compiled but disabled at runtime, so we can get FTL to compile
+        // wasm_entry(&g_opcodeMap[numOpcodeIDs], &g_opcodeMapWide16[numOpcodeIDs], &g_opcodeMapWide32[numOpcodeIDs]);
 #endif // ENABLE(WEBASSEMBLY)
     }
 

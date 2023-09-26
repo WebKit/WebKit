@@ -283,6 +283,10 @@ typedef B3Operand<int8_t> Int8Operand;
 
 #define MAKE_OPERAND(value) B3Operand<decltype(value)> { #value, value }
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264338327950288
+#endif
+
 template<typename FloatType>
 void populateWithInterestingValues(Vector<B3Operand<FloatType>>& operands)
 {

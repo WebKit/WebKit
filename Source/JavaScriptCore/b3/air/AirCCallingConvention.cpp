@@ -83,7 +83,14 @@ void marshallCCallArgument(Vector<Arg> &result, unsigned& gpArgumentCount, unsig
         marshallCCallArgumentImpl<GPRInfo>(result, gpArgumentCount, stackOffset, child);
         return;
     case FP:
+#if OS(WINDOWS) && CPU(X86_64)
+        // On Windows, arguments map to designated registers based on the argument positions,
+        // even when there are interlaced scalar and floating point arguments.
+        UNUSED_PARAM(fpArgumentCount);
+        marshallCCallArgumentImpl<FPRInfo>(result, gpArgumentCount, stackOffset, child);
+#else
         marshallCCallArgumentImpl<FPRInfo>(result, fpArgumentCount, stackOffset, child);
+#endif
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

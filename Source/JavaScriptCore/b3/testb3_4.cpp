@@ -933,6 +933,8 @@ void testStackSlot()
 
 void testLoadFromFramePointer()
 {
+// MSVC doesn't have __builtin_frame_address
+#if !COMPILER(MSVC)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     root->appendNewControlValue(
@@ -945,6 +947,7 @@ void testLoadFromFramePointer()
     void* myFP = __builtin_frame_address(0);
     CHECK(fp <= myFP);
     CHECK(fp >= bitwise_cast<char*>(myFP) - 10000);
+#endif
 }
 
 void testStoreLoadStackSlot(int value)

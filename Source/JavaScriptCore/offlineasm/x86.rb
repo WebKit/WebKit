@@ -160,6 +160,8 @@ def getSizeString(kind)
         size = "qword"
     when :quad
         size = "qword"
+    when :vector
+        size = "xmmword"
     else
         raise "Invalid kind #{kind}"
     end
@@ -1319,7 +1321,7 @@ class Instruction
         when "loadd"
             $asm.puts "movsd #{x86Operands(:double, :double)}"
         when "loadv"
-            $asm.puts "movdqu #{x86Operands(:int, :double)}"
+            $asm.puts "movdqu #{x86Operands(:vector, :vector)}"
         when "moved"
             $asm.puts "movsd #{x86Operands(:double, :double)}"
         when "storef"

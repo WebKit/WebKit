@@ -310,7 +310,6 @@ inline CapabilityLevel canCompile(Node* node)
     case GetIndexedPropertyStorage:
     case ResolveRope:
     case GetPropertyEnumerator:
-    case EnumeratorNextUpdateIndexAndMode:
     case EnumeratorNextUpdatePropertyName:
     case EnumeratorGetByVal:
     case EnumeratorInByVal:
@@ -463,6 +462,14 @@ inline CapabilityLevel canCompile(Node* node)
         // case because it would prevent us from catching bugs where the FTL backend
         // pipeline failed to optimize out an Identity.
         break;
+
+    case EnumeratorNextUpdateIndexAndMode:
+        // This doesn't work on Windows, but works elsewhere
+#if OS(WINDOWS)
+        return CannotCompile;
+#else
+        break;
+#endif
 
     case IdentityWithProfile:
     case CheckTierUpInLoop:

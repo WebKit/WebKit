@@ -2783,20 +2783,13 @@ entry(wasm, macro()
     include InitWasm
 end)
 
-macro wasmScope()
-    # Wrap the script in a macro since it overwrites some of the LLInt macros,
-    # but we don't want to interfere with the LLInt opcodes
-    include WebAssembly
-    include InPlaceInterpreter
-end
-
-global _wasmLLIntPCRangeStart
-_wasmLLIntPCRangeStart:
-    break # FIXME: rdar://96556827
-wasmScope()
-global _wasmLLIntPCRangeEnd
-_wasmLLIntPCRangeEnd:
-    break # FIXME: rdar://96556827
+# Commenting this out to avoid the includes, so we can get FTL to compile
+# macro wasmScope()
+#     # Wrap the script in a macro since it overwrites some of the LLInt macros,
+#     # but we don't want to interfere with the LLInt opcodes
+#     include WebAssembly
+#     include InPlaceInterpreter
+# end
 
 else
 
@@ -2827,6 +2820,29 @@ _wasm_trampoline_wasm_tail_call_indirect_wide32:
     crash()
 
 end # WEBASSEMBLY and not X86_64_WIN
+
+global _wasmLLIntPCRangeStart
+_wasmLLIntPCRangeStart:
+    break # FIXME: rdar://96556827
+if WEBASSEMBLY and not X86_64_WIN
+wasmScope()
+else
+global _ipint_entry
+_ipint_entry:
+    break
+global _ipint_entry_simd
+_ipint_entry_simd:
+    break
+global _ipint_catch_all_entry
+_ipint_catch_all_entry:
+    break
+global _ipint_catch_entry
+_ipint_catch_entry:
+    break
+end
+global _wasmLLIntPCRangeEnd
+_wasmLLIntPCRangeEnd:
+    break # FIXME: rdar://96556827
 
 include? LowLevelInterpreterAdditions
 

@@ -320,6 +320,17 @@ RegisterSet RegisterSetBuilder::ftlCalleeSaveRegisters()
     result.add(GPRInfo::regCS2, IgnoreVectors);
     result.add(GPRInfo::regCS3, IgnoreVectors);
     result.add(GPRInfo::regCS4, IgnoreVectors);
+#elif CPU(X86_64) && OS(WINDOWS)
+    result.add(GPRInfo::regCS0, IgnoreVectors);
+    result.add(GPRInfo::regCS1, IgnoreVectors);
+    result.add(GPRInfo::regCS2, IgnoreVectors);
+    result.add(GPRInfo::regCS3, IgnoreVectors);
+    static_assert(GPRInfo::regCS4 == GPRInfo::jitDataRegister);
+    static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister);
+    result.add(GPRInfo::regCS4, IgnoreVectors);
+    result.add(GPRInfo::regCS5, IgnoreVectors);
+    result.add(GPRInfo::regCS6, IgnoreVectors);
 #elif CPU(ARM64)
     // B3 might save and use all ARM64 callee saves specified in the ABI.
     result.add(GPRInfo::regCS0, IgnoreVectors);

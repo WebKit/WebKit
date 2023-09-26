@@ -680,6 +680,20 @@ void Options::notifyOptionsChanged()
     // https://webkit.org/b/239707
     Options::useFTLJIT() = false;
 #endif
+
+#if OS(WINDOWS)
+    // WASM enabled at build-time to simplify building JSC with FTL, disabled at runtime.
+    // https://webkit.org/b/222315
+    Options::useWebAssembly() = false;
+    Options::useWebAssemblyFastMemory() = false;
+    Options::useWasmFaultSignalHandler() = false;
+
+    // BBQ JIT is disabled on Windows. We have two fewer GPRs available to allocate as the
+    // m_validGPRs used by the register allocator excludes all callee-saves.
+    // We'll enable it at build-time to simplify building JSC, as the FTL JIT assumes the
+    // BBQ JIT code is present.
+    Options::useBBQJIT() = false;
+#endif
     
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;

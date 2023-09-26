@@ -32,6 +32,7 @@
 #include "FTLState.h"
 #include "FTLThunks.h"
 #include "GPRInfo.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 
 namespace JSC { namespace FTL {
 
@@ -58,6 +59,10 @@ SlowPathCallContext::SlowPathCallContext(
         
     m_offsetToSavingArea =
         (std::max(m_numArgs, NUMBER_OF_ARGUMENT_REGISTERS) - NUMBER_OF_ARGUMENT_REGISTERS) * wordSize;
+
+#if OS(WINDOWS)
+    m_offsetToSavingArea = std::max(m_offsetToSavingArea, maxFrameExtentForSlowPathCall);
+#endif
     
     RegisterSetBuilder callingConventionRegisters = m_callingConventionRegisters.toRegisterSet();
     for (unsigned i = std::min(NUMBER_OF_ARGUMENT_REGISTERS, numArgs); i--;)
@@ -82,7 +87,7 @@ SlowPathCallContext::SlowPathCallContext(
         stackBytesNeededForReturnAddress +
         (usedRegisters.numberOfSetRegisters() - numberOfCallingConventionRegisters) * wordSize;
         
-    m_stackBytesNeeded = (m_stackBytesNeeded + stackAlignmentBytes() - 1) & ~(stackAlignmentBytes() - 1);
+    m_stackBytesNeeded = (m_stackBytesNeeded + stackAlignmentBytes() - 1) & ~(((size_t) stackAlignmentBytes()) - 1);
         
     m_jit.subPtr(CCallHelpers::TrustedImm32(m_stackBytesNeeded), CCallHelpers::stackPointerRegister);
         

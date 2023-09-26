@@ -371,7 +371,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
             jit.storePtr(GPRInfo::regT0, materializationArguments + propertyIndex);
         }
 
-        static_assert(FunctionTraits<decltype(operationPopulateObjectInOSR)>::arity < GPRInfo::numberOfArgumentRegisters, "This call assumes that we don't pass arguments on the stack.");
+        static_assert(FunctionTraits<decltype(operationPopulateObjectInOSR)>::arity <= GPRInfo::numberOfArgumentRegisters, "This call assumes that we don't pass arguments on the stack.");
         jit.setupArguments<decltype(operationPopulateObjectInOSR)>(
             CCallHelpers::TrustedImmPtr(codeBlock->globalObjectFor(materialization->origin())),
             CCallHelpers::TrustedImmPtr(materialization),

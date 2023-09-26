@@ -92,7 +92,7 @@ public:
         case FP:
             return m_fpRegsInPriorityOrder;
         }
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     // This is the set of registers that Air is allowed to emit code to mutate. It's derived from
@@ -381,7 +381,7 @@ private:
         case FP:
             return m_fpRegsInPriorityOrder;
         }
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.

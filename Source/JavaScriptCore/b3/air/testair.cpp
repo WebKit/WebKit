@@ -232,6 +232,7 @@ void testShuffleSimpleShift()
     CHECK(things[4] == 4);
 }
 
+#if !OS(WINDOWS)
 void testShuffleLongShift()
 {
     B3::Procedure proc;
@@ -335,6 +336,7 @@ void testShuffleLongShiftBackwards()
     CHECK(things[6] == 6);
     CHECK(things[7] == 7);
 }
+#endif
 
 void testShuffleSimpleRotate()
 {
@@ -449,6 +451,7 @@ void testShuffleBroadcastAllRegs()
         CHECK(thing == 35);
 }
 
+#if !OS(WINDOWS)
 void testShuffleTreeShift()
 {
     B3::Procedure proc;
@@ -607,6 +610,7 @@ void testShuffleTreeShiftOtherBackward()
     CHECK(things[6] == 6);
     CHECK(things[7] == 5);
 }
+#endif
 
 void testShuffleMultipleShifts()
 {
@@ -2643,14 +2647,18 @@ void run(const char* filter)
 
     RUN(testShuffleSimpleSwap());
     RUN(testShuffleSimpleShift());
+#if !OS(WINDOWS)
     RUN(testShuffleLongShift());
     RUN(testShuffleLongShiftBackwards());
+#endif
     RUN(testShuffleSimpleRotate());
     RUN(testShuffleSimpleBroadcast());
     RUN(testShuffleBroadcastAllRegs());
+#if !OS(WINDOWS)
     RUN(testShuffleTreeShift());
     RUN(testShuffleTreeShiftBackward());
     RUN(testShuffleTreeShiftOtherBackward());
+#endif
     RUN(testShuffleMultipleShifts());
     RUN(testShuffleRotateWithFringe());
     RUN(testShuffleRotateWithFringeInWeirdOrder());

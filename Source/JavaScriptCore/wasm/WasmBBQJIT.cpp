@@ -347,7 +347,11 @@ private:
         };
     };
 
+#if OS(WINDOWS)
+    static_assert(sizeof(Location) == 8);
+#else
     static_assert(sizeof(Location) == 4);
+#endif
 
     static bool isValidValueTypeKind(TypeKind kind)
     {
@@ -710,7 +714,9 @@ private:
 
         static RegisterBinding none()
         {
-            return RegisterBinding();
+            RegisterBinding binding;
+            binding.m_kind = RegisterBinding::Kind::None;
+            return binding;
         }
 
         static RegisterBinding scratch()
@@ -5549,10 +5555,10 @@ public:
     PartialResult WARN_UNUSED_RETURN addI32Rotl(Value lhs, Value rhs, Value& result)
     {
         PREPARE_FOR_SHIFT;
+#if CPU(X86_64)
         EMIT_BINARY(
             "I32Rotl", TypeKind::I32,
             BLOCK(Value::fromI32(B3::rotateLeft(lhs.asI32(), rhs.asI32()))),
-#if CPU(X86_64)
             BLOCK(
                 moveShiftAmountIfNecessary(rhsLocation);
                 m_jit.rotateLeft32(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
@@ -5566,7 +5572,11 @@ public:
                     m_jit.rotateLeft32(resultLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
                 }
             )
+        );
 #else
+        EMIT_BINARY(
+            "I32Rotl", TypeKind::I32,
+            BLOCK(Value::fromI32(B3::rotateLeft(lhs.asI32(), rhs.asI32()))),
             BLOCK(
                 moveShiftAmountIfNecessary(rhsLocation);
                 m_jit.neg32(rhsLocation.asGPR(), wasmScratchGPR);
@@ -5582,17 +5592,17 @@ public:
                     m_jit.rotateRight32(resultLocation.asGPR(), wasmScratchGPR, resultLocation.asGPR());
                 }
             )
-#endif
         );
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addI64Rotl(Value lhs, Value rhs, Value& result)
     {
         PREPARE_FOR_SHIFT;
+#if CPU(X86_64)
         EMIT_BINARY(
             "I64Rotl", TypeKind::I64,
             BLOCK(Value::fromI64(B3::rotateLeft(lhs.asI64(), rhs.asI64()))),
-#if CPU(X86_64)
             BLOCK(
                 moveShiftAmountIfNecessary(rhsLocation);
                 m_jit.rotateLeft64(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
@@ -5606,7 +5616,11 @@ public:
                     m_jit.rotateLeft64(resultLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
                 }
             )
+        );
 #else
+        EMIT_BINARY(
+            "I64Rotl", TypeKind::I64,
+            BLOCK(Value::fromI64(B3::rotateLeft(lhs.asI64(), rhs.asI64()))),
             BLOCK(
                 moveShiftAmountIfNecessary(rhsLocation);
                 m_jit.neg64(rhsLocation.asGPR(), wasmScratchGPR);
@@ -5622,8 +5636,8 @@ public:
                     m_jit.rotateRight64(resultLocation.asGPR(), wasmScratchGPR, resultLocation.asGPR());
                 }
             )
-#endif
         );
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addI32Rotr(Value lhs, Value rhs, Value& result)
@@ -6182,20 +6196,26 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addF32ConvertUI32(Value operand, Value& result)
     {
+#if CPU(X86_64)
         EMIT_UNARY(
             "F32ConvertUI32", TypeKind::F32,
             BLOCK(Value::fromF32(static_cast<uint32_t>(operand.asI32()))),
             BLOCK(
-#if CPU(X86_64)
                 ScratchScope<1, 0> scratches(*this);
                 m_jit.zeroExtend32ToWord(operandLocation.asGPR(), wasmScratchGPR);
                 m_jit.convertUInt64ToFloat(wasmScratchGPR, resultLocation.asFPR(), scratches.gpr(0));
-#else
-                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), wasmScratchGPR);
-                m_jit.convertUInt64ToFloat(wasmScratchGPR, resultLocation.asFPR());
-#endif
             )
         )
+#else
+        EMIT_UNARY(
+            "F32ConvertUI32", TypeKind::F32,
+            BLOCK(Value::fromF32(static_cast<uint32_t>(operand.asI32()))),
+            BLOCK(
+                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), wasmScratchGPR);
+                m_jit.convertUInt64ToFloat(wasmScratchGPR, resultLocation.asFPR());
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF32ConvertSI64(Value operand, Value& result)
@@ -6211,17 +6231,23 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addF32ConvertUI64(Value operand, Value& result)
     {
+#if CPU(X86_64)
         EMIT_UNARY(
             "F32ConvertUI64", TypeKind::F32,
             BLOCK(Value::fromF32(static_cast<uint64_t>(operand.asI64()))),
             BLOCK(
-#if CPU(X86_64)
                 m_jit.convertUInt64ToFloat(operandLocation.asGPR(), resultLocation.asFPR(), wasmScratchGPR);
-#else
-                m_jit.convertUInt64ToFloat(operandLocation.asGPR(), resultLocation.asFPR());
-#endif
             )
         )
+#else
+        EMIT_UNARY(
+            "F32ConvertUI64", TypeKind::F32,
+            BLOCK(Value::fromF32(static_cast<uint64_t>(operand.asI64()))),
+            BLOCK(
+                m_jit.convertUInt64ToFloat(operandLocation.asGPR(), resultLocation.asFPR());
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF64ConvertSI32(Value operand, Value& result)
@@ -6237,20 +6263,26 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addF64ConvertUI32(Value operand, Value& result)
     {
+#if CPU(X86_64)
         EMIT_UNARY(
             "F64ConvertUI32", TypeKind::F64,
             BLOCK(Value::fromF64(static_cast<uint32_t>(operand.asI32()))),
             BLOCK(
-#if CPU(X86_64)
                 ScratchScope<1, 0> scratches(*this);
                 m_jit.zeroExtend32ToWord(operandLocation.asGPR(), wasmScratchGPR);
                 m_jit.convertUInt64ToDouble(wasmScratchGPR, resultLocation.asFPR(), scratches.gpr(0));
-#else
-                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), wasmScratchGPR);
-                m_jit.convertUInt64ToDouble(wasmScratchGPR, resultLocation.asFPR());
-#endif
             )
         )
+#else
+        EMIT_UNARY(
+            "F64ConvertUI32", TypeKind::F64,
+            BLOCK(Value::fromF64(static_cast<uint32_t>(operand.asI32()))),
+            BLOCK(
+                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), wasmScratchGPR);
+                m_jit.convertUInt64ToDouble(wasmScratchGPR, resultLocation.asFPR());
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF64ConvertSI64(Value operand, Value& result)
@@ -6266,29 +6298,34 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addF64ConvertUI64(Value operand, Value& result)
     {
+#if CPU(X86_64)
         EMIT_UNARY(
             "F64ConvertUI64", TypeKind::F64,
             BLOCK(Value::fromF64(static_cast<uint64_t>(operand.asI64()))),
             BLOCK(
-#if CPU(X86_64)
                 m_jit.convertUInt64ToDouble(operandLocation.asGPR(), resultLocation.asFPR(), wasmScratchGPR);
-#else
-                m_jit.convertUInt64ToDouble(operandLocation.asGPR(), resultLocation.asFPR());
-#endif
             )
         )
+#else
+        EMIT_UNARY(
+            "F64ConvertUI64", TypeKind::F64,
+            BLOCK(Value::fromF64(static_cast<uint64_t>(operand.asI64()))),
+            BLOCK(
+                m_jit.convertUInt64ToDouble(operandLocation.asGPR(), resultLocation.asFPR());
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF32Copysign(Value lhs, Value rhs, Value& result)
     {
+#if CPU(X86_64)
         EMIT_BINARY(
             "F32Copysign", TypeKind::F32,
             BLOCK(Value::fromF32(floatCopySign(lhs.asF32(), rhs.asF32()))),
             BLOCK(
                 // FIXME: Better than what we have in the Air backend, but still not great. I think
                 // there's some vector instruction we can use to do this much quicker.
-
-#if CPU(X86_64)
                 m_jit.moveFloatTo32(lhsLocation.asFPR(), wasmScratchGPR);
                 m_jit.and32(TrustedImm32(0x7fffffff), wasmScratchGPR);
                 m_jit.move32ToFloat(wasmScratchGPR, wasmScratchFPR);
@@ -6296,13 +6333,6 @@ public:
                 m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), wasmScratchGPR, wasmScratchGPR);
                 m_jit.move32ToFloat(wasmScratchGPR, resultLocation.asFPR());
                 m_jit.orFloat(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
-#else
-                m_jit.moveFloatTo32(rhsLocation.asFPR(), wasmScratchGPR);
-                m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), wasmScratchGPR, wasmScratchGPR);
-                m_jit.move32ToFloat(wasmScratchGPR, wasmScratchFPR);
-                m_jit.absFloat(lhsLocation.asFPR(), lhsLocation.asFPR());
-                m_jit.orFloat(lhsLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
-#endif
             ),
             BLOCK(
                 if (lhs.isConst()) {
@@ -6314,7 +6344,6 @@ public:
                     m_jit.orFloat(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
                 } else {
                     bool signBit = bitwise_cast<uint32_t>(rhs.asF32()) & 0x80000000u;
-#if CPU(X86_64)
                     m_jit.moveDouble(lhsLocation.asFPR(), resultLocation.asFPR());
                     m_jit.move32ToFloat(TrustedImm32(0x7fffffff), wasmScratchFPR);
                     m_jit.andFloat(wasmScratchFPR, resultLocation.asFPR());
@@ -6322,14 +6351,39 @@ public:
                         m_jit.xorFloat(wasmScratchFPR, wasmScratchFPR);
                         m_jit.subFloat(wasmScratchFPR, resultLocation.asFPR(), resultLocation.asFPR());
                     }
-#else
-                    m_jit.absFloat(lhsLocation.asFPR(), resultLocation.asFPR());
-                    if (signBit)
-                        m_jit.negateFloat(resultLocation.asFPR(), resultLocation.asFPR());
-#endif
                 }
             )
         )
+#else
+        EMIT_BINARY(
+            "F32Copysign", TypeKind::F32,
+            BLOCK(Value::fromF32(floatCopySign(lhs.asF32(), rhs.asF32()))),
+            BLOCK(
+                // FIXME: Better than what we have in the Air backend, but still not great. I think
+                // there's some vector instruction we can use to do this much quicker.
+                m_jit.moveFloatTo32(rhsLocation.asFPR(), wasmScratchGPR);
+                m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), wasmScratchGPR, wasmScratchGPR);
+                m_jit.move32ToFloat(wasmScratchGPR, wasmScratchFPR);
+                m_jit.absFloat(lhsLocation.asFPR(), lhsLocation.asFPR());
+                m_jit.orFloat(lhsLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
+            ),
+            BLOCK(
+                if (lhs.isConst()) {
+                    m_jit.moveFloatTo32(rhsLocation.asFPR(), wasmScratchGPR);
+                    m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), wasmScratchGPR, wasmScratchGPR);
+                    m_jit.move32ToFloat(wasmScratchGPR, wasmScratchFPR);
+
+                    emitMoveConst(Value::fromF32(std::abs(lhs.asF32())), resultLocation);
+                    m_jit.orFloat(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
+                } else {
+                    bool signBit = bitwise_cast<uint32_t>(rhs.asF32()) & 0x80000000u;
+                    m_jit.absFloat(lhsLocation.asFPR(), resultLocation.asFPR());
+                    if (signBit)
+                        m_jit.negateFloat(resultLocation.asFPR(), resultLocation.asFPR());
+                }
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF64Copysign(Value lhs, Value rhs, Value& result)
@@ -6337,14 +6391,13 @@ public:
         if constexpr (isX86())
             clobber(shiftRCX);
 
+#if CPU(X86_64)
         EMIT_BINARY(
             "F64Copysign", TypeKind::F64,
             BLOCK(Value::fromF64(doubleCopySign(lhs.asF64(), rhs.asF64()))),
             BLOCK(
                 // FIXME: Better than what we have in the Air backend, but still not great. I think
                 // there's some vector instruction we can use to do this much quicker.
-
-#if CPU(X86_64)
                 m_jit.moveDoubleTo64(lhsLocation.asFPR(), wasmScratchGPR);
                 m_jit.and64(TrustedImm64(0x7fffffffffffffffll), wasmScratchGPR);
                 m_jit.move64ToDouble(wasmScratchGPR, wasmScratchFPR);
@@ -6353,18 +6406,6 @@ public:
                 m_jit.lshift64(wasmScratchGPR, TrustedImm32(63), wasmScratchGPR);
                 m_jit.move64ToDouble(wasmScratchGPR, resultLocation.asFPR());
                 m_jit.orDouble(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
-#else
-                m_jit.moveDoubleTo64(rhsLocation.asFPR(), wasmScratchGPR);
-
-                // Probably saves us a bit of space compared to reserving another register and
-                // materializing a 64-bit constant.
-                m_jit.urshift64(wasmScratchGPR, TrustedImm32(63), wasmScratchGPR);
-                m_jit.lshift64(wasmScratchGPR, TrustedImm32(63), wasmScratchGPR);
-                m_jit.move64ToDouble(wasmScratchGPR, wasmScratchFPR);
-
-                m_jit.absDouble(lhsLocation.asFPR(), lhsLocation.asFPR());
-                m_jit.orDouble(lhsLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
-#endif
             ),
             BLOCK(
                 if (lhs.isConst()) {
@@ -6378,7 +6419,6 @@ public:
                     m_jit.orDouble(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
                 } else {
                     bool signBit = bitwise_cast<uint64_t>(rhs.asF64()) & 0x8000000000000000ull;
-#if CPU(X86_64)
                     m_jit.moveDouble(lhsLocation.asFPR(), resultLocation.asFPR());
                     m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), wasmScratchFPR);
                     m_jit.andDouble(wasmScratchFPR, resultLocation.asFPR());
@@ -6386,14 +6426,46 @@ public:
                         m_jit.xorDouble(wasmScratchFPR, wasmScratchFPR);
                         m_jit.subDouble(wasmScratchFPR, resultLocation.asFPR(), resultLocation.asFPR());
                     }
-#else
-                    m_jit.absDouble(lhsLocation.asFPR(), resultLocation.asFPR());
-                    if (signBit)
-                        m_jit.negateDouble(resultLocation.asFPR(), resultLocation.asFPR());
-#endif
                 }
             )
         )
+#else
+        EMIT_BINARY(
+            "F64Copysign", TypeKind::F64,
+            BLOCK(Value::fromF64(doubleCopySign(lhs.asF64(), rhs.asF64()))),
+            BLOCK(
+                // FIXME: Better than what we have in the Air backend, but still not great. I think
+                // there's some vector instruction we can use to do this much quicker.
+                m_jit.moveDoubleTo64(rhsLocation.asFPR(), wasmScratchGPR);
+
+                // Probably saves us a bit of space compared to reserving another register and
+                // materializing a 64-bit constant.
+                m_jit.urshift64(wasmScratchGPR, TrustedImm32(63), wasmScratchGPR);
+                m_jit.lshift64(wasmScratchGPR, TrustedImm32(63), wasmScratchGPR);
+                m_jit.move64ToDouble(wasmScratchGPR, wasmScratchFPR);
+
+                m_jit.absDouble(lhsLocation.asFPR(), lhsLocation.asFPR());
+                m_jit.orDouble(lhsLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
+            ),
+            BLOCK(
+                if (lhs.isConst()) {
+                    m_jit.moveDoubleTo64(rhsLocation.asFPR(), wasmScratchGPR);
+                    m_jit.urshift64(wasmScratchGPR, TrustedImm32(63), wasmScratchGPR);
+                    m_jit.lshift64(wasmScratchGPR, TrustedImm32(63), wasmScratchGPR);
+                    m_jit.move64ToDouble(wasmScratchGPR, wasmScratchFPR);
+
+                    // Moving this constant clobbers wasmScratchGPR, but not wasmScratchFPR
+                    emitMoveConst(Value::fromF64(std::abs(lhs.asF64())), resultLocation);
+                    m_jit.orDouble(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
+                } else {
+                    bool signBit = bitwise_cast<uint64_t>(rhs.asF64()) & 0x8000000000000000ull;
+                    m_jit.absDouble(lhsLocation.asFPR(), resultLocation.asFPR());
+                    if (signBit)
+                        m_jit.negateDouble(resultLocation.asFPR(), resultLocation.asFPR());
+                }
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF32Floor(Value operand, Value& result)
@@ -6442,34 +6514,46 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addF32Abs(Value operand, Value& result)
     {
+#if CPU(X86_64)
         EMIT_UNARY(
             "F32Abs", TypeKind::F32,
             BLOCK(Value::fromF32(std::abs(operand.asF32()))),
             BLOCK(
-#if CPU(X86_64)
                 m_jit.move32ToFloat(TrustedImm32(0x7fffffffll), wasmScratchFPR);
                 m_jit.andFloat(operandLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
-#else
-                m_jit.absFloat(operandLocation.asFPR(), resultLocation.asFPR());
-#endif
             )
         )
+#else
+        EMIT_UNARY(
+            "F32Abs", TypeKind::F32,
+            BLOCK(Value::fromF32(std::abs(operand.asF32()))),
+            BLOCK(
+                m_jit.absFloat(operandLocation.asFPR(), resultLocation.asFPR());
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF64Abs(Value operand, Value& result)
     {
+#if CPU(X86_64)
         EMIT_UNARY(
             "F64Abs", TypeKind::F64,
             BLOCK(Value::fromF64(std::abs(operand.asF64()))),
             BLOCK(
-#if CPU(X86_64)
                 m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), wasmScratchFPR);
                 m_jit.andDouble(operandLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
-#else
-                m_jit.absDouble(operandLocation.asFPR(), resultLocation.asFPR());
-#endif
             )
         )
+#else
+        EMIT_UNARY(
+            "F64Abs", TypeKind::F64,
+            BLOCK(Value::fromF64(std::abs(operand.asF64()))),
+            BLOCK(
+                m_jit.absDouble(operandLocation.asFPR(), resultLocation.asFPR());
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF32Sqrt(Value operand, Value& result)
@@ -6496,36 +6580,48 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addF32Neg(Value operand, Value& result)
     {
+#if CPU(X86_64)
         EMIT_UNARY(
             "F32Neg", TypeKind::F32,
             BLOCK(Value::fromF32(-operand.asF32())),
             BLOCK(
-#if CPU(X86_64)
                 m_jit.moveFloatTo32(operandLocation.asFPR(), wasmScratchGPR);
                 m_jit.xor32(TrustedImm32(bitwise_cast<uint32_t>(static_cast<float>(-0.0))), wasmScratchGPR);
                 m_jit.move32ToFloat(wasmScratchGPR, resultLocation.asFPR());
-#else
-                m_jit.negateFloat(operandLocation.asFPR(), resultLocation.asFPR());
-#endif
             )
         )
+#else
+        EMIT_UNARY(
+            "F32Neg", TypeKind::F32,
+            BLOCK(Value::fromF32(-operand.asF32())),
+            BLOCK(
+                m_jit.negateFloat(operandLocation.asFPR(), resultLocation.asFPR());
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF64Neg(Value operand, Value& result)
     {
+#if CPU(X86_64)
         EMIT_UNARY(
             "F64Neg", TypeKind::F64,
             BLOCK(Value::fromF64(-operand.asF64())),
             BLOCK(
-#if CPU(X86_64)
                 m_jit.moveDoubleTo64(operandLocation.asFPR(), wasmScratchGPR);
                 m_jit.xor64(TrustedImm64(bitwise_cast<uint64_t>(static_cast<double>(-0.0))), wasmScratchGPR);
                 m_jit.move64ToDouble(wasmScratchGPR, resultLocation.asFPR());
-#else
-                m_jit.negateDouble(operandLocation.asFPR(), resultLocation.asFPR());
-#endif
             )
         )
+#else
+        EMIT_UNARY(
+            "F64Neg", TypeKind::F64,
+            BLOCK(Value::fromF64(-operand.asF64())),
+            BLOCK(
+                m_jit.negateDouble(operandLocation.asFPR(), resultLocation.asFPR());
+            )
+        )
+#endif
     }
 
     PartialResult WARN_UNUSED_RETURN addF32Nearest(Value operand, Value& result)
@@ -10231,8 +10327,8 @@ private:
         { }
 
         BBQJIT& m_generator;
-        GPRReg m_tempGPRs[GPRs];
-        FPRReg m_tempFPRs[FPRs];
+        GPRReg m_tempGPRs[GPRs + 1];
+        FPRReg m_tempFPRs[FPRs + 1];
         RegisterSet m_preserved;
         bool m_unboundScratches { false };
         bool m_unboundPreserved { false };

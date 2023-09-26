@@ -220,6 +220,16 @@ MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunkSIMD()
     return codeRef;
 }
 
+
+ALWAYS_INLINE void* untaggedPtr(void* ptr)
+{
+#if COMPILER(MSVC)
+        return CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).untaggedPtr();
+#else
+        return CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr();
+#endif
+}
+
 MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()
 {
     static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
@@ -227,7 +237,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()
     std::call_once(onceKey, [&] {
         JSInterfaceJIT jit;
         void* ptr = reinterpret_cast<void*>(ipint_entry);
-        void* untagged = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr();
+        void* untagged = untaggedPtr(ptr);
         void* retagged = nullptr;
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage())
@@ -262,7 +272,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunkSIMD()
     std::call_once(onceKey, [&] {
         JSInterfaceJIT jit;
         void* ptr = reinterpret_cast<void*>(ipint_entry_simd);
-        void* untagged = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr();
+        void* untagged = untaggedPtr(ptr);
         void* retagged = nullptr;
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage())

@@ -130,6 +130,10 @@ void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSetBuilder&)
 
 CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext&)
 {
+#if OS(WINDOWS) && CPU(X86_64)
+    jit.sub64(CCallHelpers::TrustedImm32(4 * sizeof(int64_t)), X86Registers::esp);
+#endif
+
     switch (inst.args[calleeArgOffset].kind()) {
     case Arg::Imm:
     case Arg::BigImm:
@@ -147,6 +151,11 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+
+#if OS(WINDOWS) && CPU(X86_64)
+    jit.add64(CCallHelpers::TrustedImm32(4 * sizeof(int64_t)), X86Registers::esp);
+#endif
+
     return CCallHelpers::Jump();
 }
 

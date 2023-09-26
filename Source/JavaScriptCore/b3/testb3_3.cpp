@@ -2287,7 +2287,7 @@ void testFloorArgWithEffectfulDoubleConversion(float a)
 
 double correctSqrt(double value)
 {
-#if CPU(X86) || CPU(X86_64)
+#if (CPU(X86) || CPU(X86_64)) && !COMPILER(MSVC)
     double result;
     asm ("sqrtsd %1, %0" : "=x"(result) : "x"(value));
     return result;
@@ -3501,6 +3501,8 @@ void testStore8Imm()
 
 void testStorePartial8BitRegisterOnX86()
 {
+    // No regT6 on Windows
+#if !OS(WINDOWS)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
@@ -3548,6 +3550,7 @@ void testStorePartial8BitRegisterOnX86()
     int8_t storage = 0xff;
     CHECK(compileAndRun<int64_t>(proc, 0x12345678abcdef12, &storage) == 0x12345678abcdef12);
     CHECK(!storage);
+#endif
 }
 
 void testStore16Arg()
