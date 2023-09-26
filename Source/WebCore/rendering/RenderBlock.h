@@ -27,7 +27,7 @@
 #include "RenderBox.h"
 #include "TextRun.h"
 #include <memory>
-#include <wtf/ListHashSet.h>
+#include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ class RenderText;
 struct BidiRun;
 struct PaintInfo;
 
-using TrackedRendererListHashSet = ListHashSet<RenderBox*>;
+using TrackedRendererListHashSet = WeakListHashSet<RenderBox>;
 
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
@@ -84,7 +84,7 @@ public:
     bool hasPositionedObjects() const
     {
         auto* objects = positionedObjects();
-        return objects && !objects->isEmpty();
+        return objects && !objects->isEmptyIgnoringNullReferences();
     }
 
     void addPercentHeightDescendant(RenderBox&);
@@ -93,7 +93,7 @@ public:
     bool hasPercentHeightDescendants() const
     {
         auto* objects = percentHeightDescendants();
-        return objects && !objects->isEmpty();
+        return objects && !objects->isEmptyIgnoringNullReferences();
     }
     static bool hasPercentHeightContainerMap();
     static bool hasPercentHeightDescendant(RenderBox&);

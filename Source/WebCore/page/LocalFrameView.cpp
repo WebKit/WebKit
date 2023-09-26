@@ -4336,11 +4336,11 @@ float LocalFrameView::adjustVerticalPageScrollStepForFixedContent(float step)
     float topObscuredArea = 0;
     float bottomObscuredArea = 0;
     for (const auto& positionedObject : *positionedObjects) {
-        const RenderStyle& style = positionedObject->style();
+        const RenderStyle& style = positionedObject.style();
         if (style.position() != PositionType::Fixed || style.visibility() == Visibility::Hidden || !style.opacity())
             continue;
 
-        FloatQuad contentQuad = positionedObject->absoluteContentQuad();
+        FloatQuad contentQuad = positionedObject.absoluteContentQuad();
         if (!contentQuad.isRectilinear())
             continue;
 
