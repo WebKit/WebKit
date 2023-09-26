@@ -97,7 +97,7 @@ private:
     // FIXME: This should take DisplayLine::isTruncatedInBlockDirection() for non-prefixed line-clamp.
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
-    Vector<WTF::Range<size_t>> m_rubyColumnRangeList;
+    Vector<WTF::Range<size_t>> m_interlinearRubyColumnRangeList;
 };
 
 }

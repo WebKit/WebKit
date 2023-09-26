@@ -257,8 +257,6 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             else if (layoutBox->isFloatingPositioned()) {
                 inlineItems.append({ layoutBox, InlineItem::Type::Float });
                 m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
-            } else if (layoutBox->isRubyAnnotationBox()) {
-                // Does not participate in inline layout.
             } else
                 ASSERT_NOT_REACHED();
 
@@ -763,6 +761,10 @@ void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& i
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
 {
     if (layoutBox.isAtomicInlineLevelBox()) {
+        if (layoutBox.isRubyAnnotationBox() && layoutBox.style().rubyPosition() != RubyPosition::InterCharacter) {
+            // inter-linear annotation boxes do not participate in inline layout (only inter-characters do).
+            return;
+        }
         m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
         return inlineItems.append({ layoutBox, InlineItem::Type::Box });
     }

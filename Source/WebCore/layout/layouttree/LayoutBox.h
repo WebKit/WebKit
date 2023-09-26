@@ -119,6 +119,7 @@ public:
     bool isSizeContainmentBox() const;
     bool isInternalRubyBox() const;
     bool isRubyAnnotationBox() const;
+    bool isInterlinearRubyAnnotationBox() const;
 
     bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
     bool isBodyBox() const { return m_nodeType == NodeType::Body; }
