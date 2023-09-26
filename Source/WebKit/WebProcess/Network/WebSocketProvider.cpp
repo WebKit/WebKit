@@ -34,6 +34,7 @@
 #include "WebProcess.h"
 #include "WebSocketChannelManager.h"
 #include "WebTransportSession.h"
+#include <WebCore/Document.h>
 #include <WebCore/WorkerGlobalScope.h>
 
 namespace WebKit {
