@@ -28,13 +28,52 @@
 
 #import "APIConversions.h"
 
+@implementation ResourceUsageAndRenderStage
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _usage = usage;
+    _renderStages = renderStages;
+
+    return self;
+}
+@end
+
 namespace WebGPU {
 
-RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResources>&& resources, Device& device)
+RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode clipMode, Device& device)
     : m_indirectCommandBuffer(indirectCommandBuffer)
     , m_device(device)
-    , m_resources(WTFMove(resources))
+    , m_currentPipelineState(renderPipelineState)
+    , m_depthStencilState(depthStencilState)
+    , m_cullMode(cullMode)
+    , m_frontFace(frontFace)
+    , m_depthClipMode(clipMode)
 {
+    constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
+    constexpr auto maxStageValue = MTLRenderStageVertex | MTLRenderStageFragment;
+    static_assert(maxResourceUsageValue == 3 && maxStageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3 and MTLRenderStageVertex | MTLRenderStageFragment == 3");
+    Vector<id<MTLResource>> stageResources[maxStageValue][maxResourceUsageValue];
+
+    for (id<MTLResource> r : resources) {
+        ResourceUsageAndRenderStage *usageAndStage = [resources objectForKey:r];
+        stageResources[usageAndStage.renderStages - 1][usageAndStage.renderStages - 1].append(r);
+    }
+
+    for (size_t stage = 0; stage < maxStageValue; ++stage) {
+        for (size_t i = 0; i < maxResourceUsageValue; ++i) {
+            Vector<id<MTLResource>> &v = stageResources[stage][i];
+            if (v.size()) {
+                m_resources.append(BindableResources {
+                    .mtlResources = WTFMove(v),
+                    .usage = static_cast<MTLResourceUsage>(i + 1),
+                    .renderStages = static_cast<MTLRenderStages>(stage + 1)
+                });
+            }
+        }
+    }
 }
 
 RenderBundle::RenderBundle(Device& device)
@@ -47,6 +86,31 @@ RenderBundle::~RenderBundle() = default;
 void RenderBundle::setLabel(String&& label)
 {
     m_indirectCommandBuffer.label = label;
+}
+
+id<MTLRenderPipelineState> RenderBundle::currentPipelineState() const
+{
+    return m_currentPipelineState;
+}
+
+id<MTLDepthStencilState> RenderBundle::depthStencilState() const
+{
+    return m_depthStencilState;
+}
+
+MTLCullMode RenderBundle::cullMode() const
+{
+    return m_cullMode;
+}
+
+MTLWinding RenderBundle::frontFace() const
+{
+    return m_frontFace;
+}
+
+MTLDepthClipMode RenderBundle::depthClipMode() const
+{
+    return m_depthClipMode;
 }
 
 } // namespace WebGPU

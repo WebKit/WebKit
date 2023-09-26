@@ -507,7 +507,8 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
     unsigned bufferIndex = *AST::extractInteger(group.group());
     if (m_entryPointStage.has_value() && *m_entryPointStage == AST::StageAttribute::Stage::Vertex) {
-        auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage;
+        ASSERT(m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
+        auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
     }
     m_stringBuilder.append("[[buffer(", bufferIndex, ")]]");

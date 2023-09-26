@@ -34,6 +34,13 @@
 struct WGPURenderBundleImpl {
 };
 
+@interface ResourceUsageAndRenderStage : NSObject
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages;
+
+@property (nonatomic) MTLResourceUsage usage;
+@property (nonatomic) MTLRenderStages renderStages;
+@end
+
 namespace WebGPU {
 
 class Device;
@@ -42,9 +49,10 @@ class Device;
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResources>&& resources, Device& device)
+    using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
+    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode clipMode, Device& device)
     {
-        return adoptRef(*new RenderBundle(indirectCommandBuffer, WTFMove(resources), device));
+        return adoptRef(*new RenderBundle(indirectCommandBuffer, WTFMove(resources), renderPipelineState, depthStencilState, cullMode, frontFace, clipMode, device));
     }
     static Ref<RenderBundle> createInvalid(Device& device)
     {
@@ -61,15 +69,25 @@ public:
 
     Device& device() const { return m_device; }
     const Vector<BindableResources>& resources() const { return m_resources; }
+    id<MTLRenderPipelineState> currentPipelineState() const;
+    id<MTLDepthStencilState> depthStencilState() const;
+    MTLCullMode cullMode() const;
+    MTLWinding frontFace() const;
+    MTLDepthClipMode depthClipMode() const;
 
 private:
-    RenderBundle(id<MTLIndirectCommandBuffer>, Vector<BindableResources>&&, Device&);
+    RenderBundle(id<MTLIndirectCommandBuffer>, ResourcesContainer*, id<MTLRenderPipelineState>, id<MTLDepthStencilState>, MTLCullMode, MTLWinding, MTLDepthClipMode, Device&);
     RenderBundle(Device&);
 
     const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 
     const Ref<Device> m_device;
     Vector<BindableResources> m_resources;
+    id<MTLRenderPipelineState> m_currentPipelineState { nil };
+    id<MTLDepthStencilState> m_depthStencilState { nil };
+    MTLCullMode m_cullMode { MTLCullModeNone };
+    MTLWinding m_frontFace { MTLWindingClockwise };
+    MTLDepthClipMode m_depthClipMode { MTLDepthClipModeClip };
 };
 
 } // namespace WebGPU

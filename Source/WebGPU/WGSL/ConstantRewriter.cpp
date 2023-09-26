@@ -252,7 +252,10 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
     evaluated(expression, value);
 
     const auto& replace = [&]<typename Literal, typename Value>() {
-        auto& node =  m_shaderModule.astBuilder().construct<Literal>(SourceSpan::empty(), std::get<Value>(value));
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=262068
+        auto* maybeValue = std::get_if<Value>(&value);
+        Value valueOrDefault = maybeValue ? *maybeValue : (Value)0;
+        auto& node = m_shaderModule.astBuilder().construct<Literal>(SourceSpan::empty(), valueOrDefault);
         node.m_inferredType = expression.inferredType();
         m_shaderModule.replace(expression, node);
     };
