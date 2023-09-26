@@ -4276,7 +4276,32 @@ header: <WebCore/GraphicsStyle.h>
     float radius;
     WebCore::Color color;
     WebCore::ShadowRadiusMode radiusMode;
+    float opacity;
 };
+
+header: <WebCore/GraphicsStyle.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GraphicsGaussianBlur {
+    WebCore::FloatSize radius;
+};
+
+header: <WebCore/GraphicsStyle.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GraphicsColorMatrix {
+    std::array<float, 20> values;
+};
+
+header: <WebCore/PlatformMediaSession.h>
+[CustomHeader] struct WebCore::PlatformMediaSessionRemoteCommandArgument {
+    std::optional<double> time;
+    std::optional<bool> fastSeek;
+}
+using WebCore::PlatformMediaSession::RemoteCommandArgument = WebCore::PlatformMediaSessionRemoteCommandArgument;
+
+class WebCore::SocketStreamError {
+    int m_errorCode;
+    String m_failingURL;
+    String m_localizedDescription;
+    bool m_isNull;
+}
 
 #if ENABLE(VIDEO)
 [Nested, AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::GenericCueData::Alignment : uint8_t {
