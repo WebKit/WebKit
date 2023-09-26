@@ -241,8 +241,17 @@ ExceptionOr<void> MediaRecorder::requestData()
 
         dispatchEvent(createDataAvailableEvent(scriptExecutionContext(), WTFMove(buffer), mimeType, timeCode));
 
-        if (m_isActive && m_timeSlice)
+        switch (state()) {
+        case RecordingState::Inactive:
+            break;
+        case RecordingState::Recording:
+            ASSERT(m_isActive);
             m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));
+            break;
+        case RecordingState::Paused:
+            m_nextFireInterval = Seconds::fromMilliseconds(*m_timeSlice);
+            break;
+        }
     }, TakePrivateRecorder::No);
     return { };
 }
@@ -256,6 +265,12 @@ ExceptionOr<void> MediaRecorder::pauseRecording()
         return { };
 
     m_state = RecordingState::Paused;
+
+    if (m_timeSliceTimer.isActive()) {
+        m_nextFireInterval = m_timeSliceTimer.nextFireInterval();
+        m_timeSliceTimer.stop();
+    }
+
     m_private->pause([this, pendingActivity = makePendingActivity(*this)]() {
         if (!m_isActive)
             return;
@@ -277,6 +292,12 @@ ExceptionOr<void> MediaRecorder::resumeRecording()
         return { };
 
     m_state = RecordingState::Recording;
+
+    if (m_nextFireInterval) {
+        m_timeSliceTimer.startOneShot(*m_nextFireInterval);
+        m_nextFireInterval = { };
+    }
+
     m_private->resume([this, pendingActivity = makePendingActivity(*this)]() {
         if (!m_isActive)
             return;
