@@ -267,8 +267,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
         maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.layoutBounds().ascent;
 
     auto affectsRootInlineBoxVerticalPosition = [&](auto& inlineLevelBox) {
-        auto inlineLevelBoxStrechesLineBox = formattingGeometry.inlineLevelBoxAffectsLineBox(inlineLevelBox);
-        return inlineLevelBoxStrechesLineBox || ((inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isListMarker()) && inlineLevelBox.layoutBounds().ascent && inlineLevelBox.mayStretchLineBox());
+        return formattingGeometry.inlineLevelBoxAffectsLineBox(inlineLevelBox);
     };
 
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
