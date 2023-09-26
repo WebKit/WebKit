@@ -94,7 +94,9 @@ bool WillChangeData::canBeBackdropRoot() const
 #endif
         || containsProperty(CSSPropertyClipPath)
         || containsProperty(CSSPropertyFilter)
+#if ENABLE(CSS_COMPOSITING)
         || containsProperty(CSSPropertyMixBlendMode)
+#endif
         || containsProperty(CSSPropertyMask);
 }
 
