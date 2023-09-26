@@ -1914,7 +1914,9 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextSpacingTrim);
             changingProperties.m_properties.set(CSSPropertyTextAutospace);
             changingProperties.m_properties.set(CSSPropertyFontStyle);
+#if ENABLE(VARIATION_FONTS)
             changingProperties.m_properties.set(CSSPropertyFontVariationSettings);
+#endif
             changingProperties.m_properties.set(CSSPropertyFontWeight);
             changingProperties.m_properties.set(CSSPropertyFontSizeAdjust);
             changingProperties.m_properties.set(CSSPropertyFontFamily);
