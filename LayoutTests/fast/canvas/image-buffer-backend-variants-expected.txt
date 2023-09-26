@@ -74,7 +74,7 @@ PASS imageData.data is red
 Effective renderingMode: Accelerated
 Testing 1000x16384 (area: 16384000)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 1000x32768 (area: 32768000)
 PASS imageData.data is red
 Effective renderingMode: Unaccelerated
@@ -95,10 +95,10 @@ PASS imageData.data is red
 Effective renderingMode: Accelerated
 Testing 2048x8192 (area: 16777216)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 2048x16384 (area: 33554432)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 2048x32768 (area: 67108864)
 PASS imageData.data is red
 Effective renderingMode: Unaccelerated
@@ -116,13 +116,13 @@ PASS imageData.data is red
 Effective renderingMode: Accelerated
 Testing 4096x4096 (area: 16777216)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 4096x8192 (area: 33554432)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 4096x16384 (area: 67108864)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 4096x32768 (area: 134217728)
 PASS imageData.data is red
 Effective renderingMode: Unaccelerated
@@ -137,16 +137,16 @@ PASS imageData.data is red
 Effective renderingMode: Accelerated
 Testing 8192x2048 (area: 16777216)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 8192x4096 (area: 33554432)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 8192x8192 (area: 67108864)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 8192x16384 (area: 134217728)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 8192x32768 (area: 268435456)
 PASS imageData.data is red
 Effective renderingMode: Unaccelerated
@@ -157,19 +157,19 @@ PASS imageData.data is red
 Effective renderingMode: Accelerated
 Testing 16384x1000 (area: 16384000)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 16384x2048 (area: 33554432)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 16384x4096 (area: 67108864)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 16384x8192 (area: 134217728)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 16384x16384 (area: 268435456)
 PASS imageData.data is red
-Effective renderingMode: Unaccelerated
+Effective renderingMode: Accelerated
 Testing 16384x32768 (area: 536870912)
 PASS Context was lost
 Testing 16384x32769 (area: 536887296)

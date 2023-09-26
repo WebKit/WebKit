@@ -55,31 +55,23 @@ static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options, GraphicsClient* graphicsClient)
 {
     RefPtr<ImageBuffer> imageBuffer;
-    ImageBufferCreationContext creationContext;
-#if HAVE(IOSURFACE)
-    if (graphicsClient)
-        creationContext.displayID = graphicsClient->displayID();
-#endif
 
-    if (graphicsClient && !imageBuffer) {
-        auto renderingMode = options.contains(ImageBufferOptions::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-        bool avoidBackendSizeCheckForTesting = options.contains(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
-        imageBuffer = graphicsClient->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, avoidBackendSizeCheckForTesting);
+    if (graphicsClient) {
+        if (auto imageBuffer = graphicsClient->createImageBuffer(size, purpose, resolutionScale, colorSpace, pixelFormat, options))
+            return imageBuffer;
     }
 
-    if (imageBuffer)
-        return imageBuffer;
-
+#if HAVE(IOSURFACE)
     if (options.contains(ImageBufferOptions::Accelerated) && ProcessCapabilities::canUseAcceleratedBuffers()) {
-#if HAVE(IOSURFACE)
-        imageBuffer = IOSurfaceImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-#endif
+        ImageBufferCreationContext creationContext;
+        if (graphicsClient)
+            creationContext.displayID = graphicsClient->displayID();
+        if (auto imageBuffer = IOSurfaceImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
+            return imageBuffer;
     }
+#endif
 
-    if (!imageBuffer)
-        imageBuffer = create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-
-    return imageBuffer;
+    return create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
 }
 
 template<typename BackendType, typename ImageBufferType, typename... Arguments>

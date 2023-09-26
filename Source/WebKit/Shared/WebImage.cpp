@@ -39,8 +39,7 @@ RefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options, con
         auto purpose = (options & ImageOptionsShareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
         purpose = (options & ImageOptionsLocal) ? RenderingPurpose::ShareableLocalSnapshot : purpose;
         
-        auto buffer = client->createImageBuffer(size, RenderingMode::Unaccelerated, purpose, 1, colorSpace, PixelFormat::BGRA8);
-        if (buffer)
+        if (auto buffer = client->createImageBuffer(size, purpose, 1, colorSpace, PixelFormat::BGRA8, { }))
             return WebImage::create(buffer.releaseNonNull());
     }
 

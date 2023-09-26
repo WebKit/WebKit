@@ -263,12 +263,6 @@ LocalStorageDatabasePath:
     WebCore:
       default: '{ }'
 
-MaximumAccelerated2dCanvasSize:
-  type: uint32_t
-  defaultValue:
-    WebCore:
-      default: 5120*2880
-
 MaximumHTMLParserDOMTreeDepth:
   type: uint32_t
   defaultValue:
@@ -298,9 +292,9 @@ MediaTypeOverride:
     WebCore:
       default: '"screen"'
 
-MinimumAccelerated2dCanvasSize:
+MinimumAccelerated2DContextArea:
   comment: >-
-    Number of pixels below which 2D canvas is rendered in software
+    Number of pixels below which Canvas 2D Context is rendered in software
     even if hardware acceleration is enabled.
     Hardware acceleration is useful for large canvases where it can avoid the
     pixel bandwidth between the CPU and GPU. But GPU acceleration comes at
@@ -308,10 +302,10 @@ MinimumAccelerated2dCanvasSize:
     widely used for stylized fonts. Anti-aliasing text in hardware at that
     scale is generally slower. So below a certain size it is better to
     draw canvas in software.
-  type: uint32_t
+  type: uint64_t
   defaultValue:
     WebCore:
-      default: 257*256
+      default: 0
 
 NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
   comment: >-

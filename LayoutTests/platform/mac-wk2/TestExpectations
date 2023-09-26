@@ -1653,9 +1653,6 @@ webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
 
-# Will pass once accelerated drawing is enabled on macOS tests.
-webkit.org/b/246285 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
-
 webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Failure ]
 
 # webkit.org/b/246773 Constant crashes on wk2 debug

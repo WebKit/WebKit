@@ -3,6 +3,7 @@
 <style>
 canvas {
     -webkit-transform: translateZ(0);
+    width: 100px;
 }
 </style>
 <script>
@@ -18,7 +19,7 @@ canvas {
             var ctx = c.getContext('2d');
             if (!ctx)
                 continue;
-            ctx.fillStyle = 'rgba(255,0,0,1)';
+            ctx.fillStyle = 'rgba(0, 255, 0, 1)';
             ctx.fillRect(0,0,c.width, c.height);
         }
         if (window.testRunner) {
@@ -31,10 +32,16 @@ canvas {
 </script>
 </head>
 <body>
-<p>Verifies that 2D canvases with higher than 5120x2880 resolution don't create accelerated backing stores.</p>
+<p>Verifies Canvas 2D Context accelerated backing store behavior.</p>
+<canvas id="c0" width="10" height="10"></canvas>
 <canvas id="c1" width="512" height="288"></canvas>
 <canvas id="c2" width="5120" height="2880"></canvas>
 <canvas id="c3" width="5200" height="2900"></canvas>
+<canvas id="c4" width="8000" height="4444"></canvas>
+<canvas id="c5" width="10344" height="5555"></canvas>
+<canvas id="c6" width="17334" height="6669"></canvas>
+<canvas id="c7" width="33444" height="10649"></canvas>
+
 <pre id="layers">Layer tree goes here in DRT</pre>
 </body>
 </html>
