@@ -24,8 +24,19 @@
  */
 
 #import "config.h"
-#include "NetworkTaskCocoa.h"
+#import "NetworkTaskCocoa.h"
 
+#import "Logging.h"
+#import "NetworkProcess.h"
+#import "NetworkSession.h"
+#import <WebCore/DNS.h>
+#import <WebCore/NetworkStorageSession.h>
+#import <WebCore/RegistrableDomain.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/WeakObjCPtr.h>
+
+namespace WebKit {
 using namespace WebCore;
 
 static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
@@ -155,7 +166,14 @@ void NetworkTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore::Res
             if (!remoteAddress)
                 return cookiesSetInResponse;
 
-            if (shouldCapCookieExpiryForThirdPartyIPAddress(*remoteAddress, *firstPartyAddress)) {
+            auto needsThirdPartyIPAddressQuirk = [] (const URL& requestURL) {
+                // We only apply this quirk if we're already on google.com; otherwise, we would've
+                // already bailed at the top of this method, due to the request being third party.
+                // Note that this only applies to "accounts.google.com" (excluding subdomains).
+                return requestURL.host() == "accounts.google.com"_s;
+            };
+
+            if (shouldCapCookieExpiryForThirdPartyIPAddress(*remoteAddress, *firstPartyAddress) && !needsThirdPartyIPAddressQuirk(requestURL)) {
                 cookiesSetInResponse = cookiesByCappingExpiry(cookiesSetInResponse, ageCapForCNAMECloakedCookies);
                 if (debugLoggingEnabled) {
                     for (NSHTTPCookie *cookie in cookiesSetInResponse)
@@ -246,3 +264,5 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
     updateTaskWithFirstPartyForSameSiteCookies(task(), request);
     completionHandler(WTFMove(request));
 }
+
+} // namespace WebKit
