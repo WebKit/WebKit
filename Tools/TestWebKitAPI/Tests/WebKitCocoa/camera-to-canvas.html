@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+async function startCamera()
+{
+    try {
+        local.srcObject = await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+    } catch (e) {
+        window.webkit.messageHandlers.gum.postMessage("FAIL with " + e);
+    }
+}
+
+async function paintCameraInCanvas()
+{
+    try {
+        await local.play();
+    } catch (e) {
+        window.webkit.messageHandlers.gum.postMessage("FAIL with " + e);
+    }
+
+    canvas.getContext('2d').fillStyle = "#FFFFFF";
+    canvas.getContext('2d').fillRect(0, 0, 640, 480);
+    canvas.getContext('2d').drawImage(local, 0, 0, 640, 480);
+    const pixelData = canvas.getContext('2d').getImageData(0, 0, 1, 1,).data;
+
+    if (pixelData[0] != 0) {
+        window.webkit.messageHandlers.gum.postMessage("FAIL r");
+        return;
+    }
+
+    if (pixelData[1] != 0) {
+        window.webkit.messageHandlers.gum.postMessage("FAIL g");
+        return;
+    }
+
+    if (pixelData[2] != 0) {
+        window.webkit.messageHandlers.gum.postMessage("FAIL b");
+        return;
+    }
+
+    window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+    </script>
+</head>
+<body onload="startCamera()">
+    <video controls autoplay playsinline muted id="local" width="100px" height="100px"></video>
+    <br>
+    <canvas width="640" height="480" id=canvas></video>
+</body>
+</html>

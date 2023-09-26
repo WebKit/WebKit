@@ -64,6 +64,7 @@
 		0794742D25CB33FD00C597EB /* media-remote.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EB /* media-remote.html */; };
 		0794742D25CB33FD00C597EC /* webrtc-remote.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EC /* webrtc-remote.html */; };
 		0794742D25CB33FD00C597ED /* webrtc-remote-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597ED /* webrtc-remote-iframe.html */; };
+		0794742D25CB33FD00C597EE /* camera-to-canvas.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EE /* camera-to-canvas.html */; };
 		0799C34B1EBA3301003B7532 /* disableGetUserMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */; };
 		079D45F22A2A6BBE003830C7 /* Viewport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D45F12A2A6BBE003830C7 /* Viewport.mm */; };
 		07C046CA1E4262A8007201E7 /* CARingBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C046C91E42573E007201E7 /* CARingBufferTest.cpp */; };
@@ -1530,6 +1531,7 @@
 				46C3AEB323D0E529001B0680 /* beforeunload.html in Copy Resources */,
 				2DE71B001D49C3ED00904094 /* blinking-div.html in Copy Resources */,
 				7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */,
+				0794742D25CB33FD00C597EE /* camera-to-canvas.html in Copy Resources */,
 				26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */,
 				F4D0A6382A2D520800D47257 /* canvas-fingerprinting.html in Copy Resources */,
 				F4E7A66327222CA900E74D36 /* canvas-image-data.html in Copy Resources */,
@@ -2002,6 +2004,7 @@
 		0794742C25CB33B000C597EB /* media-remote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "media-remote.html"; sourceTree = "<group>"; };
 		0794742C25CB33B000C597EC /* webrtc-remote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webrtc-remote.html"; sourceTree = "<group>"; };
 		0794742C25CB33B000C597ED /* webrtc-remote-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webrtc-remote-iframe.html"; sourceTree = "<group>"; };
+		0794742C25CB33B000C597EE /* camera-to-canvas.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "camera-to-canvas.html"; sourceTree = "<group>"; };
 		0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = disableGetUserMedia.html; sourceTree = "<group>"; };
 		079D45F12A2A6BBE003830C7 /* Viewport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Viewport.mm; sourceTree = "<group>"; };
 		07C046C91E42573E007201E7 /* CARingBufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBufferTest.cpp; sourceTree = "<group>"; };
@@ -4678,6 +4681,7 @@
 				F41AB9971EF4692C0083FA08 /* background-image-link-and-input.html */,
 				464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */,
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
+				0794742C25CB33B000C597EE /* camera-to-canvas.html */,
 				F4D0A6362A2D51F900D47257 /* canvas-fingerprinting.html */,
 				F4E7A66227222BB100E74D36 /* canvas-image-data.html */,
 				2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */,
