@@ -388,25 +388,6 @@ RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, PreserveReso
     return BitmapImage::create(image.releaseNonNull());
 }
 
-RefPtr<Image> ImageBuffer::sinkIntoImage(RefPtr<ImageBuffer> source, PreserveResolution preserveResolution)
-{
-    if (!source)
-        return nullptr;
-    RefPtr<NativeImage> image;
-    if (source->resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes)
-        image = sinkIntoNativeImage(WTFMove(source));
-    else {
-        auto copyBuffer = source->context().createImageBuffer(source->logicalSize(), 1.f, source->colorSpace());
-        if (!copyBuffer)
-            return nullptr;
-        copyBuffer->context().drawConsumingImageBuffer(WTFMove(source), FloatRect { { }, copyBuffer->logicalSize() }, CompositeOperator::Copy);
-        image = ImageBuffer::sinkIntoNativeImage(WTFMove(copyBuffer));
-    }
-    if (!image)
-        return nullptr;
-    return BitmapImage::create(image.releaseNonNull());
-}
-
 void ImageBuffer::convertToLuminanceMask()
 {
     if (auto* backend = ensureBackendCreated())

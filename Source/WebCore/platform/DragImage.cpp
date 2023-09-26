@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DragImage.h"
 
+#include "BitmapImage.h"
 #include "FrameSnapshotting.h"
 #include "ImageBuffer.h"
 #include "LocalFrame.h"
@@ -110,7 +111,7 @@ static DragImageRef createDragImageFromSnapshot(RefPtr<ImageBuffer> snapshot, No
         orientation = downcast<RenderElement>(*renderer).imageOrientation();
     }
 
-    RefPtr<Image> image = ImageBuffer::sinkIntoImage(WTFMove(snapshot), PreserveResolution::Yes);
+    auto image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(snapshot)));
     if (!image)
         return nullptr;
     return createDragImageFromImage(image.get(), orientation);

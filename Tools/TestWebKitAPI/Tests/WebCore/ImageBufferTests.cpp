@@ -268,44 +268,6 @@ void PrintTo(TestPreserveResolution value, ::std::ostream* o)
         *o << "Unknown";
 }
 
-// ImageBuffer test fixture for tests that are variant to the image buffer device scale factor, options and the operation argument of preserving resolution
-class PreserveResolutionOperationTest : public testing::TestWithParam<std::tuple<float, TestImageBufferOptions, TestPreserveResolution>> {
-public:
-    float deviceScaleFactor() const { return std::get<0>(GetParam()); }
-    OptionSet<ImageBufferOptions> imageBufferOptions() const
-    {
-        return toImageBufferOptions(std::get<1>(GetParam()));
-    }
-    PreserveResolution operationPreserveResolution()
-    {
-        if (std::get<2>(GetParam()) == TestPreserveResolution::No)
-            return PreserveResolution::No;
-        return PreserveResolution::Yes;
-    }
-};
-
-// Test that ImageBuffer::sinkIntoImage() returns Image that contains the ImageBuffer contents and
-// that the returned Image is of expected size.
-TEST_P(PreserveResolutionOperationTest, SinkIntoImageWorks)
-{
-    FloatSize testSize { 50, 57 };
-    auto buffer = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions());
-    ASSERT_NE(buffer, nullptr);
-    auto verifyBuffer = ImageBuffer::create(buffer->logicalSize(), RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    ASSERT_NE(verifyBuffer, nullptr);
-    drawTestPattern(*buffer, 0);
-
-    auto image = ImageBuffer::sinkIntoImage(WTFMove(buffer), operationPreserveResolution());
-    ASSERT_NE(image, nullptr);
-
-    if (operationPreserveResolution() == PreserveResolution::Yes)
-        EXPECT_EQ(image->size(), expandedIntSize(testSize.scaled(deviceScaleFactor())));
-    else
-        EXPECT_EQ(image->size(), testSize);
-    verifyBuffer->context().drawImage(*image, FloatRect { { }, verifyBuffer->logicalSize() }, CompositeOperator::Copy);
-    EXPECT_TRUE(hasTestPattern(*verifyBuffer, 0));
-}
-
 // ImageBuffer test fixture for tests that are variant to the image buffer device scale factor and options
 class AnyScaleTest : public testing::TestWithParam<std::tuple<float, TestImageBufferOptions>> {
 public:
@@ -315,6 +277,25 @@ public:
         return toImageBufferOptions(std::get<1>(GetParam()));
     }
 };
+
+// Test that ImageBuffer::sinkIntoNativeImage() returns NativeImage that contains the ImageBuffer contents and
+// that the returned NativeImage is of expected size (native image size * image buffer scale factor).
+TEST_P(AnyScaleTest, SinkIntoNativeImageWorks)
+{
+    FloatSize testSize { 50, 57 };
+    auto buffer = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions());
+    ASSERT_NE(buffer, nullptr);
+    auto verifyBuffer = ImageBuffer::create(buffer->logicalSize(), RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    ASSERT_NE(verifyBuffer, nullptr);
+    drawTestPattern(*buffer, 0);
+
+    auto image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
+    ASSERT_NE(image, nullptr);
+
+    EXPECT_EQ(image->size(), expandedIntSize(testSize.scaled(deviceScaleFactor())));
+    verifyBuffer->context().drawNativeImage(*image, image->size(), FloatRect { { }, verifyBuffer->logicalSize() }, { { }, image->size() }, CompositeOperator::Copy);
+    EXPECT_TRUE(hasTestPattern(*verifyBuffer, 0));
+}
 
 // Test that ImageBuffer::getPixelBuffer() returns PixelBuffer that is sized to the ImageBuffer::logicalSize() * ImageBuffer::resolutionScale().
 TEST_P(AnyScaleTest, GetPixelBufferDimensionsContainScale)
@@ -370,14 +351,6 @@ TEST_P(AnyTwoImageBufferOptionsTest, PutPixelBufferAffectsDrawOutput)
     destination->context().drawImageBuffer(*source, FloatRect { { }, testSize }, FloatRect { { }, testSize }, { WebCore::CompositeOperator::Copy });
     EXPECT_TRUE(hasTestPattern(*destination, 1));
 }
-
-INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
-    PreserveResolutionOperationTest,
-    testing::Combine(
-        testing::Values(0.5f, 1.f, 2.f),
-        testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated),
-        testing::Values(TestPreserveResolution::No, TestPreserveResolution::Yes)),
-    TestParametersToStringFormatter());
 
 INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
     AnyScaleTest,

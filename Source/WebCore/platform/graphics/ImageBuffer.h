@@ -172,8 +172,7 @@ public:
     //     ASSERT(buffer.hasOneRef());
     //     auto nativeImage = buffer.copyNativeImage();
     //     buffer = nullptr;
-    static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
-    WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(RefPtr<ImageBuffer>, PreserveResolution = PreserveResolution::No);
+    WEBCORE_EXPORT static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
     static RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer>);
     static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
 

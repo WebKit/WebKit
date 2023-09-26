@@ -128,7 +128,7 @@ public:
     // Accessors for native image formats.
 #if USE(APPKIT)
     NSImage *nsImage() override;
-    RetainPtr<NSImage> snapshotNSImage() override;
+    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage() override;
 #endif
 
 #if PLATFORM(COCOA)
