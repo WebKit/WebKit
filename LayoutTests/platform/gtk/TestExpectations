@@ -2657,6 +2657,5 @@ webkit.org/b/261024 webgl/2.0.y/conformance/offscreencanvas/context-attribute-pr
 webkit.org/b/261024 webgl/2.0.y/conformance/renderbuffers/framebuffer-state-restoration.html [ Pass Timeout ]
 webkit.org/b/261024 webgl/2.0.y/conformance/rendering/color-mask-preserved-during-implicit-clears.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/utf8-sdp.html [ Pass Timeout ]
-webkit.org/b/261024 webrtc/video-disabled-black.html [ Crash Pass ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]

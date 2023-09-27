@@ -3470,6 +3470,7 @@ webkit.org/b/261024 svg/text/small-fonts-in-html5.html [ Failure ImageOnlyFailur
 webkit.org/b/261024 webrtc/video-maxFramerate.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/video-replace-muted-track.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/video-unmute.html [ Pass Timeout ]
+webkit.org/b/261024 webrtc/video-disabled-black.html [ Crash Pass ]
 
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/canvas-composite-modes.html [ ImageOnlyFailure ]
