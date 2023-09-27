@@ -328,6 +328,7 @@ void AXIsolatedTree::queueRemovalsLocked(Vector<AXID>&& subtreeRemovals)
     ASSERT(m_changeLogLock.isLocked());
 
     m_pendingSubtreeRemovals.appendVector(WTFMove(subtreeRemovals));
+    m_pendingProtectedFromDeletionIDs.formUnion(std::exchange(m_protectedFromDeletionIDs, { }));
 }
 
 void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(Vector<AXID>&& subtreeRemovals)
@@ -368,6 +369,11 @@ void AXIsolatedTree::queueAppendsAndRemovals(Vector<NodeChange>&& appends, Vecto
     Locker locker { m_changeLogLock };
     for (const auto& append : appends)
         queueChange(append);
+    auto parentUpdateIDs = std::exchange(m_needsParentUpdate, { });
+    for (const auto& axID : parentUpdateIDs) {
+        ASSERT_WITH_MESSAGE(m_nodeMap.contains(axID), "An object marked as needing a parent update should've had an entry in the node map by now. ID was %s", axID.loggingString().utf8().data());
+        m_pendingParentUpdates.set(axID, m_nodeMap.get(axID).parentID);
+    }
     queueRemovalsLocked(WTFMove(subtreeRemovals));
 }
 
@@ -408,7 +414,22 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
     if (m_collectingNodeChangesAtTreeLevel >= m_maxTreeDepth)
         return;
 
-    m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnMainThread);
+    auto* axParent = axObject.parentObjectUnignored();
+    auto iterator = m_nodeMap.find(axObject.objectID());
+    if (iterator == m_nodeMap.end())
+        m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnMainThread);
+    else {
+        // This object is already in the isolated tree, so there's no need to create full node change for it (doing so is expensive).
+        // Protect this object from being deleted. This is important when |axObject| was a child of some other object,
+        // but no longer is, and thus the other object will try to queue it for removal. But the fact that we're here
+        // indicates this object isn't ready to be removed, just a child of a different parent, so prevent this removal.
+        m_protectedFromDeletionIDs.add(axObject.objectID());
+        // Update the object's parent if it has changed (but only if we aren't going to create a node change for it,
+        // as the act of creating a new node change will correct this as part of creating the new AXIsolatedObject).
+        if (axParent && iterator->value.parentID != axParent->objectID() && !m_unresolvedPendingAppends.contains(axObject.objectID()))
+            m_needsParentUpdate.add(axObject.objectID());
+    }
+
     auto axChildrenCopy = axObject.children();
     Vector<AXID> axChildrenIDs;
     axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
@@ -424,7 +445,6 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
     axChildrenIDs.shrinkToFit();
 
     // Update the m_nodeMap.
-    auto* axParent = axObject.parentObjectUnignored();
     m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { axParent ? axParent->objectID() : AXID(), WTFMove(axChildrenIDs) });
 }
 
@@ -600,6 +620,11 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
             if (auto characterRange = range.characterRange(); range && characterRange)
                 value = { range.start().objectID(), *characterRange };
             propertyMap.set(AXPropertyName::TextInputMarkedTextMarkerRange, value);
+            break;
+        }
+        case AXPropertyName::TitleUIElement: {
+            auto* titleUIElement = axObject.titleUIElement();
+            propertyMap.set(AXPropertyName::TitleUIElement, titleUIElement ? titleUIElement->objectID() : AXID());
             break;
         }
         case AXPropertyName::URL:
@@ -857,6 +882,16 @@ void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
     AXLOG(makeString("objectID ", axObject.objectID().loggingString()));
     ASSERT(isMainThread());
 
+    if (RefPtr correspondingControl = axObject.isLabel() ? axObject.correspondingControlForLabelElement() : nullptr) {
+        // If a label has been removed from the AX tree, the control associated it may need to change
+        // its title UI element. Use callOnMainThread to spin the runloop before re-computing this,
+        // as we need to wait for the backing DOM element to actually be destroyed to compute the
+        // correct title UI element.
+        callOnMainThread([correspondingControl, protectedThis = Ref { *this }] {
+            protectedThis->updateNodeProperty(*correspondingControl, AXPropertyName::TitleUIElement);
+        });
+    }
+
     m_unresolvedPendingAppends.remove(axObject.objectID());
     removeSubtreeFromNodeMap(axObject.objectID(), axObject.parentObjectUnignored());
     queueRemovals({ axObject.objectID() });
@@ -885,7 +920,7 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AccessibilityObject
     Vector<AXID> removals = { objectID };
     while (removals.size()) {
         AXID axID = removals.takeLast();
-        if (!axID.isValid() || m_unresolvedPendingAppends.contains(axID))
+        if (!axID.isValid() || m_unresolvedPendingAppends.contains(axID) || m_protectedFromDeletionIDs.contains(axID))
             continue;
 
         auto it = m_nodeMap.find(axID);
@@ -965,6 +1000,8 @@ void AXIsolatedTree::applyPendingChanges()
 
     while (m_pendingSubtreeRemovals.size()) {
         auto axID = m_pendingSubtreeRemovals.takeLast();
+        if (m_pendingProtectedFromDeletionIDs.contains(axID))
+            continue;
         AXLOG(makeString("removing subtree axID ", axID.loggingString()));
         if (RefPtr object = objectForID(axID)) {
             // There's no need to call the more comprehensive AXCoreObject::detach here since
@@ -974,6 +1011,7 @@ void AXIsolatedTree::applyPendingChanges()
             m_readerThreadNodeMap.remove(axID);
         }
     }
+    m_pendingProtectedFromDeletionIDs.clear();
 
     for (const auto& item : m_pendingAppends) {
         AXID axID = item.isolatedObject->objectID();
@@ -1010,6 +1048,12 @@ void AXIsolatedTree::applyPendingChanges()
         // When m_pendingAppends is cleared, the object will be held only by m_readerThreadNodeMap. The exception is the root node whose reference count is 3.
     }
     m_pendingAppends.clear();
+
+    for (const auto& parentUpdate : m_pendingParentUpdates) {
+        if (RefPtr object = objectForID(parentUpdate.key))
+            object->setParent(parentUpdate.value);
+    }
+    m_pendingParentUpdates.clear();
 
     for (auto& update : m_pendingChildrenUpdates) {
         AXLOG(makeString("updating children for axID ", update.first.loggingString()));

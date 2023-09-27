@@ -373,6 +373,15 @@ private:
     // The key is the ID of the object that will be resolved into an m_pendingAppends NodeChange.
     // The value is whether the wrapper should be attached on the main thread or the AX thread.
     HashMap<AXID, AttachWrapper> m_unresolvedPendingAppends;
+    // Only accessed on the main thread.
+    // This is used when updating the isolated tree in response to dynamic children changes.
+    // It is required to protect objects from being incorrectly deleted when they are re-parented,
+    // as the original parent will want to queue it for removal, but we need to keep the object around
+    // for the new parent.
+    HashSet<AXID> m_protectedFromDeletionIDs;
+    // Only accessed on the main thread.
+    // Objects whose parent has changed, and said change needs to be synced to the secondary thread.
+    HashSet<AXID> m_needsParentUpdate;
     // 1-based tree level, 0 = not collecting. Only accessed on the main thread.
     unsigned m_collectingNodeChangesAtTreeLevel { 0 };
 
@@ -385,6 +394,8 @@ private:
     Vector<AXPropertyChange> m_pendingPropertyChanges WTF_GUARDED_BY_LOCK(m_changeLogLock);
     Vector<AXID> m_pendingSubtreeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes whose subtrees are to be removed from the tree.
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    HashSet<AXID> m_pendingProtectedFromDeletionIDs WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    HashMap<AXID, AXID> m_pendingParentUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
     bool m_queuedForDestruction WTF_GUARDED_BY_LOCK(m_changeLogLock) { false };
     AXID m_focusedNodeID;

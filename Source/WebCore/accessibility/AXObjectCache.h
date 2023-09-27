@@ -345,6 +345,7 @@ public:
         AXDisabledStateChanged,
         AXDropEffectChanged,
         AXFlowToChanged,
+        AXFocusableStateChanged,
         AXFocusedUIElementChanged,
         AXFrameLoadComplete,
         AXGrabbedStateChanged,
@@ -509,7 +510,7 @@ protected:
 #endif
 
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
-    void labelChanged(Element*);
+    void handleLabelForChanged(HTMLLabelElement&, const AtomString& /* oldValue */);
 
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
     void setNodeInUse(Node* n) { m_textMarkerNodes.add(n); }

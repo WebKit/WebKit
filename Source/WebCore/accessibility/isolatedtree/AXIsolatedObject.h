@@ -67,6 +67,7 @@ private:
     void detachPlatformWrapper(AccessibilityDetachmentType) override;
 
     AXID parent() const { return m_parentID; }
+    void setParent(AXID axID) { m_parentID = axID; }
 
     AXIsolatedTree* tree() const { return m_cachedTree.get(); }
 
