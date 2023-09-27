@@ -416,12 +416,7 @@ TEST(WKNavigation, WebViewURLInProcessDidTerminate)
     TestWebKitAPI::Util::run(&done);
 }
 
-// FIXME when rdar://116069794 is resolved.
-#if PLATFORM(MAC)
-TEST(WKNavigation, DISABLED_WebProcessLimit)
-#else
 TEST(WKNavigation, WebProcessLimit)
-#endif
 {
     constexpr unsigned maxProcessCount = 10;
     [WKProcessPool _setWebProcessCountLimit:maxProcessCount];

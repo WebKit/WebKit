@@ -213,6 +213,13 @@ public:
     }
 
     template <typename U>
+    bool moveToLastIfPresent(const U& value)
+    {
+        amortizedCleanupIfNeeded();
+        return m_set.moveToLastIfPresent(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value), assertionsPolicy).m_impl);
+    }
+
+    template <typename U>
     AddResult prependOrMoveToFirst(const U& value)
     {
         amortizedCleanupIfNeeded();

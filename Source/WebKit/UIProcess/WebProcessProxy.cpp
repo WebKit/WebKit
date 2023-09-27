@@ -2444,7 +2444,7 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Use
 
 void WebProcessProxy::markProcessAsRecentlyUsed()
 {
-    liveProcessesLRU().appendOrMoveToLast(*this);
+    liveProcessesLRU().moveToLastIfPresent(*this);
 }
 
 void WebProcessProxy::systemBeep()
