@@ -45,6 +45,7 @@
     RetainPtr<UIVisualEffectView> _backgroundView;
     __weak UIDatePicker *_datePicker;
     RetainPtr<UIToolbar> _accessoryView;
+    CGSize _contentSize;
 }
 
 - (instancetype)initWithDatePicker:(UIDatePicker *)datePicker
@@ -66,6 +67,7 @@
     static constexpr auto marginSize = 16;
     _datePicker.translatesAutoresizingMaskIntoConstraints = NO;
     _datePicker.layoutMargins = UIEdgeInsetsMake(marginSize, marginSize, marginSize, marginSize);
+    [_datePicker sizeToFit];
     [[_backgroundView contentView] addSubview:_datePicker];
 
     [_accessoryView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -77,19 +79,29 @@
     [_accessoryView sizeToFit];
     [[_backgroundView contentView] addSubview:_accessoryView.get()];
 
-    CGFloat toolbarBottomMargin = _datePicker.datePickerMode == UIDatePickerModeDateAndTime ? 10 : 2;
+    CGFloat toolbarBottomMargin = _datePicker.datePickerMode == UIDatePickerModeDateAndTime ? 8 : 2;
+    auto datePickerSize = [_datePicker bounds].size;
+    auto accessoryViewSize = [_accessoryView bounds].size;
+
+    _contentSize.width = 2 * marginSize + std::max<CGFloat>(datePickerSize.width, accessoryViewSize.width);
+    _contentSize.height = toolbarBottomMargin + 2 * marginSize + datePickerSize.height + accessoryViewSize.height;
+
     [NSLayoutConstraint activateConstraints:@[
+        [self.widthAnchor constraintEqualToConstant:_contentSize.width],
+        [self.heightAnchor constraintEqualToConstant:_contentSize.height],
         [[_backgroundView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor],
         [[_backgroundView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor],
         [[_backgroundView topAnchor] constraintEqualToAnchor:self.topAnchor],
-        [[_backgroundView bottomAnchor] constraintEqualToAnchor:self.bottomAnchor],
+        [[_backgroundView bottomAnchor] constraintEqualToAnchor:self.bottomAnchor constant:-toolbarBottomMargin],
+        [[_datePicker heightAnchor] constraintEqualToConstant:datePickerSize.height],
         [[_datePicker leadingAnchor] constraintEqualToAnchor:self.leadingAnchor],
         [[_datePicker trailingAnchor] constraintEqualToAnchor:self.trailingAnchor],
         [[_datePicker topAnchor] constraintEqualToAnchor:self.topAnchor],
         [[_datePicker bottomAnchor] constraintEqualToSystemSpacingBelowAnchor:[_accessoryView topAnchor] multiplier:1],
         [[_accessoryView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor],
         [[_accessoryView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor],
-        [[_accessoryView bottomAnchor] constraintEqualToAnchor:self.bottomAnchor constant:-toolbarBottomMargin],
+        [[_accessoryView heightAnchor] constraintEqualToConstant:accessoryViewSize.height],
+        [[_accessoryView bottomAnchor] constraintEqualToAnchor:[_backgroundView bottomAnchor]],
     ]];
 
     return self;
@@ -103,6 +115,15 @@
 - (UIToolbar *)accessoryView
 {
     return _accessoryView.get();
+}
+
+- (CGSize)estimatedMaximumPopoverSize
+{
+    constexpr auto additionalHeightToAvoidClippingToolbar = 60;
+    return CGSize {
+        _contentSize.width,
+        _contentSize.height + additionalHeightToAvoidClippingToolbar
+    };
 }
 
 @end
@@ -163,7 +184,7 @@
     self.preferredContentSize = [_contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
 }
 
-- (void)presentInView:(UIView *)view sourceRect:(CGRect)rect interactionBounds:(CGRect)interactionBounds completion:(void(^)())completion
+- (void)presentInView:(UIView *)view sourceRect:(CGRect)rect completion:(void(^)())completion
 {
     RetainPtr controller = [view _wk_viewControllerForFullScreenPresentation];
 
@@ -184,27 +205,35 @@
     // To prevent the popover arrow from covering the element, we force UIKit to choose the direction that
     // has the most available space, so won't cover the element with the popover arrow unless we really have
     // no other choice.
+    auto rectInWindow = [view convertRect:rect toCoordinateSpace:view.window];
+    auto windowBounds = view.window.bounds;
+    auto distanceFromTop = CGRectGetMinY(rectInWindow) - CGRectGetMinY(windowBounds);
+    auto distanceFromLeft = CGRectGetMinX(rectInWindow) - CGRectGetMinX(windowBounds);
+    auto distanceFromRight = CGRectGetMaxX(windowBounds) - CGRectGetMaxX(rectInWindow);
+    auto distanceFromBottom = CGRectGetMaxY(windowBounds) - CGRectGetMaxY(rectInWindow);
+    auto estimatedMaximumPopoverSize = [_contentView estimatedMaximumPopoverSize];
+
+    auto canContainPopover = [&](CGFloat width, CGFloat height) {
+        return estimatedMaximumPopoverSize.width < width && estimatedMaximumPopoverSize.height < height;
+    };
+
     auto presentationController = self.popoverPresentationController;
-    auto distanceFromTop = CGRectGetMinY(rect) - CGRectGetMinY(interactionBounds);
-    auto distanceFromLeft = CGRectGetMinX(rect) - CGRectGetMinX(interactionBounds);
-    auto distanceFromRight = CGRectGetMaxX(interactionBounds) - CGRectGetMaxX(rect);
-    auto distanceFromBottom = CGRectGetMaxY(interactionBounds) - CGRectGetMaxY(rect);
-    auto maxDistance = std::max<CGFloat>({ distanceFromTop, distanceFromLeft, distanceFromRight, distanceFromBottom });
     UIPopoverArrowDirection permittedDirections = 0;
-    if (distanceFromTop >= maxDistance)
+    if (canContainPopover(CGRectGetWidth(windowBounds), distanceFromTop))
         permittedDirections |= UIPopoverArrowDirectionDown;
-    if (distanceFromLeft >= maxDistance)
+    if (canContainPopover(distanceFromLeft, CGRectGetHeight(windowBounds)))
         permittedDirections |= UIPopoverArrowDirectionRight;
-    if (distanceFromRight >= maxDistance)
+    if (canContainPopover(distanceFromRight, CGRectGetHeight(windowBounds)))
         permittedDirections |= UIPopoverArrowDirectionLeft;
-    if (distanceFromBottom >= maxDistance)
+    if (canContainPopover(CGRectGetWidth(windowBounds), distanceFromBottom))
         permittedDirections |= UIPopoverArrowDirectionUp;
-    if (!permittedDirections)
-        permittedDirections = UIPopoverArrowDirectionAny;
+
     presentationController.permittedArrowDirections = permittedDirections;
     presentationController.sourceView = view;
-    presentationController.sourceRect = rect;
-    presentationController.canOverlapSourceViewRect = NO;
+    if (permittedDirections)
+        presentationController.sourceRect = rect;
+    else
+        presentationController.sourceRect = [view convertRect:view.window.bounds fromCoordinateSpace:view.window];
     [controller presentViewController:self animated:YES completion:completion];
 }
 

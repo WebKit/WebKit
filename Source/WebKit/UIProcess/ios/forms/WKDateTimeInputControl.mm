@@ -154,7 +154,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 - (void)showDateTimePicker
 {
     _datePickerController = adoptNS([[WKDatePickerPopoverController alloc] initWithDatePicker:_datePicker.get() delegate:self]);
-    [_datePickerController presentInView:_view sourceRect:_view.focusedElementInformation.interactionRect interactionBounds:_view.webView._contentRectForUserInteraction completion:[strongSelf = retainPtr(self)] {
+    [_datePickerController presentInView:_view sourceRect:_view.focusedElementInformation.interactionRect completion:[strongSelf = retainPtr(self)] {
         [strongSelf->_view.webView _didShowContextMenu];
     }];
 }
