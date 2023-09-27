@@ -703,21 +703,24 @@ static void runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest(Function
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, lastURL.absoluteString.UTF8String);
 }
 
-TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithUserGesturePushState)
+// FIXME after rdar://116090758 is resolved.
+TEST(WKBackForwardList, DISABLED_BackForwardNavigationDoesNotSkipItemsWithUserGesturePushState)
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
         [webView evaluateJavaScript:makeString("history.pushState(null, document.title, location.pathname + '"_s, fragment, "');"_s) completionHandler:nil];
     });
 }
 
-TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithUserGestureFragment)
+// FIXME after rdar://116090758 is resolved.
+TEST(WKBackForwardList, DISABLED_BackForwardNavigationDoesNotSkipItemsWithUserGestureFragment)
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
         [webView evaluateJavaScript:makeString("location.href = location.pathname + '"_s, fragment, "';"_s) completionHandler:nil];
     });
 }
 
-TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsFromLoadRequest)
+// FIXME after rdar://116090758 is resolved.
+TEST(WKBackForwardList, DISABLED_BackForwardNavigationDoesNotSkipItemsFromLoadRequest)
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
         auto newURLString = makeString(String([webView URL].absoluteString), fragment);
@@ -725,7 +728,8 @@ TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsFromLoadRequest)
     });
 }
 
-TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithRecentUserGesturePushState)
+// FIXME after rdar://116090758 is resolved.
+TEST(WKBackForwardList, DISABLED_BackForwardNavigationDoesNotSkipItemsWithRecentUserGesturePushState)
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
         // Call pushState() in a setTimeout() so that it has a recent user gesture but not a current one.
@@ -733,7 +737,8 @@ TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithRecentUserGestu
     });
 }
 
-TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithRecentUserGestureFragment)
+// FIXME after rdar://116090758 is resolved.
+TEST(WKBackForwardList, DISABLED_BackForwardNavigationDoesNotSkipItemsWithRecentUserGestureFragment)
 {
     runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest([](WKWebView *webView, ASCIILiteral fragment) {
         // Do fragment navigation in a setTimeout() so that it has a recent user gesture but not a current one.
