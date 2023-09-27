@@ -122,14 +122,12 @@ private:
     static CanBubble typeCanBubble(const AtomString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
     static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
     static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
-#if PLATFORM(WPE)
     static unsigned short buttonsForType(const AtomString& type)
     {
         // We have contact with the touch surface for most events except when we've released the touch or canceled it.
         auto& eventNames = WebCore::eventNames();
         return (type == eventNames.pointerupEvent || type == eventNames.pointeroutEvent || type == eventNames.pointerleaveEvent || type == eventNames.pointercancelEvent) ? 0 : 1;
     }
-#endif
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&);

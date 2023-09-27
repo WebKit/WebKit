@@ -36,11 +36,13 @@
 #import "WKWebViewPrivate.h"
 #import "_WKAutomationSession.h"
 #import <Carbon/Carbon.h>
+#import <Foundation/Foundation.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntSize.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <objc/runtime.h>
 #import <pal/spi/mac/NSEventSPI.h>
+#import <wtf/Scope.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -77,6 +79,24 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
 {
     NSWindow *window = page.platformWindow();
     auto webView = page.cocoaView();
+
+    // +[NSEvent pressedMouseButtons] does not account for the NSEvent objects created through eventSender JS in tests.
+    // As such, that method always returns 0. To fix this, we swizzle out +[NSEvent pressedMouseButtons], keep track of
+    // the mouse button currently being pressed down, and supply the appropriate return value as specified in documentation.
+    auto methodToSwizzle = class_getClassMethod(objc_getMetaClass(NSStringFromClass([NSEvent class]).UTF8String), @selector(pressedMouseButtons));
+    auto originalImplementation = method_setImplementation(methodToSwizzle, imp_implementationWithBlock([&mouseButtonCurrentlyDown = m_mouseButtonCurrentlyDown] {
+        switch (mouseButtonCurrentlyDown) {
+        case MouseButton::Left:
+            return 1 << 0;
+        case MouseButton::Right:
+            return 1 << 1;
+        default:
+            return 0;
+        }
+    }));
+    auto patchOriginalFunction = makeScopeExit([&methodToSwizzle, &originalImplementation] {
+        method_setImplementation(methodToSwizzle, originalImplementation);
+    });
 
     for (NSEvent *event in eventsToSend) {
         LOG(Automation, "Sending event[%p] to window[%p]: %@", event, window, event);
@@ -223,6 +243,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     }
     case MouseInteraction::Down:
         ASSERT(downEventType);
+        m_mouseButtonCurrentlyDown = button;
 
         // Hard-code the click count to one, since clients don't expect successive simulated
         // down/up events to be potentially counted as a double click event.
@@ -230,6 +251,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     case MouseInteraction::Up:
         ASSERT(upEventType);
+        m_mouseButtonCurrentlyDown = MouseButton::None;
 
         // Hard-code the click count to one, since clients don't expect successive simulated
         // down/up events to be potentially counted as a double click event.
