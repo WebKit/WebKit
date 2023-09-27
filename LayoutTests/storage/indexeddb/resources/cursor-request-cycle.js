@@ -104,17 +104,24 @@ function onOpen(evt)
 
         evalAndLog("finalRequest = store.get(0)");
         finalRequest.onsuccess = function finalRequestSuccess(evt) {
-            preamble(evt);
-            debug("Ensure requests and cursors are released.");
-            shouldBeNonNull("cursors");
-            shouldBe("cursors.length", "1000");
-            evalAndLog("cursors = null");
-            evalAndLog("gc()");
-
-            shouldBeTrue("isAnyCollected(cursorObservers)");
-            shouldBeTrue("isAnyCollected(cursorRequestObservers)");
+            debug("Check result after transaction commits automatically after finishing requests.");
         };
     };
 
-    tx.oncomplete = finishJSTest;
+    tx.oncomplete = onTransactionComplete;
+}
+
+function onTransactionComplete(evt)
+{
+    preamble(evt);
+    debug("Ensure requests and cursors are released after transaction commits.");
+
+    shouldBeNonNull("cursors");
+    shouldBe("cursors.length", "1000");
+    evalAndLog("cursors = null");
+    evalAndLog("gc()");
+    shouldBeTrue("isAnyCollected(cursorObservers)");
+    shouldBeTrue("isAnyCollected(cursorRequestObservers)");
+
+    finishJSTest();
 }
