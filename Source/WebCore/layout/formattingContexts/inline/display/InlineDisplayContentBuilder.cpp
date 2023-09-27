@@ -483,11 +483,15 @@ void InlineDisplayContentBuilder::appendInterlinearRubyAnnotationBox(const Box& 
     ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
 
     auto& annotationBox = *rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    auto borderBoxTopLeft = RubyFormattingContext { formattingContext() }.placeAnnotationBox(rubyBaseLayoutBox);
+    auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
+    auto borderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(rubyBaseLayoutBox);
+    auto contentBoxSize = rubyFormattingContext.sizeAnnotationBox(rubyBaseLayoutBox);
+
     auto& annotationBoxGeometry = formattingState().boxGeometry(annotationBox);
     annotationBoxGeometry.setTopLeft(toLayoutPoint(borderBoxTopLeft));
+    annotationBoxGeometry.setContentBoxSize(toLayoutSize(contentBoxSize));
 
-    auto borderBoxRect = InlineRect { borderBoxTopLeft.y(), borderBoxTopLeft.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
+    auto borderBoxRect = BoxGeometry::borderBoxRect(annotationBoxGeometry);
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
@@ -506,11 +510,15 @@ void InlineDisplayContentBuilder::appendIntercharacterRubyAnnotationBox(const Li
 {
     auto& annotationBox = lineRun.layoutBox();
     ASSERT(!annotationBox.isInterlinearRubyAnnotationBox());
-    auto borderBoxTopLeft = RubyFormattingContext { formattingContext() }.placeAnnotationBox(*m_interCharacterRubyBase);
+    auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
+    auto borderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(*m_interCharacterRubyBase);
+    auto contentBoxSize = rubyFormattingContext.sizeAnnotationBox(*m_interCharacterRubyBase);
+
     auto& annotationBoxGeometry = formattingState().boxGeometry(annotationBox);
     annotationBoxGeometry.setTopLeft(toLayoutPoint(borderBoxTopLeft));
+    annotationBoxGeometry.setContentBoxSize(toLayoutSize(contentBoxSize));
 
-    auto borderBoxRect = InlineRect { borderBoxTopLeft.y(), borderBoxTopLeft.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
+    auto borderBoxRect = BoxGeometry::borderBoxRect(annotationBoxGeometry);
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
