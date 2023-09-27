@@ -504,8 +504,16 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         // to the paragraph embedding level
         m_line.resetBidiLevelForTrailingWhitespace(rootStyle.isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL);
 
-        auto runsExpandHorizontally = !isInIntrinsicWidthMode() && (isLastLine ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify);
-        if (runsExpandHorizontally)
+        auto runsExpandHorizontally = [&] {
+            if (isInIntrinsicWidthMode())
+                return false;
+            if (root().isRubyAnnotationBox()) {
+                // FIXME: This is a workaround until after we generate inline boxes for annotation content.
+                return true;
+            }
+            return isLastLine ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify;
+        };
+        if (runsExpandHorizontally())
             m_line.applyRunExpansion(horizontalAvailableSpace);
         if (m_line.hasContent()) {
             auto& lastTextContent = m_line.runs().last().textContent();

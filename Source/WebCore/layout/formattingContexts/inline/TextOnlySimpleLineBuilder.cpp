@@ -463,7 +463,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (rootStyle.textIndent() != RenderStyle::initialTextIndent())
         return false;
-    if (rootStyle.textAlignLast() == TextAlignLast::Justify || rootStyle.textAlign() == TextAlignMode::Justify)
+    if (rootStyle.textAlignLast() == TextAlignLast::Justify || rootStyle.textAlign() == TextAlignMode::Justify || rootBox.isRubyAnnotationBox())
         return false;
     if (rootStyle.boxDecorationBreak() == BoxDecorationBreak::Clone)
         return false;

@@ -101,7 +101,8 @@ Line::Result Line::close()
 
 void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
 {
-    ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify || formattingContext().root().style().textAlignLast() == TextAlignLast::Justify);
+    auto& rootBox = formattingContext().root();
+    ASSERT(rootBox.isRubyAnnotationBox() || rootBox.style().textAlign() == TextAlignMode::Justify || rootBox.style().textAlignLast() == TextAlignLast::Justify);
     // Text is justified according to the method specified by the text-justify property,
     // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
     // the last line before a forced break or the end of the block is start-aligned.
@@ -114,6 +115,21 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     auto expansion = ExpansionInfo { };
     TextUtil::computedExpansions(m_runs, { 0, m_runs.size() }, m_hangingContent.trailingWhitespaceLength(), expansion);
 
+    if (rootBox.isRubyAnnotationBox()) {
+        // FIXME: This is a workaround until after we generate inline boxes for annotation content.
+        if (expansion.opportunityCount) {
+            // ruby-align: space-around
+            auto contentInset = spaceToDistribute / (expansion.opportunityCount + 1) / 2;
+            spaceToDistribute -= contentInset;
+            applyExpansionOnRange({ 0, m_runs.size() }, expansion, spaceToDistribute);
+            moveRunsBy(0, contentInset / 2);
+            return;
+        }
+        auto centerOffset = spaceToDistribute / 2;
+        moveRunsBy(0, centerOffset);
+        expandBy(0, centerOffset);
+        return;
+    }
     // Anything to distribute?
     if (!expansion.opportunityCount)
         return;
