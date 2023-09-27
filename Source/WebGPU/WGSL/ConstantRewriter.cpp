@@ -80,7 +80,7 @@ private:
     template<typename Node>
     void materialize(Node&, const ConstantValue&);
 
-    using ConstantFunction = ConstantValue(*)(const FixedVector<ConstantValue>&);
+    using ConstantFunction = ConstantValue(*)(AST::CallExpression&, const FixedVector<ConstantValue>&);
 
     ShaderModule& m_shaderModule;
     Vector<Error> m_errors;
@@ -92,6 +92,18 @@ ConstantRewriter::ConstantRewriter(ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
 {
     m_constantFunctions.add("pow"_s, constantPow);
+    m_constantFunctions.add("vec2"_s, constantVector2);
+    m_constantFunctions.add("vec2f"_s, constantVector2);
+    m_constantFunctions.add("vec2i"_s, constantVector2);
+    m_constantFunctions.add("vec2u"_s, constantVector2);
+    m_constantFunctions.add("vec3i"_s, constantVector3);
+    m_constantFunctions.add("vec3"_s, constantVector3);
+    m_constantFunctions.add("vec3f"_s, constantVector3);
+    m_constantFunctions.add("vec3u"_s, constantVector3);
+    m_constantFunctions.add("vec4u"_s, constantVector4);
+    m_constantFunctions.add("vec4"_s, constantVector4);
+    m_constantFunctions.add("vec4f"_s, constantVector4);
+    m_constantFunctions.add("vec4i"_s, constantVector4);
 }
 
 std::optional<FailedCheck> ConstantRewriter::rewrite()
@@ -172,8 +184,7 @@ void ConstantRewriter::visit(AST::IdentifierExpression& identifier)
 std::optional<ConstantValue> ConstantRewriter::evaluate(AST::Expression& expression)
 {
     AST::Visitor::visit(expression);
-
-    return m_evaluationResult;
+    return std::exchange(m_evaluationResult, std::nullopt);
 }
 
 void ConstantRewriter::visit(AST::CallExpression& call)
@@ -195,20 +206,15 @@ void ConstantRewriter::visit(AST::CallExpression& call)
             ? downcast<AST::ElaboratedTypeExpression>(target).base()
             : downcast<AST::IdentifierExpression>(target).identifier();
 
-        // FIXME: this implementation of the vector constructors is incorrect, so
-        // the ineffient comparison is irrelevant as it will be rewritten soon
-        if (targetName == "vec2"_s || targetName == "vec3"_s || targetName == "vec4"_s)
-            evaluated(call, { call.inferredType(), ConstantVector(WTFMove(arguments)) });
-
         auto it = m_constantFunctions.find(targetName);
         if (it != m_constantFunctions.end()) {
-            materialize(call, it->value(arguments));
+            materialize(call, it->value(call, arguments));
             return;
         }
     }
 
     if (is<AST::ArrayTypeExpression>(target)) {
-        evaluated(call, { call.inferredType(), ConstantArray(WTFMove(arguments)) });
+        evaluated(call, ConstantArray(WTFMove(arguments)));
         return;
     }
 }
@@ -216,32 +222,32 @@ void ConstantRewriter::visit(AST::CallExpression& call)
 // Literals
 void ConstantRewriter::visit(AST::BoolLiteral& literal)
 {
-    evaluated(literal, { literal.inferredType(), literal.value() });
+    evaluated(literal, literal.value());
 }
 
 void ConstantRewriter::visit(AST::Signed32Literal& literal)
 {
-    evaluated(literal, { literal.inferredType(), literal.value() });
+    evaluated(literal, literal.value());
 }
 
 void ConstantRewriter::visit(AST::Float32Literal& literal)
 {
-    evaluated(literal, { literal.inferredType(), literal.value() });
+    evaluated(literal, literal.value());
 }
 
 void ConstantRewriter::visit(AST::Unsigned32Literal& literal)
 {
-    evaluated(literal, { literal.inferredType(), literal.value() });
+    evaluated(literal, literal.value());
 }
 
 void ConstantRewriter::visit(AST::AbstractIntegerLiteral& literal)
 {
-    evaluated(literal, { literal.inferredType(), literal.value() });
+    evaluated(literal, literal.value());
 }
 
 void ConstantRewriter::visit(AST::AbstractFloatLiteral& literal)
 {
-    evaluated(literal, { literal.inferredType(), literal.value() });
+    evaluated(literal, literal.value());
 }
 
 template<typename Node>
@@ -260,7 +266,7 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
         m_shaderModule.replace(expression, node);
     };
 
-    return WTF::switchOn(*value.type,
+    return WTF::switchOn(*expression.inferredType(),
         [&](const Primitive& primitive) {
             switch (primitive.kind) {
             case Primitive::AbstractInt:
@@ -272,12 +278,18 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
             case Primitive::U32:
                 replace.template operator()<AST::Unsigned32Literal, int64_t>();
                 break;
-            case Primitive::AbstractFloat:
-                replace.template operator()<AST::AbstractFloatLiteral, double>();
+            case Primitive::AbstractFloat: {
+                auto& node =  m_shaderModule.astBuilder().construct<AST::AbstractFloatLiteral>(SourceSpan::empty(), value.toDouble());
+                node.m_inferredType = expression.inferredType();
+                m_shaderModule.replace(expression, node);
                 break;
-            case Primitive::F32:
-                replace.template operator()<AST::Float32Literal, double>();
+            }
+            case Primitive::F32: {
+                auto& node =  m_shaderModule.astBuilder().construct<AST::Float32Literal>(SourceSpan::empty(), value.toDouble());
+                node.m_inferredType = expression.inferredType();
+                m_shaderModule.replace(expression, node);
                 break;
+            }
             case Primitive::Bool:
                 replace.template operator()<AST::BoolLiteral, bool>();
                 break;
