@@ -32,28 +32,31 @@
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif
 
-#if !PLATFORM(WIN)
-#error "This file should only be included when building the Windows port."
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
+#error "This file should only be included when building for the GTK or WPE platforms."
 #endif
 
+/* Please keep the following in alphabetical order so we can notice duplicates. */
+/* Items should only be here if they are different from the defaults in PlatformEnable.h. */
 
-/* --------- Windows port --------- */
-
-
-#if !defined(ENABLE_GEOLOCATION)
-#define ENABLE_GEOLOCATION 1
+#if !defined(ENABLE_KINETIC_SCROLLING) && (ENABLE(ASYNC_SCROLLING) || PLATFORM(GTK))
+#define ENABLE_KINETIC_SCROLLING 1
 #endif
 
-#if !defined(ENABLE_OPENTYPE_MATH)
-#define ENABLE_OPENTYPE_MATH 1
+#if !defined(ENABLE_NOTIFICATION_EVENT)
+#define ENABLE_NOTIFICATION_EVENT 1
 #endif
 
-#if !defined(ENABLE_WEB_ARCHIVE)
-#define ENABLE_WEB_ARCHIVE 1
+#if !defined(ENABLE_OPENTYPE_VERTICAL)
+#define ENABLE_OPENTYPE_VERTICAL 1
 #endif
 
-#if !defined(ENABLE_WEBGL)
-#define ENABLE_WEBGL 1
+#if !defined(ENABLE_SCROLLING_THREAD) && USE(NICOSIA)
+#define ENABLE_SCROLLING_THREAD 1
+#endif
+
+#if !defined(ENABLE_PDFJS)
+#define ENABLE_PDFJS 1
 #endif
 
 #if !defined(ENABLE_WEBPROCESS_CACHE)

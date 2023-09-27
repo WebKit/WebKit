@@ -110,6 +110,7 @@
 		70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomStringImpl.cpp */; };
 		7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */; };
 		7A6EBA3420746C34004F9C44 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A6EBA3320746C34004F9C44 /* MachSendRight.cpp */; };
+		7AAF9CA42AC4C39100E73DD3 /* PlatformEnableGlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AAF9CA32AC4C39100E73DD3 /* PlatformEnableGlib.h */; };
 		7AF023B52061E17000A8EFD6 /* ProcessPrivilege.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */; };
 		7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AFEC6B01EB22B5900DADE36 /* UUID.cpp */; };
 		7B8A1DC82A336B9000A4CE4E /* SequenceLocked.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8A1DC72A336B9000A4CE4E /* SequenceLocked.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1220,6 +1221,7 @@
 		7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSONValues.cpp; sourceTree = "<group>"; };
 		7A6EBA3220746C33004F9C44 /* MachSendRight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachSendRight.h; sourceTree = "<group>"; };
 		7A6EBA3320746C34004F9C44 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
+		7AAF9CA32AC4C39100E73DD3 /* PlatformEnableGlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableGlib.h; sourceTree = "<group>"; };
 		7AF023B32061E16C00A8EFD6 /* ProcessPrivilege.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessPrivilege.h; sourceTree = "<group>"; };
 		7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessPrivilege.cpp; sourceTree = "<group>"; };
 		7AFEC6AE1EB22AC600DADE36 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
@@ -2240,6 +2242,7 @@
 				7C42307223CE2D8A006E54D0 /* PlatformCPU.h */,
 				7C42307123CE2D8A006E54D0 /* PlatformEnable.h */,
 				7C98CDC723E7A9B80012F232 /* PlatformEnableCocoa.h */,
+				7AAF9CA32AC4C39100E73DD3 /* PlatformEnableGlib.h */,
 				DD4901E127B4748A00D7E50D /* PlatformEnablePlayStation.h */,
 				7C98CDC923E7AFC80012F232 /* PlatformEnableWinCairo.h */,
 				7C3A45D023CFA883007DE3A6 /* PlatformHave.h */,
@@ -3217,6 +3220,7 @@
 				DD3DC8F027A4BF8E007E5B61 /* PlatformCPU.h in Headers */,
 				DD3DC93327A4BF8E007E5B61 /* PlatformEnable.h in Headers */,
 				DD3DC91127A4BF8E007E5B61 /* PlatformEnableCocoa.h in Headers */,
+				7AAF9CA42AC4C39100E73DD3 /* PlatformEnableGlib.h in Headers */,
 				DDA35E4A29CA9B68006C1018 /* PlatformEnablePlayStation.h in Headers */,
 				DDA35E4B29CA9B68006C1018 /* PlatformEnableWinCairo.h in Headers */,
 				DD3DC8B927A4BF8E007E5B61 /* PlatformHave.h in Headers */,
