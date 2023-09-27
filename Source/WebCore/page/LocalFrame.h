@@ -301,7 +301,7 @@ private:
     FrameView* virtualView() const final;
     DOMWindow* virtualWindow() const final;
 
-    HashSet<FrameDestructionObserver*> m_destructionObservers;
+    WeakHashSet<FrameDestructionObserver> m_destructionObservers;
 
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 

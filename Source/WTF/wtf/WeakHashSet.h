@@ -110,6 +110,14 @@ public:
         return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value), assertionsPolicy).m_impl);
     }
 
+    T* takeAny()
+    {
+        auto iterator = begin();
+        if (iterator == end())
+            return nullptr;
+        return m_set.take(iterator.m_position)->template get<T>();
+    }
+
     template <typename U>
     bool remove(const U& value)
     {
