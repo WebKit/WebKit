@@ -276,15 +276,10 @@ class Package(object):
         if self.is_cached():
             return
 
-        # Make sure that setuptools, tomli, setuptools_scm, wheel and packaging are installed, since setup.py relies on them
-        if self.name not in ['setuptools', 'wheel', 'pyparsing', 'packaging', 'tomli', 'setuptools_scm']:
-            AutoInstall.install('setuptools')
-            AutoInstall.install('wheel')
-            AutoInstall.install('pyparsing')
-            AutoInstall.install('packaging')
-            if sys.version_info >= (3, 0):
-                AutoInstall.install('tomli')
-            AutoInstall.install('setuptools_scm')
+        # Make sure that base libraries are installed, since setup.py relies on them
+        if self.name not in AutoInstall.BASE_LIBRARIES:
+            for library in AutoInstall.BASE_LIBRARIES:
+                AutoInstall.install(library)
 
         # In some cases a package may check if another package is installed without actually
         # importing it, which would make the AutoInstall to miss the dependency as it would
@@ -433,6 +428,11 @@ class AutoInstall(object):
     LOCK_FILE = 'autoinstall.lock'
     DISABLE_ENV_VAR = 'DISABLE_WEBKITCOREPY_AUTOINSTALLER'
     CA_CERT_PATH_ENV_VAR = 'AUTOINSTALL_CA_CERT_PATH'
+
+    # This list of libraries is required to install other libraries, and must be installed first
+    BASE_LIBRARIES = ['setuptools', 'wheel', 'pyparsing', 'packaging', 'setuptools_scm']
+    if sys.version_info >= (3, 0):
+        BASE_LIBRARIES.insert(-1, 'tomli')
 
     directory = None
     index = _default_pypi_index()
