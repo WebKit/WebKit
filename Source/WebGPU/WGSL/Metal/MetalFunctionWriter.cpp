@@ -778,6 +778,12 @@ void FunctionDefinitionWriter::visit(const Type* type)
             visit(pointer.element);
             m_stringBuilder.append("*");
         },
+        [&](const Atomic& atomic) {
+            if (atomic.element == m_callGraph.ast().types().i32Type())
+                m_stringBuilder.append("atomic_int");
+            else
+                m_stringBuilder.append("atomic_uint");
+        },
         [&](const Function&) {
             RELEASE_ASSERT_NOT_REACHED();
         },

@@ -175,6 +175,10 @@ struct Pointer {
     const Type* element;
 };
 
+struct Atomic {
+    const Type* element;
+};
+
 struct TypeConstructor {
     ASCIILiteral name;
     std::function<const Type*(AST::ElaboratedTypeExpression&)> construct;
@@ -197,6 +201,7 @@ struct Type : public std::variant<
     Types::TextureDepth,
     Types::Reference,
     Types::Pointer,
+    Types::Atomic,
     Types::TypeConstructor,
     Types::Bottom
 > {
@@ -212,6 +217,7 @@ struct Type : public std::variant<
         Types::TextureDepth,
         Types::Reference,
         Types::Pointer,
+        Types::Atomic,
         Types::TypeConstructor,
         Types::Bottom
         >::variant;

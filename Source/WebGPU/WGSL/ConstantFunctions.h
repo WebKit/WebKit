@@ -112,6 +112,9 @@ static ConstantValue zeroValue(const Type* type)
         [&](const Types::TextureDepth&) -> ConstantValue {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const Types::Atomic&) -> ConstantValue {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Types::TypeConstructor&) -> ConstantValue {
             RELEASE_ASSERT_NOT_REACHED();
         },

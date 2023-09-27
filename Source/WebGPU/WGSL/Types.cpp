@@ -208,6 +208,9 @@ void Type::dump(PrintStream& out) const
         [&](const Pointer& reference) {
             out.print("ptr<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
         },
+        [&](const Atomic& atomic) {
+            out.print("atomic<", *atomic.element, ">");
+        },
         [&](const TypeConstructor& constructor) {
             out.print(constructor.name);
         },
@@ -372,6 +375,9 @@ unsigned Type::size() const
         [&](const Pointer&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const Atomic&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const TypeConstructor&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
@@ -438,6 +444,9 @@ unsigned Type::alignment() const
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Pointer&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Atomic&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) -> unsigned {

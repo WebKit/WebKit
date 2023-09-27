@@ -332,6 +332,9 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
         [&](const TextureDepth&) {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const Atomic&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const TypeConstructor&) {
             RELEASE_ASSERT_NOT_REACHED();
         },

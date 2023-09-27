@@ -221,6 +221,27 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
         }
     ));
 
+    introduceType(AST::Identifier::make("atomic"_s), m_types.typeConstructorType(
+        "atomic"_s,
+        [this](AST::ElaboratedTypeExpression& type) -> const Type* {
+            if (type.arguments().size() != 1) {
+                typeError(InferBottom::No, type.span(), "'atomic' requires 1 template arguments");
+                return m_types.bottomType();
+            }
+
+            auto* elementType = resolve(type.arguments()[0]);
+            if (isBottom(elementType))
+                return m_types.bottomType();
+
+            if (elementType != m_types.i32Type() && elementType != m_types.u32Type()) {
+                typeError(InferBottom::No, type.arguments()[0].span(), "atomic only supports i32 or u32 types");
+                return m_types.bottomType();
+            }
+
+            return m_types.atomicType(elementType);
+        }
+    ));
+
     allocateSimpleConstructor("vec2"_s, &TypeStore::vectorType, 2);
     allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, 3);
     allocateSimpleConstructor("vec4"_s, &TypeStore::vectorType, 4);
