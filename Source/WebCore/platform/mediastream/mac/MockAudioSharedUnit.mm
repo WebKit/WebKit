@@ -168,7 +168,7 @@ CoreAudioSharedUnit& MockAudioSharedUnit::singleton()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] () {
         s_shouldIncreaseBufferSize = false;
-        unit->setSampleRateRange(CapabilityValueOrRange(44100, 96000));
+        unit->setSampleRateRange(CapabilityRange(44100, 96000));
         unit->setInternalUnitCreationCallback([](bool enableEchoCancellation) {
             UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<MockAudioSharedInternalUnit>(enableEchoCancellation);
             return result;

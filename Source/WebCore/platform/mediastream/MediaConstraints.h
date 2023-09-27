@@ -125,6 +125,12 @@ public:
         return std::abs(a - b) <= epsilon;
     }
 
+    template<typename RangeType>
+    double fitnessDistance(const RangeType& range) const
+    {
+        return fitnessDistance(range.min, range.max);
+    }
+
     double fitnessDistance(ValueType rangeMin, ValueType rangeMax) const
     {
         // https://w3c.github.io/mediacapture-main/#dfn-applyconstraints
@@ -231,6 +237,12 @@ public:
             return m_ideal.value();
 
         return 0;
+    }
+
+    template<typename RangeType>
+    ValueType valueForCapabilityRange(ValueType current, const RangeType& range) const
+    {
+        return valueForCapabilityRange(current, range.min, range.max);
     }
 
     ValueType valueForCapabilityRange(ValueType current, ValueType capabilityMin, ValueType capabilityMax) const

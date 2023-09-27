@@ -4852,21 +4852,37 @@ struct WebCore::CaptureDeviceWithCapabilities {
 
 [Nested] enum class WebCore::RealtimeMediaSourceCapabilities::EchoCancellation : bool
 
+[Nested] struct WebCore::CapabilityRange::DoubleRange {
+    double max;
+    [Validator='min <= max'] double min;
+};
+
+[Nested] struct WebCore::CapabilityRange::LongRange {
+    int max;
+    [Validator='min <= max'] int min;
+};
+
+header: <WebCore/RealtimeMediaSourceCapabilities.h>
+[CustomHeader, LegacyPopulateFromEmptyConstructor] class WebCore::CapabilityRange {
+    std::optional<WebCore::CapabilityRange::DoubleRange> m_doubleRange;
+    std::optional<WebCore::CapabilityRange::LongRange> m_longRange;
+};
+
 class WebCore::RealtimeMediaSourceCapabilities {
-    WebCore::CapabilityValueOrRange width();
-    WebCore::CapabilityValueOrRange height();
-    WebCore::CapabilityValueOrRange aspectRatio();
-    WebCore::CapabilityValueOrRange frameRate();
+    WebCore::CapabilityRange width();
+    WebCore::CapabilityRange height();
+    WebCore::CapabilityRange aspectRatio();
+    WebCore::CapabilityRange frameRate();
     Vector<WebCore::VideoFacingMode> facingMode();
     Vector<WebCore::MeteringMode> whiteBalanceModes();
-    WebCore::CapabilityValueOrRange volume();
-    WebCore::CapabilityValueOrRange sampleRate();
-    WebCore::CapabilityValueOrRange sampleSize();
+    WebCore::CapabilityRange volume();
+    WebCore::CapabilityRange sampleRate();
+    WebCore::CapabilityRange sampleSize();
     WebCore::RealtimeMediaSourceCapabilities::EchoCancellation echoCancellation();
     AtomString deviceId();
     AtomString groupId();
-    WebCore::CapabilityValueOrRange focusDistance();
-    WebCore::CapabilityValueOrRange zoom();
+    WebCore::CapabilityRange focusDistance();
+    WebCore::CapabilityRange zoom();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
@@ -4876,7 +4892,7 @@ header: <WebCore/MockMediaDevice.h>
     Invalid
 };
 
-#endif
+#endif // ENABLE(MEDIA_STREAM)
 
 enum class WebCore::PlatformVideoColorPrimaries : uint8_t {
     Bt709,

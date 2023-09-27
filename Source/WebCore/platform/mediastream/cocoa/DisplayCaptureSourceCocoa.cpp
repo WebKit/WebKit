@@ -125,9 +125,9 @@ const RealtimeMediaSourceCapabilities& DisplayCaptureSourceCocoa::capabilities()
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
         auto intrinsicSize = m_capturer->intrinsicSize();
-        capabilities.setWidth(CapabilityValueOrRange(1, intrinsicSize.width()));
-        capabilities.setHeight(CapabilityValueOrRange(1, intrinsicSize.height()));
-        capabilities.setFrameRate(CapabilityValueOrRange(.01, 30.0));
+        capabilities.setWidth(CapabilityRange(1, intrinsicSize.width()));
+        capabilities.setHeight(CapabilityRange(1, intrinsicSize.height()));
+        capabilities.setFrameRate(CapabilityRange(.01, 30.0));
 
         m_capabilities = WTFMove(capabilities);
     }
