@@ -985,6 +985,10 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         // FIXME: Handle attributes attached to statement.
         return parseForStatement();
     }
+    case TokenType::KeywordWhile: {
+        // FIXME: Handle attributes attached to statement.
+        return parseWhileStatement();
+    }
     case TokenType::KeywordBreak: {
         consume();
         CONSUME_TYPE(Semicolon);
@@ -1122,6 +1126,19 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement()
     PARSE(body, CompoundStatement);
 
     RETURN_ARENA_NODE(ForStatement, maybeInitializer, maybeTest, maybeUpdate, WTFMove(body));
+}
+
+template<typename Lexer>
+Result<AST::Statement::Ref> Parser<Lexer>::parseWhileStatement()
+{
+    START_PARSE();
+
+    CONSUME_TYPE(KeywordWhile);
+
+    PARSE(test, Expression);
+    PARSE(body, CompoundStatement);
+
+    RETURN_ARENA_NODE(WhileStatement, WTFMove(test), WTFMove(body));
 }
 
 template<typename Lexer>

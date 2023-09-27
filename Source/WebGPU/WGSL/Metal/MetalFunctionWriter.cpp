@@ -98,6 +98,7 @@ public:
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::WhileStatement&) override;
     void visit(AST::BreakStatement&) override;
     void visit(AST::ContinueStatement&) override;
 
@@ -1403,6 +1404,14 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
         m_stringBuilder.append(" ");
         visit(*update);
     }
+    m_stringBuilder.append(") ");
+    visit(statement.body());
+}
+
+void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
+{
+    m_stringBuilder.append("while (");
+    visit(statement.test());
     m_stringBuilder.append(") ");
     visit(statement.body());
 }

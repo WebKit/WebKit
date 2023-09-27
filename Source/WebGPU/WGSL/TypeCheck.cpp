@@ -82,6 +82,7 @@ public:
     void visit(AST::ReturnStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::WhileStatement&) override;
 
     // Expressions
     void visit(AST::Expression&) override;
@@ -592,6 +593,15 @@ void TypeChecker::visit(AST::ForStatement& statement)
 
     if (auto* update = statement.maybeUpdate())
         AST::Visitor::visit(*update);
+
+    visit(statement.body());
+}
+
+void TypeChecker::visit(AST::WhileStatement& statement)
+{
+    auto* testType = infer(statement.test());
+    if (!unify(m_types.boolType(), testType))
+        typeError(InferBottom::No, statement.test().span(), "while condition must be bool, got ", *testType);
 
     visit(statement.body());
 }
