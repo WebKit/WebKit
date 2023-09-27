@@ -162,6 +162,22 @@ class CheckoutRouteUnittest(testing.PathTestCase):
             self.assertEqual(response.json(), reference)
 
     @mock_app
+    def test_json_invalid(self, app=None, client=None):
+        with mocks.local.Git(self.path) as repo:
+            app.register_blueprint(CheckoutRoute(
+                Checkout(path=self.path, url=repo.remote, sentinal=False),
+                redirectors=[Redirector('https://trac.webkit.org')],
+            ))
+
+            response = client.get('bae5d1e90999~1/json')
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.json(), dict(
+                status='Not Found',
+                error='Object of type NoneType is not JSON serializable',
+                message='No commit with the specified reference could be found',
+            ))
+
+    @mock_app
     def test_redirect(self, app=None, client=None):
         with mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
