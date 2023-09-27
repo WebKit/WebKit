@@ -277,10 +277,11 @@ class Package(object):
             return
 
         # Make sure that setuptools, tomli, setuptools_scm, wheel and packaging are installed, since setup.py relies on them
-        if self.name not in ['wheel', 'packaging', 'setuptools', 'tomli', 'setuptools_scm']:
-            AutoInstall.install('wheel')
-            AutoInstall.install('packaging')
+        if self.name not in ['setuptools', 'wheel', 'pyparsing', 'packaging', 'tomli', 'setuptools_scm']:
             AutoInstall.install('setuptools')
+            AutoInstall.install('wheel')
+            AutoInstall.install('pyparsing')
+            AutoInstall.install('packaging')
             if sys.version_info >= (3, 0):
                 AutoInstall.install('tomli')
             AutoInstall.install('setuptools_scm')
