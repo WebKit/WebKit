@@ -615,8 +615,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
 
         auto& layoutBox = box.layoutBox();
-
-        if (!layoutBox.isAtomicInlineLevelBox() && !layoutBox.isRubyAnnotationBox())
+        if (!layoutBox.isAtomicInlineLevelBox())
             continue;
 
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
@@ -627,6 +626,21 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         auto adjustmentOffset = visualAdjustmentOffset(box.lineIndex());
 
         renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft() + adjustmentOffset);
+        auto relayoutRubyAnnotationIfNeeded = [&] {
+            // Annotation inline-block may get resized during inline layout (when base is wider) and
+            // we need to apply this new size on the annotation content by running layout.
+            if (!layoutBox.isRubyAnnotationBox())
+                return;
+            auto usedMarginBoxSize = Layout::BoxGeometry::marginBoxRect(logicalGeometry).size();
+            if (usedMarginBoxSize == renderer.size())
+                return;
+            renderer.setSize(usedMarginBoxSize);
+            renderer.setOverridingLogicalWidthLength({ usedMarginBoxSize.width(), LengthType::Fixed });
+            renderer.setNeedsLayout(MarkOnlyThis);
+            renderer.layoutIfNeeded();
+            renderer.clearOverridingLogicalWidthLength();
+        };
+        relayoutRubyAnnotationIfNeeded();
     }
 
     HashMap<CheckedRef<const Layout::Box>, LayoutSize> floatPaginationOffsetMap;
