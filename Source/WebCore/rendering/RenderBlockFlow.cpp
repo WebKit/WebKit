@@ -790,9 +790,6 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
 
     setLogicalHeight(beforeEdge);
     auto* layoutState = view().frameView().layoutContext().layoutState(); 
-    // Lay out our hypothetical grid line as though it occurs at the top of the block.
-    if (layoutState->lineGrid() == this)
-        layoutLineGridBox();
 
     // The margin struct caches all our current margin collapsing state.
     MarginInfo marginInfo(*this, beforeEdge, afterEdge);
@@ -2270,29 +2267,6 @@ void RenderBlockFlow::adjustSizeContainmentChildForPagination(RenderBox& child, 
 
     if (RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow())
         fragmentedFlow->updateSpaceShortageForSizeContainment(this, offsetFromLogicalTopOfFirstPage() + offset, spaceShortage);
-}
-
-void RenderBlockFlow::layoutLineGridBox()
-{
-    if (style().lineGrid() == RenderStyle::initialLineGrid()) {
-        setLineGridBox(0);
-        return;
-    }
-    
-    setLineGridBox(0);
-
-    auto lineGridBox = makeUnique<LegacyRootInlineBox>(*this);
-    lineGridBox->setHasTextChildren(); // Needed to make the line ascent/descent actually be honored in quirks mode.
-    lineGridBox->setConstructed();
-    GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-    VerticalPositionCache verticalPositionCache;
-    lineGridBox->alignBoxesInBlockDirection(logicalHeight(), textBoxDataMap, verticalPositionCache);
-    
-    setLineGridBox(WTFMove(lineGridBox));
-
-    // FIXME: If any of the characteristics of the box change compared to the old one, then we need to do a deep dirtying
-    // (similar to what happens when the page height changes). Ideally, though, we only do this if someone is actually snapping
-    // to this grid.
 }
 
 bool RenderBlockFlow::containsFloat(RenderBox& renderer) const
