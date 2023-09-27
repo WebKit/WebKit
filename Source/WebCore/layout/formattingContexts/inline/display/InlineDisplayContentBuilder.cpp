@@ -481,22 +481,20 @@ void InlineDisplayContentBuilder::appendInterlinearRubyAnnotationBox(const Box& 
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
     ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
+
     auto& annotationBox = *rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    auto annotationBoxPosition = RubyFormattingContext { formattingContext() }.annotationPosition(rubyBaseLayoutBox);
-    // Turn ruby-base relatively positioned annotation box to relative to line box.
-    annotationBoxPosition.moveBy(BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(rubyBaseLayoutBox)));
-
+    auto borderBoxTopLeft = RubyFormattingContext { formattingContext() }.placeAnnotationBox(rubyBaseLayoutBox);
     auto& annotationBoxGeometry = formattingState().boxGeometry(annotationBox);
-    annotationBoxGeometry.setTopLeft(toLayoutPoint(annotationBoxPosition));
+    annotationBoxGeometry.setTopLeft(toLayoutPoint(borderBoxTopLeft));
 
-    auto annoationBorderBox = InlineRect { annotationBoxPosition.y(), annotationBoxPosition.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
+    auto borderBoxRect = InlineRect { borderBoxTopLeft.y(), borderBoxTopLeft.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
         , annotationBox
         , UBIDI_DEFAULT_LTR
-        , annoationBorderBox
-        , annoationBorderBox
+        , borderBoxRect
+        , borderBoxRect
         , { }
         , { }
         , true
@@ -506,21 +504,20 @@ void InlineDisplayContentBuilder::appendInterlinearRubyAnnotationBox(const Box& 
 
 void InlineDisplayContentBuilder::appendIntercharacterRubyAnnotationBox(const Line::Run& lineRun, InlineDisplay::Boxes& boxes)
 {
-    auto& intercharacterAnnotationBox = lineRun.layoutBox();
-    ASSERT(!intercharacterAnnotationBox.isInterlinearRubyAnnotationBox());
-    auto annotationBoxPosition = RubyFormattingContext { formattingContext() }.annotationPosition(*m_interCharacterRubyBase);
+    auto& annotationBox = lineRun.layoutBox();
+    ASSERT(!annotationBox.isInterlinearRubyAnnotationBox());
+    auto borderBoxTopLeft = RubyFormattingContext { formattingContext() }.placeAnnotationBox(*m_interCharacterRubyBase);
+    auto& annotationBoxGeometry = formattingState().boxGeometry(annotationBox);
+    annotationBoxGeometry.setTopLeft(toLayoutPoint(borderBoxTopLeft));
 
-    auto& annotationBoxGeometry = formattingState().boxGeometry(intercharacterAnnotationBox);
-    annotationBoxGeometry.setTopLeft(toLayoutPoint(annotationBoxPosition));
-
-    auto annoationBorderBox = InlineRect { annotationBoxPosition.y(), annotationBoxPosition.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
+    auto borderBoxRect = InlineRect { borderBoxTopLeft.y(), borderBoxTopLeft.x(), annotationBoxGeometry.borderBoxWidth(), annotationBoxGeometry.borderBoxHeight() };
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
-        , intercharacterAnnotationBox
+        , annotationBox
         , lineRun.bidiLevel()
-        , annoationBorderBox
-        , annoationBorderBox
+        , borderBoxRect
+        , borderBoxRect
         , { }
         , { }
         , true

@@ -148,7 +148,7 @@ size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& ru
     return inlineItems.size() - rubyBaseContentStartIndex;
 }
 
-InlineLayoutPoint RubyFormattingContext::annotationPosition(const Box& rubyBaseLayoutBox)
+InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseLayoutBox)
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
@@ -156,18 +156,22 @@ InlineLayoutPoint RubyFormattingContext::annotationPosition(const Box& rubyBaseL
         ASSERT_NOT_REACHED();
         return { };
     }
+    auto& inlineFormattingContext = parentFormattingContext();
+    auto& rubyBaseGeometry = inlineFormattingContext.geometryForBox(rubyBaseLayoutBox);
+    auto& annotationBoxGeometry = inlineFormattingContext.geometryForBox(*annotationBox);
+
     if (isInterlinearAnnotation(annotationBox)) {
-        auto annotationMarginBoxHeight = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxHeight() };
-        if (annotationBox->style().rubyPosition() == RubyPosition::Before)
-            return { { }, -annotationMarginBoxHeight };
-        return { { }, parentFormattingContext().geometryForBox(rubyBaseLayoutBox).marginBoxHeight() };
+        auto topLeft = BoxGeometry::marginBoxRect(rubyBaseGeometry).topLeft();
+        // Move it over/under the base and make it border box position.
+        auto borderBoxTop = annotationBox->style().rubyPosition() == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseGeometry.marginBoxHeight();
+        borderBoxTop += annotationBoxGeometry.marginBefore();
+        topLeft.move(LayoutSize { annotationBoxGeometry.marginStart(), borderBoxTop });
+        return topLeft;
     }
     // Inter-character annotation box is stretched to the size of the base content box and vertically centered.
-    auto& annotationBoxGeometry = parentFormattingContext().geometryForBox(*annotationBox);
-    auto& rubyBaseGeometry = parentFormattingContext().geometryForBox(rubyBaseLayoutBox);
     auto rubyBaseRight = BoxGeometry::marginBoxRect(rubyBaseGeometry).right();
-
-    return { rubyBaseRight, (rubyBaseGeometry.contentBoxHeight() - annotationBoxGeometry.contentBoxHeight()) / 2 };
+    auto borderBoxRight = rubyBaseRight + annotationBoxGeometry.marginStart();
+    return { borderBoxRight, ((rubyBaseGeometry.contentBoxHeight() - annotationBoxGeometry.contentBoxHeight()) / 2) - annotationBoxGeometry.borderBefore() };
 }
 
 RubyFormattingContext::OverUnder RubyFormattingContext::annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox)
