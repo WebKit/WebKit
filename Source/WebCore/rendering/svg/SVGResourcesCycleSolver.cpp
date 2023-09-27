@@ -22,7 +22,6 @@
 
 #include "Logging.h"
 #include "RenderAncestorIterator.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"

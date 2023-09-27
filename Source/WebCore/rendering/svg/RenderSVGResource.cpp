@@ -24,11 +24,11 @@
 #include "config.h"
 #include "RenderSVGResource.h"
 
+#include "LegacyRenderSVGResourceClipper.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceSolidColor.h"
@@ -58,7 +58,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
 {
     bool applyToFill = mode == RenderSVGResourceMode::ApplyToFill;
 
-    // When rendering the mask for a RenderSVGResourceClipper, always use the initial fill paint server.
+    // When rendering the mask for a LegacyRenderSVGResourceClipper, always use the initial fill paint server.
     if (renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGMask)) {
         // Ignore stroke.
         if (!applyToFill)
@@ -164,7 +164,7 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
         if (RenderSVGResourceMasker* masker = resources->masker())
             masker->removeClientFromCache(renderer);
 
-        if (RenderSVGResourceClipper* clipper = resources->clipper())
+        if (LegacyRenderSVGResourceClipper* clipper = resources->clipper())
             clipper->removeClientFromCache(renderer);
     }
 

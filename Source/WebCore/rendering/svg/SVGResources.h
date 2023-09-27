@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "RenderSVGResourceClipper.h"
+#include "LegacyRenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
@@ -48,7 +48,7 @@ public:
     void layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot*);
 
     // Ordinary resources
-    RenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper.get() : nullptr; }
+    LegacyRenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper.get() : nullptr; }
     RenderSVGResourceMarker* markerStart() const { return m_markerData ? m_markerData->markerStart.get() : nullptr; }
     RenderSVGResourceMarker* markerMid() const { return m_markerData ? m_markerData->markerMid.get() : nullptr; }
     RenderSVGResourceMarker* markerEnd() const { return m_markerData ? m_markerData->markerEnd.get() : nullptr; }
@@ -89,7 +89,7 @@ private:
     void resetLinkedResource();
 
 private:
-    bool setClipper(RenderSVGResourceClipper*);
+    bool setClipper(LegacyRenderSVGResourceClipper*);
     bool setFilter(RenderSVGResourceFilter*);
     bool setMarkerStart(RenderSVGResourceMarker*);
     bool setMarkerMid(RenderSVGResourceMarker*);
@@ -110,7 +110,7 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         ClipperFilterMaskerData() = default;
-        WeakPtr<RenderSVGResourceClipper> clipper;
+        WeakPtr<LegacyRenderSVGResourceClipper> clipper;
         WeakPtr<RenderSVGResourceFilter> filter;
         WeakPtr<RenderSVGResourceMasker> masker;
     };

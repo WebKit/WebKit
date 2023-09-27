@@ -53,6 +53,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LegacyRenderSVGResourceClipper.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "MotionPath.h"
@@ -76,7 +77,6 @@
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -1549,7 +1549,7 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
             break;
         if (!is<SVGClipPathElement>(*element))
             break;
-        auto& clipper = downcast<RenderSVGResourceClipper>(*element->renderer());
+        auto& clipper = downcast<LegacyRenderSVGResourceClipper>(*element->renderer());
         if (!clipper.hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint { hitTestLocationInLocalCoordinates }))
             return false;
         break;

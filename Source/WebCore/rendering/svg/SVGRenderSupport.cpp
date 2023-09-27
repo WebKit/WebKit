@@ -28,6 +28,7 @@
 #include "SVGRenderSupport.h"
 
 #include "ElementAncestorIteratorInlines.h"
+#include "LegacyRenderSVGResourceClipper.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LegacyRenderSVGTransformableContainer.h"
@@ -39,7 +40,6 @@
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
@@ -319,7 +319,7 @@ void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& re
     if (RenderSVGResourceFilter* filter = resources->filter())
         repaintRect = filter->resourceBoundingBox(renderer);
 
-    if (RenderSVGResourceClipper* clipper = resources->clipper())
+    if (LegacyRenderSVGResourceClipper* clipper = resources->clipper())
         repaintRect.intersect(clipper->resourceBoundingBox(renderer));
 
     if (RenderSVGResourceMasker* masker = resources->masker())
@@ -426,7 +426,7 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
     if (!resources)
         return true;
 
-    if (RenderSVGResourceClipper* clipper = resources->clipper())
+    if (LegacyRenderSVGResourceClipper* clipper = resources->clipper())
         return clipper->hitTestClipContent(renderer.objectBoundingBox(), point);
 
     return true;
