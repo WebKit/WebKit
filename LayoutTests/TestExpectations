@@ -1293,6 +1293,9 @@ media/video-supports-fullscreen.html [ Skip ]
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
 media/video-with-alpha.html [ Skip ]
 
+# Support to pause with 0 rate playback seems to work only in GStreamer ports
+media/media-source/media-source-play-zero-playbackrate.html [ Skip ]
+
 # accent-color is currently only supported on Cocoa platforms
 fast/css/accent-color/button.html [ ImageOnlyFailure ]
 fast/css/accent-color/checkbox.html [ ImageOnlyFailure ]
