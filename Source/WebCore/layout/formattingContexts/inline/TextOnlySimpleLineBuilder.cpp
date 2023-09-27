@@ -473,6 +473,8 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (rootStyle.textWrap() == TextWrap::Balance)
         return false;
+    if (rootStyle.lineAlign() != LineAlign::None)
+        return false;
 
     return true;
 }

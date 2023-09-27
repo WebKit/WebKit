@@ -58,8 +58,6 @@ static std::optional<AvoidanceReason> canUseForBlockStyle(const RenderBlockFlow&
     ASSERT(is<RenderBlockFlow>(blockContainer));
 
     auto& style = blockContainer.style();
-    if (style.lineAlign() != LineAlign::None)
-        return AvoidanceReason::FlowHasLineAlignEdges;
     if (style.lineSnap() != LineSnap::None)
         return AvoidanceReason::FlowHasLineSnap;
     return { };

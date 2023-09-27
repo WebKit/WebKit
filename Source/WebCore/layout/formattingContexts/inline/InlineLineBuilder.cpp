@@ -521,6 +521,7 @@ LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const Inline
 {
     auto isIntrinsicWidthMode = isInIntrinsicWidthMode() ? InlineFormattingGeometry::IsIntrinsicWidthMode::Yes : InlineFormattingGeometry::IsIntrinsicWidthMode::No;
     auto textIndent = formattingContext().formattingGeometry().computedTextIndent(isIntrinsicWidthMode, previousLineEndsWithLineBreak, initialLineLogicalRect.width());
+
     return floatConstrainedRect(initialLineLogicalRect, textIndent);
 }
 
@@ -734,28 +735,35 @@ static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent
 
 LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect& logicalRect, InlineLayoutUnit marginStart) const
 {
-    if (isInIntrinsicWidthMode() || floatingState().isEmpty())
-        return { logicalRect, marginStart, { } };
+    auto constraints = [&]() -> LineBuilder::UsedConstraints {
+        if (isInIntrinsicWidthMode() || floatingState().isEmpty())
+            return { logicalRect, marginStart, { } };
 
-    auto constraints = formattingContext().formattingGeometry().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), FloatingContext { formattingContext(), floatingState() });
-    if (!constraints.left && !constraints.right)
-        return { logicalRect, marginStart, { } };
+        auto constraints = formattingContext().formattingGeometry().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), FloatingContext { formattingContext(), floatingState() });
+        if (!constraints.left && !constraints.right)
+            return { logicalRect, marginStart, { } };
 
-    auto isConstrainedByFloat = OptionSet<UsedFloat> { };
-    auto adjustedLogicalRect = logicalRect;
-    adjustedLogicalRect.shiftLeftBy(-marginStart);
+        auto isConstrainedByFloat = OptionSet<UsedFloat> { };
+        auto adjustedLogicalRect = logicalRect;
+        adjustedLogicalRect.shiftLeftBy(-marginStart);
 
-    if (constraints.left && constraints.left->x > adjustedLogicalRect.left()) {
-        adjustedLogicalRect.shiftLeftTo(constraints.left->x);
-        isConstrainedByFloat.add(UsedFloat::Left);
-    }
-    if (constraints.right && constraints.right->x < adjustedLogicalRect.right()) {
-        adjustedLogicalRect.setRight(std::max<InlineLayoutUnit>(adjustedLogicalRect.left(), constraints.right->x));
-        isConstrainedByFloat.add(UsedFloat::Right);
-    }
+        if (constraints.left && constraints.left->x > adjustedLogicalRect.left()) {
+            adjustedLogicalRect.shiftLeftTo(constraints.left->x);
+            isConstrainedByFloat.add(UsedFloat::Left);
+        }
+        if (constraints.right && constraints.right->x < adjustedLogicalRect.right()) {
+            adjustedLogicalRect.setRight(std::max<InlineLayoutUnit>(adjustedLogicalRect.left(), constraints.right->x));
+            isConstrainedByFloat.add(UsedFloat::Right);
+        }
 
-    adjustedLogicalRect.shiftLeftBy(marginStart);
-    return { adjustedLogicalRect, marginStart, isConstrainedByFloat };
+        adjustedLogicalRect.shiftLeftBy(marginStart);
+        return { adjustedLogicalRect, marginStart, isConstrainedByFloat };
+    }();
+
+    if (auto adjustedRect = InlineFormattingQuirks::adjustedRectForLineGridLineAlign(constraints.logicalRect, formattingContext().root().style(), m_inlineLayoutState))
+        constraints.logicalRect = *adjustedRect;
+
+    return constraints;
 }
 
 LineBuilder::UsedConstraints LineBuilder::adjustedLineRectWithCandidateInlineContent(const LineCandidate& lineCandidate) const

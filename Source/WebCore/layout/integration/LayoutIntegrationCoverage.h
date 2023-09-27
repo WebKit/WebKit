@@ -37,12 +37,11 @@ namespace LayoutIntegration {
 class LineLayout;
 
 enum class AvoidanceReason : uint8_t {
-    ContentIsRuby                = 1 << 0,
-    ContentIsSVG                 = 1 << 1,
-    FlowHasLineAlignEdges        = 1 << 2,
-    FlowHasLineSnap              = 1 << 3,
-    FlowIsInitialContainingBlock = 1 << 4,
-    FeatureIsDisabled            = 1 << 5
+    ContentIsRuby,
+    ContentIsSVG,
+    FlowHasLineSnap,
+    FlowIsInitialContainingBlock,
+    FeatureIsDisabled
 };
 
 bool canUseForLineLayout(const RenderBlockFlow&);

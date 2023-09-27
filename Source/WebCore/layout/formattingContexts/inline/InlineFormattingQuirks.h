@@ -42,6 +42,7 @@ public:
     bool inlineBoxAffectsLineBox(const InlineLevelBox&) const;
     static bool lineBreakBoxAffectsParentInlineBox(const LineBox&);
     std::optional<LayoutUnit> initialLetterAlignmentOffset(const Box& floatBox, const RenderStyle& lineBoxStyle) const;
+    static std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&, const RenderStyle& rootBoxStyle, const InlineLayoutState&);
 };
 
 }

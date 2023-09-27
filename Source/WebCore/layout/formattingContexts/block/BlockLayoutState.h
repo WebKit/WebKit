@@ -44,7 +44,13 @@ public:
         End   = 1 << 1
     };
     using TextBoxTrim = OptionSet<TextBoxTrimSide>;
-    BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, TextBoxTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { });
+
+    struct LineGrid {
+        LayoutSize logicalOffset;
+        InlineLayoutUnit columnWidth;
+    };
+
+    BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, TextBoxTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
 
     FloatingState& floatingState() { return m_floatingState; }
     const FloatingState& floatingState() const { return m_floatingState; }
@@ -53,19 +59,22 @@ public:
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
 
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
+    const std::optional<LineGrid>& lineGrid() const { return m_lineGrid; }
 
 private:
     FloatingState& m_floatingState;
     std::optional<LineClamp> m_lineClamp;
     TextBoxTrim m_textBoxTrim;
     std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;
+    std::optional<LineGrid> m_lineGrid;
 };
 
-inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom)
+inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
     : m_floatingState(floatingState)
     , m_lineClamp(lineClamp)
     , m_textBoxTrim(textBoxTrim)
     , m_intrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom)
+    , m_lineGrid(lineGrid)
 {
 }
 

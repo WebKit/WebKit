@@ -523,6 +523,24 @@ static inline Layout::BlockLayoutState::TextBoxTrim textBoxTrim(const RenderBloc
     return textBoxTrimForIFC;
 }
 
+static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const RenderBlockFlow& rootRenderer)
+{
+    auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
+    if (auto* lineGrid = layoutState.lineGrid()) {
+        if (lineGrid->style().writingMode() != rootRenderer.style().writingMode())
+            return { };
+
+        auto offset = layoutState.layoutOffset() - layoutState.lineGridOffset();
+        if (lineGrid->style().isVerticalWritingMode())
+            offset = offset.transposedSize();
+
+        auto columnWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
+        return Layout::BlockLayoutState::LineGrid { offset, columnWidth };
+    }
+
+    return { };
+}
+
 std::optional<LayoutRect> LineLayout::layout()
 {
     prepareLayoutState();
@@ -556,11 +574,20 @@ std::optional<LayoutRect> LineLayout::layout()
         auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), partialContentTop };
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     }();
-    auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), textBoxTrim(flow()), intrusiveInitialLetterBottom() };
+
+    auto parentBlockLayoutState = Layout::BlockLayoutState {
+        m_blockFormattingState.floatingState(),
+        lineClamp(flow()),
+        textBoxTrim(flow()),
+        intrusiveInitialLetterBottom(),
+        lineGrid(flow())
+    };
+
     auto hyphenationLimitLines = std::optional<size_t> { };
     if (auto limitLinesValue = rootLayoutBox().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
         hyphenationLimitLines = limitLinesValue;
     auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets), hyphenationLimitLines };
+
     auto layoutResult = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState }.layout(inlineContentConstraints, inlineLayoutState, m_lineDamage.get());
 
     auto repaintRect = LayoutRect { constructContent(inlineLayoutState, WTFMove(layoutResult)) };

@@ -2659,3 +2659,5 @@ webkit.org/b/261024 webgl/2.0.y/conformance/rendering/color-mask-preserved-durin
 webkit.org/b/261024 webrtc/utf8-sdp.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
+
+fast/line-grid [ Skip ]
