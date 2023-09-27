@@ -196,6 +196,10 @@ private:
     void willDetachRenderer() override;
     bool isComposited() const override { return true; }
 
+    void createPDFDocument() override;
+    void installPDFDocument() override;
+    void tryRunScriptsInPDFDocument() override;
+
     CGFloat scaleFactor() const override;
 
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const override { return m_pdfDocument; }
@@ -207,10 +211,6 @@ private:
 
     void updateControlTints(WebCore::GraphicsContext&) override;
 
-    void streamDidReceiveResponse(const WebCore::ResourceResponse&) override;
-    void streamDidReceiveData(const WebCore::SharedBuffer&) override;
-    void streamDidFinishLoading() override;
-    void streamDidFail() override;
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
 
     bool wantsWheelEvents() const override { return true; }
@@ -239,13 +239,14 @@ private:
     id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
+    void incrementalPDFStreamDidReceiveData(const WebCore::SharedBuffer&) override;
+    bool incrementalPDFStreamDidFinishLoading() override;
+    void incrementalPDFStreamDidFail() override;
+
     void updateScrollbars();
     Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     void destroyScrollbar(WebCore::ScrollbarOrientation);
-    void installPDFDocument();
-    void addArchiveResource();
     void calculateSizes();
-    void tryRunScriptsInPDFDocument();
 
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
     WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
@@ -253,7 +254,6 @@ private:
     WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromPDFViewToRootView(const WebCore::IntRect&) const;
     WebCore::IntRect frameForHUD() const;
-    void ensureDataBufferLength(uint64_t length);
 
     bool supportsForms();
 
@@ -304,10 +304,6 @@ private:
     WebCore::IntSize m_size;
 
     URL m_sourceURL;
-
-    String m_suggestedFilename;
-    RetainPtr<CFMutableDataRef> m_data;
-    uint64_t m_streamedBytes { 0 };
 
     RetainPtr<PDFDocument> m_pdfDocument;
 

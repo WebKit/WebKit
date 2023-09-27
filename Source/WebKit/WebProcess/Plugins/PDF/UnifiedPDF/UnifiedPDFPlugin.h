@@ -43,15 +43,14 @@ private:
 
     void teardown() override;
 
+    void createPDFDocument() override;
+    void installPDFDocument() override;
+
     CGFloat scaleFactor() const override;
 
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const override;
     WebCore::FloatSize pdfDocumentSizeForPrinting() const override;
 
-    void streamDidReceiveResponse(const WebCore::ResourceResponse&) override;
-    void streamDidReceiveData(const WebCore::SharedBuffer&) override;
-    void streamDidFinishLoading() override;
-    void streamDidFail() override;
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
 
     bool handleMouseEvent(const WebMouseEvent&) override;

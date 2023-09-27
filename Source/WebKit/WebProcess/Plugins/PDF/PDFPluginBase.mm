@@ -23,17 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PDFPluginBase.h"
+#include "config.h"
+#include "PDFPluginBase.h"
 
 #if ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
 
 #include "PluginView.h"
 #include "WebFrame.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <WebCore/ArchiveResource.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLPlugInElement.h>
+#include <WebCore/LoaderNSURLExtras.h>
 #include <WebCore/PluginDocument.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -73,6 +78,74 @@ bool PDFPluginBase::isFullFramePlugin() const
     if (!is<PluginDocument>(document))
         return false;
     return downcast<PluginDocument>(*document).pluginWidget() == m_view;
+}
+
+void PDFPluginBase::ensureDataBufferLength(uint64_t targetLength)
+{
+    if (!m_data)
+        m_data = adoptCF(CFDataCreateMutable(0, 0));
+
+    auto currentLength = CFDataGetLength(m_data.get());
+    ASSERT(currentLength >= 0);
+    if (targetLength > (uint64_t)currentLength)
+        CFDataIncreaseLength(m_data.get(), targetLength - currentLength);
+}
+
+void PDFPluginBase::streamDidReceiveResponse(const ResourceResponse& response)
+{
+    m_suggestedFilename = response.suggestedFilename();
+    if (m_suggestedFilename.isEmpty())
+        m_suggestedFilename = suggestedFilenameWithMIMEType(nil, "application/pdf"_s);
+    if (!m_suggestedFilename.endsWithIgnoringASCIICase(".pdf"_s))
+        m_suggestedFilename = makeString(m_suggestedFilename, ".pdf"_s);
+}
+
+void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
+{
+    if (!m_data)
+        m_data = adoptCF(CFDataCreateMutable(0, 0));
+
+    ensureDataBufferLength(m_streamedBytes + buffer.size());
+    memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, buffer.data(), buffer.size());
+    m_streamedBytes += buffer.size();
+
+    incrementalPDFStreamDidReceiveData(buffer);
+}
+
+void PDFPluginBase::streamDidFinishLoading()
+{
+    if (m_hasBeenDestroyed)
+        return;
+
+    addArchiveResource();
+
+    m_documentFinishedLoading = true;
+
+    if (!incrementalPDFStreamDidFinishLoading()) {
+        createPDFDocument();
+        installPDFDocument();
+    }
+
+    tryRunScriptsInPDFDocument();
+}
+
+void PDFPluginBase::streamDidFail()
+{
+    m_data = nullptr;
+    incrementalPDFStreamDidFail();
+}
+
+void PDFPluginBase::addArchiveResource()
+{
+    // FIXME: It's a hack to force add a resource to DocumentLoader. PDF documents should just be fetched as CachedResources.
+
+    // Add just enough data for context menu handling and web archives to work.
+    NSDictionary* headers = @{ @"Content-Disposition": (NSString *)m_suggestedFilename, @"Content-Type" : @"application/pdf" };
+    auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_view->mainResourceURL() statusCode:200 HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headers]);
+    ResourceResponse synthesizedResponse(response.get());
+
+    auto resource = ArchiveResource::create(SharedBuffer::create(m_data.get()), m_view->mainResourceURL(), "application/pdf"_s, String(), String(), synthesizedResponse);
+    m_view->frame()->document()->loader()->addArchiveResource(resource.releaseNonNull());
 }
 
 } // namespace WebKit

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "UnifiedPDFPlugin.h"
+#include "config.h"
+#include "UnifiedPDFPlugin.h"
 
 #if ENABLE(UNIFIED_PDF)
 
@@ -47,6 +47,16 @@ void UnifiedPDFPlugin::teardown()
 
 }
 
+void UnifiedPDFPlugin::createPDFDocument()
+{
+
+}
+
+void UnifiedPDFPlugin::installPDFDocument()
+{
+
+}
+
 CGFloat UnifiedPDFPlugin::scaleFactor() const
 {
     return 1;
@@ -60,26 +70,6 @@ RetainPtr<PDFDocument> UnifiedPDFPlugin::pdfDocumentForPrinting() const
 WebCore::FloatSize UnifiedPDFPlugin::pdfDocumentSizeForPrinting() const
 {
     return { };
-}
-
-void UnifiedPDFPlugin::streamDidReceiveResponse(const WebCore::ResourceResponse&)
-{
-
-}
-
-void UnifiedPDFPlugin::streamDidReceiveData(const WebCore::SharedBuffer&)
-{
-
-}
-
-void UnifiedPDFPlugin::streamDidFinishLoading()
-{
-
-}
-
-void UnifiedPDFPlugin::streamDidFail()
-{
-
 }
 
 RefPtr<FragmentedSharedBuffer> UnifiedPDFPlugin::liveResourceData() const

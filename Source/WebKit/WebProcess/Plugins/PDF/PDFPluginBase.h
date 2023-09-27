@@ -88,11 +88,6 @@ public:
 
     virtual void updateControlTints(WebCore::GraphicsContext&) { }
 
-    virtual void streamDidReceiveResponse(const WebCore::ResourceResponse&) = 0;
-    virtual void streamDidReceiveData(const WebCore::SharedBuffer&) = 0;
-    virtual void streamDidFinishLoading() = 0;
-    virtual void streamDidFail() = 0;
-
     virtual RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const = 0;
 
     virtual bool wantsWheelEvents() const { return false; }
@@ -125,13 +120,34 @@ public:
 
     bool isFullFramePlugin() const;
 
+    void streamDidReceiveResponse(const WebCore::ResourceResponse&);
+    void streamDidReceiveData(const WebCore::SharedBuffer&);
+    void streamDidFinishLoading();
+    void streamDidFail();
+
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
     virtual void teardown() = 0;
 
+    virtual void createPDFDocument() = 0;
+    virtual void installPDFDocument() = 0;
+    virtual void tryRunScriptsInPDFDocument() { }
+
+    virtual void incrementalPDFStreamDidReceiveData(const WebCore::SharedBuffer&) { }
+    virtual bool incrementalPDFStreamDidFinishLoading() { return false; }
+    virtual void incrementalPDFStreamDidFail() { }
+
+    void ensureDataBufferLength(uint64_t);
+    void addArchiveResource();
+
     WeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
+
+    RetainPtr<CFMutableDataRef> m_data;
+
+    String m_suggestedFilename;
+    uint64_t m_streamedBytes { 0 };
 
     bool m_documentFinishedLoading { false };
     bool m_isBeingDestroyed { false };
