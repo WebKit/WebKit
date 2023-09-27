@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <wtf/CheckedRef.h>
-#include <wtf/RunLoop.h>
+#include "config.h"
+#include "BrowsingContextGroup.h"
 
 namespace WebKit {
 
-class WebProcessPool;
+BrowsingContextGroup::BrowsingContextGroup() = default;
 
-class HighPerformanceGraphicsUsageSampler {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit HighPerformanceGraphicsUsageSampler(WebProcessPool&);
-    ~HighPerformanceGraphicsUsageSampler();
+WebProcessProxy* BrowsingContextGroup::processForDomain(const WebCore::RegistrableDomain& domain)
+{
+    auto process = m_processMap.get(domain);
+    if (!process)
+        return nullptr;
+    if (process->state() == WebProcessProxy::State::Terminated)
+        return nullptr;
+    return process.get();
+}
 
-private:
-    void timerFired();
-
-    CheckedRef<WebProcessPool> m_webProcessPool;
-    RunLoop::Timer m_timer;
-};
+void BrowsingContextGroup::addProcessForDomain(const WebCore::RegistrableDomain& domain, WebProcessProxy& process)
+{
+    ASSERT(!m_processMap.get(domain) || m_processMap.get(domain)->state() == WebProcessProxy::State::Terminated || m_processMap.get(domain) == &process);
+    m_processMap.set(domain, process);
+}
 
 } // namespace WebKit

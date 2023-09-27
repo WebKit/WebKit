@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "WebURLSchemeHandler.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <wtf/Forward.h>
@@ -40,12 +41,12 @@ OBJC_PROTOCOL(_UIClickInteractionDriving);
 #endif
 
 namespace WebKit {
+class BrowsingContextGroup;
 class VisitedLinkStore;
 class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;
 class WebProcessPool;
-class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 
@@ -79,7 +80,9 @@ public:
 
     // FIXME: The configuration properties should return their default values
     // rather than nullptr.
-    
+
+    WebKit::BrowsingContextGroup& browsingContextGroup();
+
     WebKit::WebProcessPool* processPool();
     void setProcessPool(WebKit::WebProcessPool*);
 
@@ -222,53 +225,54 @@ public:
 
 private:
     struct Data {
-        RefPtr<WebKit::WebProcessPool> processPool;
-        RefPtr<WebKit::WebUserContentControllerProxy> userContentController;
+        Ref<WebKit::BrowsingContextGroup> browsingContextGroup;
+        RefPtr<WebKit::WebProcessPool> processPool { };
+        RefPtr<WebKit::WebUserContentControllerProxy> userContentController { };
 #if ENABLE(WK_WEB_EXTENSIONS)
-        RefPtr<WebKit::WebExtensionController> webExtensionController;
-        WeakPtr<WebKit::WebExtensionController> weakWebExtensionController;
+        RefPtr<WebKit::WebExtensionController> webExtensionController { };
+        WeakPtr<WebKit::WebExtensionController> weakWebExtensionController { };
 #endif
-        RefPtr<WebKit::WebPageGroup> pageGroup;
-        RefPtr<WebKit::WebPreferences> preferences;
-        RefPtr<WebKit::WebPageProxy> relatedPage;
-        WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
-        RefPtr<WebKit::VisitedLinkStore> visitedLinkStore;
+        RefPtr<WebKit::WebPageGroup> pageGroup { };
+        RefPtr<WebKit::WebPreferences> preferences { };
+        RefPtr<WebKit::WebPageProxy> relatedPage { };
+        WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom { };
+        RefPtr<WebKit::VisitedLinkStore> visitedLinkStore { };
 
-        RefPtr<WebKit::WebsiteDataStore> websiteDataStore;
-        RefPtr<WebsitePolicies> defaultWebsitePolicies;
+        RefPtr<WebKit::WebsiteDataStore> websiteDataStore { };
+        RefPtr<WebsitePolicies> defaultWebsitePolicies { };
 
 #if PLATFORM(IOS_FAMILY)
         bool canShowWhileLocked { false };
         WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting { WebKit::AttributionOverrideTesting::NoOverride };
-        RetainPtr<_UIClickInteractionDriving> clickInteractionDriverForTesting;
+        RetainPtr<_UIClickInteractionDriving> clickInteractionDriverForTesting { };
 #endif
         bool initialCapitalizationEnabled { true };
         bool waitsForPaintAfterViewDidMoveToWindow { true };
         bool drawsBackground { true };
         bool controlledByAutomation { false };
         bool allowTestOnlyIPC { false };
-        std::optional<bool> delaysWebProcessLaunchUntilFirstLoad;
-        std::optional<double> cpuLimit;
+        std::optional<bool> delaysWebProcessLaunchUntilFirstLoad { };
+        std::optional<double> cpuLimit { };
 
-        WTF::String overrideContentSecurityPolicy;
+        WTF::String overrideContentSecurityPolicy { };
 
 #if PLATFORM(COCOA)
-        WTF::Vector<WTF::String> additionalSupportedImageTypes;
+        WTF::Vector<WTF::String> additionalSupportedImageTypes { };
         bool clientNavigationsRunAtForegroundPriority { true };
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-        RefPtr<ApplicationManifest> applicationManifest;
+        RefPtr<ApplicationManifest> applicationManifest { };
 #endif
 
-        HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers;
-        Vector<WTF::String> corsDisablingPatterns;
-        HashSet<WTF::String> maskedURLSchemes;
+        HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers { };
+        Vector<WTF::String> corsDisablingPatterns { };
+        HashSet<WTF::String> maskedURLSchemes { };
         bool userScriptsShouldWaitUntilNotification { true };
         bool crossOriginAccessControlCheckEnabled { true };
-        WTF::String processDisplayName;
+        WTF::String processDisplayName { };
         bool loadsSubresources { true };
-        std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> allowedNetworkHosts;
+        std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> allowedNetworkHosts { };
 
 #if ENABLE(APP_BOUND_DOMAINS)
         bool ignoresAppBoundDomains { false };
@@ -279,7 +283,7 @@ private:
         bool httpsUpgradeEnabled { true };
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
-        WTF::String attributedBundleIdentifier;
+        WTF::String attributedBundleIdentifier { };
 
 #if HAVE(TOUCH_BAR)
         bool requiresUserActionForEditingControlsManager { false };

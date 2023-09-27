@@ -1855,8 +1855,8 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 completionHandler(Ref { page.mainFrame()->process() }, nullptr, "Found process for the same registration domain as mainFrame domain"_s);
                 return;
             }
-            if (auto* remotePageProxy = page.remotePageProxyForRegistrableDomain(registrableDomain)) {
-                completionHandler(Ref { remotePageProxy->process() }, nullptr, "Found process for the same registration domain"_s);
+            if (auto* process = page.processForRegistrableDomain(registrableDomain)) {
+                completionHandler(Ref { *process }, nullptr, "Found process for the same registration domain"_s);
                 return;
             }
         }

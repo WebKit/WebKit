@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,23 @@
 
 #pragma once
 
-#include <wtf/CheckedRef.h>
-#include <wtf/RunLoop.h>
+#include <WebCore/RegistrableDomain.h>
+#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
-class WebProcessPool;
+class WebProcessProxy;
 
-class HighPerformanceGraphicsUsageSampler {
-    WTF_MAKE_FAST_ALLOCATED;
+class BrowsingContextGroup : public RefCounted<BrowsingContextGroup> {
 public:
-    explicit HighPerformanceGraphicsUsageSampler(WebProcessPool&);
-    ~HighPerformanceGraphicsUsageSampler();
+    static Ref<BrowsingContextGroup> create() { return adoptRef(*new BrowsingContextGroup()); }
 
+    WebProcessProxy* processForDomain(const WebCore::RegistrableDomain&);
+    void addProcessForDomain(const WebCore::RegistrableDomain&, WebProcessProxy&);
 private:
-    void timerFired();
+    BrowsingContextGroup();
 
-    CheckedRef<WebProcessPool> m_webProcessPool;
-    RunLoop::Timer m_timer;
+    HashMap<WebCore::RegistrableDomain, WeakPtr<WebProcessProxy>> m_processMap;
 };
 
-} // namespace WebKit
+}
