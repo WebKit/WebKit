@@ -1,12 +1,9 @@
 
 PASS Test VideoEncoder construction
-FAIL Test VideoEncoder.configure() assert_throws_dom: bogus function "() => {
-      codec.configure(config);
-    }" did not throw
 PASS Test successful configure(), encode(), and flush()
 PASS encodeQueueSize test
 PASS Test successful reset() and re-confiugre()
-FAIL Test successful encode() after re-configure(). assert_throws_dom: function "() => encoder.configure(badConfig)" did not throw
+PASS Test successful encode() after re-configure().
 PASS Verify closed VideoEncoder operations
 PASS Verify unconfigured VideoEncoder operations
 PASS Verify encoding closed frames throws.
