@@ -469,6 +469,15 @@ HTMLMediaElement* HitTestResult::mediaElement() const
 }
 #endif
 
+bool HitTestResult::hasMediaElement() const
+{
+#if ENABLE(VIDEO)
+    return !!mediaElement();
+#else
+    return false;
+#endif
+}
+
 void HitTestResult::toggleMediaControlsDisplay() const
 {
 #if ENABLE(VIDEO)

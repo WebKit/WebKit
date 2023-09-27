@@ -38,6 +38,14 @@
 namespace WebKit {
 using namespace WebCore;
 
+static WebHitTestResultData::ElementType elementTypeFromHitTestResult(const HitTestResult& hitTestResult)
+{
+    if (!hitTestResult.hasMediaElement())
+        return WebHitTestResultData::ElementType::None;
+
+    return hitTestResult.mediaIsVideo() ? WebHitTestResultData::ElementType::Video : WebHitTestResultData::ElementType::Audio;
+}
+
 WebHitTestResultData::WebHitTestResultData()
 {
 }
@@ -57,10 +65,13 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
     , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
+    , elementType(ElementType::None)
     , toolTipText(toolTipText)
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
         isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
+
+    elementType = elementTypeFromHitTestResult(hitTestResult);
 }
 
 WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, bool includeImage)
@@ -78,9 +89,12 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
+    , elementType(ElementType::None)
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
         isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
+
+    elementType = elementTypeFromHitTestResult(hitTestResult);
 
     if (!includeImage)
         return;
@@ -112,7 +126,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     }
 }
 
-WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebKit::SharedMemory::Handle>&& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType,
+WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, const WebHitTestResultData::ElementType& elementType, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebKit::SharedMemory::Handle>&& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType,
 #if PLATFORM(MAC)
     const WebHitTestResultPlatformData& platformData,
 #endif
@@ -131,6 +145,7 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , isTextNode(isTextNode)
         , isOverTextInsideFormControlElement(isOverTextInsideFormControlElement)
         , isDownloadableMedia(isDownloadableMedia)
+        , elementType(elementType)
         , lookupText(lookupText)
         , toolTipText(toolTipText)
         , imageText(imageText)
