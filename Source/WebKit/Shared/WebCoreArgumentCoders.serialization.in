@@ -6160,3 +6160,27 @@ struct WebCore::VideoConfiguration {
     std::optional<WebCore::HdrMetadataType> hdrMetadataType;
     std::optional<WebCore::TransferFunction> transferFunction;
 }
+
+using WebCore::FontTag = std::array<char, 4>;
+
+header: <WebCore/FontTaggedSettings.h>
+[Alias=class FontTaggedSetting<float>, CustomHeader] class WebCore::FloatFontTaggedSetting {
+    WebCore::FontTag m_tag;
+    float m_value;
+};
+
+header: <WebCore/FontTaggedSettings.h>
+[Alias=class FontTaggedSetting<int>, CustomHeader] class WebCore::IntFontTaggedSetting {
+    WebCore::FontTag m_tag;
+    int m_value;
+};
+
+header: <WebCore/FontTaggedSettings.h>
+[Alias=class FontTaggedSettings<float>, CustomHeader, LegacyPopulateFromEmptyConstructor] class WebCore::FontVariationSettings {
+    Vector<WebCore::FloatFontTaggedSetting> m_list;
+};
+
+header: <WebCore/FontTaggedSettings.h>
+[Alias=class FontTaggedSettings<int>, CustomHeader, LegacyPopulateFromEmptyConstructor] class WebCore::FontFeatureSettings {
+    Vector<WebCore::IntFontTaggedSetting> m_list;
+};
