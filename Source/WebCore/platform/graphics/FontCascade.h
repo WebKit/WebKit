@@ -151,7 +151,7 @@ public:
     bool isSmallCaps() const { return m_fontDescription.variantCaps() == FontVariantCaps::Small; }
 
     float wordSpacing() const { return m_wordSpacing; }
-    float letterSpacing() const { return m_letterSpacing; }
+    float letterSpacing() const { return std::isnan(m_letterSpacing) ? 0.0f : m_letterSpacing; }
     TextSpacingTrim textSpacingTrim() const { return m_fontDescription.textSpacingTrim(); }
     TextAutospace textAutospace() const { return m_fontDescription.textAutospace(); }
     void setWordSpacing(float s) { m_wordSpacing = s; }
