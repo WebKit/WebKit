@@ -2509,6 +2509,7 @@ void WebsiteDataStore::removePage(WebPageProxy& page)
 #endif
 }
 
+#if ENABLE(SERVICE_WORKER)
 void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -2544,5 +2545,5 @@ void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, Completi
     RELEASE_LOG(Push, "Sending push message to network process to handle");
     networkProcess().processPushMessage(sessionID(), WTFMove(pushMessage), WTFMove(innerHandler));
 }
-
+#endif // ENABLE(SERVICE_WORKER)
 } // namespace WebKit
