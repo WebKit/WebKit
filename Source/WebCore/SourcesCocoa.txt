@@ -408,6 +408,8 @@ platform/graphics/cg/IntSizeCG.cpp
 platform/graphics/cg/NativeImageCG.cpp
 platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/PathCG.cpp
+platform/graphics/cg/PathSegmentDataCG.cpp
+platform/graphics/cg/PathSegmentUtilitiesCG.cpp
 platform/graphics/cg/PatternCG.cpp
 platform/graphics/cg/TransformationMatrixCG.cpp
 platform/graphics/cg/UTIRegistry.cpp

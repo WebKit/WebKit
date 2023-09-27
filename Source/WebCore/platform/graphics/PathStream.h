@@ -78,6 +78,8 @@ public:
     static FloatRect computeFastBoundingRect(std::span<const PathSegment>);
     static FloatRect computeBoundingRect(std::span<const PathSegment>);
 
+    void addToContext(PlatformGraphicsContext*) const final;
+
 private:
     struct SegmentsData : public ThreadSafeRefCounted<SegmentsData> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;

@@ -328,4 +328,10 @@ FloatRect PathStream::boundingRect() const
     return computeBoundingRect(m_segmentsData->segments.span());
 }
 
+void PathStream::addToContext(PlatformGraphicsContext* context) const
+{
+    for (auto& segment : m_segmentsData->segments)
+        segment.addToContext(context);
+}
+
 } // namespace WebCore

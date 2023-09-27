@@ -30,6 +30,7 @@
 #if USE(CG)
 
 #include "GraphicsContextCG.h"
+#include "PathSegmentUtilitiesCG.h"
 #include "PathStream.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -125,12 +126,7 @@ void PathCG::addArc(const FloatPoint& center, float radius, float startAngle, fl
 
 void PathCG::addEllipse(const FloatPoint& center, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection direction)
 {
-    AffineTransform transform;
-    transform.translate(center.x(), center.y()).rotate(rad2deg(rotation)).scale(radiusX, radiusY);
-
-    CGAffineTransform cgTransform = transform;
-    // CG coordinates system increases the angle in the anticlockwise direction.
-    CGPathAddArc(ensureMutablePlatformPath(), &cgTransform, 0, 0, 1, startAngle, endAngle, direction == RotationDirection::Counterclockwise);
+    addEllipseToPlatformPath(ensureMutablePlatformPath(), center, radiusX, radiusY, rotation, startAngle, endAngle, direction);
 }
 
 void PathCG::addEllipseInRect(const FloatRect& rect)
@@ -143,67 +139,11 @@ void PathCG::addRect(const FloatRect& rect)
     CGPathAddRect(ensureMutablePlatformPath(), nullptr, rect);
 }
 
-static void addEvenCornersRoundedRect(PlatformPathPtr platformPath, const FloatRect& rect, const FloatSize& radius)
-{
-    // Ensure that CG can render the rounded rect.
-    CGFloat radiusWidth = radius.width();
-    CGFloat radiusHeight = radius.height();
-    CGRect rectToDraw = rect;
-
-    CGFloat rectWidth = CGRectGetWidth(rectToDraw);
-    CGFloat rectHeight = CGRectGetHeight(rectToDraw);
-    if (2 * radiusWidth > rectWidth)
-        radiusWidth = rectWidth / 2 - std::numeric_limits<CGFloat>::epsilon();
-    if (2 * radiusHeight > rectHeight)
-        radiusHeight = rectHeight / 2 - std::numeric_limits<CGFloat>::epsilon();
-    CGPathAddRoundedRect(platformPath, nullptr, rectToDraw, radiusWidth, radiusHeight);
-}
-
-#if HAVE(CG_PATH_UNEVEN_CORNERS_ROUNDEDRECT)
-static void addUnevenCornersRoundedRect(PlatformPathPtr platformPath, const FloatRoundedRect& roundedRect)
-{
-    enum Corners {
-        BottomLeft,
-        BottomRight,
-        TopRight,
-        TopLeft
-    };
-
-    CGSize corners[4] = {
-        roundedRect.radii().bottomLeft(),
-        roundedRect.radii().bottomRight(),
-        roundedRect.radii().topRight(),
-        roundedRect.radii().topLeft()
-    };
-
-    CGRect rectToDraw = roundedRect.rect();
-    CGFloat rectWidth = CGRectGetWidth(rectToDraw);
-    CGFloat rectHeight = CGRectGetHeight(rectToDraw);
-
-    // Clamp the radii after conversion to CGFloats.
-    corners[TopRight].width = std::min(corners[TopRight].width, rectWidth - corners[TopLeft].width);
-    corners[BottomRight].width = std::min(corners[BottomRight].width, rectWidth - corners[BottomLeft].width);
-    corners[BottomLeft].height = std::min(corners[BottomLeft].height, rectHeight - corners[TopLeft].height);
-    corners[BottomRight].height = std::min(corners[BottomRight].height, rectHeight - corners[TopRight].height);
-
-    CGPathAddUnevenCornersRoundedRect(platformPath, nullptr, rectToDraw, corners);
-}
-#endif
-
 void PathCG::addRoundedRect(const FloatRoundedRect& roundedRect, PathRoundedRect::Strategy strategy)
 {
     if (strategy == PathRoundedRect::Strategy::PreferNative) {
-        const auto& radii = roundedRect.radii();
-
-        if (radii.hasEvenCorners()) {
-            addEvenCornersRoundedRect(ensureMutablePlatformPath(), roundedRect.rect(), radii.topLeft());
+        if (addRoundedRectToPlatformPath(ensureMutablePlatformPath(), roundedRect))
             return;
-        }
-
-#if HAVE(CG_PATH_UNEVEN_CORNERS_ROUNDEDRECT)
-        addUnevenCornersRoundedRect(ensureMutablePlatformPath(), roundedRect);
-        return;
-#endif
     }
 
     addBeziersForRoundedRect(roundedRect);
@@ -423,6 +363,11 @@ FloatRect PathCG::boundingRect() const
 {
     // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox does not.
     return zeroRectIfNull(CGPathGetPathBoundingBox(platformPath()));
+}
+
+void PathCG::addToContext(PlatformGraphicsContext* context) const
+{
+    CGContextAddPath(context, platformPath());
 }
 
 FloatRect PathCG::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const

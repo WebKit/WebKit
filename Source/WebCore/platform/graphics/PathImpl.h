@@ -28,6 +28,7 @@
 #include "FloatRoundedRect.h"
 #include "PathElement.h"
 #include "PathSegment.h"
+#include "PlatformGraphicsContext.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -88,6 +89,8 @@ public:
 
     virtual FloatRect fastBoundingRect() const = 0;
     virtual FloatRect boundingRect() const = 0;
+
+    virtual void addToContext(PlatformGraphicsContext*) const { }
 
 protected:
     PathImpl() = default;

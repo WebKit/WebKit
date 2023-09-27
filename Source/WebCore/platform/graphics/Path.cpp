@@ -558,6 +558,14 @@ FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strok
     return const_cast<Path&>(*this).ensurePlatformPathImpl().strokeBoundingRect(strokeStyleApplier);
 }
 
+void Path::addToContext(PlatformGraphicsContext* context) const
+{
+    if (auto segment = asSingle())
+        segment->addToContext(context);
+    else if (auto impl = asImpl())
+        impl->addToContext(context);
+}
+
 TextStream& operator<<(TextStream& ts, const Path& path)
 {
     bool isFirst = true;

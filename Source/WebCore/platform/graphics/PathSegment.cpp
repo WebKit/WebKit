@@ -72,6 +72,17 @@ void PathSegment::addToImpl(PathImpl& impl) const
     });
 }
 
+void PathSegment::addToContext(PlatformGraphicsContext* context) const
+{
+#if USE(CG)
+    WTF::switchOn(m_data, [&](auto& data) {
+        data.addToContext(context);
+    });
+#else
+    UNUSED_PARAM(context);
+#endif
+}
+
 bool PathSegment::canApplyElements() const
 {
     return WTF::switchOn(m_data, [&](auto& data) {

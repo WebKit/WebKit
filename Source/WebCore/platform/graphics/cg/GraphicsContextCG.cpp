@@ -698,7 +698,7 @@ void GraphicsContextCG::drawPath(const Path& path)
         CGContextDrawPathDirect(context, drawingMode, path.platformPath(), nullptr);
 #else
         CGContextBeginPath(context);
-        CGContextAddPath(context, path.platformPath());
+        path.addToContext(context);
         CGContextDrawPath(context, drawingMode);
 #endif
     }
@@ -722,7 +722,7 @@ void GraphicsContextCG::fillPath(const Path& path)
             CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
             CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
             CGContextBeginPath(layerContext);
-            CGContextAddPath(layerContext, path.platformPath());
+            path.addToContext(layerContext);
             CGContextConcatCTM(layerContext, fillGradientSpaceTransform());
 
             if (fillRule() == WindRule::EvenOdd)
@@ -734,7 +734,7 @@ void GraphicsContextCG::fillPath(const Path& path)
             CGContextDrawLayerInRect(context, rect, layer.get());
         } else {
             CGContextBeginPath(context);
-            CGContextAddPath(context, path.platformPath());
+            path.addToContext(context);
             CGContextStateSaver stateSaver(context);
             CGContextConcatCTM(context, fillGradientSpaceTransform());
 
@@ -755,7 +755,7 @@ void GraphicsContextCG::fillPath(const Path& path)
     CGContextDrawPathDirect(context, fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, path.platformPath(), nullptr);
 #else
     CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
+    path.addToContext(context);
     if (fillRule() == WindRule::EvenOdd)
         CGContextEOFillPath(context);
     else
@@ -792,7 +792,7 @@ void GraphicsContextCG::strokePath(const Path& path)
             CGContextScaleCTM(layerContext, layerSize.width() / adjustedWidth, layerSize.height() / adjustedHeight);
             CGContextTranslateCTM(layerContext, translationX, translationY);
 
-            CGContextAddPath(layerContext, path.platformPath());
+            path.addToContext(layerContext);
             CGContextReplacePathWithStrokedPath(layerContext);
             CGContextClip(layerContext);
             CGContextConcatCTM(layerContext, strokeGradientSpaceTransform());
@@ -804,7 +804,7 @@ void GraphicsContextCG::strokePath(const Path& path)
         } else {
             CGContextStateSaver stateSaver(context);
             CGContextBeginPath(context);
-            CGContextAddPath(context, path.platformPath());
+            path.addToContext(context);
             CGContextReplacePathWithStrokedPath(context);
             CGContextClip(context);
             CGContextConcatCTM(context, strokeGradientSpaceTransform());
@@ -828,7 +828,7 @@ void GraphicsContextCG::strokePath(const Path& path)
     CGContextDrawPathDirect(context, kCGPathStroke, path.platformPath(), nullptr);
 #else
     CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
+    path.addToContext(context);
     CGContextStrokePath(context);
 #endif
 }
@@ -1017,7 +1017,7 @@ void GraphicsContextCG::clipOut(const Path& path)
     CGContextBeginPath(platformContext());
     CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
     if (!path.isEmpty())
-        CGContextAddPath(platformContext(), path.platformPath());
+        path.addToContext(platformContext());
     CGContextEOClip(platformContext());
 }
 
@@ -1028,7 +1028,7 @@ void GraphicsContextCG::clipPath(const Path& path, WindRule clipRule)
         CGContextClipToRect(context, CGRectZero);
     else {
         CGContextBeginPath(platformContext());
-        CGContextAddPath(platformContext(), path.platformPath());
+        path.addToContext(platformContext());
 
         if (clipRule == WindRule::EvenOdd)
             CGContextEOClip(context);
