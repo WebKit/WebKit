@@ -2324,7 +2324,7 @@ void AXObjectCache::handleRoleChanged(AccessibilityObject* axObject)
     axObject->recomputeIsIgnored();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(axObject, AXNotification::AXRoleChanged);
+    postNotification(axObject, nullptr, AXRoleChanged);
 #endif
 }
 
@@ -2413,12 +2413,18 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     }
     else if (attrName == disabledAttr)
         postNotification(element, AXObjectCache::AXDisabledStateChanged);
-    else if (attrName == forAttr && is<HTMLLabelElement>(*element))
-        labelChanged(element);
+    else if (attrName == forAttr && is<HTMLLabelElement>(element))
+        handleLabelForChanged(downcast<HTMLLabelElement>(*element), oldValue);
     else if (attrName == requiredAttr)
         postNotification(element, AXRequiredStatusChanged);
-    else if (attrName == tabindexAttr)
-        childrenChanged(element->parentNode(), element);
+    else if (attrName == tabindexAttr) {
+        if (oldValue.isEmpty() || newValue.isEmpty()) {
+            childrenChanged(element->parentNode(), element);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+            postNotification(element, AXFocusableStateChanged);
+#endif
+        }
+    }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     else if (attrName == headersAttr)
         updateIsolatedTree(get(element), AXTableHeadersChanged);
@@ -2574,11 +2580,12 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     }
 }
 
-void AXObjectCache::labelChanged(Element* element)
+void AXObjectCache::handleLabelForChanged(HTMLLabelElement& label, const AtomString& oldValue)
 {
-    ASSERT(is<HTMLLabelElement>(*element));
-    auto correspondingControl = downcast<HTMLLabelElement>(*element).control();
-    deferTextChangedIfNeeded(correspondingControl.get());
+    RefPtr currentControl = label.control();
+    deferTextChangedIfNeeded(currentControl.get());
+    RefPtr oldControl = label.treeScope().getElementById(oldValue);
+    deferTextChangedIfNeeded(oldControl.get());
 }
 
 void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
@@ -4114,6 +4121,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXExpandedChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsExpanded);
             break;
+        case AXFocusableStateChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetFocusAttribute);
+            break;
         case AXMaximumValueChanged:
             tree->updateNodeProperties(*notification.first, { AXPropertyName::MaxValueForRange, AXPropertyName::ValueForRange });
             break;
@@ -4423,6 +4433,7 @@ Vector<QualifiedName>& AXObjectCache::relationAttributes()
         aria_labeledbyAttr,
         aria_ownsAttr,
         headersAttr,
+        popovertargetAttr,
     };
     return relationAttributes;
 }

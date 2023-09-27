@@ -21,7 +21,8 @@
 
   <div>
     <label id="label3">Label 3</label>
-    <input id="control3" type="text">
+    <input id="control3a" type="text">
+    <input id="control3b" type="text">
   </div>
 
   <div>
@@ -77,11 +78,15 @@ if (window.accessibilityController) {
     output += expect("axElement('control2').titleUIElement().isEqual(axElement('label2'))", "true");
 
     var label4Element;
-    // Test changing the "for" attribute dynamically.
-    output += expect("hasTitleUIElement(axElement('control3'))", "false");
-    output += evalAndReturn("document.getElementById('label3').setAttribute('for', 'control3');");
+    // Test addition of the for attribute.
+    output += expect("hasTitleUIElement(axElement('control3a'))", "false");
+    output += evalAndReturn("document.getElementById('label3').setAttribute('for', 'control3a');");
     setTimeout(async function() {
-        output += await expectAsync("axElement('control3').titleUIElement().isEqual(axElement('label3'))", "true");
+        output += await expectAsync("axElement('control3a').titleUIElement().isEqual(axElement('label3'))", "true");
+        // Change "for" to point at a different control.
+        output += evalAndReturn("document.getElementById('label3').setAttribute('for', 'control3b');");
+        output += await expectAsync("hasTitleUIElement(axElement('control3a'))", "false");
+        output += await expectAsync("axElement('control3b').titleUIElement().isEqual(axElement('label3'))", "true");
 
         // Test unattached label element that's subsequently attached.
         output += evalAndReturn("label4Element = createLabelWithIdAndForAttribute('label4', 'control4');");

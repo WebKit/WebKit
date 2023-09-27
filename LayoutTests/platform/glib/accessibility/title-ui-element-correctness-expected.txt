@@ -2,9 +2,12 @@ This tests that titleUIElement works correctly even when things change dynamical
 
 PASS: axElement('control1').titleUIElement().isEqual(axElement('label1')) === true
 PASS: axElement('control2').titleUIElement().isEqual(axElement('label2')) === true
-PASS: hasTitleUIElement(axElement('control3')) === false
-document.getElementById('label3').setAttribute('for', 'control3');
-PASS: axElement('control3').titleUIElement().isEqual(axElement('label3')) === true
+PASS: hasTitleUIElement(axElement('control3a')) === false
+document.getElementById('label3').setAttribute('for', 'control3a');
+PASS: axElement('control3a').titleUIElement().isEqual(axElement('label3')) === true
+document.getElementById('label3').setAttribute('for', 'control3b');
+PASS: hasTitleUIElement(axElement('control3a')) === false
+PASS: axElement('control3b').titleUIElement().isEqual(axElement('label3')) === true
 label4Element = createLabelWithIdAndForAttribute('label4', 'control4');
 PASS: hasTitleUIElement(axElement('control4')) === false
 document.getElementById('container').appendChild(label4Element);
