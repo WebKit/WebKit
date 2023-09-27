@@ -2682,10 +2682,6 @@ webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-li
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ImageOnlyFailure ]
 
-# webkit.org/b/261306 Batch mark expectations for constant failures following Sonoma OpenSource expectations migration.
-[ Monterey+ ] fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ]
-[ Monterey+ ] fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html [ Failure ]
-
 webkit.org/b/261339 [ Monterey+ Debug ] editing/selection/cleared-by-relayout.html [ Crash ]
 webkit.org/b/261339 [ Monterey+ Debug ] imported/w3c/web-platform-tests/editing/crashtests/designMode-document-will-be-blurred-by-focus-event-listener.html [ Crash ]
 

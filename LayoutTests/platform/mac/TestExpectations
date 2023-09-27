@@ -2813,11 +2813,6 @@ imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-over
 # rdar://106116937 ([UI-side compositing] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html times out)
 fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ ImageOnlyFailure Timeout ]
 
-# rdar://111424377 (PROGRESSION (263656@main): [ Sonoma ] Three fast/scrolling/mac/scrollbars are a consistent failure or timeout)
-fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal.html [ Timeout ]
-fast/scrolling/mac/scrollbars/scrollbar-state.html [ Timeout ]
-fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html [ Timeout ]
-
 imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-text/word-break/auto/word-break-auto-000.html [ Pass ImageOnlyFailure Failure ]
