@@ -52,25 +52,10 @@ namespace LLInt {
 #define WASM_SLOW_PATH_HIDDEN_DECL(name) \
     WASM_SLOW_PATH_DECL(name) REFERENCED_FROM_ASM WTF_INTERNAL
 
-#define WASM_IPINT_EXTERN_CPP_DECL(name, ...) \
-    extern "C" UGPRPair ipint_extern_##name(Wasm::Instance* instance, __VA_ARGS__)
-
-#define WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(name, ...) \
-    WASM_IPINT_EXTERN_CPP_DECL(name, __VA_ARGS__) REFERENCED_FROM_ASM WTF_INTERNAL
-
-#define WASM_IPINT_EXTERN_CPP_DECL_1P(name) \
-    extern "C" UGPRPair ipint_extern_##name(Wasm::Instance* instance)
-
-#define WASM_IPINT_EXTERN_CPP_HIDDEN_DECL_1P(name) \
-    WASM_IPINT_EXTERN_CPP_DECL_1P(name) REFERENCED_FROM_ASM WTF_INTERNAL
-
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 WASM_SLOW_PATH_HIDDEN_DECL(prologue_osr);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prologue_osr, CallFrame* callFrame);
 WASM_SLOW_PATH_HIDDEN_DECL(loop_osr);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t* pl);
 WASM_SLOW_PATH_HIDDEN_DECL(epilogue_osr);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(epilogue_osr, CallFrame* callFrame);
 WASM_SLOW_PATH_HIDDEN_DECL(simd_go_straight_to_bbq_osr);
 #endif
 
@@ -78,53 +63,27 @@ WASM_SLOW_PATH_HIDDEN_DECL(trace);
 WASM_SLOW_PATH_HIDDEN_DECL(out_of_line_jump_target);
 
 WASM_SLOW_PATH_HIDDEN_DECL(ref_func);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_func, unsigned index);
 WASM_SLOW_PATH_HIDDEN_DECL(table_get);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_get, unsigned, unsigned);
 WASM_SLOW_PATH_HIDDEN_DECL(table_set);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_set, unsigned tableIndex, unsigned index, EncodedJSValue value);
 WASM_SLOW_PATH_HIDDEN_DECL(table_init);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_init, uint32_t* metadata, uint32_t dest, uint64_t srcAndLength);
 WASM_SLOW_PATH_HIDDEN_DECL(table_fill);
-WASM_IPINT_EXTERN_CPP_DECL(table_fill, uint32_t tableIndex, EncodedJSValue fill, int64_t offsetAndSize);
 WASM_SLOW_PATH_HIDDEN_DECL(table_grow);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_grow, int32_t tableIndex, EncodedJSValue fill, uint32_t size);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL_1P(current_memory);
 WASM_SLOW_PATH_HIDDEN_DECL(grow_memory);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_grow, int32_t);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_init);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_init, int32_t, int32_t, int64_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(data_drop, int32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_copy, int32_t, int32_t, int32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_fill, int32_t, int32_t, int32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(elem_drop, int32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_copy, int32_t*, int32_t, int64_t);
-WASM_IPINT_EXTERN_CPP_DECL(table_size, int32_t);
 WASM_SLOW_PATH_HIDDEN_DECL(call);
 WASM_SLOW_PATH_HIDDEN_DECL(call_indirect);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call_indirect, CallFrame* callFrame, unsigned functionIndex, unsigned* metadataEntry);
-
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call, unsigned);
 
 WASM_SLOW_PATH_HIDDEN_DECL(call_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call_indirect);
 WASM_SLOW_PATH_HIDDEN_DECL(call_builtin);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(set_global_ref, uint32_t globalIndex, JSValue value);
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref);
-
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(get_global_64, unsigned);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(set_global_64, unsigned, uint64_t);
 
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref_portable_binding);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait32);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait32, uint64_t, uint32_t, uint64_t);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait64);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, uint64_t, uint64_t, uint64_t);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_notify);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, unsigned, unsigned, int32_t);
 WASM_SLOW_PATH_HIDDEN_DECL(throw);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw, CallFrame*, uint32_t);
 WASM_SLOW_PATH_HIDDEN_DECL(rethrow);
 WASM_SLOW_PATH_HIDDEN_DECL(retrieve_and_clear_exception);
 WASM_SLOW_PATH_HIDDEN_DECL(array_new);
