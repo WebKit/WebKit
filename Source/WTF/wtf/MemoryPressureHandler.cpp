@@ -341,7 +341,7 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
 void MemoryPressureHandler::platformInitialize() { }
 #endif
 
-MemoryPressureHandler::Configuration::Configuration()
+MemoryPressureHandlerConfiguration::MemoryPressureHandlerConfiguration()
     : baseThreshold(std::min(3 * GB, ramSize()))
     , conservativeThresholdFraction(s_conservativeThresholdFraction)
     , strictThresholdFraction(s_strictThresholdFraction)
@@ -350,7 +350,7 @@ MemoryPressureHandler::Configuration::Configuration()
 {
 }
 
-MemoryPressureHandler::Configuration::Configuration(size_t base, double conservative, double strict, std::optional<double> kill, Seconds interval)
+MemoryPressureHandlerConfiguration::MemoryPressureHandlerConfiguration(size_t base, double conservative, double strict, std::optional<double> kill, Seconds interval)
     : baseThreshold(base)
     , conservativeThresholdFraction(conservative)
     , strictThresholdFraction(strict)

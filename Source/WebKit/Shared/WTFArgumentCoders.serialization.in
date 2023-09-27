@@ -58,6 +58,15 @@ using WTF::ProcessID = int;
 using WTF::ProcessID = pid_t;
 #endif
 
+header: <wtf/MemoryPressureHandler.h>
+[CustomHeader] struct WTF::MemoryPressureHandlerConfiguration {
+    size_t baseThreshold;
+    double conservativeThresholdFraction;
+    double strictThresholdFraction;
+    std::optional<double> killThresholdFraction;
+    Seconds pollInterval;
+}
+
 enum class WTFLogLevel : uint8_t {
     Always,
     Error,
