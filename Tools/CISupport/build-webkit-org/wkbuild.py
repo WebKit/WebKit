@@ -46,13 +46,14 @@ def _should_file_trigger_build(target_platform, file):
         "mac-catalina",
         "mac-monterey",
         "mac-ventura",
+        "mac-sonoma",
         "win",
-        "ios-16",
-        "ios-simulator-16",
-        "tvos-16",
-        "tvos-simulator-16",
-        "watchos-9",
-        "watchos-simulator-9",
+        "ios-17",
+        "ios-simulator-17",
+        "tvos-17",
+        "tvos-simulator-17",
+        "watchos-10",
+        "watchos-simulator-10",
     ))
 
     directories = [
@@ -79,6 +80,7 @@ def _should_file_trigger_build(target_platform, file):
         ("LayoutTests/platform/mac-catalina", ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         ("LayoutTests/platform/mac-monterey", ["mac-catalina", "mac-monterey"]),
         ("LayoutTests/platform/mac-ventura", ["mac-monterey", "mac-ventura"]),
+        ("LayoutTests/platform/mac-sonoma", ["mac-ventura", "mac-sonoma"]),
         ("LayoutTests/platform/mac-wk2", ["mac"]),
         ("LayoutTests/platform/mac-wk1", ["mac"]),
         ("LayoutTests/platform/mac", ["mac", "win"]),
