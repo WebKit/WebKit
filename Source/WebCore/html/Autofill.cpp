@@ -247,9 +247,12 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
             return defaultLabel();
 
         category = mapEntry->category;
+        // 5. If category is not Normal and category is not Contact, then jump to the step labeled default.
         if (category != AutofillCategory::Normal && category != AutofillCategory::Contact)
             return defaultLabel();
-        if (tokens.size() > maxTokensForAutofillFieldCategory(category))
+        // 6. If index is greater than maximum tokens minus one (i.e. if the number of remaining tokens is
+        // greater than maximum tokens), then jump to the step labeled default
+        if (index > maxTokensForAutofillFieldCategory(category) - 1)
             return defaultLabel();
         idlValue = makeString(tokens[index], " ", idlValue);
     }
