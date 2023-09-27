@@ -1805,9 +1805,7 @@ static constexpr ASCIILiteral json45 = R"JSONRESOURCE(
     "default_action_url": "https://example.com/",
     "title": "Test a default action URL override",
     "mutable": true,
-    "options": {
-        "tag": "defaultactionurl https://webkit.org/"
-    },
+    "tag": "defaultactionurl https://webkit.org/",
     "app_badge": "12"
 }
 )JSONRESOURCE"_s;
@@ -1816,9 +1814,7 @@ static constexpr ASCIILiteral json46 = R"JSONRESOURCE(
     "default_action_url": "https://example.com/",
     "title": "Test a missing default action URL override",
     "mutable": true,
-    "options": {
-        "tag": "emptydefaultactionurl"
-    },
+    "tag": "emptydefaultactionurl",
     "app_badge": "12"
 }
 )JSONRESOURCE"_s;
@@ -2082,8 +2078,7 @@ public:
     }
 };
 
-// FIXME after rdar://116087660 is resolved.
-TEST_F(WebPushDPushNotificationEventTest, DISABLED_Basic)
+TEST_F(WebPushDPushNotificationEventTest, Basic)
 {
     prep();
     runTest(json39);
