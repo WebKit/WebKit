@@ -144,38 +144,4 @@ protected:
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PlatformTextTrackData::TrackKind> {
-    using values = EnumValues<
-        WebCore::PlatformTextTrackData::TrackKind,
-        WebCore::PlatformTextTrackData::TrackKind::Subtitle,
-        WebCore::PlatformTextTrackData::TrackKind::Caption,
-        WebCore::PlatformTextTrackData::TrackKind::Description,
-        WebCore::PlatformTextTrackData::TrackKind::Chapter,
-        WebCore::PlatformTextTrackData::TrackKind::MetaData,
-        WebCore::PlatformTextTrackData::TrackKind::Forced
-    >;
-};
-
-template<> struct EnumTraits<WebCore::PlatformTextTrackData::TrackType> {
-    using values = EnumValues<
-        WebCore::PlatformTextTrackData::TrackType,
-        WebCore::PlatformTextTrackData::TrackType::InBand,
-        WebCore::PlatformTextTrackData::TrackType::OutOfBand,
-        WebCore::PlatformTextTrackData::TrackType::Script
-    >;
-};
-
-template<> struct EnumTraits<WebCore::PlatformTextTrackData::TrackMode> {
-    using values = EnumValues<
-        WebCore::PlatformTextTrackData::TrackMode,
-        WebCore::PlatformTextTrackData::TrackMode::Disabled,
-        WebCore::PlatformTextTrackData::TrackMode::Hidden,
-        WebCore::PlatformTextTrackData::TrackMode::Showing
-    >;
-};
-
-} // namespace WTF
-
 #endif // ENABLE(VIDEO)

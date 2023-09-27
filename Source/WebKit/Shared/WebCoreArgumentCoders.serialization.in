@@ -6007,6 +6007,66 @@ struct WebCore::LinkDecorationFilteringData {
     String linkDecoration;
 };
 
+header: <WebCore/InspectorFrontendClient.h>
+[CustomHeader] enum class WebCore::InspectorFrontendClientAppearance : uint8_t {
+    System,
+    Light,
+    Dark,
+};
+using WebCore::InspectorFrontendClient::Appearance = WebCore::InspectorFrontendClientAppearance;
+
+[Nested] enum class WebCore::InspectorFrontendClient::SaveMode : uint8_t {
+    SingleFile,
+    FileVariants,
+};
+
+header: <WebCore/InspectorFrontendClient.h>
+[CustomHeader] struct WebCore::InspectorFrontendClientSaveData {
+    String displayType;
+    String url;
+    String content;
+    bool base64Encoded;
+};
+using WebCore::InspectorFrontendClient::SaveData = WebCore::InspectorFrontendClientSaveData;
+
+#if ENABLE(VIDEO)
+header: <WebCore/PlatformTextTrack.h>
+[Nested, CustomHeader] enum class WebCore::PlatformTextTrackData::TrackKind : uint8_t {
+    Subtitle,
+    Caption,
+    Description,
+    Chapter,
+    MetaData,
+    Forced,
+};
+
+header: <WebCore/PlatformTextTrack.h>
+[Nested, CustomHeader] enum class WebCore::PlatformTextTrackData::TrackType : uint8_t {
+    InBand,
+    OutOfBand,
+    Script,
+};
+
+header: <WebCore/PlatformTextTrack.h>
+[Nested, CustomHeader] enum class WebCore::PlatformTextTrackData::TrackMode : uint8_t {
+    Disabled,
+    Hidden,
+    Showing,
+};
+
+header: <WebCore/PlatformTextTrack.h>
+[CustomHeader] struct WebCore::PlatformTextTrackData {
+    String m_label;
+    String m_language;
+    String m_url;
+    WebCore::PlatformTextTrackData::TrackMode m_mode;
+    WebCore::PlatformTextTrackData::TrackKind m_kind;
+    WebCore::PlatformTextTrackData::TrackType m_type;
+    int m_uniqueId;
+    bool m_isDefault;
+}
+#endif // ENABLE(VIDEO)
+
 [WebKitPlatform] struct WebCore::NotificationPayload {
     URL defaultActionURL;
     String title;
@@ -6135,18 +6195,6 @@ struct WebCore::NowPlayingInfo {
     bool isPlaying;
     bool allowsNowPlayingControlsVisibility;
     std::optional<WebCore::NowPlayingInfoArtwork> artwork;
-}
-
-header: <WebCore/PlatformTextTrack.h>
-[CustomHeader] struct WebCore::PlatformTextTrackData {
-    String m_label;
-    String m_language;
-    String m_url;
-    WebCore::PlatformTextTrackData::TrackMode m_mode;
-    WebCore::PlatformTextTrackData::TrackKind m_kind;
-    WebCore::PlatformTextTrackData::TrackType m_type;
-    int m_uniqueId;
-    bool m_isDefault;
 }
 
 struct WebCore::VideoConfiguration {
