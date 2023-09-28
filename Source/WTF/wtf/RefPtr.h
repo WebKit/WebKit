@@ -77,7 +77,6 @@ public:
     T* get() const { return PtrTraits::unwrap(m_ptr); }
 
     Ref<T> releaseNonNull() { ASSERT(m_ptr); Ref<T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
-    Ref<const T> releaseConstNonNull() { ASSERT(m_ptr); Ref<const T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
 
     T* leakRef() WARN_UNUSED_RETURN;
 
