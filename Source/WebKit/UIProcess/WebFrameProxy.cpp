@@ -400,7 +400,7 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
     }
 
     if (!m_provisionalFrame || navigation.currentRequestIsCrossSiteRedirect()) {
-        // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain.
+        // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
         RegistrableDomain navigationDomain(navigation.currentRequest().url());
         RefPtr remotePageProxy = m_page->remotePageProxyForRegistrableDomain(navigationDomain);
         if (remotePageProxy)
@@ -411,7 +411,7 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
         }
 
         m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, process, WTFMove(remotePageProxy));
-        // FIXME: This gives too much cookie access. This should be removed when a RemoteFrame is given a topOrigin member.
+        // FIXME: This gives too much cookie access. This should be removed when a RemoteFrame is given a topOrigin member. <rdar://116201929>
         auto giveAllCookieAccess = LoadedWebArchive::Yes;
         WebCore::RegistrableDomain domain { };
         page()->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process.coreProcessIdentifier(), domain, giveAllCookieAccess), WTFMove(completionHandler));

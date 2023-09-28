@@ -310,7 +310,7 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowF
     ASSERT(delegate);
 
     auto configuration = adoptNS([m_uiDelegate->m_webView.get()->_configuration copy]);
-    // FIXME: after calling triggerBrowsingContextGroupSwitchForNavigation this configuration's BrowsingContextGroup is incorrect.
+    // FIXME: after calling triggerBrowsingContextGroupSwitchForNavigation this configuration's BrowsingContextGroup is incorrect. <rdar://116203642>
     // The fix should go into platform-independent code, though. Needs some refactoring. And also needs switching browsing context group.
     [configuration _setRelatedWebView:m_uiDelegate->m_webView.get().get()];
 

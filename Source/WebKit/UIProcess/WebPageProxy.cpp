@@ -4126,6 +4126,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(WebProcessProxy& processNavi
         }
 
         if (loadContinuingInNonInitiatingProcess) {
+            // FIXME: Add more parameters as appropriate. <rdar://116200985>
             LoadParameters loadParameters;
             loadParameters.request = navigation->currentRequest();
             loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
@@ -4270,6 +4271,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     bool isProcessSwappingOnNavigationResponse = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted;
     if (!frame.isMainFrame() && preferences().siteIsolationEnabled()) {
 
+        // FIXME: Add more parameters as appropriate. <rdar://116200985>
         LoadParameters loadParameters;
         loadParameters.request = navigation.currentRequest();
         loadParameters.shouldTreatAsContinuingLoad = navigation.currentRequestIsRedirect() ? WebCore::ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted : WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
@@ -12810,7 +12812,7 @@ void WebPageProxy::setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&& page
     internals().remotePageProxyInOpenerProcess = WTFMove(page);
 }
 
-// FIXME: Add a corresponding remove call if the opened page is closed or destroyed.
+// FIXME: Add a corresponding remove call if the opened page is closed or destroyed. <rdar://111064432>
 void WebPageProxy::addOpenedRemotePageProxy(Ref<RemotePageProxy>&& page)
 {
     internals().openedRemotePageProxies.add(WTFMove(page));
