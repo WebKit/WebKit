@@ -676,8 +676,8 @@ void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
 
     bool hasMask = !!m_state.maskLayer;
     bool hasReplicaMask = options.replicaLayer == this && m_state.replicaLayer->m_state.maskLayer;
-    bool defersLastFilterPass = !hasMask && !hasReplicaMask;
-    options.surface = options.surface->applyFilters(options.textureMapper, m_currentFilters, defersLastFilterPass);
+    bool defersLastFilter = !hasMask && !hasReplicaMask;
+    options.surface = options.surface->applyFilters(options.textureMapper, m_currentFilters, defersLastFilter);
     options.textureMapper.bindSurface(options.surface.get());
     if (hasMask)
         m_state.maskLayer->applyMask(options);

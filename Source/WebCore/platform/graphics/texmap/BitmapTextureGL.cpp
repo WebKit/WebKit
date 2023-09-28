@@ -162,26 +162,66 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     updateContents(imageData, targetRect, offset, bytesPerLine);
 }
 
-RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters, bool defersLastFilterPass)
+static unsigned getPassesRequiredForFilter(FilterOperation::Type type)
+{
+    switch (type) {
+    case FilterOperation::Type::Grayscale:
+    case FilterOperation::Type::Sepia:
+    case FilterOperation::Type::Saturate:
+    case FilterOperation::Type::HueRotate:
+    case FilterOperation::Type::Invert:
+    case FilterOperation::Type::Brightness:
+    case FilterOperation::Type::Contrast:
+    case FilterOperation::Type::Opacity:
+        return 1;
+    case FilterOperation::Type::Blur:
+    case FilterOperation::Type::DropShadow:
+        // We use two-passes (vertical+horizontal) for blur and drop-shadow.
+        return 2;
+    default:
+        return 0;
+    }
+}
+
+RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters, bool defersLastFilter)
 {
     if (filters.isEmpty())
         return this;
 
     TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);
     RefPtr<BitmapTexture> previousSurface = texmapGL.currentSurface();
-    RefPtr<BitmapTexture> surface = this;
+    RefPtr<BitmapTexture> resultSurface = this;
+    RefPtr<BitmapTexture> intermediateSurface;
+    RefPtr<BitmapTexture> spareSurface;
+
+    m_filterInfo = FilterInfo();
 
     for (size_t i = 0; i < filters.size(); ++i) {
         RefPtr<FilterOperation> filter = filters.operations()[i];
         ASSERT(filter);
 
-        bool lastFilter = (i == filters.size() - 1);
+        int numPasses = getPassesRequiredForFilter(filter->type());
+        for (int j = 0; j < numPasses; ++j) {
+            bool last = (i == filters.size() - 1) && (j == numPasses - 1);
+            if (defersLastFilter && last) {
+                toBitmapTextureGL(resultSurface.get())->m_filterInfo = BitmapTextureGL::FilterInfo(filter.copyRef(), j, spareSurface.copyRef());
+                break;
+            }
 
-        surface = texmapGL.applyFilter(surface, filter, defersLastFilterPass && lastFilter);
+            if (!intermediateSurface)
+                intermediateSurface = texmapGL.acquireTextureFromPool(contentSize(), BitmapTexture::SupportsAlpha);
+            texmapGL.bindSurface(intermediateSurface.get());
+            texmapGL.drawFiltered(*resultSurface.get(), spareSurface.get(), *filter, j);
+            if (!j && filter->type() == FilterOperation::Type::DropShadow) {
+                spareSurface = resultSurface;
+                resultSurface = nullptr;
+            }
+            std::swap(resultSurface, intermediateSurface);
+        }
     }
 
     texmapGL.bindSurface(previousSurface.get());
-    return surface;
+    return resultSurface;
 }
 
 void BitmapTextureGL::initializeStencil()
