@@ -110,7 +110,6 @@ GENERATE_BINDINGS(TestRunnerInjectedBundleBindings
     OUTPUT_SOURCE TestRunnerInjectedBundle_SOURCES
     INPUT_FILES ${TestRunnerInjectedBundle_IDL_FILES}
     BASE_DIR ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
-    IDL_INCLUDES ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
     FEATURES ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
     DESTINATION ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
     GENERATOR TestRunner

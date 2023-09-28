@@ -2225,6 +2225,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MockCDMFactory.idl
     testing/MockContentFilterSettings.idl
     testing/MockPageOverlay.idl
+    testing/MockWebAuthenticationConfiguration.idl
     testing/ServiceWorkerInternals.idl
     testing/TypeConversions.idl
 )
@@ -2249,6 +2250,7 @@ if (ENABLE_WEBXR)
     list(APPEND WebCoreTestSupport_IDL_FILES
         testing/FakeXRBoundsPoint.idl
         testing/FakeXRButtonStateInit.idl
+        testing/FakeXRJointStateInit.idl
         testing/FakeXRInputSourceInit.idl
         testing/FakeXRRigidTransformInit.idl
         testing/FakeXRViewInit.idl
@@ -2601,7 +2603,6 @@ GENERATE_BINDINGS(WebCoreBindings
     INPUT_FILES ${WebCore_IDL_FILES}
     PP_INPUT_FILES ${WebCore_IDL_FILES} ${WebCoreTestSupport_IDL_FILES}
     BASE_DIR ${WEBCORE_DIR}
-    IDL_INCLUDES ${WebCore_IDL_INCLUDES} ${WebCore_DERIVED_SOURCES_DIR}
     FEATURES ${FEATURE_DEFINES_JAVASCRIPT}
     DESTINATION ${WebCore_DERIVED_SOURCES_DIR}
     GENERATOR JS
@@ -2631,7 +2632,7 @@ GENERATE_BINDINGS(WebCoreTestSupportBindings
     OUTPUT_SOURCE WebCoreTestSupport_SOURCES
     INPUT_FILES ${WebCoreTestSupport_IDL_FILES}
     BASE_DIR ${WEBCORE_DIR}
-    IDL_INCLUDES ${WebCore_IDL_INCLUDES} ${WebCore_DERIVED_SOURCES_DIR} ${WebCoreTestSupport_IDL_INCLUDES}
+    INCLUDED_FILES ${WebCore_IDL_FILES}
     FEATURES ${FEATURE_DEFINES_JAVASCRIPT}
     DESTINATION ${WebCore_DERIVED_SOURCES_DIR}
     GENERATOR JS)
