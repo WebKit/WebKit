@@ -301,9 +301,7 @@ PASS TextTrack interface object name
 PASS TextTrack interface: existence and properties of interface prototype object
 PASS TextTrack interface: existence and properties of interface prototype object's "constructor" property
 PASS TextTrack interface: existence and properties of interface prototype object's @@unscopables property
-FAIL TextTrack interface: attribute kind assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function kind() {
-    [native code]
-}"
+PASS TextTrack interface: attribute kind
 PASS TextTrack interface: attribute label
 PASS TextTrack interface: attribute language
 PASS TextTrack interface: attribute id
