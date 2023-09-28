@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>video-scrolling-with-overflow</title>
+    <script src=../../../media/video-test.js></script>
+    <script src=../../../media/media-file.js></script>
+    <script src=../../../resources/basic-gestures.js></script>
+    <script>
+    async function runTest() {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../../../media/content/test")');
+        await waitFor(video, 'canplay');
+        await shouldResolve(run('video.play()'));
+
+        consoleWrite('Simulate drag on video element');
+
+        let middleX = video.offsetLeft + video.offsetWidth / 2;
+        let middleY = video.offsetTop + video.offsetHeight / 2;
+        await Promise.all([
+            touchAndDragFromPointToPoint(middleX, middleY, middleX, 0),
+            waitFor(scroller, 'scroll')
+        ]);
+        await liftUpAtPoint(middleX, 0);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+    <style>
+        html, body { height: 100vh; overflow: hidden; }
+        #spacer { width: 100vw; height: 120vh; }
+        #scroller { border: 1px solid green; height: 50vh; width: 100vw; overflow-y: scroll; }
+    </style>
+</head>
+<body>
+    <div id=scroller>
+        <video muted playsinline></video>
+        <div id=spacer></div>
+    </div>
+</body>
+</html>
