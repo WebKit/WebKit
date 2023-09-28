@@ -35,6 +35,7 @@
 #import "TestRunnerWKWebView.h"
 #import "WebKitTestRunnerWindow.h"
 #import <Carbon/Carbon.h>
+#import <WebCore/PlatformMouseEvent.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
@@ -339,7 +340,7 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++m_eventNumber 
                                       clickCount:m_clickCount 
-                                        pressure:0.0];
+                                        pressure:WebCore::ForceAtClick];
 
     NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     if (targetView) {
@@ -397,7 +398,7 @@ void EventSenderProxy::sendMouseDownToStartPressureEvents()
         context:[NSGraphicsContext currentContext]
         eventNumber:++m_eventNumber
         clickCount:m_clickCount
-        pressure:0.0];
+        pressure:WebCore::ForceAtClick];
 
     [NSApp sendEvent:event];
 }

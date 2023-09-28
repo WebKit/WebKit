@@ -65,7 +65,7 @@ public:
             break;
         case WebEventType::MouseUp:
             m_type = WebCore::PlatformEvent::Type::MouseReleased;
-            m_force = WebCore::ForceAtClick;
+            m_force = 0;
             break;
         case WebEventType::MouseMove:
             m_type = WebCore::PlatformEvent::Type::MouseMoved;
@@ -81,7 +81,7 @@ public:
             break;
         case WebEventType::MouseForceUp:
             m_type = WebCore::PlatformEvent::Type::MouseForceUp;
-            m_force = WebCore::ForceAtForceClick;
+            m_force = 0;
             break;
         default:
             ASSERT_NOT_REACHED();
