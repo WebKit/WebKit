@@ -408,6 +408,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerMessageReceive
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionIDLFileNamesList.txt
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameMessageReceiver.cpp

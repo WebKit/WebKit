@@ -672,6 +672,7 @@ EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions
 EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts
 EXTENSIONS_INTERFACES_DIR = $(EXTENSIONS_DIR)/Interfaces
 IDL_ATTRIBUTES_FILE = $(EXTENSIONS_SCRIPTS_DIR)/IDLAttributes.json
+IDL_FILE_NAMES_LIST = WebExtensionIDLFileNamesList.txt
 
 BINDINGS_SCRIPTS = \
     $(WebCorePrivateHeaders)/generate-bindings.pl \
@@ -698,9 +699,12 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIWindowsEvent \
 #
 
-JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(IDL_FILE_NAMES_LIST) : $(EXTENSION_INTERFACES:%=%.idl)
+	echo $^ | tr " " "\n" > $@
+
+JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES) $(IDL_FILE_NAMES_LIST)
 	@echo Generating bindings for $*...
-	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --include $(EXTENSIONS_INTERFACES_DIR) --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
+	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --idlFileNamesList $(IDL_FILE_NAMES_LIST) $<
 
 all : $(EXTENSION_INTERFACES:%=JS%.h) $(EXTENSION_INTERFACES:%=JS%.mm)
 
