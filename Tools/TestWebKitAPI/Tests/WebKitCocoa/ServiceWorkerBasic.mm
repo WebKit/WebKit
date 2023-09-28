@@ -3039,6 +3039,93 @@ TEST(ServiceWorker, RemovalOfSameRegistrableDomainButDifferentOrigin)
     // Verify the process running the service worker is not suspended.
     ASSERT_TRUE([mainWebView _hasServiceWorkerForegroundActivityForTesting] || [mainWebView _hasServiceWorkerBackgroundActivityForTesting]);
 }
+
+static constexpr auto cacheStorageNetworkProcessCrashMainBytes = R"SWRESOURCE(
+<html>
+<body>
+<div>
+hello
+</div>
+<script>
+var cache1;
+onload = async () => {
+    try {
+        // Create cache1
+        cache1 = await self.caches.open("test1");
+        await cache1.put(new Request('test'), new Response('my response'));
+        webkit.messageHandlers.sw.postMessage("PASS");
+    } catch(e) {
+        webkit.messageHandlers.sw.postMessage("fill failed with " + e);
+    }
+}
+
+function check()
+{
+    // Create several caches, one of which should have the same ObjectIdentifier value as cache1.
+    Promise.all([
+        self.caches.open("test2"),
+        self.caches.open("test3"),
+        self.caches.open("test4"),
+        self.caches.open("test5"),
+        self.caches.open("test6"),
+        self.caches.open("test7"),
+        self.caches.open("test8"),
+        self.caches.open("test9"),
+        self.caches.open("test10")
+    ]).then(() => {
+        cache1.match('test').then(() => {
+            webkit.messageHandlers.sw.postMessage("cache1 did match unexpectedly");
+        }, e => {
+            webkit.messageHandlers.sw.postMessage("PASS");
+        });
+    }, e => {
+        webkit.messageHandlers.sw.postMessage("check failed with " + e);
+    });
+}
+</script>
+</body>
+</html>
+)SWRESOURCE"_s;
+
+TEST(ServiceWorkers, CacheStorageNetworkProcessCrash)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+    auto defaultPreferences = [configuration preferences];
+    [defaultPreferences _setSecureContextChecksEnabled:NO];
+
+    auto messageHandler = adoptNS([[SWMessageHandlerForCacheStorage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { cacheStorageNetworkProcessCrashMainBytes } }
+    });
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    // Create cache1
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [configuration.get().websiteDataStore _terminateNetworkProcess];
+
+    // Verify cache1 is invalidated after network process crash.
+    [webView evaluateJavaScript:@"check()" completionHandler: nil];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 #endif // WK_HAVE_C_SPI
 
 static constexpr auto ServiceWorkerWindowClientFocusMain =
