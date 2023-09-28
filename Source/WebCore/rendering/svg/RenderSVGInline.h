@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +33,8 @@ public:
     RenderSVGInline(SVGGraphicsElement&, RenderStyle&&);
 
     inline SVGGraphicsElement& graphicsElement() const;
+
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
 private:
     void element() const = delete;

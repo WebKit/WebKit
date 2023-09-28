@@ -2,11 +2,11 @@
  * Copyright (C) 2007, 2008 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2009 Google, Inc.  All rights reserved.
+ * Copyright (C) 2009-2013 Google, Inc.  All rights reserved.
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2018 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -546,6 +546,14 @@ bool SVGHitTestCycleDetectionScope::isEmpty()
 bool SVGHitTestCycleDetectionScope::isVisiting(const RenderElement& element)
 {
     return visitedElements().contains(element);
+}
+
+bool SVGRenderSupport::isEmptySVGInlineText(const RenderObject* object)
+{
+    // RenderSVGInlineText performs whitespace filtering in order to support xml:space
+    // (http://www.w3.org/TR/SVG/struct.html#LangSpaceAttrs), and can end up with an empty string
+    // even when its original constructor argument is non-empty.
+    return object->isSVGInlineText() && downcast<RenderSVGInlineText>(object)->hasEmptyText();
 }
 
 }

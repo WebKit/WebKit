@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,6 +48,14 @@ std::unique_ptr<LegacyInlineFlowBox> RenderSVGInline::createInlineFlowBox()
     auto box = makeUnique<SVGInlineFlowBox>(*this);
     box->setHasVirtualLogicalHeight();
     return box;
+}
+
+bool RenderSVGInline::isChildAllowed(const RenderObject& child, const RenderStyle& style) const
+{
+    if (SVGRenderSupport::isEmptySVGInlineText(&child))
+        return false;
+
+    return RenderElement::isChildAllowed(child, style);
 }
 
 FloatRect RenderSVGInline::objectBoundingBox() const
