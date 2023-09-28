@@ -794,7 +794,6 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& pr
 void TextureMapperGL::drawTextureCopy(const BitmapTexture& sourceTexture, const FloatRect& sourceRect, const FloatRect& targetRect)
 {
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram({ TextureMapperShaderProgram::TextureCopy });
-    IntSize textureSize = sourceTexture.contentSize();
 
     glUseProgram(program->programID());
 
@@ -810,15 +809,11 @@ void TextureMapperGL::drawTextureCopy(const BitmapTexture& sourceTexture, const 
         0
     );
 
-    program->setMatrix(program->textureSpaceMatrixLocation(), textureCopyMatrix);
+    program->setMatrix(program->textureCopyMatrixLocation(), textureCopyMatrix);
 
-    glUniform2f(program->texelSizeLocation(), 1.f / textureSize.width(), 1.f / textureSize.height());
+    glUniform2f(program->texelSizeLocation(), 1.f / sourceRect.width(), 1.f / sourceRect.height());
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, static_cast<const BitmapTextureGL&>(sourceTexture).id());
-    glUniform1i(program->samplerLocation(), 0);
-
-    draw(targetRect, TransformationMatrix(), program.get(), GL_TRIANGLE_FAN, 0);
+    drawTexturedQuadWithProgram(program.get(), static_cast<const BitmapTextureGL&>(sourceTexture).id(), 0, targetRect, TransformationMatrix(), 1);
 }
 
 void TextureMapperGL::drawBlurred(const BitmapTexture& sourceTexture, const FloatRect& rect, float radius, Direction direction, bool alphaBlur)
@@ -827,11 +822,9 @@ void TextureMapperGL::drawBlurred(const BitmapTexture& sourceTexture, const Floa
         alphaBlur ? TextureMapperShaderProgram::AlphaBlur : TextureMapperShaderProgram::BlurFilter,
     });
 
-    IntSize textureSize = sourceTexture.contentSize();
-
     glUseProgram(program->programID());
 
-    glUniform2f(program->texelSizeLocation(), 1.f / textureSize.width(), 1.f / textureSize.height());
+    glUniform2f(program->texelSizeLocation(), 1.f / rect.width(), 1.f / rect.height());
 
     auto directionVector = direction == Direction::X ? FloatPoint(1, 0) : FloatPoint(0, 1);
     glUniform2f(program->blurDirectionLocation(), directionVector.x(), directionVector.y());
@@ -844,22 +837,18 @@ void TextureMapperGL::drawBlurred(const BitmapTexture& sourceTexture, const Floa
     auto textureBlurMatrix = TransformationMatrix::identity;
 
     textureBlurMatrix.scale3d(
-        double(rect.width()) / textureSize.width(),
-        double(rect.height()) / textureSize.height(),
+        double(rect.width()) / sourceTexture.contentSize().width(),
+        double(rect.height()) / sourceTexture.contentSize().height(),
         1
     ).translate3d(
-        double(rect.x()) / textureSize.width(),
-        double(rect.y()) / textureSize.height(),
+        double(rect.x()) / sourceTexture.contentSize().width(),
+        double(rect.y()) / sourceTexture.contentSize().height(),
         0
     );
 
-    program->setMatrix(program->textureSpaceMatrixLocation(), textureBlurMatrix);
+    program->setMatrix(program->textureBlurMatrixLocation(), textureBlurMatrix);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, static_cast<const BitmapTextureGL&>(sourceTexture).id());
-    glUniform1i(program->samplerLocation(), 0);
-
-    draw(rect, TransformationMatrix(), program.get(), GL_TRIANGLE_FAN, 0);
+    drawTexturedQuadWithProgram(program.get(), static_cast<const BitmapTextureGL&>(sourceTexture).id(), 0, rect, TransformationMatrix(), 1);
 }
 
 RefPtr<BitmapTexture> TextureMapperGL::applyBlurFilter(RefPtr<BitmapTexture> sourceTexture, const BlurFilterOperation& blurFilter)
