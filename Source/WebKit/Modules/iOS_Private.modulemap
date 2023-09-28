@@ -3071,6 +3071,16 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionMessagePort {
+    header "_WKWebExtensionMessagePort.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionMessagePortPrivate {
+    header "_WKWebExtensionMessagePortPrivate.h"
+    export *
+  }
+
   explicit module _WKWebExtensionPermission {
     header "_WKWebExtensionPermission.h"
     export *

@@ -98,6 +98,7 @@ public:
     const Type* functionType(Vector<const Type*>&&, const Type*);
     const Type* referenceType(AddressSpace, const Type*, AccessMode);
     const Type* pointerType(AddressSpace, const Type*, AccessMode);
+    const Type* atomicType(const Type*);
     const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
 
 private:
@@ -125,6 +126,8 @@ private:
     const Type* m_textureDepthCube;
     const Type* m_textureDepthArrayCube;
     const Type* m_textureDepthMultisampled2d;
+    const Type* m_atomicI32;
+    const Type* m_atomicU32;
 };
 
 } // namespace WGSL

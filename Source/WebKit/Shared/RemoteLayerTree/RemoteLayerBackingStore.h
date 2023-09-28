@@ -52,10 +52,6 @@ class RemoteLayerBackingStoreCollection;
 class RemoteLayerTreeNode;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-using UseCGDisplayListImageCache = WebCore::ImageBufferCreationContext::UseCGDisplayListImageCache;
-#endif
-
 enum class BackingStoreNeedsDisplayReason : uint8_t {
     None,
     NoFrontBuffer,
@@ -94,7 +90,7 @@ public:
         Bitmap
     };
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     enum class IncludeDisplayList : bool { No, Yes };
 #endif
 
@@ -106,9 +102,8 @@ public:
         bool deepColor { false };
         bool isOpaque { false };
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
         IncludeDisplayList includeDisplayList { IncludeDisplayList::No };
-        UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
 #endif
 
         friend bool operator==(const Parameters&, const Parameters&) = default;
@@ -223,7 +218,7 @@ private:
     std::optional<MachSendRight> m_contentsBufferHandle;
     std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     RefPtr<WebCore::ImageBuffer> m_displayListBuffer;
 #endif
 
@@ -246,7 +241,7 @@ public:
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStoreProperties&);
 
     enum class LayerContentsType { IOSurface, CAMachPort, CachedIOSurface };
-    void applyBackingStoreToLayer(CALayer *, LayerContentsType, std::optional<WebCore::RenderingResourceIdentifier>, bool replayCGDisplayListsIntoBackingStore);
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType, std::optional<WebCore::RenderingResourceIdentifier>, bool replayDynamicContentScalingDisplayListsIntoBackingStore);
 
     void updateCachedBuffers(RemoteLayerTreeNode&, LayerContentsType);
 
@@ -268,7 +263,7 @@ private:
 
     std::optional<WebCore::IntRect> m_paintedRect;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
 #endif
 

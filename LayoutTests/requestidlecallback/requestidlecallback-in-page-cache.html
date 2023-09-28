@@ -10,20 +10,12 @@ jsTestIsAsync = true;
 const iframe = document.createElement('iframe');
 document.body.appendChild(iframe);
 
-let isInitialLoad = true;
 const logsA = [];
 const logsB = [];
-if (window.testRunner)
-  setTimeout(() => testRunner.notifyDone(), 3000);
 
 window.addEventListener("pageshow", function(event) {
-    if (isInitialLoad) {
-        isInitialLoad = false;
+    if (!event.persisted)
         return;
-    }
-  
-    if (window.testRunner)
-      setTimeout(() => testRunner.notifyDone(), 3000);
 
     shouldBeTrue('event.persisted');
     shouldBe('logsA.length', '0');
@@ -31,11 +23,15 @@ window.addEventListener("pageshow", function(event) {
     iframe.contentWindow.requestIdleCallback(() => logsB.push('B3'));
     requestIdleCallback(() => logsA.push('A4'));
     setTimeout(() => {
-        shouldBe('logsA.length', '4');
-        shouldBeEqualToString('logsA.join(", ")', 'A1, A2, A3, A4');
-        shouldBe('logsB.length', '3');
-        shouldBeEqualToString('logsB.join(", ")', 'B1, B2, B3');
-        finishJSTest();
+        requestIdleCallback(() => {
+            iframe.contentWindow.requestIdleCallback(() => {
+                shouldBe('logsA.length', '4');
+                shouldBeEqualToString('logsA.join(", ")', 'A1, A2, A3, A4');
+                shouldBe('logsB.length', '3');
+                shouldBeEqualToString('logsB.join(", ")', 'B1, B2, B3');
+                finishJSTest();
+            });
+        });
     }, 100);
 });
 

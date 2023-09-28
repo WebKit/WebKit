@@ -30,6 +30,7 @@
 
 #include "PDFPlugin.h"
 #include "ShareableBitmap.h"
+#include "UnifiedPDFPlugin.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebKeyboardEvent.h"
@@ -213,9 +214,18 @@ RefPtr<PluginView> PluginView::create(HTMLPlugInElement& element, const URL& mai
     return adoptRef(*new PluginView(element, mainResourceURL, contentType, shouldUseManualLoader, *page));
 }
 
+static Ref<PDFPluginBase> createPlugin(HTMLPlugInElement& element)
+{
+#if ENABLE(UNIFIED_PDF)
+    if (element.document().settings().unifiedPDFEnabled())
+        return UnifiedPDFPlugin::create(element);
+#endif
+    return PDFPlugin::create(element);
+}
+
 PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, const String&, bool shouldUseManualLoader, WebPage& page)
     : m_pluginElement(element)
-    , m_plugin(PDFPlugin::create(element))
+    , m_plugin(createPlugin(element))
     , m_webPage(page)
     , m_mainResourceURL(mainResourceURL)
     , m_shouldUseManualLoader(shouldUseManualLoader)
@@ -354,7 +364,7 @@ void PluginView::initializePlugin()
     redeliverManualStream();
 
 #if PLATFORM(COCOA)
-    if (m_plugin->pluginLayer() && frame()) {
+    if (m_plugin->isComposited() && frame()) {
         frame()->view()->enterCompositingMode();
         m_pluginElement->invalidateStyleAndLayerComposition();
     }
@@ -376,21 +386,34 @@ PlatformLayer* PluginView::platformLayer() const
     if (!m_isInitialized)
         return nil;
 
-    return m_plugin->pluginLayer();
+    if (is<PDFPlugin>(m_plugin))
+        return downcast<PDFPlugin>(m_plugin)->pluginLayer();
+
+    return nullptr;
 }
 
 #endif
 
 bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {
-    return m_isInitialized && m_plugin->scroll(direction, granularity);
+    if (!m_isInitialized)
+        return false;
+
+    if (is<PDFPlugin>(m_plugin))
+        return downcast<PDFPlugin>(m_plugin)->scroll(direction, granularity);
+
+    return false;
 }
 
 ScrollPosition PluginView::scrollPositionForTesting() const
 {
     if (!m_isInitialized)
         return { };
-    return m_plugin->scrollPositionForTesting();
+
+    if (is<PDFPlugin>(m_plugin))
+        return downcast<PDFPlugin>(m_plugin)->scrollPositionForTesting();
+
+    return { };
 }
 
 Scrollbar* PluginView::horizontalScrollbar()
@@ -398,7 +421,10 @@ Scrollbar* PluginView::horizontalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
-    return m_plugin->horizontalScrollbar();
+    if (is<PDFPlugin>(m_plugin))
+        return downcast<PDFPlugin>(m_plugin)->horizontalScrollbar();
+
+    return nullptr;
 }
 
 Scrollbar* PluginView::verticalScrollbar()
@@ -406,12 +432,18 @@ Scrollbar* PluginView::verticalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
-    return m_plugin->verticalScrollbar();
+    if (is<PDFPlugin>(m_plugin))
+        return downcast<PDFPlugin>(m_plugin)->verticalScrollbar();
+
+    return nullptr;
 }
 
 bool PluginView::wantsWheelEvents()
 {
-    return true;
+    if (!m_isInitialized)
+        return false;
+
+    return m_plugin->wantsWheelEvents();
 }
 
 void PluginView::setFrameRect(const WebCore::IntRect& rect)
@@ -443,8 +475,12 @@ void PluginView::paint(GraphicsContext& context, const IntRect& /*dirtyRect*/, W
             if (!image)
                 return;
             context.drawImage(*image, frameRect());
-        } else
-            m_transientPaintingSnapshot->paint(context, m_plugin->deviceScaleFactor(), frameRect().location(), m_transientPaintingSnapshot->bounds());
+        } else {
+            auto deviceScaleFactor = 1;
+            if (auto* page = m_pluginElement->document().page())
+                deviceScaleFactor = page->deviceScaleFactor();
+            m_transientPaintingSnapshot->paint(context, deviceScaleFactor, frameRect().location(), m_transientPaintingSnapshot->bounds());
+        }
     }
 }
 
@@ -528,7 +564,7 @@ void PluginView::handleEvent(Event& event)
     if (didHandleEvent)
         event.setDefaultHandled();
 }
-    
+
 bool PluginView::handleEditingCommand(const String& commandName, const String&)
 {
     if (!m_isInitialized)
@@ -740,7 +776,7 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
         return;
 
 #if PLATFORM(COCOA)
-    if (m_plugin->pluginLayer())
+    if (m_plugin->isComposited())
         return;
 #endif
 

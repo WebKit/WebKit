@@ -221,6 +221,11 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
         if (m_isClosed)
             return;
 
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [this] {
+            m_harness->dumpGraph("video-encoder");
+        });
+
         bool isKeyFrame = !GST_BUFFER_FLAG_IS_SET(outputBuffer.get(), GST_BUFFER_FLAG_DELTA_UNIT);
         GST_TRACE_OBJECT(m_harness->element(), "Notifying encoded%s frame", isKeyFrame ? " key" : "");
         GstMappedBuffer encodedImage(outputBuffer.get(), GST_MAP_READ);

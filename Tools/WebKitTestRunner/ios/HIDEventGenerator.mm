@@ -28,7 +28,7 @@
 
 #import "BackBoardServicesSPI.h"
 #import "GeneratedTouchesDebugWindow.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <mach/mach_time.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/Assertions.h>

@@ -70,6 +70,8 @@ public:
 
     bool isDownloadableMedia() const { return m_data.isDownloadableMedia; }
 
+    WebKit::WebHitTestResultData::ElementType elementType() const { return m_data.elementType; }
+
 private:
     explicit HitTestResult(const WebKit::WebHitTestResultData& hitTestResultData)
         : m_data(hitTestResultData)

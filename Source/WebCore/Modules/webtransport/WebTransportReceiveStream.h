@@ -31,9 +31,15 @@ namespace WebCore {
 
 class DeferredPromise;
 
+struct WebTransportReceiveStreamStats;
+
 class WebTransportReceiveStream : public ReadableStream {
 public:
+    static ExceptionOr<Ref<WebTransportReceiveStream>> create(JSDOMGlobalObject&, Ref<ReadableStreamSource>&&);
+
     void getStats(Ref<DeferredPromise>&&);
+private:
+    WebTransportReceiveStream(Ref<InternalReadableStream>&&);
 };
 
 }

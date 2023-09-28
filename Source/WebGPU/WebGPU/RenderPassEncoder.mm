@@ -137,6 +137,14 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<const Rende
 {
     for (auto& bundle : bundles) {
         const auto& renderBundle = bundle.get();
+        if (renderBundle.currentPipelineState())
+            [m_renderCommandEncoder setRenderPipelineState:renderBundle.currentPipelineState()];
+        if (renderBundle.depthStencilState())
+            [m_renderCommandEncoder setDepthStencilState:renderBundle.depthStencilState()];
+        [m_renderCommandEncoder setCullMode:renderBundle.cullMode()];
+        [m_renderCommandEncoder setFrontFacingWinding:renderBundle.frontFace()];
+        [m_renderCommandEncoder setDepthClipMode:renderBundle.depthClipMode()];
+
         for (const auto& resource : renderBundle.resources())
             [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 

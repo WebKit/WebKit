@@ -1293,6 +1293,9 @@ media/video-supports-fullscreen.html [ Skip ]
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
 media/video-with-alpha.html [ Skip ]
 
+# Support to pause with 0 rate playback seems to work only in GStreamer ports
+media/media-source/media-source-play-zero-playbackrate.html [ Skip ]
+
 # accent-color is currently only supported on Cocoa platforms
 fast/css/accent-color/button.html [ ImageOnlyFailure ]
 fast/css/accent-color/checkbox.html [ ImageOnlyFailure ]
@@ -1605,7 +1608,6 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-c
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/masonry-columns-item-placement-auto-flow-next-001.html [ Skip ]
 
 # Subgrid failures
-imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-012.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-002.html [ ImageOnlyFailure ]
@@ -3883,6 +3885,7 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/fon
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2c.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/hiragana-katakana-kerning.html [ ImageOnlyFailure ]
+webkit.org/b/259551 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-014.html [ ImageOnlyFailure ]
 
 # Untriaged font-style/font-face @font-face descriptor bugs
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-style-auto-variable.html [ ImageOnlyFailure ]
@@ -6590,22 +6593,24 @@ imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass Failure Imag
 webkit.org/b/255970 [ Debug ] fullscreen/exit-full-screen-video-crash.html [ Crash ]
 
 # These tests time out because WebTransport only has a stub implementation.
-imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-closed-webtransport-connection.https.window.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-open-webtransport-connection.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/bidirectional-cancel-crash.https.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/echo-large-bidirectional-streams.https.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/close.https.any.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/close.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/close.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/close.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/connect.https.any.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/connect.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/connect.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/connect.https.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/constructor.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/constructor.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/constructor.https.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/datagrams.https.any.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/datagrams.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/datagrams.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/datagrams.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/streams-close.https.any.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/streams-close.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/streams-close.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/streams-close.https.any.worker.html [ Skip ]

@@ -29,10 +29,10 @@
 
 #include "BasicShapes.h"
 #include "LegacyRenderSVGImage.h"
+#include "LegacyRenderSVGResourceClipper.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "RenderLayer.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderView.h"
@@ -150,7 +150,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         }
     }
 
-    RenderSVGResourceClipper* clipper = resources->clipper();
+    LegacyRenderSVGResourceClipper* clipper = resources->clipper();
     if (!hasCSSClipping && clipper) {
         GraphicsContext* contextPtr = &m_paintInfo->context();
         bool result = clipper->applyResource(*m_renderer, style, contextPtr, { });

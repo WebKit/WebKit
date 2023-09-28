@@ -170,7 +170,7 @@ ContentSecurityPolicySourceListDirective* ContentSecurityPolicyDirectiveList::op
     }
 
     if (m_childSrc.get()) {
-        m_childSrc.get()->setNameForReporting(nameForReporting);
+        m_childSrc->setNameForReporting(nameForReporting);
         return m_childSrc.get();
     }
 
@@ -185,7 +185,7 @@ ContentSecurityPolicySourceListDirective* ContentSecurityPolicyDirectiveList::op
     }
 
     if (m_defaultSrc.get())
-        m_defaultSrc.get()->setNameForReporting(nameForReporting);
+        m_defaultSrc->setNameForReporting(nameForReporting);
 
     return m_defaultSrc.get();
 }

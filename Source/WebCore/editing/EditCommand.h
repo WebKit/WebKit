@@ -47,7 +47,7 @@ class EditCommand : public RefCounted<EditCommand> {
 public:
     virtual ~EditCommand();
 
-    void setParent(CompositeEditCommand*);
+    void setParent(RefPtr<CompositeEditCommand>&&);
 
     virtual EditAction editingAction() const;
 

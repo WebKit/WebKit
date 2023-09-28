@@ -52,10 +52,8 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXI
     auto* axParent = axObject->parentObjectUnignored();
     m_parentID = axParent ? axParent->objectID() : AXID();
 
-    // Every object will have at least this many properties. We can shrink this number
-    // to some estimated average once we implement sparse property storage (i.e. only storing
-    // a property if it's not the default value for its type).
-    m_propertyMap.reserveInitialCapacity(92);
+    // Allocate a capacity based on the minimum properties an object has (based on measurements from a real webpage).
+    m_propertyMap.reserveInitialCapacity(22);
 
     initializeProperties(axObject);
 }
@@ -390,8 +388,51 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
 {
     if (shouldRemove)
         m_propertyMap.remove(propertyName);
-    else
-        m_propertyMap.set(propertyName, value);
+    else {
+        bool isDefaultValue = WTF::switchOn(value,
+            [](std::nullptr_t&) { return true; },
+            [](AXID typedValue) { return !typedValue.isValid(); },
+            [](String& typedValue) { return typedValue == emptyString(); },
+            [](bool typedValue) { return !typedValue; },
+            [](int typedValue) { return !typedValue; },
+            [](unsigned typedValue) { return !typedValue; },
+            [](double typedValue) { return typedValue == 0.0; },
+            [](float typedValue) { return typedValue == 0.0; },
+            [](uint64_t typedValue) { return !typedValue; },
+            [](AccessibilityButtonState& typedValue) { return typedValue == AccessibilityButtonState::Off; },
+            [](Color& typedValue) { return typedValue == Color(); },
+            [](URL& typedValue) { return typedValue == URL(); },
+            [](LayoutRect& typedValue) { return typedValue == LayoutRect(); },
+            [](IntPoint& typedValue) { return typedValue == IntPoint(); },
+            [](std::pair<unsigned, unsigned>& typedValue) {
+                // (0, 1) is the default for an index range.
+                return typedValue == std::pair<unsigned, unsigned>(0, 1);
+            },
+            [](Vector<AccessibilityText>& typedValue) { return typedValue.isEmpty(); },
+            [](Vector<AXID>& typedValue) { return typedValue.isEmpty(); },
+            [](Vector<std::pair<AXID, AXID>>& typedValue) { return typedValue.isEmpty(); },
+            [](Vector<String>& typedValue) { return typedValue.isEmpty(); },
+            [](Path& typedValue) { return typedValue == Path(); },
+            [](OptionSet<AXAncestorFlag>& typedValue) { return typedValue.isEmpty(); },
+#if PLATFORM(COCOA)
+            [](RetainPtr<NSAttributedString>& typedValue) { return !typedValue; },
+#endif
+            [](InsideLink& typedValue) { return typedValue == InsideLink(); },
+            [](Vector<Vector<AXID>>& typedValue) { return typedValue.isEmpty(); },
+            [](CharacterRange& typedValue) { return !typedValue.location && !typedValue.length; },
+            [](std::pair<AXID, CharacterRange>& typedValue) {
+                return !typedValue.first.isValid() && !typedValue.second.location && !typedValue.second.length;
+            },
+            [](auto&) {
+                ASSERT_NOT_REACHED();
+                return false;
+            }
+        );
+        if (isDefaultValue)
+            m_propertyMap.remove(propertyName);
+        else
+            m_propertyMap.set(propertyName, value);
+    }
 }
 
 void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType)
@@ -757,13 +798,12 @@ OptionSet<T> AXIsolatedObject::optionSetAttributeValue(AXPropertyName propertyNa
     );
 }
 
-template<typename T>
-std::pair<T, T> AXIsolatedObject::pairAttributeValue(AXPropertyName propertyName) const
+std::pair<unsigned, unsigned> AXIsolatedObject::indexRangePairAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (std::pair<T, T>& typedValue) -> std::pair<T, T> { return typedValue; },
-        [] (auto&) { return std::pair<T, T>(0, 1); }
+        [] (std::pair<unsigned, unsigned>& typedValue) -> std::pair<unsigned, unsigned> { return typedValue; },
+        [] (auto&) { return std::pair<unsigned, unsigned>(0, 1); }
     );
 }
 

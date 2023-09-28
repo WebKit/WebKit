@@ -19,18 +19,16 @@ else {
     observer.observe(div, {childList: true});
 
     var script = document.createElement('script');
-    script.textContent = 'disconnectObserver()';
-
-    var child = document.createElement('div');
-    child.appendChild(script);
-    div.appendChild(child);
-
-    function disconnectObserver() {
+    script.textContent = `
         observer.disconnect();
         observer = null;
         GCController.collect();
         observer = new MutationObserver(function() {});
-    }
+    `;
+
+    var child = document.createElement('div');
+    child.appendChild(script);
+    div.appendChild(child);
 
     window.onload = () => {
         testPassed('WebKit did not crash');

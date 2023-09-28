@@ -33,7 +33,7 @@
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
 #import "TextInputSPI.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import "UIPasteboardConsistencyEnforcer.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>

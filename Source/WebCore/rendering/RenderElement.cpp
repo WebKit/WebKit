@@ -748,7 +748,7 @@ bool RenderElement::layerCreationAllowedForSubtree() const
     // any "hidden container"). For LBSE layers are needed for painting, even if a
     // RenderSVGHiddenContainer is in the render tree ancestor chain -- however they are
     // never painted directly, only indirectly through the "LegacyRenderSVGResourceContainer
-    // elements (such as RenderSVGResourceClipper, RenderSVGResourceMasker, etc.)
+    // elements (such as LegacyRenderSVGResourceClipper, RenderSVGResourceMasker, etc.)
     if (document().settings().layerBasedSVGEngineEnabled())
         return true;
 #endif

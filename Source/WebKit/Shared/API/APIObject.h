@@ -180,6 +180,7 @@ public:
         WebExtensionController,
         WebExtensionControllerConfiguration,
         WebExtensionMatchPattern,
+        WebExtensionMessagePort,
 #endif
         WebResourceLoadStatisticsManager,
         WebsiteDataRecord,
@@ -440,6 +441,7 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::WebExtensionController,
         API::Object::Type::WebExtensionControllerConfiguration,
         API::Object::Type::WebExtensionMatchPattern,
+        API::Object::Type::WebExtensionMessagePort,
 #endif
         API::Object::Type::WebResourceLoadStatisticsManager,
         API::Object::Type::WebsiteDataRecord,

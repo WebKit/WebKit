@@ -523,6 +523,24 @@ static inline Layout::BlockLayoutState::TextBoxTrim textBoxTrim(const RenderBloc
     return textBoxTrimForIFC;
 }
 
+static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const RenderBlockFlow& rootRenderer)
+{
+    auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
+    if (auto* lineGrid = layoutState.lineGrid()) {
+        if (lineGrid->style().writingMode() != rootRenderer.style().writingMode())
+            return { };
+
+        auto offset = layoutState.layoutOffset() - layoutState.lineGridOffset();
+        if (lineGrid->style().isVerticalWritingMode())
+            offset = offset.transposedSize();
+
+        auto columnWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
+        return Layout::BlockLayoutState::LineGrid { offset, columnWidth };
+    }
+
+    return { };
+}
+
 std::optional<LayoutRect> LineLayout::layout()
 {
     prepareLayoutState();
@@ -556,11 +574,20 @@ std::optional<LayoutRect> LineLayout::layout()
         auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), partialContentTop };
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     }();
-    auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), textBoxTrim(flow()), intrusiveInitialLetterBottom() };
+
+    auto parentBlockLayoutState = Layout::BlockLayoutState {
+        m_blockFormattingState.floatingState(),
+        lineClamp(flow()),
+        textBoxTrim(flow()),
+        intrusiveInitialLetterBottom(),
+        lineGrid(flow())
+    };
+
     auto hyphenationLimitLines = std::optional<size_t> { };
     if (auto limitLinesValue = rootLayoutBox().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
         hyphenationLimitLines = limitLinesValue;
     auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets), hyphenationLimitLines };
+
     auto layoutResult = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState }.layout(inlineContentConstraints, inlineLayoutState, m_lineDamage.get());
 
     auto repaintRect = LayoutRect { constructContent(inlineLayoutState, WTFMove(layoutResult)) };
@@ -615,8 +642,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
 
         auto& layoutBox = box.layoutBox();
-
-        if (!layoutBox.isAtomicInlineLevelBox() && !layoutBox.isRubyAnnotationBox())
+        if (!layoutBox.isAtomicInlineLevelBox())
             continue;
 
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
@@ -627,6 +653,21 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         auto adjustmentOffset = visualAdjustmentOffset(box.lineIndex());
 
         renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft() + adjustmentOffset);
+        auto relayoutRubyAnnotationIfNeeded = [&] {
+            // Annotation inline-block may get resized during inline layout (when base is wider) and
+            // we need to apply this new size on the annotation content by running layout.
+            if (!layoutBox.isRubyAnnotationBox())
+                return;
+            auto usedMarginBoxSize = Layout::BoxGeometry::marginBoxRect(logicalGeometry).size();
+            if (usedMarginBoxSize == renderer.size())
+                return;
+            renderer.setSize(usedMarginBoxSize);
+            renderer.setOverridingLogicalWidthLength({ usedMarginBoxSize.width(), LengthType::Fixed });
+            renderer.setNeedsLayout(MarkOnlyThis);
+            renderer.layoutIfNeeded();
+            renderer.clearOverridingLogicalWidthLength();
+        };
+        relayoutRubyAnnotationIfNeeded();
     }
 
     HashMap<CheckedRef<const Layout::Box>, LayoutSize> floatPaginationOffsetMap;

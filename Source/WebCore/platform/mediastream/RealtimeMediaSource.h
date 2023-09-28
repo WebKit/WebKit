@@ -265,8 +265,8 @@ protected:
 
     void scheduleDeferredTask(Function<void()>&&);
 
-    virtual void beginConfiguration() { }
-    virtual void commitConfiguration() { }
+    virtual void startApplyingConstraints() { }
+    virtual void endApplyingConstraints() { }
 
     bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
     double fitnessDistance(const MediaConstraint&);

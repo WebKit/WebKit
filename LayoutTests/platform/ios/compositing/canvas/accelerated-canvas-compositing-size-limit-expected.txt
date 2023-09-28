@@ -1,31 +1,61 @@
-Verifies that 2D canvases with higher than 5120x2880 resolution don't create accelerated backing stores.
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 16777216).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 16777216).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 16777216).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 16777216).
+Verifies Canvas 2D Context accelerated backing store behavior.
 
- (GraphicsLayer
+
+(GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 5208.00 6175.00)
+  (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer
-      (bounds 5208.00 6175.00)
+      (bounds 800.00 600.00)
       (contentsOpaque 1)
       (acceleratesDrawing 1)
-      (children 3
+      (children 7
         (GraphicsLayer
-          (position 8.00 52.00)
-          (bounds 512.00 288.00)
+          (position 112.00 96.00)
+          (anchor 0.50 0.50)
+          (bounds 100.00 56.50)
           (drawsContent 1)
           (acceleratesDrawing 1)
         )
         (GraphicsLayer
-          (position 8.00 345.00)
-          (bounds 5120.00 2880.00)
-          (usingTiledLayer 1)
+          (position 216.00 96.00)
+          (anchor 0.50 0.50)
+          (bounds 100.00 56.50)
           (drawsContent 1)
           (acceleratesDrawing 1)
         )
         (GraphicsLayer
-          (position 8.00 3230.00)
-          (bounds 5200.00 2900.00)
-          (usingTiledLayer 1)
+          (position 320.00 96.00)
+          (bounds 100.00 56.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 424.00 96.00)
+          (bounds 100.00 56.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 528.00 98.00)
+          (bounds 100.00 54.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 632.00 114.00)
+          (anchor 0.50 0.49)
+          (bounds 100.00 38.50)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 8.00 157.00)
+          (bounds 100.00 32.00)
           (drawsContent 1)
           (acceleratesDrawing 1)
         )

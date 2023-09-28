@@ -21,9 +21,9 @@
 #include "SVGResources.h"
 
 #include "FilterOperation.h"
+#include "LegacyRenderSVGResourceClipperInlines.h"
 #include "LegacyRenderSVGRoot.h"
 #include "PathOperation.h"
-#include "RenderSVGResourceClipperInlines.h"
 #include "RenderSVGResourceFilterInlines.h"
 #include "RenderSVGResourceMarkerInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
@@ -224,7 +224,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
             // https://bugs.webkit.org/show_bug.cgi?id=127032
             auto& clipPath = downcast<ReferencePathOperation>(*style.clipPath());
             AtomString id(clipPath.fragment());
-            if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(treeScope, id)))
+            if (setClipper(getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, id)))
                 foundResources = true;
             else
                 treeScope.addPendingSVGResource(id, element);
@@ -492,7 +492,7 @@ void SVGResources::buildSetOfResources(WeakHashSet<LegacyRenderSVGResourceContai
     }
 }
 
-bool SVGResources::setClipper(RenderSVGResourceClipper* clipper)
+bool SVGResources::setClipper(LegacyRenderSVGResourceClipper* clipper)
 {
     if (!clipper)
         return false;

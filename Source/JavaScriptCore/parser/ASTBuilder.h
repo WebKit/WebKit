@@ -197,9 +197,9 @@ public:
     bool isMetaProperty(ExpressionNode* node) { return node->isMetaProperty(); }
     bool isNewTarget(ExpressionNode* node) { return node->isNewTarget(); }
     bool isImportMeta(ExpressionNode* node) { return node->isImportMeta(); }
-    ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& start, const JSTextPosition& end)
+    ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& start, const JSTextPosition& end, const bool needToCheckUsesArguments = true)
     {
-        if (m_vm.propertyNames->arguments == ident)
+        if (needToCheckUsesArguments && m_vm.propertyNames->arguments == ident)
             usesArguments();
 
         if (ident.isSymbol()) {
@@ -981,6 +981,7 @@ public:
     ExpressionNode* createAssignment(const JSTokenLocation& location, int& assignmentStackDepth, ExpressionNode* rhs, int initialAssignmentCount, int currentAssignmentCount, const JSTextPosition& lastTokenEnd)
     {
         AssignmentInfo& info = m_assignmentInfoStack.last();
+        checkArgumentsLengthModification(info.m_node);
         ExpressionNode* result = makeAssignNode(location, info.m_node, info.m_op, rhs, info.m_initAssignments != initialAssignmentCount, info.m_initAssignments != currentAssignmentCount, info.m_start, info.m_divot + 1, lastTokenEnd);
         m_assignmentInfoStack.removeLast();
         assignmentStackDepth--;
@@ -1066,6 +1067,7 @@ public:
 
     AssignmentElement createAssignmentElement(const Expression& assignmentTarget, const JSTextPosition& start, const JSTextPosition& end)
     {
+        checkArgumentsLengthModification(assignmentTarget);
         return new (m_parserArena) AssignmentElementNode(assignmentTarget, start, end);
     }
 
@@ -1096,7 +1098,9 @@ public:
     }
 
     void propagateArgumentsUse() { usesArguments(); }
-    
+
+    bool hasArgumentsFeature() const { return m_scope.m_features & ArgumentsFeature; }
+
 private:
     struct Scope {
         Scope()
@@ -1107,6 +1111,14 @@ private:
         int m_features;
         int m_numConstants;
     };
+
+    void checkArgumentsLengthModification(const ExpressionNode* node)
+    {
+        // Since we exclude pattern `arguments.length` to enable ArgumentsFeature,
+        // we need re-enable ArgumentsFeature for `arguments.length` modification.
+        if (node && node->isArgumentsLengthAccess(m_vm))
+            usesArguments();
+    }
 
     static void setExceptionLocation(ThrowableExpressionData* node, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd)
     {
@@ -1658,11 +1670,13 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
 
 ExpressionNode* ASTBuilder::makePrefixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator op, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
 {
+    checkArgumentsLengthModification(expr);
     return new (m_parserArena) PrefixNode(location, expr, op, divot, start, end);
 }
 
 ExpressionNode* ASTBuilder::makePostfixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator op, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
 {
+    checkArgumentsLengthModification(expr);
     return new (m_parserArena) PostfixNode(location, expr, op, divot, start, end);
 }
 

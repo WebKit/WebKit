@@ -2569,6 +2569,15 @@ class WebCore::TransformOperations {
     std::optional<WebCore::SourceBrush::Brush> brush();
 }
 
+header: <WebCore/ThreadSafeDataBuffer.h>
+[RefCounted, CustomHeader] class WebCore::ThreadSafeDataBufferImpl {
+    Vector<uint8_t> m_data;
+};
+
+class WebCore::ThreadSafeDataBuffer {
+    RefPtr<WebCore::ThreadSafeDataBufferImpl> m_impl;
+};
+
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 header: <WebCore/GraphicsContextGLAttributes.h>
 [CustomHeader] enum class WebCore::GraphicsContextGLPowerPreference : uint8_t {
@@ -4276,7 +4285,32 @@ header: <WebCore/GraphicsStyle.h>
     float radius;
     WebCore::Color color;
     WebCore::ShadowRadiusMode radiusMode;
+    float opacity;
 };
+
+header: <WebCore/GraphicsStyle.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GraphicsGaussianBlur {
+    WebCore::FloatSize radius;
+};
+
+header: <WebCore/GraphicsStyle.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GraphicsColorMatrix {
+    std::array<float, 20> values;
+};
+
+header: <WebCore/PlatformMediaSession.h>
+[CustomHeader] struct WebCore::PlatformMediaSessionRemoteCommandArgument {
+    std::optional<double> time;
+    std::optional<bool> fastSeek;
+}
+using WebCore::PlatformMediaSession::RemoteCommandArgument = WebCore::PlatformMediaSessionRemoteCommandArgument;
+
+class WebCore::SocketStreamError {
+    int m_errorCode;
+    String m_failingURL;
+    String m_localizedDescription;
+    bool m_isNull;
+}
 
 #if ENABLE(VIDEO)
 [Nested, AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::GenericCueData::Alignment : uint8_t {
@@ -4818,21 +4852,37 @@ struct WebCore::CaptureDeviceWithCapabilities {
 
 [Nested] enum class WebCore::RealtimeMediaSourceCapabilities::EchoCancellation : bool
 
+[Nested] struct WebCore::CapabilityRange::DoubleRange {
+    double max;
+    [Validator='min <= max'] double min;
+};
+
+[Nested] struct WebCore::CapabilityRange::LongRange {
+    int max;
+    [Validator='min <= max'] int min;
+};
+
+header: <WebCore/RealtimeMediaSourceCapabilities.h>
+[CustomHeader, LegacyPopulateFromEmptyConstructor] class WebCore::CapabilityRange {
+    std::optional<WebCore::CapabilityRange::DoubleRange> m_doubleRange;
+    std::optional<WebCore::CapabilityRange::LongRange> m_longRange;
+};
+
 class WebCore::RealtimeMediaSourceCapabilities {
-    WebCore::CapabilityValueOrRange width();
-    WebCore::CapabilityValueOrRange height();
-    WebCore::CapabilityValueOrRange aspectRatio();
-    WebCore::CapabilityValueOrRange frameRate();
+    WebCore::CapabilityRange width();
+    WebCore::CapabilityRange height();
+    WebCore::CapabilityRange aspectRatio();
+    WebCore::CapabilityRange frameRate();
     Vector<WebCore::VideoFacingMode> facingMode();
     Vector<WebCore::MeteringMode> whiteBalanceModes();
-    WebCore::CapabilityValueOrRange volume();
-    WebCore::CapabilityValueOrRange sampleRate();
-    WebCore::CapabilityValueOrRange sampleSize();
+    WebCore::CapabilityRange volume();
+    WebCore::CapabilityRange sampleRate();
+    WebCore::CapabilityRange sampleSize();
     WebCore::RealtimeMediaSourceCapabilities::EchoCancellation echoCancellation();
     AtomString deviceId();
     AtomString groupId();
-    WebCore::CapabilityValueOrRange focusDistance();
-    WebCore::CapabilityValueOrRange zoom();
+    WebCore::CapabilityRange focusDistance();
+    WebCore::CapabilityRange zoom();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
@@ -4842,7 +4892,7 @@ header: <WebCore/MockMediaDevice.h>
     Invalid
 };
 
-#endif
+#endif // ENABLE(MEDIA_STREAM)
 
 enum class WebCore::PlatformVideoColorPrimaries : uint8_t {
     Bt709,
@@ -5957,6 +6007,66 @@ struct WebCore::LinkDecorationFilteringData {
     String linkDecoration;
 };
 
+header: <WebCore/InspectorFrontendClient.h>
+[CustomHeader] enum class WebCore::InspectorFrontendClientAppearance : uint8_t {
+    System,
+    Light,
+    Dark,
+};
+using WebCore::InspectorFrontendClient::Appearance = WebCore::InspectorFrontendClientAppearance;
+
+[Nested] enum class WebCore::InspectorFrontendClient::SaveMode : uint8_t {
+    SingleFile,
+    FileVariants,
+};
+
+header: <WebCore/InspectorFrontendClient.h>
+[CustomHeader] struct WebCore::InspectorFrontendClientSaveData {
+    String displayType;
+    String url;
+    String content;
+    bool base64Encoded;
+};
+using WebCore::InspectorFrontendClient::SaveData = WebCore::InspectorFrontendClientSaveData;
+
+#if ENABLE(VIDEO)
+header: <WebCore/PlatformTextTrack.h>
+[Nested, CustomHeader] enum class WebCore::PlatformTextTrackData::TrackKind : uint8_t {
+    Subtitle,
+    Caption,
+    Description,
+    Chapter,
+    MetaData,
+    Forced,
+};
+
+header: <WebCore/PlatformTextTrack.h>
+[Nested, CustomHeader] enum class WebCore::PlatformTextTrackData::TrackType : uint8_t {
+    InBand,
+    OutOfBand,
+    Script,
+};
+
+header: <WebCore/PlatformTextTrack.h>
+[Nested, CustomHeader] enum class WebCore::PlatformTextTrackData::TrackMode : uint8_t {
+    Disabled,
+    Hidden,
+    Showing,
+};
+
+header: <WebCore/PlatformTextTrack.h>
+[CustomHeader] struct WebCore::PlatformTextTrackData {
+    String m_label;
+    String m_language;
+    String m_url;
+    WebCore::PlatformTextTrackData::TrackMode m_mode;
+    WebCore::PlatformTextTrackData::TrackKind m_kind;
+    WebCore::PlatformTextTrackData::TrackType m_type;
+    int m_uniqueId;
+    bool m_isDefault;
+}
+#endif // ENABLE(VIDEO)
+
 [WebKitPlatform] struct WebCore::NotificationPayload {
     URL defaultActionURL;
     String title;
@@ -6022,3 +6132,103 @@ header: <WebCore/NetworkLoadMetrics.h>
     uint64_t requestBodyBytesSent;
     bool isProxyConnection;
 }
+
+struct WebCore::DisplayUpdate {
+    unsigned updateIndex;
+    WebCore::FramesPerSecond updatesPerSecond;
+}
+
+struct WebCore::MediaUsageInfo {
+    URL mediaURL;
+    bool hasSource;
+    bool isPlaying;
+    bool canShowControlsManager;
+    bool canShowNowPlayingControls;
+    bool isSuspended;
+    bool isInActiveDocument;
+    bool isFullscreen;
+    bool isMuted;
+    bool isMediaDocumentInMainFrame;
+    bool isVideo;
+    bool isAudio;
+    bool hasVideo;
+    bool hasAudio;
+    bool hasRenderer;
+    bool audioElementWithUserGesture;
+    bool userHasPlayedAudioBefore;
+    bool isElementRectMostlyInMainFrame;
+    bool playbackPermitted;
+    bool pageMediaPlaybackSuspended;
+    bool isMediaDocumentAndNotOwnerElement;
+    bool pageExplicitlyAllowsElementToAutoplayInline;
+    bool requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted;
+    bool isVideoAndRequiresUserGestureForVideoRateChange;
+    bool isAudioAndRequiresUserGestureForAudioRateChange;
+    bool isVideoAndRequiresUserGestureForVideoDueToLowPowerMode;
+    bool noUserGestureRequired;
+    bool requiresPlaybackAndIsNotPlaying;
+    bool hasEverNotifiedAboutPlaying;
+    bool outsideOfFullscreen;
+    bool isLargeEnoughForMainContent;
+#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
+    bool isInViewport;
+#endif
+}
+
+header: <WebCore/NowPlayingInfo.h>
+[CustomHeader] struct WebCore::NowPlayingInfoArtwork {
+    String src;
+    String mimeType;
+    RefPtr<WebCore::Image> image;
+}
+
+struct WebCore::NowPlayingInfo {
+    String title;
+    String artist;
+    String album;
+    String sourceApplicationIdentifier;
+    double duration;
+    double currentTime;
+    double rate;
+    bool supportsSeeking;
+    WebCore::MediaUniqueIdentifier uniqueIdentifier;
+    bool isPlaying;
+    bool allowsNowPlayingControlsVisibility;
+    std::optional<WebCore::NowPlayingInfoArtwork> artwork;
+}
+
+struct WebCore::VideoConfiguration {
+    String contentType;
+    uint32_t width;
+    uint32_t height;
+    uint64_t bitrate;
+    double framerate;
+    std::optional<bool> alphaChannel;
+    std::optional<WebCore::ColorGamut> colorGamut;
+    std::optional<WebCore::HdrMetadataType> hdrMetadataType;
+    std::optional<WebCore::TransferFunction> transferFunction;
+}
+
+using WebCore::FontTag = std::array<char, 4>;
+
+header: <WebCore/FontTaggedSettings.h>
+[Alias=class FontTaggedSetting<float>, CustomHeader] class WebCore::FloatFontTaggedSetting {
+    WebCore::FontTag m_tag;
+    float m_value;
+};
+
+header: <WebCore/FontTaggedSettings.h>
+[Alias=class FontTaggedSetting<int>, CustomHeader] class WebCore::IntFontTaggedSetting {
+    WebCore::FontTag m_tag;
+    int m_value;
+};
+
+header: <WebCore/FontTaggedSettings.h>
+[Alias=class FontTaggedSettings<float>, CustomHeader, LegacyPopulateFromEmptyConstructor] class WebCore::FontVariationSettings {
+    Vector<WebCore::FloatFontTaggedSetting> m_list;
+};
+
+header: <WebCore/FontTaggedSettings.h>
+[Alias=class FontTaggedSettings<int>, CustomHeader, LegacyPopulateFromEmptyConstructor] class WebCore::FontFeatureSettings {
+    Vector<WebCore::IntFontTaggedSetting> m_list;
+};

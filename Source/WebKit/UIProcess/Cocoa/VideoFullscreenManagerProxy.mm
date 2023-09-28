@@ -731,6 +731,8 @@ RetainPtr<WKVideoView> VideoFullscreenManagerProxy::createViewWithID(PlaybackSes
         [playerLayer setFullscreenModel:model.get()];
         [playerLayer setVideoSublayer:[view layer]];
 
+        [playerView addSubview:view.get()];
+
         // The videoView may already be reparented in fullscreen, so only parent the view
         // if it has no existing parent:
         if (![[view layer] superlayer])

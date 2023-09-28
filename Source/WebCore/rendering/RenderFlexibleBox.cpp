@@ -2137,8 +2137,8 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
     // addPercentHeightDescendant() is never called for them. This means that this method would always wrongly
     // return false for a child of a <button> with a percentage height.
     if (hasPercentHeightDescendants() && skipContainingBlockForPercentHeightCalculation(renderer, isHorizontalWritingMode() != renderer.isHorizontalWritingMode())) {
-        for (auto* descendant : *percentHeightDescendants()) {
-            if (renderBlock.isContainingBlockAncestorFor(*descendant))
+        for (auto& descendant : *percentHeightDescendants()) {
+            if (renderBlock.isContainingBlockAncestorFor(descendant))
                 return true;
         }
     }
@@ -2150,9 +2150,9 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
     if (!percentHeightDescendants)
         return false;
 
-    for (auto* descendant : *percentHeightDescendants) {
+    for (auto& descendant : *percentHeightDescendants) {
         bool hasOutOfFlowAncestor = false;
-        for (auto* ancestor = descendant->containingBlock(); ancestor && ancestor != &renderBlock; ancestor = ancestor->containingBlock()) {
+        for (auto* ancestor = descendant.containingBlock(); ancestor && ancestor != &renderBlock; ancestor = ancestor->containingBlock()) {
             if (ancestor->isOutOfFlowPositioned()) {
                 hasOutOfFlowAncestor = true;
                 break;

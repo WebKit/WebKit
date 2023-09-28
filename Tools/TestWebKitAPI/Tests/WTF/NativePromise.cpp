@@ -328,15 +328,17 @@ TEST(NativePromise, PromiseRequest)
             [&](MyPromise::Result&& result) {
                 EXPECT_TRUE(result.has_value());
                 EXPECT_TRUE(result.value());
+                EXPECT_TRUE(!!request1);
                 request1.complete();
+                EXPECT_FALSE(!!request1);
             }).track(request1);
     });
 
     // PromiseRequest allows to use capture by reference or pointer to ref-counted object and ensure the
     // lifetime of the object.
+    std::atomic<bool> objectToShare = true;
     runInCurrentRunLoop([&](auto& runLoop) {
         NativePromiseRequest<GenericPromise> request2;
-        bool objectToShare = true;
         GenericPromise::Producer p2(__func__);
         p2.whenSettled(runLoop, __func__,
             [&objectToShare](GenericPromise::Result&&) mutable {
@@ -344,10 +346,13 @@ TEST(NativePromise, PromiseRequest)
                 // but this function will never run as we've disconnected the ThenCommand.
                 objectToShare = false;
             }).track(request2);
+        EXPECT_TRUE(!!request2);
         request2.disconnect();
+        EXPECT_FALSE(!!request2);
         p2.resolve(__func__);
         EXPECT_TRUE(objectToShare);
     });
+    EXPECT_TRUE(objectToShare);
 }
 
 // Ensure that callbacks aren't run when request holder is disconnected after the promise was resolved and then() called.

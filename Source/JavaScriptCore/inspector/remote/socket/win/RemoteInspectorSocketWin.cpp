@@ -101,6 +101,7 @@ static bool setOpt(PlatformSocketType socket, int optname, const void* optval, i
 {
     int error = ::setsockopt(socket, SOL_SOCKET, optname, static_cast<const char*>(optval), optlen);
     if (error < 0) {
+        UNUSED_PARAM(debug);
         LOG_ERROR("setsockopt(%s) failed (errno = %d)", debug, WSAGetLastError());
         return false;
     }

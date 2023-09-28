@@ -45,6 +45,7 @@ using GPUVideoSource = RefPtr<HTMLVideoElement>;
 
 struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 
+#if ENABLE(VIDEO)
     static WebGPU::VideoSourceIdentifier mediaIdentifierForSource(const GPUVideoSource& videoSource)
     {
 #if ENABLE(WEB_CODECS)
@@ -58,17 +59,24 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
         return videoSource->playerIdentifier().value_or(MediaPlayerIdentifier(0));
 #endif
     }
+#endif
 
     WebGPU::ExternalTextureDescriptor convertToBacking() const
     {
         return {
             { label },
+#if ENABLE(VIDEO)
             mediaIdentifierForSource(source),
+#else
+            { 0 },
+#endif
             WebCore::convertToBacking(colorSpace),
         };
     }
 
+#if ENABLE(VIDEO)
     GPUVideoSource source;
+#endif
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
 };
 

@@ -351,11 +351,6 @@ LayoutUnit LegacyRootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     if (!lineGrid || lineGrid->style().writingMode() != blockFlow().style().writingMode())
         return 0;
 
-    // Get the hypothetical line box used to establish the grid.
-    LegacyRootInlineBox* lineGridBox = lineGrid->lineGridBox();
-    if (!lineGridBox)
-        return 0;
-    
     LayoutUnit lineGridBlockOffset = lineGrid->isHorizontalWritingMode() ? lineGridOffset.height() : lineGridOffset.width();
     LayoutUnit blockOffset = blockFlow().isHorizontalWritingMode() ? layoutState->layoutOffset().height() : layoutState->layoutOffset().width();
 
@@ -363,14 +358,17 @@ LayoutUnit LegacyRootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     // as established by the line box.
     // FIXME: Need to handle crazy line-box-contain values that cause the root line box to not be considered. I assume
     // the grid should honor line-box-contain.
-    LayoutUnit gridLineHeight = lineGridBox->lineBoxBottom() - lineGridBox->lineBoxTop();
+    LayoutUnit gridLineHeight = lineGrid->style().computedLineHeight();
     if (!roundToInt(gridLineHeight))
         return 0;
 
-    LayoutUnit lineGridFontAscent = lineGrid->style().metricsOfPrimaryFont().ascent(baselineType());
-    LayoutUnit lineGridFontHeight { lineGridBox->logicalHeight() };
-    LayoutUnit firstTextTop { lineGridBlockOffset + lineGridBox->logicalTop() };
-    LayoutUnit firstLineTopWithLeading = lineGridBlockOffset + lineGridBox->lineBoxTop();
+    auto& gridFontMetrics = lineGrid->style().metricsOfPrimaryFont();
+    LayoutUnit lineGridFontAscent = gridFontMetrics.ascent(baselineType());
+    LayoutUnit lineGridFontHeight = gridFontMetrics.height();
+    LayoutUnit lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
+
+    LayoutUnit firstLineTop = lineGridBlockOffset + lineGrid->borderAndPaddingBefore();
+    LayoutUnit firstTextTop = firstLineTop + lineGridHalfLeading;
     LayoutUnit firstBaselinePosition = firstTextTop + lineGridFontAscent;
 
     LayoutUnit currentTextTop { blockOffset + logicalTop() + delta };
@@ -384,8 +382,8 @@ LayoutUnit LegacyRootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     LayoutUnit pageLogicalTop;
     if (layoutState->isPaginated() && layoutState->pageLogicalHeight()) {
         pageLogicalTop = blockFlow().pageLogicalTopForOffset(lineBoxTop() + delta);
-        if (pageLogicalTop > firstLineTopWithLeading)
-            firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderAndPaddingBefore() + lineGridPaginationOrigin;
+        if (pageLogicalTop > firstLineTop)
+            firstTextTop = pageLogicalTop + lineGridHalfLeading + lineGridPaginationOrigin;
     }
 
     if (blockFlow().style().lineSnap() == LineSnap::Contain) {

@@ -56,6 +56,8 @@ private:
 
     void reference(DOMCacheIdentifier) final;
     void dereference(DOMCacheIdentifier) final;
+    void lockStorage(const ClientOrigin&) final;
+    void unlockStorage(const ClientOrigin&) final;
 
     void openCompleted(uint64_t requestIdentifier, const DOMCacheEngine::CacheIdentifierOrError&);
     void removeCompleted(uint64_t requestIdentifier, const DOMCacheEngine::RemoveCacheIdentifierOrError&);

@@ -92,6 +92,21 @@ static NSURL *URLFromString(const WTF::String& urlString)
     return _hitTestResult->elementBoundingBox();
 }
 
+- (_WKHitTestResultElementType)elementType
+{
+    switch (_hitTestResult->elementType()) {
+    case WebKit::WebHitTestResultData::ElementType::None:
+        return _WKHitTestResultElementTypeNone;
+    case WebKit::WebHitTestResultData::ElementType::Audio:
+        return _WKHitTestResultElementTypeAudio;
+    case WebKit::WebHitTestResultData::ElementType::Video:
+        return _WKHitTestResultElementTypeVideo;
+    }
+
+    ASSERT_NOT_REACHED();
+    return _WKHitTestResultElementTypeNone;
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
     return [self retain];

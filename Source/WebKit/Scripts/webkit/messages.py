@@ -282,7 +282,6 @@ def serialized_identifiers():
         'IPC::AsyncReplyID',
         'WebCore::BackgroundFetchRecordIdentifier',
         'WebCore::BroadcastChannelIdentifier',
-        'WebCore::DOMCacheIdentifier',
         'WebCore::DictationContext',
         'WebCore::ElementIdentifier',
         'WebCore::FetchIdentifier',
@@ -369,6 +368,8 @@ def serialized_identifiers():
         'WebKit::WebExtensionWindowIdentifier',
         'WebKit::WebGPUIdentifier',
         'WebKit::WebPageProxyIdentifier',
+        'WebKit::WebTransportSessionIdentifier',
+        'WebKit::WebTransportStreamIdentifier',
         'WebKit::WebURLSchemeHandlerIdentifier',
     ]
 
@@ -391,6 +392,7 @@ def types_that_cannot_be_forward_declared():
         'String',
         'WebCore::BackForwardItemIdentifier',
         'WebCore::ControlStyle',
+        'WebCore::DOMCacheIdentifier',
         'WebCore::DestinationColorSpace',
         'WebCore::DiagnosticLoggingDomain',
         'WebCore::DictationContext',
@@ -1010,6 +1012,8 @@ def headers_for_type(type):
         'WebKit::WebPushD::PushMessageForTesting': ['"PushMessageForTesting.h"'],
         'WebKit::WebPushD::WebPushDaemonConnectionConfiguration': ['"WebPushDaemonConnectionConfiguration.h"'],
         'WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
+        'WebKit::WebTransportSessionIdentifier': ['"WebTransportSession.h"'],
+        'WebKit::WebTransportStreamIdentifier': ['"WebTransportSession.h"'],
         'WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
         'WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'WTF::UnixFileDescriptor': ['<wtf/unix/UnixFileDescriptor.h>'],

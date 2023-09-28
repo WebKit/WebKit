@@ -26,3 +26,6 @@
 INFOPLIST_FILE = Shared/AuxiliaryProcessExtensions/WebContentExtension-Crashy-Info.plist;
 INFOPLIST_KEY_CFBundleDisplayName = WebContentCrashyExtension;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContentExtension.Crashy;
+PRODUCT_BUNDLE_EXECUTABLE = WebContentCrashyExtension;
+PRODUCT_BUNDLE_NAME = WebContentCrashyExtension;
+PRODUCT_BUNDLE_VERSION = 1.0;

@@ -32,4 +32,5 @@ public:
     static Ref<LegacySocketProvider> create() { return adoptRef(*new LegacySocketProvider); }
 private:
     RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&) final;
+    void initializeWebTransportSession(WebCore::ScriptExecutionContext&, const URL&, CompletionHandler<void(RefPtr<WebCore::WebTransportSession>&&)>&&) final;
 };

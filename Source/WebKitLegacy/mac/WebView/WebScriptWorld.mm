@@ -40,7 +40,7 @@
 @implementation WebScriptWorldPrivate
 @end
 
-typedef HashMap<WebCore::DOMWrapperWorld*, WebScriptWorld*> WorldMap;
+using WorldMap = HashMap<CheckedRef<WebCore::DOMWrapperWorld>, WebScriptWorld*>;
 static WorldMap& allWorlds()
 {
     static WorldMap& map = *new WorldMap;
@@ -58,8 +58,8 @@ static WorldMap& allWorlds()
     _private = [[WebScriptWorldPrivate alloc] init];
     _private->world = WTFMove(world);
 
-    ASSERT_ARG(world, !allWorlds().contains(_private->world.get()));
-    allWorlds().add(_private->world.get(), self);
+    ASSERT_ARG(world, !allWorlds().contains(*_private->world));
+    allWorlds().add(*_private->world, self);
 
     return self;
 }
@@ -76,8 +76,8 @@ static WorldMap& allWorlds()
 
 - (void)dealloc
 {
-    ASSERT(allWorlds().contains(_private->world.get()));
-    allWorlds().remove(_private->world.get());
+    ASSERT(allWorlds().contains(*_private->world));
+    allWorlds().remove(*_private->world);
 
     [_private release];
     _private = nil;
@@ -121,7 +121,7 @@ WebCore::DOMWrapperWorld* core(WebScriptWorld *world)
     if (&world == &WebCore::mainThreadNormalWorld())
         return [self standardWorld];
 
-    if (WebScriptWorld *existingWorld = allWorlds().get(&world))
+    if (WebScriptWorld *existingWorld = allWorlds().get(world))
         return existingWorld;
 
     return adoptNS([[self alloc] initWithWorld:world]).autorelease();

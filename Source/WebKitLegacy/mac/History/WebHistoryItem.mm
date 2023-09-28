@@ -98,7 +98,7 @@ using namespace WebCore;
 
 @end
 
-typedef HashMap<HistoryItem*, WebHistoryItem*> HistoryItemMap;
+using HistoryItemMap = HashMap<CheckedRef<HistoryItem>, WebHistoryItem*>;
 
 static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* itemPrivate)
 {
@@ -152,7 +152,7 @@ void WKNotifyHistoryItemChanged()
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebHistoryItem class], self))
         return;
 
-    historyItemWrappers().remove(_private->_historyItem.get());
+    historyItemWrappers().remove(*_private->_historyItem);
     [_private release];
 
     [super dealloc];
@@ -165,7 +165,7 @@ void WKNotifyHistoryItemChanged()
 
     copy->_private->_lastVisitedTime = _private->_lastVisitedTime;
 
-    historyItemWrappers().set(core(copy->_private), copy.get());
+    historyItemWrappers().set(*core(copy->_private), copy.get());
 
     return copy.leakRef();
 }
@@ -261,7 +261,7 @@ HistoryItem* core(WebHistoryItem *item)
 {
     if (!item)
         return nullptr;
-    ASSERT(historyItemWrappers().get(core(item->_private)) == item);
+    ASSERT(historyItemWrappers().get(*core(item->_private)) == item);
     return core(item->_private);
 }
 
@@ -269,7 +269,7 @@ WebHistoryItem *kit(HistoryItem* item)
 {
     if (!item)
         return nil;
-    if (auto wrapper = historyItemWrappers().get(item))
+    if (auto wrapper = historyItemWrappers().get(*item))
         return retainPtr(wrapper).autorelease();
     return adoptNS([[WebHistoryItem alloc] initWithWebCoreHistoryItem:*item]).autorelease();
 }
@@ -298,8 +298,8 @@ WebHistoryItem *kit(HistoryItem* item)
     _private = [[WebHistoryItemPrivate alloc] init];
     _private->_historyItem = WTFMove(item);
 
-    ASSERT(!historyItemWrappers().get(core(_private)));
-    historyItemWrappers().set(core(_private), self);
+    ASSERT(!historyItemWrappers().get(*core(_private)));
+    historyItemWrappers().set(*core(_private), self);
     return self;
 }
 

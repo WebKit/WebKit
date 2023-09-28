@@ -170,6 +170,15 @@ const Type* OverloadResolver::materialize(const AbstractType& abstractType) cons
                 return m_types.textureType(texture.kind, element);
             return nullptr;
         },
+        [&](const AbstractTextureStorage& texture) -> const Type* {
+            auto format = materialize(texture.format);
+            auto access = materialize(texture.access);
+            return m_types.textureStorageType(texture.kind, static_cast<TexelFormat>(format), static_cast<AccessMode>(access));
+        },
+        [&](const AbstractChannelFormat& channelFormat) -> const Type* {
+            auto format = materialize(channelFormat.format);
+            return shaderTypeForTexelFormat(static_cast<TexelFormat>(format), m_types);
+        },
         [&](const AbstractReference& reference) -> const Type* {
             if (auto* element = materialize(reference.element)) {
                 auto addressSpace = materialize(reference.addressSpace);
@@ -320,6 +329,14 @@ ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, co
         return calculateRank(arrayParameter->element, arrayArgument.element);
     }
 
+    if (std::holds_alternative<AbstractTextureStorage>(*parameter.get()))
+        return 0;
+
+    if (auto* channelFormat = std::get_if<AbstractChannelFormat>(parameter.get())) {
+        auto format = materialize(channelFormat->format);
+        return conversionRank(argumentType, shaderTypeForTexelFormat(static_cast<TexelFormat>(format), m_types));
+    }
+
     auto* parameterType = std::get<const Type*>(*parameter);
     return conversionRank(argumentType, parameterType);
 }
@@ -428,6 +445,22 @@ bool OverloadResolver::unify(const AbstractType& parameter, const Type* argument
         if (textureParameter->kind != textureArgument->kind)
             return false;
         return unify(textureParameter->element, textureArgument->element);
+    }
+
+    if (auto* textureStorageParameter = std::get_if<AbstractTextureStorage>(parameter.get())) {
+        auto* textureStorageArgument = std::get_if<Types::TextureStorage>(argumentType);
+        if (!textureStorageArgument)
+            return false;
+        if (textureStorageParameter->kind != textureStorageArgument->kind)
+            return false;
+        if (!unify(textureStorageParameter->format, WTF::enumToUnderlyingType(textureStorageArgument->format)))
+            return false;
+        return unify(textureStorageParameter->access, WTF::enumToUnderlyingType(textureStorageArgument->access));
+    }
+
+    if (auto* channelFormat = std::get_if<AbstractChannelFormat>(parameter.get())) {
+        auto format = materialize(channelFormat->format);
+        return !!conversionRank(argumentType, shaderTypeForTexelFormat(static_cast<TexelFormat>(format), m_types));
     }
 
     if (auto* arrayParameter = std::get_if<AbstractArray>(parameter.get())) {
@@ -561,6 +594,17 @@ void printInternal(PrintStream& out, const WGSL::AbstractType& type)
             printInternal(out, texture.element);
             out.print(">");
         },
+        [&](const WGSL::AbstractTextureStorage& texture) {
+            printInternal(out, texture.kind);
+            out.print("<");
+            printInternal(out, texture.format);
+            out.print(", ");
+            printInternal(out, texture.access);
+            out.print(">");
+        },
+        [&](const WGSL::AbstractChannelFormat& channelFormat) {
+            out.print("ChannelFormat<", channelFormat.format, ">");
+        },
         [&](const WGSL::AbstractReference& reference) {
             out.print("ref<");
             printInternal(out, reference.addressSpace);
@@ -640,6 +684,24 @@ void printInternal(PrintStream& out, WGSL::Types::Texture::Kind textureKind)
         return;
     case WGSL::Types::Texture::Kind::TextureMultisampled2d:
         out.print("texture_multisampled_2d");
+        return;
+    }
+}
+
+void printInternal(PrintStream& out, WGSL::Types::TextureStorage::Kind textureKind)
+{
+    switch (textureKind) {
+    case WGSL::Types::TextureStorage::Kind::TextureStorage1d:
+        out.print("texture_storage_1d");
+        return;
+    case WGSL::Types::TextureStorage::Kind::TextureStorage2d:
+        out.print("texture_storage_2d");
+        return;
+    case WGSL::Types::TextureStorage::Kind::TextureStorage2dArray:
+        out.print("texture_storage_2d_array");
+        return;
+    case WGSL::Types::TextureStorage::Kind::TextureStorage3d:
+        out.print("texture_storage_3d");
         return;
     }
 }

@@ -143,7 +143,7 @@ void LibWebRTCSocketFactory::forSocketInGroup(ScriptExecutionContextIdentifier c
 {
     ASSERT(!WTF::isMainRunLoop());
     for (auto& socket : m_sockets.values()) {
-        if (socket.get()->contextIdentifier() == contextIdentifier)
+        if (socket->contextIdentifier() == contextIdentifier)
             callback(*socket);
     }
 }

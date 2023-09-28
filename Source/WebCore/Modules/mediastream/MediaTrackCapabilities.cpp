@@ -32,17 +32,12 @@
 
 namespace WebCore {
 
-static DoubleRange capabilityDoubleRange(const CapabilityValueOrRange& value)
+static DoubleRange capabilityDoubleRange(const CapabilityRange& value)
 {
-    DoubleRange range;
-    switch (value.type()) {
-    case CapabilityValueOrRange::Double:
-        range.min = value.value().asDouble;
-        range.max = range.min;
-        break;
-    case CapabilityValueOrRange::DoubleRange: {
-        auto min = value.rangeMin().asDouble;
-        auto max = value.rangeMax().asDouble;
+    if (value.type() == CapabilityRange::Type::DoubleRange) {
+        DoubleRange range;
+        auto min = value.doubleRange().min;
+        auto max = value.doubleRange().max;
 
         ASSERT(min != std::numeric_limits<double>::min() || max != std::numeric_limits<double>::max());
 
@@ -50,36 +45,21 @@ static DoubleRange capabilityDoubleRange(const CapabilityValueOrRange& value)
             range.min = min;
         if (max != std::numeric_limits<double>::max())
             range.max = max;
-        break;
+
+        return range;
     }
-    case CapabilityValueOrRange::Undefined:
-    case CapabilityValueOrRange::ULong:
-    case CapabilityValueOrRange::ULongRange:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    return range;
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
-static LongRange capabilityIntRange(const CapabilityValueOrRange& value)
+static LongRange capabilityIntRange(const CapabilityRange& value)
 {
-    LongRange range;
-    switch (value.type()) {
-    case CapabilityValueOrRange::ULong:
-        range.min = value.value().asInt;
-        range.max = range.min;
-        break;
-    case CapabilityValueOrRange::ULongRange:
-        range.min = value.rangeMin().asInt;
-        range.max = value.rangeMax().asInt;
-        break;
-    case CapabilityValueOrRange::Undefined:
-    case CapabilityValueOrRange::Double:
-    case CapabilityValueOrRange::DoubleRange:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    return range;
+    if (value.type() == CapabilityRange::Type::LongRange)
+        return { value.longRange().max, value.longRange().min };
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static Vector<String> capabilityStringVector(const Vector<VideoFacingMode>& modes)

@@ -84,6 +84,7 @@ public:
     WEBCORE_EXPORT Node* containerNode() const; // null for a before/after position anchored to a node with no parent
     RefPtr<Node> protectedContainerNode() const { return containerNode(); }
     Text* containerText() const;
+    RefPtr<Text> protectedContainerText() const;
     Element* containerOrParentElement() const;
 
     int computeOffsetInContainerNode() const;  // O(n) for before/after-anchored positions, O(1) for parent-anchored positions

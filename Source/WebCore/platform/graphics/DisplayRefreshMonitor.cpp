@@ -115,7 +115,7 @@ std::optional<FramesPerSecond> DisplayRefreshMonitor::maximumClientPreferredFram
 {
     std::optional<FramesPerSecond> maxFramesPerSecond;
     for (auto& client : m_clients)
-        maxFramesPerSecond = std::max<FramesPerSecond>(maxFramesPerSecond.value_or(0), client.get()->preferredFramesPerSecond());
+        maxFramesPerSecond = std::max<FramesPerSecond>(maxFramesPerSecond.value_or(0), client->preferredFramesPerSecond());
 
     return maxFramesPerSecond;
 }
@@ -207,7 +207,7 @@ void DisplayRefreshMonitor::displayDidRefresh(const DisplayUpdate& displayUpdate
     m_clientsToBeNotified = &clientsToBeNotified;
     while (!clientsToBeNotified.isEmpty()) {
         auto client = clientsToBeNotified.takeAny();
-        client.get()->fireDisplayRefreshIfNeeded(displayUpdate);
+        client->fireDisplayRefreshIfNeeded(displayUpdate);
 
         // This checks if this function was reentered. In that case, stop iterating
         // since it's not safe to use the set any more.

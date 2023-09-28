@@ -52,9 +52,6 @@ struct GraphicsDropShadow {
     bool isVisible() const { return color.isVisible(); }
     bool isBlurred() const { return isVisible() && radius; }
     bool hasOutsets() const { return isBlurred() || (isVisible() && !offset.isZero()); }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<GraphicsDropShadow> decode(Decoder&);
 };
 
 inline bool operator==(const GraphicsDropShadow& a, const GraphicsDropShadow& b)
@@ -66,17 +63,12 @@ struct GraphicsGaussianBlur {
     FloatSize radius;
 
     friend bool operator==(const GraphicsGaussianBlur&, const GraphicsGaussianBlur&) = default;
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<GraphicsGaussianBlur> decode(Decoder&);
 };
 
 struct GraphicsColorMatrix {
     std::array<float, 20> values;
 
     friend bool operator==(const GraphicsColorMatrix&, const GraphicsColorMatrix&) = default;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<GraphicsColorMatrix> decode(Decoder&);
 };
 
 using GraphicsStyle = std::variant<
@@ -89,80 +81,5 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsDropS
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsGaussianBlur&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsColorMatrix&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsStyle&);
-
-template<class Encoder>
-void GraphicsDropShadow::encode(Encoder& encoder) const
-{
-    encoder << offset;
-    encoder << radius;
-    encoder << color;
-    encoder << radiusMode;
-    encoder << opacity;
-}
-
-template<class Decoder>
-std::optional<GraphicsDropShadow> GraphicsDropShadow::decode(Decoder& decoder)
-{
-    std::optional<FloatSize> offset;
-    decoder >> offset;
-    if (!offset)
-        return std::nullopt;
-
-    std::optional<float> radius;
-    decoder >> radius;
-    if (!radius)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    std::optional<ShadowRadiusMode> radiusMode;
-    decoder >> radiusMode;
-    if (!radius)
-        return std::nullopt;
-
-    std::optional<float> opacity;
-    decoder >> opacity;
-    if (!opacity)
-        return std::nullopt;
-
-    return GraphicsDropShadow { *offset, *radius, *color, *radiusMode, *opacity };
-}
-
-template<class Encoder>
-void GraphicsGaussianBlur::encode(Encoder& encoder) const
-{
-    encoder << radius;
-}
-
-template<class Decoder>
-std::optional<GraphicsGaussianBlur> GraphicsGaussianBlur::decode(Decoder& decoder)
-{
-    std::optional<FloatSize> radius;
-    decoder >> radius;
-    if (!radius)
-        return std::nullopt;
-
-    return GraphicsGaussianBlur { *radius };
-}
-
-template<class Encoder>
-void GraphicsColorMatrix::encode(Encoder& encoder) const
-{
-    encoder << values;
-}
-
-template<class Decoder>
-std::optional<GraphicsColorMatrix> GraphicsColorMatrix::decode(Decoder& decoder)
-{
-    std::optional<std::array<float, 20>> values;
-    decoder >> values;
-    if (!values)
-        return std::nullopt;
-
-    return GraphicsColorMatrix { WTFMove(*values) };
-}
 
 } // namespace WebCore

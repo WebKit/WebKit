@@ -242,6 +242,7 @@ bool Box::isInlineLevelBox() const
         || display == DisplayType::InlineGrid
         || display == DisplayType::Ruby
         || display == DisplayType::RubyBase
+        || display == DisplayType::RubyAnnotation
         || isInlineBlockBox()
         || isInlineTableBox();
 }
@@ -299,6 +300,11 @@ bool Box::isLayoutContainmentBox() const
 bool Box::isRubyAnnotationBox() const
 {
     return m_style.display() == DisplayType::RubyAnnotation;
+}
+
+bool Box::isInterlinearRubyAnnotationBox() const
+{
+    return isRubyAnnotationBox() && m_style.rubyPosition() != RubyPosition::InterCharacter;
 }
 
 bool Box::isInternalRubyBox() const

@@ -51,7 +51,7 @@ void Font::platformDestroy()
     ScriptFreeCache(&m_scriptCache);
 }
 
-RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
+RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
 {
     float scaledSize = scaleFactor * m_platformData.size();
     if (origin() == Origin::Remote)

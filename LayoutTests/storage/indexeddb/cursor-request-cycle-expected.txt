@@ -32,9 +32,10 @@ gc()
 PASS isAnyCollected(cursorObservers) is false
 PASS isAnyCollected(cursorRequestObservers) is false
 finalRequest = store.get(0)
+Check result after transaction commits automatically after finishing requests.
 
-finalRequestSuccess():
-Ensure requests and cursors are released.
+onTransactionComplete():
+Ensure requests and cursors are released after transaction commits.
 PASS cursors is non-null.
 PASS cursors.length is 1000
 cursors = null

@@ -35,7 +35,7 @@
 #import "TestInputDelegate.h"
 #import "TestUIMenuBuilder.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebKit/WKPreferencesPrivate.h>

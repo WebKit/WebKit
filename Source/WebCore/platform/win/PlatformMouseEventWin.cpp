@@ -38,7 +38,7 @@ namespace WebCore {
 
 #define HIGH_BIT_MASK_SHORT 0x8000
 
-static IntPoint positionForEvent(HWND hWnd, LPARAM lParam)
+static IntPoint positionForEvent(HWND, LPARAM lParam)
 {
     IntPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     return point;

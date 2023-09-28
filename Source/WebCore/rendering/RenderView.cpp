@@ -1043,7 +1043,7 @@ RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
         return;
     if (!m_rootView)
         return;
-    m_rootView.get()->flushAccumulatedRepaintRegion();
+    m_rootView->flushAccumulatedRepaintRegion();
 }
 
 unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const

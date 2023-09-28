@@ -883,7 +883,7 @@ void WebExtensionAPITabs::captureVisibleTab(WebPage* page, double windowID, NSDi
     }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::sendMessage(WebFrame *frame, double tabID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::sendMessage(WebFrame *frame, double tabID, NSString *messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/sendMessage
 
@@ -891,7 +891,7 @@ void WebExtensionAPITabs::sendMessage(WebFrame *frame, double tabID, NSString *m
     if (!isValid(tabIdentifer, outExceptionString))
         return;
 
-    if (message.length > webExtensionMaxMessageLength) {
+    if (messageJSON.length > webExtensionMaxMessageLength) {
         *outExceptionString = toErrorString(nil, @"message", @"it exceeded the maximum allowed length");
         return;
     }
@@ -909,7 +909,7 @@ void WebExtensionAPITabs::sendMessage(WebFrame *frame, double tabID, NSString *m
         frame->url(),
     };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), message, targetFrameIdentifier, sender), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, WebExtensionTab::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), messageJSON, targetFrameIdentifier, sender), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, WebExtensionTab::Error error) {
         if (error) {
             callback->reportError(error.value());
             return;

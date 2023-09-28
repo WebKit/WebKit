@@ -72,8 +72,8 @@ public:
     Result<AST::Variable::Ref> parseVariable();
     Result<AST::Variable::Ref> parseVariableWithAttributes(AST::Attribute::List&&);
     Result<AST::VariableQualifier::Ref> parseVariableQualifier();
-    Result<AST::StorageClass> parseStorageClass();
-    Result<AST::AccessMode> parseAccessMode();
+    Result<AddressSpace> parseAddressSpace();
+    Result<AccessMode> parseAccessMode();
     Result<AST::Function::Ref> parseFunction(AST::Attribute::List&&);
     Result<std::reference_wrapper<AST::Parameter>> parseParameter();
     Result<AST::Statement::Ref> parseStatement();
@@ -81,6 +81,7 @@ public:
     Result<AST::Statement::Ref> parseIfStatement();
     Result<AST::Statement::Ref> parseIfStatementWithAttributes(AST::Attribute::List&&, SourcePosition _startOfElementPosition);
     Result<AST::Statement::Ref> parseForStatement();
+    Result<AST::Statement::Ref> parseWhileStatement();
     Result<AST::Statement::Ref> parseReturnStatement();
     Result<AST::Statement::Ref> parseVariableUpdatingStatement();
     Result<AST::Statement::Ref> parseVariableUpdatingStatement(AST::Expression::Ref&&);

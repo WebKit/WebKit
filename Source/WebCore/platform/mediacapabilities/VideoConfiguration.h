@@ -45,9 +45,6 @@ struct VideoConfiguration {
 
     VideoConfiguration isolatedCopy() const &;
     VideoConfiguration isolatedCopy() &&;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<VideoConfiguration> decode(Decoder&);
 };
 
 inline VideoConfiguration VideoConfiguration::isolatedCopy() const &
@@ -58,81 +55,6 @@ inline VideoConfiguration VideoConfiguration::isolatedCopy() const &
 inline VideoConfiguration VideoConfiguration::isolatedCopy() &&
 {
     return { WTFMove(contentType).isolatedCopy(), width, height, bitrate, framerate, alphaChannel, colorGamut, hdrMetadataType, transferFunction };
-}
-
-template<class Encoder>
-void VideoConfiguration::encode(Encoder& encoder) const
-{
-    encoder << contentType;
-    encoder << width;
-    encoder << height;
-    encoder << bitrate;
-    encoder << framerate;
-    encoder << alphaChannel;
-    encoder << colorGamut;
-    encoder << hdrMetadataType;
-    encoder << transferFunction;
-}
-
-template<class Decoder>
-std::optional<VideoConfiguration> VideoConfiguration::decode(Decoder& decoder)
-{
-    std::optional<String> contentType;
-    decoder >> contentType;
-    if (!contentType)
-        return std::nullopt;
-
-    std::optional<uint32_t> width;
-    decoder >> width;
-    if (!width)
-        return std::nullopt;
-
-    std::optional<uint32_t> height;
-    decoder >> height;
-    if (!height)
-        return std::nullopt;
-
-    std::optional<uint64_t> bitrate;
-    decoder >> bitrate;
-    if (!bitrate)
-        return std::nullopt;
-
-    std::optional<double> framerate;
-    decoder >> framerate;
-    if (!framerate)
-        return std::nullopt;
-
-    std::optional<std::optional<bool>> alphaChannel;
-    decoder >> alphaChannel;
-    if (!alphaChannel)
-        return std::nullopt;
-
-    std::optional<std::optional<ColorGamut>> colorGamut;
-    decoder >> colorGamut;
-    if (!colorGamut)
-        return std::nullopt;
-
-    std::optional<std::optional<HdrMetadataType>> hdrMetadataType;
-    decoder >> hdrMetadataType;
-    if (!hdrMetadataType)
-        return std::nullopt;
-
-    std::optional<std::optional<TransferFunction>> transferFunction;
-    decoder >> transferFunction;
-    if (!transferFunction)
-        return std::nullopt;
-
-    return {{
-        *contentType,
-        *width,
-        *height,
-        *bitrate,
-        *framerate,
-        *alphaChannel,
-        *colorGamut,
-        *hdrMetadataType,
-        *transferFunction,
-    }};
 }
 
 } // namespace WebCore

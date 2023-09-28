@@ -46,7 +46,7 @@ class LocalFrame;
 
 namespace WebKit {
 
-class PDFPlugin;
+class PDFPluginBase;
 class ShareableBitmap;
 class WebPage;
 
@@ -144,7 +144,7 @@ private:
     void clipRectChanged() final;
 
     Ref<WebCore::HTMLPlugInElement> m_pluginElement;
-    Ref<PDFPlugin> m_plugin;
+    Ref<PDFPluginBase> m_plugin;
     WeakPtr<WebPage> m_webPage;
     URL m_mainResourceURL;
     String m_mainResourceContentType;

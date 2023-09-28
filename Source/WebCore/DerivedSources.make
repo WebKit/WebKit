@@ -2333,11 +2333,7 @@ PREPROCESS_IDLS_SCRIPTS = \
 
 # JS bindings generator
 
-IDL_INCLUDES = \
-    $(WebCore)/Modules \
-    $(ADDITIONAL_BINDING_IDLS_PATHS)
-
-IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir .
+IDL_COMMON_ARGS = --write-dependencies --outputDir .
 
 JS_BINDINGS_SCRIPTS = $(COMMON_BINDINGS_SCRIPTS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
 
@@ -2428,15 +2424,15 @@ vpath %.idl $(ADDITIONAL_BINDING_IDLS_PATHS) $(WebCore)/bindings/scripts
 # -------------------------------------------------
 define GENERATE_BINDINGS_template
 
-JS$(call get_bare_name,$(1)).cpp JS$(call get_bare_name,$(1)).h: $(1) $$(JS_BINDINGS_SCRIPTS) $$(IDL_ATTRIBUTES_FILE) $$(IDL_INTERMEDIATE_FILES) $$(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+JS$(call get_bare_name,$(1)).cpp JS$(call get_bare_name,$(1)).h: $(1) $$(JS_BINDINGS_SCRIPTS) $$(IDL_ATTRIBUTES_FILE) $$(IDL_INTERMEDIATE_FILES) $$(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES) $(IDL_FILE_NAMES_LIST)
 	$$(PERL) $$(WebCore)/bindings/scripts/generate-bindings.pl \
 		$$(IDL_COMMON_ARGS) \
 		--defines "$$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" \
 		--generator JS \
 		--idlAttributesFile $$(IDL_ATTRIBUTES_FILE) \
+		--idlFileNamesList $(IDL_FILE_NAMES_LIST) \
 		--supplementalDependencyFile $$(SUPPLEMENTAL_DEPENDENCY_FILE) \
 		$$<
-
 endef
 # -------------------------------------------------
 

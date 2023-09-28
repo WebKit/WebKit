@@ -82,6 +82,7 @@ public:
     void visit(AST::ReturnStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::WhileStatement&) override;
 
     // Expressions
     void visit(AST::Expression&) override;
@@ -220,6 +221,27 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
         }
     ));
 
+    introduceType(AST::Identifier::make("atomic"_s), m_types.typeConstructorType(
+        "atomic"_s,
+        [this](AST::ElaboratedTypeExpression& type) -> const Type* {
+            if (type.arguments().size() != 1) {
+                typeError(InferBottom::No, type.span(), "'atomic' requires 1 template arguments");
+                return m_types.bottomType();
+            }
+
+            auto* elementType = resolve(type.arguments()[0]);
+            if (isBottom(elementType))
+                return m_types.bottomType();
+
+            if (elementType != m_types.i32Type() && elementType != m_types.u32Type()) {
+                typeError(InferBottom::No, type.arguments()[0].span(), "atomic only supports i32 or u32 types");
+                return m_types.bottomType();
+            }
+
+            return m_types.atomicType(elementType);
+        }
+    ));
+
     allocateSimpleConstructor("vec2"_s, &TypeStore::vectorType, 2);
     allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, 3);
     allocateSimpleConstructor("vec4"_s, &TypeStore::vectorType, 4);
@@ -351,8 +373,8 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         AddressSpace addressSpace;
         AccessMode accessMode;
         if (auto* maybeQualifier = variable.maybeQualifier()) {
-            addressSpace = static_cast<AddressSpace>(maybeQualifier->storageClass());
-            accessMode = static_cast<AccessMode>(maybeQualifier->accessMode());
+            addressSpace = maybeQualifier->addressSpace();
+            accessMode = maybeQualifier->accessMode();
         } else if (variableKind == VariableKind::Local) {
             addressSpace = AddressSpace::Function;
             accessMode = AccessMode::ReadWrite;
@@ -592,6 +614,15 @@ void TypeChecker::visit(AST::ForStatement& statement)
 
     if (auto* update = statement.maybeUpdate())
         AST::Visitor::visit(*update);
+
+    visit(statement.body());
+}
+
+void TypeChecker::visit(AST::WhileStatement& statement)
+{
+    auto* testType = infer(statement.test());
+    if (!unify(m_types.boolType(), testType))
+        typeError(InferBottom::No, statement.test().span(), "while condition must be bool, got ", *testType);
 
     visit(statement.body());
 }
@@ -1258,28 +1289,9 @@ std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
     ASSERT(is<AST::IdentifierExpression>(expression));
     auto& formatName = downcast<AST::IdentifierExpression>(expression).identifier();
 
-    static constexpr std::pair<ComparableASCIILiteral, TexelFormat> texelFormatMappings[] {
-        { "bgra8unorm", TexelFormat::BGRA8unorm },
-        { "r32float", TexelFormat::R32float },
-        { "r32sint", TexelFormat::R32sint },
-        { "r32uint", TexelFormat::R32uint },
-        { "rg32float", TexelFormat::RG32float },
-        { "rg32sint", TexelFormat::RG32sint },
-        { "rg32uint", TexelFormat::RG32uint },
-        { "rgba16float", TexelFormat::RGBA16float },
-        { "rgba16sint", TexelFormat::RGBA16sint },
-        { "rgba16uint", TexelFormat::RGBA16uint },
-        { "rgba32float", TexelFormat::RGBA32float },
-        { "rgba32sint", TexelFormat::RGBA32sint },
-        { "rgba32uint", TexelFormat::RGBA32uint },
-        { "rgba8sint", TexelFormat::RGBA8sint },
-        { "rgba8snorm", TexelFormat::RGBA8snorm },
-        { "rgba8uint", TexelFormat::RGBA8uint },
-        { "rgba8unorm", TexelFormat::RGBA8unorm },
-    };
-    static constexpr SortedArrayMap texelFormats { texelFormatMappings };
-
-    return { texelFormats.get(formatName.id()) };
+    auto* format = parseTexelFormat(formatName.id());
+    ASSERT(format);
+    return { *format };
 }
 
 std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
@@ -1293,14 +1305,9 @@ std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
     ASSERT(is<AST::IdentifierExpression>(expression));
     auto& accessName = downcast<AST::IdentifierExpression>(expression).identifier();
 
-    static constexpr std::pair<ComparableASCIILiteral, AccessMode> accessModeMappings[] {
-        { "read", AccessMode::Read },
-        { "read_write", AccessMode::ReadWrite },
-        { "write", AccessMode::Write },
-    };
-    static constexpr SortedArrayMap accessModes { accessModeMappings };
-
-    return { accessModes.get(accessName.id()) };
+    auto* accessMode = parseAccessMode(accessName.id());
+    ASSERT(accessMode);
+    return { *accessMode };
 }
 
 std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expression)
@@ -1314,18 +1321,9 @@ std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expressio
     ASSERT(is<AST::IdentifierExpression>(expression));
     auto& addressSpaceName = downcast<AST::IdentifierExpression>(expression).identifier();
 
-    static constexpr std::pair<ComparableASCIILiteral, AddressSpace> addressSpaceMappings[] {
-        { "function", AddressSpace::Function },
-        { "handle", AddressSpace::Handle },
-        { "private", AddressSpace::Private },
-        { "storage", AddressSpace::Storage },
-        { "uniform", AddressSpace::Uniform },
-        { "workgroup", AddressSpace::Workgroup },
-
-    };
-    static constexpr SortedArrayMap addressSpaces { addressSpaceMappings };
-
-    return { addressSpaces.get(addressSpaceName.id()) };
+    auto* addressSpace = parseAddressSpace(addressSpaceName.id());
+    ASSERT(addressSpace);
+    return { *addressSpace };
 }
 
 } // namespace WGSL

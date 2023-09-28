@@ -568,6 +568,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXFlowToChanged:
         stream << "AXFlowToChanged";
         break;
+    case AXObjectCache::AXNotification::AXFocusableStateChanged:
+        stream << "AXFocusableStateChanged";
+        break;
     case AXObjectCache::AXNotification::AXFocusedUIElementChanged:
         stream << "AXFocusedUIElementChanged";
         break;

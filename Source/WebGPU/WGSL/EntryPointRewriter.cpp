@@ -153,7 +153,7 @@ void EntryPointRewriter::collectParameters()
 
 void EntryPointRewriter::checkReturnType()
 {
-    if (m_stage != AST::StageAttribute::Stage::Vertex)
+    if (m_stage == AST::StageAttribute::Stage::Compute)
         return;
 
     if (auto* maybeReturnType = m_function.maybeReturnType()) {
@@ -162,25 +162,31 @@ void EntryPointRewriter::checkReturnType()
 
         auto& namedTypeName = downcast<AST::IdentifierExpression>(*maybeReturnType);
         if (auto* structType = std::get_if<Types::Struct>(namedTypeName.inferredType())) {
-            ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
+            const auto& duplicateStruct = [&] (AST::StructureRole role, const char* suffix) {
+                ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
+                String returnStructName = makeString("__", structType->structure.name(), "_", suffix);
+                auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
+                    SourceSpan::empty(),
+                    AST::Identifier::make(returnStructName),
+                    AST::StructureMember::List(structType->structure.members()),
+                    AST::Attribute::List { },
+                    role
+                );
+                m_shaderModule.append(m_shaderModule.structures(), returnStruct);
+                auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+                    SourceSpan::empty(),
+                    AST::Identifier::make(returnStructName)
+                );
+                returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
+                m_shaderModule.replace(namedTypeName, returnType);
+            };
 
-            String returnStructName = makeString("__", structType->structure.name(), "_VertexOutput");
-            auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
-                SourceSpan::empty(),
-                AST::Identifier::make(returnStructName),
-                AST::StructureMember::List(structType->structure.members()),
-                AST::Attribute::List { },
-                AST::StructureRole::VertexOutput
+            if (m_stage == AST::StageAttribute::Stage::Fragment) {
+                duplicateStruct(AST::StructureRole::FragmentOutput, "FragmentOutput");
+                return;
+            }
 
-            );
-            m_shaderModule.append(m_shaderModule.structures(), returnStruct);
-
-            auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
-                SourceSpan::empty(),
-                AST::Identifier::make(returnStructName)
-            );
-            returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
-            m_shaderModule.replace(namedTypeName, returnType);
+            duplicateStruct(AST::StructureRole::VertexOutput, "VertexOutput");
         }
     }
 }

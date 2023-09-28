@@ -30,7 +30,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <wtf/RetainPtr.h>
 
 @interface WKWebView (TextServices)

@@ -114,21 +114,27 @@ public:
     RefPtr<Node> fromElement() const final { return nullptr; }
 
     EventInterface eventInterface() const override;
+    static bool typeIsUpOrDown(const AtomString& type);
+    static MouseButton buttonForType(const AtomString& type) { return !typeIsUpOrDown(type) ? MouseButton::PointerHasNotChanged : MouseButton::Left; }
 
 private:
     static bool typeIsEnterOrLeave(const AtomString& type);
     static CanBubble typeCanBubble(const AtomString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
     static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
     static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
-#if PLATFORM(WPE)
-    static MouseButton buttonForType(const AtomString& type) { return type == eventNames().pointermoveEvent ? MouseButton::PointerMove : MouseButton::Left; }
     static unsigned short buttonsForType(const AtomString& type)
     {
         // We have contact with the touch surface for most events except when we've released the touch or canceled it.
         auto& eventNames = WebCore::eventNames();
         return (type == eventNames.pointerupEvent || type == eventNames.pointeroutEvent || type == eventNames.pointerleaveEvent || type == eventNames.pointercancelEvent) ? 0 : 1;
     }
-#endif
+    static float pressureForPressureInsensitiveInputDevices(unsigned short buttons)
+    {
+        // https://www.w3.org/TR/pointerevents/#dfn-active-buttons-state
+        bool isInActiveButtonsState = buttons;
+        // https://www.w3.org/TR/pointerevents/#dom-pointerevent-pressure
+        return isInActiveButtonsState ? 0.5 : 0;
+    }
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&);
@@ -154,6 +160,12 @@ inline bool PointerEvent::typeIsEnterOrLeave(const AtomString& type)
 {
     auto& eventNames = WebCore::eventNames();
     return type == eventNames.pointerenterEvent || type == eventNames.pointerleaveEvent;
+}
+
+inline bool PointerEvent::typeIsUpOrDown(const AtomString& type)
+{
+    auto& eventNames = WebCore::eventNames();
+    return type == eventNames.pointerupEvent || type == eventNames.pointerdownEvent;
 }
 
 } // namespace WebCore

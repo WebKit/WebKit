@@ -29,7 +29,7 @@
 #if USE(CORE_IMAGE)
 
 #import "FilterImage.h"
-#import "PlatformImageBuffer.h"
+#import "IOSurfaceImageBuffer.h"
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>

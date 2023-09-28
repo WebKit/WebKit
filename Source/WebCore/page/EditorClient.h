@@ -31,6 +31,7 @@
 #include "TextAffinity.h"
 #include "TextChecking.h"
 #include "UndoStep.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -56,7 +57,7 @@ struct GapRects;
 struct GrammarDetail;
 struct SimpleRange;
 
-class EditorClient : public CanMakeWeakPtr<EditorClient> {
+class EditorClient : public CanMakeWeakPtr<EditorClient>, public CanMakeCheckedPtr {
 public:
     virtual ~EditorClient() = default;
 

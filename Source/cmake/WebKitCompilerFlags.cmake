@@ -113,6 +113,8 @@ if (COMPILER_IS_GCC_OR_CLANG)
                                              -Wno-macro-redefined
                                              -Wno-unknown-pragmas
                                              -Wno-nonportable-include-path
+                                             -Wno-sign-compare
+                                             -Wno-deprecated-declarations
                                              -Wno-unknown-argument)
     else ()
         WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-exceptions)

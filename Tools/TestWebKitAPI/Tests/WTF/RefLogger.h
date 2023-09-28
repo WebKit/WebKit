@@ -31,8 +31,8 @@ namespace TestWebKitAPI {
 
 struct RefLogger {
     RefLogger(const char* name);
-    void ref();
-    void deref();
+    void ref() const;
+    void deref() const;
     const char& name;
 };
 

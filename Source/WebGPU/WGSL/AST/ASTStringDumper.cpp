@@ -459,11 +459,7 @@ void StringDumper::visit(StructureMember& member)
 
 void StringDumper::visit(VariableQualifier& qualifier)
 {
-    constexpr ASCIILiteral accessMode[]= { "read"_s, "write"_s, "read_write"_s };
-    constexpr ASCIILiteral storageClass[] = { "function"_s, "private"_s, "workgroup"_s, "uniform"_s, "storage"_s };
-    auto sc = WTF::enumToUnderlyingType(qualifier.storageClass());
-    auto am = WTF::enumToUnderlyingType(qualifier.accessMode());
-    m_out.print("<", storageClass[sc], ",", accessMode[am], ">");
+    m_out.print("<", qualifier.addressSpace(), ",", qualifier.accessMode(), ">");
 }
 
 void dumpAST(ShaderModule& shaderModule)

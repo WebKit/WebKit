@@ -26,8 +26,16 @@
 #import "LegacySocketProvider.h"
 
 #import "WebSocketChannel.h"
+#import <WebCore/WebTransportSession.h>
+#import <wtf/CompletionHandler.h>
 
 RefPtr<WebCore::ThreadableWebSocketChannel> LegacySocketProvider::createWebSocketChannel(WebCore::Document& document, WebCore::WebSocketChannelClient& client)
 {
     return WebCore::WebSocketChannel::create(document, client, *this);
+}
+
+void LegacySocketProvider::initializeWebTransportSession(WebCore::ScriptExecutionContext&, const URL&, CompletionHandler<void(RefPtr<WebCore::WebTransportSession>&&)>&& completionHandler)
+{
+    ASSERT_NOT_REACHED();
+    completionHandler(nullptr);
 }

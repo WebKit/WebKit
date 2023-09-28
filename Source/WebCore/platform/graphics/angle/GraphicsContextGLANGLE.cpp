@@ -1886,26 +1886,6 @@ GCGLint GraphicsContextGLANGLE::getProgrami(PlatformGLObject program, GCGLenum p
     return value;
 }
 
-String GraphicsContextGLANGLE::getUnmangledInfoLog(PlatformGLObject shaders[2], GCGLsizei count, const String& log)
-{
-    UNUSED_PARAM(shaders);
-    UNUSED_PARAM(count);
-    LOG(WebGL, "Original ShaderInfoLog:\n%s", log.utf8().data());
-
-    StringBuilder processedLog;
-
-    // ANGLE inserts a "#extension" line into the shader source that
-    // causes a warning in some compilers. There is no point showing
-    // this warning to the user since they didn't write the code that
-    // is causing it.
-    static constexpr auto angleWarning = "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n"_s;
-    int startFrom = log.startsWith(angleWarning) ? angleWarning.length() : 0;
-    processedLog.append(StringView(log).substring(startFrom, log.length() - startFrom));
-
-    LOG(WebGL, "Unmangled ShaderInfoLog:\n%s", processedLog.toString().utf8().data());
-    return processedLog.toString();
-}
-
 String GraphicsContextGLANGLE::getProgramInfoLog(PlatformGLObject program)
 {
     ASSERT(program);
@@ -1921,12 +1901,7 @@ String GraphicsContextGLANGLE::getProgramInfoLog(PlatformGLObject program)
     GLsizei size = 0;
     Vector<GLchar> info(length);
     GL_GetProgramInfoLog(program, length, &size, info.data());
-
-    GCGLsizei count = 0;
-    PlatformGLObject shaders[2] = { 0u, 0u };
-    getAttachedShaders(program, 2, &count, shaders);
-
-    return getUnmangledInfoLog(shaders, count, String(info.data(), size));
+    return { info.data(), static_cast<unsigned>(size) };
 }
 
 GCGLint GraphicsContextGLANGLE::getRenderbufferParameteri(GCGLenum target, GCGLenum pname)
@@ -1963,9 +1938,7 @@ String GraphicsContextGLANGLE::getShaderInfoLog(PlatformGLObject shader)
     GLsizei size = 0;
     Vector<GLchar> info(length);
     GL_GetShaderInfoLog(shader, length, &size, info.data());
-
-    PlatformGLObject shaders[2] = { shader, 0 };
-    return getUnmangledInfoLog(shaders, 1, String(info.data(), size));
+    return { info.data(), static_cast<unsigned>(size) };
 }
 
 String GraphicsContextGLANGLE::getShaderSource(PlatformGLObject)

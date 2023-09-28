@@ -150,49 +150,6 @@ SpeechRecognitionRealtimeMediaSourceManager::~SpeechRecognitionRealtimeMediaSour
     WebProcess::singleton().removeMessageReceiver(*this);
 }
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-
-void SpeechRecognitionRealtimeMediaSourceManager::grantSandboxExtensions(SandboxExtension::Handle&& machBootstrapHandle,  SandboxExtension::Handle&& sandboxHandleForTCCD, SandboxExtension::Handle&& sandboxHandleForMicrophone)
-{
-    m_machBootstrapExtension = SandboxExtension::create(WTFMove(machBootstrapHandle));
-    if (!m_machBootstrapExtension)
-        RELEASE_LOG_ERROR(Media, "Failed to create Mach bootstrap sandbox extension");
-    else
-        m_machBootstrapExtension->consume();
-
-    m_sandboxExtensionForTCCD = SandboxExtension::create(WTFMove(sandboxHandleForTCCD));
-    if (!m_sandboxExtensionForTCCD)
-        RELEASE_LOG_ERROR(Media, "Failed to create sandbox extension for tccd");
-    else
-        m_sandboxExtensionForTCCD->consume();
-
-    m_sandboxExtensionForMicrophone = SandboxExtension::create(WTFMove(sandboxHandleForMicrophone));
-    if (!m_sandboxExtensionForMicrophone)
-        RELEASE_LOG_ERROR(Media, "Failed to create sandbox extension for microphone");
-    else
-        m_sandboxExtensionForMicrophone->consume();
-}
-
-void SpeechRecognitionRealtimeMediaSourceManager::revokeSandboxExtensions()
-{
-    if (m_sandboxExtensionForTCCD) {
-        m_sandboxExtensionForTCCD->revoke();
-        m_sandboxExtensionForTCCD = nullptr;
-    }
-
-    if (m_sandboxExtensionForMicrophone) {
-        m_sandboxExtensionForMicrophone->revoke();
-        m_sandboxExtensionForMicrophone = nullptr;
-    }
-
-    if (m_machBootstrapExtension) {
-        m_machBootstrapExtension->revoke();
-        m_machBootstrapExtension = nullptr;
-    }
-}
-
-#endif
-
 void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, PageIdentifier pageIdentifier)
 {
     auto result = SpeechRecognitionCaptureSource::createRealtimeMediaSource(device, pageIdentifier);

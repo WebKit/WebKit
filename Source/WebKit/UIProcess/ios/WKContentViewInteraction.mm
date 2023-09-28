@@ -524,7 +524,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 - (NSString *)accessoryViewCustomButtonTitle
 {
-    return [[[_contentView formAccessoryView] _autofill] title];
+    return [_contentView formAccessoryView].autoFillButtonItem.title;
 }
 
 - (void)setAccessoryViewCustomButtonTitle:(NSString *)title
@@ -5374,14 +5374,14 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
     [self _resetIsDoubleTapPending];
 }
 
-// MARK: UIWebFormAccessoryDelegate protocol and accessory methods
-
-- (void)accessoryClear
-{
-    _page->setFocusedElementValue(_focusedElementInformation.elementContext, { });
-}
+// MARK: WKFormAccessoryViewDelegate protocol and accessory methods
 
 - (void)accessoryDone
+{
+    [self accessoryViewDone:_formAccessoryView.get()];
+}
+
+- (void)accessoryViewDone:(WKFormAccessoryView *)view
 {
     if ([_webView _resetFocusPreservationCount])
         RELEASE_LOG_ERROR(ViewState, "Keyboard dismissed with nonzero focus preservation count; check for unbalanced calls to -_incrementFocusPreservationCount");
@@ -5420,6 +5420,12 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)accessoryTab:(BOOL)isNext
 {
+    auto direction = isNext ? WebKit::TabDirection::Next : WebKit::TabDirection::Previous;
+    [self accessoryView:_formAccessoryView.get() tabInDirection:direction];
+}
+
+- (void)accessoryView:(WKFormAccessoryView *)view tabInDirection:(WebKit::TabDirection)direction
+{
     // The input peripheral may need to update the focused DOM node before we switch focus. The UI process does
     // not maintain a handle to the actual focused DOM node – only the web process has such a handle. So, we need
     // to end the editing session now before we tell the web process to switch focus. Once the web process tells
@@ -5430,29 +5436,28 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
     _isChangingFocusUsingAccessoryTab = YES;
     [self beginSelectionChange];
-    _page->focusNextFocusedElement(isNext, [protectedSelf = retainPtr(self)] {
+    _page->focusNextFocusedElement(direction == WebKit::TabDirection::Next, [protectedSelf = retainPtr(self)] {
         [protectedSelf endSelectionChange];
         [protectedSelf reloadInputViews];
         protectedSelf->_isChangingFocusUsingAccessoryTab = NO;
     });
 }
 
-- (void)accessoryAutoFill
+- (void)accessoryViewAutoFill:(WKFormAccessoryView *)view
 {
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
     if ([inputDelegate respondsToSelector:@selector(_webView:accessoryViewCustomButtonTappedInFormInputSession:)])
         [inputDelegate _webView:self.webView accessoryViewCustomButtonTappedInFormInputSession:_formInputSession.get()];
 }
 
-- (UIWebFormAccessory *)formAccessoryView
+- (WKFormAccessoryView *)formAccessoryView
 {
     if (WebKit::defaultAlternateFormControlDesignEnabled())
         return nil;
 
-    if (_formAccessoryView)
-        return _formAccessoryView.get();
-    _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] initWithInputAssistantItem:self.inputAssistantItem]);
-    [_formAccessoryView setDelegate:self];
+    if (!_formAccessoryView)
+        _formAccessoryView = adoptNS([[WKFormAccessoryView alloc] initWithInputAssistantItem:self.inputAssistantItem delegate:self]);
+
     return _formAccessoryView.get();
 }
 
@@ -5474,23 +5479,6 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
     [accessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
     [accessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
-
-    if (!PAL::currentUserInterfaceIdiomIsSmallScreen()) {
-        [accessoryView setClearVisible:NO];
-        return;
-    }
-
-    switch (_focusedElementInformation.elementType) {
-    case WebKit::InputType::Date:
-    case WebKit::InputType::DateTimeLocal:
-    case WebKit::InputType::Month:
-    case WebKit::InputType::Time:
-        [accessoryView setClearVisible:YES];
-        return;
-    default:
-        [accessoryView setClearVisible:NO];
-        return;
-    }
 }
 
 // MARK: Keyboard interaction
@@ -8984,9 +8972,18 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     return (id <WKUIDelegatePrivate>)[_webView UIDelegate];
 }
 
+- (Class)_dragInteractionClass
+{
+#if HAVE(UI_ASYNC_DRAG_INTERACTION)
+    if (_page->preferences().useAsyncUIKitInteractions())
+        return _UIAsyncDragInteraction.class;
+#endif
+    return UIDragInteraction.class;
+}
+
 - (void)setUpDragAndDropInteractions
 {
-    _dragInteraction = adoptNS([[UIDragInteraction alloc] initWithDelegate:self]);
+    _dragInteraction = adoptNS([[self._dragInteractionClass alloc] initWithDelegate:self]);
     _dropInteraction = adoptNS([[UIDropInteraction alloc] initWithDelegate:self]);
     [_dragInteraction _setLiftDelay:self.dragLiftDelay];
     [_dragInteraction setEnabled:shouldEnableDragInteractionForPolicy(self.webView._dragInteractionPolicy)];
@@ -9964,6 +9961,26 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
     [existingLocalDragSessionContext(session) cleanUpTemporaryDirectories];
 }
+
+#if HAVE(UI_ASYNC_DRAG_INTERACTION)
+
+#pragma mark - _UIAsyncDragInteractionDelegate
+
+- (void)asyncDragInteraction:(_UIAsyncDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
+{
+    [self _dragInteraction:interaction prepareForSession:session completion:[completion = makeBlockPtr(completion)] {
+        completion();
+    }];
+}
+
+- (void)asyncDragInteraction:(_UIAsyncDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
+{
+    [self _dragInteraction:interaction itemsForAddingToSession:session withTouchAtPoint:point completion:[completion = makeBlockPtr(completion)](NSArray<UIDragItem *> *items) {
+        completion(items);
+    }];
+}
+
+#endif // HAVE(UI_ASYNC_DRAG_INTERACTION)
 
 #pragma mark - UIDropInteractionDelegate
 
@@ -12026,6 +12043,15 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     return self.webView._allowAnimationControls;
 }
 #endif
+
+- (void)dismissFormAccessoryView
+{
+#if !PLATFORM(WATCHOS)
+    if (auto dateInput = self.dateTimeInputControl; [dateInput dismissWithAnimation])
+        return;
+#endif
+    [self accessoryDone];
+}
 
 #if ENABLE(DATALIST_ELEMENT)
 - (void)_selectDataListOption:(NSInteger)optionIndex

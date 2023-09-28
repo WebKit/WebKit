@@ -1405,7 +1405,7 @@ RenderBox* LocalFrameView::embeddedContentBox() const
 void LocalFrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
     if (!m_embeddedObjectsToUpdate)
-        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<RenderEmbeddedObject*>>();
+        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<CheckedPtr<RenderEmbeddedObject>>>();
 
     auto& element = embeddedObject.frameOwnerElement();
     if (is<HTMLPlugInImageElement>(element))
@@ -4336,11 +4336,11 @@ float LocalFrameView::adjustVerticalPageScrollStepForFixedContent(float step)
     float topObscuredArea = 0;
     float bottomObscuredArea = 0;
     for (const auto& positionedObject : *positionedObjects) {
-        const RenderStyle& style = positionedObject->style();
+        const RenderStyle& style = positionedObject.style();
         if (style.position() != PositionType::Fixed || style.visibility() == Visibility::Hidden || !style.opacity())
             continue;
 
-        FloatQuad contentQuad = positionedObject->absoluteContentQuad();
+        FloatQuad contentQuad = positionedObject.absoluteContentQuad();
         if (!contentQuad.isRectilinear())
             continue;
 
@@ -6088,7 +6088,7 @@ void LocalFrameView::updateWidgetPositionsTimerFired()
 void LocalFrameView::notifyWidgets(WidgetNotification notification)
 {
     for (auto& widget : collectAndProtectWidgets(m_widgetsInRenderTree))
-        widget.get()->notifyWidget(notification);
+        widget->notifyWidget(notification);
 }
 
 void LocalFrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect)

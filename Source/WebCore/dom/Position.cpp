@@ -198,6 +198,11 @@ Text* Position::containerText() const
     return nullptr;
 }
 
+RefPtr<Text> Position::protectedContainerText() const
+{
+    return containerText();
+}
+
 Element* Position::containerOrParentElement() const
 {
     auto* container = containerNode();

@@ -73,7 +73,7 @@ void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, 
 {
 }
 
-void Widget::setFocus(bool focused)
+void Widget::setFocus(bool)
 {
 }
 

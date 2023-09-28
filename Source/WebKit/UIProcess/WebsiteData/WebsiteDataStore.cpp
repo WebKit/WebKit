@@ -247,7 +247,7 @@ bool WebsiteDataStore::defaultDataStoreExists()
 RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const WTF::UUID& identifier)
 {
     for (auto& dataStore : allDataStores().values()) {
-        if (dataStore && dataStore.get()->configuration().identifier() == identifier)
+        if (dataStore && dataStore->configuration().identifier() == identifier)
             return dataStore.get();
     }
 
@@ -261,7 +261,7 @@ Ref<WebsiteDataStore> WebsiteDataStore::dataStoreForIdentifier(const WTF::UUID& 
 
     InitializeWebKit2();
     for (auto& dataStore : allDataStores().values()) {
-        if (dataStore && dataStore.get()->configuration().identifier() == uuid)
+        if (dataStore && dataStore->configuration().identifier() == uuid)
             return Ref { *dataStore };
     }
 
@@ -298,8 +298,8 @@ static Ref<NetworkProcessProxy> networkProcessForSession(PAL::SessionID sessionI
     if (sessionID.isEphemeral()) {
         // Reuse a previous persistent session network process for ephemeral sessions.
         for (auto& dataStore : allDataStores().values()) {
-            if (dataStore.get()->isPersistent())
-                return dataStore.get()->networkProcess();
+            if (dataStore->isPersistent())
+                return dataStore->networkProcess();
         }
     }
     return NetworkProcessProxy::create();
@@ -1831,7 +1831,7 @@ void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheMode
 Vector<WebsiteDataStoreParameters> WebsiteDataStore::parametersFromEachWebsiteDataStore()
 {
     return WTF::map(allDataStores(), [](auto& entry) {
-        return entry.value.get()->parameters();
+        return entry.value->parameters();
     });
 }
 
@@ -2509,6 +2509,7 @@ void WebsiteDataStore::removePage(WebPageProxy& page)
 #endif
 }
 
+#if ENABLE(SERVICE_WORKER)
 void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -2544,5 +2545,5 @@ void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, Completi
     RELEASE_LOG(Push, "Sending push message to network process to handle");
     networkProcess().processPushMessage(sessionID(), WTFMove(pushMessage), WTFMove(innerHandler));
 }
-
+#endif // ENABLE(SERVICE_WORKER)
 } // namespace WebKit

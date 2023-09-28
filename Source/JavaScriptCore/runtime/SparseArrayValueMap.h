@@ -35,47 +35,7 @@
 
 namespace JSC {
 
-class SparseArrayValueMap;
-
-class SparseArrayEntry : private WriteBarrier<Unknown> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    using Base = WriteBarrier<Unknown>;
-
-    SparseArrayEntry()
-    {
-        Base::setWithoutWriteBarrier(jsUndefined());
-    }
-
-    void get(JSObject*, PropertySlot&) const;
-    void get(PropertyDescriptor&) const;
-    bool put(JSGlobalObject*, JSValue thisValue, SparseArrayValueMap*, JSValue, bool shouldThrow);
-    JSValue getNonSparseMode() const;
-    JSValue getConcurrently() const;
-
-    unsigned attributes() const { return m_attributes; }
-
-    void forceSet(unsigned attributes)
-    {
-        // FIXME: We can expand this for non x86 environments. Currently, loading ReadOnly | DontDelete property
-        // from compiler thread is only supported in X86 architecture because of its TSO nature.
-        // https://bugs.webkit.org/show_bug.cgi?id=134641
-        if (isX86())
-            WTF::storeStoreFence();
-        m_attributes = attributes;
-    }
-
-    void forceSet(VM& vm, JSCell* map, JSValue value, unsigned attributes)
-    {
-        Base::set(vm, map, value);
-        forceSet(attributes);
-    }
-
-    WriteBarrier<Unknown>& asValue() { return *this; }
-
-private:
-    unsigned m_attributes { 0 };
-};
+class SparseArrayEntry;
 
 class SparseArrayValueMap final : public JSCell {
 public:
@@ -86,9 +46,10 @@ private:
     typedef HashMap<uint64_t, SparseArrayEntry, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> Map;
 
     enum Flags {
-        Normal = 0,
-        SparseMode = 1,
-        LengthIsReadOnly = 2,
+        Normal                             = 0,
+        SparseMode                         = 1 << 0,
+        LengthIsReadOnly                   = 1 << 1,
+        HasAnyKindOfGetterSetterProperties = 1 << 2,
     };
 
     SparseArrayValueMap(VM&);
@@ -137,6 +98,16 @@ public:
         m_flags = static_cast<Flags>(m_flags | LengthIsReadOnly);
     }
 
+    bool hasAnyKindOfGetterSetterProperties()
+    {
+        return m_flags & HasAnyKindOfGetterSetterProperties;
+    }
+
+    void setHasAnyKindOfGetterSetterProperties()
+    {
+        m_flags = static_cast<Flags>(m_flags | HasAnyKindOfGetterSetterProperties);
+    }
+
     // These methods may mutate the contents of the map
     bool putEntry(JSGlobalObject*, JSObject*, unsigned, JSValue, bool shouldThrow);
     bool putDirect(JSGlobalObject*, JSObject*, unsigned, JSValue, unsigned attributes, PutDirectIndexMode);
@@ -161,6 +132,50 @@ private:
     Map m_map;
     Flags m_flags { Normal };
     size_t m_reportedCapacity { 0 };
+};
+
+class SparseArrayEntry : private WriteBarrier<Unknown> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    using Base = WriteBarrier<Unknown>;
+
+    SparseArrayEntry()
+    {
+        Base::setWithoutWriteBarrier(jsUndefined());
+    }
+
+    void get(JSObject*, PropertySlot&) const;
+    void get(PropertyDescriptor&) const;
+    bool put(JSGlobalObject*, JSValue thisValue, SparseArrayValueMap*, JSValue, bool shouldThrow);
+    JSValue getNonSparseMode() const;
+    JSValue getConcurrently() const;
+    JSValue get() const;
+
+    unsigned attributes() const { return m_attributes; }
+
+    void forceSet(SparseArrayValueMap* map, unsigned attributes)
+    {
+        // FIXME: We can expand this for non x86 environments. Currently, loading ReadOnly | DontDelete property
+        // from compiler thread is only supported in X86 architecture because of its TSO nature.
+        // https://bugs.webkit.org/show_bug.cgi?id=134641
+        if (isX86())
+            WTF::storeStoreFence();
+
+        if (attributes & PropertyAttribute::Accessor)
+            map->setHasAnyKindOfGetterSetterProperties();
+        m_attributes = attributes;
+    }
+
+    void forceSet(VM& vm, SparseArrayValueMap* map, JSValue value, unsigned attributes)
+    {
+        Base::set(vm, map, value);
+        forceSet(map, attributes);
+    }
+
+    WriteBarrier<Unknown>& asValue() { return *this; }
+
+private:
+    unsigned m_attributes { 0 };
 };
 
 } // namespace JSC

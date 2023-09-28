@@ -648,6 +648,38 @@ static WebVTTNodeType tokenToNodeType(WebVTTToken& token)
     return WebVTTNodeTypeNone;
 }
 
+template<int width>
+static inline void appendNumber(StringBuilder& builder, unsigned value)
+{
+    String valueString = String::number(value);
+    int fillingZerosCount = width - valueString.length();
+    for (int i = 0; i < fillingZerosCount; ++i)
+        builder.append('0');
+    builder.append(valueString);
+}
+
+static WTF::String serializeTimestamp(double timestamp)
+{
+    uint64_t total = timestamp * 1000;
+    unsigned milliseconds = total % 1000;
+    total /= 1000;
+    unsigned seconds = total % 60;
+    total /= 60;
+    unsigned minutes = total % 60;
+    unsigned hours = total / 60;
+
+    StringBuilder builder;
+    appendNumber<2>(builder, hours);
+    builder.append(':');
+    appendNumber<2>(builder, minutes);
+    builder.append(':');
+    appendNumber<2>(builder, seconds);
+    builder.append('.');
+    appendNumber<3>(builder, milliseconds);
+
+    return builder.toString();
+}
+
 void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 {
     // http://dev.w3.org/html5/webvtt/#webvtt-cue-text-dom-construction-rules
@@ -710,10 +742,9 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         break;
     }
     case WebVTTTokenTypes::TimestampTag: {
-        String charactersString = m_token.characters();
         MediaTime parsedTimeStamp;
-        if (WebVTTParser::collectTimeStamp(charactersString, parsedTimeStamp))
-            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, WTFMove(charactersString)));
+        if (WebVTTParser::collectTimeStamp(m_token.characters(), parsedTimeStamp))
+            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, serializeTimestamp(parsedTimeStamp.toDouble())));
         break;
     }
     default:

@@ -31,13 +31,13 @@
 #import <QuartzCore/QuartzCore.h>
 
 namespace WebKit {
-class CGDisplayList;
+class DynamicContentScalingDisplayList;
 }
 
 @interface WKCompositingLayer : CALayer
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-- (void)_setWKContents:(id)contents withDisplayList:(WebKit::CGDisplayList&&)data replayForTesting:(BOOL)replay;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+- (void)_setWKContents:(id)contents withDisplayList:(WebKit::DynamicContentScalingDisplayList&&)data replayForTesting:(BOOL)replay;
 #endif
 
 @end

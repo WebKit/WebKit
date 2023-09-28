@@ -63,10 +63,6 @@ struct ImageBufferCreationContext {
     IOSurfacePool* surfacePool { nullptr };
     PlatformDisplayID displayID { 0 };
 #endif
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    enum class UseCGDisplayListImageCache : bool { No, Yes };
-    UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
-#endif
     WebCore::ProcessIdentity resourceOwner;
 
     ImageBufferCreationContext() = default; // To guarantee order in presence of ifdefs, use individual .property to initialize them.
@@ -172,8 +168,7 @@ public:
     //     ASSERT(buffer.hasOneRef());
     //     auto nativeImage = buffer.copyNativeImage();
     //     buffer = nullptr;
-    static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
-    WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(RefPtr<ImageBuffer>, PreserveResolution = PreserveResolution::No);
+    WEBCORE_EXPORT static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
     static RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer>);
     static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
 

@@ -89,12 +89,9 @@ public:
 
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
 
-    bool useCGDisplayListsForDOMRendering() const { return m_useCGDisplayListsForDOMRendering; }
-    void setUseCGDisplayListsForDOMRendering(bool useCGDisplayLists) { m_useCGDisplayListsForDOMRendering = useCGDisplayLists; }
+    bool useDynamicContentScalingDisplayListsForDOMRendering() const { return m_useDynamicContentScalingDisplayListsForDOMRendering; }
+    void setUseDynamicContentScalingDisplayListsForDOMRendering(bool useDynamicContentScalingDisplayLists) { m_useDynamicContentScalingDisplayListsForDOMRendering = useDynamicContentScalingDisplayLists; }
 
-    bool useCGDisplayListImageCache() const { return m_useCGDisplayListImageCache; }
-    void setUseCGDisplayListImageCache(bool useCGDisplayListImageCache) { m_useCGDisplayListImageCache = useCGDisplayListImageCache; }
-    
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
 #endif
@@ -125,8 +122,7 @@ private:
     RemoteLayerTreeTransaction* m_currentTransaction { nullptr };
 
     bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
-    bool m_useCGDisplayListsForDOMRendering { false };
-    bool m_useCGDisplayListImageCache { false };
+    bool m_useDynamicContentScalingDisplayListsForDOMRendering { false };
 };
 
 } // namespace WebKit

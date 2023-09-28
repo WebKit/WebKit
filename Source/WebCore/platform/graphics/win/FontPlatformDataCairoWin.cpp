@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* faceName)
+void FontPlatformData::platformDataInit(HFONT font, float size, HDC, WCHAR* faceName)
 {
     cairo_font_face_t* fontFace = cairo_win32_font_face_create_for_hfont(font);
 

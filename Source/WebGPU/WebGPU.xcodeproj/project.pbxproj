@@ -125,6 +125,8 @@
 		97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */; };
 		97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */; };
 		97099AC32AA60D58003B41F8 /* ASTArrayTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */; };
+		97099AC62AC49AAB003B41F8 /* WGSLEnums.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97099AC42AC49AAB003B41F8 /* WGSLEnums.cpp */; };
+		97099AC72AC49AAB003B41F8 /* WGSLEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC52AC49AAB003B41F8 /* WGSLEnums.h */; };
 		97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */ = {isa = PBXBuildFile; fileRef = 97296765299C09B0001C8BD4 /* TypeDeclarations.rb */; };
 		973F784729C8A78200166C66 /* Pipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 973F784529C8A78200166C66 /* Pipeline.h */; };
 		973F784829C8A78200166C66 /* Pipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 973F784629C8A78200166C66 /* Pipeline.mm */; };
@@ -400,6 +402,8 @@
 		97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTElaboratedTypeExpression.h; sourceTree = "<group>"; };
 		97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTReferenceTypeExpression.h; sourceTree = "<group>"; };
 		97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTArrayTypeExpression.h; sourceTree = "<group>"; };
+		97099AC42AC49AAB003B41F8 /* WGSLEnums.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WGSLEnums.cpp; sourceTree = "<group>"; };
+		97099AC52AC49AAB003B41F8 /* WGSLEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLEnums.h; sourceTree = "<group>"; };
 		97296764299BFB72001C8BD4 /* main.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = main.rb; sourceTree = "<group>"; };
 		97296765299C09B0001C8BD4 /* TypeDeclarations.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = TypeDeclarations.rb; sourceTree = "<group>"; };
 		973F784529C8A78200166C66 /* Pipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pipeline.h; sourceTree = "<group>"; };
@@ -631,6 +635,8 @@
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
 				97FA1A8729C085A60052D650 /* wgslc.cpp */,
+				97099AC42AC49AAB003B41F8 /* WGSLEnums.cpp */,
+				97099AC52AC49AAB003B41F8 /* WGSLEnums.h */,
 				1CA5B4F32A6F28C400E5F297 /* wgslfuzz.cpp */,
 				9776BE7529957E12002D6D93 /* WGSLShaderModule.h */,
 			);
@@ -869,6 +875,7 @@
 				978A9133298BBFD300B37E5E /* Types.h in Headers */,
 				978A9137298D40F100B37E5E /* TypeStore.h in Headers */,
 				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
+				97099AC72AC49AAB003B41F8 /* WGSLEnums.h in Headers */,
 				9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1099,6 +1106,7 @@
 				978A9134298BBFD300B37E5E /* Types.cpp in Sources */,
 				978A9138298D40F100B37E5E /* TypeStore.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,
+				97099AC62AC49AAB003B41F8 /* WGSLEnums.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

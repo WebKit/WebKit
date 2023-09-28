@@ -26,6 +26,7 @@
 #ifndef StorageThread_h
 #define StorageThread_h
 
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/Threading.h>
@@ -36,7 +37,7 @@ namespace WebCore {
 class StorageAreaSync;
 class StorageTask;
 
-class StorageThread {
+class StorageThread : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(StorageThread); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type { LocalStorage, IndexedDB };

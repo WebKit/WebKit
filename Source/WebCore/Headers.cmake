@@ -569,6 +569,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
+    Modules/streams/WritableStreamSink.h
 
     Modules/system-preview/ARKitBadgeSystemImage.h
 
@@ -638,6 +639,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/websockets/WebSocketFrame.h
     Modules/websockets/WebSocketIdentifier.h
     Modules/websockets/WebSocketHandshake.h
+
+    Modules/webtransport/WebTransportBidirectionalStreamConstructionParameters.h
+    Modules/webtransport/WebTransportReceiveStreamStats.h
+    Modules/webtransport/WebTransportSendStreamStats.h
+    Modules/webtransport/WebTransportSession.h
+    Modules/webtransport/WebTransportSessionClient.h
 
     accessibility/AXCoreObject.h
     accessibility/AXGeometryManager.h
@@ -1911,6 +1918,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
     platform/graphics/ImageBufferBackendParameters.h
+    platform/graphics/ImageBufferPlatformBackend.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
     platform/graphics/ImageFrame.h
@@ -1968,8 +1976,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformGraphicsContext.h
     platform/graphics/PlatformImage.h
-    platform/graphics/PlatformImageBuffer.h
-    platform/graphics/PlatformImageBufferBackend.h
     platform/graphics/PlatformLayer.h
     platform/graphics/PlatformLayerIdentifier.h
     platform/graphics/PlatformMediaResourceLoader.h

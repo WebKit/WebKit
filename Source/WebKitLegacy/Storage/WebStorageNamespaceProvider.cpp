@@ -33,9 +33,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static HashSet<WebStorageNamespaceProvider*>& storageNamespaceProviders()
+static HashSet<CheckedRef<WebStorageNamespaceProvider>>& storageNamespaceProviders()
 {
-    static NeverDestroyed<HashSet<WebStorageNamespaceProvider*>> storageNamespaceProviders;
+    static NeverDestroyed<HashSet<CheckedRef<WebStorageNamespaceProvider>>> storageNamespaceProviders;
 
     return storageNamespaceProviders;
 }
@@ -48,52 +48,52 @@ Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(const Strin
 WebStorageNamespaceProvider::WebStorageNamespaceProvider(const String& localStorageDatabasePath)
     : m_localStorageDatabasePath(localStorageDatabasePath.isNull() ? emptyString() : localStorageDatabasePath)
 {
-    storageNamespaceProviders().add(this);
+    storageNamespaceProviders().add(*this);
 }
 
 WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
 {
-    ASSERT(storageNamespaceProviders().contains(this));
-    storageNamespaceProviders().remove(this);
+    ASSERT(storageNamespaceProviders().contains(*this));
+    storageNamespaceProviders().remove(*this);
 }
 
 void WebStorageNamespaceProvider::closeLocalStorage()
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
-        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->close();
+        if (RefPtr localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            static_cast<StorageNamespaceImpl&>(*localStorageNamespace).close();
     }
 }
 
 void WebStorageNamespaceProvider::clearLocalStorageForAllOrigins()
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
-        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->clearAllOriginsForDeletion();
+        if (RefPtr localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            static_cast<StorageNamespaceImpl&>(*localStorageNamespace).clearAllOriginsForDeletion();
     }
 }
 
 void WebStorageNamespaceProvider::clearLocalStorageForOrigin(const SecurityOriginData& origin)
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
-        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->clearOriginForDeletion(origin);
+        if (RefPtr localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            static_cast<StorageNamespaceImpl&>(*localStorageNamespace).clearOriginForDeletion(origin);
     }
 }
 
 void WebStorageNamespaceProvider::closeIdleLocalStorageDatabases()
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
-        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->closeIdleLocalStorageDatabases();
+        if (RefPtr localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            static_cast<StorageNamespaceImpl&>(*localStorageNamespace).closeIdleLocalStorageDatabases();
     }
 }
 
 void WebStorageNamespaceProvider::syncLocalStorage()
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
-        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->sync();
+        if (RefPtr localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            static_cast<StorageNamespaceImpl&>(*localStorageNamespace).sync();
     }
 }
 

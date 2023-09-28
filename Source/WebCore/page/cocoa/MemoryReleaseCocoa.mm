@@ -55,7 +55,7 @@ void platformReleaseMemory(Critical)
     LocaleCocoa::releaseMemory();
 
     for (auto& pool : LayerPool::allLayerPools())
-        pool.get()->drain();
+        pool->drain();
 
 #if PLATFORM(IOS_FAMILY)
     LegacyTileCache::drainLayerPool();

@@ -434,7 +434,7 @@ void VideoFullscreenControllerContext::hasVideoChanged(bool hasVideo)
     }
 
     for (auto& client : m_fullscreenClients)
-        client.get()->hasVideoChanged(hasVideo);
+        client->hasVideoChanged(hasVideo);
 }
 
 void VideoFullscreenControllerContext::videoDimensionsChanged(const FloatSize& videoDimensions)
@@ -447,7 +447,7 @@ void VideoFullscreenControllerContext::videoDimensionsChanged(const FloatSize& v
     }
 
     for (auto& client : m_fullscreenClients)
-        client.get()->videoDimensionsChanged(videoDimensions);
+        client->videoDimensionsChanged(videoDimensions);
 }
 
 void VideoFullscreenControllerContext::seekableRangesChanged(const TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
@@ -650,35 +650,35 @@ void VideoFullscreenControllerContext::willEnterPictureInPicture()
 {
     ASSERT(isUIThread());
     for (auto& client : m_fullscreenClients)
-        client.get()->willEnterPictureInPicture();
+        client->willEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::didEnterPictureInPicture()
 {
     ASSERT(isUIThread());
     for (auto& client : m_fullscreenClients)
-        client.get()->didEnterPictureInPicture();
+        client->didEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::failedToEnterPictureInPicture()
 {
     ASSERT(isUIThread());
     for (auto& client : m_fullscreenClients)
-        client.get()->failedToEnterPictureInPicture();
+        client->failedToEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::willExitPictureInPicture()
 {
     ASSERT(isUIThread());
     for (auto& client : m_fullscreenClients)
-        client.get()->willExitPictureInPicture();
+        client->willExitPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::didExitPictureInPicture()
 {
     ASSERT(isUIThread());
     for (auto& client : m_fullscreenClients)
-        client.get()->didExitPictureInPicture();
+        client->didExitPictureInPicture();
 }
 
 FloatSize VideoFullscreenControllerContext::videoDimensions() const

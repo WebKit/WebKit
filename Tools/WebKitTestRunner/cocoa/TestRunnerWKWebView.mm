@@ -36,7 +36,6 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
 #import "UIKitSPIForTesting.h"
 #import <WebKit/WKWebViewPrivate.h>
 
@@ -49,10 +48,6 @@
 - (void)_scheduleVisibleContentRectUpdate;
 
 @end
-#endif
-
-#if HAVE(PEPPER_UI_CORE)
-#import "PepperUICoreSPI.h"
 #endif
 
 struct CustomMenuActionInfo {
@@ -522,10 +517,10 @@ IGNORE_WARNINGS_END
 static bool isQuickboardViewController(UIViewController *viewController)
 {
 #if HAVE(PEPPER_UI_CORE)
-    if ([viewController isKindOfClass:PUICQuickboardViewController.class])
+    if ([viewController isKindOfClass:NSClassFromString(@"PUICQuickboardViewController")])
         return true;
 #if HAVE(QUICKBOARD_CONTROLLER)
-    if ([viewController isKindOfClass:PUICQuickboardRemoteViewController.class])
+    if ([viewController isKindOfClass:NSClassFromString(@"PUICQuickboardRemoteViewController")])
         return true;
 #endif // HAVE(QUICKBOARD_CONTROLLER)
 #endif // HAVE(PEPPER_UI_CORE)

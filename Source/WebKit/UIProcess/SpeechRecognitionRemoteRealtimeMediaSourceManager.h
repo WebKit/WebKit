@@ -72,7 +72,6 @@ private:
 
     Ref<IPC::Connection> m_connection;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, ThreadSafeWeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
-    HashSet<WebCore::RealtimeMediaSourceIdentifier> m_sourcesNeedingSandboxExtension;
 };
 
 } // namespace WebKit

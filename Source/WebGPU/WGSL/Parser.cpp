@@ -356,6 +356,11 @@ Result<void> Parser<Lexer>::parseShader()
     disambiguateTemplates();
 
     while (current().type != TokenType::EndOfFile) {
+        if (current().type == TokenType::Semicolon) {
+            consume();
+            continue;
+        }
+
         auto globalExpected = parseGlobalDecl();
         if (!globalExpected)
             return makeUnexpected(globalExpected.error());
@@ -494,9 +499,6 @@ template<typename Lexer>
 Result<void> Parser<Lexer>::parseGlobalDecl()
 {
     START_PARSE();
-
-    while (current().type == TokenType::Semicolon)
-        consume();
 
     if (current().type == TokenType::KeywordConst) {
         PARSE(variable, Variable);
@@ -821,9 +823,9 @@ Result<AST::VariableQualifier::Ref> Parser<Lexer>::parseVariableQualifier()
     START_PARSE();
 
     CONSUME_TYPE(TemplateArgsLeft);
-    PARSE(storageClass, StorageClass);
+    PARSE(addressSpace, AddressSpace);
 
-    AST::AccessMode accessMode;
+    AccessMode accessMode;
     if (current().type == TokenType::Comma) {
         consume();
         PARSE(actualAccessMode, AccessMode);
@@ -831,58 +833,45 @@ Result<AST::VariableQualifier::Ref> Parser<Lexer>::parseVariableQualifier()
     } else {
         // Default access mode based on address space
         // https://www.w3.org/TR/WGSL/#address-space
-        switch (storageClass) {
-        case AST::StorageClass::Function:
-        case AST::StorageClass::Private:
-        case AST::StorageClass::Workgroup:
-            accessMode = AST::AccessMode::ReadWrite;
+        switch (addressSpace) {
+        case AddressSpace::Function:
+        case AddressSpace::Private:
+        case AddressSpace::Workgroup:
+            accessMode = AccessMode::ReadWrite;
             break;
-        case AST::StorageClass::Uniform:
-        case AST::StorageClass::Storage:
-            accessMode = AST::AccessMode::Read;
+        case AddressSpace::Uniform:
+        case AddressSpace::Storage:
+            accessMode = AccessMode::Read;
             break;
+        case AddressSpace::Handle:
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
     CONSUME_TYPE(TemplateArgsRight);
-    RETURN_ARENA_NODE(VariableQualifier, storageClass, accessMode);
+    RETURN_ARENA_NODE(VariableQualifier, addressSpace, accessMode);
 }
 
 template<typename Lexer>
-Result<AST::StorageClass> Parser<Lexer>::parseStorageClass()
+Result<AddressSpace> Parser<Lexer>::parseAddressSpace()
 {
     START_PARSE();
 
-    static constexpr std::pair<ComparableASCIILiteral, AST::StorageClass> storageClassMappings[] {
-        { "function", AST::StorageClass::Function },
-        { "private", AST::StorageClass::Private },
-        { "storage", AST::StorageClass::Storage },
-        { "uniform", AST::StorageClass::Uniform },
-        { "workgroup", AST::StorageClass::Workgroup },
-    };
-    static constexpr SortedArrayMap storageClasses { storageClassMappings };
-
     CONSUME_TYPE_NAMED(identifier, Identifier);
-    if (auto* storageClass = storageClasses.tryGet(identifier.ident))
-        return { *storageClass };
+    // FIXME: remove `handle` from the parsing
+    if (auto* addressSpace = WGSL::parseAddressSpace(identifier.ident); addressSpace && *addressSpace != AddressSpace::Handle)
+        return { *addressSpace };
 
     FAIL("Expected one of 'function'/'private'/'storage'/'uniform'/'workgroup'"_s);
 }
 
 template<typename Lexer>
-Result<AST::AccessMode> Parser<Lexer>::parseAccessMode()
+Result<AccessMode> Parser<Lexer>::parseAccessMode()
 {
     START_PARSE();
 
-    static constexpr std::pair<ComparableASCIILiteral, AST::AccessMode> accessModeMappings[] {
-        { "read", AST::AccessMode::Read },
-        { "read_write", AST::AccessMode::ReadWrite },
-        { "write", AST::AccessMode::Write },
-    };
-    static constexpr SortedArrayMap accessModes { accessModeMappings };
-
     CONSUME_TYPE_NAMED(identifier, Identifier);
-    if (auto* accessMode = accessModes.tryGet(identifier.ident))
+    if (auto* accessMode = WGSL::parseAccessMode(identifier.ident))
         return { *accessMode };
 
     FAIL("Expected one of 'read'/'write'/'read_write'"_s);
@@ -941,9 +930,6 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
 {
     START_PARSE();
 
-    while (current().type == TokenType::Semicolon)
-        consume();
-
     switch (current().type) {
     case TokenType::BraceLeft: {
         PARSE(compoundStmt, CompoundStatement);
@@ -986,6 +972,10 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         // FIXME: Handle attributes attached to statement.
         return parseForStatement();
     }
+    case TokenType::KeywordWhile: {
+        // FIXME: Handle attributes attached to statement.
+        return parseWhileStatement();
+    }
     case TokenType::KeywordBreak: {
         consume();
         CONSUME_TYPE(Semicolon);
@@ -1022,6 +1012,11 @@ Result<AST::CompoundStatement::Ref> Parser<Lexer>::parseCompoundStatement()
 
     AST::Statement::List statements;
     while (current().type != TokenType::BraceRight) {
+        if (current().type == TokenType::Semicolon) {
+            consume();
+            continue;
+        }
+
         PARSE(stmt, Statement);
         statements.append(WTFMove(stmt));
     }
@@ -1118,6 +1113,19 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement()
     PARSE(body, CompoundStatement);
 
     RETURN_ARENA_NODE(ForStatement, maybeInitializer, maybeTest, maybeUpdate, WTFMove(body));
+}
+
+template<typename Lexer>
+Result<AST::Statement::Ref> Parser<Lexer>::parseWhileStatement()
+{
+    START_PARSE();
+
+    CONSUME_TYPE(KeywordWhile);
+
+    PARSE(test, Expression);
+    PARSE(body, CompoundStatement);
+
+    RETURN_ARENA_NODE(WhileStatement, WTFMove(test), WTFMove(body));
 }
 
 template<typename Lexer>

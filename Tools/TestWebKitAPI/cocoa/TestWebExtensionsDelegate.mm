@@ -96,6 +96,23 @@
         completionHandler(matchPatterns);
 }
 
+- (void)webExtensionController:(_WKWebExtensionController *)controller sendMessage:(id)message toApplicationIdentifier:(NSString *)applicationIdentifier forExtensionContext:(_WKWebExtensionContext *)extensionContext replyHandler:(void (^)(id, NSError *))replyHandler
+{
+    if (_sendMessage)
+        _sendMessage(message, applicationIdentifier, replyHandler);
+    else
+        replyHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"runtime.sendNativeMessage() not implemneted" }]);
+}
+
+- (void)webExtensionController:(_WKWebExtensionController *)controller connectUsingMessagePort:(_WKWebExtensionMessagePort *)port forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError *error))completionHandler
+{
+    if (_connectUsingMessagePort) {
+        _connectUsingMessagePort(port);
+        completionHandler(nil);
+    } else
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"runtime.connectNative() not implemneted" }]);
+}
+
 @end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

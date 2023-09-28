@@ -62,6 +62,8 @@ public:
     WebExtensionAPIRuntime& runtime() final { return *this; }
 
 #if PLATFORM(COCOA)
+    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+
     NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
     NSDictionary *getManifest();
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
@@ -70,8 +72,11 @@ public:
 
     JSValue *lastError();
 
-    void sendMessage(WebFrame *, NSString *extensionID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void sendMessage(WebFrame*, NSString *extensionID, NSString *messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     RefPtr<WebExtensionAPIPort> connect(WebFrame*, JSContextRef, NSString *extensionID, NSDictionary *options, NSString **outExceptionString);
+
+    void sendNativeMessage(WebFrame*, NSString *applicationID, NSString *messageJSON, Ref<WebExtensionCallbackHandler>&&);
+    RefPtr<WebExtensionAPIPort> connectNative(WebFrame*, JSContextRef, NSString *applicationID);
 
     WebExtensionAPIEvent& onConnect();
     WebExtensionAPIEvent& onMessage();

@@ -121,6 +121,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkSocketChannelMessageReceiver.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkSocketChannelMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkStorageManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkStorageManagerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkTransportChannelMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkTransportChannelMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkTransportSessionMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkTransportSessionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NotificationManagerMessageHandlerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NotificationManagerMessageHandlerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PlatformXRSystemMessageReceiver.cpp
@@ -502,6 +506,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSocketChannelMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSocketChannelMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSpeechRecognitionConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSpeechRecognitionConnectionMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebTransportChannelMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebTransportChannelMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebTransportSessionMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebTransportSessionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerProxyMessageReceiver.cpp

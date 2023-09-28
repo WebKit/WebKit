@@ -660,6 +660,18 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
             GST_DEBUG_OBJECT(stream->pad.get(), "StreamingMembers mutex taken, using it to set isFlushing = false.");
             streamingMembers->isFlushing = false;
             streamingMembers->doesNeedSegmentEvent = true;
+
+            if (!webkitGstCheckVersion(1, 22, 0)) {
+                // In older GST versions STREAM_COLLECTION event is delivered to decodebin3
+                // from parsebin src pad probe. On the way, this event is cached inside
+                // parser element (GstBaseParse) and pushed downstream with first frame.
+                // Flushing before first frame is handled by the parser,
+                // the event is dropped from GstBaseParse and never reaches decodebin3.
+                // GST 1.21.3 added STREAM_COLLECTION event handling on decodebin3 sink pad directly
+                // so this workaround is not needed anymore.
+                GST_DEBUG_OBJECT(stream->pad.get(), "Reset hasPushedStreamCollectionEvent");
+                streamingMembers->hasPushedStreamCollectionEvent = false;
+            }
         }
 
         GST_DEBUG_OBJECT(stream->pad.get(), "Sending FLUSH_STOP downstream (resetTime = %s).", boolForPrinting(isSeekingFlush));

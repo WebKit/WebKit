@@ -477,7 +477,9 @@ public:
 #endif
     void setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&&);
 
+#if ENABLE(SERVICE_WORKER)
     void processPushMessage(WebPushMessage&&, CompletionHandler<void(bool)>&&);
+#endif
 
 private:
     enum class ForceReinitialization : bool { No, Yes };

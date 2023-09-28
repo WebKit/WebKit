@@ -190,8 +190,8 @@ TEST(WGSLParserTests, SourceLifecycle)
     EXPECT_EQ(*binding, 0u);
     EXPECT_EQ(var.name(), "x"_s);
     EXPECT_TRUE(var.maybeQualifier());
-    EXPECT_EQ(var.maybeQualifier()->storageClass(), WGSL::AST::StorageClass::Storage);
-    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AST::AccessMode::ReadWrite);
+    EXPECT_EQ(var.maybeQualifier()->addressSpace(), WGSL::AddressSpace::Storage);
+    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AccessMode::ReadWrite);
     EXPECT_TRUE(var.maybeTypeName());
     EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(var.maybeTypeName()));
     auto& namedType = downcast<WGSL::AST::IdentifierExpression>(*var.maybeTypeName());
@@ -254,8 +254,8 @@ TEST(WGSLParserTests, GlobalVariable)
     EXPECT_EQ(*binding, 0u);
     EXPECT_EQ(var.name(), "x"_s);
     EXPECT_TRUE(var.maybeQualifier());
-    EXPECT_EQ(var.maybeQualifier()->storageClass(), WGSL::AST::StorageClass::Storage);
-    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AST::AccessMode::ReadWrite);
+    EXPECT_EQ(var.maybeQualifier()->addressSpace(), WGSL::AddressSpace::Storage);
+    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AccessMode::ReadWrite);
     EXPECT_TRUE(var.maybeTypeName());
     EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(var.maybeTypeName()));
     auto& namedType = downcast<WGSL::AST::IdentifierExpression>(*var.maybeTypeName());
@@ -1107,6 +1107,22 @@ TEST(WGSLParserTests, RedFrag)
         "fn main() -> @location(0) vec4<f32> {\n"
         "    return vec4<f32>(1.0, 0.0, 0.0, 1.0);\n"
         "}\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+}
+
+TEST(WGSLParserTests, TrailingSemicolon)
+{
+    auto shader = parse(
+        "fn f(){\n"
+        "  ;;;\n"
+        "}\n"
+        ";;;\n"_s);
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());

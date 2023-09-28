@@ -85,6 +85,7 @@ private:
     id<MTLIndirectRenderCommand> currentRenderCommand();
 
     void makeInvalid() { m_indirectCommandBuffer = nil; }
+    void executePreDrawCommands();
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
     MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
@@ -93,11 +94,22 @@ private:
     uint64_t m_currentCommandIndex { 0 };
     id<MTLBuffer> m_indexBuffer { nil };
     id<MTLRenderPipelineState> m_currentPipelineState { nil };
+    id<MTLDepthStencilState> m_depthStencilState { nil };
+    MTLCullMode m_cullMode { MTLCullModeNone };
+    MTLWinding m_frontFace { MTLWindingClockwise };
+    MTLDepthClipMode m_depthClipMode { MTLDepthClipModeClip };
+
     MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
     Vector<WTF::Function<void(void)>> m_recordedCommands;
-    Vector<BindableResources> m_resources;
+    NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>* m_resources;
+    struct BufferAndOffset {
+        id<MTLBuffer> buffer { nil };
+        uint64_t offset { 0 };
+    };
+    Vector<BufferAndOffset> m_vertexBuffers;
+    Vector<BufferAndOffset> m_fragmentBuffers;
     const Ref<Device> m_device;
 };
 

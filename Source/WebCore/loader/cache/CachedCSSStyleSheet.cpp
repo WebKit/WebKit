@@ -75,7 +75,10 @@ String CachedCSSStyleSheet::encoding() const
 
 const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, bool* hasValidMIMEType) const
 {
-    if (!m_data || m_data->isEmpty() || !canUseSheet(mimeTypeCheckHint, hasValidMIMEType))
+    // Ensure hasValidMIMEType always gets set (even if m_data is null or empty) — which in
+    // turn ensures that if the MIME type isn't text/css, we never load the resource.
+    // https://html.spec.whatwg.org/#link-type-stylesheet:process-the-linked-resource
+    if (!canUseSheet(mimeTypeCheckHint, hasValidMIMEType) || !m_data || m_data->isEmpty())
         return String();
 
     if (!m_decodedSheetText.isNull())

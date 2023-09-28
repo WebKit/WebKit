@@ -79,7 +79,7 @@ public:
 
     CALayer *layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
-    bool replayCGDisplayListsIntoBackingStore() const;
+    bool replayDynamicContentScalingDisplayListsIntoBackingStore() const;
     bool css3DTransformInteroperabilityEnabled() const;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionIDs() const { return m_overlayRegionIDs; }

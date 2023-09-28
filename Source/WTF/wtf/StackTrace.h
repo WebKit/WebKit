@@ -34,6 +34,10 @@
 #include <execinfo.h>
 #endif
 
+#if USE(LIBBACKTRACE)
+#include <backtrace.h>
+#endif
+
 #if HAVE(DLADDR)
 #include <cxxabi.h>
 #include <dlfcn.h>
@@ -47,6 +51,10 @@
 namespace WTF {
 
 class PrintStream;
+
+#if USE(LIBBACKTRACE)
+WTF_EXPORT_PRIVATE char** symbolize(void* const*, int);
+#endif
 
 class StackTrace {
     WTF_MAKE_FAST_ALLOCATED;
@@ -105,7 +113,11 @@ public:
     template<typename Functor>
     void forEach(Functor functor) const
     {
-#if HAVE(BACKTRACE_SYMBOLS)
+#if USE(LIBBACKTRACE)
+        char** symbols = symbolize(m_stack.data(), m_stack.size());
+        if (!symbols)
+            return;
+#elif HAVE(BACKTRACE_SYMBOLS)
         char** symbols = backtrace_symbols(m_stack.data(), m_stack.size());
         if (!symbols)
             return;
@@ -132,7 +144,11 @@ public:
             functor(i + 1, m_stack[i], name);
         }
 
-#if HAVE(BACKTRACE_SYMBOLS)
+#if USE(LIBBACKTRACE)
+        for (size_t i = 0; i < m_stack.size(); ++i)
+            free(symbols[i]);
+        free(symbols);
+#elif HAVE(BACKTRACE_SYMBOLS)
         free(symbols);
 #endif
     }

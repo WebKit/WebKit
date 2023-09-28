@@ -31,14 +31,15 @@
 
 namespace WebCore {
 
-ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportBidirectionalStream::readable()
+Ref<WebTransportBidirectionalStream> WebTransportBidirectionalStream::create(Ref<WebTransportReceiveStream>&& readable, Ref<WebTransportSendStream>&& writable)
 {
-    return Exception { NotSupportedError };
+    return adoptRef(*new WebTransportBidirectionalStream(WTFMove(readable), WTFMove(writable)));
 }
 
-ExceptionOr<Ref<WebTransportSendStream>> WebTransportBidirectionalStream::writable()
-{
-    return Exception { NotSupportedError };
-}
+WebTransportBidirectionalStream::WebTransportBidirectionalStream(Ref<WebTransportReceiveStream>&& readable, Ref<WebTransportSendStream>&& writable)
+    : m_readable(WTFMove(readable))
+    , m_writable(WTFMove(writable)) { }
+
+WebTransportBidirectionalStream::~WebTransportBidirectionalStream() = default;
 
 }

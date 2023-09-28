@@ -29,6 +29,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/storage"
     "${WEBKIT_DIR}/NetworkProcess/watchos"
     "${WEBKIT_DIR}/NetworkProcess/webrtc"
+    "${WEBKIT_DIR}/NetworkProcess/webtransport"
     "${WEBKIT_DIR}/Platform"
     "${WEBKIT_DIR}/Platform/IPC"
     "${WEBKIT_DIR}/PluginProcess"
@@ -218,6 +219,8 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/webrtc/NetworkRTCProvider
     NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy
 
+    NetworkProcess/webtransport/NetworkTransportSession
+
     Shared/AuxiliaryProcess
     Shared/IPCConnectionTester
     Shared/IPCStreamTester
@@ -310,6 +313,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Network/NetworkProcessConnection
     WebProcess/Network/WebResourceLoader
     WebProcess/Network/WebSocketChannel
+    WebProcess/Network/WebTransportSession
 
     WebProcess/Notifications/WebNotificationManager
 

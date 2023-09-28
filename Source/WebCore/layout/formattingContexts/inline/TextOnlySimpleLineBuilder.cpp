@@ -463,7 +463,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (rootStyle.textIndent() != RenderStyle::initialTextIndent())
         return false;
-    if (rootStyle.textAlignLast() == TextAlignLast::Justify || rootStyle.textAlign() == TextAlignMode::Justify)
+    if (rootStyle.textAlignLast() == TextAlignLast::Justify || rootStyle.textAlign() == TextAlignMode::Justify || rootBox.isRubyAnnotationBox())
         return false;
     if (rootStyle.boxDecorationBreak() == BoxDecorationBreak::Clone)
         return false;
@@ -472,6 +472,8 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
     if (rootStyle.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
         return false;
     if (rootStyle.textWrap() == TextWrap::Balance)
+        return false;
+    if (rootStyle.lineAlign() != LineAlign::None)
         return false;
 
     return true;

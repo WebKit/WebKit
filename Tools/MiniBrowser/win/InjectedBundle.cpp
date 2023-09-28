@@ -31,7 +31,7 @@
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePrivate.h>
 
-void didReceiveMessageToPage(WKBundleRef bundle, WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
+void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef page, WKStringRef messageName, WKTypeRef, const void*)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "DumpLayerTree")) {
         auto frame = WKBundlePageGetMainFrame(page);

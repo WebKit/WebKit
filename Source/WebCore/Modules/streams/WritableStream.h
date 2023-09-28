@@ -49,10 +49,11 @@ public:
 
     InternalWritableStream& internalWritableStream();
 
-private:
+protected:
     static ExceptionOr<Ref<WritableStream>> create(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue);
+    static ExceptionOr<Ref<InternalWritableStream>> createInternalWritableStream(JSDOMGlobalObject&, Ref<WritableStreamSink>&&);
     explicit WritableStream(Ref<InternalWritableStream>&&);
-
+private:
     Ref<InternalWritableStream> m_internalWritableStream;
 };
 

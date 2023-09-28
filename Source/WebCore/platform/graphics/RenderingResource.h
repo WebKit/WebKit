@@ -48,7 +48,7 @@ public:
         if (!hasValidRenderingResourceIdentifier())
             return;
         for (auto& observer : m_observers)
-            observer.get()->releaseRenderingResource(renderingResourceIdentifier());
+            observer->releaseRenderingResource(renderingResourceIdentifier());
     }
 
     virtual bool isNativeImage() const { return false; }

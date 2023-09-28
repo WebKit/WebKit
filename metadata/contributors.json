@@ -3039,6 +3039,17 @@
    },
    {
       "emails" : [
+         "ggabrielli@suse.de",
+         "crazybyte@protonmail.com"
+      ],
+      "github" : "staypirate",
+      "name" : "Gianluca Gabrielli",
+      "nicks" : [
+         "crazybyte"
+      ]
+   },
+   {
+      "emails" : [
          "girish@forwardbias.in",
          "ramakrishnan.girish@gmail.com"
       ],

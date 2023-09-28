@@ -1111,13 +1111,18 @@ public:
     NativePromiseRequest() = default;
     NativePromiseRequest(NativePromiseRequest&& other) = default;
     NativePromiseRequest& operator=(NativePromiseRequest&& other) = default;
-    ~NativePromiseRequest() { ASSERT(!m_request); }
+    ~NativePromiseRequest()
+    {
+        ASSERT(!m_request, "complete() or disconnect() wasn't called");
+    }
 
     void track(Ref<typename PromiseType::Request> request)
     {
         ASSERT(!m_request);
         m_request = WTFMove(request);
     }
+
+    explicit operator bool() const { return !!m_request; }
 
     void complete()
     {

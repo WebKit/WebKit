@@ -146,7 +146,7 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
     if (inlineLevelBox.isInlineBox())
         return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineBoxAffectsLineBox(inlineLevelBox);
     if (inlineLevelBox.isAtomicInlineLevelBox())
-        return true;
+        return !inlineLevelBox.layoutBox().isRubyAnnotationBox();
     return false;
 }
 

@@ -27,8 +27,8 @@
 #include "ReferencedSVGResources.h"
 
 #include "FilterOperations.h"
+#include "LegacyRenderSVGResourceClipper.h"
 #include "PathOperation.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderStyle.h"
 #include "SVGClipPathElement.h"
@@ -156,12 +156,12 @@ SVGFilterElement* ReferencedSVGResources::referencedFilterElement(TreeScope& tre
     return element ? downcast<SVGFilterElement>(element) : nullptr;
 }
 
-RenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(TreeScope& treeScope, const ReferencePathOperation& clipPath)
+LegacyRenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(TreeScope& treeScope, const ReferencePathOperation& clipPath)
 {
     if (clipPath.fragment().isEmpty())
         return nullptr;
     // For some reason, SVG stores a cache of id -> renderer, rather than just using getElementById() and renderer().
-    return getRenderSVGResourceById<RenderSVGResourceClipper>(treeScope, clipPath.fragment());
+    return getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, clipPath.fragment());
 }
 
 } // namespace WebCore

@@ -2816,7 +2816,7 @@ static bool putIndexedDescriptor(JSGlobalObject* globalObject, SparseArrayValueM
         else if (oldDescriptor.isAccessorDescriptor())
             entryInMap->forceSet(vm, map, jsUndefined(), attributes);
         else
-            entryInMap->forceSet(attributes);
+            entryInMap->forceSet(map, attributes);
         return true;
     }
 
@@ -2838,7 +2838,7 @@ static bool putIndexedDescriptor(JSGlobalObject* globalObject, SparseArrayValueM
     }
 
     ASSERT(descriptor.isGenericDescriptor());
-    entryInMap->forceSet(descriptor.attributesOverridingCurrent(oldDescriptor));
+    entryInMap->forceSet(map, descriptor.attributesOverridingCurrent(oldDescriptor));
     return true;
 }
 

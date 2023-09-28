@@ -183,7 +183,8 @@ void ProvisionalPageProxy::cancel()
         { },
         m_mainFrame->frameID(),
         std::nullopt,
-        m_mainFrame->processID()
+        m_mainFrame->processID(),
+        m_mainFrame->isFocused()
     };
     didFailProvisionalLoadForFrame(WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL.string(), error, WebCore::WillContinueLoading::No, UserData { }, WebCore::WillInternallyHandleFailure::No); // Will delete |this|.
 }

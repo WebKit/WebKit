@@ -41,10 +41,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static Node* enclosingListChild(Node* node, Node* listNode)
+static RefPtr<Node> enclosingListChild(Node* node, Node* listNode)
 {
-    Node* listChild = enclosingListChild(node);
-    while (listChild && enclosingList(listChild) != listNode)
+    RefPtr listChild = enclosingListChild(node);
+    while (listChild && enclosingList(listChild.get()) != listNode)
         listChild = enclosingListChild(listChild->parentNode());
     return listChild;
 }
@@ -92,7 +92,7 @@ Ref<HTMLElement> InsertListCommand::mergeWithNeighboringLists(HTMLElement& list)
     return protectedList;
 }
 
-bool InsertListCommand::selectionHasListOfType(const VisibleSelection& selection, const QualifiedName& listTag)
+bool InsertListCommand::selectionHasListOfType(const VisibleSelection& selection, const HTMLQualifiedName& listTag)
 {
     VisiblePosition start = selection.visibleStart();
 
@@ -101,7 +101,7 @@ bool InsertListCommand::selectionHasListOfType(const VisibleSelection& selection
 
     VisiblePosition end = startOfParagraph(selection.visibleEnd());
     while (start.isNotNull() && start != end) {
-        Element* listNode = enclosingList(start.deepEquivalent().deprecatedNode());
+        RefPtr listNode = enclosingList(start.deepEquivalent().deprecatedNode());
         if (!listNode || !listNode->hasTagName(listTag))
             return false;
         start = startOfNextParagraph(start);
@@ -224,7 +224,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
     bool switchListType = false;
     if (listChildNode) {
         // Remove the list child.
-        RefPtr<HTMLElement> listNode = enclosingList(listChildNode.get());
+        RefPtr listNode = enclosingList(listChildNode.get());
         if (!listNode) {
             RefPtr<HTMLElement> listElement = fixOrphanedListChild(*listChildNode);
             if (!listElement || !listElement->isConnected())
@@ -254,10 +254,10 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
             if (!newList->hasEditableStyle())
                 return;
 
-            auto* firstChildInList = enclosingListChild(VisiblePosition(firstPositionInNode(listNode.get())).deepEquivalent().deprecatedNode(), listNode.get());
-            Node* outerBlock = firstChildInList && isBlockFlowElement(*firstChildInList) ? firstChildInList : listNode.get();
+            RefPtr firstChildInList = enclosingListChild(VisiblePosition(firstPositionInNode(listNode.get())).deepEquivalent().deprecatedNode(), listNode.get());
+            RefPtr outerBlock = firstChildInList && isBlockFlowElement(*firstChildInList) ? firstChildInList : listNode.get();
             
-            moveParagraphWithClones(firstPositionInNode(listNode.get()), lastPositionInNode(listNode.get()), newList.get(), outerBlock);
+            moveParagraphWithClones(firstPositionInNode(listNode.get()), lastPositionInNode(listNode.get()), newList.get(), outerBlock.get());
 
             // Manually remove listNode because moveParagraphWithClones sometimes leaves it behind in the document.
             // See the bug 33668 and editing/execCommand/insert-list-orphaned-item-with-nested-lists.html.
@@ -351,9 +351,9 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
     moveParagraphs(start, end, insertionPoint, true);
 }
 
-static RefPtr<Element> adjacentEnclosingList(const VisiblePosition& pos, const VisiblePosition& adjacentPos, const QualifiedName& listTag)
+static RefPtr<HTMLElement> adjacentEnclosingList(const VisiblePosition& pos, const VisiblePosition& adjacentPos, const HTMLQualifiedName& listTag)
 {
-    RefPtr<Element> listNode = outermostEnclosingList(adjacentPos.deepEquivalent().protectedDeprecatedNode().get());
+    RefPtr listNode = outermostEnclosingList(adjacentPos.deepEquivalent().protectedDeprecatedNode().get());
 
     if (!listNode)
         return nullptr;
@@ -370,7 +370,7 @@ static RefPtr<Element> adjacentEnclosingList(const VisiblePosition& pos, const V
     return listNode;
 }
 
-RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& originalStart, const QualifiedName& listTag)
+RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& originalStart, const HTMLQualifiedName& listTag)
 {
     VisiblePosition start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
     VisiblePosition end = endOfParagraph(start, CanSkipOverEditingBoundary);

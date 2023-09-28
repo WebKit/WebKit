@@ -201,6 +201,7 @@ set(WTF_PUBLIC_HEADERS
     PlatformCPU.h
     PlatformEnable.h
     PlatformEnableCocoa.h
+    PlatformEnableGlib.h
     PlatformEnablePlayStation.h
     PlatformEnableWinCairo.h
     PlatformHave.h

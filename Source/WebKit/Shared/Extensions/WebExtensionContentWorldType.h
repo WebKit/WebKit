@@ -34,6 +34,7 @@ namespace WebKit {
 enum class WebExtensionContentWorldType : uint8_t {
     Main,
     ContentScript,
+    Native,
 };
 
 inline String toDebugString(WebExtensionContentWorldType contentWorldType)
@@ -43,6 +44,8 @@ inline String toDebugString(WebExtensionContentWorldType contentWorldType)
         return "main"_s;
     case WebExtensionContentWorldType::ContentScript:
         return "content script"_s;
+    case WebExtensionContentWorldType::Native:
+        return "native"_s;
     }
 }
 

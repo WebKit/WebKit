@@ -152,7 +152,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         updateCapabilities(capabilities);
 
         if (facingMode == VideoFacingMode::Environment) {
-            capabilities.setFocusDistance(CapabilityValueOrRange(0.2, std::numeric_limits<double>::max()));
+            capabilities.setFocusDistance(CapabilityRange(0.2, std::numeric_limits<double>::max()));
             supportedConstraints.setSupportsFocusDistance(true);
         }
 
@@ -163,13 +163,13 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         }
         capabilities.setSupportedConstraints(supportedConstraints);
     } else if (mockDisplay()) {
-        capabilities.setWidth(CapabilityValueOrRange(72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
-        capabilities.setHeight(CapabilityValueOrRange(45, std::get<MockDisplayProperties>(m_device.properties).defaultSize.height()));
-        capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
+        capabilities.setWidth(CapabilityRange(72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
+        capabilities.setHeight(CapabilityRange(45, std::get<MockDisplayProperties>(m_device.properties).defaultSize.height()));
+        capabilities.setFrameRate(CapabilityRange(.01, 60.0));
     } else {
-        capabilities.setWidth(CapabilityValueOrRange(72, 2880));
-        capabilities.setHeight(CapabilityValueOrRange(45, 1800));
-        capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
+        capabilities.setWidth(CapabilityRange(72, 2880));
+        capabilities.setHeight(CapabilityRange(45, 1800));
+        capabilities.setFrameRate(CapabilityRange(.01, 60.0));
     }
 
     m_capabilities = WTFMove(capabilities);

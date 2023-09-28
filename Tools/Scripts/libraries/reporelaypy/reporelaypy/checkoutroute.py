@@ -153,6 +153,8 @@ class Redirector(object):
 
 
 class CheckoutRoute(AuthedBlueprint):
+    VALID_REF_RE = re.compile(r'^[a-zA-Z0-9\/\.\@-]+$')
+
     @classmethod
     def find_newer(cls, a, b):
         if not a or not b:
@@ -201,6 +203,9 @@ class CheckoutRoute(AuthedBlueprint):
         self.add_url_rule('/changeset/<path:revision>/webkit', 'trac', self.trac, methods=('GET',))
 
     def commit(self, ref=None):
+        if ref and (not isinstance(ref, str) or not self.VALID_REF_RE.match(ref)):
+            return None
+
         try:
             retrieved = self.database.get(ref)
             if retrieved:

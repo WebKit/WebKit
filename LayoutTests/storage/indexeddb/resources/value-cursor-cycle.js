@@ -39,6 +39,9 @@ function onOpen(evt)
 
         cursorObservation = internals.observeGC(cursor);
         valueObservation = internals.observeGC(value);
+    };
+
+    tx.oncomplete = () => {
         evalAndLog("cursor = null");
         evalAndLog("cursorRequest = null");
         evalAndLog("gc()");
@@ -48,7 +51,6 @@ function onOpen(evt)
         evalAndLog("gc()");
         shouldBeTrue("cursorObservation.wasCollected");
         shouldBeTrue("valueObservation.wasCollected");
+        finishJSTest();
     }
-
-    tx.oncomplete = finishJSTest;
 }

@@ -141,6 +141,7 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/webrtc/NetworkRTCProvider \
 	NetworkProcess/webrtc/NetworkRTCMonitor \
 	NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy \
+	NetworkProcess/webtransport/NetworkTransportSession \
 	NetworkProcess/Cookies/WebCookieManager \
 	NetworkProcess/storage/NetworkStorageManager \
 	Shared/AuxiliaryProcess \
@@ -224,6 +225,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Network/WebSocketChannel \
 	WebProcess/Network/NetworkProcessConnection \
 	WebProcess/Network/WebResourceLoader \
+	WebProcess/Network/WebTransportSession \
 	WebProcess/Network/webrtc/LibWebRTCNetwork \
 	WebProcess/Network/webrtc/RTCDataChannelRemoteManager \
 	WebProcess/Network/webrtc/WebRTCMonitor \

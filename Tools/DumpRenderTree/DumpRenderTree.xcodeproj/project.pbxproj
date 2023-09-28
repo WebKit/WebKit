@@ -308,7 +308,6 @@
 		A134E53718905F4C00901D06 /* AccessibilityCommonMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AccessibilityCommonMac.h; path = mac/AccessibilityCommonMac.h; sourceTree = "<group>"; };
 		A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = DumpRenderTreeLibrary.xcconfig; path = mac/Configurations/DumpRenderTreeLibrary.xcconfig; sourceTree = "<group>"; };
 		A16CD20D18907A7D0092363E /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = BaseTarget.xcconfig; path = mac/Configurations/BaseTarget.xcconfig; sourceTree = "<group>"; };
-		A17A5A2C22A881090065C5F0 /* PencilKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PencilKitTestSPI.h; sourceTree = "<group>"; };
 		A17A5A2D22A881090065C5F0 /* AppKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitTestSPI.h; sourceTree = "<group>"; };
 		A17A5A2E22A881090065C5F0 /* CoreGraphicsTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreGraphicsTestSPI.h; sourceTree = "<group>"; };
 		A19317FC1892855F001C52B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ios/Info.plist; sourceTree = "<group>"; };
@@ -398,6 +397,7 @@
 		F4C3578920E8442700FA0748 /* LayoutTestSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutTestSpellChecker.h; sourceTree = "<group>"; };
 		F4D4235F1DD5045300678290 /* TextInputControllerIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextInputControllerIOS.m; path = ios/TextInputControllerIOS.m; sourceTree = "<group>"; };
 		F4D423601DD5046900678290 /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
+		F4F289562AC4F5B70084A38D /* UIKitSPIForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPIForTesting.h; sourceTree = "<group>"; };
 		F4FED31E23582158003C139C /* NSPasteboardAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSPasteboardAdditions.h; path = mac/NSPasteboardAdditions.h; sourceTree = "<group>"; };
 		F4FED31F23582158003C139C /* NSPasteboardAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NSPasteboardAdditions.mm; path = mac/NSPasteboardAdditions.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -712,7 +712,7 @@
 			children = (
 				A17A5A2D22A881090065C5F0 /* AppKitTestSPI.h */,
 				A17A5A2E22A881090065C5F0 /* CoreGraphicsTestSPI.h */,
-				A17A5A2C22A881090065C5F0 /* PencilKitTestSPI.h */,
+				F4F289562AC4F5B70084A38D /* UIKitSPIForTesting.h */,
 			);
 			path = spi;
 			sourceTree = "<group>";

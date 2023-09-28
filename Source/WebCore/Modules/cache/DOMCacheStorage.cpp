@@ -149,6 +149,27 @@ Ref<DOMCache> DOMCacheStorage::findCacheOrCreate(DOMCacheEngine::CacheInfo&& inf
    return DOMCache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef());
 }
 
+class ConnectionStorageLock {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    ConnectionStorageLock(Ref<CacheStorageConnection>&& connection, const ClientOrigin& origin)
+        : m_connection(WTFMove(connection))
+        , m_origin(origin)
+    {
+        m_connection->lockStorage(m_origin);
+    }
+
+    ~ConnectionStorageLock()
+    {
+        m_connection->unlockStorage(m_origin);
+    }
+
+private:
+    Ref<CacheStorageConnection> m_connection;
+    ClientOrigin m_origin;
+};
+
 void DOMCacheStorage::retrieveCaches(CompletionHandler<void(std::optional<Exception>&&)>&& callback)
 {
     auto origin = this->origin();
@@ -157,7 +178,7 @@ void DOMCacheStorage::retrieveCaches(CompletionHandler<void(std::optional<Except
         return;
     }
 
-    m_connection->retrieveCaches(*origin, m_updateCounter, [this, callback = WTFMove(callback), pendingActivity = makePendingActivity(*this)](DOMCacheEngine::CacheInfosOrError&& result) mutable {
+    m_connection->retrieveCaches(*origin, m_updateCounter, [this, callback = WTFMove(callback), pendingActivity = makePendingActivity(*this), connectionStorageLock = makeUnique<ConnectionStorageLock>(m_connection.copyRef(), *origin)](DOMCacheEngine::CacheInfosOrError&& result) mutable {
         if (m_isStopped) {
             callback(DOMCacheEngine::convertToException(DOMCacheEngine::Error::Stopped));
             return;
@@ -207,7 +228,7 @@ void DOMCacheStorage::doOpen(const String& name, DOMPromiseDeferred<IDLInterface
         return;
     }
 
-    m_connection->open(*origin(), name, [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](const DOMCacheEngine::CacheIdentifierOrError& result) mutable {
+    m_connection->open(*origin(), name, [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this), connectionStorageLock = makeUnique<ConnectionStorageLock>(m_connection.copyRef(), *origin())](const DOMCacheEngine::CacheIdentifierOrError& result) mutable {
         if (!result.has_value())
             promise.reject(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
         else {

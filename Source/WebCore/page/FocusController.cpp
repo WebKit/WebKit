@@ -439,7 +439,7 @@ FocusController::FocusController(Page& page, OptionSet<ActivityState> activitySt
 {
 }
 
-void FocusController::setFocusedFrame(LocalFrame* frame)
+void FocusController::setFocusedFrame(Frame* frame)
 {
     ASSERT(!frame || frame->page() == &m_page);
     if (m_focusedFrame == frame || m_isChangingFocusedFrame)
@@ -447,10 +447,10 @@ void FocusController::setFocusedFrame(LocalFrame* frame)
 
     m_isChangingFocusedFrame = true;
 
-    RefPtr oldFrame { m_focusedFrame };
-    RefPtr newFrame { frame };
+    RefPtr oldFrame { focusedLocalFrame() };
+    RefPtr newFrame { dynamicDowncast<LocalFrame>(frame) };
 
-    m_focusedFrame = newFrame;
+    m_focusedFrame = frame;
 
     // Now that the frame is updated, fire events and update the selection focused states of both frames.
     if (auto* oldFrameView = oldFrame ? oldFrame->view() : nullptr) {
@@ -480,14 +480,14 @@ void FocusController::setFocusedFrame(LocalFrame* frame)
 #endif
     }
 
-    m_page.chrome().focusedFrameChanged(newFrame.get());
+    m_page.chrome().focusedFrameChanged(frame);
 
     m_isChangingFocusedFrame = false;
 }
 
 LocalFrame& FocusController::focusedOrMainFrame() const
 {
-    if (auto* frame = focusedFrame())
+    if (auto* frame = focusedLocalFrame())
         return *frame;
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
         return *localMainFrame;
@@ -507,14 +507,15 @@ void FocusController::setFocusedInternal(bool focused)
     if (!isFocused())
         focusedOrMainFrame().eventHandler().stopAutoscrollTimer();
 
-    if (!m_focusedFrame) {
+    if (!focusedFrame()) {
         if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
             setFocusedFrame(localMainFrame);
     }
 
-    if (m_focusedFrame && m_focusedFrame->view()) {
-        m_focusedFrame->selection().setFocused(focused);
-        dispatchEventsOnWindowAndFocusedElement(m_focusedFrame->document(), focused);
+    auto* focusedFrame = focusedLocalFrame();
+    if (focusedFrame && focusedFrame->view()) {
+        focusedFrame->selection().setFocused(focused);
+        dispatchEventsOnWindowAndFocusedElement(focusedFrame->document(), focused);
     }
 }
 
@@ -928,7 +929,7 @@ static bool shouldClearSelectionWhenChangingFocusedElement(const Page& page, Ref
 bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocusedFrame, const FocusOptions& options)
 {
     Ref protectedNewFocusedFrame { newFocusedFrame };
-    RefPtr oldFocusedFrame { focusedFrame() };
+    RefPtr oldFocusedFrame { focusedLocalFrame() };
     RefPtr oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
     
     RefPtr oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
@@ -1016,8 +1017,9 @@ void FocusController::setActiveInternal(bool active)
 
     focusedOrMainFrame().selection().pageActivationChanged();
     
-    if (m_focusedFrame && isFocused())
-        dispatchEventsOnWindowAndFocusedElement(m_focusedFrame->document(), active);
+    auto* focusedFrame = focusedLocalFrame();
+    if (focusedFrame && isFocused())
+        dispatchEventsOnWindowAndFocusedElement(focusedFrame->document(), active);
 }
 
 static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didShow)
@@ -1114,7 +1116,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
 
 void FocusController::findFocusCandidateInContainer(Node& container, const LayoutRect& startingRect, FocusDirection direction, KeyboardEvent* event, FocusCandidate& closest)
 {
-    Node* focusedNode = (focusedFrame() && focusedFrame()->document()) ? focusedFrame()->document()->focusedElement() : 0;
+    Node* focusedNode = (focusedLocalFrame() && focusedLocalFrame()->document()) ? focusedLocalFrame()->document()->focusedElement() : nullptr;
 
     Element* element = ElementTraversal::firstWithin(container);
     FocusCandidate current;
@@ -1146,9 +1148,10 @@ void FocusController::findFocusCandidateInContainer(Node& container, const Layou
 
     // The variable 'candidateCount' keeps track of the number of nodes traversed in a given container.
     // If we have more than one container in a page then the total number of nodes traversed is equal to the sum of nodes traversed in each container.
-    if (focusedFrame() && focusedFrame()->document()) {
-        candidateCount += focusedFrame()->document()->page()->lastSpatialNavigationCandidateCount();
-        focusedFrame()->document()->page()->setLastSpatialNavigationCandidateCount(candidateCount);
+    auto* focusedFrame = focusedLocalFrame();
+    if (focusedFrame && focusedFrame->document()) {
+        candidateCount += focusedFrame->document()->page()->lastSpatialNavigationCandidateCount();
+        focusedFrame->document()->page()->setLastSpatialNavigationCandidateCount(candidateCount);
     }
 }
 
@@ -1244,7 +1247,8 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
         }
     }
 
-    if (focusedFrame() && focusedFrame()->document())
+    auto* focusedFrame = focusedLocalFrame();
+    if (focusedFrame && focusedFrame->document())
         focusedDocument->page()->setLastSpatialNavigationCandidateCount(0);
 
     bool consumed = false;

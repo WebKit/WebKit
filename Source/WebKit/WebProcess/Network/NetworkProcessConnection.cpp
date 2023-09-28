@@ -63,6 +63,7 @@
 #include "WebSharedWorkerObjectConnectionMessages.h"
 #include "WebSocketChannel.h"
 #include "WebSocketChannelMessages.h"
+#include "WebTransportSessionMessages.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/InspectorInstrumentationWebKit.h>
@@ -120,6 +121,11 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     }
     if (decoder.messageReceiverName() == Messages::WebFileSystemStorageConnection::messageReceiverName()) {
         WebProcess::singleton().fileSystemStorageConnection().didReceiveMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::WebTransportSession::messageReceiverName()) {
+        if (auto* webTransportSession = WebProcess::singleton().webTransportSession(WebTransportSessionIdentifier(decoder.destinationID())))
+            webTransportSession->didReceiveMessage(connection, decoder);
         return;
     }
 

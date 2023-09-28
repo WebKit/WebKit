@@ -63,6 +63,7 @@
 #include "AuthenticationDecisionListener.h"
 #include "AuthenticationManager.h"
 #include "AuthenticatorManager.h"
+#include "BrowsingContextGroup.h"
 #include "DownloadManager.h"
 #include "DownloadProxy.h"
 #include "DragControllerAction.h"
@@ -626,6 +627,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_ignoresAppBoundDomains(m_configuration->ignoresAppBoundDomains())
     , m_limitsNavigationsToAppBoundDomains(m_configuration->limitsNavigationsToAppBoundDomains())
 #endif
+    , m_browsingContextGroup(m_configuration->browsingContextGroup())
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "constructor:");
 
@@ -8867,7 +8869,7 @@ void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp
     }
 }
 
-void WebPageProxy::focusedFrameChanged(const std::optional<FrameIdentifier>& frameID)
+void WebPageProxy::focusedFrameChanged(IPC::Connection& connection, const std::optional<FrameIdentifier>& frameID)
 {
     if (!frameID) {
         m_focusedFrame = nullptr;
@@ -8878,6 +8880,7 @@ void WebPageProxy::focusedFrameChanged(const std::optional<FrameIdentifier>& fra
     MESSAGE_CHECK(m_process, frame);
 
     m_focusedFrame = frame;
+    broadcastFocusedFrameToOtherProcesses(connection, *frameID);
 }
 
 void WebPageProxy::processDidBecomeUnresponsive()
@@ -12726,10 +12729,12 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-void WebPageProxy::addRemotePageProxy(const WebCore::RegistrableDomain& domain, WeakPtr<RemotePageProxy>&& remotePageProxy)
+void WebPageProxy::addRemotePageProxy(const WebCore::RegistrableDomain& domain, RemotePageProxy& remotePageProxy)
 {
-    auto addResult = internals().domainToRemotePageProxyMap.add(domain, WTFMove(remotePageProxy));
+    auto addResult = internals().domainToRemotePageProxyMap.add(domain, remotePageProxy);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
+    m_browsingContextGroup->addProcessForDomain(domain, remotePageProxy.process());
 }
 
 void WebPageProxy::removeRemotePageProxy(const WebCore::RegistrableDomain& domain)
@@ -12737,7 +12742,12 @@ void WebPageProxy::removeRemotePageProxy(const WebCore::RegistrableDomain& domai
     internals().domainToRemotePageProxyMap.remove(domain);
 }
 
-RemotePageProxy* WebPageProxy::remotePageProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const
+WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::RegistrableDomain& domain)
+{
+    return m_browsingContextGroup->processForDomain(domain);
+}
+
+RemotePageProxy* WebPageProxy::remotePageProxyForRegistrableDomain(const WebCore::RegistrableDomain& domain) const
 {
     return internals().domainToRemotePageProxyMap.get(domain).get();
 }
@@ -12964,6 +12974,19 @@ void WebPageProxy::dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier
     }
 
     remotePageProxy->send(Messages::WebPage::DispatchLoadEventToFrameOwnerElement(frameID));
+}
+
+void WebPageProxy::broadcastFocusedFrameToOtherProcesses(IPC::Connection& connection, const WebCore::FrameIdentifier& frameID)
+{
+    auto* frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess) {
+        if (!webProcess.hasConnection() || webProcess.connection() == &connection)
+            return;
+        webProcess.send(Messages::WebPage::FrameWasFocusedInAnotherProcess(frameID), webPageID());
+    });
 }
 
 } // namespace WebKit

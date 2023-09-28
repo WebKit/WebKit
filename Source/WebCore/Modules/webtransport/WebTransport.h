@@ -25,7 +25,12 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
+#include "WebTransportOptions.h"
+#include "WebTransportReliabilityMode.h"
+#include "WebTransportSessionClient.h"
+#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 
 namespace JSC {
@@ -34,32 +39,87 @@ class JSGlobalObject;
 
 namespace WebCore {
 
-enum class WebTransportReliabilityMode : uint8_t;
 enum class WebTransportCongestionControl : uint8_t;
-class DOMPromise;
-class DeferredPromise;
-class ReadableStream;
-class WebTransportDatagramDuplexStream;
-struct WebTransportSendStreamOptions;
-struct WebTransportOptions;
-struct WebTransportCloseInfo;
 
-class WebTransport : public RefCounted<WebTransport> {
+class DOMException;
+class DOMPromise;
+class DatagramSource;
+class DeferredPromise;
+class JSDOMGlobalObject;
+class ReadableStream;
+class ScriptExecutionContext;
+class SocketProvider;
+class WebTransportBidirectionalStreamSource;
+class WebTransportDatagramDuplexStream;
+class WebTransportError;
+class WebTransportReceiveStreamSource;
+class WebTransportSession;
+class WritableStream;
+
+struct WebTransportCloseInfo;
+struct WebTransportSendStreamOptions;
+struct WebTransportHash;
+
+class WebTransport : public WebTransportSessionClient, public ActiveDOMObject {
 public:
-    static Ref<WebTransport> create(String&&, std::optional<WebTransportOptions>&&);
+    static ExceptionOr<Ref<WebTransport>> create(ScriptExecutionContext&, String&&, WebTransportOptions&&);
+    ~WebTransport();
 
     void getStats(Ref<DeferredPromise>&&);
-    Ref<DOMPromise> ready(JSC::JSGlobalObject&);
+    DOMPromise& ready();
     WebTransportReliabilityMode reliability();
     WebTransportCongestionControl congestionControl();
-    Ref<DOMPromise> closed(JSC::JSGlobalObject&);
-    Ref<DOMPromise> draining(JSC::JSGlobalObject&);
-    void close(std::optional<WebTransportCloseInfo>&&);
-    Ref<WebTransportDatagramDuplexStream> datagrams();
-    void createBidirectionalStream(std::optional<WebTransportSendStreamOptions>&&, Ref<DeferredPromise>&&);
-    ExceptionOr<Ref<ReadableStream>> incomingBidirectionalStreams(JSC::JSGlobalObject&);
-    void createUnidirectionalStream(std::optional<WebTransportSendStreamOptions>&&, Ref<DeferredPromise>&&);
-    ExceptionOr<Ref<ReadableStream>> incomingUnidirectionalStreams(JSC::JSGlobalObject&);
+    DOMPromise& closed();
+    DOMPromise& draining();
+    void close(WebTransportCloseInfo&&);
+    WebTransportDatagramDuplexStream& datagrams();
+    void createBidirectionalStream(ScriptExecutionContext&, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&&);
+    ReadableStream& incomingBidirectionalStreams();
+    void createUnidirectionalStream(ScriptExecutionContext&, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&&);
+    ReadableStream& incomingUnidirectionalStreams();
+
+    RefPtr<WebTransportSession> session();
+
+private:
+    WebTransport(ScriptExecutionContext&, JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<ReadableStream>&&, WebTransportCongestionControl, Ref<WebTransportDatagramDuplexStream>&&, Ref<DatagramSource>&&, Ref<WebTransportReceiveStreamSource>&&, Ref<WebTransportBidirectionalStreamSource>&&);
+
+    void initializeOverHTTP(SocketProvider&, ScriptExecutionContext&, URL&&, bool dedicated, bool http3Only, WebTransportCongestionControl, Vector<WebTransportHash>&&);
+    void cleanup(Ref<DOMException>&&, std::optional<WebTransportCloseInfo>&&);
+
+    const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
+
+    void receiveDatagram(std::span<const uint8_t>) final;
+    void receiveIncomingUnidirectionalStream() final;
+    void receiveBidirectionalStream() final;
+
+    ListHashSet<Ref<WritableStream>> m_sendStreams;
+    ListHashSet<Ref<ReadableStream>> m_receiveStreams;
+    Ref<ReadableStream> m_incomingBidirectionalStreams;
+    Ref<ReadableStream> m_incomingUnidirectionalStreams;
+
+    // https://www.w3.org/TR/webtransport/#dom-webtransport-state-slot
+    enum class State : uint8_t {
+        Connecting,
+        Connected,
+        Draining,
+        Closed,
+        Failed
+    };
+    State m_state { State::Connecting };
+
+    using PromiseAndWrapper = std::pair<Ref<DOMPromise>, Ref<DeferredPromise>>;
+    PromiseAndWrapper m_ready;
+    WebTransportReliabilityMode m_reliability { WebTransportReliabilityMode::Pending };
+    WebTransportCongestionControl m_congestionControl;
+    PromiseAndWrapper m_closed;
+    PromiseAndWrapper m_draining;
+    Ref<WebTransportDatagramDuplexStream> m_datagrams;
+    RefPtr<WebTransportSession> m_session;
+
+    Ref<DatagramSource> m_datagramSource;
+    Ref<WebTransportReceiveStreamSource> m_receiveStreamSource;
+    Ref<WebTransportBidirectionalStreamSource> m_bidirectionalStreamSource;
 };
 
 }

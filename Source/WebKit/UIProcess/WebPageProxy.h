@@ -318,6 +318,7 @@ namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
 class AuthenticationChallengeProxy;
+class BrowsingContextGroup;
 class CallbackID;
 class ContextMenuContextData;
 class DownloadProxy;
@@ -2157,8 +2158,9 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    RemotePageProxy* remotePageProxyForRegistrableDomain(WebCore::RegistrableDomain) const;
-    void addRemotePageProxy(const WebCore::RegistrableDomain&, WeakPtr<RemotePageProxy>&&);
+    WebProcessProxy* processForRegistrableDomain(const WebCore::RegistrableDomain&);
+    RemotePageProxy* remotePageProxyForRegistrableDomain(const WebCore::RegistrableDomain&) const;
+    void addRemotePageProxy(const WebCore::RegistrableDomain&, RemotePageProxy&);
     void removeRemotePageProxy(const WebCore::RegistrableDomain&);
     void setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&&);
     void addOpenedRemotePageProxy(Ref<RemotePageProxy>&&);
@@ -2584,7 +2586,7 @@ private:
     static WebCore::ScreenOrientationType toScreenOrientationType(WebCore::IntDegrees);
 #endif
 
-    void focusedFrameChanged(const std::optional<WebCore::FrameIdentifier>&);
+    void focusedFrameChanged(IPC::Connection&, const std::optional<WebCore::FrameIdentifier>&);
 
     void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&);
 
@@ -2810,6 +2812,8 @@ private:
     bool useGPUProcessForDOMRenderingEnabled() const;
 
     void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
+
+    void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, const WebCore::FrameIdentifier&);
 
     struct Internals;
     Internals& internals() { return m_internals; }
@@ -3309,6 +3313,7 @@ private:
 #endif
 
     RefPtr<WebPageProxy> m_pageToCloneSessionStorageFrom;
+    Ref<BrowsingContextGroup> m_browsingContextGroup;
 };
 
 } // namespace WebKit

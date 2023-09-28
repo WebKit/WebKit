@@ -1,11 +1,11 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL close promise_test: Unhandled rejection with value: null
-FAIL close without waiting for ready assert_true: expected true got false
-TIMEOUT close with code and reason Test timed out
-NOTRUN close with code and long reason
-NOTRUN server initiated closure without code and reason
+FAIL close promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'close_info.closeCode')"
+FAIL close without waiting for ready promise_rejects_exactly: ready promise should be rejected function "function() { throw e }" threw object "NetworkError:  A network error occurred." but we expected it to throw object "NetworkError:  A network error occurred."
+FAIL close with code and reason promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'close_info.closeCode')"
+FAIL close with code and long reason promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'close_info.closeCode')"
+TIMEOUT server initiated closure without code and reason Test timed out
 NOTRUN server initiated closure with code and reason
 NOTRUN server initiated connection closure
 NOTRUN opening unidirectional stream before ready

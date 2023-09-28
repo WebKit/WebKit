@@ -74,6 +74,13 @@ def health():
         mimetype='application/json',
     )
 
+# Crawling a reporelay service is always a bad idea
+@app.route('/robots.txt')
+def robots_txt():
+    return '''User-agent: *
+Disallow: /
+'''
+
 
 app.register_blueprint(checkout_routes)
 if hook_routes:

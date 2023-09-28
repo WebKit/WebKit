@@ -54,6 +54,8 @@
 #include "NetworkSocketChannel.h"
 #include "NetworkSocketChannelMessages.h"
 #include "NetworkStorageManager.h"
+#include "NetworkTransportSession.h"
+#include "NetworkTransportSessionMessages.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PingLoad.h"
 #include "PreconnectTask.h"
@@ -287,7 +289,13 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         cacheStorageConnection().didReceiveMessage(connection, decoder);
         return;
     }
-    
+
+    if (decoder.messageReceiverName() == Messages::NetworkTransportSession::messageReceiverName()) {
+        if (auto* networkTransportSession = m_networkTransportSessions.get(WebTransportSessionIdentifier(decoder.destinationID())))
+            networkTransportSession->didReceiveMessage(connection, decoder);
+        return;
+    }
+
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
         if (m_swConnection)
@@ -1517,7 +1525,6 @@ void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeU
     });
 }
 
-
 void NetworkConnectionToWebProcess::navigatorUnsubscribeFromPushService(URL&& scopeURL, const PushSubscriptionIdentifier& subscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     auto* session = networkSession();
@@ -1552,6 +1559,24 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
     session->notificationManager().getPushPermissionState(WTFMove(scopeURL), WTFMove(completionHandler));
 }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
+void NetworkConnectionToWebProcess::initializeWebTransportSession(URL&& url, CompletionHandler<void(std::optional<WebTransportSessionIdentifier>)>&& completionHandler)
+{
+    NetworkTransportSession::initialize(*this, WTFMove(url), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (std::unique_ptr<NetworkTransportSession>&& session) mutable {
+        if (!session || !weakThis)
+            return completionHandler(std::nullopt);
+        auto identifier = session->identifier();
+        ASSERT(!m_networkTransportSessions.contains(identifier));
+        m_networkTransportSessions.set(identifier, makeUniqueRefFromNonNullUniquePtr(WTFMove(session)));
+        completionHandler(identifier);
+    });
+}
+
+void NetworkConnectionToWebProcess::destroyWebTransportSession(WebTransportSessionIdentifier identifier)
+{
+    ASSERT(m_networkTransportSessions.contains(identifier));
+    m_networkTransportSessions.remove(identifier);
+}
 
 } // namespace WebKit
 

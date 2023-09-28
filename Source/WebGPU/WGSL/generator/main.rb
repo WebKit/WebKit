@@ -344,6 +344,8 @@ module DSL
         Vector = AbstractType.new(:Vector)
         Matrix = AbstractType.new(:Matrix)
         Texture = AbstractType.new(:Texture)
+        TextureStorage = AbstractType.new(:TextureStorage)
+        ChannelFormat = AbstractType.new(:ChannelFormat)
 
         array = AbstractType.new(:Array)
         ptr = AbstractType.new(:Pointer)
@@ -358,20 +360,27 @@ module DSL
         TextureCube = Variable.new(:"Types::Texture::Kind::TextureCube", nil)
         TextureCubeArray = Variable.new(:"Types::Texture::Kind::TextureCubeArray", nil)
 
+        # texture storage kinds
+        TextureStorage1d = Variable.new(:"Types::TextureStorage::Kind::TextureStorage1d", nil)
+        TextureStorage2d = Variable.new(:"Types::TextureStorage::Kind::TextureStorage2d", nil)
+        TextureStorage2dArray = Variable.new(:"Types::TextureStorage::Kind::TextureStorage2dArray", nil)
+        TextureStorage3d = Variable.new(:"Types::TextureStorage::Kind::TextureStorage3d", nil)
+
         # Variables
         S = Variable.new(:S, @TypeVariable)
         T = Variable.new(:T, @TypeVariable)
         U = Variable.new(:U, @TypeVariable)
         V = Variable.new(:V, @TypeVariable)
+
         N = Variable.new(:N, @ValueVariable)
         C = Variable.new(:C, @ValueVariable)
         R = Variable.new(:R, @ValueVariable)
         K = Variable.new(:K, @ValueVariable)
         AS = Variable.new(:AS, @ValueVariable)
+        F = Variable.new(:F, @ValueVariable)
         AM = Variable.new(:AM, @ValueVariable)
 
         # constraints
-
         Number = Constraint.new(:Number)
         Integer = Constraint.new(:Integer)
         Float = Constraint.new(:Float)
@@ -383,6 +392,7 @@ module DSL
         SignedNumber = Constraint.new(:SignedNumber)
 
         # primitives
+        void = PrimitiveType.new(:Void)
         bool = PrimitiveType.new(:Bool)
         i32 = PrimitiveType.new(:I32)
         u32 = PrimitiveType.new(:U32)
@@ -401,11 +411,13 @@ module DSL
         storage = AbstractValue.new(:"AddressSpace::Storage")
         read = AbstractValue.new(:"AccessMode::Read")
         read_write = AbstractValue.new(:"AccessMode::ReadWrite")
+        write = AbstractValue.new(:"AccessMode::Write")
 
         # helpers
         vec = AggregateConstructor.new(Vector, [1, 1])
         mat = AggregateConstructor.new(Matrix, [2, 1])
         texture = AggregateConstructor.new(Texture, [1, 1])
+        texture_storage = AggregateConstructor.new(TextureStorage, [1, 2])
 
         vec2 = vec[2]
         vec3 = vec[3]
@@ -428,6 +440,11 @@ module DSL
         texture_3d = texture[Texture3d]
         texture_cube = texture[TextureCube]
         texture_cube_array = texture[TextureCubeArray]
+
+        texture_storage_1d = texture_storage[TextureStorage1d]
+        texture_storage_2d = texture_storage[TextureStorage2d]
+        texture_storage_2d_array = texture_storage[TextureStorage2dArray]
+        texture_storage_3d = texture_storage[TextureStorage3d]
         EOS
     end
 

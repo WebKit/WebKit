@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DownloadID.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>

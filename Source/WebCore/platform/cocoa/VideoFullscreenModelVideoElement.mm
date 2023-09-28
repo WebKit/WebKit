@@ -281,7 +281,7 @@ void VideoFullscreenModelVideoElement::setHasVideo(bool hasVideo)
     m_hasVideo = hasVideo;
 
     for (auto& client : copyToVector(m_clients))
-        client.get()->hasVideoChanged(m_hasVideo);
+        client->hasVideoChanged(m_hasVideo);
 }
 
 void VideoFullscreenModelVideoElement::setVideoDimensions(const FloatSize& videoDimensions)
@@ -293,7 +293,7 @@ void VideoFullscreenModelVideoElement::setVideoDimensions(const FloatSize& video
     m_videoDimensions = videoDimensions;
 
     for (auto& client : copyToVector(m_clients))
-        client.get()->videoDimensionsChanged(m_videoDimensions);
+        client->videoDimensionsChanged(m_videoDimensions);
 }
 
 void VideoFullscreenModelVideoElement::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
@@ -304,42 +304,42 @@ void VideoFullscreenModelVideoElement::setPlayerIdentifier(std::optional<MediaPl
     m_playerIdentifier = identifier;
 
     for (auto& client : copyToVector(m_clients))
-        client.get()->setPlayerIdentifier(identifier);
+        client->setPlayerIdentifier(identifier);
 }
 
 void VideoFullscreenModelVideoElement::willEnterPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
-        client.get()->willEnterPictureInPicture();
+        client->willEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::didEnterPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
-        client.get()->didEnterPictureInPicture();
+        client->didEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::failedToEnterPictureInPicture()
 {
     ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
-        client.get()->failedToEnterPictureInPicture();
+        client->failedToEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::willExitPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
-        client.get()->willExitPictureInPicture();
+        client->willExitPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::didExitPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
-        client.get()->didExitPictureInPicture();
+        client->didExitPictureInPicture();
 }
 
 #if !RELEASE_LOG_DISABLED

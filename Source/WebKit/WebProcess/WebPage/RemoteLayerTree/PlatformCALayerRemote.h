@@ -254,7 +254,7 @@ private:
     void updateBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     RemoteLayerBackingStore::IncludeDisplayList shouldIncludeDisplayListInBackingStore() const;
 #endif
 

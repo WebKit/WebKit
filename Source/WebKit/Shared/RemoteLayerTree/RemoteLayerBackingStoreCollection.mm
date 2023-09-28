@@ -26,9 +26,10 @@
 #import "config.h"
 #import "RemoteLayerBackingStoreCollection.h"
 
+#import "ImageBufferShareableBitmapBackend.h"
+#import "ImageBufferShareableMappedIOSurfaceBackend.h"
 #import "Logging.h"
 #import "PlatformCALayerRemote.h"
-#import "PlatformImageBufferShareableBackend.h"
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
 #import "SwapBuffersDisplayRequirement.h"
@@ -258,10 +259,10 @@ RefPtr<WebCore::ImageBuffer> RemoteLayerBackingStoreCollection::allocateBufferFo
     case RemoteLayerBackingStore::Type::IOSurface: {
         ImageBufferCreationContext creationContext;
         creationContext.surfacePool = &WebCore::IOSurfacePool::sharedPool();
-        return WebCore::ImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(backingStore.size(), backingStore.scale(), backingStore.colorSpace(), backingStore.pixelFormat(), WebCore::RenderingPurpose::LayerBacking, creationContext);
+        return WebCore::ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend>(backingStore.size(), backingStore.scale(), backingStore.colorSpace(), backingStore.pixelFormat(), WebCore::RenderingPurpose::LayerBacking, creationContext);
     }
     case RemoteLayerBackingStore::Type::Bitmap:
-        return WebCore::ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(backingStore.size(), backingStore.scale(), backingStore.colorSpace(), backingStore.pixelFormat(), WebCore::RenderingPurpose::LayerBacking, { });
+        return WebCore::ImageBuffer::create<ImageBufferShareableBitmapBackend>(backingStore.size(), backingStore.scale(), backingStore.colorSpace(), backingStore.pixelFormat(), WebCore::RenderingPurpose::LayerBacking, { });
     }
     return nullptr;
 }

@@ -819,8 +819,6 @@ webkit.org/b/187935 [ Release ] imported/w3c/web-platform-tests/service-workers/
 
 webkit.org/b/165352 fast/dom/Window/window-resize-contents.html [ Pass Timeout ]
 
-webkit.org/b/167653 http/tests/contentextensions/block-everything-unless-domain.html [ Pass Timeout ]
-
 webkit.org/b/168065 inspector/unit-tests/heap-snapshot.html [ Pass Failure Timeout ]
 
 webkit.org/b/168085 tiled-drawing/scrolling/latched-to-deleted-node.html [ Pass Failure ]
@@ -1653,9 +1651,6 @@ webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
 
-# Will pass once accelerated drawing is enabled on macOS tests.
-webkit.org/b/246285 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
-
 webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Failure ]
 
 # webkit.org/b/246773 Constant crashes on wk2 debug
@@ -2111,7 +2106,6 @@ webkit.org/b/261226 fast/images/mac/play-pause-individual-animation-context-menu
 [ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Pass Failure ]
 [ Monterey+ X86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
 
-webkit.org/b/261341 requestidlecallback/requestidlecallback-in-page-cache.html [ Pass Failure Timeout ]
 webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer.html [ Pass Failure ]
 
 # rdar://115746676 (REGRESSION (267943@main): [ Sonoma wk2 ] 27 tests are a constant crash)
@@ -2160,5 +2154,11 @@ webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer
 
 webkit.org/b/261906 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last [ Slow ]
 
-webkit.org/b/262019 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-replaced.html [ Failure ]
-webkit.org/b/262020 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
+webkit.org/b/262079 [ Ventura+ arm64 ] fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
+
+# webkit.org/b/262216 (REGRESSION(268472@main): 5 tests under http/tests/contentextensions/ are consistently failing.)
+http/tests/contentextensions/main-resource-redirect-blocked.py [ Pass Failure ]
+http/tests/contentextensions/main-resource-redirect-error.html [ Pass Failure ]
+http/tests/contentextensions/block-everything-unless-domain.html [ Pass Failure ] # Switch back to [ Pass Timeout ] when resolved: webkit.org/b/167653
+http/tests/contentextensions/block-everything-unless-domain-iframe.html [ Pass Failure ]
+http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass Failure ]

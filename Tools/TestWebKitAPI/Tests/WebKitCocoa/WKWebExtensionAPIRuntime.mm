@@ -35,20 +35,24 @@ namespace TestWebKitAPI {
 static auto *runtimeManifest = @{
     @"manifest_version": @3,
 
+    @"name": @"Runtime Test",
+    @"description": @"Runtime Test",
+    @"version": @"1",
+
     @"background": @{
         @"scripts": @[ @"background.js" ],
         @"type": @"module",
         @"persistent": @NO,
     },
 
-    @"unused" : [NSNull null],
+    @"permissions": @[ @"nativeMessaging" ],
 };
 
 static auto *runtimeContentScriptManifest = @{
     @"manifest_version": @3,
 
-    @"name": @"Tabs Test",
-    @"description": @"Tabs Test",
+    @"name": @"Runtime Test",
+    @"description": @"Runtime Test",
     @"version": @"1",
 
     @"background": @{
@@ -61,6 +65,8 @@ static auto *runtimeContentScriptManifest = @{
         @"js": @[ @"content.js" ],
         @"matches": @[ @"*://localhost/*" ],
     } ],
+
+    @"permissions": @[ @"nativeMessaging" ],
 };
 
 TEST(WKWebExtensionAPIRuntime, GetURL)
@@ -131,13 +137,25 @@ TEST(WKWebExtensionAPIRuntime, Id)
 
 TEST(WKWebExtensionAPIRuntime, GetManifest)
 {
+    auto *testManifest = @{
+        @"manifest_version": @3,
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"unused" : [NSNull null],
+    };
+
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertDeepEq(browser.runtime.getManifest(), { manifest_version: 3, background: { persistent: false, scripts: [ 'background.js' ], type: 'module' }, unused: null })",
 
         @"browser.test.notifyPass()"
     ]);
 
-    Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+    Util::loadAndRunExtension(testManifest, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPIRuntime, GetPlatformInfo)
@@ -555,6 +573,82 @@ TEST(WKWebExtensionAPIRuntime, PortDisconnectFromContentScriptWithMultipleListen
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendNativeMessage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const response = await browser.test.assertSafeResolve(() => browser.runtime.sendNativeMessage('test', 'Hello'))",
+        @"browser.test.assertEq(response, 'Received', 'Should get the response from the native app')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionNativeMessaging];
+
+    manager.get().internalDelegate.sendMessage = ^(id message, NSString *applicationIdentifier, void (^replyHandler)(id replyMessage, NSError *error)) {
+        EXPECT_NS_EQUAL(applicationIdentifier, @"test");
+        EXPECT_NS_EQUAL(message, @"Hello");
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            replyHandler(@"Received", nil);
+        });
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, ConnectNative)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const port = browser.runtime.connectNative('test')",
+
+        @"let messagesReceived = 0",
+        @"port.onMessage.addListener((response) => {",
+        @"  browser.test.assertTrue(response.startsWith('Received '), 'Should get the response from the native code')",
+        @"  ++messagesReceived",
+        @"})",
+
+        @"port.onDisconnect.addListener(() => {",
+        @"  if (messagesReceived === 2)",
+        @"    browser.test.notifyPass()",
+        @"  else",
+        @"    browser.test.notifyFail('Not all messages were received')",
+        @"})",
+
+        @"port.postMessage('Hello')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionNativeMessaging];
+
+    manager.get().internalDelegate.connectUsingMessagePort = ^(_WKWebExtensionMessagePort *messagePort) {
+        EXPECT_NS_EQUAL(messagePort.applicationIdentifier, @"test");
+
+        messagePort.messageHandler = ^(id _Nullable message, NSError * _Nullable error) {
+            EXPECT_NULL(error);
+            EXPECT_NS_EQUAL(message, @"Hello");
+
+            [messagePort sendMessage:@"Received 1" completionHandler:^(BOOL success, NSError *error) {
+                EXPECT_TRUE(success);
+                EXPECT_NULL(error);
+            }];
+
+            [messagePort sendMessage:@"Received 2" completionHandler:^(BOOL success, NSError *error) {
+                EXPECT_TRUE(success);
+                EXPECT_NULL(error);
+            }];
+
+            [messagePort disconnectWithError:nil];
+        };
+    };
 
     [manager loadAndRun];
 }

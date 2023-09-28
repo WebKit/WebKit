@@ -32,7 +32,7 @@
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeWindow.h"
 #import "PixelDumpSupportCG.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>

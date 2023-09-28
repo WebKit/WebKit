@@ -94,8 +94,8 @@ struct SameSizeAsRenderBlock : public RenderBox {
 
 static_assert(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), "RenderBlock should stay small");
 
-typedef HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>> TrackedDescendantsMap;
-typedef HashMap<const RenderBox*, HashSet<const RenderBlock*>> TrackedContainerMap;
+using TrackedDescendantsMap = WeakHashMap<const RenderBlock, std::unique_ptr<TrackedRendererListHashSet>>;
+using TrackedContainerMap = WeakHashMap<const RenderBox, WeakHashSet<const RenderBlock>>;
 
 static TrackedDescendantsMap* percentHeightDescendantsMap;
 static TrackedContainerMap* percentHeightContainerMap;
@@ -107,23 +107,23 @@ static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBo
         percentHeightContainerMap = new TrackedContainerMap;
     }
     
-    auto& descendantSet = percentHeightDescendantsMap->ensure(&container, [] {
+    auto& descendantSet = percentHeightDescendantsMap->ensure(container, [] {
         return makeUnique<TrackedRendererListHashSet>();
     }).iterator->value;
 
-    bool added = descendantSet->add(&descendant).isNewEntry;
+    bool added = descendantSet->add(descendant).isNewEntry;
     if (!added) {
 #if ASSERT_ENABLED
-        auto it = percentHeightContainerMap->find(&descendant);
+        auto it = percentHeightContainerMap->find(descendant);
         ASSERT(it != percentHeightContainerMap->end());
-        ASSERT(it->value.contains(&container));
+        ASSERT(it->value.contains(container));
 #endif
         return;
     }
     
-    auto& containerSet = percentHeightContainerMap->add(&descendant, HashSet<const RenderBlock*>()).iterator->value;
-    ASSERT(!containerSet.contains(&container));
-    containerSet.add(&container);
+    auto& containerSet = percentHeightContainerMap->add(descendant, WeakHashSet<const RenderBlock>()).iterator->value;
+    ASSERT(!containerSet.contains(container));
+    containerSet.add(container);
 }
 
 static void removeFromTrackedRendererMaps(RenderBox& descendant)
@@ -131,8 +131,8 @@ static void removeFromTrackedRendererMaps(RenderBox& descendant)
     if (!percentHeightDescendantsMap)
         return;
     
-    HashSet<const RenderBlock*> containerSet = percentHeightContainerMap->take(&descendant);
-    for (auto* container : containerSet) {
+    auto containerSet = percentHeightContainerMap->take(descendant);
+    for (auto& container : containerSet) {
         // FIXME: Disabling this assert temporarily until we fix the layout
         // bugs associated with positioned objects not properly cleared from
         // their ancestor chain before being moved. See webkit bug 93766.
@@ -142,9 +142,9 @@ static void removeFromTrackedRendererMaps(RenderBox& descendant)
         if (descendantsMapIterator == percentHeightDescendantsMap->end())
             continue;
         auto& descendantSet = descendantsMapIterator->value;
-        ASSERT(descendantSet->contains(&descendant));
-        descendantSet->remove(&descendant);
-        if (descendantSet->isEmpty())
+        ASSERT(descendantSet->contains(descendant));
+        descendantSet->remove(descendant);
+        if (descendantSet->isEmptyIgnoringNullReferences())
             percentHeightDescendantsMap->remove(descendantsMapIterator);
     }
 }
@@ -154,10 +154,10 @@ public:
     void addDescendant(const RenderBlock& containingBlock, RenderBox& positionedDescendant)
     {
         // Protect against double insert where a descendant would end up with multiple containing blocks.
-        auto previousContainingBlock = m_containerMap.get(&positionedDescendant);
+        auto previousContainingBlock = m_containerMap.get(positionedDescendant);
         if (previousContainingBlock && previousContainingBlock != &containingBlock) {
             if (auto* descendants = m_descendantsMap.get(previousContainingBlock.get()))
-                descendants->remove(&positionedDescendant);
+                descendants->remove(positionedDescendant);
         }
 
         auto& descendants = m_descendantsMap.ensure(&containingBlock, [] {
@@ -165,10 +165,10 @@ public:
         }).iterator->value;
 
         auto isNewEntry = false;
-        if (!is<RenderView>(containingBlock) || descendants->isEmpty())
-            isNewEntry = descendants->add(&positionedDescendant).isNewEntry;
+        if (!is<RenderView>(containingBlock) || descendants->isEmptyIgnoringNullReferences())
+            isNewEntry = descendants->add(positionedDescendant).isNewEntry;
         else if (positionedDescendant.isFixedPositioned() || isInTopLayerOrBackdrop(positionedDescendant.style(), positionedDescendant.element()))
-            isNewEntry = descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry;
+            isNewEntry = descendants->appendOrMoveToLast(positionedDescendant).isNewEntry;
         else {
             auto ensureLayoutDepentBoxPosition = [&] {
                 // RenderView is a special containing block as it may hold both absolute and fixed positioned containing blocks.
@@ -176,26 +176,26 @@ public:
                 // we have to make sure that the absolute positioned box is inserted before the fixed box to follow
                 // block layout dependency.
                 for (auto it = descendants->begin(); it != descendants->end(); ++it) {
-                    if ((*it)->isFixedPositioned()) {
-                        isNewEntry = descendants->insertBefore(it, &positionedDescendant).isNewEntry;
+                    if (it->isFixedPositioned()) {
+                        isNewEntry = descendants->insertBefore(it, positionedDescendant).isNewEntry;
                         return;
                     }
                 }
-                isNewEntry = descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry;
+                isNewEntry = descendants->appendOrMoveToLast(positionedDescendant).isNewEntry;
             };
             ensureLayoutDepentBoxPosition();
         }
 
         if (!isNewEntry) {
-            ASSERT(m_containerMap.contains(&positionedDescendant));
+            ASSERT(m_containerMap.contains(positionedDescendant));
             return;
         }
-        m_containerMap.set(&positionedDescendant, containingBlock);
+        m_containerMap.set(positionedDescendant, containingBlock);
     }
 
     void removeDescendant(const RenderBox& positionedDescendant)
     {
-        auto containingBlock = m_containerMap.take(&positionedDescendant);
+        auto containingBlock = m_containerMap.take(positionedDescendant);
         if (!containingBlock)
             return;
 
@@ -205,10 +205,10 @@ public:
             return;
 
         auto& descendants = descendantsIterator->value;
-        ASSERT(descendants->contains(const_cast<RenderBox*>(&positionedDescendant)));
+        ASSERT(descendants->contains(const_cast<RenderBox&>(positionedDescendant)));
 
-        descendants->remove(const_cast<RenderBox*>(&positionedDescendant));
-        if (descendants->isEmpty())
+        descendants->remove(const_cast<RenderBox&>(positionedDescendant));
+        if (descendants->isEmptyIgnoringNullReferences())
             m_descendantsMap.remove(descendantsIterator);
     }
     
@@ -218,7 +218,7 @@ public:
         if (!descendants)
             return;
 
-        for (auto* renderer : *descendants)
+        for (auto& renderer : *descendants)
             m_containerMap.remove(renderer);
     }
     
@@ -229,7 +229,7 @@ public:
 
 private:
     using DescendantsMap = HashMap<CheckedPtr<const RenderBlock>, std::unique_ptr<TrackedRendererListHashSet>>;
-    using ContainerMap = HashMap<const RenderBox*, WeakPtr<const RenderBlock>>;
+    using ContainerMap = WeakHashMap<const RenderBox, WeakPtr<const RenderBlock>>;
     
     DescendantsMap m_descendantsMap;
     ContainerMap m_containerMap;
@@ -241,7 +241,7 @@ static PositionedDescendantsMap& positionedDescendantsMap()
     return mapForPositionedDescendants;
 }
 
-typedef HashMap<RenderBlock*, std::unique_ptr<ListHashSet<RenderInline*>>> ContinuationOutlineTableMap;
+using ContinuationOutlineTableMap = HashMap<CheckedPtr<RenderBlock>, std::unique_ptr<ListHashSet<CheckedPtr<RenderInline>>>>;
 
 // Allocated only when some of these fields have non-default values
 
@@ -314,15 +314,15 @@ RenderBlock::RenderBlock(Document& document, RenderStyle&& style, BaseTypeFlags 
 {
 }
 
-static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock* block)
+static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock& block)
 {
     if (!percentHeightDescendantsMap)
         return;
-    std::unique_ptr<TrackedRendererListHashSet> descendantSet = percentHeightDescendantsMap->take(block);
+    auto descendantSet = percentHeightDescendantsMap->take(block);
     if (!descendantSet)
         return;
     
-    for (auto* descendant : *descendantSet) {
+    for (auto& descendant : *descendantSet) {
         auto it = percentHeightContainerMap->find(descendant);
         ASSERT(it != percentHeightContainerMap->end());
         if (it == percentHeightContainerMap->end())
@@ -330,7 +330,7 @@ static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock* blo
         auto& containerSet = it->value;
         ASSERT(containerSet.contains(block));
         containerSet.remove(block);
-        if (containerSet.isEmpty())
+        if (containerSet.isEmptyIgnoringNullReferences())
             percentHeightContainerMap->remove(it);
     }
 }
@@ -361,7 +361,7 @@ void RenderBlock::blockWillBeDestroyed()
 {
     removeFromUpdateScrollInfoAfterLayoutTransaction();
 
-    removeBlockFromPercentageDescendantAndContainerMaps(this);
+    removeBlockFromPercentageDescendantAndContainerMaps(*this);
     positionedDescendantsMap().removeContainingBlock(*this);
 }
 
@@ -743,10 +743,10 @@ void RenderBlock::addOverflowFromPositionedObjects()
     if (!positionedDescendants)
         return;
 
-    for (auto* positionedObject : *positionedDescendants) {
+    for (auto& positionedObject : *positionedDescendants) {
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
-        if (positionedObject->style().position() != PositionType::Fixed)
-            addOverflowFromChild(positionedObject, { positionedObject->x(), positionedObject->y() });
+        if (positionedObject.style().position() != PositionType::Fixed)
+            addOverflowFromChild(&positionedObject, { positionedObject.x(), positionedObject.y() });
     }
 }
 
@@ -809,14 +809,14 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
     if (!percentHeightDescendantsMap)
         return;
 
-    TrackedRendererListHashSet* descendants = percentHeightDescendantsMap->get(this);
+    auto* descendants = percentHeightDescendantsMap->get(*this);
     if (!descendants)
         return;
 
-    for (RenderElement* renderer : *descendants) {
+    for (auto& descendant : *descendants) {
         // Let's not dirty the height perecentage descendant when it has an absolutely positioned containing block ancestor. We should be able to dirty such boxes through the regular invalidation logic.
         bool descendantNeedsLayout = true;
-        for (auto* ancestor = renderer->containingBlock(); ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
+        for (auto* ancestor = descendant.containingBlock(); ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
             if (ancestor->isOutOfFlowPositioned()) {
                 descendantNeedsLayout = false;
                 break;
@@ -825,6 +825,7 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
         if (!descendantNeedsLayout)
             continue;
 
+        CheckedPtr<RenderElement> renderer = &descendant;
         while (renderer != this) {
             if (renderer->normalChildNeedsLayout())
                 break;
@@ -1033,8 +1034,8 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPosit
     
     // Do not cache positionedDescendants->end() in a local variable, since |positionedDescendants| can be mutated
     // as it is walked. We always need to fetch the new end() value dynamically.
-    for (auto* descendant : *positionedDescendants)
-        layoutPositionedObject(*descendant, relayoutChildren, fixedPositionObjectsOnly);
+    for (auto& descendant : *positionedDescendants)
+        layoutPositionedObject(descendant, relayoutChildren, fixedPositionObjectsOnly);
 }
 
 void RenderBlock::markPositionedObjectsForLayout()
@@ -1043,8 +1044,8 @@ void RenderBlock::markPositionedObjectsForLayout()
     if (!positionedDescendants)
         return;
 
-    for (auto* descendant : *positionedDescendants)
-        descendant->setChildNeedsLayout();
+    for (auto& descendant : *positionedDescendants)
+        descendant.setChildNeedsLayout();
 }
 
 void RenderBlock::markForPaginationRelayoutIfNeeded()
@@ -1354,11 +1355,11 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
     // way of painting.
     ASSERT(!flow->layer() && !flow->isContinuation());
     
-    ContinuationOutlineTableMap* table = continuationOutlineTable();
-    ListHashSet<RenderInline*>* continuations = table->get(this);
+    auto* table = continuationOutlineTable();
+    auto* continuations = table->get(this);
     if (!continuations) {
-        continuations = new ListHashSet<RenderInline*>;
-        table->set(this, std::unique_ptr<ListHashSet<RenderInline*>>(continuations));
+        continuations = new ListHashSet<CheckedPtr<RenderInline>>;
+        table->set(this, std::unique_ptr<ListHashSet<CheckedPtr<RenderInline>>>(continuations));
     }
     
     continuations->add(flow);
@@ -1383,13 +1384,13 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
 
     LayoutPoint accumulatedPaintOffset = paintOffset;
     // Paint each continuation outline.
-    for (auto* flow : *continuations) {
+    for (auto& flow : *continuations) {
         // Need to add in the coordinates of the intervening blocks.
-        RenderBlock* block = flow->containingBlock();
+        RenderBlock* block = flow.get()->containingBlock();
         for ( ; block && block != this; block = block->containingBlock())
             accumulatedPaintOffset.moveBy(block->location());
-        ASSERT(block);   
-        flow->paintOutline(info, accumulatedPaintOffset);
+        ASSERT(block);
+        flow.get()->paintOutline(info, accumulatedPaintOffset);
     }
 }
 
@@ -1479,8 +1480,8 @@ static void clipOutPositionedObjects(const PaintInfo* paintInfo, const LayoutPoi
     if (!positionedObjects)
         return;
     
-    for (auto* renderer : *positionedObjects)
-        paintInfo->context().clipOut(IntRect(offset.x() + renderer->x(), offset.y() + renderer->y(), renderer->width(), renderer->height()));
+    for (auto& renderer : *positionedObjects)
+        paintInfo->context().clipOut(IntRect(offset.x() + renderer.x(), offset.y() + renderer.y(), renderer.width(), renderer.height()));
 }
 
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock)
@@ -1767,26 +1768,26 @@ void RenderBlock::removePositionedObjects(const RenderBlock* newContainingBlockC
     if (!positionedDescendants)
         return;
     
-    Vector<CheckedPtr<RenderBox>, 16> renderersToRemove;
-    for (auto* renderer : *positionedDescendants) {
-        if (newContainingBlockCandidate && !renderer->isDescendantOf(newContainingBlockCandidate))
+    Vector<CheckedRef<RenderBox>, 16> renderersToRemove;
+    for (auto& renderer : *positionedDescendants) {
+        if (newContainingBlockCandidate && !renderer.isDescendantOf(newContainingBlockCandidate))
             continue;
         renderersToRemove.append(renderer);
         if (containingBlockState == NewContainingBlock) {
-            renderer->setChildNeedsLayout(MarkOnlyThis);
-            if (renderer->needsPreferredWidthsRecalculation())
-                renderer->setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
+            renderer.setChildNeedsLayout(MarkOnlyThis);
+            if (renderer.needsPreferredWidthsRecalculation())
+                renderer.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
         }
         // It is the parent block's job to add positioned children to positioned objects list of its containing block.
         // Dirty the parent to ensure this happens. We also need to make sure the new containing block is dirty as well so
         // that it gets to these new positioned objects.
-        auto* parent = renderer->parent();
+        auto* parent = renderer.parent();
         while (parent && !is<RenderBlock>(parent))
             parent = parent->parent();
         if (parent)
             parent->setChildNeedsLayout();
 
-        if (renderer->isFixedPositioned())
+        if (renderer.isFixedPositioned())
             view().setNeedsLayout();
         else if (auto* newContainingBlock = containingBlock()) {
             // During style change, at this point the renderer's containing block is still "this" renderer, and "this" renderer is still positioned.
@@ -1798,7 +1799,7 @@ void RenderBlock::removePositionedObjects(const RenderBlock* newContainingBlockC
         }
     }
     for (auto& renderer : renderersToRemove)
-        removePositionedObject(*renderer);
+        removePositionedObject(renderer);
 }
 
 void RenderBlock::addPercentHeightDescendant(RenderBox& descendant)
@@ -1813,7 +1814,7 @@ void RenderBlock::removePercentHeightDescendant(RenderBox& descendant)
 
 TrackedRendererListHashSet* RenderBlock::percentHeightDescendants() const
 {
-    return percentHeightDescendantsMap ? percentHeightDescendantsMap->get(this) : nullptr;
+    return percentHeightDescendantsMap ? percentHeightDescendantsMap->get(*this) : nullptr;
 }
 
 bool RenderBlock::hasPercentHeightContainerMap()
@@ -1827,7 +1828,7 @@ bool RenderBlock::hasPercentHeightDescendant(RenderBox& descendant)
     // already ensures this and we need to call this function on every
     // descendant in clearPercentHeightDescendantsFrom().
     ASSERT(percentHeightContainerMap);
-    return percentHeightContainerMap->contains(&descendant);
+    return percentHeightContainerMap->contains(descendant);
 }
 
 void RenderBlock::removePercentHeightDescendantIfNeeded(RenderBox& descendant)
@@ -3147,8 +3148,8 @@ void RenderBlock::checkPositionedObjectsNeedLayout()
     if (!positionedDescendants)
         return;
 
-    for (auto* renderer : *positionedDescendants)
-        ASSERT(!renderer->needsLayout());
+    for (auto& renderer : *positionedDescendants)
+        ASSERT(!renderer.needsLayout());
 }
 #endif // ASSERT_ENABLED
 

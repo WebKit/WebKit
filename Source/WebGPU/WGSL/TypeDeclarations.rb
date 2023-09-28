@@ -581,7 +581,7 @@ operator :textureDimensions, {
     # T is texture_1d<ST> or texture_storage_1d<F,A>
     # @must_use fn textureDimensions(t: T) -> u32
     [S < Concrete32BitNumber].(texture_1d[S]) => u32,
-    # FIXME: add declarations for texture storage
+    [F, AM].(texture_storage_1d[F, AM]) => u32,
 
     # ST is i32, u32, or f32
     # T is texture_1d<ST>
@@ -604,7 +604,8 @@ operator :textureDimensions, {
     [].(texture_depth_cube) => vec2[u32],
     [].(texture_depth_cube_array) => vec2[u32],
     [].(texture_depth_multisampled_2d) => vec2[u32],
-    # FIXME: add declarations for texture storage
+    [F, AM].(texture_storage_2d[F, AM]) => vec2[u32],
+    [F, AM].(texture_storage_2d_array[F, AM]) => vec2[u32],
     [].(texture_external) => vec2[u32],
 
     # ST is i32, u32, or f32
@@ -626,7 +627,7 @@ operator :textureDimensions, {
     # T is texture_3d<ST> or texture_storage_3d<F,A>
     # @must_use fn textureDimensions(t: T) -> vec3<u32>
     [S < Concrete32BitNumber].(texture_3d[S]) => vec3[u32],
-    # FIXME: add declarations for texture storage
+    [F, AM].(texture_storage_3d[F, AM]) => vec3[u32],
 
     # ST is i32, u32, or f32
     # T is texture_3d<ST>
@@ -713,7 +714,7 @@ operator :textureNumLayers, {
     [S < Concrete32BitNumber].(texture_cube_array[S]) => u32,
     [].(texture_depth_2d_array) => u32,
     [].(texture_depth_cube_array) => u32,
-    # FIXME: add declarations for texture storage
+    [F, AM].(texture_storage_2d_array[F, AM]) => u32,
 }
 
 # 16.7.6
@@ -877,4 +878,29 @@ operator :textureSampleBaseClampToEdge, {
 }
 
 # 16.7.15 textureStore
-# FIXME: this only applies to texture_storage, implement
+operator :textureStore, {
+    # F is a texel format
+    # C is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureStore(t: texture_storage_1d<F,write>, coords: C, value: vec4<CF>)
+    [F, T < ConcreteInteger].(texture_storage_1d[F, write], T, vec4[ChannelFormat[F]]) => void,
+
+    # F is a texel format
+    # C is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureStore(t: texture_storage_2d<F,write>, coords: vec2<C>, value: vec4<CF>)
+    [F, T < ConcreteInteger].(texture_storage_2d[F, write], vec2[T], vec4[ChannelFormat[F]]) => void,
+
+    # F is a texel format
+    # C is i32, or u32
+    # A is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureStore(t: texture_storage_2d_array<F,write>, coords: vec2<C>, array_index: A, value: vec4<CF>)
+    [F, T < ConcreteInteger, S < ConcreteInteger].(texture_storage_2d_array[F, write], vec2[T], S, vec4[ChannelFormat[F]]) => void,
+
+    # F is a texel format
+    # C is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureStore(t: texture_storage_3d<F,write>, coords: vec3<C>, value: vec4<CF>)
+    [F, T < ConcreteInteger].(texture_storage_3d[F, write], vec3[T], vec4[ChannelFormat[F]]) => void,
+}

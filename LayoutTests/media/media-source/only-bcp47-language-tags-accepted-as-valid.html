@@ -77,32 +77,20 @@
                 "inv-alid-char-*", "inv-alid-char-"
             ];
 
-            var videoTrack;
-            var audioTrack;
             var textTrack;
             function startBCP74Test () {
-                videoTrack = video.videoTracks[0];
-                audioTrack = video.audioTracks[0];
                 // Access text track language through the element's srclang attribute
                 // since the DOM property is read-only.
                 textTrack = document.getElementById("textTrack");
                 for (var i = 0; i < validLanguageTags.length; i++) {
-                    videoTrack.language = validLanguageTags[i];
-                    testExpected("videoTrack.language", validLanguageTags[i]);
                     textTrack.setAttribute("srclang", validLanguageTags[i]);
                     testExpected("textTrack.track.language", validLanguageTags[i]);
-                    audioTrack.language = validLanguageTags[i];
-                    testExpected("audioTrack.language", validLanguageTags[i]);
                 }
                 var notOverwritten = "not-overwritten";
                 for (var i = 0; i < invalidLanguageTags.length; i++) {
                     // These are accepted in the web page layer but will produce console warnings
-                    videoTrack.language = invalidLanguageTags[i];
-                    testExpected("videoTrack.language", invalidLanguageTags[i]);
                     textTrack.setAttribute("srclang", invalidLanguageTags[i]);
                     testExpected("textTrack.track.language", invalidLanguageTags[i]);
-                    audioTrack.language = invalidLanguageTags[i];
-                    testExpected("audioTrack.language", invalidLanguageTags[i]);
                 }
                 endTest();
             }

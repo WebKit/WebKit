@@ -54,21 +54,21 @@ body {
         shouldBe("valueOccuranceInElementTree(content, value)", "1");
         if (window.eventSender)
             eventSender.keyDown('a');
-    
-        function valueOccuranceInElementTree(element, value) {
-            if (!element) {
-                return 0;
-            }
-            var count = 0;
-            if (element.stringValue == value)
-                count++;
-            var childrenCount = element.childrenCount;
-            for (var k = 0; k < childrenCount; k++)
-                count += valueOccuranceInElementTree(element.childAtIndex(k), value);
-            return count;
-        }
     }
     successfullyParsed = true;
+
+    function valueOccuranceInElementTree(element, value) {
+        if (!element) {
+            return 0;
+        }
+        var count = 0;
+        if (element.stringValue == value)
+            count++;
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++)
+            count += valueOccuranceInElementTree(element.childAtIndex(k), value);
+        return count;
+    }
 </script>
 </body>
 </html>

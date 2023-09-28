@@ -216,6 +216,8 @@ namespace JSC {
         virtual bool isOptionalChain() const { return false; }
         virtual bool isOptionalCall() const { return false; }
         virtual bool isPrivateIdentifier() const { return false; }
+        virtual bool isArgumentsLengthAccess(VM&) const { return false; }
+        virtual bool isArguments(VM&) const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label&, Label&, FallThroughMode);
 
@@ -672,6 +674,7 @@ namespace JSC {
         ResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition& start);
 
         const Identifier& identifier() const { return m_ident; }
+        bool isArguments(VM& vm) const final { return m_ident == vm.propertyNames->arguments; }
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -887,6 +890,7 @@ namespace JSC {
         const Identifier& identifier() const { return m_ident; }
         DotType type() const { return m_type; }
         bool isPrivateMember() const { return m_type == DotType::PrivateMember; }
+        bool isArgumentsLengthAccess(VM& vm) const final { return m_base->isArguments(vm) && identifier() == vm.propertyNames->length; }
 
         RegisterID* emitGetPropertyValue(BytecodeGenerator&, RegisterID* dst, RegisterID* base, RefPtr<RegisterID>& thisValue);
         RegisterID* emitGetPropertyValue(BytecodeGenerator&, RegisterID* dst, RegisterID* base);
@@ -1950,6 +1954,7 @@ namespace JSC {
         bool doAnyInnerArrowFunctionsUseNewTarget() { return m_innerArrowFunctionCodeFeatures & NewTargetInnerArrowFunctionFeature; }
 
         bool usesEval() const { return m_features & EvalFeature; }
+        bool hasShadowsArgumentsFeature() const { return m_features & ShadowsArgumentsFeature; }
         bool usesArguments() const { return (m_features & ArgumentsFeature) && !(m_features & ShadowsArgumentsFeature); }
         bool usesArrowFunction() const { return m_features & ArrowFunctionFeature; }
         bool isStrictMode() const { return m_lexicalScopeFeatures & StrictModeLexicalFeature; }

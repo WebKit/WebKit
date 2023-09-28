@@ -189,13 +189,13 @@ void EditCommand::setEndingSelection(const VisibleSelection& selection)
     }
 }
 
-void EditCommand::setParent(CompositeEditCommand* parent)
+void EditCommand::setParent(RefPtr<CompositeEditCommand>&& parent)
 {
     ASSERT((parent && !m_parent) || (!parent && m_parent));
-    m_parent = parent;
-    if (parent) {
-        m_startingSelection = parent->m_endingSelection;
-        m_endingSelection = parent->m_endingSelection;
+    m_parent = WTFMove(parent);
+    if (m_parent) {
+        m_startingSelection = m_parent->m_endingSelection;
+        m_endingSelection = m_parent->m_endingSelection;
     }
 }
 
@@ -212,7 +212,8 @@ void EditCommand::postTextStateChangeNotification(AXTextEditType type, const Str
         return;
     if (!text.length())
         return;
-    auto* cache = document().existingAXObjectCache();
+    auto document = protectedDocument();
+    CheckedPtr cache = document->existingAXObjectCache();
     if (!cache)
         return;
     RefPtr node { highestEditableRoot(position.deepEquivalent(), HasEditableAXRole) };
@@ -232,7 +233,7 @@ void SimpleEditCommand::doReapply()
 #ifndef NDEBUG
 void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Ref<Node>>& nodes)
 {
-    for (Node* node = startNode; node; node = NodeTraversal::next(*node, startNode))
+    for (RefPtr node = startNode; node; node = NodeTraversal::next(*node, startNode))
         nodes.add(*node);
 }
 #endif

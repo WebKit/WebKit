@@ -79,7 +79,7 @@ public:
     void registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
     void unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
     bool isRunning() const { return m_ioUnitStarted; }
-    void setSampleRateRange(CapabilityValueOrRange range) { m_sampleRateCapabilities = range; }
+    void setSampleRateRange(CapabilityRange range) { m_sampleRateCapabilities = range; }
 
 #if PLATFORM(IOS_FAMILY)
     void setIsInBackground(bool);
@@ -91,7 +91,7 @@ public:
 private:
     static size_t preferredIOBufferSize();
 
-    CapabilityValueOrRange sampleRateCapacities() const final { return m_sampleRateCapabilities; }
+    CapabilityRange sampleRateCapacities() const final { return m_sampleRateCapabilities; }
 
     bool hasAudioUnit() const final { return !!m_ioUnit; }
     void captureDeviceChanged() final;
@@ -149,7 +149,7 @@ private:
     String m_ioUnitName;
 #endif
 
-    CapabilityValueOrRange m_sampleRateCapabilities;
+    CapabilityRange m_sampleRateCapabilities;
 
     uint64_t m_microphoneProcsCalled { 0 };
     uint64_t m_microphoneProcsCalledLastTime { 0 };

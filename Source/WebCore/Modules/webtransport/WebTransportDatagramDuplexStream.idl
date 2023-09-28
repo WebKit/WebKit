@@ -28,8 +28,8 @@
     Exposed=(Window,Worker),
     SecureContext
 ] interface WebTransportDatagramDuplexStream {
-    [CallWith=CurrentGlobalObject] readonly attribute ReadableStream readable;
-    [CallWith=CurrentGlobalObject] readonly attribute WritableStream writable;
+    readonly attribute ReadableStream readable;
+    readonly attribute WritableStream writable;
 
     readonly attribute unsigned long maxDatagramSize;
     attribute unrestricted double incomingMaxAge;

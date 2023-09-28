@@ -735,6 +735,12 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             .viewDimension = viewDimension,
             .multisampled = multisampled
         };
+    }, [&](const Atomic&) -> BindGroupLayoutEntry::BindingMember {
+        return BufferBindingLayout {
+            .type = addressSpace(),
+            .hasDynamicOffset = false,
+            .minBindingSize = 0
+        };
     }, [&](const Reference&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Pointer&) -> BindGroupLayoutEntry::BindingMember {
@@ -847,6 +853,8 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
 
         for (auto [binding, globalName] : bindingGlobalMap) {
             if (!usedBindings.contains(binding))
+                continue;
+            if (!m_reads.contains(globalName))
                 continue;
 
             auto it = m_globals.find(globalName);

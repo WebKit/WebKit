@@ -55,9 +55,7 @@
     <branch repo="aomedia.googlesource.com"
             module="aom"
             checkoutdir="aom"
-            branch="master"
-            revision="master"
-            tag="cdb083e84a71d6d31163a4f64f18dc1328fd782c" />
+            tag="v3.7.0" />
   </cmake>
 
   <autotools id="libsrtp">

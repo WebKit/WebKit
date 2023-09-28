@@ -929,8 +929,7 @@
             "com.apple.frontboard.systemappservices"
             "com.apple.iphone.axserver-systemwide"
             "com.apple.mobileassetd.v2"
-            "com.apple.mobilegestalt.xpc"
-            "com.apple.tccd")))
+            "com.apple.mobilegestalt.xpc")))
 
 (allow mach-lookup
     (require-all

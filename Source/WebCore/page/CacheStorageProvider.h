@@ -49,6 +49,8 @@ public:
         void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&, DOMCacheEngine::RecordIdentifiersCallback&&) final { }
         void reference(DOMCacheIdentifier) final { }
         void dereference(DOMCacheIdentifier) final { }
+        void lockStorage(const ClientOrigin&) final { }
+        void unlockStorage(const ClientOrigin&) final { }
     };
 
     static Ref<CacheStorageProvider> create() { return adoptRef(*new CacheStorageProvider); }

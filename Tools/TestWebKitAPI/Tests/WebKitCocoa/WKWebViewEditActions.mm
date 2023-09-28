@@ -32,7 +32,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <UIKit/UIFontDescriptor.h>
 #endif
 

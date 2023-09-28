@@ -68,14 +68,14 @@ void CacheStorageEngineConnection::open(WebCore::ClientOrigin&& origin, String&&
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
     Engine::open(*session, WTFMove(origin), WTFMove(cacheName), [callback = WTFMove(callback), sessionID = this->sessionID()](auto& result) mutable {
-        CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK("open", "cache identifier is %" PRIu64, [](const auto& value) { return value.identifier.toUInt64(); });
+        CACHE_STORAGE_RELEASE_LOG_FUNCTION_IN_CALLBACK("open", "cache identifier is %" PRIu64, [](const auto& value) { return value.identifier.object().toUInt64(); });
         callback(result);
     });
 }
 
 void CacheStorageEngineConnection::remove(WebCore::DOMCacheIdentifier cacheIdentifier, RemoveCacheIdentifierCallback&& callback)
 {
-    CACHE_STORAGE_RELEASE_LOG("remove cache %" PRIu64, cacheIdentifier.toUInt64());
+    CACHE_STORAGE_RELEASE_LOG("remove cache %" PRIu64, cacheIdentifier.object().toUInt64());
     auto* session = m_connection.networkSession();
     if (!session)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
@@ -101,7 +101,7 @@ void CacheStorageEngineConnection::caches(WebCore::ClientOrigin&& origin, uint64
 
 void CacheStorageEngineConnection::retrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, RecordsCallback&& callback)
 {
-    CACHE_STORAGE_RELEASE_LOG("retrieveRecords in cache %" PRIu64, cacheIdentifier.toUInt64());
+    CACHE_STORAGE_RELEASE_LOG("retrieveRecords in cache %" PRIu64, cacheIdentifier.object().toUInt64());
     auto* session = m_connection.networkSession();
     if (!session)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
@@ -114,7 +114,7 @@ void CacheStorageEngineConnection::retrieveRecords(WebCore::DOMCacheIdentifier c
 
 void CacheStorageEngineConnection::deleteMatchingRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
-    CACHE_STORAGE_RELEASE_LOG("deleteMatchingRecords in cache %" PRIu64, cacheIdentifier.toUInt64());
+    CACHE_STORAGE_RELEASE_LOG("deleteMatchingRecords in cache %" PRIu64, cacheIdentifier.object().toUInt64());
     auto* session = m_connection.networkSession();
     if (!session)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
@@ -127,7 +127,7 @@ void CacheStorageEngineConnection::deleteMatchingRecords(WebCore::DOMCacheIdenti
 
 void CacheStorageEngineConnection::putRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 {
-    CACHE_STORAGE_RELEASE_LOG("putRecords in cache %" PRIu64 ", %lu records", cacheIdentifier.toUInt64(), records.size());
+    CACHE_STORAGE_RELEASE_LOG("putRecords in cache %" PRIu64 ", %lu records", cacheIdentifier.object().toUInt64(), records.size());
     auto* session = m_connection.networkSession();
     if (!session)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
@@ -140,7 +140,7 @@ void CacheStorageEngineConnection::putRecords(WebCore::DOMCacheIdentifier cacheI
 
 void CacheStorageEngineConnection::reference(WebCore::DOMCacheIdentifier cacheIdentifier)
 {
-    CACHE_STORAGE_RELEASE_LOG("reference cache %" PRIu64, cacheIdentifier.toUInt64());
+    CACHE_STORAGE_RELEASE_LOG("reference cache %" PRIu64, cacheIdentifier.object().toUInt64());
     auto* session = m_connection.networkSession();
     if (!session)
         return;
@@ -158,7 +158,7 @@ void CacheStorageEngineConnection::reference(WebCore::DOMCacheIdentifier cacheId
 
 void CacheStorageEngineConnection::dereference(WebCore::DOMCacheIdentifier cacheIdentifier)
 {
-    CACHE_STORAGE_RELEASE_LOG("dereference cache %" PRIu64, cacheIdentifier.toUInt64());
+    CACHE_STORAGE_RELEASE_LOG("dereference cache %" PRIu64, cacheIdentifier.object().toUInt64());
     auto* session = m_connection.networkSession();
     if (!session)
         return;

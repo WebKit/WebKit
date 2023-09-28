@@ -1193,9 +1193,8 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
             // selected.  In this case, we should expand the selection to
             // the enclosing anchor element
             Position pos = sourceSelection.base();
-            Node* node = enclosingAnchorElement(pos);
-            if (node)
-                src.selection().setSelection(VisibleSelection::selectionFromContentsOfNode(node));
+            if (RefPtr node = enclosingAnchorElement(pos))
+                src.selection().setSelection(VisibleSelection::selectionFromContentsOfNode(node.get()));
         }
 
         client().willPerformDragSourceAction(DragSourceAction::Link, dragOrigin, dataTransfer);

@@ -78,7 +78,7 @@ public:
     virtual bool hasAudioUnit() const = 0;
     void setCaptureDevice(String&&, uint32_t);
 
-    virtual CapabilityValueOrRange sampleRateCapacities() const = 0;
+    virtual CapabilityRange sampleRateCapacities() const = 0;
     virtual int actualSampleRate() const { return sampleRate(); }
 
     void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);

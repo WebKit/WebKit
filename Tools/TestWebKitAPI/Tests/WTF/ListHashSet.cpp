@@ -132,6 +132,49 @@ TEST(WTF_ListHashSet, AppendOrMoveToLastWithDuplicates)
     ++iterator;
 }
 
+TEST(WTF_ListHashSet, MoveToLastIfPresent)
+{
+    ListHashSet<int> list;
+    EXPECT_EQ(list.size(), 0U);
+    EXPECT_FALSE(list.moveToLastIfPresent(1));
+    EXPECT_EQ(list.size(), 0U);
+
+    list.add(1);
+    EXPECT_EQ(list.size(), 1U);
+    EXPECT_FALSE(list.moveToLastIfPresent(2));
+    EXPECT_EQ(list.size(), 1U);
+    EXPECT_EQ(list.first(), 1);
+
+    EXPECT_TRUE(list.moveToLastIfPresent(1));
+    EXPECT_EQ(list.size(), 1U);
+    EXPECT_EQ(list.first(), 1);
+
+    list.add(2);
+    list.add(3);
+    list.add(4);
+    EXPECT_EQ(list.size(), 4U);
+
+    EXPECT_TRUE(list.moveToLastIfPresent(1));
+    auto iterator = list.begin();
+    ASSERT_EQ(2, *iterator);
+    ++iterator;
+    ASSERT_EQ(3, *iterator);
+    ++iterator;
+    ASSERT_EQ(4, *iterator);
+    ++iterator;
+    ASSERT_EQ(1, *iterator);
+
+    EXPECT_TRUE(list.moveToLastIfPresent(4));
+    iterator = list.begin();
+    ASSERT_EQ(2, *iterator);
+    ++iterator;
+    ASSERT_EQ(3, *iterator);
+    ++iterator;
+    ASSERT_EQ(1, *iterator);
+    ++iterator;
+    ASSERT_EQ(4, *iterator);
+}
+
 TEST(WTF_ListHashSet, PrependOrMoveToLastNewItems)
 {
     ListHashSet<int> list;

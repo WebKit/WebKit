@@ -30,8 +30,6 @@
 
 namespace WGSL {
 
-struct Type;
-
 // A constant value might be:
 // - a scalar
 // - a vector
@@ -72,21 +70,7 @@ using BaseValue = std::variant<double, int64_t, bool, ConstantArray, ConstantVec
 struct ConstantValue : BaseValue {
     ConstantValue() = default;
 
-    template<typename T>
-    ConstantValue(const Type* type, T&& value)
-        : BaseValue(std::forward<T>(value))
-        , type(type)
-    {
-    }
-
-    static void constructDeletedValue(ConstantValue& slot)
-    {
-        slot.type = bitwise_cast<Type*>(static_cast<intptr_t>(-1));
-    }
-    static bool isDeletedValue(const ConstantValue& value)
-    {
-        return value.type == bitwise_cast<Type*>(static_cast<intptr_t>(-1));
-    }
+    using BaseValue::BaseValue;
 
     void dump(PrintStream&) const;
 
@@ -95,6 +79,8 @@ struct ConstantValue : BaseValue {
         return std::holds_alternative<int64_t>(*this) || std::holds_alternative<double>(*this);
     }
 
+    bool toBool() const { return std::get<bool>(*this); }
+    int64_t toInt() const { return std::get<int64_t>(*this); }
     double toDouble() const
     {
         ASSERT(isNumber());
@@ -102,8 +88,6 @@ struct ConstantValue : BaseValue {
             return std::get<double>(*this);
         return static_cast<double>(std::get<int64_t>(*this));
     }
-
-    const Type* type;
 };
 
 } // namespace WGSL

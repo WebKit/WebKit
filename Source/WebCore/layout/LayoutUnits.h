@@ -176,6 +176,11 @@ inline LayoutPoint toLayoutPoint(const InlineLayoutPoint& point)
     return LayoutPoint { point };
 }
 
+inline LayoutSize toLayoutSize(const InlineLayoutSize& size)
+{
+    return LayoutSize { size };
+}
+
 inline LayoutRect toLayoutRect(const InlineLayoutRect& rect)
 {
     return LayoutRect { rect };

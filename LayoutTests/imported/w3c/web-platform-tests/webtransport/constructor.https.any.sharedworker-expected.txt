@@ -1,20 +1,20 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL WebTransport constructor should reject URL 'null' assert_throws_dom: constructor should throw function "() => new WebTransport(url)" did not throw
-FAIL WebTransport constructor should reject URL '' assert_throws_dom: constructor should throw function "() => new WebTransport(url)" did not throw
-FAIL WebTransport constructor should reject URL 'no-scheme' assert_throws_dom: constructor should throw function "() => new WebTransport(url)" did not throw
-FAIL WebTransport constructor should reject URL 'http://example.com/' assert_throws_dom: constructor should throw function "() => new WebTransport(url)" did not throw
-FAIL WebTransport constructor should reject URL 'quic-transport://example.com/' assert_throws_dom: constructor should throw function "() => new WebTransport(url)" did not throw
-FAIL WebTransport constructor should reject URL 'https:///' assert_throws_dom: constructor should throw function "() => new WebTransport(url)" did not throw
-FAIL WebTransport constructor should reject URL 'https://example.com/#failing' assert_throws_dom: constructor should throw function "() => new WebTransport(url)" did not throw
-FAIL WebTransport constructor should reject URL 'https://localhost:999999/' assert_throws_dom: constructor should throw function "() => new WebTransport(url)" did not throw
-FAIL WebTransport constructor should allow options {"allowPooling":true} promise_test: Unhandled rejection with value: null
-FAIL WebTransport constructor should allow options {"requireUnreliable":true} promise_test: Unhandled rejection with value: null
-FAIL WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true} promise_test: Unhandled rejection with value: null
-FAIL WebTransport constructor should allow options {"congestionControl":"default"} promise_test: Unhandled rejection with value: null
-FAIL WebTransport constructor should allow options {"congestionControl":"throughput"} promise_test: Unhandled rejection with value: null
-FAIL WebTransport constructor should allow options {"congestionControl":"low-latency"} promise_test: Unhandled rejection with value: null
-TIMEOUT WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true,"congestionControl":"low-latency"} Test timed out
-NOTRUN Connection to port 0 should fail
+PASS WebTransport constructor should reject URL 'null'
+PASS WebTransport constructor should reject URL ''
+PASS WebTransport constructor should reject URL 'no-scheme'
+PASS WebTransport constructor should reject URL 'http://example.com/'
+PASS WebTransport constructor should reject URL 'quic-transport://example.com/'
+PASS WebTransport constructor should reject URL 'https:///'
+PASS WebTransport constructor should reject URL 'https://example.com/#failing'
+PASS WebTransport constructor should reject URL 'https://localhost:999999/'
+FAIL WebTransport constructor should allow options {"allowPooling":true} promise_test: Unhandled rejection with value: undefined
+FAIL WebTransport constructor should allow options {"requireUnreliable":true} promise_test: Unhandled rejection with value: undefined
+FAIL WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true} promise_test: Unhandled rejection with value: undefined
+FAIL WebTransport constructor should allow options {"congestionControl":"default"} promise_test: Unhandled rejection with value: undefined
+FAIL WebTransport constructor should allow options {"congestionControl":"throughput"} promise_test: Unhandled rejection with value: undefined
+FAIL WebTransport constructor should allow options {"congestionControl":"low-latency"} promise_test: Unhandled rejection with value: undefined
+FAIL WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true,"congestionControl":"low-latency"} promise_test: Unhandled rejection with value: undefined
+TIMEOUT Connection to port 0 should fail Test timed out
 

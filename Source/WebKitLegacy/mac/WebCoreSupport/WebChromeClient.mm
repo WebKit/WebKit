@@ -244,7 +244,7 @@ void WebChromeClient::focusedElementChanged(Element* element)
     CallFormDelegate(m_webView, @selector(didFocusTextField:inFrame:), kit(&inputElement), kit(inputElement.document().frame()));
 }
 
-void WebChromeClient::focusedFrameChanged(LocalFrame*)
+void WebChromeClient::focusedFrameChanged(Frame*)
 {
 }
 

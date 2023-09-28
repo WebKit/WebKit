@@ -149,7 +149,7 @@ bool isEditableNode(const Node& node)
 
 bool isEditablePosition(const Position& position, EditableType editableType)
 {
-    Node* node = position.containerNode();
+    RefPtr node = position.containerNode();
     return node && computeEditability(*node, editableType, Node::ShouldUpdateStyle::Update);
 }
 
@@ -161,20 +161,20 @@ bool isAtUnsplittableElement(const Position& position)
 
 bool isRichlyEditablePosition(const Position& position)
 {
-    auto* node = position.containerNode();
+    RefPtr node = position.containerNode();
     return node && node->hasRichlyEditableStyle();
 }
 
 Element* editableRootForPosition(const Position& position, EditableType editableType)
 {
-    Node* node = position.containerNode();
+    RefPtr node = position.containerNode();
     if (!node)
         return nullptr;
 
     switch (editableType) {
     case HasEditableAXRole:
         if (auto* cache = node->document().existingAXObjectCache())
-            return const_cast<Element*>(cache->rootAXEditableElement(node));
+            return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
         FALLTHROUGH;
     case ContentIsEditable:
         return node->rootEditableElement();
@@ -213,13 +213,13 @@ Position nextVisuallyDistinctCandidate(const Position& position, SkipDisplayCont
         nextPosition = nextPosition.next(Character);
         if (nextPosition.isCandidate() && nextPosition.downstream() != downstreamStart)
             return nextPosition;
-        if (auto* node = nextPosition.containerNode()) {
+        if (RefPtr node = nextPosition.containerNode()) {
             if (!node->renderer()) {
                 if (skipDisplayContents == SkipDisplayContents::No) {
-                    if (auto* element = dynamicDowncast<Element>(node); element && element->hasDisplayContents())
+                    if (auto element = dynamicDowncast<Element>(node); element && element->hasDisplayContents())
                         continue;
                 }
-                nextPosition = lastPositionInOrAfterNode(node);
+                nextPosition = lastPositionInOrAfterNode(node.get());
             }
         }
     }
@@ -246,9 +246,9 @@ Position previousVisuallyDistinctCandidate(const Position& position)
         previousPosition = previousPosition.previous(Character);
         if (previousPosition.isCandidate() && previousPosition.downstream() != downstreamStart)
             return previousPosition;
-        if (auto* node = previousPosition.containerNode()) {
+        if (RefPtr node = previousPosition.containerNode()) {
             if (!node->renderer())
-                previousPosition = firstPositionInOrBeforeNode(node);
+                previousPosition = firstPositionInOrBeforeNode(node.get());
         }
     }
     return { };
@@ -266,17 +266,17 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Cont
     Position candidate = position;
 
     if (&position.deprecatedNode()->treeScope() != &highestRoot->treeScope()) {
-        auto* shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(position.deprecatedNode());
+        RefPtr shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(position.protectedDeprecatedNode().get());
         if (!shadowAncestor)
             return { };
 
-        candidate = positionAfterNode(shadowAncestor);
+        candidate = positionAfterNode(shadowAncestor.get());
     }
 
-    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(*highestRoot))
-        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentAfterNode(candidate.deprecatedNode()) : nextVisuallyDistinctCandidate(candidate);
+    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.protectedDeprecatedNode()->isDescendantOf(*highestRoot))
+        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentAfterNode(candidate.protectedDeprecatedNode().get()) : nextVisuallyDistinctCandidate(candidate);
 
-    if (candidate.deprecatedNode() && candidate.deprecatedNode() != highestRoot && !candidate.deprecatedNode()->isDescendantOf(*highestRoot))
+    if (candidate.deprecatedNode() && candidate.deprecatedNode() != highestRoot && !candidate.protectedDeprecatedNode()->isDescendantOf(*highestRoot))
         return { };
 
     return candidate;
@@ -294,17 +294,17 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
     Position candidate = position;
 
     if (&position.deprecatedNode()->treeScope() != &highestRoot->treeScope()) {
-        auto* shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(position.deprecatedNode());
+        RefPtr shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(position.protectedDeprecatedNode().get());
         if (!shadowAncestor)
             return { };
 
-        candidate = firstPositionInOrBeforeNode(shadowAncestor);
+        candidate = firstPositionInOrBeforeNode(shadowAncestor.get());
     }
 
-    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(*highestRoot))
-        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentBeforeNode(candidate.deprecatedNode()) : previousVisuallyDistinctCandidate(candidate);
+    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.protectedDeprecatedNode()->isDescendantOf(*highestRoot))
+        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentBeforeNode(candidate.protectedDeprecatedNode().get()) : previousVisuallyDistinctCandidate(candidate);
     
-    if (candidate.deprecatedNode() && candidate.deprecatedNode() != highestRoot && !candidate.deprecatedNode()->isDescendantOf(*highestRoot))
+    if (candidate.deprecatedNode() && candidate.deprecatedNode() != highestRoot && !candidate.protectedDeprecatedNode()->isDescendantOf(*highestRoot))
         return { };
     
     return candidate;
@@ -411,7 +411,7 @@ const String& nonBreakingSpaceString()
     return nonBreakingSpaceString;
 }
 
-Element* isFirstPositionAfterTable(const VisiblePosition& position)
+RefPtr<Element> isFirstPositionAfterTable(const VisiblePosition& position)
 {
     Position upstream(position.deepEquivalent().upstream());
     auto node = upstream.protectedDeprecatedNode();
@@ -420,10 +420,10 @@ Element* isFirstPositionAfterTable(const VisiblePosition& position)
     auto* renderer = node->renderer();
     if (!renderer || !renderer->isTable() || !upstream.atLastEditingPositionForNode())
         return nullptr;
-    return &downcast<Element>(*node);
+    return downcast<Element>(node.releaseNonNull());
 }
 
-Element* isLastPositionBeforeTable(const VisiblePosition& position)
+RefPtr<Element> isLastPositionBeforeTable(const VisiblePosition& position)
 {
     Position downstream(position.deepEquivalent().downstream());
     auto node = downstream.protectedDeprecatedNode();
@@ -432,7 +432,7 @@ Element* isLastPositionBeforeTable(const VisiblePosition& position)
     auto* renderer = node->renderer();
     if (!renderer || !renderer->isTable() || !downstream.atFirstEditingPositionForNode())
         return nullptr;
-    return &downcast<Element>(*node);
+    return downcast<Element>(node.releaseNonNull());
 }
 
 // Returns the visible position at the beginning of a node
@@ -461,15 +461,15 @@ VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element& 
         return { };
 
     Ref<const Element> protectedElement { element };
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
-    RenderObject* renderer = element.renderer();
+    CheckedPtr renderer = element.renderer();
     // Look at the inner element of a form control, not the control itself, as it is the editable part.
     if (is<HTMLTextFormControlElement>(element)) {
-        auto& formControlElement = downcast<HTMLTextFormControlElement>(element);
-        if (!formControlElement.isInnerTextElementEditable())
+        Ref formControlElement = downcast<HTMLTextFormControlElement>(element);
+        if (!formControlElement->isInnerTextElementEditable())
             return { };
-        if (auto innerTextElement = formControlElement.innerTextElement())
+        if (RefPtr innerTextElement = formControlElement->innerTextElement())
             renderer = innerTextElement->renderer();
     }
     if (!renderer)
@@ -528,7 +528,7 @@ RefPtr<Node> enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(
 RefPtr<Node> highestEnclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule rule, Node* stayWithin)
 {
     RefPtr<Node> highest;
-    auto root = rule == CannotCrossEditingBoundary ? highestEditableRoot(position) : nullptr;
+    RefPtr root = rule == CannotCrossEditingBoundary ? highestEditableRoot(position) : nullptr;
     for (RefPtr<Node> n = position.containerNode(); n && n != stayWithin; n = n->parentNode()) {
         if (root && !n->hasEditableStyle())
             continue;
@@ -542,7 +542,7 @@ RefPtr<Node> highestEnclosingNodeOfType(const Position& position, bool (*nodeIsO
 
 static bool hasARenderedDescendant(Node* node, Node* excludedNode)
 {
-    for (Node* n = node->firstChild(); n;) {
+    for (RefPtr n = node->firstChild(); n;) {
         if (n == excludedNode) {
             n = NodeTraversal::nextSkippingChildren(*n, node);
             continue;
@@ -554,13 +554,13 @@ static bool hasARenderedDescendant(Node* node, Node* excludedNode)
     return false;
 }
 
-Node* highestNodeToRemoveInPruning(Node* node)
+RefPtr<Node> highestNodeToRemoveInPruning(Node* node)
 {
-    Node* previousNode = nullptr;
-    auto* rootEditableElement = node ? node->rootEditableElement() : nullptr;
+    RefPtr<Node> previousNode;
+    RefPtr rootEditableElement = node ? node->rootEditableElement() : nullptr;
     for (RefPtr currentNode = node; currentNode; currentNode = currentNode->parentNode()) {
         if (auto* renderer = currentNode->renderer()) {
-            if (!renderer->canHaveChildren() || hasARenderedDescendant(currentNode.get(), previousNode) || rootEditableElement == currentNode.get())
+            if (!renderer->canHaveChildren() || hasARenderedDescendant(currentNode.get(), previousNode.get()) || rootEditableElement == currentNode.get())
                 return previousNode;
         }
         previousNode = currentNode.get();
@@ -573,25 +573,25 @@ RefPtr<Element> enclosingTableCell(const Position& position)
     return downcast<Element>(enclosingNodeOfType(position, isTableCell));
 }
 
-Element* enclosingAnchorElement(const Position& p)
+RefPtr<Element> enclosingAnchorElement(const Position& p)
 {
     for (auto node = p.protectedDeprecatedNode(); node; node = node->parentNode()) {
         if (is<Element>(*node) && node->isLink())
-            return downcast<Element>(node.get());
+            return downcast<Element>(node.releaseNonNull());
     }
     return nullptr;
 }
 
-HTMLElement* enclosingList(Node* node)
+RefPtr<HTMLElement> enclosingList(Node* node)
 {
     if (!node)
         return nullptr;
         
-    auto root = highestEditableRoot(firstPositionInOrBeforeNode(node));
+    RefPtr root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
     for (RefPtr ancestor = node->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
         if (is<HTMLUListElement>(*ancestor) || is<HTMLOListElement>(*ancestor))
-            return downcast<HTMLElement>(ancestor.get());
+            return downcast<HTMLElement>(ancestor.releaseNonNull());
         if (ancestor == root)
             return nullptr;
     }
@@ -599,19 +599,19 @@ HTMLElement* enclosingList(Node* node)
     return nullptr;
 }
 
-Node* enclosingListChild(Node* node)
+RefPtr<Node> enclosingListChild(Node* node)
 {
     if (!node)
         return nullptr;
 
     // Check for a list item element, or for a node whose parent is a list element. Such a node
     // will appear visually as a list item (but without a list marker)
-    auto root = highestEditableRoot(firstPositionInOrBeforeNode(node));
+    RefPtr root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
     // FIXME: This function is inappropriately named since it starts with node instead of node->parentNode()
     for (RefPtr n = node; n && n->parentNode(); n = n->parentNode()) {
         if (is<HTMLLIElement>(*n) || (isListHTMLElement(n->parentNode()) && n != root))
-            return n.get();
+            return n;
         if (n == root || isTableCell(*n))
             return nullptr;
     }
@@ -620,15 +620,15 @@ Node* enclosingListChild(Node* node)
 }
 
 // FIXME: This function should not need to call isStartOfParagraph/isEndOfParagraph.
-Node* enclosingEmptyListItem(const VisiblePosition& position)
+RefPtr<Node> enclosingEmptyListItem(const VisiblePosition& position)
 {
     // Check that position is on a line by itself inside a list item
-    auto* listChildNode = enclosingListChild(position.deepEquivalent().protectedDeprecatedNode().get());
+    RefPtr listChildNode = enclosingListChild(position.deepEquivalent().protectedDeprecatedNode().get());
     if (!listChildNode || !isStartOfParagraph(position) || !isEndOfParagraph(position))
         return nullptr;
 
-    VisiblePosition firstInListChild(firstPositionInOrBeforeNode(listChildNode));
-    VisiblePosition lastInListChild(lastPositionInOrAfterNode(listChildNode));
+    VisiblePosition firstInListChild(firstPositionInOrBeforeNode(listChildNode.get()));
+    VisiblePosition lastInListChild(lastPositionInOrAfterNode(listChildNode.get()));
 
     if (firstInListChild != position || lastInListChild != position)
         return nullptr;
@@ -636,16 +636,16 @@ Node* enclosingEmptyListItem(const VisiblePosition& position)
     return listChildNode;
 }
 
-HTMLElement* outermostEnclosingList(Node* node, Node* rootList)
+RefPtr<HTMLElement> outermostEnclosingList(Node* node, Node* rootList)
 {
-    auto* list = enclosingList(node);
+    RefPtr list = enclosingList(node);
     if (!list)
         return nullptr;
 
-    while (auto* nextList = enclosingList(list)) {
+    while (RefPtr nextList = enclosingList(list.get())) {
         if (nextList == rootList)
             break;
-        list = nextList;
+        list = WTFMove(nextList);
     }
 
     return list;
@@ -656,14 +656,14 @@ bool canMergeLists(Element* firstList, Element* secondList)
     if (!is<HTMLElement>(firstList) || !is<HTMLElement>(secondList))
         return false;
 
-    auto& first = downcast<HTMLElement>(*firstList);
-    auto& second = downcast<HTMLElement>(*secondList);
+    Ref first = downcast<HTMLElement>(*firstList);
+    Ref second = downcast<HTMLElement>(*secondList);
 
-    return first.localName() == second.localName() // make sure the list types match (ol vs. ul)
-        && first.hasEditableStyle() && second.hasEditableStyle() // both lists are editable
-        && first.rootEditableElement() == second.rootEditableElement() // don't cross editing boundaries
+    return first->localName() == second->localName() // make sure the list types match (ol vs. ul)
+        && first->hasEditableStyle() && second->hasEditableStyle() // both lists are editable
+        && first->rootEditableElement() == second->rootEditableElement() // don't cross editing boundaries
         // Make sure there is no visible content between this li and the previous list.
-        && isVisiblyAdjacent(positionInParentAfterNode(&first), positionInParentBeforeNode(&second));
+        && isVisiblyAdjacent(positionInParentAfterNode(first.ptr()), positionInParentBeforeNode(second.ptr()));
 }
 
 static Node* previousNodeConsideringAtomicNodes(const Node* node)
@@ -684,7 +684,7 @@ static Node* nextNodeConsideringAtomicNodes(const Node* node)
         return node->firstChild();
     if (node->nextSibling())
         return node->nextSibling();
-    const Node* n = node;
+    RefPtr<const Node> n = node;
     while (n && !n->nextSibling())
         n = n->parentNode();
     if (n)
@@ -742,7 +742,7 @@ bool isEmptyTableCell(const Node* node)
 
     // Make sure the rendered node is a table cell or <br>.
     // If it's a <br>, then the parent node has to be a table cell.
-    auto* renderer = node->renderer();
+    CheckedPtr renderer = node->renderer();
     if (renderer->isBR()) {
         renderer = renderer->parent();
         if (!renderer)
@@ -752,7 +752,7 @@ bool isEmptyTableCell(const Node* node)
         return false;
 
     // Check that the table cell contains no child renderers except for perhaps a single <br>.
-    auto* childRenderer = downcast<RenderTableCell>(*renderer).firstChild();
+    CheckedPtr childRenderer = downcast<RenderTableCell>(*renderer).firstChild();
     if (!childRenderer)
         return true;
     if (!childRenderer->isBR())
@@ -927,7 +927,7 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
     // if the start of the selection is inside that table, then the last paragraph
     // that we'll want modify is the last one inside the table, not the table itself
     // (a table is itself a paragraph).
-    if (auto* table = isFirstPositionAfterTable(endOfSelection)) {
+    if (RefPtr table = isFirstPositionAfterTable(endOfSelection)) {
         if (startOfSelection.deepEquivalent().deprecatedNode()->isDescendantOf(*table))
             newSelection = VisibleSelection(startOfSelection, endOfSelection.previous(CannotCrossEditingBoundary));
     }
@@ -936,7 +936,7 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
     // and if the end of the selection is inside that table, then the first paragraph
     // we'll want to modify is the first one inside the table, not the paragraph
     // containing the table itself.
-    if (auto* table = isLastPositionBeforeTable(startOfSelection)) {
+    if (RefPtr table = isLastPositionBeforeTable(startOfSelection)) {
         if (endOfSelection.deepEquivalent().deprecatedNode()->isDescendantOf(*table))
             newSelection = VisibleSelection(startOfSelection.next(CannotCrossEditingBoundary), endOfSelection);
     }
@@ -956,16 +956,16 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
         return 0;
 
     auto position = visiblePosition.deepEquivalent();
-    auto& document = *position.document();
+    Ref document = *position.document();
 
     auto editableRoot = highestEditableRoot(position, AXObjectCache::accessibilityEnabled() ? HasEditableAXRole : ContentIsEditable);
-    if (editableRoot && !document.inDesignMode())
+    if (editableRoot && !document->inDesignMode())
         scope = editableRoot;
     else {
         if (position.containerNode()->isInShadowTree())
             scope = position.containerNode()->containingShadowRoot();
         else
-            scope = &document;
+            scope = WTFMove(document);
     }
 
     auto range = *makeSimpleRange(makeBoundaryPointBeforeNodeContents(*scope), position);
@@ -1162,11 +1162,11 @@ LayoutRect localCaretRectInRendererForRect(LayoutRect& localRect, Node* node, Re
 
     // Compute an offset between the renderer and the caretPainter.
     while (renderer != caretPainter) {
-        RenderElement* containerObject = renderer->container();
+        CheckedPtr containerObject = renderer->container();
         if (!containerObject)
             return LayoutRect();
         localRect.move(renderer->offsetFromContainer(*containerObject, localRect.location()));
-        renderer = containerObject;
+        renderer = containerObject.get();
     }
 
     return localRect;
@@ -1192,10 +1192,10 @@ HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages
         if (!is<HTMLImageElement>(iterator.node()))
             continue;
 
-        auto& imageElement = downcast<HTMLImageElement>(*iterator.node());
-        auto* cachedImage = imageElement.cachedImage();
+        Ref imageElement = downcast<HTMLImageElement>(*iterator.node());
+        auto* cachedImage = imageElement->cachedImage();
         if (cachedImage && cachedImage->isLoading())
-            result.add(&imageElement);
+            result.add(WTFMove(imageElement));
     }
     return result;
 }

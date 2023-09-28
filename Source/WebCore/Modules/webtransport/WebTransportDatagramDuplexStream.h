@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
 
 namespace JSC {
@@ -34,23 +35,40 @@ class JSGlobalObject;
 
 namespace WebCore {
 
+class DOMPromise;
 class ReadableStream;
 class WritableStream;
 
 class WebTransportDatagramDuplexStream : public RefCounted<WebTransportDatagramDuplexStream> {
 public:
-    static Ref<WebTransportDatagramDuplexStream> create();
-    ExceptionOr<Ref<ReadableStream>> readable(JSC::JSGlobalObject&);
-    ExceptionOr<Ref<WritableStream>> writable(JSC::JSGlobalObject&);
+    static Ref<WebTransportDatagramDuplexStream> create(Ref<ReadableStream>&&, Ref<WritableStream>&&);
+    ~WebTransportDatagramDuplexStream();
+
+    ReadableStream& readable();
+    WritableStream& writable();
     unsigned maxDatagramSize();
     double incomingMaxAge();
     double outgoingMaxAge();
     double incomingHighWaterMark();
     double outgoingHighWaterMark();
-    void setIncomingMaxAge(double);
-    void setOutgoingMaxAge(double);
-    void setIncomingHighWaterMark(double);
-    void setOutgoingHighWaterMark(double);
+    ExceptionOr<void> setIncomingMaxAge(double);
+    ExceptionOr<void> setOutgoingMaxAge(double);
+    ExceptionOr<void> setIncomingHighWaterMark(double);
+    ExceptionOr<void> setOutgoingHighWaterMark(double);
+
+private:
+    WebTransportDatagramDuplexStream(Ref<ReadableStream>&&, Ref<WritableStream>&&);
+
+    Ref<ReadableStream> m_readable;
+    Ref<WritableStream> m_writable;
+    Deque<std::pair<Vector<uint8_t>, MonotonicTime>> m_incomingDatagramsQueue;
+    RefPtr<DOMPromise> m_incomingDatagramsPullPromise;
+    double m_incomingDatagramsHighWaterMark { 1 };
+    double m_incomingDatagramsExpirationDuration { std::numeric_limits<double>::infinity() };
+    Deque<std::tuple<Vector<uint8_t>, MonotonicTime, Ref<DOMPromise>>> m_outgoingDatagramsQueue;
+    double m_outgoingDatagramsHighWaterMark { 1 };
+    double m_outgoingDatagramsExpirationDuration { std::numeric_limits<double>::infinity() };
+    size_t m_outgoingMaxDatagramSize { 1024 };
 };
 
 }
