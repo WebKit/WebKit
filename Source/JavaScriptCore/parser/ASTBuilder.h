@@ -1237,6 +1237,7 @@ ExpressionNode* ASTBuilder::makeDeleteNode(const JSTokenLocation& location, Expr
         return new (m_parserArena) DeleteBracketNode(location, bracket->base(), bracket->subscript(), divot, start, end);
     }
     ASSERT(expr->isDotAccessorNode());
+    checkArgumentsLengthModification(expr);
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
     return new (m_parserArena) DeleteDotNode(location, dot->base(), dot->identifier(), divot, start, end);
 }

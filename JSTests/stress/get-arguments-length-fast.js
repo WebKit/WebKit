@@ -300,3 +300,9 @@ shouldBeAsync(14, () => argumentsWithAsyncFunction(1, 2, 3));
     var arguments = [3, 2];
     shouldBe(arguments.length, 2);
 }
+
+function deleteArgumentsLength() {
+    return (delete arguments.length);
+}
+
+shouldBe(deleteArgumentsLength(), true);
