@@ -334,7 +334,6 @@
 #include "WKStringCF.h"
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
-#include <WebCore/UTIRegistry.h>
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
@@ -966,7 +965,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if PLATFORM(COCOA)
     setSmartInsertDeleteEnabled(parameters.smartInsertDeleteEnabled);
-    WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)
