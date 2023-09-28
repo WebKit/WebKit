@@ -51,7 +51,7 @@
 {
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer) {
-        WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
+        WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::ContextSource::CALayer);
         WebCore::PlatformCALayer::RepaintRectList rectsToPaint = WebCore::PlatformCALayer::collectRectsToPaint(graphicsContext, layer.get());
         OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior;
         if (self.isRenderingInContext)
@@ -138,7 +138,7 @@
     ASSERT(isMainThread());
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner()) {
-        WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
+        WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::ContextSource::CALayer);
         WebCore::FloatRect clipBounds = CGContextGetClipBoundingBox(context);
         OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior;
         if (self.isRenderingInContext)

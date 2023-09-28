@@ -49,7 +49,7 @@ TEST(BifurcatedGraphicsContextTests, Basic)
     auto colorSpace = DestinationColorSpace::SRGB();
     auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
-    GraphicsContextCG primaryContext(primaryCGContext.get());
+    GraphicsContextCG primaryContext(primaryCGContext.get(), GraphicsContextCG::ContextSource::WebKit);
 
     DisplayList displayList;
     RecorderImpl secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
@@ -122,8 +122,8 @@ TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
     auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
     auto secondaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
-    GraphicsContextCG primaryContext(primaryCGContext.get());
-    GraphicsContextCG secondaryContext(secondaryCGContext.get());
+    GraphicsContextCG primaryContext(primaryCGContext.get(), GraphicsContextCG::ContextSource::WebKit);
+    GraphicsContextCG secondaryContext(secondaryCGContext.get(), GraphicsContextCG::ContextSource::WebKit);
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
     auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
@@ -154,8 +154,8 @@ TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
     auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
     auto secondaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
-    GraphicsContextCG primaryContext(primaryCGContext.get());
-    GraphicsContextCG secondaryContext(secondaryCGContext.get());
+    GraphicsContextCG primaryContext(primaryCGContext.get(), GraphicsContextCG::ContextSource::WebKit);
+    GraphicsContextCG secondaryContext(secondaryCGContext.get(), GraphicsContextCG::ContextSource::WebKit);
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
     auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
@@ -185,7 +185,7 @@ TEST(BifurcatedGraphicsContextTests, Borders)
     auto colorSpace = DestinationColorSpace::SRGB();
     auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
-    GraphicsContextCG primaryContext(primaryCGContext.get());
+    GraphicsContextCG primaryContext(primaryCGContext.get(), GraphicsContextCG::ContextSource::WebKit);
 
     DisplayList displayList;
     RecorderImpl secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
@@ -211,7 +211,7 @@ TEST(BifurcatedGraphicsContextTests, TransformedClip)
     auto colorSpace = DestinationColorSpace::SRGB();
     auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, 100, 100, 8, 4 * 100, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
-    GraphicsContextCG primaryContextCG(primaryCGContext.get());
+    GraphicsContextCG primaryContextCG(primaryCGContext.get(), GraphicsContextCG::ContextSource::WebKit);
     GraphicsContext& primaryContext = primaryContextCG;
 
     DisplayList displayList;
@@ -270,7 +270,7 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
     auto colorSpace = DestinationColorSpace::SRGB();
     auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, 100, 100, 8, 4 * 100, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
-    GraphicsContextCG primaryContextCG(primaryCGContext.get());
+    GraphicsContextCG primaryContextCG(primaryCGContext.get(), GraphicsContextCG::ContextSource::WebKit);
     GraphicsContext& primaryContext = primaryContextCG;
 
     DisplayList displayList;

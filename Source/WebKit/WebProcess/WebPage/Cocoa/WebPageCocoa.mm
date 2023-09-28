@@ -430,7 +430,7 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
 
         CGPDFContextBeginPage(pdfContext.get(), dictionary);
 
-        GraphicsContextCG graphicsContext { pdfContext.get() };
+        GraphicsContextCG graphicsContext { pdfContext.get(), GraphicsContextCG::ContextSource::WebKit };
         graphicsContext.scale({ 1, -1 });
         graphicsContext.translate(0, -bitmapSize.height());
 

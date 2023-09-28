@@ -115,7 +115,7 @@ ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 GraphicsContext& ImageBufferIOSurfaceBackend::context()
 {
     if (!m_context) {
-        m_context = makeUnique<GraphicsContextCG>(ensurePlatformContext());
+        m_context = makeUnique<GraphicsContextCG>(ensurePlatformContext(), GraphicsContextCG::ContextSource::WebKit);
         applyBaseTransform(*m_context);
     }
     return *m_context;

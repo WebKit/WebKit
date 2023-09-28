@@ -58,7 +58,7 @@ static CFDictionaryRef makeContextOptions(const DynamicContentScalingImageBuffer
 class GraphicsContextDynamicContentScaling : public WebCore::GraphicsContextCG {
 public:
     GraphicsContextDynamicContentScaling(const DynamicContentScalingImageBufferBackend::Parameters& parameters, WebCore::IntSize backendSize, WebCore::RenderingMode renderingMode)
-        : GraphicsContextCG(adoptCF(RECGCommandsContextCreate(backendSize, makeContextOptions(parameters))).autorelease(), GraphicsContextCG::Unknown, renderingMode)
+        : GraphicsContextCG(adoptCF(RECGCommandsContextCreate(backendSize, makeContextOptions(parameters))).autorelease(), GraphicsContextCG::ContextSource::WebKit, renderingMode)
     {
     }
 

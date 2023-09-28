@@ -305,7 +305,7 @@ static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOption
     if (!coreFrame)
         return;
 
-    GraphicsContextCG graphicsContext(cgContext);
+    GraphicsContextCG graphicsContext(cgContext, GraphicsContextCG::ContextSource::PlatformView);
     PrintContext::spoolAllPagesWithBoundaries(*coreFrame, graphicsContext, FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 

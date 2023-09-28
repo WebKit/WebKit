@@ -44,7 +44,7 @@
 
 - (void)drawInContext:(CGContextRef)cgContext
 {
-    WebCore::GraphicsContextCG context { cgContext, WebCore::GraphicsContextCG::CGContextFromCALayer };
+    WebCore::GraphicsContextCG context { cgContext, WebCore::GraphicsContextCG::ContextSource::CALayer };
     self.didDraw = true;
     self.lastRenderingMode = context.renderingMode();
 }
@@ -61,7 +61,7 @@ RetainPtr<CGImageRef> greenImage()
 {
     auto colorSpace = DestinationColorSpace::SRGB();
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
-    GraphicsContextCG ctx(cgContext.get());
+    GraphicsContextCG ctx(cgContext.get(), GraphicsContextCG::ContextSource::WebKit);
     ctx.fillRect(FloatRect(0, 0, contextWidth, contextHeight), Color::green);
     return adoptCF(CGBitmapContextCreateImage(cgContext.get()));
 }
@@ -70,7 +70,7 @@ TEST(GraphicsContextTests, DrawNativeImageDoesNotLeakCompositeOperator)
 {
     auto colorSpace = DestinationColorSpace::SRGB();
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
-    GraphicsContextCG ctx(cgContext.get());
+    GraphicsContextCG ctx(cgContext.get(), GraphicsContextCG::ContextSource::WebKit);
 
     EXPECT_EQ(ctx.compositeOperation(), CompositeOperator::SourceOver);
     EXPECT_EQ(ctx.blendMode(), BlendMode::Normal);
@@ -100,7 +100,7 @@ TEST(GraphicsContextTests, CGBitmapRenderingModeIsUnaccelerated)
     auto srgb = DestinationColorSpace::SRGB();
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, 3, 3, 8, 4 * 3, srgb.platformColorSpace(), kCGImageAlphaPremultipliedLast));
     ASSERT_NE(cgContext, nullptr);
-    GraphicsContextCG context(cgContext.get());
+    GraphicsContextCG context(cgContext.get(), GraphicsContextCG::ContextSource::WebKit);
     EXPECT_EQ(context.renderingMode(), RenderingMode::Unaccelerated);
 }
 
@@ -114,7 +114,7 @@ TEST(GraphicsContextTests, IOSurfaceRenderingModeIsAccelerated)
     auto bitsPerComponent = 8;
     auto bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
     auto cgContext = adoptCF(CGIOSurfaceContextCreate(surface->surface(), size.width(), size.height(), bitsPerComponent, bitsPerPixel, srgb.platformColorSpace(), bitmapInfo));
-    GraphicsContextCG context(cgContext.get());
+    GraphicsContextCG context(cgContext.get(), GraphicsContextCG::ContextSource::WebKit);
     EXPECT_EQ(context.renderingMode(), RenderingMode::Accelerated);
 }
 
@@ -198,7 +198,7 @@ TEST(GraphicsContextTests, DrawsReportHasDrawn)
     auto bitsPerComponent = 8;
     auto bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
     auto cgContext = adoptCF(CGIOSurfaceContextCreate(surface->surface(), size.width(), size.height(), bitsPerComponent, bitsPerPixel, srgb.platformColorSpace(), bitmapInfo));
-    GraphicsContextCG context(cgContext.get());
+    GraphicsContextCG context(cgContext.get(), GraphicsContextCG::ContextSource::WebKit);
 
     // Context starts saying has drawn, conservative estimate.
     EXPECT_TRUE(context.consumeHasDrawn());

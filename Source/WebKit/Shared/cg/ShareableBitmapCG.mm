@@ -181,7 +181,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     CGContextTranslateCTM(bitmapContext.get(), 0, size().height());
     CGContextScaleCTM(bitmapContext.get(), 1, -1);
 
-    return makeUnique<GraphicsContextCG>(bitmapContext.get());
+    return makeUnique<GraphicsContextCG>(bitmapContext.get(), GraphicsContextCG::ContextSource::WebKit);
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& destination, const IntRect& source)
