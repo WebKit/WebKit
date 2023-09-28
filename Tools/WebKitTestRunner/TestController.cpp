@@ -521,7 +521,7 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         decidePolicyForPluginLoad,
         nullptr, // didStartProvisionalNavigation
         didReceiveServerRedirectForProvisionalNavigation,
-        didFailProvisionalNavigation,
+        nullptr, // didFailProvisionalNavigation
         nullptr, // didCommitNavigation
         nullptr, // didFinishNavigation
         nullptr, // didFailNavigation
@@ -983,7 +983,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         decidePolicyForPluginLoad,
         nullptr, // didStartProvisionalNavigation
         didReceiveServerRedirectForProvisionalNavigation,
-        didFailProvisionalNavigation,
+        nullptr, // didFailProvisionalNavigation
         didCommitNavigation,
         didFinishNavigation,
         nullptr, // didFailNavigation
@@ -1464,26 +1464,17 @@ WKRetainPtr<WKStringRef> TestController::backgroundFetchState(WKStringRef)
 
 WKURLRef TestController::createTestURL(const char* pathOrURL)
 {
-    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://"))
+    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://") || strstr(pathOrURL, "file://"))
         return WKURLCreateWithUTF8CString(pathOrURL);
 
+    // Creating from filesytem path.
     size_t length = strlen(pathOrURL);
     if (!length)
         return 0;
 
-    if (length >= 7 && strstr(pathOrURL, "file://")) {
-        if (!WTF::FileSystemImpl::fileExists(String(pathOrURL + 7, length - 7))) {
-            printf("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathOrURL);
-            return 0;
-        }
-        return WKURLCreateWithUTF8CString(pathOrURL);
-    }
-
-    // Creating from filesytem path.
-
 #if PLATFORM(WIN)
     bool isAbsolutePath = false;
-    if (length >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == pathSeparator)
+    if (strlen(pathOrURL) >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == pathSeparator)
         isAbsolutePath = true;
 #else
     bool isAbsolutePath = pathOrURL[0] == pathSeparator;
@@ -1506,12 +1497,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
         strcpy(buffer.get() + numCharacters + 1, pathOrURL);
     }
 
-    auto cPath = buffer.get();
-    if (!WTF::FileSystemImpl::fileExists(String(cPath + 7, strlen(cPath) - 7))) {
-        printf("Failed: File ‘%s’ was not found or is inaccessible\n", pathOrURL);
-        return 0;
-    }
-    return WKURLCreateWithUTF8CString(cPath);
+    return WKURLCreateWithUTF8CString(buffer.get());
 }
 
 TestOptions TestController::testOptionsForTest(const TestCommand& command) const
@@ -1680,11 +1666,7 @@ bool TestController::runTest(const char* inputLine)
     
     TestOptions options = testOptionsForTest(command);
 
-    m_mainResourceURL = adoptWK(createTestURL(command.pathOrURL.c_str()));
-    if (!m_mainResourceURL)
-        return false;
-
-    m_currentInvocation = makeUnique<TestInvocation>(m_mainResourceURL.get(), options);
+    m_currentInvocation = makeUnique<TestInvocation>(adoptWK(createTestURL(command.pathOrURL.c_str())).get(), options);
 
     if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
@@ -1701,7 +1683,6 @@ bool TestController::runTest(const char* inputLine)
 
     m_currentInvocation->invoke();
     m_currentInvocation = nullptr;
-    m_mainResourceURL = nullptr;
 
     return true;
 }
@@ -2200,11 +2181,6 @@ void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigat
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishNavigation(page, navigation);
 }
 
-void TestController::didFailProvisionalNavigation(WKPageRef page, WKNavigationRef navigation, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
-{
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->didFailProvisionalNavigation(page, error);
-}
-
 void TestController::didReceiveServerRedirectForProvisionalNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef userData, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveServerRedirectForProvisionalNavigation(page, navigation, userData);
@@ -2376,20 +2352,6 @@ void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigat
 
     m_doneResetting = true;
     singleton().notifyDone();
-}
-
-void TestController::didFailProvisionalNavigation(WKPageRef page, WKErrorRef error)
-{
-    auto failingURL = adoptWK(WKErrorCopyFailingURL(error));
-    if (!m_mainResourceURL || !failingURL || !WKURLIsEqual(failingURL.get(), m_mainResourceURL.get()))
-        return;
-
-    auto failingURLString = toWTFString(adoptWK(WKURLCopyString(failingURL.get())));
-    auto errorDomain = toWTFString(adoptWK(WKErrorCopyDomain(error)));
-    auto errorDescription = toWTFString(adoptWK(WKErrorCopyLocalizedDescription(error)));
-    int errorCode = WKErrorGetErrorCode(error);
-    auto errorMessage = makeString("Failed: ", errorDescription, " (errorDomain=", errorDomain, ", code=", errorCode, ") for URL ", failingURLString);
-    printf("%s\n", errorMessage.utf8().data());
 }
 
 void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationChallengeRef authenticationChallenge)
@@ -2929,7 +2891,7 @@ WTF::String pathSuitableForTestResult(WKURLRef fileURL, WKPageRef page)
     String pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
     String mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_s;
     auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind('/') + 1);
-
+    
     if (!basePath.isEmpty() && pathString.startsWith(basePath))
         return pathString.substring(basePath.length());
     return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileURL))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
