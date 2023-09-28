@@ -68,13 +68,7 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsBase.css
     ${WEBCORE_DIR}/css/mediaControls.css
-)
-
-set(WebCore_USER_AGENT_SCRIPTS
-    ${WEBCORE_DIR}/en.lproj/mediaControlsLocalizedStrings.js
-    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsBase.js
 )
 
 list(APPEND WebCore_LIBRARIES
