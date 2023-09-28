@@ -373,8 +373,8 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         AddressSpace addressSpace;
         AccessMode accessMode;
         if (auto* maybeQualifier = variable.maybeQualifier()) {
-            addressSpace = static_cast<AddressSpace>(maybeQualifier->storageClass());
-            accessMode = static_cast<AccessMode>(maybeQualifier->accessMode());
+            addressSpace = maybeQualifier->addressSpace();
+            accessMode = maybeQualifier->accessMode();
         } else if (variableKind == VariableKind::Local) {
             addressSpace = AddressSpace::Function;
             accessMode = AccessMode::ReadWrite;
@@ -1289,28 +1289,9 @@ std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
     ASSERT(is<AST::IdentifierExpression>(expression));
     auto& formatName = downcast<AST::IdentifierExpression>(expression).identifier();
 
-    static constexpr std::pair<ComparableASCIILiteral, TexelFormat> texelFormatMappings[] {
-        { "bgra8unorm", TexelFormat::BGRA8unorm },
-        { "r32float", TexelFormat::R32float },
-        { "r32sint", TexelFormat::R32sint },
-        { "r32uint", TexelFormat::R32uint },
-        { "rg32float", TexelFormat::RG32float },
-        { "rg32sint", TexelFormat::RG32sint },
-        { "rg32uint", TexelFormat::RG32uint },
-        { "rgba16float", TexelFormat::RGBA16float },
-        { "rgba16sint", TexelFormat::RGBA16sint },
-        { "rgba16uint", TexelFormat::RGBA16uint },
-        { "rgba32float", TexelFormat::RGBA32float },
-        { "rgba32sint", TexelFormat::RGBA32sint },
-        { "rgba32uint", TexelFormat::RGBA32uint },
-        { "rgba8sint", TexelFormat::RGBA8sint },
-        { "rgba8snorm", TexelFormat::RGBA8snorm },
-        { "rgba8uint", TexelFormat::RGBA8uint },
-        { "rgba8unorm", TexelFormat::RGBA8unorm },
-    };
-    static constexpr SortedArrayMap texelFormats { texelFormatMappings };
-
-    return { texelFormats.get(formatName.id()) };
+    auto* format = parseTexelFormat(formatName.id());
+    ASSERT(format);
+    return { *format };
 }
 
 std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
@@ -1324,14 +1305,9 @@ std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
     ASSERT(is<AST::IdentifierExpression>(expression));
     auto& accessName = downcast<AST::IdentifierExpression>(expression).identifier();
 
-    static constexpr std::pair<ComparableASCIILiteral, AccessMode> accessModeMappings[] {
-        { "read", AccessMode::Read },
-        { "read_write", AccessMode::ReadWrite },
-        { "write", AccessMode::Write },
-    };
-    static constexpr SortedArrayMap accessModes { accessModeMappings };
-
-    return { accessModes.get(accessName.id()) };
+    auto* accessMode = parseAccessMode(accessName.id());
+    ASSERT(accessMode);
+    return { *accessMode };
 }
 
 std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expression)
@@ -1345,18 +1321,9 @@ std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expressio
     ASSERT(is<AST::IdentifierExpression>(expression));
     auto& addressSpaceName = downcast<AST::IdentifierExpression>(expression).identifier();
 
-    static constexpr std::pair<ComparableASCIILiteral, AddressSpace> addressSpaceMappings[] {
-        { "function", AddressSpace::Function },
-        { "handle", AddressSpace::Handle },
-        { "private", AddressSpace::Private },
-        { "storage", AddressSpace::Storage },
-        { "uniform", AddressSpace::Uniform },
-        { "workgroup", AddressSpace::Workgroup },
-
-    };
-    static constexpr SortedArrayMap addressSpaces { addressSpaceMappings };
-
-    return { addressSpaces.get(addressSpaceName.id()) };
+    auto* addressSpace = parseAddressSpace(addressSpaceName.id());
+    ASSERT(addressSpace);
+    return { *addressSpace };
 }
 
 } // namespace WGSL

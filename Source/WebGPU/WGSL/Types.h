@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTForward.h"
+#include "WGSLEnums.h"
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 #include <wtf/PrintStream.h>
@@ -36,41 +37,6 @@ namespace WGSL {
 class TypeChecker;
 class TypeStore;
 struct Type;
-
-enum class AddressSpace : uint8_t {
-    Function,
-    Private,
-    Workgroup,
-    Uniform,
-    Storage,
-    Handle,
-};
-
-enum class AccessMode : uint8_t {
-    Read,
-    Write,
-    ReadWrite,
-};
-
-enum class TexelFormat : uint8_t {
-    BGRA8unorm,
-    RGBA8unorm,
-    RGBA8snorm,
-    RGBA8uint,
-    RGBA8sint,
-    RGBA16uint,
-    RGBA16sint,
-    RGBA16float,
-    R32uint,
-    R32sint,
-    R32float,
-    RG32uint,
-    RG32sint,
-    RG32float,
-    RGBA32uint,
-    RGBA32sint,
-    RGBA32float,
-};
 
 namespace Types {
 
@@ -259,9 +225,4 @@ private:
     String const m_string;
 };
 
-} // namespace WTF
-
-namespace WTF {
-void printInternal(PrintStream&, WGSL::AddressSpace);
-void printInternal(PrintStream&, WGSL::AccessMode);
 } // namespace WTF

@@ -190,8 +190,8 @@ TEST(WGSLParserTests, SourceLifecycle)
     EXPECT_EQ(*binding, 0u);
     EXPECT_EQ(var.name(), "x"_s);
     EXPECT_TRUE(var.maybeQualifier());
-    EXPECT_EQ(var.maybeQualifier()->storageClass(), WGSL::AST::StorageClass::Storage);
-    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AST::AccessMode::ReadWrite);
+    EXPECT_EQ(var.maybeQualifier()->addressSpace(), WGSL::AddressSpace::Storage);
+    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AccessMode::ReadWrite);
     EXPECT_TRUE(var.maybeTypeName());
     EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(var.maybeTypeName()));
     auto& namedType = downcast<WGSL::AST::IdentifierExpression>(*var.maybeTypeName());
@@ -254,8 +254,8 @@ TEST(WGSLParserTests, GlobalVariable)
     EXPECT_EQ(*binding, 0u);
     EXPECT_EQ(var.name(), "x"_s);
     EXPECT_TRUE(var.maybeQualifier());
-    EXPECT_EQ(var.maybeQualifier()->storageClass(), WGSL::AST::StorageClass::Storage);
-    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AST::AccessMode::ReadWrite);
+    EXPECT_EQ(var.maybeQualifier()->addressSpace(), WGSL::AddressSpace::Storage);
+    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AccessMode::ReadWrite);
     EXPECT_TRUE(var.maybeTypeName());
     EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(var.maybeTypeName()));
     auto& namedType = downcast<WGSL::AST::IdentifierExpression>(*var.maybeTypeName());
