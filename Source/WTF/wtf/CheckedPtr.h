@@ -115,6 +115,8 @@ public:
     ALWAYS_INLINE T& operator*() const { ASSERT(m_ptr); return *get(); }
     ALWAYS_INLINE T* operator->() const { return get(); }
 
+    CheckedRef<T> releaseNonNull() { ASSERT(m_ptr); return CheckedRef { *PtrTraits::unwrap(std::exchange(m_ptr, nullptr)), CheckedRef<T>::Adopt }; }
+
     bool operator==(const T* other) const { return m_ptr == other; }
     template<typename U> bool operator==(U* other) const { return m_ptr == other; }
 

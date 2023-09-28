@@ -35,6 +35,7 @@
 #include "PolicyContainer.h"
 #include "SerializedScriptValue.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -66,7 +67,7 @@ protected:
     HistoryItemClient() = default;
 };
 
-class HistoryItem : public RefCounted<HistoryItem> {
+class HistoryItem : public RefCounted<HistoryItem>, public CanMakeCheckedPtr {
     friend class BackForwardCache;
 
 public:

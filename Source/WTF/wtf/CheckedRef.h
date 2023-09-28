@@ -54,6 +54,12 @@ public:
         PtrTraits::unwrap(m_ptr)->incrementPtrCount();
     }
 
+    enum AdoptTag { Adopt };
+    CheckedRef(T& object, AdoptTag)
+        : m_ptr(&object)
+    {
+    }
+
     ALWAYS_INLINE CheckedRef(const CheckedRef& other)
         : m_ptr { PtrTraits::unwrap(other.m_ptr) }
     {

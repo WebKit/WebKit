@@ -28,9 +28,10 @@
 
 #import <WebCore/SharedStringHash.h>
 #import <WebCore/VisitedLinkStore.h>
+#import <wtf/CheckedRef.h>
 #import <wtf/Ref.h>
 
-class WebVisitedLinkStore final : public WebCore::VisitedLinkStore {
+class WebVisitedLinkStore final : public WebCore::VisitedLinkStore, public CanMakeCheckedPtr {
 public:
     static Ref<WebVisitedLinkStore> create();
     virtual ~WebVisitedLinkStore();

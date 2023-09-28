@@ -28,10 +28,12 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/Timer.h>
 #include <array>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -81,7 +83,7 @@ private:
     bool isSuspendingPendingRequests() const { return !!m_suspendPendingRequestsCount; }
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;
 
-    class HostInformation {
+    class HostInformation : public CanMakeWeakPtr<HostInformation>, public CanMakeCheckedPtr {
         WTF_MAKE_NONCOPYABLE(HostInformation); WTF_MAKE_FAST_ALLOCATED;
     public:
         HostInformation(const String&, unsigned);
@@ -112,12 +114,12 @@ private:
         FindOnly
     };
     
-    HostInformation* hostForURL(const URL&, CreateHostPolicy = FindOnly);
-    void servePendingRequests(HostInformation*, WebCore::ResourceLoadPriority);
+    CheckedPtr<HostInformation> hostForURL(const URL&, CreateHostPolicy = FindOnly);
+    void servePendingRequests(CheckedRef<HostInformation>&&, WebCore::ResourceLoadPriority);
 
-    typedef HashMap<String, HostInformation*, StringHash> HostMap;
+    typedef HashMap<String, std::unique_ptr<HostInformation>, StringHash> HostMap;
     HostMap m_hosts;
-    HostInformation* m_nonHTTPProtocolHost;
+    UniqueRef<HostInformation> m_nonHTTPProtocolHost;
         
     WebCore::Timer m_requestTimer;
 

@@ -31,6 +31,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/StorageMap.h>
 #include <WebCore/StorageType.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
@@ -39,9 +40,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static HashMap<String, StorageNamespaceImpl*>& localStorageNamespaceMap()
+static HashMap<String, CheckedPtr<StorageNamespaceImpl>>& localStorageNamespaceMap()
 {
-    static NeverDestroyed<HashMap<String, StorageNamespaceImpl*>> localStorageNamespaceMap;
+    static NeverDestroyed<HashMap<String, CheckedPtr<StorageNamespaceImpl>>> localStorageNamespaceMap;
 
     return localStorageNamespaceMap;
 }
