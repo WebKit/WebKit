@@ -41,10 +41,9 @@
 
 namespace WebCore {
 
-CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics)
+CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, CaptureNetworkLoadMetrics captureExtraMetrics)
     : m_client(client)
     , m_request(request.isolatedCopy())
-    , m_enableMultipart(enableMultipart == EnableMultipart::Yes)
     , m_formDataStream(m_request.httpBody())
     , m_captureExtraMetrics(captureExtraMetrics == CaptureNetworkLoadMetrics::Extended)
 {
@@ -337,8 +336,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
 
     m_response.networkLoadMetrics = networkLoadMetrics();
 
-    if (m_enableMultipart)
-        m_multipartHandle = CurlMultipartHandle::createIfNeeded(*this, m_response);
+    m_multipartHandle = CurlMultipartHandle::createIfNeeded(*this, m_response);
 
     // Response will send at didReceiveData() or didCompleteTransfer()
     // to receive continueDidRceiveResponse() for asynchronously.
@@ -372,9 +370,11 @@ size_t CurlRequest::didReceiveData(const SharedBuffer& buffer)
     m_totalReceivedSize += receiveBytes;
 
     if (receiveBytes) {
-        if (m_multipartHandle)
-            m_multipartHandle->didReceiveData(buffer);
-        else {
+        if (m_multipartHandle) {
+            m_multipartHandle->didReceiveMessage(buffer);
+            if (m_multipartHandle->hasError())
+                return CURL_WRITEFUNC_ERROR;
+        } else {
             callClient([buffer = Ref { buffer }](CurlRequest& request, CurlRequestClient& client) {
                 client.curlDidReceiveData(request, buffer);
             });
@@ -384,7 +384,7 @@ size_t CurlRequest::didReceiveData(const SharedBuffer& buffer)
     return receiveBytes;
 }
 
-void CurlRequest::didReceiveHeaderFromMultipart(const Vector<String>& headers)
+void CurlRequest::didReceiveHeaderFromMultipart(Vector<String>&& headers)
 {
     if (isCompletedOrCancelled())
         return;
@@ -393,24 +393,40 @@ void CurlRequest::didReceiveHeaderFromMultipart(const Vector<String>& headers)
     response.expectedContentLength = 0;
     response.headers.clear();
 
-    for (auto header : headers)
-        response.headers.append(header);
+    for (auto& header : headers)
+        response.headers.append(WTFMove(header));
 
-    invokeDidReceiveResponse(response);
+    invokeDidReceiveResponse(response, [this] {
+        runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
+            if (isCompletedOrCancelled() || !m_multipartHandle)
+                return;
+
+            m_multipartHandle->completeHeaderProcessing();
+        });
+    });
 }
 
-void CurlRequest::didReceiveDataFromMultipart(const SharedBuffer& buffer)
+void CurlRequest::didReceiveDataFromMultipart(Ref<SharedBuffer>&& buffer)
 {
     if (isCompletedOrCancelled())
         return;
 
-    auto receiveBytes = buffer.size();
+    auto receiveBytes = buffer->size();
 
     if (receiveBytes) {
-        callClient([buffer = Ref { buffer }](CurlRequest& request, CurlRequestClient& client) {
-            client.curlDidReceiveData(request, buffer);
+        callClient([buffer = WTFMove(buffer)](CurlRequest& request, CurlRequestClient& client) {
+            client.curlDidReceiveData(request, buffer.get());
         });
     }
+}
+
+void CurlRequest::didCompleteFromMultipart()
+{
+    ASSERT(m_multipartHandle && m_multipartHandle->completed());
+
+    runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
+        didCompleteTransfer(CURLE_OK);
+    });
 }
 
 void CurlRequest::didCompleteTransfer(CURLcode result)
@@ -434,8 +450,10 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
     }
 
     if (result == CURLE_OK) {
-        if (m_multipartHandle)
-            m_multipartHandle->didComplete();
+        if (m_multipartHandle && !m_multipartHandle->completed()) {
+            m_multipartHandle->didCompleteMessage();
+            return;
+        }
 
         auto metrics = networkLoadMetrics();
 

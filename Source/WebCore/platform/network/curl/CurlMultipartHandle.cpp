@@ -32,13 +32,37 @@
 
 #include "CurlMultipartHandleClient.h"
 #include "CurlResponse.h"
-#include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
-#include "ResourceResponse.h"
+#include "ParsedContentType.h"
 #include "SharedBuffer.h"
 #include <wtf/StringExtras.h>
 
 namespace WebCore {
+
+static std::optional<CString> extractBoundary(const CurlResponse& response)
+{
+    static const auto contentTypeLength = strlen("content-type:");
+
+    for (auto header : response.headers) {
+        if (!header.startsWithIgnoringASCIICase("content-type:"_s))
+            continue;
+
+        auto contentType = ParsedContentType::create(header.substring(contentTypeLength));
+        if (!contentType)
+            return std::nullopt;
+
+        if (!equalLettersIgnoringASCIICase(contentType->mimeType(), "multipart/x-mixed-replace"_s))
+            return std::nullopt;
+
+        auto boundary = contentType->parameterValueForName("boundary"_s);
+        if (boundary.isEmpty())
+            return std::nullopt;
+
+        return makeString("--", boundary).latin1();
+    }
+
+    return std::nullopt;
+}
 
 std::unique_ptr<CurlMultipartHandle> CurlMultipartHandle::createIfNeeded(CurlMultipartHandleClient& client, const CurlResponse& response)
 {
@@ -46,82 +70,18 @@ std::unique_ptr<CurlMultipartHandle> CurlMultipartHandle::createIfNeeded(CurlMul
     if (!boundary)
         return nullptr;
 
-    return makeUnique<CurlMultipartHandle>(client, *boundary);
+    return makeUnique<CurlMultipartHandle>(client, WTFMove(*boundary));
 }
 
-std::optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& response)
-{
-    for (auto header : response.headers) {
-        auto splitPosition = header.find(':');
-        if (splitPosition == notFound)
-            continue;
-
-        auto key = header.left(splitPosition).trim(deprecatedIsSpaceOrNewline);
-        if (!equalIgnoringASCIICase(key, "Content-Type"_s))
-            continue;
-
-        auto contentType = header.substring(splitPosition + 1).trim(deprecatedIsSpaceOrNewline);
-        auto mimeType = extractMIMETypeFromMediaType(contentType);
-        if (!equalLettersIgnoringASCIICase(mimeType, "multipart/x-mixed-replace"_s))
-            continue;
-
-        auto boundary = extractBoundaryFromContentType(contentType);
-        if (!boundary)
-            continue;
-
-        return String("--" + *boundary);
-    }
-
-    return std::nullopt;
-}
-
-std::optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const String& contentType)
-{
-    static const size_t length = strlen("boundary=");
-
-    auto boundaryStart = contentType.findIgnoringASCIICase("boundary="_s);
-    if (boundaryStart == notFound)
-        return std::nullopt;
-
-    boundaryStart += length;
-    size_t boundaryEnd = 0;
-
-    if (contentType[boundaryStart] == '"') {
-        // Boundary value starts with a " quote. Search for the closing one.
-        ++boundaryStart;
-        boundaryEnd = contentType.find('"', boundaryStart);
-        if (boundaryEnd == notFound)
-            return std::nullopt;
-    } else if (contentType[boundaryStart] == '\'') {
-        // Boundary value starts with a ' quote. Search for the closing one.
-        ++boundaryStart;
-        boundaryEnd = contentType.find('\'', boundaryStart);
-        if (boundaryEnd == notFound)
-            return std::nullopt;
-    } else {
-        // Check for the end of the boundary. That can be a semicolon or a newline.
-        boundaryEnd = contentType.find(';', boundaryStart);
-        if (boundaryEnd == notFound)
-            boundaryEnd = contentType.length();
-    }
-
-    // The boundary end should not be before the start
-    if (boundaryEnd <= boundaryStart)
-        return std::nullopt;
-
-    return contentType.substring(boundaryStart, boundaryEnd - boundaryStart);
-}
-
-CurlMultipartHandle::CurlMultipartHandle(CurlMultipartHandleClient& client, const String& boundary)
+CurlMultipartHandle::CurlMultipartHandle(CurlMultipartHandleClient& client, CString&& boundary)
     : m_client(client)
-    , m_boundary(boundary)
+    , m_boundary(WTFMove(boundary))
 {
-
 }
 
-void CurlMultipartHandle::didReceiveData(const SharedBuffer& buffer)
+void CurlMultipartHandle::didReceiveMessage(const SharedBuffer& buffer)
 {
-    if (m_state == State::End)
+    if (m_state == State::WaitingForTerminate || m_state == State::End || m_didCompleteMessage)
         return; // The handler is closed down so ignore everything.
 
     m_buffer.append(buffer.data(), buffer.size());
@@ -129,230 +89,227 @@ void CurlMultipartHandle::didReceiveData(const SharedBuffer& buffer)
     while (processContent()) { }
 }
 
-void CurlMultipartHandle::didComplete()
+void CurlMultipartHandle::completeHeaderProcessing()
 {
-    // Process the leftover data.
+    if (m_state == State::WaitingForTerminate || m_state == State::End)
+        return; // The handler is closed down so ignore everything.
+
+    RELEASE_ASSERT(m_state == State::WaitingForHeaderProcessing);
+
+    m_state = State::InBody;
+
     while (processContent()) { }
+}
 
-    if (m_state != State::End) {
-        // It seems we are still not at the end of the processing.
-        // Push out the remaining data.
-        m_client.didReceiveDataFromMultipart(SharedBuffer::create(WTFMove(m_buffer)));
-        m_state = State::End;
-    }
+void CurlMultipartHandle::didCompleteMessage()
+{
+    if (m_state == State::End)
+        return; // The handler is closed down so ignore everything.
 
-    m_buffer.clear();
+    m_didCompleteMessage = true;
+
+    if (m_state == State::WaitingForTerminate)
+        m_state = State::Terminating;
+
+    while (processContent()) { }
 }
 
 bool CurlMultipartHandle::processContent()
 {
-/*
-    The allowed transitions between the states:
-         Check Boundary
-               |
-      /-- In Boundary <----\
-     |         |            |
-     |     In Header        |
-     |         |            |
-     |     In Content       |
-     |         |            |
-     |    End Boundary ----/
-     |         |
-      \-----> End
-
-*/
     switch (m_state) {
-    case State::CheckBoundary: {
-        if (m_buffer.size() < m_boundary.length()) {
-            // We don't have enough data, so just skip.
-            return false;
-        }
-
-        // Check for the boundary string.
-        size_t boundaryStart;
-        size_t lastPartialMatch;
-
-        if (!checkForBoundary(boundaryStart, lastPartialMatch) && boundaryStart == notFound) {
-            // Did not find the boundary start in this chunk.
-            // Skip ahead to the last valid looking boundary character and start again.
-            m_buffer.remove(0, lastPartialMatch);
-            return false;
-        }
-
-        // Found the boundary start.
-        // Consume everything before that and also the boundary
-        m_buffer.remove(0, boundaryStart + m_boundary.length());
-        m_state = State::InBoundary;
-    }
-    // Fallthrough.
-    case State::InBoundary: {
-        // Now the first two characters should be: \r\n
-        if (m_buffer.size() < 2)
-            return false;
-
-        auto* content = m_buffer.data();
-        // By default we'll remove 2 characters at the end.
-        // The \r and \n as stated in the multipart RFC.
-        size_t removeCount = 2;
-
-        if (content[0] != '\r' || content[1] != '\n') {
-            // There should be a \r and a \n but it seems that's not the case.
-            // So we'll check for a simple \n. Not really RFC compatible but servers do tricky things.
-            if (content[0] != '\n') {
-                // Also no \n so just go to the end.
-                m_state = State::End;
-                return false;
-            }
-
-            // Found a simple \n so remove just that.
-            removeCount = 1;
-        }
-
-        // Consume the characters.
-        m_buffer.remove(0, removeCount);
-        m_headers.clear();
-        m_state = State::InHeader;
-    }
-    // Fallthrough.
-    case State::InHeader: {
-        // Process the headers.
-        if (!parseHeadersIfPossible()) {
-            // Parsing of headers failed, try again later.
-            return false;
-        }
-
-        m_client.didReceiveHeaderFromMultipart(m_headers);
-        m_state = State::InContent;
-    }
-    // Fallthrough.
-    case State::InContent: {
-        if (m_buffer.isEmpty())
-            return false;
-
-        size_t boundaryStart;
-        size_t lastPartialMatch;
-
-        if (!checkForBoundary(boundaryStart, lastPartialMatch) && boundaryStart == notFound) {
-            // Did not find the boundary start, all data up to the lastPartialMatch is ok.
-            m_client.didReceiveDataFromMultipart(SharedBuffer::create(m_buffer.data(), lastPartialMatch));
-            m_buffer.remove(0, lastPartialMatch);
-            return false;
-        }
-
-        // There was a boundary start (or end we'll check that later), push out part of the data.
-        m_client.didReceiveDataFromMultipart(SharedBuffer::create(m_buffer.data(), boundaryStart));
-        m_buffer.remove(0, boundaryStart + m_boundary.length());
-        m_state = State::EndBoundary;
-    }
-    // Fallthrough.
-    case State::EndBoundary: {
-        if (m_buffer.size() < 2)
-            return false; // Not enough data to check. Return later when there is more data.
-
-        // We'll decide if this is a closing boundary or an opening one.
-        auto* content = m_buffer.data();
-
-        if (content[0] == '-' && content[1] == '-') {
-            // This is a closing boundary. Close down the handler.
+    case State::FindBoundaryStart:
+        FALLTHROUGH;
+    case State::InBody: {
+        auto result = findBoundary();
+        if (result.isSyntaxError) {
+            m_hasError = true;
             m_state = State::End;
             return false;
         }
 
-        // This was a simple content separator not a closing one.
-        // Go to before the content processing.
-        m_state = State::InBoundary;
-        break;
-    }
-    case State::End:
-        // We are done. Nothing to do anymore.
-        return false;
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+        if (m_state == State::InBody && result.dataEnd)
+            m_client->didReceiveDataFromMultipart(SharedBuffer::create(m_buffer.data(), result.dataEnd));
 
-    return true; // There are still things to process, so go for it.
-}
+        if (result.processed)
+            m_buffer.remove(0, result.processed);
 
-bool CurlMultipartHandle::checkForBoundary(size_t& boundaryStartPosition, size_t& lastPartialMatchPosition)
-{
-    auto contentLength = m_buffer.size();
+        if (!result.hasBoundary || result.hasCloseDelimiter) {
+            if (m_didCompleteMessage) {
+                m_state = State::Terminating;
+                return true;
+            }
 
-    boundaryStartPosition = notFound;
-    lastPartialMatchPosition = contentLength;
+            if (result.hasCloseDelimiter)
+                m_state = State::WaitingForTerminate;
 
-    if (contentLength < m_boundary.length())
-        return false;
-
-    const auto content = m_buffer.data();
-
-    for (size_t i = 0; i < contentLength - m_boundary.length(); ++i) {
-        auto length = matchedLength(content + i);
-        if (length == m_boundary.length()) {
-            boundaryStartPosition = i;
-            return true;
+            return false;
         }
 
-        if (length)
-            lastPartialMatchPosition = i;
+        m_headers.clear();
+        m_state = State::InHeader;
+        return true;
+    }
+
+    case State::InHeader: {
+        switch (parseHeadersIfPossible()) {
+        case ParseHeadersResult::Success:
+            m_client->didReceiveHeaderFromMultipart(WTFMove(m_headers));
+            m_state = State::WaitingForHeaderProcessing;
+            return true;
+
+        case ParseHeadersResult::NeedMoreData:
+            if (m_didCompleteMessage) {
+                m_state = State::Terminating;
+                return true;
+            }
+            return false;
+
+        case ParseHeadersResult::HeaderSizeTooLarge:
+            m_hasError = true;
+            m_state = State::End;
+            return false;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    case State::WaitingForHeaderProcessing: {
+        // Wait until completeHeaderProcessing() is called
+        return false;
+    }
+
+    case State::WaitingForTerminate: {
+        // Wait until didCompleteMessage() is called
+        return false;
+    }
+
+    case State::Terminating: {
+        m_client->didCompleteFromMultipart();
+        m_state = State::End;
+        return false;
+    }
+
+    case State::End:
+        return false;
     }
 
     return false;
 }
 
-size_t CurlMultipartHandle::matchedLength(const uint8_t* data)
+CurlMultipartHandle::FindBoundaryResult CurlMultipartHandle::findBoundary()
 {
-    auto length = m_boundary.length();
-    for (size_t i = 0; i < length; ++i) {
-        if (data[i] != m_boundary[i])
-            return i;
+    FindBoundaryResult result;
+
+    auto contentLength = m_buffer.size();
+    const auto contentStartPtr = m_buffer.data();
+    const auto contentEndPtr = contentStartPtr + contentLength;
+
+    auto boundaryLength = m_boundary.length();
+    auto boundaryStartPtr = m_boundary.data();
+
+    auto matchedStartPtr = static_cast<const uint8_t*>(memmem(contentStartPtr, contentLength, boundaryStartPtr, boundaryLength));
+    if (!matchedStartPtr) {
+        if (!m_didCompleteMessage) {
+            // Not enough data to check the boundary (Temporarily retain "Initial CRLF + (boundary - 1)" bytes for the next search.)
+            result.dataEnd = std::max(int(contentLength) - int(boundaryLength) + 1 - 2, 0);
+        } else
+            result.dataEnd = contentLength;
+
+        result.processed = result.dataEnd;
+        return result;
     }
 
-    return length;
+    auto matchedEndPtr = matchedStartPtr + boundaryLength;
+
+    // The initial CRLF is considered to be attached to the boundary delimiter line rather than
+    // part of the preceding part. (See RFC2046 [5.1.1. Common Syntax])
+    if (matchedStartPtr - contentStartPtr >= 2 && !memcmp(matchedStartPtr - 2, "\r\n", 2))
+        matchedStartPtr -= 2;
+    else if (matchedStartPtr - contentStartPtr >= 1 && !memcmp(matchedStartPtr - 1, "\n", 1))
+        matchedStartPtr--;
+
+    result.dataEnd = matchedStartPtr - contentStartPtr;
+    result.processed = result.dataEnd;
+
+    // Check the Close Delimiter
+    if (contentEndPtr - matchedEndPtr < 2) {
+        if (!m_didCompleteMessage) {
+            // Not enough data to check the Close Delimiter.
+            return result;
+        }
+    } else if (!memcmp(matchedEndPtr, "--", 2)) {
+        result.hasBoundary = true;
+        result.hasCloseDelimiter = true;
+        result.processed = matchedEndPtr + 2 - contentStartPtr;
+        return result;
+    }
+
+    // Skip transport-padding
+    for (; matchedEndPtr < contentEndPtr && isTabOrSpace(*matchedEndPtr); ++matchedEndPtr) { }
+
+    // There should be a \r and a \n but it seems that's not the case.
+    // So we'll check for a simple \n. Not really RFC compatible but servers do tricky things.
+    if (contentEndPtr - matchedEndPtr >= 2  && !memcmp(matchedEndPtr, "\r\n", 2))
+        matchedEndPtr += 2;
+    else if (contentEndPtr - matchedEndPtr >= 1 && !memcmp(matchedEndPtr, "\n", 1))
+        matchedEndPtr++;
+    else if (matchedEndPtr >= contentEndPtr) {
+        // Not enough data to check the boundary
+        return result;
+    } else {
+        result.isSyntaxError = true;
+        return result;
+    }
+
+    result.hasBoundary = true;
+    result.processed = matchedEndPtr - contentStartPtr;
+    return result;
 }
 
-bool CurlMultipartHandle::parseHeadersIfPossible()
+CurlMultipartHandle::ParseHeadersResult CurlMultipartHandle::parseHeadersIfPossible()
 {
+    static const auto maxHeaderSize = 300 * 1024;
+
     auto contentLength = m_buffer.size();
-
-    if (!contentLength)
-        return false;
-
-    auto* content = m_buffer.data();
+    const auto contentStartPtr = m_buffer.data();
 
     // Check if we have the header closing strings.
-    if (!memmem(content, contentLength, "\r\n\r\n", 4)) {
-        // Some servers closes the headers with only \n-s.
-        if (!memmem(content, contentLength, "\n\n", 2)) {
-            // Don't have the header closing string. Wait for more data.
-            return false;
-        }
+    const uint8_t* end = nullptr;
+    if ((end = static_cast<const uint8_t*>(memmem(contentStartPtr, contentLength, "\r\n\r\n", 4))))
+        end += 4;
+    else if ((end = static_cast<const uint8_t*>(memmem(contentStartPtr, contentLength, "\n\n", 2))))
+        end += 2;
+    else if (contentLength > maxHeaderSize)
+        return ParseHeadersResult::HeaderSizeTooLarge;
+    else {
+        // Don't have the header closing string. Wait for more data.
+        return ParseHeadersResult::NeedMoreData;
     }
 
+    if (end - contentStartPtr > maxHeaderSize)
+        return ParseHeadersResult::HeaderSizeTooLarge;
+
     // Parse the HTTP headers.
-    String value;
+    String failureReason;
     StringView name;
-    auto p = content;
-    const auto end = content + contentLength;
-    size_t totalConsumedLength = 0;
-    for (; p < end; ++p) {
-        String failureReason;
+    String value;
+
+    for (auto p = contentStartPtr; p < end; ++p) {
         size_t consumedLength = parseHTTPHeader(p, end - p, failureReason, name, value, false);
         if (!consumedLength)
             break; // No more header to parse.
 
         p += consumedLength;
-        totalConsumedLength += consumedLength;
 
         // The name should not be empty, but the value could be empty.
         if (name.isEmpty())
             break;
 
-        m_headers.append(name.toString() + ": " + value + "\r\n");
+        m_headers.append(makeString(name, ": ", value, "\r\n"));
     }
 
-    m_buffer.remove(0, totalConsumedLength + 1);
-    return true;
+    m_buffer.remove(0, end - contentStartPtr);
+    return ParseHeadersResult::Success;
 }
 
 } // namespace WebCore

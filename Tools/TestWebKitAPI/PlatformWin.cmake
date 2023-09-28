@@ -16,6 +16,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/CryptoDigest.cpp
 
     Tests/WebCore/curl/Cookies.cpp
+    Tests/WebCore/curl/CurlMultipartHandleTests.cpp
     Tests/WebCore/curl/OpenSSLHelperTests.cpp
 
     Tests/WebCore/win/BitmapImage.cpp
