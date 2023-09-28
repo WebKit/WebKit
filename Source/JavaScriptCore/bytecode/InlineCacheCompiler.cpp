@@ -658,7 +658,7 @@ static constexpr size_t prologueSizeInBytesDataIC = 8;
 #elif CPU(ARM64)
 static constexpr size_t prologueSizeInBytesDataIC = 4;
 #elif CPU(ARM_THUMB2)
-static constexpr size_t prologueSizeInBytesDataIC = 4;
+static constexpr size_t prologueSizeInBytesDataIC = 6;
 #elif CPU(MIPS)
 static constexpr size_t prologueSizeInBytesDataIC = 16;
 #elif CPU(RISCV64)
@@ -4181,7 +4181,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     if (codeBlock->useDataIC()) {
         ASSERT(m_success.empty());
         if (JITCode::isBaselineCode(codeBlock->jitType()))
-            linkBuffer.link(failure, CodeLocationLabel(CodePtr<NoPtrTag> { (generateSlowPathCode(vm(), m_stubInfo->accessType).retaggedCode<NoPtrTag>().untaggedPtr<uint8_t*>() + prologueSizeInBytesDataIC) }));
+            linkBuffer.link(failure, CodeLocationLabel(CodePtr<NoPtrTag> { (generateSlowPathCode(vm(), m_stubInfo->accessType).retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC) }));
     } else {
         linkBuffer.link(m_success, successLabel);
         linkBuffer.link(failure, m_stubInfo->slowPathStartLocation);
