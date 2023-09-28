@@ -84,7 +84,18 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         if (comparisonResult !== 0)
             return comparisonResult;
 
-        // Compare by title when the subtitles are the same.
+        // Compare by title without file extensions when the subtitles are the same.
+        function filenameWithoutExtension(resourceTitle) {
+            return resourceTitle.substring(0, resourceTitle.lastIndexOf("."));
+        }
+        
+        let titleA = filenameWithoutExtension(a.mainTitle);
+        let titleB = filenameWithoutExtension(b.mainTitle);
+        comparisonResult = titleA.extendedLocaleCompare(titleB);
+        if (comparisonResult !== 0)
+            return comparisonResult;
+
+        // Compare by complete title (with extensions) when the filenames are the same.
         return a.mainTitle.extendedLocaleCompare(b.mainTitle);
     }
 
