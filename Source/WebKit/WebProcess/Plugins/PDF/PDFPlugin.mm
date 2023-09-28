@@ -2008,7 +2008,8 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransfo
     if (size() == pluginSize && m_view->pageScaleFactor() == [m_pdfLayerController contentScaleFactor])
         return;
 
-    m_size = pluginSize;
+    PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
+
     m_rootViewToPluginTransform = valueOrDefault(pluginToRootViewTransform.inverse());
     [m_pdfLayerController setFrameSize:pluginSize];
 

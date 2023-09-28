@@ -46,10 +46,14 @@ private:
     void createPDFDocument() override;
     void installPDFDocument() override;
 
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
+
     CGFloat scaleFactor() const override;
 
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const override;
     WebCore::FloatSize pdfDocumentSizeForPrinting() const override;
+
+    void geometryDidChange(const WebCore::IntSize&, const WebCore::AffineTransform&) override;
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
 
@@ -75,6 +79,8 @@ private:
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
     id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
+
+    RetainPtr<CGPDFDocumentRef> m_pdfDocument;
 };
 
 } // namespace WebKit
