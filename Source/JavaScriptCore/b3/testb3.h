@@ -879,6 +879,7 @@ void testCheckAddImmCommute();
 void testCheckAddImmSomeRegister();
 void testCheckAdd();
 void testCheckAdd64();
+void testCheckAdd64Range();
 void testCheckAddFold(int, int);
 void testCheckAddFoldFail(int, int);
 void test42();
