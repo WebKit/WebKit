@@ -35,7 +35,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <UIKit/UIKit.h>
 #endif
 

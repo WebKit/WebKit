@@ -33,7 +33,7 @@
 #import <wtf/BlockPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #endif
 
 #if PLATFORM(MAC)

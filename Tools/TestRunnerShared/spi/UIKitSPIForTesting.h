@@ -25,33 +25,47 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <UIKit/UITextInputTraits.h>
+#import <UIKit/UIKit.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/NSParagraphStyle_Private.h>
 #import <UIKit/NSTextAlternatives.h>
 #import <UIKit/NSTextList.h>
+#import <UIKit/NSURL+UIItemProvider.h>
 #import <UIKit/UIAction_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItemGroup_Private.h>
+#import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
+#import <UIKit/UIDevice_Private.h>
+#import <UIKit/UIEvent_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
+#import <UIKit/UIKeyboardInputModeController.h>
+#import <UIKit/UIKeyboardPreferencesController.h>
 #import <UIKit/UIKeyboard_Private.h>
+#import <UIKit/UIPress_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/UIScrollEvent_Private.h>
 #import <UIKit/UIScrollView_ForWebKitOnly.h>
 #import <UIKit/UIScrollView_Private.h>
+#import <UIKit/UITapGestureRecognizer_Private.h>
 #import <UIKit/UITextAutofillSuggestion.h>
+#import <UIKit/UITextChecker_Private.h>
+#import <UIKit/UITextEffectsWindow.h>
 #import <UIKit/UITextInputMultiDocument.h>
 #import <UIKit/UITextInputTraits_Private.h>
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
+#import <UIKit/UIWebFormAccessory.h>
+#import <UIKit/UIWindowScene_RequiresApproval.h>
+#import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import <UIKit/UIWebBrowserView.h>
+#import <UIKit/UIWebScrollView.h>
 #import <UIKit/UIWebView_Private.h>
 IGNORE_WARNINGS_END
 
@@ -74,10 +88,43 @@ IGNORE_WARNINGS_END
 
 WTF_EXTERN_C_BEGIN
 
+typedef struct __IOHIDEvent* IOHIDEventRef;
+typedef struct __GSKeyboard* GSKeyboardRef;
+
 void UIApplicationInitialize(void);
 void UIApplicationInstantiateSingleton(Class principalClass);
 
+extern NSString * const UIWindowDidRotateNotification;
+extern NSNotificationName const _UIWindowSceneEnhancedWindowingModeChanged;
+
 WTF_EXTERN_C_END
+
+#if HAVE(UIFINDINTERACTION)
+
+@interface _UIFindInteraction : NSObject <UIInteraction>
+@end
+
+@interface _UIFindInteraction (Staging_84486967)
+
+- (void)presentFindNavigatorShowingReplace:(BOOL)replaceVisible;
+
+- (void)findNext;
+- (void)findPrevious;
+
+@end
+
+#endif // HAVE(UIFINDINTERACTION)
+
+@interface UIApplication ()
+- (void)_enqueueHIDEvent:(IOHIDEventRef)event;
+- (void)_handleHIDEvent:(IOHIDEventRef)event;
+- (void)_cancelAllTouches;
+- (CGFloat)statusBarHeight;
+@end
+
+@interface UIDevice ()
+- (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
+@end
 
 @interface UITextSuggestion : NSObject
 @property (nonatomic, copy) NSString *displayText;
@@ -107,7 +154,6 @@ WTF_EXTERN_C_END
 - (UITextInputTraits *)textInputTraits;
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
 - (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
-- (BOOL)_shouldSuppressSelectionCommands;
 - (NSDictionary *)_autofillContext;
 - (UIFont *)fontForCaretSelection;
 @end
@@ -204,17 +250,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler;
 @end
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
-
-@interface UIWebBrowserView : UIView <UIKeyInput>
-@end
-
-@interface UIWebView (Private)
-- (UIWebBrowserView *)_browserView;
-@end
-
-IGNORE_WARNINGS_END
-
 @interface UIScreen ()
 @property (nonatomic, readonly) CGRect _referenceBounds;
 @end
@@ -235,7 +270,15 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 @end
 
 @interface UIKeyboardImpl : UIView
++ (instancetype)activeInstance;
 + (instancetype)sharedInstance;
+- (BOOL)isAutoShifted;
+- (void)dismissKeyboard;
+- (void)setCorrectionLearningAllowed:(BOOL)allowed;
+@end
+
+@interface UIScreen ()
+- (void)_setScale:(CGFloat)scale;
 @end
 
 @protocol UITextInputSuggestionDelegate <UITextInputDelegate>
@@ -244,6 +287,8 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 
 @interface UIScrollView (SPI)
 @property (nonatomic, getter=_isAutomaticContentOffsetAdjustmentEnabled, setter=_setAutomaticContentOffsetAdjustmentEnabled:) BOOL isAutomaticContentOffsetAdjustmentEnabled;
+@property (nonatomic, readonly, getter=_isVerticalBouncing) BOOL isVerticalBouncing;
+@property (nonatomic, readonly, getter=_isHorizontalBouncing) BOOL isHorizontalBouncing;
 @end
 
 typedef NS_ENUM(NSUInteger, UIScrollPhase) {
@@ -277,25 +322,170 @@ typedef NS_ENUM(NSInteger, _UITextSearchMatchMethod) {
 };
 
 @protocol _UITextSearching <NSObject>
-
 @optional
 - (void)didBeginTextSearchOperation;
 - (void)didEndTextSearchOperation;
+- (BOOL)supportsTextReplacement;
 @end
 
+@interface UIScrollView ()
+@property (nonatomic, readonly, getter=_isAnimatingZoom) BOOL isAnimatingZoom;
+@property (nonatomic, readonly, getter=_isAnimatingScroll) BOOL isAnimatingScroll;
+@property (nonatomic, getter=_isFirstResponderKeyboardAvoidanceEnabled, setter=_setFirstResponderKeyboardAvoidanceEnabled:) BOOL firstResponderKeyboardAvoidanceEnabled;
+@end
 
-@interface _UIFindInteraction : NSObject <UIInteraction>
-@property (nonatomic, strong) id<_UITextSearching> searchableObject;
+@interface UIView ()
+- (void)_removeAllAnimations:(BOOL)includeSubviews;
+@end
+
+@interface UIViewController ()
+- (BOOL)isPerformingModalTransition;
+@end
+
+@interface UIApplicationRotationFollowingWindow : UIWindow
+@end
+
+@interface UIAutoRotatingWindow : UIApplicationRotationFollowingWindow
+@end
+
+@interface UIApplicationRotationFollowingController : UIViewController
+@end
+
+@interface UIApplicationRotationFollowingControllerNoTouches : UIApplicationRotationFollowingController
+@end
+
+@interface UITextEffectsWindow : UIAutoRotatingWindow
++ (UITextEffectsWindow *)sharedTextEffectsWindowForWindowScene:(UIWindowScene *)windowScene;
+@end
+
+@interface UITextChecker ()
+- (instancetype)_initWithAsynchronousLoading:(BOOL)asynchronousLoading;
+- (NSArray<NSTextAlternatives *> *)grammarAlternativesForString:(NSString *)string;
+- (NSArray<NSTextCheckingResult *> *)checkString:(NSString *)stringToCheck range:(NSRange)range types:(NSTextCheckingTypes)checkingTypes languages:(NSArray<NSString *> *)languagesArray options:(NSDictionary<NSString *, id> *)options;
+@end
+
+@interface UITapGestureRecognizer ()
+@property (nonatomic) CFTimeInterval maximumIntervalBetweenSuccessiveTaps;
+@end
+
+@interface UIWebScrollView : UIScrollView
+@end
+
+@interface UIWindow ()
+- (uint32_t)_contextId;
+@end
+
+@interface UIWebTiledView : UIView
+@end
+
+@class WAKWindow;
+
+@interface UIWebTiledView ()
+- (void)setWAKWindow:(WAKWindow *)window;
+@end
+
+@interface UIWebDocumentView : UIWebTiledView
+@end
+
+typedef enum {
+    UIEveryDocumentMask = 0xFFFFFF,
+} UIDocumentMask;
+
+@interface UIWebDocumentView ()
+- (void)setDelegate:(id)delegate;
+- (void)setAutoresizes:(BOOL)flag;
+- (void)setMinimumSize:(CGSize)aSize;
+- (void)setInitialScale:(float)aScale forDocumentTypes:(UIDocumentMask)aDocumentMask;
+- (void)setViewportSize:(CGSize)aSize forDocumentTypes:(UIDocumentMask)aDocumentMask;
+- (void)setMinimumScale:(float)aScale forDocumentTypes:(UIDocumentMask)aDocumentMask;
+- (void)setMaximumScale:(float)aScale forDocumentTypes:(UIDocumentMask)aDocumentMask;
+@end
+
+@interface UIWebBrowserView : UIWebDocumentView
+@end
+
+@class WebView;
+
+@interface UIWebBrowserView ()
+- (WebView *)webView;
+- (void)setPaused:(BOOL)paused;
+- (void)sendScrollEventIfNecessaryWasUserScroll:(BOOL)userScroll;
+- (void)insertText:(NSString *)text;
+@property (nonatomic) BOOL inputViewObeysDOMFocus;
+@end
+
+WTF_EXTERN_C_BEGIN
+
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+
+extern const float UIWebViewGrowsAndShrinksToFitHeight;
+extern const float UIWebViewScalesToFitScale;
+extern const float UIWebViewStandardViewportWidth;
+
+void _UIApplicationLoadWebKit(void);
+
+@interface UIWebView (Private)
+- (UIWebBrowserView *)_browserView;
+@end
+
+IGNORE_WARNINGS_END
+
+WTF_EXTERN_C_END
+
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+
+@interface UIWindowScene ()
+@property (nonatomic, readonly) BOOL _enhancedWindowingEnabled;
+@end
+
+#endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
+
+@protocol TIPreferencesControllerActions;
+
+@interface UIKeyboardPreferencesController : NSObject
++ (UIKeyboardPreferencesController *)sharedPreferencesController;
+- (void)setValue:(id)value forPreferenceKey:(NSString *)key;
+- (BOOL)boolForPreferenceKey:(NSString *)key;
+- (id)valueForPreferenceKey:(NSString *)key;
+@property (nonatomic, readonly) UIKeyboardPreferencesController<TIPreferencesControllerActions> *preferencesActions;
+@end
+
+@interface UIContextMenuInteraction ()
+- (void)_presentMenuAtLocation:(CGPoint)location;
+@end
+
+@interface UIKeyboardInputMode : UITextInputMode <NSCopying>
++ (UIKeyboardInputMode *)keyboardInputModeWithIdentifier:(NSString *)identifier;
+@property (nonatomic, readonly, retain) NSArray <NSString *> *multilingualLanguages;
+@property (nonatomic, readonly, retain) NSString *languageWithRegion;
+@end
+
+@interface UIKeyboardInputModeController : NSObject
++ (UIKeyboardInputModeController *)sharedInputModeController;
+@property (readwrite, retain) UIKeyboardInputMode *currentInputMode;
+@end
+
+#if PLATFORM(IOS) && !defined(__IPHONE_13_4)
+typedef NS_OPTIONS(NSInteger, UIEventButtonMask) {
+    UIEventButtonMaskPrimary = 1 << 0,
+    UIEventButtonMaskSecondary = 1 << 1,
+};
+#endif
+
+typedef enum {
+    kUIKeyboardInputModifierFlagsChanged   = 1 << 5,
+} UIKeyboardInputFlags;
+
+@interface UIEvent ()
+- (UIEventButtonMask)_buttonMask;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+// Start of UIKit IPI
+
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
-@end
-
-@interface NSURL (UIKitSPI)
-@property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
 
 @interface UIKeyboard ()
@@ -303,8 +493,14 @@ typedef NS_ENUM(NSInteger, _UITextSearchMatchMethod) {
 + (BOOL)usesInputSystemUI;
 @end
 
+@class TIKeyboardCandidate;
+@class TIKeyboardInput;
+
 @interface UIKeyboardImpl (UIKitIPI)
+- (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
 - (BOOL)_shouldSuppressSoftwareKeyboard;
+- (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
+@property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -381,7 +577,6 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 @property (nonatomic, readwrite) UITextSearchMatchMethod wordMatchMethod;
 @property (nonatomic, readwrite) NSStringCompareOptions stringCompareOptions;
 @end
-
 #endif
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
@@ -389,5 +584,27 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 @property (nonatomic, copy) NSArray<NSValue *> *autocorrectedRanges;
 @end
 #endif
+
+@interface UIView (IPI)
+- (void)_updateSafeAreaInsets;
+@end
+
+@interface UIPhysicalKeyboardEvent : UIPressesEvent
+@end
+
+@interface UIPhysicalKeyboardEvent ()
++ (UIPhysicalKeyboardEvent *)_eventWithInput:(NSString *)input inputFlags:(UIKeyboardInputFlags)flags;
+- (void)_setHIDEvent:(IOHIDEventRef)event keyboard:(GSKeyboardRef)gsKeyboard;
+@end
+
+@class UIPressInfo;
+
+@interface UIPress (IPI)
+- (void)_loadStateFromPressInfo:(UIPressInfo *)pressInfo;
+@end
+
+@interface UIApplication (IPI)
+- (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
+@end
 
 #endif // PLATFORM(IOS_FAMILY)

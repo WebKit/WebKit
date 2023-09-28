@@ -49,7 +49,7 @@
 #import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #endif
 

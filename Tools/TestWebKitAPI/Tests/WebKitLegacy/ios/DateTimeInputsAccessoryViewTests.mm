@@ -32,7 +32,7 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import "DeprecatedGlobalValues.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import "UserInterfaceSwizzler.h"
 #import <wtf/RetainPtr.h>
 

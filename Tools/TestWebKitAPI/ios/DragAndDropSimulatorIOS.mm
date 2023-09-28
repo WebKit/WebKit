@@ -31,7 +31,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragItem.h>
 #import <UIKit/UIDropInteraction.h>

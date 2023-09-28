@@ -31,7 +31,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import "WKTouchEventsGestureRecognizer.h"
 #import <wtf/RetainPtr.h>
 

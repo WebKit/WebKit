@@ -32,7 +32,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "TestWKWebViewController.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import "UIKitUtilities.h"
 #import "UserInterfaceSwizzler.h"
 #import "WKWebViewConfigurationExtras.h"

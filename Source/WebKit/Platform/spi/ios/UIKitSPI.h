@@ -51,7 +51,6 @@
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboardInputModeController.h>
 #import <UIKit/UIKeyboardIntl.h>
-#import <UIKit/UIKeyboardPreferencesController.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
 #import <UIKit/UIMenuController_Private.h>
@@ -87,7 +86,6 @@
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebDocumentView.h>
-#import <UIKit/UIWebScrollView.h>
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
@@ -213,15 +211,11 @@ typedef struct __IOHIDEvent* IOHIDEventRef;
 typedef struct __GSKeyboard* GSKeyboardRef;
 WTF_EXTERN_C_END
 
-@class UIPressInfo;
-
 @interface UIApplication ()
 - (UIInterfaceOrientation)interfaceOrientation;
 - (void)_cancelAllTouches;
-- (CGFloat)statusBarHeight;
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
-- (void)_handleHIDEvent:(IOHIDEventRef)event;
 - (BOOL)_appAdoptsUISceneLifecycle;
 @end
 
@@ -229,25 +223,13 @@ WTF_EXTERN_C_END
 + (UIColor *)systemBackgroundColor;
 @end
 
-@interface UIDevice ()
-- (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
-@property (nonatomic, readonly, retain) NSString *buildVersion;
-@end
-
 typedef enum {
     kUIKeyboardInputRepeat                 = 1 << 0,
-    kUIKeyboardInputPopupVariant           = 1 << 1,
-    kUIKeyboardInputMultitap               = 1 << 2,
-    kUIKeyboardInputSkipCandidateSelection = 1 << 3,
-    kUIKeyboardInputDeadKey                = 1 << 4,
     kUIKeyboardInputModifierFlagsChanged   = 1 << 5,
-    kUIKeyboardInputFlick                  = 1 << 6,
-    kUIKeyboardInputPreProcessed           = 1 << 7,
 } UIKeyboardInputFlags;
 
 #if PLATFORM(IOS) && !defined(__IPHONE_13_4)
 typedef NS_OPTIONS(NSInteger, UIEventButtonMask) {
-    UIEventButtonMaskPrimary = 1 << 0,
     UIEventButtonMaskSecondary = 1 << 1,
 };
 #endif
@@ -257,7 +239,6 @@ typedef NS_OPTIONS(NSInteger, UIEventButtonMask) {
 - (NSString *)_unmodifiedInput;
 - (NSString *)_modifiedInput;
 - (BOOL)_isKeyDown;
-- (UIEventButtonMask)_buttonMask;
 @end
 
 #if HAVE(UIFINDINTERACTION)
@@ -369,7 +350,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @interface UIKeyboardImpl : UIView <UIKeyboardCandidateListDelegate>
 + (BOOL)smartInsertDeleteIsEnabled;
 - (void)updateForChangedSelection;
-- (void)setCorrectionLearningAllowed:(BOOL)allowed;
 @end
 
 @interface UIKeyboardImpl ()
@@ -383,8 +363,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 - (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags;
 - (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags withInputManagerHint:(NSString *)hint;
 - (BOOL)autocorrectSpellingEnabled;
-- (BOOL)isAutoShifted;
-- (void)dismissKeyboard;
 - (void)clearShiftState;
 - (void)deleteFromInput;
 - (void)deleteFromInputWithFlags:(NSUInteger)flags;
@@ -449,7 +427,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 
 @class FBSDisplayConfiguration;
 @interface UIScreen ()
-- (void)_setScale:(CGFloat)scale;
 @property (nonatomic, readonly, retain) FBSDisplayConfiguration *displayConfiguration;
 @end
 
@@ -501,7 +478,6 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 @property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation;
 @property (nonatomic, readonly) CGPoint location;
 @property (nonatomic) CGFloat allowableMovement;
-@property (nonatomic) CFTimeInterval maximumIntervalBetweenSuccessiveTaps;
 @end
 
 @class WebEvent;
@@ -577,10 +553,6 @@ typedef enum {
 - (void)setSuggestions:(NSArray <UITextSuggestion*> *)suggestions;
 @end
 
-@interface UIViewController ()
-- (BOOL)isPerformingModalTransition;
-@end
-
 @interface UIViewController (ViewService)
 - (pid_t)_hostProcessIdentifier;
 @property (readonly) NSString *_hostApplicationBundleIdentifier;
@@ -637,7 +609,6 @@ typedef enum {
 - (void)insertSubview:(UIView *)view above:(UIView *)sibling;
 - (void)_didRemoveSubview:(UIView *)subview;
 - (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
-- (void)_removeAllAnimations:(BOOL)includeSubviews;
 - (UIColor *)_inheritedInteractionTintColor;
 - (NSString *)recursiveDescription;
 @end
@@ -839,9 +810,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (uint32_t)_contextId;
 @end
 
-@interface UIWebScrollView : UIScrollView
-@end
-
 @interface UIWebTiledView : UIView
 @end
 
@@ -922,11 +890,9 @@ typedef enum {
 - (id)_initWithAsynchronousLoading:(BOOL)asynchronousLoading;
 - (BOOL)_doneLoading;
 - (NSRange)rangeOfMisspelledWordInString:(NSString *)stringToCheck range:(NSRange)range startingAt:(NSInteger)startingOffset wrap:(BOOL)wrapFlag languages:(NSArray *)languagesArray;
-- (NSArray<NSTextAlternatives *> *)grammarAlternativesForString:(NSString *)string;
 @end
 
 @interface UIKeyboardInputMode : UITextInputMode <NSCopying>
-+ (UIKeyboardInputMode *)keyboardInputModeWithIdentifier:(NSString *)identifier;
 @property (nonatomic, readonly, retain) NSArray <NSString *> *multilingualLanguages;
 @property (nonatomic, readonly, retain) NSString *languageWithRegion;
 @end
@@ -977,16 +943,6 @@ WTF_EXTERN_C_END
 @end
 
 #endif
-
-@protocol TIPreferencesControllerActions;
-
-@interface UIKeyboardPreferencesController : NSObject
-+ (UIKeyboardPreferencesController *)sharedPreferencesController;
-- (void)setValue:(id)value forPreferenceKey:(NSString *)key;
-- (BOOL)boolForPreferenceKey:(NSString *)key;
-- (id)valueForPreferenceKey:(NSString *)key;
-@property (nonatomic, readonly) UIKeyboardPreferencesController<TIPreferencesControllerActions> *preferencesActions;
-@end
 
 @interface UIAutoRotatingWindow : UIApplicationRotationFollowingWindow
 @end
@@ -1171,8 +1127,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @end
 
 @interface UIPhysicalKeyboardEvent ()
-+ (UIPhysicalKeyboardEvent *)_eventWithInput:(NSString *)input inputFlags:(UIKeyboardInputFlags)flags;
-- (void)_setHIDEvent:(IOHIDEventRef)event keyboard:(GSKeyboardRef)gsKeyboard;
 - (UIPhysicalKeyboardEvent *)_cloneEvent NS_RETURNS_RETAINED;
 @property (nonatomic, readonly) UIKeyboardInputFlags _inputFlags;
 @property (nonatomic, readonly) CFIndex _keyCode;
@@ -1192,7 +1146,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (CGPoint)accessibilityConvertPointFromSceneReferenceCoordinates:(CGPoint)point;
 - (CGRect)accessibilityConvertRectToSceneReferenceCoordinates:(CGRect)rect;
 - (UIRectEdge)_edgesApplyingSafeAreaInsetsToContentInset;
-- (void)_updateSafeAreaInsets;
 @end
 
 @interface UIScrollView (IPI)
@@ -1214,22 +1167,8 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
 @end
 
-@class TIKeyboardCandidate;
-@class TIKeyboardInput;
-
 @interface UIKeyboardImpl (IPI)
 - (void)setInitialDirection;
-- (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
-- (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
-@property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
-@end
-
-@interface UIApplication (IPI)
-- (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
-@end
-
-@interface UIPress (IPI)
-- (void)_loadStateFromPressInfo:(UIPressInfo *)pressInfo;
 @end
 
 @class CALayerHost;
@@ -1317,7 +1256,7 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 @end
 
-#endif
+#endif // HAVE(UIFINDINTERACTION)
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
 @interface UIWKDocumentContext (Staging_112795757)
@@ -1341,13 +1280,8 @@ extern NSString * const UIKeyboardPrivateDidRequestDismissalNotification;
 extern NSString * const UIKeyboardIsLocalUserInfoKey;
 
 BOOL _UIApplicationIsExtension(void);
-void _UIApplicationLoadWebKit(void);
 
 void UIImageDataWriteToSavedPhotosAlbum(NSData *imageData, id completionTarget, SEL completionSelector, void *contextInfo);
-
-extern const float UIWebViewGrowsAndShrinksToFitHeight;
-extern const float UIWebViewScalesToFitScale;
-extern const float UIWebViewStandardViewportWidth;
 
 extern const NSString *UIPreviewDataLink;
 extern const NSString *UIPreviewDataDDResult;

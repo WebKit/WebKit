@@ -38,7 +38,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "TestInputDelegate.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

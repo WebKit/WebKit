@@ -34,7 +34,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "ClassMethodSwizzler.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #endif
 
 static bool focusDidStartInputSession;

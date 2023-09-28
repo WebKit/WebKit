@@ -27,7 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <CoreServices/CoreServices.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WKPreferencesPrivate.h>

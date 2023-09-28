@@ -118,7 +118,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "DumpRenderTreeBrowserView.h"
 #import "IOSLayoutTestCommunication.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebKit/WAKWindow.h>
 #import <WebKit/WebCoreThread.h>

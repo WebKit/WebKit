@@ -31,7 +31,7 @@
 #import <wtf/BlockPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #endif
 

@@ -30,7 +30,7 @@
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 
 #import "PlatformUtilities.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <wtf/RetainPtr.h>
 
 @interface LegacyLoadingDelegate : NSObject <UIWebViewDelegate>

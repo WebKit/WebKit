@@ -39,7 +39,7 @@
 #import <wtf/Vector.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #endif
 
 @interface AppHighlightDelegate : NSObject <_WKAppHighlightDelegate>

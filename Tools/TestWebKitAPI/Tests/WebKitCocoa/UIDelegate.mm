@@ -54,7 +54,7 @@
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import "UIKitUtilities.h"
 #endif
 
