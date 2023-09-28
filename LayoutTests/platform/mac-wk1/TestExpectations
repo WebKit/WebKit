@@ -2692,3 +2692,7 @@ webkit.org/b/261618 [ Monterey+ Debug ] imported/w3c/web-platform-tests/preload/
 webkit.org/b/262130 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-cross-frame.html [ Pass Failure ]
 
 webkit.org/b/262133 [ Release ] js/ShadowRealm-importValue.html [ Pass Timeout ]
+
+webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure ]
+webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Failure ]
+webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html [ Failure ]
