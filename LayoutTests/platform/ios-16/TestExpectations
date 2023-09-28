@@ -7,16 +7,13 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 # These tests require compile-time flags in WebKit that are only enabled in iOS17. They were marked as Skip in
-# https://bugs.webkit.org/show_bug.cgi?id=248545
+# https://bugs.webkit.org/show_bug.cgi?id=248545 
 fast/images/animations-resume-from-last-displayed-frame.html [ Skip ]
 fast/images/individual-animation-toggle.html [ Skip ]
 fast/images/page-wide-animation-toggle.html [ Skip ]
-fast/images/pagewide-play-pause-animateTransform-svg-animation.html [ Skip ]
+fast/images/pagewide-play-pause-animateTransform-svg-animation.html [ Skip ] 
 fast/images/pagewide-play-pause-offscreen-animations.html [ Skip ]
 svg/custom/svg-fonts-in-html.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=261056
 accessibility/ios-simulator/inline-prediction-attributed-string.html [ Skip ]
-
-# Only supported with iOS 17 and later.
-media/media-webm-opus-variable-length.html [ Failure ]

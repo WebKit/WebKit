@@ -34,12 +34,10 @@ class AudioStreamDescription;
 namespace WebCore {
 
 struct AudioInfo;
-class SharedBuffer;
 
 WEBCORE_EXPORT bool isVorbisDecoderAvailable();
 WEBCORE_EXPORT bool registerVorbisDecoderIfNeeded();
-static constexpr size_t kVorbisMinimumFrameDataSize = 1;
-RefPtr<AudioInfo> createVorbisAudioInfo(size_t, const uint8_t*);
+RefPtr<AudioInfo> createVorbisAudioInfo(size_t, const void*);
 
 struct OpusCookieContents {
     uint8_t version { 0 };
@@ -54,17 +52,13 @@ struct OpusCookieContents {
     uint8_t framesPerPacket { 0 };
     bool isVBR { false };
     bool hasPadding { false };
-#if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    RefPtr<SharedBuffer> cookieData;
-#endif
 };
 
 WEBCORE_EXPORT bool isOpusDecoderAvailable();
 WEBCORE_EXPORT bool registerOpusDecoderIfNeeded();
 static constexpr size_t kOpusHeaderSize = 19;
 static constexpr size_t kOpusMinimumFrameDataSize = 2;
-bool parseOpusPrivateData(size_t privateDataSize, const uint8_t* privateData, SharedBuffer& frameData, OpusCookieContents&);
-bool parseOpusTOCData(const SharedBuffer& frameData, OpusCookieContents&);
+bool parseOpusPrivateData(size_t privateDataSize, const void* privateData, size_t frameDataSize, const void* frameData, OpusCookieContents&);
 RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents&);
 
 }

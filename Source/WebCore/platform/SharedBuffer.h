@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
@@ -281,7 +281,6 @@ public:
     }
 
     WEBCORE_EXPORT const uint8_t* data() const;
-    WEBCORE_EXPORT const uint8_t& operator[](size_t) const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
     std::span<const uint8_t> dataAsSpanForContiguousData() const { RELEASE_ASSERT(isContiguous()); return std::span(data(), size()); }
     WTF::Persistence::Decoder decoder() const;
