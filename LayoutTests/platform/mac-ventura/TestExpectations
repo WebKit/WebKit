@@ -18,4 +18,4 @@ imported/w3c/web-platform-tests/xhr/open-method-case-sensitive.htm [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
 
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
-http/tests/appcache/fail-on-update-2.html [ Timeout Failure ]
+http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Timeout Failure ]
