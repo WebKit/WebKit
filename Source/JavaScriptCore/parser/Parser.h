@@ -1443,10 +1443,9 @@ private:
 
     std::pair<DeclarationResultMask, ScopeRef> declareFunction(const Identifier* ident)
     {
-        if ((m_statementDepth == 1) || (!strictMode() && !currentScope()->isFunction() && !closestParentOrdinaryFunctionNonLexicalScope()->isEvalContext())) {
+        if (m_statementDepth == 1) {
             // Functions declared at the top-most scope (both in sloppy and strict mode) are declared as vars
             // for backwards compatibility. This allows us to declare functions with the same name more than once.
-            // In sloppy mode, we always declare functions as vars.
             bool declareAsVar = true;
             ScopeRef variableScope = currentVariableScope();
             return std::make_pair(variableScope->declareFunction(ident, declareAsVar), variableScope);
@@ -1456,20 +1455,6 @@ private:
         ScopeRef lexicalVariableScope = currentLexicalDeclarationScope();
         if (lexicalVariableScope->isCatchBlockScope() && lexicalVariableScope.containingScope()->hasLexicallyDeclaredVariable(*ident))
             return std::make_pair(DeclarationResult::InvalidDuplicateDeclaration, lexicalVariableScope);
-
-        if (!strictMode()) {
-            ASSERT(currentScope()->isFunction() || closestParentOrdinaryFunctionNonLexicalScope()->isEvalContext());
-
-            // Functions declared inside a function inside a nested block scope in sloppy mode are subject to this
-            // crazy rule defined inside Annex B.3.3 in the ES6 spec. It basically states that we will create
-            // the function as a local block scoped variable, but when we evaluate the block that the function is
-            // contained in, we will assign the function to a "var" variable only if declaring such a "var" wouldn't
-            // be a syntax error and if there isn't a parameter with the same name. (It would only be a syntax error if
-            // there are is a let/class/const with the same name). Note that this mean we only do the "var" hoisting 
-            // binding if the block evaluates. For example, this means we wont won't perform the binding if it's inside
-            // the untaken branch of an if statement.
-            return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar), lexicalVariableScope);
-        }
 
         return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar), lexicalVariableScope);
     }

@@ -2116,14 +2116,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
 {
     semanticFailIfTrue(strictMode(), "Function declarations are only allowed inside blocks or switch statements in strict mode");
     failIfFalse(parentAllowsFunctionDeclarationAsStatement, "Function declarations are only allowed inside block statements or at the top level of a program");
-    if (!currentScope()->isFunction() && !closestParentOrdinaryFunctionNonLexicalScope()->isEvalContext()) {
-        // We only implement annex B.3.3 if we're in function mode or eval mode. Otherwise, we fall back
-        // to hoisting behavior.
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=155813
-        DepthManager statementDepth(&m_statementDepth);
-        m_statementDepth = 1;
-        return parseFunctionDeclaration(context, FunctionDeclarationType::Statement);
-    }
 
     // Any function declaration that isn't in a block is a syntax error unless it's
     // in an if/else statement. If it's in an if/else statement, we will magically
@@ -2837,11 +2829,18 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     if (TreeBuilder::CreatesAST) {
         FunctionMetadataNode* metadata = getMetadata(functionInfo);
         functionDeclaration.second->appendFunction(metadata);
-        // FIXME: This convoluted condition is only temporary until Annex B hoisting for global scope is implemented.
-        // https://bugs.webkit.org/show_bug.cgi?id=163209
-        bool isSloppyModeHoistingCandidate = m_statementDepth != 1 && !strictMode() && m_parseMode == SourceParseMode::NormalFunctionMode && (currentScope()->isFunction() || closestParentOrdinaryFunctionNonLexicalScope()->isEvalContext());
-        if (isSloppyModeHoistingCandidate)
+        bool isSloppyModeHoistingCandidate = m_statementDepth != 1 && !strictMode() && m_parseMode == SourceParseMode::NormalFunctionMode;
+        if (isSloppyModeHoistingCandidate) {
+            // Functions declared inside a function inside a nested block scope in sloppy mode are subject to this
+            // crazy rule defined inside Annex B.3.2 in the ECMA-262 spec. It basically states that we will create
+            // the function as a local block scoped variable, but when we evaluate the block that the function is
+            // contained in, we will assign the function to a "var" variable only if declaring such a "var" wouldn't
+            // be a syntax error and if there isn't a parameter with the same name. (It would only be a syntax error if
+            // there are is a let/class/const with the same name). Note that this mean we only do the "var" hoisting
+            // binding if the block evaluates. For example, this means we wont won't perform the binding if it's inside
+            // the untaken branch of an if statement.
             functionDeclaration.second->addSloppyModeFunctionHoistingCandidate<Scope::NeedsDuplicateDeclarationCheck::No>(metadata);
+        }
     }
     return result;
 }

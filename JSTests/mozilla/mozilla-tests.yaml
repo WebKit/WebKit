@@ -1617,7 +1617,7 @@
 - path: ecma_3/FunExpr/fe-001-n.js
   cmd: defaultRunMozillaTest :negative, "../shell.js"
 - path: ecma_3/FunExpr/fe-001.js
-  cmd: defaultRunMozillaTest :fail, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma_3/FunExpr/fe-002.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma_3/Number/15.7.4.5-1.js

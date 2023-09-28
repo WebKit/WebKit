@@ -3,7 +3,8 @@ function assert(x) {
         throw new Error("Bad assertion!");
 }
 
-globalThis.bar = 1;
+let barSetterValue;
+Object.defineProperty(globalThis, "bar", { get() {}, set(val) { barSetterValue = val; }, enumerable: true, configurable: false });
 Object.preventExtensions(globalThis);
 
 eval(`{
@@ -12,4 +13,5 @@ eval(`{
 }`);
 
 assert(typeof foo === "undefined");
-assert(typeof bar === "function");
+assert(typeof barSetterValue === "function");
+assert(!globalThis.hasOwnProperty("foo"));

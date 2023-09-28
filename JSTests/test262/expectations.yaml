@@ -7,214 +7,6 @@ test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
   strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
-test/annexB/language/global-code/block-decl-global-block-scoping.js:
-  default: "TypeError: f is not a function. (In 'f()', 'f' is 123)"
-test/annexB/language/global-code/block-decl-global-existing-block-fn-no-init.js:
-  default: 'Test262Error: Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/block-decl-global-existing-fn-update.js:
-  default: 'Test262Error: Expected SameValue(«outer declaration», «inner declaration») to be true'
-test/annexB/language/global-code/block-decl-global-existing-non-enumerable-global-init.js:
-  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
-test/annexB/language/global-code/block-decl-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/block-decl-global-no-skip-try.js:
-  default: 'Test262Error: Initialized binding created prior to evaluation Expected SameValue(«function f() { return 123; }», «undefined») to be true'
-test/annexB/language/global-code/block-decl-global-skip-early-err-block.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/block-decl-global-skip-early-err-for-in.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/block-decl-global-skip-early-err-for-of.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/block-decl-global-skip-early-err-for.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/block-decl-global-skip-early-err-switch.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/block-decl-global-skip-early-err-try.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/block-decl-global-skip-early-err.js:
-  default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/global-code/if-decl-else-decl-a-global-block-scoping.js:
-  default: "TypeError: f is not a function. (In 'f()', 'f' is 123)"
-test/annexB/language/global-code/if-decl-else-decl-a-global-existing-block-fn-no-init.js:
-  default: 'Test262Error: Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-decl-a-global-existing-fn-update.js:
-  default: 'Test262Error: Expected SameValue(«outer declaration», «inner declaration») to be true'
-test/annexB/language/global-code/if-decl-else-decl-a-global-existing-non-enumerable-global-init.js:
-  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
-test/annexB/language/global-code/if-decl-else-decl-a-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-decl-a-global-no-skip-try.js:
-  default: 'Test262Error: Initialized binding created prior to evaluation Expected SameValue(«function f() { return 123; }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-decl-a-global-skip-early-err-block.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-a-global-skip-early-err-for-in.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-a-global-skip-early-err-for-of.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-a-global-skip-early-err-for.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-a-global-skip-early-err-switch.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-a-global-skip-early-err-try.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-a-global-skip-early-err.js:
-  default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/global-code/if-decl-else-decl-b-global-block-scoping.js:
-  default: "TypeError: f is not a function. (In 'f()', 'f' is 123)"
-test/annexB/language/global-code/if-decl-else-decl-b-global-existing-block-fn-no-init.js:
-  default: 'Test262Error: Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-decl-b-global-existing-fn-update.js:
-  default: 'Test262Error: Expected SameValue(«outer declaration», «inner declaration») to be true'
-test/annexB/language/global-code/if-decl-else-decl-b-global-existing-non-enumerable-global-init.js:
-  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
-test/annexB/language/global-code/if-decl-else-decl-b-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-decl-b-global-no-skip-try.js:
-  default: 'Test262Error: Initialized binding created prior to evaluation Expected SameValue(«function f() { return 123; }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-decl-b-global-skip-early-err-block.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-b-global-skip-early-err-for-in.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-b-global-skip-early-err-for-of.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-b-global-skip-early-err-for.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-b-global-skip-early-err-switch.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-b-global-skip-early-err-try.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-decl-b-global-skip-early-err.js:
-  default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/global-code/if-decl-else-stmt-global-block-scoping.js:
-  default: "TypeError: f is not a function. (In 'f()', 'f' is 123)"
-test/annexB/language/global-code/if-decl-else-stmt-global-existing-block-fn-no-init.js:
-  default: 'Test262Error: Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-stmt-global-existing-fn-update.js:
-  default: 'Test262Error: Expected SameValue(«outer declaration», «inner declaration») to be true'
-test/annexB/language/global-code/if-decl-else-stmt-global-existing-non-enumerable-global-init.js:
-  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
-test/annexB/language/global-code/if-decl-else-stmt-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-stmt-global-no-skip-try.js:
-  default: 'Test262Error: Initialized binding created prior to evaluation Expected SameValue(«function f() { return 123; }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-else-stmt-global-skip-early-err-block.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-stmt-global-skip-early-err-for-in.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-stmt-global-skip-early-err-for-of.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-stmt-global-skip-early-err-for.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-stmt-global-skip-early-err-switch.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-stmt-global-skip-early-err-try.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-else-stmt-global-skip-early-err.js:
-  default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/global-code/if-decl-no-else-global-block-scoping.js:
-  default: "TypeError: f is not a function. (In 'f()', 'f' is 123)"
-test/annexB/language/global-code/if-decl-no-else-global-existing-block-fn-no-init.js:
-  default: 'Test262Error: Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-no-else-global-existing-fn-update.js:
-  default: 'Test262Error: Expected SameValue(«outer declaration», «inner declaration») to be true'
-test/annexB/language/global-code/if-decl-no-else-global-existing-non-enumerable-global-init.js:
-  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
-test/annexB/language/global-code/if-decl-no-else-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-no-else-global-no-skip-try.js:
-  default: 'Test262Error: Initialized binding created prior to evaluation Expected SameValue(«function f() { return 123; }», «undefined») to be true'
-test/annexB/language/global-code/if-decl-no-else-global-skip-early-err-block.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-no-else-global-skip-early-err-for-in.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-no-else-global-skip-early-err-for-of.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-no-else-global-skip-early-err-for.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-no-else-global-skip-early-err-switch.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-no-else-global-skip-early-err-try.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-decl-no-else-global-skip-early-err.js:
-  default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/global-code/if-stmt-else-decl-global-block-scoping.js:
-  default: "TypeError: f is not a function. (In 'f()', 'f' is 123)"
-test/annexB/language/global-code/if-stmt-else-decl-global-existing-block-fn-no-init.js:
-  default: 'Test262Error: Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-stmt-else-decl-global-existing-fn-update.js:
-  default: 'Test262Error: Expected SameValue(«outer declaration», «inner declaration») to be true'
-test/annexB/language/global-code/if-stmt-else-decl-global-existing-non-enumerable-global-init.js:
-  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
-test/annexB/language/global-code/if-stmt-else-decl-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/if-stmt-else-decl-global-no-skip-try.js:
-  default: 'Test262Error: Initialized binding created prior to evaluation Expected SameValue(«function f() { return 123; }», «undefined») to be true'
-test/annexB/language/global-code/if-stmt-else-decl-global-skip-early-err-block.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-stmt-else-decl-global-skip-early-err-for-in.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-stmt-else-decl-global-skip-early-err-for-of.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-stmt-else-decl-global-skip-early-err-for.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-stmt-else-decl-global-skip-early-err-switch.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-stmt-else-decl-global-skip-early-err-try.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/if-stmt-else-decl-global-skip-early-err.js:
-  default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/global-code/switch-case-global-block-scoping.js:
-  default: "TypeError: f is not a function. (In 'f()', 'f' is 123)"
-test/annexB/language/global-code/switch-case-global-existing-block-fn-no-init.js:
-  default: 'Test262Error: Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/switch-case-global-existing-fn-update.js:
-  default: 'Test262Error: Expected SameValue(«outer declaration», «inner declaration») to be true'
-test/annexB/language/global-code/switch-case-global-existing-non-enumerable-global-init.js:
-  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
-test/annexB/language/global-code/switch-case-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/switch-case-global-no-skip-try.js:
-  default: 'Test262Error: Initialized binding created prior to evaluation Expected SameValue(«function f() { return 123; }», «undefined») to be true'
-test/annexB/language/global-code/switch-case-global-skip-early-err-block.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-case-global-skip-early-err-for-in.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-case-global-skip-early-err-for-of.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-case-global-skip-early-err-for.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-case-global-skip-early-err-switch.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-case-global-skip-early-err-try.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-case-global-skip-early-err.js:
-  default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/global-code/switch-dflt-global-block-scoping.js:
-  default: "TypeError: f is not a function. (In 'f()', 'f' is 123)"
-test/annexB/language/global-code/switch-dflt-global-existing-block-fn-no-init.js:
-  default: 'Test262Error: Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/switch-dflt-global-existing-fn-update.js:
-  default: 'Test262Error: Expected SameValue(«outer declaration», «inner declaration») to be true'
-test/annexB/language/global-code/switch-dflt-global-existing-non-enumerable-global-init.js:
-  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
-test/annexB/language/global-code/switch-dflt-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(«function f() {  }», «undefined») to be true'
-test/annexB/language/global-code/switch-dflt-global-no-skip-try.js:
-  default: 'Test262Error: Initialized binding created prior to evaluation Expected SameValue(«function f() { return 123; }», «undefined») to be true'
-test/annexB/language/global-code/switch-dflt-global-skip-early-err-block.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-dflt-global-skip-early-err-for-in.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-dflt-global-skip-early-err-for-of.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-dflt-global-skip-early-err-for.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-dflt-global-skip-early-err-switch.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
-  default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
-  default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
 test/built-ins/ArrayBuffer/prototype/detached/detached-buffer-resizable.js:
   default: 'Test262Error: Resizable ArrayBuffer with maxByteLength of 0 is not detached Expected SameValue(«undefined», «false») to be true'
   strict mode: 'Test262Error: Resizable ArrayBuffer with maxByteLength of 0 is not detached Expected SameValue(«undefined», «false») to be true'
@@ -1374,79 +1166,31 @@ test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-class.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-const.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-let.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-var.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-class.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-const.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-let.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-var.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/class-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/class-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/class-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/class-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/const-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/const-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/const-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/const-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-class.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-const.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-let.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-var.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-class.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-const.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-let.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-var.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -1460,22 +1204,6 @@ test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaratio
 test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/inner-block-var-redeclaration-attempt-after-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/inner-block-var-redeclaration-attempt-after-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/inner-block-var-redeclaration-attempt-after-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/inner-block-var-redeclaration-attempt-after-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -1488,14 +1216,6 @@ test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-wi
 test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign.js:
@@ -2010,105 +1730,41 @@ test/language/statements/labeled/decl-async-generator.js:
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/let/block-local-closure-set-before-initialization.js:
-  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/statements/let/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/let/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/switch/scope-lex-async-function.js:
-  default: Expected uncaught exception with name 'ReferenceError' but none was thrown
-test/language/statements/switch/scope-lex-async-generator.js:
-  default: Expected uncaught exception with name 'ReferenceError' but none was thrown
-test/language/statements/switch/scope-lex-generator.js:
-  default: Expected uncaught exception with name 'ReferenceError' but none was thrown
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-class.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-const.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-let.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-var.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-class.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-const.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-let.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-var.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/class-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/class-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/class-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/class-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/const-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/const-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/const-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/const-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-class.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-const.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-let.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-var.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-class.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-const.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-let.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-var.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/let-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/let-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/let-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/let-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'

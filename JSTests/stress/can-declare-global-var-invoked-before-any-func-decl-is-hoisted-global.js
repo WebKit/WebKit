@@ -3,22 +3,22 @@ function assert(x) {
         throw new Error("Bad assertion!");
 }
 
-globalThis.foo = 1;
+globalThis.bar = 1;
 Object.preventExtensions(globalThis);
 
 let didThrow = false;
 try {
-    eval(`
+    $262.evalScript(`
         if (true) {
-            function foo() {}
+            function bar() {}
         }
 
-        var bar;
+        var foo;
     `);
 } catch (err) {
     didThrow = true;
-    assert(err.toString() === "TypeError: Can't declare global variable 'bar': global object must be extensible");
+    assert(err.toString() === "TypeError: Can't declare global variable 'foo': global object must be extensible");
 }
 
 assert(didThrow);
-assert(foo === 1);
+assert(bar === 1);
