@@ -328,15 +328,8 @@ static constexpr float kernelHalfSizeToBlurRadius(unsigned kernelHalfSize)
     return (kernelHalfSize - 1) / 2.f;
 }
 
-static constexpr unsigned kernelHalfSizeToSimplifiedKernelHalfSize(unsigned kernelHalfSize)
-{
-    return kernelHalfSize / 2 + 1;
-}
-
 // Max kernel size is 21
 static constexpr unsigned GaussianKernelMaxHalfSize = 11;
-
-static constexpr unsigned SimplifiedGaussianKernelMaxHalfSize = kernelHalfSizeToSimplifiedKernelHalfSize(GaussianKernelMaxHalfSize);
 
 static constexpr float GaussianBlurMaxRadius = kernelHalfSizeToBlurRadius(GaussianKernelMaxHalfSize);
 
@@ -346,48 +339,24 @@ static inline float gauss(float x, float radius)
 }
 
 // returns kernel half size
-static int computeGaussianKernel(float radius, std::array<float, SimplifiedGaussianKernelMaxHalfSize>& kernel, std::array<float, SimplifiedGaussianKernelMaxHalfSize>& offset)
+static int computeGaussianKernel(float radius, std::array<float, GaussianKernelMaxHalfSize>& kernel)
 {
     unsigned kernelHalfSize = blurRadiusToKernelHalfSize(radius);
     ASSERT(kernelHalfSize <= GaussianKernelMaxHalfSize);
 
-    float fullKernel[GaussianKernelMaxHalfSize];
-
-    fullKernel[0] = 1; // gauss(0, radius);
-    float sum = fullKernel[0];
+    kernel[0] = 1; // gauss(0, radius);
+    float sum = kernel[0];
     for (unsigned i = 1; i < kernelHalfSize; ++i) {
-        fullKernel[i] = gauss(i, radius);
-        sum += 2 * fullKernel[i];
+        kernel[i] = gauss(i, radius);
+        sum += 2 * kernel[i];
     }
 
     // Normalize the kernel.
     float scale = 1 / sum;
     for (unsigned i = 0; i < kernelHalfSize; ++i)
-        fullKernel[i] *= scale;
+        kernel[i] *= scale;
 
-    unsigned simplifiedKernelHalfSize = kernelHalfSizeToSimplifiedKernelHalfSize(kernelHalfSize);
-
-    // Simplify the kernel by utilizing linear interpolation during texture sampling
-    // full kernel                                                  simplified kernel
-    // |  0  |  1  |  2  |  3  |  4  |  5  |    --- simplify -->    |  0  | 1&2 | 3&4 |  5  |
-    // (kernelHalfSize = 6)
-    kernel[0] = fullKernel[0];
-    for (unsigned i = 1; i < simplifiedKernelHalfSize; i ++) {
-        unsigned offset1 = 2 * i - 1;
-        unsigned offset2 = 2 * i;
-
-        if (offset2 >= kernelHalfSize) {
-            // no pair to simplify
-            kernel[i] = fullKernel[offset1];
-            offset[i] = offset1;
-            break;
-        }
-
-        kernel[i] = fullKernel[offset1] + fullKernel[offset2];
-        offset[i] = (fullKernel[offset1] * offset1 + fullKernel[offset2] * offset2) / kernel[i];
-    }
-
-    return simplifiedKernelHalfSize;
+    return kernelHalfSize;
 }
 
 static void prepareFilterProgram(TextureMapperShaderProgram& program, const FilterOperation& operation)
@@ -867,12 +836,10 @@ void TextureMapperGL::drawBlurred(const BitmapTexture& sourceTexture, const Floa
     auto directionVector = direction == Direction::X ? FloatPoint(1, 0) : FloatPoint(0, 1);
     glUniform2f(program->blurDirectionLocation(), directionVector.x(), directionVector.y());
 
-    std::array<float, SimplifiedGaussianKernelMaxHalfSize> kernel;
-    std::array<float, SimplifiedGaussianKernelMaxHalfSize> offset;
-    int simplifiedKernelHalfSize = computeGaussianKernel(radius, kernel, offset);
-    glUniform1fv(program->gaussianKernelLocation(), SimplifiedGaussianKernelMaxHalfSize, kernel.data());
-    glUniform1fv(program->gaussianKernelOffsetLocation(), SimplifiedGaussianKernelMaxHalfSize, offset.data());
-    glUniform1i(program->gaussianKernelHalfSizeLocation(), simplifiedKernelHalfSize);
+    std::array<float, GaussianKernelMaxHalfSize> kernel;
+    int kernelHalfSize = computeGaussianKernel(radius, kernel);
+    glUniform1fv(program->gaussianKernelLocation(), GaussianKernelMaxHalfSize, kernel.data());
+    glUniform1i(program->gaussianKernelHalfSizeLocation(), kernelHalfSize);
 
     auto textureBlurMatrix = TransformationMatrix::identity;
 
