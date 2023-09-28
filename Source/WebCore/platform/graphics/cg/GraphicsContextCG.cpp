@@ -59,23 +59,6 @@ inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
     return CGAffineTransformConcat(CGContextGetCTM(context), CGAffineTransformInvert(CGContextGetBaseCTM(context)));
 }
 
-static InterpolationQuality coreInterpolationQuality(CGContextRef context)
-{
-    switch (CGContextGetInterpolationQuality(context)) {
-    case kCGInterpolationDefault:
-        return InterpolationQuality::Default;
-    case kCGInterpolationNone:
-        return InterpolationQuality::DoNotInterpolate;
-    case kCGInterpolationLow:
-        return InterpolationQuality::Low;
-    case kCGInterpolationMedium:
-        return InterpolationQuality::Medium;
-    case kCGInterpolationHigh:
-        return InterpolationQuality::High;
-    }
-    return InterpolationQuality::Default;
-}
-
 static CGInterpolationQuality cgInterpolationQuality(InterpolationQuality quality)
 {
     switch (quality) {
@@ -183,12 +166,12 @@ static void setCGBlendMode(CGContextRef context, CompositeOperator op, BlendMode
     CGContextSetBlendMode(context, selectCGBlendMode(op, blendMode));
 }
 
-static RenderingMode renderingModeForCGContext(CGContextRef cgContext, GraphicsContextCG::CGContextSource source)
+static RenderingMode renderingModeForCGContext(CGContextRef cgContext, GraphicsContextCG::ContextSource source)
 {
     if (!cgContext)
         return RenderingMode::Unaccelerated;
     auto type = CGContextGetType(cgContext);
-    if (type == kCGContextTypeIOSurface || (source == GraphicsContextCG::CGContextFromCALayer && type == kCGContextTypeUnknown))
+    if (type == kCGContextTypeIOSurface || (source == GraphicsContextCG::ContextSource::CALayer && type == kCGContextTypeUnknown))
         return RenderingMode::Accelerated;
     return RenderingMode::Unaccelerated;
 }
@@ -201,19 +184,25 @@ static GraphicsContext::IsDeferred isDeferredForCGContext(CGContextRef cgContext
     return GraphicsContext::IsDeferred::Yes;
 }
 
-GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource source, std::optional<RenderingMode> knownRenderingMode)
-    : GraphicsContext(isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
+GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, ContextSource source, std::optional<RenderingMode> knownRenderingMode)
+    : GraphicsContext(isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, InterpolationQuality::High)
     , m_cgContext(cgContext)
     , m_renderingMode(knownRenderingMode.value_or(renderingModeForCGContext(cgContext, source)))
-    , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)
+    , m_contextSource(source)
+    , m_savedInterpolationQuality(m_contextSource != ContextSource::WebKit ? CGContextGetInterpolationQuality(cgContext) : kCGInterpolationDefault)
 {
     if (!cgContext)
         return;
     // Make sure the context starts in sync with our state.
     didUpdateState(m_state);
+    CGContextSetInterpolationQuality(cgContext, kCGInterpolationHigh);
 }
 
-GraphicsContextCG::~GraphicsContextCG() = default;
+GraphicsContextCG::~GraphicsContextCG()
+{
+    if (m_contextSource != ContextSource::WebKit)
+        CGContextSetInterpolationQuality(m_cgContext.get(), m_savedInterpolationQuality);
+}
 
 bool GraphicsContextCG::hasPlatformContext() const
 {
@@ -430,7 +419,7 @@ static void drawPatternCallback(void* info, CGContextRef context)
 {
     CGImageRef image = (CGImageRef)info;
     CGFloat height = CGImageGetHeight(image);
-    CGContextDrawImage(context, GraphicsContextCG(context).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), height)), image);
+    CGContextDrawImage(context, GraphicsContextCG(context, GraphicsContextCG::ContextSource::WebKit).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), height)), image);
 }
 
 static void patternReleaseCallback(void* info)
@@ -1540,7 +1529,7 @@ void GraphicsContextCG::setURLForRect(const URL& link, const FloatRect& destRect
 
 bool GraphicsContextCG::isCALayerContext() const
 {
-    return m_isLayerCGContext;
+    return m_contextSource == ContextSource::CALayer;
 }
 
 RenderingMode GraphicsContextCG::renderingMode() const

@@ -78,7 +78,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
 
         NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
         CGContextRef cgContext = [nsContext CGContext];
-        GraphicsContextCG graphicsContext { cgContext };
+        GraphicsContextCG graphicsContext { cgContext, GraphicsContextCG::ContextSource::PlatformView };
 
         // WebCore requires a flipped graphics context.
         bool flipped = [nsContext isFlipped];

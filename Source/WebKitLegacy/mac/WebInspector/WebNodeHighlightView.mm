@@ -98,7 +98,7 @@ using namespace WebCore;
 
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-        GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
+        GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext], GraphicsContextCG::ContextSource::PlatformView);
         [_webNodeHighlight inspectorController]->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];
     }

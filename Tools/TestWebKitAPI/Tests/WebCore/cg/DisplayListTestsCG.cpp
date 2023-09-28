@@ -50,7 +50,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 
     auto colorSpace = DestinationColorSpace::SRGB();
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
-    GraphicsContextCG context { cgContext.get() };
+    GraphicsContextCG context { cgContext.get(), GraphicsContextCG::ContextSource::WebKit };
 
     auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
     auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
@@ -87,7 +87,7 @@ TEST(DisplayListTests, ItemValidationFailure)
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-    GraphicsContextCG context { cgContext.get() };
+    GraphicsContextCG context { cgContext.get(), GraphicsContextCG::ContextSource::WebKit };
 
     auto runTestWithInvalidIdentifier = [&](RenderingResourceIdentifier identifier) {
         EXPECT_FALSE(identifier.isValid());

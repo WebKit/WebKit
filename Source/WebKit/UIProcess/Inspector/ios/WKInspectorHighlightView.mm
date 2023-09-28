@@ -271,7 +271,7 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     if (!_highlight)
         return;
 
-    auto context = WebCore::GraphicsContextCG(UIGraphicsGetCurrentContext());
+    WebCore::GraphicsContextCG context { UIGraphicsGetCurrentContext(), WebCore::GraphicsContextCG::ContextSource::PlatformView };
     context.clip({ dirtyRect });
     context.translate(-self.frame.origin.x, -self.frame.origin.y);
 

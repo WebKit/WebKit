@@ -1878,7 +1878,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
     LocalDefaultSystemAppearance localAppearance(page->useDarkAppearance());
 #endif
 
-    GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
+    GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::ContextSource::CALayer);
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     if (layer == m_scrollCornerLayer) {

@@ -559,7 +559,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     RefPtr<WebKit::ShareableBitmap> bitmap = pagePreviewIterator->value;
 
-    WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
+    WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext], WebCore::GraphicsContextCG::ContextSource::PlatformView);
     WebCore::GraphicsContextStateSaver stateSaver(context);
 
     bitmap->paint(context, _webFrame->page()->deviceScaleFactor(), WebCore::IntPoint(nsRect.origin), bitmap->bounds());

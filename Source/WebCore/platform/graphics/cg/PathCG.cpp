@@ -398,7 +398,7 @@ bool PathCG::strokeContains(const FloatPoint& point, const Function<void(Graphic
     CGContextBeginPath(context);
     CGContextAddPath(context, platformPath());
 
-    GraphicsContextCG graphicsContext(context);
+    GraphicsContextCG graphicsContext(context, GraphicsContextCG::ContextSource::WebKit);
     strokeStyleApplier(graphicsContext);
 
     bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
@@ -437,7 +437,7 @@ FloatRect PathCG::strokeBoundingRect(const Function<void(GraphicsContext&)>& str
     CGContextAddPath(context, platformPath());
 
     if (strokeStyleApplier) {
-        GraphicsContextCG graphicsContext(context);
+        GraphicsContextCG graphicsContext(context, GraphicsContextCG::ContextSource::WebKit);
         strokeStyleApplier(graphicsContext);
     }
 

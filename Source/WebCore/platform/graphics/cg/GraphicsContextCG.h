@@ -34,11 +34,12 @@ namespace WebCore {
 
 class WEBCORE_EXPORT GraphicsContextCG : public GraphicsContext {
 public:
-    enum CGContextSource {
-        Unknown,
-        CGContextFromCALayer
+    enum class ContextSource : uint8_t {
+        WebKit,
+        PlatformView,
+        CALayer
     };
-    GraphicsContextCG(CGContextRef, CGContextSource = CGContextSource::Unknown, std::optional<RenderingMode> knownRenderingMode = std::nullopt);
+    GraphicsContextCG(CGContextRef, ContextSource, std::optional<RenderingMode> knownRenderingMode = std::nullopt);
 
     ~GraphicsContextCG();
 
@@ -154,7 +155,8 @@ private:
 
     const RetainPtr<CGContextRef> m_cgContext;
     const RenderingMode m_renderingMode;
-    const bool m_isLayerCGContext;
+    const ContextSource m_contextSource;
+    const CGInterpolationQuality m_savedInterpolationQuality; // Only for WebKit non-owned contexts.
     mutable bool m_userToDeviceTransformKnownToBeIdentity { false };
     // Flag for pending draws. Start with true because we do not know what commands have been scheduled to the context.
     bool m_hasDrawn { true };

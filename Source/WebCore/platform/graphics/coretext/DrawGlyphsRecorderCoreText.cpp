@@ -84,7 +84,7 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     auto contextType = kCGContextTypeWindow;
 #endif
     auto context = adoptCF(CGContextCreateWithDelegate(contextDelegate.get(), contextType, nullptr, nullptr));
-    return makeUniqueRef<GraphicsContextCG>(context.get());
+    return makeUniqueRef<GraphicsContextCG>(context.get(), GraphicsContextCG::ContextSource::WebKit);
 }
 
 DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, float scaleFactor, DeriveFontFromContext deriveFontFromContext)

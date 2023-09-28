@@ -639,7 +639,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     CGContextRef ctx = WKGetCurrentGraphicsContext();
 #endif
-    WebCore::GraphicsContextCG context(ctx);
+    WebCore::GraphicsContextCG context(ctx, WebCore::GraphicsContextCG::ContextSource::PlatformView);
     auto* view = _private->coreFrame->view();
     
     OptionSet<WebCore::PaintBehavior> oldBehavior = view->paintBehavior();

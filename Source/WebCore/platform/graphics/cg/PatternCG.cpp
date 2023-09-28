@@ -43,7 +43,7 @@ static void patternCallback(void* info, CGContextRef context)
     if (!platformImage)
         return;
 
-    CGRect rect = GraphicsContextCG(context).roundToDevicePixels(
+    CGRect rect = GraphicsContextCG(context, GraphicsContextCG::ContextSource::WebKit).roundToDevicePixels(
         FloatRect(0, 0, CGImageGetWidth(platformImage), CGImageGetHeight(platformImage)));
     CGContextDrawImage(context, rect, platformImage);
 }
