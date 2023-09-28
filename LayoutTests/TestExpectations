@@ -3885,7 +3885,6 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/fon
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2c.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/hiragana-katakana-kerning.html [ ImageOnlyFailure ]
-webkit.org/b/259551 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-014.html [ ImageOnlyFailure ]
 
 # Untriaged font-style/font-face @font-face descriptor bugs
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-style-auto-variable.html [ ImageOnlyFailure ]
