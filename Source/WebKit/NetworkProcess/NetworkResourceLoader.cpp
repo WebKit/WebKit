@@ -75,6 +75,7 @@
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ViolationReportType.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/Expected.h>
 #include <wtf/RunLoop.h>
 

@@ -12,8 +12,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/CacheStorageEngineConnectionMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/CacheStorageEngineConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DrawingAreaMessageReceiver.cpp

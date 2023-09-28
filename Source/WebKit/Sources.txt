@@ -181,10 +181,6 @@ NetworkProcess/storage/SessionStorageManager.cpp
 NetworkProcess/storage/StorageAreaBase.cpp
 NetworkProcess/storage/StorageAreaRegistry.cpp
 
-NetworkProcess/cache/CacheStorageEngine.cpp
-NetworkProcess/cache/CacheStorageEngineCache.cpp
-NetworkProcess/cache/CacheStorageEngineCaches.cpp
-NetworkProcess/cache/CacheStorageEngineConnection.cpp
 NetworkProcess/cache/AsyncRevalidation.cpp
 NetworkProcess/cache/NetworkCache.cpp
 NetworkProcess/cache/NetworkCacheBlobStorage.cpp

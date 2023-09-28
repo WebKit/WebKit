@@ -126,7 +126,6 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
 	NetworkProcess/NetworkContentRuleListManager \
-	NetworkProcess/cache/CacheStorageEngineConnection \
 	NetworkProcess/CustomProtocols/LegacyCustomProtocolManager \
 	NetworkProcess/NetworkSocketChannel \
 	NetworkProcess/ServiceWorker/WebSWServerConnection \

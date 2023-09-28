@@ -232,7 +232,6 @@ public:
 
     NetworkStorageManager& storageManager() { return m_storageManager.get(); }
     Ref<NetworkStorageManager> protectedStorageManager();
-    CacheStorage::Engine& ensureCacheEngine();
     void clearCacheEngine();
 
     NetworkLoadScheduler& networkLoadScheduler();
@@ -372,8 +371,6 @@ protected:
 
     Ref<NetworkStorageManager> m_storageManager;
     String m_cacheStorageDirectory;
-    RefPtr<CacheStorage::Engine> m_cacheEngine;
-    Vector<Function<void(CacheStorage::Engine&)>> m_cacheStorageParametersCallbacks;
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData m_appPrivacyReportTestingData;
