@@ -205,6 +205,11 @@ JSValue SparseArrayEntry::getNonSparseMode() const
     return Base::get();
 }
 
+JSValue SparseArrayEntry::get() const
+{
+    return Base::get();
+}
+
 template<typename Visitor>
 void SparseArrayValueMap::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {

@@ -55,7 +55,7 @@ ALWAYS_INLINE void objectAssignIndexedPropertiesFast(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    source->forEachIndexedProperty(globalObject, [&](unsigned index, JSValue value) {
+    source->forEachOwnIndexedProperty(globalObject, [&](unsigned index, JSValue value) {
         target->putDirectIndex(globalObject, index, value);
         RETURN_IF_EXCEPTION(scope, IterationStatus::Done);
         return IterationStatus::Continue;
@@ -83,6 +83,9 @@ ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSObject* targ
     auto scope = DECLARE_THROW_SCOPE(vm);
     properties.resize(0);
     values.clear();
+
+    if (source->canHaveExistingOwnIndexedGetterSetterProperties())
+        return false;
     bool canUseFastPath = source->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
         if (entry.attributes() & PropertyAttribute::DontEnum)
             return true;
