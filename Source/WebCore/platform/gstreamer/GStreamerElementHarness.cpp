@@ -488,7 +488,7 @@ void MermaidBuilder::process(GStreamerElementHarness& harness, bool generateFoot
         if (!downstreamHarness)
             continue;
         process(*downstreamHarness, false);
-        m_stringBuilder.append(padId, "--->"_s, generatePadId(*downstreamHarness, downstreamHarness->inputPad()), '\n');
+        m_stringBuilder.append(padId, " ---> "_s, generatePadId(*downstreamHarness, downstreamHarness->inputPad()), '\n');
     }
 
     if (!generateFooter)
@@ -497,12 +497,12 @@ void MermaidBuilder::process(GStreamerElementHarness& harness, bool generateFoot
     for (auto& [padHarness, srcPad, sinkPad] : m_padLinks) {
         m_stringBuilder.append(generatePadId(padHarness, srcPad.get()), ":::"_s, getPadClass(srcPad));
         if (GST_IS_PROXY_PAD(srcPad.get()))
-            m_stringBuilder.append("--->"_s);
+            m_stringBuilder.append(" ---> "_s);
         else if (auto srcCaps = adoptGRef(gst_pad_get_current_caps(srcPad.get()))) {
             auto capsString = describeCaps(srcCaps.get());
-            m_stringBuilder.append("--\""_s, capsString, "\"-->"_s);
+            m_stringBuilder.append(" --\""_s, capsString, "\"--> "_s);
         } else
-            m_stringBuilder.append("--->"_s);
+            m_stringBuilder.append(" ---> "_s);
         m_stringBuilder.append(generatePadId(padHarness, sinkPad.get()), ":::"_s, getPadClass(sinkPad), '\n');
     }
 
@@ -572,7 +572,7 @@ void MermaidBuilder::dumpElement(GStreamerElementHarness& harness, GstElement* e
     // There is no clean way to maintain subgraph ordering, so draw invisible links between pads.
     // Upstream bug report: https://github.com/mermaid-js/mermaid/issues/815
     if (firstSinkPad && firstSrcPad) {
-        m_stringBuilder.append(generatePadId(harness, firstSinkPad.get()), "---"_s, generatePadId(harness, firstSrcPad.get()), '\n');
+        m_stringBuilder.append(generatePadId(harness, firstSinkPad.get()), " --- "_s, generatePadId(harness, firstSrcPad.get()), '\n');
         m_stringBuilder.append("linkStyle "_s, m_invisibleLinesCounter, " stroke-width:0px\n"_s);
         m_invisibleLinesCounter++;
     }
