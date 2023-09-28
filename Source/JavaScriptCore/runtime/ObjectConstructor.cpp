@@ -567,24 +567,29 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
 
     {
         MarkedArgumentBuffer namedPropertyValues;
-        bool canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
-            if (entry.attributes() & PropertyAttribute::DontEnum)
-                return true;
+        bool canUseFastPath = false;
+        if (!target->canHaveExistingOwnIndexedGetterSetterProperties()) {
+            canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
+                if (entry.attributes() & PropertyAttribute::DontEnum)
+                    return true;
 
-            if (entry.key()->isSymbol())
-                return true;
+                if (entry.key()->isSymbol())
+                    return true;
 
-            namedPropertyValues.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
-            return true;
-        });
+                namedPropertyValues.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+                return true;
+            });
+        }
 
         if (canUseFastPath) {
             Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
             MarkedArgumentBuffer indexedPropertyValues;
-            target->forEachIndexedProperty(globalObject, [&](unsigned, JSValue value) {
-                indexedPropertyValues.appendWithCrashOnOverflow(value);
-                return IterationStatus::Continue;
-            });
+            if (target->canHaveExistingOwnIndexedProperties()) {
+                target->forEachOwnIndexedProperty(globalObject, [&](unsigned, JSValue value) {
+                    indexedPropertyValues.appendWithCrashOnOverflow(value);
+                    return IterationStatus::Continue;
+                });
+            }
             RETURN_IF_EXCEPTION(scope, { });
 
             {
