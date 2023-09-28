@@ -819,8 +819,6 @@ webkit.org/b/187935 [ Release ] imported/w3c/web-platform-tests/service-workers/
 
 webkit.org/b/165352 fast/dom/Window/window-resize-contents.html [ Pass Timeout ]
 
-webkit.org/b/167653 http/tests/contentextensions/block-everything-unless-domain.html [ Pass Timeout ]
-
 webkit.org/b/168065 inspector/unit-tests/heap-snapshot.html [ Pass Failure Timeout ]
 
 webkit.org/b/168085 tiled-drawing/scrolling/latched-to-deleted-node.html [ Pass Failure ]
@@ -2157,3 +2155,10 @@ webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer
 webkit.org/b/261906 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last [ Slow ]
 
 webkit.org/b/262079 [ Ventura+ arm64 ] fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
+
+# webkit.org/b/262216 (REGRESSION(268472@main): 5 tests under http/tests/contentextensions/ are consistently failing.)
+http/tests/contentextensions/main-resource-redirect-blocked.py [ Pass Failure ]
+http/tests/contentextensions/main-resource-redirect-error.html [ Pass Failure ]
+http/tests/contentextensions/block-everything-unless-domain.html [ Pass Failure ] # Switch back to [ Pass Timeout ] when resolved: webkit.org/b/167653
+http/tests/contentextensions/block-everything-unless-domain-iframe.html [ Pass Failure ]
+http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass Failure ]
