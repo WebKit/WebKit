@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.42.1
+=================
+
+What's new in WPE WebKit 2.42.1?
+
+  - Fix enable-html5-database setting to properly enable/disable IndexedDB API.
+  - Fix the build with GBM disabled.
+  - Fix rendering on the Raspberry Pi.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.42.0
 =================
 
