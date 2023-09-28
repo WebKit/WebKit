@@ -234,28 +234,28 @@ void TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::paintToTextureMapper(Te
     case DMABufFormat::FourCC::ABGR8888:
         // Either no colorspace or the SRGB colorspace was defined for this object. Other options are not meaningful.
         ASSERT(m_object.colorSpace == DMABufColorSpace::Invalid || m_object.colorSpace == DMABufColorSpace::SRGB);
-        texmapGL.drawTexture(data.texture[0], m_flags, targetRect, modelViewMatrix, opacity);
+        texmapGL.drawTexture(data.texture[0], m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity);
         break;
     case DMABufFormat::FourCC::I420:
     case DMABufFormat::FourCC::Y444:
     case DMABufFormat::FourCC::Y41B:
     case DMABufFormat::FourCC::Y42B:
         texmapGL.drawTexturePlanarYUV(std::array<GLuint, 3> { data.texture[0], data.texture[1], data.texture[2] },
-            yuvToRGB, m_flags, targetRect, modelViewMatrix, opacity, std::nullopt);
+            yuvToRGB, m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity, std::nullopt);
         break;
     case DMABufFormat::FourCC::YV12:
         texmapGL.drawTexturePlanarYUV(std::array<GLuint, 3> { data.texture[0], data.texture[2], data.texture[1] },
-            yuvToRGB, m_flags, targetRect, modelViewMatrix, opacity, std::nullopt);
+            yuvToRGB, m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity, std::nullopt);
         break;
     case DMABufFormat::FourCC::A420:
         texmapGL.drawTexturePlanarYUV(std::array<GLuint, 3> { data.texture[0], data.texture[1], data.texture[2] },
-            yuvToRGB, m_flags, targetRect, modelViewMatrix, opacity, data.texture[3]);
+            yuvToRGB, m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity, data.texture[3]);
         break;
     case DMABufFormat::FourCC::NV12:
     case DMABufFormat::FourCC::NV21:
         texmapGL.drawTextureSemiPlanarYUV(std::array<GLuint, 2> { data.texture[0], data.texture[1] },
             (m_object.format.fourcc == DMABufFormat::FourCC::NV21),
-            yuvToRGB, m_flags, targetRect, modelViewMatrix, opacity);
+            yuvToRGB, m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity);
         break;
     case DMABufFormat::FourCC::YUY2:
     case DMABufFormat::FourCC::YVYU:
@@ -264,7 +264,7 @@ void TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::paintToTextureMapper(Te
     case DMABufFormat::FourCC::VUYA:
     case DMABufFormat::FourCC::AYUV:
         texmapGL.drawTexturePackedYUV(data.texture[0],
-            yuvToRGB, m_flags, targetRect, modelViewMatrix, opacity);
+            yuvToRGB, m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity);
         break;
     case DMABufFormat::FourCC::P010:
     case DMABufFormat::FourCC::P016:
@@ -272,7 +272,7 @@ void TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::paintToTextureMapper(Te
         // threat it as a regular semi-planar YUV format, thus ignoring the two least significant
         // bits when rendering.
         texmapGL.drawTextureSemiPlanarYUV(std::array<GLuint, 2> { data.texture[0], data.texture[1] },
-            false, yuvToRGB, m_flags, targetRect, modelViewMatrix, opacity);
+            false, yuvToRGB, m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity);
         break;
     default:
         break;

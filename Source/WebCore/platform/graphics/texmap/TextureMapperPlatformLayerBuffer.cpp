@@ -102,7 +102,7 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
     if (m_hasManagedTexture) {
         ASSERT(m_texture);
         BitmapTextureGL* textureGL = static_cast<BitmapTextureGL*>(m_texture.get());
-        texmapGL.drawTexture(textureGL->id(), m_extraFlags | textureGL->colorConvertFlags(), targetRect, modelViewMatrix, opacity);
+        texmapGL.drawTexture(textureGL->id(), m_extraFlags | textureGL->colorConvertFlags(), textureGL->size(), targetRect, modelViewMatrix, opacity);
         return;
     }
 
@@ -122,7 +122,7 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
     WTF::switchOn(m_variant,
         [&](const RGBTexture& texture) {
             ASSERT(texture.id);
-            texmapGL.drawTexture(texture.id, m_extraFlags, targetRect, modelViewMatrix, opacity);
+            texmapGL.drawTexture(texture.id, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity);
         },
         [&](const YUVTexture& texture) {
             switch (texture.numberOfPlanes) {
@@ -130,22 +130,22 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
                 ASSERT(texture.yuvPlane[0] == texture.yuvPlane[1] && texture.yuvPlane[1] == texture.yuvPlane[2]);
                 ASSERT(texture.yuvPlaneOffset[0] == 2 && texture.yuvPlaneOffset[1] == 1 && !texture.yuvPlaneOffset[2]);
                 texmapGL.drawTexturePackedYUV(texture.planes[texture.yuvPlane[0]],
-                    texture.yuvToRgbMatrix, m_extraFlags, targetRect, modelViewMatrix, opacity);
+                    texture.yuvToRgbMatrix, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity);
                 break;
             case 2:
                 ASSERT(!texture.yuvPlaneOffset[0]);
                 texmapGL.drawTextureSemiPlanarYUV(std::array<GLuint, 2> { texture.planes[texture.yuvPlane[0]], texture.planes[texture.yuvPlane[1]] }, !!texture.yuvPlaneOffset[1],
-                    texture.yuvToRgbMatrix, m_extraFlags, targetRect, modelViewMatrix, opacity);
+                    texture.yuvToRgbMatrix, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity);
                 break;
             case 3:
                 ASSERT(!texture.yuvPlaneOffset[0] && !texture.yuvPlaneOffset[1] && !texture.yuvPlaneOffset[2]);
                 texmapGL.drawTexturePlanarYUV(std::array<GLuint, 3> { texture.planes[texture.yuvPlane[0]], texture.planes[texture.yuvPlane[1]], texture.planes[texture.yuvPlane[2]] },
-                    texture.yuvToRgbMatrix, m_extraFlags, targetRect, modelViewMatrix, opacity, std::nullopt);
+                    texture.yuvToRgbMatrix, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity, std::nullopt);
                 break;
             case 4:
                 ASSERT(!texture.yuvPlaneOffset[0] && !texture.yuvPlaneOffset[1] && !texture.yuvPlaneOffset[2]);
                 texmapGL.drawTexturePlanarYUV(std::array<GLuint, 3> { texture.planes[texture.yuvPlane[0]], texture.planes[texture.yuvPlane[1]], texture.planes[texture.yuvPlane[2]] },
-                    texture.yuvToRgbMatrix, m_extraFlags, targetRect, modelViewMatrix, opacity, texture.planes[texture.yuvPlane[3]]);
+                    texture.yuvToRgbMatrix, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity, texture.planes[texture.yuvPlane[3]]);
                 break;
             }
         },

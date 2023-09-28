@@ -69,9 +69,13 @@ public:
     RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&, bool defersLastFilterPass) override;
     struct FilterInfo {
         RefPtr<const FilterOperation> filter;
+        unsigned pass;
+        RefPtr<BitmapTexture> contentTexture;
 
-        FilterInfo(RefPtr<const FilterOperation>&& f = nullptr)
+        FilterInfo(RefPtr<const FilterOperation>&& f = nullptr, unsigned p = 0, RefPtr<BitmapTexture>&& t = nullptr)
             : filter(WTFMove(f))
+            , pass(p)
+            , contentTexture(WTFMove(t))
             { }
     };
 
