@@ -1114,10 +1114,11 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes)
         auto handleOverhangAfter = [&] {
             if (index != m_interlinearRubyColumnRangeList[currentRubyBaseIndex].end())
                 return;
-            auto& rubyBaseLayoutBox = boxes[m_interlinearRubyColumnRangeList[currentRubyBaseIndex].begin()].layoutBox();
+            auto rubyBaseIndex = m_interlinearRubyColumnRangeList[currentRubyBaseIndex].begin();
+            auto& rubyBaseLayoutBox = boxes[rubyBaseIndex].layoutBox();
             ASSERT(rubyBaseLayoutBox.isRubyBase());
             ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
-            accumulatedShift += rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, index, boxes);
+            accumulatedShift += rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, rubyBaseIndex, index, boxes);
             ++currentRubyBaseIndex;
         };
         handleOverhangAfter();
