@@ -94,6 +94,7 @@ private:
     String label() const final;
     void didRemoveFromUndoManager() final { }
     bool areRootEditabledElementsConnected();
+    RefPtr<Document> protectedDocument() const { return m_document; }
 
     RefPtr<Document> m_document;
     VisibleSelection m_startingSelection;
@@ -172,7 +173,7 @@ protected:
     void removeNodeAttribute(Element&, const QualifiedName& attribute);
     void removeChildrenInRange(Node&, unsigned from, unsigned to);
     virtual void removeNode(Node&, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
-    HTMLElement* replaceElementWithSpanPreservingChildrenAndAttributes(HTMLElement&);
+    RefPtr<HTMLElement> replaceElementWithSpanPreservingChildrenAndAttributes(HTMLElement&);
     void removeNodePreservingChildren(Node&, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
     void removeNodeAndPruneAncestors(Node&);
     void moveRemainingSiblingsToNewParent(Node*, Node* pastLastNodeToMove, Element& newParent);

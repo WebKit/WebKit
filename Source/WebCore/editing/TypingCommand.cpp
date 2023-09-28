@@ -705,8 +705,8 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
             // Extend the selection backward into the last cell, then deletion will handle the move.
             selection.modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, granularity);
         // If the caret is just after a table, select the table and don't delete anything.
-        } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
-            setEndingSelection(VisibleSelection(positionBeforeNode(table), endingSelection().start(), Affinity::Downstream, endingSelection().isDirectional()));
+        } else if (RefPtr table = isFirstPositionAfterTable(visibleStart)) {
+            setEndingSelection(VisibleSelection(positionBeforeNode(table.get()), endingSelection().start(), Affinity::Downstream, endingSelection().isDirectional()));
             typingAddedToOpenCommand(Type::DeleteKey);
             return;
         }

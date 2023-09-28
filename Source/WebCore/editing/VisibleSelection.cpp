@@ -299,7 +299,7 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
                 // the next one) to match TextEdit.
                 end = wordEnd.next();
                 
-                if (auto* table = isFirstPositionAfterTable(end)) {
+                if (RefPtr table = isFirstPositionAfterTable(end)) {
                     // The paragraph break after the last paragraph in the last cell of a block table ends
                     // at the start of the paragraph after the table.
                     if (isBlock(*table))
@@ -352,7 +352,7 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
             // of the next one) in the selection.
             VisiblePosition end(visibleParagraphEnd.next());
 
-            if (Node* table = isFirstPositionAfterTable(end)) {
+            if (RefPtr table = isFirstPositionAfterTable(end)) {
                 // The paragraph break after the last paragraph in the last cell of a block table ends
                 // at the start of the paragraph after the table, not at the position just after the table.
                 if (isBlock(*table))

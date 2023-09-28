@@ -27,10 +27,11 @@
 
 #include "DictationAlternative.h"
 #include "TextInsertionBaseCommand.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
-class DictationCommand : public TextInsertionBaseCommand {
+class DictationCommand : public TextInsertionBaseCommand, public CanMakeCheckedPtr {
     friend class DictationCommandLineOperation;
 public:
     static void insertText(Ref<Document>&&, const String&, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);
