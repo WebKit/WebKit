@@ -51,7 +51,7 @@ enum TrackSizeRestriction {
 };
 
 RenderGrid::RenderGrid(Element& element, RenderStyle&& style)
-    : RenderBlock(element, WTFMove(style), 0)
+    : RenderBlock(Type::Grid, element, WTFMove(style), 0)
     , m_grid(*this)
     , m_trackSizingAlgorithm(this, currentGrid())
     , m_masonryLayout(*this)

@@ -57,7 +57,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGImage);
 
 RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
-    : RenderSVGModelObject(element, WTFMove(style))
+    : RenderSVGModelObject(Type::SVGImage, element, WTFMove(style))
     , m_imageResource(makeUnique<RenderImageResource>())
 {
     imageResource().initialize(*this);

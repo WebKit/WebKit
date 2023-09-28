@@ -45,8 +45,8 @@ class FlexLayout;
 class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderFlexibleBox);
 public:
-    RenderFlexibleBox(Element&, RenderStyle&&);
-    RenderFlexibleBox(Document&, RenderStyle&&);
+    RenderFlexibleBox(Type, Element&, RenderStyle&&);
+    RenderFlexibleBox(Type, Document&, RenderStyle&&);
     virtual ~RenderFlexibleBox();
 
     using Direction = BlockFlowDirection;

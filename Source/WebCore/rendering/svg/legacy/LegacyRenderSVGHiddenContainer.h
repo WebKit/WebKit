@@ -30,7 +30,7 @@ class SVGElement;
 class LegacyRenderSVGHiddenContainer : public LegacyRenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGHiddenContainer);
 public:
-    LegacyRenderSVGHiddenContainer(SVGElement&, RenderStyle&&);
+    LegacyRenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&);
 
 protected:
     void layout() override;

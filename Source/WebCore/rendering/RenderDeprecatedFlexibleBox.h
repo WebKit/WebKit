@@ -31,7 +31,7 @@ class FlexBoxIterator;
 class RenderDeprecatedFlexibleBox final : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderDeprecatedFlexibleBox);
 public:
-    RenderDeprecatedFlexibleBox(Element&, RenderStyle&&);
+    RenderDeprecatedFlexibleBox(Type, Element&, RenderStyle&&);
     virtual ~RenderDeprecatedFlexibleBox();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

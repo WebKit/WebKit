@@ -90,7 +90,7 @@ class RenderSliderContainer final : public RenderFlexibleBox {
     WTF_MAKE_ISO_ALLOCATED_INLINE(RenderSliderContainer);
 public:
     RenderSliderContainer(SliderContainerElement& element, RenderStyle&& style)
-        : RenderFlexibleBox(element, WTFMove(style))
+        : RenderFlexibleBox(Type::SliderContainer, element, WTFMove(style))
     {
     }
 

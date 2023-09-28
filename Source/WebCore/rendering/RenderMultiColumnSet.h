@@ -142,8 +142,7 @@ public:
 
 private:
     void addOverflowFromChildren() override;
-    
-    bool isRenderMultiColumnSet() const override { return true; }
+
     void layout() override;
 
     Node* nodeForHitTest() const override;

@@ -307,8 +307,8 @@ protected:
     
     typedef unsigned BaseTypeFlags;
 
-    RenderElement(Element&, RenderStyle&&, BaseTypeFlags);
-    RenderElement(Document&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Type, Element&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Type, Document&, RenderStyle&&, BaseTypeFlags);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -351,7 +351,7 @@ protected:
     inline bool shouldApplySizeOrStyleContainment(bool) const;
 
 private:
-    RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Type, ContainerNode&, RenderStyle&&, BaseTypeFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;

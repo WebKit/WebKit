@@ -32,7 +32,7 @@ public:
     inline SVGGraphicsElement& graphicsElement() const;
 
 protected:
-    RenderSVGBlock(SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGBlock(Type, SVGGraphicsElement&, RenderStyle&&);
     void willBeDestroyed() override;
 
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;

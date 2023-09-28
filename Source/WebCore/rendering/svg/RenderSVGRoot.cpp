@@ -68,7 +68,7 @@ const int defaultWidth = 300;
 const int defaultHeight = 150;
 
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
-    : RenderReplaced(element, WTFMove(style))
+    : RenderReplaced(Type::SVGRoot, element, WTFMove(style))
 {
     LayoutSize intrinsicSize(calculateIntrinsicSize());
     if (!intrinsicSize.width())

@@ -82,7 +82,7 @@ static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 #endif
 
 RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
-    : RenderFlexibleBox(element, WTFMove(style))
+    : RenderFlexibleBox(Type::MenuList, element, WTFMove(style))
     , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)
 #if !PLATFORM(IOS_FAMILY)
@@ -284,7 +284,7 @@ void RenderMenuList::setText(const String& s)
         m_buttonText->setText(textToUse.impl(), true);
         m_buttonText->dirtyLineBoxes(false);
     } else {
-        auto newButtonText = createRenderer<RenderText>(document(), textToUse);
+        auto newButtonText = createRenderer<RenderText>(Type::Text, document(), textToUse);
         m_buttonText = *newButtonText;
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
         if (RenderTreeBuilder::current())

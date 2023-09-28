@@ -50,12 +50,11 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLineBreak);
 static const int invalidLineHeight = -1;
 
 RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
-    : RenderBoxModelObject(element, WTFMove(style), 0)
+    : RenderBoxModelObject(Type::LineBreak, element, WTFMove(style), 0)
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
     , m_isWBR(is<HTMLWBRElement>(element))
 {
-    setIsLineBreak();
 }
 
 RenderLineBreak::~RenderLineBreak()

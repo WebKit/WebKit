@@ -45,8 +45,8 @@ enum class TableIntrinsics : uint8_t { ForLayout, ForKeyword };
 class RenderTable : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderTable);
 public:
-    RenderTable(Element&, RenderStyle&&);
-    RenderTable(Document&, RenderStyle&&);
+    RenderTable(Type, Element&, RenderStyle&&);
+    RenderTable(Type, Document&, RenderStyle&&);
     virtual ~RenderTable();
 
     // Per CSS 3 writing-mode: "The first and second values of the 'border-spacing' property represent spacing between columns

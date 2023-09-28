@@ -304,13 +304,13 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderBox(type, element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
 }
 
-RenderBlock::RenderBlock(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderBox(type, document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
 }
 
@@ -2846,9 +2846,9 @@ RenderPtr<RenderBlock> RenderBlock::createAnonymousBlockWithStyleAndDisplay(Docu
     // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
     RenderPtr<RenderBlock> newBox;
     if (display == DisplayType::Flex || display == DisplayType::InlineFlex)
-        newBox = createRenderer<RenderFlexibleBox>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Flex));
+        newBox = createRenderer<RenderFlexibleBox>(RenderObject::Type::FlexibleBox, document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Flex));
     else
-        newBox = createRenderer<RenderBlockFlow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Block));
+        newBox = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Block));
     
     newBox->initializeStyle();
     return newBox;

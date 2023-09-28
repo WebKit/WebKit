@@ -211,8 +211,8 @@ public:
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const override;
 
 protected:
-    RenderBoxModelObject(Element&, RenderStyle&&, BaseTypeFlags);
-    RenderBoxModelObject(Document&, RenderStyle&&, BaseTypeFlags);
+    RenderBoxModelObject(Type, Element&, RenderStyle&&, BaseTypeFlags);
+    RenderBoxModelObject(Type, Document&, RenderStyle&&, BaseTypeFlags);
 
     void willBeDestroyed() override;
 

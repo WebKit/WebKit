@@ -47,8 +47,6 @@ public:
     WEBCORE_EXPORT std::span<const RecentSearch> recentSearches();
 
 private:
-    bool isSearchField() const final { return true; }
-
     void willBeDestroyed() override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     void updateFromElement() override;

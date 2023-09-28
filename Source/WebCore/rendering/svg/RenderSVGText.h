@@ -73,7 +73,6 @@ private:
     void graphicsElement() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderSVGText"_s; }
-    bool isSVGText() const override { return true; }
 
     void paint(PaintInfo&, const LayoutPoint&) override;
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

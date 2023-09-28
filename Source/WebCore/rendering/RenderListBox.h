@@ -76,8 +76,6 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderListBox"_s; }
 
-    bool isListBox() const override { return true; }
-
     void updateFromElement() override;
     bool hasControlClip() const override { return true; }
     void paintObject(PaintInfo&, const LayoutPoint&) override;

@@ -52,7 +52,6 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const final { return "RenderSVGImage"_s; }
-    bool isSVGImage() const final { return true; }
     bool canHaveChildren() const final { return false; }
 
     FloatRect calculateObjectBoundingBox() const;

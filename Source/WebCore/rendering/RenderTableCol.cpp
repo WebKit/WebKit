@@ -46,7 +46,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableCol);
 
 RenderTableCol::RenderTableCol(Element& element, RenderStyle&& style)
-    : RenderBox(element, WTFMove(style), 0)
+    : RenderBox(Type::TableCol, element, WTFMove(style), 0)
 {
     // init RenderObject attributes
     setInline(true); // our object is not Inline
@@ -54,7 +54,7 @@ RenderTableCol::RenderTableCol(Element& element, RenderStyle&& style)
 }
 
 RenderTableCol::RenderTableCol(Document& document, RenderStyle&& style)
-    : RenderBox(document, WTFMove(style), 0)
+    : RenderBox(Type::TableCol, document, WTFMove(style), 0)
 {
     setInline(true);
 }

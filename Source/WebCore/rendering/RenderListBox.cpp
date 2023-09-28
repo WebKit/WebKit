@@ -89,7 +89,7 @@ const int defaultSize = 4;
 const int baselineAdjustment = 7;
 
 RenderListBox::RenderListBox(HTMLSelectElement& element, RenderStyle&& style)
-    : RenderBlockFlow(element, WTFMove(style))
+    : RenderBlockFlow(Type::ListBox, element, WTFMove(style))
 {
     view().frameView().addScrollableArea(this);
 }

@@ -119,8 +119,8 @@ public:
     virtual Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) const;
 
 protected:
-    RenderFragmentContainer(Element&, RenderStyle&&, RenderFragmentedFlow*);
-    RenderFragmentContainer(Document&, RenderStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Element&, RenderStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Document&, RenderStyle&&, RenderFragmentedFlow*);
 
     void ensureOverflowForBox(const RenderBox*, RefPtr<RenderOverflow>&, bool) const;
 

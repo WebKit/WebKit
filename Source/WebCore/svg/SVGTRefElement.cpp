@@ -191,7 +191,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGInline>(*this, WTFMove(style));
+    return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTFMove(style));
 }
 
 bool SVGTRefElement::childShouldCreateRenderer(const Node& child) const

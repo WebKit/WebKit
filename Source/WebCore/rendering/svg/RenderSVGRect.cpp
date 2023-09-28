@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGRect);
 
 RenderSVGRect::RenderSVGRect(SVGRectElement& element, RenderStyle&& style)
-    : RenderSVGShape(element, WTFMove(style))
+    : RenderSVGShape(Type::SVGRect, element, WTFMove(style))
 {
 }
 

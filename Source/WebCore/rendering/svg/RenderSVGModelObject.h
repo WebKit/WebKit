@@ -81,8 +81,8 @@ public:
     LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRect(location, fragment, relevancy); }
 
 protected:
-    RenderSVGModelObject(Document&, RenderStyle&&);
-    RenderSVGModelObject(SVGElement&, RenderStyle&&);
+    RenderSVGModelObject(Type, Document&, RenderStyle&&);
+    RenderSVGModelObject(Type, SVGElement&, RenderStyle&&);
 
     void willBeDestroyed() override;
     void updateFromStyle() override;

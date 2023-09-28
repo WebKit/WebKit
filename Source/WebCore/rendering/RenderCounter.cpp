@@ -432,7 +432,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
 }
 
 RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
-    : RenderText(document, emptyString())
+    : RenderText(Type::Counter, document, emptyString())
     , m_counter(counter)
 {
     view().addCounterNeedingUpdate(*this);
@@ -456,11 +456,6 @@ void RenderCounter::willBeDestroyed()
 ASCIILiteral RenderCounter::renderName() const
 {
     return "RenderCounter"_s;
-}
-
-bool RenderCounter::isCounter() const
-{
-    return true;
 }
 
 String RenderCounter::originalText() const

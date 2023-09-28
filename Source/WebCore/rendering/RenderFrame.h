@@ -43,7 +43,6 @@ private:
     void frameOwnerElement() const = delete;
 
     ASCIILiteral renderName() const final { return "RenderFrame"_s; }
-    bool isFrame() const final { return true; }
 };
 
 inline RenderFrame* HTMLFrameElement::renderer() const

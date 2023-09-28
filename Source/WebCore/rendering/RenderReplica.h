@@ -47,7 +47,6 @@ public:
     void paint(PaintInfo&, const LayoutPoint&) override;
 
 private:
-    bool isReplica() const override { return true; }
     bool canHaveChildren() const override { return false; }
     void computePreferredLogicalWidths() override;
 };

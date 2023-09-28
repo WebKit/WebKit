@@ -36,7 +36,6 @@ public:
     virtual ~LegacyRenderSVGPath();
 
 private:
-    bool isLegacySVGPath() const override { return true; }
     ASCIILiteral renderName() const override { return "RenderSVGPath"_s; }
 
     void updateShapeFromElement() override;

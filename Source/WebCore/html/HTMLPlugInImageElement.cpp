@@ -136,7 +136,7 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(RenderSty
         return RenderElement::createFor(*this, WTFMove(style));
 
     if (isImageType())
-        return createRenderer<RenderImage>(*this, WTFMove(style));
+        return createRenderer<RenderImage>(RenderObject::Type::Image, *this, WTFMove(style));
 
     return HTMLPlugInElement::createElementRenderer(WTFMove(style), insertionPosition);
 }

@@ -45,8 +45,8 @@ static bool isPrescriptDelimiter(const RenderObject& renderObject)
     return renderObject.node() && renderObject.node()->hasTagName(MathMLNames::mprescriptsTag);
 }
 
-RenderMathMLScripts::RenderMathMLScripts(MathMLScriptsElement& element, RenderStyle&& style)
-    : RenderMathMLBlock(element, WTFMove(style))
+RenderMathMLScripts::RenderMathMLScripts(Type type, MathMLScriptsElement& element, RenderStyle&& style)
+    : RenderMathMLBlock(type, element, WTFMove(style))
 {
 }
 

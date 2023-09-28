@@ -44,7 +44,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGForeignObject);
 
 LegacyRenderSVGForeignObject::LegacyRenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
-    : RenderSVGBlock(element, WTFMove(style))
+    : RenderSVGBlock(Type::LegacySVGForeignObject, element, WTFMove(style))
 {
 }
 

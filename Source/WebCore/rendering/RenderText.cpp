@@ -245,8 +245,8 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
     return textBox.fontCascade().offsetForPosition(textBox.textRun(InlineIterator::TextRunMode::Editing), x - textBox.logicalLeftIgnoringInlineDirection(), true);
 }
 
-inline RenderText::RenderText(Node& node, const String& text)
-    : RenderObject(node)
+inline RenderText::RenderText(Type type, Node& node, const String& text)
+    : RenderObject(type, node)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
     , m_text(text)
 {
@@ -255,13 +255,13 @@ inline RenderText::RenderText(Node& node, const String& text)
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
 }
 
-RenderText::RenderText(Text& textNode, const String& text)
-    : RenderText(static_cast<Node&>(textNode), text)
+RenderText::RenderText(Type type, Text& textNode, const String& text)
+    : RenderText(type, static_cast<Node&>(textNode), text)
 {
 }
 
-RenderText::RenderText(Document& document, const String& text)
-    : RenderText(static_cast<Node&>(document), text)
+RenderText::RenderText(Type type, Document& document, const String& text)
+    : RenderText(type, static_cast<Node&>(document), text)
 {
 }
 
@@ -279,11 +279,6 @@ ASCIILiteral RenderText::renderName() const
 Text* RenderText::textNode() const
 {
     return downcast<Text>(RenderObject::node());
-}
-
-bool RenderText::isTextFragment() const
-{
-    return false;
 }
 
 bool RenderText::computeUseBackslashAsYenSymbol() const

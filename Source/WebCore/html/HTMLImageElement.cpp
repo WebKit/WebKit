@@ -435,7 +435,7 @@ RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(RenderStyle&& s
     if (style.hasContent())
         return RenderElement::createFor(*this, WTFMove(style));
 
-    return createRenderer<RenderImage>(*this, WTFMove(style), nullptr, m_imageDevicePixelRatio);
+    return createRenderer<RenderImage>(RenderObject::Type::Image, *this, WTFMove(style), nullptr, m_imageDevicePixelRatio);
 }
 
 bool HTMLImageElement::canStartSelection() const

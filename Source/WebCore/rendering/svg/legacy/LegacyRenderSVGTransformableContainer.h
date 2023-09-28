@@ -31,7 +31,6 @@ class LegacyRenderSVGTransformableContainer final : public LegacyRenderSVGContai
 public:
     LegacyRenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
 
-    bool isLegacySVGTransformableContainer() const override { return true; }
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
     bool didTransformToRootUpdate() override { return m_didTransformToRootUpdate; }

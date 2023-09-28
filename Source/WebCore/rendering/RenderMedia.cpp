@@ -39,14 +39,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMedia);
 
-RenderMedia::RenderMedia(HTMLMediaElement& element, RenderStyle&& style)
-    : RenderImage(element, WTFMove(style))
+RenderMedia::RenderMedia(Type type, HTMLMediaElement& element, RenderStyle&& style)
+    : RenderImage(type, element, WTFMove(style))
 {
     setHasShadowControls(true);
 }
 
-RenderMedia::RenderMedia(HTMLMediaElement& element, RenderStyle&& style, const IntSize& intrinsicSize)
-    : RenderImage(element, WTFMove(style))
+RenderMedia::RenderMedia(Type type, HTMLMediaElement& element, RenderStyle&& style, const IntSize& intrinsicSize)
+    : RenderImage(type, element, WTFMove(style))
 {
     setIntrinsicSize(intrinsicSize);
     setHasShadowControls(true);

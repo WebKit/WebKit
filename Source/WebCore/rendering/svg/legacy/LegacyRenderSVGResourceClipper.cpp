@@ -51,7 +51,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceClipper);
 
 LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElement& element, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(element, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceClipper, element, WTFMove(style))
 {
 }
 

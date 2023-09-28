@@ -41,7 +41,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGTextPath);
 
 RenderSVGTextPath::RenderSVGTextPath(SVGTextPathElement& element, RenderStyle&& style)
-    : RenderSVGInline(element, WTFMove(style))
+    : RenderSVGInline(Type::SVGTextPath, element, WTFMove(style))
 {
 }
 

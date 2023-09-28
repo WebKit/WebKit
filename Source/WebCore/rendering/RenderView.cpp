@@ -76,15 +76,13 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderView);
 
 RenderView::RenderView(Document& document, RenderStyle&& style)
-    : RenderBlockFlow(document, WTFMove(style))
+    : RenderBlockFlow(Type::View, document, WTFMove(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
     , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::FormattingContextIntegrationType::Inline))
     , m_selection(*this)
     , m_lazyRepaintTimer(*this, &RenderView::lazyRepaintTimerFired)
 {
-    setIsRenderView();
-
     // FIXME: We should find a way to enforce this at compile time.
     ASSERT(document.view());
 

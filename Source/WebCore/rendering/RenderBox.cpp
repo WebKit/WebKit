@@ -151,14 +151,14 @@ static void removeControlStatesForRenderer(const RenderBox& renderer)
 
 bool RenderBox::s_hadNonVisibleOverflow = false;
 
-RenderBox::RenderBox(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBoxModelObject(element, WTFMove(style), baseTypeFlags)
+RenderBox::RenderBox(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderBoxModelObject(type, element, WTFMove(style), baseTypeFlags)
 {
     setIsBox();
 }
 
-RenderBox::RenderBox(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBoxModelObject(document, WTFMove(style), baseTypeFlags)
+RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderBoxModelObject(type, document, WTFMove(style), baseTypeFlags)
 {
     setIsBox();
 }

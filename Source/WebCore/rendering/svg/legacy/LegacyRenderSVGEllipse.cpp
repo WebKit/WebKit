@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGEllipse);
 
 LegacyRenderSVGEllipse::LegacyRenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
-    : LegacyRenderSVGShape(element, WTFMove(style))
+    : LegacyRenderSVGShape(Type::LegacySVGEllipse, element, WTFMove(style))
 {
 }
 

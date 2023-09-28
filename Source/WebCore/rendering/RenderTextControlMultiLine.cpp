@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlMultiLine);
 
 RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, RenderStyle&& style)
-    : RenderTextControl(element, WTFMove(style))
+    : RenderTextControl(Type::TextControlMultiLine, element, WTFMove(style))
 {
 }
 

@@ -42,7 +42,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLFraction);
 
 RenderMathMLFraction::RenderMathMLFraction(MathMLFractionElement& element, RenderStyle&& style)
-    : RenderMathMLBlock(element, WTFMove(style))
+    : RenderMathMLBlock(Type::MathMLFraction, element, WTFMove(style))
 {
 }
 

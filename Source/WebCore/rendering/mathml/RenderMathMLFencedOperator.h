@@ -40,7 +40,6 @@ public:
     void updateOperatorContent(const String&);
 
 private:
-    bool isRenderMathMLFencedOperator() const final { return true; }
     bool isVertical() const final { return m_operatorChar.isVertical; }
     UChar32 textContent() const final { return m_operatorChar.character; }
     LayoutUnit leadingSpace() const final;

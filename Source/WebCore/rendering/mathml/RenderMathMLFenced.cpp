@@ -51,7 +51,7 @@ static constexpr auto gOpeningBraceChar = "("_s;
 static constexpr auto gClosingBraceChar = ")"_s;
 
 RenderMathMLFenced::RenderMathMLFenced(MathMLRowElement& element, RenderStyle&& style)
-    : RenderMathMLRow(element, WTFMove(style))
+    : RenderMathMLRow(Type::MathMLFenced, element, WTFMove(style))
 {
 }
 

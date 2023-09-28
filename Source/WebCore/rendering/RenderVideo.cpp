@@ -52,7 +52,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderVideo);
 
 RenderVideo::RenderVideo(HTMLVideoElement& element, RenderStyle&& style)
-    : RenderMedia(element, WTFMove(style))
+    : RenderMedia(Type::Video, element, WTFMove(style))
 {
     setIntrinsicSize(calculateIntrinsicSize());
 }

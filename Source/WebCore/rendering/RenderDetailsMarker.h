@@ -36,7 +36,6 @@ public:
 
 private:
     ASCIILiteral renderName() const override { return "RenderDetailsMarker"_s; }
-    bool isDetailsMarker() const override { return true; }
     void paint(PaintInfo&, const LayoutPoint&) override;
 
     bool isOpen() const;

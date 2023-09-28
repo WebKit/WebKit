@@ -59,7 +59,6 @@ public:
 private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    bool isRubyInline() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderRuby (inline)"_s; }
     bool createsAnonymousWrapper() const override { return true; }
 };
@@ -76,7 +75,6 @@ public:
 private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    bool isRubyBlock() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderRuby (block)"_s; }
     bool createsAnonymousWrapper() const override { return true; }
 };

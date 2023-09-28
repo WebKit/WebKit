@@ -67,8 +67,8 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTable);
 
-RenderTable::RenderTable(Element& element, RenderStyle&& style)
-    : RenderBlock(element, WTFMove(style), 0)
+RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
+    : RenderBlock(type, element, WTFMove(style), 0)
     , m_columnPos(1, 0)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
@@ -86,8 +86,8 @@ RenderTable::RenderTable(Element& element, RenderStyle&& style)
     setChildrenInline(false);
 }
 
-RenderTable::RenderTable(Document& document, RenderStyle&& style)
-    : RenderBlock(document, WTFMove(style), 0)
+RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
+    : RenderBlock(type, document, WTFMove(style), 0)
     , m_columnPos(1, 0)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
@@ -1635,7 +1635,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
 RenderPtr<RenderTable> RenderTable::createTableWithStyle(Document& document, const RenderStyle& style)
 {
-    auto table = createRenderer<RenderTable>(document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == DisplayType::Inline ? DisplayType::InlineTable : DisplayType::Table));
+    auto table = createRenderer<RenderTable>(Type::Table, document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == DisplayType::Inline ? DisplayType::InlineTable : DisplayType::Table));
     table->initializeStyle();
     return table;
 }
