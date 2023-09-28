@@ -128,6 +128,13 @@ private:
         auto& eventNames = WebCore::eventNames();
         return (type == eventNames.pointerupEvent || type == eventNames.pointeroutEvent || type == eventNames.pointerleaveEvent || type == eventNames.pointercancelEvent) ? 0 : 1;
     }
+    static float pressureForPressureInsensitiveInputDevices(unsigned short buttons)
+    {
+        // https://www.w3.org/TR/pointerevents/#dfn-active-buttons-state
+        bool isInActiveButtonsState = buttons;
+        // https://www.w3.org/TR/pointerevents/#dom-pointerevent-pressure
+        return isInActiveButtonsState ? 0.5 : 0;
+    }
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&);

@@ -39,6 +39,7 @@
 #import "DumpRenderTreePasteboard.h"
 #import "ModifierKeys.h"
 #import "WebCoreTestSupport.h"
+#import <WebCore/PlatformMouseEvent.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <functional>
@@ -600,7 +601,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
-                                        pressure:0.0]);
+                                        pressure:WebCore::ForceAtClick]);
 #else
     auto event = adoptNS([[WebEvent alloc] initWithMouseEventType:WebEventMouseDown
                                                      timeStamp:[self currentEventTime]
@@ -923,7 +924,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
-                                        pressure:0.0];
+                                        pressure:WebCore::ForceAtClick];
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     NSMutableArray *menuItemStrings = [NSMutableArray array];

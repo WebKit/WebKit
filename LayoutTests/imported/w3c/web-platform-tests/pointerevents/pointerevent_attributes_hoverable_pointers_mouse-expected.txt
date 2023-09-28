@@ -73,7 +73,7 @@ PASS mouse pointerdown.isTrusted value is true
 PASS mouse pointerdown.composed value is valid
 PASS mouse pointerdown.bubbles value is valid
 PASS mouse pointerdown.cancelable value is valid
-FAIL mouse pointerdown.pressure value is valid assert_greater_than: pressure is greater than 0 with a button pressed expected a number greater than 0 but got 0
+PASS mouse pointerdown.pressure value is valid
 PASS mouse pointerdown properties for pointerType = mouse
 PASS mouse pointerdown.isPrimary attribute is true.
 PASS mouse pointerdown.pointerId should be the same as previous pointer events for this active pointer.
