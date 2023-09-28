@@ -992,10 +992,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @end
 
 typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
-    _UIContextMenuLayoutActionsOnly = 1,
-    _UIContextMenuLayoutPreviewOnly = 2,
     _UIContextMenuLayoutCompactMenu = 3,
-    _UIContextMenuLayoutAutomatic = 100,
 };
 
 @interface _UIContextMenuStyle : NSObject <NSCopying>

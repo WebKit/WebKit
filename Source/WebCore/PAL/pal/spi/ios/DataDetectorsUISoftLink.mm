@@ -41,5 +41,6 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsUI, DDDetectionControll
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsUI, kDataDetectorsLeadingText, const NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsUI, kDataDetectorsReferenceDateKey, const NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsUI, kDataDetectorsTrailingText, const NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsUI, kDDContextMenuWantsPreviewKey, const NSString *, PAL_EXPORT)
 
 #endif
