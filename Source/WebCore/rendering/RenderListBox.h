@@ -157,20 +157,20 @@ private:
     void setHasVerticalScrollbar(bool hasScrollbar);
     Ref<Scrollbar> createScrollbar();
     void destroyScrollbar();
-    
-    int maximumNumberOfItemsThatFitInPaddingBottomArea() const;
 
-    int numberOfVisibleItemsInPaddingTop() const;
-    int numberOfVisibleItemsInPaddingBottom() const;
+    int maximumNumberOfItemsThatFitInPaddingAfterArea() const;
 
-    void computeFirstIndexesVisibleInPaddingTopBottomAreas();
+    int numberOfVisibleItemsInPaddingBefore() const;
+    int numberOfVisibleItemsInPaddingAfter() const;
 
-    LayoutUnit itemHeight() const;
+    void computeFirstIndexesVisibleInPaddingBeforeAfterAreas();
+
+    LayoutUnit itemLogicalHeight() const;
 
     enum class ConsiderPadding : bool { No, Yes };
     int numVisibleItems(ConsiderPadding = ConsiderPadding::No) const;
     int numItems() const;
-    LayoutUnit listHeight() const;
+    LayoutUnit listLogicalHeight() const;
 
     std::optional<int> optionRowIndex(const HTMLOptionElement&) const;
 
@@ -188,15 +188,15 @@ private:
     bool m_optionsChanged { true };
     bool m_scrollToRevealSelectionAfterLayout { false };
     bool m_inAutoscroll { false };
-    int m_optionsWidth { 0 };
+    int m_optionsLogicalWidth { 0 };
 
     RefPtr<Scrollbar> m_vBar;
 
     // Note: This is based on item index rather than a pixel offset.
     ScrollPosition m_scrollPosition;
 
-    std::optional<int> m_indexOfFirstVisibleItemInsidePaddingTopArea;
-    std::optional<int> m_indexOfFirstVisibleItemInsidePaddingBottomArea;
+    std::optional<int> m_indexOfFirstVisibleItemInsidePaddingBeforeArea;
+    std::optional<int> m_indexOfFirstVisibleItemInsidePaddingAfterArea;
 
 };
 

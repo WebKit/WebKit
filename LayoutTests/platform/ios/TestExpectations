@@ -3941,6 +3941,7 @@ imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearan
 # <select> are always menulists on iOS, regardless of multiple/size attributes, these tests assume the listbox appearance that desktop platforms have.
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-scrolling.optional.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-size-scrolling-and-sizing.optional.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-options-visual-order.html [ Failure ]
 fast/forms/select/multiselect-in-listbox-mouse-release-outside.html [ Skip ]
 
 # To investigate: might need to relax the tests, or adapt native thumb appearance.
