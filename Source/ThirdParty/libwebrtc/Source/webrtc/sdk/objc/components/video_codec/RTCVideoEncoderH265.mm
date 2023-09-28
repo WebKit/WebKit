@@ -468,20 +468,16 @@ void compressionOutputCallback(void* encoder,
 
 - (void)configureCompressionSession {
   RTC_DCHECK(_compressionSession);
-  SetVTSessionProperty(_compressionSession, nullptr, kVTCompressionPropertyKey_RealTime,
+  SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_RealTime,
                        _isLowLatencyEnabled);
   // SetVTSessionProperty(_compressionSession,
   // kVTCompressionPropertyKey_ProfileLevel, _profile);
-  SetVTSessionProperty(_compressionSession, nullptr,
-                       kVTCompressionPropertyKey_AllowFrameReordering, false);
+  SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, false);
   [self setEncoderBitrateBps:_targetBitrateBps];
 
   // Set a relatively large value for keyframe emission (7200 frames or 4 minutes).
-  SetVTSessionProperty(_compressionSession, nullptr,
-                       kVTCompressionPropertyKey_MaxKeyFrameInterval, 7200);
-  SetVTSessionProperty(_compressionSession, nullptr,
-                       kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration,
-                       240);
+  SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_MaxKeyFrameInterval, 7200);
+  SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, 240);
   OSStatus status =
       VTCompressionSessionPrepareToEncodeFrames(_compressionSession);
   if (status != noErr) {
@@ -509,8 +505,7 @@ void compressionOutputCallback(void* encoder,
 
 - (void)setEncoderBitrateBps:(uint32_t)bitrateBps {
   if (_compressionSession) {
-    SetVTSessionProperty(_compressionSession, nullptr, 
-                         kVTCompressionPropertyKey_AverageBitRate, bitrateBps);
+    SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AverageBitRate, bitrateBps);
 
     // TODO(tkchin): Add a helper method to set array value.
     int64_t dataLimitBytesPerSecondValue =

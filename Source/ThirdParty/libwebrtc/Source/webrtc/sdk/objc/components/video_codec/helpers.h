@@ -16,8 +16,6 @@
 #include <VideoToolbox/VideoToolbox.h>
 #include <string>
 
-#include "sdk/WebKit/VideoProcessingSoftLink.h"
-
 // Convenience function for creating a dictionary.
 inline CFDictionaryRef CreateCFTypeDictionary(CFTypeRef* keys,
                                               CFTypeRef* values,
@@ -31,24 +29,18 @@ inline CFDictionaryRef CreateCFTypeDictionary(CFTypeRef* keys,
 std::string CFStringToString(const CFStringRef cf_string);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession,CFStringRef key, int32_t value);
+void SetVTSessionProperty(VTCompressionSessionRef session, CFStringRef key, int32_t value);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession,
-                          CFStringRef key,
-                          uint32_t value);
+void SetVTSessionProperty(VTCompressionSessionRef session, CFStringRef key, uint32_t value);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession, CFStringRef key, bool value);
+void SetVTSessionProperty(VTCompressionSessionRef session, CFStringRef key, bool value);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession,
-                          CFStringRef key,
-                          CFStringRef value);
+void SetVTSessionProperty(VTCompressionSessionRef session, CFStringRef key, CFStringRef value);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession,
-                          CFStringRef key,
-                          CFArrayRef value);
+void SetVTSessionProperty(VTCompressionSessionRef session, CFStringRef key, CFArrayRef value);
 
 #endif  // SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOX_HELPERS_H_

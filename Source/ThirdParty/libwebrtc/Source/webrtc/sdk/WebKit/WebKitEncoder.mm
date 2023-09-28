@@ -242,13 +242,6 @@ std::unique_ptr<VideoEncoder> RemoteVideoEncoderFactory::CreateVideoEncoder(cons
 
 std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9, WebKitH264LowLatency useH264LowLatency, WebKitAv1 supportsAv1)
 {
-#if ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        webrtc::VPModuleInitialize();
-    });
-#endif
-
     auto internalFactory = ObjCToNativeVideoEncoderFactory([[RTCDefaultVideoEncoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9Profile0:supportsVP9 > WebKitVP9::Off vp9Profile2:supportsVP9 == WebKitVP9::Profile0And2 lowLatencyH264:useH264LowLatency == WebKitH264LowLatency::On av1:supportsAv1 == WebKitAv1::On]);
 
     return std::make_unique<VideoEncoderFactoryWithSimulcast>(std::make_unique<RemoteVideoEncoderFactory>(std::move(internalFactory)));
