@@ -47,6 +47,7 @@
 #include "Image.h"
 #include "LocalFrame.h"
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "SerializedAttachmentData.h"
@@ -68,6 +69,7 @@ static const CFStringRef LegacyWebArchiveResourceDataKey = CFSTR("WebResourceDat
 static const CFStringRef LegacyWebArchiveResourceFrameNameKey = CFSTR("WebResourceFrameName");
 static const CFStringRef LegacyWebArchiveResourceMIMETypeKey = CFSTR("WebResourceMIMEType");
 static const CFStringRef LegacyWebArchiveResourceURLKey = CFSTR("WebResourceURL");
+static const CFStringRef LegacyWebArchiveResourceFileNameKey = CFSTR("WebResourceFileName");
 static const CFStringRef LegacyWebArchiveResourceTextEncodingNameKey = CFSTR("WebResourceTextEncodingName");
 static const CFStringRef LegacyWebArchiveResourceResponseKey = CFSTR("WebResourceResponse");
 static const CFStringRef LegacyWebArchiveResourceResponseVersionKey = CFSTR("WebResourceResponseVersion");
@@ -99,6 +101,10 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
         LOG(Archives, "LegacyWebArchive - NULL resource URL is invalid - returning null property list");
         return nullptr;
     }
+
+    auto& fileName = resource->fileName();
+    if (!fileName.isEmpty())
+        CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceFileNameKey, fileName.createCFString().get());
 
     // FrameName should be left out if empty for subresources, but always included for main resources
     auto& frameName = resource->frameName();
@@ -225,7 +231,14 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         response = createResourceResponseFromPropertyListData(resourceResponseData, resourceResponseVersion);
     }
 
-    return ArchiveResource::create(SharedBuffer::create(resourceData), URL { url }, mimeType, textEncoding, frameName, response);
+    auto fileNameValue = CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceFileNameKey);
+    auto fileName = dynamic_cf_cast<CFStringRef>(fileNameValue);
+    if (fileNameValue && !fileName) {
+        LOG(Archives, "LegacyWebArchive - File name is not of type CFString, cannot create invalid resource");
+        return nullptr;
+    }
+
+    return ArchiveResource::create(SharedBuffer::create(resourceData), URL { url }, mimeType, textEncoding, frameName, response, fileName);
 }
 
 Ref<LegacyWebArchive> LegacyWebArchive::create()
@@ -410,7 +423,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter, const String& mainResourceFileName)
 {
     auto* frame = node.document().frame();
     if (!frame)
@@ -431,7 +444,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = documentTypeString(node.document()) + markupString;
 
-    return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter));
+    return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter), mainResourceFileName);
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
@@ -505,7 +518,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, c
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const String& mainResourceFileName)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -521,7 +534,8 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
 
     Vector<Ref<LegacyWebArchive>> subframeArchives;
     Vector<Ref<ArchiveResource>> subresources;
-    HashSet<URL> uniqueSubresources;
+    HashMap<String, String> uniqueSubresources;
+    String subresourcesDirectoryName = mainResourceFileName.isNull() ? String { } : makeString(mainResourceFileName, "_files");
 
     for (auto& node : nodes) {
         RefPtr<LocalFrame> childFrame;
@@ -542,28 +556,30 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             auto& documentLoader = *frame.loader().documentLoader();
 
             for (auto& subresourceURL : subresourceURLs) {
-                if (uniqueSubresources.contains(subresourceURL))
+                if (uniqueSubresources.contains(subresourceURL.string()))
                     continue;
 
-                uniqueSubresources.add(subresourceURL);
+                auto addResult = uniqueSubresources.add(subresourceURL.string(), emptyString());
+                RefPtr<ArchiveResource> resource = documentLoader.subresource(subresourceURL);
+                if (!resource) {
+                    ResourceRequest request(subresourceURL);
+                    request.setDomainForCachePartition(frame.document()->domainForCachePartition());
+                    if (auto* cachedResource = MemoryCache::singleton().resourceForRequest(request, frame.page()->sessionID()))
+                        resource = ArchiveResource::create(cachedResource->resourceBuffer(), subresourceURL, cachedResource->response());
+                }
 
-                if (auto resource = documentLoader.subresource(subresourceURL)) {
-                    subresources.append(resource.releaseNonNull());
+                if (!resource) {
+                    // FIXME: should do something better than spew to console here
+                    LOG_ERROR("Failed to archive subresource for %s", subresourceURL.string().utf8().data());
                     continue;
                 }
 
-                ResourceRequest request(subresourceURL);
-                request.setDomainForCachePartition(frame.document()->domainForCachePartition());
-
-                if (auto* cachedResource = MemoryCache::singleton().resourceForRequest(request, frame.page()->sessionID())) {
-                    if (auto resource = ArchiveResource::create(cachedResource->resourceBuffer(), subresourceURL, cachedResource->response())) {
-                        subresources.append(resource.releaseNonNull());
-                        continue;
-                    }
+                if (!subresourcesDirectoryName.isNull()) {
+                    addResult.iterator->value = makeString(subresourcesDirectoryName, "/", subresourceURL.lastPathComponent());
+                    resource->setFileName(addResult.iterator->value);
                 }
 
-                // FIXME: should do something better than spew to console here
-                LOG_ERROR("Failed to archive subresource for %s", subresourceURL.string().utf8().data());
+                subresources.append(resource.releaseNonNull());
             }
         }
     }
@@ -580,6 +596,19 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             if (auto resource = documentLoader->subresource(icon.url))
                 subresources.append(resource.releaseNonNull());
         }
+    }
+
+    if (!mainResourceFileName.isNull()) {
+        auto* document = frame.document();
+        if (!document)
+            return nullptr;
+        auto fileNameWithExtension = mainResourceFileName;
+        auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(mainResource->mimeType());
+        if (!fileNameWithExtension.endsWith(extension))
+            fileNameWithExtension = makeString(mainResourceFileName, ".", extension);
+        uniqueSubresources.add(responseURL.string(), fileNameWithExtension);
+        String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::No, nullptr, std::nullopt, WTFMove(uniqueSubresources));
+        mainResource = ArchiveResource::create(utf8Buffer(updatedMarkupString), responseURL, response.mimeType(), "UTF-8"_s, frame.tree().uniqueName(), ResourceResponse(), fileNameWithExtension);
     }
 
     return create(mainResource.releaseNonNull(), WTFMove(subresources), WTFMove(subframeArchives));

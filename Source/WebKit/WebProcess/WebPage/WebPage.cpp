@@ -4298,6 +4298,20 @@ void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& re
     callback(IPC::SharedBufferReference(WTFMove(buffer)));
 }
 
+void WebPage::getWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier frameID, const String& fileName, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& completionHandler)
+{
+    std::optional<IPC::SharedBufferReference> result;
+#if PLATFORM(COCOA)
+    if (RefPtr frame = WebProcess::singleton().webFrame(frameID)) {
+        if (RetainPtr<CFDataRef> data = frame->webArchiveData(nullptr, nullptr, fileName))
+            result = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
+    }
+#else
+    UNUSED_PARAM(frameID);
+#endif
+    completionHandler(result);
+}
+
 void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
 {
 #if PLATFORM(COCOA)

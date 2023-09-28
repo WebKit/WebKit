@@ -172,6 +172,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/AppHighlight.h>
+#include <WebCore/ArchiveError.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
@@ -255,6 +256,7 @@
 #include "WebPrivacyHelpers.h"
 #include <WebCore/AttributedString.h>
 #include <WebCore/CoreAudioCaptureDeviceManager.h>
+#include <WebCore/LegacyWebArchive.h>
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/SystemBattery.h>
 #include <objc/runtime.h>
@@ -385,6 +387,14 @@ static constexpr Seconds audibleActivityClearDelay = 10_s;
 #endif
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
+
+#if PLATFORM(COCOA)
+static WorkQueue& sharedFileQueue()
+{
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("com.apple.WebKit.WebPageSharedFileQueue"));
+    return queue.get();
+}
+#endif
 
 class StorageRequests {
     WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
@@ -5263,6 +5273,49 @@ void WebPageProxy::getSelectionOrContentsAsString(CompletionHandler<void(const S
 void WebPageProxy::getSelectionAsWebArchiveData(CompletionHandler<void(API::Data*)>&& callback)
 {
     sendWithAsyncReply(Messages::WebPage::GetSelectionAsWebArchiveData(), toAPIDataCallback(WTFMove(callback)));
+}
+
+void WebPageProxy::saveResources(WebFrameProxy* frame, const String& directory, const String& suggestedMainResourceName, CompletionHandler<void(Expected<void, WebCore::ArchiveError>)>&& completionHandler)
+{
+    if (!frame)
+        return completionHandler(makeUnexpected(WebCore::ArchiveError::InvalidFrame));
+
+    if (directory.isEmpty())
+        return completionHandler(makeUnexpected(WebCore::ArchiveError::InvalidFilePath));
+
+    String mainResourceName = suggestedMainResourceName;
+    if (mainResourceName.isEmpty()) {
+        auto host = frame->url().host();
+        mainResourceName = host.isEmpty() ? "main"_s : host.toString();
+    }
+
+    sendWithAsyncReply(Messages::WebPage::GetWebArchiveOfFrameWithFileName(frame->frameID(), mainResourceName), [directory = directory, completionHandler = WTFMove(completionHandler)](const std::optional<IPC::SharedBufferReference>& data) mutable {
+#if PLATFORM(COCOA)
+        if (!data)
+            return completionHandler(makeUnexpected(WebCore::ArchiveError::SerializationFailure));
+
+        auto buffer = data->unsafeBuffer();
+        if (!buffer)
+            return completionHandler(makeUnexpected(WebCore::ArchiveError::SerializationFailure));
+
+        sharedFileQueue().dispatch([directory = directory.isolatedCopy(), buffer, completionHandler = WTFMove(completionHandler)]() mutable {
+            auto archive = LegacyWebArchive::create(*buffer);
+            auto result = archive->saveResourcesToDisk(directory);
+            std::optional<WebCore::ArchiveError> error;
+            if (!result)
+                error = result.error();
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), error]() mutable {
+                if (error)
+                    return completionHandler(makeUnexpected(*error));
+
+                completionHandler({ });
+            });
+        });
+#else
+        ASSERT_UNUSED(data, !data);
+        completionHandler(makeUnexpected(WebCore::ArchiveError::NotImplemented));
+#endif
+    });
 }
 
 void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, CompletionHandler<void(API::Data*)>&& callback)

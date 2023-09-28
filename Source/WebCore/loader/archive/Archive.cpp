@@ -29,6 +29,8 @@
 #include "config.h"
 #include "Archive.h"
 
+#include <wtf/Scope.h>
+
 namespace WebCore {
 
 Archive::~Archive() = default;
@@ -48,6 +50,50 @@ void Archive::clearAllSubframeArchives(HashSet<Archive*>& clearedArchives)
             archive->clearAllSubframeArchives(clearedArchives);
     }
     m_subframeArchives.clear();
+}
+
+Expected<Vector<String>, ArchiveError> Archive::saveResourcesToDisk(const String& directory)
+{
+    ASSERT(!RunLoop::isMain());
+
+    Vector<String> filePaths;
+    if (!m_mainResource)
+        return makeUnexpected(ArchiveError::EmptyResource);
+
+    bool hasError = false;
+    auto cleanup = makeScopeExit([&] {
+        if (hasError) {
+            for (auto filePath : filePaths)
+                FileSystem::deleteFile(filePath);
+        }
+    });
+
+    auto mainResourceResult = m_mainResource->saveToDisk(directory);
+    if (!mainResourceResult) {
+        hasError = true;
+        return makeUnexpected(mainResourceResult.error());
+    }
+    filePaths.append(mainResourceResult.value());
+
+    for (auto subresource : m_subresources) {
+        auto result = subresource->saveToDisk(directory);
+        if (!result) {
+            hasError = true;
+            return makeUnexpected(result.error());
+        }
+        filePaths.append(result.value());
+    }
+
+    for (auto subframeArchive : m_subframeArchives) {
+        auto result = subframeArchive->saveResourcesToDisk(directory);
+        if (!result) {
+            hasError = true;
+            return makeUnexpected(result.error());
+        }
+        filePaths.appendVector(result.value());
+    }
+
+    return filePaths;
 }
 
 }
