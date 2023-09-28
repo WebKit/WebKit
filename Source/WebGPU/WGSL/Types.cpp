@@ -27,6 +27,7 @@
 #include "Types.h"
 
 #include "ASTStructure.h"
+#include "TypeStore.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringHash.h>
@@ -471,6 +472,32 @@ bool isPrimitiveReference(const Type* type, Primitive::Kind kind)
     if (!reference)
         return false;
     return isPrimitive(reference->element, kind);
+}
+
+const Type* shaderTypeForTexelFormat(TexelFormat format, const TypeStore& types)
+{
+    switch (format) {
+    case TexelFormat::BGRA8unorm:
+    case TexelFormat::RGBA8unorm:
+    case TexelFormat::RGBA8snorm:
+    case TexelFormat::RGBA16float:
+    case TexelFormat::R32float:
+    case TexelFormat::RG32float:
+    case TexelFormat::RGBA32float:
+        return types.f32Type();
+    case TexelFormat::RGBA8uint:
+    case TexelFormat::RGBA16uint:
+    case TexelFormat::R32uint:
+    case TexelFormat::RG32uint:
+    case TexelFormat::RGBA32uint:
+        return types.u32Type();
+    case TexelFormat::RGBA8sint:
+    case TexelFormat::RGBA16sint:
+    case TexelFormat::R32sint:
+    case TexelFormat::RG32sint:
+    case TexelFormat::RGBA32sint:
+        return types.i32Type();
+    }
 }
 
 } // namespace WGSL

@@ -34,6 +34,7 @@
 namespace WGSL {
 
 class TypeChecker;
+class TypeStore;
 struct Type;
 
 enum class AddressSpace : uint8_t {
@@ -232,6 +233,7 @@ ConversionRank conversionRank(const Type* from, const Type* to);
 
 bool isPrimitive(const Type*, Types::Primitive::Kind);
 bool isPrimitiveReference(const Type*, Types::Primitive::Kind);
+const Type* shaderTypeForTexelFormat(TexelFormat, const TypeStore&);
 
 } // namespace WGSL
 

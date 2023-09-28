@@ -648,7 +648,6 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const TextureStorage& texture) {
             const char* base;
-            const char* type;
             const char* mode;
             switch (texture.kind) {
             case Types::TextureStorage::Kind::TextureStorage1d:
@@ -658,35 +657,10 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 base = "texture2d";
                 break;
             case Types::TextureStorage::Kind::TextureStorage2dArray:
-                base = "texture2d_aray";
+                base = "texture2d_array";
                 break;
             case Types::TextureStorage::Kind::TextureStorage3d:
                 base = "texture3d";
-                break;
-            }
-            switch (texture.format) {
-            case TexelFormat::BGRA8unorm:
-            case TexelFormat::RGBA8unorm:
-            case TexelFormat::RGBA8snorm:
-            case TexelFormat::RGBA16float:
-            case TexelFormat::R32float:
-            case TexelFormat::RG32float:
-            case TexelFormat::RGBA32float:
-                type = "float";
-                break;
-            case TexelFormat::RGBA8uint:
-            case TexelFormat::RGBA16uint:
-            case TexelFormat::R32uint:
-            case TexelFormat::RG32uint:
-            case TexelFormat::RGBA32uint:
-                type = "uint";
-                break;
-            case TexelFormat::RGBA8sint:
-            case TexelFormat::RGBA16sint:
-            case TexelFormat::R32sint:
-            case TexelFormat::RG32sint:
-            case TexelFormat::RGBA32sint:
-                type = "int";
                 break;
             }
             switch (texture.access) {
@@ -700,7 +674,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 mode = "read_write";
                 break;
             }
-            m_stringBuilder.append(base, "<", type, ", access::", mode, ">");
+            m_stringBuilder.append(base, "<");
+            visit(shaderTypeForTexelFormat(texture.format, m_callGraph.ast().types()));
+            m_stringBuilder.append(", access::", mode, ">");
         },
         [&](const TextureDepth& texture) {
             const char* base;

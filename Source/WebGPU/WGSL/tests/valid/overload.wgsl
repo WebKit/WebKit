@@ -2047,10 +2047,10 @@ fn testTrunc()
 @group(0) @binding(16) var tc: texture_cube<f32>;
 @group(0) @binding(17) var tca: texture_cube_array<f32>;
 
-@group(0) @binding(18) var ts1d: texture_storage_2d<rgba8unorm, read>;
+@group(0) @binding(18) var ts1d: texture_storage_1d<rgba8unorm, write>;
 @group(0) @binding(19) var ts2d: texture_storage_2d<rgba16uint, write>;
-@group(0) @binding(20) var ts2da: texture_storage_2d<r32sint, read_write>;
-@group(0) @binding(21) var ts3d: texture_storage_2d<rgba32float, write>;
+@group(0) @binding(20) var ts2da: texture_storage_2d_array<r32sint, write>;
+@group(0) @binding(21) var ts3d: texture_storage_3d<rgba32float, write>;
 @group(0) @binding(22) var te: texture_external;
 
 var td2d: texture_depth_2d;
@@ -2064,10 +2064,10 @@ var tdms2d: texture_depth_multisampled_2d;
 @compute @workgroup_size(1)
 fn testTextureDimensions()
 {
-    // FIXME: add declarations for texture storage
-
     // [S < Concrete32BitNumber].(Texture[S, Texture1d]) => U32,
     _ = textureDimensions(t1d);
+    // [F, AM].(texture_storage_1d[F, AM]) => u32,
+    _ = textureDimensions(ts1d);
 
     // [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture1d], T) => U32,
     _ = textureDimensions(t1d, 0);
@@ -2094,6 +2094,11 @@ fn testTextureDimensions()
     // [].(texture_depth_multisampled_2d) => Vector[U32, 2],
     _ = textureDimensions(tdms2d);
 
+    // [F, AM].(texture_storage_2d[F, AM]) => vec2[u32],
+    _ = textureDimensions(ts2d);
+    // [F, AM].(texture_storage_2d_array[F, AM]) => vec2[u32],
+    _ = textureDimensions(ts2da);
+
     // [].(TextureExternal) => Vector[U32, 2],
     _ = textureDimensions(te);
 
@@ -2116,6 +2121,8 @@ fn testTextureDimensions()
 
     // [S < Concrete32BitNumber].(Texture[S, Texture3d]) => Vector[U32, 3],
     _ = textureDimensions(t3d);
+    // [F, AM].(texture_storage_3d[F, AM]) => vec3[u32],
+    _ = textureDimensions(ts3d);
 
     // [S < Concrete32BitNumber, T < ConcreteInteger].(Texture[S, Texture3d], T) => Vector[U32, 3],
     _ = textureDimensions(t3d, 0);
@@ -2296,8 +2303,6 @@ fn testTextureLoad()
 // 16.7.5
 fn testTextureNumLayers()
 {
-    // FIXME: add declarations for texture storage
-
     // [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => U32,
     _ = textureNumLayers(t2da);
 
@@ -2309,6 +2314,9 @@ fn testTextureNumLayers()
 
     // [].(texture_depth_cube_array) => U32,
     _ = textureNumLayers(tdca);
+
+    // [F, AM].(texture_storage_2d_array[F, AM]) => u32,
+    _ = textureNumLayers(ts2da);
 }
 
 // 16.7.6
@@ -2526,5 +2534,18 @@ fn testTextureSampleBaseClampToEdge() {
     _ = textureSampleBaseClampToEdge(t2d, s, vec2f(0));
 }
 
-// 16.7.15 textureStore
-// FIXME: this only applies to texture_storage, implement
+// 16.7.15
+fn testTextureStore()
+{
+    // [F, T < ConcreteInteger].(texture_storage_1d[F, write], T, vec4[ChannelFormat[F]]) => void,
+    textureStore(ts1d, 0, vec4f(0));
+
+    // [F, T < ConcreteInteger].(texture_storage_2d[F, write], vec2[T], vec4[ChannelFormat[F]]) => void,
+    textureStore(ts2d, vec2(0), vec4u(0));
+
+    // [F, T < ConcreteInteger, S < ConcreteInteger].(texture_storage_2d_array[F, write], vec2[T], S, vec4[ChannelFormat[F]]) => void,
+    textureStore(ts2da, vec2(0), 0, vec4i(0));
+
+    // [F, T < ConcreteInteger].(texture_storage_3d[F, write], vec3[T], vec4[ChannelFormat[F]]) => void,
+    textureStore(ts3d, vec3(0), vec4f(0));
+}
