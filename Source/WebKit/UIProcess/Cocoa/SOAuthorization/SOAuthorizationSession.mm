@@ -230,11 +230,24 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
         initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin()->toString();
     if (m_action == InitiatingAction::SubFrame && m_page->mainFrame())
         initiatorOrigin = WebCore::SecurityOrigin::create(m_page->mainFrame()->url())->toString();
+
     NSDictionary *authorizationOptions = @{
         SOAuthorizationOptionUserActionInitiated: @(m_navigationAction->isProcessingUserGesture()),
         SOAuthorizationOptionInitiatorOrigin: (NSString *)initiatorOrigin,
         SOAuthorizationOptionInitiatingAction: @(static_cast<NSInteger>(m_action))
     };
+#if PLATFORM(VISION)
+    RetainPtr<WKWebView> webView = m_page->cocoaView();
+    id webViewUIDelegate = [webView UIDelegate];
+    if ([webViewUIDelegate respondsToSelector:@selector(_hostSceneIdentifierForWebView:)]) {
+        NSString *callerSceneID = [webViewUIDelegate _hostSceneIdentifierForWebView:webView.get()];
+        if (callerSceneID) {
+            NSMutableDictionary *mutableAuthorizationOptions = [authorizationOptions mutableCopy];
+            mutableAuthorizationOptions[@"callerSceneIdentifier"] = callerSceneID;
+            authorizationOptions = mutableAuthorizationOptions;
+        }
+    }
+#endif
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
