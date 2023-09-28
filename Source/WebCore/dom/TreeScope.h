@@ -29,6 +29,7 @@
 #include "ExceptionOr.h"
 #include "TreeScopeOrderedMap.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -60,7 +61,7 @@ class ShadowRoot;
 class WeakPtrImplWithEventTargetData;
 struct SVGResourcesMap;
 
-class TreeScope {
+class TreeScope : public CanMakeCheckedPtr {
     friend class Document;
 
 public:

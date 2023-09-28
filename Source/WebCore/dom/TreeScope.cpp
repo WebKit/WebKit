@@ -60,7 +60,7 @@
 
 namespace WebCore {
 
-struct SameSizeAsTreeScope {
+struct SameSizeAsTreeScope : CanMakeCheckedPtr {
     void* pointers[12];
 };
 

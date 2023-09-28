@@ -110,6 +110,8 @@ ShadowRoot::~ShadowRoot()
     // runs so we don't go through Node::setTreeScopeRecursively for each child with a
     // destructed tree scope in each descendant.
     removeDetachedChildren();
+
+    setTreeScope(document());
 }
 
 Node::InsertedIntoAncestorResult ShadowRoot::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

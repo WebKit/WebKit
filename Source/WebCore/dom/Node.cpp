@@ -428,7 +428,9 @@ Node::~Node()
     ASSERT(!m_previous);
     ASSERT(!m_next);
 
-    document().decrementReferencingNodeCount();
+    auto& document = m_treeScope->documentScope();
+    m_treeScope = nullptr;
+    document.decrementReferencingNodeCount();
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY) && (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS))
     for (auto* document : Document::allDocuments()) {
