@@ -104,7 +104,7 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
 }
 
 ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Parameters& parameters, Ref<ShareableBitmap>&& bitmap, std::unique_ptr<GraphicsContext>&& context)
-    : PlatformImageBufferBackend(parameters)
+    : ImageBufferShareableBitmapBackendBase(parameters)
     , m_bitmap(WTFMove(bitmap))
     , m_context(WTFMove(context))
 {

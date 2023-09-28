@@ -1918,6 +1918,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
     platform/graphics/ImageBufferBackendParameters.h
+    platform/graphics/ImageBufferPlatformBackend.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
     platform/graphics/ImageFrame.h
@@ -1975,8 +1976,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformGraphicsContext.h
     platform/graphics/PlatformImage.h
-    platform/graphics/PlatformImageBuffer.h
-    platform/graphics/PlatformImageBufferBackend.h
     platform/graphics/PlatformLayer.h
     platform/graphics/PlatformLayerIdentifier.h
     platform/graphics/PlatformMediaResourceLoader.h

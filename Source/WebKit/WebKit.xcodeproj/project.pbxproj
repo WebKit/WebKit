@@ -5820,7 +5820,6 @@
 		727A7F352407857F004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableMappedIOSurfaceBackend.h; sourceTree = "<group>"; };
 		727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableBitmapBackend.h; sourceTree = "<group>"; };
 		727A7F37240788F0004D2931 /* ImageBufferShareableBitmapBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableBitmapBackend.cpp; sourceTree = "<group>"; };
-		727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformImageBufferShareableBackend.h; sourceTree = "<group>"; };
 		727A7F39240788F1004D2931 /* ImageBufferBackendHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferBackendHandle.h; sourceTree = "<group>"; };
 		727A7F492408AEE6004D2931 /* RemoteImageBufferProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBufferProxy.h; sourceTree = "<group>"; };
 		728E86EF1795188C0087879E /* WebColorPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerMac.h; sourceTree = "<group>"; };
@@ -11289,7 +11288,6 @@
 				0FA7467E27BB611800B5FF5A /* ImageBufferBackendHandleSharing.h */,
 				727A7F37240788F0004D2931 /* ImageBufferShareableBitmapBackend.cpp */,
 				727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */,
-				727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */,
 				0FC5FB6529C4ECEE001EDFE5 /* PrepareBackingStoreBuffersData.cpp */,
 				0F65956C27E10C2C00EE874B /* PrepareBackingStoreBuffersData.h */,
 				86D1967629A4E7B50083B077 /* PrepareBackingStoreBuffersData.serialization.in */,

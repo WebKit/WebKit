@@ -25,27 +25,31 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#include "ImageBuffer.h"
+#include "ImageBufferIOSurfaceBackend.h"
 
-#include "ImageBufferShareableBitmapBackend.h"
+namespace WebCore {
 
-#if HAVE(IOSURFACE)
-#include "ImageBufferRemoteIOSurfaceBackend.h"
-#include "ImageBufferShareableMappedIOSurfaceBackend.h"
-#endif
+class IOSurfaceImageBuffer final : public ImageBuffer {
+public:
+    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext = { })
+    {
+        return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+    }
 
-namespace WebKit {
+    static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
+    {
+        return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, context, purpose);
+    }
 
-using UnacceleratedImageBufferShareableBackend = ImageBufferShareableBitmapBackend;
+    IOSurface& surface() { return *static_cast<ImageBufferIOSurfaceBackend&>(*m_backend).surface(); }
 
-#if HAVE(IOSURFACE)
-using AcceleratedImageBufferRemoteBackend = ImageBufferRemoteIOSurfaceBackend;
-using AcceleratedImageBufferShareableMappedBackend = ImageBufferShareableMappedIOSurfaceBackend;
-#else
-using AcceleratedImageBufferRemoteBackend = UnacceleratedImageBufferShareableBackend;
-using AcceleratedImageBufferShareableMappedBackend = UnacceleratedImageBufferShareableBackend;
-#endif
+protected:
+    using ImageBuffer::ImageBuffer;
+};
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // ENABLE(GPU_PROCESS)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::IOSurfaceImageBuffer)
+    static bool isType(const WebCore::ImageBuffer& buffer) { return buffer.renderingMode() == WebCore::RenderingMode::Accelerated; }
+SPECIALIZE_TYPE_TRAITS_END()

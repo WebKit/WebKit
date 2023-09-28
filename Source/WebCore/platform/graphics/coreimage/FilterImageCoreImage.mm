@@ -28,7 +28,7 @@
 
 #if USE(CORE_IMAGE)
 
-#import "PlatformImageBuffer.h"
+#import "IOSurfaceImageBuffer.h"
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CoreImage.h>
 #import <wtf/NeverDestroyed.h>

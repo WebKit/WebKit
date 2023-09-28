@@ -35,8 +35,8 @@
 #include "FilterStyleTargetSwitcher.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
+#include "ImageBufferPlatformBackend.h"
 #include "MIMETypeRegistry.h"
-#include "PlatformImageBuffer.h"
 #include "ProcessCapabilities.h"
 #include <wtf/text/Base64.h>
 
@@ -45,6 +45,10 @@
 #endif
 #if USE(CAIRO)
 #include "ImageBufferUtilitiesCairo.h"
+#endif
+
+#if HAVE(IOSURFACE)
+#include "IOSurfaceImageBuffer.h"
 #endif
 
 namespace WebCore {
@@ -71,7 +75,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
     }
 #endif
 
-    return create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
+    return create<ImageBufferPlatformBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
 }
 
 template<typename BackendType, typename ImageBufferType, typename... Arguments>

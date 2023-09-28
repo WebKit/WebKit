@@ -28,9 +28,9 @@
 
 #import "ArgumentCoders.h"
 #import "DynamicContentScalingImageBufferBackend.h"
+#import "ImageBufferBackendHandleSharing.h"
 #import "Logging.h"
 #import "PlatformCALayerRemote.h"
-#import "PlatformImageBufferShareableBackend.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeLayers.h"

@@ -25,56 +25,20 @@
 
 #pragma once
 
-#include "ImageBuffer.h"
-
 #if USE(CG)
 #include "ImageBufferCGBitmapBackend.h"
 #elif USE(CAIRO)
 #include "ImageBufferCairoImageSurfaceBackend.h"
 #endif
 
-#if HAVE(IOSURFACE)
-#include "ImageBufferIOSurfaceBackend.h"
-#endif
-
 namespace WebCore {
 
 #if USE(CG)
-using UnacceleratedImageBufferBackend = ImageBufferCGBitmapBackend;
+using ImageBufferPlatformBackend = ImageBufferCGBackend;
+using ImageBufferPlatformBitmapBackend = ImageBufferCGBitmapBackend;
 #elif USE(CAIRO)
-using UnacceleratedImageBufferBackend = ImageBufferCairoImageSurfaceBackend;
-#endif
-
-#if HAVE(IOSURFACE)
-using AcceleratedImageBufferBackend = ImageBufferIOSurfaceBackend;
-#else
-using AcceleratedImageBufferBackend = UnacceleratedImageBufferBackend;
-#endif
-
-#if HAVE(IOSURFACE)
-class IOSurfaceImageBuffer final : public ImageBuffer {
-public:
-    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext = { })
-    {
-        return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-    }
-
-    static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
-    {
-        return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, context, purpose);
-    }
-
-    IOSurface& surface() { return *static_cast<ImageBufferIOSurfaceBackend&>(*m_backend).surface(); }
-
-protected:
-    using ImageBuffer::ImageBuffer;
-};
+using ImageBufferPlatformBackend = ImageBufferCairoBackend;
+using ImageBufferPlatformBitmapBackend = ImageBufferCairoImageSurfaceBackend;
 #endif
 
 } // namespace WebCore
-
-#if HAVE(IOSURFACE)
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::IOSurfaceImageBuffer)
-    static bool isType(const WebCore::ImageBuffer& buffer) { return buffer.renderingMode() == WebCore::RenderingMode::Accelerated; }
-SPECIALIZE_TYPE_TRAITS_END()
-#endif

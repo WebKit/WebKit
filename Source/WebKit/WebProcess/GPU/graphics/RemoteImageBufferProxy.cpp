@@ -30,8 +30,8 @@
 
 #include "GPUConnectionToWebProcessMessages.h"
 #include "IPCEvent.h"
+#include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
-#include "PlatformImageBufferShareableBackend.h"
 #include "RemoteImageBufferMessages.h"
 #include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
@@ -40,6 +40,11 @@
 #include <WebCore/Document.h>
 #include <WebCore/WorkerGlobalScope.h>
 #include <wtf/SystemTracing.h>
+
+#if HAVE(IOSURFACE)
+#include "ImageBufferRemoteIOSurfaceBackend.h"
+#include "ImageBufferShareableMappedIOSurfaceBackend.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -206,12 +211,14 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
     // FIXME: this will be removed and backend be constructed in the contructor.
     std::unique_ptr<ImageBufferBackend> backend;
     if (renderingMode() == RenderingMode::Accelerated) {
+#if HAVE(IOSURFACE)
         if (canMapBackingStore())
-            backend = AcceleratedImageBufferShareableMappedBackend::create(parameters(), WTFMove(*handle));
+            backend = ImageBufferShareableMappedIOSurfaceBackend::create(parameters(), WTFMove(*handle));
         else
-            backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(*handle));
+            backend = ImageBufferRemoteIOSurfaceBackend::create(parameters(), WTFMove(*handle));
+#endif
     } else
-        backend = UnacceleratedImageBufferShareableBackend::create(parameters(), WTFMove(*handle));
+        backend = ImageBufferShareableBitmapBackend::create(parameters(), WTFMove(*handle));
 
     setBackend(WTFMove(backend));
 }

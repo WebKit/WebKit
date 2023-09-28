@@ -30,9 +30,9 @@
 
 #include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
+#include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
-#include "PlatformImageBufferShareableBackend.h"
 #include "RemoteBarcodeDetector.h"
 #include "RemoteBarcodeDetectorMessages.h"
 #include "RemoteDisplayListRecorder.h"
@@ -60,6 +60,9 @@
 #include <wtf/SystemTracing.h>
 
 #if HAVE(IOSURFACE)
+#include "ImageBufferRemoteIOSurfaceBackend.h"
+#include "ImageBufferShareableMappedIOSurfaceBackend.h"
+#include "ImageBufferShareableMappedIOSurfaceBitmapBackend.h"
 #include <WebCore/IOSurfacePool.h>
 #endif
 
@@ -67,10 +70,6 @@
 #import <WebCore/BarcodeDetectorImplementation.h>
 #import <WebCore/FaceDetectorImplementation.h>
 #import <WebCore/TextDetectorImplementation.h>
-#endif
-
-#if PLATFORM(COCOA)
-#include "ImageBufferShareableMappedIOSurfaceBitmapBackend.h"
 #endif
 
 #define MESSAGE_CHECK(assertion, message) do { \
@@ -225,20 +224,20 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     assertIsCurrent(workQueue());
     RefPtr<ImageBuffer> imageBuffer;
     ImageBufferCreationContext creationContext;
-#if HAVE(IOSURFACE)
-    creationContext.surfacePool = &ioSurfacePool();
-#endif
     creationContext.resourceOwner = m_resourceOwner;
 
+#if HAVE(IOSURFACE)
+    creationContext.surfacePool = &ioSurfacePool();
     if (renderingMode == RenderingMode::Accelerated) {
-#if PLATFORM(COCOA)
         if (isSmallLayerBacking({ logicalSize, resolutionScale, colorSpace, pixelFormat, purpose }))
             imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBitmapBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
-#endif
         if (!imageBuffer)
-            imageBuffer = ImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
+            imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
     } else
-        imageBuffer = ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
+        imageBuffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
+#else
+    imageBuffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
+#endif
 
     if (imageBuffer)
         didCreateImageBuffer(imageBuffer.releaseNonNull());
