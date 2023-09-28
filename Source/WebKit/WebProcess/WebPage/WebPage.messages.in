@@ -737,4 +737,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     UpdateFrameSize(WebCore::FrameIdentifier frame, WebCore::IntSize newSize)
 
     DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
+
+    FrameWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID)
 }

@@ -271,7 +271,7 @@ void WebChromeClient::focusedElementChanged(Element* element)
     page->injectedBundleFormClient().didFocusTextField(page.ptr(), *inputElement, webFrame.get());
 }
 
-void WebChromeClient::focusedFrameChanged(LocalFrame* frame)
+void WebChromeClient::focusedFrameChanged(Frame* frame)
 {
     auto webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
 

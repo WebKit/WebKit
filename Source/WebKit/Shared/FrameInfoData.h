@@ -43,6 +43,7 @@ struct FrameInfoData {
     WebCore::FrameIdentifier frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
     ProcessID processID;
+    bool isFocused { false };
 };
 
 }

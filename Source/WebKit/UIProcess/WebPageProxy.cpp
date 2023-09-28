@@ -8869,7 +8869,7 @@ void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp
     }
 }
 
-void WebPageProxy::focusedFrameChanged(const std::optional<FrameIdentifier>& frameID)
+void WebPageProxy::focusedFrameChanged(IPC::Connection& connection, const std::optional<FrameIdentifier>& frameID)
 {
     if (!frameID) {
         m_focusedFrame = nullptr;
@@ -8880,6 +8880,7 @@ void WebPageProxy::focusedFrameChanged(const std::optional<FrameIdentifier>& fra
     MESSAGE_CHECK(m_process, frame);
 
     m_focusedFrame = frame;
+    broadcastFocusedFrameToOtherProcesses(connection, *frameID);
 }
 
 void WebPageProxy::processDidBecomeUnresponsive()
@@ -12973,6 +12974,19 @@ void WebPageProxy::dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier
     }
 
     remotePageProxy->send(Messages::WebPage::DispatchLoadEventToFrameOwnerElement(frameID));
+}
+
+void WebPageProxy::broadcastFocusedFrameToOtherProcesses(IPC::Connection& connection, const WebCore::FrameIdentifier& frameID)
+{
+    auto* frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess) {
+        if (!webProcess.hasConnection() || webProcess.connection() == &connection)
+            return;
+        webProcess.send(Messages::WebPage::FrameWasFocusedInAnotherProcess(frameID), webPageID());
+    });
 }
 
 } // namespace WebKit

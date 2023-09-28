@@ -2121,6 +2121,8 @@ private:
 
     void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
 
+    void frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier);
+
     WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;

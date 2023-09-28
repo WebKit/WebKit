@@ -232,6 +232,8 @@ public:
     bool handleContextMenuEvent(const WebCore::PlatformMouseEvent&);
     WebCore::HandleMouseEventResult handleMouseEvent(const WebMouseEvent&);
     bool handleKeyEvent(const WebKeyboardEvent&);
+
+    bool isFocused() const;
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 

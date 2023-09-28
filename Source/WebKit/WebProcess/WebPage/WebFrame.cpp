@@ -243,7 +243,8 @@ FrameInfoData WebFrame::info() const
         m_coreFrame ? m_coreFrame->tree().specifiedName().string() : String(),
         frameID(),
         parent ? std::optional<WebCore::FrameIdentifier> { parent->frameID() } : std::nullopt,
-        getCurrentProcessID()
+        getCurrentProcessID(),
+        isFocused()
     };
 
     return info;
@@ -1303,6 +1304,18 @@ bool WebFrame::handleKeyEvent(const WebKeyboardEvent& keyboardEvent)
     if (keyboardEvent.type() == WebEventType::Char && keyboardEvent.isSystemKey())
         return frame->eventHandler().handleAccessKey(platform(keyboardEvent));
     return frame->eventHandler().keyEvent(platform(keyboardEvent));
+}
+
+bool WebFrame::isFocused() const
+{
+    if (!m_coreFrame)
+        return false;
+
+    auto* page = m_coreFrame->page();
+    if (!page)
+        return false;
+
+    return m_coreFrame->page()->focusController().focusedFrame() == coreFrame();
 }
 
 } // namespace WebKit

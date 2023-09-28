@@ -1304,4 +1304,59 @@ TEST(SiteIsolation, OpenerProcessSharing)
     Util::run(&done);
 }
 
+TEST(SiteIsolation, SetFocusedFrame)
+{
+    auto mainframeHTML = "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr<WKFrameInfo> mainFrameInfo;
+    RetainPtr<WKFrameInfo> childFrameInfo;
+    auto getUpdatedFrameInfo = [&] {
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            mainFrameInfo = mainFrame.info;
+            childFrameInfo = mainFrame.childFrames.firstObject.info;
+            done = true;
+        }];
+        Util::run(&done);
+    };
+
+    getUpdatedFrameInfo();
+    EXPECT_FALSE(mainFrameInfo.get()._isFocused);
+    EXPECT_FALSE(childFrameInfo.get()._isFocused);
+
+    done = false;
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:^(id value, NSError *error) {
+        done = true;
+    }];
+    Util::run(&done);
+
+    do {
+        getUpdatedFrameInfo();
+    } while (mainFrameInfo.get()._isFocused || !childFrameInfo.get()._isFocused);
+
+    done = false;
+    [webView evaluateJavaScript:@"window.focus()" completionHandler:^(id value, NSError *error) {
+        done = true;
+    }];
+    Util::run(&done);
+
+    do {
+        getUpdatedFrameInfo();
+    } while (!mainFrameInfo.get()._isFocused || childFrameInfo.get()._isFocused);
+}
+
 }

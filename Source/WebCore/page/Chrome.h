@@ -64,6 +64,7 @@ class DateTimeChooserClient;
 class FileChooser;
 class FileIconLoader;
 class FloatRect;
+class Frame;
 class Element;
 class Geolocation;
 class HitTestResult;
@@ -145,7 +146,7 @@ public:
     void takeFocus(FocusDirection);
 
     void focusedElementChanged(Element*);
-    void focusedFrameChanged(LocalFrame*);
+    void focusedFrameChanged(Frame*);
 
     WEBCORE_EXPORT Page* createWindow(LocalFrame&, const WindowFeatures&, const NavigationAction&);
     WEBCORE_EXPORT void show();

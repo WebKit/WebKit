@@ -39,6 +39,7 @@ class ContainerNode;
 class Document;
 class Element;
 class FocusNavigationScope;
+class Frame;
 class IntRect;
 class KeyboardEvent;
 class LocalFrame;
@@ -53,8 +54,10 @@ class FocusController : public CanMakeCheckedPtr {
 public:
     explicit FocusController(Page&, OptionSet<ActivityState>);
 
-    WEBCORE_EXPORT void setFocusedFrame(LocalFrame*);
-    LocalFrame* focusedFrame() const { return m_focusedFrame.get(); }
+    WEBCORE_EXPORT void setFocusedFrame(Frame*);
+    void updateFocusedFrame(Frame* frame) { m_focusedFrame = frame; }
+    Frame* focusedFrame() const { return m_focusedFrame.get(); }
+    LocalFrame* focusedLocalFrame() const { return dynamicDowncast<LocalFrame>(m_focusedFrame.get()); }
     WEBCORE_EXPORT LocalFrame& focusedOrMainFrame() const;
 
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
@@ -119,7 +122,7 @@ private:
     void focusRepaintTimerFired();
 
     Page& m_page;
-    RefPtr<LocalFrame> m_focusedFrame;
+    RefPtr<Frame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
     OptionSet<ActivityState> m_activityState;
 

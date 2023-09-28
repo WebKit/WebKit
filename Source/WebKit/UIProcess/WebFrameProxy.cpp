@@ -510,6 +510,15 @@ void WebFrameProxy::removeRemotePagesForSuspension()
         child->removeRemotePagesForSuspension();
 }
 
+bool WebFrameProxy::isFocused() const
+{
+    auto* webPage = page();
+    if (!webPage)
+        return false;
+
+    return webPage->focusedFrame() == this;
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

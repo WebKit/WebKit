@@ -187,7 +187,7 @@ void Chrome::focusedElementChanged(Element* element)
     m_client->focusedElementChanged(element);
 }
 
-void Chrome::focusedFrameChanged(LocalFrame* frame)
+void Chrome::focusedFrameChanged(Frame* frame)
 {
     m_client->focusedFrameChanged(frame);
 }

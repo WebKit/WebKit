@@ -67,7 +67,7 @@ private:
     void takeFocus(WebCore::FocusDirection) final;
 
     void focusedElementChanged(WebCore::Element*) final;
-    void focusedFrameChanged(WebCore::LocalFrame*) final;
+    void focusedFrameChanged(WebCore::Frame*) final;
 
     // The Frame pointer provides the ChromeClient with context about which
     // Frame wants to create the new Page.  Also, the newly created window

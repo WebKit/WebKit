@@ -166,6 +166,8 @@ public:
     RefPtr<RemotePageProxy> remotePageProxy();
     void removeRemotePagesForSuspension();
 
+    bool isFocused() const;
+
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);
 

@@ -62,7 +62,7 @@ private:
     void takeFocus(WebCore::FocusDirection) override;
 
     void focusedElementChanged(WebCore::Element*) override;
-    void focusedFrameChanged(WebCore::LocalFrame*) final;
+    void focusedFrameChanged(WebCore::Frame*) final;
 
     WebCore::Page* createWindow(WebCore::LocalFrame&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;

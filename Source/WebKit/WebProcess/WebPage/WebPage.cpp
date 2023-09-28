@@ -8937,6 +8937,14 @@ void WebPage::dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier fram
         coreRemoteFrame->ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
+void WebPage::frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+    m_page->focusController().updateFocusedFrame(frame->coreFrame());
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG
