@@ -499,6 +499,7 @@ void run(const TestConfig* config)
     RUN(testCheckAddImmSomeRegister());
     RUN(testCheckAdd());
     RUN(testCheckAdd64());
+    RUN(testCheckAdd64Range());
     RUN(testCheckAddFold(100, 200));
     RUN(testCheckAddFoldFail(2147483647, 100));
     RUN(testCheckAddArgumentAliasing64());
