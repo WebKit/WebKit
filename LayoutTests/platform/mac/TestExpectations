@@ -2733,8 +2733,6 @@ webkit.org/b/259712 [ Monterey+ ] media/media-source/media-source-paint-after-di
 # rdar://110876540 ASSERTION FAILED: firstChild(): [ macOS ] (258183)
 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
 
-webkit.org/b/259539 [ Debug ] storage/indexeddb/cursor-update.html [ Pass Failure Crash ]
-
 webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/259373 Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels
