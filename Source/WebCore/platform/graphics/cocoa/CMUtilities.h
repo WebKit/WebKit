@@ -27,21 +27,48 @@
 
 #if PLATFORM(COCOA)
 
+#include <memory>
 #include <wtf/Expected.h>
 #include <wtf/RetainPtr.h>
 
+typedef struct AudioFormatVorbisModeInfo AudioFormatVorbisModeInfo;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 
 namespace WebCore {
 
 class MediaSamplesBlock;
+class SharedBuffer;
+struct AudioInfo;
 struct TrackInfo;
 
 WEBCORE_EXPORT RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const TrackInfo&);
 // Convert MediaSamplesBlock to the equivalent CMSampleBufferRef. If CMFormatDescriptionRef
 // is set it will be used, otherwise it will be created from the MediaSamplesBlock's TrackInfo.
 WEBCORE_EXPORT Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(MediaSamplesBlock&&, CMFormatDescriptionRef = nullptr);
+
+class PacketDurationParser final {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit PacketDurationParser(const AudioInfo&);
+    ~PacketDurationParser();
+
+    bool isValid() const { return m_isValid; }
+    size_t framesInPacket(SharedBuffer&);
+    void reset();
+
+private:
+    uint32_t m_audioFormatID { 0 };
+    uint32_t m_constantFramesPerPacket { 0 };
+    std::optional<Seconds> m_frameDuration;
+    uint32_t m_sampleRate { 0 };
+#if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
+    std::unique_ptr<AudioFormatVorbisModeInfo> m_vorbisModeInfo;
+#endif
+    uint32_t m_vorbisModeMask { 0 };
+    uint32_t m_lastVorbisBlockSize { 0 };
+    bool m_isValid { false };
+};
 
 }
 
