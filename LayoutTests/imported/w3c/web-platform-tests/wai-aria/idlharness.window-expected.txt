@@ -16,7 +16,7 @@ PASS Element interface: attribute ariaColIndex
 FAIL Element interface: attribute ariaColIndexText assert_true: The prototype object must have a property "ariaColIndexText" expected true got false
 PASS Element interface: attribute ariaColSpan
 PASS Element interface: attribute ariaCurrent
-FAIL Element interface: attribute ariaDescription assert_true: The prototype object must have a property "ariaDescription" expected true got false
+PASS Element interface: attribute ariaDescription
 PASS Element interface: attribute ariaDisabled
 PASS Element interface: attribute ariaExpanded
 PASS Element interface: attribute ariaHasPopup
@@ -57,7 +57,7 @@ FAIL Element interface: element must inherit property "ariaColIndex" with the pr
 FAIL Element interface: element must inherit property "ariaColIndexText" with the proper type assert_inherits: property "ariaColIndexText" not found in prototype chain
 FAIL Element interface: element must inherit property "ariaColSpan" with the proper type assert_equals: expected "string" but got "object"
 FAIL Element interface: element must inherit property "ariaCurrent" with the proper type assert_equals: expected "string" but got "object"
-FAIL Element interface: element must inherit property "ariaDescription" with the proper type assert_inherits: property "ariaDescription" not found in prototype chain
+FAIL Element interface: element must inherit property "ariaDescription" with the proper type assert_equals: expected "string" but got "object"
 FAIL Element interface: element must inherit property "ariaDisabled" with the proper type assert_equals: expected "string" but got "object"
 FAIL Element interface: element must inherit property "ariaExpanded" with the proper type assert_equals: expected "string" but got "object"
 FAIL Element interface: element must inherit property "ariaHasPopup" with the proper type assert_equals: expected "string" but got "object"
