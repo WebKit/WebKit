@@ -27,6 +27,7 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "PDFDocumentLayout.h"
 #include "PDFPluginBase.h"
 
 namespace WebKit {
@@ -80,7 +81,7 @@ private:
     id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
-    RetainPtr<CGPDFDocumentRef> m_pdfDocument;
+    PDFDocumentLayout m_documentLayout;
 };
 
 } // namespace WebKit

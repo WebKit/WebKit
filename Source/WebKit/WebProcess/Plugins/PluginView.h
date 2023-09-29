@@ -101,6 +101,8 @@ public:
     
     bool isUsingUISideCompositing() const;
 
+    void invalidateRect(const WebCore::IntRect&) final;
+
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();
@@ -132,7 +134,6 @@ private:
     // WebCore::Widget
     void setFrameRect(const WebCore::IntRect&) final;
     void paint(WebCore::GraphicsContext&, const WebCore::IntRect&, WebCore::Widget::SecurityOriginPaintPolicy, WebCore::RegionContext*) final;
-    void invalidateRect(const WebCore::IntRect&) final;
     void frameRectsChanged() final;
     void setParent(WebCore::ScrollView*) final;
     void handleEvent(WebCore::Event&) final;

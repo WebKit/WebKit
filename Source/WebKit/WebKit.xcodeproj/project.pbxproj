@@ -3007,6 +3007,8 @@
 		0F3157A928F4EDD800D79D05 /* RemoteLayerTreeDrawingAreaProxyIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingAreaProxyIOS.mm; sourceTree = "<group>"; };
 		0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorHighlightView.mm; sourceTree = "<group>"; };
 		0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorHighlightView.h; sourceTree = "<group>"; };
+		0F3D56722AC651390086D64E /* PDFDocumentLayout.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFDocumentLayout.mm; sourceTree = "<group>"; };
+		0F3D56732AC651390086D64E /* PDFDocumentLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFDocumentLayout.h; sourceTree = "<group>"; };
 		0F4000FD2527D69D00E91DA7 /* WebWheelEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebWheelEvent.h; sourceTree = "<group>"; };
 		0F4000FE2527D6C300E91DA7 /* WebMouseEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMouseEvent.h; sourceTree = "<group>"; };
 		0F4000FF2527D6F700E91DA7 /* WebKeyboardEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKeyboardEvent.h; sourceTree = "<group>"; };
@@ -7985,6 +7987,8 @@
 		0FFACF022AC2453300ED8DB6 /* UnifiedPDF */ = {
 			isa = PBXGroup;
 			children = (
+				0F3D56732AC651390086D64E /* PDFDocumentLayout.h */,
+				0F3D56722AC651390086D64E /* PDFDocumentLayout.mm */,
 				0FFACF042AC2453300ED8DB6 /* UnifiedPDFPlugin.h */,
 				0FFACF032AC2453300ED8DB6 /* UnifiedPDFPlugin.mm */,
 			);

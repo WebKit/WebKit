@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "WebPage.h"
 #include <WebCore/EditorClient.h>
 #include <WebCore/TextCheckerClient.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 enum class DOMPasteAccessCategory : uint8_t;

@@ -144,6 +144,8 @@ protected:
     void ensureDataBufferLength(uint64_t);
     void addArchiveResource();
 
+    void invalidateRect(const WebCore::IntRect&);
+
     WeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
 
