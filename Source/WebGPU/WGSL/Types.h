@@ -49,6 +49,7 @@ namespace Types {
     f(Void, "void") \
     f(Bool, "bool") \
     f(Sampler, "sampler") \
+    f(SamplerComparison, "sampler_comparion") \
     f(TextureExternal, "texture_external") \
     f(AccessMode, "access_mode") \
     f(TexelFormat, "texel_format") \

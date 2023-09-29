@@ -161,6 +161,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceType(AST::Identifier::make("u32"_s), m_types.u32Type());
     introduceType(AST::Identifier::make("f32"_s), m_types.f32Type());
     introduceType(AST::Identifier::make("sampler"_s), m_types.samplerType());
+    introduceType(AST::Identifier::make("sampler_comparison"_s), m_types.samplerComparisonType());
     introduceType(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
 
     introduceType(AST::Identifier::make("texture_depth_2d"_s), m_types.textureDepth2dType());

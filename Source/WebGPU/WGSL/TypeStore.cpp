@@ -113,6 +113,7 @@ TypeStore::TypeStore()
     m_u32 = allocateType<Primitive>(Primitive::U32);
     m_f32 = allocateType<Primitive>(Primitive::F32);
     m_sampler = allocateType<Primitive>(Primitive::Sampler);
+    m_samplerComparison = allocateType<Primitive>(Primitive::SamplerComparison);
     m_textureExternal = allocateType<Primitive>(Primitive::TextureExternal);
     m_accessMode = allocateType<Primitive>(Primitive::AccessMode);
     m_texelFormat = allocateType<Primitive>(Primitive::TexelFormat);

@@ -64,6 +64,7 @@ static ConstantValue zeroValue(const Type* type)
                 return { static_cast<double>(false) };
             case Types::Primitive::Void:
             case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
             case Types::Primitive::TextureExternal:
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:

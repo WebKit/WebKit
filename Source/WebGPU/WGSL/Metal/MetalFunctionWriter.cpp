@@ -397,6 +397,7 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
     case Types::Primitive::Bool:
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
+    case Types::Primitive::SamplerComparison:
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:
@@ -584,6 +585,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::Void:
             case Types::Primitive::Bool:
             case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
                 m_stringBuilder.append(*type);
                 break;
             case Types::Primitive::TextureExternal:

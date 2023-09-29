@@ -672,8 +672,29 @@ operator :textureGather, {
     [U < ConcreteInteger].(texture_depth_cube_array, sampler, vec3[f32], U) => vec4[f32],
 }
 
-# 16.7.3 textureGatherCompare
-# FIXME: Implement sampler_comparison
+# 16.7.3
+operator :textureGatherCompare, {
+    # @must_use fn textureGatherCompare(t: texture_depth_2d, s: sampler_comparison, coords: vec2<f32>, depth_ref: f32) -> vec4<f32>
+    [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => vec4[f32],
+
+    # @must_use fn textureGatherCompare(t: texture_depth_2d, s: sampler_comparison, coords: vec2<f32>, depth_ref: f32, offset: vec2<i32>) -> vec4<f32>
+    [].(texture_depth_2d, sampler_comparison, vec2[f32], f32, vec2[i32]) => vec4[f32],
+
+    # A is i32, or u32
+    # @must_use fn textureGatherCompare(t: texture_depth_2d_array, s: sampler_comparison, coords: vec2<f32>, array_index: A, depth_ref: f32) -> vec4<f32>
+    [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32) => vec4[f32],
+
+    # A is i32, or u32
+    # @must_use fn textureGatherCompare(t: texture_depth_2d_array, s: sampler_comparison, coords: vec2<f32>, array_index: A, depth_ref: f32, offset: vec2<i32>) -> vec4<f32>
+    [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32, vec2[i32]) => vec4[f32],
+
+    # @must_use fn textureGatherCompare(t: texture_depth_cube, s: sampler_comparison, coords: vec3<f32>, depth_ref: f32) -> vec4<f32>
+    [].(texture_depth_cube, sampler_comparison, vec3[f32], f32) => vec4[f32],
+
+    # A is i32, or u32
+    # @must_use fn textureGatherCompare(t: texture_depth_cube_array, s: sampler_comparison, coords: vec3<f32>, array_index: A, depth_ref: f32) -> vec4<f32>
+    [T < ConcreteInteger].(texture_depth_cube_array, sampler_comparison, vec3[f32], T, f32) => vec4[f32],
+}
 
 # 16.7.4
 operator :textureLoad, {
@@ -802,11 +823,53 @@ operator :textureSampleBias, {
     [T < ConcreteInteger].(texture_cube_array[f32], sampler, vec3[f32], T, f32) => vec4[f32],
 }
 
-# 16.7.10 textureSampleCompare
-# FIXME: Implement sampler_comparison
+# 16.7.10
+operator :textureSampleCompare, {
+    # @must_use fn textureSampleCompare(t: texture_depth_2d, s: sampler_comparison, coords: vec2<f32>, depth_ref: f32) -> f32
+    [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,
 
-# 16.7.11 textureSampleCompareLevel
-# FIXME: Implement sampler_comparison
+    # @must_use fn textureSampleCompare(t: texture_depth_2d, s: sampler_comparison, coords: vec2<f32>, depth_ref: f32, offset: vec2<i32>) -> f32
+    [].(texture_depth_2d, sampler_comparison, vec2[f32], f32, vec2[i32]) => f32,
+
+    # A is i32, or u32
+    # @must_use fn textureSampleCompare(t: texture_depth_2d_array, s: sampler_comparison, coords: vec2<f32>, array_index: A, depth_ref: f32) -> f32
+    [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32) => f32,
+
+    # A is i32, or u32
+    # @must_use fn textureSampleCompare(t: texture_depth_2d_array, s: sampler_comparison, coords: vec2<f32>, array_index: A, depth_ref: f32, offset: vec2<i32>) -> f32
+    [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32, vec2[i32]) => f32,
+
+    # @must_use fn textureSampleCompare(t: texture_depth_cube, s: sampler_comparison, coords: vec3<f32>, depth_ref: f32) -> f32
+    [].(texture_depth_cube, sampler_comparison, vec3[f32], f32) => f32,
+
+    # A is i32, or u32
+    # @must_use fn textureSampleCompare(t: texture_depth_cube_array, s: sampler_comparison, coords: vec3<f32>, array_index: A, depth_ref: f32) -> f32
+    [T < ConcreteInteger].(texture_depth_cube_array, sampler_comparison, vec3[f32], T, f32) => f32,
+}
+
+# 16.7.11
+operator :textureSampleCompareLevel, {
+    # @must_use fn textureSampleCompareLevel(t: texture_depth_2d, s: sampler_comparison, coords: vec2<f32>, depth_ref: f32) -> f32
+    [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,
+
+    # @must_use fn textureSampleCompareLevel(t: texture_depth_2d, s: sampler_comparison, coords: vec2<f32>, depth_ref: f32, offset: vec2<i32>) -> f32
+    [].(texture_depth_2d, sampler_comparison, vec2[f32], f32, vec2[i32]) => f32,
+
+    # A is i32, or u32
+    # @must_use fn textureSampleCompareLevel(t: texture_depth_2d_array, s: sampler_comparison, coords: vec2<f32>, array_index: A, depth_ref: f32) -> f32
+    [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32) => f32,
+
+    # A is i32, or u32
+    # @must_use fn textureSampleCompareLevel(t: texture_depth_2d_array, s: sampler_comparison, coords: vec2<f32>, array_index: A, depth_ref: f32, offset: vec2<i32>) -> f32
+    [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32, vec2[i32]) => f32,
+
+    # @must_use fn textureSampleCompareLevel(t: texture_depth_cube, s: sampler_comparison, coords: vec3<f32>, depth_ref: f32) -> f32
+    [].(texture_depth_cube, sampler_comparison, vec3[f32], f32) => f32,
+
+    # A is i32, or u32
+    # @must_use fn textureSampleCompareLevel(t: texture_depth_cube_array, s: sampler_comparison, coords: vec3<f32>, array_index: A, depth_ref: f32) -> f32
+    [T < ConcreteInteger].(texture_depth_cube_array, sampler_comparison, vec3[f32], T, f32) => f32,
+}
 
 # 16.7.12
 operator :textureSampleGrad, {

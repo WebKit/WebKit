@@ -619,6 +619,10 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             return SamplerBindingLayout {
                 .type = SamplerBindingType::Filtering
             };
+        case Types::Primitive::SamplerComparison:
+            return SamplerBindingLayout {
+                .type = SamplerBindingType::Comparison
+            };
         case Types::Primitive::TextureExternal:
             return ExternalTextureBindingLayout { };
         case Types::Primitive::AccessMode:
@@ -827,6 +831,7 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
     case Types::Primitive::AbstractInt:
     case Types::Primitive::AbstractFloat:
     case Types::Primitive::Sampler:
+    case Types::Primitive::SamplerComparison:
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:

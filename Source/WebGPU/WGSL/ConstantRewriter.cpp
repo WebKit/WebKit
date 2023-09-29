@@ -321,6 +321,7 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
                 break;
             case Primitive::Void:
             case Primitive::Sampler:
+            case Primitive::SamplerComparison:
             case Primitive::TextureExternal:
             case Primitive::AccessMode:
             case Primitive::TexelFormat:
