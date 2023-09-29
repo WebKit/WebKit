@@ -2241,6 +2241,7 @@
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F40C3B712AB401C5007A3567 /* WKDatePickerPopoverController.h in Headers */ = {isa = PBXBuildFile; fileRef = F40C3B6F2AB40167007A3567 /* WKDatePickerPopoverController.h */; };
+		F41795A62AC61B78007F5F12 /* CompactContextMenuPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F41795A42AC619A2007F5F12 /* CompactContextMenuPresenter.h */; };
 		F4299507270E234D0032298B /* StreamMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = F4299506270E234C0032298B /* StreamMessageReceiver.h */; };
 		F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */ = {isa = PBXBuildFile; fileRef = F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */; };
 		F430E9422247335F005FE053 /* WebsiteMetaViewportPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */; };
@@ -7403,6 +7404,8 @@
 		F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionContext.h; path = ios/WebAutocorrectionContext.h; sourceTree = "<group>"; };
 		F41056612130699A0092281D /* APIAttachmentCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = APIAttachmentCocoa.mm; sourceTree = "<group>"; };
 		F410A19329AAC81E0082D554 /* RemoteGPURequestAdapterResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGPURequestAdapterResponse.h; sourceTree = "<group>"; };
+		F41795A42AC619A2007F5F12 /* CompactContextMenuPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CompactContextMenuPresenter.h; path = ios/CompactContextMenuPresenter.h; sourceTree = "<group>"; };
+		F41795A52AC619A2007F5F12 /* CompactContextMenuPresenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = CompactContextMenuPresenter.mm; path = ios/CompactContextMenuPresenter.mm; sourceTree = "<group>"; };
 		F4299506270E234C0032298B /* StreamMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamMessageReceiver.h; sourceTree = "<group>"; };
 		F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionData.h; path = ios/WebAutocorrectionData.h; sourceTree = "<group>"; };
 		F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMetaViewportPolicy.h; sourceTree = "<group>"; };
@@ -7453,7 +7456,7 @@
 		F4B378D021DDBBAB0095A378 /* WebUndoStepID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebUndoStepID.h; sourceTree = "<group>"; };
 		F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKImageAnalysisGestureRecognizer.h; path = ios/WKImageAnalysisGestureRecognizer.h; sourceTree = "<group>"; };
 		F4BA33F125757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKImageAnalysisGestureRecognizer.mm; path = ios/WKImageAnalysisGestureRecognizer.mm; sourceTree = "<group>"; };
-		F4BCBBE62AC3295300C1858D /* WKFormAccessoryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFormAccessoryView.h;  path = ios/forms/WKFormAccessoryView.h; sourceTree = "<group>"; };
+		F4BCBBE62AC3295300C1858D /* WKFormAccessoryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFormAccessoryView.h; path = ios/forms/WKFormAccessoryView.h; sourceTree = "<group>"; };
 		F4BCBBE72AC3295300C1858D /* WKFormAccessoryView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormAccessoryView.mm; path = ios/forms/WKFormAccessoryView.mm; sourceTree = "<group>"; };
 		F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		F4C627E52A7AC17300F546BF /* WKMouseInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseInteraction.mm; path = ios/WKMouseInteraction.mm; sourceTree = "<group>"; };
@@ -9941,6 +9944,8 @@
 				074879B82373A90900F5678E /* AppKitSoftLink.mm */,
 				1AD4C1911B39F33200ABC28E /* ApplicationStateTracker.h */,
 				1AD4C1901B39F33200ABC28E /* ApplicationStateTracker.mm */,
+				F41795A42AC619A2007F5F12 /* CompactContextMenuPresenter.h */,
+				F41795A52AC619A2007F5F12 /* CompactContextMenuPresenter.mm */,
 				F496A42F1F58A272004C1757 /* DragDropInteractionState.h */,
 				F496A4301F58A272004C1757 /* DragDropInteractionState.mm */,
 				CDCDC99B248FE8DA00A69522 /* EndowmentStateTracker.h */,
@@ -14694,6 +14699,7 @@
 				1C62747D288B4C3E00CED3A2 /* CocoaHelpers.h in Headers */,
 				4482734724528F6000A95493 /* CocoaImage.h in Headers */,
 				CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */,
+				F41795A62AC61B78007F5F12 /* CompactContextMenuPresenter.h in Headers */,
 				37BEC4E119491486008B4286 /* CompletionHandlerCallChecker.h in Headers */,
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
 				BC032DAB10F437D10058C15A /* Connection.h in Headers */,

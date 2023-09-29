@@ -32,8 +32,8 @@
 #import "APIData.h"
 #import "APIOpenPanelParameters.h"
 #import "APIString.h"
+#import "CompactContextMenuPresenter.h"
 #import "PhotosUISPI.h"
-#import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
@@ -365,10 +365,10 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 
 @interface WKFileUploadPanel () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate
 #if USE(UICONTEXTMENU)
-, UIContextMenuInteractionDelegate
+    , UIContextMenuInteractionDelegate
 #endif
 #if HAVE(PHOTOS_UI)
-, PHPickerViewControllerDelegate
+    , PHPickerViewControllerDelegate
 #endif
 >
 @end
@@ -394,7 +394,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     BOOL _isRepositioningContextMenu;
-    RetainPtr<UIContextMenuInteraction> _documentContextMenuInteraction;
+    std::unique_ptr<WebKit::CompactContextMenuPresenter> _menuPresenter;
 #endif
     RetainPtr<UIDocumentPickerViewController> _documentPickerController;
     WebCore::MediaCaptureType _mediaCaptureType;
@@ -416,7 +416,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_cameraPicker setDelegate:nil];
     [_documentPickerController setDelegate:nil];
 #if USE(UICONTEXTMENU)
-    [self removeContextMenuInteraction];
+    [self resetContextMenuPresenter];
 #endif
     [super dealloc];
 }
@@ -681,13 +681,6 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     return [_view _createTargetedContextMenuHintPreviewIfPossible];
 }
 
-- (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-{
-    _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
-    style.preferredLayout = _UIContextMenuLayoutCompactMenu;
-    return style;
-}
-
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
 
     UIContextMenuActionProvider actionMenuProvider = [self, weakSelf = WeakObjCPtr<WKFileUploadPanel>(self)] (NSArray<UIMenuElement *> *) -> UIMenu * {
@@ -731,34 +724,31 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
         return;
 
     [animator addCompletion:^{
-        [self removeContextMenuInteraction];
+        [self resetContextMenuPresenter];
         if (!self->_isPresentingSubMenu)
             [self _cancel];
     }];
 }
 
-- (void)removeContextMenuInteraction
+- (void)resetContextMenuPresenter
 {
-    if (_documentContextMenuInteraction) {
-        [_view removeInteraction:_documentContextMenuInteraction.get()];
-        _documentContextMenuInteraction = nil;
-        [_view _removeContextMenuHintContainerIfPossible];
-    }
+    if (!_menuPresenter)
+        return;
+
+    _menuPresenter = nullptr;
+    [_view _removeContextMenuHintContainerIfPossible];
 }
 
-- (UIContextMenuInteraction *)ensureContextMenuInteraction
+- (WebKit::CompactContextMenuPresenter&)contextMenuPresenter
 {
-    if (!_documentContextMenuInteraction) {
-        _documentContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
-        [_view addInteraction:_documentContextMenuInteraction.get()];
-        self->_isPresentingSubMenu = NO;
-    }
-    return _documentContextMenuInteraction.get();
+    if (!_menuPresenter)
+        _menuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(_view.get().get(), self);
+    return *_menuPresenter;
 }
 
 - (void)repositionContextMenuIfNeeded
 {
-    if (!_documentContextMenuInteraction)
+    if (!_menuPresenter)
         return;
 
     auto *webView = [_view webView];
@@ -777,8 +767,8 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
     SetForScope repositioningContextMenuScope { _isRepositioningContextMenu, YES };
     [UIView performWithoutAnimation:^{
-        [_documentContextMenuInteraction dismissMenu];
-        [_view presentContextMenu:_documentContextMenuInteraction.get() atLocation:_interactionPoint];
+        _menuPresenter->dismiss();
+        _menuPresenter->present(_interactionPoint);
     }];
 }
 
@@ -806,7 +796,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     // FIXME 49961589: Support picking media with UIImagePickerController
 #if HAVE(UICONTEXTMENU_LOCATION)
     if (_allowedImagePickerTypes.containsAny({ WKFileUploadPanelImagePickerType::Image, WKFileUploadPanelImagePickerType::Video }))
-        [_view presentContextMenu:self.ensureContextMenuInteraction atLocation:_interactionPoint];
+        self.contextMenuPresenter.present(_interactionPoint);
     else // Image and Video types are not accepted so bypass the menu and open the file picker directly.
 #endif
         [self showFilePickerMenu];

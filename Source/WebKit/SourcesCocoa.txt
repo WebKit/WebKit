@@ -465,6 +465,7 @@ UIProcess/ios/fullscreen/WKFullScreenViewController.mm
 UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
 
 UIProcess/ios/AppKitSoftLink.mm
+UIProcess/ios/CompactContextMenuPresenter.mm
 UIProcess/ios/DragDropInteractionState.mm
 UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm
 UIProcess/ios/PageClientImplIOS.mm
