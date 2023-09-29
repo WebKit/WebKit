@@ -23,18 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME (116158267): This file can be removed and its implementation merged directly into
+// CDMInstanceSessionFairPlayStreamingAVFObjC once we no logner need to support a configuration
+// where the BuiltInCDMKeyGroupingStrategyEnabled preference is off.
+
 #pragma once
 
 #if HAVE(AVCONTENTKEYSESSION)
 
+#include <wtf/Assertions.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVContentKey;
 
 namespace WebCore {
 
-class ContentKeyGroupDataSource : public CanMakeWeakPtr<ContentKeyGroupDataSource> {
+class ContentKeyGroupDataSource : public CanMakeCheckedPtr {
 public:
     virtual ~ContentKeyGroupDataSource() = default;
 
@@ -42,6 +47,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     virtual const void* contentKeyGroupDataSourceLogIdentifier() const = 0;
     virtual const Logger& contentKeyGroupDataSourceLogger() const = 0;
+    virtual WTFLogChannel& contentKeyGroupDataSourceLogChannel() const = 0;
 #endif // !RELEASE_LOG_DISABLED
 };
 

@@ -165,10 +165,6 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final
     , public AVContentKeySessionDelegateClient
     , private ContentKeyGroupDataSource {
 public:
-    using AVContentKeySessionDelegateClient::weakPtrFactory;
-    using AVContentKeySessionDelegateClient::WeakValueType;
-    using AVContentKeySessionDelegateClient::WeakPtrImplType;
-
     CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC() = default;
 
@@ -232,10 +228,11 @@ private:
     void updateProtectionStatusForDisplayID(PlatformDisplayID);
 
     // ContentKeyGroupDataSource
-    virtual Vector<RetainPtr<AVContentKey>> contentKeyGroupDataSourceKeys() const;
+    Vector<RetainPtr<AVContentKey>> contentKeyGroupDataSourceKeys() const final;
 #if !RELEASE_LOG_DISABLED
-    virtual const void* contentKeyGroupDataSourceLogIdentifier() const;
-    virtual const Logger& contentKeyGroupDataSourceLogger() const;
+    const void* contentKeyGroupDataSourceLogIdentifier() const final;
+    const Logger& contentKeyGroupDataSourceLogger() const final;
+    WTFLogChannel& contentKeyGroupDataSourceLogChannel() const final;
 #endif // !RELEASE_LOG_DISABLED
 
     Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;

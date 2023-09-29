@@ -1993,4 +1993,5 @@ using WTF::copyToVector;
 using WTF::copyToVectorOf;
 using WTF::copyToVectorSpecialization;
 using WTF::compactMap;
+using WTF::flatMap;
 using WTF::removeRepeatedElements;

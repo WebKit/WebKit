@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME (116158267): This file can be removed and its implementation merged directly into
+// CDMInstanceSessionFairPlayStreamingAVFObjC once we no logner need to support a configuration
+// where the BuiltInCDMKeyGroupingStrategyEnabled preference is off.
+
 #pragma once
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
