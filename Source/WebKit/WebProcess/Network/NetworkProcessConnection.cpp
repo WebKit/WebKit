@@ -68,6 +68,7 @@
 #include <WebCore/InspectorInstrumentationWebKit.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MessagePort.h>
+#include <WebCore/Page.h>
 #include <WebCore/SharedBuffer.h>
 #include <pal/SessionID.h>
 
