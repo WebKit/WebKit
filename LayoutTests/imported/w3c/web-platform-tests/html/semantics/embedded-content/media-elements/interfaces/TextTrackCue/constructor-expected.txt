@@ -1,4 +1,149 @@
 
 PASS TextTrackCue and VTTCue are separate interfaces
-PASS TextTrackCue constructor should not be supported
+PASS TextTrackCue constructor sets start time and end time correctly
+PASS TextTrackCue constructor with equal startTime and endTime
+PASS TextTrackCue constructor with extreme values for startTime and endTime
+PASS TextTrackCue constructor with reversed extreme values for startTime and endTime
+PASS TextTrackCue constructor with non-numeric startTime and endTime
+PASS TextTrackCue constructor with NaN and Infinity for startTime and endTime
+PASS TextTrackCue constructor throws InvalidNodeTypeError if cueFragment's first child is null
+PASS TextTrackCue constructor with a DocumentFragment containing only Text nodes
+PASS TextTrackCue constructor throws for non-exclusive Text nodes
+PASS TextTrackCue can be successfully constructed with cue and cuebackground on the same element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for Comment
+PASS TextTrackCue constructor throws InvalidNodeTypeError for ProcessingInstruction
+PASS TextTrackCue with a CDATASection Node should throw InvalidNodeTypeError
+PASS TextTrackCue constructor throws InvalidNodeTypeError for non-HTML namespace elements
+PASS TextTrackCue constructor throws InvalidNodeTypeError for mixed namespace elements
+PASS TextTrackCue constructor allows individual b element
+PASS TextTrackCue constructor allows individual br element
+PASS TextTrackCue constructor allows individual div element
+PASS TextTrackCue constructor allows individual i element
+PASS TextTrackCue constructor allows individual p element
+PASS TextTrackCue constructor allows individual rb element
+PASS TextTrackCue constructor allows individual rt element
+PASS TextTrackCue constructor allows individual rtc element
+PASS TextTrackCue constructor allows individual ruby element
+PASS TextTrackCue constructor allows individual span element
+PASS TextTrackCue constructor allows multiple allowed elements nested in a div with cue and cuebackground attributes
+PASS TextTrackCue constructor allows nested allowed elements in a div with cue and cuebackground attributes
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual a element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual abbr element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual address element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual area element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual article element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual aside element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual audio element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual base element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual bdi element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual bdo element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual blockquote element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual body element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual button element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual canvas element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual caption element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual cite element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual code element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual col element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual colgroup element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual data element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual datalist element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual dd element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual del element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual details element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual dfn element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual dialog element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual dl element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual dt element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual em element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual embed element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual fieldset element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual figcaption element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual figure element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual footer element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual form element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual h1 element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual h2 element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual h3 element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual h4 element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual h5 element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual h6 element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual head element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual header element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual hgroup element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual hr element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual html element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual iframe element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual img element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual input element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual ins element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual kbd element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual label element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual legend element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual li element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual link element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual main element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual map element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual mark element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual meta element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual meter element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual nav element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual noscript element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual object element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual ol element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual optgroup element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual option element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual output element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual param element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual picture element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual pre element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual progress element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual q element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual s element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual samp element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual script element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual section element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual select element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual small element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual source element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual strong element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual style element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual sub element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual summary element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual sup element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual svg element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual table element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual tbody element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual td element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual template element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual textarea element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual tfoot element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual th element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual thead element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual time element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual title element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual tr element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual track element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual u element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual ul element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual var element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual video element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for individual wbr element
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved b and a
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved br and abbr
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved div and address
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved i and area
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved p and article
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved rb and aside
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved rt and audio
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved rtc and base
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved ruby and bdi
+PASS TextTrackCue constructor throws InvalidNodeTypeError for interleaved span and bdo
+PASS TextTrackCue constructor with deeply nested allowed elements and each disallowed element at the end
+PASS TextTrackCue constructor allows DocumentFragment from different documents
+PASS TextTrackCue constructor throws if cue attribute is present with no cuebackground attribute
+PASS TextTrackCue constructor throws if cuebackground attribute is present with no cue attribute
+PASS TextTrackCue constructor allows multiple cue attributes with a cuebackground ancestor or on the same element
+PASS Invalid hierarchy of cue and cuebackground attributes
+PASS Invalid hierarchy with cue as ancestor of cuebackground
 

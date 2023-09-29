@@ -111,6 +111,8 @@ contenteditable
 controls
 coords
 crossorigin
+cue
+cuebackground
 data
 datetime
 declare
