@@ -2166,3 +2166,47 @@ http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass F
 webkit.org/b/262344 [ Ventura+ x86_64 ] imported/blink/css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 
 webkit.org/b/262401 [ Sonoma+ ] fast/canvas/webgl/canvas-zero-size.html [ Pass Crash ]
+
+# rdar://113373567 (REGRESSION ( Sonoma ): [ Sonoma ] 18 imported/w3c/web-platform-tests/css/css-fonts/ tests are a consistent image failure)
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-13.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-16.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-17.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-18.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-19.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-22.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-3.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-4.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-5.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-6.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-7.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-8.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-9.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-add.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-modify.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-remove.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
+
+# rdar://113666519 (REGRESSION ( Sonoma ): [ Sonoma wk2 ] 6 fast/selectors/style-invalidation tests are a consistent failure)
+[ Sonoma+ ] fast/selectors/style-invalidation-focus-change-descendants.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-focus-change-siblings.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-focus-within-change-descendants.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-focus-within-change-siblings.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-hover-change-descendants.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-hover-change-siblings.html [ Failure ]
+
+# rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
+[ Sonoma+ ] fast/text/canvas-color-fonts/COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/fill-color-shadow-COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/fill-color-shadow-ctm-COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR-3.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
+
+# rdar://114328372 (REGRESSION (262629@main): [ Sonoma wk2 ] fast/box-shadow/inset-spread-box-shadow-split-inline.html is a constant failure)
+[ Sonoma+ ] fast/box-shadow/inset-spread-box-shadow-split-inline.html [ ImageOnlyFailure ]
+
+# rdar://114334958 (REGRESSION ( Sonoma ): [ Sonoma wk2 ] fast/events/dont-loose-last-event.html is a consistent failure)
+[ Sonoma+ ] fast/events/dont-loose-last-event.html [ Failure ]
+
+# rdar://114452082 (REGRESSION (262124@main?): [ Sonoma wk2 ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html is a consistent failure)
+[ Sonoma+ ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
