@@ -1,10 +1,4 @@
 ---
-test/annexB/built-ins/Function/createdynfn-html-close-comment-params.js:
-  default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-  strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
-  default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-  strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
 test/built-ins/ArrayBuffer/prototype/detached/detached-buffer-resizable.js:
@@ -172,18 +166,6 @@ test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
 test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
   default: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
-test/built-ins/Function/prototype/toString/AsyncFunction.js:
-  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-test/built-ins/Function/prototype/toString/AsyncGenerator.js:
-  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-test/built-ins/Function/prototype/toString/Function.js:
-  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-test/built-ins/Function/prototype/toString/GeneratorFunction.js:
-  default: "SyntaxError: Unexpected keyword 'yield'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected keyword 'yield'. Expected a ')' or a ',' after a parameter declaration."
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'

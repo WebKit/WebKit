@@ -45,8 +45,8 @@ testError("a=20", "'use strict';");
 testError("{a}", "'use strict';");
 testError("...args", "'use strict';");
 testError("...args", "b", "");
-testError("//", "b", "");
 
+testOK("//", "b", "");
 testOK("/*", "*/", "");
 testOK("a", "/*b", "*/", "'use strict'; let b");
 testOK("{a}", "return a;");
