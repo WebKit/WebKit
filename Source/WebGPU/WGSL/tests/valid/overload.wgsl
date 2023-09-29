@@ -2536,6 +2536,8 @@ fn testTextureSampleGrad()
 }
 
 // 16.7.13
+// RUN: %metal-compile testTexureSampleLevel
+@compute @workgroup_size(1)
 fn testTextureSampleLevel()
 {
     // FIXME: add declarations for texture depth

@@ -816,13 +816,11 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expressi
 
 static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned startOffset = 0)
 {
-    bool first = true;
     writer->stringBuilder().append("(");
     for (unsigned i = startOffset; i < call.arguments().size(); ++i) {
-        if (!first)
+        if (i != startOffset)
             writer->stringBuilder().append(", ");
         writer->visit(call.arguments()[i]);
-        first = false;
     }
     writer->stringBuilder().append(")");
 }
@@ -934,6 +932,65 @@ static void emitTextureSample(FunctionDefinitionWriter* writer, AST::CallExpress
     writer->visit(call.arguments()[0]);
     writer->stringBuilder().append(".sample");
     visitArguments(writer, call, 1);
+}
+
+static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    bool isArray = false;
+    auto& texture = call.arguments()[0];
+    if (auto* textureType = std::get_if<Types::Texture>(texture.inferredType())) {
+        switch (textureType->kind) {
+        case Types::Texture::Kind::Texture2dArray:
+        case Types::Texture::Kind::TextureCubeArray:
+            isArray = true;
+            break;
+        case Types::Texture::Kind::Texture1d:
+        case Types::Texture::Kind::Texture2d:
+        case Types::Texture::Kind::Texture3d:
+        case Types::Texture::Kind::TextureCube:
+        case Types::Texture::Kind::TextureMultisampled2d:
+            break;
+        }
+    } else if (auto* textureStorageType = std::get_if<Types::TextureStorage>(texture.inferredType())) {
+        switch (textureStorageType->kind) {
+        case Types::TextureStorage::Kind::TextureStorage2dArray:
+            isArray = true;
+            break;
+        case Types::TextureStorage::Kind::TextureStorage1d:
+        case Types::TextureStorage::Kind::TextureStorage2d:
+        case Types::TextureStorage::Kind::TextureStorage3d:
+            break;
+        }
+    } else {
+        auto& textureDepthType = std::get<Types::TextureDepth>(*texture.inferredType());
+        switch (textureDepthType.kind) {
+        case Types::TextureDepth::Kind::TextureDepth2dArray:
+        case Types::TextureDepth::Kind::TextureDepthCubeArray:
+            isArray = true;
+            break;
+        case Types::TextureDepth::Kind::TextureDepth2d:
+        case Types::TextureDepth::Kind::TextureDepthCube:
+        case Types::TextureDepth::Kind::TextureDepthMultisampled2d:
+            break;
+        }
+    }
+
+    unsigned levelIndex = isArray ? 4 : 3;
+    writer->visit(texture);
+    writer->stringBuilder().append(".sample(");
+    for (unsigned i = 1; i < levelIndex; ++i) {
+        if (i != 1)
+            writer->stringBuilder().append(",");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(", level(");
+    writer->visit(call.arguments()[levelIndex]);
+    writer->stringBuilder().append(")");
+    for (unsigned i = levelIndex + 1; i < call.arguments().size(); ++i) {
+        writer->stringBuilder().append(",");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(")");
 }
 
 static void emitTextureSampleClampToEdge(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1058,6 +1115,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureNumLevels", emitTextureNumLevels },
             { "textureSample", emitTextureSample },
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
+            { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
