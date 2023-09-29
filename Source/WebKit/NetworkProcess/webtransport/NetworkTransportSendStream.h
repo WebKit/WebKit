@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/Forward.h>
 
 namespace WebKit {

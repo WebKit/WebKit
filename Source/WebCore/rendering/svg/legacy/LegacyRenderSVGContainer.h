@@ -40,7 +40,7 @@ public:
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
 protected:
-    LegacyRenderSVGContainer(SVGElement&, RenderStyle&&);
+    LegacyRenderSVGContainer(Type, SVGElement&, RenderStyle&&);
 
     ASCIILiteral renderName() const override { return "RenderSVGContainer"_s; }
 

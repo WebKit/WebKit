@@ -96,9 +96,6 @@ media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
 media/media-source/remoteplayback-from-source-element.html [ Pass ]
 
-# Variable size packet is only supported on Sonoma and later.
-[ Monterey Ventura ] media/media-webm-opus-variable-length.html [ Failure ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -811,7 +808,7 @@ webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/snapToLines.html [
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
@@ -2735,8 +2732,6 @@ webkit.org/b/259712 [ Monterey+ ] media/media-source/media-source-paint-after-di
 
 # rdar://110876540 ASSERTION FAILED: firstChild(): [ macOS ] (258183)
 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
-
-webkit.org/b/259539 [ Debug ] storage/indexeddb/cursor-update.html [ Pass Failure Crash ]
 
 webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure ]
 

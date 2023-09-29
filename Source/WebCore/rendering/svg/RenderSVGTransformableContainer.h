@@ -33,8 +33,6 @@ class RenderSVGTransformableContainer final : public RenderSVGContainer {
 public:
     RenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
 
-    bool isSVGTransformableContainer() const final { return true; }
-
 private:
     ASCIILiteral renderName() const final { return "RenderSVGTransformableContainer"_s; }
 

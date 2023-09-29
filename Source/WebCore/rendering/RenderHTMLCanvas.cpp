@@ -50,7 +50,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderHTMLCanvas);
 
 RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, RenderStyle&& style)
-    : RenderReplaced(element, WTFMove(style), element.size())
+    : RenderReplaced(Type::HTMLCanvas, element, WTFMove(style), element.size())
 {
 }
 

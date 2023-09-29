@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
@@ -492,12 +492,6 @@ const uint8_t* SharedBuffer::data() const
     if (m_segments.isEmpty())
         return nullptr;
     return m_segments[0].segment->data();
-}
-
-const uint8_t& SharedBuffer::operator[](size_t i) const
-{
-    RELEASE_ASSERT(i < size() && !m_segments.isEmpty());
-    return m_segments[0].segment->data()[i];
 }
 
 WTF::Persistence::Decoder SharedBuffer::decoder() const

@@ -43,7 +43,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGPath);
 
 RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGShape(element, WTFMove(style))
+    : RenderSVGShape(Type::SVGPath, element, WTFMove(style))
 {
 }
 

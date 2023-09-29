@@ -44,7 +44,7 @@ public:
 #endif
 
 protected:
-    RenderTextControl(HTMLTextFormControlElement&, RenderStyle&&);
+    RenderTextControl(Type, HTMLTextFormControlElement&, RenderStyle&&);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     RefPtr<TextControlInnerTextElement> innerTextElement() const;

@@ -48,7 +48,6 @@ private:
     static void rendererStyleChangedSlowCase(RenderElement&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     
     ASCIILiteral renderName() const override;
-    bool isCounter() const override;
     String originalText() const override;
     
     RefPtr<CSSCounterStyle> counterStyle() const;

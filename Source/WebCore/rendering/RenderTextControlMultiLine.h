@@ -37,8 +37,6 @@ public:
 private:
     void element() const = delete;
 
-    bool isTextArea() const override { return true; }
-
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     float getAverageCharWidth() override;

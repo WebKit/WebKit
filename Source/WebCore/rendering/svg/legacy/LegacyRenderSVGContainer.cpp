@@ -42,8 +42,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGContainer);
 
-LegacyRenderSVGContainer::LegacyRenderSVGContainer(SVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGModelObject(element, WTFMove(style))
+LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style)
+    : LegacyRenderSVGModelObject(type, element, WTFMove(style))
 {
 }
 

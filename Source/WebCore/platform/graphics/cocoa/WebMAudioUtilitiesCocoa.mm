@@ -145,7 +145,7 @@ constexpr Seconds opusConfigToFrameDuration(uint8_t config)
         return frameSizeArray[config];
 
     ASSERT_NOT_REACHED();
-    return 20_ms; // The most common Opus frame duration.
+    return 1_ms;
 }
 
 constexpr int32_t opusConfigToBandwidth(uint8_t config)
@@ -178,10 +178,68 @@ constexpr int32_t opusConfigToBandwidth(uint8_t config)
 }
 #endif
 
-bool parseOpusTOCData(const SharedBuffer& frameData, OpusCookieContents& cookie)
+bool parseOpusPrivateData(size_t codecPrivateSize, const void* codecPrivateData, size_t frameSize, const void* frameData, OpusCookieContents& cookie)
 {
 #if ENABLE(OPUS)
-    if (frameData.size() < 1)
+    // https://tools.ietf.org/html/rfc7845
+    // 5. Header Packets
+    //
+    //    An Ogg Opus logical stream contains exactly two mandatory header
+    //    packets: an identification header and a comment header.
+    //
+    // 5.1. Identification Header
+    //
+    //       0                   1                   2                   3
+    //       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    //      |      'O'      |      'p'      |      'u'      |      's'      |
+    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    //      |      'H'      |      'e'      |      'a'      |      'd'      |
+    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    //      |  Version = 1  | Channel Count |           Pre-skip            |
+    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    //      |                     Input Sample Rate (Hz)                    |
+    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    //      |   Output Gain (Q7.8 in dB)    | Mapping Family|               |
+    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+               :
+    //      |                                                               |
+    //      |               Optional Channel Mapping Table                  |
+    //      |                                                               |
+    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    auto* privateDataPtr = static_cast<const uint8_t*>(codecPrivateData);
+
+    if (codecPrivateSize < kOpusHeaderSize)
+        return { };
+
+    // 1. Magic Signature:
+    //
+    //     This is an 8-octet (64-bit) field that allows codec
+    //     identification and is human readable.
+    if (strncmp("OpusHead", reinterpret_cast<const char*>(privateDataPtr), 8))
+        return false;
+
+    // 2. Version (8 bits, unsigned):
+    cookie.version = *(privateDataPtr + 8);
+
+    // 3. Output Channel Count 'C' (8 bits, unsigned):
+    cookie.channelCount = *(privateDataPtr + 9);
+
+    // 4. Pre-skip (16 bits, unsigned, little endian):
+    cookie.preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(privateDataPtr + 10), true);
+
+    // 5. Input Sample Rate (32 bits, unsigned, little endian):
+    cookie.sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(privateDataPtr + 12), true);
+
+    // 6. Output Gain (16 bits, signed, little endian):
+    cookie.outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(privateDataPtr + 16), true);
+
+    // 7. Channel Mapping Family (8 bits, unsigned):
+    cookie.mappingFamily = *(privateDataPtr + 18);
+
+    auto framePtr = static_cast<const uint8_t*>(frameData);
+
+    if (frameSize < 1)
         return false;
 
     // https://tools.ietf.org/html/rfc6716
@@ -200,7 +258,7 @@ bool parseOpusTOCData(const SharedBuffer& frameData, OpusCookieContents& cookie)
     //                         +-+-+-+-+-+-+-+-+
     //                       Figure 1: The TOC Byte
 
-    uint8_t tocByte = frameData[0];
+    uint8_t tocByte = *framePtr;
     uint8_t config = (tocByte & 0b11111000) >> 3;
     cookie.frameDuration = opusConfigToFrameDuration(config);
     cookie.bandwidth = opusConfigToBandwidth(config);
@@ -235,91 +293,19 @@ bool parseOpusTOCData(const SharedBuffer& frameData, OpusCookieContents& cookie)
         //                              +-+-+-+-+-+-+-+-+
         //
         //                       Figure 5: The frame count byte
-        if (frameData.size() < 2)
+        if (frameSize < 2)
             return false;
 
-        uint8_t frameCountByte = frameData[1];
+        uint8_t frameCountByte = *(framePtr + 1);
         cookie.isVBR = ((frameCountByte & 0b10000000) >> 7) == 1;
         cookie.hasPadding = ((frameCountByte & 0b01000000) >> 6) == 1;
         cookie.framesPerPacket = (frameCountByte & 0b00111111);
     }
     return true;
 #else
-    UNUSED_PARAM(frameData);
-    UNUSED_PARAM(cookie);
-    return false;
-#endif
-}
-
-bool parseOpusPrivateData(size_t codecPrivateSize, const uint8_t* codecPrivateData, SharedBuffer& frameData, OpusCookieContents& cookie)
-{
-#if ENABLE(OPUS)
-    // https://tools.ietf.org/html/rfc7845
-    // 5. Header Packets
-    //
-    //    An Ogg Opus logical stream contains exactly two mandatory header
-    //    packets: an identification header and a comment header.
-    //
-    // 5.1. Identification Header
-    //
-    //       0                   1                   2                   3
-    //       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    //      |      'O'      |      'p'      |      'u'      |      's'      |
-    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    //      |      'H'      |      'e'      |      'a'      |      'd'      |
-    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    //      |  Version = 1  | Channel Count |           Pre-skip            |
-    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    //      |                     Input Sample Rate (Hz)                    |
-    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    //      |   Output Gain (Q7.8 in dB)    | Mapping Family|               |
-    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+               :
-    //      |                                                               |
-    //      |               Optional Channel Mapping Table                  |
-    //      |                                                               |
-    //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-    if (codecPrivateSize < kOpusHeaderSize)
-        return { };
-
-    // 1. Magic Signature:
-    //
-    //     This is an 8-octet (64-bit) field that allows codec
-    //     identification and is human readable.
-    if (strncmp("OpusHead", reinterpret_cast<const char*>(codecPrivateData), 8))
-        return false;
-
-    // 2. Version (8 bits, unsigned):
-    cookie.version = *(codecPrivateData + 8);
-
-    // 3. Output Channel Count 'C' (8 bits, unsigned):
-    cookie.channelCount = *(codecPrivateData + 9);
-
-    // 4. Pre-skip (16 bits, unsigned, little endian):
-    cookie.preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(codecPrivateData + 10), true);
-
-    // 5. Input Sample Rate (32 bits, unsigned, little endian):
-    cookie.sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(codecPrivateData + 12), true);
-
-    // 6. Output Gain (16 bits, signed, little endian):
-    cookie.outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(codecPrivateData + 16), true);
-
-    // 7. Channel Mapping Family (8 bits, unsigned):
-    cookie.mappingFamily = *(codecPrivateData + 18);
-
-    if (!parseOpusTOCData(frameData, cookie))
-        return false;
-
-#if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    cookie.cookieData = SharedBuffer::create(codecPrivateData, codecPrivateSize);
-#endif
-
-    return true;
-
-#else
     UNUSED_PARAM(codecPrivateSize);
     UNUSED_PARAM(codecPrivateData);
+    UNUSED_PARAM(frameSize);
     UNUSED_PARAM(frameData);
     UNUSED_PARAM(cookie);
     return false;
@@ -329,9 +315,6 @@ bool parseOpusPrivateData(size_t codecPrivateSize, const uint8_t* codecPrivateDa
 #if ENABLE(OPUS)
 static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& cookie)
 {
-#if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    return { cookie.cookieData->data(), cookie.cookieData->size() };
-#else
     auto samplesPerPacket = cookie.framesPerPacket * (cookie.frameDuration.seconds() * cookie.sampleRate);
 
     struct CoreAudioOpusHeader {
@@ -357,7 +340,6 @@ static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& co
     *reinterpret_cast<CoreAudioOpusHeader*>(magicCookie.data()) = header;
 
     return magicCookie;
-#endif
 }
 #endif
 
@@ -399,7 +381,7 @@ RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents& cookieContents)
     if (!cookieData.size())
         return nullptr;
 
-    return createAudioInfoForFormat(kAudioFormatOpus, WTFMove(cookieData));
+    return createAudioInfoForFormat('opus', WTFMove(cookieData));
 #else
     UNUSED_PARAM(cookieContents);
     return nullptr;
@@ -407,9 +389,7 @@ RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents& cookieContents)
 }
 
 #if ENABLE(VORBIS)
-static constexpr uint32_t kAudioFormatVorbis = 'vorb';
-
-static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, const uint8_t* codecPrivateData)
+static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, const void* codecPrivateData)
 {
     // https://tools.ietf.org/html/draft-ietf-cellar-codec-03
     // 6.4.15. A_VORBIS
@@ -424,30 +404,25 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, con
     // - Bytes n+1..: The Vorbis identification header, followed by the Vorbis comment header followed by the
     //   codec setup header.
 
+    const unsigned char* privateDataPtr = static_cast<const unsigned char*>(codecPrivateData);
+
     const int vorbisMinimumCookieSize = 3;
     if (codecPrivateSize < vorbisMinimumCookieSize) {
         RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private data too small (%zu)", codecPrivateSize);
         return { };
     }
 
-    Vector<uint8_t> cookieData;
-#if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    cookieData.append(codecPrivateData, codecPrivateSize);
-    cookieData[0] = 2;
-
-    return cookieData;
-#else
     // Despite the "This MUST be '2'" comment in the IETF document, packet count is not always equal to
     // 2 in real-word files, so ignore that field.
-    const uint16_t idHeaderSize = codecPrivateData[1];
-    const uint16_t commentHeaderSize = codecPrivateData[2];
+    const uint16_t idHeaderSize = privateDataPtr[1];
+    const uint16_t commentHeaderSize = privateDataPtr[2];
     const uint16_t calculatedHeaderSize = 1 + idHeaderSize + commentHeaderSize;
     if (1 + idHeaderSize + commentHeaderSize > codecPrivateSize) {
         RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private data too small (%zu) for header sizes (%d)", codecPrivateSize, calculatedHeaderSize);
         return { };
     }
 
-    const unsigned char* idHeader = &codecPrivateData[3];
+    const unsigned char* idHeader = &privateDataPtr[3];
     const unsigned char* commentHeader = idHeader + idHeaderSize;
     const unsigned char* codecSetupHeader = commentHeader + commentHeaderSize;
     const uint16_t codecSetupHeaderSize = codecPrivateSize - idHeaderSize - commentHeaderSize - 2 - 1;
@@ -457,6 +432,7 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, con
         return { };
     }
 
+    Vector<uint8_t> cookieData;
     cookieData.append(reinterpret_cast_ptr<const uint8_t*>(&idHeaderSize), sizeof(idHeaderSize));
     cookieData.append(idHeader, idHeaderSize);
 
@@ -467,7 +443,6 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, con
     cookieData.append(codecSetupHeader, codecSetupHeaderSize);
 
     return cookieData;
-#endif
 }
 #endif // ENABLE(VORBIS)
 
@@ -490,7 +465,7 @@ bool registerVorbisDecoderIfNeeded()
 
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        available = registerDecoderFactory("ACVorbisDecoderFactory", kAudioFormatVorbis);
+        available = registerDecoderFactory("ACVorbisDecoderFactory", 'vorb');
     });
 
     return available;
@@ -499,7 +474,7 @@ bool registerVorbisDecoderIfNeeded()
 #endif
 }
 
-RefPtr<AudioInfo> createVorbisAudioInfo(size_t privateDataSize, const uint8_t* privateData)
+RefPtr<AudioInfo> createVorbisAudioInfo(size_t privateDataSize, const void* privateData)
 {
 #if ENABLE(VORBIS)
     if (!isVorbisDecoderAvailable())
@@ -509,7 +484,7 @@ RefPtr<AudioInfo> createVorbisAudioInfo(size_t privateDataSize, const uint8_t* p
     if (!cookieData.size())
         return nullptr;
 
-    return createAudioInfoForFormat(kAudioFormatVorbis, WTFMove(cookieData));
+    return createAudioInfoForFormat('vorb', WTFMove(cookieData));
 #else
     UNUSED_PARAM(privateDataSize);
     UNUSED_PARAM(privateData);
@@ -517,6 +492,6 @@ RefPtr<AudioInfo> createVorbisAudioInfo(size_t privateDataSize, const uint8_t* p
 #endif
 }
 
-} // namespace WebCore
+}
 
 #endif // PLATFORM(COCOA)

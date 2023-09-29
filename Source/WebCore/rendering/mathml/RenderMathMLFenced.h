@@ -49,7 +49,6 @@ public:
     void updateFromElement();
 
 private:
-    bool isRenderMathMLFenced() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderMathMLFenced"_s; }
 
     String m_open;

@@ -40,7 +40,6 @@ private:
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     ASCIILiteral renderName() const override { return "RenderMeter"_s; }
-    bool isMeter() const override { return true; }
 };
 
 } // namespace WebCore

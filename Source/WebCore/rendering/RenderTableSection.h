@@ -165,8 +165,6 @@ private:
 
     bool canHaveChildren() const override { return true; }
 
-    bool isTableSection() const override { return true; }
-
     void willBeRemovedFromTree(IsInternalMove) override;
 
     void layout() override;

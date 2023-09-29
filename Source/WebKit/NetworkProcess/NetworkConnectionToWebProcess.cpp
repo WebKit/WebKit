@@ -27,7 +27,6 @@
 #include "NetworkConnectionToWebProcess.h"
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
-#include "CacheStorageEngineConnectionMessages.h"
 #include "DataReference.h"
 #include "LogInitialization.h"
 #include "Logging.h"
@@ -285,17 +284,12 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 #endif
 
-    if (decoder.messageReceiverName() == Messages::CacheStorageEngineConnection::messageReceiverName()) {
-        cacheStorageConnection().didReceiveMessage(connection, decoder);
-        return;
-    }
-
     if (decoder.messageReceiverName() == Messages::NetworkTransportSession::messageReceiverName()) {
         if (auto* networkTransportSession = m_networkTransportSessions.get(WebTransportSessionIdentifier(decoder.destinationID())))
             networkTransportSession->didReceiveMessage(connection, decoder);
         return;
     }
-
+    
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
         if (m_swConnection)
@@ -392,13 +386,6 @@ void NetworkConnectionToWebProcess::unregisterToRTCDataChannelProxy()
         m_networkProcess->rtcDataChannelProxy().unregisterConnectionToWebProcess(*this);
 }
 #endif
-
-CacheStorageEngineConnection& NetworkConnectionToWebProcess::cacheStorageConnection()
-{
-    if (!m_cacheStorageConnection)
-        m_cacheStorageConnection = CacheStorageEngineConnection::create(*this);
-    return *m_cacheStorageConnection;
-}
 
 bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& reply)
 {

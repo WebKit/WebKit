@@ -62,7 +62,7 @@ RenderPtr<RenderElement> MathMLAnnotationElement::createElementRenderer(RenderSt
         return MathMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 
     ASSERT(hasTagName(annotation_xmlTag));
-    return createRenderer<RenderMathMLBlock>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLBlock>(RenderObject::Type::MathMLBlock, *this, WTFMove(style));
 }
 
 bool MathMLAnnotationElement::childShouldCreateRenderer(const Node& child) const

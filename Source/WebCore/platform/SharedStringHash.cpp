@@ -222,10 +222,10 @@ SharedStringHash computeSharedStringHash(const UChar* url, unsigned length)
 }
 
 template <typename CharacterType>
-static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const CharacterType* characters, unsigned length, Vector<CharacterType, 512>& buffer)
+static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(const URL& base, const CharacterType* characters, unsigned length)
 {
     if (!length)
-        return;
+        return 0;
 
     // This is a poor man's completeURL. Faster with less memory allocation.
     // FIXME: It's missing a lot of what completeURL does and a lot of what URL does.
@@ -238,22 +238,19 @@ static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const C
     // FIXME: needsTrailingSlash does not properly return true for a URL that has no path, but does
     // have a query or anchor.
 
-    bool hasColonSlashSlash = containsColonSlashSlash(characters, length);
+    if (containsColonSlashSlash(characters, length)) {
+        if (!needsTrailingSlash(characters, length))
+            return computeSharedStringHashInline(characters, length);
 
-    if (hasColonSlashSlash && !needsTrailingSlash(characters, length)) {
-        buffer.append(characters, length);
-        return;
-    }
-
-
-    if (hasColonSlashSlash) {
         // FIXME: This is incorrect for URLs that have a query or anchor; the "/" needs to go at the
         // end of the path, *before* the query or anchor.
-        buffer.append(characters, length);
-        buffer.append('/');
-        return;
+        SuperFastHash hasher;
+        hasher.addCharacters(characters, length);
+        hasher.addCharacter('/');
+        return AlreadyHashed::avoidDeletedValue(hasher.hash());
     }
 
+    Vector<CharacterType, 512> buffer;
     if (!length)
         append(buffer, base.string());
     else {
@@ -277,7 +274,7 @@ static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const C
         buffer.append('/');
     }
 
-    return;
+    return computeSharedStringHashInline(buffer.data(), buffer.size());
 }
 
 SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attributeURL)
@@ -285,23 +282,12 @@ SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attri
     if (attributeURL.isEmpty())
         return 0;
 
-    if (!base.string().isEmpty() && base.string().is8Bit() && attributeURL.is8Bit()) {
-        Vector<LChar, 512> url;
-        computeSharedStringHashInline(base, attributeURL.characters8(), attributeURL.length(), url);
-        if (url.isEmpty())
-            return 0;
+    if ((base.string().isEmpty() || base.string().is8Bit()) && attributeURL.is8Bit())
+        return computeSharedStringHashInline(base, attributeURL.characters8(), attributeURL.length());
 
-        return computeSharedStringHashInline(url.data(), url.size());
-    }
-
-    Vector<UChar, 512> url;
     auto upconvertedCharacters = StringView(attributeURL.string()).upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;
-    computeSharedStringHashInline(base, characters, attributeURL.length(), url);
-    if (url.isEmpty())
-        return 0;
-
-    return computeSharedStringHashInline(url.data(), url.size());
+    return computeSharedStringHashInline(base, characters, attributeURL.length());
 }
 
 } // namespace WebCore

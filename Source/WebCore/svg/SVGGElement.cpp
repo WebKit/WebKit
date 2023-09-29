@@ -67,7 +67,7 @@ RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style,
     // subtree may be hidden - we only want the resource renderers to exist so they can be
     // referenced from somewhere else.
     if (style.display() == DisplayType::None)
-        return createRenderer<LegacyRenderSVGHiddenContainer>(*this, WTFMove(style));
+        return createRenderer<LegacyRenderSVGHiddenContainer>(RenderObject::Type::LegacySVGHiddenContainer, *this, WTFMove(style));
     return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 

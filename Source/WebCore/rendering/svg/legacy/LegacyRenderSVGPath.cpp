@@ -41,7 +41,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGPath);
 
 LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
-    : LegacyRenderSVGShape(element, WTFMove(style))
+    : LegacyRenderSVGShape(Type::LegacySVGPath, element, WTFMove(style))
 {
 }
 

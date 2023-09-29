@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderReplica);
 
 RenderReplica::RenderReplica(Document& document, RenderStyle&& style)
-    : RenderBox(document, WTFMove(style), 0)
+    : RenderBox(Type::Replica, document, WTFMove(style), 0)
 {
     // This is a hack. Replicas are synthetic, and don't pick up the attributes of the
     // renderers being replicated, so they always report that they are inline, non-replaced.

@@ -173,11 +173,6 @@ void ShadowRoot::moveShadowRootToNewDocument(Document& oldDocument, Document& ne
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&m_styleScope->document() == &newDocument);
 }
 
-Style::Scope& ShadowRoot::styleScope()
-{
-    return *m_styleScope;
-}
-
 StyleSheetList& ShadowRoot::styleSheets()
 {
     if (!m_styleSheetList)

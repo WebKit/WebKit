@@ -124,7 +124,9 @@ struct SameSizeAsRenderObject : CanMakeWeakPtr<SameSizeAsRenderObject> {
 #endif
     unsigned m_bitfields;
     CheckedRef<Node> node;
-    void* pointers[3];
+    void* pointers[2];
+    PackedPtr<RenderObject> m_next;
+    uint8_t m_type;
     CheckedPtr<Layout::Box> layoutBox;
 };
 
@@ -139,7 +141,7 @@ void RenderObjectDeleter::operator() (RenderObject* renderer) const
     renderer->destroy();
 }
 
-RenderObject::RenderObject(Node& node)
+RenderObject::RenderObject(Type type, Node& node)
     : CachedImageClient()
 #if ASSERT_ENABLED
     , m_hasAXObject(false)
@@ -150,6 +152,7 @@ RenderObject::RenderObject(Node& node)
     , m_parent(nullptr)
     , m_previous(nullptr)
     , m_next(nullptr)
+    , m_type(type)
 {
     if (RenderView* renderView = node.document().renderView())
         renderView->didCreateRenderer();

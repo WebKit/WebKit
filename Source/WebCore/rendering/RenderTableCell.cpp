@@ -68,7 +68,7 @@ static_assert(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), "Ren
 static_assert(sizeof(CollapsedBorderValue) <= 24, "CollapsedBorderValue should stay small");
 
 RenderTableCell::RenderTableCell(Element& element, RenderStyle&& style)
-    : RenderBlockFlow(element, WTFMove(style))
+    : RenderBlockFlow(Type::TableCell, element, WTFMove(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
     , m_hasColSpan(false)
@@ -84,7 +84,7 @@ RenderTableCell::RenderTableCell(Element& element, RenderStyle&& style)
 }
 
 RenderTableCell::RenderTableCell(Document& document, RenderStyle&& style)
-    : RenderBlockFlow(document, WTFMove(style))
+    : RenderBlockFlow(Type::TableCell, document, WTFMove(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
     , m_hasColSpan(false)

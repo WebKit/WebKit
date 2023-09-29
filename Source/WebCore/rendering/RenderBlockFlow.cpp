@@ -115,8 +115,8 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit
     m_negativeMargin = m_canCollapseMarginBeforeWithChildren ? block.maxNegativeMarginBefore() : 0_lu;
 }
 
-RenderBlockFlow::RenderBlockFlow(Element& element, RenderStyle&& style)
-    : RenderBlock(element, WTFMove(style), RenderBlockFlowFlag)
+RenderBlockFlow::RenderBlockFlow(Type type, Element& element, RenderStyle&& style)
+    : RenderBlock(type, element, WTFMove(style), RenderBlockFlowFlag)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -125,8 +125,8 @@ RenderBlockFlow::RenderBlockFlow(Element& element, RenderStyle&& style)
     setChildrenInline(true);
 }
 
-RenderBlockFlow::RenderBlockFlow(Document& document, RenderStyle&& style)
-    : RenderBlock(document, WTFMove(style), RenderBlockFlowFlag)
+RenderBlockFlow::RenderBlockFlow(Type type, Document& document, RenderStyle&& style)
+    : RenderBlock(type, document, WTFMove(style), RenderBlockFlowFlag)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)

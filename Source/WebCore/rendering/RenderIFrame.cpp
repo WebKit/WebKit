@@ -45,7 +45,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderIFrame);
 using namespace HTMLNames;
     
 RenderIFrame::RenderIFrame(HTMLIFrameElement& element, RenderStyle&& style)
-    : RenderFrameBase(element, WTFMove(style))
+    : RenderFrameBase(Type::IFrame, element, WTFMove(style))
 {
 }
 

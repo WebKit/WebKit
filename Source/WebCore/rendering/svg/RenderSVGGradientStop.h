@@ -51,7 +51,6 @@ private:
     FloatRect repaintRectInLocalCoordinates() const override { return FloatRect(); }
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction) override { return false; }
 
-    bool isSVGGradientStop() const override { return true; }
     ASCIILiteral renderName() const override { return "RenderSVGGradientStop"_s; }
 
     bool canHaveChildren() const override { return false; }

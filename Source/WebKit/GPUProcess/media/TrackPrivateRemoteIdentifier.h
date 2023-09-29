@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum TrackPrivateRemoteIdentifierType { };
+enum class TrackPrivateRemoteIdentifierType { };
 using TrackPrivateRemoteIdentifier = ObjectIdentifier<TrackPrivateRemoteIdentifierType>;
 
 } // namespace WebKit

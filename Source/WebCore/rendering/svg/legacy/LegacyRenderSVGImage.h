@@ -57,7 +57,6 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderSVGImage"_s; }
-    bool isLegacySVGImage() const override { return true; }
     bool canHaveChildren() const override { return false; }
 
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }

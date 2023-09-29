@@ -37,7 +37,7 @@ class RenderView;
 class RenderFrameBase : public RenderWidget {
     WTF_MAKE_ISO_ALLOCATED(RenderFrameBase);
 protected:
-    RenderFrameBase(HTMLFrameElementBase&, RenderStyle&&);
+    RenderFrameBase(Type, HTMLFrameElementBase&, RenderStyle&&);
 
 public:
     LocalFrameView* childView() const { return downcast<LocalFrameView>(RenderWidget::widget()); }

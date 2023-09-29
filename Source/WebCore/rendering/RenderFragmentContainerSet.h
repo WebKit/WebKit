@@ -48,7 +48,7 @@ public:
     void expandToEncompassFragmentedFlowContentsIfNeeded();
 
 protected:
-    RenderFragmentContainerSet(Document&, RenderStyle&&, RenderFragmentedFlow&);
+    RenderFragmentContainerSet(Type, Document&, RenderStyle&&, RenderFragmentedFlow&);
 
 private:
     void installFragmentedFlow() final;

@@ -60,7 +60,7 @@ const int defaultWidth = 300;
 const int defaultHeight = 150;
 
 LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
-    : RenderReplaced(element, WTFMove(style))
+    : RenderReplaced(Type::LegacySVGRoot, element, WTFMove(style))
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
     , m_hasBoxDecorations(false)

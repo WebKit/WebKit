@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum QuotaIncreaseRequestIdentifierType { };
+enum class QuotaIncreaseRequestIdentifierType { };
 using QuotaIncreaseRequestIdentifier = AtomicObjectIdentifier<QuotaIncreaseRequestIdentifierType>;
 
 } // namespace WebKit

@@ -41,6 +41,7 @@
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWServerConnection.h"
 #include <WebCore/NotificationData.h>
+#include <WebCore/NotificationPayload.h>
 #include <WebCore/SWServer.h>
 #include <WebCore/ServiceWorkerContextData.h>
 

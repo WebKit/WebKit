@@ -124,6 +124,7 @@
 #import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import <WebCore/AppHighlight.h>
+#import <WebCore/ArchiveError.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
@@ -3318,6 +3319,17 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     _observedRenderingProgressEvents = observedRenderingProgressEvents;
     _page->listenForLayoutMilestones(layoutMilestones(observedRenderingProgressEvents));
+}
+
+- (void)_saveResources:(NSURL *)directory suggestedFileName:(NSString *)name completionHandler:(void (^)(NSError *error))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    _page->saveResources(_page->mainFrame(), directory.path, name, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+        if (!result)
+            return completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::errorDescription(result.error()) }]);
+
+        completionHandler(nil);
+    });
 }
 
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler

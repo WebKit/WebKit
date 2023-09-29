@@ -1424,6 +1424,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/appcache/ApplicationCacheStorage.h
 
     loader/archive/Archive.h
+    loader/archive/ArchiveError.h
     loader/archive/ArchiveResource.h
 
     loader/archive/mhtml/MHTMLArchive.h

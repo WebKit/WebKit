@@ -66,6 +66,7 @@ webkit.org/b/243444 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/input/setting-input-value-cancel-ime-composition.html
 svg/text/caret-in-svg-text.xhtml
+editing/inserting/caret-position.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 editing/selection/move-left-right.html

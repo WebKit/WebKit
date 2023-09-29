@@ -59,8 +59,6 @@ public:
 private:
     void setTextInternal(const String&, bool force) override;
 
-    bool isTextFragment() const override { return true; }
-
     UChar previousCharacter() const override;
 
     unsigned m_start;

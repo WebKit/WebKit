@@ -50,7 +50,7 @@ class WritableStream;
 
 struct MessageWithMessagePorts;
 
-enum RTCRtpScriptTransformerIdentifierType { };
+enum class RTCRtpScriptTransformerIdentifierType { };
 using RTCRtpScriptTransformerIdentifier = AtomicObjectIdentifier<RTCRtpScriptTransformerIdentifierType>;
 
 class RTCRtpScriptTransformer

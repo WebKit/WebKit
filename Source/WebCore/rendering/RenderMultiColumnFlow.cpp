@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMultiColumnFlow);
 
 RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& style)
-    : RenderFragmentedFlow(document, WTFMove(style))
+    : RenderFragmentedFlow(Type::MultiColumnFlow, document, WTFMove(style))
     , m_spannerMap(makeUnique<SpannerMap>())
 {
     setFragmentedFlowState(InsideInFragmentedFlow);

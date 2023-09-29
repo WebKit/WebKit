@@ -95,8 +95,6 @@ public:
 
     static WebCore::PluginInfo pluginInfo();
 
-    WebCore::IntSize size() const { return m_size; }
-
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
 
     void paintControlForLayerInContext(CALayer *, CGContextRef);
@@ -300,8 +298,6 @@ private:
     String m_lastFoundString;
 
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
-
-    WebCore::IntSize m_size;
 
     URL m_sourceURL;
 

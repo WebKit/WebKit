@@ -858,7 +858,7 @@ bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMedia>(*this, WTFMove(style));
+    return createRenderer<RenderMedia>(RenderObject::Type::Media, *this, WTFMove(style));
 }
 
 bool HTMLMediaElement::childShouldCreateRenderer(const Node& child) const

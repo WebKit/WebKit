@@ -80,14 +80,14 @@ struct RenderFlexibleBox::LineState {
     FlexItems flexItems;
 };
 
-RenderFlexibleBox::RenderFlexibleBox(Element& element, RenderStyle&& style)
-    : RenderBlock(element, WTFMove(style), 0)
+RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, RenderStyle&& style)
+    : RenderBlock(type, element, WTFMove(style), 0)
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::RenderFlexibleBox(Document& document, RenderStyle&& style)
-    : RenderBlock(document, WTFMove(style), 0)
+RenderFlexibleBox::RenderFlexibleBox(Type type, Document& document, RenderStyle&& style)
+    : RenderBlock(type, document, WTFMove(style), 0)
 {
     setChildrenInline(false); // All of our children must be block-level.
 }

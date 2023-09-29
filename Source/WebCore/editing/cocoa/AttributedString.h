@@ -75,17 +75,20 @@ namespace WebCore {
 
 class Font;
 
+struct AttributedStringTextTableIDType;
+using AttributedStringTextTableID = ObjectIdentifier<AttributedStringTextTableIDType>;
+
+struct AttributedStringTextListIDType;
+using AttributedStringTextListID = ObjectIdentifier<AttributedStringTextListIDType>;
+
 struct WEBCORE_EXPORT AttributedString {
     struct Range {
         size_t location { 0 };
         size_t length { 0 };
     };
 
-    struct TextTableIDType;
-    using TextTableID = ObjectIdentifier<TextTableIDType>;
-
-    struct TextListIDType;
-    using TextListID = ObjectIdentifier<TextListIDType>;
+    using TextTableID = AttributedStringTextTableID;
+    using TextListID = AttributedStringTextListID;
 
     struct ParagraphStyleWithTableAndListIDs {
         RetainPtr<NSParagraphStyle> style;

@@ -88,7 +88,6 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceClipper"_s; }
-    bool isSVGResourceClipper() const override { return true; }
 
     ClipperData::Inputs computeInputs(const GraphicsContext&, const RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom);
     bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&, float effectiveZoom);

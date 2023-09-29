@@ -184,7 +184,7 @@ RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
     if (style.hasTextCombine())
         return createRenderer<RenderCombineText>(*this, data());
 
-    return createRenderer<RenderText>(*this, data());
+    return createRenderer<RenderText>(RenderObject::Type::Text, *this, data());
 }
 
 Ref<Text> Text::virtualCreate(String&& data)

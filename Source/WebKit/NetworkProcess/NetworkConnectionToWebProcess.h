@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CacheStorageEngineConnection.h"
 #include "Connection.h"
 #include "DownloadID.h"
 #include "NetworkActivityTracker.h"
@@ -39,6 +38,7 @@
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebResourceLoadObserver.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/ExceptionData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/LoadSchedulingMode.h>
@@ -48,6 +48,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/PushSubscriptionData.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <WebCore/RTCDataChannelIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
@@ -328,8 +329,6 @@ private:
         
     bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
 
-    CacheStorageEngineConnection& cacheStorageConnection();
-
     void clearPageSpecificData(WebCore::PageIdentifier);
 
 #if ENABLE(TRACKING_PREVENTION)
@@ -445,8 +444,6 @@ private:
 #endif
 
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
-
-    RefPtr<CacheStorageEngineConnection> m_cacheStorageConnection;
 
 #if ENABLE(SERVICE_WORKER)
     WeakPtr<WebSWServerConnection> m_swConnection;

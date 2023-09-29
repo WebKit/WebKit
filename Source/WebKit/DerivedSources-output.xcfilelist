@@ -12,8 +12,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/CacheStorageEngineConnectionMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/CacheStorageEngineConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DrawingAreaMessageReceiver.cpp
@@ -410,6 +408,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerMessageReceive
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionIDLFileNamesList.txt
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameMessageReceiver.cpp

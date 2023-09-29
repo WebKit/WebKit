@@ -42,14 +42,12 @@ class LineLayout;
 class RenderText : public RenderObject {
     WTF_MAKE_ISO_ALLOCATED(RenderText);
 public:
-    RenderText(Text&, const String&);
-    RenderText(Document&, const String&);
+    RenderText(Type, Text&, const String&);
+    RenderText(Type, Document&, const String&);
 
     virtual ~RenderText();
 
     WEBCORE_EXPORT Text* textNode() const;
-
-    virtual bool isTextFragment() const;
 
     const RenderStyle& style() const;
     const RenderStyle& firstLineStyle() const;
@@ -199,7 +197,7 @@ protected:
     RenderTextLineBoxes m_lineBoxes;
 
 private:
-    RenderText(Node&, const String&);
+    RenderText(Type, Node&, const String&);
 
     ASCIILiteral renderName() const override;
 

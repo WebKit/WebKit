@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMultiColumnSet);
 
 RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow, RenderStyle&& style)
-    : RenderFragmentContainerSet(fragmentedFlow.document(), WTFMove(style), fragmentedFlow)
+    : RenderFragmentContainerSet(Type::MultiColumnSet, fragmentedFlow.document(), WTFMove(style), fragmentedFlow)
     , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
     , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
 {

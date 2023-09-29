@@ -114,8 +114,8 @@ struct SameSizeAsRenderElement : public RenderObject {
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
 
-inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderObject(elementOrDocument)
+inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderObject(type, elementOrDocument)
     , m_firstChild(nullptr)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
@@ -139,13 +139,13 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
 {
 }
 
-RenderElement::RenderElement(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderElement(static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
+RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderElement(type, static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
 {
 }
 
-RenderElement::RenderElement(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderElement(static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
+RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderElement(type, static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
 {
 }
 
@@ -180,7 +180,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     if (!rendererTypeOverride && contentData && isContentDataSupported(*contentData) && !element.isPseudoElement()) {
         Style::loadPendingResources(style, element.document(), &element);
         auto& styleImage = downcast<ImageContentData>(*contentData).image();
-        auto image = createRenderer<RenderImage>(element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
+        auto image = createRenderer<RenderImage>(RenderObject::Type::Image, element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
         image->setIsGeneratedContent();
         return image;
     }
@@ -191,42 +191,42 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
         return nullptr;
     case DisplayType::Inline:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::Inline))
-            return createRenderer<RenderBlockFlow>(element, WTFMove(style));
-        return createRenderer<RenderInline>(element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
     case DisplayType::Block:
     case DisplayType::FlowRoot:
     case DisplayType::InlineBlock:
-        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
     case DisplayType::ListItem:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::ListItem))
-            return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
         return createRenderer<RenderListItem>(element, WTFMove(style));
     case DisplayType::Flex:
     case DisplayType::InlineFlex:
-        return createRenderer<RenderFlexibleBox>(element, WTFMove(style));
+        return createRenderer<RenderFlexibleBox>(RenderObject::Type::FlexibleBox, element, WTFMove(style));
     case DisplayType::Grid:
     case DisplayType::InlineGrid:
         return createRenderer<RenderGrid>(element, WTFMove(style));
     case DisplayType::Box:
     case DisplayType::InlineBox:
-        return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
+        return createRenderer<RenderDeprecatedFlexibleBox>(RenderObject::Type::DeprecatedFlexibleBox, element, WTFMove(style));
     case DisplayType::RubyBase:
-        return createRenderer<RenderInline>(element, WTFMove(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
     case DisplayType::RubyAnnotation:
-        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
     case DisplayType::Ruby:
-        return createRenderer<RenderInline>(element, WTFMove(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
     case DisplayType::RubyBlock:
-        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
 
     default: {
         if (style.isDisplayTableOrTablePart() && rendererTypeOverride.contains(ConstructBlockLevelRendererFor::TableOrTablePart))
-            return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
 
         switch (style.display()) {
         case DisplayType::Table:
         case DisplayType::InlineTable:
-            return createRenderer<RenderTable>(element, WTFMove(style));
+            return createRenderer<RenderTable>(RenderObject::Type::Table, element, WTFMove(style));
         case DisplayType::TableCell:
             return createRenderer<RenderTableCell>(element, WTFMove(style));
         case DisplayType::TableCaption:

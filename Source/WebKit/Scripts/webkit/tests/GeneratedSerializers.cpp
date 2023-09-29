@@ -41,6 +41,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
+#include "TemplateTest.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
 #include <Namespace/ReturnRefClass.h>
@@ -850,6 +851,106 @@ std::optional<WebKit::LayerProperties> ArgumentCoder<WebKit::LayerProperties>::d
     }
 
     return { WTFMove(result) };
+}
+
+void ArgumentCoder<WebKit::TemplateTest<WebKit::Fabulous>>::encode(Encoder& encoder, const WebKit::TemplateTest<WebKit::Fabulous>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, bool>);
+    struct ShouldBeSameSizeAsTemplateTest : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TemplateTest>, false> {
+        bool value;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTemplateTest) == sizeof(WebKit::TemplateTest));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::TemplateTest, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<WebKit::TemplateTest<WebKit::Fabulous>> ArgumentCoder<WebKit::TemplateTest<WebKit::Fabulous>>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::TemplateTest<WebKit::Fabulous> {
+            WTFMove(*value)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TemplateTest<WebCore::Amazing>>::encode(Encoder& encoder, const WebKit::TemplateTest<WebCore::Amazing>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, bool>);
+    struct ShouldBeSameSizeAsTemplateTest : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TemplateTest>, false> {
+        bool value;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTemplateTest) == sizeof(WebKit::TemplateTest));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::TemplateTest, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<WebKit::TemplateTest<WebCore::Amazing>> ArgumentCoder<WebKit::TemplateTest<WebCore::Amazing>>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::TemplateTest<WebCore::Amazing> {
+            WTFMove(*value)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TemplateTest<JSC::Incredible>>::encode(Encoder& encoder, const WebKit::TemplateTest<JSC::Incredible>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, bool>);
+    struct ShouldBeSameSizeAsTemplateTest : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TemplateTest>, false> {
+        bool value;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTemplateTest) == sizeof(WebKit::TemplateTest));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::TemplateTest, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<WebKit::TemplateTest<JSC::Incredible>> ArgumentCoder<WebKit::TemplateTest<JSC::Incredible>>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::TemplateTest<JSC::Incredible> {
+            WTFMove(*value)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TemplateTest<Testing::StorageSize>>::encode(Encoder& encoder, const WebKit::TemplateTest<Testing::StorageSize>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, bool>);
+    struct ShouldBeSameSizeAsTemplateTest : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TemplateTest>, false> {
+        bool value;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTemplateTest) == sizeof(WebKit::TemplateTest));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::TemplateTest, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<WebKit::TemplateTest<Testing::StorageSize>> ArgumentCoder<WebKit::TemplateTest<Testing::StorageSize>>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::TemplateTest<Testing::StorageSize> {
+            WTFMove(*value)
+        }
+    };
 }
 
 } // namespace IPC

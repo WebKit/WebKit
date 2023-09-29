@@ -76,7 +76,6 @@ public:
 private:
     void element() const = delete;
 
-    bool isSVGRoot() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderSVGRoot"_s; }
     bool requiresLayer() const final { return true; }
 

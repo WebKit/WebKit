@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum WebExtensionControllerIdentifierType { };
+enum class WebExtensionControllerIdentifierType { };
 using WebExtensionControllerIdentifier = ObjectIdentifier<WebExtensionControllerIdentifierType>;
 
 }

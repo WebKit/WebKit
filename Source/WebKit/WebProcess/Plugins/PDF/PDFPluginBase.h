@@ -76,13 +76,15 @@ public:
 
     virtual bool isComposited() const { return false; }
 
+    virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) { }
+
     virtual CGFloat scaleFactor() const = 0;
 
     // FIXME: Can we use PDFDocument here?
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const = 0;
     virtual WebCore::FloatSize pdfDocumentSizeForPrinting() const = 0;
 
-    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform) { }
+    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform);
     virtual void visibilityDidChange(bool) { }
     virtual void contentsScaleFactorChanged(float) { }
 
@@ -119,6 +121,7 @@ public:
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
 
     bool isFullFramePlugin() const;
+    WebCore::IntSize size() const { return m_size; }
 
     void streamDidReceiveResponse(const WebCore::ResourceResponse&);
     void streamDidReceiveData(const WebCore::SharedBuffer&);
@@ -148,6 +151,8 @@ protected:
 
     String m_suggestedFilename;
     uint64_t m_streamedBytes { 0 };
+
+    WebCore::IntSize m_size;
 
     bool m_documentFinishedLoading { false };
     bool m_isBeingDestroyed { false };

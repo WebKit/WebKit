@@ -4209,7 +4209,7 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
 
     auto* mainFrameView = this->localMainFrameView();
     if (!mainFrameView) {
-        // FIXME: This is hit in some site isolation tests on iOS. Investigate and fix.
+        // FIXME: This is hit in some site isolation tests on iOS. Investigate and fix. <rdar://116201382>
         return;
     }
 
@@ -4652,7 +4652,7 @@ String WebPage::platformUserAgent(const URL&) const
 
     auto* mainFrame = m_mainFrame->coreLocalFrame();
     if (!mainFrame) {
-        // FIXME: Add a user agent for loads from iframe processes.
+        // FIXME: Add a user agent for loads from iframe processes. <rdar://116201535>
         return { };
     }
 

@@ -452,7 +452,7 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
     viewGeometryDidChange();
 }
 
-void PluginView::paint(GraphicsContext& context, const IntRect& /*dirtyRect*/, Widget::SecurityOriginPaintPolicy, RegionContext*)
+void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widget::SecurityOriginPaintPolicy, RegionContext*)
 {
     if (!m_isInitialized)
         return;
@@ -481,7 +481,10 @@ void PluginView::paint(GraphicsContext& context, const IntRect& /*dirtyRect*/, W
                 deviceScaleFactor = page->deviceScaleFactor();
             m_transientPaintingSnapshot->paint(context, deviceScaleFactor, frameRect().location(), m_transientPaintingSnapshot->bounds());
         }
+        return;
     }
+
+    m_plugin->paint(context, dirtyRect);
 }
 
 void PluginView::frameRectsChanged()

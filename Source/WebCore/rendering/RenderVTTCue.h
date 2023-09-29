@@ -43,8 +43,6 @@ public:
     RenderVTTCue(VTTCueBox&, RenderStyle&&);
 
 private:
-    bool isRenderVTTCue() const final { return true; }
-
     void layout() override;
 
     bool isOutside() const;

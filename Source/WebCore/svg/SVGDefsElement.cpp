@@ -53,7 +53,7 @@ RenderPtr<RenderElement> SVGDefsElement::createElementRenderer(RenderStyle&& sty
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
 #endif
-    return createRenderer<LegacyRenderSVGHiddenContainer>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGHiddenContainer>(RenderObject::Type::LegacySVGHiddenContainer, *this, WTFMove(style));
 }
 
 }

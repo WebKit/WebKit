@@ -334,7 +334,6 @@
 #include "WKStringCF.h"
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
-#include <WebCore/UTIRegistry.h>
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
@@ -797,7 +796,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (m_drawingArea->enterAcceleratedCompositingModeIfNeeded() && !parameters.isProcessSwap)
         m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 #endif
-    // FIXME: Refactor frame construction and remove receivedMainFrameIdentifierFromUIProcess.
+    // FIXME: Refactor frame construction and remove receivedMainFrameIdentifierFromUIProcess. <rdar://116201135>
     if (!receivedMainFrameIdentifierFromUIProcess || parameters.openerFrameIdentifier)
         m_drawingArea->addRootFrame(m_mainFrame->frameID());
     m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
@@ -966,7 +965,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if PLATFORM(COCOA)
     setSmartInsertDeleteEnabled(parameters.smartInsertDeleteEnabled);
-    WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)
@@ -4296,6 +4294,20 @@ void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& re
     }
 
     callback(IPC::SharedBufferReference(WTFMove(buffer)));
+}
+
+void WebPage::getWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier frameID, const String& fileName, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& completionHandler)
+{
+    std::optional<IPC::SharedBufferReference> result;
+#if PLATFORM(COCOA)
+    if (RefPtr frame = WebProcess::singleton().webFrame(frameID)) {
+        if (RetainPtr<CFDataRef> data = frame->webArchiveData(nullptr, nullptr, fileName))
+            result = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
+    }
+#else
+    UNUSED_PARAM(frameID);
+#endif
+    completionHandler(result);
 }
 
 void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)

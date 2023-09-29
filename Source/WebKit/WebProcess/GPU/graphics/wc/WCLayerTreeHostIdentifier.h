@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum WCLayerTreeHostIdentifierType { };
+enum class WCLayerTreeHostIdentifierType { };
 using WCLayerTreeHostIdentifier = ObjectIdentifier<WCLayerTreeHostIdentifierType>;
 
 } // namespace WebKit

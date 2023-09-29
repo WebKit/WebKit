@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AcceleratedSurfaceDMABuf.h"
 
+#if USE(EGL)
+
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "ShareableBitmap.h"
@@ -425,3 +427,5 @@ void AcceleratedSurfaceDMABuf::frameDone()
 }
 
 } // namespace WebKit
+
+#endif // USE(EGL)

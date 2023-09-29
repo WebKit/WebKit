@@ -68,8 +68,6 @@ public:
 private:
     void element() const = delete;
 
-    bool isLegacySVGRoot() const override { return true; }
-
     // Intentially left 'RenderSVGRoot' instead of 'LegacyRenderSVGRoot', to avoid breaking layout tests.
     ASCIILiteral renderName() const override { return "RenderSVGRoot"_s; }
 

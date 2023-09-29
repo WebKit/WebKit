@@ -49,7 +49,7 @@ public:
     void markAllClientLayersForInvalidation();
 
 protected:
-    LegacyRenderSVGResourceContainer(SVGElement&, RenderStyle&&);
+    LegacyRenderSVGResourceContainer(Type, SVGElement&, RenderStyle&&);
 
     enum InvalidationMode {
         LayoutAndBoundariesInvalidation,

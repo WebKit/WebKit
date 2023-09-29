@@ -39,8 +39,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFrameBase);
 
-RenderFrameBase::RenderFrameBase(HTMLFrameElementBase& element, RenderStyle&& style)
-    : RenderWidget(element, WTFMove(style))
+RenderFrameBase::RenderFrameBase(Type type, HTMLFrameElementBase& element, RenderStyle&& style)
+    : RenderWidget(type, element, WTFMove(style))
 {
 }
 

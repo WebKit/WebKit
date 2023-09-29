@@ -43,15 +43,12 @@ namespace WebCore {
 
 struct BackgroundFetchInformation;
 struct NotificationData;
+struct NotificationPayload;
 class SWServer;
 struct ServiceWorkerClientData;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 enum class WorkerThreadMode : bool;
-
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-struct NotificationPayload;
-#endif
 
 class SWServerToContextConnection {
     WTF_MAKE_FAST_ALLOCATED;

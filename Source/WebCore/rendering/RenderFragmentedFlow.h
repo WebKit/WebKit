@@ -182,7 +182,7 @@ private:
     bool requiresLayer() const final { return true; }
 
 protected:
-    RenderFragmentedFlow(Document&, RenderStyle&&);
+    RenderFragmentedFlow(Type, Document&, RenderStyle&&);
 
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override { return const_cast<RenderFragmentedFlow*>(this); }
 

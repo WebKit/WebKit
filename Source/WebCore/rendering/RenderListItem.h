@@ -60,8 +60,6 @@ public:
 
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
-
-    bool isListItem() const final { return true; }
     
     void insertedIntoTree(IsInternalMove) final;
     void willBeRemovedFromTree(IsInternalMove) final;

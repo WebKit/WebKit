@@ -54,8 +54,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGShape);
 
-RenderSVGShape::RenderSVGShape(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGModelObject(element, WTFMove(style))
+RenderSVGShape::RenderSVGShape(Type type, SVGGraphicsElement& element, RenderStyle&& style)
+    : RenderSVGModelObject(type, element, WTFMove(style))
 {
 }
 

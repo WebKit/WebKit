@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+webkit_platform_headers: "StreamConnectionEncoder.h"
+
 [WebKitPlatform] class WTF::URL {
     String string()
 }
@@ -50,6 +52,141 @@ header: <wtf/text/AtomString.h>
 [WebKitPlatform] class WTF::UUID {
     uint64_t high();
     [Validator='((static_cast<UInt128>(*high) << 64) | *low) != WTF::UUID::deletedValue'] uint64_t low();
+}
+
+template: class WebKit::WebURLSchemeHandler
+template: enum class WebCore::AXIDType
+template: enum class WebCore::BackgroundFetchRecordIdentifierType
+template: enum class WebCore::ElementIdentifierType
+template: enum class WebCore::FetchIdentifierType
+template: enum class WebCore::ImageDecoderIdentifierType
+template: enum class WebCore::ImageOverlayDataDetectionResultIdentifierType
+template: enum class WebCore::InbandGenericCueIdentifierType
+template: enum class WebCore::LayerHostingContextIdentifierType
+template: enum class WebCore::MediaSessionGroupIdentifierType
+template: enum class WebCore::MediaUniqueIdentifierType
+template: enum class WebCore::ProcessIdentifierType
+template: enum class WebCore::PushSubscriptionIdentifierType
+template: enum class WebCore::RealtimeMediaSourceIdentifierType
+template: enum class WebCore::SWServerToContextConnectionIdentifierType
+template: enum class WebCore::SharedWorkerIdentifierType
+template: enum class WebCore::SpeechRecognitionConnectionClientIdentifierType
+template: enum class WebCore::TextCheckingRequestIdentifierType
+template: enum class WebCore::TextManipulationItemIdentifierType
+template: enum class WebCore::TextManipulationTokenIdentifierType
+template: enum class WebCore::WindowIdentifierType
+template: enum class WebCore::WorkletGlobalScopeIdentifierType
+template: enum class WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifierType
+template: enum class WebKit::ContentWorldIdentifierType
+template: enum class WebKit::DownloadIdentifierType
+template: enum class WebKit::ImageAnalysisRequestIdentifierType
+template: enum class WebKit::MediaDevicePermissionRequestIdentifierType
+template: enum class WebKit::MediaRecorderIdentifierType
+template: enum class WebKit::RemoteAudioHardwareListenerIdentifierType
+template: enum class WebKit::RemoteAudioSessionIdentifierType
+template: enum class WebKit::RemoteCDMIdentifierType
+template: enum class WebKit::RemoteCDMInstanceIdentifierType
+template: enum class WebKit::RemoteCDMInstanceSessionIdentifierType
+template: enum class WebKit::RemoteLegacyCDMIdentifierType
+template: enum class WebKit::RemoteLegacyCDMSessionIdentifierType
+template: enum class WebKit::RemoteMediaResourceIdentifierType
+template: enum class WebKit::RemoteMediaSourceIdentifierType
+template: enum class WebKit::RemoteRemoteCommandListenerIdentifierType
+template: enum class WebKit::RemoteSourceBufferIdentifierType
+template: enum class WebKit::RenderingBackendIdentifierType
+template: enum class WebKit::RetrieveRecordResponseBodyCallbackIdentifierType
+template: enum class WebKit::SampleBufferDisplayLayerIdentifierType
+template: enum class WebKit::ShapeDetectionIdentifierType
+template: enum class WebKit::StorageAreaImplIdentifierType
+template: enum class WebKit::StorageAreaMapIdentifierType
+template: enum class WebKit::StorageNamespaceIdentifierType
+template: enum class WebKit::TrackPrivateRemoteIdentifierType
+template: enum class WebKit::WCLayerTreeHostIdentifierType
+template: enum class WebKit::WebExtensionControllerIdentifierType
+template: enum class WebKit::WebGPUIdentifierType
+template: enum class WebKit::XRDeviceIdentifierType
+template: struct WebCore::AttributedStringTextListIDType
+template: struct WebCore::AttributedStringTextTableIDType
+template: struct WebCore::BackForwardItemIdentifierType
+template: struct WebCore::DictationContextType
+template: struct WebCore::FrameIdentifierType
+template: struct WebCore::HTMLMediaElementIdentifierType
+template: struct WebCore::MediaKeySystemRequestIdentifierType
+template: struct WebCore::MediaPlayerIdentifierType
+template: struct WebCore::MediaSessionIdentifierType
+template: struct WebCore::PageIdentifierType
+template: struct WebCore::PlatformLayerIdentifierType
+template: struct WebCore::PlaybackTargetClientContextIdentifierType
+template: struct WebCore::PolicyCheckIdentifierType
+template: struct WebCore::SharedWorkerObjectIdentifierType
+template: struct WebCore::SleepDisablerIdentifierType
+template: struct WebCore::UserMediaRequestIdentifierType
+template: struct WebKit::AuthenticationChallengeIdentifierType
+template: struct WebKit::DataTaskIdentifierType
+template: struct WebKit::DisplayLinkObserverIDType
+template: struct WebKit::DrawingAreaIdentifierType
+template: struct WebKit::GeolocationIdentifierType
+template: struct WebKit::IPCConnectionTesterIdentifierType
+template: struct WebKit::IPCStreamTesterIdentifierType
+template: struct WebKit::MarkSurfacesAsVolatileRequestIdentifierType
+template: struct WebKit::NetworkResourceLoadIdentifierType
+template: struct WebKit::PDFPluginIdentifierType
+template: struct WebKit::PageGroupIdentifierType
+template: struct WebKit::RemoteAudioDestinationIdentifierType
+template: struct WebKit::TapIdentifierType
+template: struct WebKit::TextCheckerRequestType
+template: struct WebKit::UserContentControllerIdentifierType
+template: struct WebKit::WebExtensionContextIdentifierType
+template: struct WebKit::WebExtensionFrameIdentifierType
+template: struct WebKit::WebExtensionPortChannelIdentifierType
+template: struct WebKit::WebExtensionTabIdentifierType
+template: struct WebKit::WebExtensionWindowIdentifierType
+template: struct WebKit::WebPageProxyIdentifierType
+template: struct WebKit::WebTransportSessionIdentifierType
+template: struct WebKit::WebTransportStreamIdentifierType
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::ObjectIdentifier {
+    [Validator='WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
+}
+
+header: <wtf/ObjectIdentifier.h>
+template: class WebCore::ResourceLoader
+template: class WebCore::WebSocketChannel
+template: class WebCore::WebSocketChannelClient
+template: class WebCore::WebSocketChannelInspector
+template: enum class IPC::ConnectionSyncRequestIDType
+template: enum class JSC::MicrotaskIdentifierType
+template: enum class WebCore::BroadcastChannelIdentifierType
+template: enum class WebCore::DOMCacheIdentifierType
+template: enum class WebCore::DisplayConfigurationClientIdentifierType
+template: enum class WebCore::FileSystemHandleIdentifierType
+template: enum class WebCore::FileSystemSyncAccessHandleIdentifierType
+template: enum class WebCore::LibWebRTCSocketIdentifierType
+template: enum class WebCore::MainThreadPermissionObserverIdentifierType
+template: enum class WebCore::OpaqueOriginIdentifierType
+template: enum class WebCore::PortIdentifierType
+template: enum class WebCore::RTCDataChannelLocalIdentifierType
+template: enum class WebCore::RTCRtpScriptTransformerIdentifierType
+template: enum class WebCore::RenderingResourceIdentifierType
+template: enum class WebCore::ServiceWorkerIdentifierType
+template: enum class WebCore::ServiceWorkerJobIdentifierType
+template: enum class WebCore::ServiceWorkerRegistrationIdentifierType
+template: enum class WebCore::WebLockIdentifierType
+template: enum class WebCore::WebSocketIdentifierType
+template: enum class WebCore::WorkerFileSystemStorageConnectionCallbackIdentifierType
+template: enum class WebKit::GraphicsContextGLIdentifierType
+template: enum class WebKit::LegacyCustomProtocolIDType
+template: enum class WebKit::LibWebRTCResolverIdentifierType
+template: enum class WebKit::QuotaIncreaseRequestIdentifierType
+template: enum class WebKit::RemoteVideoFrameIdentifierType
+template: enum class WebKit::VideoDecoderIdentifierType
+template: enum class WebKit::VideoEncoderIdentifierType
+template: enum class WebKit::WCContentBufferIdentifierType
+template: struct IPC::AsyncReplyIDType
+template: struct WebCore::WebSocketFrame
+template: struct WebKit::ConnectionAsyncReplyHandler
+template: struct WebKit::StorageAreaIdentifierType
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomicObjectIdentifier {
+    [Validator='WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
 
 #if OS(WINDOWS)

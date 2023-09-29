@@ -419,12 +419,17 @@ std::optional<WebCore::RegistrableDomain> Coder<WebCore::RegistrableDomain, void
 
 void Coder<WebCore::PushSubscriptionIdentifier>::encode(Encoder& encoder, const WebCore::PushSubscriptionIdentifier& instance)
 {
-    instance.encode(encoder);
+    encoder << instance.toUInt64();
 }
 
 std::optional<WebCore::PushSubscriptionIdentifier> Coder<WebCore::PushSubscriptionIdentifier>::decode(Decoder& decoder)
 {
-    return WebCore::PushSubscriptionIdentifier::decode(decoder);
+    std::optional<uint64_t> rawID;
+    decoder >> rawID;
+    if (!rawID)
+        return std::nullopt;
+
+    return { WebCore::PushSubscriptionIdentifier(*rawID) };
 }
 
 }

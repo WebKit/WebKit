@@ -49,7 +49,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLMenclose);
 const unsigned short longDivLeftSpace = 10;
 
 RenderMathMLMenclose::RenderMathMLMenclose(MathMLMencloseElement& element, RenderStyle&& style)
-    : RenderMathMLRow(element, WTFMove(style))
+    : RenderMathMLRow(Type::MathMLMenclose, element, WTFMove(style))
 {
 }
 

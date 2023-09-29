@@ -65,22 +65,22 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderReplaced);
 const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
-RenderReplaced::RenderReplaced(Element& element, RenderStyle&& style)
-    : RenderBox(element, WTFMove(style), RenderReplacedFlag)
+RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style)
+    : RenderBox(type, element, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     setReplacedOrInlineBlock(true);
 }
 
-RenderReplaced::RenderReplaced(Element& element, RenderStyle&& style, const LayoutSize& intrinsicSize)
-    : RenderBox(element, WTFMove(style), RenderReplacedFlag)
+RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, const LayoutSize& intrinsicSize)
+    : RenderBox(type, element, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplacedOrInlineBlock(true);
 }
 
-RenderReplaced::RenderReplaced(Document& document, RenderStyle&& style, const LayoutSize& intrinsicSize)
-    : RenderBox(document, WTFMove(style), RenderReplacedFlag)
+RenderReplaced::RenderReplaced(Type type, Document& document, RenderStyle&& style, const LayoutSize& intrinsicSize)
+    : RenderBox(type, document, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplacedOrInlineBlock(true);

@@ -82,7 +82,7 @@ MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Doc
 
 RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderBlockFlow>(*this, WTFMove(style));
+    return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *this, WTFMove(style));
 }
 
 static bool compareCueIntervalForDisplay(const CueInterval& one, const CueInterval& two)

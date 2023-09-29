@@ -42,6 +42,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
+#include "TemplateTest.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
 #include <Namespace/ReturnRefClass.h>
@@ -249,6 +250,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                     ", bool"
                 ">"_s,
                 "optionalTuple"_s
+            },
+        } },
+        { "WebKit::TemplateTest"_s, {
+            {
+                "bool"_s,
+                "value"_s
             },
         } },
         { "WebCore::SharedStringHash"_s, {

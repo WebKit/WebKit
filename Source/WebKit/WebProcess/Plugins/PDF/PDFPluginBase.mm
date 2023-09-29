@@ -148,6 +148,11 @@ void PDFPluginBase::addArchiveResource()
     m_view->frame()->document()->loader()->addArchiveResource(resource.releaseNonNull());
 }
 
+void PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
+{
+    m_size = pluginSize;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)

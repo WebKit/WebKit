@@ -71,7 +71,6 @@ private:
     ASCIILiteral renderName() const final { return "RenderVideo"_s; }
 
     bool requiresLayer() const final { return true; }
-    bool isVideo() const final { return true; }
 
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
 

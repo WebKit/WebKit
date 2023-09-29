@@ -210,8 +210,6 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/SharedWorker/WebSharedWorkerServerConnection
     NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection
 
-    NetworkProcess/cache/CacheStorageEngineConnection
-
     NetworkProcess/storage/NetworkStorageManager
 
     NetworkProcess/webrtc/NetworkMDNSRegister

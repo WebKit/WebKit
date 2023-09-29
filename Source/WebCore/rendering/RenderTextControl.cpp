@@ -43,8 +43,8 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControl);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlInnerContainer);
 
-RenderTextControl::RenderTextControl(HTMLTextFormControlElement& element, RenderStyle&& style)
-    : RenderBlockFlow(element, WTFMove(style))
+RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, RenderStyle&& style)
+    : RenderBlockFlow(type, element, WTFMove(style))
 {
 }
 
@@ -226,7 +226,7 @@ int RenderTextControl::innerLineHeight() const
 #endif
 
 RenderTextControlInnerContainer::RenderTextControlInnerContainer(Element& element, RenderStyle&& style)
-    : RenderFlexibleBox(element, WTFMove(style))
+    : RenderFlexibleBox(Type::TextControlInnerContainer, element, WTFMove(style))
 {
 
 }

@@ -48,7 +48,6 @@ public:
 private:
     void element() const = delete;
 
-    bool isLegacySVGViewportContainer() const override { return true; }
     ASCIILiteral renderName() const override { return "RenderSVGViewportContainer"_s; }
 
     AffineTransform viewportTransform() const;

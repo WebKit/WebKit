@@ -46,7 +46,7 @@ public:
         GlobalCoordinateSpace,
         LocalCoordinateSpace
     };
-    LegacyRenderSVGShape(SVGGraphicsElement&, RenderStyle&&);
+    LegacyRenderSVGShape(Type, SVGGraphicsElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;

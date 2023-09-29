@@ -111,7 +111,7 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
 RenderPtr<RenderElement> ImageInputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
-    return createRenderer<RenderImage>(*element(), WTFMove(style));
+    return createRenderer<RenderImage>(RenderObject::Type::Image, *element(), WTFMove(style));
 }
 
 void ImageInputType::attributeChanged(const QualifiedName& name)

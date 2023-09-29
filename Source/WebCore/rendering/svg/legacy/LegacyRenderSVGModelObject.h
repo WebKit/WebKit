@@ -63,7 +63,7 @@ public:
     SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
 
 protected:
-    LegacyRenderSVGModelObject(SVGElement&, RenderStyle&&);
+    LegacyRenderSVGModelObject(Type, SVGElement&, RenderStyle&&);
 
     void willBeDestroyed() override;
 

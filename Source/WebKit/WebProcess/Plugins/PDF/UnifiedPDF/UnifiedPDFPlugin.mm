@@ -28,6 +28,9 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include <CoreGraphics/CoreGraphics.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -49,17 +52,64 @@ void UnifiedPDFPlugin::teardown()
 
 void UnifiedPDFPlugin::createPDFDocument()
 {
-
+    auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(m_data.get()));
+    m_pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
 }
 
 void UnifiedPDFPlugin::installPDFDocument()
 {
+    ASSERT(isMainRunLoop());
 
+    if (m_hasBeenDestroyed)
+        return;
+
+    if (!m_pdfDocument)
+        return;
+
+    if (!m_view)
+        return;
+
+}
+
+void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& rect)
+{
+    ALWAYS_LOG_WITH_STREAM(stream << "UnifiedPDFPlugin::paint " << rect);
+    ASSERT(!context.paintingDisabled());
+
+    if (m_size.isEmpty())
+        return;
+
+    auto imageBuffer = ImageBuffer::create(m_size, RenderingPurpose::Unspecified, 1.0, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return;
+
+    RetainPtr firstPage = CGPDFDocumentGetPage(m_pdfDocument.get(), 1);
+    if (!firstPage)
+        return;
+
+    CGContextRef cgContext = imageBuffer->context().platformContext();
+    CGRect pageCropBox = CGPDFPageGetBoxRect(firstPage.get(), kCGPDFCropBox);
+
+    CGRect clipRect = CGRectMake(0, 0, pageCropBox.size.width, pageCropBox.size.height);
+    CGContextAddRect(cgContext, clipRect);
+    CGContextClip(cgContext);
+
+    CGContextDrawPDFPage(cgContext, firstPage.get());
+
+    context.drawImageBuffer(*imageBuffer, FloatPoint { });
 }
 
 CGFloat UnifiedPDFPlugin::scaleFactor() const
 {
     return 1;
+}
+
+void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
+{
+    if (size() == pluginSize)
+        return;
+
+    PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
 }
 
 RetainPtr<PDFDocument> UnifiedPDFPlugin::pdfDocumentForPrinting() const

@@ -369,7 +369,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         
         backingStoreCollection.willCommitLayerTree(layerTransaction);
 
-        // FIXME: Investigate whether this needs to be done multiple times in a page with multiple root frames.
+        // FIXME: Investigate whether this needs to be done multiple times in a page with multiple root frames. <rdar://116202678>
         webPage->willCommitLayerTree(layerTransaction, rootLayer.frameID);
         
         layerTransaction.setNewlyReachedPaintingMilestones(std::exchange(m_pendingNewlyReachedPaintingMilestones, { }));

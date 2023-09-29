@@ -50,9 +50,9 @@ public:
     void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const override;
 
 protected:
-    RenderReplaced(Element&, RenderStyle&&);
-    RenderReplaced(Element&, RenderStyle&&, const LayoutSize& intrinsicSize);
-    RenderReplaced(Document&, RenderStyle&&, const LayoutSize& intrinsicSize);
+    RenderReplaced(Type, Element&, RenderStyle&&);
+    RenderReplaced(Type, Element&, RenderStyle&&, const LayoutSize& intrinsicSize);
+    RenderReplaced(Type, Document&, RenderStyle&&, const LayoutSize& intrinsicSize);
 
     void layout() override;
 

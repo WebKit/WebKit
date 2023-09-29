@@ -1941,7 +1941,7 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     if (m_automationSession)
         return { WTFMove(sourceProcess), nullptr, "An automation session is active"_s };
 
-    // FIXME: We ought to be able to re-use processes that haven't committed anything with site isolation enabled, but cross-site redirects are tricky.
+    // FIXME: We ought to be able to re-use processes that haven't committed anything with site isolation enabled, but cross-site redirects are tricky. <rdar://116203552>
     if (!sourceProcess->hasCommittedAnyProvisionalLoads() && !page.preferences().siteIsolationEnabled()) {
         tryPrewarmWithDomainInformation(sourceProcess, targetRegistrableDomain);
         return { WTFMove(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s };

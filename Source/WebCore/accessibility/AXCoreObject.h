@@ -94,7 +94,7 @@ struct AccessibilityText;
 struct CharacterRange;
 struct ScrollRectToVisibleOptions;
 
-enum AXIDType { };
+enum class AXIDType { };
 using AXID = ObjectIdentifier<AXIDType>;
 
 enum class AXAncestorFlag : uint8_t {

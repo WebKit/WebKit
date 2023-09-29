@@ -71,7 +71,7 @@ RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(RenderStyle&&
 {
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 
-    return createRenderer<RenderMathMLToken>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLToken>(RenderObject::Type::MathMLToken, *this, WTFMove(style));
 }
 
 bool MathMLTokenElement::childShouldCreateRenderer(const Node& child) const

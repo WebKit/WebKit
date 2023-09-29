@@ -20,9 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if USE(EGL)
 messages -> AcceleratedBackingStoreDMABuf NotRefCounted {
     DidCreateBuffer(uint64_t id, UnixFileDescriptor fd, WebCore::IntSize size, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
     DidCreateBufferSHM(uint64_t id, WebKit::ShareableBitmap::Handle handle)
     DidDestroyBuffer(uint64_t id)
     Frame(uint64_t id)
 }
+#endif

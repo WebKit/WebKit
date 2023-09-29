@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME (116158267): This file can be removed and its implementation merged directly into
+// CDMInstanceSessionFairPlayStreamingAVFObjC once we no logner need to support a configuration
+// where the BuiltInCDMKeyGroupingStrategyEnabled preference is off.
+
 #import "config.h"
 #import "WebAVContentKeyGroup.h"
 
@@ -31,6 +35,7 @@
 #import "ContentKeyGroupDataSource.h"
 #import "Logging.h"
 #import "NotImplemented.h"
+#import <wtf/CheckedPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
@@ -48,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation WebAVContentKeyGroup {
     WeakObjCPtr<AVContentKeySession> _contentKeySession;
-    WeakPtr<WebCore::ContentKeyGroupDataSource> _dataSource;
+    CheckedPtr<WebCore::ContentKeyGroupDataSource> _dataSource;
     RetainPtr<NSUUID> _groupIdentifier;
 }
 
@@ -59,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
 
     _contentKeySession = contentKeySession;
-    _dataSource = dataSource;
+    _dataSource = &dataSource;
     _groupIdentifier = adoptNS([[NSUUID alloc] init]);
 
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "groupIdentifier=", _groupIdentifier.get());
@@ -77,15 +82,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)associateContentKeyRequest:(AVContentKeyRequest *)contentKeyRequest
 {
+    // We assume the data source is tracking unexpected key requests and will include them when
+    // ContentKeyGroupDataSource::contentKeyGroupDataSourceKeys() is called in -expire, so there's
+    // no need to do any explicit association here.
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "contentKeyRequest=", contentKeyRequest);
     return YES;
 }
 
 - (void)expire
 {
-    if (!_dataSource)
-        return;
-
     auto keys = _dataSource->contentKeyGroupDataSourceKeys();
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "keys.size=", keys.size());
     // FIXME (113405292): Actually expire the keys once API is available to do so.
@@ -105,17 +110,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (const void*)logIdentifier
 {
-    return _dataSource ? _dataSource->contentKeyGroupDataSourceLogIdentifier() : nullptr;
+    return _dataSource->contentKeyGroupDataSourceLogIdentifier();
 }
 
 - (const Logger*)loggerPtr
 {
-    return _dataSource ? &_dataSource->contentKeyGroupDataSourceLogger() : nullptr;
+    return &_dataSource->contentKeyGroupDataSourceLogger();
 }
 
 - (WTFLogChannel*)logChannel
 {
-    return &WebCore::LogEME;
+    return &_dataSource->contentKeyGroupDataSourceLogChannel();
 }
 
 @end

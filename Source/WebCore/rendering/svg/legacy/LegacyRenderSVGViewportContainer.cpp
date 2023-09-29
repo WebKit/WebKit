@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGViewportContainer);
 
 LegacyRenderSVGViewportContainer::LegacyRenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGContainer(element, WTFMove(style))
+    : LegacyRenderSVGContainer(Type::LegacySVGViewportContainer, element, WTFMove(style))
     , m_didTransformToRootUpdate(false)
     , m_isLayoutSizeChanged(false)
     , m_needsTransformUpdate(true)

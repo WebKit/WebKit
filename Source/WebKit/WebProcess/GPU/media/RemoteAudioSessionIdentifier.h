@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum RemoteAudioSessionIdentifierType { };
+enum class RemoteAudioSessionIdentifierType { };
 using RemoteAudioSessionIdentifier = ObjectIdentifier<RemoteAudioSessionIdentifierType>;
 
 } // namespace WebKit

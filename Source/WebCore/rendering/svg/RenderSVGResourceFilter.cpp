@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FilterData);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceFilter);
 
 RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(element, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(Type::SVGResourceFilter, element, WTFMove(style))
 {
 }
 

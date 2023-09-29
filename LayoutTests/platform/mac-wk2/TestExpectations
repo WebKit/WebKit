@@ -2162,3 +2162,5 @@ http/tests/contentextensions/main-resource-redirect-error.html [ Pass Failure ]
 http/tests/contentextensions/block-everything-unless-domain.html [ Pass Failure ] # Switch back to [ Pass Timeout ] when resolved: webkit.org/b/167653
 http/tests/contentextensions/block-everything-unless-domain-iframe.html [ Pass Failure ]
 http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass Failure ]
+
+webkit.org/b/262344 [ Ventura+ x86_64 ] imported/blink/css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]

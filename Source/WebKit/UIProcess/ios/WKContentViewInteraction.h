@@ -263,7 +263,7 @@ struct RemoveBackgroundData {
 
 enum class ProceedWithTextSelectionInImage : bool { No, Yes };
 
-enum ImageAnalysisRequestIdentifierType { };
+enum class ImageAnalysisRequestIdentifierType { };
 using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIdentifierType>;
 
 struct ImageAnalysisContextMenuActionData {
@@ -381,7 +381,6 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _contextMenuActionProviderDelegateNeedsOverride;
     BOOL _contextMenuIsUsingAlternateURLForImage;
     BOOL _isDisplayingContextMenuWithAnimation;
-    BOOL _useCompactMenuForContextMenuInteraction;
     BOOL _useContextMenuInteractionDismissalPreview;
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;

@@ -57,29 +57,30 @@ WindowProxy* RemoteDOMWindow::self() const
 
 Location* RemoteDOMWindow::location() const
 {
-    // FIXME: Implemented this.
+    // FIXME: Implemented this. <rdar://116203970>
     return nullptr;
 }
 
 void RemoteDOMWindow::close(Document&)
 {
-    // FIXME: Implemented this.
+    // FIXME: Implemented this. <rdar://116203970>
 }
 
 bool RemoteDOMWindow::closed() const
 {
+    // FIXME: This is probably not completely correct. <rdar://116203970>
     return !m_frame;
 }
 
 void RemoteDOMWindow::focus(LocalDOMWindow& incumbentWindow)
 {
     UNUSED_PARAM(incumbentWindow);
-    // FIXME: Implemented this.
+    // FIXME: Implemented this. <rdar://116203970>
 }
 
 void RemoteDOMWindow::blur()
 {
-    // FIXME: Implemented this.
+    // FIXME: Implemented this. <rdar://116203970>
 }
 
 unsigned RemoteDOMWindow::length() const

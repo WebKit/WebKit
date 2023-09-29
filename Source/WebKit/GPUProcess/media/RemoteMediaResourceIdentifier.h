@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum RemoteMediaResourceIdentifierType { };
+enum class RemoteMediaResourceIdentifierType { };
 using RemoteMediaResourceIdentifier = ObjectIdentifier<RemoteMediaResourceIdentifierType>;
 
 } // namespace WebKit

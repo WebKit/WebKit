@@ -8535,6 +8535,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!positionInformation.textAfter.isEmpty())
         context.get()[PAL::get_DataDetectorsUI_kDataDetectorsTrailingText()] = positionInformation.textAfter;
 
+    auto canShowPreview = ^{
+        if (!_page->websiteDataStore().isPersistent())
+            return NO;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+        if (_page->advancedPrivacyProtectionsPolicies().contains(WebCore::AdvancedPrivacyProtections::BaselineProtections))
+            return NO;
+#endif
+        return YES;
+    }();
+
+    if (!canShowPreview)
+        context.get()[PAL::get_DataDetectorsUI_kDDContextMenuWantsPreviewKey()] = @NO;
+
     CGRect sourceRect;
     if (positionInformation.isLink)
         sourceRect = positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates;
@@ -12361,7 +12374,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
 {
-    _useCompactMenuForContextMenuInteraction = NO;
     _useContextMenuInteractionDismissalPreview = YES;
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -12496,13 +12508,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(DATA_DETECTION)
     if ([(NSURL *)linkURL iTunesStoreURL]) {
-        _useCompactMenuForContextMenuInteraction = !_page->websiteDataStore().isPersistent();
-
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-        if (_page->advancedPrivacyProtectionsPolicies().contains(WebCore::AdvancedPrivacyProtections::BaselineProtections))
-            _useCompactMenuForContextMenuInteraction = YES;
-#endif
-
         [self continueContextMenuInteractionWithDataDetectors:continueWithContextMenuConfiguration];
         return;
     }
@@ -12667,11 +12672,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return suggestedActions;
 }
 
-#if HAVE(UI_CONTEXT_MENU_PREVIEW_ITEM_IDENTIFIER)
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
-#else
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-#endif
 {
     [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
     [self _cancelTouchEventGestureRecognizer];
@@ -12705,11 +12706,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
-#if HAVE(UI_CONTEXT_MENU_PREVIEW_ITEM_IDENTIFIER)
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration dismissalPreviewForItemWithIdentifier:(id<NSCopying>)identifier
-#else
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForDismissingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-#endif
 {
     if (!_useContextMenuInteractionDismissalPreview) {
         _contextMenuInteractionTargetedPreview = nil;
@@ -12717,29 +12714,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     return std::exchange(_contextMenuInteractionTargetedPreview, nil).autorelease();
-}
-
-- (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-{
-    if (_useCompactMenuForContextMenuInteraction) {
-        _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
-        style.preferredLayout = _UIContextMenuLayoutCompactMenu;
-        return style;
-    }
-
-#if defined(DD_CONTEXT_MENU_SPI_VERSION) && DD_CONTEXT_MENU_SPI_VERSION >= 2
-    if ([configuration isKindOfClass:PAL::getDDContextMenuConfigurationClass()]) {
-        DDContextMenuConfiguration *ddConfiguration = static_cast<DDContextMenuConfiguration *>(configuration);
-
-        if (ddConfiguration.prefersActionMenuStyle) {
-            _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
-            style.preferredLayout = _UIContextMenuLayoutActionsOnly;
-            return style;
-        }
-    }
-#endif
-
-    return nil;
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willPerformPreviewActionForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionCommitAnimating>)animator

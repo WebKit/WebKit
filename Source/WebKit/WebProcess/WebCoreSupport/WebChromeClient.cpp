@@ -1059,7 +1059,7 @@ void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer* graphicsLaye
     if (!drawingArea)
         return;
 
-    // FIXME: Support view overlays in iframe processes if needed.
+    // FIXME: Support view overlays in iframe processes if needed. <rdar://116202544>
     drawingArea->attachViewOverlayGraphicsLayer(page->mainWebFrame().frameID(), graphicsLayer);
 }
 

@@ -1181,11 +1181,11 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
     return fragment;
 }
 
-String serializeFragment(const Node& node, SerializedNodes root, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, Vector<QualifiedName>* tagNamesToSkip, std::optional<SerializationSyntax> serializationSyntax)
+String serializeFragment(const Node& node, SerializedNodes root, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, Vector<QualifiedName>* tagNamesToSkip, std::optional<SerializationSyntax> serializationSyntax, HashMap<String, String>&& replacementURLStrings)
 {
     if (!serializationSyntax)
         serializationSyntax = node.document().isHTMLDocument() ? SerializationSyntax::HTML : SerializationSyntax::XML;
-    MarkupAccumulator accumulator(nodes, resolveURLs, *serializationSyntax);
+    MarkupAccumulator accumulator(nodes, resolveURLs, *serializationSyntax, WTFMove(replacementURLStrings));
     return accumulator.serializeNodes(const_cast<Node&>(node), root, tagNamesToSkip);
 }
 

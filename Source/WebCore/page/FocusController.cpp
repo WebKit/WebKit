@@ -492,7 +492,7 @@ LocalFrame& FocusController::focusedOrMainFrame() const
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
         return *localMainFrame;
 
-    // FIXME: Do something better here in the site isolated case.
+    // FIXME: Do something better here in the site isolated case. <rdar://116201648>
     ASSERT(m_page.settings().siteIsolationEnabled());
     return *m_page.rootFrames().begin();
 }

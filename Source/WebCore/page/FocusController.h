@@ -28,6 +28,7 @@
 #include "ActivityState.h"
 #include "FocusOptions.h"
 #include "LayoutRect.h"
+#include "LocalFrame.h"
 #include "Timer.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -42,7 +43,6 @@ class FocusNavigationScope;
 class Frame;
 class IntRect;
 class KeyboardEvent;
-class LocalFrame;
 class Node;
 class Page;
 class TreeScope;

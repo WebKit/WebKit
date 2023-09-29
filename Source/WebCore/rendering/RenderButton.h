@@ -68,7 +68,6 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderButton"_s; }
-    bool isRenderButton() const override { return true; }
 
     bool hasLineIfEmpty() const override;
 

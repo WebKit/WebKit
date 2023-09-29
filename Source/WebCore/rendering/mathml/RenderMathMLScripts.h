@@ -38,7 +38,7 @@ namespace WebCore {
 class RenderMathMLScripts : public RenderMathMLBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLScripts);
 public:
-    RenderMathMLScripts(MathMLScriptsElement&, RenderStyle&&);
+    RenderMathMLScripts(Type, MathMLScriptsElement&, RenderStyle&&);
     RenderMathMLOperator* unembellishedOperator() const final;
 
 protected:

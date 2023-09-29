@@ -51,7 +51,6 @@ public:
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 
 private:
-    bool isLegacySVGForeignObject() const override { return true; }
     void graphicsElement() const = delete;
     ASCIILiteral renderName() const override { return "RenderSVGForeignObject"_s; }
 

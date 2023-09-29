@@ -94,8 +94,8 @@ static void moveWidgetToParentSoon(Widget& child, LocalFrameView* parent)
     WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
 }
 
-RenderWidget::RenderWidget(HTMLFrameOwnerElement& element, RenderStyle&& style)
-    : RenderReplaced(element, WTFMove(style))
+RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, RenderStyle&& style)
+    : RenderReplaced(type, element, WTFMove(style))
 {
     relaxAdoptionRequirement();
     setInline(false);

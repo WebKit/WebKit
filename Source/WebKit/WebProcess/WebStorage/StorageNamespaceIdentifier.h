@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum StorageNamespaceIdentifierType { };
+enum class StorageNamespaceIdentifierType { };
 using StorageNamespaceIdentifier = ObjectIdentifier<StorageNamespaceIdentifierType>;
 
 }

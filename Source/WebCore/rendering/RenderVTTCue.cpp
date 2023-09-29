@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderVTTCue);
 
 RenderVTTCue::RenderVTTCue(VTTCueBox& element, RenderStyle&& style)
-    : RenderBlockFlow(element, WTFMove(style))
+    : RenderBlockFlow(Type::VTTCue, element, WTFMove(style))
     , m_cue(downcast<VTTCue>(element.getCue()))
 {
     ASSERT(m_cue);

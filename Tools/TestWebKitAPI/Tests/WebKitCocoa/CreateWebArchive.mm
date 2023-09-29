@@ -150,6 +150,67 @@ TEST(WebArchive, ApplicationXWebarchiveMIMETypeDoesNotLoadHTML)
     [webView _test_waitForDidFailProvisionalNavigation];
 }
 
+TEST(WebArchive, SaveResourcesBasic)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    NSData *htmlData = [@"<head><script src=\"script.js\"></script></head><img src=\"image.png\" onload=\"onImageLoad()\"><script>function onImageLoad() { notifyTestRunner(); }</script>" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *scriptData = [@"function notifyTestRunner() { window.webkit.messageHandlers.testHandler.postMessage(\"done\"); }" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/script.js"]) {
+            mimeType = @"application/javascript";
+            data = scriptData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/image.png"]) {
+            mimeType = @"image/png";
+            data = imageData;
+        } else
+            FAIL();
+
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        auto htmlPath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:htmlPath]);
+        NSData *htmlDataWithReplacedURLs = [@"<html><head><script src=\"host_files/script.js\"></script></head><body><img src=\"host_files/image.png\" onload=\"onImageLoad()\"><script>function onImageLoad() { notifyTestRunner(); }</script></body></html>" dataUsingEncoding:NSUTF8StringEncoding];
+        EXPECT_TRUE([[NSData dataWithContentsOfFile:htmlPath] isEqualToData:htmlDataWithReplacedURLs]);
+
+        auto scriptPath = [directoryURL URLByAppendingPathComponent:@"host_files/script.js"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:scriptPath]);
+        EXPECT_TRUE([[NSData dataWithContentsOfFile:scriptPath] isEqualToData:scriptData]);
+
+        auto imagePath = [directoryURL URLByAppendingPathComponent:@"host_files/image.png"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:imagePath]);
+        EXPECT_TRUE([[NSData dataWithContentsOfFile:imagePath] isEqualToData:imageData]);
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

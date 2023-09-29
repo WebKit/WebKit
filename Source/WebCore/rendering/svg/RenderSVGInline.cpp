@@ -37,8 +37,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGInline);
     
-RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderInline(element, WTFMove(style))
+RenderSVGInline::RenderSVGInline(Type type, SVGGraphicsElement& element, RenderStyle&& style)
+    : RenderInline(type, element, WTFMove(style))
 {
 }
 

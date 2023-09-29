@@ -39,5 +39,6 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, DDDetectionController)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDataDetectorsLeadingText, const NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDataDetectorsReferenceDateKey, const NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDataDetectorsTrailingText, const NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDDContextMenuWantsPreviewKey, const NSString *)
 
 #endif

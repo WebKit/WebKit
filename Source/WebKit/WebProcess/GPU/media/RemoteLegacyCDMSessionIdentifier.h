@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum RemoteLegacyCDMSessionIdentifierType { };
+enum class RemoteLegacyCDMSessionIdentifierType { };
 using RemoteLegacyCDMSessionIdentifier = ObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>;
 
 } // namespace WebKit

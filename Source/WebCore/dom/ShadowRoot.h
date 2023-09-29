@@ -68,7 +68,7 @@ public:
     using TreeScope::getElementById;
     using TreeScope::rootNode;
 
-    WEBCORE_EXPORT Style::Scope& styleScope();
+    Style::Scope& styleScope() { return *m_styleScope; }
     StyleSheetList& styleSheets();
 
     bool delegatesFocus() const { return m_delegatesFocus; }

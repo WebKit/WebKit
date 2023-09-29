@@ -124,7 +124,7 @@ public:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
     virtual void addRootFrame(WebCore::FrameIdentifier) { }
-    // FIXME: Add a corresponding removeRootFrame.
+    // FIXME: Add a corresponding removeRootFrame. <rdar://116202445>
 
     // Cause a rendering update to happen as soon as possible.
     virtual void triggerRenderingUpdate() = 0;

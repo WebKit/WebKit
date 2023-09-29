@@ -1613,8 +1613,8 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::isLicenseTypeSupported(LicenseT
 
 Vector<RetainPtr<AVContentKey>> CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceKeys() const
 {
-    return WTF::flatMap(m_requests, [](auto& request) {
-        return WTF::compactMap(request.requests, [](auto& request) {
+    return flatMap(m_requests, [](auto& request) {
+        return compactMap(request.requests, [](auto& request) {
             return RetainPtr { [request contentKey] };
         });
     });
@@ -1630,6 +1630,11 @@ const void* CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourc
 const Logger& CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceLogger() const
 {
     return logger();
+}
+
+WTFLogChannel& CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceLogChannel() const
+{
+    return logChannel();
 }
 
 #endif // !RELEASE_LOG_DISABLED

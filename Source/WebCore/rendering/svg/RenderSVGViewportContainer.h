@@ -44,7 +44,6 @@ public:
     void updateFromStyle() final;
 
 private:
-    bool isSVGViewportContainer() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderSVGViewportContainer"_s; }
 
     void element() const = delete;

@@ -40,6 +40,7 @@ WebProcessProxy* BrowsingContextGroup::processForDomain(const WebCore::Registrab
     return process.get();
 }
 
+// FIXME: This needs a corresponding remove call when a process terminates. <rdar://116202371>
 void BrowsingContextGroup::addProcessForDomain(const WebCore::RegistrableDomain& domain, WebProcessProxy& process)
 {
     ASSERT(!m_processMap.get(domain) || m_processMap.get(domain)->state() == WebProcessProxy::State::Terminated || m_processMap.get(domain) == &process);

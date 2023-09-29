@@ -49,7 +49,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGImage);
 
 LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, RenderStyle&& style)
-    : LegacyRenderSVGModelObject(element, WTFMove(style))
+    : LegacyRenderSVGModelObject(Type::LegacySVGImage, element, WTFMove(style))
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
     , m_imageResource(makeUnique<RenderImageResource>())

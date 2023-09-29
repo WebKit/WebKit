@@ -44,7 +44,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceFilterPrimitive);
 
 RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement, RenderStyle&& style)
-    : LegacyRenderSVGHiddenContainer(filterPrimitiveElement, WTFMove(style))
+    : LegacyRenderSVGHiddenContainer(Type::SVGResourceFilterPrimitive, filterPrimitiveElement, WTFMove(style))
 {
 }
 

@@ -139,7 +139,6 @@ private:
     }
 
     ASCIILiteral renderName() const override;
-    bool isRenderGrid() const override { return true; }
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
     bool selfAlignmentChangedToStretch(GridAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;

@@ -35,8 +35,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceContainer);
 
-LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(SVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGHiddenContainer(element, WTFMove(style))
+LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(Type type, SVGElement& element, RenderStyle&& style)
+    : LegacyRenderSVGHiddenContainer(type, element, WTFMove(style))
     , m_id(element.getIdAttribute())
 {
 }
