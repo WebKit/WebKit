@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(EGL)
+
 #include "AcceleratedSurface.h"
 
 #include "MessageReceiver.h"
@@ -156,3 +158,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(EGL)

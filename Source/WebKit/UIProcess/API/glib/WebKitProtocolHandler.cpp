@@ -45,9 +45,11 @@
 #endif
 
 #if PLATFORM(GTK)
+#if USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
 #include "DMABufRendererBufferMode.h"
 #include <WebCore/PlatformDisplaySurfaceless.h>
+#endif
 #include <gtk/gtk.h>
 
 #if PLATFORM(WAYLAND)
@@ -164,6 +166,7 @@ static String dmabufRendererWithSupportedBuffers()
 {
     StringBuilder buffers;
     buffers.append("DMABuf (Supported buffers: "_s);
+#if USE(EGL)
     auto mode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
     if (mode.contains(DMABufRendererBufferMode::Hardware))
         buffers.append("Hardware"_s);
@@ -172,6 +175,7 @@ static String dmabufRendererWithSupportedBuffers()
             buffers.append(", ");
         buffers.append("Shared Memory"_s);
     }
+#endif
     buffers.append(')');
     return buffers.toString();
 }
@@ -269,7 +273,11 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if PLATFORM(GTK)
     addTableRow(versionObject, "GTK version"_s, makeString(GTK_MAJOR_VERSION, '.', GTK_MINOR_VERSION, '.', GTK_MICRO_VERSION, " (build) "_s, gtk_get_major_version(), '.', gtk_get_minor_version(), '.', gtk_get_micro_version(), " (runtime)"_s));
 
+#if USE(EGL)
     bool usingDMABufRenderer = AcceleratedBackingStoreDMABuf::checkRequirements();
+#else
+    bool usingDMABufRenderer = false;
+#endif
 
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && !usingDMABufRenderer) {

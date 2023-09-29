@@ -54,7 +54,9 @@
 
 #if PLATFORM(GTK)
 #include "GtkSettingsManager.h"
+#if USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
+#endif
 #endif
 
 
@@ -88,7 +90,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(EGL)
     parameters.dmaBufRendererBufferMode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
 #endif
 

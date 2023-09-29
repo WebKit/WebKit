@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 
+#if USE(EGL)
+
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "DMABufRendererBufferMode.h"
@@ -575,3 +577,5 @@ bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& c
 #endif
 
 } // namespace WebKit
+
+#endif // USE(EGL)

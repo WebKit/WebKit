@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(EGL)
+
 #include "AcceleratedBackingStore.h"
 
 #include "MessageReceiver.h"
@@ -200,3 +202,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(EGL)

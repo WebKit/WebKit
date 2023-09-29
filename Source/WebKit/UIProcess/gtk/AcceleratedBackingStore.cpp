@@ -40,7 +40,7 @@
 #include "AcceleratedBackingStoreX11.h"
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
 #endif
 
@@ -72,7 +72,7 @@ static bool gtkCanUseHardwareAcceleration()
 
 bool AcceleratedBackingStore::checkRequirements()
 {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(EGL)
     if (AcceleratedBackingStoreDMABuf::checkRequirements())
         return gtkCanUseHardwareAcceleration();
 #endif
@@ -93,7 +93,7 @@ std::unique_ptr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPage
     if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
         return nullptr;
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(EGL)
     if (AcceleratedBackingStoreDMABuf::checkRequirements())
         return AcceleratedBackingStoreDMABuf::create(webPage);
 #endif
