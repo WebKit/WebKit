@@ -239,8 +239,7 @@ bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, 
 
 bool WebExtensionTab::extensionHasAccess() const
 {
-    auto url = this->url();
-    return extensionContext()->hasPermission(url, delegate());
+    return extensionContext()->hasPermission(url(), const_cast<WebExtensionTab*>(this));
 }
 
 RefPtr<WebExtensionWindow> WebExtensionTab::window(SkipContainsCheck skipCheck) const

@@ -23,22 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#import <WebKit/_WKWebExtensionAction.h>
 
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import <WebKit/WKWebViewPrivate.h>
+@interface _WKWebExtensionAction ()
 
-TEST(WKWebViewInspection, UseInspectionAPIAfterClose)
-{
-    auto webView = adoptNS([[WKWebView alloc] init]);
-
-    [webView setInspectable:YES];
-
-    [webView _close];
-
-    EXPECT_FALSE([webView isInspectable]);
-    [webView setInspectable:NO];
-    EXPECT_WK_STREQ("", [webView _remoteInspectionNameOverride]);
-    [webView _setRemoteInspectionNameOverride:@"Somebody"];
-}
+@end

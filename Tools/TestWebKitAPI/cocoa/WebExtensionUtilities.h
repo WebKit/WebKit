@@ -28,15 +28,9 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "TestCocoa.h"
+#include "TestWebExtensionsDelegate.h"
 #include "Utilities.h"
 #include "WTFTestUtilities.h"
-#include <WebKit/_WKWebExtensionContextPrivate.h>
-#include <WebKit/_WKWebExtensionControllerConfigurationPrivate.h>
-#include <WebKit/_WKWebExtensionControllerDelegatePrivate.h>
-#include <WebKit/_WKWebExtensionControllerPrivate.h>
-#include <WebKit/_WKWebExtensionPrivate.h>
-#include <WebKit/_WKWebExtensionTab.h>
-#include <WebKit/_WKWebExtensionWindow.h>
 
 #ifdef __OBJC__
 
@@ -127,6 +121,7 @@
 OBJC_CLASS TestWebExtensionManager;
 OBJC_CLASS TestWebExtensionTab;
 OBJC_CLASS TestWebExtensionWindow;
+OBJC_CLASS TestWebExtensionsDelegate;
 
 #endif // __OBJC__
 

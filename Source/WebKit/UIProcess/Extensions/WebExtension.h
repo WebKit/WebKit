@@ -46,6 +46,7 @@ OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
+OBJC_CLASS UTType;
 OBJC_CLASS _WKWebExtension;
 OBJC_CLASS _WKWebExtensionLocalization;
 OBJC_CLASS _WKWebExtensionMatchPattern;
@@ -158,6 +159,8 @@ public:
     bool isAccessibleResourcePath(NSString *, NSURL *frameDocumentURL);
 
     NSURL *resourceFileURLForPath(NSString *);
+
+    UTType *resourceTypeForPath(NSString *);
 
     NSString *resourceStringForPath(NSString *, CacheResult = CacheResult::No);
     NSData *resourceDataForPath(NSString *, CacheResult = CacheResult::No);

@@ -28,9 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "HTTPServer.h"
-#import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
-#import <WebKit/_WKWebExtensionTabCreationOptions.h>
 
 namespace TestWebKitAPI {
 
