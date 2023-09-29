@@ -3570,6 +3570,32 @@ const NativeWebKeyboardEvent& WebPageProxy::firstQueuedKeyEvent() const
     return internals().keyEventQueue.first();
 }
 
+void WebPageProxy::sendKeyEvent(const NativeWebKeyboardEvent& event)
+{
+    m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
+
+    auto handleKeyEventReply = [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
+        if (!m_pageClient)
+            return;
+        if (!eventType)
+            return;
+        didReceiveEvent(*eventType, handled);
+    };
+
+    if (m_focusedFrame) {
+        if (auto remotePageProxy = m_focusedFrame->remotePageProxy()) {
+            remotePageProxy->sendWithAsyncReply(Messages::WebPage::KeyEvent(m_focusedFrame->frameID(), event), [handleKeyEventReply] (std::optional<WebEventType> eventType, bool handled) {
+                handleKeyEventReply(eventType, handled);
+            });
+            return;
+        }
+    }
+
+    sendWithAsyncReply(Messages::WebPage::KeyEvent(m_focusedFrame ? m_focusedFrame->frameID() : m_mainFrame->frameID(), event), [handleKeyEventReply] (std::optional<WebEventType> eventType, bool handled) {
+        handleKeyEventReply(eventType, handled);
+    });
+}
+
 bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 {
     if (!hasRunningProcess())
@@ -3590,13 +3616,7 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     if (internals().keyEventQueue.size() == 1) {
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
         m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
-        sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), event), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
-            if (!m_pageClient)
-                return;
-            if (!eventType)
-                return;
-            didReceiveEvent(*eventType, handled);
-        });
+        sendKeyEvent(event);
     }
 
     return true;
@@ -8678,13 +8698,7 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
             auto nextEvent = internals().keyEventQueue.first();
             LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
             m_process->recordUserGestureAuthorizationToken(nextEvent.authorizationToken());
-            sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), nextEvent), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
-                if (!m_pageClient)
-                    return;
-                if (!eventType)
-                    return;
-                didReceiveEvent(*eventType, handled);
-            });
+            sendKeyEvent(nextEvent);
         }
 
         // The call to doneWithKeyEvent may close this WebPage.

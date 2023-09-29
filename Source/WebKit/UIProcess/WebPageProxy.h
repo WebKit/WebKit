@@ -1115,6 +1115,7 @@ public:
     void wheelEventHandlingCompleted(bool wasHandled);
 
     bool isProcessingKeyboardEvents() const;
+    void sendKeyEvent(const NativeWebKeyboardEvent&);
     bool handleKeyboardEvent(const NativeWebKeyboardEvent&);
 #if PLATFORM(WIN)
     void dispatchPendingCharEvents(const NativeWebKeyboardEvent&);
