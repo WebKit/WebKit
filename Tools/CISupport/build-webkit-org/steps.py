@@ -572,8 +572,7 @@ class DownloadBuiltProduct(shell.ShellCommandNewStyle):
         # Only try to download from S3 on the official deployment <https://webkit.org/b/230006>
         if CURRENT_HOSTNAME != BUILD_WEBKIT_HOSTNAME:
             self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
-            self.finished(SKIPPED)
-            defer.returnValue(SUCCESS)
+            defer.returnValue(SKIPPED)
 
         rc = yield super().run()
         if rc == FAILURE:

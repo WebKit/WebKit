@@ -2615,6 +2615,8 @@ fn testTextureStore()
 // 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
 
 // 16.11.1.
+// RUN: %metal-compile testStorageBarrier
+@compute @workgroup_size(1)
 fn testStorageBarrier()
 {
     // [].() => void,
@@ -2622,6 +2624,8 @@ fn testStorageBarrier()
 }
 
 // 16.11.2.
+// RUN: %metal-compile testWorkgroupBarrier
+@compute @workgroup_size(1)
 fn testWorkgroupBarrier()
 {
     // fn workgroupBarrier()
@@ -2630,6 +2634,8 @@ fn testWorkgroupBarrier()
 
 // 16.11.3.
 var<workgroup> testWorkgroupUniformLoadHelper: i32;
+// RUN: %metal-compile testWorkgroupUniformLoad
+@compute @workgroup_size(1)
 fn testWorkgroupUniformLoad()
 {
     // [T].(ptr[workgroup, T]) => void,

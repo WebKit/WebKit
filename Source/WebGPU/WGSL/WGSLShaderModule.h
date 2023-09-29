@@ -72,6 +72,10 @@ public:
     void setUsesUnpackArray() { m_usesUnpackArray = true; }
     void clearUsesUnpackArray() { m_usesUnpackArray = false; }
 
+    bool usesWorkgroupUniformLoad() const { return m_usesWorkgroupUniformLoad; }
+    void setUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = true; }
+    void clearUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = false; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -177,6 +181,7 @@ private:
     bool m_usesExternalTextures { false };
     bool m_usesPackArray { false };
     bool m_usesUnpackArray { false };
+    bool m_usesWorkgroupUniformLoad { false };
     Configuration m_configuration;
     AST::Directive::List m_directives;
     AST::Function::List m_functions;

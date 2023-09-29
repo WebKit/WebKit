@@ -191,6 +191,21 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "}\n\n");
     }
+
+    if (m_callGraph.ast().usesWorkgroupUniformLoad()) {
+        m_callGraph.ast().clearUsesWorkgroupUniformLoad();
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n");
+            m_stringBuilder.append(m_indent, "auto result = *ptr;\n");
+            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n");
+            m_stringBuilder.append(m_indent, "return result;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
 }
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
@@ -440,6 +455,20 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
         visit(*variable.maybeInitializer());
         m_stringBuilder.append("_ColorSpaceConversionMatrix }");
         return;
+    }
+
+    if (auto* qualifier = variable.maybeQualifier()) {
+        switch (qualifier->addressSpace()) {
+        case AddressSpace::Workgroup:
+            m_stringBuilder.append("threadgroup ");
+            break;
+        case AddressSpace::Function:
+        case AddressSpace::Handle:
+        case AddressSpace::Private:
+        case AddressSpace::Storage:
+        case AddressSpace::Uniform:
+            break;
+        }
     }
 
     visit(type);
@@ -1079,6 +1108,23 @@ static void emitTextureStore(FunctionDefinitionWriter* writer, AST::CallExpressi
     writer->stringBuilder().append(")");
 }
 
+static void emitStorageBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
+{
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_device)");
+}
+
+static void emitWorkgroupBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
+{
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_threadgroup)");
+}
+
+static void emitWorkgroupUniformLoad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("__workgroup_uniform_load(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(")");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
@@ -1110,6 +1156,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
+            { "storageBarrier", emitStorageBarrier },
             { "textureDimensions", emitTextureDimensions },
             { "textureLoad", emitTextureLoad },
             { "textureNumLevels", emitTextureNumLevels },
@@ -1117,6 +1164,8 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
+            { "workgroupBarrier", emitWorkgroupBarrier },
+            { "workgroupUniformLoad", emitWorkgroupUniformLoad },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
         const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();

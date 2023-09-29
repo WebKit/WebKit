@@ -56,23 +56,12 @@ public:
     TransactionID nextTransactionID() const { return m_currentTransactionID.next(); }
     TransactionID lastCommittedTransactionID() const { return m_currentTransactionID; }
 
+    bool displayDidRefreshIsPending() const { return m_waitingForBackingStoreSwap; }
+
 protected:
-    enum class ScheduleRenderingUrgency {
-        // FIXME: There are many consumers of this (and triggerRenderingUpdate), do they all actually need the ASAP behaviour?
-        AsSoonAsPossible,
-        NextSuitableTime,
-    };
-    void scheduleRenderingUpdate(ScheduleRenderingUrgency);
+    void updateRendering();
 
 private:
-    enum class State {
-        Idle,
-        WaitingForDisplayDidRefresh,
-        WaitingForUpdateRenderingTimer,
-        WaitingForCallOnMainRunLoop,
-        WaitingForScheduleRenderingTimer,
-    };
-
     // DrawingArea
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
@@ -82,11 +71,8 @@ private:
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void addRootFrame(WebCore::FrameIdentifier) final;
-    void triggerRenderingUpdate() final;
+    void triggerRenderingUpdate() override;
     bool scheduleRenderingUpdate() final;
-
-    void updateRendering();
-
     void renderingUpdateFramesPerSecondChanged() final;
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) override;
 
@@ -176,12 +162,13 @@ private:
 
     std::optional<WebCore::FloatRect> m_viewExposedRect;
 
-    State m_state { State::Idle };
-
     WebCore::Timer m_updateRenderingTimer;
     bool m_isRenderingSuspended { false };
     bool m_hasDeferredRenderingUpdate { false };
     bool m_inUpdateRendering { false };
+
+    bool m_waitingForBackingStoreSwap { false };
+    bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };
 
     OSObjectPtr<dispatch_queue_t> m_commitQueue;
     RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;
@@ -195,8 +182,7 @@ private:
     WebCore::Timer m_scheduleRenderingTimer;
     std::optional<WebCore::FramesPerSecond> m_preferredFramesPerSecond;
     Seconds m_preferredRenderingUpdateInterval;
-
-    bool m_updateRenderingIsPending { false };
+    bool m_isScheduled { false };
 };
 
 inline bool RemoteLayerTreeDrawingArea::addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones)
