@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum SampleBufferDisplayLayerIdentifierType { };
+enum class SampleBufferDisplayLayerIdentifierType { };
 using SampleBufferDisplayLayerIdentifier = ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>;
 
 } // namespace WebKit

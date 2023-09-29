@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum LayerHostingContextIdentifierType { };
+enum class LayerHostingContextIdentifierType { };
 using LayerHostingContextIdentifier = ObjectIdentifier<LayerHostingContextIdentifierType>;
 
 }

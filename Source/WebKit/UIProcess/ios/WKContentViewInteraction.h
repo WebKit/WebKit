@@ -263,7 +263,7 @@ struct RemoveBackgroundData {
 
 enum class ProceedWithTextSelectionInImage : bool { No, Yes };
 
-enum ImageAnalysisRequestIdentifierType { };
+enum class ImageAnalysisRequestIdentifierType { };
 using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIdentifierType>;
 
 struct ImageAnalysisContextMenuActionData {

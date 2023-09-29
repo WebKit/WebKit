@@ -200,10 +200,13 @@ struct ConnectionAsyncReplyHandler {
     AsyncReplyID replyID;
 };
 
+enum class ConnectionSyncRequestIDType { };
+using ConnectionSyncRequestID = AtomicObjectIdentifier<ConnectionSyncRequestIDType>;
+
 class Connection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
-    enum SyncRequestIDType { };
-    using SyncRequestID = AtomicObjectIdentifier<SyncRequestIDType>;
+    enum class SyncRequestIDType { };
+    using SyncRequestID = ConnectionSyncRequestID;
     using AsyncReplyID = IPC::AsyncReplyID;
 
     class Client : public MessageReceiver {

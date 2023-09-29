@@ -191,3 +191,11 @@ using WTF::ProcessID = int;
 #else
 using WTF::ProcessID = pid_t;
 #endif
+
+template: class WebKit::Fabulous
+template: struct WebCore::Amazing
+template: enum class JSC::Incredible
+template: enum class Testing::StorageSize : uint8_t
+class WebKit::TemplateTest {
+  bool value;
+}

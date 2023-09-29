@@ -51,7 +51,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-enum MediaDevicePermissionRequestIdentifierType { };
+enum class MediaDevicePermissionRequestIdentifierType { };
 using MediaDevicePermissionRequestIdentifier = ObjectIdentifier<MediaDevicePermissionRequestIdentifierType>;
 
 class UserMediaPermissionRequestManagerProxy

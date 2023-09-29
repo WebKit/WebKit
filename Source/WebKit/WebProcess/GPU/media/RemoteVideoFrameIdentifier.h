@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-enum RemoteVideoFrameIdentifierType { };
+enum class RemoteVideoFrameIdentifierType { };
 using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>;
 using RemoteVideoFrameReadReference = IPC::ObjectIdentifierReadReference<RemoteVideoFrameIdentifier>;
 using RemoteVideoFrameWriteReference = IPC::ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>;

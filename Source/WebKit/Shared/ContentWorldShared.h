@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-enum ContentWorldIdentifierType { };
+enum class ContentWorldIdentifierType { };
 using ContentWorldIdentifier = ObjectIdentifier<ContentWorldIdentifierType>;
 
 inline ContentWorldIdentifier pageContentWorldIdentifier()
