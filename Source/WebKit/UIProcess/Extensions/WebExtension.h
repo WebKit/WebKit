@@ -28,14 +28,13 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "APIObject.h"
+#include "CocoaImage.h"
 #include "WebExtensionMatchPattern.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-
-#import "CocoaImage.h"
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSBundle;

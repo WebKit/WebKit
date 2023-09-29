@@ -39,23 +39,29 @@ TEST(WKWebExtensionControllerConfiguration, Initialization)
 
     EXPECT_TRUE(configuration.persistent);
     EXPECT_NULL(configuration.identifier);
+    EXPECT_NOT_NULL(configuration.webViewConfiguration);
     EXPECT_NE(configuration, _WKWebExtensionControllerConfiguration.defaultConfiguration);
-    EXPECT_NS_EQUAL(configuration, _WKWebExtensionControllerConfiguration.defaultConfiguration);
+    EXPECT_FALSE([configuration isEqual:_WKWebExtensionControllerConfiguration.defaultConfiguration]);
+    EXPECT_FALSE([configuration.webViewConfiguration isEqual:_WKWebExtensionControllerConfiguration.defaultConfiguration.webViewConfiguration]);
 
     configuration = _WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
 
     EXPECT_FALSE(configuration.persistent);
     EXPECT_NULL(configuration.identifier);
+    EXPECT_NOT_NULL(configuration.webViewConfiguration);
     EXPECT_NE(configuration, _WKWebExtensionControllerConfiguration.nonPersistentConfiguration);
-    EXPECT_NS_EQUAL(configuration, _WKWebExtensionControllerConfiguration.nonPersistentConfiguration);
+    EXPECT_FALSE([configuration isEqual:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration]);
+    EXPECT_FALSE([configuration.webViewConfiguration isEqual:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration.webViewConfiguration]);
 
     auto *identifier = [NSUUID UUID];
     configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
 
     EXPECT_TRUE(configuration.persistent);
     EXPECT_NS_EQUAL(configuration.identifier, identifier);
+    EXPECT_NOT_NULL(configuration.webViewConfiguration);
     EXPECT_NE(configuration, [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]);
-    EXPECT_NS_EQUAL(configuration, [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]);
+    EXPECT_FALSE([configuration isEqual:[_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier]]);
+    EXPECT_FALSE([configuration.webViewConfiguration isEqual:[_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier].webViewConfiguration]);
 }
 
 TEST(WKWebExtensionControllerConfiguration, SecureCoding)
@@ -68,8 +74,10 @@ TEST(WKWebExtensionControllerConfiguration, SecureCoding)
     EXPECT_NULL(error);
     EXPECT_TRUE(result.persistent);
     EXPECT_NULL(result.identifier);
+    EXPECT_NOT_NULL(result.webViewConfiguration);
     EXPECT_NE(configuration, result);
-    EXPECT_NS_EQUAL(configuration, result);
+    EXPECT_FALSE([result isEqual:configuration]);
+    EXPECT_FALSE([result.webViewConfiguration isEqual:configuration.webViewConfiguration]);
 
     configuration = _WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
     data = [NSKeyedArchiver archivedDataWithRootObject:configuration requiringSecureCoding:YES error:&error];
@@ -78,8 +86,10 @@ TEST(WKWebExtensionControllerConfiguration, SecureCoding)
     EXPECT_NULL(error);
     EXPECT_FALSE(result.persistent);
     EXPECT_NULL(result.identifier);
+    EXPECT_NOT_NULL(result.webViewConfiguration);
     EXPECT_NE(configuration, result);
-    EXPECT_NS_EQUAL(configuration, result);
+    EXPECT_FALSE([result isEqual:configuration]);
+    EXPECT_FALSE([result.webViewConfiguration isEqual:configuration.webViewConfiguration]);
 
     auto *identifier = [NSUUID UUID];
     configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
@@ -88,9 +98,11 @@ TEST(WKWebExtensionControllerConfiguration, SecureCoding)
 
     EXPECT_NULL(error);
     EXPECT_TRUE(result.persistent);
+    EXPECT_NOT_NULL(result.webViewConfiguration);
     EXPECT_NS_EQUAL(result.identifier, identifier);
     EXPECT_NE(configuration, result);
-    EXPECT_NS_EQUAL(configuration, result);
+    EXPECT_FALSE([result isEqual:configuration]);
+    EXPECT_FALSE([result.webViewConfiguration isEqual:configuration.webViewConfiguration]);
 }
 
 TEST(WKWebExtensionControllerConfiguration, Copying)
@@ -100,16 +112,20 @@ TEST(WKWebExtensionControllerConfiguration, Copying)
 
     EXPECT_TRUE(copy.persistent);
     EXPECT_NULL(copy.identifier);
+    EXPECT_NOT_NULL(copy.webViewConfiguration);
     EXPECT_NE(configuration, copy);
-    EXPECT_NS_EQUAL(configuration, copy);
+    EXPECT_FALSE([copy isEqual:configuration]);
+    EXPECT_FALSE([copy.webViewConfiguration isEqual:configuration.webViewConfiguration]);
 
     configuration = _WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
     copy = [configuration copy];
 
     EXPECT_FALSE(copy.persistent);
     EXPECT_NULL(copy.identifier);
+    EXPECT_NOT_NULL(copy.webViewConfiguration);
     EXPECT_NE(configuration, copy);
-    EXPECT_NS_EQUAL(configuration, copy);
+    EXPECT_FALSE([copy isEqual:configuration]);
+    EXPECT_FALSE([copy.webViewConfiguration isEqual:configuration.webViewConfiguration]);
 
     auto *identifier = [NSUUID UUID];
     configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
@@ -117,8 +133,10 @@ TEST(WKWebExtensionControllerConfiguration, Copying)
 
     EXPECT_TRUE(copy.persistent);
     EXPECT_NS_EQUAL(copy.identifier, identifier);
+    EXPECT_NOT_NULL(copy.webViewConfiguration);
     EXPECT_NE(configuration, copy);
-    EXPECT_NS_EQUAL(configuration, copy);
+    EXPECT_FALSE([copy isEqual:configuration]);
+    EXPECT_FALSE([copy.webViewConfiguration isEqual:configuration.webViewConfiguration]);
 }
 
 } // namespace TestWebKitAPI
