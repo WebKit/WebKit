@@ -179,7 +179,7 @@ void InlineBoxPainter::paintMask()
     paintFillLayers(Color(), renderer().style().maskLayers(), paintRect, compositeOp);
 
     bool hasBoxImage = maskBorder && maskBorder->canRender(&renderer(), renderer().style().effectiveZoom());
-    if (!hasBoxImage || !maskBorder->isLoaded()) {
+    if (!hasBoxImage || !maskBorder->isLoaded(&renderer())) {
         if (pushTransparencyLayer)
             m_paintInfo.context().endTransparencyLayer();
         return; // Don't paint anything while we wait for the image to load.
@@ -254,7 +254,7 @@ void InlineBoxPainter::paintDecorations()
     const NinePieceImage& borderImage = renderer().style().borderImage();
     StyleImage* borderImageSource = borderImage.image();
     bool hasBorderImage = borderImageSource && borderImageSource->canRender(&renderer(), style.effectiveZoom());
-    if (hasBorderImage && !borderImageSource->isLoaded())
+    if (hasBorderImage && !borderImageSource->isLoaded(&renderer()))
         return; // Don't paint anything while we wait for the image to load.
 
     BorderPainter borderPainter { renderer(), m_paintInfo };
