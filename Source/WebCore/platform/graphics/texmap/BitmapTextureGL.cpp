@@ -142,11 +142,8 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
     }
 }
 
-void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset)
+void BitmapTextureGL::updateContents(NativeImage* frameImage, const IntRect& targetRect, const IntPoint& offset)
 {
-    if (!image)
-        return;
-    auto frameImage = image->nativeImageForCurrentFrame();
     if (!frameImage)
         return;
 

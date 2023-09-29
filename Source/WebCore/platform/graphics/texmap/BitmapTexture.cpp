@@ -54,7 +54,7 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
 
     sourceLayer->paintGraphicsLayerContents(context, sourceRect);
 
-    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+    auto image = ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
     if (!image)
         return;
 

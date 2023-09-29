@@ -29,6 +29,7 @@
 #if ENABLE(WEBGL)
 
 #include "ANGLEInstancedArrays.h"
+#include "BitmapImage.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "DiagnosticLoggingClient.h"
@@ -3532,7 +3533,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         return { };
 
     // Fallback pure SW path.
-    RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
+    RefPtr<Image> image = BitmapImage::create(buffer->createNativeImageReference());
     // The premultiplyAlpha and flipY pixel unpack parameters are ignored for ImageBitmaps.
     if (image)
         texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Image, false, source.premultiplyAlpha(), source.forciblyPremultiplyAlpha(), sourceImageRect, depth, unpackImageHeight);
@@ -3702,7 +3703,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     }
 
     // Fallback pure SW path.
-    RefPtr<Image> image = videoFrameToImage(source, DontCopyBackingStore, functionName);
+    RefPtr<Image> image = videoFrameToImage(source, functionName);
     if (!image)
         return { };
     texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
@@ -4466,12 +4467,14 @@ RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int w
     FloatRect srcRect(FloatPoint(), image.size());
     FloatRect destRect(FloatPoint(), size);
     buf->context().drawImage(image, destRect, srcRect);
-    return buf->copyImage(DontCopyBackingStore);
+    // FIXME: createNativeImageReference() does not make sense for GPUP.
+    // Instead, should fix by GPUP side upload.
+    return BitmapImage::create(buf->createNativeImageReference());
 }
 
 #if ENABLE(VIDEO)
 
-RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& video, BackingStoreCopy backingStoreCopy, const char* functionName)
+RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& video, const char* functionName)
 {
     RefPtr<ImageBuffer> imageBuffer;
     // FIXME: When texImage2D is passed an HTMLVideoElement, implementations
@@ -4518,7 +4521,7 @@ RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& vid
         }
         video.paintCurrentFrameInContext(imageBuffer->context(), { { }, videoSize });
     }
-    RefPtr<Image> image = imageBuffer->copyImage(backingStoreCopy);
+    RefPtr<Image> image = BitmapImage::create(imageBuffer->createNativeImageReference());
     if (!image) {
         synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
         return nullptr;

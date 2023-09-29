@@ -534,7 +534,7 @@ protected:
     RefPtr<Image> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor, const char* functionName);
 
 #if ENABLE(VIDEO)
-    RefPtr<Image> videoFrameToImage(HTMLVideoElement&, BackingStoreCopy, const char* functionName);
+    RefPtr<Image> videoFrameToImage(HTMLVideoElement&, const char* functionName);
 #endif
 
     WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;

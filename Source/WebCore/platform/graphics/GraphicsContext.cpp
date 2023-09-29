@@ -403,8 +403,8 @@ void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect,
 {
     FloatRect scaledSource = source;
     scaledSource.scale(image.resolutionScale());
-    if (auto copiedImage = image.copyImage(this == &image.context() ? CopyBackingStore : DontCopyBackingStore))
-        copiedImage->drawPattern(*this, destRect, scaledSource, patternTransform, phase, spacing, options);
+    if (auto nativeImage = nativeImageForDrawing(image))
+        drawPattern(*nativeImage, destRect, source, patternTransform, phase, spacing, options);
 }
 
 void GraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)

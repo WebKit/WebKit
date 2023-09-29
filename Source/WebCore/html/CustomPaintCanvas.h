@@ -65,7 +65,7 @@ public:
 
     void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final { }
 
-    AffineTransform baseTransform() const final { ASSERT(m_copiedBuffer); return m_copiedBuffer->baseTransform(); }
+    AffineTransform baseTransform() const final;
     Image* copiedImage() const final;
     void clearCopiedImage() const final;
 
@@ -87,7 +87,6 @@ private:
 
     std::unique_ptr<CanvasRenderingContext> m_context;
     mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
-    mutable RefPtr<ImageBuffer> m_copiedBuffer;
     mutable RefPtr<Image> m_copiedImage;
 };
 

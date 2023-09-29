@@ -385,14 +385,6 @@ RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)
     return source->sinkIntoNativeImage();
 }
 
-RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
-{
-    auto image = copyImageBufferToNativeImage(const_cast<ImageBuffer&>(*this), copyBehavior, preserveResolution);
-    if (!image)
-        return nullptr;
-    return BitmapImage::create(image.releaseNonNull());
-}
-
 void ImageBuffer::convertToLuminanceMask()
 {
     if (auto* backend = ensureBackendCreated())

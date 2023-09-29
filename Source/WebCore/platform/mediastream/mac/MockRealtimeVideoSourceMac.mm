@@ -92,7 +92,7 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     }
 
     PlatformImagePtr platformImage;
-    if (auto nativeImage = imageBuffer->copyImage()->nativeImage())
+    if (auto nativeImage = imageBuffer->copyNativeImage())
         platformImage = nativeImage->platformImage();
 
     auto presentationTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());

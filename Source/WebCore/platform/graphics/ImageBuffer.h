@@ -162,7 +162,6 @@ public:
     // Useful when caller can guarantee the use of the NativeImage ends "immediately", before the next draw to this ImageBuffer.
     WEBCORE_EXPORT virtual RefPtr<NativeImage> createNativeImageReference() const;
 
-    WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> filteredNativeImage(Filter&);
     RefPtr<NativeImage> filteredNativeImage(Filter&, Function<void(GraphicsContext&)> drawCallback);
 

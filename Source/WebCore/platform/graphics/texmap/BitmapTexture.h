@@ -37,7 +37,7 @@ namespace WebCore {
 
 class FilterOperations;
 class GraphicsLayer;
-class Image;
+class NativeImage;
 class TextureMapper;
 
 // A 2D texture that can be the target of software or GL rendering.
@@ -60,7 +60,7 @@ public:
     virtual bool isBackedByOpenGL() const { return false; }
 
     virtual IntSize size() const = 0;
-    virtual void updateContents(Image*, const IntRect&, const IntPoint& offset) = 0;
+    virtual void updateContents(NativeImage*, const IntRect&, const IntPoint& offset) = 0;
     void updateContents(GraphicsLayer*, const IntRect& target, const IntPoint& offset, float scale = 1);
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine) = 0;
     virtual bool isValid() const = 0;
