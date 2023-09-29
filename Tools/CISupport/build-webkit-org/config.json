@@ -123,6 +123,7 @@
                   { "name": "wpe-linux-bot-13", "platform": "wpe" },
                   { "name": "wpe-linux-bot-14", "platform": "wpe" },
                   { "name": "wpe-linux-bot-15", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-16", "platform": "wpe" },
                   { "name": "wpe-linux-bot-17", "platform": "wpe" },
                   { "name": "wpe-linux-bot-18", "platform": "wpe" },
                   { "name": "wpe-linux-bot-19", "platform": "wpe" },
@@ -652,7 +653,7 @@
                     "name": "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["armv7"],
                     "additionalArguments": ["--no-experimental-features"],
-                    "workernames": ["wpe-linux-bot-17"]
+                    "workernames": ["wpe-linux-bot-16"]
                   },
                   {
                     "name": "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Build", "factory": "CrossTargetBuildFactory",
