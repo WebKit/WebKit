@@ -889,47 +889,6 @@ WARN_UNUSED_RETURN bool ArgumentCoder<RefPtr<WebCore::FilterOperation>>::decode(
 
 #endif // !USE(COORDINATED_GRAPHICS)
 
-void ArgumentCoder<BlobPart>::encode(Encoder& encoder, const BlobPart& blobPart)
-{
-    encoder << blobPart.type();
-    switch (blobPart.type()) {
-    case BlobPart::Type::Data:
-        encoder << blobPart.data();
-        return;
-    case BlobPart::Type::Blob:
-        encoder << blobPart.url();
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<BlobPart> ArgumentCoder<BlobPart>::decode(Decoder& decoder)
-{
-    std::optional<BlobPart::Type> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    switch (*type) {
-    case BlobPart::Type::Data: {
-        std::optional<Vector<uint8_t>> data;
-        decoder >> data;
-        if (!data)
-            return std::nullopt;
-        return BlobPart(WTFMove(*data));
-    }
-    case BlobPart::Type::Blob: {
-        URL url;
-        if (!decoder.decode(url))
-            return std::nullopt;
-        return BlobPart(url);
-    }
-    }
-
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const MediaPlaybackTargetContext& target)
 {
