@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.Collator.prototype.resolvedOptions.name, "resolvedOptions");
-
-verifyNotEnumerable(Intl.Collator.prototype.resolvedOptions, "name");
-verifyNotWritable(Intl.Collator.prototype.resolvedOptions, "name");
-verifyConfigurable(Intl.Collator.prototype.resolvedOptions, "name");
+verifyProperty(Intl.Collator.prototype.resolvedOptions, "name", {
+  value: "resolvedOptions",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

@@ -1,21 +1,21 @@
 // Copyright (C) 2021 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-description: AssertClause in ImportDeclaration may be empty
+description: WithClause in ImportDeclaration may be empty
 esid: sec-modules
 info: |
   ImportDeclaration:
-    import ModuleSpecifier[no LineTerminator here] AssertClause;
+    import ModuleSpecifier[no LineTerminator here] WithClause;
 
-  AssertClause:
+  WithClause:
     assert {}
-    assert {AssertEntries ,opt}
+    assert {WithEntries ,opt}
 
-  AssertEntries:
-    AssertionKey : StringLiteral
-    AssertionKey : StringLiteral , AssertEntries
+  WithEntries:
+    AttributeKey : StringLiteral
+    AttributeKey : StringLiteral , WithEntries
 
-  AssertionKey:
+  AttributeKey:
     IdentifierName
     StringLiteral
 features: [import-assertions, globalThis]
@@ -27,4 +27,3 @@ import './import-assertion-2_FIXTURE.js' assert {};
 export * from './import-assertion-3_FIXTURE.js' assert {};
 
 assert.sameValue(x, 262.1);
-assert.sameValue(globalThis.test262, 262.2);

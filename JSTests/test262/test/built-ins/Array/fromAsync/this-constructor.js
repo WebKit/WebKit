@@ -47,7 +47,6 @@ asyncTest(async function () {
   assert.sameValue(result.length, 2, "length is set on result");
   assert.sameValue(result[0], 1, "element 0 is set on result");
   assert.sameValue(result[1], 2, "element 1 is set on result");
-  assert.sameValue(constructorCalls.length, 2, "constructor is called twice");
-  assert.compareArray(constructorCalls[0], [], "constructor is called first with no arguments");
-  assert.compareArray(constructorCalls[1], [2], "constructor is called second with a length argument");
+  assert.sameValue(constructorCalls.length, 1, "constructor is called once");
+  assert.compareArray(constructorCalls[0], [2], "constructor is called with a length argument");
 });

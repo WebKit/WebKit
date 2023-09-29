@@ -28,7 +28,7 @@ Object.defineProperty(Temporal.TimeZone.prototype, "getOffsetNanosecondsFor", {
 // The following are all valid strings so should not throw:
 
 ["UTC", "+01:00"].forEach((timeZone) => {
-  Temporal.Duration.compare(new Temporal.Duration(), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } });
+  Temporal.Duration.compare(new Temporal.Duration(1), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } });
 });
 
 Object.defineProperty(Temporal.TimeZone.prototype, "getPossibleInstantsFor", getPossibleInstantsForOriginal);

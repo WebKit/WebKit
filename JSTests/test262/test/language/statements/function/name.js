@@ -18,7 +18,9 @@ includes: [propertyHelper.js]
 
 function func() {}
 
-assert.sameValue(func.name, 'func');
-verifyNotEnumerable(func, 'name');
-verifyNotWritable(func, 'name');
-verifyConfigurable(func, 'name');
+verifyProperty(func, "name", {
+  value: "func",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

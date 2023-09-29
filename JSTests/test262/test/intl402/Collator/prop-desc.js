@@ -24,6 +24,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Intl, "Collator");
-verifyWritable(Intl, "Collator");
-verifyConfigurable(Intl, "Collator");
+verifyProperty(Intl, "Collator", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

@@ -12,7 +12,9 @@ features: [generators]
 
 var method = { *method(a, b, c) {} }.method;
 
-assert.sameValue(method.length, 3);
-verifyNotEnumerable(method, 'length');
-verifyNotWritable(method, 'length');
-verifyConfigurable(method, 'length');
+verifyProperty(method, "length", {
+  value: 3,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

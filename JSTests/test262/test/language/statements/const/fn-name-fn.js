@@ -21,7 +21,9 @@ const fn = function() {};
 
 assert(xFn.name !== 'xFn');
 
-assert.sameValue(fn.name, 'fn');
-verifyNotEnumerable(fn, 'name');
-verifyNotWritable(fn, 'name');
-verifyConfigurable(fn, 'name');
+verifyProperty(fn, 'name', {
+  value: 'fn',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

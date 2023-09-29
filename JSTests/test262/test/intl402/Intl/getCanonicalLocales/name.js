@@ -11,10 +11,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.getCanonicalLocales.name, 'getCanonicalLocales',
-  'The value of `Intl.getCanonicalLocales.name` is `"getCanonicalLocales"`'
-);
-
-verifyNotEnumerable(Intl.getCanonicalLocales, 'name');
-verifyNotWritable(Intl.getCanonicalLocales, 'name');
-verifyConfigurable(Intl.getCanonicalLocales, 'name');
+verifyProperty(Intl.getCanonicalLocales, "name", {
+  value: "getCanonicalLocales",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

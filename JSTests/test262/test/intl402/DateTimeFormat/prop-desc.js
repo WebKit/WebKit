@@ -24,6 +24,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Intl, "DateTimeFormat");
-verifyWritable(Intl, "DateTimeFormat");
-verifyConfigurable(Intl, "DateTimeFormat");
+verifyProperty(Intl, "DateTimeFormat", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

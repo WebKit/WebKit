@@ -5,6 +5,7 @@
 esid: sec-Intl.DurationFormat.prototype.format
 description: Test if format method formats duration correctly with different "style" arguments
 locale: [en-US]
+includes: [testIntl.js]
 features: [Intl.DurationFormat]
 ---*/
 
@@ -21,7 +22,7 @@ const duration = {
   nanoseconds: 9,
 };
 
+const expected = formatDurationFormatPattern(duration);
 
 const df = new Intl.DurationFormat("en");
-const expected = "1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns";
 assert.sameValue(df.format(duration), expected, `Assert DurationFormat format output using default style option`);

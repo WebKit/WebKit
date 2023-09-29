@@ -24,8 +24,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.PluralRules.prototype.select.length, 1);
-
-verifyNotEnumerable(Intl.PluralRules.prototype.select, "length");
-verifyNotWritable(Intl.PluralRules.prototype.select, "length");
-verifyConfigurable(Intl.PluralRules.prototype.select, "length");
+verifyProperty(Intl.PluralRules.prototype.select, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

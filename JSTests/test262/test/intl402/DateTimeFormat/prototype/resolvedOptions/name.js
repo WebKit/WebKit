@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.DateTimeFormat.prototype.resolvedOptions.name, "resolvedOptions");
-
-verifyNotEnumerable(Intl.DateTimeFormat.prototype.resolvedOptions, "name");
-verifyNotWritable(Intl.DateTimeFormat.prototype.resolvedOptions, "name");
-verifyConfigurable(Intl.DateTimeFormat.prototype.resolvedOptions, "name");
+verifyProperty(Intl.DateTimeFormat.prototype.resolvedOptions, "name", {
+  value: "resolvedOptions",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

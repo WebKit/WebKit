@@ -25,8 +25,11 @@ var x = 23;
 
 (0, eval)('initial = x; var x = 45;');
 
-verifyEnumerable(this, 'x');
-verifyWritable(this, 'x');
-verifyNotConfigurable(this, 'x');
+verifyProperty(this, 'x', {
+  value: 45,
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});
 
 assert.sameValue(initial, 23);

@@ -9,8 +9,10 @@ includes: [propertyHelper.js]
 
 function assertGetterDescriptor(object, name) {
   var desc = Object.getOwnPropertyDescriptor(object, name);
-  verifyNotEnumerable(object, name);
-  verifyConfigurable(object, name);
+  verifyProperty(object, name, {
+    enumerable: false,
+    configurable: true,
+  });
   assert.sameValue(typeof desc.get, 'function', "`typeof desc.get` is `'function'`");
   assert.sameValue('prototype' in desc.get, false, "The result of `'prototype' in desc.get` is `false`");
   assert.sameValue(desc.set, undefined, "The value of `desc.set` is `undefined`");

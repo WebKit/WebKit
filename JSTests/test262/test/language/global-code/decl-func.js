@@ -41,8 +41,10 @@ includes: [propertyHelper.js]
 assert.sameValue(
   typeof brandNew, 'function', 'new binding on an extensible global object'
 );
-verifyEnumerable(this, 'brandNew');
-verifyWritable(this, 'brandNew');
-verifyNotConfigurable(this, 'brandNew');
+verifyProperty(this, 'brandNew', {
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});
 
 function brandNew() {}

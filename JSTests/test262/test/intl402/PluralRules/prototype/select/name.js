@@ -8,10 +8,9 @@ author: Zibi Braniecki
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.PluralRules.prototype.select.name, 'select',
-  'The value of `Intl.PluralRules.prototype.select.name` is `"select"`'
-);
-
-verifyNotEnumerable(Intl.PluralRules.prototype.select, 'name');
-verifyNotWritable(Intl.PluralRules.prototype.select, 'name');
-verifyConfigurable(Intl.PluralRules.prototype.select, 'name');
+verifyProperty(Intl.PluralRules.prototype.select, "name", {
+  value: "select",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

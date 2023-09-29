@@ -117,6 +117,11 @@ function createOptionsObserver({ smallestUnit = "months", largestUnit = "auto", 
 // clear any observable things that happened while constructing the objects
 actual.splice(0);
 
+// code path that skips RoundDuration:
+instance.since(otherYearMonthPropertyBag, createOptionsObserver({ smallestUnit: "months", roundingIncrement: 1 }));
+assert.compareArray(actual, expected, "order of operations with no rounding");
+actual.splice(0); // clear
+
 // code path through RoundDuration that rounds to the nearest year:
 const expectedOpsForYearRounding = expected.concat([
   "get this.calendar.dateAdd",     // 9.b

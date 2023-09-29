@@ -45,6 +45,19 @@ function verifyProperty(obj, name, desc, options) {
     return true;
   }
 
+  var names = Object.getOwnPropertyNames(desc);
+  for (var i = 0; i < names.length; i++) {
+    assert(
+      names[i] === "value" ||
+        names[i] === "writable" ||
+        names[i] === "enumerable" ||
+        names[i] === "configurable" ||
+        names[i] === "get" ||
+        names[i] === "set",
+      "Invalid descriptor field: " + names[i],
+    );
+  }
+
   assert(
     Object.prototype.hasOwnProperty.call(obj, name),
     "obj should have an own property " + nameStr
@@ -67,6 +80,9 @@ function verifyProperty(obj, name, desc, options) {
   if (Object.prototype.hasOwnProperty.call(desc, 'value')) {
     if (!isSameValue(desc.value, originalDesc.value)) {
       failures.push("descriptor value should be " + desc.value);
+    }
+    if (!isSameValue(desc.value, obj[name])) {
+      failures.push(failures, "object value should be " + desc.value);
     }
   }
 

@@ -1,6 +1,12 @@
 ---
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
+test/built-ins/Array/fromAsync/this-constructor-operations.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [construct MyArray, defineProperty A[0], defineProperty A[1], set A.length] and [construct MyArray, construct MyArray, defineProperty A[0], defineProperty A[1], set A.length] to have the same contents. order of operations for array-like argument'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [construct MyArray, defineProperty A[0], defineProperty A[1], set A.length] and [construct MyArray, construct MyArray, defineProperty A[0], defineProperty A[1], set A.length] to have the same contents. order of operations for array-like argument'
+test/built-ins/Array/fromAsync/this-constructor.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: constructor is called once Expected SameValue(«2», «1») to be true'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: constructor is called once Expected SameValue(«2», «1») to be true'
 test/built-ins/ArrayBuffer/prototype/detached/detached-buffer-resizable.js:
   default: 'Test262Error: Resizable ArrayBuffer with maxByteLength of 0 is not detached Expected SameValue(«undefined», «false») to be true'
   strict mode: 'Test262Error: Resizable ArrayBuffer with maxByteLength of 0 is not detached Expected SameValue(«undefined», «false») to be true'
@@ -77,8 +83,8 @@ test/built-ins/ArrayBuffer/prototype/transfer/new-length-non-number.js:
   default: 'Test262Error: Expected SameValue(«0», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
 test/built-ins/ArrayBuffer/prototype/transfer/nonconstructor.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transfer, 'prototype')')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transfer, 'prototype')')"
+  default: 'Test262Error: isConstructor invoked with a non-function value'
+  strict mode: 'Test262Error: isConstructor invoked with a non-function value'
 test/built-ins/ArrayBuffer/prototype/transfer/this-is-detached.js:
   default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
@@ -143,8 +149,8 @@ test/built-ins/ArrayBuffer/prototype/transferToFixedLength/new-length-non-number
   default: 'Test262Error: Expected SameValue(«0», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
 test/built-ins/ArrayBuffer/prototype/transferToFixedLength/nonconstructor.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transferToFixedLength, 'prototype')')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transferToFixedLength, 'prototype')')"
+  default: 'Test262Error: isConstructor invoked with a non-function value'
+  strict mode: 'Test262Error: isConstructor invoked with a non-function value'
 test/built-ins/ArrayBuffer/prototype/transferToFixedLength/this-is-detached.js:
   default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
@@ -181,6 +187,18 @@ test/built-ins/Object/groupBy/callback-arg.js:
 test/built-ins/Object/keys/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
+test/built-ins/Promise/withResolvers/ctx-ctor.js:
+  default: "TypeError: undefined is not an object (evaluating 'Promise.withResolvers.call')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Promise.withResolvers.call')"
+test/built-ins/Promise/withResolvers/promise.js:
+  default: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
+  strict mode: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
+test/built-ins/Promise/withResolvers/resolvers.js:
+  default: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
+  strict mode: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
+test/built-ins/Promise/withResolvers/result.js:
+  default: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
+  strict mode: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(«function Array() {'
@@ -250,12 +268,21 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/RegExp/unicodeSets/generated/rgi-emoji-15.1.js:
+  default: 'Test262Error: `\p{RGI_Emoji}` should match ⛓️‍💥 (U+0026D3 U+00FE0F U+00200D U+01F4A5)'
+  strict mode: 'Test262Error: `\p{RGI_Emoji}` should match ⛓️‍💥 (U+0026D3 U+00FE0F U+00200D U+01F4A5)'
+test/built-ins/Temporal/Duration/compare/instances-identical.js:
+  default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/compare/relativeto-propertybag-builtin-calendar-no-array-iteration.js:
+  default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/compare/relativeto-propertybag-invalid-offset-string.js:
   default: 'Test262Error: "1000 is not a valid offset string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: "1000 is not a valid offset string Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string.js:
-  default: 'TypeError: Property description must be an object.'
-  strict mode: 'TypeError: Property description must be an object.'
+  default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/from/argument-non-string.js:
   default: 'Test262Error: undefined Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: undefined Expected a TypeError but got a RangeError'
@@ -265,6 +292,9 @@ test/built-ins/Temporal/Duration/prototype/add/argument-not-object.js:
 test/built-ins/Temporal/Duration/prototype/add/precision-exact-mathematical-values.js:
   default: 'Test262Error: duration1.add(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
   strict mode: 'Test262Error: duration1.add(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-builtin-calendar-no-array-iteration.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-calendar-string.js:
   default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
@@ -286,9 +316,15 @@ test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-round-durati
 test/built-ins/Temporal/Duration/prototype/round/proto-in-calendar-fields.js:
   default: 'Test262Error: Expected a RangeError but got a Error'
   strict mode: 'Test262Error: Expected a RangeError but got a Error'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-builtin-calendar-no-array-iteration.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
 test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-string.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/rounding-is-noop.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
 test/built-ins/Temporal/Duration/prototype/round/roundingincrement-non-integer.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
@@ -307,6 +343,9 @@ test/built-ins/Temporal/Duration/prototype/subtract/argument-not-object.js:
 test/built-ins/Temporal/Duration/prototype/subtract/precision-exact-mathematical-values.js:
   default: 'Test262Error: duration1.subtract(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
   strict mode: 'Test262Error: duration1.subtract(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-builtin-calendar-no-array-iteration.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-calendar-string.js:
   default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
@@ -328,6 +367,9 @@ test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-va
 test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-2.js:
   default: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
   strict mode: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-builtin-calendar-no-array-iteration.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-string.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
@@ -659,8 +701,8 @@ test/built-ins/Temporal/PlainDate/prototype/subtract/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get this.calendar.dateAdd, call this.calendar.dateAdd, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get this.calendar.dateAdd, call this.calendar.dateAdd, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
@@ -737,8 +779,8 @@ test/built-ins/Temporal/PlainDateTime/calendar-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «iso8601») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «iso8601») to be true'
 test/built-ins/Temporal/PlainDateTime/compare/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainDateTime (first argument) Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainDateTime (first argument) Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainDateTime (first argument) Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainDateTime (first argument) Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-case-insensitive.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
@@ -758,8 +800,8 @@ test/built-ins/Temporal/PlainDateTime/compare/proto-in-calendar-fields.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/from/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainDateTime Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainDateTime Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainDateTime Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainDateTime Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-string.js:
   default: 'Test262Error: calendar slot stores a string Expected SameValue(«iso8601», «iso8601») to be true'
   strict mode: 'Test262Error: calendar slot stores a string Expected SameValue(«iso8601», «iso8601») to be true'
@@ -818,8 +860,8 @@ test/built-ins/Temporal/PlainDateTime/prototype/daysInYear/builtin-calendar-no-o
   default: 'TypeError: Property description must be an object.'
   strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainDateTime Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainDateTime Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainDateTime Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainDateTime Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
@@ -914,8 +956,8 @@ test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-wrong-typ
   default: 'Test262Error: undefined does not convert to a valid ISO string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: undefined does not convert to a valid ISO string Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
@@ -944,8 +986,8 @@ test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/validate-calendar-val
   default: 'Test262Error: undefined undefined not converted to integer Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: undefined undefined not converted to integer Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/compare/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainTime (first argument) Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainTime (first argument) Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainTime (first argument) Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainTime (first argument) Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainTime/compare/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
@@ -953,8 +995,8 @@ test/built-ins/Temporal/PlainTime/compare/argument-wrong-type.js:
   default: 'Test262Error: undefined does not convert to a valid ISO string (first argument) Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: undefined does not convert to a valid ISO string (first argument) Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainTime/from/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainTime/from/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
@@ -977,8 +1019,8 @@ test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-val
   default: 'RangeError: hour is out of range'
   strict mode: 'RangeError: hour is out of range'
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
@@ -989,8 +1031,8 @@ test/built-ins/Temporal/PlainTime/prototype/getISOFields/field-traversal-order.j
   default: 'Test262Error: Expected [calendar, isoHour, isoMicrosecond, isoMillisecond, isoMinute, isoNanosecond, isoSecond] and [isoHour, isoMicrosecond, isoMillisecond, isoMinute, isoNanosecond, isoSecond] to have the same contents. '
   strict mode: 'Test262Error: Expected [calendar, isoHour, isoMicrosecond, isoMillisecond, isoMinute, isoNanosecond, isoSecond] and [isoHour, isoMicrosecond, isoMillisecond, isoMinute, isoNanosecond, isoSecond] to have the same contents. '
 test/built-ins/Temporal/PlainTime/prototype/since/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainTime/prototype/since/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
@@ -1037,8 +1079,8 @@ test/built-ins/Temporal/PlainTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-number.js:
-  default: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: A number is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  default: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number (1) is not a valid ISO string for PlainTime Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
@@ -1063,12 +1105,21 @@ test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/number-tobigint.js
 test/harness/asyncHelpers-asyncTest-without-async-flag.js:
   default: "Test262Error: Without 'async' flag, $DONE should not be defined"
   strict mode: "Test262Error: Without 'async' flag, $DONE should not be defined"
-test/harness/temporalHelpers-cross-date-line-time-zone.js:
-  default: "TypeError: afterOffset.getOffsetNanosecondsFor is not a function. (In 'afterOffset.getOffsetNanosecondsFor(instant)', 'afterOffset.getOffsetNanosecondsFor' is undefined)"
-  strict mode: "TypeError: afterOffset.getOffsetNanosecondsFor is not a function. (In 'afterOffset.getOffsetNanosecondsFor(instant)', 'afterOffset.getOffsetNanosecondsFor' is undefined)"
-test/harness/temporalHelpers-one-shift-time-zone.js:
+test/harness/temporalHelpers-sample-time-zones.js:
   default: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
   strict mode: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
+test/harness/verifyProperty-desc-is-not-object.js:
+  default: 'Test262Error: null Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: null Expected a Test262Error but got a TypeError'
+test/harness/verifyProperty-value-error.js:
+  default: 'Error: The error thrown did not define the specified message.'
+  strict mode: 'Error: The error thrown did not define the specified message.'
+test/intl402/Collator/prototype/compare/ignorePunctuation.js:
+  default: 'Test262Error: Compare to space Expected SameValue(«0», «-1») to be true'
+  strict mode: 'Test262Error: Compare to space Expected SameValue(«0», «-1») to be true'
+test/intl402/DateTimeFormat/prototype/format/offset-timezone-gmt-same.js:
+  default: 'RangeError: invalid time zone: +0300'
+  strict mode: 'RangeError: invalid time zone: +0300'
 test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -1078,57 +1129,69 @@ test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-sup
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/formatToParts/offset-timezone-correct.js:
+  default: 'RangeError: invalid time zone: +0301'
+  strict mode: 'RangeError: invalid time zone: +0301'
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
+test/intl402/DateTimeFormat/prototype/resolvedOptions/offset-timezone-basic.js:
+  default: 'RangeError: invalid time zone: +03'
+  strict mode: 'RangeError: invalid time zone: +03'
+test/intl402/DateTimeFormat/prototype/resolvedOptions/offset-timezone-change.js:
+  default: 'RangeError: invalid time zone: -00'
+  strict mode: 'RangeError: invalid time zone: -00'
 test/intl402/DateTimeFormat/timezone-case-insensitive.js:
   default: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«America/Buenos_Aires», «America/Argentina/Buenos_Aires») to be true'
   strict mode: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«America/Buenos_Aires», «America/Argentina/Buenos_Aires») to be true'
 test/intl402/DateTimeFormat/timezone-not-canonicalized.js:
   default: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
   strict mode: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
+test/intl402/DurationFormat/prototype/format/negative-durationstyle-digital-en.js:
+  default: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06», «-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06.007008009») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06», «-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06.007008009») to be true'
+test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values.js:
+  default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000», «0:00:10,000,000.000000002») to be true'
+  strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000», «0:00:10,000,000.000000002») to be true'
+test/intl402/DurationFormat/prototype/format/style-digital-en.js:
+  default: 'Test262Error: Assert DurationFormat format output using digital style option Expected SameValue(«1 yr, 2 mths, 3 wks, 3 days, 4:05:06», «1 yr, 2 mths, 3 wks, 3 days, 4:05:06.007008009») to be true'
+  strict mode: 'Test262Error: Assert DurationFormat format output using digital style option Expected SameValue(«1 yr, 2 mths, 3 wks, 3 days, 4:05:06», «1 yr, 2 mths, 3 wks, 3 days, 4:05:06.007008009») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-digital-en.js:
+  default: 'Test262Error: Using style : digital: length Expected SameValue(«5», «7») to be true'
+  strict mode: 'Test262Error: Using style : digital: length Expected SameValue(«5», «7») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-digital-en.js:
+  default: 'Test262Error: Using style : digital: length Expected SameValue(«28», «30») to be true'
+  strict mode: 'Test262Error: Using style : digital: length Expected SameValue(«28», «30») to be true'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
-test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
-test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js:
-  default: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
-test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
-  default: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
-test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
-  default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
-test/intl402/Intl/supportedValuesOf/numberingSystems-with-simple-digit-mappings.js:
-  default: 'Test262Error: kawi with simple digit mappings is supported'
-  strict mode: 'Test262Error: kawi with simple digit mappings is supported'
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
-test/intl402/Locale/getters-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
-test/intl402/Locale/likely-subtags-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
-test/intl402/NumberFormat/prototype/format/numbering-systems.js:
-  default: 'Test262Error: numberingSystem: kawi, digit: 0 Expected SameValue(«0», «𑽐») to be true'
-  strict mode: 'Test262Error: numberingSystem: kawi, digit: 0 Expected SameValue(«0», «𑽐») to be true'
+test/intl402/NumberFormat/constructor-option-read-order.js:
+  default: 'Test262Error: Expected [localeMatcher, numberingSystem, style, currency, currencyDisplay, currencySign, unit, unitDisplay, notation, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, roundingPriority, roundingIncrement, roundingMode, trailingZeroDisplay, compactDisplay, useGrouping, signDisplay] and [localeMatcher, numberingSystem, style, currency, currencyDisplay, currencySign, unit, unitDisplay, notation, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, roundingIncrement, roundingMode, roundingPriority, trailingZeroDisplay, compactDisplay, useGrouping, signDisplay] to have the same contents. Intl.NumberFormat options read order'
+  strict mode: 'Test262Error: Expected [localeMatcher, numberingSystem, style, currency, currencyDisplay, currencySign, unit, unitDisplay, notation, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, roundingPriority, roundingIncrement, roundingMode, trailingZeroDisplay, compactDisplay, useGrouping, signDisplay] and [localeMatcher, numberingSystem, style, currency, currencyDisplay, currencySign, unit, unitDisplay, notation, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, roundingIncrement, roundingMode, roundingPriority, trailingZeroDisplay, compactDisplay, useGrouping, signDisplay] to have the same contents. Intl.NumberFormat options read order'
 test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
   default: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
   strict mode: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
 test/intl402/NumberFormat/prototype/format/value-decimal-string.js:
   default: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
+test/intl402/NumberFormat/prototype/resolvedOptions/return-keys-order-default.js:
+  default: 'Test262Error: Expected [locale, numberingSystem, style, currency, currencyDisplay, currencySign, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping, notation, compactDisplay, signDisplay, roundingMode, roundingIncrement, trailingZeroDisplay, roundingPriority] and [locale, numberingSystem, style, currency, currencyDisplay, currencySign, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping, notation, compactDisplay, signDisplay, roundingIncrement, roundingMode, roundingPriority, trailingZeroDisplay] to have the same contents. resolvedOptions() property key order with options {"notation":"compact","style":"currency","currency":"XTS"}'
+  strict mode: 'Test262Error: Expected [locale, numberingSystem, style, currency, currencyDisplay, currencySign, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping, notation, compactDisplay, signDisplay, roundingMode, roundingIncrement, trailingZeroDisplay, roundingPriority] and [locale, numberingSystem, style, currency, currencyDisplay, currencySign, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping, notation, compactDisplay, signDisplay, roundingIncrement, roundingMode, roundingPriority, trailingZeroDisplay] to have the same contents. resolvedOptions() property key order with options {"notation":"compact","style":"currency","currency":"XTS"}'
+test/intl402/PluralRules/constructor-option-read-order.js:
+  default: 'Test262Error: Expected [localeMatcher, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, roundingPriority, roundingIncrement, roundingMode, trailingZeroDisplay] and [localeMatcher, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, roundingIncrement, roundingMode, roundingPriority, trailingZeroDisplay] to have the same contents. Intl.PluralRules options read order'
+  strict mode: 'Test262Error: Expected [localeMatcher, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, roundingPriority, roundingIncrement, roundingMode, trailingZeroDisplay] and [localeMatcher, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, roundingIncrement, roundingMode, roundingPriority, trailingZeroDisplay] to have the same contents. Intl.PluralRules options read order'
+test/intl402/PluralRules/prototype/resolvedOptions/return-keys-order-default.js:
+  default: 'Test262Error: Expected [locale, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, roundingMode, roundingIncrement, trailingZeroDisplay, pluralCategories, roundingPriority] and [locale, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, pluralCategories, roundingIncrement, roundingMode, roundingPriority, trailingZeroDisplay] to have the same contents. resolvedOptions() property key order with options [{},{"minimumSignificantDigits":3},{"minimumFractionDigits":3}]'
+  strict mode: 'Test262Error: Expected [locale, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, roundingMode, roundingIncrement, trailingZeroDisplay, pluralCategories, roundingPriority] and [locale, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, pluralCategories, roundingIncrement, roundingMode, roundingPriority, trailingZeroDisplay] to have the same contents. resolvedOptions() property key order with options [{},{"minimumSignificantDigits":3},{"minimumFractionDigits":3}]'
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
@@ -1268,8 +1331,8 @@ test/language/expressions/assignment/dstr/array-rest-lref-err.js:
   default: 'Test262Error: Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
 test/language/expressions/assignment/fn-name-lhs-cover.js:
-  default: 'Test262Error: descriptor value should be '
-  strict mode: 'Test262Error: descriptor value should be '
+  default: 'Test262Error: descriptor value should be ; ; object value should be '
+  strict mode: 'Test262Error: descriptor value should be ; ; object value should be '
 test/language/expressions/assignmenttargettype/direct-callexpression-arguments.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/assignmenttargettype/parenthesized-callexpression-arguments.js:
@@ -1359,9 +1422,9 @@ test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yie
 test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-enumeration-abrupt.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected promise to be rejected, but promise was fulfilled.'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected promise to be rejected, but promise was fulfilled.'
-test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-enumeration.js:
-  default: 'Test262Error: Expected SameValue(«0», «2») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
+test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-enumeration-enumerable.js:
+  default: 'Test262Error: Expected [] and [type] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [type] to have the same contents. '
 test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-non-object.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise for null was not rejected.'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise for null was not rejected.'
@@ -1491,24 +1554,8 @@ test/language/module-code/early-dup-top-function-generator.js:
 test/language/module-code/early-dup-top-function.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/import-assertions/eval-gtbndng-indirect-faux-assertion.js:
-  raw: "SyntaxError: Unexpected identifier 'x'. import call expects one or two arguments."
+  raw: "SyntaxError: Unexpected token '*'. import call expects one or two arguments."
 test/language/module-code/import-assertions/import-assertion-empty.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/import-assertion-key-identifiername.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/import-assertion-key-string-double.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/import-assertion-key-string-single.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/import-assertion-many.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/import-assertion-newlines.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/import-assertion-trlng-comma.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/import-assertion-value-string-double.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/import-assertion-value-string-single.js:
   module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
 test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'

@@ -24,8 +24,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.NumberFormat.supportedLocalesOf.length, 1);
-
-verifyNotEnumerable(Intl.NumberFormat.supportedLocalesOf, "length");
-verifyNotWritable(Intl.NumberFormat.supportedLocalesOf, "length");
-verifyConfigurable(Intl.NumberFormat.supportedLocalesOf, "length");
+verifyProperty(Intl.NumberFormat.supportedLocalesOf, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

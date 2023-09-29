@@ -18,6 +18,6 @@ for (const arg of numbers) {
   assert.throws(
     TypeError,
     () => Temporal.PlainDateTime.from(arg),
-    "A number is not a valid ISO string for PlainDateTime"
+    `A number (${arg}) is not a valid ISO string for PlainDateTime`
   );
 }

@@ -12,9 +12,11 @@ info: |
     Built-in function objects that are not identified as constructors do not
     implement the [[Construct]] internal method unless otherwise specified
     in the description of a particular function.
+includes: [isConstructor.js]
+features: [Reflect.construct]
 ---*/
 
-assert.sameValue(Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.slice, "prototype"), false);
+assert(!isConstructor(ArrayBuffer.prototype.slice), "ArrayBuffer.prototype.slice is not a constructor");
 
 var arrayBuffer = new ArrayBuffer(8);
 assert.throws(TypeError, function() {

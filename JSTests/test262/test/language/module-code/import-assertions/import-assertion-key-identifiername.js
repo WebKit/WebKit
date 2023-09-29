@@ -2,30 +2,36 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: >
-    AssertClause in ImportDeclaration may use any valid IdentifierName as a key
+    WithClause in ImportDeclaration may use any valid IdentifierName as a key
 esid: sec-modules
 info: |
   ImportDeclaration:
-    import ModuleSpecifier[no LineTerminator here] AssertClause;
+    import ModuleSpecifier[no LineTerminator here] WithClause;
 
-  AssertClause:
+  WithClause:
     assert {}
-    assert {AssertEntries ,opt}
+    assert {WithEntries ,opt}
 
-  AssertEntries:
-    AssertionKey : StringLiteral
-    AssertionKey : StringLiteral , AssertEntries
+  WithEntries:
+    AttributeKey : StringLiteral
+    AttributeKey : StringLiteral , WithEntries
 
-  AssertionKey:
+  AttributeKey:
     IdentifierName
     StringLiteral
+negative:
+  phase: resolution
+  type: SyntaxError
 features: [import-assertions]
 flags: [module]
 ---*/
+
+$DONOTEVALUATE();
+
+import "./ensure-linking-error_FIXTURE.js";
 
 import x from './import-assertion-1_FIXTURE.js' assert {if:''};
 import './import-assertion-2_FIXTURE.js' assert {if:''};
 export * from './import-assertion-3_FIXTURE.js' assert {if:''};
 
 assert.sameValue(x, 262.1);
-assert.sameValue(globalThis.test262, 262.2);

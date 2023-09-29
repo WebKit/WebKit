@@ -13,8 +13,9 @@ const oneYear = new Temporal.Duration(1);
 const oneMonth = new Temporal.Duration(0, 1);
 const oneWeek = new Temporal.Duration(0, 0, 1);
 const oneDay = new Temporal.Duration(0, 0, 0, 1);
+const twoDays = new Temporal.Duration(0, 0, 0, 2);
 
-assert.sameValue(Temporal.Duration.compare(oneDay, oneDay), 0, "days do not require relativeTo");
+assert.sameValue(Temporal.Duration.compare(oneDay, twoDays), -1, "days do not require relativeTo");
 
 assert.throws(RangeError, () => Temporal.Duration.compare(oneWeek, oneDay), "weeks in left operand require relativeTo");
 assert.throws(RangeError, () => Temporal.Duration.compare(oneDay, oneWeek), "weeks in right operand require relativeTo");

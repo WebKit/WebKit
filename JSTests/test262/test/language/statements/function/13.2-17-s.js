@@ -8,7 +8,8 @@ description: >
     objects is not allowed outside the function
 ---*/
 
-        var foo = Function("'use strict';");
+var foo = Function("'use strict';");
+
 assert.throws(TypeError, function() {
-            var temp = foo.arguments;
+    var temp = foo.arguments;
 });

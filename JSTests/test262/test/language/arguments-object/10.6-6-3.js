@@ -10,7 +10,7 @@ flags: [noStrict]
 ---*/
 
 function testcase() {
-      var arguments= undefined;
-	(function () { assert.sameValue(arguments.length, 0); })();
- }
+    var arguments= undefined;
+    (function () { assert.sameValue(arguments.length, 0); })();
+}
 testcase();

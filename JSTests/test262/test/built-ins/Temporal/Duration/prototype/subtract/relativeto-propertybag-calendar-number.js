@@ -9,8 +9,6 @@ features: [Temporal]
 
 const instance = new Temporal.Duration(1, 0, 0, 1);
 
-const calendar = 19970327;
-
 const numbers = [
   1,
   19970327,
@@ -23,6 +21,6 @@ for (const calendar of numbers) {
   assert.throws(
     TypeError,
     () => instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo }),
-    "A number is not a valid ISO string for relativeTo.calendar"
+    `A number (${calendar}) is not a valid ISO string for relativeTo.calendar`
   );
 }

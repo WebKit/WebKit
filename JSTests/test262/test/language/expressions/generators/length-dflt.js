@@ -33,28 +33,36 @@ includes: [propertyHelper.js]
 
 var f1 = function* (x = 42) {};
 
-assert.sameValue(f1.length, 0, 'FormalsList: x = 42');
-verifyNotEnumerable(f1, 'length');
-verifyNotWritable(f1, 'length');
-verifyConfigurable(f1, 'length');
+verifyProperty(f1, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var f2 = function* (x = 42, y) {};
 
-assert.sameValue(f2.length, 0, 'FormalsList: x = 42, y');
-verifyNotEnumerable(f2, 'length');
-verifyNotWritable(f2, 'length');
-verifyConfigurable(f2, 'length');
+verifyProperty(f2, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var f3 = function* (x, y = 42) {};
 
-assert.sameValue(f3.length, 1, 'FormalsList: x, y = 42');
-verifyNotEnumerable(f3, 'length');
-verifyNotWritable(f3, 'length');
-verifyConfigurable(f3, 'length');
+verifyProperty(f3, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var f4 = function* (x, y = 42, z) {};
 
-assert.sameValue(f4.length, 1, 'FormalsList: x, y = 42, z');
-verifyNotEnumerable(f4, 'length');
-verifyNotWritable(f4, 'length');
-verifyConfigurable(f4, 'length');
+verifyProperty(f4, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

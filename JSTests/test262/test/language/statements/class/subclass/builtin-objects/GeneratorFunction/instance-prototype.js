@@ -33,6 +33,8 @@ assert.sameValue(
   'prototype has no constructor reference'
 );
 
-verifyNotEnumerable(gfn, 'prototype');
-verifyWritable(gfn, 'prototype');
-verifyNotConfigurable(gfn, 'prototype');
+verifyProperty(gfn, 'prototype', {
+  writable: true,
+  enumerable: false,
+  configurable: false,
+});

@@ -31,5 +31,7 @@ var desc = Object.getOwnPropertyDescriptor(Intl.Collator.prototype, "compare");
 assert.sameValue(desc.set, undefined);
 assert.sameValue(typeof desc.get, "function");
 
-verifyNotEnumerable(Intl.Collator.prototype, "compare");
-verifyConfigurable(Intl.Collator.prototype, "compare");
+verifyProperty(Intl.Collator.prototype, "compare", {
+  enumerable: false,
+  configurable: true,
+});

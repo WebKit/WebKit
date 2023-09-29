@@ -20,6 +20,6 @@ for (const arg of numbers) {
   assert.throws(
     TypeError,
     () => instance.toZonedDateTime({ plainTime: arg, timeZone: "UTC" }),
-    "A number is not a valid ISO string for PlainTime"
+    `A number (${arg}) is not a valid ISO string for PlainTime`
   );
 }
