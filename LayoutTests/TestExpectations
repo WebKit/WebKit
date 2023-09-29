@@ -5404,7 +5404,6 @@ http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [
 compositing/plugins [ Skip ]
 compositing/geometry/empty-embed-rects.html [ Skip ]
 accessibility/plugin.html [ Skip ]
-accessibility/video-element-url-attribute.html [ Timeout ]
 editing/selection/selection-plugin-clear-crash.html [ Skip ]
 fast/dom/Window/Plug-ins.html [ Skip ]
 fast/frames/iframe-plugin-load-remove-document-crash.html [ Skip ]
