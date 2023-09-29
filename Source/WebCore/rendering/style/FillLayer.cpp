@@ -339,10 +339,10 @@ bool FillLayer::containsImage(StyleImage& image) const
     return false;
 }
 
-bool FillLayer::imagesAreLoaded() const
+bool FillLayer::imagesAreLoaded(const RenderElement* renderer) const
 {
     for (auto* layer = this; layer; layer = layer->m_next.get()) {
-        if (layer->m_image && !layer->m_image->isLoaded())
+        if (layer->m_image && !layer->m_image->isLoaded(renderer))
             return false;
     }
     return true;

@@ -1412,7 +1412,7 @@ bool RenderElement::borderImageIsLoadedAndCanBeRendered() const
     ASSERT(style().hasBorder());
 
     StyleImage* borderImage = style().borderImage().image();
-    return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded();
+    return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded(this);
 }
 
 bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewportRect) const

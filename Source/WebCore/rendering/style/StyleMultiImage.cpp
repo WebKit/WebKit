@@ -110,9 +110,9 @@ bool StyleMultiImage::isPending() const
     return m_isPending;
 }
 
-bool StyleMultiImage::isLoaded() const
+bool StyleMultiImage::isLoaded(const RenderElement* renderer) const
 {
-    return m_selectedImage && m_selectedImage->isLoaded();
+    return m_selectedImage && m_selectedImage->isLoaded(renderer);
 }
 
 bool StyleMultiImage::errorOccurred() const
