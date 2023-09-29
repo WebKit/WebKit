@@ -301,7 +301,7 @@ void FilterImage::copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const Int
             // We prefer a conversion from the image buffer.
             if (m_imageBuffer) {
                 IntRect rect { { }, m_absoluteImageRect.size() };
-                if (auto convertedPixelBuffer = getConvertedPixelBuffer(*m_imageBuffer, alphaFormat, rect, colorSpace, m_allocator))
+                if (auto convertedPixelBuffer = getConvertedPixelBuffer(Ref { *m_imageBuffer }, alphaFormat, rect, colorSpace, m_allocator))
                     copyImageBytes(*convertedPixelBuffer, destinationPixelBuffer, sourceRect);
                 return;
             }
@@ -381,7 +381,7 @@ void FilterImage::transformToColorSpace(const DestinationColorSpace& colorSpace)
 
     // FIXME: We can avoid this potentially unnecessary ImageBuffer conversion by adding
     // color space transform support for the {pre,un}multiplied arrays.
-    if (auto imageBuffer = this->imageBuffer())
+    if (RefPtr imageBuffer = this->imageBuffer())
         imageBuffer->transformToColorSpace(colorSpace);
 
     m_colorSpace = colorSpace;

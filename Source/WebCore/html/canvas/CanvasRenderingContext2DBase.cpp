@@ -1709,7 +1709,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
 
     Ref protectedCanvas { sourceCanvas };
     // FIXME: Do this through platform-independent GraphicsContext API.
-    ImageBuffer* buffer = sourceCanvas.buffer();
+    RefPtr buffer = sourceCanvas.buffer();
     if (!buffer)
         return { };
 
@@ -1823,7 +1823,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     if (!state().hasInvertibleTransform)
         return { };
 
-    ImageBuffer* buffer = imageBitmap.buffer();
+    RefPtr buffer = imageBitmap.buffer();
     if (!buffer)
         return { };
 
@@ -2277,7 +2277,7 @@ void CanvasRenderingContext2DBase::prepareForDisplay()
 
 bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
 {
-    auto buffer = canvasBase().buffer();
+    RefPtr buffer = canvasBase().buffer();
     if (buffer && buffer->prefersPreparationForDisplay())
         return true;
 
@@ -2425,7 +2425,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
         m_cachedImageData->imageData = nullptr;
 
     canvasBase().makeRenderingResultsAvailable();
-    ImageBuffer* buffer = canvasBase().buffer();
+    RefPtr buffer = canvasBase().buffer();
     if (!buffer) {
         auto imageData = ImageData::createUninitialized(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
         if (!imageData.hasException())
@@ -2453,7 +2453,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight)
 {
-    ImageBuffer* buffer = canvasBase().buffer();
+    RefPtr buffer = canvasBase().buffer();
     if (!buffer)
         return;
 

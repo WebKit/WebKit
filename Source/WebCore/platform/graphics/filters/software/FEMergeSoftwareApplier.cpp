@@ -33,14 +33,14 @@ bool FEMergeSoftwareApplier::apply(const Filter&, const FilterImageVector& input
 {
     ASSERT(inputs.size() == m_effect.numberOfEffectInputs());
 
-    auto resultImage = result.imageBuffer();
+    RefPtr resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
     auto& filterContext = resultImage->context();
 
     for (auto& input : inputs) {
-        auto inputImage = input->imageBuffer();
+        RefPtr inputImage = input->imageBuffer();
         if (!inputImage)
             continue;
 

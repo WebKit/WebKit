@@ -3527,7 +3527,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!validateTexFunc(functionID, SourceImageBitmap, target, level, internalformat, width, height, depth, border, format, type, xoffset, yoffset, zoffset))
         return { };
 
-    ImageBuffer* buffer = source.buffer();
+    RefPtr buffer = source.buffer();
     if (!buffer)
         return { };
 
@@ -4457,7 +4457,7 @@ RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int w
 {
     IntSize size(width, height);
     size.scale(deviceScaleFactor);
-    ImageBuffer* buf = m_generatedImageCache.imageBuffer(size, DestinationColorSpace::SRGB());
+    RefPtr buf = m_generatedImageCache.imageBuffer(size, DestinationColorSpace::SRGB());
     if (!buf) {
         synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
         return nullptr;
@@ -4473,7 +4473,7 @@ RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int w
 
 RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& video, BackingStoreCopy backingStoreCopy, const char* functionName)
 {
-    ImageBuffer* imageBuffer = nullptr;
+    RefPtr<ImageBuffer> imageBuffer;
     // FIXME: When texImage2D is passed an HTMLVideoElement, implementations
     // interoperably use the native RGB color values of the video frame (e.g.
     // Rec.601 color space values) for the texture. But nativeImageForCurrentTime
@@ -5676,19 +5676,19 @@ WebGLRenderingContextBase::LRUImageBufferCache::LRUImageBufferCache(int capacity
 {
 }
 
-ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size, DestinationColorSpace colorSpace, CompositeOperator fillOperator)
+RefPtr<ImageBuffer> WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size, DestinationColorSpace colorSpace, CompositeOperator fillOperator)
 {
     size_t i;
     for (i = 0; i < m_buffers.size(); ++i) {
         if (!m_buffers[i])
             break;
-        ImageBuffer& buf = m_buffers[i]->second.get();
-        if (m_buffers[i]->first != colorSpace || buf.truncatedLogicalSize() != size)
+        RefPtr<ImageBuffer> buf = m_buffers[i]->second.ptr();
+        if (m_buffers[i]->first != colorSpace || buf->truncatedLogicalSize() != size)
             continue;
         bubbleToFront(i);
         if (fillOperator != CompositeOperator::Copy && fillOperator != CompositeOperator::Clear)
-            buf.context().clearRect({ { }, size });
-        return &buf;
+            buf->context().clearRect({ { }, size });
+        return buf;
     }
 
     // FIXME (149423): Should this ImageBuffer be unconditionally unaccelerated?
@@ -5699,9 +5699,9 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
     i = std::min(m_buffers.size() - 1, i);
     m_buffers[i] = { colorSpace, temp.releaseNonNull() };
 
-    ImageBuffer& buf = m_buffers[i]->second.get();
+    RefPtr<ImageBuffer> buf = m_buffers[i]->second.ptr();
     bubbleToFront(i);
-    return &buf;
+    return buf;
 }
 
 void WebGLRenderingContextBase::LRUImageBufferCache::bubbleToFront(size_t idx)

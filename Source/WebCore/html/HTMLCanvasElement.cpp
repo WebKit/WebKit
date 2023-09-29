@@ -823,7 +823,7 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
         return downcast<WebGLRenderingContextBase>(*m_context).paintCompositedResultsToVideoFrame();
     }
 #endif
-    auto* imageBuffer = buffer();
+    RefPtr imageBuffer = buffer();
     if (!imageBuffer)
         return nullptr;
     if (document().settings().webAPIStatisticsEnabled())

@@ -495,7 +495,7 @@ void OffscreenCanvas::pushBufferToPlaceholder()
 
 void OffscreenCanvas::commitToPlaceholderCanvas()
 {
-    auto* imageBuffer = buffer();
+    RefPtr imageBuffer = buffer();
     if (!imageBuffer)
         return;
 

@@ -82,7 +82,7 @@ MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(String&& deviceID, AtomSt
 
 void MockRealtimeVideoSourceMac::updateSampleBuffer()
 {
-    auto imageBuffer = this->imageBuffer();
+    RefPtr imageBuffer = this->imageBuffer();
     if (!imageBuffer)
         return;
 

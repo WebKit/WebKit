@@ -329,7 +329,7 @@ RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter)
     if (!result)
         return nullptr;
 
-    auto imageBuffer = result->imageBuffer();
+    RefPtr imageBuffer = result->imageBuffer();
     if (!imageBuffer)
         return nullptr;
 

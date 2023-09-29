@@ -253,7 +253,7 @@ void GPUQueue::copyExternalImageToTexture(
     const GPUImageCopyTextureTagged& destination,
     const GPUExtent3D& copySize)
 {
-    auto imageBuffer = imageBufferForSource(source.source);
+    RefPtr imageBuffer = imageBufferForSource(source.source);
     if (!imageBuffer || !destination.texture)
         return;
 

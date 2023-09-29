@@ -486,7 +486,7 @@ void MockRealtimeVideoSource::generateFrame()
         m_delayUntil = MonotonicTime();
     }
 
-    ImageBuffer* buffer = imageBuffer();
+    RefPtr buffer = imageBuffer();
     if (!buffer)
         return;
 
