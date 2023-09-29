@@ -67,8 +67,13 @@ public:
         m_slowPathBegin = slowPathBegin;
         m_slowPathCall = call;
     }
-    
+
     CCallHelpers::Label slowPathBegin() const { return m_slowPathBegin; }
+
+    void reportBaselineDataICSlowPathBegin(CCallHelpers::Label slowPathBegin)
+    {
+        m_slowPathBegin = slowPathBegin;
+    }
 
     void finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer,

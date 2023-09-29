@@ -194,6 +194,7 @@ void JIT::emitSlow_op_instanceof(const JSInstruction*, Vector<SlowCaseEntry>::it
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
     linkAllSlowCases(iter);
+    gen.reportBaselineDataICSlowPathBegin(label());
     emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
 }
 
