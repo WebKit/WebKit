@@ -43,6 +43,7 @@ public:
     ALWAYS_INLINE bool isImported() const { return m_bits & IsImported; }
     ALWAYS_INLINE bool isImportedNamespace() const { return m_bits & IsImportedNamespace; }
     ALWAYS_INLINE bool isFunction() const { return m_bits & IsFunction; }
+    ALWAYS_INLINE bool isFunctionDeclaration() const { return m_bits & IsFunctionDeclaration; }
     ALWAYS_INLINE bool isParameter() const { return m_bits & IsParameter; }
     ALWAYS_INLINE bool isSloppyModeHoistedFunction() const { return m_bits & IsSloppyModeHoistedFunction; }
     ALWAYS_INLINE bool isPrivateField() const { return m_bits & IsPrivateField; }
@@ -58,6 +59,7 @@ public:
     ALWAYS_INLINE void setIsImported() { m_bits |= IsImported; }
     ALWAYS_INLINE void setIsImportedNamespace() { m_bits |= IsImportedNamespace; }
     ALWAYS_INLINE void setIsFunction() { m_bits |= IsFunction; }
+    ALWAYS_INLINE void setIsFunctionDeclaration() { m_bits |= IsFunctionDeclaration; }
     ALWAYS_INLINE void setIsParameter() { m_bits |= IsParameter; }
     ALWAYS_INLINE void setIsSloppyModeHoistedFunction() { m_bits |= IsSloppyModeHoistedFunction; }
     ALWAYS_INLINE void setIsPrivateField() { m_bits |= IsPrivateField; }
@@ -89,6 +91,7 @@ private:
         IsPrivateMethod = 1 << 11,
         IsPrivateGetter = 1 << 12,
         IsPrivateSetter = 1 << 13,
+        IsFunctionDeclaration = 1 << 14,
     };
     uint16_t m_bits { 0 };
 };

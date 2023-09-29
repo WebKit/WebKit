@@ -374,31 +374,46 @@ public:
         return result;
     }
 
-    DeclarationResultMask declareFunction(const Identifier* ident, bool declareAsVar)
+    DeclarationResultMask declareFunctionAsVar(const Identifier* ident)
     {
-        ASSERT(m_allowsVarDeclarations || m_allowsLexicalDeclarations);
+        ASSERT(m_allowsVarDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
         bool isValidStrictMode = !isEvalOrArgumentsIdentifier(m_vm, ident);
         if (!isValidStrictMode)
             result |= DeclarationResult::InvalidStrictMode;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-        auto addResult = declareAsVar ? m_declaredVariables.add(ident->impl()) : m_lexicalVariables.add(ident->impl());
-        if (declareAsVar) {
-            addResult.iterator->value.setIsVar();
-            if (m_lexicalVariables.contains(ident->impl()))
-                result |= DeclarationResult::InvalidDuplicateDeclaration;
-        } else {
-            addResult.iterator->value.setIsLet();
-            ASSERT_WITH_MESSAGE(!m_declaredVariables.size(), "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed. I.e, in strict mode and not at the top-level scope of a function or program.");
-            if (!addResult.isNewEntry) {
-                if (strictMode() || !addResult.iterator->value.isFunction())
-                    result |= DeclarationResult::InvalidDuplicateDeclaration;
-            }
-            if (m_variablesBeingHoisted.contains(ident->impl()))
+
+        auto addResult = m_declaredVariables.add(ident->impl());
+        addResult.iterator->value.setIsVar();
+        addResult.iterator->value.setIsFunction();
+
+        if (m_lexicalVariables.contains(ident->impl()))
+            result |= DeclarationResult::InvalidDuplicateDeclaration;
+        return result;
+    }
+
+    DeclarationResultMask declareFunctionAsLet(const Identifier* ident, bool isFunctionDeclaration)
+    {
+        ASSERT(m_allowsLexicalDeclarations);
+        ASSERT_WITH_MESSAGE(!m_declaredVariables.size(), "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed.");
+        DeclarationResultMask result = DeclarationResult::Valid;
+        bool isValidStrictMode = !isEvalOrArgumentsIdentifier(m_vm, ident);
+        if (!isValidStrictMode)
+            result |= DeclarationResult::InvalidStrictMode;
+        m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
+
+        auto addResult = m_lexicalVariables.add(ident->impl());
+        if (!addResult.isNewEntry) {
+            if (strictMode() || !addResult.iterator->value.isFunctionDeclaration() || !isFunctionDeclaration)
                 result |= DeclarationResult::InvalidDuplicateDeclaration;
         }
+        if (m_variablesBeingHoisted.contains(ident->impl()))
+            result |= DeclarationResult::InvalidDuplicateDeclaration;
 
+        addResult.iterator->value.setIsLet();
         addResult.iterator->value.setIsFunction();
+        if (isFunctionDeclaration)
+            addResult.iterator->value.setIsFunctionDeclaration();
 
         return result;
     }
@@ -1448,17 +1463,16 @@ private:
         if (m_statementDepth == 1) {
             // Functions declared at the top-most scope (both in sloppy and strict mode) are declared as vars
             // for backwards compatibility. This allows us to declare functions with the same name more than once.
-            bool declareAsVar = true;
             ScopeRef variableScope = currentVariableScope();
-            return std::make_pair(variableScope->declareFunction(ident, declareAsVar), variableScope);
+            return std::make_pair(variableScope->declareFunctionAsVar(ident), variableScope);
         }
 
-        bool declareAsVar = false;
         ScopeRef lexicalVariableScope = currentLexicalDeclarationScope();
         if (lexicalVariableScope->isCatchBlockScope() && lexicalVariableScope.containingScope()->hasLexicallyDeclaredVariable(*ident))
             return std::make_pair(DeclarationResult::InvalidDuplicateDeclaration, lexicalVariableScope);
 
-        return std::make_pair(lexicalVariableScope->declareFunction(ident, declareAsVar), lexicalVariableScope);
+        bool isFunctionDeclaration = m_parseMode == SourceParseMode::NormalFunctionMode;
+        return std::make_pair(lexicalVariableScope->declareFunctionAsLet(ident, isFunctionDeclaration), lexicalVariableScope);
     }
 
     NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
