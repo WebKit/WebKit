@@ -9,7 +9,8 @@ description: >
 flags: [noStrict]
 ---*/
 
-        var _13_1_41_s = {};
+var _13_1_41_s = {};
+
 assert.throws(SyntaxError, function() {
-            eval("'use strict'; _13_1_41_s.x = function arguments() {};");
+    eval("'use strict'; _13_1_41_s.x = function arguments() {};");
 });

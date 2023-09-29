@@ -43,9 +43,11 @@ $262.evalScript('function brandNew() {}');
 assert.sameValue(
   typeof brandNew, 'function', 'new binding on an extensible global object'
 );
-verifyEnumerable(this, 'brandNew');
-verifyWritable(this, 'brandNew');
-verifyNotConfigurable(this, 'brandNew');
+verifyProperty(this, 'brandNew', {
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});
 
 Object.defineProperty(this, 'configurable', { configurable: true, value: 0 });
 Object.defineProperty(
@@ -63,9 +65,11 @@ $262.evalScript('function configurable() {}');
 assert.sameValue(
   typeof configurable, 'function', 'like-named configurable property'
 );
-verifyEnumerable(this, 'configurable')
-verifyWritable(this, 'configurable');
-verifyNotConfigurable(this, 'configurable');
+verifyProperty(this, 'configurable', {
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});
 
 $262.evalScript('function nonConfigurable() {}');
 
@@ -74,6 +78,8 @@ assert.sameValue(
   'function',
   'like-named non-configurable data property that is writable and enumerable'
 );
-verifyEnumerable(this, 'nonConfigurable');
-verifyWritable(this, 'nonConfigurable');
-verifyNotConfigurable(this, 'nonConfigurable');
+verifyProperty(this, 'nonConfigurable', {
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});

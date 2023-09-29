@@ -83,7 +83,6 @@ platform/graphics/gbm/GraphicsContextGLGBM.cpp @no-unify
 platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
 
 platform/graphics/gtk/ColorGtk.cpp
-platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
 platform/graphics/gtk/GdkCairoUtilities.cpp
 platform/graphics/gtk/ImageGtk.cpp
 platform/graphics/gtk/SystemFontDatabaseGTK.cpp

@@ -40,7 +40,7 @@ bool SourceGraphicCoreImageApplier::apply(const Filter&, const FilterImageVector
 {
     auto& input = inputs[0].get();
 
-    auto sourceImage = input.imageBuffer();
+    RefPtr sourceImage = input.imageBuffer();
     if (!sourceImage)
         return false;
 

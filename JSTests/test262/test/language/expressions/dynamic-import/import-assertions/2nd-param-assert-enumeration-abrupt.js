@@ -1,7 +1,7 @@
 // Copyright (C) 2021 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-description: Reports abrupt completions produced by assertion enumeration
+description: Reports abrupt completions produced by attributes enumeration
 esid: sec-import-call-runtime-semantics-evaluation
 info: |
   2.1.1.1 EvaluateImportCall ( specifierExpression [ , optionsExpression ] )

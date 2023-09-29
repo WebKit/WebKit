@@ -398,6 +398,7 @@ module DSL
         u32 = PrimitiveType.new(:U32)
         f32 = PrimitiveType.new(:F32)
         sampler = PrimitiveType.new(:Sampler)
+        sampler_comparison = PrimitiveType.new(:SamplerComparison)
         texture_external = PrimitiveType.new(:TextureExternal)
         abstract_int = PrimitiveType.new(:AbstractInt)
         abstract_float = PrimitiveType.new(:AbstractFloat)
@@ -409,6 +410,8 @@ module DSL
         texture_depth_multisampled_2d = PrimitiveType.new(:TextureDepthMultisampled2d)
 
         storage = AbstractValue.new(:"AddressSpace::Storage")
+        workgroup = AbstractValue.new(:"AddressSpace::Workgroup")
+
         read = AbstractValue.new(:"AccessMode::Read")
         read_write = AbstractValue.new(:"AccessMode::ReadWrite")
         write = AbstractValue.new(:"AccessMode::Write")

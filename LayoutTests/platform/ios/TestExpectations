@@ -4596,6 +4596,9 @@ imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-match
 
 webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
 
+# This test can't be enabled on iOS until EventSenderProxyIOS::keyDown() is implemented.
+http/tests/site-isolation/key-events.html [ Skip ]
+
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-both-parent-and-blended-with-3D-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ ImageOnlyFailure ]

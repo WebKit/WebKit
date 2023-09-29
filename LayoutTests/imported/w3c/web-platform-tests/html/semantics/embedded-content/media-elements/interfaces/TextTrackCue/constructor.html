@@ -7,17 +7,608 @@
     </head>
     <body>
         <script>
-            test(function()
-            {
+            function createValidCueFragment() {
+                const fragment = new DocumentFragment();
+                const div = document.createElement("div");
+                div.cuebackground = true;
+                div.innerHTML = "<span cue>Sample text</span>";
+                fragment.appendChild(div);
+                return fragment;
+            }
+
+            const cueFragment = createValidCueFragment();
+
+            test(function () {
                 assert_not_equals(TextTrackCue, VTTCue);
             }, "TextTrackCue and VTTCue are separate interfaces");
-            test(function()
-            {
-                assert_throws_js(TypeError, function()
-                {
-                    new TextTrackCue(0, 0, "");
+
+            test(() => {
+                const startTime = 10;
+                const endTime = 20;
+                const cue = new TextTrackCue(startTime, endTime, cueFragment);
+
+                assert_equals(
+                    cue.startTime,
+                    startTime,
+                    "startTime should be set correctly"
+                );
+                assert_equals(
+                    cue.endTime,
+                    endTime,
+                    "endTime should be set correctly"
+                );
+            }, "TextTrackCue constructor sets start time and end time correctly");
+
+            test(() => {
+                const cue = new TextTrackCue(1, 1, cueFragment);
+                assert_equals(cue.startTime, 1);
+                assert_equals(cue.endTime, 1);
+            }, "TextTrackCue constructor with equal startTime and endTime");
+
+            test(() => {
+                const cue = new TextTrackCue(
+                    Number.MIN_SAFE_INTEGER,
+                    Number.MAX_SAFE_INTEGER,
+                    cueFragment
+                );
+                assert_equals(cue.startTime, Number.MIN_SAFE_INTEGER);
+                assert_equals(cue.endTime, Number.MAX_SAFE_INTEGER);
+            }, "TextTrackCue constructor with extreme values for startTime and endTime");
+
+            test(() => {
+                const cue = new TextTrackCue(
+                    Number.MAX_SAFE_INTEGER,
+                    Number.MIN_SAFE_INTEGER,
+                    cueFragment
+                );
+                assert_equals(cue.startTime, Number.MAX_SAFE_INTEGER);
+                assert_equals(cue.endTime, Number.MIN_SAFE_INTEGER);
+            }, "TextTrackCue constructor with reversed extreme values for startTime and endTime");
+
+            test(() => {
+                assert_throws_js(
+                    TypeError,
+                    () => new TextTrackCue("invalid", 0, cueFragment),
+                    "Constructor should throw for non-numeric startTime"
+                );
+                assert_throws_js(
+                    TypeError,
+                    () => new TextTrackCue(0, "invalid", cueFragment),
+                    "Constructor should throw for non-numeric endTime"
+                );
+                assert_throws_js(
+                    TypeError,
+                    () => new TextTrackCue("invalid", "invalid", cueFragment),
+                    "Constructor should throw for non-numeric startTime and endTime"
+                );
+            }, "TextTrackCue constructor with non-numeric startTime and endTime");
+
+            test(() => {
+                assert_throws_js(
+                    TypeError,
+                    () => new TextTrackCue(NaN, Infinity, cueFragment),
+                    "Constructor should throw for NaN and Infinity startTime and endTime"
+                );
+            }, "TextTrackCue constructor with NaN and Infinity for startTime and endTime");
+
+            test(() => {
+                const cueFragment = new DocumentFragment();
+
+                assert_throws_dom(
+                    "InvalidNodeTypeError",
+                    () => {
+                        new TextTrackCue(0, 1, cueFragment);
+                    },
+                    "Constructor should throw an InvalidNodeTypeError if cueFragment's first child is null"
+                );
+            }, "TextTrackCue constructor throws InvalidNodeTypeError if cueFragment's first child is null");
+
+            test(() => {
+                const textOnlyFragment = new DocumentFragment();
+                textOnlyFragment.appendChild(document.createTextNode("Text"));
+                textOnlyFragment.appendChild(document.createTextNode("Text"));
+                assert_throws_dom(
+                    "InvalidNodeTypeError",
+                    () => {
+                        new TextTrackCue(0, 1, textOnlyFragment);
+                    },
+                    "Constructor should throw InvalidNodeTypeError with a DocumentFragment containing only Text nodes"
+                );
+            }, "TextTrackCue constructor with a DocumentFragment containing only Text nodes");
+
+            test(() => {
+                const fragment = new DocumentFragment();
+                const div = document.createElement("div");
+                div.cue = true;
+                div.cuebackground = true;
+
+                const textNode = document.createTextNode(
+                    "Non-exclusive text node"
+                );
+
+                // Appending the textNode first to the fragment to make it non-exclusive
+                fragment.appendChild(textNode);
+                fragment.appendChild(div);
+                assert_throws_dom("InvalidNodeTypeError", () => {
+                    new TextTrackCue(0, 1, fragment);
                 });
-            }, "TextTrackCue constructor should not be supported");
+            }, "TextTrackCue constructor throws for non-exclusive Text nodes");
+
+            test(() => {
+                const cueFragment = new DocumentFragment();
+                const span = document.createElement("span");
+                span.setAttribute("cue", "");
+                span.setAttribute("cuebackground", "");
+                cueFragment.appendChild(span);
+
+                const cue = new TextTrackCue(0, 1, cueFragment);
+
+                assert_true(
+                    cue instanceof TextTrackCue,
+                    "The constructed object should be an instance of TextTrackCue"
+                );
+            }, "TextTrackCue can be successfully constructed with cue and cuebackground on the same element");
+
+            const nonTextNonElementNodes = [
+                document.createComment("Comment node"),
+                document.createProcessingInstruction("target", "data"),
+            ];
+
+            nonTextNonElementNodes.forEach((node, index) => {
+                test(() => {
+                    const cueFragment = new DocumentFragment();
+                    cueFragment.appendChild(node);
+
+                    assert_throws_dom(
+                        "InvalidNodeTypeError",
+                        () => {
+                            new TextTrackCue(0, 1, cueFragment);
+                        },
+                        `Constructor should throw InvalidNodeTypeError for ${node.constructor.name}`
+                    );
+                }, `TextTrackCue constructor throws InvalidNodeTypeError for ${node.constructor.name}`);
+            });
+
+            test(() => {
+                const xhtmlDocument = document.implementation.createDocument(
+                    "http://www.w3.org/1999/xhtml",
+                    "html",
+                    null
+                );
+                const fragment = xhtmlDocument.createDocumentFragment();
+                const cdataNode =
+                    xhtmlDocument.createCDATASection("CDATA Section");
+                fragment.appendChild(cdataNode);
+                const div = xhtmlDocument.createElement("div");
+                div.cue = true;
+                div.cuebackground = true;
+                fragment.appendChild(div);
+                assert_throws_dom(
+                    "InvalidNodeTypeError",
+                    () => new TextTrackCue(0, 1, fragment)
+                );
+            }, "TextTrackCue with a CDATASection Node should throw InvalidNodeTypeError");
+
+            test(() => {
+                const cueFragment = new DocumentFragment();
+                const svgElement = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "svg"
+                );
+                cueFragment.appendChild(svgElement);
+
+                assert_throws_dom(
+                    "InvalidNodeTypeError",
+                    () => {
+                        new TextTrackCue(0, 1, cueFragment);
+                    },
+                    "Constructor should throw InvalidNodeTypeError for element not in the HTML namespace"
+                );
+            }, "TextTrackCue constructor throws InvalidNodeTypeError for non-HTML namespace elements");
+
+            test(() => {
+                const cueFragment = new DocumentFragment();
+
+                // Append an element in the HTML namespace
+                const divElement = document.createElement("div");
+                cueFragment.appendChild(divElement);
+
+                // Append an element in a non-HTML namespace (SVG in this case)
+                const svgElement = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "svg"
+                );
+                cueFragment.appendChild(svgElement);
+
+                assert_throws_dom(
+                    "InvalidNodeTypeError",
+                    () => {
+                        new TextTrackCue(0, 1, cueFragment);
+                    },
+                    "Constructor should throw InvalidNodeTypeError if elements from different namespaces are present"
+                );
+            }, "TextTrackCue constructor throws InvalidNodeTypeError for mixed namespace elements");
+
+            const allowedElements = [
+                "b",
+                "br",
+                "div",
+                "i",
+                "p",
+                "rb",
+                "rt",
+                "rtc",
+                "ruby",
+                "span",
+            ];
+
+            allowedElements.forEach((tagName) => {
+                test(() => {
+                    const cueFragment = new DocumentFragment();
+                    const element = document.createElement(tagName);
+
+                    // Set required attributes
+                    element.setAttribute("cue", "");
+                    element.setAttribute("cuebackground", "");
+                    cueFragment.appendChild(element);
+
+                    assert_true(
+                        new TextTrackCue(0, 1, cueFragment) instanceof
+                            TextTrackCue,
+                        `TextTrackCue should be constructible with a ${tagName} element`
+                    );
+                }, `TextTrackCue constructor allows individual ${tagName} element`);
+            });
+
+            test(() => {
+                const cueFragment = new DocumentFragment();
+                const divElement = document.createElement("div");
+
+                // Set required attributes
+                divElement.setAttribute("cue", "");
+                divElement.setAttribute("cuebackground", "");
+
+                // Append each allowed element as a child to the div
+                allowedElements.forEach((tagName) => {
+                    const element = document.createElement(tagName);
+                    divElement.appendChild(element);
+                });
+
+                cueFragment.appendChild(divElement);
+
+                assert_true(
+                    new TextTrackCue(0, 1, cueFragment) instanceof TextTrackCue,
+                    "TextTrackCue should be constructible with multiple allowed elements nested in a div"
+                );
+            }, "TextTrackCue constructor allows multiple allowed elements nested in a div with cue and cuebackground attributes");
+
+            test(() => {
+                const cueFragment = new DocumentFragment();
+                const outerDivElement = document.createElement("div");
+
+                // Set required attributes
+                outerDivElement.setAttribute("cue", "");
+                outerDivElement.setAttribute("cuebackground", "");
+
+                let parentElement = outerDivElement;
+                // Nest each allowed element inside the previous one
+                allowedElements.forEach((tagName) => {
+                    const element = document.createElement(tagName);
+                    parentElement.appendChild(element);
+                    parentElement = element;
+                });
+
+                cueFragment.appendChild(outerDivElement);
+
+                assert_true(
+                    new TextTrackCue(0, 1, cueFragment) instanceof TextTrackCue,
+                    "TextTrackCue should be constructible with allowed elements nested inside each other in a div"
+                );
+            }, "TextTrackCue constructor allows nested allowed elements in a div with cue and cuebackground attributes");
+
+            const disallowedElements = [
+                "a",
+                "abbr",
+                "address",
+                "area",
+                "article",
+                "aside",
+                "audio",
+                "base",
+                "bdi",
+                "bdo",
+                "blockquote",
+                "body",
+                "button",
+                "canvas",
+                "caption",
+                "cite",
+                "code",
+                "col",
+                "colgroup",
+                "data",
+                "datalist",
+                "dd",
+                "del",
+                "details",
+                "dfn",
+                "dialog",
+                "dl",
+                "dt",
+                "em",
+                "embed",
+                "fieldset",
+                "figcaption",
+                "figure",
+                "footer",
+                "form",
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "h6",
+                "head",
+                "header",
+                "hgroup",
+                "hr",
+                "html",
+                "iframe",
+                "img",
+                "input",
+                "ins",
+                "kbd",
+                "label",
+                "legend",
+                "li",
+                "link",
+                "main",
+                "map",
+                "mark",
+                "meta",
+                "meter",
+                "nav",
+                "noscript",
+                "object",
+                "ol",
+                "optgroup",
+                "option",
+                "output",
+                "param",
+                "picture",
+                "pre",
+                "progress",
+                "q",
+                "s",
+                "samp",
+                "script",
+                "section",
+                "select",
+                "small",
+                "source",
+                "strong",
+                "style",
+                "sub",
+                "summary",
+                "sup",
+                "svg",
+                "table",
+                "tbody",
+                "td",
+                "template",
+                "textarea",
+                "tfoot",
+                "th",
+                "thead",
+                "time",
+                "title",
+                "tr",
+                "track",
+                "u",
+                "ul",
+                "var",
+                "video",
+                "wbr",
+            ];
+
+            disallowedElements.forEach((tagName) => {
+                test(() => {
+                    const cueFragment = new DocumentFragment();
+                    const element = document.createElement(tagName);
+
+                    // Set required attributes
+                    element.setAttribute("cue", "");
+                    element.setAttribute("cuebackground", "");
+                    cueFragment.appendChild(element);
+
+                    assert_throws_dom(
+                        "InvalidNodeTypeError",
+                        () => {
+                            new TextTrackCue(0, 1, cueFragment);
+                        },
+                        `Constructor should throw InvalidNodeTypeError for a ${tagName} element`
+                    );
+                }, `TextTrackCue constructor throws InvalidNodeTypeError for individual ${tagName} element`);
+            });
+
+            const interleavedLength = Math.min(
+                allowedElements.length,
+                disallowedElements.length
+            );
+            for (let i = 0; i < interleavedLength; i++) {
+                test(() => {
+                    const cueFragment = new DocumentFragment();
+
+                    const allowedElement = document.createElement(
+                        allowedElements[i]
+                    );
+                    allowedElement.setAttribute("cue", "");
+                    allowedElement.setAttribute("cuebackground", "");
+                    cueFragment.appendChild(allowedElement);
+
+                    const disallowedElement = document.createElement(
+                        disallowedElements[i]
+                    );
+                    cueFragment.appendChild(disallowedElement);
+
+                    assert_throws_dom(
+                        "InvalidNodeTypeError",
+                        () => {
+                            new TextTrackCue(0, 1, cueFragment);
+                        },
+                        `Constructor should throw InvalidNodeTypeError for interleaved ${allowedElements[i]} and ${disallowedElements[i]}`
+                    );
+                }, `TextTrackCue constructor throws InvalidNodeTypeError for interleaved ${allowedElements[i]} and ${disallowedElements[i]}`);
+            }
+
+            test(() => {
+                // Function to create a nested structure with all allowed elements.
+                const createNestedAllowedElements = (elements) => {
+                    if (!elements.length) return null;
+                    const element = document.createElement(elements[0]);
+                    const remainingElements = elements.slice(1);
+                    const child =
+                        createNestedAllowedElements(remainingElements);
+                    if (child) element.appendChild(child);
+                    return element;
+                };
+
+                const nestedAllowedElements =
+                    createNestedAllowedElements(allowedElements);
+                nestedAllowedElements.setAttribute("cue", "");
+                nestedAllowedElements.setAttribute("cuebackground", "");
+
+                const cueFragment = new DocumentFragment();
+                cueFragment.appendChild(nestedAllowedElements);
+
+                // Append each disallowed element at the end of the nested structure, one at a time,
+                // and check that the TextTrackCue constructor throws InvalidNodeTypeError.
+                disallowedElements.forEach((tagName) => {
+                    const disallowedElement = document.createElement(tagName);
+                    cueFragment.appendChild(disallowedElement);
+
+                    assert_throws_dom(
+                        "InvalidNodeTypeError",
+                        () => {
+                            new TextTrackCue(0, 1, cueFragment);
+                        },
+                        `Constructor should throw InvalidNodeTypeError for deeply nested allowed elements with a disallowed ${tagName} element at the end`
+                    );
+
+                    cueFragment.removeChild(disallowedElement);
+                });
+            }, "TextTrackCue constructor with deeply nested allowed elements and each disallowed element at the end");
+
+            test(() => {
+                const iframe = document.createElement("iframe");
+                document.body.appendChild(iframe);
+
+                const otherDocumentFragment =
+                    iframe.contentDocument.createDocumentFragment();
+                const div = iframe.contentDocument.createElement("div");
+                div.cue = true;
+                div.cuebackground = true;
+                otherDocumentFragment.appendChild(div);
+
+                let result = "pass";
+                try {
+                    new TextTrackCue(0, 1, otherDocumentFragment);
+                } catch (err) {
+                    result = err.message;
+                }
+                assert_equals(
+                    result,
+                    "pass",
+                    "The constructor to not throw any exception"
+                );
+
+                document.body.removeChild(iframe);
+            }, "TextTrackCue constructor allows DocumentFragment from different documents");
+
+            test(() => {
+                const fragment = new DocumentFragment();
+                const div = document.createElement("div");
+                div.cue = true;
+                fragment.appendChild(div);
+
+                assert_throws_dom("HierarchyRequestError", () => {
+                    new TextTrackCue(0, 1, fragment);
+                });
+            }, "TextTrackCue constructor throws if cue attribute is present with no cuebackground attribute");
+
+            test(() => {
+                const fragment = new DocumentFragment();
+                const div = document.createElement("div");
+                div.cuebackground = true;
+                fragment.appendChild(div);
+
+                assert_throws_dom("InvalidNodeTypeError", () => {
+                    new TextTrackCue(0, 1, fragment);
+                });
+            }, "TextTrackCue constructor throws if cuebackground attribute is present with no cue attribute");
+
+            test(() => {
+                const fragment = new DocumentFragment();
+                const div = document.createElement("div");
+                div.cue = true;
+                div.cuebackground = true;
+
+                const child1 = document.createElement("span");
+                child1.setAttribute("cue", "");
+                div.appendChild(child1);
+
+                const child2 = document.createElement("span");
+                child2.setAttribute("cue", "");
+                div.appendChild(child2);
+
+                fragment.appendChild(div);
+
+                // This should not throw, as all 'cue' have a corresponding 'cuebackground' ancestor
+                new TextTrackCue(0, 1, fragment);
+            }, "TextTrackCue constructor allows multiple cue attributes with a cuebackground ancestor or on the same element");
+
+            test(() => {
+                const fragment = new DocumentFragment();
+                const div = document.createElement("div");
+
+                const backgroundCueElement = document.createElement("span");
+                backgroundCueElement.setAttribute("cue", "");
+                div.appendChild(backgroundCueElement);
+
+                const cueElement = document.createElement("span");
+                cueElement.setAttribute("cuebackground", "");
+                div.appendChild(cueElement);
+
+                fragment.appendChild(div);
+
+                assert_throws_dom(
+                    "InvalidNodeTypeError",
+                    () => {
+                        new TextTrackCue(0, 1, fragment);
+                    },
+                    "TextTrackCue constructor throws InvalidNodeTypeError if cuebackground is not an inclusive ancestor of cue"
+                );
+            }, "Invalid hierarchy of cue and cuebackground attributes");
+
+            test(() => {
+                const fragment = new DocumentFragment();
+                const div = document.createElement("div");
+                div.cue = true;
+
+                const backgroundCueElement = document.createElement("span");
+                backgroundCueElement.setAttribute("cuebackground", "");
+                div.appendChild(backgroundCueElement);
+
+                fragment.appendChild(div);
+
+                assert_throws_dom(
+                    "HierarchyRequestError",
+                    () => {
+                        new TextTrackCue(0, 1, fragment);
+                    },
+                    "TextTrackCue constructor throws HierarchyRequestError if cue is an inclusive ancestor of cuebackground"
+                );
+            }, "Invalid hierarchy with cue as ancestor of cuebackground");
         </script>
     </body>
 </html>

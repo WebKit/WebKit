@@ -10,7 +10,7 @@ features: [Temporal]
 let str = "1970-01-01T01:35:30+01:35:00.000000000[+01:35]";
 
 const result = Temporal.ZonedDateTime.from(str);
-assert.sameValue(result.timeZoneId, "+01:35", "Time zone determined from bracket name");
+assert.sameValue(result.timeZoneId, "+01:35", "ISO offset, sub-minute offset trailing-zeroes");
 
 str = "1970-01-01T01:35:30+01:35:00.000000000[+01:35:00.000000000]";
 assert.throws(

@@ -88,7 +88,7 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
 
-#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+#if !PLATFORM(GTK) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))
     virtual void targetRefreshRateDidChange(unsigned) { }
 #endif
 

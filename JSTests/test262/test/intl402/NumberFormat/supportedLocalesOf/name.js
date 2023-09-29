@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.NumberFormat.supportedLocalesOf.name, "supportedLocalesOf");
-
-verifyNotEnumerable(Intl.NumberFormat.supportedLocalesOf, "name");
-verifyNotWritable(Intl.NumberFormat.supportedLocalesOf, "name");
-verifyConfigurable(Intl.NumberFormat.supportedLocalesOf, "name");
+verifyProperty(Intl.NumberFormat.supportedLocalesOf, "name", {
+  value: "supportedLocalesOf",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

@@ -28,6 +28,7 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include "BitmapImage.h"
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
@@ -430,7 +431,7 @@ Image* OffscreenCanvas::copiedImage() const
     if (!m_copiedImage && buffer()) {
         if (m_context)
             m_context->paintRenderingResultsToCanvas();
-        m_copiedImage = buffer()->copyImage(CopyBackingStore, PreserveResolution::Yes);
+        m_copiedImage = BitmapImage::create(buffer()->copyNativeImage());
     }
     return m_copiedImage.get();
 }
@@ -495,7 +496,7 @@ void OffscreenCanvas::pushBufferToPlaceholder()
 
 void OffscreenCanvas::commitToPlaceholderCanvas()
 {
-    auto* imageBuffer = buffer();
+    RefPtr imageBuffer = buffer();
     if (!imageBuffer)
         return;
 

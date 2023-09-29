@@ -32,28 +32,36 @@ includes: [propertyHelper.js]
 
 var m1 = class { m(x = 42) {} }.prototype.m;
 
-assert.sameValue(m1.length, 0, 'formalslist: x = 42');
-verifyNotEnumerable(m1, 'length');
-verifyNotWritable(m1, 'length');
-verifyConfigurable(m1, 'length');
+verifyProperty(m1, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var m2 = class { m(x = 42, y) {} }.prototype.m;
 
-assert.sameValue(m2.length, 0, 'formalslist: x = 42, y');
-verifyNotEnumerable(m2, 'length');
-verifyNotWritable(m2, 'length');
-verifyConfigurable(m2, 'length');
+verifyProperty(m2, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var m3 = class { m(x, y = 42) {} }.prototype.m;
 
-assert.sameValue(m3.length, 1, 'formalslist: x, y = 42');
-verifyNotEnumerable(m3, 'length');
-verifyNotWritable(m3, 'length');
-verifyConfigurable(m3, 'length');
+verifyProperty(m3, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var m4 = class { m(x, y = 42, z) {} }.prototype.m;
 
-assert.sameValue(m4.length, 1, 'formalslist: x, y = 42, z');
-verifyNotEnumerable(m4, 'length');
-verifyNotWritable(m4, 'length');
-verifyConfigurable(m4, 'length');
+verifyProperty(m4, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

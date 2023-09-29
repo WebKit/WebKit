@@ -57,8 +57,8 @@ static CFDictionaryRef makeContextOptions(const DynamicContentScalingImageBuffer
 
 class GraphicsContextDynamicContentScaling : public WebCore::GraphicsContextCG {
 public:
-    GraphicsContextDynamicContentScaling(const DynamicContentScalingImageBufferBackend::Parameters& parameters, WebCore::IntSize backendSize, WebCore::RenderingMode renderingMode)
-        : GraphicsContextCG(adoptCF(RECGCommandsContextCreate(backendSize, makeContextOptions(parameters))).autorelease(), GraphicsContextCG::Unknown, renderingMode)
+    GraphicsContextDynamicContentScaling(const DynamicContentScalingImageBufferBackend::Parameters& parameters, WebCore::RenderingMode renderingMode)
+        : GraphicsContextCG(adoptCF(RECGCommandsContextCreate(parameters.backendSize, makeContextOptions(parameters))).autorelease(), GraphicsContextCG::Unknown, renderingMode)
     {
     }
 
@@ -73,13 +73,12 @@ size_t DynamicContentScalingImageBufferBackend::calculateMemoryCost(const Parame
 {
     // FIXME: This is fairly meaningless, because we don't actually have a bitmap, and
     // should really be based on the encoded data size.
-    auto backendSize = calculateBackendSize(parameters);
-    return WebCore::ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
+    return WebCore::ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
 }
 
 std::unique_ptr<DynamicContentScalingImageBufferBackend> DynamicContentScalingImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext)
 {
-    if (parameters.logicalSize.isEmpty())
+    if (parameters.backendSize.isEmpty())
         return nullptr;
 
     return std::unique_ptr<DynamicContentScalingImageBufferBackend>(new DynamicContentScalingImageBufferBackend(parameters, creationContext, WebCore::RenderingMode::Unaccelerated));
@@ -123,20 +122,15 @@ std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend:
 WebCore::GraphicsContext& DynamicContentScalingImageBufferBackend::context()
 {
     if (!m_context) {
-        m_context = makeUnique<GraphicsContextDynamicContentScaling>(m_parameters, backendSize(), m_renderingMode);
+        m_context = makeUnique<GraphicsContextDynamicContentScaling>(m_parameters, m_renderingMode);
         applyBaseTransform(*m_context);
     }
     return *m_context;
 }
 
-WebCore::IntSize DynamicContentScalingImageBufferBackend::backendSize() const
-{
-    return calculateBackendSize(m_parameters);
-}
-
 unsigned DynamicContentScalingImageBufferBackend::bytesPerRow() const
 {
-    return calculateBytesPerRow(backendSize());
+    return calculateBytesPerRow(m_parameters.backendSize);
 }
 
 void DynamicContentScalingImageBufferBackend::releaseGraphicsContext()
@@ -179,7 +173,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DynamicContentScalingAcceleratedImageBufferBackend);
 
 std::unique_ptr<DynamicContentScalingAcceleratedImageBufferBackend> DynamicContentScalingAcceleratedImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext)
 {
-    if (parameters.logicalSize.isEmpty())
+    if (parameters.backendSize.isEmpty())
         return nullptr;
 
     return std::unique_ptr<DynamicContentScalingAcceleratedImageBufferBackend>(new DynamicContentScalingAcceleratedImageBufferBackend(parameters, creationContext, WebCore::RenderingMode::Accelerated));

@@ -59,7 +59,6 @@ public:
     std::optional<ImageBufferBackendHandle> takeBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) final;
 
 private:
-    WebCore::IntSize backendSize() const final;
     RefPtr<WebCore::NativeImage> copyNativeImage() final;
     RefPtr<WebCore::NativeImage> createNativeImageReference() final;
 

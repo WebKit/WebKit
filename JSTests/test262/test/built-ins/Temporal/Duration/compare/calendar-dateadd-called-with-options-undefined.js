@@ -15,8 +15,7 @@ const timeZone = TemporalHelpers.oneShiftTimeZone(new Temporal.Instant(0n), 3600
 const relativeTo = new Temporal.ZonedDateTime(0n, timeZone, calendar);
 
 const duration1 = new Temporal.Duration(0, 0, 1);
-const duration2 = new Temporal.Duration(0, 0, 1);
+const duration2 = new Temporal.Duration(0, 0, 1, 1);
 Temporal.Duration.compare(duration1, duration2, { relativeTo });
-assert.sameValue(calendar.dateAddCallCount, 4);
-// one call in CalculateOffsetShift for each duration argument, plus one in
-// UnbalanceDurationRelative for each duration argument
+assert.sameValue(calendar.dateAddCallCount, 2);
+// one call for each duration argument to add it to relativeTo

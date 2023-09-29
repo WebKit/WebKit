@@ -119,11 +119,6 @@ void ImageBufferShareableMappedIOSurfaceBitmapBackend::setOwnershipIdentity(cons
     m_surface->setOwnershipIdentity(resourceOwner);
 }
 
-IntSize ImageBufferShareableMappedIOSurfaceBitmapBackend::backendSize() const
-{
-    return m_surface->size();
-}
-
 unsigned ImageBufferShareableMappedIOSurfaceBitmapBackend::bytesPerRow() const
 {
     return m_surface->bytesPerRow();

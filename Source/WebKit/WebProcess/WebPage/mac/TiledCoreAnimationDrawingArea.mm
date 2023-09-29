@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "DisplayRefreshMonitorMac.h"
 #import "DrawingAreaProxyMessages.h"
 #import "EventDispatcher.h"
 #import "LayerHostingContext.h"
@@ -36,6 +35,7 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "ViewGestureControllerMessages.h"
+#import "WebDisplayRefreshMonitor.h"
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
@@ -575,7 +575,7 @@ std::optional<WebCore::DestinationColorSpace> TiledCoreAnimationDrawingArea::dis
 
 RefPtr<WebCore::DisplayRefreshMonitor> TiledCoreAnimationDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
-    return DisplayRefreshMonitorMac::create(displayID);
+    return WebDisplayRefreshMonitor::create(displayID);
 }
 
 void TiledCoreAnimationDrawingArea::updateLayerHostingContext()

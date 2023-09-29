@@ -29,7 +29,7 @@ var error = new Error(message, { cause });
 verifyProperty(error, "cause", {
   configurable: true,
   enumerable: false,
-  writeable: true,
+  writable: true,
   value: cause,
 });
 

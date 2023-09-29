@@ -8,6 +8,6 @@ Console messages in named evaluations should have call frames with the correct n
 PASS: Log ConsoleMessage top call frame should have sourceURL name.
 
 -- Running test case: TriggerExceptionFromNameFunctionConstructorEvaluation
-Uncaught exception in test page: TypeError: undefined is not an object (evaluating '({}).x.x') [undefined:3]
+Uncaught exception in test page: TypeError: undefined is not an object (evaluating '({}).x.x') [undefined:4]
 PASS: Exception ConsoleMessage top call frame should have sourceURL name.
 

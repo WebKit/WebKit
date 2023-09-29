@@ -11,7 +11,7 @@ flags: [onlyStrict]
 
 
 assert.throws(TypeError, function() {
-            var foo = function () {
-            }
-            foo.caller = 20;
+    var foo = function () {
+    }
+    foo.caller = 20;
 });

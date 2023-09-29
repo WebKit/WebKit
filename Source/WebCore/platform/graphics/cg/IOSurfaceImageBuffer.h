@@ -37,11 +37,6 @@ public:
         return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
 
-    static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
-    {
-        return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, context, purpose);
-    }
-
     IOSurface& surface() { return *static_cast<ImageBufferIOSurfaceBackend&>(*m_backend).surface(); }
 
 protected:

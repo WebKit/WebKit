@@ -1293,17 +1293,13 @@ WebCore::HandleMouseEventResult WebFrame::handleMouseEvent(const WebMouseEvent& 
 
 bool WebFrame::handleKeyEvent(const WebKeyboardEvent& keyboardEvent)
 {
-    if (!m_coreFrame)
+    auto* coreFrame = coreLocalFrame();
+    if (!coreFrame)
         return false;
 
-    auto* page = m_coreFrame->page();
-    if (!page)
-        return false;
-
-    Ref frame = page->focusController().focusedOrMainFrame();
     if (keyboardEvent.type() == WebEventType::Char && keyboardEvent.isSystemKey())
-        return frame->eventHandler().handleAccessKey(platform(keyboardEvent));
-    return frame->eventHandler().keyEvent(platform(keyboardEvent));
+        return coreFrame->eventHandler().handleAccessKey(platform(keyboardEvent));
+    return coreFrame->eventHandler().keyEvent(platform(keyboardEvent));
 }
 
 bool WebFrame::isFocused() const

@@ -4082,7 +4082,8 @@ enum class WebCore::VideoFrameRotation : uint16_t {
     Vector<WebCore::GradientColorStop, 2> stops();
 };
 
-struct WebCore::ImageBufferBackendParameters {
+header: <WebCore/ImageBuffer.h>
+[CustomHeader] struct WebCore::ImageBufferParameters {
     WebCore::FloatSize logicalSize;
     float resolutionScale;
     WebCore::DestinationColorSpace colorSpace

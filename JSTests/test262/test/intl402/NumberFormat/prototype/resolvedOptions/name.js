@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.NumberFormat.prototype.resolvedOptions.name, "resolvedOptions");
-
-verifyNotEnumerable(Intl.NumberFormat.prototype.resolvedOptions, "name");
-verifyNotWritable(Intl.NumberFormat.prototype.resolvedOptions, "name");
-verifyConfigurable(Intl.NumberFormat.prototype.resolvedOptions, "name");
+verifyProperty(Intl.NumberFormat.prototype.resolvedOptions, "name", {
+  value: "resolvedOptions",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

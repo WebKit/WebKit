@@ -3,13 +3,11 @@
 
 /*---
 esid: sec-temporal.duration.prototype.total
-description: A number as relativeTo option is converted to a string, then to Temporal.PlainDate
+description: A number cannot be used in place of a relativeTo
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.Duration(1, 0, 0, 0, 24);
-
-const relativeTo = 20191101;
 
 const numbers = [
   1,
@@ -22,6 +20,6 @@ for (const relativeTo of numbers) {
   assert.throws(
     TypeError,
     () => instance.total({ unit: "days", relativeTo }),
-    `Number ${relativeTo} does not convert to a valid ISO string for relativeTo`
+    `A number (${relativeTo}) is not a valid ISO string for relativeTo`
   );
 }

@@ -2,48 +2,70 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: >
-  AssertClause in ImportDeclaration may include line terminators
+  WithClause in ImportDeclaration may include line terminators
 esid: sec-modules
 info: |
   ImportDeclaration:
-    import ModuleSpecifier[no LineTerminator here] AssertClause;
+    import ModuleSpecifier[no LineTerminator here] WithClause;
 
-  AssertClause:
+  WithClause:
     assert {}
-    assert {AssertEntries ,opt}
+    assert {WithEntries ,opt}
 
-  AssertEntries:
-    AssertionKey : StringLiteral
-    AssertionKey : StringLiteral , AssertEntries
+  WithEntries:
+    AttributeKey : StringLiteral
+    AttributeKey : StringLiteral , WithEntries
 
-  AssertionKey:
+  AttributeKey:
     IdentifierName
     StringLiteral
 
   This test uses all four LineFeed characters in order to completely verify the
   grammar.
+negative:
+  phase: resolution
+  type: SyntaxError
 features: [import-assertions, globalThis]
 flags: [module]
 ---*/
 
+$DONOTEVALUATE();
+
+import "./ensure-linking-error_FIXTURE.js";
+
 import x from './import-assertion-1_FIXTURE.js' assert
-  {
-  test262
-  :
-  ''
-  };
+
+  {
+
+  test262
+
+  :
+
+  ''
+
+  };
 import './import-assertion-2_FIXTURE.js' assert
-  {
-  test262
-  :
-  ''
-  };
+
+  {
+
+  test262
+
+  :
+
+  ''
+
+  };
 export * from './import-assertion-3_FIXTURE.js' assert
-  {
-  test262
-  :
-  ''
-  };
+
+  {
+
+  test262
+
+  :
+
+  ''
+
+  };
 
 assert.sameValue(x, 262.1);
 assert.sameValue(globalThis.test262, 262.2);

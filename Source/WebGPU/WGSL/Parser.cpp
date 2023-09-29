@@ -830,23 +830,8 @@ Result<AST::VariableQualifier::Ref> Parser<Lexer>::parseVariableQualifier()
         consume();
         PARSE(actualAccessMode, AccessMode);
         accessMode = actualAccessMode;
-    } else {
-        // Default access mode based on address space
-        // https://www.w3.org/TR/WGSL/#address-space
-        switch (addressSpace) {
-        case AddressSpace::Function:
-        case AddressSpace::Private:
-        case AddressSpace::Workgroup:
-            accessMode = AccessMode::ReadWrite;
-            break;
-        case AddressSpace::Uniform:
-        case AddressSpace::Storage:
-            accessMode = AccessMode::Read;
-            break;
-        case AddressSpace::Handle:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
+    } else
+        accessMode = defaultAccessModeForAddressSpace(addressSpace);
 
     CONSUME_TYPE(TemplateArgsRight);
     RETURN_ARENA_NODE(VariableQualifier, addressSpace, accessMode);

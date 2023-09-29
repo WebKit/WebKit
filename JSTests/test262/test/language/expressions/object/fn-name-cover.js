@@ -28,17 +28,23 @@ o = {
 
 assert(o.xId.name !== 'xId');
 
-assert.sameValue(o.id.name, 'id', 'via IdentifierName');
-verifyNotEnumerable(o.id, 'name');
-verifyNotWritable(o.id, 'name');
-verifyConfigurable(o.id, 'name');
+verifyProperty(o.id, 'name', {
+  value: 'id',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
-assert.sameValue(o[anonSym].name, '', 'via anonymous Symbol');
-verifyNotEnumerable(o[anonSym], 'name');
-verifyNotWritable(o[anonSym], 'name');
-verifyConfigurable(o[anonSym], 'name');
+verifyProperty(o[anonSym], 'name', {
+  value: '',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
-assert.sameValue(o[namedSym].name, '[test262]', 'via Symbol');
-verifyNotEnumerable(o[namedSym], 'name');
-verifyNotWritable(o[namedSym], 'name');
-verifyConfigurable(o[namedSym], 'name');
+verifyProperty(o[namedSym], 'name', {
+  value: '[test262]',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

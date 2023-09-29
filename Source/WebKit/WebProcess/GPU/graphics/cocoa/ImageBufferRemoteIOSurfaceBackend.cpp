@@ -101,15 +101,9 @@ GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context()
     return *(GraphicsContext*)nullptr;
 }
 
-IntSize ImageBufferRemoteIOSurfaceBackend::backendSize() const
-{
-    return calculateBackendSize(m_parameters);
-}
-
 unsigned ImageBufferRemoteIOSurfaceBackend::bytesPerRow() const
 {
-    IntSize backendSize = calculateBackendSize(m_parameters);
-    return ImageBufferIOSurfaceBackend::calculateBytesPerRow(backendSize);
+    return ImageBufferIOSurfaceBackend::calculateBytesPerRow(m_parameters.backendSize);
 }
 
 RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage()

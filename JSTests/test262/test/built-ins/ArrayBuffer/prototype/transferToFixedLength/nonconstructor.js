@@ -11,13 +11,11 @@ info: |
     Built-in function objects that are not identified as constructors do not
     implement the [[Construct]] internal method unless otherwise specified
     in the description of a particular function.
-features: [arraybuffer-transfer]
+includes: [isConstructor.js]
+features: [arraybuffer-transfer, Reflect.construct]
 ---*/
 
-assert.sameValue(
-  Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transferToFixedLength, 'prototype'),
-  false
-);
+assert(!isConstructor(ArrayBuffer.prototype.transferToFixedLength), "ArrayBuffer.prototype.transferToFixedLength is not a constructor");
 
 var arrayBuffer = new ArrayBuffer(8);
 assert.throws(TypeError, function() {

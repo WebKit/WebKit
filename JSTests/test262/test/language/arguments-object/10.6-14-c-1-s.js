@@ -5,18 +5,13 @@
 es5id: 10.6-14-c-1-s
 description: >
     [[Enumerable]] attribute value in 'callee' is false
+includes: [propertyHelper.js]
 ---*/
 
-        var argObj = function () {
-            return arguments;
-        } ();
+var argObj = function () {
+    return arguments;
+} ();
 
-        var verifyEnumerable = false;
-        for (var _10_6_14_c_1 in argObj) {
-            if (argObj.hasOwnProperty(_10_6_14_c_1) && _10_6_14_c_1 === "callee") {
-                verifyEnumerable = true;
-            }
-        }
-
-assert.sameValue(verifyEnumerable, false, 'verifyEnumerable');
-assert(argObj.hasOwnProperty("callee"), 'argObj.hasOwnProperty("callee") !== true');
+verifyProperty(argObj, "callee", {
+    enumerable: false,
+});

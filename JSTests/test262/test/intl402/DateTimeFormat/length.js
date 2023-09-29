@@ -24,8 +24,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.DateTimeFormat.length, 0);
-
-verifyNotEnumerable(Intl.DateTimeFormat, "length");
-verifyNotWritable(Intl.DateTimeFormat, "length");
-verifyConfigurable(Intl.DateTimeFormat, "length");
+verifyProperty(Intl.DateTimeFormat, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

@@ -78,6 +78,7 @@ public:
     const Type* abstractFloatType() const { return m_abstractFloat; }
     const Type* f32Type() const { return m_f32; }
     const Type* samplerType() const { return m_sampler; }
+    const Type* samplerComparisonType() const { return m_samplerComparison; }
     const Type* textureExternalType() const { return m_textureExternal; }
     const Type* accessModeType() const { return m_accessMode; }
     const Type* texelFormatType() const { return m_texelFormat; }
@@ -117,6 +118,7 @@ private:
     const Type* m_u32;
     const Type* m_f32;
     const Type* m_sampler;
+    const Type* m_samplerComparison;
     const Type* m_textureExternal;
     const Type* m_accessMode;
     const Type* m_texelFormat;

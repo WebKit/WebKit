@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+window.addEventListener("message", function (event) {
+    testPassed("Received key event " + event.data);
+    testRunner.notifyDone();
+});
+
+function test() {
+    document.getElementById("iframe").focus();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        eventSender.keyDown("x");
+    }
+}
+</script>
+<iframe onload="test()" id="iframe" src="http://localhost:8000/site-isolation/resources/key-event-handler.html"></iframe>

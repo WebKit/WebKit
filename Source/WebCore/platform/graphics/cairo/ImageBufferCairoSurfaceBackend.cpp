@@ -55,11 +55,6 @@ GraphicsContext& ImageBufferCairoSurfaceBackend::context()
     return m_context;
 }
 
-IntSize ImageBufferCairoSurfaceBackend::backendSize() const
-{
-    return { cairo_image_surface_get_width(m_surface.get()), cairo_image_surface_get_height(m_surface.get()) };
-}
-
 unsigned ImageBufferCairoSurfaceBackend::bytesPerRow() const
 {
     return cairo_image_surface_get_stride(m_surface.get());

@@ -36,8 +36,6 @@
 #include "DisplayRefreshMonitorIOS.h"
 #elif PLATFORM(MAC)
 #include "LegacyDisplayRefreshMonitorMac.h"
-#elif PLATFORM(GTK)
-#include "DisplayRefreshMonitorGtk.h"
 #elif PLATFORM(WIN)
 #include "DisplayRefreshMonitorWin.h"
 #endif
@@ -51,9 +49,6 @@ RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefresh
 #endif
 #if PLATFORM(IOS_FAMILY)
     return DisplayRefreshMonitorIOS::create(displayID);
-#endif
-#if PLATFORM(GTK) && !USE(GTK4)
-    return DisplayRefreshMonitorGtk::create(displayID);
 #endif
 #if PLATFORM(WIN)
     return DisplayRefreshMonitorWin::create(displayID);
@@ -139,7 +134,7 @@ void DisplayRefreshMonitor::clientPreferredFramesPerSecondChanged(DisplayRefresh
 bool DisplayRefreshMonitor::requestRefreshCallback()
 {
     Locker locker { m_lock };
-    
+
     if (isScheduled())
         return true;
 

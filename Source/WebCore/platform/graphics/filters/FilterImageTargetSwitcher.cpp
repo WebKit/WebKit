@@ -79,7 +79,7 @@ void FilterImageTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationC
         return;
 
     FilterResults results;
-    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, *m_filter, m_results ? *m_results : results);
+    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, Ref { *m_filter }, m_results ? *m_results : results);
 }
 
 } // namespace WebCore

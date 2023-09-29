@@ -122,7 +122,7 @@ private:
 
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);
 
-#if PLATFORM(MAC)
+#if HAVE(DISPLAY_LINK)
     void displayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
 #endif
 

@@ -602,7 +602,6 @@ const timeZoneIdentifiers = [
   'US/Michigan',
   'US/Mountain',
   'US/Pacific',
-  'US/Pacific-New',
   'US/Samoa',
   'UTC',
   'Universal',
@@ -620,7 +619,6 @@ for (const id of ids) {
   const lower = id.toLowerCase();
   const upper = id.toUpperCase();
   const tz = new Temporal.TimeZone(id);
-  assert.sameValue(tz.equals(id), true,  `Time zone "${id}" compared to string "${upper}"`);
-  assert.sameValue(tz.equals(id), true, `Time zone "${id}" compared to string "${lower}"`);
+  assert.sameValue(tz.equals(upper), true, `Time zone "${id}" compared to string "${upper}"`);
+  assert.sameValue(tz.equals(lower), true, `Time zone "${id}" compared to string "${lower}"`);
 }
-

@@ -43,7 +43,6 @@ public:
     static std::unique_ptr<DynamicContentScalingImageBufferBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);
 
     WebCore::GraphicsContext& context() final;
-    WebCore::IntSize backendSize() const final;
     std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
 
     void releaseGraphicsContext() final;

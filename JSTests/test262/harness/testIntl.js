@@ -29,6 +29,8 @@ defines:
   - getDateTimeComponents
   - getDateTimeComponentValues
   - isCanonicalizedStructurallyValidTimeZoneName
+  - partitionDurationFormatPattern
+  - formatDurationFormatPattern
 ---*/
 /**
  */
@@ -2501,4 +2503,213 @@ function isCanonicalizedStructurallyValidTimeZoneName(timeZone) {
     return false;
   }
   return zoneNamePattern.test(timeZone);
+}
+
+
+/**
+ * @description Simplified PartitionDurationFormatPattern implementation which
+ * only supports the "en" locale.
+ * @param {Object} duration the duration record
+ * @param {String} style the duration format style
+ * @result {Array} an array with formatted duration parts
+ */
+
+function partitionDurationFormatPattern(duration, style = "short") {
+  const units = [
+    "years",
+    "months",
+    "weeks",
+    "days",
+    "hours",
+    "minutes",
+    "seconds",
+    "milliseconds",
+    "microseconds",
+    "nanoseconds",
+  ];
+
+  function durationToFractionalSeconds(duration) {
+    let {
+      seconds = 0,
+      milliseconds = 0,
+      microseconds = 0,
+      nanoseconds = 0,
+    } = duration;
+
+    // Directly return seconds when no sub-seconds are present.
+    if (milliseconds === 0 && microseconds === 0 && nanoseconds === 0) {
+      return seconds;
+    }
+
+    // Otherwise compute the overall amount of nanoseconds using BigInt to avoid
+    // loss of precision.
+    let ns_sec = BigInt(seconds) * 1_000_000_000n;
+    let ns_ms = BigInt(milliseconds) * 1_000_000n;
+    let ns_us = BigInt(microseconds) * 1_000n;
+    let ns = ns_sec + ns_ms + ns_us + BigInt(nanoseconds);
+
+    // Split the nanoseconds amount into seconds and sub-seconds.
+    let q = ns / 1_000_000_000n;
+    let r = ns % 1_000_000_000n;
+
+    // Pad sub-seconds, without any leading negative sign, to nine digits.
+    if (r < 0) {
+      r = -r;
+    }
+    r = String(r).padStart(9, "0");
+
+    // Return seconds with fractional part as a decimal string.
+    return `${q}.${r}`;
+  }
+
+  // Only "en" is supported.
+  const locale = "en";
+  const numberingSystem = "latn";
+  const timeSeparator = ":";
+
+  let result = [];
+  let separated = false;
+
+  for (let unit of units) {
+    // Absent units default to zero.
+    let value = duration[unit] ?? 0;
+
+    let display = "auto";
+    if (style === "digital") {
+      // Always display numeric units per GetDurationUnitOptions.
+      if (unit === "hours" || unit === "minutes" || unit === "seconds") {
+        display = "always";
+      }
+
+      // Numeric seconds and sub-seconds are combined into a single value.
+      if (unit === "seconds") {
+        value = durationToFractionalSeconds(duration);
+      }
+    }
+
+    // "auto" display omits zero units.
+    if (value !== 0 || display !== "auto") {
+      // Map the DurationFormat style to a NumberFormat style.
+      let unitStyle = style;
+      if (style === "digital") {
+        if (unit === "hours") {
+          unitStyle = "numeric";
+        } else if (unit === "minutes" || unit === "seconds") {
+          unitStyle = "2-digit";
+        } else {
+          unitStyle = "short";
+        }
+      }
+
+      // NumberFormat requires singular unit names.
+      let numberFormatUnit = unit.slice(0, -1);
+
+      // Compute the matching NumberFormat options.
+      let nfOpts;
+      if (unitStyle !== "numeric" && unitStyle !== "2-digit") {
+        // The value is formatted as a standalone unit.
+        nfOpts = {
+          numberingSystem,
+          style: "unit",
+          unit: numberFormatUnit,
+          unitDisplay: unitStyle,
+        };
+      } else {
+        let roundingMode = undefined;
+        let minimumFractionDigits = undefined;
+        let maximumFractionDigits = undefined;
+
+        // Numeric seconds include any sub-seconds.
+        if (style === "digital" && unit === "seconds") {
+          roundingMode = "trunc";
+          minimumFractionDigits = 0;
+          maximumFractionDigits = 9;
+        }
+
+        // The value is formatted as a numeric unit.
+        nfOpts = {
+          numberingSystem,
+          minimumIntegerDigits: (unitStyle === "2-digit" ? 2 : 1),
+          roundingMode,
+          minimumFractionDigits,
+          maximumFractionDigits,
+        };
+      }
+
+      let nf = new Intl.NumberFormat(locale, nfOpts);
+      let formatted = nf.formatToParts(value);
+
+      // Add |numberFormatUnit| to the formatted number.
+      let list = [];
+      for (let {value, type} of formatted) {
+        list.push({type, value, unit: numberFormatUnit});
+      }
+
+      if (!separated) {
+        // Prepend the separator before the next numeric unit.
+        if (unitStyle === "2-digit" || unitStyle === "numeric") {
+          separated = true;
+        }
+
+        // Append the formatted number to |result|.
+        result.push(list);
+      } else {
+        let last = result[result.length - 1];
+
+        // Prepend the time separator before the formatted number.
+        last.push({
+          type: "literal",
+          value: timeSeparator,
+        });
+
+        // Concatenate |last| and the formatted number.
+        last.push(...list);
+      }
+    } else {
+      separated = false;
+    }
+
+    // No further units possible after "seconds" when style is "digital".
+    if (style === "digital" && unit === "seconds") {
+      break;
+    }
+  }
+
+  let lf = new Intl.ListFormat(locale, {
+    type: "unit",
+    style: (style !== "digital" ? style : "short"),
+  });
+
+  // Collect all formatted units into a list of strings.
+  let strings = [];
+  for (let parts of result) {
+    let string = "";
+    for (let {value} of parts) {
+      string += value;
+    }
+    strings.push(string);
+  }
+
+  // Format the list of strings and compute the overall result.
+  let flattened = [];
+  for (let {type, value} of lf.formatToParts(strings)) {
+    if (type === "element") {
+      flattened.push(...result.shift());
+    } else {
+      flattened.push({type, value});
+    }
+  }
+  return flattened;
+}
+
+
+/**
+ * @description Return the formatted string from partitionDurationFormatPattern.
+ * @param {Object} duration the duration record
+ * @param {String} style the duration format style
+ * @result {String} a string containing the formatted duration
+ */
+
+function formatDurationFormatPattern(duration, style) {
+  return partitionDurationFormatPattern(duration, style).reduce((acc, e) => acc + e.value, "");
 }

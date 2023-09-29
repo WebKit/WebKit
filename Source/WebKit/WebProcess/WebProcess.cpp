@@ -175,7 +175,7 @@
 #include <WebCore/ImageDecoderCG.h>
 #endif
 
-#if PLATFORM(MAC)
+#if HAVE(DISPLAY_LINK)
 #include <WebCore/DisplayRefreshMonitorManager.h>
 #endif
 
@@ -2148,7 +2148,7 @@ void WebProcess::setClientBadge(WebPageProxyIdentifier pageIdentifier, const Web
     parentProcessConnection()->send(Messages::WebProcessProxy::SetClientBadge(pageIdentifier, origin, badge), 0);
 }
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
 void WebProcess::displayDidRefresh(uint32_t displayID, const DisplayUpdate& displayUpdate)
 {
     ASSERT(RunLoop::isMain());

@@ -385,11 +385,11 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 
         if (!didEncode)
             break;
-        auto parameters = decoder.decode<WebCore::ImageBufferBackend::Parameters>();
+        auto parameters = decoder.decode<WebCore::ImageBufferParameters>();
         auto handle = decoder.decode<ShareableBitmap::Handle>();
         if (UNLIKELY(!decoder.isValid()))
             return false;
-        result = WebImage::create(*parameters, WTFMove(*handle));
+        result = WebImage::create(WTFMove(*parameters), WTFMove(*handle));
         break;
     }
 

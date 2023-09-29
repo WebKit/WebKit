@@ -1252,8 +1252,7 @@ void BoxDecorationPainter::paintFillLayer(PaintingContext& paintingContext, cons
         op == CompositeOperator::SourceOver ? layer.composite() : op,
         layer.blendMode(),
         DecodingMode::Synchronous,
-        ImageOrientation::Orientation::FromImage,
-        InterpolationQuality::Default
+        ImageOrientation::Orientation::FromImage
     };
 
     paintingContext.context.drawTiledImage(*image, geometry.destRect(), toFloatPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);

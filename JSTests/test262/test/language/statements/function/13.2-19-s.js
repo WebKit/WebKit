@@ -8,8 +8,8 @@ description: >
     'arguments' fails outside of the function
 ---*/
 
-        var foo = Function("'use strict';");
-        
-        for (var tempIndex in foo) {
-            assert.notSameValue(tempIndex, "arguments", 'tempIndex');
-        }
+var foo = Function("'use strict';");
+
+for (var tempIndex in foo) {
+    assert.notSameValue(tempIndex, "arguments", 'tempIndex');
+}

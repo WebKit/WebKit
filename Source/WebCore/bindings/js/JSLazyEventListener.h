@@ -55,7 +55,7 @@ private:
     JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const final;
 
     String m_functionName;
-    const String& m_eventParameterName;
+    const String& m_functionParameters;
     String m_code;
     URL m_sourceURL;
     TextPosition m_sourcePosition;

@@ -22,6 +22,6 @@ includes: [propertyHelper.js]
 verifyProperty(ArrayBuffer.prototype.resize, 'name', {
   value: 'resize',
   enumerable: false,
-  wrtiable: false,
+  writable: false,
   configurable: true
 });

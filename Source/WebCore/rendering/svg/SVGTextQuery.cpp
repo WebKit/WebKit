@@ -520,25 +520,26 @@ struct CharacterNumberAtPositionData : SVGTextQuery::Data {
 
 bool SVGTextQuery::characterNumberAtPositionCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
-    CharacterNumberAtPositionData* data = static_cast<CharacterNumberAtPositionData*>(queryData);
+    auto* data = static_cast<CharacterNumberAtPositionData*>(queryData);
 
-    // Offset of the fragment within the text box.
-    unsigned boxOffset = fragment.characterOffset - queryData->textBox->start();
-
+    // Iterate through the glyphs in this fragment, and check if their extents
+    // contain the query point.
     FloatRect extent;
-    for (unsigned i = 0; i < fragment.length; ++i) {
-        unsigned startPosition = data->processedCharacters + boxOffset + i;
-        unsigned endPosition = startPosition + 1;
-        if (!mapStartEndPositionsIntoFragmentCoordinates(queryData, fragment, startPosition, endPosition))
-            continue;
-
-        calculateGlyphBoundaries(queryData, fragment, startPosition, extent);
+    auto& textMetrics = queryData->textRenderer->layoutAttributes()->textMetricsValues();
+    unsigned textMetricsOffset = fragment.metricsListOffset;
+    unsigned fragmentOffset = 0;
+    while (fragmentOffset < fragment.length) {
+        calculateGlyphBoundaries(queryData, fragment, fragmentOffset, extent);
         if (extent.contains(data->position)) {
-            data->processedCharacters += i + boxOffset;
+            // Compute the character offset of the glyph within the text box
+            // and add to processedCharacters.
+            unsigned characterOffset = fragment.characterOffset + fragmentOffset;
+            data->processedCharacters += characterOffset - data->textBox->start();
             return true;
         }
+        fragmentOffset += textMetrics[textMetricsOffset].length();
+        ++textMetricsOffset;
     }
-
     return false;
 }
 

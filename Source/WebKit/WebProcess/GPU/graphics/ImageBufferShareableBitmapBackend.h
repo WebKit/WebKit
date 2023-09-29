@@ -64,7 +64,6 @@ public:
     ImageBufferShareableBitmapBackend(const Parameters&, Ref<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
 
     WebCore::GraphicsContext& context() final { return *m_context; }
-    WebCore::IntSize backendSize() const final;
 
     std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
     RefPtr<ShareableBitmap> bitmap() const final { return m_bitmap.ptr(); }

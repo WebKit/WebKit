@@ -20,11 +20,11 @@ for (const arg of numbers) {
   assert.throws(
     TypeError,
     () => Temporal.PlainYearMonth.compare(arg, new Temporal.PlainYearMonth(2019, 6)),
-    "A number is not a valid ISO string for PlainYearMonth (first argument)"
+    `A number (${arg}) is not a valid ISO string for PlainYearMonth (first argument)`
   );
   assert.throws(
     TypeError,
     () => Temporal.PlainYearMonth.compare(new Temporal.PlainYearMonth(2019, 6), arg),
-    "A number is not a valid ISO string for PlainYearMonth (first argument)"
+    `A number (${arg}) is not a valid ISO string for PlainYearMonth (first argument)`
   );
 }

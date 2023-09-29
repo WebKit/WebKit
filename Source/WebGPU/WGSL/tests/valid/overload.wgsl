@@ -2023,6 +2023,7 @@ fn testTrunc()
 // 16.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
 
 @group(0) @binding( 0) var s: sampler;
+@group(0) @binding(31) var sc: sampler_comparison;
 
 @group(0) @binding( 1) var t1d: texture_1d<f32>;
 @group(0) @binding( 2) var t1di: texture_1d<i32>;
@@ -2169,7 +2170,26 @@ fn testTextureGather()
 }
 
 // 16.7.3 textureGatherCompare
-// FIXME: this only applies to texture_depth, implement
+fn testTextureGatherCompare()
+{
+    // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => vec4[f32],
+    _ = textureGatherCompare(td2d, sc, vec2f(0), 0f);
+
+    // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32, vec2[i32]) => vec4[f32],
+    _ = textureGatherCompare(td2d, sc, vec2f(0), 0f, vec2i(0));
+
+    // [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32) => vec4[f32],
+    _ = textureGatherCompare(td2da, sc, vec2f(0), 0i, 0f);
+
+    // [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32, vec2[i32]) => vec4[f32],
+    _ = textureGatherCompare(td2da, sc, vec2f(0), 0i, 0f, vec2i(0));
+
+    // [].(texture_depth_cube, sampler_comparison, vec3[f32], f32) => vec4[f32],
+    _ = textureGatherCompare(tdc, sc, vec3f(0), 0f);
+
+    // [T < ConcreteInteger].(texture_depth_cube_array, sampler_comparison, vec3[f32], T, f32) => vec4[f32],
+    _ = textureGatherCompare(tdca, sc, vec3f(0), 0i, 0f);
+}
 
 // 16.7.4
 // RUN: %metal-compile testTextureLoad
@@ -2443,11 +2463,49 @@ fn testTextureSampleBias()
     _ = textureSampleBias(tca, s, vec3f(0), 0, 0);
 }
 
-// 16.7.10 textureSampleCompare
-// FIXME: this only applies to texture_depth, implement
+// 16.7.10
+fn testTextureSampleCompare()
+{
+    // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,
+    _ = textureSampleCompare(td2d, sc, vec2f(0), 0);
 
-// 16.7.11 textureSampleCompareLevel
-// FIXME: this only applies to texture_depth, implement
+    // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32, vec2[i32]) => f32,
+    _ = textureSampleCompare(td2d, sc, vec2f(0), 0, vec2i(0));
+
+    // [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32) => f32,
+    _ = textureSampleCompare(td2da, sc, vec2f(0), 0i, 0f);
+
+    // [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32, vec2[i32]) => f32,
+    _ = textureSampleCompare(td2da, sc, vec2f(0), 0i, 0f, vec2i(0));
+
+    // [].(texture_depth_cube, sampler_comparison, vec3[f32], f32) => f32,
+    _ = textureSampleCompare(tdc, sc, vec3f(0), 0);
+
+    // [T < ConcreteInteger].(texture_depth_cube_array, sampler_comparison, vec3[f32], T, f32) => f32,
+    _ = textureSampleCompare(tdca, sc, vec3f(0), 0i, 0f);
+}
+
+// 16.7.11
+fn testTextureSampleCompareLevel()
+{
+    // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,
+    _ = textureSampleCompareLevel(td2d, sc, vec2f(0), 0);
+
+    // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32, vec2[i32]) => f32,
+    _ = textureSampleCompareLevel(td2d, sc, vec2f(0), 0, vec2i(0));
+
+    // [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32) => f32,
+    _ = textureSampleCompareLevel(td2da, sc, vec2f(0), 0i, 0f);
+
+    // [T < ConcreteInteger].(texture_depth_2d_array, sampler_comparison, vec2[f32], T, f32, vec2[i32]) => f32,
+    _ = textureSampleCompareLevel(td2da, sc, vec2f(0), 0i, 0f, vec2i(0));
+
+    // [].(texture_depth_cube, sampler_comparison, vec3[f32], f32) => f32,
+    _ = textureSampleCompareLevel(tdc, sc, vec3f(0), 0);
+
+    // [T < ConcreteInteger].(texture_depth_cube_array, sampler_comparison, vec3[f32], T, f32) => f32,
+    _ = textureSampleCompareLevel(tdca, sc, vec3f(0), 0i, 0f);
+}
 
 // 16.7.12
 fn testTextureSampleGrad()
@@ -2478,6 +2536,8 @@ fn testTextureSampleGrad()
 }
 
 // 16.7.13
+// RUN: %metal-compile testTexureSampleLevel
+@compute @workgroup_size(1)
 fn testTextureSampleLevel()
 {
     // FIXME: add declarations for texture depth
@@ -2535,6 +2595,8 @@ fn testTextureSampleBaseClampToEdge() {
 }
 
 // 16.7.15
+// RUN: %metal-compile testTextureStore
+@compute @workgroup_size(1)
 fn testTextureStore()
 {
     // [F, T < ConcreteInteger].(texture_storage_1d[F, write], T, vec4[ChannelFormat[F]]) => void,
@@ -2548,4 +2610,28 @@ fn testTextureStore()
 
     // [F, T < ConcreteInteger].(texture_storage_3d[F, write], vec3[T], vec4[ChannelFormat[F]]) => void,
     textureStore(ts3d, vec3(0), vec4f(0));
+}
+
+// 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
+
+// 16.11.1.
+fn testStorageBarrier()
+{
+    // [].() => void,
+    storageBarrier();
+}
+
+// 16.11.2.
+fn testWorkgroupBarrier()
+{
+    // fn workgroupBarrier()
+    workgroupBarrier();
+}
+
+// 16.11.3.
+var<workgroup> testWorkgroupUniformLoadHelper: i32;
+fn testWorkgroupUniformLoad()
+{
+    // [T].(ptr[workgroup, T]) => void,
+    _ = workgroupUniformLoad(&testWorkgroupUniformLoadHelper);
 }

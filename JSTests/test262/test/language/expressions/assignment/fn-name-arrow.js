@@ -25,7 +25,9 @@ var arrow;
 
 arrow = () => {};
 
-assert.sameValue(arrow.name, 'arrow');
-verifyNotEnumerable(arrow, 'name');
-verifyNotWritable(arrow, 'name');
-verifyConfigurable(arrow, 'name');
+verifyProperty(arrow, 'name', {
+  value: 'arrow',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

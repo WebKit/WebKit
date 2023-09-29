@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.DateTimeFormat.name, "DateTimeFormat");
-
-verifyNotEnumerable(Intl.DateTimeFormat, "name");
-verifyNotWritable(Intl.DateTimeFormat, "name");
-verifyConfigurable(Intl.DateTimeFormat, "name");
+verifyProperty(Intl.DateTimeFormat, "name", {
+  value: "DateTimeFormat",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

@@ -260,6 +260,7 @@ unsigned Type::size() const
             case Types::Primitive::AbstractInt:
             case Types::Primitive::AbstractFloat:
             case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
             case Types::Primitive::TextureExternal:
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
@@ -335,6 +336,7 @@ unsigned Type::alignment() const
             case Types::Primitive::AbstractInt:
             case Types::Primitive::AbstractFloat:
             case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
             case Types::Primitive::TextureExternal:
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:

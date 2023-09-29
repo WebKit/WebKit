@@ -579,7 +579,7 @@ WebPageProxy::Internals::Internals(WebPageProxy& page)
     , tryCloseTimeoutTimer(RunLoop::main(), &page, &WebPageProxy::tryCloseTimedOut)
     , updateReportedMediaCaptureStateTimer(RunLoop::main(), &page, &WebPageProxy::updateReportedMediaCaptureState)
     , webPageID(PageIdentifier::generate())
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     , wheelEventActivityHysteresis([&page](PAL::HysteresisState state) { page.wheelEventHysteresisUpdated(state); })
 #endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -3411,7 +3411,7 @@ void WebPageProxy::continueWheelEventHandling(const WebWheelEvent& wheelEvent, c
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps, RectEdges<bool> rubberBandableEdges, std::optional<bool> willStartSwipe, bool wasHandledForScrolling)
 {
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     internals().wheelEventActivityHysteresis.impulse();
 #endif
 
@@ -3526,7 +3526,7 @@ void WebPageProxy::sendWheelEventScrollingAccelerationCurveIfNecessary(const Web
 #endif
 }
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
 void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState)
 {
     updateDisplayLinkFrequency();
@@ -3547,7 +3547,7 @@ void WebPageProxy::updateDisplayLinkFrequency()
 
 void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 {
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     updateDisplayLinkFrequency();
 #endif
 }
@@ -3570,6 +3570,32 @@ const NativeWebKeyboardEvent& WebPageProxy::firstQueuedKeyEvent() const
     return internals().keyEventQueue.first();
 }
 
+void WebPageProxy::sendKeyEvent(const NativeWebKeyboardEvent& event)
+{
+    m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
+
+    auto handleKeyEventReply = [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
+        if (!m_pageClient)
+            return;
+        if (!eventType)
+            return;
+        didReceiveEvent(*eventType, handled);
+    };
+
+    if (m_focusedFrame) {
+        if (auto remotePageProxy = m_focusedFrame->remotePageProxy()) {
+            remotePageProxy->sendWithAsyncReply(Messages::WebPage::KeyEvent(m_focusedFrame->frameID(), event), [handleKeyEventReply] (std::optional<WebEventType> eventType, bool handled) {
+                handleKeyEventReply(eventType, handled);
+            });
+            return;
+        }
+    }
+
+    sendWithAsyncReply(Messages::WebPage::KeyEvent(m_focusedFrame ? m_focusedFrame->frameID() : m_mainFrame->frameID(), event), [handleKeyEventReply] (std::optional<WebEventType> eventType, bool handled) {
+        handleKeyEventReply(eventType, handled);
+    });
+}
+
 bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 {
     if (!hasRunningProcess())
@@ -3590,13 +3616,7 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     if (internals().keyEventQueue.size() == 1) {
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
         m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
-        sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), event), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
-            if (!m_pageClient)
-                return;
-            if (!eventType)
-                return;
-            didReceiveEvent(*eventType, handled);
-        });
+        sendKeyEvent(event);
     }
 
     return true;
@@ -4629,7 +4649,7 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
 {
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     if (hasRunningProcess() && m_displayID && m_registeredForFullSpeedUpdates)
         process().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_displayID, false);
 
@@ -4649,7 +4669,7 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
 
     send(Messages::EventDispatcher::PageScreenDidChange(internals().webPageID, displayID, nominalFramesPerSecond));
     send(Messages::WebPage::WindowScreenDidChange(displayID, nominalFramesPerSecond));
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     updateDisplayLinkFrequency();
 #endif
 }
@@ -7317,7 +7337,7 @@ void WebPageProxy::pageDidScroll(const WebCore::IntPoint& scrollPosition)
 void WebPageProxy::setHasActiveAnimatedScrolls(bool isRunning)
 {
     m_hasActiveAnimatedScroll = isRunning;
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     updateDisplayLinkFrequency();
 #endif
 }
@@ -7919,9 +7939,9 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
     m_findClient->didCountStringMatches(this, string, matchCount);
 }
 
-void WebPageProxy::didGetImageForFindMatch(const ImageBufferBackend::Parameters& parameters, ShareableBitmap::Handle&& contentImageHandle, uint32_t matchIndex)
+void WebPageProxy::didGetImageForFindMatch(ImageBufferParameters&& parameters, ShareableBitmap::Handle&& contentImageHandle, uint32_t matchIndex)
 {
-    auto image = WebImage::create(parameters, WTFMove(contentImageHandle));
+    auto image = WebImage::create(WTFMove(parameters), WTFMove(contentImageHandle));
     if (!image) {
         ASSERT_NOT_REACHED();
         return;
@@ -8678,13 +8698,7 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
             auto nextEvent = internals().keyEventQueue.first();
             LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
             m_process->recordUserGestureAuthorizationToken(nextEvent.authorizationToken());
-            sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), nextEvent), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
-                if (!m_pageClient)
-                    return;
-                if (!eventType)
-                    return;
-                didReceiveEvent(*eventType, handled);
-            });
+            sendKeyEvent(nextEvent);
         }
 
         // The call to doneWithKeyEvent may close this WebPage.

@@ -65,7 +65,7 @@
 #include <WebCore/CaptionUserPreferences.h>
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
 #include "DisplayLinkObserverID.h"
 #include "DisplayLinkProcessProxyClient.h"
 #endif
@@ -342,7 +342,7 @@ public:
     void releaseHighPerformanceGPU();
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     DisplayLink::Client& displayLinkClient() { return m_displayLinkClient; }
     std::optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
 
@@ -678,7 +678,7 @@ private:
     BackgroundWebProcessToken m_backgroundToken;
     bool m_areThrottleStateChangesEnabled { true };
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     DisplayLinkProcessProxyClient m_displayLinkClient;
 #endif
 

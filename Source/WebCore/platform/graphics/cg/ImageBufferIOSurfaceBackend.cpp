@@ -45,7 +45,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferIOSurfaceBackend);
 
 IntSize ImageBufferIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
-    IntSize backendSize = calculateBackendSize(parameters);
+    IntSize backendSize = parameters.backendSize;
     if (backendSize.isEmpty())
         return { };
 
@@ -65,8 +65,7 @@ unsigned ImageBufferIOSurfaceBackend::calculateBytesPerRow(const IntSize& backen
 
 size_t ImageBufferIOSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
 {
-    IntSize backendSize = calculateBackendSize(parameters);
-    return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
+    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
 }
 
 size_t ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(const Parameters& parameters)
@@ -143,11 +142,6 @@ CGContextRef ImageBufferIOSurfaceBackend::ensurePlatformContext()
         RELEASE_ASSERT(m_platformContext);
     }
     return m_platformContext.get();
-}
-
-IntSize ImageBufferIOSurfaceBackend::backendSize() const
-{
-    return m_surface->size();
 }
 
 unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const

@@ -397,6 +397,7 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
     case Types::Primitive::Bool:
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
+    case Types::Primitive::SamplerComparison:
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:
@@ -584,6 +585,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::Void:
             case Types::Primitive::Bool:
             case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
                 m_stringBuilder.append(*type);
                 break;
             case Types::Primitive::TextureExternal:
@@ -814,13 +816,11 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expressi
 
 static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned startOffset = 0)
 {
-    bool first = true;
     writer->stringBuilder().append("(");
     for (unsigned i = startOffset; i < call.arguments().size(); ++i) {
-        if (!first)
+        if (i != startOffset)
             writer->stringBuilder().append(", ");
         writer->visit(call.arguments()[i]);
-        first = false;
     }
     writer->stringBuilder().append(")");
 }
@@ -934,6 +934,65 @@ static void emitTextureSample(FunctionDefinitionWriter* writer, AST::CallExpress
     visitArguments(writer, call, 1);
 }
 
+static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    bool isArray = false;
+    auto& texture = call.arguments()[0];
+    if (auto* textureType = std::get_if<Types::Texture>(texture.inferredType())) {
+        switch (textureType->kind) {
+        case Types::Texture::Kind::Texture2dArray:
+        case Types::Texture::Kind::TextureCubeArray:
+            isArray = true;
+            break;
+        case Types::Texture::Kind::Texture1d:
+        case Types::Texture::Kind::Texture2d:
+        case Types::Texture::Kind::Texture3d:
+        case Types::Texture::Kind::TextureCube:
+        case Types::Texture::Kind::TextureMultisampled2d:
+            break;
+        }
+    } else if (auto* textureStorageType = std::get_if<Types::TextureStorage>(texture.inferredType())) {
+        switch (textureStorageType->kind) {
+        case Types::TextureStorage::Kind::TextureStorage2dArray:
+            isArray = true;
+            break;
+        case Types::TextureStorage::Kind::TextureStorage1d:
+        case Types::TextureStorage::Kind::TextureStorage2d:
+        case Types::TextureStorage::Kind::TextureStorage3d:
+            break;
+        }
+    } else {
+        auto& textureDepthType = std::get<Types::TextureDepth>(*texture.inferredType());
+        switch (textureDepthType.kind) {
+        case Types::TextureDepth::Kind::TextureDepth2dArray:
+        case Types::TextureDepth::Kind::TextureDepthCubeArray:
+            isArray = true;
+            break;
+        case Types::TextureDepth::Kind::TextureDepth2d:
+        case Types::TextureDepth::Kind::TextureDepthCube:
+        case Types::TextureDepth::Kind::TextureDepthMultisampled2d:
+            break;
+        }
+    }
+
+    unsigned levelIndex = isArray ? 4 : 3;
+    writer->visit(texture);
+    writer->stringBuilder().append(".sample(");
+    for (unsigned i = 1; i < levelIndex; ++i) {
+        if (i != 1)
+            writer->stringBuilder().append(",");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(", level(");
+    writer->visit(call.arguments()[levelIndex]);
+    writer->stringBuilder().append(")");
+    for (unsigned i = levelIndex + 1; i < call.arguments().size(); ++i) {
+        writer->stringBuilder().append(",");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(")");
+}
+
 static void emitTextureSampleClampToEdge(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     // FIXME: we need to handle `texture2d<T>` here too, not only `texture_external`
@@ -980,6 +1039,46 @@ static void emitTextureNumLevels(FunctionDefinitionWriter* writer, AST::CallExpr
     writer->stringBuilder().append(".get_num_mip_levels()");
 }
 
+static void emitTextureStore(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    const char* cast = "uint";
+    if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
+        switch (vector->size) {
+        case 2:
+            cast = "uint2";
+            break;
+        case 3:
+            cast = "uint3";
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    AST::Expression& texture = call.arguments()[0];
+    AST::Expression& coords = call.arguments()[1];
+    AST::Expression* arrayIndex = nullptr;
+    AST::Expression* value = nullptr;
+    if (call.arguments().size() == 3)
+        value = &call.arguments()[2];
+    else {
+        arrayIndex = &call.arguments()[2];
+        value = &call.arguments()[3];
+    }
+
+    writer->visit(texture);
+    writer->stringBuilder().append(".write(");
+    writer->visit(*value);
+    writer->stringBuilder().append(", ", cast, "(");
+    writer->visit(coords);
+    writer->stringBuilder().append(")");
+    if (arrayIndex) {
+        writer->stringBuilder().append(", ");
+        writer->visit(*arrayIndex);
+    }
+    writer->stringBuilder().append(")");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
@@ -1016,6 +1115,8 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureNumLevels", emitTextureNumLevels },
             { "textureSample", emitTextureSample },
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
+            { "textureSampleLevel", emitTextureSampleLevel },
+            { "textureStore", emitTextureStore },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
         const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();

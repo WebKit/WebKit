@@ -86,4 +86,6 @@ ENUM_DECLARE(TexelFormat);
 
 #undef ENUM_DECLARE
 
+AccessMode defaultAccessModeForAddressSpace(AddressSpace);
+
 } // namespace WGSL

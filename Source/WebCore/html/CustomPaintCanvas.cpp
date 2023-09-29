@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "BitmapImage.h"
 #include "CanvasRenderingContext.h"
 #include "DisplayListDrawingContext.h"
 #include "DisplayListRecorder.h"
@@ -82,15 +83,25 @@ void CustomPaintCanvas::replayDisplayList(GraphicsContext& target)
     target.drawImageBuffer(*image, clipBounds);
 }
 
+AffineTransform CustomPaintCanvas::baseTransform() const
+{
+    // The base transform of the display list.
+    // FIXME: this is actually correct, but the display list will not behave correctly with respect to
+    // playback. The GraphicsContext should be fixed to start at identity transform, and the
+    // device transform should be a separate concept that the display list or context2d cannot reset.
+    return { };
+}
+
 Image* CustomPaintCanvas::copiedImage() const
 {
     if (!width() || !height())
         return nullptr;
-    m_copiedBuffer = ImageBuffer::create(size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (!m_copiedBuffer)
-        return nullptr;
-    replayDisplayListImpl(m_copiedBuffer->context());
-    m_copiedImage = m_copiedBuffer->copyImage(DontCopyBackingStore, PreserveResolution::Yes);
+    m_copiedImage = nullptr;
+    auto buffer = ImageBuffer::create(size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (buffer) {
+        replayDisplayListImpl(buffer->context());
+        m_copiedImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(buffer));
+    }
     return m_copiedImage.get();
 }
 

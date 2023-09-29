@@ -29,7 +29,7 @@
 
 #include "CompositingRunLoop.h"
 #include "CoordinatedGraphicsScene.h"
-#include "ThreadedDisplayRefreshMonitor.h"
+#include <WebCore/DisplayUpdate.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/TextureMapper.h>
@@ -37,6 +37,10 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
+
+#if !HAVE(DISPLAY_LINK)
+#include "ThreadedDisplayRefreshMonitor.h"
+#endif
 
 namespace WebKit {
 
@@ -57,7 +61,11 @@ public:
         virtual void displayDidRefresh(WebCore::PlatformDisplayID) = 0;
     };
 
+#if HAVE(DISPLAY_LINK)
+    static Ref<ThreadedCompositor> create(Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, WebCore::TextureMapper::PaintFlags);
+#else
     static Ref<ThreadedCompositor> create(Client&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, WebCore::TextureMapper::PaintFlags);
+#endif
     virtual ~ThreadedCompositor();
 
     void setScrollPosition(const WebCore::IntPoint&, float scale);
@@ -71,10 +79,14 @@ public:
 
     void forceRepaint();
 
+#if !HAVE(DISPLAY_LINK)
     WebCore::DisplayRefreshMonitor& displayRefreshMonitor() const;
+#endif
 
     void frameComplete();
+#if !PLATFORM(GTK)
     void targetRefreshRateDidChange(unsigned);
+#endif
 
     void suspend();
     void resume();
@@ -82,7 +94,11 @@ public:
     RunLoop& compositingRunLoop() const { return m_compositingRunLoop->runLoop(); }
 
 private:
+#if HAVE(DISPLAY_LINK)
+    ThreadedCompositor(Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, WebCore::TextureMapper::PaintFlags);
+#else
     ThreadedCompositor(Client&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, WebCore::TextureMapper::PaintFlags);
+#endif
 
     // CoordinatedGraphicsSceneClient
     void updateViewport() override;
@@ -92,7 +108,9 @@ private:
 
     void createGLContext();
 
+#if !HAVE(DISPLAY_LINK)
     void displayUpdateFired();
+#endif
 
     Client& m_client;
     RefPtr<CoordinatedGraphicsScene> m_scene;
@@ -115,6 +133,7 @@ private:
         bool clientRendersNextFrame { false };
     } m_attributes;
 
+#if !HAVE(DISPLAY_LINK)
     struct {
         WebCore::PlatformDisplayID displayID;
         WebCore::DisplayUpdate displayUpdate;
@@ -122,6 +141,7 @@ private:
     } m_display;
 
     Ref<ThreadedDisplayRefreshMonitor> m_displayRefreshMonitor;
+#endif
 };
 
 } // namespace WebKit

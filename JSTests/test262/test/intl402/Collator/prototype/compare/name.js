@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 
 var desc = Object.getOwnPropertyDescriptor(Intl.Collator.prototype, "compare");
 
-assert.sameValue(desc.get.name, "get compare");
-
-verifyNotEnumerable(desc.get, "name");
-verifyNotWritable(desc.get, "name");
-verifyConfigurable(desc.get, "name");
+verifyProperty(desc.get, "name", {
+  value: "get compare",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

@@ -34,6 +34,10 @@
     [CEReactions=Needed] attribute boolean translate;
     [CEReactions=Needed] attribute [AtomString] DOMString dir;
 
+    // TextTrackCue related
+    [CEReactions=Needed, Reflect] attribute boolean cue;
+    [CEReactions=Needed, Reflect] attribute boolean cuebackground;
+
     // user interaction
     [CEReactions=Needed, Reflect] attribute boolean hidden;
     undefined click();

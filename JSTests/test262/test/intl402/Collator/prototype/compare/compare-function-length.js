@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 
 var compareFn = new Intl.Collator().compare;
 
-assert.sameValue(compareFn.length, 2);
-
-verifyNotEnumerable(compareFn, "length");
-verifyNotWritable(compareFn, "length");
-verifyConfigurable(compareFn, "length");
+verifyProperty(compareFn, "length", {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

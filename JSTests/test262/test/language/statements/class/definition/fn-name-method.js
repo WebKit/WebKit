@@ -26,32 +26,44 @@ class A {
   static [namedSym]() {}
 }
 
-assert.sameValue(A.prototype.id.name, 'id', 'via IdentifierName');
-verifyNotEnumerable(A.prototype.id, 'name');
-verifyNotWritable(A.prototype.id, 'name');
-verifyConfigurable(A.prototype.id, 'name');
+verifyProperty(A.prototype.id, 'name', {
+  value: 'id',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
-assert.sameValue(A.prototype[anonSym].name, '', 'via anonymous Symbol');
-verifyNotEnumerable(A.prototype[anonSym], 'name');
-verifyNotWritable(A.prototype[anonSym], 'name');
-verifyConfigurable(A.prototype[anonSym], 'name');
+verifyProperty(A.prototype[anonSym], 'name', {
+  value: '',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
-assert.sameValue(A.prototype[namedSym].name, '[test262]', 'via Symbol');
-verifyNotEnumerable(A.prototype[namedSym], 'name');
-verifyNotWritable(A.prototype[namedSym], 'name');
-verifyConfigurable(A.prototype[namedSym], 'name');
+verifyProperty(A.prototype[namedSym], 'name', {
+  value: '[test262]',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
-assert.sameValue(A.id.name, 'id', 'static via IdentifierName');
-verifyNotEnumerable(A.id, 'name');
-verifyNotWritable(A.id, 'name');
-verifyConfigurable(A.id, 'name');
+verifyProperty(A.id, 'name', {
+  value: 'id',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
-assert.sameValue(A[anonSym].name, '', 'static via anonymous Symbol');
-verifyNotEnumerable(A[anonSym], 'name');
-verifyNotWritable(A[anonSym], 'name');
-verifyConfigurable(A[anonSym], 'name');
+verifyProperty(A[anonSym], 'name', {
+  value: '',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
-assert.sameValue(A[namedSym].name, '[test262]', 'static via Symbol');
-verifyNotEnumerable(A[namedSym], 'name');
-verifyNotWritable(A[namedSym], 'name');
-verifyConfigurable(A[namedSym], 'name');
+verifyProperty(A[namedSym], 'name', {
+  value: '[test262]',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

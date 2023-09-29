@@ -8,8 +8,9 @@ author: Zibi Braniecki
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.PluralRules.prototype.resolvedOptions.name, "resolvedOptions");
-
-verifyNotEnumerable(Intl.PluralRules.prototype.resolvedOptions, "name");
-verifyNotWritable(Intl.PluralRules.prototype.resolvedOptions, "name");
-verifyConfigurable(Intl.PluralRules.prototype.resolvedOptions, "name");
+verifyProperty(Intl.PluralRules.prototype.resolvedOptions, "name", {
+  value: "resolvedOptions",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

@@ -24,8 +24,9 @@ class GFn extends GeneratorFunction {}
 
 var gfn = new GFn('a', 'b', 'return a + b');
 
-assert.sameValue(gfn.length, 2);
-
-verifyNotEnumerable(gfn, 'length');
-verifyNotWritable(gfn, 'length');
-verifyConfigurable(gfn, 'length');
+verifyProperty(gfn, 'length', {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

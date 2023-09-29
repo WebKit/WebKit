@@ -34,12 +34,12 @@ includes: [propertyHelper.js]
 
 $262.evalScript('var brandNew;');
 
-assert.sameValue(
-  this.brandNew, undefined, 'new binding on an extensible global object'
-);
-verifyEnumerable(this, 'brandNew');
-verifyWritable(this, 'brandNew');
-verifyNotConfigurable(this, 'brandNew');
+verifyProperty(this, 'brandNew', {
+  value: undefined,
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});
 
 Object.defineProperty(
   this,
@@ -58,14 +58,18 @@ Object.preventExtensions(this);
 
 $262.evalScript('var configurable;');
 
-assert.sameValue(configurable, 0, 'like-named configurable property');
-verifyNotEnumerable(this, 'configurable');
-verifyNotWritable(this, 'configurable');
-verifyConfigurable(this, 'configurable');
+verifyProperty(this, 'configurable', {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 $262.evalScript('var nonConfigurable;');
 
-assert.sameValue(nonConfigurable, 0, 'like-named non-configurable property');
-verifyNotEnumerable(this, 'nonConfigurable');
-verifyNotWritable(this, 'nonConfigurable');
-verifyNotConfigurable(this, 'nonConfigurable');
+verifyProperty(this, 'nonConfigurable', {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

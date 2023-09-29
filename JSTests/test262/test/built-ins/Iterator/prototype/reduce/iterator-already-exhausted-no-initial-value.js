@@ -19,3 +19,5 @@ assert.sameValue(done, true);
 assert.throws(TypeError, function() {
   iterator.reduce(() => {});
 });
+
+iterator.reduce(() => {}, 0);

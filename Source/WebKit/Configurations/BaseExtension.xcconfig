@@ -33,8 +33,8 @@ SWIFT_VERSION = 5.0;
 SWIFT_OPTIMIZATION_LEVEL = -O;
 SWIFT_OPTIMIZATION_LEVEL[config=Debug] = -Onone;
 PRODUCT_NAME = $(TARGET_NAME);
-SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+SUPPORTED_PLATFORMS = appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator;
 SUPPORTS_MACCATALYST = NO;
 SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-TARGETED_DEVICE_FAMILY = "1,2";
+TARGETED_DEVICE_FAMILY = 1,2;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = Shared/AuxiliaryProcessExtensions/*

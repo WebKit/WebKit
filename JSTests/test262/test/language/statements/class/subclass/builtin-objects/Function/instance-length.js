@@ -20,8 +20,9 @@ class Fn extends Function {}
 
 var fn = new Fn('a', 'b', 'return a + b');
 
-assert.sameValue(fn.length, 2);
-
-verifyNotEnumerable(fn, 'length');
-verifyNotWritable(fn, 'length');
-verifyConfigurable(fn, 'length');
+verifyProperty(fn, 'length', {
+  value: 2,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

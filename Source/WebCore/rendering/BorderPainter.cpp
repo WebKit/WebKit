@@ -150,7 +150,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
         if (!styleImage)
             return false;
 
-        if (!styleImage->isLoaded())
+        if (!styleImage->isLoaded(&m_renderer))
             return false;
 
         if (!styleImage->canRender(&m_renderer, style.effectiveZoom()))
@@ -484,7 +484,7 @@ bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyl
     if (!styleImage)
         return false;
 
-    if (!styleImage->isLoaded())
+    if (!styleImage->isLoaded(&m_renderer))
         return true; // Never paint a nine-piece image incrementally, but don't paint the fallback borders either.
 
     if (!styleImage->canRender(&m_renderer, style.effectiveZoom()))

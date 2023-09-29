@@ -394,6 +394,8 @@ public:
                 if (strictMode() || !addResult.iterator->value.isFunction())
                     result |= DeclarationResult::InvalidDuplicateDeclaration;
             }
+            if (m_variablesBeingHoisted.contains(ident->impl()))
+                result |= DeclarationResult::InvalidDuplicateDeclaration;
         }
 
         addResult.iterator->value.setIsFunction();

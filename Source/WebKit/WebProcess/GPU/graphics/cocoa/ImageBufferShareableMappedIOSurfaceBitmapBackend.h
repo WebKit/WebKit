@@ -61,7 +61,6 @@ private:
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
     // WebCore::ImageBufferCGBackend
-    WebCore::IntSize backendSize() const final;
     unsigned bytesPerRow() const final;
     RefPtr<WebCore::NativeImage> copyNativeImage() final;
     RefPtr<WebCore::NativeImage> createNativeImageReference() final;
