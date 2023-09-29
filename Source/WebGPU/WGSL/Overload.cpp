@@ -48,6 +48,18 @@ inline void logLn(Arguments&&... arguments)
         dataLogLn(logPrefix, std::forward<Arguments>(arguments)...);
 }
 
+AbstractPointer::AbstractPointer(AbstractValue addressSpace, AbstractType element)
+    : AbstractPointer(addressSpace, WTFMove(element), WTF::enumToUnderlyingType(defaultAccessModeForAddressSpace(static_cast<AddressSpace>(std::get<unsigned>(addressSpace)))))
+{
+}
+
+AbstractPointer::AbstractPointer(AbstractValue addressSpace, AbstractType element, AbstractValue accessMode)
+    : addressSpace(addressSpace)
+    , element(WTFMove(element))
+    , accessMode(accessMode)
+{
+}
+
 struct ViableOverload {
     const OverloadCandidate* candidate;
     FixedVector<unsigned> ranks;

@@ -87,4 +87,20 @@ ENUM_DEFINE(TexelFormat);
 #undef LPAREN
 #undef COMMA
 
+AccessMode defaultAccessModeForAddressSpace(AddressSpace addressSpace)
+{
+    // Default access mode based on address space
+    // https://www.w3.org/TR/WGSL/#address-space
+    switch (addressSpace) {
+    case AddressSpace::Function:
+    case AddressSpace::Private:
+    case AddressSpace::Workgroup:
+        return AccessMode::ReadWrite;
+    case AddressSpace::Uniform:
+    case AddressSpace::Storage:
+    case AddressSpace::Handle:
+        return AccessMode::Read;
+    }
+}
+
 } // namespace WGSL

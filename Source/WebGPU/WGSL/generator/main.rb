@@ -410,6 +410,8 @@ module DSL
         texture_depth_multisampled_2d = PrimitiveType.new(:TextureDepthMultisampled2d)
 
         storage = AbstractValue.new(:"AddressSpace::Storage")
+        workgroup = AbstractValue.new(:"AddressSpace::Workgroup")
+
         read = AbstractValue.new(:"AccessMode::Read")
         read_write = AbstractValue.new(:"AccessMode::ReadWrite")
         write = AbstractValue.new(:"AccessMode::Write")

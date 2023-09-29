@@ -967,3 +967,23 @@ operator :textureStore, {
     # fn textureStore(t: texture_storage_3d<F,write>, coords: vec3<C>, value: vec4<CF>)
     [F, T < ConcreteInteger].(texture_storage_3d[F, write], vec3[T], vec4[ChannelFormat[F]]) => void,
 }
+
+# 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
+
+# 16.11.1.
+operator :storageBarrier, {
+    # fn storageBarrier()
+    [].() => void,
+}
+
+# 16.11.2.
+operator :workgroupBarrier, {
+    # fn workgroupBarrier()
+    [].() => void,
+}
+
+# 16.11.3.
+operator :workgroupUniformLoad, {
+    # @must_use fn workgroupUniformLoad(p : ptr<workgroup, T>) -> T
+    [T].(ptr[workgroup, T]) => void,
+}

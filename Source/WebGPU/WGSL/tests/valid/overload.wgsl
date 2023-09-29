@@ -2611,3 +2611,27 @@ fn testTextureStore()
     // [F, T < ConcreteInteger].(texture_storage_3d[F, write], vec3[T], vec4[ChannelFormat[F]]) => void,
     textureStore(ts3d, vec3(0), vec4f(0));
 }
+
+// 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
+
+// 16.11.1.
+fn testStorageBarrier()
+{
+    // [].() => void,
+    storageBarrier();
+}
+
+// 16.11.2.
+fn testWorkgroupBarrier()
+{
+    // fn workgroupBarrier()
+    workgroupBarrier();
+}
+
+// 16.11.3.
+var<workgroup> testWorkgroupUniformLoadHelper: i32;
+fn testWorkgroupUniformLoad()
+{
+    // [T].(ptr[workgroup, T]) => void,
+    _ = workgroupUniformLoad(&testWorkgroupUniformLoadHelper);
+}

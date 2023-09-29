@@ -99,6 +99,9 @@ struct AbstractPointer {
     AbstractValue addressSpace;
     AbstractType element;
     AbstractValue accessMode;
+
+    AbstractPointer(AbstractValue, AbstractType);
+    AbstractPointer(AbstractValue, AbstractType, AbstractValue);
 };
 
 struct AbstractArray {
