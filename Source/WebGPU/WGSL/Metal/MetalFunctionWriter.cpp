@@ -980,6 +980,46 @@ static void emitTextureNumLevels(FunctionDefinitionWriter* writer, AST::CallExpr
     writer->stringBuilder().append(".get_num_mip_levels()");
 }
 
+static void emitTextureStore(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    const char* cast = "uint";
+    if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
+        switch (vector->size) {
+        case 2:
+            cast = "uint2";
+            break;
+        case 3:
+            cast = "uint3";
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    AST::Expression& texture = call.arguments()[0];
+    AST::Expression& coords = call.arguments()[1];
+    AST::Expression* arrayIndex = nullptr;
+    AST::Expression* value = nullptr;
+    if (call.arguments().size() == 3)
+        value = &call.arguments()[2];
+    else {
+        arrayIndex = &call.arguments()[2];
+        value = &call.arguments()[3];
+    }
+
+    writer->visit(texture);
+    writer->stringBuilder().append(".write(");
+    writer->visit(*value);
+    writer->stringBuilder().append(", ", cast, "(");
+    writer->visit(coords);
+    writer->stringBuilder().append(")");
+    if (arrayIndex) {
+        writer->stringBuilder().append(", ");
+        writer->visit(*arrayIndex);
+    }
+    writer->stringBuilder().append(")");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
@@ -1016,6 +1056,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureNumLevels", emitTextureNumLevels },
             { "textureSample", emitTextureSample },
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
+            { "textureStore", emitTextureStore },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
         const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();

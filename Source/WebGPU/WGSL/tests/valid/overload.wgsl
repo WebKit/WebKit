@@ -2535,6 +2535,8 @@ fn testTextureSampleBaseClampToEdge() {
 }
 
 // 16.7.15
+// RUN: %metal-compile testTextureStore
+@compute @workgroup_size(1)
 fn testTextureStore()
 {
     // [F, T < ConcreteInteger].(texture_storage_1d[F, write], T, vec4[ChannelFormat[F]]) => void,
