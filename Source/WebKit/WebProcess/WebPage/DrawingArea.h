@@ -128,10 +128,7 @@ public:
 
     // Cause a rendering update to happen as soon as possible.
     virtual void triggerRenderingUpdate() = 0;
-    // Cause a rendering update to happen at the next suitable time,
-    // as determined by the drawing area.
     virtual bool scheduleRenderingUpdate() { return false; }
-
     virtual void renderingUpdateFramesPerSecondChanged() { }
 
     virtual void willStartRenderingUpdateDisplay();
