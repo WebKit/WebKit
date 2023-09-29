@@ -1935,6 +1935,25 @@ enum class WebCore::MediaCaptureType : uint8_t {
     MediaCaptureTypeEnvironment
 };
 
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+header: <WebCore/GraphicsContextGL.h>
+[CustomHeader, RValue] struct WebCore::GraphicsContextGLEGLImageSourceIOSurfaceHandle {
+    MachSendRight handle;
+};
+
+[CustomHeader, RValue] struct WebCore::GraphicsContextGLEGLImageSourceMTLSharedTextureHandle {
+    MachSendRight handle;
+};
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+struct WebCore::SerializedAttachmentData {
+    String identifier;
+    String mimeType;
+    Ref<WebCore::SharedBuffer> data;
+};
+#endif // ENABLE(ATTACHMENT_ELEMENT)
+
 header: <WebCore/FileChooser.h>
 [CustomHeader] struct WebCore::FileChooserSettings {
     bool allowsDirectories;
