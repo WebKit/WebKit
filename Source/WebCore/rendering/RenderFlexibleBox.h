@@ -51,8 +51,6 @@ public:
 
     using Direction = BlockFlowDirection;
 
-    bool isFlexibleBox() const override { return true; }
-
     ASCIILiteral renderName() const override;
 
     bool avoidsFloats() const final { return true; }
@@ -302,4 +300,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlexibleBox, isFlexibleBox())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlexibleBox, isRenderFlexibleBox())

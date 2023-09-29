@@ -2894,7 +2894,7 @@ bool RenderBox::isStretchingColumnFlexItem() const
         return true;
 
     // We don't stretch multiline flexboxes because they need to apply line spacing (align-content) first.
-    if (parent()->isFlexibleBox() && parent()->style().flexWrap() == FlexWrap::NoWrap && parent()->style().isColumnFlexDirection() && columnFlexItemHasStretchAlignment())
+    if (is<RenderFlexibleBox>(*parent()) && parent()->style().flexWrap() == FlexWrap::NoWrap && parent()->style().isColumnFlexDirection() && columnFlexItemHasStretchAlignment())
         return true;
     return false;
 }
@@ -2980,7 +2980,7 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     // Flexible box items should shrink wrap, so we lay them out at their intrinsic widths.
     // In the case of columns that have a stretch alignment, we layout at the stretched size
     // to avoid an extra layout when applying alignment.
-    if (parent()->isFlexibleBox()) {
+    if (is<RenderFlexibleBox>(*parent())) {
         // For multiline columns, we need to apply align-content first, so we can't stretch now.
         if (!parent()->style().isColumnFlexDirection() || parent()->style().flexWrap() != FlexWrap::NoWrap)
             return true;
@@ -3041,7 +3041,7 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
         return;
     }
 
-    if (containingBlock.isFlexibleBox()) {
+    if (is<RenderFlexibleBox>(containingBlock)) {
         // We need to let flexbox handle the margin adjustment - otherwise, flexbox
         // will think we're wider than we actually are and calculate line sizes
         // wrong. See also http://dev.w3.org/csswg/css-flexbox/#auto-margins
@@ -3151,7 +3151,7 @@ void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height)
     // FIXME: it should be enough with checking hasOverridingLogicalHeight() as this logic could be shared
     // by any layout system using overrides like grid or flex. However this causes a never ending sequence of calls
     // between layoutBlock() <-> relayoutToAvoidWidows().
-    if (isFloatingOrOutOfFlowPositioned() || !parent() || !parent()->isFlexibleBox() || hasOverridingLogicalHeight() || shouldComputeLogicalHeightFromAspectRatio())
+    if (isFloatingOrOutOfFlowPositioned() || !is<RenderFlexibleBox>(parent()) || hasOverridingLogicalHeight() || shouldComputeLogicalHeightFromAspectRatio())
         return;
     downcast<RenderFlexibleBox>(parent())->setCachedChildIntrinsicContentLogicalHeight(*this, height);
 }

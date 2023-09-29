@@ -1301,8 +1301,8 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
         }
 
         // FIXME: This does not belong here.
-        RenderObject* parent = renderer.parent();
-        if (parent && parent->isFlexibleBox() && renderer.isBox())
+        auto* parent = renderer.parent();
+        if (is<RenderFlexibleBox>(parent) && renderer.isBox())
             downcast<RenderFlexibleBox>(parent)->clearCachedMainSizeForChild(*m_layer.renderBox());
     }
 

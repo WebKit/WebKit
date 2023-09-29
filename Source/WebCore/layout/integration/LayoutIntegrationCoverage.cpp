@@ -271,7 +271,7 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
         // FIXME: No nested flexbox support.
         if (flexItem.isFlexibleBoxIncludingDeprecated())
             return false;
-        if (flexItem.isFieldset() || flexItem.isTextControl())
+        if (flexItem.isFieldset() || flexItem.isRenderTextControl())
             return false;
         if (flexItem.isTable())
             return false;

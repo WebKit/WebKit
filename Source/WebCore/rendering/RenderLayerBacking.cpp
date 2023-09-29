@@ -2927,7 +2927,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (renderer().isRenderReplaced() && !isCompositedPlugin(renderer()))
         return false;
 
-    if (renderer().isTextControl())
+    if (renderer().isRenderTextControl())
         return false;
 
     if (contentsInfo.paintsBoxDecorations() || contentsInfo.paintsContent())
