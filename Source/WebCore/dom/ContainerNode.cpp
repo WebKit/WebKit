@@ -685,14 +685,6 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
     rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
 
-    auto* element = dynamicDowncast<Element>(oldChild);
-    if (element && (element->lastRememberedLogicalWidth() || element->lastRememberedLogicalHeight())) {
-        // The disconnected element could be unobserved because of other properties, here we need to make sure it is observed,
-        // so that deliver could be triggered and it would clear lastRememberedSize.
-        document().observeForContainIntrinsicSize(*element);
-        document().resetObservationSizeForContainIntrinsicSize(*element);
-    }
-
     return { };
 }
 
