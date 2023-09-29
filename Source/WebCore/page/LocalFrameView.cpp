@@ -5043,21 +5043,25 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive()
     ASSERT(!needsLayout());
 }
 
-void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText)
-{
-    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold && m_hasReachedSignificantRenderedTextThreshold)
-        return;
+#include <span>
 
-    auto nonWhitespaceLength = [](auto& inlineText) {
-        auto length = inlineText.length();
-        for (unsigned i = 0; i < inlineText.length(); ++i) {
-            if (!isASCIIWhitespace(inlineText[i]))
-                continue;
-            --length;
-        }
-        return length;
-    };
-    m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText);
+template<typename CharacterType>
+static unsigned nonWhitespaceLength(const CharacterType* characters, unsigned length)
+{
+    unsigned result = length;
+    for (unsigned i = 0; i < length; ++i) {
+        if (isASCIIWhitespace(characters[i]))
+            --result;
+    }
+    return result;
+}
+
+void LocalFrameView::incrementVisuallyNonEmptyCharacterCountSlowCase(const String& inlineText)
+{
+    if (inlineText.is8Bit())
+        m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText.characters8(), inlineText.length());
+    else
+        m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText.characters16(), inlineText.length());
     ++m_textRendererCountForVisuallyNonEmptyCharacters;
 }
 
