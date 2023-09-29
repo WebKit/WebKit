@@ -140,9 +140,8 @@ public:
     }
 
     // Helper to verify that a given sub-range of an ArrayBuffer is within range.
-    static bool verifySubRangeLength(const ArrayBuffer& buffer, size_t byteOffset, size_t numElements, unsigned elementSize)
+    static bool verifySubRangeLength(size_t byteLength, size_t byteOffset, size_t numElements, unsigned elementSize)
     {
-        size_t byteLength = buffer.byteLength();
         if (byteOffset > byteLength)
             return false;
         size_t remainingElements = (byteLength - byteOffset) / static_cast<size_t>(elementSize);
