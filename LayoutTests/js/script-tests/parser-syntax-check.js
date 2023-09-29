@@ -476,6 +476,8 @@ invalid("let f1; function f1(a) {};")
 invalid("{ function f1(a) {}; let f1; }")
 invalid("{ function f1(a) {}; const f1 = 25; }")
 invalid("{ function f1(a) {}; class f1{}; }")
+invalid("{ if (false) {{ var foo; }} function foo() {} }");
+invalid("{ { if (true) {{ var foo; }} } async function* foo() {} }");
 invalid("function foo() { { let bar; function bar() { } } }")
 invalid("function foo() { { function bar() { }; let bar; } }")
 invalid("function foo() { { const bar; function bar() { } } }")

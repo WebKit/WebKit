@@ -1174,30 +1174,6 @@ test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-atte
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign.js:
@@ -1748,18 +1724,6 @@ test/language/statements/switch/syntax/redeclaration/generator-name-redeclaratio
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-async-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-generator.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/variable/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
