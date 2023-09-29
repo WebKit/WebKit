@@ -678,6 +678,10 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
         return { };
 
     auto& overflowingRun = runs[overflowingRunIndex];
+    if (!is<InlineTextItem>(overflowingRun.inlineItem)) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
     // Make sure we always hyphenate before the overflow.
     auto overflowPositionWithHyphen = TextUtil::breakWord(downcast<InlineTextItem>(overflowingRun.inlineItem), fontCascade, overflowingRun.logicalWidth, availableWidthExcludingHyphen, lineStatus.contentLogicalRight).length;
     auto hyphenLocation = hyphenPosition(content, overflowingRunStartPosition + overflowPositionWithHyphen, style);
@@ -689,7 +693,10 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     auto hyphenLocationWithinInlineTextItem = *hyphenLocation;
     size_t hyphenatedRunIndex = 0;
     for (; hyphenatedRunIndex <= overflowingRunIndex; ++hyphenatedRunIndex) {
-        auto& inlineTextItem = downcast<InlineTextItem>(runs[hyphenatedRunIndex].inlineItem);
+        auto& inlineItem = runs[hyphenatedRunIndex].inlineItem;
+        if (inlineItem.isOpaque())
+            continue;
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         if (inlineTextItem.length() >= hyphenLocationWithinInlineTextItem)
             break;
         hyphenLocationWithinInlineTextItem -= inlineTextItem.length();
@@ -721,7 +728,10 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
     auto nonOverflowingContentWidth = InlineLayoutUnit { };
     auto overflowingRunIndex = runs.size(); 
     for (size_t index = 0; index < runs.size(); ++index) {
-        auto runLogicalWidth = runs[index].logicalWidth;
+        auto& run = runs[index];
+        if (run.inlineItem.isOpaque())
+            continue;
+        auto runLogicalWidth = run.logicalWidth;
         if (nonOverflowingContentWidth + runLogicalWidth > lineStatus.availableWidth) {
             overflowingRunIndex = index;
             break;
