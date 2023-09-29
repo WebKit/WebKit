@@ -36,15 +36,19 @@
 #import "WebMAudioUtilitiesCocoa.h"
 #import <CoreMedia/CMFormatDescription.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/Scope.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
 #import <pal/cocoa/AVFoundationSoftLink.h>
-#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cf/AudioToolboxSoftLink.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 
+#if ENABLE(VORBIS)
+constexpr uint32_t kAudioFormatVorbis = 'vorb';
+#endif
 
 namespace WebCore {
 
@@ -141,13 +145,13 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
 
         switch (audioInfo.codecName.value) {
 #if ENABLE(OPUS)
-        case 'opus':
+        case kAudioFormatOpus:
             if (!isOpusDecoderAvailable())
                 return nullptr;
             return createAudioFormatDescription(audioInfo);
 #endif
 #if ENABLE(VORBIS)
-        case 'vorb':
+        case kAudioFormatVorbis:
             if (!isVorbisDecoderAvailable())
                 return nullptr;
             return createAudioFormatDescription(audioInfo);
@@ -276,6 +280,126 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(MediaSamplesBlo
 
     return adoptCF(rawSampleBuffer);
 }
+
+PacketDurationParser::PacketDurationParser(const AudioInfo& info)
+{
+    AudioStreamBasicDescription asbd { };
+    asbd.mFormatID = info.codecName.value;
+    UInt32 size = sizeof(asbd);
+    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, info.cookieData->size(), info.cookieData->data(), &size, &asbd);
+    if (error || !info.rate) {
+        RELEASE_LOG_ERROR(Media, "createAudioFormatDescription failed with error %d (%.4s)", (int)error, (char*)&error);
+        return;
+    }
+    m_audioFormatID = asbd.mFormatID;
+    m_sampleRate = info.rate;
+    m_constantFramesPerPacket = asbd.mFramesPerPacket;
+#if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
+    switch (m_audioFormatID) {
+#if ENABLE(VORBIS)
+    case kAudioFormatVorbis: {
+        AudioFormatInfo formatInfo = { asbd, info.cookieData->data(), (UInt32)info.cookieData->size() };
+        UInt32 propertySize = sizeof(AudioFormatVorbisModeInfo);
+        m_vorbisModeInfo = std::make_unique<AudioFormatVorbisModeInfo>();
+        if (PAL::AudioFormatGetProperty(kAudioFormatProperty_VorbisModeInfo, sizeof(formatInfo), &formatInfo, &propertySize, m_vorbisModeInfo.get()) != noErr || !m_vorbisModeInfo->mModeCount) {
+            m_vorbisModeInfo.reset();
+            // No mode info or invalid mode info.
+            return;
+        }
+
+        auto ilog = [] (uint32_t v) {
+            int ret = 0;
+            while (v) {
+                ret++;
+                v >>= 1;
+            }
+            return ret;
+        };
+
+        uint32_t modeBitCount = ilog(m_vorbisModeInfo->mModeCount - 1);
+        for (uint32_t thisModeBit = 0; thisModeBit < modeBitCount; ++thisModeBit)
+            m_vorbisModeMask |= 1 << thisModeBit;
+        }
+        break;
+#endif
+    default:
+        // No need to examine the magic cookie.
+        break;
+    }
+#endif
+    m_isValid = true;
+}
+
+size_t PacketDurationParser::framesInPacket(SharedBuffer& packet)
+{
+#if !HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
+    UNUSED_PARAM(packet);
+    return m_constantFramesPerPacket;
+#else
+    if (m_constantFramesPerPacket)
+        return m_constantFramesPerPacket;
+
+    if (packet.isEmpty())
+        return 0;
+
+    switch (m_audioFormatID) {
+#if ENABLE(OPUS)
+    case kAudioFormatOpus: {
+        OpusCookieContents cookie;
+        if (!parseOpusTOCData(packet, cookie))
+            return 0;
+        return cookie.framesPerPacket * (cookie.frameDuration.seconds() * m_sampleRate);
+        }
+#endif
+#if ENABLE(VORBIS)
+    case kAudioFormatVorbis: {
+        // The following calculation corresponds to the duration of the "finished audiodata"
+        // produced by the decoder from the current packet in its position within
+        // the stream, as documented by Xiph in the Vorbis I specification.
+        // It also corresponds to the delta in granule position of the packet within
+        // the same sequence of packets in an Ogg file, with the possible exception of
+        // the ultimate packet, which may be assigned a smaller delta for the purpose
+        // of trimming.
+        constexpr uint8_t kVorbisPacketTypeFlag = 0b00000001;
+
+        auto leadingByte = packet[0];
+        if (leadingByte & kVorbisPacketTypeFlag)
+            return 0; // Not an audio packet.
+
+        uint32_t modeIndex = (leadingByte >> 1) & m_vorbisModeMask;
+        if (modeIndex >= m_vorbisModeInfo->mModeCount)
+            return 0; // Invalid mode.
+
+        uint32_t blockSize = 0;
+        if (!(m_vorbisModeInfo->mModeFlags & (1 << modeIndex)))
+            blockSize = m_vorbisModeInfo->mShortBlockSize;
+        else
+            blockSize = m_vorbisModeInfo->mLongBlockSize;
+        // The first vorbis packet decoded doesn't output audible content, and should be undetermined.
+        // However as content could be fed in any order, we must assume that previous content could be available at some stage.
+        size_t framesOfOutput = (blockSize + m_lastVorbisBlockSize) / 4;
+        m_lastVorbisBlockSize = blockSize;
+
+        return framesOfOutput;
+        break;
+        }
+#endif
+    default:
+        return m_constantFramesPerPacket;
+    }
+#endif
+}
+
+void PacketDurationParser::reset()
+{
+#if ENABLE(VORBIS)
+    if (m_audioFormatID == kAudioFormatVorbis)
+        m_lastVorbisBlockSize = 0;
+#endif
+}
+
+PacketDurationParser::~PacketDurationParser() = default;
+
 
 } // namespace WebCore
 
