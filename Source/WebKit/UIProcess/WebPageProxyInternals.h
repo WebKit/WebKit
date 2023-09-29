@@ -233,7 +233,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     ContextMenuContextData activeContextMenuContextData;
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     PAL::HysteresisActivity wheelEventActivityHysteresis;
 #endif
 

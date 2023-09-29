@@ -2660,7 +2660,7 @@ private:
 
     WebWheelEventCoalescer& wheelEventCoalescer();
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
     void updateDisplayLinkFrequency();
 #endif

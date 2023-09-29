@@ -28,7 +28,7 @@
 #include "config.h"
 #include "DisplayLinkProcessProxyClient.h"
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
 
 #include "EventDispatcherMessages.h"
 #include "WebProcessMessages.h"
@@ -59,6 +59,6 @@ void DisplayLinkProcessProxyClient::displayLinkFired(WebCore::PlatformDisplayID 
         connection->send(Messages::WebProcess::DisplayDidRefresh(displayID, displayUpdate), 0, { }, Thread::QOS::UserInteractive);
 }
 
-}
+} // namespace WebKit
 
-#endif // HAVE(CVDISPLAYLINK)
+#endif // HAVE(DISPLAY_LINK)

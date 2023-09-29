@@ -44,6 +44,7 @@
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
 #include "PointerLockManager.h"
+#include "ScreenManager.h"
 #include "ViewGestureController.h"
 #include "WebEventFactory.h"
 #include "WebInspectorUIProxy.h"
@@ -316,11 +317,14 @@ struct _WebKitWebViewBasePrivate {
     unsigned long toplevelIsActiveID { 0 };
     unsigned long toplevelWindowStateChangedID { 0 };
     unsigned long toplevelWindowUnrealizedID { 0 };
+    unsigned long toplevelWindowEnterMonitorID { 0 };
+    unsigned long toplevelWindowLeaveMonitorID { 0 };
     GdkToplevelState toplevelWindowState;
 #else
     unsigned long toplevelFocusInEventID { 0 };
     unsigned long toplevelFocusOutEventID { 0 };
     unsigned long toplevelWindowStateEventID { 0 };
+    unsigned long toplevelWindowConfigureEventID { 0 };
 #endif
     unsigned long toplevelWindowRealizedID { 0 };
 
@@ -328,6 +332,8 @@ struct _WebKitWebViewBasePrivate {
     OptionSet<ActivityState> activityState;
     OptionSet<ActivityState> activityStateFlagsToUpdate;
     RunLoop::Timer updateActivityStateTimer;
+
+    PlatformDisplayID displayID;
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy::FullscreenState fullScreenState;
@@ -378,6 +384,20 @@ static void webkitWebViewBaseDidEnterFullScreen(WebKitWebViewBase*);
 static void webkitWebViewBaseDidExitFullScreen(WebKitWebViewBase*);
 static void webkitWebViewBaseRequestExitFullScreen(WebKitWebViewBase*);
 #endif
+
+static void webkitWebViewBaseUpdateDisplayID(WebKitWebViewBase* webViewBase, GdkMonitor* monitor)
+{
+    if (!monitor)
+        return;
+
+    auto displayID = ScreenManager::singleton().displayID(monitor);
+    if (displayID == webViewBase->priv->displayID)
+        return;
+
+    webViewBase->priv->displayID = displayID;
+    if (webViewBase->priv->pageProxy)
+        webViewBase->priv->pageProxy->windowScreenDidChange(displayID);
+}
 
 static void webkitWebViewBaseScheduleUpdateActivityState(WebKitWebViewBase* webViewBase, OptionSet<ActivityState> flagsToUpdate)
 {
@@ -460,6 +480,17 @@ static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event,
     return FALSE;
 }
 
+static gboolean toplevelWindowConfigureEvent(GtkWidget* widget, GdkEventConfigure*, WebKitWebViewBase* webViewBase)
+{
+    if (!gtk_widget_get_realized(GTK_WIDGET(webViewBase)))
+        return FALSE;
+
+    auto* monitor = gdk_display_get_monitor_at_window(gtk_widget_get_display(widget), gtk_widget_get_window(widget));
+    webkitWebViewBaseUpdateDisplayID(webViewBase, monitor);
+
+    return FALSE;
+}
+
 static void toplevelWindowRealized(WebKitWebViewBase* webViewBase)
 {
     gtk_widget_realize(GTK_WIDGET(webViewBase));
@@ -493,6 +524,10 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
         g_signal_handler_disconnect(priv->toplevelOnScreenWindow, priv->toplevelWindowRealizedID);
         priv->toplevelWindowRealizedID = 0;
     }
+    if (priv->toplevelWindowConfigureEventID) {
+        g_signal_handler_disconnect(priv->toplevelOnScreenWindow, priv->toplevelWindowConfigureEventID);
+        priv->toplevelWindowConfigureEventID = 0;
+    }
 
     priv->toplevelOnScreenWindow = window;
 
@@ -520,6 +555,8 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
                          G_CALLBACK(toplevelWindowFocusOutEvent), webViewBase);
     priv->toplevelWindowStateEventID =
         g_signal_connect(priv->toplevelOnScreenWindow, "window-state-event", G_CALLBACK(toplevelWindowStateEvent), webViewBase);
+    priv->toplevelWindowConfigureEventID =
+        g_signal_connect(priv->toplevelOnScreenWindow, "configure-event", G_CALLBACK(toplevelWindowConfigureEvent), webViewBase);
 
     if (gtk_widget_get_realized(GTK_WIDGET(window)))
         gtk_widget_realize(GTK_WIDGET(webViewBase));
@@ -572,6 +609,9 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributesMask);
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
+
+    auto* monitor = gdk_display_get_monitor_at_window(gtk_widget_get_display(widget), window);
+    webkitWebViewBaseUpdateDisplayID(webView, monitor);
 #endif
 
     auto* imContext = priv->inputMethodFilter.context();
@@ -2000,6 +2040,13 @@ static void toplevelWindowStateChanged(GdkSurface* surface, GParamSpec*, WebKitW
     webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
 }
 
+static void toplevelWindowMonitorsChanged(GdkSurface* surface, GdkMonitor*, WebKitWebViewBase* webViewBase)
+{
+    auto* priv = webViewBase->priv;
+    auto* monitor = gdk_display_get_monitor_at_surface(gtk_widget_get_display(GTK_WIDGET(priv->toplevelOnScreenWindow)), surface);
+    webkitWebViewBaseUpdateDisplayID(webViewBase, monitor);
+}
+
 static void toplevelWindowRealized(WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -2008,13 +2055,22 @@ static void toplevelWindowRealized(WebKitWebViewBase* webViewBase)
     priv->toplevelWindowState = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
     priv->toplevelWindowStateChangedID =
         g_signal_connect(surface, "notify::state", G_CALLBACK(toplevelWindowStateChanged), webViewBase);
+    auto* monitor = gdk_display_get_monitor_at_surface(gtk_widget_get_display(GTK_WIDGET(priv->toplevelOnScreenWindow)), surface);
+    webkitWebViewBaseUpdateDisplayID(webViewBase, monitor);
+    priv->toplevelWindowEnterMonitorID =
+        g_signal_connect(surface, "enter-monitor", G_CALLBACK(toplevelWindowMonitorsChanged), webViewBase);
+    priv->toplevelWindowLeaveMonitorID =
+        g_signal_connect(surface, "leave-monitor", G_CALLBACK(toplevelWindowMonitorsChanged), webViewBase);
 }
 
 static void toplevelWindowUnrealized(WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     g_clear_signal_handler(&priv->toplevelWindowUnrealizedID, priv->toplevelOnScreenWindow);
-    g_clear_signal_handler(&priv->toplevelWindowStateChangedID, gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)));
+    auto* surface = gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow));
+    g_clear_signal_handler(&priv->toplevelWindowStateChangedID, surface);
+    g_clear_signal_handler(&priv->toplevelWindowEnterMonitorID, surface);
+    g_clear_signal_handler(&priv->toplevelWindowLeaveMonitorID, surface);
 }
 
 static void webkitWebViewBaseRoot(GtkWidget* widget)
@@ -2044,6 +2100,12 @@ static void webkitWebViewBaseRoot(GtkWidget* widget)
         priv->toplevelWindowState = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
         priv->toplevelWindowStateChangedID =
             g_signal_connect(surface, "notify::state", G_CALLBACK(toplevelWindowStateChanged), widget);
+        auto* monitor = gdk_display_get_monitor_at_surface(gtk_widget_get_display(GTK_WIDGET(priv->toplevelOnScreenWindow)), surface);
+        webkitWebViewBaseUpdateDisplayID(webViewBase, monitor);
+        priv->toplevelWindowEnterMonitorID =
+            g_signal_connect(surface, "enter-monitor", G_CALLBACK(toplevelWindowMonitorsChanged), webViewBase);
+        priv->toplevelWindowLeaveMonitorID =
+            g_signal_connect(surface, "leave-monitor", G_CALLBACK(toplevelWindowMonitorsChanged), webViewBase);
     } else {
         priv->toplevelWindowRealizedID =
             g_signal_connect_swapped(priv->toplevelOnScreenWindow, "realize", G_CALLBACK(toplevelWindowRealized), widget);
@@ -2061,8 +2123,11 @@ static void webkitWebViewBaseUnroot(GtkWidget* widget)
     g_clear_signal_handler(&priv->toplevelIsActiveID, priv->toplevelOnScreenWindow);
     g_clear_signal_handler(&priv->toplevelWindowRealizedID, priv->toplevelOnScreenWindow);
     g_clear_signal_handler(&priv->toplevelWindowUnrealizedID, priv->toplevelOnScreenWindow);
-    if (gtk_widget_get_realized(GTK_WIDGET(priv->toplevelOnScreenWindow)))
-        g_clear_signal_handler(&priv->toplevelWindowStateChangedID, gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)));
+    if (gtk_widget_get_realized(GTK_WIDGET(priv->toplevelOnScreenWindow))) {
+        auto* surface = gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow));
+        g_clear_signal_handler(&priv->toplevelWindowStateChangedID, surface);
+        g_clear_signal_handler(&priv->toplevelWindowEnterMonitorID, surface);
+    }
     priv->toplevelOnScreenWindow = nullptr;
 
     OptionSet<ActivityState> flagsToUpdate;
@@ -2581,6 +2646,9 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
     priv->pageProxy->initializeWebPage();
 
+    if (priv->displayID)
+        priv->pageProxy->windowScreenDidChange(priv->displayID);
+
     // We attach this here, because changes in scale factor are passed directly to the page proxy.
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
@@ -2975,6 +3043,8 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
         priv->viewGestureController = makeUnique<WebKit::ViewGestureController>(*priv->pageProxy);
         priv->viewGestureController->setSwipeGestureEnabled(priv->isBackForwardNavigationGestureEnabled);
     }
+    if (priv->displayID)
+        priv->pageProxy->windowScreenDidChange(priv->displayID);
 }
 
 void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)

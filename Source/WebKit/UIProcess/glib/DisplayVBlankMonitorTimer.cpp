@@ -23,40 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DisplayVBlankMonitorTimer.h"
 
-#include <WebCore/ScreenProperties.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GdkMonitor GdkMonitor;
+#include <WebCore/AnimationFrameRate.h>
+#include <chrono>
+#include <thread>
 
 namespace WebKit {
 
-using PlatformDisplayID = uint32_t;
+std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorTimer::create()
+{
+    return makeUnique<DisplayVBlankMonitorTimer>();
+}
 
-class ScreenManager {
-    WTF_MAKE_NONCOPYABLE(ScreenManager);
-    friend NeverDestroyed<ScreenManager>;
-public:
-    static ScreenManager& singleton();
+DisplayVBlankMonitorTimer::DisplayVBlankMonitorTimer()
+    : DisplayVBlankMonitor(WebCore::FullSpeedFramesPerSecond)
+{
+}
 
-    PlatformDisplayID displayID(GdkMonitor*) const;
-    GdkMonitor* monitor(PlatformDisplayID) const;
-
-    WebCore::ScreenProperties collectScreenProperties() const;
-
-private:
-    ScreenManager();
-
-    void addMonitor(GdkMonitor*);
-    void removeMonitor(GdkMonitor*);
-    void propertiesDidChange() const;
-
-    Vector<GRefPtr<GdkMonitor>, 1> m_monitors;
-    HashMap<GdkMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
-};
+bool DisplayVBlankMonitorTimer::waitForVBlank() const
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000 / m_refreshRate));
+    return true;
+}
 
 } // namespace WebKit

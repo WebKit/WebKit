@@ -25,38 +25,18 @@
 
 #pragma once
 
-#include <WebCore/ScreenProperties.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GdkMonitor GdkMonitor;
+#include "DisplayVBlankMonitor.h"
 
 namespace WebKit {
 
-using PlatformDisplayID = uint32_t;
-
-class ScreenManager {
-    WTF_MAKE_NONCOPYABLE(ScreenManager);
-    friend NeverDestroyed<ScreenManager>;
+class DisplayVBlankMonitorTimer final : public DisplayVBlankMonitor {
 public:
-    static ScreenManager& singleton();
-
-    PlatformDisplayID displayID(GdkMonitor*) const;
-    GdkMonitor* monitor(PlatformDisplayID) const;
-
-    WebCore::ScreenProperties collectScreenProperties() const;
+    static std::unique_ptr<DisplayVBlankMonitor> create();
+    explicit DisplayVBlankMonitorTimer();
+    ~DisplayVBlankMonitorTimer() = default;
 
 private:
-    ScreenManager();
-
-    void addMonitor(GdkMonitor*);
-    void removeMonitor(GdkMonitor*);
-    void propertiesDidChange() const;
-
-    Vector<GRefPtr<GdkMonitor>, 1> m_monitors;
-    HashMap<GdkMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
+    bool waitForVBlank() const override;
 };
 
 } // namespace WebKit

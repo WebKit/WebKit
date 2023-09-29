@@ -25,16 +25,23 @@
 
 #pragma once
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
 
 #include "DisplayLinkObserverID.h"
-#include <CoreVideo/CVDisplayLink.h>
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+
+#if PLATFORM(MAC)
+#include <CoreVideo/CVDisplayLink.h>
+#endif
+
+#if PLATFORM(GTK)
+#include "DisplayVBlankMonitor.h"
+#endif
 
 namespace WebKit {
 
@@ -45,7 +52,7 @@ public:
     friend class DisplayLink;
     public:
         virtual ~Client() = default;
-        
+
     private:
         virtual void displayLinkFired(WebCore::PlatformDisplayID, WebCore::DisplayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback) = 0;
     };
@@ -55,7 +62,7 @@ public:
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     WebCore::FramesPerSecond nominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
-    
+
     void displayPropertiesChanged();
 
     void addObserver(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
@@ -70,12 +77,19 @@ public:
     void setObserverPreferredFramesPerSecond(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
 
 private:
+#if PLATFORM(MAC)
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
+    static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
+#endif
     void notifyObserversDisplayDidRefresh();
 
-    bool removeInfoForClientIfUnused(Client&) WTF_REQUIRES_LOCK(m_clientsLock);
+    void platformInitialize();
+    void platformFinalize();
+    bool platformIsRunning() const;
+    void platformStart();
+    void platformStop();
 
-    static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
+    bool removeInfoForClientIfUnused(Client&) WTF_REQUIRES_LOCK(m_clientsLock);
 
     struct ObserverInfo {
         DisplayLinkObserverID observerID;
@@ -87,7 +101,12 @@ private:
         Vector<ObserverInfo> observers;
     };
 
+#if PLATFORM(MAC)
     CVDisplayLinkRef m_displayLink { nullptr };
+#endif
+#if PLATFORM(GTK)
+    std::unique_ptr<DisplayVBlankMonitor> m_vblankMonitor;
+#endif
     Lock m_clientsLock;
     HashMap<CheckedRef<Client>, ClientInfo> m_clients WTF_GUARDED_BY_LOCK(m_clientsLock);
     const WebCore::PlatformDisplayID m_displayID;
@@ -116,4 +135,4 @@ private:
 
 } // namespace WebKit
 
-#endif // HAVE(CVDISPLAYLINK)
+#endif // HAVE(DISPLAY_LINK)

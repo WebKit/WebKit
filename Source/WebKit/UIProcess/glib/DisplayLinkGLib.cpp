@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if PLATFORM(MAC)
-
-#include "DisplayLinkObserverID.h"
-#include <WebCore/DisplayRefreshMonitor.h>
-#include <WebCore/RunLoopObserver.h>
+#include "config.h"
+#include "DisplayLink.h"
 
 namespace WebKit {
 
-class DisplayRefreshMonitorMac final : public WebCore::DisplayRefreshMonitor {
-public:
-    static Ref<DisplayRefreshMonitorMac> create(WebCore::PlatformDisplayID displayID)
-    {
-        return adoptRef(*new DisplayRefreshMonitorMac(displayID));
-    }
+using namespace WebCore;
 
-    virtual ~DisplayRefreshMonitorMac();
+void DisplayLink::platformInitialize()
+{
+    // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case DisplayVBlankMonitor defaults to the main screen.
+    m_vblankMonitor = DisplayVBlankMonitor::create(m_displayID);
+    m_vblankMonitor->setHandler([this] {
+        notifyObserversDisplayDidRefresh();
+    });
 
-private:
-    explicit DisplayRefreshMonitorMac(WebCore::PlatformDisplayID);
+    m_displayNominalFramesPerSecond = m_vblankMonitor->refreshRate();
+}
 
-    void dispatchDisplayDidRefresh(const WebCore::DisplayUpdate&) final;
+void DisplayLink::platformFinalize()
+{
+    ASSERT(m_vblankMonitor);
+    m_vblankMonitor->invalidate();
+}
 
-    bool startNotificationMechanism() final;
-    void stopNotificationMechanism() final;
+bool DisplayLink::platformIsRunning() const
+{
+    return m_vblankMonitor->isActive();
+}
 
-    void adjustPreferredFramesPerSecond(WebCore::FramesPerSecond) final;
+void DisplayLink::platformStart()
+{
+    m_vblankMonitor->start();
+}
 
-    DisplayLinkObserverID m_observerID;
-    std::unique_ptr<WebCore::RunLoopObserver> m_runLoopObserver;
-
-    bool m_displayLinkIsActive { false };
-    bool m_firstCallbackInCurrentRunloop { false };
-};
+void DisplayLink::platformStop()
+{
+    m_vblankMonitor->stop();
+}
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)

@@ -511,8 +511,7 @@ UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 
 UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
-UIProcess/mac/DisplayLink.cpp
-UIProcess/mac/DisplayLinkProcessProxyClient.cpp
+UIProcess/mac/DisplayLinkMac.cpp
 UIProcess/mac/HighPerformanceGPUManager.mm
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
@@ -700,7 +699,6 @@ WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
 WebProcess/WebPage/ios/FindControllerIOS.mm
 WebProcess/WebPage/ios/WebPageIOS.mm
 
-WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp
 WebProcess/WebPage/mac/PageBannerMac.mm
 WebProcess/WebPage/mac/RemoteLayerTreeDrawingAreaMac.mm
 WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm

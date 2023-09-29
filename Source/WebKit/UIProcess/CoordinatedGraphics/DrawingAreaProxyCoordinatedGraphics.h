@@ -58,6 +58,10 @@ private:
     void deviceScaleFactorDidChange() override;
     void setBackingStoreIsDiscardable(bool) override;
 
+#if HAVE(DISPLAY_LINK)
+    std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
+#endif
+
 #if PLATFORM(GTK)
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
@@ -68,7 +72,9 @@ private:
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, UpdateInfo&&) override;
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+#if !PLATFORM(GTK)
     void targetRefreshRateDidChange(unsigned) override;
+#endif
 
     bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
 

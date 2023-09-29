@@ -579,7 +579,7 @@ WebPageProxy::Internals::Internals(WebPageProxy& page)
     , tryCloseTimeoutTimer(RunLoop::main(), &page, &WebPageProxy::tryCloseTimedOut)
     , updateReportedMediaCaptureStateTimer(RunLoop::main(), &page, &WebPageProxy::updateReportedMediaCaptureState)
     , webPageID(PageIdentifier::generate())
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     , wheelEventActivityHysteresis([&page](PAL::HysteresisState state) { page.wheelEventHysteresisUpdated(state); })
 #endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -3411,7 +3411,7 @@ void WebPageProxy::continueWheelEventHandling(const WebWheelEvent& wheelEvent, c
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps, RectEdges<bool> rubberBandableEdges, std::optional<bool> willStartSwipe, bool wasHandledForScrolling)
 {
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     internals().wheelEventActivityHysteresis.impulse();
 #endif
 
@@ -3526,7 +3526,7 @@ void WebPageProxy::sendWheelEventScrollingAccelerationCurveIfNecessary(const Web
 #endif
 }
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
 void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState)
 {
     updateDisplayLinkFrequency();
@@ -3547,7 +3547,7 @@ void WebPageProxy::updateDisplayLinkFrequency()
 
 void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 {
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     updateDisplayLinkFrequency();
 #endif
 }
@@ -4649,7 +4649,7 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
 {
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     if (hasRunningProcess() && m_displayID && m_registeredForFullSpeedUpdates)
         process().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_displayID, false);
 
@@ -4669,7 +4669,7 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
 
     send(Messages::EventDispatcher::PageScreenDidChange(internals().webPageID, displayID, nominalFramesPerSecond));
     send(Messages::WebPage::WindowScreenDidChange(displayID, nominalFramesPerSecond));
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     updateDisplayLinkFrequency();
 #endif
 }
@@ -7337,7 +7337,7 @@ void WebPageProxy::pageDidScroll(const WebCore::IntPoint& scrollPosition)
 void WebPageProxy::setHasActiveAnimatedScrolls(bool isRunning)
 {
     m_hasActiveAnimatedScroll = isRunning;
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     updateDisplayLinkFrequency();
 #endif
 }

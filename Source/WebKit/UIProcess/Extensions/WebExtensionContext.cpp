@@ -30,6 +30,7 @@
 
 #include "WebExtensionContextParameters.h"
 #include "WebExtensionContextProxyMessages.h"
+#include "WebPageProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 

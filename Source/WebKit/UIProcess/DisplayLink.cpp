@@ -26,11 +26,10 @@
 #include "config.h"
 #include "DisplayLink.h"
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
 
 #include "Logging.h"
 #include <WebCore/AnimationFrameRate.h>
-#include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/TextStream.h>
 
@@ -43,22 +42,7 @@ constexpr unsigned maxFireCountWithoutObservers { 20 };
 DisplayLink::DisplayLink(PlatformDisplayID displayID)
     : m_displayID(displayID)
 {
-    // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case CVDisplayLinkCreateWithCGDisplay()
-    // probably defaults to the main screen.
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &m_displayLink);
-    if (error) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a display link for display %u: error %d", displayID, error);
-        return;
-    }
-    
-    error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
-    if (error) {
-        RELEASE_LOG_FAULT(DisplayLink, "DisplayLink: Could not set the display link output callback for display %u: error %d", displayID, error);
-        return;
-    }
-
-    m_displayNominalFramesPerSecond = nominalFramesPerSecondFromDisplayLink(m_displayLink);
+    platformInitialize();
 
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] Created DisplayLink " << this << " for display " << displayID << " with nominal fps " << m_displayNominalFramesPerSecond);
 }
@@ -67,23 +51,7 @@ DisplayLink::~DisplayLink()
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] Destroying DisplayLink " << this << " for display " << m_displayID);
 
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    ASSERT(m_displayLink);
-    if (!m_displayLink)
-        return;
-
-    CVDisplayLinkStop(m_displayLink);
-    CVDisplayLinkRelease(m_displayLink);
-}
-
-FramesPerSecond DisplayLink::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
-{
-    CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
-    if (!refreshPeriod.timeValue)
-        return FullSpeedFramesPerSecond;
-
-    FramesPerSecond result = round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
-    return result ?: FullSpeedFramesPerSecond;
+    platformFinalize();
 }
 
 void DisplayLink::addObserver(Client& client, DisplayLinkObserverID observerID, FramesPerSecond preferredFramesPerSecond)
@@ -99,14 +67,12 @@ void DisplayLink::addObserver(Client& client, DisplayLinkObserverID observerID, 
         }).iterator->value.observers.append({ observerID, preferredFramesPerSecond });
     }
 
-    if (!CVDisplayLinkIsRunning(m_displayLink)) {
-        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " starting CVDisplayLink with fps " << m_displayNominalFramesPerSecond);
+    if (!platformIsRunning()) {
+        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " starting DisplayLink with fps " << m_displayNominalFramesPerSecond);
 
         m_currentUpdate = { 0, m_displayNominalFramesPerSecond };
 
-        CVReturn error = CVDisplayLinkStart(m_displayLink);
-        if (error)
-            RELEASE_LOG_FAULT(DisplayLink, "DisplayLink: Could not start the display link: %d", error);
+        platformStart();
     }
 }
 
@@ -211,12 +177,6 @@ void DisplayLink::setObserverPreferredFramesPerSecond(Client& client, DisplayLin
         clientInfo.observers[index].preferredFramesPerSecond = preferredFramesPerSecond;
 }
 
-CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
-{
-    static_cast<DisplayLink*>(data)->notifyObserversDisplayDidRefresh();
-    return kCVReturnSuccess;
-}
-
 void DisplayLink::notifyObserversDisplayDidRefresh()
 {
     ASSERT(!RunLoop::isMain());
@@ -251,8 +211,8 @@ void DisplayLink::notifyObserversDisplayDidRefresh()
 
     if (!anyConnectionHadObservers) {
         if (++m_fireCountWithoutObservers >= maxFireCountWithoutObservers) {
-            LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " fired " << m_fireCountWithoutObservers << " times with no observers; stopping CVDisplayLink");
-            CVDisplayLinkStop(m_displayLink);
+            LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " fired " << m_fireCountWithoutObservers << " times with no observers; stopping DisplayLink");
+            platformStop();
         }
         return;
     }
@@ -311,7 +271,7 @@ void DisplayLinkCollection::stopDisplayLinks(DisplayLink::Client& client)
 {
     for (auto& displayLink : m_displayLinks)
         displayLink->removeClient(client);
-    
+
     // FIXME: Remove unused display links?
 }
 
@@ -335,4 +295,4 @@ void DisplayLinkCollection::setDisplayLinkForDisplayWantsFullSpeedUpdates(Displa
 
 } // namespace WebKit
 
-#endif // HAVE(CVDISPLAYLINK)
+#endif // HAVE(DISPLAY_LINK)

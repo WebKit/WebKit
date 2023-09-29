@@ -35,8 +35,10 @@
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
+#include <optional>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
@@ -134,6 +136,15 @@ void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(UpdateInfo&& updateI
 }
 #endif
 
+#if HAVE(DISPLAY_LINK)
+std::optional<WebCore::FramesPerSecond> DrawingAreaProxyCoordinatedGraphics::displayNominalFramesPerSecond()
+{
+    if (auto displayId = m_webPageProxy->displayID())
+        return m_webPageProxy->process().nominalFramesPerSecondForDisplay(displayId.value());
+    return std::nullopt;
+}
+#endif
+
 void DrawingAreaProxyCoordinatedGraphics::sizeDidChange()
 {
     if (!m_webPageProxy->hasRunningProcess())
@@ -211,10 +222,12 @@ void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(uint6
     updateAcceleratedCompositingMode(layerTreeContext);
 }
 
+#if !PLATFORM(GTK)
 void DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
 {
     protectedWebPageProxy()->send(Messages::DrawingArea::TargetRefreshRateDidChange(rate), m_identifier);
 }
+#endif
 
 bool DrawingAreaProxyCoordinatedGraphics::alwaysUseCompositing() const
 {

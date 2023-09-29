@@ -25,38 +25,26 @@
 
 #pragma once
 
-#include <WebCore/ScreenProperties.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
-#include <wtf/glib/GRefPtr.h>
+#if USE(LIBDRM)
 
-typedef struct _GdkMonitor GdkMonitor;
+#include "DisplayVBlankMonitor.h"
+#include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebKit {
 
-using PlatformDisplayID = uint32_t;
-
-class ScreenManager {
-    WTF_MAKE_NONCOPYABLE(ScreenManager);
-    friend NeverDestroyed<ScreenManager>;
+class DisplayVBlankMonitorDRM final : public DisplayVBlankMonitor {
 public:
-    static ScreenManager& singleton();
-
-    PlatformDisplayID displayID(GdkMonitor*) const;
-    GdkMonitor* monitor(PlatformDisplayID) const;
-
-    WebCore::ScreenProperties collectScreenProperties() const;
+    static std::unique_ptr<DisplayVBlankMonitor> create(PlatformDisplayID);
+    DisplayVBlankMonitorDRM(unsigned, WTF::UnixFileDescriptor&&, uint32_t);
+    ~DisplayVBlankMonitorDRM() = default;
 
 private:
-    ScreenManager();
+    bool waitForVBlank() const override;
 
-    void addMonitor(GdkMonitor*);
-    void removeMonitor(GdkMonitor*);
-    void propertiesDidChange() const;
-
-    Vector<GRefPtr<GdkMonitor>, 1> m_monitors;
-    HashMap<GdkMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
+    WTF::UnixFileDescriptor m_fd;
+    int m_crtcBitmask { 0 };
 };
 
 } // namespace WebKit
+
+#endif // USE(LIBDRM)

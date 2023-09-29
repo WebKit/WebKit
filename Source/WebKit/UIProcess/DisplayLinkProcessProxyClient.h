@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebExtensionAlarm.h"
+#pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#include "DisplayLink.h"
 
-#include "Logging.h"
+#if HAVE(DISPLAY_LINK)
+
+#include "Connection.h"
 
 namespace WebKit {
 
-using namespace WebCore;
+class WebProcessProxy;
 
-void WebExtensionAlarm::schedule()
-{
-    m_parameters.nextScheduledTime = MonotonicTime::now() + initialInterval();
+class DisplayLinkProcessProxyClient final : public DisplayLink::Client {
+public:
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DisplayLinkProcessProxyClient() = default;
+    ~DisplayLinkProcessProxyClient() = default;
 
-    RELEASE_LOG_DEBUG(Extensions, "Scheduled alarm; initial = %{public}f seconds; repeat = %{public}f seconds", initialInterval().seconds(), repeatInterval().seconds());
+    void setConnection(RefPtr<IPC::Connection>&&);
 
-    m_timer = makeUnique<Timer>(*this, &WebExtensionAlarm::fire);
-    m_timer->start(initialInterval(), repeatInterval());
-}
+private:
+    void displayLinkFired(WebCore::PlatformDisplayID, WebCore::DisplayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback) override;
 
-void WebExtensionAlarm::fire()
-{
-    // Calculate the next scheduled time now, so the handler's work time does not count against it.
-    auto nextScheduledTime = MonotonicTime::now() + repeatInterval();
-
-    m_handler(*this);
-
-    if (!repeatInterval()) {
-        m_timer = nullptr;
-        return;
-    }
-
-    m_parameters.nextScheduledTime = nextScheduledTime;
-}
+    Lock m_connectionLock;
+    RefPtr<IPC::Connection> m_connection;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+#endif // HAVE(DISPLAY_LINK)

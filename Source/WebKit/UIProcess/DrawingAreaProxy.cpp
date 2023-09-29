@@ -33,6 +33,7 @@
 #include <WebCore/ScrollView.h>
 
 #if PLATFORM(COCOA)
+#include "MessageSenderInlines.h"
 #include <wtf/MachSendRight.h>
 #endif
 

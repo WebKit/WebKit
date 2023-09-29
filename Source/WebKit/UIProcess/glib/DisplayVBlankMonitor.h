@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2023 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,50 @@
 
 #pragma once
 
-#if !USE(GTK4)
+#include <wtf/Condition.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Function.h>
+#include <wtf/Lock.h>
+#include <wtf/RunLoop.h>
 
-#include "DisplayRefreshMonitor.h"
+namespace WebKit {
 
-typedef struct _GtkWidget GtkWidget;
+using PlatformDisplayID = uint32_t;
 
-namespace WebCore {
-
-class DisplayRefreshMonitorGtk : public DisplayRefreshMonitor {
+class DisplayVBlankMonitor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<DisplayRefreshMonitorGtk> create(PlatformDisplayID displayID)
-    {
-        return adoptRef(*new DisplayRefreshMonitorGtk(displayID));
-    }
+    static std::unique_ptr<DisplayVBlankMonitor> create(PlatformDisplayID);
+    virtual ~DisplayVBlankMonitor();
 
-    virtual ~DisplayRefreshMonitorGtk();
+    unsigned refreshRate() const { return m_refreshRate; }
 
-    void displayLinkCallbackFired();
+    void start();
+    void stop();
+    bool isActive();
+    void invalidate();
+
+    void setHandler(Function<void()>&&);
+
+protected:
+    explicit DisplayVBlankMonitor(unsigned);
+
+    virtual bool waitForVBlank() const = 0;
+
+    unsigned m_refreshRate;
 
 private:
-    explicit DisplayRefreshMonitorGtk(PlatformDisplayID);
+    enum class State { Stop, Active, Failed, Invalid };
 
-    void stop() final;
-    bool startNotificationMechanism() final;
-    void stopNotificationMechanism() final;
+    bool startThreadIfNeeded();
+    void destroyThreadTimerFired();
 
-    GtkWidget* m_window { nullptr };
-    DisplayUpdate m_currentUpdate;
-    bool m_clockIsActive { false };
+    RefPtr<Thread> m_thread;
+    Lock m_lock;
+    Condition m_condition;
+    State m_state WTF_GUARDED_BY_LOCK(m_lock) { State::Stop };
+    Function<void()> m_handler;
+    RunLoop::Timer m_destroyThreadTimer;
 };
 
-} // namespace WebCore
-
-#endif // !USE(GTK4)
+} // namespace WebKit

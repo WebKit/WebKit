@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,47 @@
 
 #pragma once
 
-#include "DisplayLink.h"
+#if HAVE(DISPLAY_LINK)
 
-#if HAVE(CVDISPLAYLINK)
+#include "DisplayLinkObserverID.h"
+#include <WebCore/DisplayRefreshMonitor.h>
 
-#include "Connection.h"
+namespace WebCore {
+class RunLoopObserver;
+}
 
 namespace WebKit {
 
-class WebProcessProxy;
+class WebDisplayRefreshMonitor final : public WebCore::DisplayRefreshMonitor {
+public:
+    static Ref<WebDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID)
+    {
+        return adoptRef(*new WebDisplayRefreshMonitor(displayID));
+    }
 
-class DisplayLinkProcessProxyClient final : public DisplayLink::Client {
-public:
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    DisplayLinkProcessProxyClient() = default;
-    ~DisplayLinkProcessProxyClient() = default;
-    
-    void setConnection(RefPtr<IPC::Connection>&&);
+    virtual ~WebDisplayRefreshMonitor();
 
 private:
-    void displayLinkFired(WebCore::PlatformDisplayID, WebCore::DisplayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback) override;
+    explicit WebDisplayRefreshMonitor(WebCore::PlatformDisplayID);
 
-    Lock m_connectionLock;
-    RefPtr<IPC::Connection> m_connection;
+#if PLATFORM(MAC)
+    void dispatchDisplayDidRefresh(const WebCore::DisplayUpdate&) final;
+#endif
+
+    bool startNotificationMechanism() final;
+    void stopNotificationMechanism() final;
+
+    void adjustPreferredFramesPerSecond(WebCore::FramesPerSecond) final;
+
+    DisplayLinkObserverID m_observerID;
+#if PLATFORM(MAC)
+    std::unique_ptr<WebCore::RunLoopObserver> m_runLoopObserver;
+    bool m_firstCallbackInCurrentRunloop { false };
+#endif
+
+    bool m_displayLinkIsActive { false };
 };
 
-}
+} // namespace WebKit
 
-#endif // HAVE(CVDISPLAYLINK)
+#endif // HAVE(DISPLAY_LINK)

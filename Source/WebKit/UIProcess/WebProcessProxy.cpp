@@ -342,7 +342,7 @@ WebProcessProxy::~WebProcessProxy()
 
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 
@@ -579,7 +579,7 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
     // reply from the UIProcess, which would be unsafe.
     connection.setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     m_displayLinkClient.setConnection(&connection);
 #endif
 }
@@ -589,11 +589,39 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
     WEBPROCESSPROXY_RELEASE_LOG(Process, "processWillShutDown:");
     ASSERT_UNUSED(connection, this->connection() == &connection);
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     m_displayLinkClient.setConnection(nullptr);
     processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 }
+
+#if HAVE(DISPLAY_LINK)
+std::optional<unsigned> WebProcessProxy::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
+{
+    return processPool().displayLinks().nominalFramesPerSecondForDisplay(displayID);
+}
+
+void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    processPool().displayLinks().startDisplayLink(m_displayLinkClient, observerID, displayID, preferredFramesPerSecond);
+}
+
+void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
+{
+    processPool().displayLinks().stopDisplayLink(m_displayLinkClient, observerID, displayID);
+}
+
+void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+{
+    processPool().displayLinks().setDisplayLinkPreferredFramesPerSecond(m_displayLinkClient, observerID, displayID, preferredFramesPerSecond);
+}
+
+void WebProcessProxy::setDisplayLinkForDisplayWantsFullSpeedUpdates(WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
+{
+    processPool().displayLinks().setDisplayLinkForDisplayWantsFullSpeedUpdates(m_displayLinkClient, displayID, wantsFullSpeedUpdates);
+}
+#endif
 
 void WebProcessProxy::shutDown()
 {
