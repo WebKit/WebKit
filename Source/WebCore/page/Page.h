@@ -1253,7 +1253,10 @@ private:
 
     std::unique_ptr<RenderingUpdateScheduler> m_renderingUpdateScheduler;
 
-    HashSet<CheckedPtr<RenderObject>> m_relevantUnpaintedRenderObjects;
+    // FIXME: This should use a WeakHashSet. Note that using CheckedPtr causes
+    // crashes (rdar://116257845).
+    HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
+
     Region m_topRelevantPaintedRegion;
     Region m_bottomRelevantPaintedRegion;
     Region m_relevantUnpaintedRegion;
