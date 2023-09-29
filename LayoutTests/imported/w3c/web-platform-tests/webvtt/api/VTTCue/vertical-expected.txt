@@ -1,4 +1,4 @@
 
 PASS VTTCue.vertical, script-created cue
-FAIL VTTCue.vertical, parsed cue null is not an object (evaluating 't.track.cues[0]')
+PASS VTTCue.vertical, parsed cue
 

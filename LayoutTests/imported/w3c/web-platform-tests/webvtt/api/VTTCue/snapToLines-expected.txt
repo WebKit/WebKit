@@ -1,4 +1,4 @@
 
 PASS VTTCue.snapToLines, script-created cue
-FAIL VTTCue.snapToLines, parsed cue null is not an object (evaluating 't.track.cues[0]')
+FAIL VTTCue.snapToLines, parsed cue assert_true: expected true got false
 
