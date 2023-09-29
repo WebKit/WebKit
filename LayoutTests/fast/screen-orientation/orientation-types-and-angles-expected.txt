@@ -1,0 +1,25 @@
+Checks that screen.orientation.type and angles are as expected when device is rotated (for a portrait device).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isPortrait is true
+
+Simulating rotation to "landscape-right".
+PASS screen.orientation.type is "landscape-secondary"
+PASS screen.orientation.angle is 270
+PASS window.orientation is -90
+
+Simulating rotation to "portrait".
+PASS screen.orientation.type is "portrait-primary"
+PASS screen.orientation.angle is 0
+PASS window.orientation is 0
+
+Simulating rotation to "landscape-left".
+PASS screen.orientation.type is "landscape-primary"
+PASS screen.orientation.angle is 90
+PASS window.orientation is 90
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

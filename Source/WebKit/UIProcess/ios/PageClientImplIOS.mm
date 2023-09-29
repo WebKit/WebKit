@@ -763,9 +763,9 @@ static UIInterfaceOrientationMask toUIInterfaceOrientationMask(WebCore::ScreenOr
     case WebCore::ScreenOrientationType::PortraitSecondary:
         return UIInterfaceOrientationMaskPortraitUpsideDown;
     case WebCore::ScreenOrientationType::LandscapePrimary:
-        return UIInterfaceOrientationMaskLandscapeRight;
-    case WebCore::ScreenOrientationType::LandscapeSecondary:
         return UIInterfaceOrientationMaskLandscapeLeft;
+    case WebCore::ScreenOrientationType::LandscapeSecondary:
+        return UIInterfaceOrientationMaskLandscapeRight;
     }
     ASSERT_NOT_REACHED();
     return UIInterfaceOrientationMaskPortrait;
