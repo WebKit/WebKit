@@ -57,6 +57,7 @@ public:
     void visit(AST::ForStatement&) override;
 
     // Expressions
+    void visit(AST::Expression&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::CallExpression&) override;
 
@@ -73,6 +74,7 @@ private:
     void error(const SourceSpan&, Arguments&&...);
 
     std::optional<ConstantValue> evaluate(AST::Expression&);
+    void introduceVariable(const String&, const std::optional<ConstantValue>&);
 
     template<typename Node>
     void evaluated(Node&, ConstantValue);
@@ -181,9 +183,20 @@ void ConstantRewriter::visit(AST::IdentifierExpression& identifier)
 }
 
 // Private helpers
+void ConstantRewriter::visit(AST::Expression& expression)
+{
+    m_evaluationResult = std::nullopt;
+    AST::Visitor::visit(expression);
+}
+
 std::optional<ConstantValue> ConstantRewriter::evaluate(AST::Expression& expression)
 {
     AST::Visitor::visit(expression);
+    if (shouldDumpConstantValues) {
+        dataLog("> Evaluated expression: ");
+        dumpNode(WTF::dataFile(), expression);
+        dataLogLn(" = ", m_evaluationResult);
+    }
     return std::exchange(m_evaluationResult, std::nullopt);
 }
 
@@ -208,6 +221,19 @@ void ConstantRewriter::visit(AST::CallExpression& call)
 
         auto it = m_constantFunctions.find(targetName);
         if (it != m_constantFunctions.end()) {
+            if (shouldDumpConstantValues) {
+                dataLog("> Evaluating call: ");
+                dumpNode(WTF::dataFile(), call);
+                dataLog(" => ", targetName, "(");
+                bool first = true;
+                for (unsigned i = 0; i < argumentCount; ++i) {
+                    if (!first)
+                        dataLog(", ");
+                    first = false;
+                    dataLog(arguments[i]);
+                }
+                dataLogLn(")");
+            }
             materialize(call, it->value(call, arguments));
             return;
         }
@@ -350,9 +376,15 @@ void ConstantRewriter::evaluated(Node& expression, ConstantValue value)
     if (shouldDumpConstantValues) {
         dataLog("> Evaluated expression: ");
         dumpNode(WTF::dataFile(), expression);
-        dataLog(" = ");
-        dataLogLn(value);
+        dataLogLn(" = ", m_evaluationResult);
     }
+}
+
+void ConstantRewriter::introduceVariable(const String& name, const std::optional<ConstantValue>& value)
+{
+    if (shouldDumpConstantValues)
+        dataLogLn("> Assigning value: ", name, " => ", value);
+    ContextProvider::introduceVariable(name, value);
 }
 
 template<typename... Arguments>
