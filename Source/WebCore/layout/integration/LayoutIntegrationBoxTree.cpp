@@ -375,7 +375,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
     for (size_t lineIndex = 0, boxIndex = 0; lineIndex < lines.size() && boxIndex < boxes.size(); ++lineIndex) {
         auto addSpacing = [&](auto& streamToUse) {
             size_t printedCharacters = 0;
-            streamToUse << "-------- --";
+            streamToUse << "---------- --";
             while (++printedCharacters <= depth * 2)
                 streamToUse << " ";
 
