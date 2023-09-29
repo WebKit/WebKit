@@ -74,6 +74,8 @@ skip:
     - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
     - test/intl402/Locale/constructor-non-iana-canon.js
     - test/intl402/Locale/likely-subtags.js
+    - test/intl402/Locale/getters-grandfathered.js
+    - test/intl402/Locale/likely-subtags-grandfathered.js
 
     # ICU 72~ is required
     - test/intl402/NumberFormat/prototype/format/format-rounding-priority-less-precision.js
@@ -88,6 +90,10 @@ skip:
     - test/intl402/Intl/getCanonicalLocales/complex-region-subtag-replacement.js
     - test/intl402/Intl/getCanonicalLocales/grandfathered.js
     - test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js
+    - test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js
+    - test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js
+    - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js
+    - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js
 
     # Test is obsolete. microseconds and nanoseconds are added in the spec.
     - test/intl402/Intl/supportedValuesOf/units.js
