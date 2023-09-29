@@ -26,15 +26,15 @@
 #pragma once
 
 #include "DestinationColorSpace.h"
-#include "FloatSize.h"
+#include "IntSize.h"
 #include "PixelFormat.h"
 #include "RenderingMode.h"
 
 namespace WebCore {
 
 struct ImageBufferBackendParameters {
-    FloatSize logicalSize;
-    float resolutionScale;
+    IntSize backendSize;
+    float resolutionScale; // Resolution scale is of the ImageBuffer logical size.
     DestinationColorSpace colorSpace;
     PixelFormat pixelFormat;
     RenderingPurpose purpose;

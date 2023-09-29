@@ -7919,9 +7919,9 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
     m_findClient->didCountStringMatches(this, string, matchCount);
 }
 
-void WebPageProxy::didGetImageForFindMatch(const ImageBufferBackend::Parameters& parameters, ShareableBitmap::Handle&& contentImageHandle, uint32_t matchIndex)
+void WebPageProxy::didGetImageForFindMatch(ImageBufferParameters&& parameters, ShareableBitmap::Handle&& contentImageHandle, uint32_t matchIndex)
 {
-    auto image = WebImage::create(parameters, WTFMove(contentImageHandle));
+    auto image = WebImage::create(WTFMove(parameters), WTFMove(contentImageHandle));
     if (!image) {
         ASSERT_NOT_REACHED();
         return;

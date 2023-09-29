@@ -105,15 +105,12 @@ public:
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
 
-    WEBCORE_EXPORT static IntSize calculateBackendSize(const Parameters&);
     WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
     static size_t calculateExternalMemoryCost(const Parameters&) { return 0; }
     WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const Parameters&, bool originAtBottomLeftCorner);
 
     virtual GraphicsContext& context() = 0;
     virtual void flushContext() { }
-
-    virtual IntSize backendSize() const { return { }; }
 
     virtual RefPtr<NativeImage> copyNativeImage() = 0;
     virtual RefPtr<NativeImage> createNativeImageReference() = 0;
@@ -163,15 +160,10 @@ protected:
 
     virtual unsigned bytesPerRow() const = 0;
 
-
-    IntSize logicalSize() const { return IntSize(m_parameters.logicalSize); }
+    IntSize size() const { return m_parameters.backendSize; };
     float resolutionScale() const { return m_parameters.resolutionScale; }
     const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
-    RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
-
-    IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };
-    IntRect backendRect() const { return IntRect(IntPoint::zero(), backendSize()); };
 
     WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, void* data, PixelBuffer& destination);
     WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* destination);

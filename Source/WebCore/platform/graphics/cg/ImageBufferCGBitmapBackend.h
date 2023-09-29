@@ -49,7 +49,6 @@ public:
 private:
     ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContextCG>&&);
 
-    IntSize backendSize() const final;
     unsigned bytesPerRow() const final;
 
     RefPtr<NativeImage> copyNativeImage() final;

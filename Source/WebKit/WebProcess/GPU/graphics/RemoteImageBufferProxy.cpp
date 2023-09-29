@@ -116,7 +116,7 @@ private:
 
 }
 
-RemoteImageBufferProxy::RemoteImageBufferProxy(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier)
+RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier)
     : ImageBuffer(parameters, info, WTFMove(backend), identifier)
     , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
     , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ImageBuffer::logicalSize() }, ImageBuffer::baseTransform())
@@ -210,15 +210,16 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
     // This should match RemoteImageBufferProxy::create<>() call site and RemoteImageBuffer::create<>() call site.
     // FIXME: this will be removed and backend be constructed in the contructor.
     std::unique_ptr<ImageBufferBackend> backend;
+    auto backendParameters = this->backendParameters(parameters());
     if (renderingMode() == RenderingMode::Accelerated) {
 #if HAVE(IOSURFACE)
         if (canMapBackingStore())
-            backend = ImageBufferShareableMappedIOSurfaceBackend::create(parameters(), WTFMove(*handle));
+            backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTFMove(*handle));
         else
-            backend = ImageBufferRemoteIOSurfaceBackend::create(parameters(), WTFMove(*handle));
+            backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*handle));
 #endif
     } else
-        backend = ImageBufferShareableBitmapBackend::create(parameters(), WTFMove(*handle));
+        backend = ImageBufferShareableBitmapBackend::create(backendParameters, WTFMove(*handle));
 
     setBackend(WTFMove(backend));
 }
@@ -445,7 +446,7 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 
     m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
 
-    auto result = makeUnique<RemoteSerializedImageBufferProxy>(backend()->parameters(), backendInfo(), m_renderingResourceIdentifier, *m_remoteRenderingBackendProxy);
+    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, *m_remoteRenderingBackendProxy);
 
     clearBackend();
     m_remoteRenderingBackendProxy = nullptr;
@@ -460,7 +461,7 @@ IPC::StreamClientConnection& RemoteImageBufferProxy::streamConnection() const
     return m_remoteRenderingBackendProxy->streamConnection();
 }
 
-RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
+RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
     : m_parameters(parameters)
     , m_info(info)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)

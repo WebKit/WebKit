@@ -225,7 +225,7 @@ struct FrameIdentifierType;
 struct GrammarDetail;
 struct HTMLMediaElementIdentifierType;
 struct HTMLModelElementCamera;
-struct ImageBufferBackendParameters;
+struct ImageBufferParameters;
 struct InspectorOverlayHighlight;
 struct LinkIcon;
 struct LinkDecorationFilteringData;
@@ -1305,7 +1305,7 @@ public:
     void getImageForFindMatch(int32_t matchIndex);
     void selectFindMatch(int32_t matchIndex);
     void indicateFindMatch(int32_t matchIndex);
-    void didGetImageForFindMatch(const WebCore::ImageBufferBackendParameters&, ShareableBitmapHandle&& contentImageHandle, uint32_t matchIndex);
+    void didGetImageForFindMatch(WebCore::ImageBufferParameters&&, ShareableBitmapHandle&& contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
     void hideFindIndicator();
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);

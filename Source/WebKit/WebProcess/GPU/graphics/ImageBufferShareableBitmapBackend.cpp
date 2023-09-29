@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
 IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
-    IntSize backendSize = calculateBackendSize(parameters);
+    IntSize backendSize = parameters.backendSize;
     if (backendSize.isEmpty())
         return { };
 
@@ -62,8 +62,7 @@ unsigned ImageBufferShareableBitmapBackend::calculateBytesPerRow(const Parameter
 
 size_t ImageBufferShareableBitmapBackend::calculateMemoryCost(const Parameters& parameters)
 {
-    IntSize backendSize = calculateBackendSize(parameters);
-    return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(parameters, backendSize));
+    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters, parameters.backendSize));
 }
 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext&)
@@ -120,11 +119,6 @@ std::optional<ImageBufferBackendHandle> ImageBufferShareableBitmapBackend::creat
     if (auto handle = m_bitmap->createHandle(protection))
         return ImageBufferBackendHandle(WTFMove(*handle));
     return { };
-}
-
-IntSize ImageBufferShareableBitmapBackend::backendSize() const
-{
-    return m_bitmap->size();
 }
 
 unsigned ImageBufferShareableBitmapBackend::bytesPerRow() const

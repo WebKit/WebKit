@@ -78,18 +78,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
     return create<ImageBufferPlatformBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
 }
 
-template<typename BackendType, typename ImageBufferType, typename... Arguments>
-RefPtr<ImageBufferType> ImageBuffer::create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose, Arguments&&... arguments)
-{
-    auto parameters = ImageBufferBackend::Parameters { size, 1, context.colorSpace(), PixelFormat::BGRA8, purpose };
-    auto backend = BackendType::create(parameters, { });
-    if (!backend)
-        return nullptr;
-    auto backendInfo = populateBackendInfo<BackendType>(parameters);
-    return create<ImageBufferType>(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...);
-}
-
-ImageBuffer::ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)
+ImageBuffer::ImageBuffer(Parameters parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)
     : m_parameters(parameters)
     , m_backendInfo(backendInfo)
     , m_backend(WTFMove(backend))
@@ -98,6 +87,19 @@ ImageBuffer::ImageBuffer(const ImageBufferBackend::Parameters& parameters, const
 }
 
 ImageBuffer::~ImageBuffer() = default;
+
+IntSize ImageBuffer::calculateBackendSize(FloatSize logicalSize, float resolutionScale)
+{
+    FloatSize scaledSize = { ceilf(resolutionScale * logicalSize.width()), ceilf(resolutionScale * logicalSize.height()) };
+    if (scaledSize.isEmpty() || !scaledSize.isExpressibleAsIntSize())
+        return { };
+    return IntSize { scaledSize };
+}
+
+ImageBufferBackendParameters ImageBuffer::backendParameters(const ImageBufferParameters& parameters)
+{
+    return { calculateBackendSize(parameters.logicalSize, parameters.resolutionScale), parameters.resolutionScale, parameters.colorSpace, parameters.pixelFormat, parameters.purpose };
+}
 
 bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)
 {
@@ -275,10 +277,9 @@ std::unique_ptr<ImageBufferBackend> ImageBuffer::takeBackend()
 
 IntSize ImageBuffer::backendSize() const
 {
-    if (auto* backend = ensureBackendCreated())
-        return backend->backendSize();
-    return { };
+    return calculateBackendSize(m_parameters.logicalSize, m_parameters.resolutionScale);
 }
+
 
 RefPtr<NativeImage> ImageBuffer::copyNativeImage() const
 {
