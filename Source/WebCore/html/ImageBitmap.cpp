@@ -237,14 +237,14 @@ static InterpolationQuality interpolationQualityForResizeQuality(ImageBitmapOpti
     case ImageBitmapOptions::ResizeQuality::Pixelated:
         return InterpolationQuality::DoNotInterpolate;
     case ImageBitmapOptions::ResizeQuality::Low:
-        return InterpolationQuality::Default; // Low is the default.
+        return InterpolationQuality::Low;
     case ImageBitmapOptions::ResizeQuality::Medium:
         return InterpolationQuality::Medium;
     case ImageBitmapOptions::ResizeQuality::High:
         return InterpolationQuality::High;
     }
     ASSERT_NOT_REACHED();
-    return InterpolationQuality::Default;
+    return InterpolationQuality::Low;
 }
 
 static AlphaPremultiplication alphaPremultiplicationForPremultiplyAlpha(ImageBitmapOptions::PremultiplyAlpha premultiplyAlpha)

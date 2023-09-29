@@ -821,6 +821,7 @@ struct AccessibilityIsIgnoredFromParentData {
 class AXCoreObject : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AXCoreObject> {
 public:
     virtual ~AXCoreObject() = default;
+    virtual String dbg() const = 0;
 
     void setObjectID(AXID axID) { m_id = axID; }
     AXID objectID() const { return m_id; }

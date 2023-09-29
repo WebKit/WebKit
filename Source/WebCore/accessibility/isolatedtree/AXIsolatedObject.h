@@ -52,6 +52,7 @@ public:
     ~AXIsolatedObject();
 
     ProcessID processID() const override { return tree()->processID(); }
+    String dbg() const final;
 
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const override;

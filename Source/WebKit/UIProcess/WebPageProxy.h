@@ -607,6 +607,10 @@ public:
 
     WebUserContentControllerProxy& userContentController() { return m_userContentController.get(); }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    WebExtensionController* webExtensionController();
+#endif
+
     bool hasSleepDisabler() const;
 
 #if ENABLE(FULLSCREEN_API)

@@ -68,7 +68,6 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderTextControl"_s; }
-    bool isTextControl() const final { return true; }
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
     bool avoidsFloats() const override { return true; }
@@ -102,4 +101,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControl, isTextControl())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControl, isRenderTextControl())

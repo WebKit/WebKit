@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebExtensionControllerConfiguration.h"
+#pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#if USE(UICONTEXTMENU)
+
+#import <UIKit/UIKit.h>
+#import <wtf/RetainPtr.h>
+
+@class WKCompactContextMenuPresenterButton;
 
 namespace WebKit {
 
-WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(IsPersistent persistent)
-    : m_storageDirectory(persistent == IsPersistent::Yes ? createStorageDirectoryPath() : nullString())
-{
-}
+class CompactContextMenuPresenter {
+    WTF_MAKE_NONCOPYABLE(CompactContextMenuPresenter); WTF_MAKE_FAST_ALLOCATED;
+public:
+    CompactContextMenuPresenter(UIView *rootView, id<UIContextMenuInteractionDelegate>);
+    ~CompactContextMenuPresenter();
 
-WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(const WTF::UUID& identifier)
-    : m_identifier(identifier)
-    , m_storageDirectory(createStorageDirectoryPath(identifier))
-{
-}
+    void present(CGRect rectInRootView);
+    void present(CGPoint locationInRootView);
+    void dismiss();
 
-bool WebExtensionControllerConfiguration::operator==(const WebExtensionControllerConfiguration& other) const
-{
-    return this == &other || (m_identifier == other.m_identifier && m_storageDirectory == other.m_storageDirectory && m_webViewConfiguration == other.m_webViewConfiguration);
-}
+    UIContextMenuInteraction *interaction() const;
+
+private:
+    __weak UIView *m_rootView { nil };
+    RetainPtr<WKCompactContextMenuPresenterButton> m_button;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+#endif // USE(UICONTEXTMENU)

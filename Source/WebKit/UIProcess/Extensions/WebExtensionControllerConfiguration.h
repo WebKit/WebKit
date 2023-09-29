@@ -30,8 +30,10 @@
 #include "APIObject.h"
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/UUID.h>
 
+OBJC_CLASS WKWebViewConfiguration;
 OBJC_CLASS _WKWebExtensionControllerConfiguration;
 
 namespace WebKit {
@@ -56,6 +58,9 @@ public:
     bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
     String storageDirectory() const { return m_storageDirectory; }
 
+    WKWebViewConfiguration *webViewConfiguration();
+    void setWebViewConfiguration(WKWebViewConfiguration *configuration) { m_webViewConfiguration = configuration; }
+
     bool operator==(const WebExtensionControllerConfiguration&) const;
 
 #ifdef __OBJC__
@@ -67,6 +72,7 @@ private:
 
     Markable<WTF::UUID> m_identifier;
     String m_storageDirectory;
+    RetainPtr<WKWebViewConfiguration> m_webViewConfiguration;
 };
 
 } // namespace WebKit

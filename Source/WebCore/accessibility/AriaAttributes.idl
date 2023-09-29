@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/aom/spec/aria-reflection.html#AriaAttributes
+// https://w3c.github.io/aria/#idl-interface
 interface mixin AriaAttributes {
     [CEReactions=Needed, Reflect=aria_activedescendant, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute Element? ariaActiveDescendantElement;
     [CEReactions=Needed, Reflect=aria_atomic]           attribute DOMString? ariaAtomic;
@@ -36,6 +36,7 @@ interface mixin AriaAttributes {
     [CEReactions=Needed, CustomGetter, Reflect=aria_controls, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaControlsElements;
     [CEReactions=Needed, Reflect=aria_current]          attribute DOMString? ariaCurrent;
     [CEReactions=Needed, CustomGetter, Reflect=aria_describedby, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaDescribedByElements;
+    [CEReactions=Needed, Reflect=aria_description]      attribute DOMString? ariaDescription;
     [CEReactions=Needed, CustomGetter, Reflect=aria_details, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaDetailsElements;
     [CEReactions=Needed, Reflect=aria_disabled]         attribute DOMString? ariaDisabled;
     [CEReactions=Needed, CustomGetter, Reflect=aria_errormessage, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaErrorMessageElements;

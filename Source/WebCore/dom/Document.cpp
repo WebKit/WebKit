@@ -192,6 +192,7 @@
 #include "PointerLockController.h"
 #include "PolicyChecker.h"
 #include "PopStateEvent.h"
+#include "Position.h"
 #include "ProcessingInstruction.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "PublicSuffix.h"
@@ -3036,14 +3037,14 @@ AppHighlightStorage& Document::appHighlightStorage()
     return *m_appHighlightStorage;
 }
 #endif
-void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRange>>& highlightRanges, const HighlightRegister& highlightRegister)
+void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>& highlightRanges, const HighlightRegister& highlightRegister)
 {
     for (auto& highlight : highlightRegister.map()) {
         for (auto& highlightRange : highlight.value->highlightRanges()) {
             if (highlightRange->startPosition().isNotNull() && highlightRange->endPosition().isNotNull() && !highlightRange->range().isLiveRange())
                 continue;
 
-            if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && !liveRange->didChangeHighlight())
+            if (auto liveRange = RefPtr { dynamicDowncast<Range>(highlightRange->range()) }; liveRange && !liveRange->didChangeForHighlight())
                 continue;
 
             auto simpleRange = makeSimpleRange(highlightRange->range());
@@ -3056,8 +3057,8 @@ void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRange>>& hig
     // One range can belong to multiple highlights so resetting a range's flag cannot be done in the loops above.
     for (auto& highlight : highlightRegister.map()) {
         for (auto& highlightRange : highlight.value->highlightRanges()) {
-            if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && liveRange->didChangeHighlight())
-                liveRange->resetDidChangeHighlight();
+            if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && liveRange->didChangeForHighlight())
+                liveRange->resetDidChangeForHighlight();
         }
     }
 }
@@ -3066,25 +3067,33 @@ void Document::updateHighlightPositions()
 {
     Vector<WeakPtr<HighlightRange>> highlightRanges;
     if (m_highlightRegister)
-        collectRangeDataFromRegister(highlightRanges, *m_highlightRegister.get());
+        collectHighlightRangesFromRegister(highlightRanges, *m_highlightRegister.get());
     if (m_fragmentHighlightRegister)
-        collectRangeDataFromRegister(highlightRanges, *m_fragmentHighlightRegister.get());
+        collectHighlightRangesFromRegister(highlightRanges, *m_fragmentHighlightRegister.get());
 #if ENABLE(APP_HIGHLIGHTS)
     if (m_appHighlightRegister)
-        collectRangeDataFromRegister(highlightRanges, *m_appHighlightRegister.get());
+        collectHighlightRangesFromRegister(highlightRanges, *m_appHighlightRegister.get());
 #endif
 
     for (auto& weakRangeData : highlightRanges) {
         if (auto* highlightRange = weakRangeData.get()) {
             VisibleSelection visibleSelection(makeSimpleRange(highlightRange->range()));
+            auto range = makeSimpleRange(highlightRange->range());
+
             auto startPosition = visibleSelection.visibleStart().deepEquivalent();
             auto endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
+
+            if (auto simpleRange = makeSimpleRange(highlightRange->startPosition(), highlightRange->endPosition()))
+                Highlight::repaintRange(StaticRange::create(*simpleRange));
+
             if (!startPosition.isNull())
                 highlightRange->setStartPosition(WTFMove(startPosition));
             if (!endPosition.isNull())
                 highlightRange->setEndPosition(WTFMove(endPosition));
+
+            Highlight::repaintRange(highlightRange->range());
         }
     }
 }

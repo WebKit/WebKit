@@ -1912,7 +1912,7 @@ private:
 
     void platformSuspendOrStopActiveDOMObjects();
 
-    void collectRangeDataFromRegister(Vector<WeakPtr<HighlightRange>>&, const HighlightRegister&);
+    void collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>&, const HighlightRegister&);
 
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 

@@ -100,6 +100,19 @@ DECLARE_GCGL_OWNED(Texture);
 
 #undef DECLARE_GCGL_OWNED
 
+#if PLATFORM(COCOA)
+struct GraphicsContextGLEGLImageSourceIOSurfaceHandle {
+    MachSendRight handle;
+};
+struct GraphicsContextGLEGLImageSourceMTLSharedTextureHandle {
+    MachSendRight handle;
+};
+using GraphicsContextGLEGLImageSource = std::variant<
+    GraphicsContextGLEGLImageSourceIOSurfaceHandle,
+    GraphicsContextGLEGLImageSourceMTLSharedTextureHandle
+    >;
+#endif // PLATFORM(COCOA)
+
 // Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
 public:
@@ -1511,16 +1524,9 @@ public:
     // ========== EGL related entry points.
 
 #if PLATFORM(COCOA)
-    struct EGLImageSourceIOSurfaceHandle {
-        MachSendRight handle;
-    };
-    struct EGLImageSourceMTLSharedTextureHandle {
-        MachSendRight handle;
-    };
-    using EGLImageSource = std::variant<
-        EGLImageSourceIOSurfaceHandle,
-        EGLImageSourceMTLSharedTextureHandle
-        >;
+    using EGLImageSourceIOSurfaceHandle = GraphicsContextGLEGLImageSourceIOSurfaceHandle;
+    using EGLImageSourceMTLSharedTextureHandle = GraphicsContextGLEGLImageSourceMTLSharedTextureHandle;
+    using EGLImageSource = GraphicsContextGLEGLImageSource;
 #else
     using EGLImageSource = int;
 #endif

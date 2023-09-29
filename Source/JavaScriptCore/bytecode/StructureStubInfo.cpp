@@ -197,7 +197,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // PolymorphicAccess.
         clearBufferedStructures();
         
-        InlineCacheCompiler compiler(vm, globalObject, ecmaMode, *this);
+        InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
         result = compiler.regenerate(locker, *m_stub, codeBlock);
         
         if (StructureStubInfoInternal::verbose)
@@ -537,7 +537,12 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, const Ba
     m_identifier = unlinkedStubInfo.m_identifier;
     callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedStubInfo.bytecodeIndex.offset()));
     codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
-    m_codePtr = InlineCacheCompiler::generateSlowPathCode(vm, accessType).code().template retagged<JITStubRoutinePtrTag>();
+    if (Options::useHandlerIC())
+        m_codePtr = InlineCacheCompiler::generateSlowPathCode(vm, accessType).code().template retagged<JITStubRoutinePtrTag>();
+    else {
+        m_codePtr = unlinkedStubInfo.slowPathStartLocation;
+        slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
+    }
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
     canBeMegamorphic = unlinkedStubInfo.canBeMegamorphic;
     isEnumerator = unlinkedStubInfo.isEnumerator;
@@ -731,11 +736,11 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::Un
 {
     accessType = unlinkedStubInfo.accessType;
     doneLocation = unlinkedStubInfo.doneLocation;
-    slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
     m_identifier = unlinkedStubInfo.m_identifier;
     callSiteIndex = unlinkedStubInfo.callSiteIndex;
     codeOrigin = unlinkedStubInfo.codeOrigin;
-    m_codePtr = slowPathStartLocation;
+    slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
+    m_codePtr = unlinkedStubInfo.slowPathStartLocation;
 
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
     propertyIsSymbol = unlinkedStubInfo.propertyIsSymbol;

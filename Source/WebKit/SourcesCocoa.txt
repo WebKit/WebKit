@@ -465,6 +465,7 @@ UIProcess/ios/fullscreen/WKFullScreenViewController.mm
 UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
 
 UIProcess/ios/AppKitSoftLink.mm
+UIProcess/ios/CompactContextMenuPresenter.mm
 UIProcess/ios/DragDropInteractionState.mm
 UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm
 UIProcess/ios/PageClientImplIOS.mm
@@ -669,6 +670,7 @@ WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginPasswordField.mm
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
 WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDocumentLayout.mm
 
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp

@@ -438,17 +438,24 @@ void InlineCacheCompiler::restoreScratch()
     m_allocator->restoreReusedRegistersByPopping(*m_jit, m_preservedReusedRegisterState);
 }
 
+inline bool InlineCacheCompiler::useHandlerIC() const
+{
+    return JITCode::isBaselineCode(m_jitType) && Options::useHandlerIC();
+}
+
 void InlineCacheCompiler::succeed()
 {
     restoreScratch();
+    if (useHandlerIC()) {
+        emitDataICEpilogue(*m_jit);
+        m_jit->ret();
+        return;
+    }
     if (m_jit->codeBlock()->useDataIC()) {
-        if (JITCode::isBaselineCode(m_jit->codeBlock()->jitType())) {
-            emitDataICEpilogue(*m_jit);
-            m_jit->ret();
-        } else
-            m_jit->farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfDoneLocation()), JSInternalPtrTag);
-    } else
-        m_success.append(m_jit->jump());
+        m_jit->farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfDoneLocation()), JSInternalPtrTag);
+        return;
+    }
+    m_success.append(m_jit->jump());
 }
 
 const ScalarRegisterSet& InlineCacheCompiler::liveRegistersForCall()
@@ -2587,7 +2594,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
 
             if (codeBlock->useDataIC()) {
                 jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
-                if (JITCode::isBaselineCode(codeBlock->jitType()))
+                if (useHandlerIC())
                     jit.addPtr(CCallHelpers::TrustedImm32(-(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall + m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
                 else
                     jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
@@ -3346,7 +3353,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
 
     if (codeBlock->useDataIC()) {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
-        if (JITCode::isBaselineCode(codeBlock->jitType()))
+        if (useHandlerIC())
             jit.addPtr(CCallHelpers::TrustedImm32(-(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall + m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
         else
             jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
@@ -3822,7 +3829,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         return AccessGenerationResult(resultKind, poly.m_stubRoutine->code().code());
     };
 
-    if (generatedMegamorphicCode && JITCode::isBaselineCode(codeBlock->jitType())) {
+    if (generatedMegamorphicCode && useHandlerIC()) {
         ASSERT(codeBlock->useDataIC());
         auto stub = vm().m_sharedJITStubs->getMegamorphic(m_stubInfo->accessType);
         if (stub)
@@ -3906,14 +3913,14 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     CCallHelpers jit(codeBlock);
     m_jit = &jit;
 
-    if (JITCode::isBaselineCode(codeBlock->jitType()))
+    if (useHandlerIC())
         emitDataICPrologue(*m_jit);
 
     if (!canBeShared && ASSERT_ENABLED) {
         if (codeBlock->useDataIC()) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), jit.scratchRegister());
             jit.addPtr(jit.scratchRegister(), GPRInfo::callFrameRegister, jit.scratchRegister());
-            if (JITCode::isBaselineCode(codeBlock->jitType()))
+            if (useHandlerIC())
                 jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall)), jit.scratchRegister());
         } else
             jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, jit.scratchRegister());
@@ -4108,7 +4115,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         ASSERT(!spillState.isEmpty());
         jit.loadPtr(vm().addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
         if (codeBlock->useDataIC()) {
-            ASSERT(!JITCode::isBaselineCode(codeBlock->jitType()));
+            ASSERT(!JITCode::isBaselineCode(m_jitType));
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
             jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
             jit.addPtr(m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
@@ -4142,7 +4149,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     }
 
     if (codeBlock->useDataIC()) {
-        if (!JITCode::isBaselineCode(codeBlock->jitType())) {
+        if (!useHandlerIC()) {
             failure.link(&jit);
             JIT_COMMENT(jit, "failure far jump");
             jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfSlowPathStartLocation()), JITStubRoutinePtrTag);
@@ -4180,7 +4187,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     if (codeBlock->useDataIC()) {
         ASSERT(m_success.empty());
-        if (JITCode::isBaselineCode(codeBlock->jitType()))
+        if (useHandlerIC())
             linkBuffer.link(failure, CodeLocationLabel(CodePtr<NoPtrTag> { (generateSlowPathCode(vm(), m_stubInfo->accessType).retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC) }));
     } else {
         linkBuffer.link(m_success, successLabel);
@@ -4195,7 +4202,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), codeBlock, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
 
-    if (generatedMegamorphicCode && JITCode::isBaselineCode(codeBlock->jitType())) {
+    if (generatedMegamorphicCode && useHandlerIC()) {
         ASSERT(codeBlock->useDataIC());
         vm().m_sharedJITStubs->setMegamorphic(m_stubInfo->accessType, *stub);
     }

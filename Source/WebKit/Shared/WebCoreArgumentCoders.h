@@ -133,7 +133,6 @@ struct CompositionUnderline;
 struct DataDetectorElementInfo;
 struct KeypressCommand;
 struct Length;
-struct SerializedAttachmentData;
 struct SoupNetworkProxySettings;
 struct TextRecognitionDataDetector;
 struct ViewportArguments;
@@ -324,29 +323,6 @@ template<> struct ArgumentCoder<WebCore::PaymentSessionError> {
 
 #endif
 
-#if ENABLE(SERVICE_WORKER)
-
-template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientData> {
-    static void encode(Encoder&, const WebCore::ServiceWorkerOrClientData&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ServiceWorkerOrClientData&);
-};
-
-template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
-    static void encode(Encoder&, const WebCore::ServiceWorkerOrClientIdentifier&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ServiceWorkerOrClientIdentifier&);
-};
-
-#endif
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-template<> struct ArgumentCoder<WebCore::SerializedAttachmentData> {
-    static void encode(Encoder&, const WebCore::SerializedAttachmentData&);
-    static std::optional<WebCore::SerializedAttachmentData> decode(Decoder&);
-};
-
-#endif // ENABLE(ATTACHMENT_ELEMENT)
-
 #if ENABLE(VIDEO)
 template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
     static void encode(Encoder&, const WebCore::SerializedPlatformDataCueValue&);
@@ -468,20 +444,6 @@ template<> struct ArgumentCoder<WebCore::PixelBuffer> {
     template<class Encoder> static void encode(Encoder&, const WebCore::PixelBuffer&);
     static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
 };
-
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-
-template<> struct ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> {
-    static void encode(Encoder&, WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle&&);
-    static std::optional<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle> {
-    static void encode(Encoder&, WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle&&);
-    static std::optional<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle> decode(Decoder&);
-};
-
-#endif
 
 } // namespace IPC
 

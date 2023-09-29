@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "SandboxUtilities.h"
+#import "WKWebViewConfiguration.h"
 #import <wtf/FileSystem.h>
 
 namespace WebKit {
@@ -60,6 +61,29 @@ String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::opti
     });
 
     return defaultStoragePath.get();
+}
+
+Ref<WebExtensionControllerConfiguration> WebExtensionControllerConfiguration::copy() const
+{
+    RefPtr<WebExtensionControllerConfiguration> result;
+
+    if (m_identifier)
+        result = create(m_identifier.value());
+    else if (storageIsPersistent())
+        result = createDefault();
+    else
+        result = createNonPersistent();
+
+    result->setWebViewConfiguration([m_webViewConfiguration copy]);
+
+    return result.releaseNonNull();
+}
+
+WKWebViewConfiguration *WebExtensionControllerConfiguration::webViewConfiguration()
+{
+    if (!m_webViewConfiguration)
+        m_webViewConfiguration = [[WKWebViewConfiguration alloc] init];
+    return m_webViewConfiguration.get();
 }
 
 } // namespace WebKit

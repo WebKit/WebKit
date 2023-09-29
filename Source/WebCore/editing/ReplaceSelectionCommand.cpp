@@ -178,7 +178,7 @@ ReplacementFragment::ReplacementFragment(DocumentFragment* fragment, const Visib
 
     RefPtr shadowHost { editableRoot->shadowHost() };
     if (!editableRoot->attributeEventListener(eventNames().webkitBeforeTextInsertedEvent, mainThreadNormalWorld())
-        && !(shadowHost && shadowHost->renderer() && shadowHost->renderer()->isTextControl())
+        && !(shadowHost && shadowHost->renderer() && shadowHost->renderer()->isRenderTextControl())
         && editableRoot->hasRichlyEditableStyle()) {
         removeInterchangeNodes(m_fragment.get());
         return;

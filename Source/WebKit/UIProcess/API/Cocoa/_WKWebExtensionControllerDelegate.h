@@ -163,7 +163,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  If not implemented, the default behavior is to pass the messages to the app extension handler within the extension's bundle,
  if the extension was loaded from an app extension bundle; otherwise, no action is performed if not implemented.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller connectUsingMessagePort:(_WKWebExtensionMessagePort *)port forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError * _Nullable error))replyHandler NS_SWIFT_NAME(webExtensionController(_:connectUsingMessagePort:for:completionHandler:));
+- (void)webExtensionController:(_WKWebExtensionController *)controller connectUsingMessagePort:(_WKWebExtensionMessagePort *)port forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(webExtensionController(_:connectUsingMessagePort:for:completionHandler:));
 
 @end
 

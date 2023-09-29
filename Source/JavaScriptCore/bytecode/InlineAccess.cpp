@@ -446,7 +446,7 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
 
 void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    if (JITCode::isBaselineCode(codeBlock->jitType()))
+    if (JITCode::isBaselineCode(codeBlock->jitType()) && Options::useHandlerIC())
         rewireStubAsJumpInAccess(codeBlock, stubInfo, CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(codeBlock->vm(), stubInfo.accessType).code().template retagged<JITStubRoutinePtrTag>() });
     else
         rewireStubAsJumpInAccess(codeBlock, stubInfo, stubInfo.slowPathStartLocation);
@@ -454,7 +454,7 @@ void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubIn
 
 void InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    if (JITCode::isBaselineCode(codeBlock->jitType()))
+    if (JITCode::isBaselineCode(codeBlock->jitType()) && Options::useHandlerIC())
         rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(codeBlock->vm(), stubInfo.accessType).code().template retagged<JITStubRoutinePtrTag>() });
     else
         rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, stubInfo.slowPathStartLocation);

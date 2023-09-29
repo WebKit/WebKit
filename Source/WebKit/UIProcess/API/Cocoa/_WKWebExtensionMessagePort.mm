@@ -77,6 +77,9 @@ NSErrorDomain const _WKWebExtensionMessagePortErrorDomain = @"_WKWebExtensionMes
 {
     NSParameterAssert(message);
 
+    if (!completionHandler)
+        completionHandler = ^(BOOL, NSError *) { };
+
     _webExtensionMessagePort->sendMessage(message, [completionHandler = makeBlockPtr(completionHandler)] (WebKit::WebExtensionMessagePort::Error error) {
         if (error) {
             completionHandler(NO, toAPI(error.value()));

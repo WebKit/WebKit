@@ -1604,18 +1604,31 @@ void WebExtensionContext::setTestingMode(bool testingMode)
     m_testingMode = testingMode;
 }
 
+WKWebView *WebExtensionContext::relatedWebView()
+{
+    if (m_backgroundWebView)
+        return m_backgroundWebView.get();
+
+    return nil;
+}
+
 WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
 {
     ASSERT(isLoaded());
 
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+    WKWebViewConfiguration *configuration = [extensionController()->configuration().webViewConfiguration() copy];
+
+    // When using manifest v2 the web views need to use the same process.
+    if (extension().supportsManifestVersion(2))
+        configuration._relatedWebView = relatedWebView();
 
     // Use the weak property to avoid a reference cycle while an extension web view is being held by the context.
     configuration._weakWebExtensionController = extensionController()->wrapper();
+    configuration._webExtensionController = nil;
 
     configuration._processDisplayName = extension().webProcessDisplayName();
 
-    WKPreferences *preferences = configuration.preferences;
+    auto *preferences = configuration.preferences;
 #if PLATFORM(MAC)
     preferences._domTimersThrottlingEnabled = NO;
 #endif

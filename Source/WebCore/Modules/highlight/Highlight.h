@@ -27,6 +27,7 @@
 
 #include "ExceptionOr.h"
 #include "Position.h"
+#include "Range.h"
 #include "StaticRange.h"
 #include <wtf/RefCounted.h>
 
@@ -53,6 +54,8 @@ private:
     explicit HighlightRange(Ref<AbstractRange>&& range)
         : m_range(WTFMove(range))
     {
+        if (auto liveRange = dynamicDowncast<Range>(m_range))
+            liveRange->didAssociateWithHighlight();
     }
 
     Ref<AbstractRange> m_range;
@@ -63,6 +66,7 @@ private:
 class Highlight : public RefCounted<Highlight> {
 public:
     WEBCORE_EXPORT static Ref<Highlight> create(FixedVector<std::reference_wrapper<AbstractRange>>&&);
+    static void repaintRange(const AbstractRange&);
     void clearFromSetLike();
     bool addToSetLike(AbstractRange&);
     bool removeFromSetLike(const AbstractRange&);

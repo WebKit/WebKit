@@ -145,6 +145,15 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
     startPosition -= queryData->processedCharacters;
     endPosition -= queryData->processedCharacters;
 
+    // <startPosition, endPosition> is now a tuple of offsets relative to the current text box.
+    // Compute the offsets of the fragment in the same offset space.
+    unsigned fragmentStartInBox = fragment.characterOffset - queryData->textBox->start();
+    unsigned fragmentEndInBox = fragmentStartInBox + fragment.length;
+
+    // Check if the ranges intersect.
+    startPosition = std::max<unsigned>(startPosition, fragmentStartInBox);
+    endPosition = std::min<unsigned>(endPosition, fragmentEndInBox);
+
     if (startPosition >= endPosition)
         return false;
 

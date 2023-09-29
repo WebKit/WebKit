@@ -83,7 +83,10 @@ void JITInlineCacheGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, u
 void JITInlineCacheGenerator::generateBaselineDataICFastPath(JIT& jit, GPRReg stubInfoGPR)
 {
     m_start = jit.label();
-    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    if (Options::useHandlerIC())
+        jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    else
+        jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     m_done = jit.label();
 }
 
@@ -136,7 +139,10 @@ static void generateGetByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
     jit.loadProperty(baseJSR.payloadGPR(), scratch1GPR, resultJSR);
     auto done = jit.jump();
     doNotInlineAccess.link(&jit);
-    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    if (Options::useHandlerIC())
+        jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    else
+        jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     done.link(&jit);
 }
 
@@ -243,7 +249,10 @@ static void generatePutByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
     jit.storeProperty(valueJSR, baseJSR.payloadGPR(), scratch1GPR, scratch2GPR);
     auto done = jit.jump();
     doNotInlineAccess.link(&jit);
-    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    if (Options::useHandlerIC())
+        jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    else
+        jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     done.link(&jit);
 }
 
@@ -399,7 +408,10 @@ static void generateInByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg s
     jit.boxBoolean(true, resultJSR);
     auto finished = jit.jump();
     skipInlineAccess.link(&jit);
-    jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    if (Options::useHandlerIC())
+        jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    else
+        jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     finished.link(&jit);
 }
 

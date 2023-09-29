@@ -227,8 +227,6 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderTable"_s; }
 
-    bool isTable() const final { return true; }
-
     bool avoidsFloats() const final { return true; }
 
     void paint(PaintInfo&, const LayoutPoint&) final;

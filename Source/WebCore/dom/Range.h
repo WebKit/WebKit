@@ -42,6 +42,7 @@ struct SimpleRange;
 
 class Range final : public AbstractRange, public CanMakeWeakPtr<Range>, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Range);
+    WTF_MAKE_NONCOPYABLE(Range);
 public:
     WEBCORE_EXPORT static Ref<Range> create(Document&);
     WEBCORE_EXPORT ~Range();
@@ -53,8 +54,8 @@ public:
     bool collapsed() const final { return m_start == m_end; }
     WEBCORE_EXPORT Node* commonAncestorContainer() const;
 
-    void resetDidChangeHighlight() { m_didChangeHighlight = false; }
-    bool didChangeHighlight() const { return m_didChangeHighlight; }
+    void resetDidChangeForHighlight() { m_didChangeForHighlight = false; }
+    bool didChangeForHighlight() const { return m_didChangeForHighlight; }
 
     WEBCORE_EXPORT ExceptionOr<void> setStart(Ref<Node>&&, unsigned offset);
     WEBCORE_EXPORT ExceptionOr<void> setEnd(Ref<Node>&&, unsigned offset);
@@ -111,6 +112,12 @@ public:
     void didDisassociateFromSelection() { m_isAssociatedWithSelection = false; }
     void updateFromSelection(const SimpleRange&);
 
+    void didAssociateWithHighlight()
+    {
+        m_isAssociatedWithHighlight = true;
+        m_didChangeForHighlight = true;
+    }
+
     // For use by garbage collection. Returns nullptr for ranges not assocated with selection.
     LocalDOMWindow* window() const;
 
@@ -131,13 +138,15 @@ private:
 
     void updateDocument();
     void updateAssociatedSelection();
+    void updateAssociatedHighlight();
     ExceptionOr<RefPtr<DocumentFragment>> processContents(ActionType);
 
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;
     RangeBoundaryPoint m_end;
     bool m_isAssociatedWithSelection { false };
-    bool m_didChangeHighlight { false };
+    bool m_didChangeForHighlight { false };
+    bool m_isAssociatedWithHighlight { false };
 };
 
 WEBCORE_EXPORT SimpleRange makeSimpleRange(const Range&);

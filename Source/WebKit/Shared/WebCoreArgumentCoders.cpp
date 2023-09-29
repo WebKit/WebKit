@@ -133,11 +133,8 @@
 #include <WebCore/SearchFieldResultsPart.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/SerializedAttachmentData.h>
 #include <WebCore/SerializedPlatformDataCueValue.h>
 #include <WebCore/SerializedScriptValue.h>
-#include <WebCore/ServiceWorkerClientData.h>
-#include <WebCore/ServiceWorkerData.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SkewTransformOperation.h>
@@ -1003,96 +1000,6 @@ std::optional<RefPtr<WebCore::SerializedScriptValue>> ArgumentCoder<RefPtr<WebCo
 
     return { scriptValue };
 }
-
-#if ENABLE(SERVICE_WORKER)
-void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)
-{
-    bool isServiceWorkerData = std::holds_alternative<ServiceWorkerData>(data);
-    encoder << isServiceWorkerData;
-    if (isServiceWorkerData)
-        encoder << std::get<ServiceWorkerData>(data);
-    else
-        encoder << std::get<ServiceWorkerClientData>(data);
-}
-
-bool ArgumentCoder<ServiceWorkerOrClientData>::decode(Decoder& decoder, ServiceWorkerOrClientData& data)
-{
-    bool isServiceWorkerData;
-    if (!decoder.decode(isServiceWorkerData))
-        return false;
-    if (isServiceWorkerData) {
-        std::optional<ServiceWorkerData> workerData;
-        decoder >> workerData;
-        if (!workerData)
-            return false;
-
-        data = WTFMove(*workerData);
-    } else {
-        std::optional<ServiceWorkerClientData> clientData;
-        decoder >> clientData;
-        if (!clientData)
-            return false;
-
-        data = WTFMove(*clientData);
-    }
-    return true;
-}
-
-void ArgumentCoder<ServiceWorkerOrClientIdentifier>::encode(Encoder& encoder, const ServiceWorkerOrClientIdentifier& identifier)
-{
-    bool isServiceWorkerIdentifier = std::holds_alternative<ServiceWorkerIdentifier>(identifier);
-    encoder << isServiceWorkerIdentifier;
-    if (isServiceWorkerIdentifier)
-        encoder << std::get<ServiceWorkerIdentifier>(identifier);
-    else
-        encoder << std::get<ScriptExecutionContextIdentifier>(identifier);
-}
-
-bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, ServiceWorkerOrClientIdentifier& identifier)
-{
-    bool isServiceWorkerIdentifier;
-    if (!decoder.decode(isServiceWorkerIdentifier))
-        return false;
-    if (isServiceWorkerIdentifier) {
-        std::optional<ServiceWorkerIdentifier> workerIdentifier;
-        decoder >> workerIdentifier;
-        if (!workerIdentifier)
-            return false;
-
-        identifier = WTFMove(*workerIdentifier);
-    } else {
-        std::optional<ScriptExecutionContextIdentifier> clientIdentifier;
-        decoder >> clientIdentifier;
-        if (!clientIdentifier)
-            return false;
-
-        identifier = WTFMove(*clientIdentifier);
-    }
-    return true;
-}
-
-#endif
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-void ArgumentCoder<SerializedAttachmentData>::encode(IPC::Encoder& encoder, const WebCore::SerializedAttachmentData& data)
-{
-    encoder << data.identifier << data.mimeType << data.data;
-}
-
-std::optional<SerializedAttachmentData> ArgumentCoder<WebCore::SerializedAttachmentData>::decode(IPC::Decoder& decoder)
-{
-    auto identifier = decoder.decode<String>();
-    auto mimeType = decoder.decode<String>();
-    auto data = decoder.decode<Ref<SharedBuffer>>();
-
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-
-    return { { WTFMove(*identifier), WTFMove(*mimeType), WTFMove(*data) } };
-}
-
-#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(VIDEO)
 void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encode(Encoder& encoder, const SerializedPlatformDataCueValue& value)

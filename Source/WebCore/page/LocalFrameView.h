@@ -757,6 +757,8 @@ private:
     bool isVerticalDocument() const final;
     bool isFlippedDocument() const final;
 
+    void incrementVisuallyNonEmptyCharacterCountSlowCase(const String&);
+
     void reset();
     void init();
 
@@ -1081,6 +1083,14 @@ inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& s
         m_visuallyNonEmptyPixelCount = std::numeric_limits<decltype(m_visuallyNonEmptyPixelCount)>::max();
     else
         m_visuallyNonEmptyPixelCount = area;
+}
+
+inline void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText)
+{
+    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold && m_hasReachedSignificantRenderedTextThreshold)
+        return;
+
+    incrementVisuallyNonEmptyCharacterCountSlowCase(inlineText);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrameView&);

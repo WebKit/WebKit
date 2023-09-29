@@ -53,7 +53,9 @@ void UnifiedPDFPlugin::teardown()
 void UnifiedPDFPlugin::createPDFDocument()
 {
     auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(m_data.get()));
-    m_pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
+    auto pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
+
+    m_documentLayout.setPDFDocument(WTFMove(pdfDocument));
 }
 
 void UnifiedPDFPlugin::installPDFDocument()
@@ -63,38 +65,46 @@ void UnifiedPDFPlugin::installPDFDocument()
     if (m_hasBeenDestroyed)
         return;
 
-    if (!m_pdfDocument)
+    if (!m_documentLayout.hasPDFDocument())
         return;
 
     if (!m_view)
         return;
 
+    invalidateRect({ IntPoint(), size() });
 }
 
 void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& rect)
 {
-    ALWAYS_LOG_WITH_STREAM(stream << "UnifiedPDFPlugin::paint " << rect);
     ASSERT(!context.paintingDisabled());
 
     if (m_size.isEmpty())
         return;
 
-    auto imageBuffer = ImageBuffer::create(m_size, RenderingPurpose::Unspecified, 1.0, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(m_size, RenderingPurpose::Unspecified, context.scaleFactor().width(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return;
 
-    RetainPtr firstPage = CGPDFDocumentGetPage(m_pdfDocument.get(), 1);
-    if (!firstPage)
-        return;
+    auto& bufferContext = imageBuffer->context();
 
-    CGContextRef cgContext = imageBuffer->context().platformContext();
-    CGRect pageCropBox = CGPDFPageGetBoxRect(firstPage.get(), kCGPDFCropBox);
+    for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i) {
+        auto page = m_documentLayout.pageAtIndex(i);
+        if (!page)
+            continue;
 
-    CGRect clipRect = CGRectMake(0, 0, pageCropBox.size.width, pageCropBox.size.height);
-    CGContextAddRect(cgContext, clipRect);
-    CGContextClip(cgContext);
+        auto pageBounds = m_documentLayout.boundsForPageAtIndex(i);
 
-    CGContextDrawPDFPage(cgContext, firstPage.get());
+        auto stateSaver = GraphicsContextStateSaver(bufferContext);
+        bufferContext.clip(pageBounds);
+
+        bufferContext.fillRect(pageBounds, Color::white);
+
+        bufferContext.translate(pageBounds.x(), pageBounds.y());
+        bufferContext.translate(0, pageBounds.height());
+        bufferContext.scale({ 1, -1 });
+
+        CGContextDrawPDFPage(imageBuffer->context().platformContext(), page.get());
+    }
 
     context.drawImageBuffer(*imageBuffer, FloatPoint { });
 }

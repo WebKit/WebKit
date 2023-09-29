@@ -112,6 +112,21 @@ inline ProcessID AccessibilityObject::processID() const
     return presentingApplicationPID();
 }
 
+String AccessibilityObject::dbg() const
+{
+    String backingEntityDescription;
+    if (auto* renderer = this->renderer())
+        backingEntityDescription = makeString(", ", renderer->debugDescription());
+    else if (auto* node = this->node())
+        backingEntityDescription = makeString(", ", node->debugDescription());
+
+    return makeString(
+        "{role: ", accessibilityRoleToString(roleValue()),
+        ", ID ", objectID().loggingString(),
+        backingEntityDescription, "}"
+    );
+}
+
 void AccessibilityObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
 {
     // Menu close events need to notify the platform. No element is used in the notification because it's a destruction event.

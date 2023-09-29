@@ -153,6 +153,14 @@ void PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
     m_size = pluginSize;
 }
 
+void PDFPluginBase::invalidateRect(const IntRect& rect)
+{
+    if (!m_view)
+        return;
+
+    m_view->invalidateRect(rect);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)

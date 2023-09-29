@@ -284,6 +284,9 @@ public:
     void addInjectedContent(WebUserContentControllerProxy&);
     void removeInjectedContent(WebUserContentControllerProxy&);
 
+    WKWebView *relatedWebView();
+    WKWebViewConfiguration *webViewConfiguration();
+
     void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
 
     HashSet<Ref<WebProcessProxy>> processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
@@ -320,8 +323,6 @@ private:
 
     PermissionsMap& removeExpired(PermissionsMap&, WallTime& nextExpirationDate, NSString *notificationName = nil);
     PermissionMatchPatternsMap& removeExpired(PermissionMatchPatternsMap&, WallTime& nextExpirationDate, NSString *notificationName = nil);
-
-    WKWebViewConfiguration *webViewConfiguration();
 
     void populateWindowsAndTabs();
 

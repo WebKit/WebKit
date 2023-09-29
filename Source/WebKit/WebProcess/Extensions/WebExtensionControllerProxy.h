@@ -53,7 +53,7 @@ public:
     ~WebExtensionControllerProxy();
 
     using WebExtensionContextProxySet = HashSet<Ref<WebExtensionContextProxy>>;
-    using WebExtensionContextProxyBaseURLMap = HashMap<URL, Ref<WebExtensionContextProxy>>;
+    using WebExtensionContextProxyBaseURLMap = HashMap<String, Ref<WebExtensionContextProxy>>;
 
     WebExtensionControllerIdentifier identifier() { return m_identifier; }
 

@@ -664,10 +664,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_pageGroup->addPage(*this);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (m_webExtensionController)
-        m_webExtensionController->addPage(*this);
-    if (m_weakWebExtensionController)
-        m_weakWebExtensionController->addPage(*this);
+    if (auto *webExtensionController = this->webExtensionController())
+        webExtensionController->addPage(*this);
 #endif
 
     m_inspector = WebInspectorUIProxy::create(*this);
@@ -789,6 +787,13 @@ bool WebPageProxy::modelElementEnabled()
 {
     return preferences().modelElementEnabled();
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+WebExtensionController* WebPageProxy::webExtensionController()
+{
+    return m_webExtensionController.get() ?: m_weakWebExtensionController.get();
+}
+#endif
 
 // FIXME: Should return a const PageClient& and add a separate non-const
 // version of this function, but several PageClient methods will need to become

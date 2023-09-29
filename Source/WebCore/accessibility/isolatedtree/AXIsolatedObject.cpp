@@ -68,6 +68,14 @@ AXIsolatedObject::~AXIsolatedObject()
     ASSERT(!wrapper());
 }
 
+String AXIsolatedObject::dbg() const
+{
+    return makeString(
+        "{role: ", accessibilityRoleToString(roleValue()),
+        ", ID ", objectID().loggingString(), "}"
+    );
+}
+
 void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axObject)
 {
     auto& object = axObject.get();

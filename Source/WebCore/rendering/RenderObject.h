@@ -356,12 +356,12 @@ public:
     bool isRubyText() const { return type() == Type::RubyText; }
 
     bool isSlider() const { return type() == Type::Slider; }
-    virtual bool isTable() const { return false; }
+    bool isTable() const;
     bool isTableCell() const { return type() == Type::TableCell; }
     bool isRenderTableCol() const { return type() == Type::TableCol; }
     bool isTableCaption() const { return type() == Type::TableCaption; }
     bool isTableSection() const { return type() == Type::TableSection; }
-    virtual bool isTextControl() const { return false; }
+    inline bool isRenderTextControl() const; // Defined in RenderElement.h.
     bool isTextArea() const { return type() == Type::TextControlMultiLine; }
     virtual bool isTextField() const { return false; }
     bool isSearchField() const { return type() == Type::SearchField; }
@@ -862,8 +862,8 @@ public:
     // Virtual function helpers for the deprecated Flexible Box Layout (display: -webkit-box).
     virtual bool isDeprecatedFlexibleBox() const { return false; }
     // Virtual function helper for the new FlexibleBox Layout (display: -webkit-flex).
-    virtual bool isFlexibleBox() const { return false; }
-    bool isFlexibleBoxIncludingDeprecated() const { return isFlexibleBox() || isDeprecatedFlexibleBox(); }
+    inline bool isRenderFlexibleBox() const; // Defined in RenderElement.h.
+    inline bool isFlexibleBoxIncludingDeprecated() const; // Defined in RenderElement.h.
 
     bool isCombineText() const { return type() == Type::CombineText; }
 
@@ -1380,6 +1380,20 @@ inline bool RenderObject::isRenderMathMLRow() const
     return false;
 }
 #endif
+
+inline bool RenderObject::isTable() const
+{
+    switch (type()) {
+    case Type::Table:
+#if ENABLE(MATHML)
+    case Type::MathMLTable:
+#endif
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
 
