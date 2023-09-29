@@ -833,6 +833,9 @@ void TypeChecker::visit(AST::CallExpression& call)
 
         auto* result = chooseOverload("initializer", call.span(), targetName, call.arguments(), typeArguments);
         if (result) {
+            // FIXME: this will go away once we track used intrinsics properly
+            if (targetName == "workgroupUniformLoad"_s)
+                m_shaderModule.setUsesWorkgroupUniformLoad();
             target.m_inferredType = result;
             return;
         }
