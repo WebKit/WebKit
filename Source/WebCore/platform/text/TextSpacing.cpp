@@ -24,24 +24,51 @@
  */
 
 #include "config.h"
-#include "CoreTextCompositionEngine.h"
-
-#include "CoreTextChineseCompositionEngine.h"
-#include "TextFlags.h"
 #include "TextSpacing.h"
+
+#if USE(CORE_TEXT)
+#include "CoreTextCompositionEngine.h"
+#endif
+#include "GlyphBuffer.h"
+#include "TextRun.h"
+#include <wtf/Forward.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-CharacterSpacingType characterSpacing(TextSpacingSupportedLanguage language, bool isVertical, UChar32 beforeCharacter, UChar32 afterCharacter)
+TextSpacingWidth TextSpacingEngine::processTextSpacingAndUpdateState(unsigned glyphBufferIndex, const TextSpacingWidth& width)
 {
-    // FIXME: implement CJK composition engine adjusting spacing so we can calculate the spacing to be added between characters rdar://105189659
-    UNUSED_PARAM(language);
-    UNUSED_PARAM(isVertical);
-    UNUSED_PARAM(beforeCharacter);
-    UNUSED_PARAM(afterCharacter);
-    return CharacterSpacingType::_______;
+    if (!m_state)
+        return { };
+    // Left width is to be added to the left of next glyph on next iteration, so we save it on text-spacing engine state. The right width is to be added to the current glyph on the current iteration. We should also add the left width of the last iteration to the current glyph.
+    auto leftWidth = m_state->leftoverWidth;
+    auto rightWidth = width.rightWidth;
+
+    // Do we need to differentiate between LTR and RTL if this is for CJK only?
+    if (leftWidth)
+        m_glyphBuffer.expandAdvanceToLeft(glyphBufferIndex, leftWidth);
+    if (rightWidth)
+        m_glyphBuffer.expandAdvance(glyphBufferIndex, rightWidth);
+
+    m_state->leftoverWidth = width.leftWidth;
+    return { leftWidth, rightWidth };
 }
 
+TextSpacingWidth TextSpacingEngine::adjustTextSpacing(unsigned currentCharacterIndex, unsigned glyphIndex)
+{
+    if (!m_state)
+        return { };
+    // That's how calculateAdditionalWidth currently maps back to character. But will that work for surrogated pairs?
+    UChar character = m_run[currentCharacterIndex];
+    UChar nextCharacter = currentCharacterIndex + 1 < m_run.length() ? m_run[currentCharacterIndex + 1] : m_state->firstCharacterOfNextRun;
+    // FIXME: get script language
+    auto language = TextSpacingSupportedLanguage::Japanese;
+    auto width = calculateCJKAdjustingSpacing(language, character, nextCharacter);
+    return processTextSpacingAndUpdateState(glyphIndex, width);
+}
+
+#if !USE(CORE_TEXT)
+// dummy implementation for other platforms
 TextSpacingWidth calculateCJKAdjustingSpacing(TextSpacingSupportedLanguage language, UChar32 currentCharacter, UChar32 nextCharacter)
 {
     // FIXME: implement CJK composition engine adjusting spacing so we can calculate the spacing to be added between characters rdar://105189659
@@ -50,5 +77,5 @@ TextSpacingWidth calculateCJKAdjustingSpacing(TextSpacingSupportedLanguage langu
     UNUSED_PARAM(nextCharacter);
     return { };
 }
-
+#endif
 } // namespace WebCore

@@ -36,6 +36,7 @@ class FontCascade;
 class GraphicsContext;
 class GlyphBuffer;
 class Font;
+struct TextSpacingEngineState;
 
 struct GlyphData;
 
@@ -43,13 +44,14 @@ class TextRun {
     WTF_MAKE_FAST_ALLOCATED;
     friend void add(Hasher&, const TextRun&);
 public:
-    explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+    explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true, TextSpacingEngineState* textSpacingEngineState = nullptr)
         : m_text(text)
         , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
         , m_expansion(expansion)
         , m_expansionBehavior(expansionBehavior)
+        , m_textSpacingEngineState(textSpacingEngineState)
         , m_allowTabs(false)
         , m_direction(static_cast<unsigned>(direction))
         , m_directionalOverride(directionalOverride)
@@ -59,8 +61,8 @@ public:
         ASSERT(!m_text.isNull());
     }
 
-    explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
-        : TextRun(stringView.toStringWithoutCopying(), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath)
+    explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true, TextSpacingEngineState* textSpacingEngineState = nullptr)
+        : TextRun(stringView.toStringWithoutCopying(), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath, textSpacingEngineState)
     {
     }
 
@@ -71,6 +73,7 @@ public:
         , m_horizontalGlyphStretch(0)
         , m_expansion(0)
         , m_expansionBehavior(ExpansionBehavior::defaultBehavior())
+        , m_textSpacingEngineState(nullptr)
         , m_allowTabs(0)
         , m_direction(0)
         , m_directionalOverride(0)
@@ -86,6 +89,7 @@ public:
         , m_horizontalGlyphStretch(0)
         , m_expansion(0)
         , m_expansionBehavior(ExpansionBehavior::defaultBehavior())
+        , m_textSpacingEngineState(nullptr)
         , m_allowTabs(0)
         , m_direction(0)
         , m_directionalOverride(0)
@@ -170,6 +174,8 @@ private:
 
     float m_expansion;
     ExpansionBehavior m_expansionBehavior;
+    TextSpacingEngineState* m_textSpacingEngineState;
+
     unsigned m_allowTabs : 1;
     unsigned m_direction : 1;
     unsigned m_directionalOverride : 1; // Was this direction set by an override character.

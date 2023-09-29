@@ -35,6 +35,7 @@ struct ExpectedTextRunSize {
     float float2;
     float float3;
     ExpansionBehavior expansionBehavior;
+    void* textSpacingEngineState;
     unsigned bitfields : 5;
 };
 

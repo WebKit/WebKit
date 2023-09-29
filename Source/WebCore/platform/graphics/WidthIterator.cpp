@@ -36,11 +36,12 @@ namespace WebCore {
 
 using namespace WTF::Unicode;
 
-WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, WeakHashSet<const Font>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
+WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, WeakHashSet<const Font>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis, TextSpacingEngineState* textSpacingEngineState)
     : m_font(font)
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
     , m_expansion(run.expansion())
+    , m_textSpacingEngineState(textSpacingEngineState)
     , m_direction(m_run.direction())
     , m_isAfterExpansion(run.expansionBehavior().left == ExpansionBehavior::Behavior::Forbid)
     , m_accountForGlyphBounds(accountForGlyphBounds)
@@ -183,6 +184,11 @@ void WidthIterator::applyInitialAdvance(GlyphBuffer& glyphBuffer, GlyphBufferAdv
 bool WidthIterator::hasExtraSpacing() const
 {
     return (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
+}
+
+bool WidthIterator::hasTextSpacingAuto() const
+{
+    return m_font.textAutospace().isAuto() || m_font.textSpacingTrim().isAuto();
 }
 
 static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset index)
@@ -590,6 +596,10 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
             glyphIndexRange = {{i, i}};
     }
 
+#if USE(CORE_TEXT)
+    TextSpacingEngine textSpacingEngine(m_textSpacingEngineState, glyphBuffer, m_run);
+#endif
+
     // SVG can stretch advances
     if (m_run.horizontalGlyphStretch() != 1) {
         for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); ++i) {
@@ -611,6 +621,10 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
         if (!glyphIndexRange)
             continue;
 
+#if USE(CORE_TEXT)
+        auto textSpacingWidth = textSpacingEngine.adjustTextSpacing(i, glyphIndexRange->leadingGlyphIndex);
+        m_runWidthSoFar += textSpacingWidth.leftWidth + textSpacingWidth.rightWidth;
+#endif
         auto width = calculateAdditionalWidth(glyphBuffer, i, glyphIndexRange->leadingGlyphIndex, glyphIndexRange->trailingGlyphIndex, position);
         applyAdditionalWidth(glyphBuffer, glyphIndexRange.value(), width.left, width.right, width.leftExpansion, width.rightExpansion);
 
@@ -807,8 +821,12 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
         m_runWidthSoFar += m_leftoverJustificationWidth;
         m_leftoverJustificationWidth = 0;
     }
-
-    if (hasExtraSpacing() || m_containsTabs || m_run.horizontalGlyphStretch() != 1)
+#if USE(CORE_TEXT)
+    bool shouldProcessTextSpacingAuto = hasTextSpacingAuto();
+#else
+    bool shouldProcessTextSpacingAuto = false;
+#endif
+    if (hasExtraSpacing() || m_containsTabs || m_run.horizontalGlyphStretch() != 1 || shouldProcessTextSpacingAuto)
         applyExtraSpacingAfterShaping(glyphBuffer, characterStartIndex, glyphBufferStartIndex, offset, startingRunWidth);
 
     applyCSSVisibilityRules(glyphBuffer, glyphBufferStartIndex);

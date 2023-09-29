@@ -556,7 +556,7 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const Rende
     ASSERT(textContent.is8Bit() || FontCascade::characterRangeCodePath(textContent.characters16(), textContent.length()) == FontCascade::CodePath::Simple);
     // FIXME: All these checks should be more fine-grained at the inline item level.
     auto& fontCascade = style.fontCascade();
-    if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
+    if (fontCascade.wordSpacing() || fontCascade.letterSpacing() || !fontCascade.textAutospace().isNoAutospace() || !fontCascade.textSpacingTrim().isSpaceAll())
         return false;
 
     // Additional check on the font codepath.

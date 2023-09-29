@@ -39,13 +39,14 @@ struct GlyphIndexRange;
 struct OriginalAdvancesForCharacterTreatedAsSpace;
 struct AdvanceInternalState;
 struct SmallCapsState;
+struct TextSpacingEngineState;
 
 using CharactersTreatedAsSpace = Vector<OriginalAdvancesForCharacterTreatedAsSpace, 64>;
 
 struct WidthIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WidthIterator(const FontCascade&, const TextRun&, WeakHashSet<const Font>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
+    WidthIterator(const FontCascade&, const TextRun&, WeakHashSet<const Font>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false, TextSpacingEngineState* = nullptr);
 
     void advance(unsigned to, GlyphBuffer&);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
@@ -79,6 +80,7 @@ private:
     void applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
 
     bool hasExtraSpacing() const;
+    bool hasTextSpacingAuto() const;
     void applyExtraSpacingAfterShaping(GlyphBuffer&, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth);
     void applyCSSVisibilityRules(GlyphBuffer&, unsigned glyphBufferStartIndex);
 
@@ -105,6 +107,7 @@ private:
     float m_leftoverJustificationWidth { 0 };
     float m_runWidthSoFar { 0 };
     float m_expansion { 0 };
+    TextSpacingEngineState* m_textSpacingEngineState { nullptr };
     float m_expansionPerOpportunity { 0 };
     float m_maxGlyphBoundingBoxY { std::numeric_limits<float>::lowest() };
     float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
