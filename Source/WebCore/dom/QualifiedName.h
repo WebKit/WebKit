@@ -132,7 +132,8 @@ inline void add(Hasher& hasher, const QualifiedName& name)
 extern LazyNeverDestroyed<const QualifiedName> anyName;
 inline const QualifiedName& anyQName() { return anyName; }
 
-const QualifiedName& nullQName();
+extern LazyNeverDestroyed<const QualifiedName> nullName;
+inline const QualifiedName& nullQName() { return nullName; }
 
 inline bool operator==(const AtomString& a, const QualifiedName& q) { return a == q.localName(); }
 inline bool operator==(const QualifiedName& q, const AtomString& a) { return a == q.localName(); }
