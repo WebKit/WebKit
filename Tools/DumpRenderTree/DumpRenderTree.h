@@ -47,6 +47,7 @@ std::wstring urlSuitableForTestResult(const std::wstring& url);
 class TestRunner;
 
 extern volatile bool done;
+extern bool gUsingServerMode;
 
 // FIXME: This is a bad abstraction.  We should insted pass this to other controller objects which need access to it.
 extern RefPtr<TestRunner> gTestRunner;

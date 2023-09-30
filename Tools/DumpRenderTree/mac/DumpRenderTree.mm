@@ -84,6 +84,7 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebInspector.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebPreferences.h>
@@ -193,6 +194,7 @@ static void runTest(const std::string& testURL);
 // Note that the call to notifyDone and the end of the load can happen in either order.
 
 volatile bool done;
+bool gUsingServerMode;
 
 RetainPtr<NavigationController> gNavigationController;
 RefPtr<TestRunner> gTestRunner;
@@ -1026,19 +1028,23 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
     int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, nullptr)) != -1) {
         switch (option) {
-            case '?':   // unknown or ambiguous option
-            case ':':   // missing argument
-                exitProcess(1);
-                break;
-            case 'a': // "allowed-host"
-                allowedHosts.insert(optarg);
-                break;
-            case 'l': // "localhost-alias"
-                localhostAliases.insert(optarg);
-                allowedHosts.insert(optarg); // localhost is implicitly allowed and so should aliases to it.
-                break;
-            case 'w': // "webcore-logging"
-                webCoreLogging = optarg;
+        case '?': // unknown or ambiguous option
+            fprintf(stderr, "Unknown or ambiguous option for '%s'\n", argv[optind]);
+            exitProcess(1);
+            break;
+        case ':': // missing argument
+            fprintf(stderr, "Missing argument for '%s'\n", argv[optind]);
+            exitProcess(1);
+            break;
+        case 'a': // "allowed-host"
+            allowedHosts.insert(optarg);
+            break;
+        case 'l': // "localhost-alias"
+            localhostAliases.insert(optarg);
+            allowedHosts.insert(optarg); // localhost is implicitly allowed and so should aliases to it.
+            break;
+        case 'w': // "webcore-logging"
+            webCoreLogging = optarg;
         }
     }
 }
@@ -1210,7 +1216,8 @@ void dumpRenderTree(int argc, const char *argv[])
     if (threaded)
         startJavaScriptThreads();
 
-    if (useLongRunningServerMode(argc, argv)) {
+    gUsingServerMode = useLongRunningServerMode(argc, argv);
+    if (gUsingServerMode) {
         printSeparators = YES;
         runTestingServerLoop();
     } else {
@@ -1915,6 +1922,19 @@ static void runTest(const std::string& inputLine)
         fprintf(stderr, "Failed to parse \"%s\" as a URL\n", pathOrURL.c_str());
         return;
     }
+
+    // For files, don't wait until the load fails, check that the file actually exists and can be read
+    // so we can emit a cleaner error message than we can otherwise from the resource loader delegate.
+    if (!gUsingServerMode) {
+        NSError *error = nil;
+        if (url.fileURL && ![url checkResourceIsReachableAndReturnError:&error]) {
+            fprintf(stderr, "Failed: %s\n", error.localizedDescription.UTF8String);
+            return;
+        }
+
+        resourceLoadDelegate().get().mainResourceURL = [url _webkit_canonicalize_with_wtf];
+    }
+
     if (!testPath)
         testPath = [url absoluteString];
 
