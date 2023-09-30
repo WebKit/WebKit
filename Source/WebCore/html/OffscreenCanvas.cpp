@@ -34,6 +34,8 @@
 #include "Chrome.h"
 #include "Document.h"
 #include "EventDispatcher.h"
+#include "GPU.h"
+#include "GPUCanvasContext.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapRenderingContext.h"
@@ -46,6 +48,7 @@
 #include "PlaceholderRenderingContext.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerNavigator.h"
 #include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(WEBGL)
@@ -232,6 +235,16 @@ void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGL
 
 #endif // ENABLE(WEBGL)
 
+GPUCanvasContext* OffscreenCanvas::createContextWebGPU(RenderingContextType type, GPU* gpu)
+{
+    ASSERT_UNUSED(type, type == RenderingContextType::Webgpu);
+    ASSERT(!m_context);
+
+    m_context = GPUCanvasContext::create(*this, *gpu);
+
+    return static_cast<GPUCanvasContext*>(m_context.get());
+}
+
 ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_detached)
@@ -269,6 +282,30 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             return { { std::nullopt } };
 
         return { { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*m_context) } } };
+    } else if (contextType == RenderingContextType::Webgpu) {
+        if (m_context) {
+            if (is<GPUCanvasContext>(*m_context))
+                return { { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*m_context) } } };
+
+            return { { std::nullopt } };
+        }
+
+        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+
+        auto scriptExecutionContext = this->scriptExecutionContext();
+        if (!scriptExecutionContext)
+            return { { std::nullopt } };
+
+        if (is<WorkerGlobalScope>(*scriptExecutionContext)) {
+            auto gpu = downcast<WorkerGlobalScope>(scriptExecutionContext)->navigator().gpu();
+            createContextWebGPU(contextType, gpu);
+        }
+
+        if (!m_context)
+            return { { std::nullopt } };
+
+        return { { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*m_context) } } };
     }
 #if ENABLE(WEBGL)
     else {

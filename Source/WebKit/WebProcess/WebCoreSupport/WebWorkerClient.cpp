@@ -27,8 +27,10 @@
 #include "WebWorkerClient.h"
 
 #include "ImageBufferShareableBitmapBackend.h"
+#include "RemoteGPUProxy.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
@@ -47,7 +49,8 @@ using namespace WebCore;
 WebWorkerClient::WebWorkerClient(WebPage* page, SerialFunctionDispatcher& dispatcher)
     : m_dispatcher(dispatcher)
 #if ENABLE(GPU_PROCESS)
-    , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
+    , m_gpuProcessConnection(WebProcess::singleton().ensureGPUProcessConnection())
+    , m_connection(m_gpuProcessConnection.connection())
 #if ENABLE(VIDEO)
     , m_videoFrameObjectHeapProxy(WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy())
 #endif
@@ -63,12 +66,15 @@ WebWorkerClient::WebWorkerClient(WebPage* page, SerialFunctionDispatcher& dispat
 }
 
 #if ENABLE(GPU_PROCESS)
-WebWorkerClient::WebWorkerClient(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, RemoteRenderingBackendCreationParameters& creationParameters, WebCore::PlatformDisplayID& displayID
+WebWorkerClient::WebWorkerClient(GPUProcessConnection& gpuProcessConnection, IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, RemoteRenderingBackendCreationParameters& creationParameters, WebCore::PlatformDisplayID& displayID
 #if ENABLE(VIDEO)
     , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
 #endif
-    )
+)
     : m_dispatcher(dispatcher)
+#if ENABLE(GPU_PROCESS)
+    , m_gpuProcessConnection(gpuProcessConnection)
+#endif
     , m_connection(connection)
     , m_creationParameters(creationParameters)
 #if ENABLE(VIDEO)
@@ -97,7 +103,7 @@ std::unique_ptr<WorkerClient> WebWorkerClient::clone(SerialFunctionDispatcher& d
 {
     assertIsCurrent(m_dispatcher);
 #if ENABLE(GPU_PROCESS)
-    return makeUnique<WebWorkerClient>(m_connection, dispatcher, m_creationParameters, m_displayID
+    return makeUnique<WebWorkerClient>(m_gpuProcessConnection, m_connection, dispatcher, m_creationParameters, m_displayID
 #if ENABLE(VIDEO)
         , m_videoFrameObjectHeapProxy.copyRef()
 #endif
@@ -143,10 +149,21 @@ RefPtr<GraphicsContextGL> WebWorkerClient::createGraphicsContextGL(const Graphic
 #if ENABLE(VIDEO)
         return RemoteGraphicsContextGLProxy::create(m_connection, attributes, ensureRenderingBackend(), m_videoFrameObjectHeapProxy.copyRef());
 #else
-        return RemoteGraphicsContextGLProxy::create(m_connection, attributes, ensureRenderingBackend());
+    return RemoteGraphicsContextGLProxy::create(m_connection, attributes, ensureRenderingBackend());
 #endif
 #endif
     return WebCore::createWebProcessGraphicsContextGL(attributes, &m_dispatcher);
+}
+#endif
+
+#if HAVE(WEBGPU_IMPLEMENTATION)
+RefPtr<WebCore::WebGPU::GPU> WebWorkerClient::createGPUForWebGPU() const
+{
+#if ENABLE(GPU_PROCESS)
+    return RemoteGPUProxy::create(m_gpuProcessConnection, WebGPU::DowncastConvertToBackingContext::create(), WebGPUIdentifier::generate(), ensureRenderingBackend().ensureBackendCreated());
+#else
+    return nullptr;
+#endif
 }
 #endif
 

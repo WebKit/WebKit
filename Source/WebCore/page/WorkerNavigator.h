@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class GPU;
+
 class WorkerNavigator final : public NavigatorBase, public Supplementable<WorkerNavigator> {
 public:
     static Ref<WorkerNavigator> create(ScriptExecutionContext& context, const String& userAgent, bool isOnline) { return adoptRef(*new WorkerNavigator(context, userAgent, isOnline)); }
@@ -52,6 +54,9 @@ private:
 
     String m_userAgent;
     bool m_isOnline;
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    RefPtr<GPU> m_gpuForWebGPU;
+#endif
 };
 
 } // namespace WebCore

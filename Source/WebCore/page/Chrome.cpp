@@ -565,11 +565,12 @@ RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextG
     return m_client->createGraphicsContextGL(attributes);
 }
 #endif
-
+#if HAVE(WEBGPU_IMPLEMENTATION)
 RefPtr<WebGPU::GPU> Chrome::createGPUForWebGPU() const
 {
     return m_client->createGPUForWebGPU();
 }
+#endif
 
 RefPtr<ShapeDetection::BarcodeDetector> Chrome::createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions) const
 {
