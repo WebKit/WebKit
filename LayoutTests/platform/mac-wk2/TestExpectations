@@ -1691,8 +1691,6 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Monterey+ x86_64 ] css3/blending/background-blend-mode-body-image.html [ ImageOnlyFailure ]
 [ BigSur Monterey ] fast/images/animated-heics-draw.html [ Skip ]
 [ Ventura+ ] fast/images/animated-heics-draw.html [ Pass Timeout ]
-[ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
-[ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Failure ]
 [ Ventura+ ]  http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]
 [ Monterey+ ] http/tests/media/video-webm-stall.html  [ Failure ]
 [ Monterey+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
