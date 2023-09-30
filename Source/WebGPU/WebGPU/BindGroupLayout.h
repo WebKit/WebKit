@@ -54,7 +54,11 @@ public:
         WGPUShaderStageFlags visibility;
         using BindingLayout = std::variant<WGPUBufferBindingLayout, WGPUSamplerBindingLayout, WGPUTextureBindingLayout, WGPUStorageTextureBindingLayout, WGPUExternalTextureBindingLayout>;
         BindingLayout bindingLayout;
+        std::optional<uint32_t> vertexDynamicOffset;
+        std::optional<uint32_t> fragmentDynamicOffset;
+        std::optional<uint32_t> computeDynamicOffset;
     };
+    using EntriesContainer = HashMap<uint32_t, Entry, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
     using BindingAccess = MTLArgumentAccess;
@@ -70,9 +74,9 @@ public:
     using StageMapValue = BindingAccess;
     using StageMapTable = HashMap<uint64_t, StageMapValue, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
-    static Ref<BindGroupLayout> create(StageMapTable&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& entries)
+    static Ref<BindGroupLayout> create(StageMapTable&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, EntriesContainer&& entries, size_t sizeOfVertexDynamicOffsets, size_t sizeOfFragmentDynamicOffsets, size_t sizeOfComputeDynamicOffsets)
     {
-        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable), vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, WTFMove(entries)));
+        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable), vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, WTFMove(entries), sizeOfVertexDynamicOffsets, sizeOfFragmentDynamicOffsets, sizeOfComputeDynamicOffsets));
     }
     static Ref<BindGroupLayout> createInvalid(Device&)
     {
@@ -99,10 +103,13 @@ public:
     static bool isPresent(const WGPUStorageTextureBindingLayout&);
     static bool isPresent(const WGPUExternalTextureBindingLayout&);
 
-    const Vector<Entry>& entries() const { return m_bindGroupLayoutEntries; }
+    const EntriesContainer& entries() const { return m_bindGroupLayoutEntries; }
+    uint32_t sizeOfVertexDynamicOffsets() const;
+    uint32_t sizeOfFragmentDynamicOffsets() const;
+    uint32_t sizeOfComputeDynamicOffsets() const;
 
 private:
-    BindGroupLayout(StageMapTable&&, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, Vector<Entry>&&);
+    BindGroupLayout(StageMapTable&&, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, EntriesContainer&&, size_t sizeOfVertexDynamicOffsets, size_t sizeOfFragmentDynamicOffsets, size_t sizeOfComputeDynamicOffsets);
     explicit BindGroupLayout();
 
     const StageMapTable m_indicesForBinding;
@@ -111,8 +118,11 @@ private:
     const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
 
-    const Vector<Entry> m_bindGroupLayoutEntries;
+    const EntriesContainer m_bindGroupLayoutEntries;
     const bool m_valid { true };
+    const size_t m_sizeOfVertexDynamicOffsets { 0 };
+    const size_t m_sizeOfFragmentDynamicOffsets { 0 };
+    const size_t m_sizeOfComputeDynamicOffsets { 0 };
 };
 
 } // namespace WebGPU

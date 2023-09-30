@@ -57,7 +57,6 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     } else
         descriptor.dataType = MTLDataTypePointer;
 
-    // FIXME: Handle hasDynamicOffset.
     // FIXME: Handle minBindingSize.
     switch (bufferType) {
     case WGPUBufferBindingType_Uniform:
@@ -170,8 +169,8 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     for (uint32_t i = 0; i < stageCount; ++i)
         arguments[i] = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
 
-    Vector<BindGroupLayout::Entry> bindGroupLayoutEntries;
-    bindGroupLayoutEntries.reserveInitialCapacity(descriptor.entryCount);
+    BindGroupLayout::EntriesContainer bindGroupLayoutEntries;
+    size_t sizeOfDynamicOffsets[stageCount] = { 0, 0, 0 };
     for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
         const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
         if (entry.nextInChain) {
@@ -182,7 +181,6 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         }
 
         MTLArgumentDescriptor *descriptor = nil;
-
         BindGroupLayout::Entry::BindingLayout bindingLayout;
         auto processBindingLayout = [&](const auto& type) {
             if (!BindGroupLayout::isPresent(type))
@@ -214,17 +212,25 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         if (!descriptor)
             return BindGroupLayout::createInvalid(*this);
 
+        std::optional<uint32_t> dynamicOffsets[stageCount] = { std::nullopt, std::nullopt, std::nullopt };
         for (uint32_t stage = 0; stage < stageCount; ++stage) {
             if (containsStage(entry.visibility, stage)) {
                 indicesForBinding.add(makeKey(entry.binding, stage), descriptor.access);
                 addDescriptor(arguments[stage], descriptor, entry.binding);
+                if (entry.buffer.hasDynamicOffset) {
+                    dynamicOffsets[stage] = sizeOfDynamicOffsets[stage];
+                    sizeOfDynamicOffsets[stage] += sizeof(uint32_t);
+                }
             }
         }
 
-        bindGroupLayoutEntries.uncheckedAppend({
+        bindGroupLayoutEntries.add(entry.binding, BindGroupLayout::Entry {
             entry.binding,
             entry.visibility,
             WTFMove(bindingLayout),
+            WTFMove(dynamicOffsets[0]),
+            WTFMove(dynamicOffsets[1]),
+            WTFMove(dynamicOffsets[2])
         });
     }
 
@@ -245,15 +251,18 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             return BindGroupLayout::createInvalid(*this);
     }
 
-    return BindGroupLayout::create(WTFMove(indicesForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries));
+    return BindGroupLayout::create(WTFMove(indicesForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries), sizeOfDynamicOffsets[0], sizeOfDynamicOffsets[1], sizeOfDynamicOffsets[2]);
 }
 
-BindGroupLayout::BindGroupLayout(StageMapTable&& indicesForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& bindGroupLayoutEntries)
+BindGroupLayout::BindGroupLayout(StageMapTable&& indicesForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, BindGroupLayout::EntriesContainer&& bindGroupLayoutEntries, size_t sizeOfVertexDynamicOffsets, size_t sizeOfFragmentDynamicOffsets, size_t sizeOfComputeDynamicOffsets)
     : m_indicesForBinding(WTFMove(indicesForBinding))
     , m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
     , m_computeArgumentEncoder(computeArgumentEncoder)
     , m_bindGroupLayoutEntries(WTFMove(bindGroupLayoutEntries))
+    , m_sizeOfVertexDynamicOffsets(sizeOfVertexDynamicOffsets)
+    , m_sizeOfFragmentDynamicOffsets(sizeOfFragmentDynamicOffsets)
+    , m_sizeOfComputeDynamicOffsets(sizeOfComputeDynamicOffsets)
 {
 }
 
@@ -291,6 +300,21 @@ std::optional<BindGroupLayout::StageMapValue> BindGroupLayout::bindingAccessForB
         return std::nullopt;
 
     return it->value;
+}
+
+uint32_t BindGroupLayout::sizeOfVertexDynamicOffsets() const
+{
+    return m_sizeOfVertexDynamicOffsets;
+}
+
+uint32_t BindGroupLayout::sizeOfFragmentDynamicOffsets() const
+{
+    return m_sizeOfFragmentDynamicOffsets;
+}
+
+uint32_t BindGroupLayout::sizeOfComputeDynamicOffsets() const
+{
+    return m_sizeOfComputeDynamicOffsets;
 }
 
 } // namespace WebGPU

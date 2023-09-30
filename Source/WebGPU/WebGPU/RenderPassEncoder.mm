@@ -85,10 +85,46 @@ void RenderPassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, u
     UNUSED_PARAM(queryIndex);
 }
 
+void RenderPassEncoder::executePreDrawCommands()
+{
+    if (!m_pipeline)
+        return;
+
+    for (auto& kvp : m_bindGroupDynamicOffsets) {
+        auto& pipelineLayout = m_pipeline->pipelineLayout();
+        auto bindGroupIndex = kvp.key;
+
+        auto* pvertexOffsets = pipelineLayout.vertexOffsets(bindGroupIndex, kvp.value);
+        if (pvertexOffsets && pvertexOffsets->size()) {
+            auto& vertexOffsets = *pvertexOffsets;
+            auto startIndex = pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex);
+            RELEASE_ASSERT(vertexOffsets.size() <= m_vertexDynamicOffsets.size() + startIndex);
+            memcpy(&m_vertexDynamicOffsets[startIndex], &vertexOffsets[0], sizeof(vertexOffsets[0]) * vertexOffsets.size());
+        }
+
+        auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
+        if (pfragmentOffsets && pfragmentOffsets->size()) {
+            auto& fragmentOffsets = *pfragmentOffsets;
+            auto startIndex = pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex);
+            RELEASE_ASSERT(fragmentOffsets.size() <= m_fragmentDynamicOffsets.size() + startIndex);
+            memcpy(&m_fragmentDynamicOffsets[startIndex], &fragmentOffsets[0], sizeof(fragmentOffsets[0]) * fragmentOffsets.size());
+        }
+    }
+
+    if (m_vertexDynamicOffsets.size())
+        [m_renderCommandEncoder setVertexBytes:&m_vertexDynamicOffsets[0] length:m_vertexDynamicOffsets.size() atIndex:m_device->maxBuffersPlusVertexBuffersForVertexStage()];
+
+    if (m_fragmentDynamicOffsets.size())
+        [m_renderCommandEncoder setFragmentBytes:&m_fragmentDynamicOffsets[0] length:m_fragmentDynamicOffsets.size() atIndex:m_device->maxBuffersForFragmentStage()];
+
+    m_bindGroupDynamicOffsets.clear();
+}
+
 void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
     // FIXME: validation according to
     // https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-draw
+    executePreDrawCommands();
     [m_renderCommandEncoder
         drawPrimitives:m_primitiveType
         vertexStart:firstVertex
@@ -100,16 +136,19 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
 void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
     UNUSED_PARAM(firstIndex);
+    executePreDrawCommands();
     [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
 }
 
 void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
+    executePreDrawCommands();
     [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
 }
 
 void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
+    executePreDrawCommands();
     [m_renderCommandEncoder drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
 }
 
@@ -209,6 +248,9 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
     UNUSED_PARAM(dynamicOffsetCount);
     UNUSED_PARAM(dynamicOffsets);
 
+    if (dynamicOffsetCount)
+        m_bindGroupDynamicOffsets.add(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
+
     for (const auto& resource : group.resources())
         [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
@@ -243,6 +285,10 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
         return;
 
     m_primitiveType = pipeline.primitiveType();
+    m_pipeline = &pipeline;
+
+    m_vertexDynamicOffsets.resize(pipeline.pipelineLayout().sizeOfVertexDynamicOffsets());
+    m_fragmentDynamicOffsets.resize(pipeline.pipelineLayout().sizeOfFragmentDynamicOffsets());
 
     if (pipeline.renderPipelineState())
         [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];

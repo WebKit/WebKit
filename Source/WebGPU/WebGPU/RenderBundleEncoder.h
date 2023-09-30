@@ -29,6 +29,7 @@
 #import "RenderBundle.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -107,10 +108,16 @@ private:
     struct BufferAndOffset {
         id<MTLBuffer> buffer { nil };
         uint64_t offset { 0 };
+        uint32_t dynamicOffsetCount { 0 };
+        const uint32_t* dynamicOffsets { nullptr };
     };
     Vector<BufferAndOffset> m_vertexBuffers;
     Vector<BufferAndOffset> m_fragmentBuffers;
     const Ref<Device> m_device;
+    Vector<uint32_t> m_vertexDynamicOffsets;
+    Vector<uint32_t> m_fragmentDynamicOffsets;
+    const RenderPipeline* m_pipeline { nullptr };
+    HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
 };
 
 } // namespace WebGPU

@@ -746,6 +746,11 @@ bool RenderPipeline::validateDepthStencilState(bool depthReadOnly, bool stencilR
     return true;
 }
 
+PipelineLayout& RenderPipeline::pipelineLayout() const
+{
+    return m_pipelineLayout;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
