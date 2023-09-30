@@ -30,6 +30,7 @@
 #include "WebGPUCompositorIntegration.h"
 
 #include "WebGPUPresentationContextImpl.h"
+#include <WebCore/IOSurface.h>
 #include <WebGPU/WebGPU.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
@@ -84,7 +85,7 @@ private:
 #if PLATFORM(COCOA)
     Vector<MachSendRight> recreateRenderBuffers(int width, int height) override;
 
-    Vector<RetainPtr<IOSurfaceRef>> m_renderBuffers;
+    Vector<std::unique_ptr<WebCore::IOSurface>> m_renderBuffers;
     WTF::Function<void(CFArrayRef)> m_renderBuffersWereRecreatedCallback;
 #endif
 
