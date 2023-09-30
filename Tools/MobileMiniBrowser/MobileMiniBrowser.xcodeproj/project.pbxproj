@@ -492,7 +492,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.webkit.MobileMiniBrowser;
 				PRODUCT_NAME = MobileMiniBrowser;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Debug;
 		};
@@ -508,7 +508,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.webkit.MobileMiniBrowser;
 				PRODUCT_NAME = MobileMiniBrowser;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Release;
 		};

@@ -136,7 +136,7 @@ void TextBoxPainter<TextBoxPath>::paint()
         if (m_useCustomUnderlines)
             paintCompositionUnderlines();
 
-        m_renderer.page().addRelevantRepaintedObject(const_cast<RenderText*>(&m_renderer), enclosingLayoutRect(m_paintRect));
+        m_renderer.page().addRelevantRepaintedObject(m_renderer, enclosingLayoutRect(m_paintRect));
     }
 
     if (shouldRotate)

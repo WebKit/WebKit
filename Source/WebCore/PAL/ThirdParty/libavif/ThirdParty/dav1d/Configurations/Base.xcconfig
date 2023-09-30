@@ -85,7 +85,7 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 WARNING_CFLAGS = $(inherited) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wno-unknown-warning-option -Wliteral-conversion -Wthread-safety;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
 DEAD_CODE_STRIPPING = YES;

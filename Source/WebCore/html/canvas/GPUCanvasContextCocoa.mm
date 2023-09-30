@@ -132,13 +132,24 @@ static int getCanvasHeight(const GPUCanvasContext::CanvasType& canvas)
     );
 }
 
+GPUCanvasContextCocoa::CanvasType GPUCanvasContextCocoa::htmlOrOffscreenCanvas() const
+{
+    if (auto* c = htmlCanvas())
+        return c;
+
+    auto& base = canvasBase();
+    RELEASE_ASSERT(is<OffscreenCanvas>(base));
+
+    return &downcast<OffscreenCanvas>(base);
+}
+
 GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(GPUDisplayBufferDisplayDelegate::create())
     , m_compositorIntegration(gpu.createCompositorIntegration())
     , m_presentationContext(gpu.createPresentationContext(presentationContextDescriptor(m_compositorIntegration)))
-    , m_width(getCanvasWidth(htmlCanvas()))
-    , m_height(getCanvasHeight(htmlCanvas()))
+    , m_width(getCanvasWidth(htmlOrOffscreenCanvas()))
+    , m_height(getCanvasHeight(htmlOrOffscreenCanvas()))
 {
 }
 
@@ -165,9 +176,20 @@ void GPUCanvasContextCocoa::reshape(int width, int height)
     }
 }
 
+void GPUCanvasContextCocoa::prepareForDisplayWithPaint()
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 - Support offscreen canvas with WebGPU
+    prepareForDisplay();
+}
+
+void GPUCanvasContextCocoa::paintRenderingResultsToCanvas()
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 - Support offscreen canvas with WebGPU
+}
+
 GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
 {
-    return htmlCanvas();
+    return htmlOrOffscreenCanvas();
 }
 
 void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
@@ -259,26 +281,32 @@ void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()
 
     bool canvasIsDirty = false;
 
-    if (auto* canvas = htmlCanvas()) {
-        auto* renderBox = canvas->renderBox();
+    auto canvas = htmlOrOffscreenCanvas();
+    CanvasBase *canvasBase = nullptr;
+    WTF::switchOn(canvas, [&](RefPtr<HTMLCanvasElement>& htmlCanvas) {
+        auto* renderBox = htmlCanvas->renderBox();
+        canvasBase = htmlCanvas.get();
         if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
             canvasIsDirty = true;
-            canvas->clearCopiedImage();
+            htmlCanvas->clearCopiedImage();
             renderBox->contentChanged(CanvasChanged);
         }
-    }
+    }, [&](RefPtr<OffscreenCanvas>& offscreenCanvas) {
+        UNUSED_PARAM(offscreenCanvas);
+        canvasBase = offscreenCanvas.get();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 - [WebGPU] Hook it up to WorkerNavigator
+    });
 
     if (!canvasIsDirty)
-        canvasBase().didDraw({ });
+        this->canvasBase().didDraw({ });
 
     if (!isAccelerated())
         return;
 
-    auto* canvas = htmlCanvas();
-    if (!canvas)
+    if (!canvasBase)
         return;
 
-    canvas->notifyObserversCanvasChanged({ });
+    canvasBase->notifyObserversCanvasChanged({ });
 }
 
 } // namespace WebCore

@@ -70,6 +70,7 @@ public:
     MTLDepthClipMode depthClipMode() const { return m_clipMode; }
 
     Device& device() const { return m_device; }
+    PipelineLayout& pipelineLayout() const;
 
 private:
     RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, Ref<PipelineLayout>&&, Device&);

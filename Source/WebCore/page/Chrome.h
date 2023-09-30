@@ -114,9 +114,9 @@ public:
 #if ENABLE(WEBGL)
     RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const override;
 #endif
-
-    RefPtr<WebGPU::GPU> createGPUForWebGPU() const;
-
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    RefPtr<WebGPU::GPU> createGPUForWebGPU() const override;
+#endif
     RefPtr<ShapeDetection::BarcodeDetector> createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions&) const;
     void getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&&) const;
     RefPtr<ShapeDetection::FaceDetector> createFaceDetector(const ShapeDetection::FaceDetectorOptions&) const;

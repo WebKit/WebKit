@@ -367,6 +367,7 @@ bool Navigator::standalone() const
 
 GPU* Navigator::gpu()
 {
+#if HAVE(WEBGPU_IMPLEMENTATION)
     if (!m_gpuForWebGPU) {
         auto* frame = this->frame();
         if (!frame)
@@ -382,6 +383,7 @@ GPU* Navigator::gpu()
 
         m_gpuForWebGPU = GPU::create(*gpu);
     }
+#endif
 
     return m_gpuForWebGPU.get();
 }

@@ -773,8 +773,8 @@ public:
     void setIsCountingRelevantRepaintedObjects(bool isCounting) { m_isCountingRelevantRepaintedObjects = isCounting; }
     void startCountingRelevantRepaintedObjects();
     void resetRelevantPaintedObjectCounter();
-    void addRelevantRepaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
-    void addRelevantUnpaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
+    void addRelevantRepaintedObject(const RenderObject&, const LayoutRect& objectPaintRect);
+    void addRelevantUnpaintedObject(const RenderObject&, const LayoutRect& objectPaintRect);
 
     WEBCORE_EXPORT void suspendActiveDOMObjectsAndAnimations();
     WEBCORE_EXPORT void resumeActiveDOMObjectsAndAnimations();
@@ -1252,8 +1252,8 @@ private:
     int m_footerHeight { 0 };
 
     std::unique_ptr<RenderingUpdateScheduler> m_renderingUpdateScheduler;
+    WeakHashSet<const RenderObject> m_relevantUnpaintedRenderObjects;
 
-    HashSet<CheckedPtr<RenderObject>> m_relevantUnpaintedRenderObjects;
     Region m_topRelevantPaintedRegion;
     Region m_bottomRelevantPaintedRegion;
     Region m_relevantUnpaintedRegion;

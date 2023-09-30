@@ -446,6 +446,16 @@
 #define UNUSED_VARIABLE(variable) UNUSED_PARAM(variable)
 #endif
 
+/* UNUSED_VARIADIC_PARAMS */
+
+#if !defined(UNUSED_VARIADIC_PARAMS) && (COMPILER(GCC) || COMPILER(CLANG))
+#define UNUSED_VARIADIC_PARAMS __attribute__((unused))
+#endif
+
+#if !defined(UNUSED_VARIADIC_PARAMS)
+#define UNUSED_VARIADIC_PARAMS
+#endif
+
 /* WARN_UNUSED_RETURN */
 
 #if !defined(WARN_UNUSED_RETURN) && COMPILER(GCC_COMPATIBLE)

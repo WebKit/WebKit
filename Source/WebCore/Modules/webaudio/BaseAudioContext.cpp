@@ -300,7 +300,7 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
         m_audioDecoder = makeUnique<AsyncAudioDecoder>();
 
     auto p = m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate());
-    p->whenSettled(RunLoop::main(), __func__, [this, activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)] (DecodingTaskPromise::Result&& result) mutable {
+    p->whenSettled(RunLoop::main(), [this, activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)] (DecodingTaskPromise::Result&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise), result = WTFMove(result)]() mutable {
             if (!result) {
                 if (promise)

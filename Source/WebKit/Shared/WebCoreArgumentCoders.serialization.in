@@ -2004,6 +2004,10 @@ header: <WebCore/VP9Utilities.h>
     double scale;
 }
 
+class WebCore::BlobPart {
+    std::variant<Vector<uint8_t>, URL> m_dataOrURL;
+};
+
 struct WebCore::MediaCapabilitiesInfo {
     bool supported;
     bool smooth;

@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKWebViewPrivate.h>
 

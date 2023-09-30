@@ -79,7 +79,7 @@ WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS);
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
 WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
 SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;

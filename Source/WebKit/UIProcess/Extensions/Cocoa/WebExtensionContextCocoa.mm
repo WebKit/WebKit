@@ -41,6 +41,7 @@
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
+#import "WebExtensionAction.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
@@ -339,6 +340,16 @@ void WebExtensionContext::setInspectable(bool inspectable)
     m_inspectable = inspectable;
 
     m_backgroundWebView.get().inspectable = inspectable;
+
+    for (auto entry : m_actionMap) {
+        if (auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
+            webView.inspectable = inspectable;
+    }
+
+    if (m_defaultAction) {
+        if (auto *webView = m_defaultAction->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
+            webView.inspectable = inspectable;
+    }
 }
 
 const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedContents()
@@ -765,7 +776,7 @@ WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::removeExpi
     return matchPatternMap;
 }
 
-bool WebExtensionContext::hasPermission(const String& permission, _WKWebExtensionTab *tab, OptionSet<PermissionStateOptions> options)
+bool WebExtensionContext::hasPermission(const String& permission, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
     ASSERT(!permission.isEmpty());
 
@@ -785,7 +796,7 @@ bool WebExtensionContext::hasPermission(const String& permission, _WKWebExtensio
     }
 }
 
-bool WebExtensionContext::hasPermission(const URL& url, _WKWebExtensionTab *tab, OptionSet<PermissionStateOptions> options)
+bool WebExtensionContext::hasPermission(const URL& url, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
     options.add(PermissionStateOptions::SkipRequestedPermissions);
 
@@ -826,11 +837,11 @@ bool WebExtensionContext::hasPermissions(PermissionsSet permissions, MatchPatter
     return true;
 }
 
-WebExtensionContext::PermissionState WebExtensionContext::permissionState(const String& permission, _WKWebExtensionTab *tab, OptionSet<PermissionStateOptions> options)
+WebExtensionContext::PermissionState WebExtensionContext::permissionState(const String& permission, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
     ASSERT(!permission.isEmpty());
 
-    if (tab && hasActiveUserGesture(tab)) {
+    if (tab && hasActiveUserGesture(*tab)) {
         // An active user gesture grants the "tabs" permission.
         if (permission == String(_WKWebExtensionPermissionTabs))
             return PermissionState::GrantedExplicitly;
@@ -854,7 +865,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     return PermissionState::Unknown;
 }
 
-WebExtensionContext::PermissionState WebExtensionContext::permissionState(const URL& coreURL, _WKWebExtensionTab *tab, OptionSet<PermissionStateOptions> options)
+WebExtensionContext::PermissionState WebExtensionContext::permissionState(const URL& coreURL, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
     if (coreURL.isEmpty())
         return PermissionState::Unknown;
@@ -868,7 +879,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (!WebExtensionMatchPattern::validSchemes().contains(url.scheme))
         return PermissionState::Unknown;
 
-    if (tab && [[m_temporaryTabPermissionMatchPatterns objectForKey:tab] matchesURL:url])
+    if (tab && [[m_temporaryTabPermissionMatchPatterns objectForKey:tab->delegate()] matchesURL:url])
         return PermissionState::GrantedExplicitly;
 
     bool skipRequestedPermissions = options.contains(PermissionStateOptions::SkipRequestedPermissions);
@@ -970,7 +981,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     return cacheResultAndReturn(PermissionState::Unknown);
 }
 
-WebExtensionContext::PermissionState WebExtensionContext::permissionState(WebExtensionMatchPattern& pattern, _WKWebExtensionTab *tab, OptionSet<PermissionStateOptions> options)
+WebExtensionContext::PermissionState WebExtensionContext::permissionState(WebExtensionMatchPattern& pattern, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
     if (!pattern.isValid())
         return PermissionState::Unknown;
@@ -981,7 +992,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(WebExt
     if (!pattern.matchesAllURLs() && !WebExtensionMatchPattern::validSchemes().contains(pattern.scheme()))
         return PermissionState::Unknown;
 
-    if (tab && [[m_temporaryTabPermissionMatchPatterns objectForKey:tab] matchesPattern:pattern.wrapper()])
+    if (tab && [[m_temporaryTabPermissionMatchPatterns objectForKey:tab->delegate()] matchesPattern:pattern.wrapper()])
         return PermissionState::GrantedExplicitly;
 
     // Access the maps here to remove any expired entries, and only do it once for this call.
@@ -1538,28 +1549,54 @@ void WebExtensionContext::didChangeTabProperties(const WebExtensionTab& tab, Opt
     fireTabsUpdatedEventIfNeeded(tab.parameters(), tab.changedParameters(properties));
 }
 
-void WebExtensionContext::userGesturePerformed(_WKWebExtensionTab *tab)
+WebExtensionAction& WebExtensionContext::defaultAction()
 {
-    ASSERT(tab);
+    if (!m_defaultAction)
+        m_defaultAction = WebExtensionAction::create(*this);
+    return *m_defaultAction;
+}
 
+Ref<WebExtensionAction> WebExtensionContext::getOrCreateAction(WebExtensionTab* tab)
+{
+    if (!tab)
+        return defaultAction();
+
+    return m_actionMap.ensure(*tab, [&] {
+        return WebExtensionAction::create(*this, *tab);
+    }).iterator->value;
+}
+
+void WebExtensionContext::performAction(WebExtensionTab* tab)
+{
+    if (tab)
+        userGesturePerformed(*tab);
+
+    auto action = getOrCreateAction(tab);
+    if (action->hasPopup()) {
+        action->presentPopupWhenReady();
+        return;
+    }
+
+    // FIXME: <https://webkit.org/b/260154> Implement. Dispatch action event in main world pages.
+}
+
+void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
+{
     // Nothing else to do if the extension does not have the activeTab permissions.
     if (!hasPermission(_WKWebExtensionPermissionActiveTab))
         return;
 
-    if (![tab respondsToSelector:@selector(urlForWebExtensionContext:)])
-        return;
-
-    NSURL *currentURL = [tab urlForWebExtensionContext:wrapper()];
+    NSURL *currentURL = tab.url();
     if (!currentURL)
         return;
 
-    _WKWebExtensionMatchPattern *pattern = [m_temporaryTabPermissionMatchPatterns objectForKey:tab];
+    _WKWebExtensionMatchPattern *pattern = [m_temporaryTabPermissionMatchPatterns objectForKey:tab.delegate()];
 
     // Nothing to do if the tab already has a pattern matching the current URL.
     if (pattern && [pattern matchesURL:currentURL])
         return;
 
-    // A pattern should not exist, since it should be cleared in cancelUserGesture
+    // A pattern should not exist, since it should be cleared in clearUserGesture
     // on any navigation between different hosts.
     ASSERT(!pattern);
 
@@ -1568,31 +1605,24 @@ void WebExtensionContext::userGesturePerformed(_WKWebExtensionTab *tab)
 
     // Grant the tab a temporary permission to access to a pattern matching the current URL's scheme and host for all paths.
     pattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:currentURL.scheme host:currentURL.host path:@"/*"];
-    [m_temporaryTabPermissionMatchPatterns setObject:pattern forKey:tab];
+    [m_temporaryTabPermissionMatchPatterns setObject:pattern forKey:tab.delegate()];
 }
 
-bool WebExtensionContext::hasActiveUserGesture(_WKWebExtensionTab *tab) const
+bool WebExtensionContext::hasActiveUserGesture(WebExtensionTab& tab) const
 {
-    ASSERT(tab);
-
     if (!m_temporaryTabPermissionMatchPatterns)
         return false;
 
-    if (![tab respondsToSelector:@selector(urlForWebExtensionContext:)])
-        return false;
-
-    NSURL *currentURL = [tab urlForWebExtensionContext:wrapper()];
-    return [[m_temporaryTabPermissionMatchPatterns objectForKey:tab] matchesURL:currentURL];
+    NSURL *currentURL = tab.url();
+    return [[m_temporaryTabPermissionMatchPatterns objectForKey:tab.delegate()] matchesURL:currentURL];
 }
 
-void WebExtensionContext::cancelUserGesture(_WKWebExtensionTab *tab)
+void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
 {
-    ASSERT(tab);
-
     if (!m_temporaryTabPermissionMatchPatterns)
         return;
 
-    [m_temporaryTabPermissionMatchPatterns removeObjectForKey:tab];
+    [m_temporaryTabPermissionMatchPatterns removeObjectForKey:tab.delegate()];
 }
 
 void WebExtensionContext::setTestingMode(bool testingMode)
@@ -1608,6 +1638,16 @@ WKWebView *WebExtensionContext::relatedWebView()
 {
     if (m_backgroundWebView)
         return m_backgroundWebView.get();
+
+    for (auto entry : m_actionMap) {
+        if (auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
+            return webView;
+    }
+
+    if (m_defaultAction) {
+        if (auto *webView = m_defaultAction->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
+            return webView;
+    }
 
     return nil;
 }
@@ -2157,16 +2197,14 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
     }
 
     auto *tabsToRemove = [NSMutableSet set];
-    for (id<_WKWebExtensionTab> tab in m_temporaryTabPermissionMatchPatterns.get().keyEnumerator) {
-        if (![tab respondsToSelector:@selector(urlForWebExtensionContext:)])
-            continue;
-
-        NSURL *currentURL = [tab urlForWebExtensionContext:wrapper()];
+    for (id<_WKWebExtensionTab> tabDelegate in m_temporaryTabPermissionMatchPatterns.get().keyEnumerator) {
+        auto tab = getOrCreateTab(tabDelegate);
+        NSURL *currentURL = tab->url();
         if (!currentURL)
             continue;
 
         if (pattern.matchesURL(currentURL))
-            [tabsToRemove addObject:tab];
+            [tabsToRemove addObject:tabDelegate];
     }
 
     for (id tab in tabsToRemove)

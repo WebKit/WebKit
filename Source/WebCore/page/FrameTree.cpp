@@ -126,7 +126,7 @@ static bool inScope(Frame& frame, TreeScope& scope)
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(frame);
     if (!localFrame)
-        return false;
+        return true;
     Document* document = localFrame->document();
     if (!document)
         return false;

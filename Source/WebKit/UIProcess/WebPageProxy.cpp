@@ -6093,10 +6093,10 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
         frame->didFinishLoad();
 
-        auto remotePageProxy = internals().domainToRemotePageProxyMap.get(RegistrableDomain(frame->url()));
-
-        if (remotePageProxy && frame->parentFrame())
-            frame->parentFrame()->process().send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID), webPageID());
+        if (RefPtr parentFrame = frame->parentFrame()) {
+            if (parentFrame->process().coreProcessIdentifier() != frame->process().coreProcessIdentifier())
+                parentFrame->process().send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID), webPageID());
+        }
 
         internals().pageLoadState.commitChanges();
     }

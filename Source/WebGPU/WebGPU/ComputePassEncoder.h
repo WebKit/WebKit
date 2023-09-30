@@ -27,6 +27,7 @@
 
 #import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -80,6 +81,7 @@ private:
     bool validatePopDebugGroup() const;
 
     void makeInvalid();
+    void executePreDispatchCommands();
 
     id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 
@@ -92,6 +94,9 @@ private:
 
     const Ref<Device> m_device;
     MTLSize m_threadsPerThreadgroup;
+    Vector<uint32_t> m_computeDynamicOffsets;
+    const ComputePipeline* m_pipeline { nullptr };
+    HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
 };
 
 } // namespace WebGPU

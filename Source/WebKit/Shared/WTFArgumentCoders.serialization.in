@@ -103,7 +103,6 @@ template: enum class WebKit::StorageNamespaceIdentifierType
 template: enum class WebKit::TrackPrivateRemoteIdentifierType
 template: enum class WebKit::WCLayerTreeHostIdentifierType
 template: enum class WebKit::WebExtensionControllerIdentifierType
-template: enum class WebKit::WebGPUIdentifierType
 template: enum class WebKit::XRDeviceIdentifierType
 template: struct WebCore::AttributedStringTextListIDType
 template: struct WebCore::AttributedStringTextTableIDType
@@ -181,6 +180,7 @@ template: enum class WebKit::RemoteVideoFrameIdentifierType
 template: enum class WebKit::VideoDecoderIdentifierType
 template: enum class WebKit::VideoEncoderIdentifierType
 template: enum class WebKit::WCContentBufferIdentifierType
+template: enum class WebKit::WebGPUIdentifierType
 template: struct IPC::AsyncReplyIDType
 template: struct WebCore::WebSocketFrame
 template: struct WebKit::ConnectionAsyncReplyHandler

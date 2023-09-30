@@ -307,7 +307,18 @@ void Device::generateAnInternalError(String&& message)
 
 uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
 {
-    return m_capabilities.limits.maxBindGroupsPlusVertexBuffers;
+    ASSERT(m_capabilities.limits.maxBindGroupsPlusVertexBuffers > 0);
+    return m_capabilities.limits.maxBindGroupsPlusVertexBuffers - 1;
+}
+
+uint32_t Device::maxBuffersForFragmentStage() const
+{
+    return m_capabilities.limits.maxBindGroups;
+}
+
+uint32_t Device::maxBuffersForComputeStage() const
+{
+    return m_capabilities.limits.maxBindGroups;
 }
 
 uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex) const

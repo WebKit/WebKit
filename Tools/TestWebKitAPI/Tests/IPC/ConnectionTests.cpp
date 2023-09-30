@@ -509,7 +509,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
     dispatchAndWait(runLoop, [&] {
         ASSERT_TRUE(openB());
         for (uint64_t i = 100u; i < 160u; ++i) {
-            b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, i)->then(runLoop, __func__,
+            b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, i)->then(runLoop,
                 [&, j = i] (uint64_t value) {
                     if (!value)
                         WTFLogAlways("GOT: %llu", j);
@@ -554,7 +554,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOrder)
         ASSERT_TRUE(openB());
         for (uint64_t i = 0; i < counter; ++i) {
             if (!(i % 2)) {
-                b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(runLoop, __func__, [&, i] (Promise::Result result) {
+                b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(runLoop, [&, i] (Promise::Result result) {
                     EXPECT_TRUE(result.has_value());
                     EXPECT_EQ(result.value(), i);
                     replies.uncheckedAppend(i);

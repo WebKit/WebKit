@@ -345,7 +345,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         if (!resources || !resources->filter()) {
             if (paintInfo.phase == PaintPhase::Foreground)
-                page().addRelevantUnpaintedObject(this, visualOverflowRect());
+                page().addRelevantUnpaintedObject(*this, visualOverflowRect());
             return;
         }
         return;

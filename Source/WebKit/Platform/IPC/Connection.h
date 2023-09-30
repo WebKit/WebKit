@@ -720,7 +720,7 @@ template<typename T>
 Ref<typename T::Promise> Connection::sendWithPromisedReply(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
-    typename T::Promise::Producer producer(__func__, WTF::PromiseDispatchMode::RunSynchronouslyOnTarget);
+    typename T::Promise::Producer producer(WTF::PromiseDispatchMode::RunSynchronouslyOnTarget);
     Ref<typename T::Promise> promise = producer;
     auto handler = makeAsyncReplyHandler<T>(WTFMove(producer));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
@@ -850,25 +850,25 @@ Connection::AsyncReplyHandler Connection::makeAsyncReplyHandler(typename T::Prom
         {
             [producer = WTFMove(producer)] (Decoder* decoder) mutable {
                 if (!decoder) {
-                    producer.reject(Error::InvalidConnection, __func__);
+                    producer.reject(Error::InvalidConnection);
                     return;
                 }
                 if (!decoder->isValid()) {
-                    producer.reject(Error::FailedToDecodeReplyArguments, __func__);
+                    producer.reject(Error::FailedToDecodeReplyArguments);
                     return;
                 }
                 if constexpr (!std::tuple_size_v<typename T::ReplyArguments>) {
-                    producer.resolve(__func__);
+                    producer.resolve();
                     return;
                 } else if (auto arguments = decoder->decode<typename T::ReplyArguments>()) {
                     if constexpr (std::tuple_size_v<typename T::ReplyArguments> == 1)
-                        producer.resolve(std::get<0>(WTFMove(*arguments)), __func__);
+                        producer.resolve(std::get<0>(WTFMove(*arguments)));
                     else
-                        producer.resolve(WTFMove(*arguments), __func__);
+                        producer.resolve(WTFMove(*arguments));
                     return;
                 }
                 ASSERT_NOT_REACHED();
-                producer.reject(Error::FailedToDecodeReplyArguments, __func__);
+                producer.reject(Error::FailedToDecodeReplyArguments);
             }, callThread
         },
         AsyncReplyID::generate()

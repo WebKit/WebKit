@@ -32,6 +32,7 @@
 #import <WebKit/_WKWebExtensionTab.h>
 
 @class _WKWebExtension;
+@class _WKWebExtensionAction;
 @class _WKWebExtensionController;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -448,10 +449,52 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 - (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forMatchPattern:(_WKWebExtensionMatchPattern *)pattern expirationDate:(nullable NSDate *)expirationDate NS_SWIFT_NAME(setPermissionStatus(_:for:expirationDate:));
 
 /*!
- @abstract Returns a Boolean value indicating if a user gesture has been noted for the specified tab.
- @param tab The tab in which to return the user gesture status.
-*/
+ @abstract Retrieves the extension action for a given tab, or the default action if `nil` is passed.
+ @param tab The tab for which to retrieve the extension action, or `nil` to get the default action.
+ @discussion The returned object represents the action specific to the tab when provided; otherwise, it returns the default action. The default
+ action is useful when the context is unrelated to a specific tab. When possible, specify the tab to get the most context-relevant action.
+ */
+- (_WKWebExtensionAction *)actionForTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(action(for:));
+
+/*!
+ @abstract Performs the extension action associated with the specified tab or performs the default action if `nil` is passed.
+ @param tab The tab for which to perform the extension action, or `nil` to perform the default action.
+ @discussion Performing the action will mark the tab, if specified, as having an active user gesture. When the `tab` parameter is `nil`,
+ the default action is performed. The action can either trigger an event or display a popup, depending on how the extension is configured.
+ If the action is configured to display a popup, implementing the appropriate web extension controller delegate method is required; otherwise,
+ no action is performed for popup actions.
+ */
+- (void)performActionForTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(performAction(for:));
+
+/*!
+ @abstract Should be called by the app when a user gesture is performed in a specific tab.
+ @param tab The tab in which the user gesture was performed.
+ @discussion When a user gesture is performed in a tab, this method should be called to update the extension context.
+ This enables the extension to be aware of the user gesture, potentially granting it access to features that require user interaction,
+ such as `activeTab`. Not required if using `performActionForTab:`.
+ @seealso hasActiveUserGestureInTab:
+ */
+- (void)userGesturePerformedInTab:(id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(userGesturePerformed(in:));
+
+/*!
+ @abstract Indicates if a user gesture is currently active in the specified tab.
+ @param tab The tab for which to check for an active user gesture.
+ @discussion An active user gesture may influence the availability of certain permissions, such as `activeTab`. User gestures can
+ be triggered by various user interactions with the web extension, including clicking on extension menu items, executing extension commands,
+ or interacting with extension actions. A tab as having an active user gesture enables the extension to access features that require user interaction.
+ @seealso userGesturePerformedInTab:
+ */
 - (BOOL)hasActiveUserGestureInTab:(id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(hasActiveUserGesture(in:));
+
+/*!
+ @abstract Should be called by the app to clear a user gesture in a specific tab.
+ @param tab The tab from which the user gesture should be cleared.
+ @discussion When a user gesture is no longer relevant in a tab, this method should be called to update the extension context.
+ This will revoke the extension's access to features that require active user interaction, such as `activeTab`. User gestures are
+ automatically cleared during navigation in certain scenarios; this method is needed if the app intends to clear the gesture more aggressively.
+ @seealso userGesturePerformedInTab:
+ */
+- (void)clearUserGestureInTab:(id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(clearUserGesture(in:));
 
 /*!
  @abstract An array of open windows that are exposed to this extension.

@@ -72,9 +72,8 @@ bool RemoteDOMWindow::closed() const
     return !m_frame;
 }
 
-void RemoteDOMWindow::focus(LocalDOMWindow& incumbentWindow)
+void RemoteDOMWindow::focus(LocalDOMWindow&)
 {
-    UNUSED_PARAM(incumbentWindow);
     // FIXME: Implemented this. <rdar://116203970>
 }
 
@@ -85,8 +84,10 @@ void RemoteDOMWindow::blur()
 
 unsigned RemoteDOMWindow::length() const
 {
-    // FIXME: Implemented this.
-    return 0;
+    if (!m_frame)
+        return 0;
+
+    return m_frame->tree().childCount();
 }
 
 WindowProxy* RemoteDOMWindow::top() const
@@ -94,8 +95,7 @@ WindowProxy* RemoteDOMWindow::top() const
     if (!m_frame)
         return nullptr;
 
-    // FIXME: Implemented this.
-    return &m_frame->windowProxy();
+    return &m_frame->tree().top().windowProxy();
 }
 
 WindowProxy* RemoteDOMWindow::opener() const
@@ -103,7 +103,7 @@ WindowProxy* RemoteDOMWindow::opener() const
     if (!m_frame)
         return nullptr;
 
-    auto* openerFrame = m_frame->opener();
+    RefPtr openerFrame = m_frame->opener();
     if (!openerFrame)
         return nullptr;
 
@@ -115,8 +115,11 @@ WindowProxy* RemoteDOMWindow::parent() const
     if (!m_frame)
         return nullptr;
 
-    // FIXME: Implemented this.
-    return &m_frame->windowProxy();
+    RefPtr parent = m_frame->tree().parent();
+    if (!parent)
+        return nullptr;
+
+    return &parent->windowProxy();
 }
 
 ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&& options)

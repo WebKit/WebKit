@@ -261,11 +261,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::FilterOperation>> {
 };
 #endif
 
-template<> struct ArgumentCoder<WebCore::BlobPart> {
-    static void encode(Encoder&, const WebCore::BlobPart&);
-    static std::optional<WebCore::BlobPart> decode(Decoder&);
-};
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static void encode(Encoder&, const WebCore::MediaPlaybackTargetContext&);

@@ -100,7 +100,7 @@ SYSTEM_HEADER_SEARCH_PATHS = $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH
 AD_HOC_CODE_SIGNING_ALLOWED = YES;
 CODE_SIGN_IDENTITY = -;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
 FRAMEWORK_SEARCH_PATHS = $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR);

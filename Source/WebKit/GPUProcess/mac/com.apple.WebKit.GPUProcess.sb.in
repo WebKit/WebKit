@@ -912,6 +912,10 @@
     (global-name "com.apple.timesync.manager")
     (global-name "com.apple.timesync.ptp.manager")
 #endif
+#if HAVE(REFACTORED_MEDIASERVERD)
+    (global-name "com.apple.airplay.endpoint.xpc")
+    (global-name "com.apple.mediaexperience.endpoint.xpc")
+#endif
 )
 
 #if PLATFORM(MAC)

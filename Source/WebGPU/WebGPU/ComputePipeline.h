@@ -67,6 +67,8 @@ public:
     Device& device() const { return m_device; }
     MTLSize threadsPerThreadgroup() const { return m_threadsPerThreadgroup; }
 
+    PipelineLayout& pipelineLayout() const;
+
 private:
     ComputePipeline(id<MTLComputePipelineState>, Ref<PipelineLayout>&&, MTLSize, Device&);
     ComputePipeline(Device&);

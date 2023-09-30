@@ -107,7 +107,7 @@ STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 SDKROOT = macosx.internal;
 ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;

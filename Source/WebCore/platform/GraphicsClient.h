@@ -41,6 +41,10 @@ enum class PixelFormat : uint8_t;
 enum class RenderingMode : bool;
 enum class RenderingPurpose : uint8_t;
 
+namespace WebGPU {
+class GPU;
+}
+
 class GraphicsClient {
     WTF_MAKE_NONCOPYABLE(GraphicsClient); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -51,6 +55,9 @@ public:
 
 #if ENABLE(WEBGL)
     virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const = 0;
+#endif
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    virtual RefPtr<WebCore::WebGPU::GPU> createGPUForWebGPU() const = 0;
 #endif
 
 private:

@@ -259,13 +259,13 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         if (!resources || !resources->filter()) {
             if (paintInfo.phase == PaintPhase::Foreground)
-                page().addRelevantUnpaintedObject(this, visualOverflowRect());
+                page().addRelevantUnpaintedObject(*this, visualOverflowRect());
             return;
         }
     }
 
     if (paintInfo.phase == PaintPhase::Foreground)
-        page().addRelevantRepaintedObject(this, visualOverflowRect());
+        page().addRelevantRepaintedObject(*this, visualOverflowRect());
 
     // Make a copy of the PaintInfo because applyTransform will modify the damage rect.
     PaintInfo childPaintInfo(paintInfo);

@@ -146,6 +146,11 @@ void ComputePipeline::setLabel(String&&)
     // MTLComputePipelineState's labels are read-only.
 }
 
+PipelineLayout& ComputePipeline::pipelineLayout() const
+{
+    return m_pipelineLayout;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

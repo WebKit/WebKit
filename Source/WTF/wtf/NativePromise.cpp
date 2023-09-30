@@ -32,9 +32,9 @@
 
 namespace WTF {
 
-WTFLogChannel* NativePromiseBase::logChannel()
+WTFLogChannel& NativePromiseBase::logChannel()
 {
-    return &WTFLogNativePromise;
+    return WTFLogNativePromise;
 }
 
 } // namespace WTF

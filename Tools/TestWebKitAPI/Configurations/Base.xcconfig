@@ -86,7 +86,7 @@ DEBUG_DEFINES[config=Debug] = ;
 
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
 SDKROOT = macosx.internal;

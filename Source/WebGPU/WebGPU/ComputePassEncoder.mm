@@ -72,14 +72,38 @@ void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, 
     UNUSED_PARAM(queryIndex);
 }
 
+void ComputePassEncoder::executePreDispatchCommands()
+{
+    if (!m_computeDynamicOffsets.size() || !m_pipeline)
+        return;
+
+    for (auto& kvp : m_bindGroupDynamicOffsets) {
+        auto& pipelineLayout = m_pipeline->pipelineLayout();
+        auto bindGroupIndex = kvp.key;
+        auto* pcomputeOffsets = pipelineLayout.computeOffsets(bindGroupIndex, kvp.value);
+        if (pcomputeOffsets && pcomputeOffsets->size()) {
+            auto& computeOffsets = *pcomputeOffsets;
+            auto startIndex = pipelineLayout.computeOffsetForBindGroup(bindGroupIndex);
+            RELEASE_ASSERT(computeOffsets.size() <= m_computeDynamicOffsets.size() + startIndex);
+            memcpy(&m_computeDynamicOffsets[startIndex], &computeOffsets[0], sizeof(computeOffsets[0]) * computeOffsets.size());
+        }
+    }
+
+    [m_computeCommandEncoder setBytes:&m_computeDynamicOffsets[0] length:m_computeDynamicOffsets.size() atIndex:m_device->maxBuffersForComputeStage()];
+
+    m_bindGroupDynamicOffsets.clear();
+}
+
 void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 {
+    executePreDispatchCommands();
     [m_computeCommandEncoder dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
     // FIXME: ensure higher levels perform validation on indirectOffset before reaching this callsite
+    executePreDispatchCommands();
     [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
@@ -150,11 +174,12 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
+    if (dynamicOffsetCount)
+        m_bindGroupDynamicOffsets.add(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
+
     for (const auto& resource : group.resources())
         [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
 
-    UNUSED_PARAM(dynamicOffsetCount);
-    UNUSED_PARAM(dynamicOffsets);
     [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];
 }
 
@@ -165,6 +190,9 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
         makeInvalid();
         return;
     }
+
+    m_pipeline = &pipeline;
+    m_computeDynamicOffsets.resize(m_pipeline->pipelineLayout().sizeOfComputeDynamicOffsets());
 
     ASSERT(pipeline.computePipelineState());
     [m_computeCommandEncoder setComputePipelineState:pipeline.computePipelineState()];

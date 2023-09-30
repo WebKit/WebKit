@@ -5,7 +5,7 @@
     <script src="resources/util.js"></script>
 </head>
 <body onload="setTimeout('runTest()', 0)">
-<div id="description">Check that non-cookie website data gets removed after a navigation with link decoration from a prevalent resource.</div>
+<div id="description">Check that script-writeable website data gets removed after a navigation with link decoration from a prevalent resource.</div>
 <br>
 <div id="output"></div>
 <br>
@@ -38,21 +38,41 @@
     function checkCookies(isAfterDeletion) {
         let unsortedTestPassedMessages = [];
         let cookies = internals.getCookies();
+        let potentialCookies = { "http-only-cookie": 1, "server-side-cookie": 1, "client-side-cookie": 1 };
         if (!cookies.length)
             testFailed((isAfterDeletion ? "After" : "Before") + " script-accessible deletion: No cookies found.");
+
         for (let cookie of cookies) {
             switch (cookie.name) {
                 case httpOnlyCookieName:
+                    delete potentialCookies[httpOnlyCookieName];
                     unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: " + (isAfterDeletion ? " " : "") + "HttpOnly cookie exists.");
                     break;
                 case serverSideCookieName:
+                    delete potentialCookies[serverSideCookieName];
                     unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: Regular server-side cookie exists.");
                     break;
                 case clientSideCookieName:
+                    delete potentialCookies[clientSideCookieName];
                     unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: Client-side cookie exists.");
                     break;
             }
         }
+
+        for (let missingCookie in potentialCookies) {
+            switch (missingCookie) {
+                case httpOnlyCookieName:
+                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: " + (isAfterDeletion ? " " : "") + "HttpOnly cookie does not exist.");
+                    break;
+                case serverSideCookieName:
+                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: Regular server-side cookie does not exist.");
+                    break;
+                case clientSideCookieName:
+                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: Client-side cookie does not exist.");
+                    break;
+            }
+        }
+
         let sortedTestPassedMessages = unsortedTestPassedMessages.sort(sortStringArray);
         for (let testPassedMessage of sortedTestPassedMessages) {
             addOutput(testPassedMessage);

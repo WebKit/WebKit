@@ -42,13 +42,13 @@ AsyncAudioDecoder::AsyncAudioDecoder()
 
 Ref<DecodingTaskPromise> AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRate)
 {
-    return WTF::invokeAsync(m_runLoop, __func__, [audioData = WTFMove(audioData), sampleRate] () mutable {
+    return WTF::invokeAsync(m_runLoop, [audioData = WTFMove(audioData), sampleRate] () mutable {
         auto audioBuffer = AudioBuffer::createFromAudioFileData(audioData->data(), audioData->byteLength(), false, sampleRate);
         // The ArrayBuffer must be deleted on the main thread, send it back there to be derefed.
         callOnMainThread([audioData = WTFMove(audioData)] { });
         if (!audioBuffer)
-            return DecodingTaskPromise::createAndReject(EncodingError, __func__);
-        return DecodingTaskPromise::createAndResolve(audioBuffer.releaseNonNull(), __func__);
+            return DecodingTaskPromise::createAndReject(EncodingError);
+        return DecodingTaskPromise::createAndResolve(audioBuffer.releaseNonNull());
     });
 }
 

@@ -29,6 +29,7 @@
 
 #import <WebKit/_WKWebExtensionPermission.h>
 
+@class _WKWebExtensionAction;
 @class _WKWebExtensionContext;
 @class _WKWebExtensionController;
 @class _WKWebExtensionMatchPattern;
@@ -136,6 +137,19 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  the request is assumed to have been denied.
  */
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionMatchPatterns:in:for:completionHandler:));
+
+/*!
+ @abstract Called when a popup is requested to be displayed for a specific action.
+ @param controller The web extension controller initiating the request.
+ @param action The action for which the popup is requested.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block to be called once the popup display operation is completed.
+ @discussion This method is called in response to the extension's scripts or when invoking `performActionForTab:` if the action has a popup.
+ The associated tab, if applicable, can be located through the `associatedTab` property of the `action` parameter. This delegate method is
+ called when the web view for the popup is fully loaded and ready to display. Implementing this method is needed if the app intends to support
+ programmatically showing the popup by the extension, although it is recommended for handling both programmatic and user-initiated cases.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller presentActionPopup:(_WKWebExtensionAction *)action forExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called when an extension context wants to send a one-time message to an application.

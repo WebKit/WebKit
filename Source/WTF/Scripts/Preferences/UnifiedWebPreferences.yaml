@@ -3107,7 +3107,7 @@ HighlightAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
 
 HyperlinkAuditingEnabled:
   type: bool

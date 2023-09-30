@@ -47,7 +47,7 @@ class WebProcessProxy;
 struct WebExtensionTabParameters;
 struct WebExtensionTabQueryParameters;
 
-class WebExtensionTab : public RefCounted<WebExtensionTab> {
+class WebExtensionTab : public RefCounted<WebExtensionTab>, public CanMakeWeakPtr<WebExtensionTab> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
     WTF_MAKE_FAST_ALLOCATED;
 

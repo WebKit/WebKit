@@ -27,12 +27,12 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "APIContentWorld.h"
 #include "APIObject.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
 #include "MessageReceiver.h"
 #include "WebExtension.h"
+#include "WebExtensionAction.h"
 #include "WebExtensionAlarm.h"
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionController.h"
@@ -59,6 +59,7 @@
 #include <wtf/URLHash.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakHashCountedSet.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSDate;
@@ -225,17 +226,17 @@ public:
     bool hasAccessToAllURLs();
     bool hasAccessToAllHosts();
 
-    bool hasPermission(const String& permission, _WKWebExtensionTab * = nil, OptionSet<PermissionStateOptions> = { });
-    bool hasPermission(const URL&, _WKWebExtensionTab * = nil, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+    bool hasPermission(const String& permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
+    bool hasPermission(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     bool hasPermissions(PermissionsSet, MatchPatternSet);
 
-    PermissionState permissionState(const String& permission, _WKWebExtensionTab * = nil, OptionSet<PermissionStateOptions> = { });
+    PermissionState permissionState(const String& permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
     void setPermissionState(PermissionState, const String& permission, WallTime expirationDate = WallTime::infinity());
 
-    PermissionState permissionState(const URL&, _WKWebExtensionTab * = nil, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+    PermissionState permissionState(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     void setPermissionState(PermissionState, const URL&, WallTime expirationDate = WallTime::infinity());
 
-    PermissionState permissionState(WebExtensionMatchPattern&, _WKWebExtensionTab * = nil, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+    PermissionState permissionState(WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     void setPermissionState(PermissionState, WebExtensionMatchPattern&, WallTime expirationDate = WallTime::infinity());
 
     void clearCachedPermissionStates();
@@ -266,9 +267,13 @@ public:
     void didReplaceTab(const WebExtensionTab& oldTab, const WebExtensionTab& newTab);
     void didChangeTabProperties(const WebExtensionTab&, OptionSet<WebExtensionTab::ChangedProperties> = { });
 
-    void userGesturePerformed(_WKWebExtensionTab *);
-    bool hasActiveUserGesture(_WKWebExtensionTab *) const;
-    void cancelUserGesture(_WKWebExtensionTab *);
+    WebExtensionAction& defaultAction();
+    Ref<WebExtensionAction> getOrCreateAction(WebExtensionTab*);
+    void performAction(WebExtensionTab*);
+
+    void userGesturePerformed(WebExtensionTab&);
+    bool hasActiveUserGesture(WebExtensionTab&) const;
+    void clearUserGesture(WebExtensionTab&);
 
     bool inTestingMode() const { return m_testingMode; }
     void setTestingMode(bool);
@@ -491,6 +496,8 @@ private:
     HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
 
     HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
+    WeakHashMap<WebExtensionTab, Ref<WebExtensionAction>> m_actionMap;
+    RefPtr<WebExtensionAction> m_defaultAction;
 
     PortCountedSet m_ports;
     PortQueuedMessageMap m_portQueuedMessages;

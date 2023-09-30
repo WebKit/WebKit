@@ -28,10 +28,16 @@
 #include "Connection.h"
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
+#include "WebGPUIdentifier.h"
 #include <WebCore/WorkerClient.h>
+
+namespace WebCore::WebGPU {
+class GPU;
+}
 
 namespace WebKit {
 
+class GPUProcessConnection;
 class WebPage;
 class RemoteRenderingBackendProxy;
 
@@ -50,7 +56,7 @@ public:
     // nested worker.
 #if ENABLE(GPU_PROCESS)
 #if ENABLE(VIDEO)
-    WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+    WebWorkerClient(GPUProcessConnection&, IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
 #else
     WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&);
 #endif
@@ -68,6 +74,10 @@ public:
     RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&) const final;
 #endif
 
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    RefPtr<WebCore::WebGPU::GPU> createGPUForWebGPU() const final;
+#endif
+
 private:
 #if ENABLE(GPU_PROCESS)
     RemoteRenderingBackendProxy& ensureRenderingBackend() const;
@@ -75,6 +85,7 @@ private:
 
     SerialFunctionDispatcher& m_dispatcher;
 #if ENABLE(GPU_PROCESS)
+    GPUProcessConnection& m_gpuProcessConnection;
     Ref<IPC::Connection> m_connection;
     mutable std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteRenderingBackendCreationParameters m_creationParameters;
