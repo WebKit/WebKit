@@ -723,7 +723,7 @@ Document::~Document()
     ASSERT(m_backForwardCacheState != InBackForwardCache);
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_disabledFieldsetElementsCount);
-    ASSERT(m_ranges.isEmptyIgnoringNullReferences());
+    ASSERT(m_ranges.isEmpty());
     ASSERT(m_inDocumentShadowRoots.isEmptyIgnoringNullReferences());
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
@@ -5303,7 +5303,7 @@ void Document::moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
 void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 {
     for (auto& range : m_ranges)
-        range.nodeChildrenChanged(container);
+        range->nodeChildrenChanged(container);
 }
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
@@ -5314,7 +5314,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
     adjustFocusNavigationNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
 
     for (auto& range : m_ranges)
-        range.nodeChildrenWillBeRemoved(container);
+        range->nodeChildrenWillBeRemoved(container);
 
     for (auto& it : m_nodeIterators) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling())
@@ -5346,7 +5346,7 @@ void Document::nodeWillBeRemoved(Node& node)
         it.nodeWillBeRemoved(node);
 
     for (auto& range : m_ranges)
-        range.nodeWillBeRemoved(node);
+        range->nodeWillBeRemoved(node);
 
     if (RefPtr frame = this->frame()) {
         frame->eventHandler().nodeWillBeRemoved(node);
@@ -5363,8 +5363,8 @@ void Document::parentlessNodeMovedToNewDocument(Node& node)
     Vector<WeakPtr<Range>, 5> rangesAffected;
 
     for (auto& range : m_ranges) {
-        if (range.parentlessNodeMovedToNewDocumentAffectsRange(node))
-            rangesAffected.append(range);
+        if (range->parentlessNodeMovedToNewDocumentAffectsRange(node))
+            rangesAffected.append(range.get());
     }
 
     for (auto& range : rangesAffected) {
@@ -5392,10 +5392,8 @@ void Document::adjustFocusNavigationNodeOnNodeRemoval(Node& node, NodeRemoval no
 
 void Document::textInserted(Node& text, unsigned offset, unsigned length)
 {
-    if (!m_ranges.isEmptyIgnoringNullReferences()) {
-        for (auto& range : m_ranges)
-            range.textInserted(text, offset, length);
-    }
+    for (auto& range : m_ranges)
+        range->textInserted(text, offset, length);
 
     // Update the markers for spelling and grammar checking.
     m_markers->shiftMarkers(text, offset, length);
@@ -5408,10 +5406,8 @@ void Document::textInserted(Node& text, unsigned offset, unsigned length)
 
 void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 {
-    if (!m_ranges.isEmptyIgnoringNullReferences()) {
-        for (auto& range : m_ranges)
-            range.textRemoved(text, offset, length);
-    }
+    for (auto& range : m_ranges)
+        range->textRemoved(text, offset, length);
 
     // Update the markers for spelling and grammar checking.
     m_markers->removeMarkers(text, { offset, offset + length });
@@ -5420,10 +5416,10 @@ void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 
 void Document::textNodesMerged(Text& oldNode, unsigned offset)
 {
-    if (!m_ranges.isEmptyIgnoringNullReferences()) {
+    if (!m_ranges.isEmpty()) {
         NodeWithIndex oldNodeWithIndex(&oldNode);
         for (auto& range : m_ranges)
-            range.textNodesMerged(oldNodeWithIndex, offset);
+            range->textNodesMerged(oldNodeWithIndex, offset);
     }
 
     // FIXME: This should update markers for spelling and grammar checking.
@@ -5432,7 +5428,7 @@ void Document::textNodesMerged(Text& oldNode, unsigned offset)
 void Document::textNodeSplit(Text& oldNode)
 {
     for (auto& range : m_ranges)
-        range.textNodeSplit(oldNode);
+        range->textNodeSplit(oldNode);
 
     // FIXME: This should update markers for spelling and grammar checking.
 }
