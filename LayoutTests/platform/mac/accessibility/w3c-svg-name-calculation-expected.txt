@@ -1,8 +1,5 @@
 This tests the accessible text alternatives results for SVG.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
 test1:
 	Expected name: end
 	AXTitle:
@@ -279,6 +276,7 @@ test46:
 	AXDescription:
 	AXHelp: 	
 	AXTitleUIElement: null
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
