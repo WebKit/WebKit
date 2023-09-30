@@ -36,7 +36,7 @@ GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 $(inherited);
 INFOPLIST_FILE = Tests/WebKitSwiftOverlayTests-Info.plist;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKitTests-macOS;
 PRODUCT_NAME = $(TARGET_NAME);
-SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=Debug] = DEBUG;
 SWIFT_COMPILATION_MODE = wholemodule;
 

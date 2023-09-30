@@ -83,7 +83,7 @@ ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_ = NO;
 ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_NO = NO;
 ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_YES = $(ENTITLEMENTS_REQUIRED);
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 
 SDKROOT = macosx.internal;
 ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);

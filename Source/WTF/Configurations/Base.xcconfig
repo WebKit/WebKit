@@ -97,7 +97,7 @@ HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)$(WTF_INSTALL_PATH_PREFIX)$(WK_LIBRAR
 SYSTEM_HEADER_SEARCH_PATHS = $(WK_PRIVATE_SDK_DIR)$(WTF_INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(inherited);
 LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WTF_INSTALL_PATH_PREFIX)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
 DEAD_CODE_STRIPPING = YES;

@@ -94,7 +94,7 @@ TARGET_MAC_OS_X_VERSION_MAJOR_10_13 = 101300
 TARGET_MAC_OS_X_VERSION_MAJOR_10_14 = 101400
 TARGET_MAC_OS_X_VERSION_MAJOR_10_15 = 101500
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 
 JAVASCRIPTCORE_FRAMEWORKS_DIR = $(SYSTEM_LIBRARY_DIR)/Frameworks;
 

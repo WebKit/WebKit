@@ -97,7 +97,7 @@ WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // e.g. iOS 9.
 WK_TARGET_TVOS_VERSION_MAJOR = $(TVOS_DEPLOYMENT_TARGET:base);
 WK_TARGET_WATCHOS_VERSION_MAJOR = $(WATCHOS_DEPLOYMENT_TARGET:base);
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
