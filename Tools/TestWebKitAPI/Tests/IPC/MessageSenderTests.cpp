@@ -98,7 +98,7 @@ TEST_P(MessageSenderTest, SendWithPromisedReply)
 
     bool done = false;
 
-    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), __func__, [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;
@@ -127,7 +127,7 @@ TEST_P(MessageSenderTest, SendAsyncWithErrorAsynchronousCallback)
         RunLoop::current().cycle();
 
     done = false;
-    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), __func__, [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;

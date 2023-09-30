@@ -96,10 +96,6 @@ private:
 };
 
 struct RefCountedProducer final : public ThreadSafeRefCounted<RefCountedProducer> {
-    RefCountedProducer()
-        : producer(__func__)
-    {
-    }
     Ref<TestPromise> promise() { return producer; }
     typename TestPromise::Producer producer;
 };
@@ -132,7 +128,7 @@ public:
         }
 
         if (!--m_iterations) {
-            m_producer->producer.resolveOrReject(m_result, __func__);
+            m_producer->producer.resolveOrReject(m_result);
             return;
         }
 
@@ -160,9 +156,9 @@ static std::function<void()> doFail()
     };
 }
 
-static auto doFailAndReject(const char* location)
+static auto doFailAndReject(Logger::LogSiteIdentifier location = Logger::LogSiteIdentifier(__builtin_FUNCTION(), nullptr))
 {
-    return [location] {
+    return [location = WTFMove(location)] {
         EXPECT_TRUE(false);
         return TestPromise::createAndReject(0.0, location);
     };
@@ -188,7 +184,7 @@ TEST(NativePromise, BasicResolve)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue] {
-        TestPromise::createAndResolve(42, __func__)->then(queue, __func__,
+        TestPromise::createAndResolve(42)->then(queue,
             [queue](int resolveValue) {
                 EXPECT_EQ(resolveValue, 42);
                 queue->beginShutdown();
@@ -201,7 +197,7 @@ TEST(NativePromise, BasicReject)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue] {
-        TestPromise::createAndReject(42.0, __func__)->then(queue, __func__,
+        TestPromise::createAndReject(42.0)->then(queue,
             doFail(),
             [queue](int rejectValue) {
                 EXPECT_EQ(rejectValue, 42.0);
@@ -215,7 +211,7 @@ TEST(NativePromise, BasicResolveOrRejectResolved)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue] {
-        TestPromise::createAndResolve(42, __func__)->whenSettled(queue, __func__,
+        TestPromise::createAndResolve(42)->whenSettled(queue,
             [queue](const TestPromise::Result& result) {
                 EXPECT_TRUE(result);
                 EXPECT_EQ(result.value(), 42);
@@ -229,7 +225,7 @@ TEST(NativePromise, BasicResolveOrRejectRejected)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue] {
-        TestPromise::createAndReject(42.0, __func__)->whenSettled(queue, __func__,
+        TestPromise::createAndReject(42.0)->whenSettled(queue,
             [queue](const TestPromise::Result& result) {
                 EXPECT_TRUE(!result);
                 EXPECT_EQ(result.error(), 42.0);
@@ -243,33 +239,33 @@ TEST(NativePromise, GenericPromise)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue] {
-        GenericPromise::createAndResolve(__func__)->then(queue, __func__,
+        GenericPromise::createAndResolve()->then(queue,
             []() {
                 EXPECT_TRUE(true);
             },
             doFail());
-        GenericPromise::createAndResolve(__func__)->whenSettled(queue, __func__,
+        GenericPromise::createAndResolve()->whenSettled(queue,
             [](GenericPromise::Result result) {
                 EXPECT_TRUE(result);
             });
 
-        GenericPromise::createAndReject(123, __func__)->whenSettled(queue, __func__,
+        GenericPromise::createAndReject(123)->whenSettled(queue,
             [](GenericPromise::Result result) {
                 EXPECT_TRUE(!result);
                 EXPECT_EQ(result.error(), 123);
             });
 
-        GenericPromise::Producer p1(__func__);
-        p1.resolve(__func__);
-        p1.then(queue, __func__,
+        GenericPromise::Producer p1;
+        p1.resolve();
+        p1.then(queue,
             []() {
                 EXPECT_TRUE(true);
             },
             doFail());
 
-        GenericPromise::Producer p2(__func__);
-        p2.reject(123, __func__);
-        p2.then(queue, __func__,
+        GenericPromise::Producer p2;
+        p2.reject(123);
+        p2.then(queue,
             []() {
                 EXPECT_TRUE(true);
             },
@@ -277,39 +273,39 @@ TEST(NativePromise, GenericPromise)
                 EXPECT_EQ(value, 123);
             });
 
-        GenericPromise::Producer p3(__func__);
+        GenericPromise::Producer p3;
         NativePromiseRequest<GenericPromise> request;
 
         // Note that if you're not interested in the result you can provide two Function<void()> to then()
-        p3.then(queue, __func__, doFail(), doFail()).track(request);
-        p3.resolve(__func__);
+        p3.then(queue, doFail(), doFail()).track(request);
+        p3.resolve();
 
         // We are no longer interested by the result of the promise. We disconnect the request holder.
         // doFail() above will never be called.
         request.disconnect();
 
         // Note that if you're not interested in the result you can also provide one Function<void()> with whenSettled()
-        GenericPromise::Producer p4(__func__);
-        p4.whenSettled(queue, __func__, []() {
+        GenericPromise::Producer p4;
+        p4.whenSettled(queue, []() {
         });
-        p4.resolve(__func__);
+        p4.resolve();
 
         // You can mix & match promise types and chain them together.
         // Producer also accepts syntax using operator-> for consistency with a consumer's promise.
-        GenericPromise::Producer p5(__func__);
+        GenericPromise::Producer p5;
         using MyPromise = NativePromise<int, int, true>;
-        p5->whenSettled(queue, __func__,
+        p5->whenSettled(queue,
             [](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
-                return MyPromise::createAndResolve(1, __func__);
-            })->whenSettled(queue, __func__,
+                return MyPromise::createAndResolve(1);
+            })->whenSettled(queue,
                 [queue](MyPromise::Result result) {
                     static_assert(std::is_same_v<MyPromise::Result::value_type, int>, "The type received is the same as the last promise returned");
                     EXPECT_TRUE(result.has_value());
                     EXPECT_EQ(result.value(), 1);
                     queue->beginShutdown();
                 });
-        p5->resolve(__func__);
+        p5->resolve();
     });
 }
 
@@ -321,10 +317,10 @@ TEST(NativePromise, PromiseRequest)
     NativePromiseRequest<MyPromise> request1;
 
     runInCurrentRunLoop([&](auto& runLoop) {
-        MyPromise::Producer p1(__func__);
-        p1.resolve(true, __func__);
+        MyPromise::Producer p1;
+        p1.resolve(true);
 
-        p1.whenSettled(runLoop, __func__,
+        p1.whenSettled(runLoop,
             [&](MyPromise::Result&& result) {
                 EXPECT_TRUE(result.has_value());
                 EXPECT_TRUE(result.value());
@@ -339,8 +335,8 @@ TEST(NativePromise, PromiseRequest)
     std::atomic<bool> objectToShare = true;
     runInCurrentRunLoop([&](auto& runLoop) {
         NativePromiseRequest<GenericPromise> request2;
-        GenericPromise::Producer p2(__func__);
-        p2.whenSettled(runLoop, __func__,
+        GenericPromise::Producer p2;
+        p2.whenSettled(runLoop,
             [&objectToShare](GenericPromise::Result&&) mutable {
                 // It would be normally unsafe to access `objectToShare` as it went out of scope.
                 // but this function will never run as we've disconnected the ThenCommand.
@@ -349,7 +345,7 @@ TEST(NativePromise, PromiseRequest)
         EXPECT_TRUE(!!request2);
         request2.disconnect();
         EXPECT_FALSE(!!request2);
-        p2.resolve(__func__);
+        p2.resolve();
         EXPECT_TRUE(objectToShare);
     });
     EXPECT_TRUE(objectToShare);
@@ -361,10 +357,10 @@ TEST(NativePromise, PromiseRequestDisconnected1)
     runInCurrentRunLoop([](auto& runLoop) {
         NativePromiseRequest<TestPromise> request;
 
-        TestPromise::Producer p(__func__);
-        p.then(runLoop, __func__, doFail(), doFail()).track(request);
+        TestPromise::Producer p;
+        p.then(runLoop, doFail(), doFail()).track(request);
 
-        p.resolve(1, __func__);
+        p.resolve(1);
         request.disconnect();
     });
 }
@@ -375,10 +371,10 @@ TEST(NativePromise, PromiseRequestDisconnected2)
     runInCurrentRunLoop([](auto& runLoop) {
         NativePromiseRequest<TestPromise> request;
 
-        TestPromise::Producer p(__func__);
-        p->resolve(1, __func__);
+        TestPromise::Producer p;
+        p->resolve(1);
 
-        p->then(runLoop, __func__, doFail(), doFail())->track(request);
+        p->then(runLoop, doFail(), doFail())->track(request);
 
         request.disconnect();
     });
@@ -401,7 +397,7 @@ TEST(NativePromise, AsyncResolve)
         b->dispatch();
         c->dispatch();
 
-        p->then(queue, __func__,
+        p->then(queue,
             [queue, a, b, c](int resolveValue) {
                 EXPECT_EQ(resolveValue, 42);
                 a->cancel();
@@ -419,16 +415,16 @@ TEST(NativePromise, CompletionPromises)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue, &invokedPass] {
-        TestPromise::createAndResolve(40, __func__)->then(queue, __func__,
+        TestPromise::createAndResolve(40)->then(queue,
             [](int val) {
-                return TestPromise::createAndResolve(val + 10, __func__);
+                return TestPromise::createAndResolve(val + 10);
             },
-            doFailAndReject(__func__))->then(queue, __func__,
+            doFailAndReject())->then(queue,
                 [&invokedPass](int val) {
                     invokedPass = true;
-                    return TestPromise::createAndResolve(val, __func__);
+                    return TestPromise::createAndResolve(val);
                 },
-                doFailAndReject(__func__))->then(queue, __func__,
+                doFailAndReject())->then(queue,
                     [queue](int val) {
                         auto producer = adoptRef(new RefCountedProducer());
                         auto p = producer->promise();
@@ -437,11 +433,11 @@ TEST(NativePromise, CompletionPromises)
                         resolver->dispatch();
                         return p;
                     },
-                    doFailAndReject(__func__))->then(queue, __func__,
+                    doFailAndReject())->then(queue,
                         [](int val) {
-                            return TestPromise::createAndReject(double(val - 42) + 42.0, __func__);
+                            return TestPromise::createAndReject(double(val - 42) + 42.0);
                         },
-                        doFailAndReject(__func__))->then(queue, __func__,
+                        doFailAndReject())->then(queue,
                             doFail(),
                             [queue, &invokedPass](double val) {
                                 EXPECT_EQ(val, 42.0);
@@ -485,10 +481,10 @@ TEST(NativePromise, UsingMethods)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue, myClass = MyClass::create()] {
-        TestPromise::createAndResolve(1, __func__)->then(queue, __func__, myClass.get(), &MyClass::resolveWithNothing, &MyClass::rejectWithNothing);
-        TestPromise::createAndReject(2.0, __func__)->then(queue, __func__, myClass.get(), &MyClass::resolveWithValue, &MyClass::rejectWithValue);
-        TestPromise::createAndResolve(3, __func__)->whenSettled(queue, __func__, myClass.get(), &MyClass::resolveOrRejectWithNothing);
-        TestPromise::createAndResolve(1, __func__)->whenSettled(queue, __func__, myClass.get(), &MyClass::resolveOrRejectWithResult);
+        TestPromise::createAndResolve(1)->then(queue, myClass.get(), &MyClass::resolveWithNothing, &MyClass::rejectWithNothing);
+        TestPromise::createAndReject(2.0)->then(queue, myClass.get(), &MyClass::resolveWithValue, &MyClass::rejectWithValue);
+        TestPromise::createAndResolve(3)->whenSettled(queue, myClass.get(), &MyClass::resolveOrRejectWithNothing);
+        TestPromise::createAndResolve(1)->whenSettled(queue, myClass.get(), &MyClass::resolveOrRejectWithResult);
         queue->dispatch([queue] {
             queue->beginShutdown();
         });
@@ -499,7 +495,7 @@ static Ref<GenericPromise> myMethod()
 {
     assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndResolve(__func__);
+    return GenericPromise::createAndResolve();
 }
 
 TEST(NativePromise, InvokeAsync)
@@ -508,7 +504,7 @@ TEST(NativePromise, InvokeAsync)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue, &done] {
-        invokeAsync(RunLoop::main(), __func__, &myMethod)->whenSettled(queue, __func__,
+        invokeAsync(RunLoop::main(), &myMethod)->whenSettled(queue,
             [queue, &done](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
                 queue->beginShutdown();
@@ -523,9 +519,9 @@ static Ref<GenericPromise> myMethodReturningThenCommand()
 {
     assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndResolve(__func__)->whenSettled(RunLoop::main(), __func__,
+    return GenericPromise::createAndResolve()->whenSettled(RunLoop::main(),
         [](GenericPromise::Result result) {
-            return GenericPromise::createAndResolveOrReject(WTFMove(result), __func__);
+            return GenericPromise::createAndResolveOrReject(WTFMove(result));
         });
 }
 
@@ -536,7 +532,7 @@ TEST(NativePromise, InvokeAsyncAutoConversion)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue, &done] {
-        invokeAsync(RunLoop::main(), __func__, &myMethodReturningThenCommand)->whenSettled(queue, __func__,
+        invokeAsync(RunLoop::main(), &myMethodReturningThenCommand)->whenSettled(queue,
             [queue, &done](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
                 queue->beginShutdown();
@@ -551,10 +547,10 @@ static Ref<GenericPromise> myMethodReturningProducer()
 {
     assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndResolve(__func__)->whenSettled(RunLoop::main(), __func__,
+    return GenericPromise::createAndResolve()->whenSettled(RunLoop::main(),
         [](GenericPromise::Result result) {
-            GenericPromise::Producer producer(__func__);
-            producer.resolveOrReject(WTFMove(result), __func__);
+            GenericPromise::Producer producer;
+            producer.resolveOrReject(WTFMove(result));
             return producer;
         });
 }
@@ -566,7 +562,7 @@ TEST(NativePromise, InvokeAsyncAutoConversionWithProducer)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue, &done] {
-        invokeAsync(RunLoop::main(), __func__, &myMethodReturningProducer)->whenSettled(queue, __func__,
+        invokeAsync(RunLoop::main(), &myMethodReturningProducer)->whenSettled(queue,
             [queue, &done](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
                 queue->beginShutdown();
@@ -583,11 +579,11 @@ TEST(NativePromise, PromiseAllResolve)
     auto queue = awq.queue();
     queue->dispatch([queue] {
         Vector<Ref<TestPromise>> promises;
-        promises.append(TestPromise::createAndResolve(22, __func__));
-        promises.append(TestPromise::createAndResolve(32, __func__));
-        promises.append(TestPromise::createAndResolve(42, __func__));
+        promises.append(TestPromise::createAndResolve(22));
+        promises.append(TestPromise::createAndResolve(32));
+        promises.append(TestPromise::createAndResolve(42));
 
-        TestPromise::all(queue, promises)->then(queue, __func__,
+        TestPromise::all(queue, promises)->then(queue,
             [queue](const Vector<int>& resolveValues) {
                 EXPECT_EQ(resolveValues.size(), 3UL);
                 EXPECT_EQ(resolveValues[0], 22);
@@ -605,17 +601,17 @@ TEST(NativePromise, PromiseAllResolveAsync)
     auto queue = awq.queue();
     queue->dispatch([queue] {
         Vector<Ref<TestPromise>> promises;
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndResolve(22, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndResolve(22);
         }));
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndResolve(32, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndResolve(32);
         }));
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndResolve(42, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndResolve(42);
         }));
 
-        TestPromise::all(queue, promises)->then(queue, __func__,
+        TestPromise::all(queue, promises)->then(queue,
             [queue](const Vector<int>& resolveValues) {
                 EXPECT_EQ(resolveValues.size(), 3UL);
                 EXPECT_EQ(resolveValues[0], 22);
@@ -633,13 +629,13 @@ TEST(NativePromise, PromiseAllReject)
     auto queue = awq.queue();
     queue->dispatch([queue] {
         Vector<Ref<TestPromise>> promises;
-        promises.append(TestPromise::createAndResolve(22, __func__));
-        promises.append(TestPromise::createAndReject(32.0, __func__));
-        promises.append(TestPromise::createAndResolve(42, __func__));
+        promises.append(TestPromise::createAndResolve(22));
+        promises.append(TestPromise::createAndReject(32.0));
+        promises.append(TestPromise::createAndResolve(42));
         // Ensure that more than one rejection doesn't cause a crash
-        promises.append(TestPromise::createAndReject(52.0, __func__));
+        promises.append(TestPromise::createAndReject(52.0));
 
-        TestPromise::all(queue, promises)->then(queue, __func__,
+        TestPromise::all(queue, promises)->then(queue,
             doFail(),
             [queue](float rejectValue) {
                 EXPECT_EQ(rejectValue, 32.0);
@@ -654,21 +650,21 @@ TEST(NativePromise, PromiseAllRejectAsync)
     auto queue = awq.queue();
     queue->dispatch([queue] {
         Vector<Ref<TestPromise>> promises;
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndResolve(22, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndResolve(22);
         }));
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndReject(32.0, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndReject(32.0);
         }));
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndResolve(42, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndResolve(42);
         }));
         // Ensure that more than one rejection doesn't cause a crash
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndReject(52.0, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndReject(52.0);
         }));
 
-        TestPromise::all(queue, promises)->then(queue, __func__,
+        TestPromise::all(queue, promises)->then(queue,
             doFail(),
             [queue](float rejectValue) {
                 EXPECT_EQ(rejectValue, 32.0);
@@ -683,13 +679,13 @@ TEST(NativePromise, PromiseAllSettled)
     auto queue = awq.queue();
     queue->dispatch([queue] {
         Vector<Ref<TestPromise>> promises;
-        promises.append(TestPromise::createAndResolve(22, __func__));
-        promises.append(TestPromise::createAndReject(32.0, __func__));
-        promises.append(TestPromise::createAndResolve(42, __func__));
-        promises.append(TestPromise::createAndReject(52.0, __func__));
+        promises.append(TestPromise::createAndResolve(22));
+        promises.append(TestPromise::createAndReject(32.0));
+        promises.append(TestPromise::createAndResolve(42));
+        promises.append(TestPromise::createAndReject(52.0));
 
         TestPromise::allSettled(queue, promises)->then(
-            queue, __func__,
+            queue,
             [queue](const TestPromise::AllSettledPromiseType::ResolveValueType& resolveValues) {
                 EXPECT_EQ(resolveValues.size(), 4UL);
                 EXPECT_TRUE(resolveValues[0]);
@@ -713,20 +709,20 @@ TEST(NativePromise, PromiseAllSettledAsync)
 
     queue->dispatch([queue] {
         Vector<Ref<TestPromise>> promises;
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndResolve(22, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndResolve(22);
         }));
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndReject(32.0, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndReject(32.0);
         }));
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndResolve(42, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndResolve(42);
         }));
-        promises.append(invokeAsync(queue, __func__, [] {
-            return TestPromise::createAndReject(52.0, __func__);
+        promises.append(invokeAsync(queue, [] {
+            return TestPromise::createAndReject(52.0);
         }));
 
-        TestPromise::allSettled(queue, promises)->then(queue, __func__,
+        TestPromise::allSettled(queue, promises)->then(queue,
             [queue](const TestPromise::AllSettledPromiseType::ResolveValueType& resolveValues) {
                 EXPECT_EQ(resolveValues.size(), 4UL);
                 EXPECT_TRUE(resolveValues[0].has_value());
@@ -752,20 +748,20 @@ TEST(NativePromise, Chaining)
     auto queue = awq.queue();
 
     queue->dispatch([queue, &holder] {
-        auto p = TestPromise::createAndResolve(42, __func__);
+        auto p = TestPromise::createAndResolve(42);
         const size_t kIterations = 100;
         for (size_t i = 0; i < kIterations; ++i) {
-            p = p->then(queue, __func__,
+            p = p->then(queue,
                 [](int val) {
                     EXPECT_EQ(val, 42);
-                    return TestPromise::createAndResolve(val, __func__);
+                    return TestPromise::createAndResolve(val);
                 },
                 [](double val) {
-                    return TestPromise::createAndReject(val, __func__);
+                    return TestPromise::createAndReject(val);
                 });
 
             if (i == kIterations / 2) {
-                p->then(queue, __func__,
+                p->then(queue,
                     [queue, &holder] {
                         holder.disconnect();
                         queue->beginShutdown();
@@ -775,7 +771,7 @@ TEST(NativePromise, Chaining)
         }
         // We will hit the assertion if we don't disconnect the leaf Request
         // in the promise chain.
-        p->whenSettled(queue, __func__, [] { })->track(holder);
+        p->whenSettled(queue, [] { })->track(holder);
     });
 }
 
@@ -786,7 +782,7 @@ TEST(NativePromise, MoveOnlyType)
     AutoWorkQueue awq;
     auto queue = awq.queue();
 
-    MyPromise::createAndResolve(std::make_unique<int>(87), __func__)->then(queue, __func__,
+    MyPromise::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(87))->then(queue,
         [](std::unique_ptr<int> val) {
             EXPECT_EQ(87, *val);
         },
@@ -794,7 +790,7 @@ TEST(NativePromise, MoveOnlyType)
             EXPECT_TRUE(false);
         });
 
-    MyPromise::createAndResolve(std::make_unique<int>(87), __func__)->whenSettled(queue, __func__,
+    MyPromise::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(87))->whenSettled(queue,
         [queue](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
             EXPECT_EQ(87, *(val.value()));
@@ -813,67 +809,67 @@ TEST(NativePromise, HeterogeneousChaining)
     auto queue = awq.queue();
 
     queue->dispatch([queue, &holder] {
-        Promise1::createAndResolve(std::make_unique<char>(0), __func__)->whenSettled(queue, __func__,
+        Promise1::createAndResolve(makeUniqueWithoutFastMallocCheck<char>(0))->whenSettled(queue,
             [&holder] {
                 holder.disconnect();
-                return Promise2::createAndResolve(std::make_unique<int>(0), __func__);
-            })->whenSettled(queue, __func__,
+                return Promise2::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(0));
+            })->whenSettled(queue,
                 [] {
                     // Shouldn't be called for we've disconnected the request.
                     EXPECT_FALSE(true);
                 })->track(holder);
     });
 
-    Promise1::createAndResolve(std::make_unique<char>(87), __func__)->then(queue, __func__,
+    Promise1::createAndResolve(makeUniqueWithoutFastMallocCheck<char>(87))->then(queue,
         [](std::unique_ptr<char> val) {
             EXPECT_EQ(87, *val);
-            return Promise2::createAndResolve(std::make_unique<int>(94), __func__);
+            return Promise2::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(94));
         },
         [] {
-            return Promise2::createAndResolve(std::make_unique<int>(95), __func__);
-        })->then(queue, __func__,
+            return Promise2::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(95));
+        })->then(queue,
             [](std::unique_ptr<int> val) {
                 EXPECT_EQ(94, *val);
             },
             doFail());
 
-    Promise1::createAndResolve(std::make_unique<char>(87), __func__)->whenSettled(queue, __func__,
+    Promise1::createAndResolve(makeUniqueWithoutFastMallocCheck<char>(87))->whenSettled(queue,
         [](Promise1::Result&& result) {
             EXPECT_EQ(87, *(result.value()));
-            return Promise2::createAndResolve(std::make_unique<int>(94), __func__);
-        })->whenSettled(queue, __func__,
+            return Promise2::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(94));
+        })->whenSettled(queue,
             [queue](Promise2::Result&& result) {
                 EXPECT_EQ(94, *(result.value()));
             });
 
     // Chaining promises of different types, even if returned from within callback
-    TestPromise::createAndResolve(1, __func__)->whenSettled(queue, __func__,
+    TestPromise::createAndResolve(1)->whenSettled(queue,
         [queue] {
-            return TestPromiseExcl::createAndResolve(2, __func__)->whenSettled(queue, __func__, [] {
-                return TestPromise::createAndResolve(3, __func__);
+            return TestPromiseExcl::createAndResolve(2)->whenSettled(queue, [] {
+                return TestPromise::createAndResolve(3);
             });
-        })->whenSettled(queue, __func__,
+        })->whenSettled(queue,
             [queue](TestPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
                 EXPECT_EQ(3, result.value());
             });
 
-    TestPromise::createAndResolve(1, __func__)->whenSettled(queue, __func__,
+    TestPromise::createAndResolve(1)->whenSettled(queue,
         [queue] {
-            return TestPromiseExcl::createAndResolve(2, __func__)->whenSettled(queue, __func__, [] {
-                return GenericPromise::createAndResolve(__func__);
+            return TestPromiseExcl::createAndResolve(2)->whenSettled(queue, [] {
+                return GenericPromise::createAndResolve();
             });
-        })->whenSettled(queue, __func__,
+        })->whenSettled(queue,
             [queue](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
             });
 
-    TestPromise::createAndResolve(1, __func__)->whenSettled(queue, __func__,
+    TestPromise::createAndResolve(1)->whenSettled(queue,
         [queue] {
-            return TestPromiseExcl::createAndResolve(2, __func__)->whenSettled(queue, __func__, [] {
-                return GenericPromise::createAndReject(1, __func__);
+            return TestPromiseExcl::createAndResolve(2)->whenSettled(queue, [] {
+                return GenericPromise::createAndReject(1);
             });
-        })->whenSettled(queue, __func__,
+        })->whenSettled(queue,
             [queue](GenericPromise::Result result) {
                 EXPECT_FALSE(result.has_value());
                 EXPECT_EQ(1, result.error());
@@ -884,7 +880,7 @@ TEST(NativePromise, HeterogeneousChaining)
 TEST(NativePromise, RunLoop)
 {
     runInCurrentRunLoop([](auto& runLoop) {
-        TestPromise::createAndResolve(42, __func__)->then(runLoop, __func__,
+        TestPromise::createAndResolve(42)->then(runLoop,
             [](int resolveValue) {
                 EXPECT_EQ(resolveValue, 42);
             },
@@ -895,16 +891,16 @@ TEST(NativePromise, RunLoop)
 TEST(NativePromise, ImplicitConversionWithForwardPreviousReturn)
 {
     runInCurrentRunLoop([](auto& runLoop) {
-        TestPromise::Producer p(__func__);
-        Ref<TestPromise> promise = p->whenSettled(runLoop, __func__,
+        TestPromise::Producer p;
+        Ref<TestPromise> promise = p->whenSettled(runLoop,
             [](const TestPromise::Result& result) {
-                return TestPromise::createAndResolveOrReject(result, __func__);
+                return TestPromise::createAndResolveOrReject(result);
             });
-        promise->whenSettled(runLoop, __func__, [&](const TestPromise::Result& result) {
+        promise->whenSettled(runLoop, [&](const TestPromise::Result& result) {
             EXPECT_TRUE(!result.has_value());
             EXPECT_FALSE(promise->isResolved());
         });
-        p.resolve(1, __func__);
+        p.resolve(1);
         Ref<TestPromise> originalPromise = p;
         EXPECT_TRUE(originalPromise->isResolved());
         // This could be written as EXPECT_TRUE(static_cast<Ref<TestPromise>>(p)->isResolved());
@@ -915,24 +911,24 @@ TEST(NativePromise, ImplicitConversionWithForwardPreviousReturn)
 
 TEST(NativePromise, ChainTo)
 {
-    runInCurrentRunLoop([&, producer2 = TestPromise::Producer(__func__)](auto& runLoop) mutable {
-        auto promise1 = TestPromise::createAndResolve(42, __func__);
-        producer2->then(runLoop, __func__,
+    runInCurrentRunLoop([&, producer2 = TestPromise::Producer()](auto& runLoop) mutable {
+        auto promise1 = TestPromise::createAndResolve(42);
+        producer2->then(runLoop,
             [&](int resolveValue) { EXPECT_EQ(resolveValue, 42); },
             doFail());
 
         // As promise1 is already resolved, it will automatically resolve/reject producer2 with its resolved/reject value.
-        promise1->chainTo(WTFMove(producer2), __func__);
+        promise1->chainTo(WTFMove(producer2));
     });
 
-    runInCurrentRunLoop([&, producer2 = TestPromise::Producer(__func__), producer1 = TestPromise::Producer(__func__)](auto& runLoop) mutable {
-        producer2->then(runLoop, __func__,
+    runInCurrentRunLoop([&, producer2 = TestPromise::Producer(), producer1 = TestPromise::Producer()](auto& runLoop) mutable {
+        producer2->then(runLoop,
             [&](int resolveValue) { EXPECT_EQ(resolveValue, 42); },
             doFail());
 
         // When producer1 is resolved, it will automatically resolve/reject producer2 with the resolved/reject value.
-        producer1->chainTo(WTFMove(producer2), __func__);
-        producer1.resolve(42, __func__);
+        producer1->chainTo(WTFMove(producer2));
+        producer1.resolve(42);
     });
 }
 
@@ -940,37 +936,37 @@ TEST(NativePromise, RunSynchronouslyOnTarget)
 {
     // Check that the callback is executed immediately when the promise is resolved.
     runInCurrentRunLoop([](auto& runLoop) {
-        GenericPromise::Producer producer(__func__, PromiseDispatchMode::RunSynchronouslyOnTarget);
+        GenericPromise::Producer producer(PromiseDispatchMode::RunSynchronouslyOnTarget);
         int result = 0;
-        producer.resolve(__func__);
-        producer->whenSettled(runLoop, __func__, [&] {
+        producer.resolve();
+        producer->whenSettled(runLoop, [&] {
             result = 42;
         });
         EXPECT_EQ(result, 42);
     });
     // Check that the callback is executed immediately when using chained promise and that itself is set to RunSynchronouslyOnTarget
     runInCurrentRunLoop([](auto& runLoop) {
-        GenericPromise::Producer producer(__func__, PromiseDispatchMode::RunSynchronouslyOnTarget);
+        GenericPromise::Producer producer(PromiseDispatchMode::RunSynchronouslyOnTarget);
         int result = 0;
-        producer->whenSettled(runLoop, __func__, [&] {
+        producer->whenSettled(runLoop, [&] {
             // We need to configure this promise too as RunSynchronouslyOnTarget
-            GenericPromise::Producer producer(__func__, PromiseDispatchMode::RunSynchronouslyOnTarget);
-            producer.resolve(__func__);
+            GenericPromise::Producer producer(PromiseDispatchMode::RunSynchronouslyOnTarget);
+            producer.resolve();
             return producer;
-        })->whenSettled(runLoop, __func__, [&] {
+        })->whenSettled(runLoop, [&] {
             result = 42;
         });
-        producer.resolve(__func__);
+        producer.resolve();
         EXPECT_EQ(result, 42);
     });
     // Check that the callback will still run on the proper target queue, even if RunSynchronouslyOnTarget is set.
     runInCurrentRunLoop([](auto& runLoop) {
-        GenericPromise::Producer producer(__func__, PromiseDispatchMode::RunSynchronouslyOnTarget);
+        GenericPromise::Producer producer(PromiseDispatchMode::RunSynchronouslyOnTarget);
         int result = 0;
-        producer.resolve(__func__);
+        producer.resolve();
         {
             AutoWorkQueue awq;
-            producer->whenSettled(awq.queue().get(), __func__, [&, queue = awq.queue()] {
+            producer->whenSettled(awq.queue().get(), [&, queue = awq.queue()] {
                 assertIsCurrent(queue);
                 result = 42;
                 queue->beginShutdown();
