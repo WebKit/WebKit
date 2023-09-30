@@ -121,6 +121,8 @@ private:
 
     bool shouldCreateTransientPaintingSnapshot() const;
 
+    void updateDocumentForPluginSizingBehavior();
+
     // WebCore::PluginViewBase
     PlatformLayer* platformLayer() const final;
     bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;

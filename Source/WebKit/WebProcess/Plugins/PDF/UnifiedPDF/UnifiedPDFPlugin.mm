@@ -28,8 +28,11 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "PluginView.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/HTMLNames.h>
+#include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
@@ -71,7 +74,17 @@ void UnifiedPDFPlugin::installPDFDocument()
     if (!m_view)
         return;
 
+    sizeToFitContents();
     invalidateRect({ IntPoint(), size() });
+}
+
+void UnifiedPDFPlugin::sizeToFitContents()
+{
+    auto contentsSize = expandedIntSize(m_documentLayout.layoutSize());
+
+    auto& pluginElement = m_view->pluginElement();
+    pluginElement.setInlineStyleProperty(CSSPropertyWidth, contentsSize.width(), CSSUnitType::CSS_PX);
+    pluginElement.setInlineStyleProperty(CSSPropertyHeight, contentsSize.height(), CSSUnitType::CSS_PX);
 }
 
 void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& rect)
@@ -118,6 +131,8 @@ void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const Affine
 {
     if (size() == pluginSize)
         return;
+
+    // FIXME: Re-layout
 
     PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
 }

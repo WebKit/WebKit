@@ -42,6 +42,8 @@ private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }
 
+    bool pluginFillsViewport() const override { return false; }
+
     void teardown() override;
 
     void createPDFDocument() override;
@@ -80,6 +82,8 @@ private:
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
     id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
+
+    void sizeToFitContents();
 
     PDFDocumentLayout m_documentLayout;
 };
