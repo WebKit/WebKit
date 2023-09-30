@@ -52,6 +52,7 @@
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HostWindow.h>
@@ -232,6 +233,7 @@ PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, c
     , m_pendingResourceRequestTimer(RunLoop::main(), this, &PluginView::pendingResourceRequestTimerFired)
 {
     m_webPage->addPluginView(*this);
+    updateDocumentForPluginSizingBehavior();
 }
 
 PluginView::~PluginView()
@@ -246,6 +248,16 @@ PluginView::~PluginView()
 LocalFrame* PluginView::frame() const
 {
     return m_pluginElement->document().frame();
+}
+
+void PluginView::updateDocumentForPluginSizingBehavior()
+{
+    if (!m_plugin->pluginFillsViewport())
+        return;
+
+    RefPtr documentElement = m_pluginElement->document().documentElement();
+    // The styles in PluginDocumentParser are constructed to respond to this class.
+    documentElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "plugin-fills-viewport"_s);
 }
 
 void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)

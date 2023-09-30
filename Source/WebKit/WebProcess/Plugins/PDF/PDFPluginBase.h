@@ -70,6 +70,8 @@ public:
     virtual bool isUnifiedPDFPlugin() const { return false; }
     virtual bool isLegacyPDFPlugin() const { return false; }
 
+    virtual bool pluginFillsViewport() const { return true; }
+
     virtual void setView(PluginView&);
 
     virtual void willDetachRenderer() { }
