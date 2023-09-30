@@ -213,25 +213,25 @@ static CalculationValueMap& calculationValues()
 Length::Length(Ref<CalculationValue>&& value)
     : m_type(LengthType::Calculated)
 {
-    m_calculationValueHandle = calculationValues().insert(WTFMove(value));
+    m_value = calculationValues().insert(WTFMove(value));
 }
 
 CalculationValue& Length::calculationValue() const
 {
     ASSERT(isCalculated());
-    return calculationValues().get(m_calculationValueHandle);
+    return calculationValues().get(std::get<unsigned>(m_value));
 }
     
 void Length::ref() const
 {
     ASSERT(isCalculated());
-    calculationValues().ref(m_calculationValueHandle);
+    calculationValues().ref(std::get<unsigned>(m_value));
 }
 
 void Length::deref() const
 {
     ASSERT(isCalculated());
-    calculationValues().deref(m_calculationValueHandle);
+    calculationValues().deref(std::get<unsigned>(m_value));
 }
 
 float Length::nonNanCalculatedValue(float maxValue) const
@@ -325,7 +325,8 @@ Length blend(const Length& from, const Length& to, const BlendingContext& contex
 
 struct SameSizeAsLength {
     int32_t value;
-    int32_t metaData;
+    int32_t valueMetaData;
+    int32_t lengthMetaData;
 };
 static_assert(sizeof(Length) == sizeof(SameSizeAsLength), "length should stay small");
 

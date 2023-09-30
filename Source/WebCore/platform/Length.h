@@ -24,6 +24,7 @@
 
 #include "AnimationUtilities.h"
 #include <string.h>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
@@ -132,6 +133,17 @@ public:
     bool isLegacyIntrinsic() const;
 
 private:
+    friend struct IPC::ArgumentCoder<Length, void>;
+    Length(std::variant<int, float, unsigned>&& value, LengthType type, bool hasQuirk)
+        : m_value(WTFMove(value))
+        , m_type(type)
+        , m_hasQuirk(hasQuirk)
+    {
+        // This constructor is solely used for IPC decoding, and all such Length
+        // objects should be Fixed
+        RELEASE_ASSERT(isFixed());
+    }
+
     bool isCalculatedEqual(const Length&) const;
 
     void initialize(const Length&);
@@ -139,15 +151,10 @@ private:
 
     WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
-    
-    union {
-        int m_intValue { 0 };
-        float m_floatValue;
-        unsigned m_calculationValueHandle;
-    };
+
+    std::variant<int, float, unsigned> m_value;
     LengthType m_type;
     bool m_hasQuirk { false };
-    bool m_isFloat { false };
 };
 
 // Blend two lengths to produce a new length that is in between them. Used for animation.
@@ -163,7 +170,7 @@ inline Length::Length(LengthType type)
 }
 
 inline Length::Length(int value, LengthType type, bool hasQuirk)
-    : m_intValue(value)
+    : m_value(value)
     , m_type(type)
     , m_hasQuirk(hasQuirk)
 {
@@ -171,28 +178,25 @@ inline Length::Length(int value, LengthType type, bool hasQuirk)
 }
 
 inline Length::Length(LayoutUnit value, LengthType type, bool hasQuirk)
-    : m_floatValue(value.toFloat())
+    : m_value(value.toFloat())
     , m_type(type)
     , m_hasQuirk(hasQuirk)
-    , m_isFloat(true)
 {
     ASSERT(type != LengthType::Calculated);
 }
 
 inline Length::Length(float value, LengthType type, bool hasQuirk)
-    : m_floatValue(value)
+    : m_value(value)
     , m_type(type)
     , m_hasQuirk(hasQuirk)
-    , m_isFloat(true)
 {
     ASSERT(type != LengthType::Calculated);
 }
 
 inline Length::Length(double value, LengthType type, bool hasQuirk)
-    : m_floatValue(static_cast<float>(value))
+    : m_value(static_cast<float>(value))
     , m_type(type)
     , m_hasQuirk(hasQuirk)
-    , m_isFloat(true)
 {
     ASSERT(type != LengthType::Calculated);
 }
@@ -235,67 +239,17 @@ inline void Length::initialize(const Length& other)
 {
     m_type = other.m_type;
     m_hasQuirk = other.m_hasQuirk;
+    m_value = other.m_value;
 
-    switch (m_type) {
-    case LengthType::Auto:
-    case LengthType::Normal:
-    case LengthType::Content:
-    case LengthType::Undefined:
-        m_intValue = 0;
-        break;
-    case LengthType::Fixed:
-    case LengthType::Relative:
-    case LengthType::Intrinsic:
-    case LengthType::MinIntrinsic:
-    case LengthType::MinContent:
-    case LengthType::MaxContent:
-    case LengthType::FillAvailable:
-    case LengthType::FitContent:
-    case LengthType::Percent:
-        m_isFloat = other.m_isFloat;
-        if (m_isFloat)
-            m_floatValue = other.m_floatValue;
-        else
-            m_intValue = other.m_intValue;
-        break;
-    case LengthType::Calculated:
-        m_calculationValueHandle = other.m_calculationValueHandle;
+    if (m_type == LengthType::Calculated)
         ref();
-        break;
-    }
 }
 
 inline void Length::initialize(Length&& other)
 {
     m_type = other.m_type;
     m_hasQuirk = other.m_hasQuirk;
-
-    switch (m_type) {
-    case LengthType::Auto:
-    case LengthType::Normal:
-    case LengthType::Content:
-    case LengthType::Undefined:
-        m_intValue = 0;
-        break;
-    case LengthType::Fixed:
-    case LengthType::Relative:
-    case LengthType::Intrinsic:
-    case LengthType::MinIntrinsic:
-    case LengthType::MinContent:
-    case LengthType::MaxContent:
-    case LengthType::FillAvailable:
-    case LengthType::FitContent:
-    case LengthType::Percent:
-        m_isFloat = other.m_isFloat;
-        if (m_isFloat)
-            m_floatValue = other.m_floatValue;
-        else
-            m_intValue = other.m_intValue;
-        break;
-    case LengthType::Calculated:
-        m_calculationValueHandle = std::exchange(other.m_calculationValueHandle, 0);
-        break;
-    }
+    m_value = other.m_value;
 
     other.m_type = LengthType::Auto;
 }
@@ -324,10 +278,7 @@ inline Length& Length::operator*=(float value)
     if (isCalculated())
         return *this;
 
-    if (m_isFloat)
-        m_floatValue *= value;
-    else
-        m_intValue *= value;
+    std::visit([&](auto arg) { m_value = arg * value; }, m_value);
 
     return *this;
 }
@@ -336,7 +287,8 @@ inline float Length::value() const
 {
     ASSERT(!isUndefined());
     ASSERT(!isCalculated());
-    return m_isFloat ? m_floatValue : m_intValue;
+
+    return std::visit([](auto arg) { return static_cast<float>(arg); }, m_value);
 }
 
 inline int Length::intValue() const
@@ -346,7 +298,8 @@ inline int Length::intValue() const
     // FIXME: Makes no sense to return 0 here but not in the value() function above.
     if (isCalculated())
         return 0;
-    return m_isFloat ? static_cast<int>(m_floatValue) : m_intValue;
+
+    return std::visit([](auto arg) { return static_cast<int>(arg); }, m_value);
 }
 
 inline float Length::percent() const
@@ -367,7 +320,7 @@ inline bool Length::hasQuirk() const
 
 inline bool Length::isFloat() const
 {
-    return m_isFloat;
+    return std::holds_alternative<float>(m_value);
 }
 
 inline void Length::setHasQuirk(bool hasQuirk)
@@ -380,8 +333,7 @@ inline void Length::setValue(LengthType type, int value)
     ASSERT(m_type != LengthType::Calculated);
     ASSERT(type != LengthType::Calculated);
     m_type = type;
-    m_intValue = value;
-    m_isFloat = false;
+    m_value = value;
 }
 
 inline void Length::setValue(LengthType type, float value)
@@ -389,8 +341,7 @@ inline void Length::setValue(LengthType type, float value)
     ASSERT(m_type != LengthType::Calculated);
     ASSERT(type != LengthType::Calculated);
     m_type = type;
-    m_floatValue = value;
-    m_isFloat = true;
+    m_value = value;
 }
 
 inline void Length::setValue(LengthType type, LayoutUnit value)
@@ -398,8 +349,7 @@ inline void Length::setValue(LengthType type, LayoutUnit value)
     ASSERT(m_type != LengthType::Calculated);
     ASSERT(type != LengthType::Calculated);
     m_type = type;
-    m_floatValue = value;
-    m_isFloat = true;
+    m_value = value.toFloat();
 }
 
 inline bool Length::isNormal() const
@@ -431,7 +381,7 @@ inline bool Length::isNegative() const
 {
     if (isUndefined() || isCalculated())
         return false;
-    return m_isFloat ? (m_floatValue < 0) : (m_intValue < 0);
+    return std::visit([](auto arg) { return arg < 0; }, m_value);
 }
 
 inline bool Length::isPercent() const
@@ -460,7 +410,7 @@ inline bool Length::isPositive() const
         return false;
     if (isCalculated())
         return true;
-    return m_isFloat ? (m_floatValue > 0) : (m_intValue > 0);
+    return std::visit([](auto arg) { return arg > 0; }, m_value);
 }
 
 inline bool Length::isZero() const
@@ -468,7 +418,7 @@ inline bool Length::isZero() const
     ASSERT(!isUndefined());
     if (isCalculated() || isAuto())
         return false;
-    return m_isFloat ? !m_floatValue : !m_intValue;
+    return std::visit([](auto arg) { return !arg; }, m_value);
 }
 
 inline bool Length::isCalculated() const
