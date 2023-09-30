@@ -1,0 +1,4 @@
+<script>
+    window.parent.top.postMessage("top children: " + window.parent.top.length + ", parent children: " + window.parent.length + ", parent parent is top: " + (window.parent.parent === window.top), "*");
+    window.parent.top.customFunction();
+</script>
