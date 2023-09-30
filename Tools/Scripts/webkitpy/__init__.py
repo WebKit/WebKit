@@ -64,7 +64,11 @@ else:
 
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(20, 3, 0), pypi_name='attrs'))
-AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
+
+if sys.version_info >= (3, 6):
+    AutoInstall.register(Package('bs4', Version(4, 12, 0), pypi_name='beautifulsoup4'))
+else:
+    AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
 AutoInstall.register(Package('configparser', Version(4, 0, 2), implicit_deps=['pyparsing']))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
