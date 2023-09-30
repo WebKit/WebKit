@@ -3131,16 +3131,16 @@ static LayoutRect relevantViewRect(RenderView* view)
     return relevantViewRect;
 }
 
-void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& objectPaintRect)
+void Page::addRelevantRepaintedObject(const RenderObject& object, const LayoutRect& objectPaintRect)
 {
     if (!isCountingRelevantRepaintedObjects())
         return;
 
     // Objects inside sub-frames are not considered to be relevant.
-    if (&object->frame() != &mainFrame())
+    if (&object.frame() != &mainFrame())
         return;
 
-    LayoutRect relevantRect = relevantViewRect(&object->view());
+    LayoutRect relevantRect = relevantViewRect(&object.view());
 
     // The objects are only relevant if they are being painted within the viewRect().
     if (!objectPaintRect.intersects(snappedIntRect(relevantRect)))
@@ -3192,13 +3192,13 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
     }
 }
 
-void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& objectPaintRect)
+void Page::addRelevantUnpaintedObject(const RenderObject& object, const LayoutRect& objectPaintRect)
 {
     if (!isCountingRelevantRepaintedObjects())
         return;
 
     // The objects are only relevant if they are being painted within the relevantViewRect().
-    if (!objectPaintRect.intersects(snappedIntRect(relevantViewRect(&object->view()))))
+    if (!objectPaintRect.intersects(snappedIntRect(relevantViewRect(&object.view()))))
         return;
 
     m_relevantUnpaintedRenderObjects.add(object);

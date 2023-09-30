@@ -490,7 +490,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             return;
 
         if (paintInfo.phase == PaintPhase::Foreground)
-            page().addRelevantUnpaintedObject(this, visualOverflowRect());
+            page().addRelevantUnpaintedObject(*this, visualOverflowRect());
 
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 
@@ -591,7 +591,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 
         if (paintInfo.phase == PaintPhase::Foreground)
-            page().addRelevantUnpaintedObject(this, visualOverflowRect());
+            page().addRelevantUnpaintedObject(*this, visualOverflowRect());
         return;
     }
 
@@ -614,9 +614,9 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // to refine this in the future to account for the portion of the image that has painted.
         LayoutRect visibleRect = intersection(replacedContentRect, contentBoxRect);
         if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
-            page().addRelevantUnpaintedObject(this, visibleRect);
+            page().addRelevantUnpaintedObject(*this, visibleRect);
         else
-            page().addRelevantRepaintedObject(this, visibleRect);
+            page().addRelevantRepaintedObject(*this, visibleRect);
     }
 }
 

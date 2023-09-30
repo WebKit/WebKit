@@ -93,7 +93,7 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
         paintInfo.context().clip(snappedIntRect(contentBoxRect));
 
     if (paintInfo.phase == PaintPhase::Foreground)
-        page().addRelevantRepaintedObject(this, intersection(replacedContentRect, contentBoxRect));
+        page().addRelevantRepaintedObject(*this, intersection(replacedContentRect, contentBoxRect));
 
     InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
 

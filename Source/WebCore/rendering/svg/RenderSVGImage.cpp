@@ -203,13 +203,13 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
     }
 
     if (!imageResource().cachedImage()) {
-        page().addRelevantUnpaintedObject(this, visualOverflowRectEquivalent());
+        page().addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
 
     RefPtr<Image> image = imageResource().image();
     if (!image || image->isNull()) {
-        page().addRelevantUnpaintedObject(this, visualOverflowRectEquivalent());
+        page().addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
 
@@ -226,9 +226,9 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
         // to refine this in the future to account for the portion of the image that has painted.
         FloatRect visibleRect = intersection(replacedContentRect, contentBoxRect);
         if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
-            page().addRelevantUnpaintedObject(this, enclosingLayoutRect(visibleRect));
+            page().addRelevantUnpaintedObject(*this, enclosingLayoutRect(visibleRect));
         else
-            page().addRelevantRepaintedObject(this, enclosingLayoutRect(visibleRect));
+            page().addRelevantRepaintedObject(*this, enclosingLayoutRect(visibleRect));
     }
 }
 

@@ -186,13 +186,13 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintO
 
     if (isPluginUnavailable()) {
         if (countsTowardsRelevantObjects)
-            page().addRelevantUnpaintedObject(this, visualOverflowRect());
+            page().addRelevantUnpaintedObject(*this, visualOverflowRect());
         RenderReplaced::paint(paintInfo, paintOffset);
         return;
     }
 
     if (countsTowardsRelevantObjects)
-        page().addRelevantRepaintedObject(this, visualOverflowRect());
+        page().addRelevantRepaintedObject(*this, visualOverflowRect());
 
     RenderWidget::paint(paintInfo, paintOffset);
 }
