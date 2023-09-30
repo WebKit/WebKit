@@ -115,6 +115,9 @@ public:
     void toggleMediaLoopPlayback() const;
     void toggleShowMediaStats() const;
     WEBCORE_EXPORT bool mediaIsInFullscreen() const;
+    bool videoHasSubtitles() const;
+    bool subtitlesAreShowing() const;
+    void toggleShowSubtitlesForVideo() const;
     void toggleMediaFullscreenState() const;
     void enterFullscreenForVideo() const;
     bool mediaControlsEnabled() const;

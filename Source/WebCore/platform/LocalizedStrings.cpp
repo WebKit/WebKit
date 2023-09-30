@@ -468,6 +468,19 @@ String contextMenuItemTagMediaMute()
     return WEB_UI_STRING_WITH_MNEMONIC("Mute", "_Mute", "Media Mute context menu item");
 }
 
+
+#if PLATFORM(MAC)
+String contextMenuItemTagShowSubtitles()
+{
+    return WEB_UI_STRING("Show Subtitles (auto)", "Show Subtitles context menu item");
+}
+
+String contextMenuItemTagHideSubtitles()
+{
+    return WEB_UI_STRING("Hide Subtitles", "Hide Subtitles context menu item");
+}
+#endif
+
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 String contextMenuItemTagPlayAllAnimations()
 {

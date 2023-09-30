@@ -235,7 +235,7 @@
 /* Menu item label for automatic track selection behavior. */
 "Auto (Recommended) (text track)" = "Auto (Recommended)";
 
-/* Menu item label to toggle automatic scene dimming in fullscreen (visionOS only). */
+/* Menu item label to toggle automatic scene dimming in fullscreen */
 "Auto Dimming" = "Auto Dimming";
 
 /* Automatically Resize context menu item */
@@ -598,9 +598,6 @@
 /* WebKitErrorHTTPSUpgradeRedirectLoop description */
 "HTTPS Upgrade redirect loop detected" = "HTTPS Upgrade redirect loop detected";
 
-/* WebKitErrorHTTPNavigationWithHTTPSOnly description */
-"Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
-
 /* Title of the Hide button for zoomed form controls. */
 "Hide" = "Hide";
 
@@ -612,6 +609,9 @@
 
 /* menu item title */
 "Hide Substitutions" = "Hide Substitutions";
+
+/* Hide Subtitles context menu item */
+"Hide Subtitles" = "Hide Subtitles";
 
 /* Phishing warning description */
 "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
@@ -798,6 +798,9 @@
 
 /* Media Mute context menu item */
 "Mute" = "Mute";
+
+/* WebKitErrorHTTPSOnlyHTTPURL description */
+"Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
 
 /* New Quick Note context menu item. */
 "New Quick Note" = "New Quick Note";
@@ -1068,6 +1071,9 @@
 
 /* menu item title */
 "Show Substitutions" = "Show Substitutions";
+
+/* Show Subtitles context menu item */
+"Show Subtitles (auto)" = "Show Subtitles (auto)";
 
 /* Title for Show Text action button */
 "Show Text" = "Show Text";

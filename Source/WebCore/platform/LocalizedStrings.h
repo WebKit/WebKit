@@ -160,6 +160,10 @@ namespace WebCore {
     String contextMenuItemTagMediaPlay();
     String contextMenuItemTagMediaPause();
     String contextMenuItemTagMediaMute();
+#if PLATFORM(MAC)
+    String contextMenuItemTagShowSubtitles();
+    String contextMenuItemTagHideSubtitles();
+#endif
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     String contextMenuItemTagPlayAllAnimations();
     String contextMenuItemTagPauseAllAnimations();

@@ -533,6 +533,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagToggleVideoEnhancedFullscreen;
     case WebCore::ContextMenuItemTagMediaPlayPause:
         return kWKContextMenuItemTagMediaPlayPause;
+    case WebCore::ContextMenuItemTagToggleShowSubtitles:
+        return kWKContextMenuItemTagToggleShowSubtitles;
     case WebCore::ContextMenuItemTagMediaMute:
         return kWKContextMenuItemTagMediaMute;
     case WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote:
@@ -747,6 +749,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagToggleVideoEnhancedFullscreen;
     case kWKContextMenuItemTagMediaPlayPause:
         return WebCore::ContextMenuItemTagMediaPlayPause;
+    case kWKContextMenuItemTagToggleShowSubtitles:
+        return WebCore::ContextMenuItemTagToggleShowSubtitles;
     case kWKContextMenuItemTagMediaMute:
         return WebCore::ContextMenuItemTagMediaMute;
     case kWKContextMenuItemTagAddHighlightToCurrentQuickNote:

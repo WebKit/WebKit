@@ -268,6 +268,7 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemBaseCustomTag:
     case ContextMenuAction::ContextMenuItemLastCustomTag:
     case ContextMenuAction::ContextMenuItemBaseApplicationTag:
+    case ContextMenuAction::ContextMenuItemTagToggleShowSubtitles:
         return true;
     case ContextMenuAction::ContextMenuItemTagPlayAllAnimations:
     case ContextMenuAction::ContextMenuItemTagPauseAllAnimations:
