@@ -73,8 +73,8 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     RefPtr<Node> nodeAfterInsertionPosition = outerBlock;
 
     auto range = makeSimpleRange(start, endOfSelection);
-    Element* refNode = enclosingBlockFlowElement(end);
-    Element* root = editableRootForPosition(start);
+    RefPtr refNode = enclosingBlockFlowElement(end);
+    RefPtr root = editableRootForPosition(start);
     // Root is null for elements with contenteditable=false.
     if (!root || !refNode)
         return;
@@ -84,7 +84,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
         // Already in a block element that only contains the current paragraph
         if (refNode->hasTagName(tagName()))
             return;
-        nodeAfterInsertionPosition = refNode;
+        nodeAfterInsertionPosition = WTFMove(refNode);
     }
 
     if (!blockNode) {
@@ -103,14 +103,14 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
         && !isEndOfParagraph(lastParagraphInBlockNode) && !isStartOfParagraph(lastParagraphInBlockNode))
         insertBlockPlaceholder(lastParagraphInBlockNode);
 }
-    
-Element* FormatBlockCommand::elementForFormatBlockCommand(const std::optional<SimpleRange>& range)
+
+RefPtr<Element> FormatBlockCommand::elementForFormatBlockCommand(const std::optional<SimpleRange>& range)
 {
     if (!range)
         return nullptr;
 
-    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(*range);
-    while (commonAncestor && !isElementForFormatBlock(commonAncestor))
+    RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(*range);
+    while (commonAncestor && !isElementForFormatBlock(commonAncestor.get()))
         commonAncestor = commonAncestor->parentNode();
     if (!is<Element>(commonAncestor))
         return nullptr;
@@ -119,7 +119,7 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(const std::optional<Si
     if (!rootEditableElement || commonAncestor->contains(rootEditableElement))
         return nullptr;
 
-    return &downcast<Element>(*commonAncestor);
+    return downcast<Element>(commonAncestor.releaseNonNull());
 }
 
 bool isElementForFormatBlock(const QualifiedName& tagName)

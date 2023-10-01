@@ -115,16 +115,19 @@ std::optional<LayoutUnit> InlineFormattingQuirks::initialLetterAlignmentOffset(c
     return LayoutUnit { primaryFontMetrics.ascent() + (lineHeight() - primaryFontMetrics.height()) / 2 - primaryFontMetrics.capHeight() - floatBoxGeometry.marginBorderAndPaddingBefore() };
 }
 
-std::optional<InlineRect> InlineFormattingQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect, const RenderStyle& rootBoxStyle, const InlineLayoutState& inlineLayoutState)
+std::optional<InlineRect> InlineFormattingQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
 {
+    auto& rootBoxStyle = formattingContext().root().style();
+    auto& parentBlockLayoutState = formattingContext().inlineLayoutState().parentBlockLayoutState();
+
     if (rootBoxStyle.lineAlign() == LineAlign::None)
         return { };
-    if (!inlineLayoutState.parentBlockLayoutState().lineGrid())
+    if (!parentBlockLayoutState.lineGrid())
         return { };
 
     // This implement the legacy -webkit-line-align property.
     // It snaps line edges to a grid defined by an ancestor box.
-    auto& lineGrid = *inlineLayoutState.parentBlockLayoutState().lineGrid();
+    auto& lineGrid = *parentBlockLayoutState.lineGrid();
     auto offset = InlineLayoutUnit { lineGrid.logicalOffset.width() };
     auto columnWidth = lineGrid.columnWidth;
     auto leftShift = fmodf(columnWidth - fmodf(rect.left() + offset, columnWidth), columnWidth);

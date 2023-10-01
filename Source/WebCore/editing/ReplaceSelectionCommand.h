@@ -92,7 +92,7 @@ private:
         RefPtr<Node> m_lastNodeInserted;
     };
 
-    Node* insertAsListItems(HTMLElement& listElement, Node* insertionNode, const Position&, InsertedNodes&);
+    RefPtr<Node> insertAsListItems(HTMLElement& listElement, Node* insertionNode, const Position&, InsertedNodes&);
 
     void updateNodesInserted(Node*);
     bool shouldRemoveEndBR(Node*, const VisiblePosition&);

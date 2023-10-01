@@ -42,7 +42,10 @@ public:
     bool inlineBoxAffectsLineBox(const InlineLevelBox&) const;
     static bool lineBreakBoxAffectsParentInlineBox(const LineBox&);
     std::optional<LayoutUnit> initialLetterAlignmentOffset(const Box& floatBox, const RenderStyle& lineBoxStyle) const;
-    static std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&, const RenderStyle& rootBoxStyle, const InlineLayoutState&);
+    std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&) const;
+
+private:
+    const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingQuirks::formattingContext()); }
 };
 
 }

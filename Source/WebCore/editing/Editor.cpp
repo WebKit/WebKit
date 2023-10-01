@@ -516,14 +516,8 @@ static HTMLImageElement* imageElementFromImageDocument(Document& document)
     if (!document.isImageDocument())
         return nullptr;
     
-    HTMLElement* body = document.bodyOrFrameset();
-    if (!body)
-        return nullptr;
-    
-    Node* node = body->firstChild();
-    if (!is<HTMLImageElement>(node))
-        return nullptr;
-    return downcast<HTMLImageElement>(node);
+    RefPtr body = document.bodyOrFrameset();
+    return body ? dynamicDowncast<HTMLImageElement>(body->firstChild()) : nullptr;
 }
 
 bool Editor::canCopy() const
@@ -536,7 +530,7 @@ bool Editor::canCopy() const
 
 bool Editor::canPaste() const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(document().frame()->mainFrame());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(document().frame()->mainFrame());
     if (!localFrame)
         return false;
 
@@ -811,7 +805,7 @@ bool Editor::tryDHTMLCut()
 
 bool Editor::shouldInsertText(const String& text, const std::optional<SimpleRange>& range, EditorInsertAction action) const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(document().frame()->mainFrame());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(document().frame()->mainFrame());
     if (!localFrame)
         return false;
 
@@ -855,7 +849,7 @@ bool Editor::hasBidiSelection() const
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    auto renderer = startNode->renderer();
+    CheckedPtr renderer = startNode->renderer();
     while (renderer && !is<RenderBlockFlow>(*renderer))
         renderer = renderer->parent();
 
@@ -1558,7 +1552,7 @@ void Editor::postTextStateChangeNotificationForCut(const String& text, const Vis
         return;
     if (!text.length())
         return;
-    AXObjectCache* cache = document().existingAXObjectCache();
+    CheckedPtr cache = document().existingAXObjectCache();
     if (!cache)
         return;
     cache->postTextStateChangeNotification(selection.start().anchorNode(), AXTextEditTypeCut, text, selection.start());
@@ -1683,7 +1677,7 @@ void Editor::quoteFragmentForPasting(DocumentFragment& fragment)
     blockQuote->setAttributeWithoutSynchronization(typeAttr, "cite"_s);
     blockQuote->setAttributeWithoutSynchronization(classAttr, ApplePasteAsQuotation);
 
-    auto childNode = fragment.firstChild();
+    RefPtr childNode = fragment.firstChild();
 
     if (childNode) {
         while (childNode) {
@@ -2091,7 +2085,7 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    auto renderer = node->renderer();
+    CheckedPtr renderer = node->renderer();
     if (!renderer)
         return result;
 
@@ -2212,7 +2206,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     m_customCompositionHighlights.clear();
     m_customCompositionAnnotations.clear();
 
-    if (auto* cache = document->existingAXObjectCache(); cache && previousCompositionNode)
+    if (CheckedPtr cache = document->existingAXObjectCache(); cache && previousCompositionNode)
         cache->onTextCompositionChange(*previousCompositionNode, CompositionState::Ended, false, text, m_compositionStart, m_isHandlingAcceptedCandidate);
 
     if (document->selection().isNone())
@@ -2226,7 +2220,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
 
     insertTextForConfirmedComposition(text);
 
-    if (auto* target = document->focusedElement())
+    if (RefPtr target = document->focusedElement())
         target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document->windowProxy(), text));
 
     if (mode == CancelComposition) {
@@ -2359,7 +2353,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         }
     }
 
-    if (auto* cache = document->existingAXObjectCache()) {
+    if (CheckedPtr cache = document->existingAXObjectCache()) {
         if (previousCompositionNode && previousCompositionNode != m_compositionNode) {
             auto state = m_compositionNode ? CompositionState::InProgress : CompositionState::Ended;
             cache->onTextCompositionChange(*previousCompositionNode, state, true, text, m_compositionStart, m_isHandlingAcceptedCandidate);
@@ -2764,8 +2758,8 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
             if (previousPosition.isNull() || previousPosition == spellCheckingStart)
                 break;
 
-            auto* container = previousPosition.deepEquivalent().downstream().containerNode();
-            if (auto* containerElement = is<Element>(container) ? downcast<Element>(container) : container->parentElement()) {
+            RefPtr container = previousPosition.deepEquivalent().downstream().containerNode();
+            if (RefPtr containerElement = is<Element>(container) ? downcast<Element>(container.get()) : container->parentElement()) {
                 if (!containerElement->isSpellCheckingEnabled())
                     break;
             }
@@ -2838,11 +2832,11 @@ std::optional<SimpleRange> Editor::markMisspellingsOrBadGrammar(const VisibleSel
         return std::nullopt;
     
     // If we're not in an editable node, bail.
-    Node& editableNode = searchRange->startContainer();
-    if (!editableNode.hasEditableStyle())
+    Ref editableNode = searchRange->startContainer();
+    if (!editableNode->hasEditableStyle())
         return std::nullopt;
 
-    if (!isSpellCheckingEnabledFor(&editableNode))
+    if (!isSpellCheckingEnabledFor(editableNode.ptr()))
         return std::nullopt;
 
     // Get the spell checker if it is available
@@ -3321,10 +3315,10 @@ std::optional<SimpleRange> Editor::rangeForPoint(const IntPoint& windowPoint)
     RefPtr document = this->document().frame()->documentAtPoint(windowPoint);
     if (!document)
         return std::nullopt;
-    auto frame = document->frame();
+    RefPtr frame = document->frame();
     if (!frame)
         return std::nullopt;
-    auto frameView = frame->view();
+    RefPtr frameView = frame->view();
     if (!frameView)
         return std::nullopt;
     return VisibleSelection { frame->visiblePositionForPoint(frameView->windowToContents(windowPoint)) }.toNormalizedRange();
@@ -3795,7 +3789,7 @@ std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std
 
 static bool isFrameInRange(LocalFrame& frame, const SimpleRange& range)
 {
-    for (auto* ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
+    for (RefPtr ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
         if (&ownerElement->document() == &range.start.document())
             return intersects<ComposedTree>(range, *ownerElement);
     }
@@ -4223,8 +4217,7 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
         if (&ancestor == editableRoot.get())
             break;
 
-        auto* renderer = ancestor.renderer();
-        if (!renderer)
+        if (!ancestor.renderer())
             continue;
 
         if (is<HTMLUListElement>(ancestor) || is<HTMLOListElement>(ancestor))

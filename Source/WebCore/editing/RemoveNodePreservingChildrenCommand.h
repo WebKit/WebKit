@@ -40,6 +40,7 @@ private:
     explicit RemoveNodePreservingChildrenCommand(Ref<Node>&&, ShouldAssumeContentIsAlwaysEditable, EditAction);
 
     void doApply() override;
+    Ref<Node> protectedNode() const { return m_node; }
 
     Ref<Node> m_node;
     ShouldAssumeContentIsAlwaysEditable m_shouldAssumeContentIsAlwaysEditable;

@@ -43,7 +43,7 @@ class LineBox;
 
 class InlineDisplayContentBuilder {
 public:
-    InlineDisplayContentBuilder(const ConstraintsForInlineContent&, const InlineFormattingContext&, InlineFormattingState&, const InlineDisplay::Line&, size_t lineIndex);
+    InlineDisplayContentBuilder(InlineFormattingContext&, const ConstraintsForInlineContent&, const InlineDisplay::Line&, size_t lineIndex);
 
     InlineDisplay::Boxes build(const LineLayoutResult&, const LineBox&);
 
@@ -66,7 +66,7 @@ private:
     void appendInterlinearRubyAnnotationBox(const Box&, InlineDisplay::Boxes&);
     void appendIntercharacterRubyAnnotationBox(const Line::Run&, InlineDisplay::Boxes&);
     void handleInlineBoxEnd(const Line::Run&, const InlineDisplay::Boxes&);
-    void applyRubyOverhang(InlineDisplay::Boxes&) const;
+    void applyRubyOverhang(InlineDisplay::Boxes&);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
     void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
@@ -83,15 +83,15 @@ private:
     bool isLineFullyTruncatedInBlockDirection() const { return m_lineIsFullyTruncatedInBlockDirection; }
 
     const ConstraintsForInlineContent& constraints() const { return m_constraints; }
-    const ElementBox& root() const { return formattingContext().root(); }
+    const ElementBox& root() const { return m_formattingContext.root(); }
     const RenderStyle& rootStyle() const { return m_lineIndex ? root().style() : root().firstLineStyle(); }
+    InlineFormattingContext& formattingContext() { return m_formattingContext; }
     const InlineFormattingContext& formattingContext() const { return m_formattingContext; }
-    InlineFormattingState& formattingState() const { return m_formattingState; } 
+    InlineFormattingState& formattingState() { return formattingContext().formattingState(); }
 
 private:
+    InlineFormattingContext& m_formattingContext;
     const ConstraintsForInlineContent& m_constraints;
-    const InlineFormattingContext& m_formattingContext;
-    InlineFormattingState& m_formattingState;
     const InlineDisplay::Line& m_displayLine;
     IntSize m_initialContaingBlockSize;
     const size_t m_lineIndex { 0 };

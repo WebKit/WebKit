@@ -793,6 +793,16 @@ http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Failure ]
 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Failure ]
 http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html [ Failure ]
 
+http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html [ Failure ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Failure ]
+http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-iframe-ephemeral.html [ Failure ]
+http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Failure ]
+http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Failure ]
+http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
+
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Failure ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
+
 http/tests/security/XFrameOptions/x-frame-options-cached.html [ Skip ] # Crash
 http/tests/security/XFrameOptions/x-frame-options-deny.html [ Skip ] # Failure
 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Skip ] # Failure
@@ -948,12 +958,6 @@ http/tests/local/link-stylesheet-load-order.html [ Failure ]
 http/tests/misc/bubble-drag-events.html [ Failure ]
 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 http/tests/misc/window-dot-stop.html [ Failure ]
-http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html [ Failure ]
-http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Failure ]
-http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-iframe-ephemeral.html [ Failure ]
-http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Failure ]
-http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Failure ]
-http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
 http/tests/ssl/upgrade-origin-usage.html [ Failure ]
 http/tests/workers/service/openwindow-from-notification-click.html [ Failure ]
 http/tests/workers/service/service-worker-cache-api.https.html [ Failure ]
@@ -1133,6 +1137,7 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Failure ]
 
 # TODO HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
 fast/dom/timer-throttling-hidden-page.html [ Skip ] # Timeout
+fast/dom/timer-throttling-hidden-page-2.html [ Skip ] # Timeout
 
 # This test is dependent on DRT being able to open windows.
 fast/dom/Window/new-window-opener.html [ Failure ]
@@ -1187,6 +1192,8 @@ editing/selection/regional-indicators.html [ Skip ]
 [ Debug ] editing/selection/doubleclick-beside-cr-span.html [ Skip ]
 [ Debug ] editing/selection/move-by-character-brute-force.html [ Skip ]
 [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Skip ]
+
+webkit.org/b/262460 editing/selection/caret-rtl-right.html [ Failure Pass ]
 
 ###### Command enabling
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
@@ -2625,3 +2632,5 @@ fast/canvas/imageData-consistency.html [ Timeout Failure ]
 http/tests/inspector/network/resource-timing.html [ Pass Failure ]
 
 fast/canvas/image-buffer-backend-variants.html [ Skip ]
+
+webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]

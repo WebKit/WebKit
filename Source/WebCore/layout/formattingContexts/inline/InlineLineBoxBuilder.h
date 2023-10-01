@@ -39,7 +39,7 @@ class LayoutState;
 
 class LineBoxBuilder {
 public:
-    LineBoxBuilder(const InlineFormattingContext&, const InlineLayoutState&, const LineLayoutResult&);
+    LineBoxBuilder(const InlineFormattingContext&, const LineLayoutResult&);
 
     LineBox build(size_t lineIndex);
 
@@ -63,13 +63,12 @@ private:
     const Box& rootBox() const { return formattingContext().root(); }
     const RenderStyle& rootStyle() const { return isFirstLine() ? rootBox().firstLineStyle() : rootBox().style(); }
 
-    const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
+    const InlineLayoutState& inlineLayoutState() const { return formattingContext().inlineLayoutState(); }
     const BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
-    const InlineLayoutState& m_inlineLayoutState;
     const LineLayoutResult& m_lineLayoutResult;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;

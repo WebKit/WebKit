@@ -186,6 +186,9 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
             return false;
         }
 
+        if (*escapeReason == EscapeReason::InkOverflowNeedsInitialContiningBlockForStrokeWidth)
+            return true;
+
         if (*escapeReason == EscapeReason::DocumentBoxStretchesToViewportQuirk) {
             ASSERT(layoutState().inQuirksMode());
             return is<InitialContainingBlock>(layoutBox);

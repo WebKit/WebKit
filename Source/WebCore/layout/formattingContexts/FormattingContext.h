@@ -72,7 +72,8 @@ public:
         FindFixedHeightAncestorQuirk,
         DocumentBoxStretchesToViewportQuirk,
         BodyStretchesToViewportQuirk,
-        TableNeedsAccessToTableWrapper
+        TableNeedsAccessToTableWrapper,
+        InkOverflowNeedsInitialContiningBlockForStrokeWidth
     };
     const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
 

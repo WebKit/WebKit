@@ -52,6 +52,8 @@ private:
 
     bool preservesTypingStyle() const override;
 
+    RefPtr<EditingStyle> protectedStyle() const { return m_style; }
+
     RefPtr<EditingStyle> m_style;
 
     bool m_mustUseDefaultParagraphElement;

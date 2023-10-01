@@ -39,7 +39,7 @@ struct IntrinsicWidthConstraints;
 
 class IntrinsicWidthHandler {
 public:
-    IntrinsicWidthHandler(const InlineFormattingContext&);
+    IntrinsicWidthHandler(InlineFormattingContext&);
 
     IntrinsicWidthConstraints computedIntrinsicSizes();
     LayoutUnit maximumContentSize();
@@ -55,12 +55,13 @@ private:
     InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode, AbstractLineBuilder&, MayCacheLayoutResult = MayCacheLayoutResult::No);
     InlineLayoutUnit simplifiedMinimumWidth() const;
 
+    InlineFormattingContext& formattingContext();
     const InlineFormattingContext& formattingContext() const;
     const InlineFormattingState& formattingState() const;
     const ElementBox& root() const;
 
 private:
-    const InlineFormattingContext& m_inlineFormattingContext;
+    InlineFormattingContext& m_inlineFormattingContext;
 
     std::optional<LineBreakingResult> m_maximumIntrinsicWidthResultForSingleLine { };
 };

@@ -29,6 +29,7 @@
 
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/IntDegrees.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -60,6 +61,8 @@ public:
 
     RetainPtr<CGPDFPageRef> pageAtIndex(PageIndex) const;
     WebCore::FloatRect boundsForPageAtIndex(PageIndex) const;
+    // Returns 0, 90, 180, 270.
+    IntDegrees rotationForPageAtIndex(PageIndex) const;
 
     WebCore::FloatSize layoutSize() const { return m_documentBounds.size(); }
 
@@ -75,8 +78,13 @@ private:
     static FloatSize documentMargin();
     static FloatSize pageMargin();
 
+    struct PageGeometry {
+        WebCore::FloatRect normalizedBounds;
+        IntDegrees rotation { 0 };
+    };
+
     RetainPtr<CGPDFDocumentRef> m_pdfDocument;
-    Vector<WebCore::FloatRect> m_pageBounds;
+    Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
     DisplayMode m_displayMode { DisplayMode::Continuous };
 };

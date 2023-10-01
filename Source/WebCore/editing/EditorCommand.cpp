@@ -217,11 +217,11 @@ static TriState stateTextWritingDirection(LocalFrame& frame, WritingDirection di
 
 static unsigned verticalScrollDistance(LocalFrame& frame)
 {
-    Element* focusedElement = frame.document()->focusedElement();
+    RefPtr focusedElement = frame.document()->focusedElement();
     if (!focusedElement)
         return 0;
-    auto* renderer = focusedElement->renderer();
-    if (!is<RenderBox>(renderer))
+    CheckedPtr renderer = focusedElement->renderer();
+    if (!is<RenderBox>(renderer.get()))
         return 0;
     const RenderStyle& style = renderer->style();
     if (!(style.overflowY() == Overflow::Scroll || style.overflowY() == Overflow::Auto || focusedElement->hasEditableStyle()))
@@ -503,7 +503,7 @@ static bool executeInsertLineBreak(LocalFrame& frame, Event* event, EditorComman
 
 static bool executeInsertNewline(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
 {
-    LocalFrame* targetFrame = WebCore::targetFrame(frame, event);
+    RefPtr targetFrame = WebCore::targetFrame(frame, event);
     return targetFrame->eventHandler().handleTextInputEvent("\n"_s, event, targetFrame->editor().canEditRichly() ? TextEventInputKeyboard : TextEventInputLineBreak);
 }
 
@@ -1616,7 +1616,7 @@ static String valueFormatBlock(LocalFrame& frame, Event*)
     const VisibleSelection& selection = frame.selection().selection();
     if (selection.isNoneOrOrphaned() || !selection.isContentEditable())
         return emptyString();
-    auto* formatBlockElement = FormatBlockCommand::elementForFormatBlockCommand(selection.firstRange());
+    RefPtr formatBlockElement = FormatBlockCommand::elementForFormatBlockCommand(selection.firstRange());
     if (!formatBlockElement)
         return emptyString();
     return formatBlockElement->localName();

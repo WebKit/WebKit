@@ -87,14 +87,13 @@ static inline bool isInterlinearAnnotationBox(const Box* annotationBox)
     return annotationBox && annotationBox->style().rubyPosition() != RubyPosition::InterCharacter;
 }
 
-InlineDisplayContentBuilder::InlineDisplayContentBuilder(const ConstraintsForInlineContent& constraints, const InlineFormattingContext& formattingContext, InlineFormattingState& formattingState, const InlineDisplay::Line& displayLine, size_t lineIndex)
-    : m_constraints(constraints)
-    , m_formattingContext(formattingContext)
-    , m_formattingState(formattingState)
+InlineDisplayContentBuilder::InlineDisplayContentBuilder(InlineFormattingContext& formattingContext, const ConstraintsForInlineContent& constraints, const InlineDisplay::Line& displayLine, size_t lineIndex)
+    : m_formattingContext(formattingContext)
+    , m_constraints(constraints)
     , m_displayLine(displayLine)
     , m_lineIndex(lineIndex)
 {
-    auto& initialContainingBlockGeometry = m_formattingState.layoutState().geometryForBox(FormattingContext::initialContainingBlock(root()));
+    auto& initialContainingBlockGeometry = m_formattingContext.geometryForBox(FormattingContext::initialContainingBlock(root()), FormattingContext::EscapeReason::InkOverflowNeedsInitialContiningBlockForStrokeWidth);
     m_initialContaingBlockSize = ceiledIntSize(LayoutSize { initialContainingBlockGeometry.contentBoxWidth(), initialContainingBlockGeometry.contentBoxHeight() });
 }
 
@@ -1080,7 +1079,7 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
     }
 }
 
-void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes) const
+void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes)
 {
     // FIXME: We are only supposed to apply overhang when annotation box is wider than base, but at this point we can't tell (this needs to be addressed together with annotation box sizing).
     if (m_interlinearRubyColumnRangeList.isEmpty())

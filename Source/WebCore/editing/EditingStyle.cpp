@@ -158,7 +158,7 @@ template<typename T> CSSValueID identifierForStyleProperty(T& style, CSSProperty
         ASSERT(propertyID == CSSPropertyFontStyle);
         return fontStyleValue->obliqueAngle().doubleValue(CSSUnitType::CSS_DEG) >= italicThreshold() ? CSSValueItalic : CSSValueNormal;
     }
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
         if (propertyID == CSSPropertyFontWeight && primitiveValue->doubleValue(CSSUnitType::CSS_NUMBER) >= boldThreshold())
             return CSSValueBold;
         auto identifier = primitiveValue->valueID();
@@ -276,8 +276,8 @@ static bool fontWeightValueIsBold(CSSValue& fontWeight)
     if (!is<CSSPrimitiveValue>(fontWeight))
         return false;
 
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(fontWeight);
-    auto valueID = primitiveValue.valueID();
+    Ref primitiveValue = downcast<CSSPrimitiveValue>(fontWeight);
+    auto valueID = primitiveValue->valueID();
 
     if (isCSSWideKeyword(valueID))
         return false;
@@ -294,8 +294,8 @@ static bool fontWeightValueIsBold(CSSValue& fontWeight)
     if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
         return false;
 
-    ASSERT(primitiveValue.isNumber());
-    return primitiveValue.floatValue() >= static_cast<float>(boldThreshold());
+    ASSERT(primitiveValue->isNumber());
+    return primitiveValue->floatValue() >= static_cast<float>(boldThreshold());
 }
 
 class HTMLFontWeightEquivalent : public HTMLElementEquivalent {
@@ -592,18 +592,16 @@ void EditingStyle::extractFontSizeDelta()
     }
 
     // Get the adjustment amount out of the style.
-    RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitFontSizeDelta);
-    if (!is<CSSPrimitiveValue>(value))
+    RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitFontSizeDelta));
+    if (!primitiveValue)
         return;
-
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
     // Only PX handled now. If we handle more types in the future, perhaps
     // a switch statement here would be more appropriate.
-    if (!primitiveValue.isPx())
+    if (!primitiveValue->isPx())
         return;
 
-    m_fontSizeDelta = primitiveValue.floatValue();
+    m_fontSizeDelta = primitiveValue->floatValue();
     m_mutableStyle->removeProperty(CSSPropertyWebkitFontSizeDelta);
 }
 
@@ -905,7 +903,7 @@ static RefPtr<CSSValueList> textDecorationValueList(const StyleProperties& prope
 
 bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, RefPtr<MutableStyleProperties>* newInlineStylePtr, EditingStyle* extractedStyle) const
 {
-    const StyleProperties* inlineStyle = element.inlineStyle();
+    RefPtr inlineStyle = element.inlineStyle();
     if (!inlineStyle)
         return false;
     bool conflicts = false;
@@ -1160,7 +1158,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     // If this function was modified in the future to delete all redundant properties, then add a boolean value to indicate
     // which one of editingStyleAtPosition or computedStyle is called.
     auto editingStyleAtPosition = EditingStyle::create(position, EditingPropertiesInEffect);
-    StyleProperties* styleAtPosition = editingStyleAtPosition->m_mutableStyle.get();
+    RefPtr styleAtPosition = editingStyleAtPosition->m_mutableStyle.get();
 
     std::optional<CSSValueID> unicodeBidi;
     std::optional<CSSValueID> direction;
@@ -1573,15 +1571,15 @@ RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection&
     // Move it to the next deep equivalent position to avoid removing the style from this node. 
     // e.g. if pos was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead. 
     // We only do this for range because caret at Position("hello", 5) in <b>hello</b>world should give you font-weight: bold. 
-    Node* positionNode = position.containerNode(); 
+    RefPtr positionNode = position.containerNode();
     if (selection.isRange() && is<Text>(positionNode) && static_cast<unsigned>(position.computeOffsetInContainerNode()) == downcast<Text>(*positionNode).length())
         position = nextVisuallyDistinctCandidate(position);
 
-    Element* element = position.element();
+    RefPtr element = position.element();
     if (!element)
         return nullptr;
 
-    auto style = EditingStyle::create(element, EditingStyle::AllProperties);
+    auto style = EditingStyle::create(element.get(), EditingStyle::AllProperties);
     style->mergeTypingStyle(element->document());
 
     // If background color is transparent, traverse parent nodes until we hit a different value or document root
@@ -1677,7 +1675,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
 
 Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
 {
-    auto* renderer = element.renderer();
+    CheckedPtr renderer = element.renderer();
     if (!m_mutableStyle || !renderer || !renderer->style().hasAppleColorFilter())
         return *this;
 
@@ -1741,15 +1739,15 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     , m_applySubscript(false)
     , m_applySuperscript(false)
 {
-    Document* document = position.deprecatedNode() ? &position.deprecatedNode()->document() : 0;
+    RefPtr document = position.deprecatedNode() ? &position.deprecatedNode()->document() : 0;
     if (!style || style->isEmpty() || !document || !document->frame())
         return;
 
-    Node* node = position.containerNode();
+    RefPtr node = position.containerNode();
     if (!node)
         return;
 
-    ComputedStyleExtractor computedStyle(node);
+    ComputedStyleExtractor computedStyle(node.get());
 
     // FIXME: take care of background-color in effect
     auto mutableStyle = style->style() ? getPropertiesNotIn(*style->style(), computedStyle) : MutableStyleProperties::create();
@@ -1983,8 +1981,8 @@ bool hasTransparentBackgroundColor(StyleProperties* style)
 
 RefPtr<CSSValue> backgroundColorInEffect(Node* node)
 {
-    for (Node* ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
-        auto value = ComputedStyleExtractor(ancestor).propertyValue(CSSPropertyBackgroundColor);
+    for (RefPtr ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
+        auto value = ComputedStyleExtractor(ancestor.get()).propertyValue(CSSPropertyBackgroundColor);
         if (!isTransparentColorValue(value.get()))
             return value;
     }

@@ -498,7 +498,8 @@ void LineLayout::updateOverflow()
 
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
-    auto constraints = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState }.computedIntrinsicSizes(m_lineDamage.get());
+    auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState() };
+    auto constraints = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, parentBlockLayoutState }.computedIntrinsicSizes(m_lineDamage.get());
     return { constraints.minimum, constraints.maximum };
 }
 
@@ -573,7 +574,7 @@ std::optional<LayoutRect> LineLayout::layout()
         auto partialContentTop = LayoutUnit { m_inlineContent->displayContent().lines[damagedLineIndex - 1].lineBoxLogicalRect().maxY() };
         auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), partialContentTop };
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
-    }();
+    };
 
     auto parentBlockLayoutState = Layout::BlockLayoutState {
         m_blockFormattingState.floatingState(),
@@ -582,18 +583,12 @@ std::optional<LayoutRect> LineLayout::layout()
         intrusiveInitialLetterBottom(),
         lineGrid(flow())
     };
-
-    auto hyphenationLimitLines = std::optional<size_t> { };
-    if (auto limitLinesValue = rootLayoutBox().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
-        hyphenationLimitLines = limitLinesValue;
-    auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets), hyphenationLimitLines };
-
-    auto layoutResult = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState }.layout(inlineContentConstraints, inlineLayoutState, m_lineDamage.get());
-
-    auto repaintRect = LayoutRect { constructContent(inlineLayoutState, WTFMove(layoutResult)) };
-
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, parentBlockLayoutState };
+    // Temporary, integration only.
+    inlineFormattingContext.inlineLayoutState().setNestedListMarkerOffsets(WTFMove(m_nestedListMarkerOffsets));
+    auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
+    auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.inlineLayoutState(), WTFMove(layoutResult)) };
     auto adjustments = adjustContent();
-
     updateRenderTreePositions(adjustments);
 
     m_lineDamage = { };
