@@ -180,8 +180,7 @@ Vector<UChar> String::charactersWithoutNullTermination() const
 
         if (is8Bit()) {
             const LChar* characters8 = m_impl->characters8();
-            for (unsigned i = 0; i < length(); ++i)
-                result.uncheckedAppend(characters8[i]);
+            result.append(characters8, m_impl->length());
         } else {
             const UChar* characters16 = m_impl->characters16();
             result.append(characters16, m_impl->length());

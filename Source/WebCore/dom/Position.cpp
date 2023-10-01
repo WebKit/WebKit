@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,8 @@
 #include "RenderIterator.h"
 #include "RenderLineBreak.h"
 #include "RenderText.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGTextElement.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -717,6 +719,10 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
             lastNode = &currentNode;
         }
 
+        // There is no caret position in non-text svg elements.
+        if (currentNode.isSVGElement() && !is<SVGTextElement>(currentNode))
+            continue;
+
         // If we've moved to a position that is visually distinct, return the last saved position. There 
         // is code below that terminates early if we're *about* to move to a visually distinct position.
         if (endsOfNodeAreVisuallyDistinctPositions(&currentNode) && &currentNode != boundary)
@@ -824,6 +830,10 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         // return the last visible streamer position
         if (is<HTMLBodyElement>(currentNode) && currentPosition.atEndOfNode())
             break;
+
+        // There is no caret position in non-text svg elements.
+        if (currentNode.isSVGElement() && !is<SVGTextElement>(currentNode))
+            continue;
 
         // Do not move to a visually distinct position.
         if (endsOfNodeAreVisuallyDistinctPositions(&currentNode) && &currentNode != boundary)

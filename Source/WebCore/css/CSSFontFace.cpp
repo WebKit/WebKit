@@ -279,13 +279,10 @@ void CSSFontFace::setUnicodeRange(CSSValueList& list)
 {
     mutableProperties().setProperty(CSSPropertyUnicodeRange, &list);
 
-    Vector<UnicodeRange> ranges;
-    ranges.reserveInitialCapacity(list.length());
-
-    for (auto& rangeValue : list) {
+    auto ranges = WTF::map(list, [](auto& rangeValue) {
         auto& range = downcast<CSSUnicodeRangeValue>(rangeValue);
-        ranges.uncheckedAppend({ range.from(), range.to() });
-    }
+        return UnicodeRange { range.from(), range.to() };
+    });
 
     if (ranges == m_ranges)
         return;

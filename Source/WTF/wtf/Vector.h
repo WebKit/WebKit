@@ -298,6 +298,8 @@ struct VectorTypeOperations
 template<typename T>
 constexpr inline bool isValidCapacityForVector(size_t capacity) { return capacity <= std::numeric_limits<unsigned>::max() / sizeof(T); }
 
+template<typename Collection> struct CopyOrMoveToVectorResult;
+
 template<typename T, typename Malloc>
 class VectorBufferBase {
     WTF_MAKE_NONCOPYABLE(VectorBufferBase);
@@ -724,7 +726,7 @@ public:
         asanSetInitialBufferSizeTo(initializerList.size());
 
         for (const auto& element : initializerList)
-            uncheckedAppend(element);
+            unsafeAppendWithoutCapacityCheck(element);
     }
 
     template<typename... Items>
@@ -845,16 +847,18 @@ public:
     template<typename... Args> ALWAYS_INLINE void constructAndAppend(Args&&... args) { constructAndAppend<FailureAction::Crash>(std::forward<Args>(args)...); }
     template<typename... Args> ALWAYS_INLINE bool tryConstructAndAppend(Args&&... args) { return constructAndAppend<FailureAction::Report>(std::forward<Args>(args)...); }
 
-    void uncheckedAppend(ValueType&& value) { uncheckedAppend<ValueType>(std::forward<ValueType>(value)); }
-    template<typename U> void uncheckedAppend(U&&);
-    template<typename... Args> void uncheckedConstructAndAppend(Args&&...);
-
     template<typename U> ALWAYS_INLINE void append(const U* u, size_t size) { append<FailureAction::Crash>(u, size); }
     template<typename U> ALWAYS_INLINE bool tryAppend(const U* u, size_t size) { return append<FailureAction::Report>(u, size); }
     template<typename U> ALWAYS_INLINE void append(std::span<const U> span) { append(span.data(), span.size()); }
-    template<typename U> ALWAYS_INLINE void uncheckedAppend(std::span<const U> span) { uncheckedAppend<FailureAction::Crash>(span.data(), span.size()); }
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&);
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&&);
+
+    // FIXME: Remove uncheckedAppend() alias to append() after confirming there is no performance
+    // regression and call sites have been ported over.
+    ALWAYS_INLINE void uncheckedAppend(ValueType&& value) { append(std::forward<ValueType>(value)); }
+    template<typename U> ALWAYS_INLINE void uncheckedAppend(U&& value) { append(std::forward<U>(value)); }
+    template<typename... Args> ALWAYS_INLINE void uncheckedConstructAndAppend(Args&&... args) { constructAndAppend(std::forward<Args>(args)...); }
+    template<typename U> ALWAYS_INLINE void uncheckedAppend(std::span<const U> span) { append(span); }
 
     void insert(size_t position, ValueType&& value) { insert<ValueType>(position, std::forward<ValueType>(value)); }
     template<typename U> void insert(size_t position, const U*, size_t);
@@ -929,7 +933,16 @@ private:
 
     template<FailureAction, typename U> bool append(U&&);
     template<FailureAction, typename U> bool append(const U*, size_t);
-    template<FailureAction, typename U> bool uncheckedAppend(const U*, size_t);
+
+    template<typename MapFunction, typename SourceType, typename Enable> friend struct Mapper;
+    template<typename DestinationItemType, typename Collection> friend Vector<DestinationItemType> copyToVectorOf(const Collection&);
+    template<typename Collection> friend Vector<typename CopyOrMoveToVectorResult<Collection>::Type> copyToVector(const Collection&);
+    template<typename U, size_t otherInlineCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> friend class Vector;
+    template<typename DestinationVector, typename Collection> friend DestinationVector copyToVectorSpecialization(const Collection&);
+
+    void unsafeAppendWithoutCapacityCheck(ValueType&& value) { unsafeAppendWithoutCapacityCheck<ValueType>(std::forward<ValueType>(value)); }
+    template<typename U> void unsafeAppendWithoutCapacityCheck(U&&);
+    template<FailureAction, typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
 
     template<size_t position, typename U, typename... Items>
     void uncheckedInitialize(U&& item, Items&&... items)
@@ -1404,7 +1417,7 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<FailureAction action, typename U>
-ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::uncheckedAppend(const U* data, size_t dataSize)
+ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::unsafeAppendWithoutCapacityCheck(const U* data, size_t dataSize)
 {
     static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     if (!dataSize)
@@ -1495,25 +1508,13 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::constructA
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<typename U>
-ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::uncheckedAppend(U&& value)
+ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::unsafeAppendWithoutCapacityCheck(U&& value)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(size() < capacity());
 
     asanBufferSizeWillChangeTo(m_size + 1);
 
     new (NotNull, end()) T(std::forward<U>(value));
-    ++m_size;
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename... Args>
-ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::uncheckedConstructAndAppend(Args&&... args)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(size() < capacity());
-
-    asanBufferSizeWillChangeTo(m_size + 1);
-
-    new (NotNull, end()) T(std::forward<Args>(args)...);
     ++m_size;
 }
 
@@ -1532,7 +1533,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::app
     if (newSize > capacity())
         expandCapacity<FailureAction::Crash>(newSize);
     for (auto& item : val)
-        uncheckedAppend(WTFMove(item));
+        unsafeAppendWithoutCapacityCheck(WTFMove(item));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1706,7 +1707,7 @@ inline auto Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map
     ResultVector result;
     result.reserveInitialCapacity(size());
     for (size_t i = 0; i < size(); ++i)
-        result.uncheckedAppend(mapFunction(at(i)));
+        result.unsafeAppendWithoutCapacityCheck(mapFunction(at(i)));
     return result;
 }
 
@@ -1806,7 +1807,7 @@ struct Mapper {
         // FIXME: Use std::size when available on all compilers.
         result.reserveInitialCapacity(source.size());
         for (auto&& item : source)
-            result.uncheckedAppend(mapFunction(item));
+            result.unsafeAppendWithoutCapacityCheck(mapFunction(item));
         return result;
     }
 };
@@ -1822,7 +1823,7 @@ struct Mapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_re
         // FIXME: Use std::size when available on all compilers.
         result.reserveInitialCapacity(source.size());
         for (auto&& item : source)
-            result.uncheckedAppend(mapFunction(WTFMove(item)));
+            result.unsafeAppendWithoutCapacityCheck(mapFunction(WTFMove(item)));
         return result;
     }
 };
@@ -1948,7 +1949,7 @@ inline auto copyToVectorSpecialization(const Collection& collection) -> Destinat
     // FIXME: Use std::size when available on all compilers.
     result.reserveInitialCapacity(collection.size());
     for (auto&& item : collection)
-        result.uncheckedAppend(item);
+        result.unsafeAppendWithoutCapacityCheck(item);
     return result;
 }
 

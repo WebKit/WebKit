@@ -247,8 +247,7 @@ void MemoryCache::forEachResource(const Function<void(CachedResource&)>& functio
     Vector<WeakPtr<CachedResource>> allResources;
     for (auto& lruList : m_allResources) {
         allResources.reserveCapacity(allResources.size() + lruList->computeSize());
-        for (auto& resource : *lruList)
-            allResources.uncheckedAppend(resource);
+        allResources.appendRange(lruList->begin(), lruList->end());
     }
     for (auto& resource : allResources) {
         if (CachedResourceHandle resourceHandle = resource.get())
