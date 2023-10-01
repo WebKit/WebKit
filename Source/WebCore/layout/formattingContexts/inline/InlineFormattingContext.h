@@ -31,13 +31,13 @@
 #include "InlineFormattingConstraints.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
+#include "InlineLayoutState.h"
 #include "IntrinsicWidthHandler.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
-class InlineLayoutState;
 class InlineDamage;
 class InlineFormattingState;
 class LineBox;
@@ -57,31 +57,39 @@ struct InlineLayoutResult {
 class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&, BlockLayoutState& parentBlockLayoutState);
 
-    InlineLayoutResult layout(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDamage* = nullptr);
+    InlineLayoutResult layout(const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
     IntrinsicWidthConstraints computedIntrinsicSizes(const InlineDamage*);
     LayoutUnit maximumContentSize();
 
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
+    // FIXME: This should just be "layout state" (pending on renaming LayoutState).
+    InlineLayoutState& inlineLayoutState() { return m_inlineLayoutState; }
+    const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
+
+    FloatingState& floatingState() { return inlineLayoutState().parentBlockLayoutState().floatingState(); }
+    const FloatingState& floatingState() const { return inlineLayoutState().parentBlockLayoutState().floatingState(); }
 
 private:
-    InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDamage* = nullptr);
+    InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&, FloatingState&);
 
     void collectContentIfNeeded();
-    InlineRect createDisplayContentForInlineContent(const LineBox&, const LineLayoutResult&, const ConstraintsForInlineContent&, InlineLayoutState&, InlineDisplay::Content&);
-    void updateInlineLayoutStateWithLineLayoutResult(const LineLayoutResult&, InlineLayoutState&, const InlineRect& lineLogicalRect, const FloatingContext&);
+    InlineRect createDisplayContentForInlineContent(const LineBox&, const LineLayoutResult&, const ConstraintsForInlineContent&, InlineDisplay::Content&);
+    void updateInlineLayoutStateWithLineLayoutResult(const LineLayoutResult&, const InlineRect& lineLogicalRect, const FloatingContext&);
     void updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
-    bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutState&, InlineLayoutResult&);
+    bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
+    void initializeLayoutState();
 
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
     const InlineFormattingGeometry m_inlineFormattingGeometry;
     const InlineFormattingQuirks m_inlineFormattingQuirks;
+    InlineLayoutState m_inlineLayoutState;
 };
 
 }

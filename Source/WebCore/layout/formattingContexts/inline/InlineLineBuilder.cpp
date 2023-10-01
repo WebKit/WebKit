@@ -225,9 +225,8 @@ inline void LineCandidate::reset()
 }
 
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_inlineLayoutState(inlineLayoutState)
     , m_floatingState(floatingState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
@@ -768,7 +767,7 @@ LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect&
         return { adjustedLogicalRect, marginStart, isConstrainedByFloat };
     }();
 
-    if (auto adjustedRect = InlineFormattingQuirks::adjustedRectForLineGridLineAlign(constraints.logicalRect, formattingContext().root().style(), m_inlineLayoutState))
+    if (auto adjustedRect = formattingContext().formattingQuirks().adjustedRectForLineGridLineAlign(constraints.logicalRect))
         constraints.logicalRect = *adjustedRect;
 
     return constraints;
@@ -993,7 +992,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
     auto availableWidthForCandidateContent = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
         // If width constraint overrides exist (e.g. text-wrap: balance), modify the available width accordingly.
-        const auto& availableLineWidthOverride = m_inlineLayoutState.availableLineWidthOverride();
+        const auto& availableLineWidthOverride = inlineLayoutState().availableLineWidthOverride();
         auto widthOverride = availableLineWidthOverride.availableLineWidthOverrideForLine(lineIndex);
         auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : usedConstraints.logicalRect.width();
         return availableWidth(inlineContent, m_line, availableTotalWidthForContent);
@@ -1233,6 +1232,11 @@ const ElementBox& LineBuilder::root() const
 const RenderStyle& LineBuilder::rootStyle() const
 {
     return isFirstFormattedLine() ? root().firstLineStyle() : root().style();
+}
+
+const InlineLayoutState& LineBuilder::inlineLayoutState() const
+{
+    return formattingContext().inlineLayoutState();
 }
 
 }

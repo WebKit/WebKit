@@ -102,10 +102,6 @@ void LayoutContext::layoutFormattingContextSubtree(const ElementBox& formattingC
 std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const ElementBox& formattingContextRoot, LayoutState& layoutState)
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
-    if (formattingContextRoot.establishesInlineFormattingContext()) {
-        auto& inlineFormattingState = layoutState.ensureInlineFormattingState(formattingContextRoot);
-        return makeUnique<InlineFormattingContext>(formattingContextRoot, inlineFormattingState);
-    }
 
     if (formattingContextRoot.establishesBlockFormattingContext()) {
         ASSERT(!formattingContextRoot.establishesInlineFormattingContext());

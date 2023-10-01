@@ -102,9 +102,8 @@ static bool cannotBalanceInlineItem(const InlineItem& inlineItem)
     return false;
 }
 
-InlineContentBalancer::InlineContentBalancer(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, const InlineItems& inlineItems, const HorizontalConstraints& horizontalConstraints)
+InlineContentBalancer::InlineContentBalancer(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, const HorizontalConstraints& horizontalConstraints)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_inlineLayoutState(inlineLayoutState)
     , m_inlineItems(inlineItems)
     , m_horizontalConstraints(horizontalConstraints)
 {
@@ -113,7 +112,7 @@ InlineContentBalancer::InlineContentBalancer(const InlineFormattingContext& inli
 
 void InlineContentBalancer::initialize()
 {
-    if (!m_inlineLayoutState.parentBlockLayoutState().floatingState().isEmpty()) {
+    if (!m_inlineFormattingContext.floatingState().isEmpty()) {
         m_cannotBalanceContent = true;
         return;
     }
@@ -139,9 +138,7 @@ void InlineContentBalancer::initialize()
     //  - forced break locations
     InlineItemRange layoutRange = InlineItemRange { 0, m_inlineItems.size() };
     auto floatingState = FloatingState { m_inlineFormattingContext.root() };
-    auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
-    auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { }, { } };
-    auto lineBuilder = LineBuilder { m_inlineFormattingContext, inlineLayoutState, floatingState, m_horizontalConstraints, m_inlineItems };
+    auto lineBuilder = LineBuilder { m_inlineFormattingContext, floatingState, m_horizontalConstraints, m_inlineItems };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto previousLine = std::optional<PreviousLine> { };
     auto lineIndex = 0lu;

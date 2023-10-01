@@ -37,7 +37,7 @@ namespace Layout {
 
 class InlineContentBalancer {
 public:
-    InlineContentBalancer(const InlineFormattingContext&, const InlineLayoutState&, const InlineItems&, const HorizontalConstraints&);
+    InlineContentBalancer(const InlineFormattingContext&, const InlineItems&, const HorizontalConstraints&);
     std::optional<Vector<LayoutUnit>> computeBalanceConstraints();
 
 private:
@@ -51,7 +51,6 @@ private:
     bool shouldTrimTrailing(size_t inlineItemIndex, bool useFirstLineStyle) const;
 
     const InlineFormattingContext& m_inlineFormattingContext;
-    const InlineLayoutState& m_inlineLayoutState;
     const InlineItems& m_inlineItems;
     const HorizontalConstraints& m_horizontalConstraints;
 

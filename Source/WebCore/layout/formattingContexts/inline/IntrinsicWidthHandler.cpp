@@ -64,9 +64,7 @@ IntrinsicWidthConstraints IntrinsicWidthHandler::computedIntrinsicSizes()
     }
 
     auto floatingState = FloatingState { root() };
-    auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
-    auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { }, { } };
-    auto lineBuilder = LineBuilder { formattingContext(), inlineLayoutState, floatingState, { }, inlineFormattingState.inlineItems() };
+    auto lineBuilder = LineBuilder { formattingContext(), floatingState, { }, inlineFormattingState.inlineItems() };
     return { computedIntrinsicValue(IntrinsicWidthMode::Minimum, lineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, lineBuilder) };
 }
 
@@ -74,9 +72,7 @@ LayoutUnit IntrinsicWidthHandler::maximumContentSize()
 {
     auto& inlineFormattingState = formattingState();
     auto floatingState = FloatingState { root() };
-    auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
-    auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { }, { } };
-    auto lineBuilder = LineBuilder { formattingContext(), inlineLayoutState, floatingState, { }, inlineFormattingState.inlineItems() };
+    auto lineBuilder = LineBuilder { formattingContext(), floatingState, { }, inlineFormattingState.inlineItems() };
     lineBuilder.setIntrinsicWidthMode(IntrinsicWidthMode::Maximum);
 
     return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, lineBuilder));

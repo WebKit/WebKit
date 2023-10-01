@@ -169,8 +169,10 @@ LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem) co
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
+    auto floatingState = FloatingState { flexItemBox };
+    auto blockLayoutState = BlockLayoutState { floatingState };
     auto& inlineFormattingState = flexFormattingContext().layoutState().ensureInlineFormattingState(flexItemBox);
-    return InlineFormattingContext { flexItemBox, inlineFormattingState }.maximumContentSize();
+    return InlineFormattingContext { flexItemBox, inlineFormattingState, blockLayoutState }.maximumContentSize();
 }
 
 FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems) const
@@ -440,12 +442,11 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
             }
             // FIXME: Let it run through integration codepath.
             auto floatingState = FloatingState { flexItemBox };
-            auto parentBlockLayoutState = BlockLayoutState { floatingState };
-            auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { }, { } };
+            auto blockLayoutState = BlockLayoutState { floatingState };
             auto& inlineFormattingState = flexFormattingContext().layoutState().ensureInlineFormattingState(flexItemBox);
-            auto inlineFormattingContext = InlineFormattingContext { flexItemBox, inlineFormattingState };
+            auto inlineFormattingContext = InlineFormattingContext { flexItemBox, inlineFormattingState, blockLayoutState };
             auto constraintsForInFlowContent = ConstraintsForInFlowContent { HorizontalConstraints { { }, flexItemsMainSizeList[flexItemIndex] }, { } };
-            auto layoutResult = inlineFormattingContext.layout({ constraintsForInFlowContent, { } }, inlineLayoutState);
+            auto layoutResult = inlineFormattingContext.layout({ constraintsForInFlowContent, { } });
             return LayoutUnit { layoutResult.displayContent.lines.last().lineBoxLogicalRect().maxY() };
         };
         auto usedCrossSize = crossSizeAfterPerformingLayout();
