@@ -70,6 +70,7 @@ void ManagedMediaSource::setStreaming(bool streaming)
 {
     if (m_streaming == streaming)
         return;
+    ALWAYS_LOG(LOGIDENTIFIER, streaming);
     m_streaming = streaming;
     if (streaming) {
         scheduleEvent(eventNames().startstreamingEvent);
@@ -164,6 +165,7 @@ void ManagedMediaSource::monitorSourceBuffers()
 
 void ManagedMediaSource::streamingTimerFired()
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "Disabling streaming due to policy ", *m_highThreshold);
     m_streamingAllowed = false;
     notifyElementUpdateMediaState();
 }
