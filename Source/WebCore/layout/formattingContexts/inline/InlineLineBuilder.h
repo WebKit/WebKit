@@ -41,7 +41,7 @@ struct LineCandidate;
 
 class LineBuilder : public AbstractLineBuilder {
 public:
-    LineBuilder(const InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
+    LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
     virtual ~LineBuilder() { };
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
@@ -92,18 +92,18 @@ private:
     bool isLineConstrainedByFloat() const { return !m_lineIsConstrainedByFloat.isEmpty(); }
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
+    InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const InlineLayoutState& inlineLayoutState() const;
     const BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
-    FloatingState& floatingState() { return m_floatingState; }
+    FloatingState& floatingState();
     const FloatingState& floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
     const RenderStyle& rootStyle() const;
 
 private:
     std::optional<PreviousLine> m_previousLine { };
-    const InlineFormattingContext& m_inlineFormattingContext;
-    FloatingState& m_floatingState;
+    InlineFormattingContext& m_inlineFormattingContext;
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;

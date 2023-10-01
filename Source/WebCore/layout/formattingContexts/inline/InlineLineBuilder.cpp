@@ -225,9 +225,8 @@ inline void LineCandidate::reset()
 }
 
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_floatingState(floatingState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
@@ -1237,6 +1236,11 @@ const RenderStyle& LineBuilder::rootStyle() const
 const InlineLayoutState& LineBuilder::inlineLayoutState() const
 {
     return formattingContext().inlineLayoutState();
+}
+
+FloatingState& LineBuilder::floatingState()
+{
+    return formattingContext().floatingState();
 }
 
 }

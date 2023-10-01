@@ -102,7 +102,7 @@ static bool cannotBalanceInlineItem(const InlineItem& inlineItem)
     return false;
 }
 
-InlineContentBalancer::InlineContentBalancer(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, const HorizontalConstraints& horizontalConstraints)
+InlineContentBalancer::InlineContentBalancer(InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, const HorizontalConstraints& horizontalConstraints)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineItems(inlineItems)
     , m_horizontalConstraints(horizontalConstraints)
@@ -136,9 +136,8 @@ void InlineContentBalancer::initialize()
     //  - the number of lines used
     //  - the original widths of each line
     //  - forced break locations
-    InlineItemRange layoutRange = InlineItemRange { 0, m_inlineItems.size() };
-    auto floatingState = FloatingState { m_inlineFormattingContext.root() };
-    auto lineBuilder = LineBuilder { m_inlineFormattingContext, floatingState, m_horizontalConstraints, m_inlineItems };
+    auto layoutRange = InlineItemRange { 0, m_inlineItems.size() };
+    auto lineBuilder = LineBuilder { m_inlineFormattingContext, m_horizontalConstraints, m_inlineItems };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto previousLine = std::optional<PreviousLine> { };
     auto lineIndex = 0lu;

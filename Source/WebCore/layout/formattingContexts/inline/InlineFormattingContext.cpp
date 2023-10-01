@@ -75,7 +75,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     if (!root().hasInFlowChild() && !root().hasOutOfFlowChild()) {
         // Float only content does not support partial layout.
         ASSERT(!lineDamage);
-        layoutFloatContentOnly(constraints, floatingState);
+        layoutFloatContentOnly(constraints);
         return { { }, InlineLayoutResult::Range::Full };
     }
 
@@ -112,7 +112,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, constraints.horizontal(), inlineItems };
         return lineLayout(simplifiedLineBuilder, inlineItems, needsLayoutRange, previousLine(), constraints, lineDamage);
     }
-    auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal(), inlineItems };
+    auto lineBuilder = LineBuilder { *this, constraints.horizontal(), inlineItems };
     return lineLayout(lineBuilder, inlineItems, needsLayoutRange, previousLine(), constraints, lineDamage);
 }
 
@@ -209,11 +209,12 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
     return layoutResult;
 }
 
-void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineContent& constraints, FloatingState& floatingState)
+void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineContent& constraints)
 {
     ASSERT(!root().hasInFlowChild());
 
     auto& inlineFormattingState = formattingState();
+    auto& floatingState = this->floatingState();
     auto floatingContext = FloatingContext { *this, floatingState };
 
     InlineItemsBuilder { root(), inlineFormattingState }.build({ });
