@@ -32,7 +32,7 @@
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
     GenerateIsReachable=Impl,
-    EnabledBySetting=MediaSourceEnabled,
+    EnabledBySetting=MediaSourceEnabled|ManagedMediaSourceEnabled,
     Exposed=Window
 ] interface SourceBufferList : EventTarget {
     readonly attribute unsigned long length;

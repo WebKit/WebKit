@@ -249,8 +249,9 @@ media/video-size-intrinsic-scale.html [ WontFix ]
 media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Pass ]
 
 # MediaSource is not currently supported on iOS.
-media/media-source/media-managedmse-airplay.html [ Pass ]
 media/media-source
+media/media-source/media-managedmse-airplay.html [ Pass ]
+media/media-source/media-managedmse-idl.html [ Pass ]
 http/tests/media/media-source [ Skip ]
 imported/w3c/web-platform-tests/media-source/ [ Skip ]
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
