@@ -64,7 +64,7 @@ FormattingContext::~FormattingContext()
 #endif
 }
 
-LayoutState& FormattingContext::layoutState() const
+LayoutState& FormattingContext::layoutState()
 {
     return m_formattingState.layoutState();
 }

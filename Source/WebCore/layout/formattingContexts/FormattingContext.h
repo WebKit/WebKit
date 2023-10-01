@@ -60,7 +60,10 @@ public:
     virtual LayoutUnit usedContentHeight() const { return { }; }
 
     const ElementBox& root() const { return m_root; }
-    LayoutState& layoutState() const;
+
+    LayoutState& layoutState();
+    const LayoutState& layoutState() const { return const_cast<FormattingContext&>(*this).layoutState(); }
+
     const FormattingState& formattingState() const { return m_formattingState; }
     virtual const FormattingGeometry& formattingGeometry() const = 0;
     virtual const FormattingQuirks& formattingQuirks() const = 0;
