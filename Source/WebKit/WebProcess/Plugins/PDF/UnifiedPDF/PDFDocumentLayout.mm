@@ -28,7 +28,9 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "Logging.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -66,26 +68,45 @@ RetainPtr<CGPDFPageRef> PDFDocumentLayout::pageAtIndex(PageIndex index) const
 void PDFDocumentLayout::updateGeometry()
 {
     auto pageCount = this->pageCount();
-    m_pageBounds.clear();
+    m_pageGeometry.clear();
     m_documentBounds = { };
+
+    auto normalizeRotation = [](IntDegrees degrees) {
+        if (degrees < 0)
+            degrees += 360 * (1 + (degrees / -360));
+
+        // Round to nearest 90 degree angle
+        degrees = std::round(static_cast<double>(degrees) / 90.0) * 90.0;
+
+        // Normalize in positive space
+        return degrees % 360;
+    };
+
+    auto normalizePageBounds = [&](FloatRect cropBox, int degrees) {
+        auto r = cropBox;
+        if (degrees == 90 || degrees == 270)
+            r.setSize(r.size().transposedSize());
+        return r;
+    };
 
     for (PageIndex i = 0; i < pageCount; ++i) {
         auto page = pageAtIndex(i);
         if (!page) {
-            m_pageBounds.append({ });
+            m_pageGeometry.append({ });
             continue;
         }
 
         auto pageCropBox = FloatRect { CGPDFPageGetBoxRect(page.get(), kCGPDFCropBox) };
+        auto rotation = normalizeRotation(CGPDFPageGetRotationAngle(page.get()));
 
-        // FIXME: Handle page rotation
-        m_pageBounds.append(pageCropBox);
+        LOG_WITH_STREAM(Plugins, stream << "PDFDocumentLayout::updateGeometry() - page " << i << " crop box " << pageCropBox << " rotation " << rotation);
+
+        auto pageBounds = normalizePageBounds(pageCropBox, rotation);
+        m_pageGeometry.append({ pageBounds, rotation });
     }
 
-    float availableWidth = 1000; // FIXME: Fixed for now, but should use plugin width, maybe with a second layout pass when horizontal scrolling is required.
+    float availableWidth = 1600; // FIXME: Fixed for now, but should use plugin width, maybe with a second layout pass when horizontal scrolling is required.
     layoutPages(availableWidth);
-
-    // FIXME: Update plugin size here.
 }
 
 void PDFDocumentLayout::layoutPages(float availableWidth)
@@ -114,7 +135,10 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth)
     auto pageCount = this->pageCount();
 
     for (PageIndex i = 0; i < pageCount; ++i) {
-        auto pageBounds = m_pageBounds[i];
+        if (i >= m_pageGeometry.size())
+            break;
+
+        auto pageBounds = m_pageGeometry[i].normalizedBounds;
 
         auto pageLeft = std::max<float>(std::floor((availableWidth - pageBounds.width()) / 2), 0);
         pageBounds.setLocation({ pageLeft, currentYOffset });
@@ -122,7 +146,7 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth)
         currentYOffset += pageBounds.height() + pageMargin.height();
         maxPageWidth = std::max(maxPageWidth, pageBounds.width());
 
-        m_pageBounds[i] = pageBounds;
+        m_pageGeometry[i].normalizedBounds = pageBounds;
     }
 
     // Subtract the last page's bottom margin.
@@ -147,11 +171,20 @@ size_t PDFDocumentLayout::pageCount() const
 
 WebCore::FloatRect PDFDocumentLayout::boundsForPageAtIndex(PageIndex index) const
 {
-    if (index >= m_pageBounds.size())
+    if (index >= m_pageGeometry.size())
         return { };
 
-    return m_pageBounds[index];
+    return m_pageGeometry[index].normalizedBounds;
 }
+
+IntDegrees PDFDocumentLayout::rotationForPageAtIndex(PageIndex index) const
+{
+    if (index >= m_pageGeometry.size())
+        return 0;
+
+    return m_pageGeometry[index].rotation;
+}
+
 
 } // namespace WebKit
 

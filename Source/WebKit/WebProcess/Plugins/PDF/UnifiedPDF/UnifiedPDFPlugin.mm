@@ -30,6 +30,7 @@
 
 #include "PluginView.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <WebCore/AffineTransform.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
@@ -105,16 +106,21 @@ void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& r
         if (!page)
             continue;
 
-        auto pageBounds = m_documentLayout.boundsForPageAtIndex(i);
+        auto destinationRect = m_documentLayout.boundsForPageAtIndex(i);
 
         auto stateSaver = GraphicsContextStateSaver(bufferContext);
-        bufferContext.clip(pageBounds);
+        bufferContext.clip(destinationRect);
+        bufferContext.fillRect(destinationRect, Color::white);
 
-        bufferContext.fillRect(pageBounds, Color::white);
-
-        bufferContext.translate(pageBounds.x(), pageBounds.y());
-        bufferContext.translate(0, pageBounds.height());
+        // Translate the context to the bottom of pageBounds and flip, so that CGPDFPageGetDrawingTransform operates
+        // from this page's drawing origin.
+        bufferContext.translate(destinationRect.minXMaxYCorner());
         bufferContext.scale({ 1, -1 });
+
+        destinationRect.setLocation({ });
+        constexpr bool preserveAspectRatio = true;
+        auto transform = CGPDFPageGetDrawingTransform(page.get(), kCGPDFCropBox, destinationRect, 0, preserveAspectRatio);
+        bufferContext.concatCTM(transform);
 
         CGContextDrawPDFPage(imageBuffer->context().platformContext(), page.get());
     }
