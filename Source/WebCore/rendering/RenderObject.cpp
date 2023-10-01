@@ -2228,14 +2228,12 @@ static Vector<FloatRect> absoluteRectsForRangeInText(const SimpleRange& range, T
 
     if (behavior.contains(RenderObject::BoundingRectBehavior::RespectClipping)) {
         auto absoluteClippedOverflowRect = renderer->absoluteClippedOverflowRectForRepaint();
-        Vector<FloatRect> clippedRects;
-        clippedRects.reserveInitialCapacity(textQuads.size());
-        for (auto& quad : textQuads) {
+        return WTF::compactMap(textQuads, [&](auto& quad) -> std::optional<FloatRect> {
             auto clippedRect = intersection(quad.boundingBox(), absoluteClippedOverflowRect);
             if (!clippedRect.isEmpty())
-                clippedRects.uncheckedAppend(clippedRect);
-        }
-        return clippedRects;
+                return clippedRect;
+            return std::nullopt;
+        });
     }
 
     return boundingBoxes(textQuads);
@@ -2258,12 +2256,9 @@ Vector<IntRect> RenderObject::absoluteTextRects(const SimpleRange& range, Option
         }
     }
 
-    Vector<IntRect> result;
-    result.reserveInitialCapacity(rects.size());
-    for (auto& layoutRect : rects)
-        result.uncheckedAppend(enclosingIntRect(layoutRect));
-
-    return result;
+    return WTF::map(rects, [](auto& layoutRect) {
+        return enclosingIntRect(layoutRect);
+    });
 }
 
 static RefPtr<Node> nodeBefore(const BoundaryPoint& point)

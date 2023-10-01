@@ -581,14 +581,12 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOr
     if (nodeOrStringVector.isEmpty())
         return nullptr;
 
-    Vector<Ref<Node>> nodes;
-    nodes.reserveInitialCapacity(nodeOrStringVector.size());
-    for (auto& variant : nodeOrStringVector) {
-        WTF::switchOn(variant,
-            [&](RefPtr<Node>& node) { nodes.uncheckedAppend(*node.get()); },
-            [&](String& string) { nodes.uncheckedAppend(Text::create(document(), WTFMove(string))); }
+    auto nodes = WTF::map(WTFMove(nodeOrStringVector), [&](auto&& variant) -> Ref<Node> {
+        return WTF::switchOn(WTFMove(variant),
+            [&](RefPtr<Node>&& node) { return node.releaseNonNull(); },
+            [&](String&& string) -> Ref<Node> { return Text::create(document(), WTFMove(string)); }
         );
-    }
+    });
 
     if (nodes.size() == 1)
         return RefPtr<Node> { WTFMove(nodes.first()) };

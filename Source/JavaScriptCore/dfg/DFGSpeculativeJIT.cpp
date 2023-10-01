@@ -2723,16 +2723,14 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
             continue;
         if (block->isCatchEntrypoint) {
             auto& argumentsVector = m_graph.m_rootToArguments.find(block)->value;
-            Vector<FlushFormat> argumentFormats;
-            argumentFormats.reserveInitialCapacity(argumentsVector.size());
-            for (Node* setArgument : argumentsVector) {
+            auto argumentFormats = argumentsVector.map([](auto* setArgument) {
                 if (setArgument) {
                     FlushFormat flushFormat = setArgument->variableAccessData()->flushFormat();
                     ASSERT(flushFormat == FlushedInt32 || flushFormat == FlushedCell || flushFormat == FlushedBoolean || flushFormat == FlushedJSValue);
-                    argumentFormats.uncheckedAppend(flushFormat);
-                } else
-                    argumentFormats.uncheckedAppend(DeadFlush);
-            }
+                    return flushFormat;
+                }
+                return DeadFlush;
+            });
             noticeCatchEntrypoint(*block, m_osrEntryHeads[osrEntryIndex++], linkBuffer, WTFMove(argumentFormats));
         } else {
             ASSERT(block->isOSRTarget);

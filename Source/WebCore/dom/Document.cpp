@@ -8103,13 +8103,11 @@ void Document::didAssociateFormControl(Element& element)
 
 void Document::didAssociateFormControlsTimerFired()
 {
-    Vector<RefPtr<Element>> controls;
-    controls.reserveInitialCapacity(m_associatedFormControls.computeSize());
-    for (auto& element : std::exchange(m_associatedFormControls, { })) {
+    auto controls = WTF::compactMap(std::exchange(m_associatedFormControls, { }), [](auto&& element) -> std::optional<RefPtr<Element>> {
         if (element.isConnected())
-            controls.uncheckedAppend(&element);
-    }
-    controls.shrinkToFit();
+            return RefPtr { &element };
+        return std::nullopt;
+    });
 
     if (auto page = this->page(); page && !controls.isEmpty()) {
         ASSERT(m_frame);

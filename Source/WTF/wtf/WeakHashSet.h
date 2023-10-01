@@ -240,7 +240,7 @@ struct Mapper<MapFunction, const WeakHashSet<T, WeakMapImpl>&, void> {
         Vector<DestinationItemType> result;
         result.reserveInitialCapacity(source.computeSize());
         for (auto& item : source)
-            result.uncheckedAppend(mapFunction(item));
+            result.unsafeAppendWithoutCapacityCheck(mapFunction(item));
         return result;
     }
 };

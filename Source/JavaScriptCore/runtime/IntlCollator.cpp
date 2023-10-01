@@ -100,15 +100,10 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtens
         break;
     }
     case RelevantExtensionKey::Kf:
-        keyLocaleData.reserveInitialCapacity(3);
-        keyLocaleData.uncheckedAppend("false"_s);
-        keyLocaleData.uncheckedAppend("lower"_s);
-        keyLocaleData.uncheckedAppend("upper"_s);
+        keyLocaleData = Vector<String>::from("false"_str, "lower"_str, "upper"_str);
         break;
     case RelevantExtensionKey::Kn:
-        keyLocaleData.reserveInitialCapacity(2);
-        keyLocaleData.uncheckedAppend("false"_s);
-        keyLocaleData.uncheckedAppend("true"_s);
+        keyLocaleData = Vector<String>::from("false"_str, "true"_str);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -127,15 +122,10 @@ Vector<String> IntlCollator::searchLocaleData(const String&, RelevantExtensionKe
         keyLocaleData.append({ });
         break;
     case RelevantExtensionKey::Kf:
-        keyLocaleData.reserveInitialCapacity(3);
-        keyLocaleData.uncheckedAppend("false"_s);
-        keyLocaleData.uncheckedAppend("lower"_s);
-        keyLocaleData.uncheckedAppend("upper"_s);
+        keyLocaleData = Vector<String>::from("false"_str, "lower"_str, "upper"_str);
         break;
     case RelevantExtensionKey::Kn:
-        keyLocaleData.reserveInitialCapacity(2);
-        keyLocaleData.uncheckedAppend("false"_s);
-        keyLocaleData.uncheckedAppend("true"_s);
+        keyLocaleData = Vector<String>::from("false"_str, "true"_str);
         break;
     default:
         ASSERT_NOT_REACHED();

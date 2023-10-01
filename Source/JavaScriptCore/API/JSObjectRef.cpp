@@ -809,10 +809,9 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
     PropertyNameArray array(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
     jsObject->getPropertyNames(globalObject, array, DontEnumPropertiesMode::Exclude);
 
-    size_t size = array.size();
-    propertyNames->array.reserveInitialCapacity(size);
-    for (size_t i = 0; i < size; ++i)
-        propertyNames->array.uncheckedAppend(OpaqueJSString::tryCreate(array[i].string()).releaseNonNull());
+    propertyNames->array = WTF::map(array, [](auto& item) {
+        return OpaqueJSString::tryCreate(item.string()).releaseNonNull();
+    });
 
     return JSPropertyNameArrayRetain(propertyNames);
 }

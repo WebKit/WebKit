@@ -2263,11 +2263,7 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
 
     setAttribute(attributeName, emptyAtom());
 
-    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> newElements;
-    newElements.reserveInitialCapacity(elements->size());
-    for (auto element : elements.value()) {
-        newElements.uncheckedAppend(element);
-    }
+    auto newElements = copyToVectorOf<WeakPtr<Element, WeakPtrImplWithEventTargetData>>(*elements);
     explicitlySetAttrElementsMap().set(attributeName, WTFMove(newElements));
     
     if (auto* cache = document().existingAXObjectCache()) {
