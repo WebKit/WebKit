@@ -40,7 +40,7 @@ namespace WebCore {
 static inline const RenderObject* rendererFromPosition(const Position& position)
 {
     ASSERT(position.isNotNull());
-    Node* rendererNode = nullptr;
+    RefPtr<Node> rendererNode;
     switch (position.anchorType()) {
     case Position::PositionIsOffsetInAnchor:
         rendererNode = position.computeNodeAfterPosition();
@@ -206,9 +206,9 @@ Position RenderedPosition::positionAtLeftBoundaryOfBiDiRun() const
     ASSERT(atLeftBoundaryOfBidiRun());
 
     if (atLeftmostOffsetInBox())
-        return makeDeprecatedLegacyPosition(m_renderer->node(), m_offset);
+        return makeDeprecatedLegacyPosition(m_renderer->protectedNode().get(), m_offset);
 
-    return makeDeprecatedLegacyPosition(nextLeafOnLine()->renderer().node(), nextLeafOnLine()->leftmostCaretOffset());
+    return makeDeprecatedLegacyPosition(nextLeafOnLine()->renderer().protectedNode().get(), nextLeafOnLine()->leftmostCaretOffset());
 }
 
 Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
@@ -216,9 +216,9 @@ Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
     ASSERT(atRightBoundaryOfBidiRun());
 
     if (atRightmostOffsetInBox())
-        return makeDeprecatedLegacyPosition(m_renderer->node(), m_offset);
+        return makeDeprecatedLegacyPosition(m_renderer->protectedNode().get(), m_offset);
 
-    return makeDeprecatedLegacyPosition(previousLeafOnLine()->renderer().node(), previousLeafOnLine()->rightmostCaretOffset());
+    return makeDeprecatedLegacyPosition(previousLeafOnLine()->renderer().protectedNode().get(), previousLeafOnLine()->rightmostCaretOffset());
 }
 
 IntRect RenderedPosition::absoluteRect(CaretRectMode caretRectMode) const

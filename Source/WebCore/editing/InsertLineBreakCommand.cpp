@@ -136,9 +136,8 @@ void InsertLineBreakCommand::doApply()
                 insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
             else {
                 auto nbspNode = document->createTextNode(String { nonBreakingSpaceString() });
-                auto* nbspNodePtr = nbspNode.ptr();
-                insertNodeAt(WTFMove(nbspNode), positionBeforeTextNode);
-                endingPosition = firstPositionInNode(nbspNodePtr);
+                insertNodeAt(nbspNode.copyRef(), positionBeforeTextNode);
+                endingPosition = firstPositionInNode(nbspNode.ptr());
             }
         }
         

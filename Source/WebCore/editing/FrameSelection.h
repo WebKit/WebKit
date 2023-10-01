@@ -251,7 +251,7 @@ public:
     enum class TextRectangleHeight : bool { TextHeight, SelectionHeight };
     WEBCORE_EXPORT void getClippedVisibleTextRectangles(Vector<FloatRect>&, TextRectangleHeight = TextRectangleHeight::SelectionHeight) const;
 
-    WEBCORE_EXPORT HTMLFormElement* currentForm() const;
+    WEBCORE_EXPORT RefPtr<HTMLFormElement> currentForm() const;
 
     WEBCORE_EXPORT void revealSelection(SelectionRevealMode = SelectionRevealMode::Reveal, const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = RevealExtentOption::DoNotRevealExtent, ScrollBehavior = ScrollBehavior::Instant);
     WEBCORE_EXPORT void setSelectionFromNone();
@@ -320,6 +320,7 @@ private:
     void caretAnimationDidUpdate(CaretAnimator&) final;
 
     Document* document() final;
+    RefPtr<Document> protectedDocument() const { return m_document.get(); }
 
     Node* caretNode() final;
 

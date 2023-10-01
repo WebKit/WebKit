@@ -610,6 +610,7 @@ public:
             return nullptr;
         return m_node.ptr();
     }
+    RefPtr<Node> protectedNode() const { return node(); }
 
     Node* nonPseudoNode() const { return isPseudoElement() ? nullptr : node(); }
 
