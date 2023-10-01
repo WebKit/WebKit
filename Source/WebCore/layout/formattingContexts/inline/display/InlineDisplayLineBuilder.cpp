@@ -51,9 +51,9 @@ static InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect& li
     return lineLogicalRect;
 }
 
-InlineDisplayLineBuilder::InlineDisplayLineBuilder(const ConstraintsForInlineContent& constraints, const InlineFormattingContext& inlineFormattingContext)
-    : m_constraints(constraints)
-    , m_inlineFormattingContext(inlineFormattingContext)
+InlineDisplayLineBuilder::InlineDisplayLineBuilder(const InlineFormattingContext& inlineFormattingContext, const ConstraintsForInlineContent& constraints)
+    : m_inlineFormattingContext(inlineFormattingContext)
+    , m_constraints(constraints)
 {
 }
 

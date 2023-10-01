@@ -85,7 +85,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     if (needsInlineItemsUpdate) {
         // FIXME: This should go to invalidation.
         inlineFormattingState.clearMaximumIntrinsicWidthLayoutResult();
-        InlineItemsBuilder { root(), inlineFormattingState }.build(needsLayoutStartPosition);
+        InlineItemsBuilder { *this }.build(needsLayoutStartPosition);
     }
 
     auto& inlineItems = inlineFormattingState.inlineItems();
@@ -128,7 +128,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
     auto needsLayoutStartPosition = !lineDamage || !lineDamage->start() ? InlineItemPosition() : lineDamage->start()->inlineItemPosition;
     auto needsInlineItemsUpdate = inlineFormattingState.inlineItems().isEmpty() || lineDamage;
     if (needsInlineItemsUpdate)
-        InlineItemsBuilder { root(), inlineFormattingState }.build(needsLayoutStartPosition);
+        InlineItemsBuilder { *this }.build(needsLayoutStartPosition);
 
     auto intrinsicWidthHandler = IntrinsicWidthHandler { *this };
     auto intrinsicSizes = intrinsicWidthHandler.computedIntrinsicSizes();
@@ -217,7 +217,7 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
     auto& floatingState = this->floatingState();
     auto floatingContext = FloatingContext { *this, floatingState };
 
-    InlineItemsBuilder { root(), inlineFormattingState }.build({ });
+    InlineItemsBuilder { *this }.build({ });
 
     for (auto& inlineItem : inlineFormattingState.inlineItems()) {
         if (inlineItem.isFloat()) {
@@ -290,8 +290,8 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     }();
 
     auto lineIsFullyTruncatedInBlockDirection = numberOfVisibleLinesAllowed && lineIndex + 1 > *numberOfVisibleLinesAllowed;
-    auto displayLine = InlineDisplayLineBuilder { constraints, *this }.build(lineLayoutResult, lineBox, lineIsFullyTruncatedInBlockDirection);
-    auto boxes = InlineDisplayContentBuilder { constraints, *this, formattingState(), displayLine, lineIndex }.build(lineLayoutResult, lineBox);
+    auto displayLine = InlineDisplayLineBuilder { *this, constraints }.build(lineLayoutResult, lineBox, lineIsFullyTruncatedInBlockDirection);
+    auto boxes = InlineDisplayContentBuilder { *this, constraints, displayLine, lineIndex }.build(lineLayoutResult, lineBox);
 
     auto ellipsisPolicy = lineEndingEllipsisPolicy(root().style(), lineIndex, numberOfVisibleLinesAllowed);
     if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(ellipsisPolicy, displayLine, boxes, lineLayoutResult.isFirstLast.isLastLineWithInlineContent)) {
