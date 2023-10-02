@@ -28,6 +28,8 @@
 #include "WebCoreTestSupport.h"
 
 #include "DeprecatedGlobalSettings.h"
+#include "DocumentFragment.h"
+#include "FragmentScriptingPermission.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InternalSettings.h"
 #include "Internals.h"
@@ -45,6 +47,7 @@
 #include "ServiceWorkerGlobalScope.h"
 #include "SincResampler.h"
 #include "WheelEventTestMonitor.h"
+#include "XMLDocument.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/IdentifierInlines.h>
@@ -123,7 +126,7 @@ void clearWheelEventTestMonitor(WebCore::LocalFrame& frame)
     Page* page = frame.page();
     if (!page)
         return;
-    
+
     page->clearWheelEventTestMonitor();
 }
 
@@ -293,5 +296,16 @@ void testSincResamplerProcessBuffer(std::span<const float> source, std::span<flo
     SincResampler::processBuffer(source, destination, scaleFactor);
 }
 #endif // ENABLE(WEB_AUDIO)
+
+bool testDocumentFragmentParseXML(const String& chunk, OptionSet<ParserContentPolicy> parserContentPolicy)
+{
+    ProcessWarming::prewarmGlobally();
+
+    auto settings = Settings::create(nullptr);
+    auto document = XMLDocument::createXHTML(nullptr, settings, URL());
+    auto fragment = document->createDocumentFragment();
+
+    return fragment->parseXML(chunk, nullptr, parserContentPolicy);
+}
 
 } // namespace WebCoreTestSupport

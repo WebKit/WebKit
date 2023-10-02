@@ -34,7 +34,7 @@ public:
     WEBCORE_EXPORT static Ref<DocumentFragment> create(Document&);
 
     void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
-    bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    WEBCORE_EXPORT bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
 
     bool canContainRangeEndPoint() const final { return true; }
     virtual bool isTemplateContent() const { return false; }
