@@ -190,7 +190,7 @@ public:
     }
 
     template<typename... Arguments>
-    inline void logAlwaysVerbose(WTFLogChannel& channel, const char* file, const char* function, int line, UNUSED_FUNCTION const Arguments&... arguments) const
+    inline void logAlwaysVerbose(WTFLogChannel& channel, const char* file, const char* function, int line, UNUSED_VARIADIC_PARAMS const Arguments&... arguments) const
     {
 #if RELEASE_LOG_DISABLED
         // "Standard" WebCore logging goes to stderr, which is captured in layout test output and can generally be a problem
