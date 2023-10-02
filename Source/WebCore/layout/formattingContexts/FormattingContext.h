@@ -55,7 +55,6 @@ public:
     virtual ~FormattingContext();
 
     virtual void layoutInFlowContent(const ConstraintsForInFlowContent&) { };
-    void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() { return { }; }
     virtual LayoutUnit usedContentHeight() const { return { }; }
 
@@ -104,10 +103,6 @@ protected:
 #endif
 
 private:
-    void collectOutOfFlowDescendantsIfNeeded();
-    void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
-    void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
-
     CheckedRef<const ElementBox> m_root;
     FormattingState& m_formattingState;
 };

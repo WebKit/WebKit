@@ -28,7 +28,6 @@
 
 #include "BlockFormattingState.h"
 #include "FloatingState.h"
-#include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"

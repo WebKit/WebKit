@@ -31,7 +31,6 @@
 #include "FloatingContext.h"
 #include "FloatingState.h"
 #include "FormattingQuirks.h"
-#include "InlineFormattingState.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"

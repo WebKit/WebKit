@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TableFormattingGeometry.h"
 
-#include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"

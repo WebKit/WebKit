@@ -50,6 +50,7 @@ public:
     BlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState&);
 
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
+    void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
     LayoutUnit usedContentHeight() const override;
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
@@ -79,6 +80,10 @@ protected:
 
     std::optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const ElementBox&, const ConstraintsPair&);
     void updateMarginAfterForPreviousSibling(const ElementBox&);
+
+    void collectOutOfFlowDescendantsIfNeeded();
+    void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
+    void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
 
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
     BlockMarginCollapse marginCollapse() const;
