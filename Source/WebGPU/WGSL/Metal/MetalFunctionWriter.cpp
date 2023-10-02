@@ -614,8 +614,10 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::Void:
             case Types::Primitive::Bool:
             case Types::Primitive::Sampler:
-            case Types::Primitive::SamplerComparison:
                 m_stringBuilder.append(*type);
+                break;
+            case Types::Primitive::SamplerComparison:
+                m_stringBuilder.append("sampler");
                 break;
             case Types::Primitive::TextureExternal:
                 m_stringBuilder.append("texture_external");
@@ -963,6 +965,15 @@ static void emitTextureSample(FunctionDefinitionWriter* writer, AST::CallExpress
     visitArguments(writer, call, 1);
 }
 
+static void emitTextureSampleCompare(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    ASSERT(call.arguments().size() > 1);
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(".sample_compare");
+    visitArguments(writer, call, 1);
+}
+
+
 static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     bool isArray = false;
@@ -1162,6 +1173,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureNumLevels", emitTextureNumLevels },
             { "textureSample", emitTextureSample },
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
+            { "textureSampleCompare", emitTextureSampleCompare },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
             { "workgroupBarrier", emitWorkgroupBarrier },
