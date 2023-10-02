@@ -29,7 +29,7 @@
 #include "CSSLineBoxContainValue.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingGeometry.h"
-#include "InlineFormattingQuirks.h"
+#include "InlineQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "RenderStyleInlines.h"
@@ -463,7 +463,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         auto& rootStyle = this->rootStyle();
 
         auto handleTrailingContent = [&] {
-            auto& quirks = formattingContext().formattingQuirks();
+            auto& quirks = formattingContext().quirks();
             auto lineHasOverflow = [&] {
                 return horizontalAvailableSpace < m_line.contentLogicalWidth();
             };
@@ -766,7 +766,7 @@ LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect&
         return { adjustedLogicalRect, marginStart, isConstrainedByFloat };
     }();
 
-    if (auto adjustedRect = formattingContext().formattingQuirks().adjustedRectForLineGridLineAlign(constraints.logicalRect))
+    if (auto adjustedRect = formattingContext().quirks().adjustedRectForLineGridLineAlign(constraints.logicalRect))
         constraints.logicalRect = *adjustedRect;
 
     return constraints;
@@ -804,7 +804,7 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
 
     // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
     // It's a super premature as at this point we don't normally deal with vertical geometry -other than the incoming vertical constraint.
-    auto initialLetterCapHeightOffset = formattingContext().formattingQuirks().initialLetterAlignmentOffset(floatBox, rootStyle());
+    auto initialLetterCapHeightOffset = formattingContext().quirks().initialLetterAlignmentOffset(floatBox, rootStyle());
     // While initial-letter based floats do not set their clear property, intrusive floats from sibling IFCs are supposed to be cleared.
     auto intrusiveBottom = blockLayoutState().intrusiveInitialLetterLogicalBottom();
     if (!initialLetterCapHeightOffset && !intrusiveBottom)

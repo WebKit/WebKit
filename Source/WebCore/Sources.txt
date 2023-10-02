@@ -1732,7 +1732,6 @@ layout/formattingContexts/inline/InlineContentBalancer.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
 layout/formattingContexts/inline/InlineFormattingContext.cpp
 layout/formattingContexts/inline/InlineFormattingGeometry.cpp
-layout/formattingContexts/inline/InlineFormattingQuirks.cpp
 layout/formattingContexts/inline/InlineItem.cpp
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.cpp
@@ -1741,6 +1740,7 @@ layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp
 layout/formattingContexts/inline/InlineTextItem.cpp
+layout/formattingContexts/inline/InlineQuirks.cpp
 layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContent.cpp

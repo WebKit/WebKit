@@ -80,9 +80,11 @@ std::optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& lay
         return LayoutUnit { height.value() };
 
     if (!containingBlockHeight) {
-        if (layoutState().inQuirksMode())
-            containingBlockHeight = formattingContext().formattingQuirks().heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
-        else {
+        if (layoutState().inQuirksMode()) {
+            // FIXME: computedHeightValue needs to be moved to Block/Table/etc FormattingGeometry.
+            // Use heightValueOfNearestContainingBlockWithFixedHeight;
+            ASSERT_NOT_IMPLEMENTED_YET();
+        } else {
             auto nonAnonymousContainingBlockLogicalHeight = [&]() -> Length {
                 // When the block level box is a direct child of an inline level box (<span><div></div></span>) and we wrap it into a continuation,
                 // the containing block (anonymous wrapper) is not the box we need to check for fixed height.

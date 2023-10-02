@@ -55,7 +55,7 @@ public:
 
     const BlockFormattingState& formattingState() const { return m_blockFormattingState; }
     const BlockFormattingGeometry& formattingGeometry() const final { return m_blockFormattingGeometry; }
-    const BlockFormattingQuirks& formattingQuirks() const override { return m_blockFormattingQuirks; }
+    const BlockFormattingQuirks& formattingQuirks() const { return m_blockFormattingQuirks; }
 
 protected:
     struct ConstraintsPair {

@@ -385,7 +385,7 @@ void TextOnlySimpleLineBuilder::handleLineEnding(InlineItemPosition placedConten
         return root().style().lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastLine || horizontalAvailableSpace < m_line.contentLogicalWidth());
     };
     m_trimmedTrailingWhitespaceWidth = m_line.handleTrailingTrimmableContent(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
-    if (formattingContext().formattingQuirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
+    if (formattingContext().quirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
         m_line.handleOverflowingNonBreakingSpace(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
     m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);

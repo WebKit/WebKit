@@ -30,8 +30,8 @@
 #include "InlineDisplayContent.h"
 #include "InlineFormattingConstraints.h"
 #include "InlineFormattingGeometry.h"
-#include "InlineFormattingQuirks.h"
 #include "InlineLayoutState.h"
+#include "InlineQuirks.h"
 #include "IntrinsicWidthHandler.h"
 #include <wtf/IsoMalloc.h>
 
@@ -64,7 +64,7 @@ public:
     LayoutUnit maximumContentSize();
 
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
-    const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
+    const InlineQuirks& quirks() const { return m_inlineQuirks; }
     // FIXME: This should just be "layout state" (pending on renaming LayoutState).
     InlineLayoutState& inlineLayoutState() { return m_inlineLayoutState; }
     const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
@@ -89,7 +89,7 @@ private:
 private:
     InlineContentCache& m_inlineContentCache;
     const InlineFormattingGeometry m_inlineFormattingGeometry;
-    const InlineFormattingQuirks m_inlineFormattingQuirks;
+    const InlineQuirks m_inlineQuirks;
     InlineLayoutState m_inlineLayoutState;
 };
 

@@ -426,7 +426,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             setVerticalPropertiesForInlineLevelBox(lineBox, lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
 
-            if (layoutState().inStandardsMode() || InlineFormattingQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
+            if (layoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
                 lineBox.parentInlineBox(run).setHasContent();
             continue;
         }

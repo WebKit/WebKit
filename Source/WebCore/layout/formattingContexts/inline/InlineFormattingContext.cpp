@@ -64,7 +64,7 @@ InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingCon
     : FormattingContext(formattingContextRoot, layoutState)
     , m_inlineContentCache(layoutState.inlineContentCache(formattingContextRoot))
     , m_inlineFormattingGeometry(*this)
-    , m_inlineFormattingQuirks(*this)
+    , m_inlineQuirks(*this)
     , m_inlineLayoutState(parentBlockLayoutState)
 {
     initializeLayoutState();

@@ -47,7 +47,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints();
 
     const FlexFormattingGeometry& formattingGeometry() const final { return m_flexFormattingGeometry; }
-    const FormattingQuirks& formattingQuirks() const final { return m_flexFormattingQuirks; }
+    const FormattingQuirks& formattingQuirks() const { return m_flexFormattingQuirks; }
 
 private:
     FlexLayout::LogicalFlexItems convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent&);

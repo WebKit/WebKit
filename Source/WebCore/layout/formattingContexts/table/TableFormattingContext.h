@@ -46,7 +46,7 @@ public:
     LayoutUnit usedContentHeight() const override;
 
     const TableFormattingGeometry& formattingGeometry() const final { return m_tableFormattingGeometry; }
-    const TableFormattingQuirks& formattingQuirks() const final { return m_tableFormattingQuirks; }
+    const TableFormattingQuirks& formattingQuirks() const { return m_tableFormattingQuirks; }
     const TableFormattingState& formattingState() const { return m_tableFormattingState; }
 
 private:

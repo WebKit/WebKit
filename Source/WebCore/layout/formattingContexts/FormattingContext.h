@@ -61,7 +61,6 @@ public:
     const LayoutState& layoutState() const { return const_cast<FormattingContext&>(*this).layoutState(); }
 
     virtual const FormattingGeometry& formattingGeometry() const = 0;
-    virtual const FormattingQuirks& formattingQuirks() const = 0;
 
     enum class EscapeReason {
         TableQuirkNeedsGeometryFromEstablishedFormattingContext,

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "FormattingQuirks.h"
 #include "InlineLineBox.h"
 
 namespace WebCore {
@@ -33,9 +32,9 @@ namespace Layout {
 
 class InlineFormattingContext;
 
-class InlineFormattingQuirks : public FormattingQuirks {
+class InlineQuirks {
 public:
-    InlineFormattingQuirks(const InlineFormattingContext&);
+    InlineQuirks(const InlineFormattingContext&);
 
     bool trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const;
     InlineLayoutUnit initialLineHeight() const;
@@ -45,11 +44,11 @@ public:
     std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&) const;
 
 private:
-    const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingQuirks::formattingContext()); }
+    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+
+private:
+    const InlineFormattingContext& m_inlineFormattingContext;
 };
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_QUIRKS(InlineFormattingQuirks, isInlineFormattingQuirks())
-
