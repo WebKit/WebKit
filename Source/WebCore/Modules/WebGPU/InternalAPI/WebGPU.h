@@ -31,10 +31,18 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+namespace WebCore {
+class NativeImage;
+class IntSize;
+class GraphicsContext;
+}
+
 namespace WebCore::WebGPU {
 
 class Adapter;
 class CompositorIntegration;
+class GraphicsContext;
+class NativeImage;
 class PresentationContext;
 struct PresentationContextDescriptor;
 
@@ -49,6 +57,7 @@ public:
     virtual Ref<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 
     virtual Ref<CompositorIntegration> createCompositorIntegration() = 0;
+    virtual void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) = 0;
 
 protected:
     GPU() = default;

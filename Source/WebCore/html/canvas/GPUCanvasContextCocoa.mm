@@ -178,13 +178,17 @@ void GPUCanvasContextCocoa::reshape(int width, int height)
 
 void GPUCanvasContextCocoa::prepareForDisplayWithPaint()
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 - Support offscreen canvas with WebGPU
     prepareForDisplay();
 }
 
 void GPUCanvasContextCocoa::paintRenderingResultsToCanvas()
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 - Support offscreen canvas with WebGPU
+    auto& base = canvasBase();
+    base.clearCopiedImage();
+    if (auto buffer = base.buffer()) {
+        buffer->flushDrawingContext();
+        m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
+    }
 }
 
 GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
@@ -292,9 +296,7 @@ void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()
             renderBox->contentChanged(CanvasChanged);
         }
     }, [&](RefPtr<OffscreenCanvas>& offscreenCanvas) {
-        UNUSED_PARAM(offscreenCanvas);
         canvasBase = offscreenCanvas.get();
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 - [WebGPU] Hook it up to WorkerNavigator
     });
 
     if (!canvasIsDirty)

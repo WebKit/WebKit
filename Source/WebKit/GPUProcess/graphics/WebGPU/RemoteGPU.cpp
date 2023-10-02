@@ -37,10 +37,13 @@
 #include "RemoteRenderingBackend.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/NativeImage.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPU.h>
 #include <WebCore/WebGPUAdapter.h>
 #include <WebCore/WebGPUPresentationContext.h>
 #include <WebCore/WebGPUPresentationContextDescriptor.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <WebCore/WebGPUCreateImpl.h>
@@ -194,8 +197,24 @@ void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
     ASSERT(m_backing);
 
     auto compositorIntegration = m_backing->createCompositorIntegration();
-    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(compositorIntegration, m_objectHeap, *m_streamConnection, identifier);
+    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(compositorIntegration, m_objectHeap, *m_streamConnection, *this, identifier);
     m_objectHeap->addObject(identifier, remoteCompositorIntegration);
+}
+
+void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage, WebCore::RenderingResourceIdentifier imageBufferIdentifier)
+{
+    assertIsCurrent(workQueue());
+    BinarySemaphore semaphore;
+
+    auto* gpu = m_backing.get();
+    m_renderingBackend->dispatch([&]() mutable {
+        if (auto imageBuffer = m_renderingBackend->imageBuffer(imageBufferIdentifier)) {
+            gpu->paintToCanvas(nativeImage, imageBuffer->backendSize(), imageBuffer->context());
+            imageBuffer->flushDrawingContext();
+        }
+        semaphore.signal();
+    });
+    semaphore.wait();
 }
 
 } // namespace WebKit

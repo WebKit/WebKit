@@ -31,7 +31,9 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/IOSurface.h>
+#include <WebCore/NativeImage.h>
 #include <WebGPU/WebGPUExt.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebCore::WebGPU {
@@ -73,6 +75,31 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
     });
 }
 #endif
+
+void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage&)> completion)
+{
+    if (!m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size())
+        return;
+
+    RefPtr<NativeImage> displayImage;
+
+    // Use the IOSurface backed image directly
+    auto& renderBuffer = m_renderBuffers[bufferIndex];
+    RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext();
+    if (cgContext)
+        displayImage = NativeImage::create(renderBuffer->createImage(cgContext.get()));
+
+    if (!displayImage)
+        return;
+
+    CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
+    completion(*displayImage);
+}
+
+void CompositorIntegrationImpl::paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t)
+{
+    ASSERT_NOT_REACHED();
+}
 
 } // namespace WebCore::WebGPU
 

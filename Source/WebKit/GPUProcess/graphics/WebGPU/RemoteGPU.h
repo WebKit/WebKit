@@ -38,6 +38,7 @@
 #include "WebGPUSupportedLimits.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadAssertions.h>
@@ -53,6 +54,7 @@ class StreamServerConnection;
 
 namespace WebCore {
 class MediaPlayer;
+class NativeImage;
 class VideoFrame;
 }
 
@@ -79,6 +81,8 @@ public:
     virtual ~RemoteGPU();
 
     void stopListeningForIPC();
+
+    void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
 
 private:
     friend class WebGPU::ObjectHeap;

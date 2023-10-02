@@ -220,6 +220,11 @@ Ref<WebCore::WebGPU::CompositorIntegration> RemoteGPUProxy::createCompositorInte
     return WebGPU::RemoteCompositorIntegrationProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
+void RemoteGPUProxy::paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&)
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

@@ -32,6 +32,11 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCompositorIntegration.h>
 
+namespace WebCore {
+class ImageBuffer;
+class NativeImage;
+}
+
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
@@ -54,6 +59,9 @@ public:
         ASSERT(!m_presentationContext);
         m_presentationContext = &presentationContext;
     }
+
+    void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
+    void withDisplayBufferAsNativeImage(uint32_t, Function<void(WebCore::NativeImage&)>) final;
 
 private:
     friend class DowncastConvertToBackingContext;

@@ -40,4 +40,9 @@ void GPUCompositorIntegration::prepareForDisplay(CompletionHandler<void()>&& com
     m_backing->prepareForDisplay(WTFMove(completionHandler));
 }
 
+void GPUCompositorIntegration::paintCompositedResultsToCanvas(WebCore::ImageBuffer& imageBuffer, uint32_t bufferIndex)
+{
+    m_backing->paintCompositedResultsToCanvas(imageBuffer, bufferIndex);
+}
+
 } // namespace WebCore

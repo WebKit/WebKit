@@ -39,6 +39,12 @@ namespace WebKit {
 class GPUProcessConnection;
 }
 
+namespace WebCore {
+class IntSize;
+class GraphicsContext;
+class NativeImage;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -60,6 +66,7 @@ public:
     void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::deref(); }
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::controlBlock(); }
+    void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
 
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
