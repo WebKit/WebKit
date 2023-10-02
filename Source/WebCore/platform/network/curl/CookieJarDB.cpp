@@ -24,7 +24,7 @@
 
 #include "config.h"
 #include "CookieJarDB.h"
-#include "cookieJar.h"
+#include "CookieJar.h"
 
 #include "CookieUtil.h"
 #include "Logging.h"

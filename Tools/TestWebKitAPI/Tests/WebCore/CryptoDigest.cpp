@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include <PAL/crypto/CryptoDigest.h>
+#include <pal/crypto/CryptoDigest.h>
 #include <wtf/text/CString.h>
 
 namespace TestWebKitAPI {
