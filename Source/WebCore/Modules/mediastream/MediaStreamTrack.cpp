@@ -38,6 +38,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSMeteringMode.h"
 #include "JSOverconstrainedError.h"
+#include "JSPhotoCapabilities.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
@@ -49,6 +50,7 @@
 #include "NotImplemented.h"
 #include "OverconstrainedError.h"
 #include "Page.h"
+#include "PhotoCapabilities.h"
 #include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "ScriptExecutionContext.h"
@@ -305,6 +307,22 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
 
     return result;
+}
+
+void MediaStreamTrack::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&& promise) const
+{
+    m_private->getPhotoCapabilities([protectedThis = Ref { *this }, promise = WTFMove(promise)](auto&& result) mutable {
+        if (!result) {
+            // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
+            // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
+            // asynchronously), then reject p with a new DOMException whose name is OperationError, and
+            // abort these steps.
+            promise.reject(Exception { OperationError, WTFMove(result.errorMessage) });
+            return;
+        }
+
+        promise.resolve(WTFMove(*result.capabilities));
+    });
 }
 
 static MediaConstraints createMediaConstraints(const std::optional<MediaTrackConstraints>& constraints)

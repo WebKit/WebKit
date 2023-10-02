@@ -476,7 +476,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/MediaStreamTrack.h
     Modules/mediastream/MediaTrackCapabilities.h
     Modules/mediastream/MediaTrackConstraints.h
-    Modules/mediastream/MeteringMode.h
     Modules/mediastream/RTCController.h
     Modules/mediastream/RTCDataChannel.h
     Modules/mediastream/RTCDataChannelRemoteHandler.h
@@ -2144,11 +2143,16 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/CaptureDeviceWithCapabilities.h
     platform/mediastream/DisplayCaptureManager.h
     platform/mediastream/DisplayCapturePromptType.h
+    platform/mediastream/FillLightMode.h
     platform/mediastream/MDNSRegisterError.h
     platform/mediastream/MediaConstraints.h
+    platform/mediastream/MediaSettingsRange.h
     platform/mediastream/MediaStreamPrivate.h
     platform/mediastream/MediaStreamRequest.h
     platform/mediastream/MediaStreamTrackPrivate.h
+    platform/mediastream/MeteringMode.h
+    platform/mediastream/PhotoCapabilities.h
+    platform/mediastream/RedEyeReduction.h
     platform/mediastream/RTCDataChannelHandler.h
     platform/mediastream/RTCDataChannelHandlerClient.h
     platform/mediastream/RTCDataChannelIdentifier.h

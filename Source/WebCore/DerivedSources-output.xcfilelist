@@ -1043,6 +1043,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemHandle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemSyncAccessHandle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemSyncAccessHandle.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillLightMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillLightMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFlacEncoderConfig.cpp
@@ -1635,6 +1637,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContextSettings.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContextSettings.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageCapture.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageCapture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageData.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageDataSettings.cpp
@@ -1833,6 +1837,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaylistMixin.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaylistMixin.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionReadyState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionReadyState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSettingsRange.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSettingsRange.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStream.cpp
@@ -2159,6 +2165,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionStatus.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionStatus.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPhotoCapabilities.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPhotoCapabilities.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPhotoSettings.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPhotoSettings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.cpp
@@ -2387,6 +2397,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSink.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSink.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSource.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRedEyeReduction.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRedEyeReduction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.cpp

@@ -40,6 +40,7 @@
 #include "MediaAccessDenialReason.h"
 #include "MediaConstraints.h"
 #include "MediaDeviceHashSalts.h"
+#include "PhotoCapabilities.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
@@ -78,6 +79,7 @@ enum class VideoFrameRotation : uint16_t;
 
 struct CaptureSourceError;
 struct CaptureSourceOrError;
+struct PhotoCapabilitiesOrError;
 struct VideoFrameAdaptor;
 
 class WEBCORE_EXPORT RealtimeMediaSource
@@ -203,6 +205,9 @@ public:
     virtual void ref() const = 0;
     virtual void deref() const = 0;
     virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
+
+    using PhotoCapabilitiesHandler = CompletionHandler<void(PhotoCapabilitiesOrError&&)>;
+    virtual void getPhotoCapabilities(PhotoCapabilitiesHandler&&);
 
     struct ApplyConstraintsError {
         String badConstraint;
@@ -385,6 +390,25 @@ struct CaptureSourceOrError {
 
     RefPtr<RealtimeMediaSource> captureSource;
     CaptureSourceError error;
+};
+
+struct PhotoCapabilitiesOrError {
+    PhotoCapabilitiesOrError() = default;
+    PhotoCapabilitiesOrError(std::optional<PhotoCapabilities>&& capabilities, String&& errorMessage)
+        : capabilities(WTFMove(capabilities))
+        , errorMessage(WTFMove(errorMessage))
+    { }
+    PhotoCapabilitiesOrError(PhotoCapabilities& capabilities)
+        : capabilities({ capabilities })
+    { }
+    explicit PhotoCapabilitiesOrError(String&& errorMessage)
+        : errorMessage(WTFMove(errorMessage))
+    { }
+
+    operator bool() const { return capabilities.has_value(); }
+
+    std::optional<PhotoCapabilities> capabilities;
+    String errorMessage;
 };
 
 String convertEnumerationToString(RealtimeMediaSource::Type);

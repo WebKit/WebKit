@@ -5839,6 +5839,41 @@ header: <WebCore/RealtimeMediaSource.h>
     String errorMessage;
     WebCore::MediaAccessDenialReason denialReason;
 };
+
+header: <WebCore/FillLightMode.h>
+enum class WebCore::FillLightMode : uint8_t {
+    Auto,
+    Off,
+    Flash,
+};
+
+header: <WebCore/RedEyeReduction.h>
+enum class WebCore::RedEyeReduction : uint8_t {
+    Never,
+    Always,
+    Controllable,
+};
+
+header: <WebCore/MediaSettingsRange.h>
+[CustomHeader] struct WebCore::MediaSettingsRange {
+    std::optional<double> max;
+    std::optional<double> min;
+    std::optional<double> step;
+};
+
+header: <WebCore/PhotoCapabilities.h>
+[CustomHeader] struct WebCore::PhotoCapabilities {
+    std::optional<WebCore::RedEyeReduction> redEyeReduction;
+    std::optional<WebCore::MediaSettingsRange> imageHeight;
+    std::optional<WebCore::MediaSettingsRange> imageWidth;
+    std::optional<Vector<WebCore::FillLightMode>> fillLightMode;
+};
+
+header: <WebCore/RealtimeMediaSource.h>
+[CustomHeader] struct WebCore::PhotoCapabilitiesOrError {
+    std::optional<WebCore::PhotoCapabilities> capabilities;
+    String errorMessage;
+};
 #endif
 
 header: <WebCore/WebGPUTextureAspect.h>

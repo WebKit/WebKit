@@ -1413,6 +1413,11 @@ void RealtimeMediaSource::setType(Type type)
     });
 }
 
+void RealtimeMediaSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& completion)
+{
+    completion(PhotoCapabilitiesOrError("Not supported"_s));
+}
+
 RealtimeMediaSource::Observer::~Observer()
 {
 }

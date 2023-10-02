@@ -73,6 +73,7 @@ protected:
 
     const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
     const WebCore::RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
+    void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
 
 private:
     // RealtimeMediaSource
@@ -94,6 +95,7 @@ private:
     UserMediaCaptureManager& m_manager;
     std::optional<WebCore::MediaConstraints> m_constraints;
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
+    std::optional<WebCore::PhotoCapabilities> m_photoCapabilities;
     WebCore::RealtimeMediaSourceSettings m_settings;
 };
 

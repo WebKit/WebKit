@@ -110,6 +110,8 @@ public:
     WEBCORE_EXPORT const RealtimeMediaSourceSettings& settings() const;
     const RealtimeMediaSourceCapabilities& capabilities() const;
 
+    void getPhotoCapabilities(RealtimeMediaSource::PhotoCapabilitiesHandler&&);
+
     void applyConstraints(const MediaConstraints&, RealtimeMediaSource::ApplyConstraintsHandler&&);
 
     RefPtr<WebAudioSourceProvider> createAudioSourceProvider();

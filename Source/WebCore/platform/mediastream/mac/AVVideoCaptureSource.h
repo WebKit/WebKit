@@ -84,6 +84,7 @@ private:
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
+    void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
     double facingModeFitnessScoreAdjustment() const final;
     void startProducingData() final;
     void stopProducingData() final;
@@ -143,6 +144,7 @@ private:
 
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    std::optional<PhotoCapabilities> m_photoCapabilities;
     RetainPtr<WebCoreAVVideoCaptureSourceObserver> m_objcObserver;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;

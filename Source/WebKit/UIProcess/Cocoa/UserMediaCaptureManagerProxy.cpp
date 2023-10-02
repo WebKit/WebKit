@@ -189,6 +189,11 @@ public:
         m_frameRateConstraint = proxy.m_frameRateConstraint;
     }
 
+    void getPhotoCapabilities(GetPhotoCapabilitiesCallback&& handler)
+    {
+        m_source->getPhotoCapabilities(WTFMove(handler));
+    }
+
 private:
     void sourceStopped() final {
         m_connection->send(Messages::UserMediaCaptureManager::SourceStopped(m_id, m_source->captureDidFail()), 0);
@@ -519,6 +524,16 @@ void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID,
         cloneProxy->observeMedia();
         m_proxies.add(newSourceID, WTFMove(cloneProxy));
     }
+}
+
+void UserMediaCaptureManagerProxy::getPhotoCapabilities(RealtimeMediaSourceIdentifier sourceID, GetPhotoCapabilitiesCallback&& handler)
+{
+    if (auto* proxy = m_proxies.get(sourceID)) {
+        proxy->getPhotoCapabilities(WTFMove(handler));
+        return;
+    }
+
+    handler(PhotoCapabilitiesOrError("Device not available"_s));
 }
 
 void UserMediaCaptureManagerProxy::endProducingData(RealtimeMediaSourceIdentifier sourceID)
