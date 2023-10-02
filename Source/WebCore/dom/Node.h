@@ -220,6 +220,8 @@ public:
 
 #if ENABLE(VIDEO)
     virtual bool isWebVTTElement() const { return false; }
+    virtual bool isWebVTTRubyElement() const { return false; }
+    virtual bool isWebVTTRubyTextElement() const { return false; }
 #endif
     bool isStyledElement() const { return hasNodeFlag(NodeFlag::IsHTMLElement) || hasNodeFlag(NodeFlag::IsSVGElement) || hasNodeFlag(NodeFlag::IsMathMLElement); }
     virtual bool isAttributeNode() const { return false; }

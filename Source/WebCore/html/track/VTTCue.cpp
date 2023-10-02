@@ -944,12 +944,16 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
                 isPastNode = false;
         }
         
-        if (is<WebVTTElement>(*child)) {
+        if (is<WebVTTElement>(*child))
             downcast<WebVTTElement>(*child).setIsPastNode(isPastNode);
-            // Make an elemenet id match a cue id for style matching purposes.
-            if (!id().isEmpty())
-                downcast<WebVTTElement>(*child).setIdAttribute(id());
-        }
+        else if (is<WebVTTRubyElement>(*child))
+            downcast<WebVTTRubyElement>(*child).setIsPastNode(isPastNode);
+        else if (is<WebVTTRubyTextElement>(*child))
+            downcast<WebVTTRubyTextElement>(*child).setIsPastNode(isPastNode);
+
+        // Make an element id match a cue id for style matching purposes.
+        if (!id().isEmpty() && is<Element>(*child))
+            downcast<Element>(*child).setIdAttribute(id());
     }
 }
 

@@ -206,6 +206,10 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
 #if ENABLE(VIDEO)
     if (is<WebVTTElement>(element))
         language = downcast<WebVTTElement>(element).language();
+    else if (is<WebVTTRubyElement>(element))
+        language = downcast<WebVTTRubyElement>(element).language();
+    else if (is<WebVTTRubyTextElement>(element))
+        language = downcast<WebVTTRubyTextElement>(element).language();
     else
 #endif
         language = element.effectiveLang();
@@ -469,12 +473,24 @@ ALWAYS_INLINE bool matchesPictureInPicturePseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element& element)
 {
-    return is<WebVTTElement>(element) && !downcast<WebVTTElement>(element).isPastNode();
+    if (auto* webVTTElement = dynamicDowncast<WebVTTElement>(element))
+        return !webVTTElement->isPastNode();
+    if (auto* webVTTRubyElement = dynamicDowncast<WebVTTRubyElement>(element))
+        return !webVTTRubyElement->isPastNode();
+    if (auto* webVTTRubyTextElement = dynamicDowncast<WebVTTRubyTextElement>(element))
+        return !webVTTRubyTextElement->isPastNode();
+    return false;
 }
 
 ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element& element)
 {
-    return is<WebVTTElement>(element) && downcast<WebVTTElement>(element).isPastNode();
+    if (is<WebVTTElement>(element))
+        return downcast<WebVTTElement>(element).isPastNode();
+    if (is<WebVTTRubyElement>(element))
+        return downcast<WebVTTRubyElement>(element).isPastNode();
+    if (is<WebVTTRubyTextElement>(element))
+        return downcast<WebVTTRubyTextElement>(element).isPastNode();
+    return false;
 }
 
 ALWAYS_INLINE bool matchesPlayingPseudoClass(const Element& element)

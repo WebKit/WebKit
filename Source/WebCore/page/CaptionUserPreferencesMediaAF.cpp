@@ -590,9 +590,10 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     String edgeStyle = captionsTextEdgeCSS();
     String fontName = captionsDefaultFontCSS();
     String background = captionsBackgroundCSS();
-    if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty())
+    if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
         captionsOverrideStyleSheet.append(" ::", ShadowPseudoIds::cue(), '{', background, captionsColor, edgeStyle, fontName, '}');
-
+        captionsOverrideStyleSheet.append(" ::", ShadowPseudoIds::cue(), "(rt) {", background, captionsColor, edgeStyle, fontName, '}');
+    }
     String windowColor = captionsWindowCSS();
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
     if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty())
