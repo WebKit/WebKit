@@ -516,7 +516,6 @@ ImageBuffer* MockRealtimeVideoSource::imageBuffer() const
     if (!m_imageBuffer)
         return nullptr;
 
-    m_imageBuffer->context().setImageInterpolationQuality(InterpolationQuality::Default);
     m_imageBuffer->context().setStrokeThickness(1);
 
     return m_imageBuffer.get();
