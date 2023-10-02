@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <script>
+        const dbName = "PopupTestDatabase";
+        const objectStoreName = "PopupTestObjectStore";
+        const storageKey = "popup-key";
+        const storageValue = "popup-value";
+    </script>
+    <script src="util.js"></script>
+  </head>
+<body>
+<script>
+addFrameEventListener();
+initStorage(storageKey, storageValue);
+window.opener.postMessage("initialized", "*");
+</script>
+</body>
+</html>
+

@@ -1,4 +1,4 @@
-Check that script-writeable website data gets removed after a period of no user interaction.
+Check that script-writeable website data does not get removed for sites with user interaction, including partitioned cross-origin website data.
 
 Opening http://localhost:8000 popup.
 Opened cross-origin http://localhost:8000 popup
@@ -16,16 +16,14 @@ Before deletion: popup SessionStorage entry does exist.
 Before deletion: popup indexedDB entry does exist.
 
 After deletion: HttpOnly cookie exists.
-After deletion: Client-side cookie does not exist.
+After deletion: Client-side cookie exists.
 After deletion: Regular server-side cookie exists.
-After deletion: LocalStorage entry does not exist.
-After deletion: (onupgradeneeded) IDB entry does not exist.
-After deletion: http://localhost:8000 does not have local storage
-After deletion: (onsuccess) IDB entry does not exist.
-After deletion: http://localhost:8000 does not have local storage
-After deletion: iframe LocalStorage entry does not exist.
-After deletion: iframe SessionStorage entry does not exist.
-After deletion: iframe indexedDB entry does not exist.
+After deletion: LocalStorage entry does exist.
+After deletion: (onsuccess) IDB entry does exist.
+After deletion: http://localhost:8000 has local storage
+After deletion: iframe LocalStorage entry does exist.
+After deletion: iframe SessionStorage entry does exist.
+After deletion: iframe indexedDB entry does exist.
 After deletion: popup LocalStorage entry does not exist.
 After deletion: popup SessionStorage entry does not exist.
 After deletion: popup indexedDB entry does not exist.
