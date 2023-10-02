@@ -130,8 +130,8 @@ static ConstantValue constantVector(AST::CallExpression& call, const FixedVector
     auto argumentCount = arguments.size();
 
     if (!argumentCount) {
-        ASSERT(std::holds_alternative<Types::Vector>(*call.inferredType()));
-        return zeroValue(call.inferredType());
+        ASSERT(std::holds_alternative<Types::Vector>(*call.target().inferredType()));
+        return zeroValue(call.target().inferredType());
     }
 
     if (argumentCount == 1 && !std::holds_alternative<ConstantVector>(arguments[0])) {

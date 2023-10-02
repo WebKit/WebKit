@@ -80,12 +80,18 @@ struct ConstantValue : BaseValue {
     }
 
     bool toBool() const { return std::get<bool>(*this); }
-    int64_t toInt() const { return std::get<int64_t>(*this); }
+    int64_t toInt() const
+    {
+        ASSERT(isNumber());
+        if (auto* i = std::get_if<int64_t>(this))
+            return *i;
+        return static_cast<int64_t>(std::get<double>(*this));
+    }
     double toDouble() const
     {
         ASSERT(isNumber());
-        if (std::holds_alternative<double>(*this))
-            return std::get<double>(*this);
+        if (auto* d = std::get_if<double>(this))
+            return *d;
         return static_cast<double>(std::get<int64_t>(*this));
     }
 };

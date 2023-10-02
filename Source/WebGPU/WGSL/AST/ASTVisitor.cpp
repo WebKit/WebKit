@@ -527,19 +527,4 @@ void Visitor::visit(VariableQualifier&)
 {
 }
 
-std::optional<unsigned> extractInteger(const AST::Expression& expression)
-{
-    switch (expression.kind()) {
-    case AST::NodeKind::AbstractIntegerLiteral:
-        return { static_cast<unsigned>(downcast<AST::AbstractIntegerLiteral>(expression).value()) };
-    case AST::NodeKind::Unsigned32Literal:
-        return { static_cast<unsigned>(downcast<AST::Unsigned32Literal>(expression).value()) };
-    case AST::NodeKind::Signed32Literal:
-        return { static_cast<unsigned>(downcast<AST::Signed32Literal>(expression).value()) };
-    default:
-        // FIXME: handle constants and overrides
-        return std::nullopt;
-    }
-}
-
 } // namespace WGSL::AST
