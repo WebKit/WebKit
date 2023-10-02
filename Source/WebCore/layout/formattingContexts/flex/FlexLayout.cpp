@@ -52,7 +52,7 @@ struct PositionAndMargins {
     LayoutUnit marginEnd;
 };
 
-FlexLayout::FlexLayout(const FlexFormattingContext& flexFormattingContext)
+FlexLayout::FlexLayout(FlexFormattingContext& flexFormattingContext)
     : m_flexFormattingContext(flexFormattingContext)
 {
 }
@@ -153,7 +153,7 @@ void FlexLayout::computeAvailableMainAndCrossSpace(const LogicalConstraints& log
     m_availableCrossSpace = computedFinalSize(logicalConstraints.crossAxis);
 }
 
-LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem) const
+LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem)
 {
     // 9.2.3 E Otherwise, size the item into the available space using its used flex basis in place of its main size,
     // treating a value of content as max-content. If a cross size is needed to determine the main size (e.g. when the flex item’s main size
@@ -175,7 +175,7 @@ LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem) co
     return InlineFormattingContext { flexItemBox, inlineFormattingState, blockLayoutState }.maximumContentSize();
 }
 
-FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems) const
+FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems)
 {
     auto flexBaseAndHypotheticalMainSizeList = FlexBaseAndHypotheticalMainSizeList { };
     for (auto& flexItem : flexItems) {
@@ -422,7 +422,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
     return mainSizeList;
 }
 
-FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const LogicalFlexItems& flexItems, const SizeList& flexItemsMainSizeList) const
+FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const LogicalFlexItems& flexItems, const SizeList& flexItemsMainSizeList)
 {
     UNUSED_PARAM(flexItemsMainSizeList);
     // FIXME: This is where layout is called on flex items.
@@ -867,10 +867,10 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
 
 const ElementBox& FlexLayout::flexContainer() const
 {
-    return flexFormattingContext().root();
+    return m_flexFormattingContext.root();
 }
 
-const FlexFormattingContext& FlexLayout::flexFormattingContext() const
+FlexFormattingContext& FlexLayout::flexFormattingContext()
 {
     return m_flexFormattingContext;
 }

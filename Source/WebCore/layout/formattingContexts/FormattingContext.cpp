@@ -64,7 +64,7 @@ FormattingContext::~FormattingContext()
 #endif
 }
 
-LayoutState& FormattingContext::layoutState() const
+LayoutState& FormattingContext::layoutState()
 {
     return m_formattingState.layoutState();
 }
@@ -163,6 +163,11 @@ void FormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlowCont
             computeOutOfFlowVerticalGeometry(outOfFlowBox, containingBlockConstraints);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
+}
+
+BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason>)
+{
+    return layoutState().ensureGeometryForBox(layoutBox);
 }
 
 const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason) const

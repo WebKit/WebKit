@@ -37,7 +37,7 @@ class LineBox;
 
 class InlineDisplayLineBuilder {
 public:
-    InlineDisplayLineBuilder(const InlineFormattingContext&, const ConstraintsForInlineContent&);
+    InlineDisplayLineBuilder(InlineFormattingContext&, const ConstraintsForInlineContent&);
 
     InlineDisplay::Line build(const LineLayoutResult&, const LineBox&, bool lineIsFullyTruncatedInBlockDirection) const;
 
@@ -53,11 +53,12 @@ private:
 
     const ConstraintsForInlineContent& constraints() const { return m_constraints; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
     const Box& root() const { return formattingContext().root(); }
-    LayoutState& layoutState() const { return formattingContext().layoutState(); }
+    const LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
-    const InlineFormattingContext& m_inlineFormattingContext;
+    InlineFormattingContext& m_inlineFormattingContext;
     const ConstraintsForInlineContent& m_constraints;
 };
 
