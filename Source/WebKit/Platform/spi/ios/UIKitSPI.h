@@ -1003,10 +1003,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 #if USE(UICONTEXTMENU)
 
-typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
-    UIMenuOptionsPrivateRemoveLineLimitForChildren = 1 << 6,
-};
-
 @interface UIContextMenuInteraction ()
 - (void)_presentMenuAtLocation:(CGPoint)location;
 @end

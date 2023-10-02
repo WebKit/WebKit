@@ -29,8 +29,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
+#import "CompactContextMenuPresenter.h"
 #import "ImageAnalysisUtilities.h"
-#import "UIKitSPI.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
 #import "WKNSURLExtras.h"
@@ -101,10 +101,10 @@ static LSAppLink *appLinkForURL(NSURL *url)
     std::optional<WebKit::InteractionInformationAtPosition> _positionInformation;
 #if USE(UICONTEXTMENU)
 #if ENABLE(DATA_DETECTION)
-    RetainPtr<UIContextMenuInteraction> _dataDetectorContextMenuInteraction;
+    std::unique_ptr<WebKit::CompactContextMenuPresenter> _dataDetectorContextMenuPresenter;
 #endif // ENABLE(DATA_DETECTION)
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    RetainPtr<UIContextMenuInteraction> _mediaControlsContextMenuInteraction;
+    std::unique_ptr<WebKit::CompactContextMenuPresenter> _mediaControlsContextMenuPresenter;
     RetainPtr<UIMenu> _mediaControlsContextMenu;
     WebCore::FloatRect _mediaControlsContextMenuTargetFrame;
     CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)> _mediaControlsContextMenuCallback;
@@ -137,10 +137,10 @@ static LSAppLink *appLinkForURL(NSURL *url)
     [self cleanupSheet];
 #if USE(UICONTEXTMENU)
 #if ENABLE(DATA_DETECTION)
-    [self _removeDataDetectorContextMenuInteraction];
+    [self _resetDataDetectorContextMenuPresenter];
 #endif // ENABLE(DATA_DETECTION)
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    [self _removeMediaControlsContextMenuInteraction];
+    [self _resetMediaControlsContextMenuPresenter];
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 #endif // USE(UICONTEXTMENU)
     [super dealloc];
@@ -678,23 +678,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(DATA_DETECTION)
 
-- (UIContextMenuInteraction *)_ensureDataDetectorContextMenuInteraction
+- (WebKit::CompactContextMenuPresenter&)_dataDetectorContextMenuPresenter
 {
-    if (!_dataDetectorContextMenuInteraction) {
-        _dataDetectorContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
-        [_view addInteraction:_dataDetectorContextMenuInteraction.get()];
-    }
-    return _dataDetectorContextMenuInteraction.get();
+    if (!_dataDetectorContextMenuPresenter)
+        _dataDetectorContextMenuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(_view.get().get(), self);
+    return *_dataDetectorContextMenuPresenter;
 }
 
-
-- (void)_removeDataDetectorContextMenuInteraction
+- (void)_resetDataDetectorContextMenuPresenter
 {
-    if (!_dataDetectorContextMenuInteraction)
+    if (!_dataDetectorContextMenuPresenter)
         return;
 
-    [_view removeInteraction:_dataDetectorContextMenuInteraction.get()];
-    _dataDetectorContextMenuInteraction = nil;
+    _dataDetectorContextMenuPresenter = nullptr;
 
     if ([_delegate respondsToSelector:@selector(removeContextMenuViewIfPossibleForActionSheetAssistant:)])
         [_delegate removeContextMenuViewIfPossibleForActionSheetAssistant:self];
@@ -704,24 +700,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
-- (UIContextMenuInteraction *)_ensureMediaControlsContextMenuInteraction
+- (WebKit::CompactContextMenuPresenter&)_mediaControlsContextMenuPresenter
 {
-    if (!_mediaControlsContextMenuInteraction) {
-        _mediaControlsContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
-        [_view addInteraction:_mediaControlsContextMenuInteraction.get()];
-    }
-    return _mediaControlsContextMenuInteraction.get();
+    if (!_mediaControlsContextMenuPresenter)
+        _mediaControlsContextMenuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(_view.get().get(), self);
+    return *_mediaControlsContextMenuPresenter;
 }
 
-
-- (void)_removeMediaControlsContextMenuInteraction
+- (void)_resetMediaControlsContextMenuPresenter
 {
-    if (!_mediaControlsContextMenuInteraction)
+    if (!_mediaControlsContextMenuPresenter)
         return;
 
-    [_view removeInteraction:_mediaControlsContextMenuInteraction.get()];
-    _mediaControlsContextMenuInteraction = nil;
-
+    _mediaControlsContextMenuPresenter = nullptr;
     _mediaControlsContextMenu = nil;
     _mediaControlsContextMenuTargetFrame = { };
     if (auto mediaControlsContextMenuCallback = std::exchange(_mediaControlsContextMenuCallback, { }))
@@ -736,12 +727,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)hasContextMenuInteraction
 {
 #if ENABLE(DATA_DETECTION)
-    if (_dataDetectorContextMenuInteraction)
+    if (_dataDetectorContextMenuPresenter)
         return YES;
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    if (_mediaControlsContextMenuInteraction)
+    if (_mediaControlsContextMenuPresenter)
         return YES;
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
@@ -804,7 +795,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
 #if USE(UICONTEXTMENU) && HAVE(UICONTEXTMENU_LOCATION)
     if ([_view window])
-        [self._ensureDataDetectorContextMenuInteraction _presentMenuAtLocation:_positionInformation->request.point];
+        self._dataDetectorContextMenuPresenter.present(_positionInformation->request.point);
 #else
     NSMutableArray *elementActions = [NSMutableArray array];
     for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
@@ -858,7 +849,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)showMediaControlsContextMenu:(WebCore::FloatRect&&)targetFrame items:(Vector<WebCore::MediaControlsContextMenuItem>&&)items completionHandler:(CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&)completionHandler
 {
-    ASSERT(!_mediaControlsContextMenuInteraction);
+    ASSERT(!_mediaControlsContextMenuPresenter);
     ASSERT(!_mediaControlsContextMenu);
     ASSERT(!_mediaControlsContextMenuCallback);
 
@@ -886,7 +877,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _mediaControlsContextMenuTargetFrame = WTFMove(targetFrame);
     _mediaControlsContextMenuCallback = WTFMove(completionHandler);
 
-    [self._ensureMediaControlsContextMenuInteraction _presentMenuAtLocation:_mediaControlsContextMenuTargetFrame.center()];
+    self._mediaControlsContextMenuPresenter.present(_mediaControlsContextMenuTargetFrame);
 }
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -914,7 +905,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
 {
 #if ENABLE(DATA_DETECTION)
-    if (interaction == _dataDetectorContextMenuInteraction) {
+    if (_dataDetectorContextMenuPresenter && interaction == _dataDetectorContextMenuPresenter->interaction()) {
         DDDetectionController *controller = [PAL::getDDDetectionControllerClass() sharedController];
         NSDictionary *context = nil;
         NSString *textAtSelection = nil;
@@ -943,7 +934,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    if (interaction == _mediaControlsContextMenuInteraction) {
+    if (_mediaControlsContextMenuPresenter && interaction == _mediaControlsContextMenuPresenter->interaction()) {
         return [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:[weakSelf = WeakObjCPtr<WKActionSheetAssistant>(self)] (NSArray<UIMenuElement *> *suggestedActions) -> UIMenu * {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
@@ -960,7 +951,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
 #if ENABLE(DATA_DETECTION)
-    if (interaction == _dataDetectorContextMenuInteraction) {
+    if (_dataDetectorContextMenuPresenter && interaction == _dataDetectorContextMenuPresenter->interaction()) {
         auto delegate = _delegate.get();
         CGPoint center = _positionInformation->request.point;
 
@@ -975,7 +966,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    if (interaction == _mediaControlsContextMenuInteraction) {
+    if (_mediaControlsContextMenuPresenter && interaction == _mediaControlsContextMenuPresenter->interaction()) {
         auto emptyView = adoptNS([[UIView alloc] initWithFrame:_mediaControlsContextMenuTargetFrame]);
         auto previewParameters = adoptNS([[UIPreviewParameters alloc] init]);
         auto previewTarget = adoptNS([[UIPreviewTarget alloc] initWithContainer:_view.getAutoreleased() center:_mediaControlsContextMenuTargetFrame.center()]);
@@ -985,13 +976,6 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
     return nil;
-}
-
-- (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-{
-    _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
-    style.preferredLayout = _UIContextMenuLayoutCompactMenu;
-    return style;
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
@@ -1009,13 +993,13 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
 {
 #if ENABLE(DATA_DETECTION)
-    if (interaction == _dataDetectorContextMenuInteraction)
-        [self _removeDataDetectorContextMenuInteraction];
+    if (_dataDetectorContextMenuPresenter && interaction == _dataDetectorContextMenuPresenter->interaction())
+        [self _resetDataDetectorContextMenuPresenter];
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    if (interaction == _mediaControlsContextMenuInteraction)
-        [self _removeMediaControlsContextMenuInteraction];
+    if (_mediaControlsContextMenuPresenter && interaction == _mediaControlsContextMenuPresenter->interaction())
+        [self _resetMediaControlsContextMenuPresenter];
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKActionSheetAssistant>(self)] {
@@ -1031,7 +1015,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 - (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
 {
 #if ENABLE(DATA_DETECTION)
-    if (interaction == _dataDetectorContextMenuInteraction) {
+    if (_dataDetectorContextMenuPresenter && interaction == _dataDetectorContextMenuPresenter->interaction()) {
         if (!_positionInformation)
             return nil;
         return [self suggestedActionsForContextMenuWithPositionInformation:*_positionInformation];

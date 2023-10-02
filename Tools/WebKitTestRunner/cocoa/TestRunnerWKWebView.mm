@@ -268,14 +268,22 @@ IGNORE_WARNINGS_END
 - (void)_dismissAllContextMenuInteractions
 {
 #if USE(UICONTEXTMENU)
-    for (id <UIInteraction> interaction in self.contentView.interactions) {
-        if (auto contextMenuInteraction = dynamic_objc_cast<UIContextMenuInteraction>(interaction)) {
-            [UIView performWithoutAnimation:^{
-                [contextMenuInteraction dismissMenu];
-            }];
+    auto dismissContextMenuInteractionsForView = ^(UIView *view) {
+        for (id<UIInteraction> interaction in view.interactions) {
+            if (auto contextMenuInteraction = dynamic_objc_cast<UIContextMenuInteraction>(interaction)) {
+                [UIView performWithoutAnimation:^{
+                    [contextMenuInteraction dismissMenu];
+                }];
+            }
         }
+    };
+
+    for (UIView *subview in self.contentView.subviews) {
+        if ([subview isKindOfClass:UIButton.class])
+            dismissContextMenuInteractionsForView(subview);
     }
-#endif
+    dismissContextMenuInteractionsForView(self.contentView);
+#endif // USE(UICONTEXTMENU)
 }
 
 - (void)setAllowedMenuActions:(NSArray<NSString *> *)actions
