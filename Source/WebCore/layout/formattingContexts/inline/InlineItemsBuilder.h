@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InlineFormattingContext.h"
+#include "InlineFormattingState.h"
 #include "InlineLineTypes.h"
 #include "LayoutElementBox.h"
 #include <wtf/text/StringBuilder.h>
@@ -36,7 +36,7 @@ class InlineTextBox;
 
 class InlineItemsBuilder {
 public:
-    InlineItemsBuilder(InlineFormattingContext&);
+    InlineItemsBuilder(InlineFormattingState&, const ElementBox& root);
     void build(InlineItemPosition startPosition);
 
 private:
@@ -54,10 +54,13 @@ private:
     
     bool contentRequiresVisualReordering() const { return m_contentRequiresVisualReordering; }
 
-    const ElementBox& root() const { return m_inlineFormattingContext.root(); }
-    InlineFormattingState& inlineFormattingState() { return m_inlineFormattingContext.formattingState(); }
+    const ElementBox& root() const { return m_root; }
+    InlineFormattingState& inlineFormattingState() { return m_inlineFormattingState; }
 
-    InlineFormattingContext& m_inlineFormattingContext;
+private:
+    InlineFormattingState& m_inlineFormattingState;
+    const ElementBox& m_root;
+
     bool m_contentRequiresVisualReordering { false };
     bool m_isNonBidiTextAndForcedLineBreakOnlyContent { true };
 };

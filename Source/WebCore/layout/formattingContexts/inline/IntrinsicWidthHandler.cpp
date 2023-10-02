@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IntrinsicWidthHandler.h"
 
-#include "FloatingContext.h"
-#include "FloatingState.h"
 #include "InlineFormattingContext.h"
 #include "InlineLineBuilder.h"
 #include "LayoutElementBox.h"
@@ -42,34 +40,33 @@ static bool isEligibleForNonLineBuilderProcess(const RenderStyle& style)
     return TextUtil::isWrappingAllowed(style) && (style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord);
 }
 
-IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext)
+IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, bool mayUseSimplifiedTextOnlyInlineLayout)
     : m_inlineFormattingContext(inlineFormattingContext)
+    , m_inlineItems(inlineItems)
+    , m_mayUseSimplifiedTextOnlyInlineLayout(mayUseSimplifiedTextOnlyInlineLayout)
 {
 }
 
 IntrinsicWidthConstraints IntrinsicWidthHandler::computedIntrinsicSizes()
 {
-    auto& inlineFormattingState = formattingState();
-    auto& rootStyle = root().style();
-
     auto computedIntrinsicValue = [&](auto intrinsicWidthMode, auto& inlineBuilder, MayCacheLayoutResult mayCacheLayoutResult = MayCacheLayoutResult::No) {
         inlineBuilder.setIntrinsicWidthMode(intrinsicWidthMode);
         return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(intrinsicWidthMode, inlineBuilder, mayCacheLayoutResult));
     };
 
-    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState)) {
-        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, inlineFormattingState.inlineItems() };
-        auto minimumWidth = isEligibleForNonLineBuilderProcess(rootStyle) ? ceiledLayoutUnit(simplifiedMinimumWidth()) : computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder);
+    if (m_mayUseSimplifiedTextOnlyInlineLayout) {
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, m_inlineItems };
+        auto minimumWidth = isEligibleForNonLineBuilderProcess(rootStyle()) ? ceiledLayoutUnit(simplifiedMinimumWidth()) : computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder);
         return { minimumWidth, computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::Yes) };
     }
 
-    auto lineBuilder = LineBuilder { formattingContext(), { }, inlineFormattingState.inlineItems() };
+    auto lineBuilder = LineBuilder { formattingContext(), { }, m_inlineItems };
     return { computedIntrinsicValue(IntrinsicWidthMode::Minimum, lineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, lineBuilder) };
 }
 
 LayoutUnit IntrinsicWidthHandler::maximumContentSize()
 {
-    auto lineBuilder = LineBuilder { formattingContext(), { }, formattingState().inlineItems() };
+    auto lineBuilder = LineBuilder { formattingContext(), { }, m_inlineItems };
     lineBuilder.setIntrinsicWidthMode(IntrinsicWidthMode::Maximum);
 
     return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, lineBuilder));
@@ -80,8 +77,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
     auto horizontalConstraints = HorizontalConstraints { };
     if (intrinsicWidthMode == IntrinsicWidthMode::Maximum)
         horizontalConstraints.logicalWidth = maxInlineLayoutUnit();
-    auto& inlineItems = formattingState().inlineItems();
-    auto layoutRange = InlineItemRange { 0 , inlineItems.size() };
+    auto layoutRange = InlineItemRange { 0 , m_inlineItems.size() };
     auto maximumContentWidth = InlineLayoutUnit { };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto previousLine = std::optional<PreviousLine> { };
@@ -126,11 +122,10 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
 
 InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth() const
 {
-    auto& rootStyle = root().style();
-    auto& fontCascade = rootStyle.fontCascade();
+    auto& fontCascade = rootStyle().fontCascade();
 
     auto maximumWidth = InlineLayoutUnit { };
-    for (auto& inlineItem : formattingState().inlineItems()) {
+    for (auto& inlineItem : m_inlineItems) {
         if (inlineItem.isText()) {
             auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
             auto contentLength = inlineTextItem.length();
@@ -159,14 +154,9 @@ const InlineFormattingContext& IntrinsicWidthHandler::formattingContext() const
     return m_inlineFormattingContext;
 }
 
-const InlineFormattingState& IntrinsicWidthHandler::formattingState() const
+const RenderStyle& IntrinsicWidthHandler::rootStyle() const
 {
-    return formattingContext().formattingState();
-}
-
-const ElementBox& IntrinsicWidthHandler::root() const
-{
-    return m_inlineFormattingContext.root();
+    return m_inlineFormattingContext.root().style();
 }
 
 }

@@ -27,7 +27,6 @@
 #include "InlineInvalidation.h"
 
 #include "InlineDamage.h"
-#include "InlineFormattingState.h"
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutUnit.h"
 #include "TextDirection.h"

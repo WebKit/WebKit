@@ -77,8 +77,9 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBr
     return textLength - startPosition;
 }
 
-InlineItemsBuilder::InlineItemsBuilder(InlineFormattingContext& inlineFormattingContext)
-    : m_inlineFormattingContext(inlineFormattingContext)
+InlineItemsBuilder::InlineItemsBuilder(InlineFormattingState& inlineFormattingState, const ElementBox& root)
+    : m_inlineFormattingState(inlineFormattingState)
+    , m_root(root)
 {
 }
 

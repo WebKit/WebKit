@@ -35,6 +35,7 @@ namespace WebCore {
 namespace Layout {
 
 class InlineContentBreaker;
+class InlineFormattingState;
 struct CandidateTextContent;
 struct TextOnlyLineBreakResult;
 

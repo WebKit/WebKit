@@ -27,6 +27,7 @@
 #include "TextOnlySimpleLineBuilder.h"
 
 #include "InlineFormattingContext.h"
+#include "InlineFormattingState.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {

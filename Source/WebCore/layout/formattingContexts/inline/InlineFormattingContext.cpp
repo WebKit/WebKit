@@ -85,7 +85,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     if (needsInlineItemsUpdate) {
         // FIXME: This should go to invalidation.
         inlineFormattingState.clearMaximumIntrinsicWidthLayoutResult();
-        InlineItemsBuilder { *this }.build(needsLayoutStartPosition);
+        InlineItemsBuilder { inlineFormattingState, root() }.build(needsLayoutStartPosition);
     }
 
     auto& inlineItems = inlineFormattingState.inlineItems();
@@ -128,9 +128,10 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
     auto needsLayoutStartPosition = !lineDamage || !lineDamage->start() ? InlineItemPosition() : lineDamage->start()->inlineItemPosition;
     auto needsInlineItemsUpdate = inlineFormattingState.inlineItems().isEmpty() || lineDamage;
     if (needsInlineItemsUpdate)
-        InlineItemsBuilder { *this }.build(needsLayoutStartPosition);
+        InlineItemsBuilder { inlineFormattingState, root() }.build(needsLayoutStartPosition);
 
-    auto intrinsicWidthHandler = IntrinsicWidthHandler { *this };
+    auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState);
+    auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineFormattingState.inlineItems(), mayUseSimplifiedTextOnlyInlineLayout };
     auto intrinsicSizes = intrinsicWidthHandler.computedIntrinsicSizes();
     inlineFormattingState.setIntrinsicWidthConstraints(intrinsicSizes);
     if (intrinsicWidthHandler.maximumIntrinsicWidthResult())
@@ -144,7 +145,8 @@ LayoutUnit InlineFormattingContext::maximumContentSize()
     if (auto intrinsicWidthConstraints = inlineFormattingState.intrinsicWidthConstraints())
         return intrinsicWidthConstraints->maximum;
 
-    return IntrinsicWidthHandler { *this }.maximumContentSize();
+    auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState);
+    return IntrinsicWidthHandler { *this, inlineFormattingState.inlineItems(), mayUseSimplifiedTextOnlyInlineLayout }.maximumContentSize();
 }
 
 static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t lineIndex, const InlineDisplay::Boxes& newContent)
@@ -217,7 +219,7 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
     auto& floatingState = this->floatingState();
     auto floatingContext = FloatingContext { *this, floatingState };
 
-    InlineItemsBuilder { *this }.build({ });
+    InlineItemsBuilder { inlineFormattingState, root() }.build({ });
 
     for (auto& inlineItem : inlineFormattingState.inlineItems()) {
         if (inlineItem.isFloat()) {
@@ -370,6 +372,11 @@ void InlineFormattingContext::initializeLayoutState()
 {
     if (auto limitLinesValue = root().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
         inlineLayoutState().setHyphenationLimitLines(limitLinesValue);
+}
+
+InlineFormattingState& InlineFormattingContext::formattingState()
+{
+    return downcast<InlineFormattingState>(FormattingContext::formattingState());
 }
 
 }
