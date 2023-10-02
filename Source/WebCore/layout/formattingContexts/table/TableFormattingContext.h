@@ -47,7 +47,7 @@ public:
 
     const TableFormattingGeometry& formattingGeometry() const final { return m_tableFormattingGeometry; }
     const TableFormattingQuirks& formattingQuirks() const final { return m_tableFormattingQuirks; }
-    const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
+    const TableFormattingState& formattingState() const { return m_tableFormattingState; }
 
 private:
     class TableLayout {
@@ -75,8 +75,9 @@ private:
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
     void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace);
 
-    TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
+    TableFormattingState& formattingState() { return m_tableFormattingState; }
 
+    TableFormattingState& m_tableFormattingState;
     const TableFormattingGeometry m_tableFormattingGeometry;
     const TableFormattingQuirks m_tableFormattingQuirks;
 };

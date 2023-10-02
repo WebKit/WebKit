@@ -44,8 +44,9 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingContext);
 
 // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
-TableFormattingContext::TableFormattingContext(const ElementBox& formattingContextRoot, TableFormattingState& formattingState)
-    : FormattingContext(formattingContextRoot, formattingState)
+TableFormattingContext::TableFormattingContext(const ElementBox& formattingContextRoot, TableFormattingState& tableFormattingState)
+    : FormattingContext(formattingContextRoot, tableFormattingState.layoutState())
+    , m_tableFormattingState(tableFormattingState)
     , m_tableFormattingGeometry(*this)
     , m_tableFormattingQuirks(*this)
 {

@@ -87,6 +87,7 @@ private:
     InlineFormattingState& formattingState();
 
 private:
+    InlineFormattingState& m_inlineFormattingState;
     const InlineFormattingGeometry m_inlineFormattingGeometry;
     const InlineFormattingQuirks m_inlineFormattingQuirks;
     InlineLayoutState m_inlineLayoutState;

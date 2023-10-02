@@ -41,10 +41,7 @@ namespace Layout {
 class BoxGeometry;
 class ElementBox;
 struct ConstraintsForInFlowContent;
-struct ConstraintsForOutOfFlowContent;
-struct HorizontalConstraints;
 class FormattingGeometry;
-class FormattingState;
 class FormattingQuirks;
 struct IntrinsicWidthConstraints;
 class LayoutState;
@@ -63,7 +60,6 @@ public:
     LayoutState& layoutState();
     const LayoutState& layoutState() const { return const_cast<FormattingContext&>(*this).layoutState(); }
 
-    const FormattingState& formattingState() const { return m_formattingState; }
     virtual const FormattingGeometry& formattingGeometry() const = 0;
     virtual const FormattingQuirks& formattingQuirks() const = 0;
 
@@ -93,10 +89,7 @@ public:
 #endif
 
 protected:
-    FormattingContext(const ElementBox& formattingContextRoot, FormattingState&);
-
-    FormattingState& formattingState() { return m_formattingState; }
-    void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
+    FormattingContext(const ElementBox& formattingContextRoot, LayoutState&);
 
 #if ASSERT_ENABLED
     virtual void validateGeometryConstraintsAfterLayout() const;
@@ -104,7 +97,7 @@ protected:
 
 private:
     CheckedRef<const ElementBox> m_root;
-    FormattingState& m_formattingState;
+    LayoutState& m_layoutState;
 };
 
 }

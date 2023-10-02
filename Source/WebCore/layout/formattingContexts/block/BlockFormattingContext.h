@@ -53,7 +53,7 @@ public:
     void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
     LayoutUnit usedContentHeight() const override;
 
-    const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
+    const BlockFormattingState& formattingState() const { return m_blockFormattingState; }
     const BlockFormattingGeometry& formattingGeometry() const final { return m_blockFormattingGeometry; }
     const BlockFormattingQuirks& formattingQuirks() const override { return m_blockFormattingQuirks; }
 
@@ -84,8 +84,9 @@ protected:
     void collectOutOfFlowDescendantsIfNeeded();
     void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
     void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
+    void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
 
-    BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
+    BlockFormattingState& formattingState() { return m_blockFormattingState; }
     BlockMarginCollapse marginCollapse() const;
 
 #if ASSERT_ENABLED
@@ -98,6 +99,7 @@ private:
 #if ASSERT_ENABLED
     HashMap<const ElementBox*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
 #endif
+    BlockFormattingState& m_blockFormattingState;
     const BlockFormattingGeometry m_blockFormattingGeometry;
     const BlockFormattingQuirks m_blockFormattingQuirks;
 };

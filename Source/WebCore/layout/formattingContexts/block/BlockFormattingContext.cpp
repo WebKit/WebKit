@@ -49,8 +49,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingContext);
 
-BlockFormattingContext::BlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState& formattingState)
-    : FormattingContext(formattingContextRoot, formattingState)
+BlockFormattingContext::BlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState& blockFormattingState)
+    : FormattingContext(formattingContextRoot, blockFormattingState.layoutState())
+    , m_blockFormattingState(blockFormattingState)
     , m_blockFormattingGeometry(*this)
     , m_blockFormattingQuirks(*this)
 {
@@ -711,6 +712,13 @@ void BlockFormattingContext::updateMarginAfterForPreviousSibling(const ElementBo
 
         currentBox = &previousSibling;
     }
+}
+
+void BlockFormattingContext::computeBorderAndPadding(const Box& layoutBox, const HorizontalConstraints& horizontalConstraint)
+{
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+    boxGeometry.setBorder(formattingGeometry().computedBorder(layoutBox));
+    boxGeometry.setPadding(formattingGeometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
 }
 
 BlockMarginCollapse BlockFormattingContext::marginCollapse() const

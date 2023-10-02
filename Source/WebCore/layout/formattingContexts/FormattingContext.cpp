@@ -28,7 +28,6 @@
 
 #include "FormattingGeometry.h"
 #include "FormattingQuirks.h"
-#include "FormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutBoxInlines.h"
 #include "LayoutContainingBlockChainIterator.h"
@@ -47,13 +46,13 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
-FormattingContext::FormattingContext(const ElementBox& formattingContextRoot, FormattingState& formattingState)
+FormattingContext::FormattingContext(const ElementBox& formattingContextRoot, LayoutState& layoutState)
     : m_root(formattingContextRoot)
-    , m_formattingState(formattingState)
+    , m_layoutState(layoutState)
 {
     ASSERT(formattingContextRoot.hasChild());
 #ifndef NDEBUG
-    layoutState().registerFormattingContext(*this);
+    layoutState.registerFormattingContext(*this);
 #endif
 }
 
@@ -66,14 +65,7 @@ FormattingContext::~FormattingContext()
 
 LayoutState& FormattingContext::layoutState()
 {
-    return m_formattingState.layoutState();
-}
-
-void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const HorizontalConstraints& horizontalConstraint)
-{
-    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    boxGeometry.setBorder(formattingGeometry().computedBorder(layoutBox));
-    boxGeometry.setPadding(formattingGeometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
+    return m_layoutState;
 }
 
 BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason>)

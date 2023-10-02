@@ -60,8 +60,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
-InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState& formattingState, BlockLayoutState& parentBlockLayoutState)
-    : FormattingContext(formattingContextRoot, formattingState)
+InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState& inlineFormattingState, BlockLayoutState& parentBlockLayoutState)
+    : FormattingContext(formattingContextRoot, inlineFormattingState.layoutState())
+    , m_inlineFormattingState(inlineFormattingState)
     , m_inlineFormattingGeometry(*this)
     , m_inlineFormattingQuirks(*this)
     , m_inlineLayoutState(parentBlockLayoutState)
@@ -376,7 +377,7 @@ void InlineFormattingContext::initializeLayoutState()
 
 InlineFormattingState& InlineFormattingContext::formattingState()
 {
-    return downcast<InlineFormattingState>(FormattingContext::formattingState());
+    return m_inlineFormattingState;
 }
 
 }
