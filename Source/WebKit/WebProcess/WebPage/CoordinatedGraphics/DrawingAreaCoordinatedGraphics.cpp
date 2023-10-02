@@ -449,17 +449,6 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
     completionHandler();
 }
 
-#if !PLATFORM(GTK)
-void DrawingAreaCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
-{
-    UNUSED_PARAM(rate);
-#if !USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
-    if (m_layerTreeHost)
-        m_layerTreeHost->targetRefreshRateDidChange(rate);
-#endif
-}
-#endif
-
 void DrawingAreaCoordinatedGraphics::displayDidRefresh()
 {
     // We might get didUpdate messages from the UI process even after we've

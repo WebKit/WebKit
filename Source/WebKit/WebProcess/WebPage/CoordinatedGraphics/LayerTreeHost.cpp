@@ -275,13 +275,6 @@ void LayerTreeHost::sizeDidChange(const IntSize& size)
     didChangeViewport();
 }
 
-#if !PLATFORM(GTK)
-void LayerTreeHost::targetRefreshRateDidChange(uint32_t rate)
-{
-    m_compositor->targetRefreshRateDidChange(rate);
-}
-#endif
-
 void LayerTreeHost::pauseRendering()
 {
     m_isSuspended = true;

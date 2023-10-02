@@ -85,9 +85,6 @@ private:
 
     // IPC message handlers.
     void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) override;
-#if !PLATFORM(GTK)
-    void targetRefreshRateDidChange(unsigned rate) override;
-#endif
     void displayDidRefresh() override;
     void setDeviceScaleFactor(float) override;
     void forceUpdate() override;

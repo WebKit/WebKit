@@ -39,7 +39,7 @@
 #include <CoreVideo/CVDisplayLink.h>
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 #include "DisplayVBlankMonitor.h"
 #endif
 
@@ -104,7 +104,7 @@ private:
 #if PLATFORM(MAC)
     CVDisplayLinkRef m_displayLink { nullptr };
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     std::unique_ptr<DisplayVBlankMonitor> m_vblankMonitor;
 #endif
     Lock m_clientsLock;

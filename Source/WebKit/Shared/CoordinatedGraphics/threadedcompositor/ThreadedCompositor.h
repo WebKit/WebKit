@@ -84,9 +84,6 @@ public:
 #endif
 
     void frameComplete();
-#if !PLATFORM(GTK)
-    void targetRefreshRateDidChange(unsigned);
-#endif
 
     void suspend();
     void resume();

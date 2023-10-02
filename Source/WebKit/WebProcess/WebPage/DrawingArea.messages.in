@@ -23,9 +23,6 @@
 messages -> DrawingArea NotRefCounted {
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     UpdateGeometry(WebCore::IntSize size) -> ()
-#if !PLATFORM(GTK)
-    TargetRefreshRateDidChange(unsigned rate)
-#endif
     SetDeviceScaleFactor(float deviceScaleFactor)
     ForceUpdate()
     DidDiscardBackingStore()

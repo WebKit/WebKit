@@ -29,6 +29,7 @@
 #if USE(LIBDRM)
 
 #include "Logging.h"
+#include <WebCore/PlatformDisplay.h>
 #include <fcntl.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -37,7 +38,6 @@
 
 #if PLATFORM(GTK)
 #include "ScreenManager.h"
-#include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformScreen.h>
 #include <gtk/gtk.h>
 #endif
@@ -99,17 +99,66 @@ static std::optional<uint32_t> findCrtc(int fd, GdkMonitor* monitor)
 
     return returnValue;
 }
+#elif PLATFORM(WPE)
+static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
+{
+    drmModeRes* resources = drmModeGetResources(fd);
+    if (!resources)
+        return std::nullopt;
+
+    // Get the first active connector.
+    drmModeConnector* connector = nullptr;
+    for (int i = 0; i < resources->count_connectors; ++i) {
+        connector = drmModeGetConnector(fd, resources->connectors[i]);
+        if (!connector)
+            continue;
+
+        if (connector->connection == DRM_MODE_CONNECTED && connector->encoder_id && connector->count_modes)
+            break;
+
+        drmModeFreeConnector(connector);
+        connector = nullptr;
+    }
+
+    if (!connector) {
+        drmModeFreeResources(resources);
+        return std::nullopt;
+    }
+
+    auto modeRefreshRate = [](const drmModeModeInfo* info) -> uint32_t {
+        uint64_t refresh = (info->clock * 1000000LL / info->htotal + info->vtotal / 2) / info->vtotal;
+        if (info->flags & DRM_MODE_FLAG_INTERLACE)
+            refresh *= 2;
+        if (info->flags & DRM_MODE_FLAG_DBLSCAN)
+            refresh /= 2;
+        if (info->vscan > 1)
+            refresh /= info->vscan;
+        return refresh;
+    };
+
+    std::optional<std::pair<uint32_t, uint32_t>> returnValue;
+    if (drmModeEncoder* encoder = drmModeGetEncoder(fd, connector->encoder_id)) {
+        for (int i = 0; i < resources->count_crtcs; ++i) {
+            if (resources->crtcs[i] == encoder->crtc_id) {
+                if (drmModeCrtc* crtc = drmModeGetCrtc(fd, resources->crtcs[i])) {
+                    returnValue = { i, modeRefreshRate(&crtc->mode) };
+                    drmModeFreeCrtc(crtc);
+                    break;
+                }
+            }
+        }
+        drmModeFreeEncoder(encoder);
+    }
+
+    drmModeFreeConnector(connector);
+    drmModeFreeResources(resources);
+
+    return returnValue;
+}
 #endif
 
 std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDisplayID displayID)
 {
-#if PLATFORM(GTK)
-    auto* monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
-    if (!monitor) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
-        return nullptr;
-    }
-
     auto filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
     if (filename.isEmpty()) {
         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no DRM device found", displayID);
@@ -122,6 +171,13 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
         return nullptr;
     }
 
+#if PLATFORM(GTK)
+    auto* monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
+    if (!monitor) {
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
+        return nullptr;
+    }
+
     auto crtcIndex = findCrtc(fd.value(), monitor);
     if (!crtcIndex) {
         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no CRTC found", displayID);
@@ -129,10 +185,14 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
     }
 
     return makeUnique<DisplayVBlankMonitorDRM>(gdk_monitor_get_refresh_rate(monitor) / 1000, WTFMove(fd), crtcIndex.value());
-#else
-    // FIXME: implement for WPE.
-    UNUSED_PARAM(displayID);
-    return nullptr;
+#elif PLATFORM(WPE)
+    auto crtcInfo = findCrtc(fd.value());
+    if (!crtcInfo) {
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no CRTC found", displayID);
+        return nullptr;
+    }
+
+    return makeUnique<DisplayVBlankMonitorDRM>(crtcInfo->second / 1000, WTFMove(fd), crtcInfo->first);
 #endif
 }
 
