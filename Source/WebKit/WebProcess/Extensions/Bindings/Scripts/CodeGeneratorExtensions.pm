@@ -552,7 +552,7 @@ EOF
 
                 foreach my $i (0..$#specifiedParameters) {
                     my $parameter = $specifiedParameters[$i];
-                    $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 2);
+                    $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1, 2);
                 }
 
                 foreach my $i (0..$#specifiedParameters) {
@@ -566,7 +566,7 @@ EOF
 
                     foreach my $i (0..$#specifiedParameters - 1) {
                         my $parameter = $specifiedParameters[$i];
-                        $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 2);
+                        $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1, 2);
                     }
 
                     foreach my $i (0..$#specifiedParameters - 1) {
@@ -576,7 +576,7 @@ EOF
 
                     if ($hasOptionalAsLastArgument && $requiredArgumentCount ne ($argumentCount - 1)) {
                         push(@contents, "    } else if (argumentCount == 1) {\n");
-                        $self->_installArgumentTypeExceptions(\@contents, $lastParameter, $idlType, "arguments[0]", $lastParameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 2);
+                        $self->_installArgumentTypeExceptions(\@contents, $lastParameter, $idlType, "arguments[0]", $lastParameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1, 2);
                         push(@contents, "        " . $self->_platformTypeVariableDeclaration($lastParameter, $lastParameter->name, "arguments[0]", undef, 1) . "\n");
                     }
                 } elsif ($argumentCount > 1) {
@@ -622,7 +622,7 @@ EOF
                             push(@contents, "                $nextArgumentIndex;\n");
                             push(@contents, "            }\n");
                         } else {
-                            $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "currentArgument", $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 3);
+                            $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "currentArgument", $parameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1, 3);
                             push(@contents, "            " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "currentArgument", undef, 1) . "\n");
                             push(@contents, "            $nextArgumentIndex;\n");
                         }
@@ -635,7 +635,7 @@ EOF
             } else {
                 foreach my $i (0..$#specifiedParameters) {
                     my $parameter = $specifiedParameters[$i];
-                    $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 1);
+                    $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1, 1);
                 }
 
                 foreach my $i (0..$#specifiedParameters) {
@@ -664,14 +664,14 @@ EOF
             my @methodSignatureNames = map(&$mapFunction, @specifiedParameters);
 
             foreach my $parameter (@specifiedParameters) {
-                $self->_installAutomaticExceptions(\@contents, $parameter, $idlType, $parameter->name, $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1);
+                $self->_installAutomaticExceptions(\@contents, $parameter, $idlType, $parameter->name, $parameter->name, $defaultEarlyReturnValue, \%contentsIncludes, $function, 1);
             }
 
             if (!$hasSimpleOptionalArgumentHandling) {
                 push(@contents, "\n");
                 push(@contents, "    if (UNLIKELY($argumentIndexConditon)) {\n");
                 push(@contents, "        *exception = toJSError(context, @\"${call}\", nil, @\"an unknown argument was provided\");\n");
-                push(@contents, "        return ${defaultReturnValue};\n");
+                push(@contents, "        return ${defaultEarlyReturnValue};\n");
                 push(@contents, "    }\n");
             }
 
@@ -724,7 +724,7 @@ EOF
 
     if (UNLIKELY(exceptionString)) {
         *exception = toJSError(context, @"${call}", nil, exceptionString);
-        return ${defaultReturnValue};
+        return ${defaultEarlyReturnValue};
     }
 
     return result;
@@ -735,8 +735,10 @@ EOF
     NSString *exceptionString = nil;
     ${functionCall};
 
-    if (UNLIKELY(exceptionString))
+    if (UNLIKELY(exceptionString)) {
         *exception = toJSError(context, @"${call}", nil, exceptionString);
+        return ${defaultEarlyReturnValue};
+    }
 
     return ${defaultReturnValue};
 }
@@ -1287,9 +1289,11 @@ sub _javaScriptTypeCondition
     my $nullOrUndefined = "";
     $nullOrUndefined = " || JSValueIsNull(context, ${argument}) || JSValueIsUndefined(context, ${argument})" if $signature->extendedAttributes->{"Optional"};
 
-    return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr))) || JSValueIsString(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"DOMString"};
+    return "isDictionary(context, ${argument}) || JSValueIsString(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"DOMString"};
     return "(!JSValueIsNull(context, ${argument}) && !JSValueIsUndefined(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"Serialization"};
-    return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "any" && ($signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"NSArray"} || $signature->extendedAttributes->{"NSDictionary"});
+    return "isDictionary(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSDictionary"};
+    return "JSValueIsArray(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSArray"};
+    return "JSValueIsObject(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSObject"};
     return "JSValueIsObject(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && !$signature->extendedAttributes->{"ValuesAllowed"};
     return "(JSValueIsObject(context, ${argument}) && JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "function";
     return "JSValueIsBoolean(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "boolean";
@@ -1339,14 +1343,17 @@ sub _platformTypeConstructor
 
     if ($idlTypeName eq "any") {
         return "serializeJSObject(context, $argumentName, exception)" if $signature->extendedAttributes->{"Serialization"} && $signature->extendedAttributes->{"Serialization"} eq "JSON";
-        return "toNSDictionary(context, $argumentName)" if $signature->extendedAttributes->{"NSDictionary"};
-        return "dynamic_objc_cast<NSArray>(toNSObject(context, $argumentName))" if $signature->extendedAttributes->{"NSArray"};
+        return "toNSDictionary(context, $argumentName, NullValuePolicy::Allowed)" if $signature->extendedAttributes->{"NSDictionary"} && $signature->extendedAttributes->{"NSDictionary"} eq "NullAllowed";
+        return "toNSDictionary(context, $argumentName, NullValuePolicy::NotAllowed)" if $signature->extendedAttributes->{"NSDictionary"};
+        return "toNSArray(context, $argumentName, $arrayType.class)" if $signature->extendedAttributes->{"NSArray"} && $arrayType;
+        return "toNSArray(context, $argumentName)" if $signature->extendedAttributes->{"NSArray"};
         return "toNSObject(context, $argumentName)" if $signature->extendedAttributes->{"NSObject"};
         return "toJSValue(context, $argumentName)";
     }
 
     return "toJSCallbackHandler(context, $argumentName, impl->runtime())" if $idlTypeName eq "function" && $signature->extendedAttributes->{"CallbackHandler"};
-    return "dynamic_objc_cast<NSArray>(toNSObject(context, $argumentName, $arrayType.class))" if $idlTypeName eq "array" && $arrayType;
+    return "toNSArray(context, $argumentName, $arrayType.class)" if $idlTypeName eq "array" && $arrayType;
+    return "toNSArray(context, $argumentName)" if $idlTypeName eq "array";
     return "JSValueToBoolean(context, $argumentName)" if $idlTypeName eq "boolean";
     return "toJSValue(context, $argumentName)" if $idlTypeName eq "function";
 

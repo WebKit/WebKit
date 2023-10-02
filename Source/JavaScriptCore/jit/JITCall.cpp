@@ -189,15 +189,8 @@ void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 
     resetSP();
 
-#if USE(JSVALUE32_64)
     emitGetVirtualRegister(bytecode.m_thisValue, thisValueJSR);
     emitGetVirtualRegisterPayload(bytecode.m_scope, scopeGPR);
-#else
-    emitGetVirtualRegisters({
-        { bytecode.m_thisValue, thisValueJSR },
-        { bytecode.m_scope, JSValueRegs { scopeGPR } }
-    });
-#endif
     callOperation(bytecode.m_ecmaMode.isStrict() ? operationCallDirectEvalStrict : operationCallDirectEvalSloppy, calleeFrameGPR, scopeGPR, thisValueJSR);
     addSlowCase(branchIfEmpty(returnValueJSR));
 

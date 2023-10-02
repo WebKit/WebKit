@@ -563,10 +563,13 @@ $(PROJECT_DIR)/Modules/mediasource/VideoPlaybackQuality.idl
 $(PROJECT_DIR)/Modules/mediasource/VideoTrack+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediastream/CanvasCaptureMediaStreamTrack.idl
 $(PROJECT_DIR)/Modules/mediastream/DoubleRange.idl
+$(PROJECT_DIR)/Modules/mediastream/FillLightMode.idl
+$(PROJECT_DIR)/Modules/mediastream/ImageCapture.idl
 $(PROJECT_DIR)/Modules/mediastream/InputDeviceInfo.idl
 $(PROJECT_DIR)/Modules/mediastream/LongRange.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaDeviceInfo.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaDevices.idl
+$(PROJECT_DIR)/Modules/mediastream/MediaSettingsRange.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStream.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrack.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackEvent.idl
@@ -577,6 +580,8 @@ $(PROJECT_DIR)/Modules/mediastream/MeteringMode.idl
 $(PROJECT_DIR)/Modules/mediastream/Navigator+MediaDevices.idl
 $(PROJECT_DIR)/Modules/mediastream/OverconstrainedError.idl
 $(PROJECT_DIR)/Modules/mediastream/OverconstrainedErrorEvent.idl
+$(PROJECT_DIR)/Modules/mediastream/PhotoCapabilities.idl
+$(PROJECT_DIR)/Modules/mediastream/PhotoSettings.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCAnswerOptions.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCCertificate.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCConfiguration.idl
@@ -648,6 +653,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCSignalingState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCStatsReport.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCTrackEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCTransformEvent.idl
+$(PROJECT_DIR)/Modules/mediastream/RedEyeReduction.idl
 $(PROJECT_DIR)/Modules/model-element/HTMLModelElement.idl
 $(PROJECT_DIR)/Modules/model-element/HTMLModelElementCamera.idl
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/activity-indicator.css

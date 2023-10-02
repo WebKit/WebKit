@@ -1,0 +1,5 @@
+
+
+PASS getPhotoCapabilities() on an 'ended' track should throw "InvalidStateError"
+PASS Check getPhotoCapabilities()
+

@@ -163,8 +163,8 @@ class CheckoutRoute(AuthedBlueprint):
             return b, a
         return a, b
 
-    def __init__(self, checkout, redirectors=None, import_name=__name__, auth_decorator=None, database=None):
-        super(CheckoutRoute, self).__init__('checkout', import_name, url_prefix=None, auth_decorator=auth_decorator)
+    def __init__(self, checkout, redirectors=None, import_name=__name__, auth_decorator=None, database=None, blocked_user_agents=None):
+        super(CheckoutRoute, self).__init__('checkout', import_name, url_prefix=None, auth_decorator=auth_decorator, blocked_user_agents=blocked_user_agents)
 
         self.checkout = checkout
         self.database = database or Database()

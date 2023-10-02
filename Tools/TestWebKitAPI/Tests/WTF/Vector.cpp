@@ -318,6 +318,16 @@ TEST(WTF_Vector, CopyFromOtherMinCapacity)
     EXPECT_FALSE(vector != vectorCopy);
 }
 
+TEST(WTF_Vector, ConstructorOtherRawPointerTypeAndLength)
+{
+    const UChar uchars[] = { 'b', 'a', 'r' };
+    Vector<LChar> vector(uchars, 3);
+    EXPECT_EQ(vector.size(), 3U);
+    EXPECT_EQ(vector[0], 'b');
+    EXPECT_EQ(vector[1], 'a');
+    EXPECT_EQ(vector[2], 'r');
+}
+
 TEST(WTF_Vector, Reverse)
 {
     Vector<int> intVector;

@@ -9714,6 +9714,15 @@ void Document::updateContentRelevancyForScrollIfNeeded(const Element& scrollAnch
     return m_contentVisibilityDocumentState->updateContentRelevancyForScrollIfNeeded(scrollAnchor);
 }
 
+String Document::mediaKeysStorageDirectory()
+{
+    auto* currentPage = page();
+    if (!currentPage)
+        return emptyString();
+
+    return currentPage->ensureMediaKeysStorageDirectoryForOrigin(securityOrigin().data());
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG

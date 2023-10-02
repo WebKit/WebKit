@@ -71,10 +71,10 @@ public:
     WebCore::FloatSize scaledContentsSize() const;
 
 private:
-    void layoutPages(float availableWidth, float maxPageWidth);
+    void layoutPages(float availableWidth, float maxRowWidth);
 
-    void layoutSingleColumn(float availableWidth, float maxPageWidth);
-    void layoutTwoUpColumn(float availableWidth);
+    void layoutSingleColumn(float availableWidth, float maxRowWidth);
+    void layoutTwoUpColumn(float availableWidth, float maxRowWidth);
 
     static FloatSize documentMargin();
     static FloatSize pageMargin();

@@ -434,6 +434,27 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
     return *m_capabilities;
 }
 
+void AVVideoCaptureSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& completion)
+{
+    if (m_photoCapabilities) {
+        completion({ *m_photoCapabilities });
+        return;
+    }
+
+    auto capabilities = this->capabilities();
+    PhotoCapabilities photoCapabilities;
+
+    auto height = capabilities.height();
+    photoCapabilities.imageHeight = { height.longRange().max, height.longRange().min, 1 };
+
+    auto width = capabilities.width();
+    photoCapabilities.imageWidth = { width.longRange().max, width.longRange().min, 1 };
+
+    m_photoCapabilities = WTFMove(photoCapabilities);
+
+    completion({ *m_photoCapabilities });
+}
+
 NSMutableArray* AVVideoCaptureSource::cameraCaptureDeviceTypes()
 {
     ASSERT(isMainThread());

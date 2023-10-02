@@ -27,7 +27,7 @@
 #define HWndDC_h
 
 #include <windows.h>
-#include <wtf/NonCopyable.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

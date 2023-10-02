@@ -73,6 +73,7 @@ public:
     void stopProducingData();
     void endProducingData();
     void applyConstraints(const WebCore::MediaConstraints&, WebCore::RealtimeMediaSource::ApplyConstraintsHandler&&);
+    void getPhotoCapabilities(WebCore::RealtimeMediaSource::PhotoCapabilitiesHandler&&);
 
     void whenReady(CompletionHandler<void(WebCore::CaptureSourceError&&)>&&);
     void setAsReady();

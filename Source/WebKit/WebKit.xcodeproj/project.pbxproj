@@ -2222,7 +2222,6 @@
 		E55CFD4E279D31E5002F1020 /* WebFoundTextRangeController.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CFD4C279D31C3002F1020 /* WebFoundTextRangeController.h */; };
 		E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */; };
 		E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */; };
-		E575748429F65F7700B8D458 /* LinkPresentationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E575748329F65F7700B8D458 /* LinkPresentationSPI.h */; };
 		E596DD6A251E71D400C275A7 /* WKContactPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E596DD68251E71D300C275A7 /* WKContactPicker.h */; };
 		E5BEF6822130C48000F31111 /* WebDataListSuggestionsDropdownIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BEF6802130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.h */; };
 		E5CB07DC20E1678F0022C183 /* WKFormColorControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E5CB07DA20E1678F0022C183 /* WKFormColorControl.h */; };
@@ -7378,7 +7377,6 @@
 		E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionsDropdown.h; sourceTree = "<group>"; };
 		E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionsDropdownMac.h; sourceTree = "<group>"; };
 		E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = WebDataListSuggestionsDropdownMac.mm; sourceTree = "<group>"; };
-		E575748329F65F7700B8D458 /* LinkPresentationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPresentationSPI.h; sourceTree = "<group>"; };
 		E596DD68251E71D300C275A7 /* WKContactPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContactPicker.h; sourceTree = "<group>"; };
 		E596DD69251E71D400C275A7 /* WKContactPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContactPicker.mm; sourceTree = "<group>"; };
 		E5BEF6802130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDataListSuggestionsDropdownIOS.h; path = ios/WebDataListSuggestionsDropdownIOS.h; sourceTree = "<group>"; };
@@ -10168,7 +10166,6 @@
 				1C62900C28EE2CD300C26B60 /* CoreSVGSPI.h */,
 				2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */,
 				1C62900E28EF4A1D00C26B60 /* FoundationSPI.h */,
-				E575748329F65F7700B8D458 /* LinkPresentationSPI.h */,
 				574217912400E098002B303D /* LocalAuthenticationSPI.h */,
 				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
@@ -14882,7 +14879,6 @@
 				413075AD1DE85F580039EC69 /* LibWebRTCSocket.h in Headers */,
 				41DC459C1E3DBB2800B11F51 /* LibWebRTCSocketClient.h in Headers */,
 				413075B21DE85F580039EC69 /* LibWebRTCSocketFactory.h in Headers */,
-				E575748429F65F7700B8D458 /* LinkPresentationSPI.h in Headers */,
 				2D1087611D2C573E00B85F82 /* LoadParameters.h in Headers */,
 				578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */,
 				574217922400E286002B303D /* LocalAuthenticationSPI.h in Headers */,

@@ -101,6 +101,9 @@ UIContextMenuInteraction *CompactContextMenuPresenter::interaction() const
 
 void CompactContextMenuPresenter::present(CGRect rectInRootView)
 {
+    if (!m_rootView.window)
+        return;
+
     [m_button setFrame:rectInRootView];
     if (![m_button superview])
         [m_rootView addSubview:m_button.get()];

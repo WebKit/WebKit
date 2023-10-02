@@ -130,7 +130,7 @@ def main(args=None):
     print('Connected to database!')
 
     remotes = {}
-    for pair in args.remotes:
+    for pair in args.remotes or []:
         name, remote = pair.split(':', 1)
         if not remote:
             sys.stderr("Invalid forwarding remote '{}'".format(pair))

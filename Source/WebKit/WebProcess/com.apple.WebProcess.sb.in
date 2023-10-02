@@ -2143,6 +2143,11 @@
     thread_suspend))
 
 (define (kernel-mig-routines-possibly-in-use) (kernel-mig-routine
+    io_connect_add_client
+    io_connect_async_method
+    io_connect_method
+    io_connect_method_var_output
+    io_connect_set_notification_port_64
     io_registry_entry_get_property_bytes
     mach_exception_raise
     mach_port_extract_right
@@ -2150,11 +2155,6 @@
     mach_vm_region))
 
 (define (kernel-mig-routines-iokit-service) (kernel-mig-routine
-    io_connect_add_client
-    io_connect_async_method
-    io_connect_method
-    io_connect_method_var_output
-    io_connect_set_notification_port_64
     io_service_add_interest_notification_64
     io_service_add_notification_bin_64
     io_service_get_matching_service_bin
@@ -2197,12 +2197,7 @@
 #endif
 
             (allow mach-message-send (kernel-mig-routines-in-use))
-#if HAVE(SANDBOX_STATE_FLAGS)
-            (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
-                (allow mach-message-send (kernel-mig-routines-iokit-service)))
-#else
             (allow mach-message-send (kernel-mig-routines-iokit-service))
-#endif
             (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-possibly-in-use))
                 
 #if HAVE(SANDBOX_STATE_FLAGS) && HAVE(MACH_RANGE_CREATE)

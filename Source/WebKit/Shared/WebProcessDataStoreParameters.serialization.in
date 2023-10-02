@@ -29,6 +29,7 @@ struct WebKit::WebProcessDataStoreParameters {
     WebKit::SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     String mediaKeyStorageDirectory;
     WebKit::SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
+    FileSystem::Salt mediaKeysStorageSalt;
     String javaScriptConfigurationDirectory;
     WebKit::SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
 #if ENABLE(TRACKING_PREVENTION)

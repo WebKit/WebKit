@@ -388,18 +388,13 @@ private:
     mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
-template<typename MapFunction, typename T, typename WeakMapImpl>
-struct Mapper<MapFunction, const WeakListHashSet<T, WeakMapImpl> &, void> {
-    using SourceItemType = T&;
-    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
-
-    static Vector<DestinationItemType> map(const WeakListHashSet<T, WeakMapImpl>& source, const MapFunction& mapFunction)
+template<typename MapFunction, typename DestinationVectorType, typename T, typename WeakMapImpl>
+struct Mapper<MapFunction, DestinationVectorType, const WeakListHashSet<T, WeakMapImpl> &, void> {
+    static void map(DestinationVectorType& result, const WeakListHashSet<T, WeakMapImpl>& source, const MapFunction& mapFunction)
     {
-        Vector<DestinationItemType> result;
         result.reserveInitialCapacity(source.computeSize());
         for (auto& item : source)
             result.unsafeAppendWithoutCapacityCheck(mapFunction(item));
-        return result;
     }
 };
 

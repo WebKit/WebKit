@@ -2565,6 +2565,11 @@ sub shouldRemoveCMakeCache(@)
         return 1;
     }
 
+    my $compilerFlagsCMake = File::Spec->catdir(sourceDir(), "Source", "cmake", "WebKitCompilerFlags.cmake");
+    if ($cacheFileModifiedTime < stat($compilerFlagsCMake)->mtime) {
+        return 1;
+    }
+
     # FIXME: This probably does not work as expected, or the next block to
     # delete the images subdirectory would not be here. Directory mtime does not
     # percolate upwards when files are added or removed from subdirectories.

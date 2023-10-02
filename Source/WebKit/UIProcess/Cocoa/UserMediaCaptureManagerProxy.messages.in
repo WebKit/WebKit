@@ -29,6 +29,7 @@ messages -> UserMediaCaptureManagerProxy NotRefCounted {
     StopProducingData(WebCore::RealtimeMediaSourceIdentifier id)
     RemoveSource(WebCore::RealtimeMediaSourceIdentifier id)
     ApplyConstraints(WebCore::RealtimeMediaSourceIdentifier id, struct WebCore::MediaConstraints constraints)
+    GetPhotoCapabilities(WebCore::RealtimeMediaSourceIdentifier sourceID) -> (struct WebCore::PhotoCapabilitiesOrError result) Async
     Clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID, WebCore::PageIdentifier pageIdentifier)
     EndProducingData(WebCore::RealtimeMediaSourceIdentifier sourceID)
     SetShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier sourceID, bool shouldApplyRotation)

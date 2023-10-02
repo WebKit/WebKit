@@ -27,6 +27,7 @@
 
 #include <optional>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -35,6 +36,11 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/Vector.h>
 #endif
+
+namespace WebCore {
+class ImageBuffer;
+class NativeImage;
+}
 
 namespace WebCore::WebGPU {
 
@@ -47,6 +53,8 @@ public:
 #endif
 
     virtual void prepareForDisplay(CompletionHandler<void()>&&) = 0;
+    virtual void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage&)>) = 0;
+    virtual void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t bufferIndex) = 0;
 
 protected:
     CompositorIntegration() = default;

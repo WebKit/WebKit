@@ -52,7 +52,7 @@ class Pull(Command):
             return 1
 
         if isinstance(repository, local.Git):
-            branch_point = Branch.branch_point(repository)
+            branch_point = repository.branch_point()
             bp_remotes = set(repository.branches_for(hash=branch_point.hash, remote=None).keys())
             remote = None
             for rmt in repository.source_remotes():

@@ -25,21 +25,10 @@
 
 #pragma once
 
-#import <LinkPresentation/LinkPresentation.h>
+#import <pal/spi/cocoa/LinkPresentationSPI.h>
+#import <wtf/SoftLinking.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, LinkPresentation)
 
-#import <LinkPresentation/LPMetadata.h>
-#import <LinkPresentation/LPMetadataProviderPrivate.h>
-
-#else
-
-@interface LPLinkMetadata ()
-- (void)_setIncomplete:(BOOL)incomplete;
-@end
-
-@interface LPMetadataProvider ()
-- (LPLinkMetadata *)_startFetchingMetadataForURL:(NSURL *)URL completionHandler:(void(^)(NSError *))completionHandler;
-@end
-
-#endif // USE(APPLE_INTERNAL_SDK)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, LPLinkMetadata)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, LPMetadataProvider)

@@ -339,7 +339,6 @@ namespace JSC {
         ECMAMode ecmaMode(Op);
 
         void emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst);
-        void emitGetVirtualRegisters(std::initializer_list<std::tuple<VirtualRegister, JSValueRegs>>);
         void emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst);
         void emitPutVirtualRegister(VirtualRegister dst, JSValueRegs src);
 

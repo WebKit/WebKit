@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,7 +52,7 @@ private:
 
     void collectTextBoxesInFlowBox(LegacyInlineFlowBox*);
     bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
-    void modifyStartEndPositionsRespectingLigatures(Data*, unsigned& startPosition, unsigned& endPosition) const;
+    void modifyStartEndPositionsRespectingLigatures(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
 private:
     bool numberOfCharactersCallback(Data*, const SVGTextFragment&) const;

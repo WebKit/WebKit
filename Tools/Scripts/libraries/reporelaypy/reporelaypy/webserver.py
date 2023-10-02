@@ -22,6 +22,7 @@
 
 import json
 import os
+import re
 
 from flask_cors import CORS
 
@@ -42,6 +43,7 @@ checkout = Checkout.from_json(os.environ.get('CHECKOUT', '{}'))
 checkout_routes = CheckoutRoute(
     checkout, redirectors=Redirector.from_json(os.environ.get('REDIRECTORS', '[]')),
     import_name=__name__, database=database,
+    blocked_user_agents=json.loads(os.environ.get('BLOCKED_USER_AGENTS', '[]')),
 )
 
 hook_args = json.loads(os.environ.get('HOOKS', '{}'))

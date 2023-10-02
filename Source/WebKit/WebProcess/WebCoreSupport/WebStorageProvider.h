@@ -27,11 +27,19 @@
 
 #include "WebStorageConnection.h"
 #include <WebCore/StorageProvider.h>
+#include <WebCore/StorageUtilities.h>
 
 namespace WebKit {
 
 class WebStorageProvider final : public WebCore::StorageProvider {
     WTF_MAKE_FAST_ALLOCATED;
+public:
+    WebStorageProvider(const String& mediaKeysStorageDirectory, FileSystem::Salt mediaKeysStorageSalt)
+        : m_mediaKeysStorageDirectory(mediaKeysStorageDirectory)
+        , m_mediaKeysStorageSalt(mediaKeysStorageSalt)
+    {
+    }
+
 private:
     WebCore::StorageConnection& storageConnection() final
     {
@@ -43,7 +51,25 @@ private:
         return *m_connection;
     }
 
+    String ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin) final
+    {
+        if (m_mediaKeysStorageDirectory.isEmpty())
+            return emptyString();
+
+        auto originDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(m_mediaKeysStorageSalt, origin);
+        auto originDirectory = FileSystem::pathByAppendingComponent(m_mediaKeysStorageDirectory, originDirectoryName);
+        WebCore::StorageUtilities::writeOriginToFile(FileSystem::pathByAppendingComponent(originDirectory, "origin"_s), WebCore::ClientOrigin { origin, origin });
+        return originDirectory;
+    }
+
+    void setMediaKeysStorageDirectory(const String&) final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     RefPtr<WebStorageConnection> m_connection;
+    String m_mediaKeysStorageDirectory;
+    FileSystem::Salt m_mediaKeysStorageSalt;
 };
 
 } // namespace WebKit

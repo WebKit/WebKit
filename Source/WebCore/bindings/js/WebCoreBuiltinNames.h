@@ -265,6 +265,7 @@ namespace WebCore {
     macro(IIRFilterNode) \
     macro(ImageBitmap) \
     macro(ImageBitmapRenderingContext) \
+    macro(ImageCapture) \
     macro(IdleDeadline) \
     macro(InputDeviceInfo) \
     macro(InputEvent) \

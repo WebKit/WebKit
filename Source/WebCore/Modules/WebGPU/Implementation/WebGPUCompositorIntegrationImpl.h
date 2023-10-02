@@ -42,6 +42,10 @@
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
+namespace WebCore {
+class NativeImage;
+}
+
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
@@ -69,6 +73,9 @@ public:
         ASSERT(!m_onSubmittedWorkScheduledCallback);
         m_onSubmittedWorkScheduledCallback = WTFMove(onSubmittedWorkScheduledCallback);
     }
+
+    void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage&)>) final;
+    void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
 
 private:
     friend class DowncastConvertToBackingContext;

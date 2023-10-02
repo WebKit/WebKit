@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "CompactContextMenuPresenter.h"
 #import "UIKitUtilities.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
@@ -488,7 +489,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if USE(UICONTEXTMENU)
     RetainPtr<UIMenu> _selectMenu;
-    RetainPtr<UIContextMenuInteraction> _selectContextMenuInteraction;
+    std::unique_ptr<WebKit::CompactContextMenuPresenter> _selectContextMenuPresenter;
+    BOOL _isAnimatingContextMenuDismissal;
 #endif
 }
 
@@ -527,14 +529,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_view stopRelinquishingFirstResponderToFocusedElement];
 
 #if USE(UICONTEXTMENU)
-    [self removeContextMenuInteraction];
+    [self resetContextMenuPresenter];
 #endif
 }
 
 - (void)dealloc
 {
 #if USE(UICONTEXTMENU)
-    [self removeContextMenuInteraction];
+    [self resetContextMenuPresenter];
 #endif
     [super dealloc];
 }
@@ -554,6 +556,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if USE(UICONTEXTMENU)
+
+static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuOptions>(1 << 6);
 
 - (UIMenu *)createMenu
 {
@@ -585,7 +589,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 currentIndex++;
             }
 
-            UIMenu *groupMenu = [UIMenu menuWithTitle:groupText image:nil identifier:nil options:(UIMenuOptionsDisplayInline | (UIMenuOptions)UIMenuOptionsPrivateRemoveLineLimitForChildren) children:groupedItems];
+            UIMenu *groupMenu = [UIMenu menuWithTitle:groupText image:nil identifier:nil options:UIMenuOptionsDisplayInline | removeLineLimitForChildrenMenuOption children:groupedItems];
             [items addObject:groupMenu];
             continue;
         }
@@ -596,7 +600,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         currentIndex++;
     }
 
-    return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:(UIMenuOptionsSingleSelection | (UIMenuOptions)UIMenuOptionsPrivateRemoveLineLimitForChildren) children:items];
+    return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsSingleSelection | removeLineLimitForChildrenMenuOption children:items];
 }
 
 - (UIAction *)actionForOptionItem:(const OptionItem&)option withIndex:(NSInteger)optionIndex
@@ -645,13 +649,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [_view _createTargetedContextMenuHintPreviewForFocusedElement];
 }
 
-- (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-{
-    _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
-    style.preferredLayout = _UIContextMenuLayoutCompactMenu;
-    return style;
-}
-
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
 {
     UIContextMenuActionProvider actionMenuProvider = [weakSelf = WeakObjCPtr<WKSelectPicker>(self)] (NSArray<UIMenuElement *> *) -> UIMenu * {
@@ -676,39 +673,34 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
+    _isAnimatingContextMenuDismissal = YES;
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
         auto strongSelf = weakSelf.get();
         if (strongSelf) {
             [strongSelf->_view accessoryDone];
             [strongSelf->_view.webView _didDismissContextMenu];
+            strongSelf->_isAnimatingContextMenuDismissal = NO;
         }
     }];
 }
 
-- (void)removeContextMenuInteraction
+- (void)resetContextMenuPresenter
 {
-    if (!_selectContextMenuInteraction)
+    if (!_selectContextMenuPresenter)
         return;
 
-    [_view removeInteraction:_selectContextMenuInteraction.get()];
-    _selectContextMenuInteraction = nil;
+    _selectContextMenuPresenter = nullptr;
     [_view _removeContextMenuHintContainerIfPossible];
-    [_view.webView _didDismissContextMenu];
-}
 
-- (void)ensureContextMenuInteraction
-{
-    if (_selectContextMenuInteraction)
-        return;
-
-    _selectContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
-    [_view addInteraction:_selectContextMenuInteraction.get()];
+    if (!_isAnimatingContextMenuDismissal)
+        [_view.webView _didDismissContextMenu];
 }
 
 - (void)showSelectPicker
 {
-    [self ensureContextMenuInteraction];
-    [_view presentContextMenu:_selectContextMenuInteraction.get() atLocation:_interactionPoint];
+    if (!_selectContextMenuPresenter)
+        _selectContextMenuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(_view, self);
+    _selectContextMenuPresenter->present(_interactionPoint);
 }
 
 #endif // USE(UICONTEXTMENU)

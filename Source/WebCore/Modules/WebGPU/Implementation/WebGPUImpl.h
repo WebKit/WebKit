@@ -34,6 +34,12 @@
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 
+namespace WebCore {
+class GraphicsContext;
+class IntSize;
+class NativeImage;
+}
+
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
@@ -50,6 +56,8 @@ public:
 
     void ref() const final { RefCounted<GPUImpl>::ref(); }
     void deref() const final { RefCounted<GPUImpl>::deref(); }
+
+    void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
 
 private:
     friend class DowncastConvertToBackingContext;

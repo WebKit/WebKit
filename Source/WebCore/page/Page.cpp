@@ -4511,6 +4511,19 @@ void Page::removeRootFrame(LocalFrame& frame)
     m_rootFrames.remove(frame);
 }
 
+String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin)
+{
+    if (usesEphemeralSession())
+        return emptyString();
+
+    return m_storageProvider->ensureMediaKeysStorageDirectoryForOrigin(origin);
+}
+
+void Page::setMediaKeysStorageDirectory(const String& directory)
+{
+    m_storageProvider->setMediaKeysStorageDirectory(directory);
+}
+
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
