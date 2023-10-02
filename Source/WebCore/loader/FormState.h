@@ -41,7 +41,7 @@ enum FormSubmissionTrigger { SubmittedByJavaScript, NotSubmittedByJavaScript };
 
 using StringPairVector = Vector<std::pair<String, String>>;
 
-class FormState : public RefCounted<FormState>, public CanMakeWeakPtr<FormState>, public FrameDestructionObserver {
+class FormState : public RefCounted<FormState>, public FrameDestructionObserver {
 public:
     static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
     ~FormState();
