@@ -155,7 +155,7 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
     if (startPosition >= endPosition)
         return false;
 
-    modifyStartEndPositionsRespectingLigatures(queryData, startPosition, endPosition);
+    modifyStartEndPositionsRespectingLigatures(queryData, fragment, startPosition, endPosition);
     if (!queryData->textBox->mapStartEndPositionsIntoFragmentCoordinates(fragment, startPosition, endPosition))
         return false;
 
@@ -163,74 +163,37 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
     return true;
 }
 
-void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, unsigned& startPosition, unsigned& endPosition) const
+void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, const SVGTextFragment& fragment, unsigned& startPosition, unsigned& endPosition) const
 {
     SVGTextLayoutAttributes* layoutAttributes = queryData->textRenderer->layoutAttributes();
     Vector<SVGTextMetrics>& textMetricsValues = layoutAttributes->textMetricsValues();
-    unsigned boxStart = queryData->textBox->start();
-    unsigned boxLength = queryData->textBox->len();
 
-    unsigned textMetricsOffset = 0;
-    unsigned textMetricsSize = textMetricsValues.size();
+    unsigned textMetricsOffset = fragment.metricsListOffset;
 
-    unsigned positionOffset = 0;
-    unsigned positionSize = layoutAttributes->context().text().length();
-
-    bool alterStartPosition = true;
-    bool alterEndPosition = true;
-
-    std::optional<unsigned> lastPositionOffset;
-    for (; textMetricsOffset < textMetricsSize && positionOffset < positionSize; ++textMetricsOffset) {
-        SVGTextMetrics& metrics = textMetricsValues[textMetricsOffset];
-
-        // Advance to text box start location.
-        if (positionOffset < boxStart) {
-            positionOffset += metrics.length();
-            continue;
-        }
-
-        // Stop if we've finished processing this text box.
-        if (positionOffset >= boxStart + boxLength)
+    // Compute the offset of the fragment within the box, since that's the
+    // space <startPosition, endPosition> is in (and that's what we need).
+    unsigned fragmentOffsetInBox = fragment.characterOffset - queryData->textBox->start();
+    unsigned fragmentEndInBox = fragmentOffsetInBox + fragment.length;
+    // Find the text metrics cell that start at or contain the character startPosition.
+    while (fragmentOffsetInBox < fragmentEndInBox) {
+        auto& metrics = textMetricsValues[textMetricsOffset];
+        unsigned glyphEnd = fragmentOffsetInBox + metrics.length();
+        if (startPosition < glyphEnd)
             break;
+        fragmentOffsetInBox = glyphEnd;
+        ++textMetricsOffset;
+    }
+    startPosition = fragmentOffsetInBox;
 
-        // If the start position maps to a character in the metrics list, we don't need to modify it.
-        if (startPosition == positionOffset)
-            alterStartPosition = false;
-
-        // If the start position maps to a character in the metrics list, we don't need to modify it.
-        if (endPosition == positionOffset)
-            alterEndPosition = false;
-
-        // Detect ligatures.
-        if (lastPositionOffset && lastPositionOffset.value() - positionOffset > 1) {
-            if (alterStartPosition && startPosition > lastPositionOffset.value() && startPosition < positionOffset) {
-                startPosition = lastPositionOffset.value();
-                alterStartPosition = false;
-            }
-
-            if (alterEndPosition && endPosition > lastPositionOffset.value() && endPosition < positionOffset) {
-                endPosition = positionOffset;
-                alterEndPosition = false;
-            }
-        }
-
-        if (!alterStartPosition && !alterEndPosition)
+    // Find the text metrics cell that contain or ends at the character endPosition.
+    while (fragmentOffsetInBox < fragmentEndInBox) {
+        auto& metrics = textMetricsValues[textMetricsOffset];
+        fragmentOffsetInBox += metrics.length();
+        if (fragmentOffsetInBox >= endPosition)
             break;
-
-        lastPositionOffset = positionOffset;
-        positionOffset += metrics.length();
+        ++textMetricsOffset;
     }
-
-    if (!alterStartPosition && !alterEndPosition)
-        return;
-
-    if (lastPositionOffset && lastPositionOffset.value() - positionOffset > 1) {
-        if (alterStartPosition && startPosition > lastPositionOffset.value() && startPosition < positionOffset)
-            startPosition = lastPositionOffset.value();
-
-        if (alterEndPosition && endPosition > lastPositionOffset.value() && endPosition < positionOffset)
-            endPosition = positionOffset;
-    }
+    endPosition = fragmentOffsetInBox;
 }
 
 // numberOfCharacters() implementation
