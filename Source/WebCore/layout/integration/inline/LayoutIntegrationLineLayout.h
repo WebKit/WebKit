@@ -171,7 +171,7 @@ private:
     BoxTree m_boxTree;
     WeakPtr<Layout::LayoutState> m_layoutState;
     Layout::BlockFormattingState& m_blockFormattingState;
-    Layout::InlineFormattingState& m_inlineFormattingState;
+    Layout::InlineContentCache& m_inlineContentCache;
     std::optional<Layout::ConstraintsForInlineContent> m_inlineContentConstraints;
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;

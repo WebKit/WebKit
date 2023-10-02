@@ -32,7 +32,7 @@ namespace Layout {
 
 class AbstractLineBuilder;
 class InlineFormattingContext;
-class InlineFormattingState;
+class InlineContentCache;
 struct IntrinsicWidthConstraints;
 
 class IntrinsicWidthHandler {
@@ -55,7 +55,7 @@ private:
 
     InlineFormattingContext& formattingContext();
     const InlineFormattingContext& formattingContext() const;
-    const InlineFormattingState& formattingState() const;
+    const InlineContentCache& formattingState() const;
     const RenderStyle& rootStyle() const;
 
 private:

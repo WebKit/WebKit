@@ -47,7 +47,6 @@ public:
     std::optional<IntrinsicWidthConstraints> intrinsicWidthConstraints() const { return m_intrinsicWidthConstraints; }
 
     bool isBlockFormattingState() const { return m_type == Type::Block; }
-    bool isInlineFormattingState() const { return m_type == Type::Inline; }
     bool isTableFormattingState() const { return m_type == Type::Table; }
     bool isFlexFormattingState() const { return m_type == Type::Flex; }
 
@@ -57,7 +56,7 @@ public:
     BoxGeometry& boxGeometry(const Box& layoutBox);
 
 protected:
-    enum class Type { Block, Inline, Table, Flex };
+    enum class Type { Block, Table, Flex };
     FormattingState(Type, LayoutState&);
     ~FormattingState();
 

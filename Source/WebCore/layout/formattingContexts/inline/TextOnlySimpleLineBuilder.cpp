@@ -26,8 +26,8 @@
 #include "config.h"
 #include "TextOnlySimpleLineBuilder.h"
 
+#include "InlineContentCache.h"
 #include "InlineFormattingContext.h"
-#include "InlineFormattingState.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {
@@ -448,11 +448,11 @@ const ElementBox& TextOnlySimpleLineBuilder::root() const
     return formattingContext().root();
 }
 
-bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineFormattingState& inlineFormattingState, const FloatingState* floatingState)
+bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineContentCache& inlineContentCache, const FloatingState* floatingState)
 {
     if (floatingState && !floatingState->isEmpty())
         return false;
-    if (!inlineFormattingState.isNonBidiTextAndForcedLineBreakOnlyContent())
+    if (!inlineContentCache.isNonBidiTextAndForcedLineBreakOnlyContent())
         return false;
 
     auto& rootStyle = rootBox.style();

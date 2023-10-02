@@ -34,9 +34,9 @@
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InlineContentCache.h"
 #include "InlineDamage.h"
 #include "InlineFormattingContext.h"
-#include "InlineFormattingState.h"
 #include "InlineInvalidation.h"
 #include "InlineWalker.h"
 #include "LayoutBoxGeometry.h"
@@ -84,14 +84,14 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_boxTree(flow)
     , m_layoutState(flow.view().layoutState())
     , m_blockFormattingState(layoutState().ensureBlockFormattingState(rootLayoutBox()))
-    , m_inlineFormattingState(layoutState().ensureInlineFormattingState(rootLayoutBox()))
+    , m_inlineContentCache(layoutState().inlineContentCache(rootLayoutBox()))
 {
 }
 
 LineLayout::~LineLayout()
 {
     clearInlineContent();
-    layoutState().destroyInlineFormattingState(rootLayoutBox());
+    layoutState().destroyInlineContentCache(rootLayoutBox());
     layoutState().destroyBlockFormattingState(rootLayoutBox());
 }
 
@@ -485,7 +485,7 @@ void LineLayout::updateInlineContentDimensions()
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderStyle& oldStyle)
 {
     if (m_inlineContent) {
-        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems(), m_inlineContent->displayContent() };
         invalidation.styleChanged(m_boxTree.layoutBoxForRenderer(renderer), oldStyle);
     }
     m_boxTree.updateStyle(renderer);
@@ -499,7 +499,7 @@ void LineLayout::updateOverflow()
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState() };
-    auto constraints = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, parentBlockLayoutState }.computedIntrinsicSizes(m_lineDamage.get());
+    auto constraints = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState }.computedIntrinsicSizes(m_lineDamage.get());
     return { constraints.minimum, constraints.maximum };
 }
 
@@ -547,7 +547,7 @@ std::optional<LayoutRect> LineLayout::layout()
     prepareLayoutState();
     prepareFloatingState();
 
-    // FIXME: Partial layout should not rely on inline display content, but instead InlineFormattingState
+    // FIXME: Partial layout should not rely on inline display content, but instead InlineContentCache
     // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
     // layout in constructContent.
     auto isPartialLayout = isDamaged() && m_lineDamage->start();
@@ -583,7 +583,7 @@ std::optional<LayoutRect> LineLayout::layout()
         intrusiveInitialLetterBottom(),
         lineGrid(flow())
     };
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, parentBlockLayoutState };
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
     // Temporary, integration only.
     inlineFormattingContext.inlineLayoutState().setNestedListMarkerOffsets(WTFMove(m_nestedListMarkerOffsets));
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
@@ -604,7 +604,7 @@ FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLa
     m_inlineContent->clearGapAfterLastLine = inlineLayoutState.clearGapAfterLastLine();
     m_inlineContent->shrinkToFit();
 
-    m_inlineFormattingState.shrinkToFit();
+    m_inlineContentCache.shrinkToFit();
     m_blockFormattingState.shrinkToFit();
 
     // FIXME: These needs to be incorporated into the partial damage.
@@ -1275,13 +1275,13 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
 
     auto& childLayoutBox = m_boxTree.insert(parent, child, child.previousSibling());
     if (is<Layout::InlineTextBox>(childLayoutBox)) {
-        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems(), m_inlineContent->displayContent() };
         invalidation.textInserted(downcast<Layout::InlineTextBox>(childLayoutBox));
         return;
     }
 
     if (childLayoutBox.isLineBreakBox() || childLayoutBox.isReplacedBox() || childLayoutBox.isInlineBox()) {
-        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems(), m_inlineContent->displayContent() };
         invalidation.inlineLevelBoxInserted(childLayoutBox);
         return;
     }
@@ -1298,7 +1298,7 @@ void LineLayout::removedFromTree(const RenderElement& parent, RenderObject& chil
     }
 
     auto& childLayoutBox = m_boxTree.layoutBoxForRenderer(child);
-    auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
+    auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems(), m_inlineContent->displayContent() };
     auto boxIsInvalidated = is<Layout::InlineTextBox>(childLayoutBox) ? invalidation.textWillBeRemoved(downcast<Layout::InlineTextBox>(childLayoutBox)) : childLayoutBox.isLineBreakBox() ? invalidation.inlineLevelBoxWillBeRemoved(childLayoutBox) : false;
     if (boxIsInvalidated)
         m_lineDamage->addDetachedBox(m_boxTree.remove(parent, child));
@@ -1313,7 +1313,7 @@ void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset
     }
 
     m_boxTree.updateContent(textRenderer);
-    auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
+    auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems(), m_inlineContent->displayContent() };
     auto& inlineTextBox = downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer));
     if (delta >= 0) {
         invalidation.textInserted(inlineTextBox, offset);
@@ -1335,7 +1335,7 @@ void LineLayout::releaseCaches(RenderView& view)
 
 void LineLayout::releaseCaches()
 {
-    m_inlineFormattingState.inlineItems().clear();
+    m_inlineContentCache.inlineItems().clear();
     if (m_inlineContent)
         m_inlineContent->releaseCaches();
 }
@@ -1356,7 +1356,7 @@ Layout::InlineDamage& LineLayout::ensureLineDamage()
 
 bool LineLayout::contentNeedsVisualReordering() const
 {
-    return m_inlineFormattingState.contentRequiresVisualReordering();
+    return m_inlineContentCache.contentRequiresVisualReordering();
 }
 
 #if ENABLE(TREE_DEBUGGING)

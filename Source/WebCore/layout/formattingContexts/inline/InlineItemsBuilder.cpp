@@ -77,8 +77,8 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBr
     return textLength - startPosition;
 }
 
-InlineItemsBuilder::InlineItemsBuilder(InlineFormattingState& inlineFormattingState, const ElementBox& root)
-    : m_inlineFormattingState(inlineFormattingState)
+InlineItemsBuilder::InlineItemsBuilder(InlineContentCache& inlineContentCache, const ElementBox& root)
+    : m_inlineContentCache(inlineContentCache)
     , m_root(root)
 {
 }
@@ -94,26 +94,26 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     }
     computeInlineTextItemWidths(inlineItems);
 
-    auto adjustInlineFormattingStateWithNewInlineItems = [&] {
+    auto adjustInlineContentCacheWithNewInlineItems = [&] {
         if (!startPosition)
-            return inlineFormattingState().setInlineItems(WTFMove(inlineItems));
+            return inlineContentCache().setInlineItems(WTFMove(inlineItems));
         // Let's first remove the dirty inline items if there are any.
-        auto& currentInlineItems = inlineFormattingState().inlineItems();
+        auto& currentInlineItems = inlineContentCache().inlineItems();
         if (startPosition.index >= currentInlineItems.size()) {
             ASSERT_NOT_REACHED();
-            return inlineFormattingState().setInlineItems(WTFMove(inlineItems));
+            return inlineContentCache().setInlineItems(WTFMove(inlineItems));
         }
         currentInlineItems.remove(startPosition.index, currentInlineItems.size() - startPosition.index);
-        inlineFormattingState().appendInlineItems(WTFMove(inlineItems));
+        inlineContentCache().appendInlineItems(WTFMove(inlineItems));
     };
-    adjustInlineFormattingStateWithNewInlineItems();
+    adjustInlineContentCacheWithNewInlineItems();
 
 #if ASSERT_ENABLED
     // Check if we've got matching inline box start/end pairs and unique inline level items (non-text, non-inline box items).
     size_t inlineBoxStart = 0;
     size_t inlineBoxEnd = 0;
     auto inlineLevelItems = HashSet<const Box*> { };
-    for (auto& inlineItem : inlineFormattingState().inlineItems()) {
+    for (auto& inlineItem : inlineContentCache().inlineItems()) {
         if (inlineItem.isInlineBoxStart())
             ++inlineBoxStart;
         else if (inlineItem.isInlineBoxEnd())
@@ -184,7 +184,7 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(Inline
     // <div><span><span>text more_text</span></span> should produce
     // [inline box start][inline box start][text][ ][more_text][inline box end][inline box end]
     // where we start processing the content at the new layout box and continue with whatever we have on the stack (layout queue).
-    auto& existingInlineItems = inlineFormattingState().inlineItems();
+    auto& existingInlineItems = inlineContentCache().inlineItems();
     if (startPosition.index >= existingInlineItems.size()) {
         ASSERT_NOT_REACHED();
         return { *root.firstChild() };
@@ -208,12 +208,12 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
     auto layoutQueue = initializeLayoutQueue(startPosition);
-    auto& inlineFormattingState = this->inlineFormattingState();
+    auto& inlineContentCache = this->inlineContentCache();
 
     auto partialContentOffset = [&](auto& inlineTextBox) -> std::optional<size_t> {
         if (!startPosition)
             return { };
-        auto& currentInlineItems = inlineFormattingState.inlineItems();
+        auto& currentInlineItems = inlineContentCache.inlineItems();
         if (startPosition.index >= currentInlineItems.size()) {
             ASSERT_NOT_REACHED();
             return { };
@@ -267,8 +267,8 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             }
         }
     }
-    inlineFormattingState.setIsNonBidiTextAndForcedLineBreakOnlyContent(m_isNonBidiTextAndForcedLineBreakOnlyContent);
-    inlineFormattingState.setContentRequiresVisualReordering(m_contentRequiresVisualReordering);
+    inlineContentCache.setIsNonBidiTextAndForcedLineBreakOnlyContent(m_isNonBidiTextAndForcedLineBreakOnlyContent);
+    inlineContentCache.setContentRequiresVisualReordering(m_contentRequiresVisualReordering);
 }
 
 static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineTextBox& inlineTextBox, StringBuilder& paragraphContentBuilder)

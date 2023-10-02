@@ -171,8 +171,7 @@ LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem)
     }
     auto floatingState = FloatingState { flexItemBox };
     auto blockLayoutState = BlockLayoutState { floatingState };
-    auto& inlineFormattingState = flexFormattingContext().layoutState().ensureInlineFormattingState(flexItemBox);
-    return InlineFormattingContext { flexItemBox, inlineFormattingState, blockLayoutState }.maximumContentSize();
+    return InlineFormattingContext { flexItemBox, flexFormattingContext().layoutState(), blockLayoutState }.maximumContentSize();
 }
 
 FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems)
@@ -443,8 +442,7 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
             // FIXME: Let it run through integration codepath.
             auto floatingState = FloatingState { flexItemBox };
             auto blockLayoutState = BlockLayoutState { floatingState };
-            auto& inlineFormattingState = flexFormattingContext().layoutState().ensureInlineFormattingState(flexItemBox);
-            auto inlineFormattingContext = InlineFormattingContext { flexItemBox, inlineFormattingState, blockLayoutState };
+            auto inlineFormattingContext = InlineFormattingContext { flexItemBox, flexFormattingContext().layoutState(), blockLayoutState };
             auto constraintsForInFlowContent = ConstraintsForInFlowContent { HorizontalConstraints { { }, flexItemsMainSizeList[flexItemIndex] }, { } };
             auto layoutResult = inlineFormattingContext.layout({ constraintsForInFlowContent, { } });
             return LayoutUnit { layoutResult.displayContent.lines.last().lineBoxLogicalRect().maxY() };

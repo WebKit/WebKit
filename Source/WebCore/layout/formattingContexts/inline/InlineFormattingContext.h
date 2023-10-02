@@ -39,7 +39,7 @@ namespace WebCore {
 namespace Layout {
 
 class InlineDamage;
-class InlineFormattingState;
+class InlineContentCache;
 class LineBox;
 
 struct InlineLayoutResult {
@@ -57,7 +57,7 @@ struct InlineLayoutResult {
 class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&, BlockLayoutState& parentBlockLayoutState);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
 
     InlineLayoutResult layout(const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
     IntrinsicWidthConstraints computedIntrinsicSizes(const InlineDamage*);
@@ -84,10 +84,10 @@ private:
     bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
     void initializeLayoutState();
 
-    InlineFormattingState& formattingState();
+    InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 
 private:
-    InlineFormattingState& m_inlineFormattingState;
+    InlineContentCache& m_inlineContentCache;
     const InlineFormattingGeometry m_inlineFormattingGeometry;
     const InlineFormattingQuirks m_inlineFormattingQuirks;
     InlineLayoutState m_inlineLayoutState;

@@ -41,7 +41,7 @@ class BoxGeometry;
 class FlexFormattingState;
 class FormattingContext;
 class FormattingState;
-class InlineFormattingState;
+class InlineContentCache;
 class TableFormattingState;
 
 class LayoutState : public CanMakeWeakPtr<LayoutState> {
@@ -57,12 +57,12 @@ public:
 
     void updateQuirksMode(const Document&);
 
-    InlineFormattingState& ensureInlineFormattingState(const ElementBox& formattingContextRoot);
+    InlineContentCache& inlineContentCache(const ElementBox& formattingContextRoot);
+
     BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot);
     TableFormattingState& ensureTableFormattingState(const ElementBox& formattingContextRoot);
     FlexFormattingState& ensureFlexFormattingState(const ElementBox& formattingContextRoot);
 
-    InlineFormattingState& formattingStateForInlineFormattingContext(const ElementBox& inlineFormattingContextRoot) const;
     BlockFormattingState& formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const;
     TableFormattingState& formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const;
     FlexFormattingState& formattingStateForFlexFormattingContext(const ElementBox& flexFormattingContextRoot) const;
@@ -70,10 +70,9 @@ public:
     FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const;
 
     void destroyBlockFormattingState(const ElementBox& formattingContextRoot);
-    void destroyInlineFormattingState(const ElementBox& formattingContextRoot);
+    void destroyInlineContentCache(const ElementBox& formattingContextRoot);
 
     bool hasFormattingState(const ElementBox& formattingRoot) const;
-    bool hasInlineFormattingState(const ElementBox& formattingRoot) const { return m_inlineFormattingStates.contains(&formattingRoot); }
 
 #ifndef NDEBUG
     void registerFormattingContext(const FormattingContext&);
@@ -103,12 +102,12 @@ private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
     BoxGeometry& ensureGeometryForBoxSlow(const Box&);
 
-    HashMap<const ElementBox*, std::unique_ptr<InlineFormattingState>> m_inlineFormattingStates;
+    HashMap<const ElementBox*, std::unique_ptr<InlineContentCache>> m_inlineContentCaches;
     HashMap<const ElementBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
     HashMap<const ElementBox*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
     HashMap<const ElementBox*, std::unique_ptr<FlexFormattingState>> m_flexFormattingStates;
 
-    std::unique_ptr<InlineFormattingState> m_rootInlineFormattingStateForIntegration;
+    std::unique_ptr<InlineContentCache> m_rootInlineContentCacheForIntegration;
     std::unique_ptr<FlexFormattingState> m_rootFlexFormattingStateForIntegration;
 
 #ifndef NDEBUG
