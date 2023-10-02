@@ -2268,11 +2268,11 @@ sub getMSBuildPlatformArgument()
 
 sub getCMakeWindowsToolsetArgument()
 {
+    my @args;
     my $toolset = getVisualStudioToolset();
-    if (defined($toolset) && length($toolset)) {
-        return "-A $toolset";
-    }
-    return "";
+    push(@args, '-A', $toolset) if defined($toolset) && length($toolset);
+    push(@args, '-T', 'ClangCL') if defined($ENV{CC}) && $ENV{CC} =~ 'clang-cl';
+    return @args;
 }
 
 sub buildVisualStudioProject
