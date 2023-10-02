@@ -296,6 +296,7 @@ platform/cocoa/LowPowerModeNotifier.mm
 platform/cocoa/MIMETypeRegistryCocoa.mm
 platform/cocoa/MediaUtilities.cpp
 platform/cocoa/NetworkExtensionContentFilter.mm
+platform/cocoa/NSURLUtilities.mm
 platform/cocoa/ParentalControlsContentFilter.mm
 platform/cocoa/PasteboardCocoa.mm
 platform/cocoa/PasteboardCustomDataCocoa.mm

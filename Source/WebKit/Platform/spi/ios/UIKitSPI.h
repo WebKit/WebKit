@@ -558,12 +558,6 @@ typedef enum {
 @property (readonly) NSString *_hostApplicationBundleIdentifier;
 @end
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-@interface NSURL ()
-@property (nonatomic, copy, setter=_setTitle:) NSString *_title;
-@end
-#endif
-
 @interface _UIViewControllerTransitionContext : NSObject <UIViewControllerContextTransitioning>
 @end
 

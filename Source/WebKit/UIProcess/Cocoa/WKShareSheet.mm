@@ -30,6 +30,7 @@
 
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import <WebCore/NSURLUtilities.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ShareData.h>
 #import <pal/spi/mac/QuarantineSPI.h>
@@ -42,20 +43,16 @@
 #import <wtf/WorkQueue.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "LinkPresentationSPI.h"
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <pal/cocoa/LinkPresentationSoftLink.h>
 #else
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-
-SOFT_LINK_FRAMEWORK(LinkPresentation)
-SOFT_LINK_CLASS(LinkPresentation, LPLinkMetadata)
-SOFT_LINK_CLASS(LinkPresentation, LPMetadataProvider)
 
 @interface WKShareSheetFileItemProvider : UIActivityItemProvider
 - (instancetype)initWithURL:(NSURL *)url;
@@ -73,7 +70,7 @@ SOFT_LINK_CLASS(LinkPresentation, LPMetadataProvider)
 
     _url = url;
 
-    RetainPtr provider = adoptNS([allocLPMetadataProviderInstance() init]);
+    auto provider = adoptNS([PAL::allocLPMetadataProviderInstance() init]);
     [provider setShouldFetchSubresources:NO];
 
     _headerMetadata = [provider _startFetchingMetadataForURL:url completionHandler:^(NSError *) { }];
@@ -110,7 +107,7 @@ SOFT_LINK_CLASS(LinkPresentation, LPMetadataProvider)
 @end
 
 @interface WKShareSheetURLItemProvider : UIActivityItemProvider
-- (instancetype)initWithURL:(NSURL *)url;
+- (instancetype)initWithURL:(NSURL *)url title:(NSString *)title;
 @end
 
 @implementation WKShareSheetURLItemProvider {
@@ -118,15 +115,15 @@ SOFT_LINK_CLASS(LinkPresentation, LPMetadataProvider)
     RetainPtr<LPLinkMetadata> _metadata;
 }
 
-- (instancetype)initWithURL:(NSURL *)url
+- (instancetype)initWithURL:(NSURL *)url title:(NSString *)title
 {
     if (!(self = [super initWithPlaceholderItem:url]))
         return nil;
 
-    _metadata = adoptNS([allocLPLinkMetadataInstance() init]);
+    _metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
     [_metadata setOriginalURL:url];
     [_metadata setURL:url];
-    [_metadata setTitle:url._title];
+    [_metadata setTitle:title];
 
     [_metadata _setIncomplete:YES];
 
@@ -242,15 +239,20 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     if (data.url) {
         NSURL *url = (NSURL *)data.url.value();
 #if PLATFORM(IOS_FAMILY)
+        NSString *title = nil;
         if (!data.shareData.title.isEmpty())
-            url._title = data.shareData.title;
+            title = data.shareData.title;
 
         if (data.originator == WebCore::ShareDataOriginator::Web) {
-            auto itemProvider = adoptNS([[WKShareSheetURLItemProvider alloc] initWithURL:url]);
+            auto itemProvider = adoptNS([[WKShareSheetURLItemProvider alloc] initWithURL:url title:title]);
             if (itemProvider)
                 [shareDataArray addObject:itemProvider.get()];
-        } else
+        } else {
+#if HAVE(NSURL_TITLE)
+            [url _web_setTitle:title];
+#endif
             [shareDataArray addObject:url];
+        }
 #else
         [shareDataArray addObject:url];
 #endif

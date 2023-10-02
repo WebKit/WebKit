@@ -47,7 +47,6 @@ WTF_EXTERN_C_END
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
-#import <UIKit/NSURL+UIItemProvider.h>
 
 @interface UIApplication ()
 + (UIApplicationSceneClassicMode)_classicMode;
@@ -159,10 +158,6 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 
 @property (nonatomic, readonly) CGRect _referenceBounds;
 
-@end
-
-@interface NSURL ()
-@property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
 
 @interface UIFocusRingStyle : NSObject
