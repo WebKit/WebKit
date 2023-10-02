@@ -30,8 +30,8 @@
 #include "InlineDisplayContent.h"
 #include "InlineFormattingConstraints.h"
 #include "InlineFormattingGeometry.h"
-#include "InlineFormattingQuirks.h"
 #include "InlineLayoutState.h"
+#include "InlineQuirks.h"
 #include "IntrinsicWidthHandler.h"
 #include <wtf/IsoMalloc.h>
 
@@ -39,7 +39,7 @@ namespace WebCore {
 namespace Layout {
 
 class InlineDamage;
-class InlineFormattingState;
+class InlineContentCache;
 class LineBox;
 
 struct InlineLayoutResult {
@@ -57,22 +57,20 @@ struct InlineLayoutResult {
 class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&, BlockLayoutState& parentBlockLayoutState);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
 
     InlineLayoutResult layout(const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
     IntrinsicWidthConstraints computedIntrinsicSizes(const InlineDamage*);
     LayoutUnit maximumContentSize();
 
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
-    const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
-    const InlineFormattingState& formattingState() const { return const_cast<InlineFormattingContext&>(*this).formattingState(); }
-    InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
+    const InlineQuirks& quirks() const { return m_inlineQuirks; }
     // FIXME: This should just be "layout state" (pending on renaming LayoutState).
     InlineLayoutState& inlineLayoutState() { return m_inlineLayoutState; }
     const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
 
-    FloatingState& floatingState() { return inlineLayoutState().parentBlockLayoutState().floatingState(); }
-    const FloatingState& floatingState() const { return inlineLayoutState().parentBlockLayoutState().floatingState(); }
+    PlacedFloats& placedFloats() { return inlineLayoutState().parentBlockLayoutState().placedFloats(); }
+    const PlacedFloats& placedFloats() const { return inlineLayoutState().parentBlockLayoutState().placedFloats(); }
 
 private:
     InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
@@ -86,9 +84,12 @@ private:
     bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
     void initializeLayoutState();
 
+    InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
+
 private:
+    InlineContentCache& m_inlineContentCache;
     const InlineFormattingGeometry m_inlineFormattingGeometry;
-    const InlineFormattingQuirks m_inlineFormattingQuirks;
+    const InlineQuirks m_inlineQuirks;
     InlineLayoutState m_inlineLayoutState;
 };
 

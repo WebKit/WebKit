@@ -159,8 +159,6 @@
 		97C36CFE29F1730100CFB379 /* Constraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C36CFC29F1730000CFB379 /* Constraints.h */; };
 		97C36CFF29F1730100CFB379 /* Constraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97C36CFD29F1730000CFB379 /* Constraints.cpp */; };
 		97E21C8B2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */; };
-		97E21C8E2A20B2A3009CEB0E /* ConstantRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C8C2A20B2A3009CEB0E /* ConstantRewriter.cpp */; };
-		97E21C8F2A20B2A3009CEB0E /* ConstantRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C8D2A20B2A3009CEB0E /* ConstantRewriter.h */; };
 		97E21C972A2512F7009CEB0E /* ConstantValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C942A2512F7009CEB0E /* ConstantValue.cpp */; };
 		97E21C982A2512F7009CEB0E /* ConstantValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C952A2512F7009CEB0E /* ConstantValue.h */; };
 		97E21C992A2512F7009CEB0E /* ConstantFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C962A2512F7009CEB0E /* ConstantFunctions.h */; };
@@ -437,8 +435,6 @@
 		97C36CFC29F1730000CFB379 /* Constraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constraints.h; sourceTree = "<group>"; };
 		97C36CFD29F1730000CFB379 /* Constraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constraints.cpp; sourceTree = "<group>"; };
 		97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTDecrementIncrementStatement.cpp; sourceTree = "<group>"; };
-		97E21C8C2A20B2A3009CEB0E /* ConstantRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantRewriter.cpp; sourceTree = "<group>"; };
-		97E21C8D2A20B2A3009CEB0E /* ConstantRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantRewriter.h; sourceTree = "<group>"; };
 		97E21C942A2512F7009CEB0E /* ConstantValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantValue.cpp; sourceTree = "<group>"; };
 		97E21C952A2512F7009CEB0E /* ConstantValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantValue.h; sourceTree = "<group>"; };
 		97E21C962A2512F7009CEB0E /* ConstantFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantFunctions.h; sourceTree = "<group>"; };
@@ -598,8 +594,6 @@
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
 				1CEBD8042716BFAB00A5254D /* config.h */,
 				97E21C962A2512F7009CEB0E /* ConstantFunctions.h */,
-				97E21C8C2A20B2A3009CEB0E /* ConstantRewriter.cpp */,
-				97E21C8D2A20B2A3009CEB0E /* ConstantRewriter.h */,
 				97E21C942A2512F7009CEB0E /* ConstantValue.cpp */,
 				97E21C952A2512F7009CEB0E /* ConstantValue.h */,
 				97C36CFD29F1730000CFB379 /* Constraints.cpp */,
@@ -853,7 +847,6 @@
 				3A12AEB228FCE94C00C1B975 /* ASTWorkgroupSizeAttribute.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
 				97E21C992A2512F7009CEB0E /* ConstantFunctions.h in Headers */,
-				97E21C8F2A20B2A3009CEB0E /* ConstantRewriter.h in Headers */,
 				97E21C982A2512F7009CEB0E /* ConstantValue.h in Headers */,
 				97C36CFE29F1730100CFB379 /* Constraints.h in Headers */,
 				978A912A298AB60200B37E5E /* ContextProvider.h in Headers */,
@@ -1088,7 +1081,6 @@
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,
 				9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
-				97E21C8E2A20B2A3009CEB0E /* ConstantRewriter.cpp in Sources */,
 				97E21C972A2512F7009CEB0E /* ConstantValue.cpp in Sources */,
 				97C36CFF29F1730100CFB379 /* Constraints.cpp in Sources */,
 				979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */,

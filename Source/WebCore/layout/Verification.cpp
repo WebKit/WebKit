@@ -29,7 +29,6 @@
 #if ASSERT_ENABLED
 
 #include "BlockFormattingState.h"
-#include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"

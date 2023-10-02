@@ -27,7 +27,6 @@
 
 #include "InlineDamage.h"
 #include "InlineDisplayContent.h"
-#include "InlineFormattingState.h"
 #include <optional>
 #include <wtf/Forward.h>
 
@@ -39,7 +38,6 @@ namespace Layout {
 
 class Box;
 class InlineTextBox;
-class InlineFormattingState;
 struct DamagedLine;
 
 class InlineInvalidation {

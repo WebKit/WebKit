@@ -28,7 +28,7 @@
 
 #include "BlockFormattingState.h"
 #include "FlexFormattingState.h"
-#include "InlineFormattingState.h"
+#include "InlineContentCache.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainingBlockChainIterator.h"
@@ -91,7 +91,6 @@ bool LayoutState::hasFormattingState(const ElementBox& formattingContextRoot) co
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     return m_blockFormattingStates.contains(&formattingContextRoot)
-        || m_inlineFormattingStates.contains(&formattingContextRoot)
         || m_tableFormattingStates.contains(&formattingContextRoot)
         || m_flexFormattingStates.contains(&formattingContextRoot);
 }
@@ -105,9 +104,6 @@ FormattingState& LayoutState::formattingStateForFormattingContext(const ElementB
         return *m_rootFlexFormattingStateForIntegration;
     }
 
-    if (formattingContextRoot.establishesInlineFormattingContext())
-        return formattingStateForInlineFormattingContext(formattingContextRoot);
-
     if (formattingContextRoot.establishesBlockFormattingContext())
         return formattingStateForBlockFormattingContext(formattingContextRoot);
 
@@ -118,13 +114,6 @@ FormattingState& LayoutState::formattingStateForFormattingContext(const ElementB
         return formattingStateForFlexFormattingContext(formattingContextRoot);
 
     CRASH();
-}
-
-InlineFormattingState& LayoutState::formattingStateForInlineFormattingContext(const ElementBox& inlineFormattingContextRoot) const
-{
-    ASSERT(inlineFormattingContextRoot.establishesInlineFormattingContext());
-
-    return *m_inlineFormattingStates.get(&inlineFormattingContextRoot);
 }
 
 BlockFormattingState& LayoutState::formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const
@@ -151,10 +140,10 @@ FlexFormattingState& LayoutState::formattingStateForFlexFormattingContext(const 
     return *m_flexFormattingStates.get(&flexFormattingContextRoot);
 }
 
-InlineFormattingState& LayoutState::ensureInlineFormattingState(const ElementBox& formattingContextRoot)
+InlineContentCache& LayoutState::inlineContentCache(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
-    return *m_inlineFormattingStates.ensure(&formattingContextRoot, [&] { return makeUnique<InlineFormattingState>(*this); }).iterator->value;
+    return *m_inlineContentCaches.ensure(&formattingContextRoot, [&] { return makeUnique<InlineContentCache>(); }).iterator->value;
 }
 
 BlockFormattingState& LayoutState::ensureBlockFormattingState(const ElementBox& formattingContextRoot)
@@ -190,10 +179,10 @@ void LayoutState::destroyBlockFormattingState(const ElementBox& formattingContex
     m_blockFormattingStates.remove(&formattingContextRoot);
 }
 
-void LayoutState::destroyInlineFormattingState(const ElementBox& formattingContextRoot)
+void LayoutState::destroyInlineContentCache(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
-    m_inlineFormattingStates.remove(&formattingContextRoot);
+    m_inlineContentCaches.remove(&formattingContextRoot);
 }
 
 bool LayoutState::shouldNotSynthesizeInlineBlockBaseline() const

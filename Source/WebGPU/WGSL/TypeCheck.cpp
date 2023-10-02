@@ -30,6 +30,7 @@
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
 #include "CompilationMessage.h"
+#include "ConstantFunctions.h"
 #include "ContextProviderInlines.h"
 #include "Overload.h"
 #include "TypeStore.h"
@@ -41,6 +42,7 @@
 namespace WGSL {
 
 static constexpr bool shouldDumpInferredTypes = false;
+static constexpr bool shouldDumpConstantValues = false;
 
 struct Binding {
     enum Kind : uint8_t {
@@ -50,6 +52,7 @@ struct Binding {
 
     Kind kind;
     const struct Type* type;
+    std::optional<ConstantValue> constantValue;
 };
 
 class TypeChecker : public AST::Visitor, public ContextProvider<Binding> {
@@ -130,7 +133,7 @@ private:
     bool unify(const Type*, const Type*) WARN_UNUSED_RETURN;
     bool isBottom(const Type*) const;
     void introduceType(const AST::Identifier&, const Type*);
-    void introduceValue(const AST::Identifier&, const Type*);
+    void introduceValue(const AST::Identifier&, const Type*, std::optional<ConstantValue> = std::nullopt);
 
     template<typename TargetConstructor, typename... Arguments>
     void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, Arguments&&...);
@@ -143,6 +146,11 @@ private:
     template<typename CallArguments>
     const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
+    template<typename Node>
+    void setConstantValue(Node&, const ConstantValue&);
+
+    using ConstantFunction = ConstantValue(*)(AST::CallExpression&, const FixedVector<ConstantValue>&);
+
     ShaderModule& m_shaderModule;
     const Type* m_inferredType { nullptr };
 
@@ -150,6 +158,7 @@ private:
     Vector<Error> m_errors;
     // FIXME: maybe these should live in the context
     HashMap<String, Vector<OverloadCandidate>> m_overloadedOperations;
+    HashMap<String, ConstantFunction> m_constantFunctions;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -299,6 +308,20 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
+
+    m_constantFunctions.add("pow"_s, constantPow);
+    m_constantFunctions.add("vec2"_s, constantVector2);
+    m_constantFunctions.add("vec2f"_s, constantVector2);
+    m_constantFunctions.add("vec2i"_s, constantVector2);
+    m_constantFunctions.add("vec2u"_s, constantVector2);
+    m_constantFunctions.add("vec3i"_s, constantVector3);
+    m_constantFunctions.add("vec3"_s, constantVector3);
+    m_constantFunctions.add("vec3f"_s, constantVector3);
+    m_constantFunctions.add("vec3u"_s, constantVector3);
+    m_constantFunctions.add("vec4u"_s, constantVector4);
+    m_constantFunctions.add("vec4"_s, constantVector4);
+    m_constantFunctions.add("vec4f"_s, constantVector4);
+    m_constantFunctions.add("vec4i"_s, constantVector4);
 }
 
 std::optional<FailedCheck> TypeChecker::check()
@@ -351,10 +374,13 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
     visitAttributes(variable.attributes());
 
     const Type* result = nullptr;
+    std::optional<ConstantValue> value;
     if (variable.maybeTypeName())
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
         auto* initializerType = infer(*variable.maybeInitializer());
+        if (variable.flavor() == AST::VariableFlavor::Const)
+            value = variable.maybeInitializer()->constantValue();
         if (auto* reference = std::get_if<Types::Reference>(initializerType)) {
             initializerType = reference->element;
             variable.maybeInitializer()->m_inferredType = initializerType;
@@ -369,6 +395,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             variable.maybeInitializer()->m_inferredType = result;
         else
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
+
     }
     if (variable.flavor() == AST::VariableFlavor::Var) {
         AddressSpace addressSpace;
@@ -393,7 +420,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             variable.m_referenceType = &referenceType;
         }
     }
-    introduceValue(variable.name(), result);
+    introduceValue(variable.name(), result, value);
 }
 
 void TypeChecker::visit(AST::Function& function)
@@ -403,8 +430,10 @@ void TypeChecker::visit(AST::Function& function)
     Vector<const Type*> parameters;
     const Type* result;
     parameters.reserveInitialCapacity(function.parameters().size());
-    for (auto& parameter : function.parameters())
+    for (auto& parameter : function.parameters()) {
+        visitAttributes(parameter.attributes());
         parameters.append(resolve(parameter.typeName()));
+    }
     if (function.maybeReturnType())
         result = resolve(*function.maybeReturnType());
     else
@@ -736,6 +765,8 @@ void TypeChecker::visit(AST::IdentifierExpression& identifier)
     }
 
     inferred(binding->type);
+    if (binding->constantValue.has_value())
+        setConstantValue(identifier, *binding->constantValue);
 }
 
 void TypeChecker::visit(AST::CallExpression& call)
@@ -837,6 +868,19 @@ void TypeChecker::visit(AST::CallExpression& call)
             if (targetName == "workgroupUniformLoad"_s)
                 m_shaderModule.setUsesWorkgroupUniformLoad();
             target.m_inferredType = result;
+
+            auto it = m_constantFunctions.find(targetName);
+            if (it != m_constantFunctions.end()) {
+                unsigned argumentCount = call.arguments().size();
+                FixedVector<ConstantValue> arguments(argumentCount);
+                for (unsigned i = 0; i < argumentCount; ++i) {
+                    auto value = call.arguments()[i].constantValue();
+                    if (!value.has_value())
+                        return;
+                    arguments[i] = *value;
+                }
+                setConstantValue(call, it->value(call, WTFMove(arguments)));
+            }
             return;
         }
 
@@ -858,11 +902,19 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
             elementType = resolve(*array.maybeElementType());
-            elementCount = *extractInteger(*array.maybeElementCount());
+
+            auto elementCountType = infer(*array.maybeElementCount());
+            if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
+                typeError(array.span(), "array count must be an i32 or u32 value, found '", *elementCountType, "'");
+                return;
+            }
+
+            elementCount = array.maybeElementCount()->constantValue()->toInt();
             if (!elementCount) {
                 typeError(call.span(), "array count must be greater than 0");
                 return;
             }
+
             unsigned numberOfArguments = call.arguments().size();
             if (numberOfArguments && numberOfArguments != elementCount) {
                 const char* errorKind = call.arguments().size() < elementCount ? "few" : "many";
@@ -904,6 +956,17 @@ void TypeChecker::visit(AST::CallExpression& call)
         }
         auto* result = m_types.arrayType(elementType, { elementCount });
         inferred(result);
+
+        unsigned argumentCount = call.arguments().size();
+        FixedVector<ConstantValue> arguments(argumentCount);
+        for (unsigned i = 0; i < argumentCount; ++i) {
+            auto value = call.arguments()[i].constantValue();
+            if (!value.has_value())
+                return;
+            arguments[i] = *value;
+        }
+        setConstantValue(call, ConstantArray(WTFMove(arguments)));
+
         return;
     }
 
@@ -916,34 +979,40 @@ void TypeChecker::visit(AST::UnaryExpression& unary)
 }
 
 // Literal Expressions
-void TypeChecker::visit(AST::BoolLiteral&)
+void TypeChecker::visit(AST::BoolLiteral& literal)
 {
     inferred(m_types.boolType());
+    literal.setConstantValue(literal.value());
 }
 
-void TypeChecker::visit(AST::Signed32Literal&)
+void TypeChecker::visit(AST::Signed32Literal& literal)
 {
     inferred(m_types.i32Type());
+    literal.setConstantValue(literal.value());
 }
 
-void TypeChecker::visit(AST::Float32Literal&)
+void TypeChecker::visit(AST::Float32Literal& literal)
 {
     inferred(m_types.f32Type());
+    literal.setConstantValue(literal.value());
 }
 
-void TypeChecker::visit(AST::Unsigned32Literal&)
+void TypeChecker::visit(AST::Unsigned32Literal& literal)
 {
     inferred(m_types.u32Type());
+    literal.setConstantValue(literal.value());
 }
 
-void TypeChecker::visit(AST::AbstractIntegerLiteral&)
+void TypeChecker::visit(AST::AbstractIntegerLiteral& literal)
 {
     inferred(m_types.abstractIntType());
+    literal.setConstantValue(literal.value());
 }
 
-void TypeChecker::visit(AST::AbstractFloatLiteral&)
+void TypeChecker::visit(AST::AbstractFloatLiteral& literal)
 {
     inferred(m_types.abstractFloatType());
+    literal.setConstantValue(literal.value());
 }
 
 // Types
@@ -960,11 +1029,19 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
 
     std::optional<unsigned> size;
     if (array.maybeElementCount()) {
-        size = extractInteger(*array.maybeElementCount());
-        if (!size) {
+        auto elementCountType = infer(*array.maybeElementCount());
+        if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
+            typeError(array.span(), "array count must be an i32 or u32 value, found '", *elementCountType, "'");
+            return;
+        }
+
+        auto value = array.maybeElementCount()->constantValue();
+        if (!value.has_value()) {
             typeError(array.span(), "array count must evaluate to a constant integer expression or override variable");
             return;
         }
+
+        size = value->toInt();
     }
 
     inferred(m_types.arrayType(elementType, size));
@@ -1212,13 +1289,15 @@ bool TypeChecker::isBottom(const Type* type) const
 
 void TypeChecker::introduceType(const AST::Identifier& name, const Type* type)
 {
-    if (!introduceVariable(name, { Binding::Type, type }))
+    if (!introduceVariable(name, { Binding::Type, type, std::nullopt }))
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
-void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type)
+void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, std::optional<ConstantValue> value)
 {
-    if (!introduceVariable(name, { Binding::Value, type }))
+    if (shouldDumpConstantValues && value.has_value())
+        dataLogLn("> Assigning value: ", name, " => ", value);
+    if (!introduceVariable(name, { Binding::Value, type , value }))
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
@@ -1329,5 +1408,19 @@ std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expressio
     ASSERT(addressSpace);
     return { *addressSpace };
 }
+
+template<typename Node>
+void TypeChecker::setConstantValue(Node& expression, const ConstantValue& value)
+{
+    using namespace Types;
+
+    if (shouldDumpConstantValues) {
+        dataLog("> Setting constantValue for expression: ");
+        dumpNode(WTF::dataFile(), expression);
+        dataLogLn(" = ", value);
+    }
+    expression.setConstantValue(value);
+}
+
 
 } // namespace WGSL

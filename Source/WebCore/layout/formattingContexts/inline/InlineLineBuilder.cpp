@@ -29,7 +29,7 @@
 #include "CSSLineBoxContainValue.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingGeometry.h"
-#include "InlineFormattingQuirks.h"
+#include "InlineQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "RenderStyleInlines.h"
@@ -463,7 +463,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         auto& rootStyle = this->rootStyle();
 
         auto handleTrailingContent = [&] {
-            auto& quirks = formattingContext().formattingQuirks();
+            auto& quirks = formattingContext().quirks();
             auto lineHasOverflow = [&] {
                 return horizontalAvailableSpace < m_line.contentLogicalWidth();
             };
@@ -742,10 +742,10 @@ static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent
 LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect& logicalRect, InlineLayoutUnit marginStart) const
 {
     auto constraints = [&]() -> LineBuilder::UsedConstraints {
-        if (isInIntrinsicWidthMode() || floatingState().isEmpty())
+        if (isInIntrinsicWidthMode() || placedFloats().isEmpty())
             return { logicalRect, marginStart, { } };
 
-        auto constraints = formattingContext().formattingGeometry().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), FloatingContext { formattingContext(), floatingState() });
+        auto constraints = formattingContext().formattingGeometry().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), FloatingContext { formattingContext(), placedFloats() });
         if (!constraints.left && !constraints.right)
             return { logicalRect, marginStart, { } };
 
@@ -766,7 +766,7 @@ LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect&
         return { adjustedLogicalRect, marginStart, isConstrainedByFloat };
     }();
 
-    if (auto adjustedRect = formattingContext().formattingQuirks().adjustedRectForLineGridLineAlign(constraints.logicalRect))
+    if (auto adjustedRect = formattingContext().quirks().adjustedRectForLineGridLineAlign(constraints.logicalRect))
         constraints.logicalRect = *adjustedRect;
 
     return constraints;
@@ -804,7 +804,7 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
 
     // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
     // It's a super premature as at this point we don't normally deal with vertical geometry -other than the incoming vertical constraint.
-    auto initialLetterCapHeightOffset = formattingContext().formattingQuirks().initialLetterAlignmentOffset(floatBox, rootStyle());
+    auto initialLetterCapHeightOffset = formattingContext().quirks().initialLetterAlignmentOffset(floatBox, rootStyle());
     // While initial-letter based floats do not set their clear property, intrusive floats from sibling IFCs are supposed to be cleared.
     auto intrusiveBottom = blockLayoutState().intrusiveInitialLetterLogicalBottom();
     if (!initialLetterCapHeightOffset && !intrusiveBottom)
@@ -888,7 +888,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     if (isFloatLayoutSuspended())
         return false;
 
-    auto floatingContext = FloatingContext { formattingContext(), floatingState() };
+    auto floatingContext = FloatingContext { formattingContext(), placedFloats() };
     auto boxGeometry = [&]() -> BoxGeometry {
         auto marginTrim = rootStyle().marginTrim();
         if (!marginTrim.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }) || m_lineIsConstrainedByFloat.containsAll({ UsedFloat::Left, UsedFloat::Right }))
@@ -955,8 +955,8 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     auto placeFloatBox = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
         auto floatItem = floatingContext.makeFloatItem(floatBox, boxGeometry, lineIndex);
-        // FIXME: Maybe FloatingContext should be able to preserve FloatItems and the caller should mutate the FloatingState instead.
-        floatingState().append(floatItem);
+        // FIXME: Maybe FloatingContext should be able to preserve FloatItems and the caller should mutate the PlacedFloats instead.
+        placedFloats().append(floatItem);
         m_placedFloats.append(floatItem);
     };
     placeFloatBox();
@@ -1238,9 +1238,9 @@ const InlineLayoutState& LineBuilder::inlineLayoutState() const
     return formattingContext().inlineLayoutState();
 }
 
-FloatingState& LineBuilder::floatingState()
+PlacedFloats& LineBuilder::placedFloats()
 {
-    return formattingContext().floatingState();
+    return formattingContext().placedFloats();
 }
 
 }

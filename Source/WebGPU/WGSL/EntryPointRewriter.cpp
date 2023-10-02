@@ -89,11 +89,11 @@ EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Fu
             if (!is<AST::WorkgroupSizeAttribute>(attribute))
                 continue;
             auto& workgroupSize = downcast<AST::WorkgroupSizeAttribute>(attribute);
-            x = *AST::extractInteger(workgroupSize.x());
+            x = workgroupSize.x().constantValue()->toInt();
             if (auto* maybeY = workgroupSize.maybeY())
-                y = *AST::extractInteger(*maybeY);
+                y = maybeY->constantValue()->toInt();
             if (auto* maybeZ = workgroupSize.maybeZ())
-                z = *AST::extractInteger(*maybeZ);
+                z = maybeZ->constantValue()->toInt();
         }
         ASSERT(x);
         m_information.typedEntryPoint = Reflection::Compute { x, y, z };

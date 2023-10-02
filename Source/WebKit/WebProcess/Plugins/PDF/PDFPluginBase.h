@@ -130,6 +130,8 @@ public:
     void streamDidFinishLoading();
     void streamDidFail();
 
+    WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
+
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
@@ -157,6 +159,7 @@ protected:
     uint64_t m_streamedBytes { 0 };
 
     WebCore::IntSize m_size;
+    WebCore::AffineTransform m_rootViewToPluginTransform;
 
     bool m_documentFinishedLoading { false };
     bool m_isBeingDestroyed { false };

@@ -91,9 +91,6 @@ public:
     void forceRepaint();
     void forceRepaintAsync(CompletionHandler<void()>&&);
     void sizeDidChange(const WebCore::IntSize& newSize);
-#if !PLATFORM(GTK)
-    void targetRefreshRateDidChange(unsigned);
-#endif
 
     void pauseRendering();
     void resumeRendering();
@@ -217,7 +214,6 @@ inline void LayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect&) 
 inline void LayerTreeHost::forceRepaint() { }
 inline void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&&) { }
 inline void LayerTreeHost::sizeDidChange(const WebCore::IntSize&) { }
-inline void LayerTreeHost::targetRefreshRateDidChange(unsigned) { }
 inline void LayerTreeHost::pauseRendering() { }
 inline void LayerTreeHost::resumeRendering() { }
 inline WebCore::GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory() { return nullptr; }

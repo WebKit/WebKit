@@ -37,8 +37,6 @@ struct AncestorStack;
 class ElementBox;
 struct DisplayBoxTree;
 struct IsFirstLastIndex;
-class InlineFormattingGeometry;
-class InlineFormattingState;
 class LineBox;
 
 class InlineDisplayContentBuilder {
@@ -87,7 +85,6 @@ private:
     const RenderStyle& rootStyle() const { return m_lineIndex ? root().style() : root().firstLineStyle(); }
     InlineFormattingContext& formattingContext() { return m_formattingContext; }
     const InlineFormattingContext& formattingContext() const { return m_formattingContext; }
-    InlineFormattingState& formattingState() { return formattingContext().formattingState(); }
 
 private:
     InlineFormattingContext& m_formattingContext;

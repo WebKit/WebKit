@@ -31,15 +31,13 @@ namespace WebCore {
 namespace Layout {
 
 class AbstractLineBuilder;
-class ElementBox;
 class InlineFormattingContext;
-class InlineFormattingState;
-
+class InlineContentCache;
 struct IntrinsicWidthConstraints;
 
 class IntrinsicWidthHandler {
 public:
-    IntrinsicWidthHandler(InlineFormattingContext&);
+    IntrinsicWidthHandler(InlineFormattingContext&, const InlineItems&, bool mayUseSimplifiedTextOnlyInlineLayout);
 
     IntrinsicWidthConstraints computedIntrinsicSizes();
     LayoutUnit maximumContentSize();
@@ -57,11 +55,13 @@ private:
 
     InlineFormattingContext& formattingContext();
     const InlineFormattingContext& formattingContext() const;
-    const InlineFormattingState& formattingState() const;
-    const ElementBox& root() const;
+    const InlineContentCache& formattingState() const;
+    const RenderStyle& rootStyle() const;
 
 private:
     InlineFormattingContext& m_inlineFormattingContext;
+    const InlineItems& m_inlineItems;
+    const bool m_mayUseSimplifiedTextOnlyInlineLayout { false };
 
     std::optional<LineBreakingResult> m_maximumIntrinsicWidthResultForSingleLine { };
 };

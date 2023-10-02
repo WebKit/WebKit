@@ -78,7 +78,8 @@ Ref<HTMLStyleElement> PluginDocumentParser::createStyleElement(Document& documen
     constexpr auto styleSheetContents = R"CONTENTS(
 html.plugin-fills-viewport, html.plugin-fills-viewport body, html.plugin-fills-viewport embed { width: 100%; height: 100%; }
 html.plugin-fills-viewport body { overflow: hidden; }
-body { margin: 0 }
+body { margin: 0; }
+embed { width: 100%; }
 )CONTENTS"_s;
 
 #if PLATFORM(IOS_FAMILY)

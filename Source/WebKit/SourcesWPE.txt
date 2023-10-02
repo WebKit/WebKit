@@ -80,7 +80,6 @@ Shared/CoordinatedGraphics/SimpleViewportController.cpp
 
 Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
-Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp
 
 Shared/cairo/ShareableBitmapCairo.cpp
 
@@ -220,6 +219,10 @@ UIProcess/Gamepad/libwpe/UIGamepadProviderLibWPE.cpp
 
 UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 
+UIProcess/glib/DisplayLinkGLib.cpp
+UIProcess/glib/DisplayVBlankMonitor.cpp
+UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+UIProcess/glib/DisplayVBlankMonitorTimer.cpp
 UIProcess/glib/WebPageProxyGLib.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp

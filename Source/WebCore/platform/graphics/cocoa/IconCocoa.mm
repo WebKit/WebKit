@@ -79,8 +79,7 @@ void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
     auto image = NativeImage::create(cgImage);
 
     FloatRect srcRect(FloatPoint::zero(), image->size());
-    context.setImageInterpolationQuality(InterpolationQuality::High);
-    context.drawNativeImage(*image, srcRect.size(), destRect, srcRect);
+    context.drawNativeImage(*image, srcRect.size(), destRect, srcRect, { InterpolationQuality::High });
 }
 
 }

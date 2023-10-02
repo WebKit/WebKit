@@ -31,9 +31,9 @@
 #include "FormattingContext.h"
 #include "InlineDisplayContent.h"
 #include "InlineFormattingContext.h"
-#include "InlineFormattingQuirks.h"
 #include "InlineLevelBoxInlines.h"
 #include "InlineLineBoxVerticalAligner.h"
+#include "InlineQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutElementBox.h"
 #include "LengthFunctions.h"
@@ -144,7 +144,7 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
     if (inlineLevelBox.isListMarker())
         return true;
     if (inlineLevelBox.isInlineBox())
-        return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineBoxAffectsLineBox(inlineLevelBox);
+        return layoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
     if (inlineLevelBox.isAtomicInlineLevelBox())
         return !inlineLevelBox.layoutBox().isRubyAnnotationBox();
     return false;
@@ -214,7 +214,7 @@ InlineLayoutUnit InlineFormattingGeometry::initialLineHeight(bool isFirstLine) c
 {
     if (layoutState().inStandardsMode())
         return isFirstLine ? formattingContext().root().firstLineStyle().computedLineHeight() : formattingContext().root().style().computedLineHeight();
-    return formattingContext().formattingQuirks().initialLineHeight();
+    return formattingContext().quirks().initialLineHeight();
 }
 
 FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext& floatingContext) const

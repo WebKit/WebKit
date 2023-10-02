@@ -354,19 +354,6 @@ void ThreadedCompositor::frameComplete()
     sceneUpdateFinished();
 }
 
-#if !PLATFORM(GTK)
-void ThreadedCompositor::targetRefreshRateDidChange(unsigned rate)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (!rate)
-        rate = c_defaultRefreshRate;
-    m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }, rate] {
-        m_display.displayUpdate = { 0, rate / 1000 };
-    });
-}
-#endif
-
 #if !HAVE(DISPLAY_LINK)
 void ThreadedCompositor::displayUpdateFired()
 {

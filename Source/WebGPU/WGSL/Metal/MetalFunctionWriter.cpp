@@ -115,6 +115,7 @@ private:
     void serializeVariable(AST::Variable&);
     void generatePackingHelpers(AST::Structure&);
     bool emitPackedVector(const Types::Vector&);
+    void serializeConstant(const Type*, ConstantValue);
 
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
@@ -296,9 +297,9 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 explicitSize = fieldSize;
                 for (auto &attribute : member.attributes()) {
                     if (is<AST::SizeAttribute>(attribute))
-                        explicitSize = *AST::extractInteger(downcast<AST::SizeAttribute>(attribute).size());
+                        explicitSize = downcast<AST::SizeAttribute>(attribute).size().constantValue()->toInt();
                     else if (is<AST::AlignAttribute>(attribute))
-                        fieldAlignment = *AST::extractInteger(downcast<AST::AlignAttribute>(attribute).alignment());
+                        fieldAlignment = downcast<AST::AlignAttribute>(attribute).alignment().constantValue()->toInt();
                 }
 
                 offset = WTF::roundUpToMultipleOf(fieldAlignment, size);
@@ -473,7 +474,7 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
 
     visit(type);
     m_stringBuilder.append(" ", variable.name());
-    if (variable.maybeInitializer()) {
+    if (variable.maybeInitializer() && variable.flavor() != AST::VariableFlavor::Override) {
         m_stringBuilder.append(" = ");
         visit(type, *variable.maybeInitializer());
     }
@@ -536,7 +537,7 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 
 void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
-    unsigned bufferIndex = *AST::extractInteger(group.group());
+    unsigned bufferIndex = group.group().constantValue()->toInt();
     if (m_entryPointStage.has_value() && *m_entryPointStage == AST::StageAttribute::Stage::Vertex) {
         ASSERT(m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
         auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
@@ -547,7 +548,7 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 
 void FunctionDefinitionWriter::visit(AST::BindingAttribute& binding)
 {
-    m_stringBuilder.append("[[id(", *AST::extractInteger(binding.binding()), ")]]");
+    m_stringBuilder.append("[[id(", binding.binding().constantValue()->toInt(), ")]]");
 }
 
 void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
@@ -557,7 +558,7 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         switch (role) {
         case AST::StructureRole::VertexOutput:
         case AST::StructureRole::FragmentInput:
-            m_stringBuilder.append("[[user(loc", *AST::extractInteger(location.location()), ")]]");
+            m_stringBuilder.append("[[user(loc", location.location().constantValue()->toInt(), ")]]");
             return;
         case AST::StructureRole::BindGroup:
         case AST::StructureRole::UserDefined:
@@ -566,10 +567,10 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::PackedResource:
             return;
         case AST::StructureRole::FragmentOutput:
-            m_stringBuilder.append("[[color(", *AST::extractInteger(location.location()), ")]]");
+            m_stringBuilder.append("[[color(", location.location().constantValue()->toInt(), ")]]");
             return;
         case AST::StructureRole::VertexInput:
-            m_stringBuilder.append("[[attribute(", *AST::extractInteger(location.location()), ")]]");
+            m_stringBuilder.append("[[attribute(", location.location().constantValue()->toInt(), ")]]");
             break;
         }
     }
@@ -614,8 +615,10 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::Void:
             case Types::Primitive::Bool:
             case Types::Primitive::Sampler:
-            case Types::Primitive::SamplerComparison:
                 m_stringBuilder.append(*type);
+                break;
+            case Types::Primitive::SamplerComparison:
+                m_stringBuilder.append("sampler");
                 break;
             case Types::Primitive::TextureExternal:
                 m_stringBuilder.append("texture_external");
@@ -830,6 +833,11 @@ void FunctionDefinitionWriter::visit(AST::Expression& expression)
 
 void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expression)
 {
+    if (auto constantValue = expression.constantValue()) {
+        serializeConstant(type, *constantValue);
+        return;
+    }
+
     switch (expression.kind()) {
     case AST::NodeKind::CallExpression:
         visit(type, downcast<AST::CallExpression>(expression));
@@ -962,6 +970,15 @@ static void emitTextureSample(FunctionDefinitionWriter* writer, AST::CallExpress
     writer->stringBuilder().append(".sample");
     visitArguments(writer, call, 1);
 }
+
+static void emitTextureSampleCompare(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    ASSERT(call.arguments().size() > 1);
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(".sample_compare");
+    visitArguments(writer, call, 1);
+}
+
 
 static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
@@ -1162,6 +1179,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureNumLevels", emitTextureNumLevels },
             { "textureSample", emitTextureSample },
             { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
+            { "textureSampleCompare", emitTextureSampleCompare },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
             { "workgroupBarrier", emitWorkgroupBarrier },
@@ -1556,6 +1574,103 @@ void FunctionDefinitionWriter::visit(AST::BreakStatement&)
 void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
 {
     m_stringBuilder.append("continue");
+}
+
+void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue value)
+{
+    using namespace Types;
+
+    WTF::switchOn(*type,
+        [&](const Primitive& primitive) {
+            switch (primitive.kind) {
+            case Primitive::AbstractInt:
+            case Primitive::I32:
+                m_stringBuilder.append(value.toInt());
+                break;
+            case Primitive::U32:
+                m_stringBuilder.append(value.toInt(), "u");
+                break;
+            case Primitive::AbstractFloat:
+            case Primitive::F32: {
+                NumberToStringBuffer buffer;
+                WTF::numberToStringWithTrailingPoint(value.toDouble(), buffer);
+                m_stringBuilder.append(&buffer[0]);
+                break;
+            }
+            case Primitive::Bool:
+                m_stringBuilder.append(std::get<bool>(value) ? "true" : "false");
+                break;
+            case Primitive::Void:
+            case Primitive::Sampler:
+            case Primitive::SamplerComparison:
+            case Primitive::TextureExternal:
+            case Primitive::AccessMode:
+            case Primitive::TexelFormat:
+            case Primitive::AddressSpace:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        },
+        [&](const Reference& reference) {
+            return serializeConstant(reference.element, value);
+        },
+        [&](const Vector& vectorType) {
+            auto& vector = std::get<ConstantVector>(value);
+            visit(type);
+            m_stringBuilder.append("(");
+            bool first = true;
+            for (auto& element : vector.elements) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                serializeConstant(vectorType.element, element);
+            }
+            m_stringBuilder.append(")");
+        },
+        [&](const Array& arrayType) {
+            auto& array = std::get<ConstantArray>(value);
+            visit(type);
+            m_stringBuilder.append("{");
+            bool first = true;
+            for (auto& element : array.elements) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                serializeConstant(arrayType.element, element);
+            }
+            m_stringBuilder.append("}");
+        },
+        [&](const Matrix&) {
+            // Not supported yet
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Struct&) {
+            // Not supported yet
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Pointer&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Function&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Texture&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureStorage&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureDepth&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Atomic&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TypeConstructor&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
 }
 
 void emitMetalFunctions(StringBuilder& stringBuilder, CallGraph& callGraph)

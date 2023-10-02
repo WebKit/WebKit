@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "FloatingState.h"
 #include "FormattingContext.h"
 #include "LayoutElementBox.h"
+#include "PlacedFloats.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -39,13 +39,13 @@ class Box;
 // FloatingContext is responsible for adjusting the position of a box in the current formatting context
 // by taking the floating boxes into account.
 // Note that a FloatingContext's inline direction always matches the root's inline direction but it may
-// not match the FloatingState's inline direction (i.e. FloatingState may be constructed by a parent BFC with mismatching inline direction).
+// not match the PlacedFloats's inline direction (i.e. PlacedFloats may be constructed by a parent BFC with mismatching inline direction).
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
-    FloatingContext(const FormattingContext&, const FloatingState&);
+    FloatingContext(const FormattingContext&, const PlacedFloats&);
 
-    const FloatingState& floatingState() const { return m_floatingState; }
+    const PlacedFloats& placedFloats() const { return m_placedFloats; }
 
     LayoutPoint positionForFloat(const Box&, const BoxGeometry&, const HorizontalConstraints&) const;
     LayoutPoint positionForNonFloatingFloatAvoider(const Box&, const BoxGeometry&) const;
@@ -61,7 +61,7 @@ public:
     std::optional<LayoutUnit> rightBottom() const { return bottom(Clear::Right); }
     std::optional<LayoutUnit> bottom() const { return bottom(Clear::Both); }
 
-    bool isEmpty() const { return m_floatingState.floats().isEmpty(); }
+    bool isEmpty() const { return m_placedFloats.list().isEmpty(); }
 
     struct Constraints {
         std::optional<PointInContextRoot> left;
@@ -70,15 +70,15 @@ public:
     enum class MayBeAboveLastFloat : bool { No, Yes };
     Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat) const;
 
-    FloatingState::FloatItem makeFloatItem(const Box& floatBox, const BoxGeometry&, std::optional<size_t> line = { }) const;
+    PlacedFloats::Item makeFloatItem(const Box& floatBox, const BoxGeometry&, std::optional<size_t> line = { }) const;
 
     bool isLogicalLeftPositioned(const Box& floatBox) const;
 
 private:
     std::optional<LayoutUnit> bottom(Clear) const;
 
-    bool isFloatingCandidateLeftPositionedInFloatingState(const Box&) const;
-    Clear clearInFloatingState(const Box&) const;
+    bool isFloatingCandidateLeftPositionedInPlacedFloats(const Box&) const;
+    Clear clearInPlacedFloats(const Box&) const;
 
     const FormattingContext& formattingContext() const { return m_formattingContext; }
     const ElementBox& root() const { return m_formattingContext.root(); }
@@ -87,11 +87,11 @@ private:
 
     struct AbsoluteCoordinateValuesForFloatAvoider;
     AbsoluteCoordinateValuesForFloatAvoider absoluteCoordinates(const Box&, LayoutPoint borderBoxTopLeft) const;
-    LayoutPoint mapTopLeftToFloatingStateRoot(const Box&, LayoutPoint borderBoxTopLeft) const;
-    Point mapPointFromFormattingContextRootToFloatingStateRoot(Point) const;
+    LayoutPoint mapTopLeftToPlacedFloatsRoot(const Box&, LayoutPoint borderBoxTopLeft) const;
+    Point mapPointFromFormattingContextRootToPlacedFloatsRoot(Point) const;
 
     const FormattingContext& m_formattingContext;
-    const FloatingState& m_floatingState;
+    const PlacedFloats& m_placedFloats;
 };
 
 }

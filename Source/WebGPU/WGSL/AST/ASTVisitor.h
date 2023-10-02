@@ -138,7 +138,5 @@ private:
     Result<void> m_expectedError;
 };
 
-std::optional<unsigned> extractInteger(const AST::Expression&);
-
 } // namespace AST
 } // namespace WGSL

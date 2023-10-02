@@ -112,7 +112,7 @@ InlineContentBalancer::InlineContentBalancer(InlineFormattingContext& inlineForm
 
 void InlineContentBalancer::initialize()
 {
-    if (!m_inlineFormattingContext.floatingState().isEmpty()) {
+    if (!m_inlineFormattingContext.placedFloats().isEmpty()) {
         m_cannotBalanceContent = true;
         return;
     }

@@ -477,6 +477,19 @@ static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const
     extent = fragmentTransform.mapRect(extent);
 }
 
+static inline FloatRect calculateFragmentBoundaries(const RenderSVGInlineText& textRenderer, const SVGTextFragment& fragment)
+{
+    float scalingFactor = textRenderer.scalingFactor();
+    ASSERT(scalingFactor);
+
+    float baseline = textRenderer.scaledFont().metricsOfPrimaryFont().floatAscent() / scalingFactor;
+
+    AffineTransform fragmentTransform;
+    FloatRect fragmentRect(fragment.x, fragment.y - baseline, fragment.width, fragment.height);
+    fragment.buildFragmentTransform(fragmentTransform);
+    return fragmentTransform.mapRect(fragmentRect);
+}
+
 bool SVGTextQuery::extentOfCharacterCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
     ExtentOfCharacterData* data = static_cast<ExtentOfCharacterData*>(queryData);
@@ -510,6 +523,11 @@ struct CharacterNumberAtPositionData : SVGTextQuery::Data {
 bool SVGTextQuery::characterNumberAtPositionCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
     auto* data = static_cast<CharacterNumberAtPositionData*>(queryData);
+
+    // Test the query point against the bounds of the entire fragment first.
+    FloatRect fragmentExtents = calculateFragmentBoundaries(*queryData->textRenderer, fragment);
+    if (!fragmentExtents.contains(data->position))
+        return false;
 
     // Iterate through the glyphs in this fragment, and check if their extents
     // contain the query point.

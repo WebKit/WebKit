@@ -174,8 +174,6 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     };
     if (!isSupportedParent())
         return true;
-    if (lineLayout.hasOutOfFlowContent())
-        return true;
     if (rootBlockContainer.containsFloats())
         return true;
 

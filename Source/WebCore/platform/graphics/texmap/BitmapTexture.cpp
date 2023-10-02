@@ -43,7 +43,6 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
         return;
 
     GraphicsContext& context = imageBuffer->context();
-    context.setImageInterpolationQuality(InterpolationQuality::Default);
     context.setTextDrawingMode(TextDrawingMode::Fill);
 
     IntRect sourceRect(targetRect);

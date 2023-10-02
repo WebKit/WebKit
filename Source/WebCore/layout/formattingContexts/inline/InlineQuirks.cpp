@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "InlineFormattingQuirks.h"
+#include "InlineQuirks.h"
 
 #include "InlineFormattingContext.h"
 #include "LayoutBoxGeometry.h"
@@ -33,12 +33,12 @@
 namespace WebCore {
 namespace Layout {
 
-InlineFormattingQuirks::InlineFormattingQuirks(const InlineFormattingContext& inlineFormattingContext)
-    : FormattingQuirks(inlineFormattingContext)
+InlineQuirks::InlineQuirks(const InlineFormattingContext& inlineFormattingContext)
+    : m_inlineFormattingContext(inlineFormattingContext)
 {
 }
 
-bool InlineFormattingQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const
+bool InlineQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const
 {
     if (isInIntrinsicWidthMode || !lineHasOverflow)
         return false;
@@ -46,13 +46,13 @@ bool InlineFormattingQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIn
     return rootStyle.nbspMode() == NBSPMode::Space && rootStyle.textWrap() != TextWrap::NoWrap && rootStyle.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
 }
 
-InlineLayoutUnit InlineFormattingQuirks::initialLineHeight() const
+InlineLayoutUnit InlineQuirks::initialLineHeight() const
 {
-    ASSERT(!layoutState().inStandardsMode());
+    ASSERT(!formattingContext().layoutState().inStandardsMode());
     return 0.f;
 }
 
-bool InlineFormattingQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
+bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
 {
     // In quirks mode linebreak boxes (<br>) stop affecting the line box when (assume <br> is nested e.g. <span style="font-size: 100px"><br></span>)
     // 1. the root inline box has content <div>content<br>/div>
@@ -75,9 +75,9 @@ bool InlineFormattingQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& l
     return true;
 }
 
-bool InlineFormattingQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
+bool InlineQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
 {
-    ASSERT(!layoutState().inStandardsMode());
+    ASSERT(!formattingContext().layoutState().inStandardsMode());
     ASSERT(inlineLevelBox.isInlineBox());
     // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
     if (inlineLevelBox.hasContent())
@@ -100,7 +100,7 @@ bool InlineFormattingQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlin
     return false;
 }
 
-std::optional<LayoutUnit> InlineFormattingQuirks::initialLetterAlignmentOffset(const Box& floatBox, const RenderStyle& lineBoxStyle) const
+std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& floatBox, const RenderStyle& lineBoxStyle) const
 {
     ASSERT(floatBox.isFloatingPositioned());
     if (!floatBox.style().lineBoxContain().contains(LineBoxContain::InitialLetter))
@@ -115,7 +115,7 @@ std::optional<LayoutUnit> InlineFormattingQuirks::initialLetterAlignmentOffset(c
     return LayoutUnit { primaryFontMetrics.ascent() + (lineHeight() - primaryFontMetrics.height()) / 2 - primaryFontMetrics.capHeight() - floatBoxGeometry.marginBorderAndPaddingBefore() };
 }
 
-std::optional<InlineRect> InlineFormattingQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
+std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
 {
     auto& rootBoxStyle = formattingContext().root().style();
     auto& parentBlockLayoutState = formattingContext().inlineLayoutState().parentBlockLayoutState();

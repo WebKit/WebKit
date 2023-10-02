@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextOnlySimpleLineBuilder.h"
 
+#include "InlineContentCache.h"
 #include "InlineFormattingContext.h"
 #include "RenderStyleInlines.h"
 
@@ -384,7 +385,7 @@ void TextOnlySimpleLineBuilder::handleLineEnding(InlineItemPosition placedConten
         return root().style().lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastLine || horizontalAvailableSpace < m_line.contentLogicalWidth());
     };
     m_trimmedTrailingWhitespaceWidth = m_line.handleTrailingTrimmableContent(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
-    if (formattingContext().formattingQuirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
+    if (formattingContext().quirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
         m_line.handleOverflowingNonBreakingSpace(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
     m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);
@@ -447,11 +448,11 @@ const ElementBox& TextOnlySimpleLineBuilder::root() const
     return formattingContext().root();
 }
 
-bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineFormattingState& inlineFormattingState, const FloatingState* floatingState)
+bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineContentCache& inlineContentCache, const PlacedFloats* placedFloats)
 {
-    if (floatingState && !floatingState->isEmpty())
+    if (placedFloats && !placedFloats->isEmpty())
         return false;
-    if (!inlineFormattingState.isNonBidiTextAndForcedLineBreakOnlyContent())
+    if (!inlineContentCache.isNonBidiTextAndForcedLineBreakOnlyContent())
         return false;
 
     auto& rootStyle = rootBox.style();

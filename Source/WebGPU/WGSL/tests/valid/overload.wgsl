@@ -2464,6 +2464,8 @@ fn testTextureSampleBias()
 }
 
 // 16.7.10
+// RUN: %metal-compile testTextureSampleCompare
+@compute @workgroup_size(1)
 fn testTextureSampleCompare()
 {
     // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,

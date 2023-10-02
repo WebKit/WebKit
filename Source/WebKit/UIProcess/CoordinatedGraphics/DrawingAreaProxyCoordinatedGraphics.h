@@ -72,9 +72,6 @@ private:
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, UpdateInfo&&) override;
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
-#if !PLATFORM(GTK)
-    void targetRefreshRateDidChange(unsigned) override;
-#endif
 
     bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
 

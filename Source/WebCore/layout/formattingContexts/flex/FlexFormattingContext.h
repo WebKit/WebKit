@@ -47,7 +47,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints();
 
     const FlexFormattingGeometry& formattingGeometry() const final { return m_flexFormattingGeometry; }
-    const FormattingQuirks& formattingQuirks() const final { return m_flexFormattingQuirks; }
+    const FormattingQuirks& formattingQuirks() const { return m_flexFormattingQuirks; }
 
 private:
     FlexLayout::LogicalFlexItems convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent&);
@@ -55,9 +55,11 @@ private:
 
     std::optional<LayoutUnit> computedAutoMarginValueForFlexItems(const ConstraintsForFlexContent&);
 
-    const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
-    FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
+    const FlexFormattingState& formattingState() const { return m_flexFormattingState; }
+    FlexFormattingState& formattingState() { return m_flexFormattingState; }
 
+private:
+    FlexFormattingState& m_flexFormattingState;
     const FlexFormattingGeometry m_flexFormattingGeometry;
     const FormattingQuirks m_flexFormattingQuirks;
 };

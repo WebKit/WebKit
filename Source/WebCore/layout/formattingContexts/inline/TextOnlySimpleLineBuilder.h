@@ -35,6 +35,7 @@ namespace WebCore {
 namespace Layout {
 
 class InlineContentBreaker;
+class InlineContentCache;
 struct CandidateTextContent;
 struct TextOnlyLineBreakResult;
 
@@ -43,7 +44,7 @@ public:
     TextOnlySimpleLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
-    static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineFormattingState&, const FloatingState* = nullptr);
+    static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineContentCache&, const PlacedFloats* = nullptr);
 
 private:
     InlineItemPosition placeInlineTextContent(const InlineItemRange&);

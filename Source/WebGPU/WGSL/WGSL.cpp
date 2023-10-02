@@ -27,7 +27,6 @@
 #include "WGSL.h"
 
 #include "CallGraph.h"
-#include "ConstantRewriter.h"
 #include "EntryPointRewriter.h"
 #include "GlobalSorting.h"
 #include "GlobalVariableRewriter.h"
@@ -72,7 +71,6 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     CHECK_PASS(parse);
     CHECK_PASS(reorderGlobals);
     CHECK_PASS(typeCheck);
-    CHECK_PASS(rewriteConstants);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));

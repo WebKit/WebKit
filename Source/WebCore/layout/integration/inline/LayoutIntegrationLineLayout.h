@@ -131,7 +131,6 @@ public:
 #endif
 
     // This is temporary, required by partial bailout check.
-    bool hasOutOfFlowContent() const;
     bool contentNeedsVisualReordering() const;
     bool isDamaged() const { return m_lineDamage && m_lineDamage->type() != Layout::InlineDamage::Type::Invalid; }
     OptionSet<Layout::InlineDamage::Reason> damageReasons() const { return !m_lineDamage || m_lineDamage->type() == Layout::InlineDamage::Type::Invalid ? OptionSet<Layout::InlineDamage::Reason>() : m_lineDamage->reasons(); }
@@ -149,7 +148,7 @@ private:
     void updateListMarkerDimensions(const RenderListMarker&);
 
     void prepareLayoutState();
-    void prepareFloatingState();
+    void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
     Vector<LineAdjustment> adjustContent();
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
@@ -158,6 +157,7 @@ private:
     void updateLayoutBoxDimensions(const RenderBox&);
 
     Layout::LayoutState& layoutState() { return *m_layoutState; }
+    const Layout::LayoutState& layoutState() const { return *m_layoutState; }
 
     Layout::InlineDamage& ensureLineDamage();
 
@@ -171,7 +171,7 @@ private:
     BoxTree m_boxTree;
     WeakPtr<Layout::LayoutState> m_layoutState;
     Layout::BlockFormattingState& m_blockFormattingState;
-    Layout::InlineFormattingState& m_inlineFormattingState;
+    Layout::InlineContentCache& m_inlineContentCache;
     std::optional<Layout::ConstraintsForInlineContent> m_inlineContentConstraints;
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;

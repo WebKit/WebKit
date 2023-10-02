@@ -64,15 +64,16 @@ public:
     // Returns 0, 90, 180, 270.
     IntDegrees rotationForPageAtIndex(PageIndex) const;
 
-    WebCore::FloatSize layoutSize() const { return m_documentBounds.size(); }
+    // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
+    float scale() const { return m_scale; }
+
+    void updateLayout(WebCore::IntSize pluginSize);
+    WebCore::FloatSize scaledContentsSize() const;
 
 private:
+    void layoutPages(float availableWidth, float maxPageWidth);
 
-    void updateGeometry();
-
-    void layoutPages(float availableWidth);
-
-    void layoutSingleColumn(float availableWidth);
+    void layoutSingleColumn(float availableWidth, float maxPageWidth);
     void layoutTwoUpColumn(float availableWidth);
 
     static FloatSize documentMargin();
@@ -86,6 +87,7 @@ private:
     RetainPtr<CGPDFDocumentRef> m_pdfDocument;
     Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
+    float m_scale { 1 };
     DisplayMode m_displayMode { DisplayMode::Continuous };
 };
 

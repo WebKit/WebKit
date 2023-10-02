@@ -88,10 +88,6 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
 
-#if !PLATFORM(GTK) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))
-    virtual void targetRefreshRateDidChange(unsigned) { }
-#endif
-
     virtual void minimumSizeForAutoLayoutDidChange() { }
     virtual void sizeToContentAutoSizeMaximumSizeDidChange() { }
     virtual void windowKindDidChange() { }

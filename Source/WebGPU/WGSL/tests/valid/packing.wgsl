@@ -164,19 +164,19 @@ fn testIndexAccess() -> i32
 
 fn testBinaryOperations() -> i32
 {
-    // CHECK: parameter\d+\.v2f\.x = \(2 \* parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2 \* parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2 \* parameter\d+\.v4f\.x\);
+    // CHECK: parameter\d+\.v2f\.x = \(2. \* parameter\d+\.v2f\.x\);
+    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2. \* parameter\d+\.v3f\.x\);
+    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2. \* parameter\d+\.v4f\.x\);
     // CHECK-NEXT: parameter\d+\.v2u\.x = \(2u \* parameter\d+\.v2u\.x\);
     // CHECK-NEXT: parameter\d+\.v3u\.x = \(2u \* parameter\d+\.v3u\.x\);
     // CHECK-NEXT: parameter\d+\.v4u\.x = \(2u \* parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = \(2 \* parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = \(2 \* float3\(parameter\d+\.v3f\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = \(2 \* parameter\d+\.v4f\);
+    // CHECK-NEXT: parameter\d+\.v2f = \(2. \* parameter\d+\.v2f\);
+    // CHECK-NEXT: parameter\d+\.v3f = \(2. \* float3\(parameter\d+\.v3f\)\);
+    // CHECK-NEXT: parameter\d+\.v4f = \(2. \* parameter\d+\.v4f\);
     // CHECK-NEXT: parameter\d+\.v2u = \(2u \* parameter\d+\.v2u\);
     // CHECK-NEXT: parameter\d+\.v3u = \(2u \* uint3\(parameter\d+\.v3u\)\);
     // CHECK-NEXT: parameter\d+\.v4u = \(2u \* parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = \(2 \* parameter\d+\.f\);
+    // CHECK-NEXT: parameter\d+\.f = \(2. \* parameter\d+\.f\);
     // CHECK-NEXT: parameter\d+\.u = \(2u \* parameter\d+\.u\);
     t.v2f.x = 2 * t1.v2f.x;
     t.v3f.x = 2 * t1.v3f.x;
@@ -193,19 +193,19 @@ fn testBinaryOperations() -> i32
     t.f     = 2 * t1.f;
     t.u     = 2 * t1.u;
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = \(2 \* parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2 \* parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2 \* parameter\d+\.v4f\.x\);
+    // CHECK-NEXT: parameter\d+\.v2f\.x = \(2. \* parameter\d+\.v2f\.x\);
+    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2. \* parameter\d+\.v3f\.x\);
+    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2. \* parameter\d+\.v4f\.x\);
     // CHECK-NEXT: parameter\d+\.v2u\.x = \(2u \* parameter\d+\.v2u\.x\);
     // CHECK-NEXT: parameter\d+\.v3u\.x = \(2u \* parameter\d+\.v3u\.x\);
     // CHECK-NEXT: parameter\d+\.v4u\.x = \(2u \* parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = \(2 \* parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(\(2 \* float3\(parameter\d+\.v3f\)\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = \(2 \* parameter\d+\.v4f\);
+    // CHECK-NEXT: parameter\d+\.v2f = \(2. \* parameter\d+\.v2f\);
+    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(\(2. \* float3\(parameter\d+\.v3f\)\)\);
+    // CHECK-NEXT: parameter\d+\.v4f = \(2. \* parameter\d+\.v4f\);
     // CHECK-NEXT: parameter\d+\.v2u = \(2u \* parameter\d+\.v2u\);
     // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(\(2u \* uint3\(parameter\d+\.v3u\)\)\);
     // CHECK-NEXT: parameter\d+\.v4u = \(2u \* parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = \(2 \* parameter\d+\.f\);
+    // CHECK-NEXT: parameter\d+\.f = \(2. \* parameter\d+\.f\);
     // CHECK-NEXT: parameter\d+\.u = \(2u \* parameter\d+\.u\);
     t1.v2f.x = 2 * t2.v2f.x;
     t1.v3f.x = 2 * t2.v3f.x;
@@ -222,19 +222,19 @@ fn testBinaryOperations() -> i32
     t1.f     = 2 * t2.f;
     t1.u     = 2 * t2.u;
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = \(2 \* parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2 \* parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2 \* parameter\d+\.v4f\.x\);
+    // CHECK-NEXT: parameter\d+\.v2f\.x = \(2. \* parameter\d+\.v2f\.x\);
+    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2. \* parameter\d+\.v3f\.x\);
+    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2. \* parameter\d+\.v4f\.x\);
     // CHECK-NEXT: parameter\d+\.v2u\.x = \(2u \* parameter\d+\.v2u\.x\);
     // CHECK-NEXT: parameter\d+\.v3u\.x = \(2u \* parameter\d+\.v3u\.x\);
     // CHECK-NEXT: parameter\d+\.v4u\.x = \(2u \* parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = \(2 \* parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(\(2 \* parameter\d+\.v3f\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = \(2 \* parameter\d+\.v4f\);
+    // CHECK-NEXT: parameter\d+\.v2f = \(2. \* parameter\d+\.v2f\);
+    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(\(2. \* parameter\d+\.v3f\)\);
+    // CHECK-NEXT: parameter\d+\.v4f = \(2. \* parameter\d+\.v4f\);
     // CHECK-NEXT: parameter\d+\.v2u = \(2u \* parameter\d+\.v2u\);
     // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(\(2u \* parameter\d+\.v3u\)\);
     // CHECK-NEXT: parameter\d+\.v4u = \(2u \* parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = \(2 \* parameter\d+\.f\);
+    // CHECK-NEXT: parameter\d+\.f = \(2. \* parameter\d+\.f\);
     // CHECK-NEXT: parameter\d+\.u = \(2u \* parameter\d+\.u\);
     t2.v2f.x = 2 * t.v2f.x;
     t2.v3f.x = 2 * t.v3f.x;

@@ -248,7 +248,6 @@ private:
 
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
     WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromPDFViewToRootView(const WebCore::IntRect&) const;
     WebCore::IntRect frameForHUD() const;
@@ -289,12 +288,10 @@ private:
     RefPtr<PDFPluginPasswordField> m_passwordField;
     RefPtr<WebCore::Element> m_annotationContainer;
 
-    WebCore::AffineTransform m_rootViewToPluginTransform;
     std::optional<WebMouseEvent> m_lastMouseEvent;
     WebCore::IntPoint m_lastMousePositionInPluginCoordinates;
 
     String m_temporaryPDFUUID;
-
     String m_lastFoundString;
 
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;

@@ -51,7 +51,6 @@ PDFDocumentLayout::~PDFDocumentLayout() = default;
 void PDFDocumentLayout::setPDFDocument(RetainPtr<CGPDFDocumentRef>&& pdfDocument)
 {
     m_pdfDocument = WTFMove(pdfDocument);
-    updateGeometry();
 }
 
 bool PDFDocumentLayout::hasPDFDocument() const
@@ -65,7 +64,7 @@ RetainPtr<CGPDFPageRef> PDFDocumentLayout::pageAtIndex(PageIndex index) const
     return page;
 }
 
-void PDFDocumentLayout::updateGeometry()
+void PDFDocumentLayout::updateLayout(IntSize pluginSize)
 {
     auto pageCount = this->pageCount();
     m_pageGeometry.clear();
@@ -89,6 +88,8 @@ void PDFDocumentLayout::updateGeometry()
         return r;
     };
 
+    float maxPageWidth = 0;
+
     for (PageIndex i = 0; i < pageCount; ++i) {
         auto page = pageAtIndex(i);
         if (!page) {
@@ -99,23 +100,26 @@ void PDFDocumentLayout::updateGeometry()
         auto pageCropBox = FloatRect { CGPDFPageGetBoxRect(page.get(), kCGPDFCropBox) };
         auto rotation = normalizeRotation(CGPDFPageGetRotationAngle(page.get()));
 
-        LOG_WITH_STREAM(Plugins, stream << "PDFDocumentLayout::updateGeometry() - page " << i << " crop box " << pageCropBox << " rotation " << rotation);
+        LOG_WITH_STREAM(Plugins, stream << "PDFDocumentLayout::updateLayout() - page " << i << " crop box " << pageCropBox << " rotation " << rotation);
 
         auto pageBounds = normalizePageBounds(pageCropBox, rotation);
+        maxPageWidth = std::max(maxPageWidth, pageBounds.width());
+
         m_pageGeometry.append({ pageBounds, rotation });
     }
 
-    float availableWidth = 1600; // FIXME: Fixed for now, but should use plugin width, maybe with a second layout pass when horizontal scrolling is required.
-    layoutPages(availableWidth);
+    layoutPages(pluginSize.width(), maxPageWidth);
+
+    LOG_WITH_STREAM(Plugins, stream << "PDFDocumentLayout::updateLayout() - plugin size " << pluginSize << " document bounds " << m_documentBounds << " scale " << m_scale);
 }
 
-void PDFDocumentLayout::layoutPages(float availableWidth)
+void PDFDocumentLayout::layoutPages(float availableWidth, float maxPageWidth)
 {
     // We always lay out in a continuous mode. We handle non-continuous mode via scroll snap.
     switch (m_displayMode) {
     case DisplayMode::SinglePage:
     case DisplayMode::Continuous:
-        layoutSingleColumn(availableWidth);
+        layoutSingleColumn(availableWidth, maxPageWidth);
         break;
 
     case DisplayMode::TwoUp:
@@ -125,14 +129,15 @@ void PDFDocumentLayout::layoutPages(float availableWidth)
     }
 }
 
-void PDFDocumentLayout::layoutSingleColumn(float availableWidth)
+void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxPageWidth)
 {
     auto documentMargin = PDFDocumentLayout::documentMargin();
-    auto pageMargin = PDFDocumentLayout::documentMargin();
+    auto pageMargin = PDFDocumentLayout::pageMargin();
 
     float currentYOffset = documentMargin.height();
-    float maxPageWidth = 0;
     auto pageCount = this->pageCount();
+
+    maxPageWidth += 2 * documentMargin.width();
 
     for (PageIndex i = 0; i < pageCount; ++i) {
         if (i >= m_pageGeometry.size())
@@ -140,11 +145,10 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth)
 
         auto pageBounds = m_pageGeometry[i].normalizedBounds;
 
-        auto pageLeft = std::max<float>(std::floor((availableWidth - pageBounds.width()) / 2), 0);
+        auto pageLeft = std::max<float>(std::floor((maxPageWidth - pageBounds.width()) / 2), 0);
         pageBounds.setLocation({ pageLeft, currentYOffset });
 
         currentYOffset += pageBounds.height() + pageMargin.height();
-        maxPageWidth = std::max(maxPageWidth, pageBounds.width());
 
         m_pageGeometry[i].normalizedBounds = pageBounds;
     }
@@ -153,7 +157,9 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth)
     currentYOffset -= pageMargin.height();
     currentYOffset += documentMargin.height();
 
-    m_documentBounds = FloatRect { 0, 0, std::max(maxPageWidth, availableWidth), currentYOffset };
+    constexpr float minScale = 0.1; // Arbitrarily chosen min scale.
+    m_scale = std::max<float>(availableWidth / maxPageWidth, minScale);
+    m_documentBounds = FloatRect { 0, 0, availableWidth, currentYOffset };
 }
 
 void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth)
@@ -185,6 +191,10 @@ IntDegrees PDFDocumentLayout::rotationForPageAtIndex(PageIndex index) const
     return m_pageGeometry[index].rotation;
 }
 
+WebCore::FloatSize PDFDocumentLayout::scaledContentsSize() const
+{
+    return m_documentBounds.size().scaled(m_scale);
+}
 
 } // namespace WebKit
 

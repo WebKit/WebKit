@@ -222,13 +222,6 @@ void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(uint6
     updateAcceleratedCompositingMode(layerTreeContext);
 }
 
-#if !PLATFORM(GTK)
-void DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
-{
-    protectedWebPageProxy()->send(Messages::DrawingArea::TargetRefreshRateDidChange(rate), m_identifier);
-}
-#endif
-
 bool DrawingAreaProxyCoordinatedGraphics::alwaysUseCompositing() const
 {
     return m_webPageProxy->preferences().acceleratedCompositingEnabled() && m_webPageProxy->preferences().forceCompositingMode();

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FormattingState.h"
+#include "FormattingConstraints.h"
 #include "InlineDisplayContent.h"
 #include "InlineItem.h"
 #include "IntrinsicWidthHandler.h"
@@ -36,13 +36,10 @@ namespace Layout {
 
 using InlineItems = Vector<InlineItem>;
 
-// InlineFormattingState holds the state for a particular inline formatting context tree.
-class InlineFormattingState : public FormattingState {
-    WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);
+// InlineContentCache is used to cache content for subsequent layouts.
+class InlineContentCache {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(InlineContentCache);
 public:
-    InlineFormattingState(LayoutState&);
-    ~InlineFormattingState();
-
     InlineItems& inlineItems() { return m_inlineItems; }
     const InlineItems& inlineItems() const { return m_inlineItems; }
     void setInlineItems(InlineItems&& inlineItems) { m_inlineItems = WTFMove(inlineItems); }
@@ -61,15 +58,18 @@ public:
     void clearMaximumIntrinsicWidthLayoutResult() { m_maximumIntrinsicWidthLayoutResult = { }; }
     std::optional<IntrinsicWidthHandler::LineBreakingResult>& maximumIntrinsicWidthLayoutResult() { return m_maximumIntrinsicWidthLayoutResult; }
 
+    void setIntrinsicWidthConstraints(IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
+    void resetIntrinsicWidthConstraints() { m_intrinsicWidthConstraints = { }; }
+    std::optional<IntrinsicWidthConstraints> intrinsicWidthConstraints() const { return m_intrinsicWidthConstraints; }
+
 private:
     InlineItems m_inlineItems;
     std::optional<IntrinsicWidthHandler::LineBreakingResult> m_maximumIntrinsicWidthLayoutResult { };
+    std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints { };
     bool m_contentRequiresVisualReordering { false };
     bool m_isNonBidiTextAndForcedLineBreakOnlyContent { false };
 };
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_STATE(InlineFormattingState, isInlineFormattingState())
 

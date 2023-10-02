@@ -1726,14 +1726,12 @@ layout/formattingContexts/flex/FlexLayout.cpp
 layout/formattingContexts/flex/FlexFormattingState.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp
-layout/floats/FloatingState.cpp
+layout/floats/PlacedFloats.cpp
 layout/formattingContexts/inline/AbstractLineBuilder.cpp
 layout/formattingContexts/inline/InlineContentBalancer.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
 layout/formattingContexts/inline/InlineFormattingContext.cpp
 layout/formattingContexts/inline/InlineFormattingGeometry.cpp
-layout/formattingContexts/inline/InlineFormattingQuirks.cpp
-layout/formattingContexts/inline/InlineFormattingState.cpp
 layout/formattingContexts/inline/InlineItem.cpp
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.cpp
@@ -1742,6 +1740,7 @@ layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp
 layout/formattingContexts/inline/InlineTextItem.cpp
+layout/formattingContexts/inline/InlineQuirks.cpp
 layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContent.cpp
