@@ -136,11 +136,9 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     using Type = Vector<T, inlineCapacity, OverflowHandler, minCapacity>;
     static Type copy(const Type& source)
     {
-        Type destination;
-        destination.reserveInitialCapacity(source.size());
-        for (auto& object : source)
-            destination.uncheckedAppend(CrossThreadCopier<T>::copy(object));
-        return destination;
+        return WTF::map<inlineCapacity, OverflowHandler, minCapacity>(source, [](auto& object) {
+            return CrossThreadCopier<T>::copy(object);
+        });
     }
     static Type copy(Type&& source)
     {

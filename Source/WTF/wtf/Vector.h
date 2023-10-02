@@ -935,7 +935,7 @@ private:
     template<FailureAction, typename U> bool append(U&&);
     template<FailureAction, typename U> bool append(const U*, size_t);
 
-    template<typename MapFunction, typename SourceType, typename Enable> friend struct Mapper;
+    template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable> friend struct Mapper;
     template<typename DestinationItemType, typename Collection> friend Vector<DestinationItemType> copyToVectorOf(const Collection&);
     template<typename Collection> friend Vector<typename CopyOrMoveToVectorResult<Collection>::Type> copyToVector(const Collection&);
     template<typename U, size_t otherInlineCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> friend class Vector;
@@ -1797,42 +1797,50 @@ struct CollectionInspector {
     using SourceItemType = typename std::iterator_traits<IteratorType>::value_type;
 };
 
-template<typename MapFunction, typename SourceType, typename Enable = void>
+template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable = void>
 struct Mapper {
-    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
-
-    static Vector<DestinationItemType> map(const SourceType& source, const MapFunction& mapFunction)
+    static void map(DestinationVectorType& result, const SourceType& source, const MapFunction& mapFunction)
     {
-        Vector<DestinationItemType> result;
         // FIXME: Use std::size when available on all compilers.
         result.reserveInitialCapacity(source.size());
         for (auto&& item : source)
             result.unsafeAppendWithoutCapacityCheck(mapFunction(item));
-        return result;
     }
 };
 
-template<typename MapFunction, typename SourceType>
-struct Mapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
-    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
-
-    static Vector<DestinationItemType> map(SourceType&& source, const MapFunction& mapFunction)
+template<typename MapFunction, typename DestinationVectorType, typename SourceType>
+struct Mapper<MapFunction, DestinationVectorType, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
+    static void map(DestinationVectorType& result, SourceType&& source, const MapFunction& mapFunction)
     {
-        Vector<DestinationItemType> result;
         // FIXME: Use std::size when available on all compilers.
         result.reserveInitialCapacity(source.size());
         for (auto&& item : source)
             result.unsafeAppendWithoutCapacityCheck(mapFunction(WTFMove(item)));
-        return result;
     }
 };
 
-template<typename MapFunction, typename SourceType>
-Vector<typename Mapper<MapFunction, SourceType>::DestinationItemType> map(SourceType&& source, MapFunction&& mapFunction)
+template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
+Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType&& source, MapFunction&& mapFunction)
 {
-    return Mapper<MapFunction, SourceType>::map(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
+    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
+    using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
+
+    DestinationVectorType result;
+    Mapper<MapFunction, DestinationVectorType, SourceType>::map(result, std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+    return result;
+}
+
+template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
+Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType& source, MapFunction&& mapFunction)
+{
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
+    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
+    using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
+
+    DestinationVectorType result;
+    Mapper<MapFunction, DestinationVectorType, SourceType&>::map(result, source, std::forward<MapFunction>(mapFunction));
+    return result;
 }
 
 template<typename MapFunctionReturnType>
