@@ -79,6 +79,7 @@ public:
         InkOverflowNeedsInitialContiningBlockForStrokeWidth
     };
     const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
+    BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt);
 
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }

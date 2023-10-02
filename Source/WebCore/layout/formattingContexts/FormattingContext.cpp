@@ -165,6 +165,11 @@ void FormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlowCont
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
 
+BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason>)
+{
+    return layoutState().ensureGeometryForBox(layoutBox);
+}
+
 const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason) const
 {
     UNUSED_PARAM(escapeReason);

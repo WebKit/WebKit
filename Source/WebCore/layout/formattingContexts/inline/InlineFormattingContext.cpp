@@ -222,7 +222,7 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
     for (auto& inlineItem : inlineFormattingState.inlineItems()) {
         if (inlineItem.isFloat()) {
             auto& floatBox = inlineItem.layoutBox();
-            auto& floatBoxGeometry = inlineFormattingState.boxGeometry(floatBox);
+            auto& floatBoxGeometry = geometryForBox(floatBox);
             auto staticPosition = LayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
             staticPosition.move(floatBoxGeometry.marginStart(), floatBoxGeometry.marginBefore());
             floatBoxGeometry.setTopLeft(staticPosition);
@@ -272,7 +272,7 @@ void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutR
             // We should not be placing intrusive floats coming from parent BFC.
             continue;
         }
-        auto& boxGeometry = formattingState().boxGeometry(*floatItem.layoutBox());
+        auto& boxGeometry = geometryForBox(*floatItem.layoutBox());
         auto usedGeometry = floatItem.boxGeometry();
         boxGeometry.setTopLeft(BoxGeometry::borderBoxTopLeft(usedGeometry));
         // Adopt trimmed inline direction margin.
@@ -316,7 +316,7 @@ void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRan
         auto hasBoxGeometry = inlineItem.isBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak() || inlineItem.isInlineBoxStart();
         if (!hasBoxGeometry)
             continue;
-        auto& boxGeometry = formattingState().boxGeometry(inlineItem.layoutBox());
+        auto& boxGeometry = geometryForBox(inlineItem.layoutBox());
         boxGeometry.setTopLeft(topleft);
         boxGeometry.setContentBoxHeight({ });
         boxGeometry.setContentBoxWidth({ });
