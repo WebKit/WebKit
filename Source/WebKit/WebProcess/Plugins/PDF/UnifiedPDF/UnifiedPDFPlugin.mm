@@ -39,7 +39,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<UnifiedPDFPlugin> UnifiedPDFPlugin::create(WebCore::HTMLPlugInElement& pluginElement)
+Ref<UnifiedPDFPlugin> UnifiedPDFPlugin::create(HTMLPlugInElement& pluginElement)
 {
     return adoptRef(*new UnifiedPDFPlugin(pluginElement));
 }
@@ -88,20 +88,30 @@ void UnifiedPDFPlugin::sizeToFitContents()
     pluginElement.setInlineStyleProperty(CSSPropertyHeight, contentsSize.height(), CSSUnitType::CSS_PX);
 }
 
-void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& rect)
+void UnifiedPDFPlugin::paint(GraphicsContext& context, const IntRect& rect)
 {
     ASSERT(!context.paintingDisabled());
 
     if (m_size.isEmpty())
         return;
 
-    auto imageBuffer = ImageBuffer::create(m_size, RenderingPurpose::Unspecified, context.scaleFactor().width(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto drawingRect = IntRect { { }, m_size };
+    drawingRect.intersect(rect);
+
+    auto imageBuffer = ImageBuffer::create(drawingRect.size(), RenderingPurpose::Unspecified, context.scaleFactor().width(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return;
 
     auto& bufferContext = imageBuffer->context();
     auto stateSaver = GraphicsContextStateSaver(bufferContext);
-    bufferContext.scale(m_documentLayout.scale());
+
+    bufferContext.translate(FloatPoint { -drawingRect.location() });
+    auto scale = m_documentLayout.scale();
+    bufferContext.scale(scale);
+
+    auto inverseScale = 1.0f / scale;
+    auto scaleTransform = AffineTransform::makeScale({ inverseScale, inverseScale });
+    auto drawingRectInPDFLayoutCoordinates = scaleTransform.mapRect(FloatRect { drawingRect });
 
     for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i) {
         auto page = m_documentLayout.pageAtIndex(i);
@@ -109,6 +119,10 @@ void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& r
             continue;
 
         auto destinationRect = m_documentLayout.boundsForPageAtIndex(i);
+
+        // FIXME: If we draw page shadows we'll have to inflate destinationRect here.
+        if (!destinationRect.intersects(drawingRectInPDFLayoutCoordinates))
+            continue;
 
         auto pageStateSaver = GraphicsContextStateSaver(bufferContext);
         bufferContext.clip(destinationRect);
@@ -127,7 +141,7 @@ void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& r
         CGContextDrawPDFPage(imageBuffer->context().platformContext(), page.get());
     }
 
-    context.drawImageBuffer(*imageBuffer, FloatPoint { });
+    context.drawImageBuffer(*imageBuffer, drawingRect.location());
 }
 
 CGFloat UnifiedPDFPlugin::scaleFactor() const
@@ -151,7 +165,7 @@ RetainPtr<PDFDocument> UnifiedPDFPlugin::pdfDocumentForPrinting() const
     return nil;
 }
 
-WebCore::FloatSize UnifiedPDFPlugin::pdfDocumentSizeForPrinting() const
+FloatSize UnifiedPDFPlugin::pdfDocumentSizeForPrinting() const
 {
     return { };
 }
@@ -206,32 +220,32 @@ String UnifiedPDFPlugin::getSelectionString() const
     return emptyString();
 }
 
-bool UnifiedPDFPlugin::existingSelectionContainsPoint(const WebCore::FloatPoint&) const
+bool UnifiedPDFPlugin::existingSelectionContainsPoint(const FloatPoint&) const
 {
     return false;
 }
 
-WebCore::FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *) const
+FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *) const
 {
     return { };
 }
 
-unsigned UnifiedPDFPlugin::countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount)
+unsigned UnifiedPDFPlugin::countFindMatches(const String& target, FindOptions, unsigned maxMatchCount)
 {
     return 0;
 }
 
-bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount)
+bool UnifiedPDFPlugin::findString(const String& target, FindOptions, unsigned maxMatchCount)
 {
     return false;
 }
 
-bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint&)
+bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint&)
 {
     return false;
 }
 
-std::tuple<String, PDFSelection *, NSDictionary *> UnifiedPDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const
+std::tuple<String, PDFSelection *, NSDictionary *> UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint&, WebHitTestResultData&) const
 {
     return { };
 }
@@ -241,7 +255,7 @@ RefPtr<ShareableBitmap> UnifiedPDFPlugin::snapshot()
     return nullptr;
 }
 
-id UnifiedPDFPlugin::accessibilityHitTest(const WebCore::IntPoint&) const
+id UnifiedPDFPlugin::accessibilityHitTest(const IntPoint&) const
 {
     return nil;
 }
@@ -251,7 +265,7 @@ id UnifiedPDFPlugin::accessibilityObject() const
     return nil;
 }
 
-id UnifiedPDFPlugin::accessibilityAssociatedPluginParentForElement(WebCore::Element*) const
+id UnifiedPDFPlugin::accessibilityAssociatedPluginParentForElement(Element*) const
 {
     return nil;
 }
