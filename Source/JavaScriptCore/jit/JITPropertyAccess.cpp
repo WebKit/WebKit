@@ -60,10 +60,8 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByVal::profileGPR;
     using BaselineJITRegisters::GetByVal::scratch1GPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { property, propertyJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(property, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -120,10 +118,8 @@ void JIT::emit_op_get_private_name(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByVal::resultJSR;
     using BaselineJITRegisters::GetByVal::stubInfoGPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { property, propertyJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(property, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -163,10 +159,8 @@ void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PrivateBrand::propertyJSR;
     using BaselineJITRegisters::PrivateBrand::stubInfoGPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { brand, propertyJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(brand, propertyJSR);
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
 
@@ -206,10 +200,8 @@ void JIT::emit_op_check_private_brand(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PrivateBrand::propertyJSR;
     using BaselineJITRegisters::PrivateBrand::stubInfoGPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { brand, propertyJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(brand, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -249,11 +241,9 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutByVal::stubInfoGPR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { property, propertyJSR },
-        { value, valueJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(property, propertyJSR);
+    emitGetVirtualRegister(value, valueJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -328,11 +318,9 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutByVal::valueJSR;
     using BaselineJITRegisters::PutByVal::stubInfoGPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { property, propertyJSR },
-        { value, valueJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(property, propertyJSR);
+    emitGetVirtualRegister(value, valueJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -404,18 +392,10 @@ void JIT::emit_op_put_getter_by_val(const JSInstruction* currentInstruction)
     // Attributes in argument 3
     constexpr GPRReg setterGPR = preferredArgumentGPR<SlowOperation, 4>();
 
-    int32_t attributes = bytecode.m_attributes;
-#if USE(JSVALUE32_64)
     emitGetVirtualRegisterPayload(bytecode.m_base, baseGPR);
     emitGetVirtualRegister(bytecode.m_property, propertyJSR);
+    int32_t attributes = bytecode.m_attributes;
     emitGetVirtualRegisterPayload(bytecode.m_accessor, setterGPR);
-#else
-    emitGetVirtualRegisters({
-        { bytecode.m_base, JSValueRegs { baseGPR } },
-        { bytecode.m_property, propertyJSR },
-        { bytecode.m_accessor, JSValueRegs { setterGPR } }
-    });
-#endif
     loadGlobalObject(globalObjectGRP);
     callOperation(operationPutGetterByVal, globalObjectGRP, baseGPR, propertyJSR, attributes, setterGPR);
 }
@@ -431,18 +411,10 @@ void JIT::emit_op_put_setter_by_val(const JSInstruction* currentInstruction)
     // Attributes in argument 3
     constexpr GPRReg setterGPR = preferredArgumentGPR<SlowOperation, 4>();
 
-    int32_t attributes = bytecode.m_attributes;
-#if USE(JSVALUE32_64)
     emitGetVirtualRegisterPayload(bytecode.m_base, baseGPR);
     emitGetVirtualRegister(bytecode.m_property, propertyJSR);
+    int32_t attributes = bytecode.m_attributes;
     emitGetVirtualRegisterPayload(bytecode.m_accessor, setterGPR);
-#else
-    emitGetVirtualRegisters({
-        { bytecode.m_base, JSValueRegs { baseGPR } },
-        { bytecode.m_property, propertyJSR },
-        { bytecode.m_accessor, JSValueRegs { setterGPR } }
-    });
-#endif
     loadGlobalObject(globalObjectGRP);
     callOperation(operationPutSetterByVal, globalObjectGRP, baseGPR, propertyJSR, attributes, setterGPR);
 }
@@ -507,10 +479,8 @@ void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::DelByVal::resultJSR;
     using BaselineJITRegisters::DelByVal::stubInfoGPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { property, propertyJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(property, propertyJSR);
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
 
@@ -692,10 +662,8 @@ void JIT::emit_op_get_by_id_with_this(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByIdWithThis::resultJSR;
     using BaselineJITRegisters::GetByIdWithThis::stubInfoGPR;
 
-    emitGetVirtualRegisters({
-        { baseVReg, baseJSR },
-        { thisVReg, thisJSR }
-    });
+    emitGetVirtualRegister(baseVReg, baseJSR);
+    emitGetVirtualRegister(thisVReg, thisJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -744,10 +712,8 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutById::stubInfoGPR;
     using BaselineJITRegisters::PutById::scratch1GPR;
 
-    emitGetVirtualRegisters({
-        { baseVReg, baseJSR },
-        { valueVReg, valueJSR }
-    });
+    emitGetVirtualRegister(baseVReg, baseJSR);
+    emitGetVirtualRegister(valueVReg, valueJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -832,10 +798,8 @@ void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::InByVal::profileGPR;
     using BaselineJITRegisters::InByVal::scratch1GPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { property, propertyJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(property, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -872,10 +836,8 @@ void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegis
     using BaselineJITRegisters::InByVal::resultJSR;
     using BaselineJITRegisters::InByVal::stubInfoGPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { propertyOrBrand, propertyJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(propertyOrBrand, propertyJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -1454,15 +1416,8 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
             loadPtrFromMetadata(bytecode, OpPutToScope::Metadata::offsetOfWatchpointSet(), regT3);
             loadPtrFromMetadata(bytecode, OpPutToScope::Metadata::offsetOfOperand(), regT2);
             emitNotifyWriteWatchpoint(regT3);
-#if USE(JSVALUE32_64)
             emitGetVirtualRegister(value, jsRegT10);
             emitGetVirtualRegisterPayload(scope, regT3);
-#else
-            emitGetVirtualRegisters({
-                { value, jsRegT10 },
-                { scope, JSValueRegs { regT3 } }
-            });
-#endif
             storeValue(jsRegT10, BaseIndex(regT3, regT2, TimesEight, JSLexicalEnvironment::offsetOfVariables()));
 
             emitWriteBarrier(scope, value, ShouldFilterValue);
@@ -1608,15 +1563,8 @@ void JIT::emit_op_put_to_arguments(const JSInstruction* currentInstruction)
     VirtualRegister value = bytecode.m_value;
 
     static_assert(noOverlap(regT2, jsRegT10));
-#if USE(JSVALUE32_64)
     emitGetVirtualRegisterPayload(arguments, regT2);
     emitGetVirtualRegister(value, jsRegT10);
-#else
-    emitGetVirtualRegisters({
-        { arguments, JSValueRegs { regT2 } },
-        { value, jsRegT10 }
-    });
-#endif
     storeValue(jsRegT10, Address(regT2, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>)));
 
     emitWriteBarrier(arguments, value, ShouldFilterValue);
@@ -1644,15 +1592,8 @@ void JIT::emit_op_put_internal_field(const JSInstruction* currentInstruction)
     unsigned index = bytecode.m_index;
 
     static_assert(noOverlap(regT2, jsRegT10));
-#if USE(JSVALUE32_64)
     emitGetVirtualRegisterPayload(base, regT2);
     emitGetVirtualRegister(value, jsRegT10);
-#else
-    emitGetVirtualRegisters({
-        { base, JSValueRegs { regT2 } },
-        { value, jsRegT10 }
-    });
-#endif
     storeValue(jsRegT10, Address(regT2, JSInternalFieldObjectImpl<>::offsetOfInternalField(index)));
     emitWriteBarrier(base, value, ShouldFilterValue);
 }
@@ -1675,11 +1616,9 @@ void JIT::emit_op_get_by_val_with_this(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByValWithThis::profileGPR;
     using BaselineJITRegisters::GetByValWithThis::scratch1GPR;
 
-    emitGetVirtualRegisters({
-        { base, baseJSR },
-        { property, propertyJSR },
-        { thisValue, thisJSR }
-    });
+    emitGetVirtualRegister(base, baseJSR);
+    emitGetVirtualRegister(property, propertyJSR);
+    emitGetVirtualRegister(thisValue, thisJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     loadConstant(stubInfoIndex, stubInfoGPR);
@@ -1770,11 +1709,9 @@ void JIT::emit_op_enumerator_next(const JSInstruction* currentInstruction)
     if (bytecode.metadata(m_profiledCodeBlock).m_enumeratorMetadata == JSPropertyNameEnumerator::OwnStructureMode) {
         GPRReg enumeratorGPR = regT3;
         GPRReg scratch1GPR = regT4;
-        emitGetVirtualRegisters({
-            { enumerator, JSValueRegs { enumeratorGPR } },
-            { base, JSValueRegs { baseGPR } }
-        });
+        emitGetVirtualRegister(enumerator, enumeratorGPR);
         operationCases.append(branchTest32(NonZero, Address(enumeratorGPR, JSPropertyNameEnumerator::flagsOffset()), TrustedImm32((~JSPropertyNameEnumerator::OwnStructureMode) & JSPropertyNameEnumerator::enumerationModeMask)));
+        emitGetVirtualRegister(base, baseGPR);
 
         load8FromMetadata(bytecode, OpEnumeratorNext::Metadata::offsetOfEnumeratorMetadata(), scratch1GPR);
         or32(TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode), scratch1GPR);
@@ -1783,10 +1720,8 @@ void JIT::emit_op_enumerator_next(const JSInstruction* currentInstruction)
         load32(Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset()), indexGPR);
         operationCases.append(branch32(NotEqual, indexGPR, Address(baseGPR, JSCell::structureIDOffset())));
 
-        emitGetVirtualRegisters({
-            { mode, JSValueRegs { modeGPR } },
-            { index, JSValueRegs { indexGPR } }
-        });
+        emitGetVirtualRegister(mode, modeGPR);
+        emitGetVirtualRegister(index, indexGPR);
         Jump notInit = branchTest32(Zero, modeGPR);
         // Need to use add64 since this is a JSValue int32.
         add64(TrustedImm32(1), indexGPR);
@@ -1826,18 +1761,18 @@ void JIT::emit_enumerator_has_propertyImpl(const Bytecode& bytecode, SlowPathFun
 
     JumpList slowCases;
 
-    emitGetVirtualRegisters({
-        { base, JSValueRegs { regT0 } },
-        { enumerator, JSValueRegs { regT1 } },
-        { mode, JSValueRegs { regT2 } }
-    });
-    load8FromMetadata(bytecode, Bytecode::Metadata::offsetOfEnumeratorMetadata(), regT3);
-    or32(regT2, regT3);
-    store8ToMetadata(regT3, bytecode, Bytecode::Metadata::offsetOfEnumeratorMetadata());
+    emitGetVirtualRegister(mode, regT0);
+    load8FromMetadata(bytecode, Bytecode::Metadata::offsetOfEnumeratorMetadata(), regT1);
+    or32(regT0, regT1);
+    store8ToMetadata(regT1, bytecode, Bytecode::Metadata::offsetOfEnumeratorMetadata());
 
-    slowCases.append(branchTest32(Zero, regT2, TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode)));
+    slowCases.append(branchTest32(Zero, regT0, TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode)));
+
+    emitGetVirtualRegister(base, regT0);
+
     slowCases.append(branchIfNotCell(regT0));
 
+    emitGetVirtualRegister(enumerator, regT1);
     load32(Address(regT0, JSCell::structureIDOffset()), regT0);
     slowCases.append(branch32(NotEqual, regT0, Address(regT1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
 
@@ -1886,11 +1821,9 @@ void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::EnumeratorGetByVal::scratch2GPR;
     using BaselineJITRegisters::EnumeratorGetByVal::scratch3GPR;
 
-    emitGetVirtualRegisters({
-        { base, JSValueRegs { baseGPR } },
-        { mode, JSValueRegs { scratch3GPR } },
-        { propertyName, JSValueRegs { propertyGPR } }
-    });
+    emitGetVirtualRegister(base, baseGPR);
+    emitGetVirtualRegister(mode, scratch3GPR);
+    emitGetVirtualRegister(propertyName, propertyGPR);
 
     load8FromMetadata(bytecode, OpEnumeratorGetByVal::Metadata::offsetOfEnumeratorMetadata(), scratch2GPR);
     or32(scratch3GPR, scratch2GPR);
@@ -1981,13 +1914,12 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::EnumeratorPutByVal::scratch2GPR;
 
     // These four registers need to be set up before jumping to SlowPath code.
-    emitGetVirtualRegisters({
-        { base, JSValueRegs { baseGPR } },
-        { value, JSValueRegs { valueGPR } },
-        { propertyName, JSValueRegs { propertyGPR } },
-        { mode, JSValueRegs { scratch2GPR } }
-    });
+    emitGetVirtualRegister(base, baseGPR);
+    emitGetVirtualRegister(value, valueGPR);
+    emitGetVirtualRegister(propertyName, propertyGPR);
     materializePointerIntoMetadata(bytecode, OpEnumeratorPutByVal::Metadata::offsetOfArrayProfile(), profileGPR);
+
+    emitGetVirtualRegister(mode, scratch2GPR);
 
     load8FromMetadata(bytecode, OpEnumeratorPutByVal::Metadata::offsetOfEnumeratorMetadata(), scratch1GPR);
     or32(scratch2GPR, scratch1GPR);

@@ -458,9 +458,6 @@ private:
 #define FINALIZE_CODE(linkBufferReference, resultPtrTag, ...)  \
     FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
 
-#define FINALIZE_BASELINE_CODE(linkBufferReference, resultPtrTag, ...)  \
-    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpBaselineDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
-
 #define FINALIZE_DFG_CODE(linkBufferReference, resultPtrTag, ...)  \
     FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpDFGDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
 
