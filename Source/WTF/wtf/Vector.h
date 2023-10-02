@@ -707,13 +707,14 @@ public:
             TypeOperations::uninitializedFill(begin(), end(), val);
     }
 
-    Vector(const T* data, size_t dataSize)
+    template<typename U = T>
+    Vector(const U* data, size_t dataSize)
         : Base(dataSize, dataSize)
     {
         asanSetInitialBufferSizeTo(dataSize);
 
         if (begin())
-            TypeOperations::uninitializedCopy(data, data + dataSize, begin());
+            VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, data + dataSize, begin());
     }
 
     Vector(std::span<const T> span)
@@ -1985,6 +1986,8 @@ inline Vector<typename CopyOrMoveToVectorResult<Collection>::Type> moveToVector(
 {
     return moveToVectorOf<typename CopyOrMoveToVectorResult<Collection>::Type>(collection);
 }
+
+template<typename U> Vector(const U*, size_t) -> Vector<U>;
 
 } // namespace WTF
 
