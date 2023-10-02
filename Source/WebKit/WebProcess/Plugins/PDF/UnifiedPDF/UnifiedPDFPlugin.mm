@@ -75,16 +75,16 @@ void UnifiedPDFPlugin::installPDFDocument()
     if (!m_view)
         return;
 
+    m_documentLayout.updateLayout(size());
     sizeToFitContents();
     invalidateRect({ IntPoint(), size() });
 }
 
 void UnifiedPDFPlugin::sizeToFitContents()
 {
-    auto contentsSize = expandedIntSize(m_documentLayout.layoutSize());
+    auto contentsSize = expandedIntSize(m_documentLayout.scaledContentsSize());
 
     auto& pluginElement = m_view->pluginElement();
-    pluginElement.setInlineStyleProperty(CSSPropertyWidth, contentsSize.width(), CSSUnitType::CSS_PX);
     pluginElement.setInlineStyleProperty(CSSPropertyHeight, contentsSize.height(), CSSUnitType::CSS_PX);
 }
 
@@ -100,6 +100,8 @@ void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& r
         return;
 
     auto& bufferContext = imageBuffer->context();
+    auto stateSaver = GraphicsContextStateSaver(bufferContext);
+    bufferContext.scale(m_documentLayout.scale());
 
     for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i) {
         auto page = m_documentLayout.pageAtIndex(i);
@@ -108,7 +110,7 @@ void UnifiedPDFPlugin::paint(GraphicsContext& context, const WebCore::IntRect& r
 
         auto destinationRect = m_documentLayout.boundsForPageAtIndex(i);
 
-        auto stateSaver = GraphicsContextStateSaver(bufferContext);
+        auto pageStateSaver = GraphicsContextStateSaver(bufferContext);
         bufferContext.clip(destinationRect);
         bufferContext.fillRect(destinationRect, Color::white);
 
@@ -138,9 +140,10 @@ void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const Affine
     if (size() == pluginSize)
         return;
 
-    // FIXME: Re-layout
-
     PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
+
+    m_documentLayout.updateLayout(size());
+    sizeToFitContents();
 }
 
 RetainPtr<PDFDocument> UnifiedPDFPlugin::pdfDocumentForPrinting() const

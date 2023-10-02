@@ -1935,11 +1935,6 @@ IntPoint PDFPlugin::convertFromPluginToPDFView(const IntPoint& point) const
     return IntPoint(point.x(), size().height() - point.y());
 }
 
-IntPoint PDFPlugin::convertFromRootViewToPlugin(const IntPoint& point) const
-{
-    return m_rootViewToPluginTransform.mapPoint(point);
-}
-
 IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
 {
     IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
@@ -2008,9 +2003,9 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransfo
     if (size() == pluginSize && m_view->pageScaleFactor() == [m_pdfLayerController contentScaleFactor])
         return;
 
+    LOG_WITH_STREAM(Plugins, stream << "PDFPlugin::geometryDidChange - size " << pluginSize << " pluginToRootViewTransform " << pluginToRootViewTransform);
     PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
 
-    m_rootViewToPluginTransform = valueOrDefault(pluginToRootViewTransform.inverse());
     [m_pdfLayerController setFrameSize:pluginSize];
 
     [CATransaction begin];

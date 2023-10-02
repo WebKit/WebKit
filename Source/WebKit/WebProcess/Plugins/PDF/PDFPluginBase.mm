@@ -151,6 +151,7 @@ void PDFPluginBase::addArchiveResource()
 void PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
     m_size = pluginSize;
+    m_rootViewToPluginTransform = valueOrDefault(pluginToRootViewTransform.inverse());
 }
 
 void PDFPluginBase::invalidateRect(const IntRect& rect)
@@ -159,6 +160,11 @@ void PDFPluginBase::invalidateRect(const IntRect& rect)
         return;
 
     m_view->invalidateRect(rect);
+}
+
+IntPoint PDFPluginBase::convertFromRootViewToPlugin(const IntPoint& point) const
+{
+    return m_rootViewToPluginTransform.mapPoint(point);
 }
 
 } // namespace WebKit
