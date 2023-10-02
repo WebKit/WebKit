@@ -30,7 +30,6 @@
 #include "BlockFormattingState.h"
 #include "BlockMarginCollapse.h"
 #include "FloatingContext.h"
-#include "FloatingState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainingBlockChainIterator.h"
@@ -39,6 +38,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include "Logging.h"
+#include "PlacedFloats.h"
 #include "RenderStyleInlines.h"
 #include "TableWrapperBlockFormattingContext.h"
 #include <wtf/IsoMallocInlines.h>
@@ -66,8 +66,8 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> block formatting context -> formatting root(" << &root() << ")");
     auto& formattingRoot = root();
     ASSERT(formattingRoot.hasInFlowOrFloatingChild());
-    auto& floatingState = formattingState().floatingState();
-    auto floatingContext = FloatingContext { *this, floatingState };
+    auto& placedFloats = formattingState().placedFloats();
+    auto floatingContext = FloatingContext { *this, placedFloats };
 
     Vector<const ElementBox*> layoutQueue;
     enum class LayoutDirection { Child, Sibling };
@@ -141,7 +141,7 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
             // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height and vertical margin.
             computeHeightAndMargin(layoutBox, containingBlockConstraints);
             if (layoutBox.isFloatingPositioned())
-                floatingState.append(floatingContext.makeFloatItem(layoutBox, geometryForBox(layoutBox)));
+                placedFloats.append(floatingContext.makeFloatItem(layoutBox, geometryForBox(layoutBox)));
             else {
                 // Adjust the vertical position now that we've got final margin values for non-float avoider boxes.
                 // Float avoiders have pre-computed vertical positions when floats are present.
@@ -303,7 +303,7 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
         bottom = BoxGeometry::marginBoxRect(geometryForBox(*root().lastInFlowChild())).bottom();
     }
 
-    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
+    auto floatingContext = FloatingContext { *this, formattingState().placedFloats() };
     if (auto floatTop = floatingContext.top()) {
         top = std::min(*floatTop, top.value_or(*floatTop));
         auto floatBottom = *floatingContext.bottom();

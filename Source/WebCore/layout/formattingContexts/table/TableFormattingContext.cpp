@@ -27,12 +27,12 @@
 #include "TableFormattingContext.h"
 
 #include "BlockFormattingState.h"
-#include "FloatingState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
+#include "PlacedFloats.h"
 #include "RenderStyleInlines.h"
 #include "TableFormattingConstraints.h"
 #include "TableFormattingState.h"
@@ -104,8 +104,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
 
         if (cellBox.hasInFlowOrFloatingChild()) {
             // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell multiple times as part of the multi-pass table algorithm.
-            auto& floatingStateForCellContent = layoutState().ensureBlockFormattingState(cellBox).floatingState();
-            floatingStateForCellContent.clear();
+            auto& placedFloatsForCellContent = layoutState().ensureBlockFormattingState(cellBox).placedFloats();
+            placedFloatsForCellContent.clear();
             LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(formattingGeometry.constraintsForInFlowContent(cellBox));
         }
         cellBoxGeometry.setContentBoxHeight(formattingGeometry.verticalSpaceForCellContent(*cell, availableVerticalSpace));

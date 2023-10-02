@@ -38,24 +38,24 @@ class Box;
 class BoxGeometry;
 class Rect;
 
-// FloatingState holds the floating boxes for BFC using the BFC's inline direction.
-// FloatingState may be inherited by nested IFCs with mismataching inline direction. In such cases floating boxes
-// are added to the FloatingState as if they had matching inline direction.
-class FloatingState {
-    WTF_MAKE_ISO_ALLOCATED(FloatingState);
+// PlacedFloats holds the floating boxes for BFC/IFC using the BFC's writing mode.
+// PlacedFloats may be inherited by IFCs with mismataching writing mode. In such cases floats
+// are added to PlacledFloats as if they had matching inline direction (i.e. all boxes within PlacedFloats share the same writing mode)
+class PlacedFloats {
+    WTF_MAKE_ISO_ALLOCATED(PlacedFloats);
 public:
-    FloatingState(const ElementBox& blockFormattingContextRoot);
+    PlacedFloats(const ElementBox& blockFormattingContextRoot);
 
-    const ElementBox& root() const { return m_blockFormattingContextRoot; }
+    const ElementBox& formattingContextRoot() const { return m_blockFormattingContextRoot; }
 
-    class FloatItem {
+    class Item {
     public:
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
-        FloatItem(Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const Shape*);
-        FloatItem(const Box&, Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line);
+        Item(Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const Shape*);
+        Item(const Box&, Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line);
 
-        ~FloatItem();
+        ~Item();
 
         bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isRightPositioned() const { return m_position == Position::Right; }
@@ -81,19 +81,19 @@ public:
         RefPtr<const Shape> m_shape;
         std::optional<size_t> m_placedByLine;
     };
-    using FloatList = Vector<FloatItem>;
-    const FloatList& floats() const { return m_floats; }
-    const FloatItem* last() const { return floats().isEmpty() ? nullptr : &m_floats.last(); }
+    using List = Vector<Item>;
+    const List& list() const { return m_list; }
+    const Item* last() const { return list().isEmpty() ? nullptr : &m_list.last(); }
 
-    void append(FloatItem);
+    void append(Item);
     void clear();
 
-    bool isEmpty() const { return floats().isEmpty(); }
+    bool isEmpty() const { return list().isEmpty(); }
     bool hasLeftPositioned() const;
     bool hasRightPositioned() const;
 
     bool isLeftToRightDirection() const { return m_isLeftToRightDirection; }
-    // FIXME: This should always be floatingState's root().style().isLeftToRightDirection() if we used the actual containing block of the intrusive
+    // FIXME: This should always be placedFloats's root().style().isLeftToRightDirection() if we used the actual containing block of the intrusive
     // floats to initiate the floating state in the integration codepath (i.e. when the float comes from the parent BFC).
     void setIsLeftToRightDirection(bool isLeftToRightDirection) { m_isLeftToRightDirection = isLeftToRightDirection; }
 
@@ -101,7 +101,7 @@ public:
 
 private:
     CheckedRef<const ElementBox> m_blockFormattingContextRoot;
-    FloatList m_floats;
+    List m_list;
     enum class PositionType {
         Left = 1 << 0,
         Right  = 1 << 1
@@ -110,12 +110,12 @@ private:
     bool m_isLeftToRightDirection { true };
 };
 
-inline bool FloatingState::hasLeftPositioned() const
+inline bool PlacedFloats::hasLeftPositioned() const
 {
     return m_positionTypes.contains(PositionType::Left);
 }
 
-inline bool FloatingState::hasRightPositioned() const
+inline bool PlacedFloats::hasRightPositioned() const
 {
     return m_positionTypes.contains(PositionType::Right);
 }

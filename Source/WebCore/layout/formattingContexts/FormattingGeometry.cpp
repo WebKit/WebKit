@@ -29,13 +29,13 @@
 #include "BlockFormattingContext.h"
 #include "FlexFormattingState.h"
 #include "FloatingContext.h"
-#include "FloatingState.h"
 #include "FormattingQuirks.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LengthFunctions.h"
 #include "Logging.h"
+#include "PlacedFloats.h"
 #include "RenderStyleInlines.h"
 #include "TableFormattingState.h"
 
@@ -795,7 +795,7 @@ ContentHeightAndMargin FormattingGeometry::complicatedCases(const Box& layoutBox
             // This is a special (quirk?) behavior since the document box is not a formatting context root and
             // all the float boxes end up at the ICB level.
             auto& initialContainingBlock = FormattingContext::initialContainingBlock(documentBox);
-            auto floatingContext = FloatingContext { formattingContext(), downcast<BlockFormattingState>(layoutState().formattingStateForFormattingContext(initialContainingBlock)).floatingState() };
+            auto floatingContext = FloatingContext { formattingContext(), downcast<BlockFormattingState>(layoutState().formattingStateForFormattingContext(initialContainingBlock)).placedFloats() };
             if (auto floatBottom = floatingContext.bottom()) {
                 bottom = std::max<LayoutUnit>(*floatBottom, bottom);
                 auto floatTop = floatingContext.top();

@@ -69,8 +69,8 @@ public:
     InlineLayoutState& inlineLayoutState() { return m_inlineLayoutState; }
     const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
 
-    FloatingState& floatingState() { return inlineLayoutState().parentBlockLayoutState().floatingState(); }
-    const FloatingState& floatingState() const { return inlineLayoutState().parentBlockLayoutState().floatingState(); }
+    PlacedFloats& placedFloats() { return inlineLayoutState().parentBlockLayoutState().placedFloats(); }
+    const PlacedFloats& placedFloats() const { return inlineLayoutState().parentBlockLayoutState().placedFloats(); }
 
 private:
     InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);

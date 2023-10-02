@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "FloatingState.h"
 #include "InlineLine.h"
 #include "InlineLineTypes.h"
 #include "LayoutUnits.h"
+#include "PlacedFloats.h"
 
 namespace WebCore {
 namespace Layout {
 
 struct LineLayoutResult {
-    using PlacedFloatList = FloatingState::FloatList;
+    using PlacedFloatList = PlacedFloats::List;
     using SuspendedFloatList = Vector<const Box*>;
 
     InlineItemRange inlineItemRange;

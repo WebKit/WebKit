@@ -29,12 +29,12 @@
 #include "BlockFormattingQuirks.h"
 #include "BlockFormattingState.h"
 #include "BorderValue.h"
-#include "FloatingState.h"
 #include "LayoutBox.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutUnit.h"
+#include "PlacedFloats.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {

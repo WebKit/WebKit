@@ -26,9 +26,9 @@
 #include "config.h"
 #include "LayoutIntegrationPagination.h"
 
-#include "FloatingState.h"
 #include "FontCascade.h"
 #include "InlineIteratorLineBox.h"
+#include "PlacedFloats.h"
 #include "RenderBlockFlow.h"
 #include "RenderStyleInlines.h"
 #include "RenderTableCell.h"
@@ -36,23 +36,23 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::FloatingState& floatingState, RenderBlockFlow& flow)
+Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, RenderBlockFlow& flow)
 {
     auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
 
     HashMap<size_t, LayoutUnit, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>  lineFloatBottomMap;
-    for (auto& item : floatingState.floats()) {
-        if (!item.layoutBox())
+    for (auto& floatBox : placedFloats.list()) {
+        if (!floatBox.layoutBox())
             continue;
 
-        auto& renderer = downcast<RenderBox>(inlineContent.rendererForLayoutBox(*item.layoutBox()));
+        auto& renderer = downcast<RenderBox>(inlineContent.rendererForLayoutBox(*floatBox.layoutBox()));
         bool isUsplittable = renderer.isUnsplittableForPagination();
 
-        auto placedByLine = item.placedByLine();
+        auto placedByLine = floatBox.placedByLine();
         if (!placedByLine) {
             if (isUsplittable) {
-                auto rect = item.absoluteRectWithMargin();
+                auto rect = floatBox.absoluteRectWithMargin();
                 flow.updateMinimumPageHeight(rect.top(), rect.height());
             }
             continue;
@@ -60,7 +60,7 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
 
         auto floatMinimumBottom = [&] {
             if (isUsplittable)
-                return item.absoluteRectWithMargin().bottom();
+                return floatBox.absoluteRectWithMargin().bottom();
 
             if (auto* block = dynamicDowncast<RenderBlockFlow>(renderer)) {
                 if (auto firstLine = InlineIterator::firstLineBoxFor(*block))

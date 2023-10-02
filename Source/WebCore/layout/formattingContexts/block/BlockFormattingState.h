@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatingState.h"
 #include "FormattingState.h"
+#include "PlacedFloats.h"
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
 
@@ -40,8 +40,8 @@ public:
     BlockFormattingState(LayoutState&, const ElementBox& blockFormattingContextRoot);
     ~BlockFormattingState();
 
-    const FloatingState& floatingState() const { return m_floatingState; }
-    FloatingState& floatingState() { return m_floatingState; }
+    const PlacedFloats& placedFloats() const { return m_placedFloats; }
+    PlacedFloats& placedFloats() { return m_placedFloats; }
 
     // Since we layout the out-of-flow boxes at the end of the formatting context layout, it's okay to store them in the formatting state -as opposed to the containing block level.
     using OutOfFlowBoxList = Vector<CheckedRef<const Box>>;
@@ -60,7 +60,7 @@ public:
     void shrinkToFit();
 
 private:
-    FloatingState m_floatingState;
+    PlacedFloats m_placedFloats;
     OutOfFlowBoxList m_outOfFlowBoxes;
     HashMap<CheckedRef<const Box>, UsedVerticalMargin> m_usedVerticalMargins;
     HashSet<CheckedRef<const Box>> m_clearanceSet;

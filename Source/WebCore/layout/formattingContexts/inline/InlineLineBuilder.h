@@ -95,8 +95,8 @@ private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const InlineLayoutState& inlineLayoutState() const;
     const BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
-    FloatingState& floatingState();
-    const FloatingState& floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
+    PlacedFloats& placedFloats();
+    const PlacedFloats& placedFloats() const { return const_cast<LineBuilder&>(*this).placedFloats(); }
     const ElementBox& root() const;
     const RenderStyle& rootStyle() const;
 

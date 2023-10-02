@@ -448,9 +448,9 @@ const ElementBox& TextOnlySimpleLineBuilder::root() const
     return formattingContext().root();
 }
 
-bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineContentCache& inlineContentCache, const FloatingState* floatingState)
+bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineContentCache& inlineContentCache, const PlacedFloats* placedFloats)
 {
-    if (floatingState && !floatingState->isEmpty())
+    if (placedFloats && !placedFloats->isEmpty())
         return false;
     if (!inlineContentCache.isNonBidiTextAndForcedLineBreakOnlyContent())
         return false;

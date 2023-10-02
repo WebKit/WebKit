@@ -148,7 +148,7 @@ private:
     void updateListMarkerDimensions(const RenderListMarker&);
 
     void prepareLayoutState();
-    void prepareFloatingState();
+    void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
     Vector<LineAdjustment> adjustContent();
     void updateRenderTreePositions(const Vector<LineAdjustment>&);

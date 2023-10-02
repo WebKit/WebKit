@@ -72,7 +72,7 @@ InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingCon
 
 InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage)
 {
-    auto& floatingState = this->floatingState();
+    auto& placedFloats = this->placedFloats();
     if (!root().hasInFlowChild() && !root().hasOutOfFlowChild()) {
         // Float only content does not support partial layout.
         ASSERT(!lineDamage);
@@ -109,7 +109,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
             inlineLayoutState().setAvailableLineWidthOverride({ *balancedLineWidths });
     }
 
-    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), this->inlineContentCache(), &floatingState)) {
+    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), this->inlineContentCache(), &placedFloats)) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, constraints.horizontal(), inlineItems };
         return lineLayout(simplifiedLineBuilder, inlineItems, needsLayoutRange, previousLine(), constraints, lineDamage);
     }
@@ -176,7 +176,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         return layoutResult;
     }
 
-    auto floatingContext = FloatingContext { *this, floatingState() };
+    auto floatingContext = FloatingContext { *this, placedFloats() };
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto leadingInlineItemPosition = needsLayoutRange.start;
@@ -217,8 +217,8 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
     ASSERT(!root().hasInFlowChild());
 
     auto& inlineContentCache = this->inlineContentCache();
-    auto& floatingState = this->floatingState();
-    auto floatingContext = FloatingContext { *this, floatingState };
+    auto& placedFloats = this->placedFloats();
+    auto floatingContext = FloatingContext { *this, placedFloats };
 
     InlineItemsBuilder { inlineContentCache, root() }.build({ });
 
@@ -232,7 +232,7 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
 
             auto floatBoxTopLeft = floatingContext.positionForFloat(floatBox, floatBoxGeometry, constraints.horizontal());
             floatBoxGeometry.setTopLeft(floatBoxTopLeft);
-            floatingState.append(floatingContext.makeFloatItem(floatBox, floatBoxGeometry));
+            placedFloats.append(floatingContext.makeFloatItem(floatBox, floatBoxGeometry));
             continue;
         }
         ASSERT_NOT_REACHED();
@@ -339,7 +339,7 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
         inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
         return false;
     }
-    if (!floatingState().isEmpty()) {
+    if (!placedFloats().isEmpty()) {
         inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
         return false;
     }
