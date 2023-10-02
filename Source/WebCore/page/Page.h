@@ -1058,6 +1058,8 @@ public:
 
     void opportunisticallyRunIdleCallbacks();
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
+    String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&);
+    WEBCORE_EXPORT void setMediaKeysStorageDirectory(const String&);
 
     bool isWaitingForLoadToFinish() const { return m_isWaitingForLoadToFinish; }
 

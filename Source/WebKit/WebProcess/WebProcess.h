@@ -428,6 +428,9 @@ public:
     const OptionSet<DMABufRendererBufferMode>& dmaBufRendererBufferMode() const { return m_dmaBufRendererBufferMode; }
 #endif
 
+    String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
+    FileSystem::Salt mediaKeysStorageSalt() const { return m_mediaKeysStorageSalt; }
+
 private:
     WebProcess();
     ~WebProcess();
@@ -808,6 +811,8 @@ private:
     bool m_imageAnimationEnabled { true };
 
     HashSet<WebCore::RegistrableDomain> m_allowedFirstPartiesForCookies;
+    String m_mediaKeysStorageDirectory;
+    FileSystem::Salt m_mediaKeysStorageSalt;
 
     HashMap<WebTransportSessionIdentifier, WeakPtr<WebTransportSession>> m_webTransportSessions;
 };

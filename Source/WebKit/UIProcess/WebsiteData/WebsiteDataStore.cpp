@@ -64,6 +64,7 @@
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/StorageUtilities.h>
 #include <WebCore/WebLockRegistry.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedPtr.h>
@@ -112,6 +113,11 @@ static HashMap<PAL::SessionID, CheckedPtr<WebsiteDataStore>>& allDataStores()
     RELEASE_ASSERT(isUIThread());
     static NeverDestroyed<HashMap<PAL::SessionID, CheckedPtr<WebsiteDataStore>>> map;
     return map;
+}
+
+static String computeMediaKeyFile(const String& mediaKeyDirectory)
+{
+    return FileSystem::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist"_s);
 }
 
 WorkQueue& WebsiteDataStore::websiteDataStoreIOQueue()
@@ -342,6 +348,42 @@ void WebsiteDataStore::unregisterProcess(WebProcessProxy& process)
     m_processes.remove(process);
 }
 
+String WebsiteDataStore::migrateMediaKeysStorageIfNecessary(const String& directory)
+{
+    if (directory.isEmpty())
+        return emptyString();
+
+    static constexpr ASCIILiteral versionName = "v1"_s;
+    auto versionDirectory = FileSystem::pathByAppendingComponent(directory, versionName);
+    auto saltPath = FileSystem::pathByAppendingComponent(versionDirectory, "salt"_s);
+    m_mediaKeysStorageSalt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
+
+    auto originDirectoryNames = FileSystem::listDirectory(directory);
+    // Migrate existing data to new version directory.
+    for (auto name : originDirectoryNames) {
+        if (name == versionName)
+            continue;
+
+        auto originData = WebCore::SecurityOriginData::fromDatabaseIdentifier(name);
+        if (!originData)
+            continue;
+
+        auto originDirectory = FileSystem::pathByAppendingComponent(directory, name);
+        auto mediaKeysStorageFile = computeMediaKeyFile(originDirectory);
+        if (!FileSystem::fileExists(mediaKeysStorageFile)) {
+            FileSystem::deleteEmptyDirectory(originDirectory);
+            continue;
+        }
+
+        auto newOriginDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(m_mediaKeysStorageSalt, *originData);
+        auto newOriginDirectory = FileSystem::pathByAppendingComponent(versionDirectory, newOriginDirectoryName);
+        if (FileSystem::moveFile(originDirectory, newOriginDirectory))
+            WebCore::StorageUtilities::writeOriginToFile(FileSystem::pathByAppendingComponent(newOriginDirectory, "origin"_s), WebCore::ClientOrigin { *originData, *originData });
+    }
+
+    return versionDirectory;
+}
+
 void WebsiteDataStore::resolveDirectoriesIfNecessary()
 {
     if (m_hasResolvedDirectories)
@@ -353,8 +395,10 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setApplicationCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->applicationCacheDirectory()));
     if (!m_configuration->mediaCacheDirectory().isEmpty())
         m_resolvedConfiguration->setMediaCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->mediaCacheDirectory()));
-    if (!m_configuration->mediaKeysStorageDirectory().isEmpty())
-        m_resolvedConfiguration->setMediaKeysStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->mediaKeysStorageDirectory()));
+    if (!m_configuration->mediaKeysStorageDirectory().isEmpty()) {
+        auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
+        m_resolvedConfiguration->setMediaKeysStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(mediaKeysStorageDirectory));
+    }
     if (!m_configuration->indexedDBDatabaseDirectory().isEmpty())
         m_resolvedConfiguration->setIndexedDBDatabaseDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->indexedDBDatabaseDirectory()));
     if (!m_configuration->alternativeServicesDirectory().isEmpty())
@@ -620,9 +664,10 @@ private:
     }
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
-        m_queue->dispatch([mediaKeysStorageDirectory = m_configuration->mediaKeysStorageDirectory().isolatedCopy(), callbackAggregator] {
+        auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
+        m_queue->dispatch([mediaKeysStorageDirectory = mediaKeysStorageDirectory.isolatedCopy(), callbackAggregator] {
             WebsiteData websiteData;
-            websiteData.entries = mediaKeyOrigins(mediaKeysStorageDirectory).map([](auto& origin) {
+            websiteData.entries = mediaKeysStorageOrigins(mediaKeysStorageDirectory).map([](auto& origin) {
                 return WebsiteData::Entry { origin, WebsiteDataType::MediaKeys, 0 };
             });
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
@@ -743,8 +788,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     }
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
-        m_queue->dispatch([mediaKeysStorageDirectory = m_configuration->mediaKeysStorageDirectory().isolatedCopy(), callbackAggregator, modifiedSince] {
-            removeMediaKeys(mediaKeysStorageDirectory, modifiedSince);
+        auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
+        m_queue->dispatch([mediaKeysStorageDirectory = mediaKeysStorageDirectory.isolatedCopy(), callbackAggregator, modifiedSince] {
+            removeMediaKeysStorage(mediaKeysStorageDirectory, modifiedSince);
         });
     }
 
@@ -861,8 +907,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 origins.add(crossThreadCopy(origin));
         }
 
-        m_queue->dispatch([mediaKeysStorageDirectory = m_configuration->mediaKeysStorageDirectory().isolatedCopy(), callbackAggregator, origins = WTFMove(origins)] {
-            removeMediaKeys(mediaKeysStorageDirectory, origins);
+        auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
+        m_queue->dispatch([mediaKeysStorageDirectory = mediaKeysStorageDirectory.isolatedCopy(), salt = m_mediaKeysStorageSalt, callbackAggregator, origins = WTFMove(origins)] {
+            removeMediaKeysStorage(mediaKeysStorageDirectory, origins, salt);
         });
     }
 }
@@ -1542,11 +1589,6 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::ensureProcessPools() const
     return processPools;
 }
 
-static String computeMediaKeyFile(const String& mediaKeyDirectory)
-{
-    return FileSystem::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist"_s);
-}
-
 #if !PLATFORM(COCOA)
 void WebsiteDataStore::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificate, const String& host)
 {
@@ -1559,55 +1601,57 @@ void WebsiteDataStore::allowTLSCertificateChainForLocalPCMTesting(const WebCore:
     protectedNetworkProcess()->send(Messages::NetworkProcess::AllowTLSCertificateChainForLocalPCMTesting(sessionID(), certificate), 0);
 }
 
-Vector<WebCore::SecurityOriginData> WebsiteDataStore::mediaKeyOrigins(const String& mediaKeysStorageDirectory)
+Vector<WebCore::SecurityOriginData> WebsiteDataStore::mediaKeysStorageOrigins(const String& mediaKeysStorageDirectory)
 {
     ASSERT(!mediaKeysStorageDirectory.isEmpty());
 
     Vector<WebCore::SecurityOriginData> origins;
 
-    for (const auto& mediaKeyIdentifier : FileSystem::listDirectory(mediaKeysStorageDirectory)) {
-        auto originPath = FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, mediaKeyIdentifier);
-        auto mediaKeyFile = computeMediaKeyFile(originPath);
-        if (!FileSystem::fileExists(mediaKeyFile))
+    for (const auto& originDirectoryName : FileSystem::listDirectory(mediaKeysStorageDirectory)) {
+        auto originDirectory = FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, originDirectoryName);
+        auto mediaKeysStorageFile = computeMediaKeyFile(originDirectory);
+        if (!FileSystem::fileExists(mediaKeysStorageFile))
             continue;
 
-        if (auto securityOrigin = WebCore::SecurityOriginData::fromDatabaseIdentifier(mediaKeyIdentifier))
-            origins.append(*securityOrigin);
+        auto originFile = FileSystem::pathByAppendingComponent(originDirectory, "origin"_s);
+        if (auto origin = WebCore::StorageUtilities::readOriginFromFile(originFile))
+            origins.append(origin->clientOrigin);
     }
 
     return origins;
 }
 
-void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, WallTime modifiedSince)
+void WebsiteDataStore::removeMediaKeysStorage(const String& mediaKeysStorageDirectory, WallTime modifiedSince)
 {
     ASSERT(!mediaKeysStorageDirectory.isEmpty());
 
-    for (const auto& directoryName : FileSystem::listDirectory(mediaKeysStorageDirectory)) {
-        auto mediaKeyDirectory = FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, directoryName);
-        auto mediaKeyFile = computeMediaKeyFile(mediaKeyDirectory);
-
-        auto modificationTime = FileSystem::fileModificationTime(mediaKeyFile);
+    for (const auto& originDirectoryName : FileSystem::listDirectory(mediaKeysStorageDirectory)) {
+        auto originDirectory = FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, originDirectoryName);
+        auto mediaKeysStorageFile = computeMediaKeyFile(originDirectory);
+        auto modificationTime = FileSystem::fileModificationTime(mediaKeysStorageFile);
         if (!modificationTime)
             continue;
 
         if (modificationTime.value() < modifiedSince)
             continue;
 
-        FileSystem::deleteFile(mediaKeyFile);
-        FileSystem::deleteEmptyDirectory(mediaKeyDirectory);
+        FileSystem::deleteFile(mediaKeysStorageFile);
+        FileSystem::deleteFile(FileSystem::pathByAppendingComponent(originDirectory, "origin"_s));
+        FileSystem::deleteEmptyDirectory(originDirectory);
     }
 }
 
-void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, const HashSet<WebCore::SecurityOriginData>& origins)
+void WebsiteDataStore::removeMediaKeysStorage(const String& mediaKeysStorageDirectory, const HashSet<WebCore::SecurityOriginData>& origins, const FileSystem::Salt& salt)
 {
     ASSERT(!mediaKeysStorageDirectory.isEmpty());
 
     for (const auto& origin : origins) {
-        auto mediaKeyDirectory = FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, origin.databaseIdentifier());
-        auto mediaKeyFile = computeMediaKeyFile(mediaKeyDirectory);
-
-        FileSystem::deleteFile(mediaKeyFile);
-        FileSystem::deleteEmptyDirectory(mediaKeyDirectory);
+        auto originDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(salt, origin);
+        auto originDirectory = FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, originDirectoryName);
+        auto mediaKeysStorageFile = computeMediaKeyFile(originDirectory);
+        FileSystem::deleteFile(mediaKeysStorageFile);
+        FileSystem::deleteFile(FileSystem::pathByAppendingComponent(originDirectory, "origin"_s));
+        FileSystem::deleteEmptyDirectory(originDirectory);
     }
 }
 
@@ -2457,6 +2501,13 @@ void WebsiteDataStore::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF:
     protectedNetworkProcess()->send(Messages::NetworkProcess::SetProxyConfigData(m_sessionID, WTFMove(data)), 0);
 }
 #endif // HAVE(NW_PROXY_CONFIG)
+
+FileSystem::Salt WebsiteDataStore::mediaKeysStorageSalt() const
+{
+    RELEASE_ASSERT(m_hasResolvedDirectories);
+
+    return m_mediaKeysStorageSalt;
+}
 
 void WebsiteDataStore::setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&& completionHandler)
 {

@@ -1799,6 +1799,8 @@ public:
     void scheduleContentRelevancyUpdate(ContentRelevancy);
     void updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor);
 
+    String mediaKeysStorageDirectory();
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,

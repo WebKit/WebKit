@@ -746,6 +746,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite))
             mediaKeyStorageDirectoryExtensionHandle = WTFMove(*handle);
     }
+    auto mediaKeyStorageSalt = websiteDataStore.mediaKeysStorageSalt();
 
     String javaScriptConfigurationDirectory;
     if (!m_javaScriptConfigurationDirectory.isEmpty())
@@ -789,6 +790,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(mediaCacheDirectoryExtensionHandle),
         WTFMove(mediaKeyStorageDirectory),
         WTFMove(mediaKeyStorageDirectoryExtensionHandle),
+        WTFMove(mediaKeyStorageSalt),
         WTFMove(javaScriptConfigurationDirectory),
         WTFMove(javaScriptConfigurationDirectoryExtensionHandle),
 #if ENABLE(TRACKING_PREVENTION)

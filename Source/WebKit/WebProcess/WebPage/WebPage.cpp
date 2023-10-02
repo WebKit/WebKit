@@ -676,7 +676,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
-        makeUniqueRef<WebStorageProvider>(),
+        makeUniqueRef<WebStorageProvider>(WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt()),
         makeUniqueRef<WebModelPlayerProvider>(*this),
         WebProcess::singleton().badgeClient(),
         m_historyItemClient.copyRef(),
@@ -953,11 +953,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     for (auto& mimeType : parameters.mimeTypesWithCustomContentProviders)
         m_mimeTypesWithCustomContentProviders.add(mimeType);
 
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (WebMediaKeyStorageManager* manager = webProcess.supplement<WebMediaKeyStorageManager>())
-        m_page->settings().setMediaKeysStorageDirectory(manager->mediaKeyStorageDirectory());
-#endif
     if (parameters.viewScaleFactor != 1)
         scaleView(parameters.viewScaleFactor);
 

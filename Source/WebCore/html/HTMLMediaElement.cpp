@@ -2985,15 +2985,7 @@ void HTMLMediaElement::mediaPlayerKeyNeeded(const SharedBuffer& initData)
 
 String HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory() const
 {
-    auto* page = document().page();
-    if (!page || page->usesEphemeralSession())
-        return emptyString();
-
-    String storageDirectory = document().settings().mediaKeysStorageDirectory();
-    if (storageDirectory.isEmpty())
-        return emptyString();
-
-    return FileSystem::pathByAppendingComponent(storageDirectory, document().securityOrigin().data().databaseIdentifier());
+    return document().mediaKeysStorageDirectory();
 }
 
 void HTMLMediaElement::webkitSetMediaKeys(WebKitMediaKeys* mediaKeys)

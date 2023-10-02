@@ -661,6 +661,8 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
     
 #endif
 
+    m_mediaKeysStorageDirectory = parameters.mediaKeyStorageDirectory;
+    m_mediaKeysStorageSalt = parameters.mediaKeysStorageSalt;
     for (auto& supplement : m_supplements.values())
         supplement->setWebsiteDataStore(parameters);
 

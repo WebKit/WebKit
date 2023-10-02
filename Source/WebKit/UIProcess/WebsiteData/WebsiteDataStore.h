@@ -290,6 +290,7 @@ public:
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     const String& resolvedModelElementCacheDirectory() const { return m_resolvedConfiguration->modelElementCacheDirectory(); }
 #endif
+    FileSystem::Salt mediaKeysStorageSalt() const;
 
     static void setCachedProcessSuspensionDelayForTesting(Seconds);
 
@@ -511,9 +512,9 @@ private:
     // Will create a temporary process pool is none exists yet.
     HashSet<RefPtr<WebProcessPool>> ensureProcessPools() const;
 
-    static Vector<WebCore::SecurityOriginData> mediaKeyOrigins(const String& mediaKeysStorageDirectory);
-    static void removeMediaKeys(const String& mediaKeysStorageDirectory, WallTime modifiedSince);
-    static void removeMediaKeys(const String& mediaKeysStorageDirectory, const HashSet<WebCore::SecurityOriginData>&);
+    static Vector<WebCore::SecurityOriginData> mediaKeysStorageOrigins(const String& mediaKeysStorageDirectory);
+    static void removeMediaKeysStorage(const String& mediaKeysStorageDirectory, WallTime modifiedSince);
+    static void removeMediaKeysStorage(const String& mediaKeysStorageDirectory, const HashSet<WebCore::SecurityOriginData>&, const FileSystem::Salt&);
 
     void registerWithSessionIDMap();
     bool hasActivePages();
@@ -535,6 +536,8 @@ private:
     String resolvedContainerCachesNetworkingDirectory();
     String parentBundleDirectory() const;
 #endif
+
+    String migrateMediaKeysStorageIfNecessary(const String& directory);
 
     const PAL::SessionID m_sessionID;
 
@@ -609,6 +612,7 @@ private:
     CompletionHandler<void(String&&)> m_completionHandlerForRemovalFromNetworkProcess;
 
     bool m_inspectionForServiceWorkersAllowed { true };
+    FileSystem::Salt m_mediaKeysStorageSalt;
 };
 
 }

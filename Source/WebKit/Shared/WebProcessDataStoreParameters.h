@@ -28,6 +28,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
@@ -44,6 +45,7 @@ struct WebProcessDataStoreParameters {
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     String mediaKeyStorageDirectory;
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
+    FileSystem::Salt mediaKeysStorageSalt;
     String javaScriptConfigurationDirectory;
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
 #if ENABLE(TRACKING_PREVENTION)

@@ -233,18 +233,7 @@ void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t syst
 String WebKitMediaKeySession::mediaKeysStorageDirectory() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (!document)
-        return emptyString();
-
-    auto* page = document->page();
-    if (!page || page->usesEphemeralSession())
-        return emptyString();
-
-    auto storageDirectory = document->settings().mediaKeysStorageDirectory();
-    if (storageDirectory.isEmpty())
-        return emptyString();
-
-    return FileSystem::pathByAppendingComponent(storageDirectory, document->securityOrigin().data().databaseIdentifier());
+    return document ? document->mediaKeysStorageDirectory() : emptyString();
 }
 
 bool WebKitMediaKeySession::virtualHasPendingActivity() const
