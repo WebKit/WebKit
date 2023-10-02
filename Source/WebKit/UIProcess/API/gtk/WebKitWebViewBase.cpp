@@ -2127,6 +2127,7 @@ static void webkitWebViewBaseUnroot(GtkWidget* widget)
         auto* surface = gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow));
         g_clear_signal_handler(&priv->toplevelWindowStateChangedID, surface);
         g_clear_signal_handler(&priv->toplevelWindowEnterMonitorID, surface);
+        g_clear_signal_handler(&priv->toplevelWindowLeaveMonitorID, surface);
     }
     priv->toplevelOnScreenWindow = nullptr;
 
