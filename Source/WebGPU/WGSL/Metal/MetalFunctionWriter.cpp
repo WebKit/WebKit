@@ -473,7 +473,7 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
 
     visit(type);
     m_stringBuilder.append(" ", variable.name());
-    if (variable.maybeInitializer()) {
+    if (variable.maybeInitializer() && variable.flavor() != AST::VariableFlavor::Override) {
         m_stringBuilder.append(" = ");
         visit(type, *variable.maybeInitializer());
     }
