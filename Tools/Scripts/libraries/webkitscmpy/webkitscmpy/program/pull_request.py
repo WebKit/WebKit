@@ -213,7 +213,7 @@ class PullRequest(Command):
             sys.stderr.write("'--remote={}' is incompatible with '--redacted'\n".format(args.remote))
             return None
 
-        branch_point = Branch.branch_point(repository)
+        branch_point = repository.branch_point()
         if not branch_point:
             sys.stderr.write('Failed to determine where pull-request diverged from production branch\n')
             return None

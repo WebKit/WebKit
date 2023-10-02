@@ -557,7 +557,7 @@ class Git(SCM, SVNRepository):
     def remote_branch_ref(self, find_branch=False):
         if find_branch:
             repository = local.Git(self.checkout_root)
-            branch_point = branch.Branch.branch_point(repository)
+            branch_point = repository.branch_point()
             if branch_point:
                 # First, look for a remote branch that contains the branch point
                 for remote in repository.source_remotes():

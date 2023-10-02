@@ -326,6 +326,7 @@ class Git(Scm):
         'webkitscmpy.set-upstream-on-push': ['false', 'true'],
     }
     CONFIG_LOCATIONS = ['global', 'repository', 'project']
+    MERGE_BASE_SHARD_SIZE = 512  # Windows has a maximum of ~32K characters in a single command
 
     @classmethod
     @decorators.Memoize()
@@ -619,6 +620,67 @@ class Git(Scm):
                     'remotes/{}/{}'.format(key, default_branch) if key else default_branch,
                 ], cwd=self.root_path, capture_output=True, encoding='utf-8').returncode == 0
         return default_branch in self.branches_for(hash)
+
+    def branch_point(self, ref='HEAD'):
+        branches = self.branches_for(remote=None)
+        production_branches = [
+            'remotes/{}/{}'.format(remote, branch)
+            for remote in self.source_remotes()
+            for branch in branches[remote] if not self.dev_branches.match(branch)
+        ]
+
+        head = run(
+            [self.executable(), 'rev-parse', ref],
+            cwd=self.root_path,
+            capture_output=True,
+            encoding='utf-8',
+        ).stdout.strip()
+
+        partial_bases = set()
+        for shard in [
+            production_branches[self.MERGE_BASE_SHARD_SIZE * i:self.MERGE_BASE_SHARD_SIZE * (i + 1)]
+            for i in range(1 + len(production_branches) // self.MERGE_BASE_SHARD_SIZE)
+        ]:
+            if not shard:
+                continue
+            result = run(
+                [self.executable(), 'merge-base', head] + shard,
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8',
+            )
+            if result.returncode:
+                partial_bases = set()
+                break
+            partial_base = result.stdout.strip()
+            if partial_base == head:
+                # If the current commit is ever the merge-base, then the current commit will
+                # be the merge-base when we combine all shards.
+                return self.commit(
+                    hash=head,
+                    include_log=False, include_identifier=False,
+                )
+            partial_bases.add(partial_base)
+
+        merge_base = None
+        if len(partial_bases) == 1:
+            merge_base = list(partial_bases)[0]
+        elif len(partial_bases) > 1:
+            result = run(
+                [self.executable(), 'merge-base', head] + list(partial_bases),
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8',
+            )
+            if not result.returncode:
+                merge_base = result.stdout.strip()
+        if not merge_base:
+            sys.stderr.write('Failed to find intersection with production branch\n')
+            return None
+        return self.commit(
+            hash=merge_base,
+            include_log=False, include_identifier=False,
+        )
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
         # Only git-svn checkouts can convert revisions to fully qualified commits, unless we happen to have a SVN cache built

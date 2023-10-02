@@ -36,7 +36,6 @@ class Branch(Command):
     help = 'Create a local development branch from the current checkout state'
 
     PR_PREFIX = 'eng'
-    MERGE_BASE_SHARD_SIZE = 512  # Windows has a maximum of ~32K characters in a single command
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -89,68 +88,6 @@ class Branch(Command):
                 if branch in repository.branches_for(remote=name, cached=True):
                     return False
         return True
-
-    @classmethod
-    def branch_point(cls, repository):
-        branches = repository.branches_for(remote=None)
-        production_branches = [
-            'remotes/{}/{}'.format(remote, branch)
-            for remote in repository.source_remotes()
-            for branch in branches[remote] if not repository.dev_branches.match(branch)
-        ]
-
-        head = run(
-            [repository.executable(), 'rev-parse', 'HEAD'],
-            cwd=repository.root_path,
-            capture_output=True,
-            encoding='utf-8',
-        ).stdout.strip()
-
-        partial_bases = set()
-        for shard in [
-            production_branches[cls.MERGE_BASE_SHARD_SIZE * i:cls.MERGE_BASE_SHARD_SIZE * (i + 1)]
-            for i in range(1 + len(production_branches) // cls.MERGE_BASE_SHARD_SIZE)
-        ]:
-            if not shard:
-                continue
-            result = run(
-                [repository.executable(), 'merge-base', head] + shard,
-                cwd=repository.root_path,
-                capture_output=True,
-                encoding='utf-8',
-            )
-            if result.returncode:
-                partial_bases = set()
-                break
-            partial_base = result.stdout.strip()
-            if partial_base == head:
-                # If the current commit is ever the merge-base, then the current commit will
-                # be the merge-base when we combine all shards.
-                return repository.commit(
-                    hash=head,
-                    include_log=False, include_identifier=False,
-                )
-            partial_bases.add(partial_base)
-
-        merge_base = None
-        if len(partial_bases) == 1:
-            merge_base = list(partial_bases)[0]
-        elif len(partial_bases) > 1:
-            result = run(
-                [repository.executable(), 'merge-base', head] + list(partial_bases),
-                cwd=repository.root_path,
-                capture_output=True,
-                encoding='utf-8',
-            )
-            if not result.returncode:
-                merge_base = result.stdout.strip()
-        if not merge_base:
-            sys.stderr.write('Failed to find intersection with production branch\n')
-            return None
-        return repository.commit(
-            hash=merge_base,
-            include_log=False, include_identifier=False,
-        )
 
     @classmethod
     def to_branch_name(cls, value):

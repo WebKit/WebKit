@@ -516,14 +516,14 @@ Created the local development branch 'eng/4'
                 )
             ]
             repo.head = repo.commits['eng/1234'][-1]
-            self.assertEqual(program.Branch.branch_point(local.Git(self.path)).hash, 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
+            self.assertEqual(local.Git(self.path).branch_point().hash, 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
         self.assertEqual(captured.root.log.getvalue(), '')
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
 
     def test_branch_point_main(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn():
-            self.assertEqual(program.Branch.branch_point(local.Git(self.path)).hash, 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
+            self.assertEqual(local.Git(self.path).branch_point().hash, 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
         self.assertEqual(captured.root.log.getvalue(), '')
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
