@@ -219,12 +219,12 @@ LocalFrame::~LocalFrame()
 
 void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)
 {
-    m_destructionObservers.add(observer);
+    m_destructionObservers.add(&observer);
 }
 
 void LocalFrame::removeDestructionObserver(FrameDestructionObserver& observer)
 {
-    m_destructionObservers.remove(observer);
+    m_destructionObservers.remove(&observer);
 }
 
 void LocalFrame::setView(RefPtr<LocalFrameView>&& view)
@@ -778,7 +778,7 @@ void LocalFrame::willDetachPage()
         parent->loader().checkLoadComplete();
 
     for (auto& observer : m_destructionObservers)
-        observer.willDetachPage();
+        observer->willDetachPage();
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.

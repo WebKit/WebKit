@@ -1405,7 +1405,7 @@ RenderBox* LocalFrameView::embeddedContentBox() const
 void LocalFrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
     if (!m_embeddedObjectsToUpdate)
-        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<CheckedPtr<RenderEmbeddedObject>>>();
+        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<RenderEmbeddedObject*>>();
 
     auto& element = embeddedObject.frameOwnerElement();
     if (is<HTMLPlugInImageElement>(element))

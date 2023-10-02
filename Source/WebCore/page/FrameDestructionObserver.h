@@ -25,14 +25,13 @@
 
 #pragma once
 
-#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class LocalFrame;
 
-class FrameDestructionObserver : public CanMakeWeakPtr<FrameDestructionObserver> {
+class FrameDestructionObserver {
 public:
     WEBCORE_EXPORT explicit FrameDestructionObserver(LocalFrame*);
 

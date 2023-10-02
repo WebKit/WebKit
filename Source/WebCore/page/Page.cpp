@@ -770,13 +770,13 @@ void Page::setNeedsRecalcStyleInAllFrames()
 
 void Page::refreshPlugins(bool reload)
 {
-    WeakHashSet<PluginInfoProvider> pluginInfoProviders;
+    HashSet<PluginInfoProvider*> pluginInfoProviders;
 
     for (auto& page : allPages())
-        pluginInfoProviders.add(page->pluginInfoProvider());
+        pluginInfoProviders.add(&page->pluginInfoProvider());
 
     for (auto& pluginInfoProvider : pluginInfoProviders)
-        pluginInfoProvider.refresh(reload);
+        pluginInfoProvider->refresh(reload);
 }
 
 PluginData& Page::pluginData()
@@ -3150,7 +3150,7 @@ void Page::addRelevantRepaintedObject(const RenderObject& object, const LayoutRe
 
     // If this object was previously counted as an unpainted object, remove it from that HashSet
     // and corresponding Region. FIXME: This doesn't do the right thing if the objects overlap.
-    if (m_relevantUnpaintedRenderObjects.remove(object))
+    if (m_relevantUnpaintedRenderObjects.remove(&object))
         m_relevantUnpaintedRegion.subtract(snappedPaintRect);
 
     // Split the relevantRect into a top half and a bottom half. Making sure we have coverage in
@@ -3201,7 +3201,7 @@ void Page::addRelevantUnpaintedObject(const RenderObject& object, const LayoutRe
     if (!objectPaintRect.intersects(snappedIntRect(relevantViewRect(&object.view()))))
         return;
 
-    m_relevantUnpaintedRenderObjects.add(object);
+    m_relevantUnpaintedRenderObjects.add(&object);
     m_relevantUnpaintedRegion.unite(snappedIntRect(objectPaintRect));
 }
 

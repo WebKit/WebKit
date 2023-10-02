@@ -301,7 +301,7 @@ private:
     FrameView* virtualView() const final;
     DOMWindow* virtualWindow() const final;
 
-    WeakHashSet<FrameDestructionObserver> m_destructionObservers;
+    HashSet<FrameDestructionObserver*> m_destructionObservers; // FIXME: Should use WeakHashSet.
 
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 

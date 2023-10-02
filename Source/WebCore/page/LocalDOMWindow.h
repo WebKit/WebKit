@@ -124,7 +124,7 @@ public:
     // the network load. See also SecurityContext::isSecureTransitionTo.
     void didSecureTransitionTo(Document&);
 
-    class Observer : public CanMakeWeakPtr<Observer> {
+    class Observer {
     public:
         virtual ~Observer() { }
 
@@ -441,7 +441,7 @@ private:
     bool m_isSuspendingObservers { false };
     std::optional<bool> m_canShowModalDialogOverride;
 
-    WeakHashSet<Observer> m_observers;
+    HashSet<Observer*> m_observers; // FIXME: Should use WeakHashSet.
 
     mutable RefPtr<Crypto> m_crypto;
     mutable RefPtr<History> m_history;
