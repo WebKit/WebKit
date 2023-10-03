@@ -241,9 +241,9 @@
                     -DJPEGXL_ENABLE_SKCMS=ON">
     <pkg-config>libjxl.pc</pkg-config>
     <branch module="libjxl/libjxl.git"
-            version="0.7.0"
-            tag="v0.7.0"
-            checkoutdir="libjxl-0.7.0"
+            version="0.8.2"
+            tag="v0.8.2"
+            checkoutdir="libjxl-0.8.2"
             repo="github.com">
       <patch file="libjxl-add-cmake-flag-provision-dependencies.patch" strip="1"/>
     </branch>
