@@ -139,6 +139,7 @@ public:
     
     LocalFrame* frame() const; // Can be null
     Document* document() const { return m_document.get(); } // Can be null
+    RefPtr<Document> protectedDocument() const { return document(); }
     void setDocument(Document* document) { m_document = document; }
     void clearDocumentLoader(); 
     void loadDone(LoadCompletionType, bool shouldPerformPostLoadActions = true);

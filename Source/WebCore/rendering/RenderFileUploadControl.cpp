@@ -28,6 +28,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "Icon.h"
+#include "InlineIteratorInlineBox.h"
 #include "LocalizedStrings.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
@@ -168,18 +169,28 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
         else
             textX = contentLeft + contentWidth() - buttonAndIconWidth - font.width(textRun);
 
-        LayoutUnit textY;
         // We want to match the button's baseline
         // FIXME: Make this work with transforms.
-        if (RenderButton* buttonRenderer = downcast<RenderButton>(button->renderer()))
-            textY = paintOffset.y() + borderTop() + paddingTop() + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
-        else
-            textY = baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
+        auto textY = [&]() -> int {
+            if (auto* buttonRenderer = downcast<RenderButton>(button->renderer())) {
+                if (auto* buttonTextRenderer = buttonRenderer->textRenderer()) {
+                    if (auto textBox = InlineIterator::firstTextBoxFor(*buttonTextRenderer)) {
+                        auto textVisualRect = textBox->visualRectIgnoringBlockDirection();
+                        textVisualRect.setLocation(buttonTextRenderer->localToContainerPoint(textVisualRect.location(), this));
+                        textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, document().deviceScaleFactor()));
+                        textVisualRect.move(0, textBox->style().fontCascade().metricsOfPrimaryFont().ascent());
+                        return std::round(textVisualRect.y());
+                    }
+                }
+            }
+
+            return roundToInt(baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine));
+        }();
 
         paintInfo.context().setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
         
         // Draw the filename
-        paintInfo.context().drawBidiText(font, textRun, IntPoint(roundToInt(textX), roundToInt(textY)));
+        paintInfo.context().drawBidiText(font, textRun, IntPoint(roundToInt(textX), textY));
         
         if (inputElement().icon()) {
             // Determine where the icon should be placed

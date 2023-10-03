@@ -345,9 +345,10 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
     return -1;
 }
 
-- (BOOL)dismissWithAnimation
+- (BOOL)dismissWithAnimationForTesting
 {
     if (auto picker = dynamic_objc_cast<WKDateTimePicker>(self.control)) {
+        [picker.datePickerController assertAccessoryViewCanBeHitTestedForTesting];
         [picker.datePickerController dismissDatePicker];
         return YES;
     }

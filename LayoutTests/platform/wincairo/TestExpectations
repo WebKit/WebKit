@@ -632,12 +632,14 @@ js/dom/deep-recursion-test.html [ Failure ]
 [ Debug ] js/dom/domjit-accessor-polymorphic.html [ Skip ]
 [ Debug ] js/dom/domjit-function-get-element-by-id.html [ Skip ]
 [ Debug ] js/error-should-not-strong-reference-global-object.html [ Skip ]
-[ Debug ] js/large-expressions.html [ Failure ]
 [ Debug ] js/regress-150434.html [ Skip ]
 [ Debug ] js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip ]
 [ Debug ] js/slow-stress/nested-function-parsing-random.html [ Skip ]
 [ Debug ] js/sort-with-side-effecting-comparisons.html [ Skip ]
 [ Debug ] js/stack-overflow-regexp.html [ Skip ]
+
+# "Out of memory" only on buildbot
+[ Debug ] js/large-expressions.html [ Failure Pass ]
 
 js/dfg-convert-this-dom-window.html [ Skip ] # Slow
 js/dfg-dead-variable-on-exit.html [ Skip ] # Slow
@@ -932,7 +934,7 @@ http/wpt/service-workers/mac [ Skip ]
 webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure Pass ]
 webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure Pass ]
 
-http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
+#http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
 http/tests/cookies/document-cookie-after-showModalDialog.html [ Timeout ]
 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Timeout ]
@@ -1194,6 +1196,8 @@ editing/selection/regional-indicators.html [ Skip ]
 [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Skip ]
 
 webkit.org/b/262460 editing/selection/caret-rtl-right.html [ Failure Pass ]
+webkit.org/b/262460 editing/selection/caret-ltr-right.html [ Failure Pass ]
+webkit.org/b/262460 editing/selection/5057506.html [ Failure Pass ]
 
 ###### Command enabling
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]

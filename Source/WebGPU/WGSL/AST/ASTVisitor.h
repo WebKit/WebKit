@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTForward.h"
+#include "ASTInterpolateAttribute.h"
 #include "CompilationMessage.h"
 
 #include <wtf/Expected.h>
@@ -111,6 +112,8 @@ public:
 
     virtual void visit(AST::Variable&);
     virtual void visit(AST::VariableQualifier&);
+
+    virtual void visit(AST::InterpolateAttribute::Type, std::optional<AST::InterpolateAttribute::Sampling>) { }
 
     bool hasError() const;
     Result<void> result();

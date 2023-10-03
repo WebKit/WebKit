@@ -22,6 +22,7 @@
 #pragma once
 
 #include "RenderFlexibleBox.h"
+#include "RenderTextFragment.h"
 #include <memory>
 
 namespace WebCore {
@@ -58,6 +59,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void layout() override;
 #endif
+
+    RenderTextFragment* textRenderer() const { return m_buttonText.get(); }
 
     RenderBlock* innerRenderer() const { return m_inner.get(); }
     void setInnerRenderer(RenderBlock&);

@@ -1,6 +1,6 @@
 // RUN: %metal-compile main
 
-const x = y * 2;
+const x = y - 2;
 const y = 3;
 
 struct T {

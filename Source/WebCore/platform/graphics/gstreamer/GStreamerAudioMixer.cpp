@@ -90,8 +90,9 @@ GRefPtr<GstPad> GStreamerAudioMixer::registerProducer(GstElement* interaudioSink
     g_object_set(interaudioSink, "channel", GST_ELEMENT_NAME(interaudioSink), nullptr);
 
     GstElement* audioResample = makeGStreamerElement("audioresample", nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), src, audioResample, nullptr);
-    gst_element_link(src, audioResample);
+    auto audioConvert = makeGStreamerElement("audioconvert", nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), src, audioResample, audioConvert, nullptr);
+    gst_element_link_many(src, audioConvert, audioResample, nullptr);
 
     bool shouldStart = !m_mixer->numsinkpads;
 
@@ -101,10 +102,8 @@ GRefPtr<GstPad> GStreamerAudioMixer::registerProducer(GstElement* interaudioSink
 
     if (shouldStart)
         gst_element_set_state(m_pipeline.get(), GST_STATE_READY);
-    else {
-        gst_element_sync_state_with_parent(src);
-        gst_element_sync_state_with_parent(audioResample);
-    }
+    else
+        gst_bin_sync_children_states(GST_BIN_CAST(m_pipeline.get()));
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Registered audio producer %" GST_PTR_FORMAT, mixerPad.get());
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "audio-mixer-after-producer-registration");

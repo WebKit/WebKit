@@ -49,8 +49,12 @@
 - (void)_setIncomplete:(BOOL)incomplete;
 @end
 
+#if !PLATFORM(APPLETV)
+
 @interface LPMetadataProvider ()
 - (LPLinkMetadata *)_startFetchingMetadataForURL:(NSURL *)URL completionHandler:(void(^)(NSError *))completionHandler;
 @end
+
+#endif // !PLATFORM(APPLETV)
 
 #endif // USE(APPLE_INTERNAL_SDK)

@@ -119,7 +119,7 @@
 
 - (CGSize)estimatedMaximumPopoverSize
 {
-    constexpr auto additionalHeightToAvoidClippingToolbar = 60;
+    static constexpr auto additionalHeightToAvoidClippingToolbar = 80;
     return CGSize {
         _contentSize.width,
         _contentSize.height + additionalHeightToAvoidClippingToolbar
@@ -134,6 +134,8 @@
 
 @implementation WKDatePickerPopoverController {
     RetainPtr<WKDatePickerPopoverView> _contentView;
+    RetainPtr<NSLayoutConstraint> _untransformedContentWidthConstraint;
+    RetainPtr<NSLayoutConstraint> _transformedContentWidthConstraint;
     __weak id<WKDatePickerPopoverControllerDelegate> _delegate;
     BOOL _canSendPopoverControllerDidDismiss;
 }
@@ -155,6 +157,28 @@
     [_delegate datePickerPopoverControllerDidReset:self];
 }
 
+- (void)assertAccessoryViewCanBeHitTestedForTesting
+{
+    auto accessoryView = [_contentView accessoryView];
+    auto popoverView = self.viewIfLoaded;
+
+    RELEASE_ASSERT(accessoryView);
+    RELEASE_ASSERT(popoverView);
+
+    auto bounds = [popoverView convertRect:accessoryView.bounds fromView:accessoryView];
+    CGPoint center { CGRectGetMidX(bounds), CGRectGetMidY(bounds) };
+
+    BOOL hitTestedToAccessoryView = NO;
+    for (auto view = [popoverView hitTest:center withEvent:nil]; view; view = view.superview) {
+        if (view == accessoryView) {
+            hitTestedToAccessoryView = YES;
+            break;
+        }
+    }
+
+    RELEASE_ASSERT(hitTestedToAccessoryView);
+}
+
 - (void)dismissDatePicker
 {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:[strongSelf = retainPtr(self)] {
@@ -174,7 +198,9 @@
 
     [self.view addSubview:_contentView.get()];
 
+    _untransformedContentWidthConstraint = [[_contentView widthAnchor] constraintEqualToAnchor:self.view.widthAnchor];
     [NSLayoutConstraint activateConstraints:@[
+        _untransformedContentWidthConstraint.get(),
         [[_contentView leadingAnchor] constraintEqualToAnchor:self.view.leadingAnchor],
         [[_contentView trailingAnchor] constraintEqualToAnchor:self.view.trailingAnchor],
         [[_contentView topAnchor] constraintEqualToAnchor:self.view.topAnchor],
@@ -182,6 +208,45 @@
     ]];
 
     self.preferredContentSize = [_contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+}
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+
+    if (self.beingDismissed) {
+        // The popover shrinks below content size while running dismissal animations.
+        // Don't bother shrinking the content down to fit in this case.
+        return;
+    }
+
+    [self _scaleDownToFitHeightIfNeeded];
+}
+
+- (void)_scaleDownToFitHeightIfNeeded
+{
+    auto viewBounds = self.view.bounds;
+    auto originalContentFrame = [_contentView frame];
+    if (CGRectIsEmpty(originalContentFrame) || CGRectGetHeight(originalContentFrame) <= CGRectGetHeight(viewBounds))
+        return;
+
+    auto targetScale = std::min(CGRectGetWidth(viewBounds) / CGRectGetWidth(originalContentFrame), CGRectGetHeight(viewBounds) / CGRectGetHeight(originalContentFrame));
+    auto adjustedContentSize = CGSizeMake(CGRectGetWidth(originalContentFrame) * targetScale, CGRectGetHeight(originalContentFrame) * targetScale);
+
+    [_contentView setTransform:^{
+        auto translateToOriginAfterScaling = CGAffineTransformMakeTranslation(
+            (adjustedContentSize.width - CGRectGetWidth(originalContentFrame)) / 2,
+            (adjustedContentSize.height - CGRectGetHeight(originalContentFrame)) / 2
+        );
+        return CGAffineTransformScale(translateToOriginAfterScaling, targetScale, targetScale);
+    }()];
+
+    self.preferredContentSize = adjustedContentSize;
+
+    [_untransformedContentWidthConstraint setActive:NO];
+    [_transformedContentWidthConstraint setActive:NO];
+    _transformedContentWidthConstraint = [[_contentView widthAnchor] constraintEqualToAnchor:self.view.widthAnchor multiplier:1 / targetScale];
+    [_transformedContentWidthConstraint setActive:YES];
 }
 
 - (void)presentInView:(UIView *)view sourceRect:(CGRect)rect completion:(void(^)())completion

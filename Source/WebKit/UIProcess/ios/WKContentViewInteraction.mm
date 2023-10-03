@@ -12060,7 +12060,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (void)dismissFormAccessoryView
 {
 #if !PLATFORM(WATCHOS)
-    if (auto dateInput = self.dateTimeInputControl; [dateInput dismissWithAnimation])
+    if (auto dateInput = self.dateTimeInputControl; [dateInput dismissWithAnimationForTesting])
         return;
 #endif
     [self accessoryDone];

@@ -40,6 +40,7 @@
 - (instancetype)initWithDatePicker:(UIDatePicker *)datePicker delegate:(id<WKDatePickerPopoverControllerDelegate>)delegate;
 - (void)presentInView:(UIView *)view sourceRect:(CGRect)rect completion:(void(^)())completion;
 - (void)dismissDatePicker;
+- (void)assertAccessoryViewCanBeHitTestedForTesting;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
