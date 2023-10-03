@@ -144,7 +144,7 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
     if (inlineLevelBox.isListMarker())
         return true;
     if (inlineLevelBox.isInlineBox())
-        return layoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
+        return inlineLayoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
     if (inlineLevelBox.isAtomicInlineLevelBox())
         return !inlineLevelBox.layoutBox().isRubyAnnotationBox();
     return false;
@@ -212,7 +212,7 @@ InlineLayoutUnit InlineFormattingGeometry::computedTextIndent(IsIntrinsicWidthMo
 
 InlineLayoutUnit InlineFormattingGeometry::initialLineHeight(bool isFirstLine) const
 {
-    if (layoutState().inStandardsMode())
+    if (inlineLayoutState().inStandardsMode())
         return isFirstLine ? formattingContext().root().firstLineStyle().computedLineHeight() : formattingContext().root().style().computedLineHeight();
     return formattingContext().quirks().initialLineHeight();
 }
@@ -527,6 +527,10 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
     return layoutRange.endIndex();
 }
 
+const InlineLayoutState& InlineFormattingGeometry::inlineLayoutState() const
+{
+    return formattingContext().inlineLayoutState();
+}
 
 }
 }

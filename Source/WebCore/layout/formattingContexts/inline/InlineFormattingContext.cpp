@@ -371,8 +371,14 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
 
 void InlineFormattingContext::initializeLayoutState()
 {
+    auto& inlineLayoutState = this->inlineLayoutState();
+
     if (auto limitLinesValue = root().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
-        inlineLayoutState().setHyphenationLimitLines(limitLinesValue);
+        inlineLayoutState.setHyphenationLimitLines(limitLinesValue);
+    // FIXME: Remove when IFC takes care of running layout on inline-blocks.
+    inlineLayoutState.setShouldNotSynthesizeInlineBlockBaseline();
+    if (layoutState().inStandardsMode())
+        inlineLayoutState.setInStandardsMode();
 }
 
 }

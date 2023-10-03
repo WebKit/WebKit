@@ -313,7 +313,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
         auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
         auto ascent = [&]() -> InlineLayoutUnit {
-            if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
+            if (inlineLayoutState().shouldNotSynthesizeInlineBlockBaseline())
                 return downcast<ElementBox>(layoutBox).baselineForIntegration().value_or(marginBoxHeight);
 
             if (layoutBox.isInlineBlockBox()) {
@@ -426,7 +426,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             setVerticalPropertiesForInlineLevelBox(lineBox, lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
 
-            if (layoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
+            if (inlineLayoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
                 lineBox.parentInlineBox(run).setHasContent();
             continue;
         }

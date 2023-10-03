@@ -48,11 +48,7 @@ class LayoutState : public CanMakeWeakPtr<LayoutState> {
     WTF_MAKE_NONCOPYABLE(LayoutState);
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
-    enum class FormattingContextIntegrationType {
-        Inline,
-        Flex
-    };
-    LayoutState(const Document&, const ElementBox& rootContainer, std::optional<FormattingContextIntegrationType> = std::nullopt);
+    LayoutState(const Document&, const ElementBox& rootContainer);
     ~LayoutState();
 
     void updateQuirksMode(const Document&);
@@ -92,12 +88,6 @@ public:
 
     const ElementBox& root() const { return m_rootContainer; }
 
-    // LFC integration only. Full LFC has proper ICB access.
-    bool isInlineFormattingContextIntegration() const { return m_formattingContextIntegrationType && *m_formattingContextIntegrationType == FormattingContextIntegrationType::Inline; }
-    bool isFlexFormattingContextIntegration() const { return m_formattingContextIntegrationType && *m_formattingContextIntegrationType == FormattingContextIntegrationType::Flex; }
-
-    bool shouldNotSynthesizeInlineBlockBaseline() const;
-
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
     BoxGeometry& ensureGeometryForBoxSlow(const Box&);
@@ -117,9 +107,6 @@ private:
     QuirksMode m_quirksMode { QuirksMode::No };
 
     CheckedRef<const ElementBox> m_rootContainer;
-
-    // LFC integration only.
-    std::optional<FormattingContextIntegrationType> m_formattingContextIntegrationType;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

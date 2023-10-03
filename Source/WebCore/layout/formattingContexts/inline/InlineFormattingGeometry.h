@@ -70,7 +70,7 @@ private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
 
     const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }
-
+    const InlineLayoutState& inlineLayoutState() const;
 };
 
 }
