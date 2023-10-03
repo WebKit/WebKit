@@ -1697,7 +1697,6 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Monterey+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure Timeout ]
 [ Monterey+ x86_64 ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
-[ Monterey+ x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/wpt/webrtc/audiovideo-script-transform.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/block-local-documents-inheriting-none.https.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
@@ -2164,3 +2163,54 @@ http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass F
 webkit.org/b/262401 [ Sonoma+ ] fast/canvas/webgl/canvas-zero-size.html [ Pass Crash ]
 
 webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.html [ Pass Crash ]
+
+# webkit.org/b/262425 (REGRESSION(268433@main): [ iOS17 Sonoma ] 5 tests under http/wpt/mediarecorder are constantly crashing.)
+[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-dataavailable.html [ Crash ]
+[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-multiple-start-stop.html [ Crash ]
+[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-requestData.html [ Crash ]
+[ Monterey+ ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure Crash ]
+[ Sonoma ] http/wpt/mediarecorder/record-96KHz-sources.html [ Crash ]
+
+# rdar://113373567 (REGRESSION ( Sonoma ): [ Sonoma ] 18 imported/w3c/web-platform-tests/css/css-fonts/ tests are a consistent image failure)
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-13.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-16.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-17.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-18.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-19.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-22.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-3.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-4.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-5.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-6.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-7.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-8.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-9.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-add.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-modify.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/font-palette-remove.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
+
+# rdar://113666519 (REGRESSION ( Sonoma ): [ Sonoma wk2 ] 6 fast/selectors/style-invalidation tests are a consistent failure)
+[ Sonoma+ ] fast/selectors/style-invalidation-focus-change-descendants.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-focus-change-siblings.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-focus-within-change-descendants.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-focus-within-change-siblings.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-hover-change-descendants.html [ Failure ]
+[ Sonoma+ ] fast/selectors/style-invalidation-hover-change-siblings.html [ Failure ]
+
+# rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
+[ Sonoma+ ] fast/text/canvas-color-fonts/COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/fill-color-shadow-COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/fill-color-shadow-ctm-COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR-3.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
+
+# rdar://114328372 (REGRESSION (262629@main): [ Sonoma wk2 ] fast/box-shadow/inset-spread-box-shadow-split-inline.html is a constant failure)
+[ Sonoma+ ] fast/box-shadow/inset-spread-box-shadow-split-inline.html [ ImageOnlyFailure ]
+
+# rdar://114334958 (REGRESSION ( Sonoma ): [ Sonoma wk2 ] fast/events/dont-loose-last-event.html is a consistent failure)
+[ Sonoma+ ] fast/events/dont-loose-last-event.html [ Failure ]
+
+# rdar://114452082 (REGRESSION (262124@main?): [ Sonoma wk2 ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html is a consistent failure)
+[ Sonoma+ ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]

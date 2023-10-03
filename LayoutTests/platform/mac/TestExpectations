@@ -2883,3 +2883,11 @@ webkit.org/b/261306 imported/w3c/web-platform-tests/content-security-policy/repo
 [ Sonoma ] fast/forms/input-disabled-color.html [ Failure ]
 [ Sonoma ] fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
 [ Sonoma ] fast/forms/placeholder-pseudo-style.html [ Failure ]
+# rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
+[ Sonoma+ ] fast/text/canvas-color-fonts/linedash-COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-color-COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-color-shadow-ctm-COLR.html [ ImageOnlyFailure ]
+
+# rdar://114294654 (REGRESSION (265615@main): [ Sonoma ] fast/attachment/cocoa/wide-attachment-rendering.html is a constant failure)
+[ Sonoma+ ] fast/attachment/cocoa/wide-attachment-rendering.html [ Failure ]
