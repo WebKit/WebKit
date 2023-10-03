@@ -44,7 +44,8 @@ private:
     explicit AccessibilityMenuList(RenderMenuList*);
 
     bool isMenuList() const final { return true; }
-    AccessibilityRole roleValue() const override { return AccessibilityRole::PopUpButton; }
+    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::PopUpButton; }
+
     bool canSetFocusAttribute() const override;
 
     void addChildren() override;

@@ -107,6 +107,11 @@ AccessibilityObject::~AccessibilityObject()
     ASSERT(isDetached());
 }
 
+void AccessibilityObject::init()
+{
+    m_role = determineAccessibilityRole();
+}
+
 inline ProcessID AccessibilityObject::processID() const
 {
     return presentingApplicationPID();
@@ -2768,6 +2773,16 @@ String AccessibilityObject::computedRoleString() const
         return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::LandmarkRegion));
 
     return reverseAriaRoleMap().get(static_cast<int>(role));
+}
+
+void AccessibilityObject::updateRole()
+{
+    auto previousRole = m_role;
+    m_role = determineAccessibilityRole();
+    if (previousRole != m_role) {
+        if (auto* cache = axObjectCache())
+            cache->handleRoleChanged(this);
+    }
 }
 
 bool AccessibilityObject::hasHighlighting() const

@@ -189,8 +189,8 @@ private:
 #endif
     String expandedTextValue() const override;
     bool supportsExpandedTextValue() const override;
-    void updateRoleAfterChildrenCreation();
-    
+    virtual void updateRoleAfterChildrenCreation();
+
     bool inheritsPresentationalRole() const override;
 
     bool shouldGetTextFromNode(AccessibilityTextUnderElementMode) const;

@@ -79,7 +79,7 @@ public:
     // After constructing an AccessibilityObject, it must be given a
     // unique ID, then added to AXObjectCache, and finally init() must
     // be called last.
-    virtual void init() { }
+    virtual void init();
 
     // Prefer using the dedicated functions over consuming these flag values directly, as the flags can sometimes be uninitialized.
     // Also, the dedicated functions traverse for you if the flags aren't yet initialized.
@@ -416,7 +416,9 @@ public:
     // Only if isColorWell()
     SRGBA<uint8_t> colorValue() const override;
 
+    // FIXME: This should be made final after AccessibilityTable is fixed to use m_role rather than computing its own roleValue().
     AccessibilityRole roleValue() const override { return m_role; }
+    virtual AccessibilityRole determineAccessibilityRole() = 0;
     String rolePlatformString() const override;
     String roleDescription() const override;
     String subrolePlatformString() const override;
@@ -499,7 +501,7 @@ public:
     void increment() override { }
     void decrement() override { }
 
-    virtual void updateRole() { }
+    virtual void updateRole();
     bool childrenInitialized() const { return m_childrenInitialized; }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     virtual void addChildren() { }

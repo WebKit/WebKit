@@ -39,8 +39,8 @@ public:
     static Ref<AccessibilityTableHeaderContainer> create();
     virtual ~AccessibilityTableHeaderContainer();
     
-    AccessibilityRole roleValue() const override { return AccessibilityRole::TableHeaderContainer; }
-    
+    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::TableHeaderContainer; }
+
     void addChildren() override;
     
     LayoutRect elementRect() const override;
