@@ -31,21 +31,68 @@
 
 namespace WGSL {
 
-static ConstantValue constantPow(AST::CallExpression&, const FixedVector<ConstantValue>& arguments)
+template<typename Functor, typename... Arguments>
+static ConstantValue scalarOrVector(const Functor& functor, Arguments&&... unpackedArguments)
 {
-    const auto& value = arguments[0];
-    const auto& exponent = arguments[1];
+    unsigned vectorSize = 0;
+    std::initializer_list<ConstantValue> arguments { unpackedArguments... };
+    for (auto argument : arguments) {
+        if (auto* vector = std::get_if<ConstantVector>(&argument)) {
+            vectorSize = vector->elements.size();
+            break;
+        }
+    }
+    if (!vectorSize)
+        return functor(std::forward<Arguments>(unpackedArguments)...);
 
-    if (value.isNumber())
+    constexpr auto argumentCount = sizeof...(Arguments);
+    ConstantVector result(vectorSize);
+    std::array<ConstantValue, argumentCount> scalars;
+    for (unsigned i = 0; i < vectorSize; ++i) {
+        unsigned j = 0;
+        for (const auto& argument : arguments) {
+            if (auto* vector = std::get_if<ConstantVector>(&argument))
+                scalars[j++] = vector->elements[i];
+            else
+                scalars[j++] = argument;
+        }
+        result.elements[i] = std::apply(functor, scalars);
+    }
+    return result;
+
+}
+
+static ConstantValue constantPow(const Type*, const FixedVector<ConstantValue>& arguments)
+{
+    return scalarOrVector([&](auto value, auto exponent) -> ConstantValue {
         return { std::pow(value.toDouble(), exponent.toDouble()) };
+    }, arguments[0], arguments[1]);
+}
 
-    auto& baseVector = std::get<ConstantVector>(value);
-    auto& expVector = std::get<ConstantVector>(exponent);
-    auto size = baseVector.elements.size();
-    ConstantVector result(size);
-    for (unsigned i = 0; i < size; ++i)
-        result.elements[i] = { std::pow(baseVector.elements[i].toDouble(), expVector.elements[i].toDouble()) };
-    return { result };
+static ConstantValue constantMinus(const Type*, const FixedVector<ConstantValue>& arguments)
+{
+    const auto& unaryMinus = [&]() -> ConstantValue {
+        return scalarOrVector([&](const auto& value) -> ConstantValue {
+            if (value.isInt())
+                return -value.toInt();
+            return -value.toDouble();
+        }, arguments[0]);
+    };
+
+    const auto& binaryMinus = [&]() -> ConstantValue {
+        return scalarOrVector([&](const auto& left, auto& right) -> ConstantValue {
+            if (left.isInt()) {
+                ASSERT(right.isInt());
+                return left.toInt() - right.toInt();
+            }
+            return left.toDouble() - right.toDouble();
+        }, arguments[0], arguments[1]);
+    };
+
+    if (arguments.size() == 1)
+        return unaryMinus();
+    ASSERT(arguments.size() == 2);
+    return binaryMinus();
 }
 
 static ConstantValue zeroValue(const Type* type)
@@ -124,14 +171,14 @@ static ConstantValue zeroValue(const Type* type)
         });
 }
 
-static ConstantValue constantVector(AST::CallExpression& call, const FixedVector<ConstantValue>& arguments, unsigned size)
+static ConstantValue constantVector(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned size)
 {
     ConstantVector result(size);
     auto argumentCount = arguments.size();
 
     if (!argumentCount) {
-        ASSERT(std::holds_alternative<Types::Vector>(*call.target().inferredType()));
-        return zeroValue(call.target().inferredType());
+        ASSERT(std::holds_alternative<Types::Vector>(*resultType));
+        return zeroValue(resultType);
     }
 
     if (argumentCount == 1 && !std::holds_alternative<ConstantVector>(arguments[0])) {
@@ -154,19 +201,19 @@ static ConstantValue constantVector(AST::CallExpression& call, const FixedVector
     return { result };
 }
 
-static ConstantValue constantVector2(AST::CallExpression& call, const FixedVector<ConstantValue>& arguments)
+static ConstantValue constantVector2(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
-    return constantVector(call, arguments, 2);
+    return constantVector(resultType, arguments, 2);
 }
 
-static ConstantValue constantVector3(AST::CallExpression& call, const FixedVector<ConstantValue>& arguments)
+static ConstantValue constantVector3(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
-    return constantVector(call, arguments, 3);
+    return constantVector(resultType, arguments, 3);
 }
 
-static ConstantValue constantVector4(AST::CallExpression& call, const FixedVector<ConstantValue>& arguments)
+static ConstantValue constantVector4(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
-    return constantVector(call, arguments, 4);
+    return constantVector(resultType, arguments, 4);
 }
 
 } // namespace WGSL

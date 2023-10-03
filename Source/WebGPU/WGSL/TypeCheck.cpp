@@ -144,12 +144,12 @@ private:
     std::optional<AddressSpace> addressSpace(AST::Expression&);
 
     template<typename CallArguments>
-    const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
+    const Type* chooseOverload(const char*, AST::Expression&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
     template<typename Node>
     void setConstantValue(Node&, const ConstantValue&);
 
-    using ConstantFunction = ConstantValue(*)(AST::CallExpression&, const FixedVector<ConstantValue>&);
+    using ConstantFunction = ConstantValue(*)(const Type*, const FixedVector<ConstantValue>&);
 
     ShaderModule& m_shaderModule;
     const Type* m_inferredType { nullptr };
@@ -310,6 +310,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 #include "TypeDeclarations.h" // NOLINT
 
     m_constantFunctions.add("pow"_s, constantPow);
+    m_constantFunctions.add("-"_s, constantMinus);
     m_constantFunctions.add("vec2"_s, constantVector2);
     m_constantFunctions.add("vec2f"_s, constantVector2);
     m_constantFunctions.add("vec2i"_s, constantVector2);
@@ -379,8 +380,10 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
         auto* initializerType = infer(*variable.maybeInitializer());
-        if (variable.flavor() == AST::VariableFlavor::Const)
+        if (variable.flavor() == AST::VariableFlavor::Const) {
             value = variable.maybeInitializer()->constantValue();
+            ASSERT(value.has_value());
+        }
         if (auto* reference = std::get_if<Types::Reference>(initializerType)) {
             initializerType = reference->element;
             variable.maybeInitializer()->m_inferredType = initializerType;
@@ -748,7 +751,7 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
-    chooseOverload("operator", binary.span(), toString(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
+    chooseOverload("operator", binary, toString(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
 }
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
@@ -862,25 +865,12 @@ void TypeChecker::visit(AST::CallExpression& call)
             }
         }
 
-        auto* result = chooseOverload("initializer", call.span(), targetName, call.arguments(), typeArguments);
+        auto* result = chooseOverload("initializer", call, targetName, call.arguments(), typeArguments);
         if (result) {
             // FIXME: this will go away once we track used intrinsics properly
             if (targetName == "workgroupUniformLoad"_s)
                 m_shaderModule.setUsesWorkgroupUniformLoad();
             target.m_inferredType = result;
-
-            auto it = m_constantFunctions.find(targetName);
-            if (it != m_constantFunctions.end()) {
-                unsigned argumentCount = call.arguments().size();
-                FixedVector<ConstantValue> arguments(argumentCount);
-                for (unsigned i = 0; i < argumentCount; ++i) {
-                    auto value = call.arguments()[i].constantValue();
-                    if (!value.has_value())
-                        return;
-                    arguments[i] = *value;
-                }
-                setConstantValue(call, it->value(call, WTFMove(arguments)));
-            }
             return;
         }
 
@@ -975,7 +965,7 @@ void TypeChecker::visit(AST::CallExpression& call)
 
 void TypeChecker::visit(AST::UnaryExpression& unary)
 {
-    chooseOverload("operator", unary.span(), toString(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
+    chooseOverload("operator", unary, toString(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
 }
 
 // Literal Expressions
@@ -1166,7 +1156,7 @@ const Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::Fie
 }
 
 template<typename CallArguments>
-const Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
+const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
     auto it = m_overloadedOperations.find(target);
     if (it == m_overloadedOperations.end())
@@ -1189,6 +1179,20 @@ const Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span
         for (unsigned i = 0; i < callArguments.size(); ++i)
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
+
+        auto it = m_constantFunctions.find(target);
+        if (it != m_constantFunctions.end()) {
+            unsigned argumentCount = callArguments.size();
+            FixedVector<ConstantValue> arguments(argumentCount);
+            for (unsigned i = 0; i < argumentCount; ++i) {
+                auto value = callArguments[i].constantValue();
+                if (!value.has_value())
+                    return overload->result;
+                arguments[i] = *value;
+            }
+            setConstantValue(expression, it->value(overload->result, WTFMove(arguments)));
+        }
+
         return overload->result;
     }
 
@@ -1212,7 +1216,7 @@ const Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span
         }
         typeArgumentsStream.print(">");
     }
-    typeError(span, "no matching overload for ", kind, " ", target, typeArgumentsStream.toString(), "(", valueArgumentsStream.toString(), ")");
+    typeError(expression.span(), "no matching overload for ", kind, " ", target, typeArgumentsStream.toString(), "(", valueArgumentsStream.toString(), ")");
     return m_types.bottomType();
 }
 
