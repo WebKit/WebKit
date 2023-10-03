@@ -68,7 +68,7 @@ static String standardUserAgentStatic()
 {
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-    static NeverDestroyed<String> uaStatic(makeString("Mozilla/5.0 (PlayStation; ", getSystemSoftwareName(), '/', getSystemSoftwareVersion(), ") AppleWebKit/", versionForUAString(), " (KHTML, like Gecko) ", "Version/14.0 Safari/", versionForUAString()));
+    static NeverDestroyed<String> uaStatic(makeString("Mozilla/5.0 (PlayStation; ", getSystemSoftwareName(), '/', getSystemSoftwareVersion(), ") AppleWebKit/", versionForUAString(), " (KHTML, like Gecko) ", "Version/17.0 Safari/", versionForUAString()));
     return uaStatic;
 }
 
