@@ -800,7 +800,6 @@ protected:
 
     static bool isARIAInput(AccessibilityRole);
 
-    virtual bool exposesTitleUIElement() const { return true; }
     AccessibilityObject* radioGroupAncestor() const;
 
     bool allowsTextRanges() const;

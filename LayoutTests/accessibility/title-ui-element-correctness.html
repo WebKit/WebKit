@@ -111,8 +111,8 @@ if (window.accessibilityController) {
         output += expect("hasTitleUIElement(axElement('control6'))", isCocoa ? "false" : "true");
         output += evalAndReturn("document.getElementById('label6c').remove()");
         output += await expectAsync("axElement('control6').titleUIElement().isEqual(axElement('label6b'))", "true");
-        document.getElementById('container').style.display = 'none';
 
+        document.getElementById('container').style.display = 'none';
         debug(output);
         finishJSTest();
     }, 0);
@@ -120,4 +120,3 @@ if (window.accessibilityController) {
 </script>
 </body>
 </html>
-

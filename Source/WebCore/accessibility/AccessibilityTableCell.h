@@ -88,7 +88,6 @@ protected:
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
     AccessibilityObject* titleUIElement() const final;
-    bool exposesTitleUIElement() const final { return true; }
     bool computeAccessibilityIsIgnored() const final;
     String expandedTextValue() const final;
     bool supportsExpandedTextValue() const final;
