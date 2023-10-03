@@ -28,6 +28,7 @@
 #include <limits.h>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
+#include <wtf/Packed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
@@ -67,7 +68,6 @@ public:
     StringView(const LChar*, unsigned length);
     StringView(const UChar*, unsigned length);
     StringView(const char*, unsigned length);
-    StringView(const void*, unsigned length, bool is8bit);
     StringView(ASCIILiteral);
     ALWAYS_INLINE StringView(std::span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
     ALWAYS_INLINE StringView(std::span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
@@ -95,7 +95,6 @@ public:
     bool is8Bit() const;
     const LChar* characters8() const;
     const UChar* characters16() const;
-    const void* rawCharacters() const { return m_characters; }
     std::span<const LChar> span8() const { return { characters8(), length() }; }
     std::span<const UChar> span16() const { return { characters16(), length() }; }
 
@@ -230,13 +229,13 @@ private:
 
     void clear();
 
-    const void* m_characters { nullptr };
-    unsigned m_length { 0 };
-    bool m_is8Bit { true };
-
 #if CHECK_STRINGVIEW_LIFETIME
     UnderlyingString* m_underlyingString { nullptr };
 #endif
+
+    PackedPtr<const void> m_characters;
+    bool m_is8Bit { true };
+    unsigned m_length { 0 };
 };
 
 template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>&, StringView);
@@ -310,8 +309,8 @@ inline StringView::~StringView()
 
 inline StringView::StringView(StringView&& other)
     : m_characters(other.m_characters)
-    , m_length(other.m_length)
     , m_is8Bit(other.m_is8Bit)
+    , m_length(other.m_length)
 {
     ASSERT(other.underlyingStringIsValid());
 
@@ -323,8 +322,8 @@ inline StringView::StringView(StringView&& other)
 
 inline StringView::StringView(const StringView& other)
     : m_characters(other.m_characters)
-    , m_length(other.m_length)
     , m_is8Bit(other.m_is8Bit)
+    , m_length(other.m_length)
 {
     ASSERT(other.underlyingStringIsValid());
 
@@ -396,13 +395,6 @@ inline StringView::StringView(const char* characters, unsigned length)
     initialize(reinterpret_cast<const LChar*>(characters), length);
 }
 
-inline StringView::StringView(const void* characters, unsigned length, bool is8bit)
-    : m_characters(characters)
-    , m_length(length)
-    , m_is8Bit(is8bit)
-{
-}
-
 inline StringView::StringView(ASCIILiteral string)
 {
     initialize(string.characters8(), string.length());
@@ -459,14 +451,14 @@ inline const LChar* StringView::characters8() const
 {
     ASSERT(is8Bit());
     ASSERT(underlyingStringIsValid());
-    return static_cast<const LChar*>(m_characters);
+    return static_cast<const LChar*>(m_characters.get());
 }
 
 inline const UChar* StringView::characters16() const
 {
     ASSERT(!is8Bit() || isEmpty());
     ASSERT(underlyingStringIsValid());
-    return static_cast<const UChar*>(m_characters);
+    return static_cast<const UChar*>(m_characters.get());
 }
 
 inline unsigned StringView::hash() const
