@@ -1579,7 +1579,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/SVGRadialGradientElement.idl \
     $(WebCore)/svg/SVGRect.idl \
     $(WebCore)/svg/SVGRectElement.idl \
-    $(WebCore)/svg/SVGRenderingIntent.idl \
     $(WebCore)/svg/SVGSVGElement.idl \
     $(WebCore)/svg/SVGScriptElement.idl \
     $(WebCore)/svg/SVGSetElement.idl \

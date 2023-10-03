@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true UsesBackForwardCache=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that requestIdleCallback will execute the function even when there is a pending task for a suspended document');
+jsTestIsAsync = true;
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+
+window.addEventListener("pagehide", function(event) {
+    requestIdleCallback(() => console.log('FAIL - idle callback executed'));
+    iframe.contentWindow.requestIdleCallback(() => console.log('FAIL - idle callback in iframe executed'));
+    internals.queueTask('DOMManipulation', () => { });
+});
+
+onload = () => {
+    setTimeout(() => {
+        window.location = 'resources/page-cache-with-pending-task.html';
+    }, 0);
+}
+
+</script>
+</body>
+</html>

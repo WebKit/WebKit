@@ -2669,8 +2669,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRect.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRect.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRectElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRectElement.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRenderingIntent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRenderingIntent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGSVGElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGSVGElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGScriptElement.cpp

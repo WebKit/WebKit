@@ -1919,7 +1919,6 @@ $(PROJECT_DIR)/svg/SVGPreserveAspectRatio.idl
 $(PROJECT_DIR)/svg/SVGRadialGradientElement.idl
 $(PROJECT_DIR)/svg/SVGRect.idl
 $(PROJECT_DIR)/svg/SVGRectElement.idl
-$(PROJECT_DIR)/svg/SVGRenderingIntent.idl
 $(PROJECT_DIR)/svg/SVGSVGElement.idl
 $(PROJECT_DIR)/svg/SVGScriptElement.idl
 $(PROJECT_DIR)/svg/SVGSetElement.idl

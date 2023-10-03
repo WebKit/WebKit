@@ -1569,7 +1569,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGRadialGradientElement.idl
     svg/SVGRect.idl
     svg/SVGRectElement.idl
-    svg/SVGRenderingIntent.idl
     svg/SVGSVGElement.idl
     svg/SVGScriptElement.idl
     svg/SVGSetElement.idl

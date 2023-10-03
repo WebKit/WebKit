@@ -374,6 +374,7 @@ class VisionInlineMediaControls extends VisionMediaControls
         this.skipForwardButton.style = Button.Styles.Bar;
         this.playPauseButton.style = Button.Styles.Bar;
         this.muteButton.style = Button.Styles.Bar;
+        this.muteButton.circular = true;
         this.overflowButton.style = Button.Styles.Bar;
 
         this.timeControl.timeLabelsAttachment = TimeControl.TimeLabelsAttachment.Side;

@@ -210,7 +210,6 @@ protected:
     AccessibilityObject* captionForFigure() const;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
     AccessibilityObject* titleUIElement() const override;
-    bool exposesTitleUIElement() const override;
 
 private:
     bool isAccessibilityNodeObject() const final { return true; }

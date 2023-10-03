@@ -173,7 +173,7 @@ String AccessibilityObject::titleAttributeValue() const
 
         // If there's an element that labels this object and it's not exposed, then we should use
         // that text as our title.
-        if (text.textSource == AccessibilityTextSource::LabelByElement && !exposesTitleUIElement())
+        if (text.textSource == AccessibilityTextSource::LabelByElement)
             return text.text;
     }
 

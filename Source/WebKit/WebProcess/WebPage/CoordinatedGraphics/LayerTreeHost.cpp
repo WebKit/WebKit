@@ -451,6 +451,10 @@ void LayerTreeHost::resize(const IntSize& size)
 
 void LayerTreeHost::willRenderFrame()
 {
+    RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
+        if (auto* drawingArea = webPage->drawingArea())
+            drawingArea->willStartRenderingUpdateDisplay();
+    });
     m_surface->willRenderFrame();
 }
 
@@ -461,6 +465,10 @@ void LayerTreeHost::didRenderFrame()
     if (!m_didRenderFrameTimer.isActive())
         m_didRenderFrameTimer.startOneShot(0_s);
 #endif
+    RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
+        if (auto* drawingArea = webPage->drawingArea())
+            drawingArea->didCompleteRenderingUpdateDisplay();
+    });
 }
 
 #if HAVE(DISPLAY_LINK)

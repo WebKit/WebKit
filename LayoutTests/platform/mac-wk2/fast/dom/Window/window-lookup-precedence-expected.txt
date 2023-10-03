@@ -263,8 +263,6 @@ PASS 'function SVGPathSeg() {    [native code]}' is 'function SVGPathSeg() {    
 PASS 'function SVGPathSeg() {    [native code]}' is 'function SVGPathSeg() {    [native code]}'
 PASS 'function SVGPreserveAspectRatio() {    [native code]}' is 'function SVGPreserveAspectRatio() {    [native code]}'
 PASS 'function SVGPreserveAspectRatio() {    [native code]}' is 'function SVGPreserveAspectRatio() {    [native code]}'
-PASS 'function SVGRenderingIntent() {    [native code]}' is 'function SVGRenderingIntent() {    [native code]}'
-PASS 'function SVGRenderingIntent() {    [native code]}' is 'function SVGRenderingIntent() {    [native code]}'
 PASS 'function SVGTextContentElement() {    [native code]}' is 'function SVGTextContentElement() {    [native code]}'
 PASS 'function SVGTextContentElement() {    [native code]}' is 'function SVGTextContentElement() {    [native code]}'
 PASS 'function SVGTextPathElement() {    [native code]}' is 'function SVGTextPathElement() {    [native code]}'
