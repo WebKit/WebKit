@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPINamespace.h"
+#include "WebExtensionAPIAction.h"
 #include "WebExtensionAPIAlarms.h"
 #include "WebExtensionAPIExtension.h"
 #include "WebExtensionAPILocalization.h"
@@ -52,9 +53,12 @@ public:
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
+    WebExtensionAPIAction& action();
     WebExtensionAPIAlarms& alarms();
+    WebExtensionAPIAction& browserAction() { return action(); }
     WebExtensionAPIExtension& extension();
     WebExtensionAPILocalization& i18n();
+    WebExtensionAPIAction& pageAction() { return action(); }
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() final;
     WebExtensionAPIScripting& scripting();
@@ -65,6 +69,7 @@ public:
 #endif
 
 private:
+    RefPtr<WebExtensionAPIAction> m_action;
     RefPtr<WebExtensionAPIAlarms> m_alarms;
     RefPtr<WebExtensionAPIExtension> m_extension;
     RefPtr<WebExtensionAPILocalization> m_i18n;

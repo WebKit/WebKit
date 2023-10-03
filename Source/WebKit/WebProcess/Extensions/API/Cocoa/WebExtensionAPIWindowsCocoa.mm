@@ -595,7 +595,7 @@ inline WebExtensionAPIWindows::WindowTypeFilter toWindowTypeFilter(WebExtensionW
     }
 }
 
-void WebExtensionContextProxy::dispatchWindowsEvent(WebExtensionEventListenerType type, std::optional<WebExtensionWindowParameters> windowParameters)
+void WebExtensionContextProxy::dispatchWindowsEvent(WebExtensionEventListenerType type, const std::optional<WebExtensionWindowParameters>& windowParameters)
 {
     auto filter = windowParameters ? toWindowTypeFilter(windowParameters.value().type.value()) : WebExtensionAPIWindows::WindowTypeFilter::All;
 

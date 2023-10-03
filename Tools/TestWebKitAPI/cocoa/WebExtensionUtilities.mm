@@ -206,6 +206,11 @@
     [self run];
 }
 
+- (void)done
+{
+    _done = true;
+}
+
 - (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestAssertionResult:(BOOL)result withMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
 {
     if (result)

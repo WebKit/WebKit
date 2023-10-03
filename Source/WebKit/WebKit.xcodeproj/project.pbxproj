@@ -521,6 +521,11 @@
 		1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */; };
 		1CBBE4A119B66C53006B7D81 /* WebInspectorUIMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */; };
 		1CBEE27028F4DDA1006D1A02 /* WebExtensionControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CBEE26F28F4DDA0006D1A02 /* WebExtensionControllerCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1CC94E532AC92F190045F269 /* JSWebExtensionAPIAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CC94E512AC92F190045F269 /* JSWebExtensionAPIAction.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1CC94E542AC92F190045F269 /* JSWebExtensionAPIAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC94E522AC92F190045F269 /* JSWebExtensionAPIAction.h */; };
+		1CC94E562AC92F960045F269 /* WebExtensionAPIAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC94E552AC92F960045F269 /* WebExtensionAPIAction.h */; };
+		1CC94E582AC92FA50045F269 /* WebExtensionAPIActionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CC94E572AC92FA50045F269 /* WebExtensionAPIActionCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1CC94E5A2AC941C40045F269 /* WebExtensionContextAPIActionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CC94E592AC941C40045F269 /* WebExtensionContextAPIActionCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1CF0C9462AC34BC600EC82F2 /* _WKWebExtensionAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF0C9452AC34BC600EC82F2 /* _WKWebExtensionAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CF0C9482AC37FAD00EC82F2 /* _WKWebExtensionAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF0C9472AC37FAD00EC82F2 /* _WKWebExtensionAction.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1CF0C94A2AC37FFA00EC82F2 /* _WKWebExtensionActionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF0C9492AC37FFA00EC82F2 /* _WKWebExtensionActionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3977,6 +3982,12 @@
 		1CC23B1F288732F600D0A65A /* WebExtensionControllerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionControllerProxy.messages.in; sourceTree = "<group>"; };
 		1CC23B20288732F600D0A65A /* WebExtensionControllerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionControllerProxy.h; sourceTree = "<group>"; };
 		1CC23B21288732F600D0A65A /* WebExtensionControllerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionControllerProxy.cpp; sourceTree = "<group>"; };
+		1CC94E502AC92E9F0045F269 /* WebExtensionAPIAction.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIAction.idl; sourceTree = "<group>"; };
+		1CC94E512AC92F190045F269 /* JSWebExtensionAPIAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIAction.mm; sourceTree = "<group>"; };
+		1CC94E522AC92F190045F269 /* JSWebExtensionAPIAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIAction.h; sourceTree = "<group>"; };
+		1CC94E552AC92F960045F269 /* WebExtensionAPIAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIAction.h; sourceTree = "<group>"; };
+		1CC94E572AC92FA50045F269 /* WebExtensionAPIActionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIActionCocoa.mm; sourceTree = "<group>"; };
+		1CC94E592AC941C40045F269 /* WebExtensionContextAPIActionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIActionCocoa.mm; sourceTree = "<group>"; };
 		1CDA62A02925DA3700D90390 /* WebExtensionAPITest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPITest.idl; sourceTree = "<group>"; };
 		1CDDFC7B2755860000C93C62 /* RemoteGPUProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteGPUProxy.messages.in; sourceTree = "<group>"; };
 		1CDDFC7D2755866D00C93C62 /* RemoteGPUProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGPUProxyMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -8821,6 +8832,7 @@
 		1C1549802926E7CC001B9E5B /* API */ = {
 			isa = PBXGroup;
 			children = (
+				1CC94E592AC941C40045F269 /* WebExtensionContextAPIActionCocoa.mm */,
 				1C2B4D3E2A815ACC00C528A1 /* WebExtensionContextAPIAlarmsCocoa.mm */,
 				B6544F9E2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm */,
 				B65DA1DC294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm */,
@@ -8848,6 +8860,7 @@
 			isa = PBXGroup;
 			children = (
 				1C5DC4502908A9D00061EC62 /* Cocoa */,
+				1CC94E552AC92F960045F269 /* WebExtensionAPIAction.h */,
 				1C2B4D452A8199CC00C528A1 /* WebExtensionAPIAlarms.h */,
 				B6544F912937E45000034EB0 /* WebExtensionAPIEvent.h */,
 				1C5DC468290B239C0061EC62 /* WebExtensionAPIExtension.h */,
@@ -8871,6 +8884,7 @@
 		1C5DC4502908A9D00061EC62 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1CC94E572AC92FA50045F269 /* WebExtensionAPIActionCocoa.mm */,
 				1C2B4D432A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm */,
 				B6544F952937E46900034EB0 /* WebExtensionAPIEventCocoa.mm */,
 				1C5DC465290B23890061EC62 /* WebExtensionAPIExtensionCocoa.mm */,
@@ -9022,6 +9036,7 @@
 		1C9DD98F28FA19A30093BDB0 /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
+				1CC94E502AC92E9F0045F269 /* WebExtensionAPIAction.idl */,
 				1C2B4D472A819C4700C528A1 /* WebExtensionAPIAlarms.idl */,
 				B6544F7C29357B1B00034EB0 /* WebExtensionAPIEvent.idl */,
 				1C9DD99028FA19A30093BDB0 /* WebExtensionAPIExtension.idl */,
@@ -13686,6 +13701,8 @@
 				0F5562DE27EE28D000953585 /* GPUProcessMessages.h */,
 				0F5562E827EE28D200953585 /* GPUProcessProxyMessageReceiver.cpp */,
 				0F5562E427EE28D100953585 /* GPUProcessProxyMessages.h */,
+				1CC94E522AC92F190045F269 /* JSWebExtensionAPIAction.h */,
+				1CC94E512AC92F190045F269 /* JSWebExtensionAPIAction.mm */,
 				1C2B4D482A819D0C00C528A1 /* JSWebExtensionAPIAlarms.h */,
 				1C2B4D492A819D0C00C528A1 /* JSWebExtensionAPIAlarms.mm */,
 				B6114A7C2939498000380B1B /* JSWebExtensionAPIEvent.h */,
@@ -14853,6 +14870,7 @@
 				A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */,
 				7BE37F9327C7CA51007A6CD3 /* IPCStreamTesterIdentifier.h in Headers */,
 				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,
+				1CC94E542AC92F190045F269 /* JSWebExtensionAPIAction.h in Headers */,
 				B61AFA4829510D0F008220B1 /* JSWebExtensionAPIPermissions.h in Headers */,
 				1C9A15CE2ABDF1E2002CC12A /* JSWebExtensionAPIPort.h in Headers */,
 				B63E9A6E2AAF2B2D005F4561 /* JSWebExtensionAPIScripting.h in Headers */,
@@ -15317,6 +15335,7 @@
 				F4CBF79E2A6ADF7E00C066BF /* WebEventType.h in Headers */,
 				1CF0C94E2AC380C400EC82F2 /* WebExtensionAction.h in Headers */,
 				1C2B4D422A817D7200C528A1 /* WebExtensionAlarmParameters.h in Headers */,
+				1CC94E562AC92F960045F269 /* WebExtensionAPIAction.h in Headers */,
 				1C2B4D462A8199CD00C528A1 /* WebExtensionAPIAlarms.h in Headers */,
 				B6544F932937E45100034EB0 /* WebExtensionAPIEvent.h in Headers */,
 				1C5DC46D290B271E0061EC62 /* WebExtensionAPIExtension.h in Headers */,
@@ -17643,6 +17662,7 @@
 				522F792928D50EBB0069B45B /* HidService.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
+				1CC94E532AC92F190045F269 /* JSWebExtensionAPIAction.mm in Sources */,
 				1C2B4D4B2A819D0D00C528A1 /* JSWebExtensionAPIAlarms.mm in Sources */,
 				B6114A7F29394A1600380B1B /* JSWebExtensionAPIEvent.mm in Sources */,
 				1C5DC471290B33A20061EC62 /* JSWebExtensionAPIExtension.mm in Sources */,
@@ -17974,6 +17994,7 @@
 				E3866AE52397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm in Sources */,
 				E3866B092399A2D500F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp in Sources */,
 				1CF0C9502AC380E900EC82F2 /* WebExtensionActionCocoa.mm in Sources */,
+				1CC94E582AC92FA50045F269 /* WebExtensionAPIActionCocoa.mm in Sources */,
 				1C2B4D442A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm in Sources */,
 				B6544F972937E46900034EB0 /* WebExtensionAPIEventCocoa.mm in Sources */,
 				1C5DC467290B23890061EC62 /* WebExtensionAPIExtensionCocoa.mm in Sources */,
@@ -17990,6 +18011,7 @@
 				1C5ACFB82A96FA3200C041C0 /* WebExtensionAPIWindowsCocoa.mm in Sources */,
 				1C5ACFB42A96FA1900C041C0 /* WebExtensionAPIWindowsEventCocoa.mm in Sources */,
 				1C627478288A1E1D00CED3A2 /* WebExtensionCocoa.mm in Sources */,
+				1CC94E5A2AC941C40045F269 /* WebExtensionContextAPIActionCocoa.mm in Sources */,
 				1C2B4D3F2A815ACC00C528A1 /* WebExtensionContextAPIAlarmsCocoa.mm in Sources */,
 				B6544F9F2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm in Sources */,
 				B65DA1DD294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm in Sources */,

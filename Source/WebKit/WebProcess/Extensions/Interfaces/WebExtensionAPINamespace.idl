@@ -28,13 +28,19 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPINamespace {
 
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction action;
+
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction browserAction;
 
     readonly attribute WebExtensionAPIExtension extension;
 
     readonly attribute WebExtensionAPILocalization i18n;
 
     readonly attribute WebExtensionAPIRuntime runtime;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction pageAction;
 
     [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
 
