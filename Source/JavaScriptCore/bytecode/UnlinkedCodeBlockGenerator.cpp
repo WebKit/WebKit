@@ -157,7 +157,7 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<JSInstructionStream> i
             m_codeBlock->initializeLoopHintExecutionCounter();
     }
     m_vm.writeBarrier(m_codeBlock.get());
-    m_vm.heap.reportExtraMemoryAllocated(m_codeBlock->m_instructions->sizeInBytes() + m_codeBlock->metadataSizeInBytes());
+    m_vm.heap.reportExtraMemoryAllocated(m_codeBlock.get(), m_codeBlock->m_instructions->sizeInBytes() + m_codeBlock->metadataSizeInBytes());
 }
 
 UnlinkedHandlerInfo* UnlinkedCodeBlockGenerator::handlerForBytecodeIndex(BytecodeIndex bytecodeIndex, RequiredHandler requiredHandler)

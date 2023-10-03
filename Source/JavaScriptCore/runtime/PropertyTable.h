@@ -598,7 +598,7 @@ inline void PropertyTable::rehash(VM& vm, unsigned newCapacity, bool canStayComp
 
     size_t newDataSize = dataSize(this->isCompact());
     if (oldDataSize < newDataSize)
-        vm.heap.reportExtraMemoryAllocated(newDataSize - oldDataSize);
+        vm.heap.reportExtraMemoryAllocated(this, newDataSize - oldDataSize);
 }
 
 inline unsigned PropertyTable::tableCapacity() const { return m_indexSize >> 1; }

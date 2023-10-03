@@ -173,14 +173,14 @@ void JSWebAssemblyMemory::growSuccessCallback(VM& vm, PageCount oldPageCount, Pa
     
     memory().check();
     
-    vm.heap.reportExtraMemoryAllocated(newPageCount.bytes() - oldPageCount.bytes());
+    vm.heap.reportExtraMemoryAllocated(this, newPageCount.bytes() - oldPageCount.bytes());
 }
 
 void JSWebAssemblyMemory::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    vm.heap.reportExtraMemoryAllocated(memory().size());
+    vm.heap.reportExtraMemoryAllocated(this, memory().size());
 }
 
 void JSWebAssemblyMemory::destroy(JSCell* cell)

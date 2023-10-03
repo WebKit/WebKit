@@ -292,7 +292,7 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
         m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(m_imageBuffer->context());
 
         JSC::JSLockHolder lock(scriptExecutionContext()->vm());
-        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(memoryCost());
+        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), memoryCost());
     }
 
     return returnBuffer;

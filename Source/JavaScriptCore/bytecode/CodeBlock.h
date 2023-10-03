@@ -325,7 +325,7 @@ public:
     void setJITCode(Ref<JITCode>&& code)
     {
         if (!code->isShared())
-            heap()->reportExtraMemoryAllocated(code->size());
+            heap()->reportExtraMemoryAllocated(this, code->size());
 
         ConcurrentJSLocker locker(m_lock);
         WTF::storeStoreFence(); // This is probably not needed because the lock will also do something similar, but it's good to be paranoid.

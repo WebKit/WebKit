@@ -464,7 +464,7 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::grow(VM& vm, size_t newByteLength
         return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
     auto result = shared->grow(vm, newByteLength);
     if (result && result.value() > 0)
-        vm.heap.reportExtraMemoryAllocated(result.value());
+        vm.heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), result.value());
     return result;
 }
 
@@ -558,7 +558,7 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
     }
 
     if (deltaByteLength > 0)
-        vm.heap.reportExtraMemoryAllocated(deltaByteLength);
+        vm.heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), deltaByteLength);
 
     return deltaByteLength;
 }

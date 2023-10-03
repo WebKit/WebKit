@@ -130,7 +130,7 @@ void JSTestReportExtraMemoryCost::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    vm.heap.reportExtraMemoryAllocated(wrapped().memoryCost());
+    vm.heap.reportExtraMemoryAllocated(this, wrapped().memoryCost());
 }
 
 JSObject* JSTestReportExtraMemoryCost::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
