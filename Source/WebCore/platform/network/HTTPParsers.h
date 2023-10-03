@@ -106,6 +106,8 @@ ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header);
 size_t parseHTTPHeader(const uint8_t* data, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict = true);
 size_t parseHTTPRequestBody(const uint8_t* data, size_t length, Vector<uint8_t>& body);
 
+std::optional<uint64_t> parseContentLength(StringView);
+
 // HTTP Header routine as per https://fetch.spec.whatwg.org/#terminology-headers
 bool isForbiddenHeader(const String& name, StringView value);
 bool isForbiddenHeaderName(const String&);
