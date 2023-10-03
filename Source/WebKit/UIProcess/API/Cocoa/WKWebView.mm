@@ -1240,6 +1240,8 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     WebKit::SnapshotOptions snapshotOptions = WebKit::SnapshotOptionsInViewCoordinates;
     if (!snapshotConfiguration._includesSelectionHighlighting)
         snapshotOptions |= WebKit::SnapshotOptionsExcludeSelectionHighlighting;
+    if (snapshotConfiguration._usesTransparentBackground)
+        snapshotOptions |= WebKit::SnapshotOptionsTransparentBackground;
 
     // Software snapshot will not capture elements rendered with hardware acceleration (WebGL, video, etc).
     // This code doesn't consider snapshotConfiguration.afterScreenUpdates since the software snapshot always
