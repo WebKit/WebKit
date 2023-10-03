@@ -246,10 +246,12 @@ ExceptionOr<void> MediaRecorder::requestData()
             break;
         case RecordingState::Recording:
             ASSERT(m_isActive);
-            m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));
+            if (m_timeSlice)
+                m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));
             break;
         case RecordingState::Paused:
-            m_nextFireInterval = Seconds::fromMilliseconds(*m_timeSlice);
+            if (m_timeSlice)
+                m_nextFireInterval = Seconds::fromMilliseconds(*m_timeSlice);
             break;
         }
     }, TakePrivateRecorder::No);
