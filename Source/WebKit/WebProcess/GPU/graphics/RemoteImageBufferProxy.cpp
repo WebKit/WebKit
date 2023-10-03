@@ -150,7 +150,7 @@ ALWAYS_INLINE void RemoteImageBufferProxy::send(T&& message)
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return;
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().send(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = m_remoteRenderingBackendProxy->streamConnection().send(std::forward<T>(message), renderingResourceIdentifier());
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(result != IPC::Error::NoError)) {
         auto& parameters = m_remoteRenderingBackendProxy->parameters();
@@ -168,7 +168,7 @@ ALWAYS_INLINE auto RemoteImageBufferProxy::sendSync(T&& message)
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), renderingResourceIdentifier());
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(!result.succeeded())) {
         auto& parameters = m_remoteRenderingBackendProxy->parameters();
@@ -228,7 +228,7 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
 {
     if (!m_backend && m_remoteRenderingBackendProxy) {
-        auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
+        auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier);
         if (error != IPC::Error::NoError) {
 #if !RELEASE_LOG_DISABLED
             auto& parameters = m_remoteRenderingBackendProxy->parameters();
@@ -371,7 +371,7 @@ void RemoteImageBufferProxy::flushDrawingContext()
         return;
     }
     if (m_pendingFlush) {
-        bool success = m_pendingFlush->waitFor(RemoteRenderingBackendProxy::defaultTimeout);
+        bool success = m_pendingFlush->waitFor(m_remoteRenderingBackendProxy->streamConnection().defaultTimeout());
         ASSERT_UNUSED(success, success); // Currently there is nothing to be done on a timeout.
         m_pendingFlush = nullptr;
     }

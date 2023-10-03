@@ -1166,7 +1166,7 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
     enum JSIPCStreamTesterIdentifierType { };
     auto destination = ObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
 
-    auto sendResult = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination, timeoutDuration);
+    auto sendResult = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination, { timeoutDuration });
     if (!sendResult.succeeded()) {
         *exception = createTypeError(context, "sync send failed"_s);
         return JSValueMakeUndefined(context);
@@ -2480,7 +2480,7 @@ JSValueRef JSIPC::createStreamClientConnection(JSContextRef context, JSObjectRef
         *exception = createTypeError(context, "Must specify the size"_s);
         return JSValueMakeUndefined(context);
     }
-    auto connectionPair = IPC::StreamClientConnection::create(*bufferSizeLog2);
+    auto connectionPair = IPC::StreamClientConnection::create(15_s, *bufferSizeLog2);
     if (!connectionPair) {
         *exception = createError(context, "Failed to create the connection"_s);
         return JSValueMakeUndefined(context);

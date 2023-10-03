@@ -28,10 +28,10 @@
 
 #pragma once
 
+#include "IPCOptions.h"
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "ReceiverMatcher.h"
-#include "Timeout.h"
 #include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
@@ -72,31 +72,6 @@
 #endif
 
 namespace IPC {
-
-enum class SendOption : uint8_t {
-    // Whether this message should be dispatched when waiting for a sync reply.
-    // This is the default for synchronous messages.
-    DispatchMessageEvenWhenWaitingForSyncReply = 1 << 0,
-    DispatchMessageEvenWhenWaitingForUnboundedSyncReply = 1 << 1,
-    IgnoreFullySynchronousMode = 1 << 2,
-#if ENABLE(IPC_TESTING_API)
-    IPCTestingMessage = 1 << 3,
-#endif
-};
-
-enum class SendSyncOption : uint8_t {
-    // Use this to inform that this sync call will suspend this process until the user responds with input.
-    InformPlatformProcessWillSuspend = 1 << 0,
-    UseFullySynchronousModeForTesting = 1 << 1,
-    ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply = 1 << 2,
-    MaintainOrderingWithAsyncMessages = 1 << 3,
-};
-
-enum class WaitForOption {
-    // Use this to make waitForMessage be interrupted immediately by any incoming sync messages.
-    InterruptWaitingIfSyncMessageArrives = 1 << 0,
-    DispatchIncomingSyncMessagesWhileWaiting = 1 << 1,
-};
 
 enum class Error : uint8_t {
     NoError = 0,

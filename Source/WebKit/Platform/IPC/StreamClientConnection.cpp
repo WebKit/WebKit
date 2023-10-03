@@ -56,7 +56,7 @@ void StreamClientConnection::DedicatedConnectionClient::didReceiveInvalidMessage
     ASSERT_NOT_REACHED(); // The sender is expected to be trusted, so all invalid messages are programming errors.
 }
 
-std::optional<StreamClientConnection::StreamConnectionPair> StreamClientConnection::create(unsigned bufferSizeLog2)
+std::optional<StreamClientConnection::StreamConnectionPair> StreamClientConnection::create(Seconds defaultTimeout, unsigned bufferSizeLog2)
 {
     auto connectionIdentifiers = Connection::createConnectionIdentifierPair();
     if (!connectionIdentifiers)
@@ -71,7 +71,7 @@ std::optional<StreamClientConnection::StreamConnectionPair> StreamClientConnecti
     // The "Client" in StreamClientConnection means the party that mostly does sending, e.g. untrusted party.
     // The "Server" in StreamServerConnection means the party that mostly does receiving, e.g. the trusted party which holds the destination object to communicate with.
     auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server);
-    auto clientConnection = adoptRef(*new StreamClientConnection(WTFMove(dedicatedConnection), WTFMove(*buffer)));
+    auto clientConnection = adoptRef(*new StreamClientConnection(defaultTimeout, WTFMove(dedicatedConnection), WTFMove(*buffer)));
     StreamServerConnection::Handle serverHandle {
         WTFMove(connectionIdentifiers->client),
         clientConnection->m_buffer.createHandle()
@@ -79,8 +79,9 @@ std::optional<StreamClientConnection::StreamConnectionPair> StreamClientConnecti
     return StreamClientConnection::StreamConnectionPair { WTFMove(clientConnection), WTFMove(serverHandle) };
 }
 
-StreamClientConnection::StreamClientConnection(Ref<Connection> connection, StreamClientConnectionBuffer&& buffer)
-    : m_connection(WTFMove(connection))
+StreamClientConnection::StreamClientConnection(Seconds defaultTimeout, Ref<Connection> connection, StreamClientConnectionBuffer&& buffer)
+    : m_defaultTimeout(defaultTimeout)
+    , m_connection(WTFMove(connection))
     , m_buffer(WTFMove(buffer))
 {
 }
