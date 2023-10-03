@@ -169,13 +169,6 @@
       expect("SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET", 1);
       expect("SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE", 2);
 
-      expect("SVGRenderingIntent.RENDERING_INTENT_UNKNOWN", 0);
-      expect("SVGRenderingIntent.RENDERING_INTENT_AUTO", 1);
-      expect("SVGRenderingIntent.RENDERING_INTENT_PERCEPTUAL", 2);
-      expect("SVGRenderingIntent.RENDERING_INTENT_RELATIVE_COLORIMETRIC", 3);
-      expect("SVGRenderingIntent.RENDERING_INTENT_SATURATION", 4);
-      expect("SVGRenderingIntent.RENDERING_INTENT_ABSOLUTE_COLORIMETRIC", 5);
-
       expect("SVGTextContentElement.LENGTHADJUST_UNKNOWN", 0);
       expect("SVGTextContentElement.LENGTHADJUST_SPACING", 1);
       expect("SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS", 2);
