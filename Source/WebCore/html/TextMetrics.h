@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,55 +34,55 @@ class TextMetrics : public RefCounted<TextMetrics> {
 public:
     static Ref<TextMetrics> create() { return adoptRef(*new TextMetrics); }
 
-    float width() const { return m_width; }
-    void setWidth(float w) { m_width = w; }
+    double width() const { return m_width; }
+    void setWidth(double w) { m_width = w; }
 
-    float actualBoundingBoxLeft() const { return m_actualBoundingBoxLeft; }
-    void setActualBoundingBoxLeft(float value) { m_actualBoundingBoxLeft = value; }
+    double actualBoundingBoxLeft() const { return m_actualBoundingBoxLeft; }
+    void setActualBoundingBoxLeft(double value) { m_actualBoundingBoxLeft = value; }
 
-    float actualBoundingBoxRight() const { return m_actualBoundingBoxRight; }
-    void setActualBoundingBoxRight(float value) { m_actualBoundingBoxRight = value; }
+    double actualBoundingBoxRight() const { return m_actualBoundingBoxRight; }
+    void setActualBoundingBoxRight(double value) { m_actualBoundingBoxRight = value; }
 
-    float fontBoundingBoxAscent() const { return m_fontBoundingBoxAscent; }
-    void setFontBoundingBoxAscent(float value) {  m_fontBoundingBoxAscent = value; }
+    double fontBoundingBoxAscent() const { return m_fontBoundingBoxAscent; }
+    void setFontBoundingBoxAscent(double value) { m_fontBoundingBoxAscent = value; }
 
-    float fontBoundingBoxDescent() const { return m_fontBoundingBoxDescent; }
-    void setFontBoundingBoxDescent(float value) {  m_fontBoundingBoxDescent = value; }
+    double fontBoundingBoxDescent() const { return m_fontBoundingBoxDescent; }
+    void setFontBoundingBoxDescent(double value) { m_fontBoundingBoxDescent = value; }
 
-    float actualBoundingBoxAscent() const { return m_actualBoundingBoxAscent; }
-    void setActualBoundingBoxAscent(float value) {  m_actualBoundingBoxAscent = value; }
+    double actualBoundingBoxAscent() const { return m_actualBoundingBoxAscent; }
+    void setActualBoundingBoxAscent(double value) { m_actualBoundingBoxAscent = value; }
 
-    float actualBoundingBoxDescent() const { return m_actualBoundingBoxDescent; }
-    void setActualBoundingBoxDescent(float value) {  m_actualBoundingBoxDescent = value; }
+    double actualBoundingBoxDescent() const { return m_actualBoundingBoxDescent; }
+    void setActualBoundingBoxDescent(double value) { m_actualBoundingBoxDescent = value; }
 
-    float emHeightAscent() const { return m_emHeightAscent; }
-    void setEmHeightAscent(float value) {  m_emHeightAscent = value; }
+    double emHeightAscent() const { return m_emHeightAscent; }
+    void setEmHeightAscent(double value) { m_emHeightAscent = value; }
 
-    float emHeightDescent() const { return m_emHeightDescent; }
-    void setEmHeightDescent(float value) {  m_emHeightDescent = value; }
+    double emHeightDescent() const { return m_emHeightDescent; }
+    void setEmHeightDescent(double value) { m_emHeightDescent = value; }
 
-    float hangingBaseline() const { return m_hangingBaseline; }
-    void setHangingBaseline(float value) {  m_hangingBaseline = value; }
+    double hangingBaseline() const { return m_hangingBaseline; }
+    void setHangingBaseline(double value) { m_hangingBaseline = value; }
 
-    float alphabeticBaseline() const { return m_alphabeticBaseline; }
-    void setAlphabeticBaseline(float value) {  m_alphabeticBaseline = value; }
+    double alphabeticBaseline() const { return m_alphabeticBaseline; }
+    void setAlphabeticBaseline(double value) { m_alphabeticBaseline = value; }
 
-    float ideographicBaseline() const { return m_ideographicBaseline; }
-    void setIdeographicBaseline(float value) {  m_ideographicBaseline = value; }
+    double ideographicBaseline() const { return m_ideographicBaseline; }
+    void setIdeographicBaseline(double value) { m_ideographicBaseline = value; }
 
 private:
-    float m_width { 0 };
-    float m_actualBoundingBoxLeft { 0 };
-    float m_actualBoundingBoxRight { 0 };
-    float m_fontBoundingBoxAscent { 0 };
-    float m_fontBoundingBoxDescent { 0 };
-    float m_actualBoundingBoxAscent { 0 };
-    float m_actualBoundingBoxDescent { 0 };
-    float m_emHeightAscent { 0 };
-    float m_emHeightDescent { 0 };
-    float m_hangingBaseline { 0 };
-    float m_alphabeticBaseline { 0 };
-    float m_ideographicBaseline { 0 };
+    double m_width { 0 };
+    double m_actualBoundingBoxLeft { 0 };
+    double m_actualBoundingBoxRight { 0 };
+    double m_fontBoundingBoxAscent { 0 };
+    double m_fontBoundingBoxDescent { 0 };
+    double m_actualBoundingBoxAscent { 0 };
+    double m_actualBoundingBoxDescent { 0 };
+    double m_emHeightAscent { 0 };
+    double m_emHeightDescent { 0 };
+    double m_hangingBaseline { 0 };
+    double m_alphabeticBaseline { 0 };
+    double m_ideographicBaseline { 0 };
 };
 
 } // namespace WebCore
