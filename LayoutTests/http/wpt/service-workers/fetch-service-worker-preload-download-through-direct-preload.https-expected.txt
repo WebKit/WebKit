@@ -1,5 +1,6 @@
 Download started.
 Downloading URL with suggested filename "fetch-service-worker-preload-script.py.vcf"
 Download size: 11.
+Download expected size: 11.
 Download completed.
 

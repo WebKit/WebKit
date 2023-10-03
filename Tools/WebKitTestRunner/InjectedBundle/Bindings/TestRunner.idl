@@ -42,6 +42,7 @@ interface TestRunner {
     undefined waitUntilDownloadFinished();
     undefined setShouldLogDownloadCallbacks(boolean value);
     undefined setShouldLogDownloadSize(boolean value);
+    undefined setShouldLogDownloadExpectedSize(boolean value);
 
     const unsigned short RENDER_TREE_SHOW_ALL_LAYERS            = 1;
     const unsigned short RENDER_TREE_SHOW_LAYER_NESTING         = 2;

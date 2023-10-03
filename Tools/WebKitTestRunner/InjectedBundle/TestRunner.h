@@ -233,6 +233,7 @@ public:
     bool shouldFinishAfterDownload() const { return m_shouldFinishAfterDownload; }
     void setShouldLogDownloadCallbacks(bool);
     void setShouldLogDownloadSize(bool);
+    void setShouldLogDownloadExpectedSize(bool);
 
     bool shouldAllowEditing() const { return m_shouldAllowEditing; }
 

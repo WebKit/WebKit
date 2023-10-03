@@ -201,6 +201,7 @@ public:
     void setShouldLogCanAuthenticateAgainstProtectionSpace(bool shouldLog) { m_shouldLogCanAuthenticateAgainstProtectionSpace = shouldLog; }
     void setShouldLogDownloadCallbacks(bool shouldLog) { m_shouldLogDownloadCallbacks = shouldLog; }
     void setShouldLogDownloadSize(bool shouldLog) { m_shouldLogDownloadSize = shouldLog; }
+    void setShouldLogDownloadExpectedSize(bool shouldLog) { m_shouldLogDownloadExpectedSize = shouldLog; }
 
     bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
 
@@ -536,7 +537,7 @@ private:
     bool downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLRequestRef);
     static void downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef, const void *clientInfo);
 
-    void downloadDidWriteData(long long totalBytesWritten);
+    void downloadDidWriteData(long long totalBytesWritten, long long totalBytesExpectedToWrite);
     static void downloadDidWriteData(WKDownloadRef, long long bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite, const void* clientInfo);
 
     static void webProcessDidTerminate(WKPageRef,  WKProcessTerminationReason, const void* clientInfo);
@@ -750,7 +751,9 @@ private:
     bool m_isMediaKeySystemPermissionGranted { true };
 
     std::optional<long long> m_downloadTotalBytesWritten;
+    std::optional<uint64_t> m_downloadTotalBytesExpectedToWrite;
     bool m_shouldLogDownloadSize { false };
+    bool m_shouldLogDownloadExpectedSize { false };
     bool m_dumpPolicyDelegateCallbacks { false };
 };
 
