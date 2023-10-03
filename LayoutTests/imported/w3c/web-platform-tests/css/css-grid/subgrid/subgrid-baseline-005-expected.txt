@@ -13,7 +13,7 @@ PASS .item 5
 PASS .item 6
 FAIL .item 7 assert_equals:
 <div data-offset-y="41" class="item small first"></div>
-offsetTop expected 41 but got 8
+offsetTop expected 41 but got 21
 FAIL .item 8 assert_equals:
 <div data-offset-y="110" class="item small last"></div>
 offsetTop expected 110 but got 120
