@@ -373,7 +373,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
     }
 
     ctxt.setDrawLuminanceMask(false);
-    ctxt.drawPattern(*m_cachedImage, destRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
+    ctxt.drawPattern(Ref { *m_cachedImage }, destRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
 }
 
 bool BitmapImage::shouldAnimate() const

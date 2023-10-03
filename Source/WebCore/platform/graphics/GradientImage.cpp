@@ -92,7 +92,7 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& d
     }
 
     destContext.setDrawLuminanceMask(false);
-    destContext.drawPattern(*m_cachedImage, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
+    destContext.drawPattern(Ref { *m_cachedImage }, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
 
 }
 

@@ -39,10 +39,9 @@ RefPtr<WebMResourceClient> WebMResourceClient::create(WebMResourceClientParent& 
     auto resource = loader.requestResource(WTFMove(request), PlatformMediaResourceLoader::LoadOption::DisallowCaching);
     if (!resource)
         return nullptr;
-    auto* resourcePointer = resource.get();
-    auto client = adoptRef(*new WebMResourceClient { parent, resource.releaseNonNull() });
+    auto client = adoptRef(*new WebMResourceClient { parent, Ref { *resource } });
     auto result = client.copyRef();
-    resourcePointer->setClient(WTFMove(client));
+    resource->setClient(WTFMove(client));
     return result;
 }
 
