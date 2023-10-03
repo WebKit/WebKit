@@ -28,6 +28,7 @@
 
 #include "API.h"
 #include "AST.h"
+#include "ASTInterpolateAttribute.h"
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
@@ -101,6 +102,8 @@ public:
     void visit(AST::WhileStatement&) override;
     void visit(AST::BreakStatement&) override;
     void visit(AST::ContinueStatement&) override;
+
+    void visit(AST::InterpolateAttribute::Type, std::optional<AST::InterpolateAttribute::Sampling>) override;
 
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
@@ -592,6 +595,41 @@ void FunctionDefinitionWriter::visit(AST::AlignAttribute&)
 {
     // This attribute shouldn't generate any code. The alignment is used when
     // serializing structs.
+}
+
+static const char* convertToSampleMode(AST::InterpolateAttribute::Type type, std::optional<AST::InterpolateAttribute::Sampling> sampling)
+{
+    auto sampleType = sampling ? *sampling : AST::InterpolateAttribute::Sampling::Center;
+    switch (type) {
+    case AST::InterpolateAttribute::Type::Flat:
+        return "flat";
+    case AST::InterpolateAttribute::Type::Linear:
+        switch (sampleType) {
+        case AST::InterpolateAttribute::Sampling::Center:
+            return "center_no_perspective";
+        case AST::InterpolateAttribute::Sampling::Centroid:
+            return "centroid_no_perspective";
+        case AST::InterpolateAttribute::Sampling::Sample:
+            return "sample_no_perspective";
+        }
+    case AST::InterpolateAttribute::Type::Perspective:
+        switch (sampleType) {
+        case AST::InterpolateAttribute::Sampling::Center:
+            return "center_perspective";
+        case AST::InterpolateAttribute::Sampling::Centroid:
+            return "centroid_perspective";
+        case AST::InterpolateAttribute::Sampling::Sample:
+            return "sample_perspective";
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+    return "flat";
+}
+
+void FunctionDefinitionWriter::visit(AST::InterpolateAttribute::Type type, std::optional<AST::InterpolateAttribute::Sampling> sampling)
+{
+    m_stringBuilder.append("[[", convertToSampleMode(type, sampling), "]]");
 }
 
 // Types

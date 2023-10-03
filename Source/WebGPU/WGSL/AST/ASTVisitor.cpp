@@ -133,8 +133,9 @@ void Visitor::visit(AST::IdAttribute& attribute)
     visit(attribute.value());
 }
 
-void Visitor::visit(AST::InterpolateAttribute&)
+void Visitor::visit(AST::InterpolateAttribute& attribute)
 {
+    visit(attribute.type(), attribute.sampling());
 }
 
 void Visitor::visit(AST::InvariantAttribute&)

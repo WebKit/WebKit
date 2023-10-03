@@ -616,6 +616,29 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
         RETURN_ARENA_NODE(AlignAttribute, WTFMove(alignment));
     }
 
+    if (ident.ident == "interpolate"_s) {
+        CONSUME_TYPE(ParenLeft);
+        PARSE(interpolate, Identifier);
+        AST::InterpolateAttribute::Type interpolationType { AST::InterpolateAttribute::Type::Flat };
+        if (interpolate == "perspective"_s)
+            interpolationType = AST::InterpolateAttribute::Type::Perspective;
+        else if (interpolate == "linear"_s)
+            interpolationType = AST::InterpolateAttribute::Type::Linear;
+        AST::InterpolateAttribute::Sampling sampleType { AST::InterpolateAttribute::Sampling::Center };
+        if (current().type == TokenType::Comma) {
+            consume();
+            PARSE(sampling, Identifier);
+            UNUSED_PARAM(sampling);
+            if (sampling == "centroid"_s)
+                sampleType = AST::InterpolateAttribute::Sampling::Centroid;
+            else if (sampling == "sample"_s)
+                sampleType = AST::InterpolateAttribute::Sampling::Sample;
+        }
+        CONSUME_TYPE(ParenRight);
+        UNUSED_PARAM(interpolate);
+        RETURN_ARENA_NODE(InterpolateAttribute, interpolationType, sampleType);
+    }
+
     if (ident.ident == "size"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(size, Expression);
