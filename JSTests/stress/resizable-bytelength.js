@@ -1,4 +1,5 @@
 //@ requireOptions("--useResizableArrayBuffer=1")
+//@ skip if $memoryLimited
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
