@@ -39,7 +39,7 @@ public:
         InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };
         size_t committedCount { 0 };
     };
-    InlineLayoutResult layoutInlineAxis(const InlineItemRange&, const InlineItems&, Line&, InlineLayoutUnit availableWidth);
+    InlineLayoutResult layoutInlineAxis(const InlineItemRange&, const InlineItemList&, Line&, InlineLayoutUnit availableWidth);
 
     struct OverUnder {
         InlineLayoutUnit over { 0.f };
@@ -52,14 +52,14 @@ public:
     InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineDisplay::Boxes&);
     InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, size_t rubyBaseStartIndex, size_t rubyBaseContentEndIndex, const InlineDisplay::Boxes&);
 
-    static std::optional<size_t> nextWrapOpportunity(size_t inlineItemIndex, std::optional<size_t> previousInlineItemIndex, const InlineItemRange&, const InlineItems&);
+    static std::optional<size_t> nextWrapOpportunity(size_t inlineItemIndex, std::optional<size_t> previousInlineItemIndex, const InlineItemRange&, const InlineItemList&);
 
 private:
-    size_t layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart, const InlineItems&);
+    size_t layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart, const InlineItemList&);
     void applyRubyAlign(Line&, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth);
     std::optional<bool> annotationOverlapCheck(const InlineDisplay::Box&, const InlineLayoutRect& overhangingRect) const;
-    void placeRubyContent(WTF::Range<size_t> candidateRange, const InlineItems&, Line&);
-    InlineLayoutUnit logicaWidthForRubyRange(WTF::Range<size_t> candidateRange, const InlineItems&, InlineLayoutUnit lineContentLogicalRight) const;
+    void placeRubyContent(WTF::Range<size_t> candidateRange, const InlineItemList&, Line&);
+    InlineLayoutUnit logicaWidthForRubyRange(WTF::Range<size_t> candidateRange, const InlineItemList&, InlineLayoutUnit lineContentLogicalRight) const;
 
     const InlineFormattingContext& parentFormattingContext() const { return m_parentFormattingContext; }
 

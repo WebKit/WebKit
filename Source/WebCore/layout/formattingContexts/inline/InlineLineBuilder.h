@@ -40,7 +40,7 @@ struct LineCandidate;
 
 class LineBuilder : public AbstractLineBuilder {
 public:
-    LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
+    LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     virtual ~LineBuilder() { };
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
@@ -111,7 +111,7 @@ private:
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     InlineLayoutUnit m_candidateContentMaximumHeight { 0.f };
-    const InlineItems& m_inlineItems;
+    const InlineItemList& m_inlineItemList;
     LineLayoutResult::PlacedFloatList m_placedFloats;
     LineLayoutResult::SuspendedFloatList m_suspendedFloats;
     std::optional<InlineTextItem> m_partialLeadingTextItem;

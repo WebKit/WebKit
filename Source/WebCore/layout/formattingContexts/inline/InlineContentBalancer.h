@@ -37,7 +37,7 @@ namespace Layout {
 
 class InlineContentBalancer {
 public:
-    InlineContentBalancer(InlineFormattingContext&, const InlineItems&, const HorizontalConstraints&);
+    InlineContentBalancer(InlineFormattingContext&, const InlineItemList&, const HorizontalConstraints&);
     std::optional<Vector<LayoutUnit>> computeBalanceConstraints();
 
 private:
@@ -51,7 +51,7 @@ private:
     bool shouldTrimTrailing(size_t inlineItemIndex, bool useFirstLineStyle) const;
 
     InlineFormattingContext& m_inlineFormattingContext;
-    const InlineItems& m_inlineItems;
+    const InlineItemList& m_inlineItemList;
     const HorizontalConstraints& m_horizontalConstraints;
 
     Vector<InlineItemRange> m_originalLineInlineItemRanges;
@@ -65,7 +65,7 @@ private:
     bool m_cannotBalanceContent { false };
 
     struct SlidingWidth {
-        SlidingWidth(const InlineContentBalancer&, const InlineItems&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
+        SlidingWidth(const InlineContentBalancer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
         InlineLayoutUnit width();
         void advanceStart();
         void advanceStartTo(size_t newStart);
@@ -74,7 +74,7 @@ private:
 
     private:
         const InlineContentBalancer& m_inlineContentBalancer;
-        const InlineItems& m_inlineItems;
+        const InlineItemList& m_inlineItemList;
         size_t m_start { 0 };
         size_t m_end { 0 };
         bool m_useFirstLineStyle { false };

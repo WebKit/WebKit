@@ -89,8 +89,8 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
         InlineItemsBuilder { inlineContentCache, root() }.build(needsLayoutStartPosition);
     }
 
-    auto& inlineItems = inlineContentCache.inlineItems();
-    auto needsLayoutRange = InlineItemRange { needsLayoutStartPosition, { inlineItems.size(), 0 } };
+    auto& inlineItemList = inlineContentCache.inlineItems().content();
+    auto needsLayoutRange = InlineItemRange { needsLayoutStartPosition, { inlineItemList.size(), 0 } };
 
     auto previousLine = [&]() -> std::optional<PreviousLine> {
         if (!needsLayoutStartPosition)
@@ -103,18 +103,18 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     };
 
     if (root().style().textWrap() == TextWrap::Balance) {
-        auto balancer = InlineContentBalancer { *this, inlineItems, constraints.horizontal() };
+        auto balancer = InlineContentBalancer { *this, inlineItemList, constraints.horizontal() };
         auto balancedLineWidths = balancer.computeBalanceConstraints();
         if (balancedLineWidths)
             inlineLayoutState().setAvailableLineWidthOverride({ *balancedLineWidths });
     }
 
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), this->inlineContentCache(), &placedFloats)) {
-        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, constraints.horizontal(), inlineItems };
-        return lineLayout(simplifiedLineBuilder, inlineItems, needsLayoutRange, previousLine(), constraints, lineDamage);
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, constraints.horizontal(), inlineItemList };
+        return lineLayout(simplifiedLineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
     }
-    auto lineBuilder = LineBuilder { *this, constraints.horizontal(), inlineItems };
-    return lineLayout(lineBuilder, inlineItems, needsLayoutRange, previousLine(), constraints, lineDamage);
+    auto lineBuilder = LineBuilder { *this, constraints.horizontal(), inlineItemList };
+    return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
 }
 
 IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const InlineDamage* lineDamage)
@@ -132,7 +132,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
         InlineItemsBuilder { inlineContentCache, root() }.build(needsLayoutStartPosition);
 
     auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
-    auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineContentCache.inlineItems(), mayUseSimplifiedTextOnlyInlineLayout };
+    auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineContentCache.inlineItems().content(), mayUseSimplifiedTextOnlyInlineLayout };
     auto intrinsicSizes = intrinsicWidthHandler.computedIntrinsicSizes();
     inlineContentCache.setIntrinsicWidthConstraints(intrinsicSizes);
     if (intrinsicWidthHandler.maximumIntrinsicWidthResult())
@@ -147,7 +147,7 @@ LayoutUnit InlineFormattingContext::maximumContentSize()
         return intrinsicWidthConstraints->maximum;
 
     auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
-    return IntrinsicWidthHandler { *this, inlineContentCache.inlineItems(), mayUseSimplifiedTextOnlyInlineLayout }.maximumContentSize();
+    return IntrinsicWidthHandler { *this, inlineContentCache.inlineItems().content(), mayUseSimplifiedTextOnlyInlineLayout }.maximumContentSize();
 }
 
 static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t lineIndex, const InlineDisplay::Boxes& newContent)
@@ -161,13 +161,13 @@ static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t line
     return trailingContentFromPreviousLayout ? (!newContent.isEmpty() && *trailingContentFromPreviousLayout == newContent.last()) : false;
 }
 
-InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItems& inlineItems, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage)
+InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage)
 {
     ASSERT(!needsLayoutRange.isEmpty());
 
     auto layoutResult = InlineLayoutResult { };
     if (!needsLayoutRange.start)
-        layoutResult.displayContent.boxes.reserveInitialCapacity(inlineItems.size());
+        layoutResult.displayContent.boxes.reserveInitialCapacity(inlineItemList.size());
 
     auto isPartialLayout = lineDamage && lineDamage->start();
     if (!isPartialLayout && createDisplayContentForLineFromCachedContent(constraints, layoutResult)) {
@@ -222,7 +222,7 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
 
     InlineItemsBuilder { inlineContentCache, root() }.build({ });
 
-    for (auto& inlineItem : inlineContentCache.inlineItems()) {
+    for (auto& inlineItem : inlineContentCache.inlineItems().content()) {
         if (inlineItem.isFloat()) {
             auto& floatBox = inlineItem.layoutBox();
             auto& floatBoxGeometry = geometryForBox(floatBox);
@@ -313,9 +313,9 @@ void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRan
     if (needsDisplayContentRange.isEmpty() && suspendedFloats.isEmpty())
         return;
 
-    auto& inlineItems = this->inlineContentCache().inlineItems();
+    auto& inlineItemList = inlineContentCache().inlineItems().content();
     for (size_t index = needsDisplayContentRange.startIndex(); index < needsDisplayContentRange.endIndex(); ++index) {
-        auto& inlineItem = inlineItems[index];
+        auto& inlineItem = inlineItemList[index];
         auto hasBoxGeometry = inlineItem.isBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak() || inlineItem.isInlineBoxStart();
         if (!hasBoxGeometry)
             continue;

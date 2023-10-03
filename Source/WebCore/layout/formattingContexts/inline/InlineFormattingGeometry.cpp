@@ -441,7 +441,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
     return true;
 }
 
-size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItems& inlineItems)
+size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList& inlineItemList)
 {
     // 1. Find the start candidate by skipping leading non-content items e.g "<span><span>start". Opportunity is after "<span><span>".
     // 2. Find the end candidate by skipping non-content items inbetween e.g. "<span><span>start</span>end". Opportunity is after "</span>".
@@ -453,16 +453,16 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
     // [ex-][inline box start][line break][ample] (ex-<span><br>ample). Wrap index is after [br].
     auto previousInlineItemIndex = std::optional<size_t> { };
     for (auto index = startIndex; index < layoutRange.endIndex(); ++index) {
-        auto& currentItem = inlineItems[index];
+        auto& currentItem = inlineItemList[index];
         if (currentItem.isLineBreak() || currentItem.isWordBreakOpportunity()) {
             // We always stop at explicit wrapping opportunities e.g. <br>. However the wrap position may be at later position.
             // e.g. <span><span><br></span></span> <- wrap position is after the second </span>
             // but in case of <span><br><span></span></span> <- wrap position is right after <br>.
-            for (++index; index < layoutRange.endIndex() && inlineItems[index].isInlineBoxEnd(); ++index) { }
+            for (++index; index < layoutRange.endIndex() && inlineItemList[index].isInlineBoxEnd(); ++index) { }
             return index;
         }
         if (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) {
-            if (auto nextWrapOpportunityForRuby = RubyFormattingContext::nextWrapOpportunity(index, previousInlineItemIndex, layoutRange, inlineItems))
+            if (auto nextWrapOpportunityForRuby = RubyFormattingContext::nextWrapOpportunity(index, previousInlineItemIndex, layoutRange, inlineItemList))
                 return *nextWrapOpportunityForRuby;
             // Need to see what comes next to decide.
             continue;
@@ -486,7 +486,7 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             continue;
         }
         // At this point previous and current items are not necessarily adjacent items e.g "previous<span>current</span>"
-        auto& previousItem = inlineItems[*previousInlineItemIndex];
+        auto& previousItem = inlineItemList[*previousInlineItemIndex];
         if (isAtSoftWrapOpportunity(previousItem, currentItem)) {
             if (*previousInlineItemIndex + 1 == index && (!previousItem.isText() || !currentItem.isText())) {
                 // We only know the exact soft wrap opportunity index when the previous and current items are next to each other.
@@ -513,7 +513,7 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             auto end = index;
             // Soft wrap opportunity is at the first inline box that encloses the trailing content.
             for (auto candidateIndex = start + 1; candidateIndex < end; ++candidateIndex) {
-                auto& inlineItem = inlineItems[candidateIndex];
+                auto& inlineItem = inlineItemList[candidateIndex];
                 ASSERT((inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque()) && !inlineItem.layoutBox().isRuby());
                 if (inlineItem.isInlineBoxStart())
                     inlineBoxStack.append({ &inlineItem.layoutBox(), candidateIndex });

@@ -34,25 +34,35 @@
 namespace WebCore {
 namespace Layout {
 
-using InlineItems = Vector<InlineItem>;
-
 // InlineContentCache is used to cache content for subsequent layouts.
 class InlineContentCache {
     WTF_MAKE_ISO_ALLOCATED_INLINE(InlineContentCache);
 public:
-    InlineItems& inlineItems() { return m_inlineItems; }
+    struct InlineItems {
+        InlineItemList& content() { return m_inlineItemList; }
+        const InlineItemList& content() const { return m_inlineItemList; }
+
+        void set(InlineItemList&& inlineItemList) { m_inlineItemList = WTFMove(inlineItemList); }
+        void append(InlineItemList&& inlineItemList) { m_inlineItemList.appendVector(WTFMove(inlineItemList)); }
+        void clear() { m_inlineItemList.clear(); }
+        void shrinkToFit() { m_inlineItemList.shrinkToFit(); }
+
+        bool isEmpty() const { return content().isEmpty(); }
+        size_t size() const { return content().size(); }
+
+        void setRequiresVisualReordering(bool contentRequiresVisualReordering) { m_contentRequiresVisualReordering = contentRequiresVisualReordering; }
+        bool requiresVisualReordering() const { return m_contentRequiresVisualReordering; }
+
+        void setIsNonBidiTextAndForcedLineBreakOnlyContent(bool isNonBidiTextAndForcedLineBreakOnlyContent) { m_isNonBidiTextAndForcedLineBreakOnlyContent = isNonBidiTextAndForcedLineBreakOnlyContent; }
+        bool isNonBidiTextAndForcedLineBreakOnlyContent() const { return m_isNonBidiTextAndForcedLineBreakOnlyContent; }
+
+    private:
+        InlineItemList m_inlineItemList;
+        bool m_contentRequiresVisualReordering { false };
+        bool m_isNonBidiTextAndForcedLineBreakOnlyContent { false };
+    };
     const InlineItems& inlineItems() const { return m_inlineItems; }
-    void setInlineItems(InlineItems&& inlineItems) { m_inlineItems = WTFMove(inlineItems); }
-    void appendInlineItems(InlineItems&& inlineItems) { m_inlineItems.appendVector(WTFMove(inlineItems)); }
-
-    void setContentRequiresVisualReordering(bool contentRequiresVisualReordering) { m_contentRequiresVisualReordering = contentRequiresVisualReordering; }
-    bool contentRequiresVisualReordering() const { return m_contentRequiresVisualReordering; }
-
-    void setIsNonBidiTextAndForcedLineBreakOnlyContent(bool isNonBidiTextAndForcedLineBreakOnlyContent) { m_isNonBidiTextAndForcedLineBreakOnlyContent = isNonBidiTextAndForcedLineBreakOnlyContent; }
-    bool isNonBidiTextAndForcedLineBreakOnlyContent() const { return m_isNonBidiTextAndForcedLineBreakOnlyContent; }
-
-    void clearInlineItems() { m_inlineItems.clear(); }
-    void shrinkToFit() { m_inlineItems.shrinkToFit(); }
+    InlineItems& inlineItems() { return m_inlineItems; }
 
     void setMaximumIntrinsicWidthLayoutResult(IntrinsicWidthHandler::LineBreakingResult&& layoutResult) { m_maximumIntrinsicWidthLayoutResult = WTFMove(layoutResult); }
     void clearMaximumIntrinsicWidthLayoutResult() { m_maximumIntrinsicWidthLayoutResult = { }; }
@@ -66,8 +76,6 @@ private:
     InlineItems m_inlineItems;
     std::optional<IntrinsicWidthHandler::LineBreakingResult> m_maximumIntrinsicWidthLayoutResult { };
     std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints { };
-    bool m_contentRequiresVisualReordering { false };
-    bool m_isNonBidiTextAndForcedLineBreakOnlyContent { false };
 };
 
 }

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InlineContentCache.h"
+#include "InlineItem.h"
 #include "InlineLineTypes.h"
 #include "LayoutElementBox.h"
 #include <wtf/text/StringBuilder.h>
@@ -40,17 +41,17 @@ public:
     void build(InlineItemPosition startPosition);
 
 private:
-    void collectInlineItems(InlineItems&, InlineItemPosition startPosition);
+    void collectInlineItems(InlineItemList&, InlineItemPosition startPosition);
     using LayoutQueue = Vector<CheckedRef<const Box>>;
     LayoutQueue initializeLayoutQueue(InlineItemPosition startPosition);
     bool traverseUntilDamaged(LayoutQueue&, const Box& subtreeRoot, const Box& firstDamagedLayoutBox);
-    void breakAndComputeBidiLevels(InlineItems&);
-    void computeInlineTextItemWidths(InlineItems&);
+    void breakAndComputeBidiLevels(InlineItemList&);
+    void computeInlineTextItemWidths(InlineItemList&);
 
-    void handleTextContent(const InlineTextBox&, InlineItems&, std::optional<size_t> partialContentOffset);
-    void handleInlineBoxStart(const Box&, InlineItems&);
-    void handleInlineBoxEnd(const Box&, InlineItems&);
-    void handleInlineLevelBox(const Box&, InlineItems&);
+    void handleTextContent(const InlineTextBox&, InlineItemList&, std::optional<size_t> partialContentOffset);
+    void handleInlineBoxStart(const Box&, InlineItemList&);
+    void handleInlineBoxEnd(const Box&, InlineItemList&);
+    void handleInlineLevelBox(const Box&, InlineItemList&);
     
     bool contentRequiresVisualReordering() const { return m_contentRequiresVisualReordering; }
 

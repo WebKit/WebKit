@@ -64,7 +64,7 @@ public:
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const;
 
-    static size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItems&);
+    static size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList&);
 
 private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
