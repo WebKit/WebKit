@@ -30,6 +30,7 @@
 #if PLATFORM(MAC)
     BOOL _includesSelectionHighlighting;
 #endif
+    BOOL _usesTransparentBackground;
 }
 
 - (instancetype)init
@@ -65,12 +66,12 @@
 #if PLATFORM(MAC)
     snapshotConfiguration._includesSelectionHighlighting = self._includesSelectionHighlighting;
 #endif
+    snapshotConfiguration._usesTransparentBackground = self._usesTransparentBackground;
 
     return snapshotConfiguration;
 }
 
 #if PLATFORM(MAC)
-
 - (BOOL)_includesSelectionHighlighting
 {
     return _includesSelectionHighlighting;
@@ -80,7 +81,16 @@
 {
     _includesSelectionHighlighting = includesSelectionHighlighting;
 }
+#endif // PLATFORM(MAC)
 
-#endif
+- (BOOL)_usesTransparentBackground
+{
+    return _usesTransparentBackground;
+}
+
+- (void)_setUsesTransparentBackground:(BOOL)usesTransparentBackground
+{
+    _usesTransparentBackground = usesTransparentBackground;
+}
 
 @end
