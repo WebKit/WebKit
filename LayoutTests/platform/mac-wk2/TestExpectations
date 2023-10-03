@@ -2161,8 +2161,6 @@ http/tests/contentextensions/block-everything-unless-domain.html [ Pass Failure 
 http/tests/contentextensions/block-everything-unless-domain-iframe.html [ Pass Failure ]
 http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass Failure ]
 
-webkit.org/b/262344 [ Ventura+ x86_64 ] imported/blink/css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
-
 webkit.org/b/262401 [ Sonoma+ ] fast/canvas/webgl/canvas-zero-size.html [ Pass Crash ]
 
 webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.html [ Pass Crash ]
