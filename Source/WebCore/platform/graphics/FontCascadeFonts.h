@@ -89,6 +89,9 @@ private:
 
     class GlyphPageCacheEntry {
     public:
+        GlyphPageCacheEntry() = default;
+        GlyphPageCacheEntry(RefPtr<GlyphPage>&&);
+
         GlyphData glyphDataForCharacter(UChar32);
 
         void setSingleFontPage(RefPtr<GlyphPage>&&);
