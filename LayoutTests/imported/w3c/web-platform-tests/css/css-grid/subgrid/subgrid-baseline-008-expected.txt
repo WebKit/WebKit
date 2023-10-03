@@ -9,43 +9,43 @@ FAIL .item 1 assert_equals:
 <div data-offset-x="514" class="item first">
         <span></span><br><span></span>
       </div>
-offsetLeft expected 514 but got 479
+offsetLeft expected 514 but got 492
 FAIL .item 2 assert_equals:
 <div data-offset-x="428" class="item last">
         <span></span><br><span></span>
       </div>
-offsetLeft expected 428 but got 412
+offsetLeft expected 428 but got 421
 FAIL .item 3 assert_equals:
 <div data-offset-x="325" class="item first">
         <span></span><br><span></span>
       </div>
-offsetLeft expected 325 but got 299
+offsetLeft expected 325 but got 308
 FAIL .item 4 assert_equals:
 <div data-offset-x="234" class="item last">
         <span></span><br><span></span>
       </div>
-offsetLeft expected 234 but got 232
+offsetLeft expected 234 but got 236
 FAIL .item 5 assert_equals:
 <div data-offset-x="131" class="item first">
       <span></span><br><span></span>
     </div>
-offsetLeft expected 131 but got 107
+offsetLeft expected 131 but got 111
 PASS .item 6
 FAIL .item 7 assert_equals:
 <div data-offset-x="524" class="item small first"></div>
 offsetLeft expected 524 but got 547
 FAIL .item 8 assert_equals:
 <div data-offset-x="393" class="item small last"></div>
-offsetLeft expected 393 but got 417
+offsetLeft expected 393 but got 426
 FAIL .item 9 assert_equals:
 <div data-offset-x="335" class="item small first"></div>
-offsetLeft expected 335 but got 344
+offsetLeft expected 335 but got 353
 FAIL .item 10 assert_equals:
 <div data-offset-x="199" class="item small last"></div>
-offsetLeft expected 199 but got 220
+offsetLeft expected 199 but got 224
 FAIL .item 11 assert_equals:
 <div data-offset-x="141" class="item small first"></div>
-offsetLeft expected 141 but got 147
+offsetLeft expected 141 but got 151
 FAIL .item 12 assert_equals:
 <div data-offset-x="5" class="item small last"></div>
 offsetLeft expected 5 but got 20
