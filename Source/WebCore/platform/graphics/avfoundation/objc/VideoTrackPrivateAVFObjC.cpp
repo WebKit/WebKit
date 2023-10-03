@@ -49,6 +49,9 @@ VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC& 
 {
 }
 
+// FIXME: TrackPrivateBase inheriting from ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr does not
+// compile when using MSVC
+#if COMPILER(MSVC)
 VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(std::unique_ptr<AVTrackPrivateAVFObjCImpl>&& impl)
     : m_impl(WTFMove(impl))
     , m_videoTrackConfigurationObserver([this] { videoTrackConfigurationChanged(); })
@@ -56,6 +59,18 @@ VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(std::unique_ptr<AVTrackPrivat
     m_impl->setVideoTrackConfigurationObserver(m_videoTrackConfigurationObserver);
     resetPropertiesFromTrack();
 }
+#else
+VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(std::unique_ptr<AVTrackPrivateAVFObjCImpl>&& impl)
+    : m_impl(WTFMove(impl))
+    , m_videoTrackConfigurationObserver([weakThis = ThreadSafeWeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->videoTrackConfigurationChanged();
+    })
+{
+    m_impl->setVideoTrackConfigurationObserver(m_videoTrackConfigurationObserver);
+    resetPropertiesFromTrack();
+}
+#endif
 
 void VideoTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {
