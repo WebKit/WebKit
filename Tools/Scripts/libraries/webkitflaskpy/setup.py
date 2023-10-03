@@ -20,7 +20,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from os.path import abspath, dirname, join
+from urllib.parse import urljoin
+from urllib.request import pathname2url
+
 from setuptools import setup
+
+
+def _get_adjacent_package_requirement(name):
+    d = abspath(dirname(__file__))
+    package_path = join(d, "..", name)
+    file_url = urljoin("file://localhost", pathname2url(package_path))
+    return f"{name} @ {file_url}"
 
 
 def readme():
@@ -58,7 +69,7 @@ setup(
         'Flask-Cors',
         'gunicorn',
         'redis',
-        'webkitcorepy',
+        _get_adjacent_package_requirement('webkitcorepy'),
     ],
     include_package_data=True,
     zip_safe=False,
