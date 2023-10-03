@@ -185,7 +185,7 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, CurlRespo
     invokeDidReceiveResponse();
 }
 
-void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, const SharedBuffer& buffer)
+void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, Ref<SharedBuffer>&& buffer)
 {
     Ref protectedThis { *this };
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
@@ -195,7 +195,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, const SharedBuffer& b
         auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
         RELEASE_ASSERT(download);
         uint64_t bytesWritten = 0;
-        for (auto& segment : buffer) {
+        for (auto& segment : buffer.get()) {
             if (-1 == FileSystem::writeToFile(m_downloadDestinationFile, segment.segment->data(), segment.segment->size())) {
                 download->didFail(ResourceError(CURLE_WRITE_ERROR, m_response.url()), IPC::DataReference());
                 invalidateAndCancel();
@@ -208,7 +208,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, const SharedBuffer& b
         return;
     }
 
-    m_client->didReceiveData(buffer);
+    m_client->didReceiveData(buffer.get());
 }
 
 void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& networkLoadMetrics)

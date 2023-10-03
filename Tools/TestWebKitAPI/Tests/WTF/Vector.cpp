@@ -328,6 +328,17 @@ TEST(WTF_Vector, ConstructorOtherRawPointerTypeAndLength)
     EXPECT_EQ(vector[2], 'r');
 }
 
+TEST(WTF_Vector, ConstructorTakingLengthAndFunctor)
+{
+    Vector<size_t> vector(5, [](size_t i) { return i; });
+    EXPECT_EQ(vector.size(), 5U);
+    EXPECT_EQ(vector[0], 0U);
+    EXPECT_EQ(vector[1], 1U);
+    EXPECT_EQ(vector[2], 2U);
+    EXPECT_EQ(vector[3], 3U);
+    EXPECT_EQ(vector[4], 4U);
+}
+
 TEST(WTF_Vector, Reverse)
 {
     Vector<int> intVector;

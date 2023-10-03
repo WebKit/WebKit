@@ -141,11 +141,6 @@ const PathImpl* Path::asImpl() const
     return nullptr;
 }
 
-Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
-{
-    return Path(points);
-}
-
 void Path::moveTo(const FloatPoint& point)
 {
     if (isEmpty())

@@ -13,7 +13,7 @@ self.addEventListener("fetch", (event) => {
                 setTimeout(() => { controller.close(); }, 200);
             }
         });
-        const response = new Response(stream, {"headers" : [["Content-Type", "application/binary"]]});
+        const response = new Response(stream, {"headers" : [["Content-Type", "application/binary"], ["Content-Length", 200]]});
         event.respondWith(response);
         return;
     }

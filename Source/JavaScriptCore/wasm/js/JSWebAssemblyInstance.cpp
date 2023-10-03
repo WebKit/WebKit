@@ -64,7 +64,7 @@ void JSWebAssemblyInstance::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    vm.heap.reportExtraMemoryAllocated(m_instance->extraMemoryAllocated());
+    vm.heap.reportExtraMemoryAllocated(this, m_instance->extraMemoryAllocated());
 }
 
 void JSWebAssemblyInstance::destroy(JSCell* cell)

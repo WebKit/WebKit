@@ -138,7 +138,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     if (!pageAgent)
         return;
 
-    m_inspectedPage.forEachFrame([&](LocalFrame& frame) {
+    m_inspectedPage.forEachLocalFrame([&](LocalFrame& frame) {
         if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
             return;
 

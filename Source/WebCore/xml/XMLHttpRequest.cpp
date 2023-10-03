@@ -295,7 +295,7 @@ void XMLHttpRequest::changeState(State newState)
             if (auto* context = scriptExecutionContext()) {
                 JSC::VM& vm = context->vm();
                 JSC::JSLockHolder lock(vm);
-                vm.heap.reportExtraMemoryAllocated(memoryCost());
+                vm.heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), memoryCost());
             }
         }
         callReadyStateChangeListener();

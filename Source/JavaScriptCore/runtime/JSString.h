@@ -172,7 +172,7 @@ private:
         ASSERT_UNUSED(length, length > 0);
         ASSERT(!valueInternal().isNull());
         Base::finishCreation(vm);
-        vm.heap.reportExtraMemoryAllocated(cost);
+        vm.heap.reportExtraMemoryAllocated(this, cost);
     }
 
     void finishCreation(VM& vm, GCDeferralContext* deferralContext, unsigned length, size_t cost)
@@ -180,7 +180,7 @@ private:
         ASSERT_UNUSED(length, length > 0);
         ASSERT(!valueInternal().isNull());
         Base::finishCreation(vm);
-        vm.heap.reportExtraMemoryAllocated(deferralContext, cost);
+        vm.heap.reportExtraMemoryAllocated(deferralContext, this, cost);
     }
 
     static JSString* createEmptyString(VM&);

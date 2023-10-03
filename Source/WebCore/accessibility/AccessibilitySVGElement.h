@@ -39,13 +39,13 @@ public:
 protected:
     explicit AccessibilitySVGElement(RenderObject*, AXObjectCache*);
     AXObjectCache* axObjectCache() const override { return m_axObjectCache.get(); }
+    AccessibilityRole determineAriaRoleAttribute() const final;
 
 private:
     String description() const final;
     String helpText() const final;
     void accessibilityText(Vector<AccessibilityText>&) const final;
-    AccessibilityRole determineAccessibilityRole() final;
-    AccessibilityRole determineAriaRoleAttribute() const final;
+    AccessibilityRole determineAccessibilityRole() override;
     bool inheritsPresentationalRole() const final;
     bool computeAccessibilityIsIgnored() const final;
 

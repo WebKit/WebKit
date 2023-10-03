@@ -52,7 +52,7 @@ namespace WebCore {
 // https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/region.html
 
 // Default region line-height (vh units)
-static const float lineHeight = 5.33;
+static const float lineHeight = 6;
 
 // Default scrolling animation time period (s).
 static const Seconds scrollTime { 433_ms };
@@ -331,30 +331,6 @@ void VTTRegion::prepareRegionDisplayTree()
     // FIXME: Change the code below to use viewport units when
     // http://crbug/244618 is fixed.
 
-    // Let regionWidth be the text track region width.
-    // Let width be 'regionWidth vw' ('vw' is a CSS unit)
-    m_regionDisplayTree->setInlineStyleProperty(CSSPropertyWidth, m_width, CSSUnitType::CSS_PERCENTAGE);
-
-    // Let lineHeight be '0.0533vh' ('vh' is a CSS unit) and regionHeight be
-    // the text track region height. Let height be 'lineHeight' multiplied
-    // by regionHeight.
-    double height = lineHeight * m_lines;
-    m_regionDisplayTree->setInlineStyleProperty(CSSPropertyHeight, height, CSSUnitType::CSS_VH);
-
-    // Let viewportAnchorX be the x dimension of the text track region viewport
-    // anchor and regionAnchorX be the x dimension of the text track region
-    // anchor. Let leftOffset be regionAnchorX multiplied by width divided by
-    // 100.0. Let left be leftOffset subtracted from 'viewportAnchorX vw'.
-    double leftOffset = m_regionAnchor.x() * m_width / 100;
-    m_regionDisplayTree->setInlineStyleProperty(CSSPropertyLeft, m_viewportAnchor.x() - leftOffset, CSSUnitType::CSS_PERCENTAGE);
-
-    // Let viewportAnchorY be the y dimension of the text track region viewport
-    // anchor and regionAnchorY be the y dimension of the text track region
-    // anchor. Let topOffset be regionAnchorY multiplied by height divided by
-    // 100.0. Let top be topOffset subtracted from 'viewportAnchorY vh'.
-    double topOffset = m_regionAnchor.y() * height / 100;
-    m_regionDisplayTree->setInlineStyleProperty(CSSPropertyTop, m_viewportAnchor.y() - topOffset, CSSUnitType::CSS_PERCENTAGE);
-
     // The cue container is used to wrap the cues and it is the object which is
     // gradually scrolled out as multiple cues are appended to the region.
     if (!m_cueContainer) {
@@ -362,7 +338,39 @@ void VTTRegion::prepareRegionDisplayTree()
         m_cueContainer->setPseudo(ShadowPseudoIds::webkitMediaTextTrackRegionContainer());
         m_regionDisplayTree->appendChild(*m_cueContainer);
     }
-    m_cueContainer->setInlineStyleProperty(CSSPropertyTop, 0.0f, CSSUnitType::CSS_PX);
+
+    // Let regionWidth be the WebVTT region width.
+    // Let width be 'regionWidth vw' ('vw' is a CSS unit)
+    m_regionDisplayTree->setInlineStyleProperty(CSSPropertyWidth, m_width, CSSUnitType::CSS_CQW);
+    m_cueContainer->setInlineStyleProperty(CSSPropertyWidth, m_width, CSSUnitType::CSS_CQW);
+
+    // Let lineHeight be '6vh' ('vh' is a CSS unit) and regionHeight be
+    // the WebVTT region lines. Let lines be 'lineHeight' multiplied
+    // by regionHeight.
+    double lines = lineHeight * m_lines;
+
+    // Although the spec does not say to set the height property to lines, without doing so,
+    // the caption is not visible
+    m_regionDisplayTree->setInlineStyleProperty(CSSPropertyHeight, lines, CSSUnitType::CSS_CQH);
+    m_cueContainer->setInlineStyleProperty(CSSPropertyHeight, lines, CSSUnitType::CSS_CQH);
+
+    // Let viewportAnchorX be the x dimension of the WebVTT viewport
+    // anchor and regionAnchorX be the x dimension of the WebVTT region
+    // anchor. Let leftOffset be regionAnchorX multiplied by width divided by
+    // 100.0. Let left be leftOffset subtracted from 'viewportAnchorX vw'.
+    double leftOffset = m_regionAnchor.x() * m_width / 100;
+    double left = m_viewportAnchor.x() - leftOffset;
+    m_regionDisplayTree->setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_CQW);
+    m_cueContainer->setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_CQW);
+
+    // Let viewportAnchorY be the y dimension of the WebVTT region viewport
+    // anchor and regionAnchorY be the y dimension of the WebVTT region
+    // anchor. Let topOffset be regionAnchorY multiplied by lines divided by
+    // 100.0. Let top be topOffset subtracted from 'viewportAnchorY vh'.
+    double topOffset = m_regionAnchor.y() * lines / 100;
+    double top = m_viewportAnchor.y() - topOffset;
+    m_regionDisplayTree->setInlineStyleProperty(CSSPropertyTop, top, CSSUnitType::CSS_CQH);
+    m_cueContainer->setInlineStyleProperty(CSSPropertyTop, top, CSSUnitType::CSS_CQH);
 
     // 7.5 Every WebVTT region object is initialised with the following CSS
 

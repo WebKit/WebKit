@@ -41,7 +41,7 @@ struct TextOnlyLineBreakResult;
 
 class TextOnlySimpleLineBuilder : public AbstractLineBuilder {
 public:
-    TextOnlySimpleLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
+    TextOnlySimpleLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
     static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineContentCache&, const PlacedFloats* = nullptr);
@@ -71,7 +71,7 @@ private:
 
     Line m_line;
     InlineRect m_lineLogicalRect;
-    const InlineItems& m_inlineItems;
+    const InlineItemList& m_inlineItemList;
     Vector<const InlineTextItem*> m_wrapOpportunityList;
     bool m_isWrappingAllowed { false };
     InlineLayoutUnit m_trimmedTrailingWhitespaceWidth { 0.f };

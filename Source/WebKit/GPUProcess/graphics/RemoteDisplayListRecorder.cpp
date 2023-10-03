@@ -277,7 +277,7 @@ void RemoteDisplayListRecorder::drawFilteredImageBufferInternal(std::optional<Re
 
 void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Ref<Filter> filter)
 {
-    auto* svgFilter = dynamicDowncast<SVGFilter>(filter.get());
+    RefPtr svgFilter = dynamicDowncast<SVGFilter>(filter);
 
     if (!svgFilter || !svgFilter->hasValidRenderingResourceIdentifier()) {
         FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_renderingBackend->resourceOwner()));
@@ -286,7 +286,7 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
     }
 
     RefPtr cachedFilter = resourceCache().cachedFilter(filter->renderingResourceIdentifier());
-    auto* cachedSVGFilter = dynamicDowncast<SVGFilter>(cachedFilter.get());
+    RefPtr cachedSVGFilter = dynamicDowncast<SVGFilter>(WTFMove(cachedFilter));
     if (!cachedSVGFilter) {
         ASSERT_NOT_REACHED();
         return;

@@ -40,9 +40,9 @@ static bool isEligibleForNonLineBuilderProcess(const RenderStyle& style)
     return TextUtil::isWrappingAllowed(style) && (style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord);
 }
 
-IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, bool mayUseSimplifiedTextOnlyInlineLayout)
+IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext, const InlineItemList& inlineItemList, bool mayUseSimplifiedTextOnlyInlineLayout)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_inlineItems(inlineItems)
+    , m_inlineItemList(inlineItemList)
     , m_mayUseSimplifiedTextOnlyInlineLayout(mayUseSimplifiedTextOnlyInlineLayout)
 {
 }
@@ -55,18 +55,18 @@ IntrinsicWidthConstraints IntrinsicWidthHandler::computedIntrinsicSizes()
     };
 
     if (m_mayUseSimplifiedTextOnlyInlineLayout) {
-        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, m_inlineItems };
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, m_inlineItemList };
         auto minimumWidth = isEligibleForNonLineBuilderProcess(rootStyle()) ? ceiledLayoutUnit(simplifiedMinimumWidth()) : computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder);
         return { minimumWidth, computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::Yes) };
     }
 
-    auto lineBuilder = LineBuilder { formattingContext(), { }, m_inlineItems };
+    auto lineBuilder = LineBuilder { formattingContext(), { }, m_inlineItemList };
     return { computedIntrinsicValue(IntrinsicWidthMode::Minimum, lineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, lineBuilder) };
 }
 
 LayoutUnit IntrinsicWidthHandler::maximumContentSize()
 {
-    auto lineBuilder = LineBuilder { formattingContext(), { }, m_inlineItems };
+    auto lineBuilder = LineBuilder { formattingContext(), { }, m_inlineItemList };
     lineBuilder.setIntrinsicWidthMode(IntrinsicWidthMode::Maximum);
 
     return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, lineBuilder));
@@ -77,7 +77,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
     auto horizontalConstraints = HorizontalConstraints { };
     if (intrinsicWidthMode == IntrinsicWidthMode::Maximum)
         horizontalConstraints.logicalWidth = maxInlineLayoutUnit();
-    auto layoutRange = InlineItemRange { 0 , m_inlineItems.size() };
+    auto layoutRange = InlineItemRange { 0 , m_inlineItemList.size() };
     auto maximumContentWidth = InlineLayoutUnit { };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto previousLine = std::optional<PreviousLine> { };
@@ -125,7 +125,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth() const
     auto& fontCascade = rootStyle().fontCascade();
 
     auto maximumWidth = InlineLayoutUnit { };
-    for (auto& inlineItem : m_inlineItems) {
+    for (auto& inlineItem : m_inlineItemList) {
         if (inlineItem.isText()) {
             auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
             auto contentLength = inlineTextItem.length();

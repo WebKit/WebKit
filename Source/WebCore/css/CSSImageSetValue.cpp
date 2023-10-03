@@ -64,14 +64,11 @@ RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state
 {
     size_t length = this->length();
 
-    Vector<ImageWithScale> images;
-    images.reserveInitialCapacity(length);
-
-    for (size_t i = 0; i < length; ++i) {
+    Vector<ImageWithScale> images(length, [&](size_t i) {
         ASSERT(is<CSSImageSetOptionValue>(item(i)));
         auto option = downcast<CSSImageSetOptionValue>(item(i));
-        images.uncheckedAppend(ImageWithScale { state.createStyleImage(option->image()), option->resolution()->floatValue(CSSUnitType::CSS_DPPX), option->type() });
-    }
+        return ImageWithScale { state.createStyleImage(option->image()), option->resolution()->floatValue(CSSUnitType::CSS_DPPX), option->type() };
+    });
 
     // Sort the images so that they are stored in order from lowest resolution to highest.
     // We want to maintain the authored order for serialization so we create a sorted indexing vector.

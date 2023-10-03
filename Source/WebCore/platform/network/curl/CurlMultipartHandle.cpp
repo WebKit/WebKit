@@ -79,12 +79,12 @@ CurlMultipartHandle::CurlMultipartHandle(CurlMultipartHandleClient& client, CStr
 {
 }
 
-void CurlMultipartHandle::didReceiveMessage(const SharedBuffer& buffer)
+void CurlMultipartHandle::didReceiveMessage(std::span<const uint8_t> receivedData)
 {
     if (m_state == State::WaitingForTerminate || m_state == State::End || m_didCompleteMessage)
         return; // The handler is closed down so ignore everything.
 
-    m_buffer.append(buffer.data(), buffer.size());
+    m_buffer.append(receivedData);
 
     while (processContent()) { }
 }
@@ -128,7 +128,7 @@ bool CurlMultipartHandle::processContent()
         }
 
         if (m_state == State::InBody && result.dataEnd)
-            m_client->didReceiveDataFromMultipart(SharedBuffer::create(m_buffer.data(), result.dataEnd));
+            m_client->didReceiveDataFromMultipart({ m_buffer.data(), result.dataEnd });
 
         if (result.processed)
             m_buffer.remove(0, result.processed);

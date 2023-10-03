@@ -96,9 +96,9 @@ private:
     CURL* setupTransfer() override;
     size_t willSendData(char*, size_t, size_t);
     size_t didReceiveHeader(String&&);
-    size_t didReceiveData(const SharedBuffer&);
+    size_t didReceiveData(std::span<const uint8_t>);
     void didReceiveHeaderFromMultipart(Vector<String>&&) override;
-    void didReceiveDataFromMultipart(Ref<SharedBuffer>&&) override;
+    void didReceiveDataFromMultipart(std::span<const uint8_t>) override;
     void didCompleteFromMultipart() override;
     void didCompleteTransfer(CURLcode) override;
     void didCancelTransfer() override;

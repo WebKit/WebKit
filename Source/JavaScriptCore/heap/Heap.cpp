@@ -587,9 +587,49 @@ void Heap::releaseDelayedReleasedObjects()
 #endif
 }
 
-void Heap::reportExtraMemoryAllocatedSlowCase(GCDeferralContext* deferralContext, size_t size)
+void Heap::reportExtraMemoryAllocatedPossiblyFromAlreadyMarkedCell(const JSCell* cell, size_t size)
+{
+    ASSERT(cell);
+
+    // Increasing extraMemory of already marked objects will not be visible as a retained memory.
+    // We need to report this additionally to tell GC that we get additional extra memory now,
+    // and GC needs to consider scheduling GC based on this increase.
+
+    if (UNLIKELY(mutatorShouldBeFenced())) {
+        // In this case, the barrierThreshold is the tautological threshold, so cell could still be
+        // not black. But we can't know for sure until we fire off a fence.
+        WTF::storeLoadFence();
+        if (cell->cellState() != CellState::PossiblyBlack)
+            return;
+
+        WTF::loadLoadFence();
+        if (!isMarked(cell)) {
+            // During a full collection a store into an unmarked object that had surivived past
+            // collections will manifest as a store to an unmarked PossiblyBlack object. If the
+            // object gets marked at some time after this then it will go down the normal marking
+            // path. So, we don't have to remember this object. We could return here. But we go
+            // further and attempt to re-white the object.
+            ASSERT(m_collectionScope && m_collectionScope.value() == CollectionScope::Full);
+            return;
+        }
+    } else
+        ASSERT(isMarked(cell));
+
+    // It could be that the object was *just* marked. This means that the collector may set the
+    // state to DefinitelyGrey and then to PossiblyOldOrBlack at any time. It's OK for us to
+    // race with the collector here. If we win then this is accurate because the object _will_
+    // get scanned again. If we lose then someone else will barrier the object again. That would
+    // be unfortunate but not the end of the world.
+    reportExtraMemoryVisited(size);
+}
+
+void Heap::reportExtraMemoryAllocatedSlowCase(GCDeferralContext* deferralContext, const JSCell* cell, size_t size)
 {
     didAllocate(size);
+    if (cell) {
+        if (UNLIKELY(isWithinThreshold(cell->cellState(), barrierThreshold())))
+            reportExtraMemoryAllocatedPossiblyFromAlreadyMarkedCell(cell, size);
+    }
     collectIfNecessaryOrDefer(deferralContext);
 }
 
@@ -600,7 +640,7 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
     CheckedSize checkedNewSize = m_deprecatedExtraMemorySize;
     checkedNewSize += size;
     m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.value();
-    reportExtraMemoryAllocatedSlowCase(nullptr, size);
+    reportExtraMemoryAllocatedSlowCase(nullptr, nullptr, size);
 }
 
 bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)

@@ -108,7 +108,7 @@ void AccessibilityNodeObject::init()
     ASSERT(!m_initialized);
     m_initialized = true;
 #endif
-    m_role = determineAccessibilityRole();
+    AccessibilityObject::init();
 }
 
 Ref<AccessibilityNodeObject> AccessibilityNodeObject::create(Node& node)
@@ -121,16 +121,6 @@ void AccessibilityNodeObject::detachRemoteParts(AccessibilityDetachmentType deta
     // AccessibilityObject calls clearChildren.
     AccessibilityObject::detachRemoteParts(detachmentType);
     m_node = nullptr;
-}
-
-void AccessibilityNodeObject::updateRole()
-{
-    auto previousRole = m_role;
-    m_role = determineAccessibilityRole();
-    if (previousRole != m_role) {
-        if (auto* cache = axObjectCache())
-            cache->handleRoleChanged(this);
-    }
 }
 
 AccessibilityObject* AccessibilityNodeObject::firstChild() const
@@ -669,10 +659,8 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
     if (isDescendantOfBarrenParent())
         return true;
 
-    if (roleValue() == AccessibilityRole::Ignored)
-        return true;
-    
-    return m_role == AccessibilityRole::Unknown;
+    auto role = roleValue();
+    return role == AccessibilityRole::Ignored || role == AccessibilityRole::Unknown;
 }
 
 bool AccessibilityNodeObject::canvasHasFallbackContent() const

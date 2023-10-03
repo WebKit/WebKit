@@ -984,8 +984,8 @@ public:
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
-    static void forEachDocumentFromMainFrame(const LocalFrame&, const Function<void(Document&)>&);
-    void forEachFrame(const Function<void(LocalFrame&)>&);
+    static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
+    void forEachLocalFrame(const Function<void(LocalFrame&)>&);
     void forEachWindowEventLoop(const Function<void(WindowEventLoop&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;

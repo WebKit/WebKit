@@ -37,7 +37,7 @@ struct IntrinsicWidthConstraints;
 
 class IntrinsicWidthHandler {
 public:
-    IntrinsicWidthHandler(InlineFormattingContext&, const InlineItems&, bool mayUseSimplifiedTextOnlyInlineLayout);
+    IntrinsicWidthHandler(InlineFormattingContext&, const InlineItemList&, bool mayUseSimplifiedTextOnlyInlineLayout);
 
     IntrinsicWidthConstraints computedIntrinsicSizes();
     LayoutUnit maximumContentSize();
@@ -60,7 +60,7 @@ private:
 
 private:
     InlineFormattingContext& m_inlineFormattingContext;
-    const InlineItems& m_inlineItems;
+    const InlineItemList& m_inlineItemList;
     const bool m_mayUseSimplifiedTextOnlyInlineLayout { false };
 
     std::optional<LineBreakingResult> m_maximumIntrinsicWidthResultForSingleLine { };

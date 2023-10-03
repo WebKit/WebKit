@@ -2489,10 +2489,3 @@ webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/260322 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-flat-tree.html [ Failure ]
 
 webkit.org/b/261957 media/audio-play-with-video-element-interrupted.html [ Pass Timeout ]
-
-# webkit.org/b/262425 (REGRESSION(268433@main): [ iOS17 Sonoma ] 5 tests under http/wpt/mediarecorder are constantly crashing.)
-http/wpt/mediarecorder/MediaRecorder-dataavailable.html [ Crash ]
-http/wpt/mediarecorder/MediaRecorder-multiple-start-stop.html [ Crash ]
-http/wpt/mediarecorder/MediaRecorder-requestData.html [ Crash ]
-http/wpt/mediarecorder/pause-recording.html [ Crash ]
-http/wpt/mediarecorder/record-96KHz-sources.html [ Crash ]

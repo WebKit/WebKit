@@ -48,7 +48,7 @@ bool InlineQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWid
 
 InlineLayoutUnit InlineQuirks::initialLineHeight() const
 {
-    ASSERT(!formattingContext().layoutState().inStandardsMode());
+    ASSERT(!formattingContext().inlineLayoutState().inStandardsMode());
     return 0.f;
 }
 
@@ -77,7 +77,7 @@ bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
 
 bool InlineQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
 {
-    ASSERT(!formattingContext().layoutState().inStandardsMode());
+    ASSERT(!formattingContext().inlineLayoutState().inStandardsMode());
     ASSERT(inlineLevelBox.isInlineBox());
     // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
     if (inlineLevelBox.hasContent())

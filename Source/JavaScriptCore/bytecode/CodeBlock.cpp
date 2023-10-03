@@ -735,7 +735,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         dumpBytecode();
 
     if (m_metadata)
-        vm.heap.reportExtraMemoryAllocated(m_metadata->sizeInBytesForGC());
+        vm.heap.reportExtraMemoryAllocated(this, m_metadata->sizeInBytesForGC());
 
     initializeTemplateObjects(topLevelExecutable, templateObjectIndices);
     RETURN_IF_EXCEPTION(throwScope, false);

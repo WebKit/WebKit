@@ -89,6 +89,7 @@ public:
     static Ref<VTTCueBox> create(Document&, VTTCue&);
 
     void applyCSSProperties() override;
+    void applyCSSPropertiesWithRegion();
 
     void setFontSizeFromCaptionUserPrefs(int fontSize) { m_fontSizeFromCaptionUserPrefs = fontSize; }
 
@@ -232,6 +233,7 @@ private:
 
     void determineTextDirection();
     void calculateDisplayParameters();
+    void calculateDisplayParametersWithRegion();
     void obtainCSSBoxes();
 
     enum CueSetting {

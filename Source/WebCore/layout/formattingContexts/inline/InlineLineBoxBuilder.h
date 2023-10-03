@@ -65,7 +65,6 @@ private:
 
     const InlineLayoutState& inlineLayoutState() const { return formattingContext().inlineLayoutState(); }
     const BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
-    const LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;

@@ -55,9 +55,14 @@ public:
     void resetSuccessiveHyphenatedLineCount() { m_successiveHyphenatedLineCount = 0; }
     bool isHyphenationDisabled() const { return m_hyphenationLimitLines && *m_hyphenationLimitLines <= m_successiveHyphenatedLineCount; }
 
+    void setInStandardsMode() { m_inStandardsMode = true; }
+    bool inStandardsMode() const { return m_inStandardsMode; }
+
     // Integration codepath
     void setNestedListMarkerOffsets(HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets) { m_nestedListMarkerOffsets = WTFMove(nestedListMarkerOffsets); }
     LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(&listMarkerBox); }
+    void setShouldNotSynthesizeInlineBlockBaseline() { m_shouldNotSynthesizeInlineBlockBaseline = true; }
+    bool shouldNotSynthesizeInlineBlockBaseline() const { return m_shouldNotSynthesizeInlineBlockBaseline; }
 
 private:
     BlockLayoutState& m_parentBlockLayoutState;
@@ -69,6 +74,8 @@ private:
     // FIXME: This is required by the integaration codepath.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
     AvailableLineWidthOverride m_availableLineWidthOverride;
+    bool m_shouldNotSynthesizeInlineBlockBaseline { false };
+    bool m_inStandardsMode { false };
 };
 
 inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState)

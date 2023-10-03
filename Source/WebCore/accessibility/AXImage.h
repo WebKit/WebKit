@@ -41,7 +41,7 @@ public:
 private:
     explicit AXImage(RenderImage*);
 
-    AccessibilityRole roleValue() const override;
+    AccessibilityRole determineAccessibilityRole() final;
     std::optional<AccessibilityChildrenVector> imageOverlayElements() override;
 };
 

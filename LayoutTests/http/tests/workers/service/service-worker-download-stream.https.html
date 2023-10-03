@@ -8,6 +8,7 @@ if (window.testRunner) {
   testRunner.dumpAsText();
   testRunner.setShouldLogDownloadCallbacks(true);
   testRunner.setShouldLogDownloadSize(true);
+  testRunner.setShouldLogDownloadExpectedSize(true);
   testRunner.waitUntilDownloadFinished();
   testRunner.setShouldDownloadUndisplayableMIMETypes(true);
 }

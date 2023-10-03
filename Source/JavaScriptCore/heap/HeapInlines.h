@@ -210,16 +210,16 @@ inline HashSet<MarkedVectorBase*>& Heap::markListSet()
     return m_markListSet;
 }
 
-inline void Heap::reportExtraMemoryAllocated(size_t size)
+inline void Heap::reportExtraMemoryAllocated(const JSCell* cell, size_t size)
 {
     if (size > minExtraMemory)
-        reportExtraMemoryAllocatedSlowCase(nullptr, size);
+        reportExtraMemoryAllocatedSlowCase(nullptr, cell, size);
 }
 
-inline void Heap::reportExtraMemoryAllocated(GCDeferralContext* deferralContext, size_t size)
+inline void Heap::reportExtraMemoryAllocated(GCDeferralContext* deferralContext, const JSCell* cell, size_t size)
 {
     if (size > minExtraMemory)
-        reportExtraMemoryAllocatedSlowCase(deferralContext, size);
+        reportExtraMemoryAllocatedSlowCase(deferralContext, cell, size);
 }
 
 inline void Heap::deprecatedReportExtraMemory(size_t size)

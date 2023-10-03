@@ -73,7 +73,7 @@ SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigne
         }
     }
     if (increasedCapacity)
-        Heap::heap(array)->reportExtraMemoryAllocated(increasedCapacity * sizeof(Map::KeyValuePairType));
+        Heap::heap(array)->reportExtraMemoryAllocated(array, increasedCapacity * sizeof(Map::KeyValuePairType));
     return result;
 }
 

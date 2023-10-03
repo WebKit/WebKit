@@ -73,7 +73,7 @@ public:
     const PlacedFloats& placedFloats() const { return inlineLayoutState().parentBlockLayoutState().placedFloats(); }
 
 private:
-    InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
+    InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&);
 
     void collectContentIfNeeded();

@@ -57,9 +57,6 @@ public:
 
     WEBCORE_EXPORT bool operator==(const Path&) const;
 
-    // FIXME: Remove this method when the call of it from WebKitAdditions in is removed.
-    static Path polygonPathFromPoints(const Vector<FloatPoint>&);
-
     WEBCORE_EXPORT void moveTo(const FloatPoint&);
 
     WEBCORE_EXPORT void addLineTo(const FloatPoint&);

@@ -4975,7 +4975,7 @@ sub GenerateImplementation
         $hasNonTrivialFinishCreation = 1;
     }
     if ($interface->extendedAttributes->{ReportExtraMemoryCost}) {
-        push(@finishCreation, "    vm.heap.reportExtraMemoryAllocated(wrapped().memoryCost());\n");
+        push(@finishCreation, "    vm.heap.reportExtraMemoryAllocated(this, wrapped().memoryCost());\n");
         $hasNonTrivialFinishCreation = 1;
     }
     push(@finishCreation, "}\n");

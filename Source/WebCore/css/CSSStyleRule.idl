@@ -18,12 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/cssom/#the-cssstylerule-interface
+
 typedef USVString CSSOMString;
 
 [
     Exposed=Window
 ] interface CSSStyleRule : CSSRule {
-    attribute DOMString? selectorText;
+    attribute DOMString selectorText;
     [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 
     // https://drafts.css-houdini.org/css-typed-om/#declared-stylepropertymap-objects

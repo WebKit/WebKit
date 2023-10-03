@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>Test Positioning of WebVTT Regions</title>
+        <script src=../../resources/js-test-pre.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-file.js></script>
+        <script>
+            async function runTest()
+            {
+                video = document.getElementById('video');
+                video.src = findMediaFile('video', '../content/test');
+                await waitFor(video, 'canplay');
+                let track = document.createElement('track');
+                track.src = 'captions-webvtt/regions.vtt';
+                video.appendChild(track);
+
+                await waitFor(video.textTracks, 'addtrack');
+                testExpected("video.textTracks.length", 1);
+                run("video.textTracks[0].mode = 'showing'");
+
+                run("video.currentTime = 1");
+                await waitFor(video, 'seeked');
+
+                window.internals.ensureUserAgentShadowRoot(video);
+                await testExpectedEventually("window.internals.shadowRoot(video).querySelector('div[pseudo=-webkit-media-text-track-region]')", null, "!=", 1000);
+                region = window.internals.shadowRoot(video).querySelector('div[pseudo=-webkit-media-text-track-region]');
+                await testExpected("region.offsetLeft == 0", true);
+                await testExpected("region.offsetTop == 0", true);
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <video id="video" width="320px" height="240px" paused></video>
+    </body>
+</html>

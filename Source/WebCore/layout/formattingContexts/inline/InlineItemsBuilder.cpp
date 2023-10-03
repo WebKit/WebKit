@@ -85,26 +85,28 @@ InlineItemsBuilder::InlineItemsBuilder(InlineContentCache& inlineContentCache, c
 
 void InlineItemsBuilder::build(InlineItemPosition startPosition)
 {
-    InlineItems inlineItems;
-    collectInlineItems(inlineItems, startPosition);
+    InlineItemList inlineItemList;
+    collectInlineItems(inlineItemList, startPosition);
 
     if (!root().style().isLeftToRightDirection() || contentRequiresVisualReordering()) {
         // FIXME: Add support for partial, yet paragraph level bidi content handling.
-        breakAndComputeBidiLevels(inlineItems);
+        breakAndComputeBidiLevels(inlineItemList);
     }
-    computeInlineTextItemWidths(inlineItems);
+    computeInlineTextItemWidths(inlineItemList);
 
     auto adjustInlineContentCacheWithNewInlineItems = [&] {
+        auto& inlineItemCache = inlineContentCache().inlineItems();
         if (!startPosition)
-            return inlineContentCache().setInlineItems(WTFMove(inlineItems));
+            return inlineItemCache.set(WTFMove(inlineItemList));
         // Let's first remove the dirty inline items if there are any.
-        auto& currentInlineItems = inlineContentCache().inlineItems();
+        auto& currentInlineItems = inlineItemCache.content();
         if (startPosition.index >= currentInlineItems.size()) {
             ASSERT_NOT_REACHED();
-            return inlineContentCache().setInlineItems(WTFMove(inlineItems));
+            return inlineItemCache.set(WTFMove(inlineItemList));
         }
+        // FIXME: Use replace instead.
         currentInlineItems.remove(startPosition.index, currentInlineItems.size() - startPosition.index);
-        inlineContentCache().appendInlineItems(WTFMove(inlineItems));
+        inlineItemCache.append(WTFMove(inlineItemList));
     };
     adjustInlineContentCacheWithNewInlineItems();
 
@@ -113,7 +115,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     size_t inlineBoxStart = 0;
     size_t inlineBoxEnd = 0;
     auto inlineLevelItems = HashSet<const Box*> { };
-    for (auto& inlineItem : inlineContentCache().inlineItems()) {
+    for (auto& inlineItem : inlineContentCache().inlineItems().content()) {
         if (inlineItem.isInlineBoxStart())
             ++inlineBoxStart;
         else if (inlineItem.isInlineBoxEnd())
@@ -184,7 +186,7 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(Inline
     // <div><span><span>text more_text</span></span> should produce
     // [inline box start][inline box start][text][ ][more_text][inline box end][inline box end]
     // where we start processing the content at the new layout box and continue with whatever we have on the stack (layout queue).
-    auto& existingInlineItems = inlineContentCache().inlineItems();
+    auto& existingInlineItems = inlineContentCache().inlineItems().content();
     if (startPosition.index >= existingInlineItems.size()) {
         ASSERT_NOT_REACHED();
         return { *root.firstChild() };
@@ -203,17 +205,17 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(Inline
     return layoutQueue;
 }
 
-void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItemPosition startPosition)
+void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, InlineItemPosition startPosition)
 {
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
     auto layoutQueue = initializeLayoutQueue(startPosition);
-    auto& inlineContentCache = this->inlineContentCache();
+    auto& inlineItemCache = this->inlineContentCache().inlineItems();
 
     auto partialContentOffset = [&](auto& inlineTextBox) -> std::optional<size_t> {
         if (!startPosition)
             return { };
-        auto& currentInlineItems = inlineContentCache.inlineItems();
+        auto& currentInlineItems = inlineItemCache.content();
         if (startPosition.index >= currentInlineItems.size()) {
             ASSERT_NOT_REACHED();
             return { };
@@ -236,7 +238,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             if (!isInlineBoxWithInlineContent)
                 break;
             // This is the start of an inline box (e.g. <span>).
-            handleInlineBoxStart(layoutBox, inlineItems);
+            handleInlineBoxStart(layoutBox, inlineItemList);
             auto& inlineBox = downcast<ElementBox>(layoutBox);
             if (!inlineBox.hasChild())
                 break;
@@ -247,16 +249,16 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             auto layoutBox = layoutQueue.takeLast();
             if (layoutBox->isOutOfFlowPositioned()) {
                 m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
-                inlineItems.append({ layoutBox, InlineItem::Type::Opaque });
+                inlineItemList.append({ layoutBox, InlineItem::Type::Opaque });
             } else if (layoutBox->isInlineTextBox()) {
                 auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
-                handleTextContent(inlineTextBox, inlineItems, partialContentOffset(inlineTextBox));
+                handleTextContent(inlineTextBox, inlineItemList, partialContentOffset(inlineTextBox));
             } else if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isLineBreakBox())
-                handleInlineLevelBox(layoutBox, inlineItems);
+                handleInlineLevelBox(layoutBox, inlineItemList);
             else if (layoutBox->isInlineBox())
-                handleInlineBoxEnd(layoutBox, inlineItems);
+                handleInlineBoxEnd(layoutBox, inlineItemList);
             else if (layoutBox->isFloatingPositioned()) {
-                inlineItems.append({ layoutBox, InlineItem::Type::Float });
+                inlineItemList.append({ layoutBox, InlineItem::Type::Float });
                 m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
             } else
                 ASSERT_NOT_REACHED();
@@ -267,8 +269,8 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             }
         }
     }
-    inlineContentCache.setIsNonBidiTextAndForcedLineBreakOnlyContent(m_isNonBidiTextAndForcedLineBreakOnlyContent);
-    inlineContentCache.setContentRequiresVisualReordering(m_contentRequiresVisualReordering);
+    inlineItemCache.setIsNonBidiTextAndForcedLineBreakOnlyContent(m_isNonBidiTextAndForcedLineBreakOnlyContent);
+    inlineItemCache.setRequiresVisualReordering(m_contentRequiresVisualReordering);
 }
 
 static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineTextBox& inlineTextBox, StringBuilder& paragraphContentBuilder)
@@ -362,7 +364,7 @@ static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBui
 }
 
 using InlineItemOffsetList = Vector<std::optional<size_t>>;
-static inline void buildBidiParagraph(const RenderStyle& rootStyle, const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, InlineItemOffsetList& inlineItemOffsetList)
+static inline void buildBidiParagraph(const RenderStyle& rootStyle, const InlineItemList& inlineItemList,  StringBuilder& paragraphContentBuilder, InlineItemOffsetList& inlineItemOffsetList)
 {
     auto bidiContextStack = BidiContextStack { };
     handleEnterExitBidiContext(paragraphContentBuilder, rootStyle.unicodeBidi(), rootStyle.isLeftToRightDirection(), EnterExitType::EnteringBlock, bidiContextStack);
@@ -371,8 +373,8 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
 
     const Box* lastInlineTextBox = nullptr;
     size_t inlineTextBoxOffset = 0;
-    for (size_t index = 0; index < inlineItems.size(); ++index) {
-        auto& inlineItem = inlineItems[index];
+    for (size_t index = 0; index < inlineItemList.size(); ++index) {
+        auto& inlineItem = inlineItemList[index];
         auto& layoutBox = inlineItem.layoutBox();
 
         auto appendTextBasedContent = [&] {
@@ -482,14 +484,14 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
     }
 }
 
-void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
+void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItemList& inlineItemList)
 {
-    ASSERT(!inlineItems.isEmpty());
+    ASSERT(!inlineItemList.isEmpty());
 
     StringBuilder paragraphContentBuilder;
     InlineItemOffsetList inlineItemOffsets;
-    inlineItemOffsets.reserveInitialCapacity(inlineItems.size());
-    buildBidiParagraph(root().style(), inlineItems, paragraphContentBuilder, inlineItemOffsets);
+    inlineItemOffsets.reserveInitialCapacity(inlineItemList.size());
+    buildBidiParagraph(root().style(), inlineItemList, paragraphContentBuilder, inlineItemOffsets);
     if (paragraphContentBuilder.isEmpty()) {
         // Style may trigger visual reordering even on a completely empty content.
         // e.g. <div><span style="direction:rtl"></span></div>
@@ -501,7 +503,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
         // UnicodeBidi::Plaintext makes directionality calculated without taking parent direction property into account.
         return;
     }
-    ASSERT(inlineItemOffsets.size() == inlineItems.size());
+    ASSERT(inlineItemOffsets.size() == inlineItemList.size());
     // 1. Setup the bidi boundary loop by calling ubidi_setPara with the paragraph text.
     // 2. Call ubidi_getLogicalRun to advance to the next bidi boundary until we hit the end of the content.
     // 3. Set the computed bidi level on the associated inline items. Split them as needed.
@@ -545,7 +547,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
             // Start of the range is always where we left off (bidi ranges do not have gaps).
             for (; inlineItemIndex < inlineItemOffsets.size(); ++inlineItemIndex) {
                 auto offset = inlineItemOffsets[inlineItemIndex];
-                auto& inlineItem = inlineItems[inlineItemIndex];
+                auto& inlineItem = inlineItemList[inlineItemIndex];
                 if (!offset) {
                     // This is an opaque item. Let's post-process it.
                     hasSeenOpaqueItem = true;
@@ -563,7 +565,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
                 auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
                 auto endPosition = *offset + inlineTextItem.length();
                 if (endPosition > bidiEnd) {
-                    inlineItems.insert(inlineItemIndex + 1, inlineTextItem.split(bidiEnd - *offset));
+                    inlineItemList.insert(inlineItemIndex + 1, inlineTextItem.split(bidiEnd - *offset));
                     // Right side is going to be processed at the next bidi range.
                     inlineItemOffsets.insert(inlineItemIndex + 1, bidiEnd);
                     ++inlineItemIndex;
@@ -582,13 +584,13 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
         // Opaque runs are excluded from the visual list (ie. only empty inline boxes should be kept around as bidi content -to figure out their visual order).
         enum class InlineBoxHasContent : bool { No, Yes };
         Vector<InlineBoxHasContent> inlineBoxContentFlagStack;
-        inlineBoxContentFlagStack.reserveInitialCapacity(inlineItems.size());
-        for (auto index = inlineItems.size(); index--;) {
-            auto& inlineItem = inlineItems[index];
+        inlineBoxContentFlagStack.reserveInitialCapacity(inlineItemList.size());
+        for (auto index = inlineItemList.size(); index--;) {
+            auto& inlineItem = inlineItemList[index];
             if (inlineItem.isInlineBoxStart()) {
                 ASSERT(!inlineBoxContentFlagStack.isEmpty());
                 if (inlineBoxContentFlagStack.takeLast() == InlineBoxHasContent::Yes)
-                    inlineItems[index].setBidiLevel(InlineItem::opaqueBidiLevel);
+                    inlineItemList[index].setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
             if (inlineItem.isInlineBoxEnd()) {
@@ -626,9 +628,9 @@ static inline bool canCacheMeasuredWidthOnInlineTextItem(const InlineTextBox& in
     return true;
 }
 
-void InlineItemsBuilder::computeInlineTextItemWidths(InlineItems& inlineItems)
+void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemList)
 {
-    for (auto& inlineItem : inlineItems) {
+    for (auto& inlineItem : inlineItemList) {
         if (!inlineItem.isText())
             continue;
 
@@ -643,15 +645,15 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItems& inlineItems)
     }
 }
 
-void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItems& inlineItems, std::optional<size_t> partialContentOffset)
+void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItemList& inlineItemList, std::optional<size_t> partialContentOffset)
 {
     auto text = inlineTextBox.content();
     auto contentLength = text.length();
     if (!contentLength)
-        return inlineItems.append(InlineTextItem::createEmptyItem(inlineTextBox));
+        return inlineItemList.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
     if (inlineTextBox.isCombined())
-        return inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, false, { }));
+        return inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, false, { }));
 
     m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineTextBox);
     m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering;
@@ -668,7 +670,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             auto isSegmentBreakCandidate = text[currentPosition] == newlineCharacter;
             if (!isSegmentBreakCandidate || !shouldPreserveNewline)
                 return false;
-            inlineItems.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition++));
+            inlineItemList.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition++));
             return true;
         };
         if (handleSegmentBreak())
@@ -686,9 +688,9 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
                 // For break-spaces, a soft wrap opportunity exists after every space and every tab.
                 // FIXME: if this turns out to be a perf hit with too many individual whitespace inline items, we should transition this logic to line breaking.
                 for (size_t i = 0; i < whitespaceContent->length; ++i)
-                    inlineItems.append(InlineTextItem::createWhitespaceItem(inlineTextBox, currentPosition + i, 1, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, { }));
+                    inlineItemList.append(InlineTextItem::createWhitespaceItem(inlineTextBox, currentPosition + i, 1, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, { }));
             } else
-                inlineItems.append(InlineTextItem::createWhitespaceItem(inlineTextBox, currentPosition, whitespaceContent->length, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, { }));
+                inlineItemList.append(InlineTextItem::createWhitespaceItem(inlineTextBox, currentPosition, whitespaceContent->length, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, { }));
             currentPosition += whitespaceContent->length;
             return true;
         };
@@ -709,7 +711,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             if (startPosition == endPosition)
                 return false;
             for (auto index = startPosition; index < endPosition; ++index)
-                inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, index, 1, UBIDI_DEFAULT_LTR, { }, { }));
+                inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, index, 1, UBIDI_DEFAULT_LTR, { }, { }));
             currentPosition = endPosition;
             return true;
         };
@@ -732,7 +734,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
                 hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
             }
             ASSERT_IMPLIES(style.hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
-            inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, endPosition - startPosition, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, { }));
+            inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, endPosition - startPosition, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, { }));
             currentPosition = endPosition;
             return true;
         };
@@ -743,23 +745,23 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     }
 }
 
-void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems& inlineItems)
+void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItemList& inlineItemList)
 {
-    inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxStart });
+    inlineItemList.append({ inlineBox, InlineItem::Type::InlineBoxStart });
     m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineBox);
     m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
 }
 
-void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
+void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItemList& inlineItemList)
 {
-    inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxEnd });
+    inlineItemList.append({ inlineBox, InlineItem::Type::InlineBoxEnd });
     ASSERT(!m_isNonBidiTextAndForcedLineBreakOnlyContent);
     m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
     // Inline box end item itself can not trigger bidi content.
     ASSERT(contentRequiresVisualReordering() || inlineBox.style().isLeftToRightDirection() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == UnicodeBidi::Normal);
 }
 
-void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
+void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemList& inlineItemList)
 {
     if (layoutBox.isAtomicInlineLevelBox()) {
         if (layoutBox.isRubyAnnotationBox() && layoutBox.style().rubyPosition() != RubyPosition::InterCharacter) {
@@ -767,12 +769,12 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems&
             return;
         }
         m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
-        return inlineItems.append({ layoutBox, InlineItem::Type::Box });
+        return inlineItemList.append({ layoutBox, InlineItem::Type::Box });
     }
 
     if (layoutBox.isLineBreakBox()) {
         m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !layoutBox.isWordBreakOpportunity();
-        return inlineItems.append({ layoutBox, layoutBox.isWordBreakOpportunity() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
+        return inlineItemList.append({ layoutBox, layoutBox.isWordBreakOpportunity() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
     }
 
     ASSERT_NOT_REACHED();

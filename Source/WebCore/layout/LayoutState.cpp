@@ -43,9 +43,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, std::optional<FormattingContextIntegrationType> formattingContextIntegrationType)
+LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer)
     : m_rootContainer(rootContainer)
-    , m_formattingContextIntegrationType(formattingContextIntegrationType)
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
     ASSERT(root().establishesFormattingContext());
@@ -99,19 +98,11 @@ FormattingState& LayoutState::formattingStateForFormattingContext(const ElementB
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
 
-    if (isFlexFormattingContextIntegration()) {
-        ASSERT(&formattingContextRoot == m_rootContainer.ptr());
-        return *m_rootFlexFormattingStateForIntegration;
-    }
-
     if (formattingContextRoot.establishesBlockFormattingContext())
         return formattingStateForBlockFormattingContext(formattingContextRoot);
 
     if (formattingContextRoot.establishesTableFormattingContext())
         return formattingStateForTableFormattingContext(formattingContextRoot);
-
-    if (formattingContextRoot.establishesFlexFormattingContext())
-        return formattingStateForFlexFormattingContext(formattingContextRoot);
 
     CRASH();
 }
@@ -131,12 +122,6 @@ TableFormattingState& LayoutState::formattingStateForTableFormattingContext(cons
 FlexFormattingState& LayoutState::formattingStateForFlexFormattingContext(const ElementBox& flexFormattingContextRoot) const
 {
     ASSERT(flexFormattingContextRoot.establishesFlexFormattingContext());
-
-    if (isFlexFormattingContextIntegration()) {
-        ASSERT(&flexFormattingContextRoot == m_rootContainer.ptr());
-        return *m_rootFlexFormattingStateForIntegration;
-    }
-
     return *m_flexFormattingStates.get(&flexFormattingContextRoot);
 }
 
@@ -161,15 +146,6 @@ TableFormattingState& LayoutState::ensureTableFormattingState(const ElementBox& 
 FlexFormattingState& LayoutState::ensureFlexFormattingState(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesFlexFormattingContext());
-
-    if (isFlexFormattingContextIntegration()) {
-        if (!m_rootFlexFormattingStateForIntegration) {
-            ASSERT(&formattingContextRoot == m_rootContainer.ptr());
-            m_rootFlexFormattingStateForIntegration = makeUnique<FlexFormattingState>(*this);
-        }
-        return *m_rootFlexFormattingStateForIntegration;
-    }
-
     return *m_flexFormattingStates.ensure(&formattingContextRoot, [&] { return makeUnique<FlexFormattingState>(*this); }).iterator->value;
 }
 
@@ -183,11 +159,6 @@ void LayoutState::destroyInlineContentCache(const ElementBox& formattingContextR
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
     m_inlineContentCaches.remove(&formattingContextRoot);
-}
-
-bool LayoutState::shouldNotSynthesizeInlineBlockBaseline() const
-{
-    return isInlineFormattingContextIntegration();
 }
 
 }

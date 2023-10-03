@@ -47,12 +47,10 @@ Ref<AXImage> AXImage::create(RenderImage* renderer)
     return adoptRef(*new AXImage(renderer));
 }
 
-AccessibilityRole AXImage::roleValue() const
+AccessibilityRole AXImage::determineAccessibilityRole()
 {
-    auto ariaRole = ariaRoleAttribute();
-    if (ariaRole != AccessibilityRole::Unknown)
-        return ariaRole;
-
+    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
+        return m_ariaRole;
     return AccessibilityRole::Image;
 }
 

@@ -122,17 +122,7 @@ void FrameLoader::HistoryController::clearScrollPositionAndViewState()
 */
 void FrameLoader::HistoryController::restoreScrollPositionAndViewState()
 {
-    if (!m_frame.loader().stateMachine().committedFirstRealDocumentLoad())
-        return;
-
-    ASSERT(m_currentItem);
-    
-    // FIXME: As the ASSERT attests, it seems we should always have a currentItem here.
-    // One counterexample is <rdar://problem/4917290>
-    // For now, to cover this issue in release builds, there is no technical harm to returning
-    // early and from a user standpoint - as in the above radar - the previous page load failed 
-    // so there *is* no scroll or view state to restore!
-    if (!m_currentItem)
+    if (!m_currentItem || !m_frame.loader().stateMachine().committedFirstRealDocumentLoad())
         return;
 
     RefPtr view = m_frame.view();

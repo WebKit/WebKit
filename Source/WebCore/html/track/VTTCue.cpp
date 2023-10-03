@@ -148,6 +148,29 @@ VTTCueBox::VTTCueBox(Document& document, VTTCue& cue)
 {
 }
 
+void VTTCueBox::applyCSSPropertiesWithRegion()
+{
+    auto textTrackCue = getCue();
+    ASSERT(!textTrackCue || is<VTTCue>(textTrackCue));
+    if (!textTrackCue || !is<VTTCue>(textTrackCue))
+        return;
+
+    Ref cue = downcast<VTTCue>(*textTrackCue);
+
+    // the 'left' property must be set to left
+    std::visit(WTF::makeVisitor([&] (double left) {
+        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_PERCENTAGE);
+    }, [&] (auto) {
+        setInlineStyleProperty(CSSPropertyLeft, CSSValueAuto);
+    }), cue->left());
+    setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
+    setInlineStyleProperty(CSSPropertyTextAlign, cue->getCSSAlignment());
+
+    // Section 7.4 states that the text track display should be abolustely positioned,
+    // unless if it is the child of a region, then it is to be relatively positioned.
+    setInlineStyleProperty(CSSPropertyPosition, CSSValueRelative);
+}
+
 void VTTCueBox::applyCSSProperties()
 {
     auto textTrackCue = getCue();
@@ -225,6 +248,10 @@ void VTTCueBox::applyCSSProperties()
     // whose first cell is the value of the corresponding cue's WebVTT cue text
     // alignment:
     setInlineStyleProperty(CSSPropertyTextAlign, cue->getCSSAlignment());
+
+    // Section 7.4 states that the text track display should be abolustely positioned,
+    // unless if it is the child of a region, then it is to be relatively positioned.
+    setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
 
     // The font shorthand property on the (root) list of WebVTT Node Objects
     // must be set to 5vh sans-serif. [CSS-VALUES]
@@ -769,6 +796,35 @@ double VTTCue::calculateMaximumSize() const
     return maxSize;
 }
 
+void VTTCue::calculateDisplayParametersWithRegion()
+{
+    // 1. Let region be cue’s WebVTT cue region.
+    ASSERT(region());
+
+    // 2. If region’s WebVTT region scroll setting is up and region already has one child,
+    // set region’s transition-property to top and transition-duration to 0.433s.
+
+    // 3. Let offset be cue’s computed position multiplied by region’s WebVTT region width
+    // and divided by 100 (i.e. interpret it as a percentage of the region width).
+    double regionWidth = region()->width();
+    double offset = calculateComputedTextPosition() * regionWidth / 100;
+
+    // 4. Adjust offset using cue’s computed position alignment as follows:
+
+    // 5. If the computed position alignment is center alignment
+    // Subtract half of region’s WebVTT region width from offset.
+    auto computedPositionAlignment = calculateComputedPositionAlignment();
+    if (computedPositionAlignment == PositionAlignSetting::Center)
+        offset = offset - regionWidth / 2;
+
+    // 6. If the computed position alignment is line-right alignment
+    // Subtract region’s WebVTT region width from offset.
+    else if (computedPositionAlignment == PositionAlignSetting::LineRight)
+        offset = offset - regionWidth;
+
+    // 7. Let left be offset %. [CSS-VALUES]
+    m_left = offset;
+}
 void VTTCue::calculateDisplayParameters()
 {
     // https://w3c.github.io/webvtt/#processing-cue-settings
@@ -905,8 +961,10 @@ void VTTCue::obtainCSSBoxes()
     // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
     // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose
     // 'display' property has the value 'ruby-base'.
-
-    displayTree->applyCSSProperties();
+    if (region())
+        displayTree->applyCSSPropertiesWithRegion();
+    else
+        displayTree->applyCSSProperties();
 
     if (displayTree->document().page()) {
         auto cssString = displayTree->document().page()->captionUserPreferencesStyleSheet();
@@ -990,10 +1048,14 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree()
     if (!displayTree || !m_displayTreeShouldChange || !track() || !track()->isRendered())
         return displayTree;
 
-    // https://w3c.github.io/webvtt/#processing-cue-settings
-    // 7.2. Processing cue settings
-    // Steps 1-25:
-    calculateDisplayParameters();
+    if (region())
+        calculateDisplayParametersWithRegion();
+    else {
+        // https://w3c.github.io/webvtt/#processing-cue-settings
+        // 7.2. Processing cue settings
+        // Steps 1-25:
+        calculateDisplayParameters();
+    }
 
     // 26. Obtain a set of CSS boxes boxes positioned relative to an initial containing block.
     obtainCSSBoxes();

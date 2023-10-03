@@ -55,7 +55,6 @@ private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
     const Box& root() const { return formattingContext().root(); }
-    const LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
     InlineFormattingContext& m_inlineFormattingContext;

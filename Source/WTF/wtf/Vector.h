@@ -707,6 +707,17 @@ public:
             TypeOperations::uninitializedFill(begin(), end(), val);
     }
 
+    template<typename Functor, typename = typename std::enable_if_t<std::is_invocable_v<Functor, size_t>>>
+    Vector(size_t size, const Functor& valueGenerator)
+    {
+        reserveInitialCapacity(size);
+
+        asanSetInitialBufferSizeTo(size);
+
+        for (size_t i = 0; i < size; ++i)
+            unsafeAppendWithoutCapacityCheck(valueGenerator(i));
+    }
+
     template<typename U = T>
     Vector(const U* data, size_t dataSize)
         : Base(dataSize, dataSize)
@@ -1871,48 +1882,62 @@ struct CompactMapTraits<RetainPtr<T>> {
     static ItemType extractValue(RetainPtr<T>&& returnValue) { return WTFMove(returnValue); }
 };
 
-template<typename MapFunction, typename SourceType, typename Enable = void>
+template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable = void>
 struct CompactMapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
-    using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
 
-    static Vector<DestinationItemType> compactMap(const SourceType& source, const MapFunction& mapFunction)
+    static void compactMap(DestinationVectorType& result, const SourceType& source, const MapFunction& mapFunction)
     {
-        Vector<DestinationItemType> result;
         for (auto&& item : source) {
             auto itemResult = mapFunction(item);
             if (CompactMapTraits<ResultItemType>::hasValue(itemResult))
                 result.append(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
         }
         result.shrinkToFit();
-        return result;
     }
 };
 
-template<typename MapFunction, typename SourceType>
-struct CompactMapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
+template<typename MapFunction, typename DestinationVectorType, typename SourceType>
+struct CompactMapper<MapFunction, DestinationVectorType, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
-    using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
 
-    static Vector<DestinationItemType> compactMap(SourceType&& source, const MapFunction& mapFunction)
+    static void compactMap(DestinationVectorType& result, SourceType&& source, const MapFunction& mapFunction)
     {
-        Vector<DestinationItemType> result;
         for (auto&& item : source) {
             auto itemResult = mapFunction(WTFMove(item));
             if (CompactMapTraits<ResultItemType>::hasValue(itemResult))
                 result.append(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
         }
         result.shrinkToFit();
-        return result;
     }
 };
 
-template<typename MapFunction, typename SourceType>
-Vector<typename CompactMapper<MapFunction, SourceType>::DestinationItemType> compactMap(SourceType&& source, MapFunction&& mapFunction)
+template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
+Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType&& source, MapFunction&& mapFunction)
 {
-    return CompactMapper<MapFunction, SourceType>::compactMap(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
+    using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
+    using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
+    using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
+
+    DestinationVectorType result;
+    CompactMapper<MapFunction, DestinationVectorType, SourceType>::compactMap(result, std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+    return result;
+}
+
+template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
+Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType& source, MapFunction&& mapFunction)
+{
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
+    using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
+    using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
+    using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
+
+    DestinationVectorType result;
+    CompactMapper<MapFunction, DestinationVectorType, SourceType&>::compactMap(result, source, std::forward<MapFunction>(mapFunction));
+    return result;
 }
 
 template<typename MapFunction, typename SourceType>
