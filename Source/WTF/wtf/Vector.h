@@ -707,6 +707,17 @@ public:
             TypeOperations::uninitializedFill(begin(), end(), val);
     }
 
+    template<typename Functor, typename = typename std::enable_if_t<std::is_invocable_v<Functor, size_t>>>
+    Vector(size_t size, const Functor& valueGenerator)
+    {
+        reserveInitialCapacity(size);
+
+        asanSetInitialBufferSizeTo(size);
+
+        for (size_t i = 0; i < size; ++i)
+            unsafeAppendWithoutCapacityCheck(valueGenerator(i));
+    }
+
     template<typename U = T>
     Vector(const U* data, size_t dataSize)
         : Base(dataSize, dataSize)

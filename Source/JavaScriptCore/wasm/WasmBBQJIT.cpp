@@ -7512,10 +7512,7 @@ public:
 
             fallThrough.link(&m_jit);
         } else {
-            Vector<int64_t> cases;
-            cases.reserveInitialCapacity(targets.size());
-            for (size_t i = 0; i < targets.size(); ++i)
-                cases.uncheckedAppend(i);
+            Vector<int64_t> cases(targets.size(), [](size_t i) { return i; });
 
             BinarySwitch binarySwitch(wasmScratchGPR, cases, BinarySwitch::Int32);
             while (binarySwitch.advance(m_jit)) {

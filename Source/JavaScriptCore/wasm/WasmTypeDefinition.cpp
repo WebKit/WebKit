@@ -428,14 +428,12 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
 {
     if (is<FunctionSignature>()) {
         const FunctionSignature* func = as<FunctionSignature>();
-        Vector<Type, 16> newArguments;
-        Vector<Type, 16> newReturns;
-        newArguments.reserveInitialCapacity(func->argumentCount());
-        newReturns.reserveInitialCapacity(func->returnCount());
-        for (unsigned i = 0; i < func->argumentCount(); ++i)
-            newArguments.uncheckedAppend(substitute(func->argumentType(i), projectee));
-        for (unsigned i = 0; i < func->returnCount(); ++i)
-            newReturns.uncheckedAppend(substitute(func->returnType(i), projectee));
+        Vector<Type, 16> newArguments(func->argumentCount(), [&](size_t i) {
+            return substitute(func->argumentType(i), projectee);
+        });
+        Vector<Type, 16> newReturns(func->returnCount(), [&](size_t i) {
+            return substitute(func->returnType(i), projectee);
+        });
 
         RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForFunction(newReturns, newArguments);
         return *def;
@@ -443,13 +441,11 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
 
     if (is<StructType>()) {
         const StructType* structType = as<StructType>();
-        Vector<FieldType> newFields;
-        newFields.reserveInitialCapacity(structType->fieldCount());
-        for (unsigned i = 0; i < structType->fieldCount(); i++) {
+        Vector<FieldType> newFields(structType->fieldCount(), [&](size_t i) {
             FieldType field = structType->field(i);
             StorageType substituted = field.type.is<PackedType>() ? field.type : StorageType(substitute(field.type.as<Type>(), projectee));
-            newFields.uncheckedAppend(FieldType { substituted, field.mutability });
-        }
+            return FieldType { substituted, field.mutability };
+        });
 
         RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForStruct(newFields);
         return *def;
@@ -465,11 +461,10 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
 
     if (is<Subtype>()) {
         const Subtype* subtype = as<Subtype>();
-        Vector<TypeIndex> supertypes;
-        supertypes.reserveInitialCapacity(subtype->supertypeCount());
         const TypeDefinition& newUnderlyingType = TypeInformation::get(subtype->underlyingType()).replacePlaceholders(projectee);
-        for (SupertypeCount i = 0; i < subtype->supertypeCount(); i++)
-            supertypes.uncheckedAppend(substituteParent(subtype->superType(i), projectee));
+        Vector<TypeIndex> supertypes(subtype->supertypeCount(), [&](size_t i) {
+            return substituteParent(subtype->superType(i), projectee);
+        });
         RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForSubtype(supertypes, newUnderlyingType.index(), subtype->isFinal());
         return *def;
     }
