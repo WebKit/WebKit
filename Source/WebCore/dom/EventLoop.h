@@ -135,8 +135,7 @@ protected:
     void run(std::optional<ApproximateTime> deadline = std::nullopt);
     void clearAllTasks();
 
-    // FIXME: Account for fully-activeness of each document.
-    bool hasTasksForFullyActiveDocument() const { return !m_tasks.isEmpty(); }
+    bool hasTasksForFullyActiveDocument() const;
 
 private:
     virtual void scheduleToRun() = 0;

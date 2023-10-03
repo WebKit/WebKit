@@ -346,6 +346,14 @@ void EventLoop::clearAllTasks()
     m_groupsWithSuspendedTasks.clear();
 }
 
+bool EventLoop::hasTasksForFullyActiveDocument() const
+{
+    return m_tasks.containsIf([](auto& task) {
+        auto group = task->group();
+        return group && !group->isStoppedPermanently() && !group->isSuspended();
+    });
+}
+
 void EventLoop::forEachAssociatedContext(const Function<void(ScriptExecutionContext&)>& apply)
 {
     m_associatedContexts.forEach(apply);
