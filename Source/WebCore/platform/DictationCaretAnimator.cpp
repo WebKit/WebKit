@@ -237,7 +237,7 @@ Path DictationCaretAnimator::makeDictationTailConePath(const FloatRect& rect) co
     const auto verticalOffsetLTR = isLTR ? verticalOffset : 0.f;
     const auto verticalOffsetRTL = isLTR ? 0.f : verticalOffset;
 
-    return Path::polygonPathFromPoints({
+    return Path(Vector<FloatPoint> {
         { rect.x(), rect.y() + verticalOffsetLTR },
         { rect.x(), rect.maxY() - verticalOffsetLTR },
         { rect.maxX(), rect.maxY() - verticalOffsetRTL },
