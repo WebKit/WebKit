@@ -2649,14 +2649,11 @@ void JSObject::getOwnIndexedPropertyNames(JSGlobalObject*, PropertyNameArray& pr
             }
             
             if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
-                Vector<unsigned, 0, UnsafeVectorOverflow> keys;
-                keys.reserveInitialCapacity(map->size());
-                
-                SparseArrayValueMap::const_iterator end = map->end();
-                for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                    if (mode == DontEnumPropertiesMode::Include || !(it->value.attributes() & PropertyAttribute::DontEnum))
-                        keys.uncheckedAppend(static_cast<unsigned>(it->key));
-                }
+                auto keys = WTF::compactMap<0, UnsafeVectorOverflow>(*map, [mode](auto& entry) ->std::optional<unsigned> {
+                    if (mode == DontEnumPropertiesMode::Include || !(entry.value.attributes() & PropertyAttribute::DontEnum))
+                        return static_cast<unsigned>(entry.key);
+                    return std::nullopt;
+                });
                 
                 std::sort(keys.begin(), keys.end());
                 for (unsigned i = 0; i < keys.size(); ++i)
