@@ -1697,7 +1697,7 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Monterey+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure Timeout ]
 [ Monterey+ x86_64 ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
-[ Monterey Ventura x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ] # change back to [ Monterey+ x86_64 ] when webkit.org/b/262425 is resolved.
+[ Monterey+ x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/wpt/webrtc/audiovideo-script-transform.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/block-local-documents-inheriting-none.https.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
@@ -2164,10 +2164,3 @@ http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass F
 webkit.org/b/262401 [ Sonoma+ ] fast/canvas/webgl/canvas-zero-size.html [ Pass Crash ]
 
 webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.html [ Pass Crash ]
-
-# webkit.org/b/262425 (REGRESSION(268433@main): [ iOS17 Sonoma ] 5 tests under http/wpt/mediarecorder are constantly crashing.)
-[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-dataavailable.html [ Crash ]
-[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-multiple-start-stop.html [ Crash ]
-[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-requestData.html [ Crash ]
-[ Sonoma ] http/wpt/mediarecorder/pause-recording.html [ Crash ]
-[ Sonoma ] http/wpt/mediarecorder/record-96KHz-sources.html [ Crash ]
