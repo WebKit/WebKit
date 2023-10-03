@@ -286,6 +286,15 @@ float FontCascade::width(const TextRun& run, WeakHashSet<const Font>* fallbackFo
     return result;
 }
 
+template<typename CharacterType>
+static void addGlyphsFromText(GlyphBuffer& glyphBuffer, const Font& font, const CharacterType* characters, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        auto glyph = font.glyphForCharacter(characters[i]);
+        glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
+    }
+}
+
 float FontCascade::widthForSimpleText(StringView text, TextDirection textDirection) const
 {
     if (text.isNull() || text.isEmpty())
@@ -298,10 +307,10 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
     GlyphBuffer glyphBuffer;
     auto& font = primaryFont();
     ASSERT(!font.syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
-    for (size_t i = 0; i < text.length(); ++i) {
-        auto glyph = font.glyphForCharacter(text[i]);
-        glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
-    }
+    if (text.is8Bit())
+        addGlyphsFromText(glyphBuffer, font, text.characters8(), text.length());
+    else
+        addGlyphsFromText(glyphBuffer, font, text.characters16(), text.length());
 
     auto initialAdvance = font.applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
     auto width = 0.f;
