@@ -295,49 +295,6 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     return CGFAbs(a - b) < 1;
 }
 
-- (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside
-{
-    UIEdgeInsets contentInsets = self.contentInset;
-    CGSize contentSize = self.contentSize;
-    CGRect bounds = self.bounds;
-
-    CGFloat minimalHorizontalRange = bounds.size.width - contentInsets.left - contentInsets.right;
-    CGFloat contentWidthAtMinimumScale = contentSize.width * (self.minimumZoomScale / self.zoomScale);
-    if (contentWidthAtMinimumScale < minimalHorizontalRange) {
-        CGFloat unobscuredEmptyHorizontalMarginAtMinimumScale = minimalHorizontalRange - contentWidthAtMinimumScale;
-        minimalHorizontalRange -= unobscuredEmptyHorizontalMarginAtMinimumScale;
-    }
-    if (contentSize.width < minimalHorizontalRange) {
-        if (valuesAreWithinOnePixel(minOffset, -contentInsets.left)
-            && valuesAreWithinOnePixel(maxOffset, contentSize.width + contentInsets.right - bounds.size.width)
-            && valuesAreWithinOnePixel(range, bounds.size.width)) {
-
-            CGFloat emptyHorizontalMargin = (minimalHorizontalRange - contentSize.width) / 2;
-            minOffset -= emptyHorizontalMargin;
-            maxOffset = minOffset;
-        }
-    }
-
-    CGFloat minimalVerticalRange = bounds.size.height - contentInsets.top - contentInsets.bottom;
-    CGFloat contentHeightAtMinimumScale = contentSize.height * (self.minimumZoomScale / self.zoomScale);
-    if (contentHeightAtMinimumScale < minimalVerticalRange) {
-        CGFloat unobscuredEmptyVerticalMarginAtMinimumScale = minimalVerticalRange - contentHeightAtMinimumScale;
-        minimalVerticalRange -= unobscuredEmptyVerticalMarginAtMinimumScale;
-    }
-    if (contentSize.height < minimalVerticalRange) {
-        if (valuesAreWithinOnePixel(minOffset, -contentInsets.top)
-            && valuesAreWithinOnePixel(maxOffset, contentSize.height + contentInsets.bottom - bounds.size.height)
-            && valuesAreWithinOnePixel(range, bounds.size.height)) {
-
-            CGFloat emptyVerticalMargin = (minimalVerticalRange - contentSize.height) / 2;
-            minOffset -= emptyVerticalMargin;
-            maxOffset = minOffset;
-        }
-    }
-
-    return [super _rubberBandOffsetForOffset:newOffset maxOffset:maxOffset minOffset:minOffset range:range outside:outside];
-}
-
 - (void)setContentInset:(UIEdgeInsets)contentInset
 {
     [super setContentInset:contentInset];
