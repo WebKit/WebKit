@@ -45,7 +45,7 @@ public:
     CurlMultipartHandle(CurlMultipartHandleClient&, CString&&);
     ~CurlMultipartHandle() { }
 
-    WEBCORE_EXPORT void didReceiveMessage(const SharedBuffer&);
+    WEBCORE_EXPORT void didReceiveMessage(std::span<const uint8_t>);
     WEBCORE_EXPORT void didCompleteMessage();
 
     WEBCORE_EXPORT void completeHeaderProcessing();
