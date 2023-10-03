@@ -356,11 +356,9 @@ ExceptionOr<void> WebCodecsAudioEncoder::closeEncoder(Exception&& exception)
         return result;
     m_state = WebCodecsCodecState::Closed;
     m_internalEncoder = nullptr;
-    if (exception.code() != AbortError) {
-        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, exception = WTFMove(exception)]() mutable {
-            m_error->handleEvent(DOMException::create(WTFMove(exception)));
-        });
-    }
+    if (exception.code() != AbortError)
+        m_error->handleEvent(DOMException::create(WTFMove(exception)));
+
     return { };
 }
 
@@ -376,9 +374,6 @@ ExceptionOr<void> WebCodecsAudioEncoder::resetEncoder(const Exception& exception
     if (m_encodeQueueSize) {
         m_encodeQueueSize = 0;
         scheduleDequeueEvent();
-        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, exception = Exception { exception }]() mutable {
-            m_error->handleEvent(DOMException::create(WTFMove(exception)));
-        });
     }
     ++m_clearFlushPromiseCount;
     while (!m_pendingFlushPromises.isEmpty())
