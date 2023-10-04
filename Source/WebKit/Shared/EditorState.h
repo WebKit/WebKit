@@ -155,9 +155,6 @@ struct EditorState {
 
     bool hasVisualData() const { return !!visualData; }
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, EditorState&);
-
     bool hasPostLayoutAndVisualData() const { return hasPostLayoutData() && hasVisualData(); }
 
     std::optional<PostLayoutData> postLayoutData;
