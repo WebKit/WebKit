@@ -68,6 +68,8 @@ typedef struct WGPUInstanceCocoaDescriptor {
     __unsafe_unretained WGPUScheduleWorkBlock scheduleWorkBlock;
 } WGPUInstanceCocoaDescriptor;
 
+const int WGPUTextureSampleType_ExternalTexture = WGPUTextureSampleType_Force32 - 1;
+
 typedef void (^WGPURenderBuffersWereRecreatedBlockCallback)(CFArrayRef ioSurfaces);
 typedef void (^WGPUOnSubmittedWorkScheduledCallback)(WGPUWorkItem);
 typedef void (^WGPUCompositorIntegrationRegisterBlockCallback)(WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreated, WGPUOnSubmittedWorkScheduledCallback onSubmittedWorkScheduledCallback);
@@ -79,11 +81,6 @@ typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
 typedef struct WGPUExternalTextureBindingLayout {
     WGPUChainedStruct const * nextInChain;
 } WGPUExternalTextureBindingLayout;
-
-typedef struct WGPUExternalTextureBindGroupLayoutEntry {
-    WGPUChainedStruct chain;
-    WGPUExternalTextureBindingLayout externalTexture;
-} WGPUExternalTextureBindGroupLayoutEntry;
 
 typedef struct WGPUBindGroupExternalTextureEntry {
     WGPUChainedStruct chain;

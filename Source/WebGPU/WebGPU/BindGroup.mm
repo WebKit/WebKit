@@ -477,7 +477,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             if (!optionalAccess)
                 continue;
 
-            auto index = entry.binding;
+            auto index = bindGroupLayout.argumentBufferIndexForEntryIndex(entry.binding, stage);
             MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(*optionalAccess);
 
             if (bufferIsPresent) {

@@ -176,23 +176,12 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
 {
     auto label = descriptor.label.utf8();
 
-    auto backingExternalTextureEntries = descriptor.entries.map([](const auto&) {
-        return WGPUExternalTextureBindGroupLayoutEntry {
-            {
-                nullptr,
-                static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture),
-            }, {
-                nullptr,
-            },
-        };
-    });
-
     Vector<WGPUBindGroupLayoutEntry> backingEntries;
     backingEntries.reserveInitialCapacity(descriptor.entries.size());
     for (size_t i = 0; i < descriptor.entries.size(); ++i) {
         const auto& entry = descriptor.entries[i];
         backingEntries.uncheckedAppend({
-            entry.externalTexture ? &backingExternalTextureEntries[i].chain : nullptr,
+            nullptr,
             entry.binding,
             m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility), {
                 nullptr,
@@ -204,9 +193,9 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
                 entry.sampler ? m_convertToBackingContext->convertToBacking(entry.sampler->type) : WGPUSamplerBindingType_Undefined,
             }, {
                 nullptr,
-                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined,
-                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
-                entry.texture ? entry.texture->multisampled : false,
+                entry.externalTexture ? static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture) : (entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined),
+                (!entry.externalTexture && entry.texture) ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
+                (!entry.externalTexture && entry.texture) ? entry.texture->multisampled : false,
             }, {
                 nullptr,
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->access) : WGPUStorageTextureAccess_Undefined,
