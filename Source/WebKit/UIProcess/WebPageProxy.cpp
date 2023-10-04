@@ -2567,9 +2567,12 @@ void WebPageProxy::dispatchActivityStateChange()
     auto activityStateChangeID = m_activityStateChangeWantsSynchronousReply ? takeNextActivityStateChangeID() : static_cast<ActivityStateChangeID>(ActivityStateChangeAsynchronous);
 
     if (changed || activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbacks.isEmpty()) {
-        sendWithAsyncReply(Messages::WebPage::SetActivityState(internals().activityState, activityStateChangeID), [callbacks = std::exchange(m_nextActivityStateChangeCallbacks, { })] () mutable {
+        auto callbackAggregator = CallbackAggregator::create([callbacks = std::exchange(m_nextActivityStateChangeCallbacks, { })] () mutable {
             for (auto& callback : callbacks)
                 callback();
+        });
+        forEachWebContentProcess([&](auto& webProcess) {
+            webProcess.sendWithAsyncReply(Messages::WebPage::SetActivityState(internals().activityState, activityStateChangeID), [callbackAggregator] { }, webPageID());
         });
     }
 
