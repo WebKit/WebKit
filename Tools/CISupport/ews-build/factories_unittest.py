@@ -702,6 +702,11 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'push-commit-to-webkit-repo',
             'set-build-summary'
         ],
+        'Safe-Merge-Queue': [
+            'retrieve-pr-data-from-label',
+            'retrieve-pr-data-from-label',
+            'retrieve-pr-data-from-label'
+        ],
     }
 
     def setUp(self):
