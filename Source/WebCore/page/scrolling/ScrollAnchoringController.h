@@ -25,12 +25,16 @@
 
 #pragma once
 
+#include "Document.h"
 #include "FloatPoint.h"
-#include "LocalFrameView.h"
+#include "ScrollTypes.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Element;
+class ScrollableArea;
+class WeakPtrImplWithEventTargetData;
 
 enum class CandidateExaminationResult {
     Exclude, Select, Descend, Skip
@@ -39,27 +43,23 @@ enum class CandidateExaminationResult {
 class ScrollAnchoringController final : public CanMakeWeakPtr<ScrollAnchoringController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ScrollAnchoringController(LocalFrameView& frameView)
-        : m_frameView(frameView)
-    { }
-
+    explicit ScrollAnchoringController(ScrollableArea&);
     void invalidateAnchorElement();
     void adjustScrollPositionForAnchoring();
     void selectAnchorElement();
     void chooseAnchorElement(Document&);
     void updateAnchorElement();
-    LocalFrameView& frameView() { return m_frameView; }
 
 private:
     Element* findAnchorElementRecursive(Element*);
     CandidateExaminationResult examineCandidate(Element&);
     bool didFindPriorityCandidate(Document&);
-    ScrollOffset computeOffset(RenderObject& candidate);
+    FloatPoint computeOffsetFromOwningScroller(RenderObject& candidate);
+    LocalFrameView& frameView();
 
-    // TODO: add owning scrollable area
-    LocalFrameView& m_frameView;
+    ScrollableArea& m_owningScrollableArea;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_anchorElement;
-    ScrollOffset m_lastOffsetForAnchorElement;
+    FloatPoint m_lastOffsetForAnchorElement;
     bool m_midUpdatingScrollPositionForAnchorElement { false };
     bool m_isQueuedForScrollPositionUpdate { false };
 };

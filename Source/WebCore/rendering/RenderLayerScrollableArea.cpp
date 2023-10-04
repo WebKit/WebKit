@@ -54,6 +54,8 @@
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameSelection.h"
+#include "HTMLBodyElement.h"
+#include "HTMLHtmlElement.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
 #include "LineClampValue.h"
@@ -82,6 +84,9 @@ namespace WebCore {
 RenderLayerScrollableArea::RenderLayerScrollableArea(RenderLayer& layer)
     : m_layer(layer)
 {
+    auto& renderer = m_layer.renderer();
+    if (renderer.document().settings().cssScrollAnchoringEnabled() && !is<HTMLHtmlElement>(renderer.element()) && !is<HTMLBodyElement>(renderer.element()))
+        m_scrollAnchoringController = WTF::makeUnique<ScrollAnchoringController>(*this);
 }
 
 RenderLayerScrollableArea::~RenderLayerScrollableArea()
@@ -2024,5 +2029,24 @@ float RenderLayerScrollableArea::deviceScaleFactor() const
 {
     return m_layer.renderer().document().deviceScaleFactor();
 }
+
+void RenderLayerScrollableArea::updateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->updateAnchorElement();
+}
+
+void RenderLayerScrollableArea::updateScrollPositionForScrollAnchoringController()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->adjustScrollPositionForAnchoring();
+}
+
+void RenderLayerScrollableArea::invalidateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->invalidateAnchorElement();
+}
+
 
 } // namespace WebCore

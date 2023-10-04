@@ -218,7 +218,7 @@ LocalFrameView::LocalFrameView(LocalFrame& frame)
     ScrollableArea::setVerticalScrollElasticity(verticalElasticity);
     ScrollableArea::setHorizontalScrollElasticity(horizontalElasticity);
 #endif
-    if (frame.document() && frame.document()->settings().cssScrollAnchoringEnabled())
+    if (m_frame->settings().cssScrollAnchoringEnabled())
         m_scrollAnchoringController = WTF::makeUnique<ScrollAnchoringController>(*this);
 }
 
@@ -2859,7 +2859,9 @@ void LocalFrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset
     updateCompositingLayersAfterScrolling();
     repaintSlowRepaintObjects();
     scrollPositionChanged(scrollPositionFromOffset(oldOffset), scrollPositionFromOffset(newOffset));
-    
+    invalidateScrollAnchoringElement();
+    updateScrollAnchoringElement();
+
     if (auto* renderView = this->renderView()) {
         if (renderView->usesCompositing())
             renderView->compositor().didChangeVisibleRect();
@@ -2895,9 +2897,6 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
         if (auto* layer = renderView->layer())
             m_frame->editor().renderLayerDidScroll(*layer);
     }
-
-    invalidateScrollAnchoringElement();
-    updateScrollAnchoringElement();
 }
 
 void LocalFrameView::applyRecursivelyWithVisibleRect(const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>& apply)
@@ -3867,24 +3866,6 @@ void LocalFrameView::performPostLayoutTasks()
     m_frame->document()->scheduleDeferredAXObjectCacheUpdate();
 }
 
-void LocalFrameView::invalidateScrollAnchoringElement()
-{
-    if (m_scrollAnchoringController)
-        m_scrollAnchoringController->invalidateAnchorElement();
-}
-
-void LocalFrameView::updateScrollAnchoringElement()
-{
-    if (m_scrollAnchoringController)
-        m_scrollAnchoringController->updateAnchorElement();
-}
-
-void LocalFrameView::updateScrollPositionForScrollAnchoringController()
-{
-    if (m_scrollAnchoringController)
-        m_scrollAnchoringController->adjustScrollPositionForAnchoring();
-}
-
 void LocalFrameView::dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableArea& scrollableArea)
 {
     m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate.remove(scrollableArea);
@@ -3893,6 +3874,15 @@ void LocalFrameView::dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableAre
 void LocalFrameView::queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea& scrollableArea)
 {
     m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate.add(scrollableArea);
+}
+
+void LocalFrameView::updateScrollAnchoringElementsForScrollableAreas()
+{
+    updateScrollAnchoringElement();
+    if (!m_scrollableAreas)
+        return;
+    for (auto& scrollableArea : *m_scrollableAreas)
+        scrollableArea.updateScrollAnchoringElement();
 }
 
 void LocalFrameView::updateScrollAnchoringPositionForScrollableAreas()
@@ -6450,6 +6440,24 @@ float LocalFrameView::deviceScaleFactor() const
 void LocalFrameView::writeRenderTreeAsText(TextStream& ts, OptionSet<RenderAsTextFlag> behavior)
 {
     externalRepresentationForLocalFrame(ts, frame(), behavior);
+}
+
+void LocalFrameView::updateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->updateAnchorElement();
+}
+
+void LocalFrameView::updateScrollPositionForScrollAnchoringController()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->adjustScrollPositionForAnchoring();
+}
+
+void LocalFrameView::invalidateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->invalidateAnchorElement();
 }
 
 } // namespace WebCore
