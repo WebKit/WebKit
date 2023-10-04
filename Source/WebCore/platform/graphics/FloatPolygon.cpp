@@ -195,33 +195,6 @@ bool FloatPolygon::contains(const FloatPoint& point) const
     return fillRule() == WindRule::NonZero ? containsNonZero(point) : containsEvenOdd(point);
 }
 
-bool VertexPair::overlapsRect(const FloatRect& rect) const
-{
-    bool boundsOverlap = (minX() < rect.maxX()) && (maxX() > rect.x()) && (minY() < rect.maxY()) && (maxY() > rect.y());
-    if (!boundsOverlap)
-        return false;
-
-    float leftSideValues[4] = {
-        leftSide(vertex1(), vertex2(), rect.minXMinYCorner()),
-        leftSide(vertex1(), vertex2(), rect.maxXMinYCorner()),
-        leftSide(vertex1(), vertex2(), rect.minXMaxYCorner()),
-        leftSide(vertex1(), vertex2(), rect.maxXMaxYCorner())
-    };
-
-    int currentLeftSideSign = 0;
-    for (unsigned i = 0; i < 4; ++i) {
-        if (!leftSideValues[i])
-            continue;
-        int leftSideSign = leftSideValues[i] > 0 ? 1 : -1;
-        if (!currentLeftSideSign)
-            currentLeftSideSign = leftSideSign;
-        else if (currentLeftSideSign != leftSideSign)
-            return true;
-    }
-
-    return false;
-}
-
 bool VertexPair::intersection(const VertexPair& other, FloatPoint& point) const
 {
     // See: http://paulbourke.net/geometry/pointlineplane/, "Intersection point of two lines in 2 dimensions"
