@@ -136,9 +136,7 @@ const Vector<String>& LocaleNone::timeAMPMLabels()
 {
     if (!m_timeAMPMLabels.isEmpty())
         return m_timeAMPMLabels;
-    m_timeAMPMLabels.reserveCapacity(2);
-    m_timeAMPMLabels.uncheckedAppend("AM");
-    m_timeAMPMLabels.uncheckedAppend("PM");
+    m_timeAMPMLabels.appendList({ "AM"_s, "PM"_s });
     return m_timeAMPMLabels;
 }
 

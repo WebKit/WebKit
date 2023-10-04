@@ -1124,23 +1124,15 @@ static void appendDecimal(UChar32 c, Vector<uint8_t>& result)
 static void urlEncodedEntityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)
 {
     result.reserveCapacity(result.size() + 9 + maxUChar32Digits);
-    result.uncheckedAppend('%');
-    result.uncheckedAppend('2');
-    result.uncheckedAppend('6');
-    result.uncheckedAppend('%');
-    result.uncheckedAppend('2');
-    result.uncheckedAppend('3');
+    result.appendList({ '%', '2', '6', '%', '2', '3' });
     appendDecimal(c, result);
-    result.uncheckedAppend('%');
-    result.uncheckedAppend('3');
-    result.uncheckedAppend('B');
+    result.appendList({ '%', '3', 'B' });
 }
 
 static void entityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)
 {
     result.reserveCapacity(result.size() + 3 + maxUChar32Digits);
-    result.uncheckedAppend('&');
-    result.uncheckedAppend('#');
+    result.appendList({ '&', '#' });
     appendDecimal(c, result);
     result.uncheckedAppend(';');
 }
