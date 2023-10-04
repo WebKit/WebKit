@@ -1244,12 +1244,15 @@ enum class WebCore::ScreenOrientationLockType : uint8_t {
 }
 
 struct WebCore::ApplicationManifest {
+    String rawJSON
     String name
     String shortName
     String description
     URL scope
+    bool isDefaultScope
     WebCore::ApplicationManifest::Display display
     std::optional<WebCore::ScreenOrientationLockType> orientation
+    URL manifestURL
     URL startURL
     URL id
     WebCore::Color backgroundColor
