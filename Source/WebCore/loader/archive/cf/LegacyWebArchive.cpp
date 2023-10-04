@@ -518,7 +518,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, c
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const String& mainResourceFileName)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const String& mainFrameFileName)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -535,7 +535,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
     Vector<Ref<LegacyWebArchive>> subframeArchives;
     Vector<Ref<ArchiveResource>> subresources;
     HashMap<String, String> uniqueSubresources;
-    String subresourcesDirectoryName = mainResourceFileName.isNull() ? String { } : makeString(mainResourceFileName, "_files");
+    String subresourcesDirectoryName = mainFrameFileName.isNull() ? String { } : makeString(mainFrameFileName, "_files");
 
     for (auto& node : nodes) {
         RefPtr<LocalFrame> childFrame;
@@ -543,9 +543,17 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             && (childFrame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(node.get()).contentFrame()))) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;
-            if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter)))
+            if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter), mainFrameFileName)) {
+                auto subframeMainResource = subframeArchive->mainResource();
+                auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
+                if (!subframeMainResourceURL.isNull()) {
+                    if (subframeMainResourceURL.isAboutSrcDoc() || subframeMainResourceURL.isAboutBlank())
+                        uniqueSubresources.add(childFrame->frameID().toString(), subframeMainResource->fileName());
+                    else
+                        uniqueSubresources.add(subframeMainResourceURL.string(), subframeMainResource->fileName());
+                }
                 subframeArchives.append(subframeArchive.releaseNonNull());
-            else
+            } else
                 LOG_ERROR("Unabled to archive subframe %s", childFrame->tree().uniqueName().string().utf8().data());
 
         } else {
@@ -575,8 +583,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
                 }
 
                 if (!subresourcesDirectoryName.isNull()) {
-                    addResult.iterator->value = makeString(subresourcesDirectoryName, "/", subresourceURL.lastPathComponent());
-                    resource->setFileName(addResult.iterator->value);
+                    String subresourceFileName = subresourceURL.lastPathComponent().toString();
+                    String subresourceFilePath = makeString(subresourcesDirectoryName, "/", subresourceFileName);
+                    resource->setFileName(subresourceFilePath);
+                    addResult.iterator->value = frame.isMainFrame() ? subresourceFilePath : subresourceFileName;
                 }
 
                 subresources.append(resource.releaseNonNull());
@@ -598,14 +608,14 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
         }
     }
 
-    if (!mainResourceFileName.isNull()) {
+    if (!mainFrameFileName.isNull()) {
         auto* document = frame.document();
         if (!document)
             return nullptr;
-        auto fileNameWithExtension = mainResourceFileName;
+        auto fileNameWithExtension = frame.isMainFrame() ? mainFrameFileName : makeString(subresourcesDirectoryName, "/frame_", frame.frameID().toString());
         auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(mainResource->mimeType());
         if (!fileNameWithExtension.endsWith(extension))
-            fileNameWithExtension = makeString(mainResourceFileName, ".", extension);
+            fileNameWithExtension = makeString(fileNameWithExtension, ".", extension);
         uniqueSubresources.add(responseURL.string(), fileNameWithExtension);
         String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::No, nullptr, std::nullopt, WTFMove(uniqueSubresources));
         mainResource = ArchiveResource::create(utf8Buffer(updatedMarkupString), responseURL, response.mimeType(), "UTF-8"_s, frame.tree().uniqueName(), ResourceResponse(), fileNameWithExtension);

@@ -35,6 +35,7 @@ namespace WebCore {
 class Attribute;
 class DocumentType;
 class Element;
+class LocalFrame;
 class Node;
 class Range;
 
@@ -106,6 +107,9 @@ private:
     bool inXMLFragmentSerialization() const { return m_serializationSyntax == SerializationSyntax::XML; }
     void generateUniquePrefix(QualifiedName&, const Namespaces&);
     QualifiedName xmlAttributeSerialization(const Attribute&, Namespaces*);
+    LocalFrame* frameForAttributeReplacement(const Element&);
+    Attribute replaceAttributeIfNecessary(const Element&, const Attribute&);
+    void appendURLAttributeIfNecessary(StringBuilder&, const Element&, Namespaces*);
 
     StringBuilder m_markup;
     const ResolveURLs m_resolveURLs;
