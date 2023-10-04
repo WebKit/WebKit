@@ -151,7 +151,7 @@ class HTMLMediaElement;
 class HTMLMetaElement;
 class HTMLVideoElement;
 class HighlightRange;
-class HighlightRegister;
+class HighlightRegistry;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
@@ -1722,16 +1722,16 @@ public:
     TextManipulationController* textManipulationControllerIfExists() { return m_textManipulationController.get(); }
 
     bool hasHighlight() const;
-    HighlightRegister* highlightRegisterIfExists() { return m_highlightRegister.get(); }
-    HighlightRegister& highlightRegister();
+    HighlightRegistry* highlightRegistryIfExists() { return m_highlightRegistry.get(); }
+    HighlightRegistry& highlightRegistry();
     void updateHighlightPositions();
 
-    HighlightRegister* fragmentHighlightRegisterIfExists() { return m_fragmentHighlightRegister.get(); }
-    HighlightRegister& fragmentHighlightRegister();
+    HighlightRegistry* fragmentHighlightRegistryIfExists() { return m_fragmentHighlightRegistry.get(); }
+    HighlightRegistry& fragmentHighlightRegistry();
         
 #if ENABLE(APP_HIGHLIGHTS)
-    HighlightRegister* appHighlightRegisterIfExists() { return m_appHighlightRegister.get(); }
-    WEBCORE_EXPORT HighlightRegister& appHighlightRegister();
+    HighlightRegistry* appHighlightRegistryIfExists() { return m_appHighlightRegistry.get(); }
+    WEBCORE_EXPORT HighlightRegistry& appHighlightRegistry();
 
     WEBCORE_EXPORT AppHighlightStorage& appHighlightStorage();
     AppHighlightStorage* appHighlightStorageIfExists() const { return m_appHighlightStorage.get(); };
@@ -1914,7 +1914,7 @@ private:
 
     void platformSuspendOrStopActiveDOMObjects();
 
-    void collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>&, const HighlightRegister&);
+    void collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>&, const HighlightRegistry&);
 
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 
@@ -2143,10 +2143,10 @@ private:
     std::unique_ptr<TextAutoSizing> m_textAutoSizing;
 #endif
         
-    RefPtr<HighlightRegister> m_highlightRegister;
-    RefPtr<HighlightRegister> m_fragmentHighlightRegister;
+    RefPtr<HighlightRegistry> m_highlightRegistry;
+    RefPtr<HighlightRegistry> m_fragmentHighlightRegistry;
 #if ENABLE(APP_HIGHLIGHTS)
-    RefPtr<HighlightRegister> m_appHighlightRegister;
+    RefPtr<HighlightRegistry> m_appHighlightRegistry;
     std::unique_ptr<AppHighlightStorage> m_appHighlightStorage;
 #endif
 

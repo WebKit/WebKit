@@ -63,7 +63,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLPlugInImageElement.h"
-#include "HighlightRegister.h"
+#include "HighlightRegistry.h"
 #include "ImageDocument.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
@@ -2321,7 +2321,7 @@ bool LocalFrameView::scrollToFragment(const URL& url)
             
             auto highlightRanges = FragmentDirectiveRangeFinder::findRangesFromTextDirectives(parsedTextDirectives, document);
             for (auto range : highlightRanges)
-                document->fragmentHighlightRegister().addAnnotationHighlightWithRange(StaticRange::create(range));
+                document->fragmentHighlightRegistry().addAnnotationHighlightWithRange(StaticRange::create(range));
             
             if (highlightRanges.size()) {
                 auto range = highlightRanges.first();

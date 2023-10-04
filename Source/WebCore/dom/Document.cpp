@@ -131,7 +131,7 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "HashChangeEvent.h"
-#include "HighlightRegister.h"
+#include "HighlightRegistry.h"
 #include "History.h"
 #include "HitTestResult.h"
 #include "IDBConnectionProxy.h"
@@ -879,13 +879,13 @@ void Document::commonTeardown()
 
     scriptRunner().clearPendingScripts();
 
-    if (m_highlightRegister)
-        m_highlightRegister->clear();
-    if (m_fragmentHighlightRegister)
-        m_fragmentHighlightRegister->clear();
+    if (m_highlightRegistry)
+        m_highlightRegistry->clear();
+    if (m_fragmentHighlightRegistry)
+        m_fragmentHighlightRegistry->clear();
 #if ENABLE(APP_HIGHLIGHTS)
-    if (m_appHighlightRegister)
-        m_appHighlightRegister->clear();
+    if (m_appHighlightRegistry)
+        m_appHighlightRegistry->clear();
 #endif
     m_pendingScrollEventTargetList = nullptr;
 
@@ -2997,37 +2997,37 @@ Ref<DocumentParser> Document::createParser()
 
 bool Document::hasHighlight() const
 {
-    return (m_highlightRegister && !m_highlightRegister->isEmpty())
-        || (m_fragmentHighlightRegister && !m_fragmentHighlightRegister->isEmpty())
+    return (m_highlightRegistry && !m_highlightRegistry->isEmpty())
+        || (m_fragmentHighlightRegistry && !m_fragmentHighlightRegistry->isEmpty())
 #if ENABLE(APP_HIGHLIGHTS)
-        || (m_appHighlightRegister && !m_appHighlightRegister->isEmpty())
+        || (m_appHighlightRegistry && !m_appHighlightRegistry->isEmpty())
 #endif
     ;
 }
 
-HighlightRegister& Document::highlightRegister()
+HighlightRegistry& Document::highlightRegistry()
 {
-    if (!m_highlightRegister)
-        m_highlightRegister = HighlightRegister::create();
-    return *m_highlightRegister;
+    if (!m_highlightRegistry)
+        m_highlightRegistry = HighlightRegistry::create();
+    return *m_highlightRegistry;
 }
 
-HighlightRegister& Document::fragmentHighlightRegister()
+HighlightRegistry& Document::fragmentHighlightRegistry()
 {
-    if (!m_fragmentHighlightRegister)
-        m_fragmentHighlightRegister = HighlightRegister::create();
-    return *m_fragmentHighlightRegister;
+    if (!m_fragmentHighlightRegistry)
+        m_fragmentHighlightRegistry = HighlightRegistry::create();
+    return *m_fragmentHighlightRegistry;
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-HighlightRegister& Document::appHighlightRegister()
+HighlightRegistry& Document::appHighlightRegistry()
 {
-    if (!m_appHighlightRegister) {
-        m_appHighlightRegister = HighlightRegister::create();
+    if (!m_appHighlightRegistry) {
+        m_appHighlightRegistry = HighlightRegistry::create();
         if (auto* currentPage = page())
-            m_appHighlightRegister->setHighlightVisibility(currentPage->chrome().client().appHighlightsVisiblility());
+            m_appHighlightRegistry->setHighlightVisibility(currentPage->chrome().client().appHighlightsVisiblility());
     }
-    return *m_appHighlightRegister;
+    return *m_appHighlightRegistry;
 }
 
 AppHighlightStorage& Document::appHighlightStorage()
@@ -3037,9 +3037,9 @@ AppHighlightStorage& Document::appHighlightStorage()
     return *m_appHighlightStorage;
 }
 #endif
-void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>& highlightRanges, const HighlightRegister& highlightRegister)
+void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>& highlightRanges, const HighlightRegistry& highlightRegistry)
 {
-    for (auto& highlight : highlightRegister.map()) {
+    for (auto& highlight : highlightRegistry.map()) {
         for (auto& highlightRange : highlight.value->highlightRanges()) {
             if (highlightRange->startPosition().isNotNull() && highlightRange->endPosition().isNotNull() && !highlightRange->range().isLiveRange())
                 continue;
@@ -3055,7 +3055,7 @@ void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>
     }
 
     // One range can belong to multiple highlights so resetting a range's flag cannot be done in the loops above.
-    for (auto& highlight : highlightRegister.map()) {
+    for (auto& highlight : highlightRegistry.map()) {
         for (auto& highlightRange : highlight.value->highlightRanges()) {
             if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && liveRange->didChangeForHighlight())
                 liveRange->resetDidChangeForHighlight();
@@ -3066,13 +3066,13 @@ void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>
 void Document::updateHighlightPositions()
 {
     Vector<WeakPtr<HighlightRange>> highlightRanges;
-    if (m_highlightRegister)
-        collectHighlightRangesFromRegister(highlightRanges, *m_highlightRegister.get());
-    if (m_fragmentHighlightRegister)
-        collectHighlightRangesFromRegister(highlightRanges, *m_fragmentHighlightRegister.get());
+    if (m_highlightRegistry)
+        collectHighlightRangesFromRegister(highlightRanges, *m_highlightRegistry.get());
+    if (m_fragmentHighlightRegistry)
+        collectHighlightRangesFromRegister(highlightRanges, *m_fragmentHighlightRegistry.get());
 #if ENABLE(APP_HIGHLIGHTS)
-    if (m_appHighlightRegister)
-        collectHighlightRangesFromRegister(highlightRanges, *m_appHighlightRegister.get());
+    if (m_appHighlightRegistry)
+        collectHighlightRangesFromRegister(highlightRanges, *m_appHighlightRegistry.get());
 #endif
 
     for (auto& weakRangeData : highlightRanges) {

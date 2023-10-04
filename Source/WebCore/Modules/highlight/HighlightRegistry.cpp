@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "HighlightRegister.h"
+#include "HighlightRegistry.h"
 
 #include "IDLTypes.h"
 #include "JSDOMMapLike.h"
@@ -32,13 +32,13 @@
 
 namespace WebCore {
     
-void HighlightRegister::initializeMapLike(DOMMapAdapter& map)
+void HighlightRegistry::initializeMapLike(DOMMapAdapter& map)
 {
     for (auto& keyValue : m_map)
         map.set<IDLDOMString, IDLInterface<Highlight>>(keyValue.key, keyValue.value);
 }
 
-void HighlightRegister::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
+void HighlightRegistry::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
 {
     auto addResult = m_map.set(key, WTFMove(value));
     if (addResult.isNewEntry) {
@@ -47,19 +47,19 @@ void HighlightRegister::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
     }
 }
 
-void HighlightRegister::clear()
+void HighlightRegistry::clear()
 {
     m_map.clear();
     m_highlightNames.clear();
 }
 
-bool HighlightRegister::remove(const AtomString& key)
+bool HighlightRegistry::remove(const AtomString& key)
 {
     m_highlightNames.removeFirst(key);
     return m_map.remove(key);
 }
 #if ENABLE(APP_HIGHLIGHTS)
-void HighlightRegister::setHighlightVisibility(HighlightVisibility highlightVisibility)
+void HighlightRegistry::setHighlightVisibility(HighlightVisibility highlightVisibility)
 {
     if (m_highlightVisibility == highlightVisibility)
         return;
@@ -75,7 +75,7 @@ static ASCIILiteral annotationHighlightKey()
     return "annotationHighlightKey"_s;
 }
 
-void HighlightRegister::addAnnotationHighlightWithRange(Ref<StaticRange>&& value)
+void HighlightRegistry::addAnnotationHighlightWithRange(Ref<StaticRange>&& value)
 {
     if (m_map.contains(annotationHighlightKey()))
         m_map.get(annotationHighlightKey())->addToSetLike(value);

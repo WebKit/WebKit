@@ -221,7 +221,7 @@
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HandleMouseEventResult.h>
 #include <WebCore/Highlight.h>
-#include <WebCore/HighlightRegister.h>
+#include <WebCore/HighlightRegistry.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
@@ -8628,7 +8628,7 @@ bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighli
     if (!selectionRange)
         return false;
 
-    document->appHighlightRegister().addAnnotationHighlightWithRange(StaticRange::create(selectionRange.value()));
+    document->appHighlightRegistry().addAnnotationHighlightWithRange(StaticRange::create(selectionRange.value()));
     document->appHighlightStorage().storeAppHighlight(StaticRange::create(selectionRange.value()));
 
     return true;
@@ -8657,7 +8657,7 @@ void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlig
         if (!localFrame)
             continue;
         if (RefPtr document = localFrame->document())
-            document->appHighlightRegister().setHighlightVisibility(appHighlightVisibility);
+            document->appHighlightRegistry().setHighlightVisibility(appHighlightVisibility);
     }
 }
 

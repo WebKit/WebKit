@@ -143,7 +143,7 @@ Modules/geolocation/GeolocationCoordinates.cpp
 Modules/geolocation/NavigatorGeolocation.cpp
 Modules/highlight/AppHighlightRangeData.cpp
 Modules/highlight/AppHighlightStorage.cpp
-Modules/highlight/HighlightRegister.cpp
+Modules/highlight/HighlightRegistry.cpp
 Modules/highlight/Highlight.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp
@@ -3743,7 +3743,7 @@ JSHTMLVideoElement.cpp
 JSHardwareAcceleration.cpp
 JSHashChangeEvent.cpp
 JSHdrMetadataType.cpp
-JSHighlightRegister.cpp
+JSHighlightRegistry.cpp
 JSHighlight.cpp
 JSHistory.cpp
 JSHkdfParams.cpp

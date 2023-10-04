@@ -26,7 +26,7 @@
 [
     EnabledByDeprecatedGlobalSetting=HighlightAPIEnabled,
     Exposed=Window
-] interface HighlightRegister {
+] interface HighlightRegistry {
     constructor();
 
     maplike<[AtomString] DOMString, Highlight>;

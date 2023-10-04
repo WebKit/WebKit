@@ -242,7 +242,7 @@ namespace WebCore {
     macro(GamepadButton) \
     macro(GamepadEvent) \
     macro(GamepadHapticActuator) \
-    macro(HighlightRegister) \
+    macro(HighlightRegistry) \
     macro(Highlight) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
