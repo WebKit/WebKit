@@ -38,9 +38,9 @@ using namespace WebCore;
 
 static bool s_shouldTrackVisitedLinks;
 
-static HashSet<WebVisitedLinkStore*>& visitedLinkStores()
+static HashSet<CheckedRef<WebVisitedLinkStore>>& visitedLinkStores()
 {
-    static NeverDestroyed<HashSet<WebVisitedLinkStore*>> visitedLinkStores;
+    static NeverDestroyed<HashSet<CheckedRef<WebVisitedLinkStore>>> visitedLinkStores;
 
     return visitedLinkStores;
 }
@@ -54,12 +54,12 @@ Ref<WebVisitedLinkStore> WebVisitedLinkStore::create()
 WebVisitedLinkStore::WebVisitedLinkStore()
     : m_visitedLinksPopulated(false)
 {
-    visitedLinkStores().add(this);
+    visitedLinkStores().add(*this);
 }
 
 WebVisitedLinkStore::~WebVisitedLinkStore()
 {
-    visitedLinkStores().remove(this);
+    visitedLinkStores().remove(*this);
 }
 
 void WebVisitedLinkStore::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
@@ -74,7 +74,7 @@ void WebVisitedLinkStore::setShouldTrackVisitedLinks(bool shouldTrackVisitedLink
 void WebVisitedLinkStore::removeAllVisitedLinks()
 {
     for (auto& visitedLinkStore : visitedLinkStores())
-        visitedLinkStore->removeVisitedLinkHashes();
+        Ref { visitedLinkStore.get() }->removeVisitedLinkHashes();
 }
 
 void WebVisitedLinkStore::addVisitedLink(NSString *urlString)

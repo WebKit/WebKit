@@ -150,7 +150,12 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 /*! @abstract The localized extension description. Returns `nil` if there was no description specified. */
 @property (nonatomic, nullable, readonly, copy) NSString *displayDescription;
 
-/*! @abstract The localized extension action label. Returns `nil` if there was no action label specified. */
+/*!
+ @abstract The default localized extension action label.
+ @result The action label, or `nil` if there was no default action label specified.
+ @discussion This label serves as a default and should be used to represent the extension in contexts like action sheets or toolbars prior to
+ the extension being loaded into an extension context. Once the extension is loaded, use the `actionForTab:` API to get the tab-specific label.
+ */
 @property (nonatomic, nullable, readonly, copy) NSString *displayActionLabel;
 
 /*! @abstract The extension version. Returns `nil` if there was no version specified. */
@@ -171,11 +176,13 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 #endif
 
 /*!
- @abstract Returns the action icon for the specified size.
+ @abstract Returns the default action icon for the specified size.
  @param size The size to use when looking up the action icon.
  @result The action icon, or `nil` if the icon was unable to be loaded.
- @discussion This icon should represent the extension in action sheets or toolbars. The returned image will be the best match for the specified
- size that is available in the extension's action icon set. If no matching icon is available, the method will fall back to the extension's icon.
+ @discussion This icon serves as a default and should be used to represent the extension in contexts like action sheets or toolbars prior to
+ the extension being loaded into an extension context. Once the extension is loaded, use the `actionForTab:` API to get the tab-specific icon.
+ The returned image will be the best match for the specified size that is available in the extension's action icon set. If no matching icon is available,
+ the method will fall back to the extension's icon.
  @seealso iconForSize:
  */
 #if TARGET_OS_IPHONE

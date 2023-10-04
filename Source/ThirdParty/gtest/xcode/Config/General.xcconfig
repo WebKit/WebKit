@@ -63,5 +63,5 @@ COMBINE_HIDPI_IMAGES = YES;
 // VERSIONING BUILD SETTINGS (used in Info.plist)
 GTEST_VERSIONINFO_ABOUT =  © 2008 Google Inc.
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;

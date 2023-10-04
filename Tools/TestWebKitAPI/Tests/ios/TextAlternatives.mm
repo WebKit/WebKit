@@ -28,7 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 

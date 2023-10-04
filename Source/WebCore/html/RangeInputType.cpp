@@ -136,7 +136,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
     if (element()->isDisabledFormControl())
         return;
 
-    if (event.button() != LeftButton || !is<Node>(event.target()))
+    if (event.button() != MouseButton::Left || !is<Node>(event.target()))
         return;
     ASSERT(element()->shadowRoot());
     auto& targetNode = downcast<Node>(*event.target());

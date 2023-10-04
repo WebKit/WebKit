@@ -51,15 +51,15 @@ using namespace MathMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLBlock);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLTable);
 
-RenderMathMLBlock::RenderMathMLBlock(MathMLPresentationElement& container, RenderStyle&& style)
-    : RenderBlock(container, WTFMove(style), 0)
+RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, RenderStyle&& style)
+    : RenderBlock(type, container, WTFMove(style), 0)
     , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderMathMLBlock::RenderMathMLBlock(Document& document, RenderStyle&& style)
-    : RenderBlock(document, WTFMove(style), 0)
+RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, RenderStyle&& style)
+    : RenderBlock(type, document, WTFMove(style), 0)
     , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.

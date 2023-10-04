@@ -53,6 +53,8 @@ namespace WebCore {
 
 class CanvasRenderingContext;
 class DeferredPromise;
+class GPU;
+class GPUCanvasContext;
 class HTMLCanvasElement;
 class ImageBitmap;
 class ImageBitmapRenderingContext;
@@ -67,6 +69,7 @@ using OffscreenRenderingContext = std::variant<
     RefPtr<WebGLRenderingContext>,
     RefPtr<WebGL2RenderingContext>,
 #endif
+    RefPtr<GPUCanvasContext>,
     RefPtr<ImageBitmapRenderingContext>,
     RefPtr<OffscreenCanvasRenderingContext2D>
 >;
@@ -111,7 +114,8 @@ public:
         _2d,
         Webgl,
         Webgl2,
-        Bitmaprenderer
+        Bitmaprenderer,
+        Webgpu
     };
 
     static bool enabledForContext(ScriptExecutionContext&);
@@ -175,6 +179,8 @@ private:
 #if ENABLE(WEBGL)
     void createContextWebGL(RenderingContextType, WebGLContextAttributes&& = { });
 #endif
+
+    GPUCanvasContext* createContextWebGPU(RenderingContextType, GPU*);
 
     void createImageBuffer() const final;
     std::unique_ptr<SerializedImageBuffer> takeImageBuffer() const;

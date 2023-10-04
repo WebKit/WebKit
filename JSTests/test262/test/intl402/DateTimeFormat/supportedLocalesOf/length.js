@@ -24,8 +24,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.DateTimeFormat.supportedLocalesOf.length, 1);
-
-verifyNotEnumerable(Intl.DateTimeFormat.supportedLocalesOf, "length");
-verifyNotWritable(Intl.DateTimeFormat.supportedLocalesOf, "length");
-verifyConfigurable(Intl.DateTimeFormat.supportedLocalesOf, "length");
+verifyProperty(Intl.DateTimeFormat.supportedLocalesOf, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

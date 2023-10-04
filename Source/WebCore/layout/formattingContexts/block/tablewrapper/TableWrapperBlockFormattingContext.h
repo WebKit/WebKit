@@ -44,7 +44,7 @@ public:
 
     void setHorizontalConstraintsIgnoringFloats(const HorizontalConstraints& horizontalConstraints) { m_horizontalConstraintsIgnoringFloats = horizontalConstraints; }
 
-    const TableWrapperQuirks& formattingQuirks() const final { return m_tableWrapperFormattingQuirks; }
+    const TableWrapperQuirks& formattingQuirks() const { return m_tableWrapperFormattingQuirks; }
 
 private:
     void layoutTableBox(const ElementBox& tableBox, const ConstraintsForInFlowContent&);

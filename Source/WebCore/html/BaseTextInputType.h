@@ -48,6 +48,8 @@ protected:
 
     bool supportsPlaceholder() const final;
     bool supportsSelectionAPI() const override;
+
+    bool dirAutoUsesValue() const override;
 };
 
 } // namespace WebCore

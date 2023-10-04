@@ -2,23 +2,20 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: >
-  AssertClause in ImportDeclaration may not be preceded by a line terminator
+  `assert` AttributesKeyword in WithClause in ImportDeclaration may not
+  be preceded by a line terminator
 esid: sec-modules
 info: |
   ImportDeclaration:
-    import ModuleSpecifier[no LineTerminator here] AssertClause;
+    import ModuleSpecifier[no LineTerminator here] WithClause;
 
-  AssertClause:
-    assert {}
-    assert {AssertEntries ,opt}
+  WithClause:
+    AttributesKeyword {}
+    AttributesKeyword { WithEntries ,opt }
 
-  AssertEntries:
-    AssertionKey : StringLiteral
-    AssertionKey : StringLiteral , AssertEntries
-
-  AssertionKey:
-    IdentifierName
-    StringLiteral
+  AttributesKeyword:
+    with
+    [no LineTerminator here] assert
 
   The restriction LineTerminator could be verified more simply with a negative
   syntax test. This test is designed to parse successfully in order to verify
@@ -37,34 +34,14 @@ Object.defineProperty(globalThis, 'assert', {
   }
 });
 
-import x from './import-assertion-1_FIXTURE.js'
+import * as x from './import-assertion-1_FIXTURE.js'
 assert
-{test262:''};
+{ type: 'json' };
 
-if (x !== 262.1) {
+if (x.default !== 262.1) {
   throw 'module value incorrectly imported - first declaration';
 }
 
 if (callCount !== 1) {
   throw 'IdentifierReference not recognized - first declaration';
-}
-
-import './import-assertion-2_FIXTURE.js'
-assert
-{test262:''};
-
-if (globalThis.test262 !== 262.2) {
-  throw 'module value incorrectly imported - second declaration';
-}
-
-if (callCount !== 2) {
-  throw 'IdentifierReference not recognized - second declaration';
-}
-
-export * from './import-assertion-3_FIXTURE.js'
-assert
-{test262:''};
-
-if (callCount !== 3) {
-  throw 'IdentifierReference not recognized - third declaration';
 }

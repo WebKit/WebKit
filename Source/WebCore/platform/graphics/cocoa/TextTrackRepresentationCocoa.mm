@@ -140,7 +140,7 @@ TextTrackRepresentationCocoa::~TextTrackRepresentationCocoa()
 void TextTrackRepresentationCocoa::update()
 {
     if (auto representation = m_client.createTextTrackRepresentationImage())
-        [m_layer setContents:(__bridge id)representation->nativeImage()->platformImage().get()];
+        [m_layer setContents:(__bridge id)representation->platformImage().get()];
 }
 
 void TextTrackRepresentationCocoa::setContentScale(float scale)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FloatingState.h"
+#include "PlacedFloats.h"
 
 namespace WebCore {
 namespace Layout {
@@ -44,28 +44,37 @@ public:
         End   = 1 << 1
     };
     using TextBoxTrim = OptionSet<TextBoxTrimSide>;
-    BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, TextBoxTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { });
 
-    FloatingState& floatingState() { return m_floatingState; }
-    const FloatingState& floatingState() const { return m_floatingState; }
+    struct LineGrid {
+        LayoutSize logicalOffset;
+        InlineLayoutUnit columnWidth;
+    };
+
+    BlockLayoutState(PlacedFloats&, std::optional<LineClamp> = { }, TextBoxTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
+
+    PlacedFloats& placedFloats() { return m_placedFloats; }
+    const PlacedFloats& placedFloats() const { return m_placedFloats; }
 
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
 
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
+    const std::optional<LineGrid>& lineGrid() const { return m_lineGrid; }
 
 private:
-    FloatingState& m_floatingState;
+    PlacedFloats& m_placedFloats;
     std::optional<LineClamp> m_lineClamp;
     TextBoxTrim m_textBoxTrim;
     std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;
+    std::optional<LineGrid> m_lineGrid;
 };
 
-inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom)
-    : m_floatingState(floatingState)
+inline BlockLayoutState::BlockLayoutState(PlacedFloats& placedFloats, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
+    : m_placedFloats(placedFloats)
     , m_lineClamp(lineClamp)
     , m_textBoxTrim(textBoxTrim)
     , m_intrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom)
+    , m_lineGrid(lineGrid)
 {
 }
 

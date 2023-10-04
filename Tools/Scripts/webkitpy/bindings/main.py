@@ -49,17 +49,16 @@ class BindingsTests:
         if self.json_file_name:
             self.failures = []
 
-    def generate_from_idl(self, generator, idl_file, output_directory, supplemental_dependency_file):
+    def generate_from_idl(self, generator, idl_file, output_directory, supplemental_dependency_file, idl_files_list):
         cmd = ['perl', '-w',
                '-IWebCore/bindings/scripts',
                'WebCore/bindings/scripts/generate-bindings.pl',
-               # idl include directories (path relative to generate-bindings.pl)
-               '--include', '.',
                '--defines', 'TESTING_%s' % generator,
                '--generator', generator,
                '--outputDir', output_directory,
                '--supplementalDependencyFile', supplemental_dependency_file,
                '--idlAttributesFile', 'WebCore/bindings/scripts/IDLAttributes.json',
+               '--idlFileNamesList', idl_files_list,
                idl_file]
 
         exit_code = 0
@@ -72,21 +71,26 @@ class BindingsTests:
             exit_code = e.exit_code
         return exit_code
 
-    def generate_supplemental_dependency(self, input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, shadowrealmglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, sharedworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, audioworkletglobalscope_constructors_file, testglobalscope_constructors_file):
+    def generate_idl_file_names_list(self, input_directory, include_constructors=False):
         idl_files_list = tempfile.mkstemp()
-        for input_file in os.listdir(input_directory):
-            (name, extension) = os.path.splitext(input_file)
-            if extension != '.idl':
-                continue
-            if name.endswith('Constructors'):
-                continue
-            os.write(idl_files_list[0], string_utils.encode(os.path.join(input_directory, input_file) + "\n"))
+        for dirpath, dirnames, filenames in os.walk(input_directory):
+            for input_file in filenames:
+                (name, extension) = os.path.splitext(input_file)
+                if extension != '.idl':
+                    continue
+                if not include_constructors and name.endswith('Constructors'):
+                    continue
+                os.write(idl_files_list[0], string_utils.encode(os.path.join(dirpath, input_file) + "\n"))
         os.close(idl_files_list[0])
+        return idl_files_list[1]
+
+    def generate_supplemental_dependency(self, input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, shadowrealmglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, sharedworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, audioworkletglobalscope_constructors_file, testglobalscope_constructors_file):
+        idl_files_list = self.generate_idl_file_names_list(input_directory)
 
         cmd = ['perl', '-w',
                '-IWebCore/bindings/scripts',
                'WebCore/bindings/scripts/preprocess-idls.pl',
-               '--idlFileNamesList', idl_files_list[1],
+               '--idlFileNamesList', idl_files_list,
                '--testGlobalContextName', 'TestGlobalObject',
                '--defines', '',
                '--idlAttributesFile', 'WebCore/bindings/scripts/IDLAttributes.json',
@@ -112,7 +116,6 @@ class BindingsTests:
         except ScriptError as e:
             print(e.output)
             exit_code = e.exit_code
-        os.remove(idl_files_list[1])
         return exit_code
 
     def detect_changes(self, generator, work_directory, reference_directory):
@@ -156,7 +159,7 @@ class BindingsTests:
                 return True
         return False
 
-    def run_tests(self, generator, input_directory, reference_directory, supplemental_dependency_file):
+    def run_tests(self, generator, input_directory, reference_directory, supplemental_dependency_file, idl_files_list):
         work_directory = reference_directory
 
         passed = True
@@ -176,7 +179,8 @@ class BindingsTests:
             if self.generate_from_idl(generator,
                                       os.path.join(input_directory, input_file),
                                       work_directory,
-                                      supplemental_dependency_file):
+                                      supplemental_dependency_file,
+                                      idl_files_list):
                 passed = False
 
             if self.reset_results:
@@ -253,13 +257,16 @@ class BindingsTests:
             if self.detect_file_changes('globalscope', work_directory, input_directory, testglobalscope_constructors_filename):
                 all_tests_passed = False
 
+        idl_files_list = self.generate_idl_file_names_list(os.path.join('WebCore'), include_constructors=True)
+
         for generator in self.generators:
             input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
             reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
-            if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file):
+            if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file, idl_files_list):
                 all_tests_passed = False
 
         shutil.rmtree(work_directory)
+        os.remove(idl_files_list)
 
         if self.json_file_name:
             json_data = {

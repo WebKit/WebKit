@@ -32,6 +32,7 @@
 #import "PictureInPictureSupport.h"
 #import "RuntimeApplicationChecks.h"
 #import "TimeRanges.h"
+#import "UIViewControllerUtilities.h"
 #import "WebAVPlayerController.h"
 #import "WebAVPlayerLayer.h"
 #import "WebAVPlayerLayerView.h"
@@ -821,10 +822,12 @@ bool VideoFullscreenInterfaceAVKit::pictureInPictureWasStartedWhenEnteringBackgr
 #if PLATFORM(WATCHOS)
 static UIViewController *fallbackViewController(UIView *view)
 {
+    // FIXME: This logic to find a fallback view controller should move out of WebCore,
+    // and into the client layer.
     for (UIView *currentView = view; currentView; currentView = currentView.superview) {
-        if (UIViewController *viewController = [PAL::getUIViewControllerClass() viewControllerForView:currentView]) {
-            if (![viewController parentViewController])
-                return viewController;
+        if (auto controller = viewController(currentView)) {
+            if (!controller.parentViewController)
+                return controller;
         }
     }
 

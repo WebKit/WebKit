@@ -28,7 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "InstanceMethodSwizzler.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <UIKit/UIKit.h>
 
 namespace TestWebKitAPI {

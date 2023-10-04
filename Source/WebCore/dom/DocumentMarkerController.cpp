@@ -448,19 +448,19 @@ DocumentMarker* DocumentMarkerController::markerContainingPoint(const LayoutPoin
     return nullptr;
 }
 
-Vector<RenderedDocumentMarker*> DocumentMarkerController::markersFor(Node& node, OptionSet<DocumentMarker::MarkerType> types)
+Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersFor(Node& node, OptionSet<DocumentMarker::MarkerType> types)
 {
     if (!possiblyHasMarkers(types))
         return { };
 
-    Vector<RenderedDocumentMarker*> result;
+    Vector<WeakPtr<RenderedDocumentMarker>> result;
     auto list = m_markers.get(&node);
     if (!list)
         return result;
 
     for (auto& marker : *list) {
         if (types.contains(marker.type()))
-            result.append(&marker);
+            result.append(marker);
     }
 
     return result;
@@ -499,17 +499,18 @@ void DocumentMarkerController::forEachOfTypes(OptionSet<DocumentMarker::MarkerTy
             if (!types.contains(marker.type()))
                 continue;
 
-            function(*nodeMarkers.key, marker);
+            Ref node { *nodeMarkers.key };
+            function(node, marker);
         }
     }
 }
 
-Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types)
+Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersInRange(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types)
 {
     // FIXME: Consider making forEach public and changing callers to use that function instead of this one.
-    Vector<RenderedDocumentMarker*> markers;
+    Vector<WeakPtr<RenderedDocumentMarker>> markers;
     forEach(range, types, [&] (Node&, RenderedDocumentMarker& marker) {
-        markers.append(&marker);
+        markers.append(marker);
         return false;
     });
     return markers;

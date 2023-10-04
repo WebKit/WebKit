@@ -33,12 +33,12 @@ RefLogger::RefLogger(const char* name)
 {
 }
 
-void RefLogger::ref()
+void RefLogger::ref() const
 {
     log() << "ref(" << &name << ") ";
 }
 
-void RefLogger::deref()
+void RefLogger::deref() const
 {
     log() << "deref(" << &name << ") ";
 }

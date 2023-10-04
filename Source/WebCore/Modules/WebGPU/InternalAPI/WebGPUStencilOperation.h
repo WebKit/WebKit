@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -42,21 +41,3 @@ enum class StencilOperation : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::StencilOperation> {
-    using values = EnumValues<
-        WebCore::WebGPU::StencilOperation,
-        WebCore::WebGPU::StencilOperation::Keep,
-        WebCore::WebGPU::StencilOperation::Zero,
-        WebCore::WebGPU::StencilOperation::Replace,
-        WebCore::WebGPU::StencilOperation::Invert,
-        WebCore::WebGPU::StencilOperation::IncrementClamp,
-        WebCore::WebGPU::StencilOperation::DecrementClamp,
-        WebCore::WebGPU::StencilOperation::IncrementWrap,
-        WebCore::WebGPU::StencilOperation::DecrementWrap
-    >;
-};
-
-} // namespace WTF

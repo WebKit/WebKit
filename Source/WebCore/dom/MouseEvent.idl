@@ -34,7 +34,7 @@
     readonly attribute boolean shiftKey;
     readonly attribute boolean altKey;
     readonly attribute boolean metaKey;
-    readonly attribute short button;
+    [ImplementedAs=buttonAsShort] readonly attribute short button;
     readonly attribute unsigned short buttons;
     readonly attribute EventTarget? relatedTarget;
 

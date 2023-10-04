@@ -26,18 +26,20 @@
 #include "config.h"
 #include "AcceleratedSurfaceDMABuf.h"
 
+#if USE(EGL)
+
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/DMABufFormat.h>
 #include <WebCore/PlatformDisplay.h>
 #include <array>
 #include <epoxy/egl.h>
 #include <wtf/SafeStrerror.h>
 
 #if USE(GBM)
+#include <WebCore/DMABufFormat.h>
 #include <WebCore/GBMDevice.h>
 #include <gbm.h>
 #endif
@@ -425,3 +427,5 @@ void AcceleratedSurfaceDMABuf::frameDone()
 }
 
 } // namespace WebKit
+
+#endif // USE(EGL)

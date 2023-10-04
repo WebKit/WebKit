@@ -1,0 +1,6 @@
+
+PASS Animation events do not fire for a CSS animation running in a content visibility subtree
+PASS The finished promise does not resolve due to the normal passage of time  for a CSS animation in a content visibility subtree
+PASS The finished promise does not resolve due to the normal passage of time  for a CSS transition in a content visibility subtree
+PASS Events and promises are handled normally for animations without an owning element
+

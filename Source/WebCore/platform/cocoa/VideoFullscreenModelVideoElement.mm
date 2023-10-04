@@ -303,7 +303,7 @@ void VideoFullscreenModelVideoElement::setPlayerIdentifier(std::optional<MediaPl
 
     m_playerIdentifier = identifier;
 
-    for (auto* client : copyToVector(m_clients))
+    for (auto& client : copyToVector(m_clients))
         client->setPlayerIdentifier(identifier);
 }
 

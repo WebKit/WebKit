@@ -6,7 +6,6 @@ description('This test verifies that IDBTransaction objects are collected when c
 
 const gcInterval = 50;
 var gcCountdown = 50;
-var frame = null;
 
 function databaseName()
 {
@@ -28,7 +27,6 @@ function frameTransactionAborted(event)
 {
     preamble(event);
 
-    frame.src = "about::blank";
     gcCheck();
 }
 
@@ -66,7 +64,7 @@ function test()
         return;
     }
 
-    frame = document.createElement('iframe');
+    let frame = document.createElement('iframe');
     frame.src = "resources/database-transaction-cycle-iframe.html";
     document.body.appendChild(frame);
 }

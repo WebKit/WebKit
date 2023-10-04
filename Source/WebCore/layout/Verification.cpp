@@ -29,7 +29,6 @@
 #if ASSERT_ENABLED
 
 #include "BlockFormattingState.h"
-#include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
@@ -143,7 +142,6 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
             
             if (is<RenderLineBreak>(inlineBox->renderer())) {
                 // <br> positioning is weird at this point. It needs proper baseline.
-                matchingRuns = true;
                 ++boxIndex;
                 continue;
             }
@@ -290,7 +288,7 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& contex
 {
     // Rendering code does not have the concept of table wrapper box. Skip it by verifying the first child(table box) instead. 
     if (layoutBox.isTableWrapperBox())
-        return verifyAndOutputSubtree(stream, context, renderer, *downcast<ElementBox>(layoutBox).firstChild()); 
+        return verifyAndOutputSubtree(stream, context, renderer, *downcast<ElementBox>(layoutBox).firstChild());
 
     auto mismtachingGeometry = outputMismatchingBlockBoxInformationIfNeeded(stream, context, renderer, layoutBox);
 

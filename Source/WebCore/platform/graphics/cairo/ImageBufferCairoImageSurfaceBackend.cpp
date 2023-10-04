@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCairoImageSurfaceBackend);
 
 IntSize ImageBufferCairoImageSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
-    IntSize backendSize = calculateBackendSize(parameters);
+    IntSize backendSize = parameters.backendSize;
     if (backendSize.isEmpty())
         return { };
 
@@ -69,8 +69,7 @@ unsigned ImageBufferCairoImageSurfaceBackend::calculateBytesPerRow(const IntSize
 
 size_t ImageBufferCairoImageSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
 {
-    IntSize backendSize = calculateBackendSize(parameters);
-    return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
+    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
 }
 
 std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
@@ -111,24 +110,24 @@ ImageBufferCairoImageSurfaceBackend::ImageBufferCairoImageSurfaceBackend(const P
 
 unsigned ImageBufferCairoImageSurfaceBackend::bytesPerRow() const
 {
-    IntSize backendSize = calculateBackendSize(m_parameters);
-    return calculateBytesPerRow(backendSize);
+    return calculateBytesPerRow(m_parameters.backendSize);
 }
 
 void ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace(const std::array<uint8_t, 256>& lookUpTable)
 {
+    auto size = this->size();
     unsigned char* dataSrc = cairo_image_surface_get_data(m_surface.get());
     int stride = cairo_image_surface_get_stride(m_surface.get());
-    for (int y = 0; y < logicalSize().height(); ++y) {
+    for (int y = 0; y < size.height(); ++y) {
         unsigned* row = reinterpret_cast_ptr<unsigned*>(dataSrc + stride * y);
-        for (int x = 0; x < logicalSize().width(); x++) {
+        for (int x = 0; x < size.width(); x++) {
             unsigned* pixel = row + x;
             auto pixelComponents = unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel })).resolved();
             auto transformedPixelComponents = SRGBA<uint8_t> { lookUpTable[pixelComponents.red], lookUpTable[pixelComponents.green], lookUpTable[pixelComponents.blue], pixelComponents.alpha };
             *pixel = PackedColor::ARGB { premultipliedCeiling(transformedPixelComponents) }.value;
         }
     }
-    cairo_surface_mark_dirty_rectangle(m_surface.get(), 0, 0, logicalSize().width(), logicalSize().height());
+    cairo_surface_mark_dirty_rectangle(m_surface.get(), 0, 0, size.width(), size.height());
 }
 
 } // namespace WebCore

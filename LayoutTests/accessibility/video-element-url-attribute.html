@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -38,38 +38,29 @@
 </video>
 
 <script>
-    description("This test ensures video accessibility elements return URL attribute values when appropriate.");
+output = "This test ensures video accessibility elements return URL attribute values when appropriate.\n\n";
 
-    const baseVideoPath = "resources/test.mp4";
-    debug(`baseVideoPath = "${baseVideoPath}"`);
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+const baseVideoPath = "resources/test.mp4";
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        var domVideo, video;
-        setTimeout(async function() {
-            await waitFor(() => {
-                domVideo = document.getElementById("video-with-src-attribute");
-                return domVideo && domVideo.readyState >= 2;
-            });
-            video = accessibilityController.accessibleElementById(domVideo.id);
-            shouldBe("video.url.includes(baseVideoPath)", "true");
+    var domVideo, video;
+    setTimeout(async function() {
+        domVideo = document.getElementById("video-with-src-attribute");
+        video = accessibilityController.accessibleElementById(domVideo.id);
+        output += await expectAsync("video.url.includes(baseVideoPath)", "true");
 
-            await waitFor(() => {
-                domVideo = document.getElementById("video-with-source-element");
-                return domVideo && domVideo.readyState >= 2;
-            });
-            video = accessibilityController.accessibleElementById(domVideo.id);
-            shouldBe("video.url.includes(baseVideoPath)", "true");
+        domVideo = document.getElementById("video-with-source-element");
+        video = accessibilityController.accessibleElementById(domVideo.id);
+        output += await expectAsync("video.url.includes(baseVideoPath)", "true");
 
-            video = accessibilityController.accessibleElementById("video-with-empty-source-element");
-            shouldBe("!video.url", "true");
+        output += await expectAsync("!accessibilityController.accessibleElementById('video-with-empty-source-element').url", "true");
+        output += await expectAsync("!accessibilityController.accessibleElementById('empty-video').url", "true");
 
-            video = accessibilityController.accessibleElementById("empty-video");
-            shouldBe("!video.url", "true")
-
-            finishJSTest();
-        }, 0);
-    }
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

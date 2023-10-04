@@ -121,18 +121,18 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
 
     topBorder = std::max(topBorder, formattingGeometry().computedBorder(*tableBox.firstChild()).vertical.top);
     for (auto& section : childrenOfType<ElementBox>(tableBox)) {
-        auto horiztonalBorder = formattingGeometry().computedBorder(section).horizontal;
-        leftBorder = std::max(leftBorder, horiztonalBorder.left);
-        rightBorder = std::max(rightBorder, horiztonalBorder.right);
+        auto horizontalBorder = formattingGeometry().computedBorder(section).horizontal;
+        leftBorder = std::max(leftBorder, horizontalBorder.left);
+        rightBorder = std::max(rightBorder, horizontalBorder.right);
     }
     bottomBorder = std::max(bottomBorder, formattingGeometry().computedBorder(*tableBox.lastChild()).vertical.bottom);
 
     auto& rows = grid.rows().list();
     topBorder = std::max(topBorder, formattingGeometry().computedBorder(rows.first().box()).vertical.top);
     for (auto& row : rows) {
-        auto horiztonalBorder = formattingGeometry().computedBorder(row.box()).horizontal;
-        leftBorder = std::max(leftBorder, horiztonalBorder.left);
-        rightBorder = std::max(rightBorder, horiztonalBorder.right);
+        auto horizontalBorder = formattingGeometry().computedBorder(row.box()).horizontal;
+        leftBorder = std::max(leftBorder, horizontalBorder.left);
+        rightBorder = std::max(rightBorder, horizontalBorder.right);
     }
     bottomBorder = std::max(bottomBorder, formattingGeometry().computedBorder(rows.last().box()).vertical.bottom);
 
@@ -234,7 +234,7 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     formattingState().setUsedVerticalMargin(tableBox, verticalMargin);
 
     auto& boxGeometry = formattingState().boxGeometry(tableBox);
-    boxGeometry.setLogicalTop(verticalPositionWithMargin(tableBox, verticalMargin, constraints.logicalTop()));
+    boxGeometry.setTop(verticalPositionWithMargin(tableBox, verticalMargin, constraints.logicalTop()));
     boxGeometry.setContentBoxHeight(heightAndMargin.contentHeight);
     boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.

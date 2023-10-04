@@ -322,7 +322,14 @@ TEST(WTF_RefPtr, ReleaseNonNull)
 
     {
         RefPtr<RefLogger> refPtr = &a;
-        RefPtr<RefLogger> ref = refPtr.releaseNonNull();
+        Ref<RefLogger> ref = refPtr.releaseNonNull();
+    }
+
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        RefPtr<RefLogger> refPtr = &a;
+        Ref<const RefLogger> ref = refPtr.releaseNonNull();
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());

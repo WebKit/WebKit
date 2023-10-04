@@ -67,8 +67,13 @@ public:
         m_slowPathBegin = slowPathBegin;
         m_slowPathCall = call;
     }
-    
+
     CCallHelpers::Label slowPathBegin() const { return m_slowPathBegin; }
+
+    void reportBaselineDataICSlowPathBegin(CCallHelpers::Label slowPathBegin)
+    {
+        m_slowPathBegin = slowPathBegin;
+    }
 
     void finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer,
@@ -95,6 +100,8 @@ public:
             stubInfo.hasConstantIdentifier = true;
         }
     }
+
+    AccessType accessType() const { return m_accessType; }
 
 protected:
     void generateBaselineDataICFastPath(JIT&, GPRReg stubInfoGPR);
@@ -171,7 +178,7 @@ public:
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSetBuilder& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, AccessType);
     
-    void generateFastPath(CCallHelpers&, GPRReg scratchGPR);
+    void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
 #if ENABLE(DFG_JIT)
     void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);
@@ -197,7 +204,7 @@ public:
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSetBuilder& usedRegisters, CacheableIdentifier,
         JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs, GPRReg stubInfoGPR);
 
-    void generateFastPath(CCallHelpers&, GPRReg scratchGPR);
+    void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
 #if ENABLE(DFG_JIT)
     void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);
@@ -227,7 +234,7 @@ public:
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSetBuilder& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch, ECMAMode, AccessType);
     
-    void generateFastPath(CCallHelpers&, GPRReg scratchGPR, GPRReg scratch2GPR);
+    void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
 #if ENABLE(DFG_JIT)
     void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR);
@@ -452,7 +459,7 @@ public:
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSetBuilder& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR);
 
-    void generateFastPath(CCallHelpers&, GPRReg scratchGPR);
+    void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
 #if ENABLE(DFG_JIT)
     void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratchGPR);

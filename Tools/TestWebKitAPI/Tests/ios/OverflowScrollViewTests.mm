@@ -31,7 +31,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <WebKit/WKWebViewPrivate.h>
 
 // FIXME: Likely we can remove this special case for watchOS and tvOS.

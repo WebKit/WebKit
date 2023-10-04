@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -39,18 +38,3 @@ enum class BlendOperation : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::BlendOperation> {
-    using values = EnumValues<
-        WebCore::WebGPU::BlendOperation,
-        WebCore::WebGPU::BlendOperation::Add,
-        WebCore::WebGPU::BlendOperation::Subtract,
-        WebCore::WebGPU::BlendOperation::ReverseSubtract,
-        WebCore::WebGPU::BlendOperation::Min,
-        WebCore::WebGPU::BlendOperation::Max
-    >;
-};
-
-} // namespace WTF

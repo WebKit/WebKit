@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum ShapeDetectionIdentifierType { };
+enum class ShapeDetectionIdentifierType { };
 using ShapeDetectionIdentifier = ObjectIdentifier<ShapeDetectionIdentifierType>;
 
 } // namespace WebKit

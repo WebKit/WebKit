@@ -444,7 +444,7 @@ int ScrollbarThemeMac::minimumThumbLength(Scrollbar& scrollbar)
 
 static bool shouldCenterOnThumb(const PlatformMouseEvent& evt)
 {
-    if (evt.button() != LeftButton)
+    if (evt.button() != MouseButton::Left)
         return false;
     if (gJumpOnTrackClick)
         return !evt.altKey();
@@ -453,7 +453,7 @@ static bool shouldCenterOnThumb(const PlatformMouseEvent& evt)
 
 ScrollbarButtonPressAction ScrollbarThemeMac::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
-    if (event.button() == RightButton)
+    if (event.button() == MouseButton::Right)
         return ScrollbarButtonPressAction::None;
 
     switch (pressedPart) {

@@ -52,7 +52,7 @@ public:
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
     static constexpr bool isOriginAtBottomLeftCorner = true;
 
-    ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
+    std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
     void setOwnershipIdentity(const WebCore::ProcessIdentity&) final;
     WebCore::GraphicsContext& context() final;
     bool originAtBottomLeftCorner() const override { return isOriginAtBottomLeftCorner; }
@@ -61,10 +61,9 @@ private:
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
     // WebCore::ImageBufferCGBackend
-    WebCore::IntSize backendSize() const final;
     unsigned bytesPerRow() const final;
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;
-    RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::GraphicsContext&) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage() final;
+    RefPtr<WebCore::NativeImage> createNativeImageReference() final;
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
     bool isInUse() const final;
     void releaseGraphicsContext() final;

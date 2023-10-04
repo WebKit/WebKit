@@ -41,6 +41,11 @@ bool ThermalMitigationNotifier::thermalMitigationEnabled() const
     return false;
 }
 
+bool ThermalMitigationNotifier::isThermalMitigationEnabled()
+{
+    return false;
+}
+
 #endif
 
 } // namespace WebCore

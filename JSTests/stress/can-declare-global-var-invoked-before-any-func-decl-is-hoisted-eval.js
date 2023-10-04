@@ -8,12 +8,12 @@ Object.preventExtensions(globalThis);
 
 let didThrow = false;
 try {
-    $262.evalScript(`
-        var bar;
-
+    eval(`
         if (true) {
             function foo() {}
         }
+
+        var bar;
     `);
 } catch (err) {
     didThrow = true;

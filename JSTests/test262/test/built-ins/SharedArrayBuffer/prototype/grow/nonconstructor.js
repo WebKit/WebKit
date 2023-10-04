@@ -11,13 +11,11 @@ info: |
     Built-in function objects that are not identified as constructors do not
     implement the [[Construct]] internal method unless otherwise specified
     in the description of a particular function.
-features: [SharedArrayBuffer, resizable-arraybuffer]
+includes: [isConstructor.js]
+features: [SharedArrayBuffer, resizable-arraybuffer, Reflect.construct]
 ---*/
 
-assert.sameValue(
-  Object.prototype.hasOwnProperty.call(SharedArrayBuffer.prototype.grow, 'prototype'),
-  false
-);
+assert(!isConstructor(SharedArrayBuffer.prototype.grow), "SharedArrayBuffer.prototype.grow is not a constructor");
 
 var arrayBuffer = new SharedArrayBuffer(8);
 assert.throws(TypeError, function() {

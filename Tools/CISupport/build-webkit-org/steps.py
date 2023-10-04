@@ -22,7 +22,7 @@
 
 from buildbot.plugins import steps, util
 from buildbot.process import buildstep, logobserver, properties
-from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
+from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from twisted.internet import defer
@@ -45,6 +45,8 @@ RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
+THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
+MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}'
 
 
 class CustomFlagsMixin(object):
@@ -330,6 +332,8 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
     description = ["compiling"]
     descriptionDone = ["compiled"]
     warningPattern = ".*arning: .*"
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def start(self):
         platform = self.getProperty('platform')
@@ -373,10 +377,22 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
         return kwargs
 
     def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
+
         if "arning:" in line:
             self._addToLog('warnings', line + '\n')
         if "rror:" in line:
             self._addToLog('errors', line + '\n')
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -392,16 +408,25 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
             self.build.addStepsAfterCurrentStep([ArchiveMinifiedBuiltProduct(), UploadMinifiedBuiltProduct(), TransferToS3(terminate_build=True)])
         return rc
 
+    def getResultSummary(self):
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
+        if self.results == FAILURE:
+            return {'step': f'Failed {self.name}'}
+        return shell.Compile.getResultSummary(self)
+
 
 class CompileLLINTCLoop(CompileWebKit):
     command = ["perl", "Tools/Scripts/build-jsc", "--cloop", WithProperties("--%(configuration)s")]
 
 
 class Compile32bitJSC(CompileWebKit):
+    name = 'compile-jsc-32bit'
     command = ["perl", "Tools/Scripts/build-jsc", "--32-bit", WithProperties("--%(configuration)s")]
 
 
 class CompileJSCOnly(CompileWebKit):
+    name = 'compile-jsc'
     command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
 
@@ -547,8 +572,7 @@ class DownloadBuiltProduct(shell.ShellCommandNewStyle):
         # Only try to download from S3 on the official deployment <https://webkit.org/b/230006>
         if CURRENT_HOSTNAME != BUILD_WEBKIT_HOSTNAME:
             self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
-            self.finished(SKIPPED)
-            defer.returnValue(SUCCESS)
+            defer.returnValue(SKIPPED)
 
         rc = yield super().run()
         if rc == FAILURE:
@@ -702,6 +726,8 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin):
         ('missing results', re.compile(r'Regressions: Unexpected missing results\s+\((\d+)\)')),
         ('failures', re.compile(r'Regressions: Unexpected.+\((\d+)\)')),
     ]
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
@@ -738,6 +764,11 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin):
         return line
 
     def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
+
         if r'Exiting early' in line or r'leaks found' in line:
             self.incorrectLayoutLines.append(self._strip_python_logging_prefix(line))
             return
@@ -778,12 +809,18 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin):
         return result
 
     def getResultSummary(self):
-        status = self.name
-
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
         if self.results != SUCCESS and self.incorrectLayoutLines:
-            status = ' '.join(self.incorrectLayoutLines)
-            return {'step': status}
-        return super(RunWebKitTests, self).getResultSummary()
+            return {'step': ' '.join(self.incorrectLayoutLines)}
+        return super().getResultSummary()
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
 
 class RunDashboardTests(RunWebKitTests):
@@ -819,6 +856,8 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
     ]
     failedTestsFormatString = "%d api test%s failed or timed out"
     test_summary_re = re.compile(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful')
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
@@ -840,9 +879,26 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
         return self.failedTestCount
 
     def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
+
         match = self.test_summary_re.match(line)
         if match:
             self.failedTestCount = int(match.group('ran')) - int(match.group('passed'))
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
+
+    def getResultSummary(self):
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
+        return super().getResultSummary()
 
 
 class RunPythonTests(TestWithFailureCount):
@@ -1111,53 +1167,40 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
     jsonFileName = "webdriver_tests.json"
     command = ["python3", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def start(self):
         additionalArguments = self.getProperty('additionalArguments')
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
 
+        self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+        self.addLogObserver('stdio', self.log_observer)
+
         self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
-        logText = cmd.logs['stdio'].getText()
+    def getResultSummary(self):
+        # TODO: Parse logs to count number of failures and unexpected passes. https://webkit.org/b/261698
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
+        if self.results == FAILURE:
+            return {'step': f'Failed {self.name}'}
+        return super().getResultSummary()
 
-        self.failuresCount = 0
-        self.newPassesCount = 0
-        foundItems = re.findall(r"^Unexpected .+ \((\d+)\)", logText, re.MULTILINE)
-        if foundItems:
-            self.failuresCount = int(foundItems[0])
-        foundItems = re.findall(r"^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
-        if foundItems:
-            self.newPassesCount = int(foundItems[0])
+    def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
 
-    def evaluateCommand(self, cmd):
-        if self.failuresCount:
-            return FAILURE
-
-        if self.newPassesCount:
-            return WARNINGS
-
-        if cmd.rc != 0:
-            return FAILURE
-
-        return SUCCESS
-
-    def getText(self, cmd, results):
-        return self.getText2(cmd, results)
-
-    def getText2(self, cmd, results):
-        if results != SUCCESS and (self.failuresCount or self.newPassesCount):
-            lines = []
-            if self.failuresCount:
-                lines.append("%d failures" % self.failuresCount)
-            if self.newPassesCount:
-                lines.append("%d new passes" % self.newPassesCount)
-            return ["%s %s" % (self.name, ", ".join(lines))]
-
-        return [self.name]
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
 
 class RunWebKit1Tests(RunWebKitTests):

@@ -672,7 +672,7 @@ public:
     void didAddWidgetToRenderTree(Widget&);
     void willRemoveWidgetFromRenderTree(Widget&);
 
-    const HashSet<Widget*>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
+    const HashSet<CheckedPtr<Widget>>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
 
     void notifyAllFramesThatContentAreaWillPaint() const;
 
@@ -736,6 +736,14 @@ public:
     ScrollbarGutter scrollbarGutterStyle() const final;
     ScrollbarWidth scrollbarWidthStyle() const final;
 
+    void updateScrollAnchoringElement() final;
+    void updateScrollPositionForScrollAnchoringController() final;
+    void invalidateScrollAnchoringElement();
+
+    void dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
+    void queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
+    void updateScrollAnchoringPositionForScrollableAreas();
+
 private:
     explicit LocalFrameView(LocalFrame&);
 
@@ -748,6 +756,8 @@ private:
 
     bool isVerticalDocument() const final;
     bool isFlippedDocument() const final;
+
+    void incrementVisuallyNonEmptyCharacterCountSlowCase(const String&);
 
     void reset();
     void init();
@@ -933,8 +943,8 @@ private:
 
     std::unique_ptr<Display::View> m_displayView;
 
-    HashSet<Widget*> m_widgetsInRenderTree;
-    std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
+    HashSet<CheckedPtr<Widget>> m_widgetsInRenderTree;
+    std::unique_ptr<ListHashSet<CheckedPtr<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
     std::unique_ptr<WeakHashSet<RenderElement>> m_slowRepaintObjects;
 
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
@@ -1017,6 +1027,7 @@ private:
     ScrollPinningBehavior m_scrollPinningBehavior { ScrollPinningBehavior::DoNotPin };
     SelectionRevealMode m_selectionRevealModeForFocusedElement { SelectionRevealMode::DoNotReveal };
     std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
+    ScrollableAreaSet m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate;
 
     bool m_shouldUpdateWhileOffscreen { true };
     bool m_overflowStatusDirty { true };
@@ -1072,6 +1083,14 @@ inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& s
         m_visuallyNonEmptyPixelCount = std::numeric_limits<decltype(m_visuallyNonEmptyPixelCount)>::max();
     else
         m_visuallyNonEmptyPixelCount = area;
+}
+
+inline void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText)
+{
+    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold && m_hasReachedSignificantRenderedTextThreshold)
+        return;
+
+    incrementVisuallyNonEmptyCharacterCountSlowCase(inlineText);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrameView&);

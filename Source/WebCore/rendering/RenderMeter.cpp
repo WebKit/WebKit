@@ -35,7 +35,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMeter);
 
 RenderMeter::RenderMeter(HTMLElement& element, RenderStyle&& style)
-    : RenderBlockFlow(element, WTFMove(style))
+    : RenderBlockFlow(Type::Meter, element, WTFMove(style))
 {
 }
 

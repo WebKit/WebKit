@@ -38,6 +38,8 @@ class BenchmarkBuilder(object):
             self._prepare_content_from_local_git_archive(self._plan['local_git_archive'])
         elif 'github_source' in self._plan:
             self._download_from_github(self._plan['github_source'], self._plan.get('github_subtree'))
+        elif 'git_repository' in self._plan:
+            self._clone_git_repository(self._plan['git_repository'])
         else:
             raise Exception('The benchmark location was not specified')
 
@@ -137,12 +139,14 @@ class BenchmarkBuilder(object):
             subprocess.check_call(['tar', 'zxvf', output, '-C', temp_extract_path])
             shutil.copytree(os.path.join(temp_extract_path, relpath_in_repo), self._dest)
 
+    def _clone_git_repository(self, repository_url):
+        subprocess.check_call(['git', 'clone', repository_url, self._dest])
+        git_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=self._dest).strip().decode()
+        _log.info('Latest commit is {}'.format(git_hash))
+
     def _apply_patch(self, patch):
         _log.info('Applying patch %s' % (patch))
-        old_working_directory = os.getcwd()
-        os.chdir(self._dest)
-        error_code = subprocess.call(['patch', '-p1', '-f', '-i', get_path_from_project_root(patch)])
-        os.chdir(old_working_directory)
+        error_code = subprocess.call(['patch', '-p1', '-f', '-i', get_path_from_project_root(patch)], cwd=self._dest)
         if error_code:
             raise Exception('Cannot apply patch, will skip current benchmark_path - Error: %s' % error_code)
 

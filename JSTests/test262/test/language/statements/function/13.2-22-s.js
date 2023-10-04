@@ -9,7 +9,8 @@ description: >
 flags: [noStrict]
 ---*/
 
-        function foo () {"use strict";}
+function foo () {"use strict";}
+
 assert.throws(TypeError, function() {
-            foo.caller = 41;
+    foo.caller = 41;
 });

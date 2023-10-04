@@ -33,7 +33,7 @@ namespace WebCore {
 
 inline SVGMaskElement& RenderSVGResourceMasker::maskElement() const
 {
-    return downcast<SVGMaskElement>(RenderSVGResourceContainer::element());
+    return downcast<SVGMaskElement>(LegacyRenderSVGResourceContainer::element());
 }
 
 SVGUnitTypes::SVGUnitType RenderSVGResourceMasker::maskUnits() const

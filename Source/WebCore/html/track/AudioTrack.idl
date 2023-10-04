@@ -32,9 +32,9 @@
     Exposed=Window
 ] interface AudioTrack {
     readonly attribute DOMString id;
-    [EnabledConditionallyReadWriteBySetting=MediaSourceEnabled] attribute [AtomString] DOMString kind;
+    readonly attribute [AtomString] DOMString kind;
     readonly attribute DOMString label;
-    [EnabledConditionallyReadWriteBySetting=MediaSourceEnabled] attribute [AtomString] DOMString language;
+    readonly attribute [AtomString] DOMString language;
     attribute boolean enabled;
 
     [EnabledBySetting=TrackConfigurationEnabled] readonly attribute AudioTrackConfiguration configuration;

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 
+#if USE(EGL)
+
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "DMABufRendererBufferMode.h"
@@ -33,7 +35,6 @@
 #include "ShareableBitmap.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/DMABufFormat.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformDisplay.h>
@@ -41,7 +42,11 @@
 #include <wtf/glib/GUniquePtr.h>
 
 #if USE(GBM)
+#include <WebCore/DMABufFormat.h>
 #include <gbm.h>
+static constexpr uint64_t s_dmabufInvalidModifier = uint64_t(WebCore::DMABufFormat::Modifier::Invalid);
+#else
+static constexpr uint64_t s_dmabufInvalidModifier = ((1ULL << 56) - 1);
 #endif
 
 #if PLATFORM(X11) && USE(GTK4)
@@ -118,7 +123,7 @@ RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::Buf
         EGL_DMA_BUF_PLANE0_OFFSET_EXT, static_cast<EGLAttrib>(offset),
         EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLAttrib>(stride)
     };
-    if (modifier != uint64_t(WebCore::DMABufFormat::Modifier::Invalid) && display.eglExtensions().EXT_image_dma_buf_import_modifiers) {
+    if (modifier != s_dmabufInvalidModifier && display.eglExtensions().EXT_image_dma_buf_import_modifiers) {
         std::array<EGLAttrib, 4> modifierAttributes {
             EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast<EGLAttrib>(modifier >> 32),
             EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast<EGLAttrib>(modifier & 0xffffffff)
@@ -516,3 +521,5 @@ bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& c
 #endif
 
 } // namespace WebKit
+
+#endif // USE(EGL)

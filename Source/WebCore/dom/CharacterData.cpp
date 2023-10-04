@@ -27,6 +27,7 @@
 #include "ElementTraversal.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
+#include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
 #include "MutationEvent.h"
 #include "MutationObserverInterestGroup.h"
@@ -50,7 +51,7 @@ static bool canUseSetDataOptimization(const CharacterData& node)
 {
     auto& document = node.document();
     return !document.hasListenerType(Document::ListenerType::DOMCharacterDataModified) && !document.hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
-        && !document.hasListenerType(Document::ListenerType::DOMSubtreeModified);
+        && !document.hasListenerType(Document::ListenerType::DOMSubtreeModified) && !is<HTMLStyleElement>(node.parentNode());
 }
 
 void CharacterData::setData(const String& data)

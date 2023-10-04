@@ -8,16 +8,22 @@ foo foobar
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 8.00 8.00)
-          (bounds 342.00 320.00)
+          (bounds 800.00 600.00)
           (drawsContent 1)
-          (structural layer
-            (position 179.00 168.00)
-            (bounds 342.00 320.00)
-          )
-          (backdrop layer
-            (position 0.00 0.00)
-            (bounds 100.00 200.00)
+          (children 1
+            (GraphicsLayer
+              (position 8.00 8.00)
+              (bounds 342.00 320.00)
+              (drawsContent 1)
+              (structural layer
+                (position 179.00 168.00)
+                (bounds 342.00 320.00)
+              )
+              (backdrop layer
+                (position 0.00 0.00)
+                (bounds 100.00 200.00)
+              )
+            )
           )
         )
       )

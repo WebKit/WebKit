@@ -90,7 +90,7 @@ public:
     size_t boxCount() const { return m_boxCount; }
     bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
 
-    void moveVertically(float offset);
+    void moveInBlockDirection(float offset, bool isHorizontalWritingMode);
     void setEllipsisVisualRect(const FloatRect& ellipsisVisualRect) { m_ellipsisVisualRect = ellipsisVisualRect; }
 
     bool hasContentAfterEllipsisBox() const { return m_hasContentAfterEllipsisBox; }
@@ -150,17 +150,25 @@ inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxR
 {
 }
 
-inline void Line::moveVertically(float offset)
+inline void Line::moveInBlockDirection(float offset, bool isHorizontalWritingMode)
 {
-    m_lineBoxRect.move({ { }, offset });
+    ASSERT(isHorizontalWritingMode == m_isHorizontal);
+
+    if (!offset)
+        return;
+
+    auto physicalOffset = isHorizontalWritingMode ? FloatSize { { }, offset } : FloatSize { offset, { } };
+
+    m_lineBoxRect.move(physicalOffset);
+    m_scrollableOverflow.move(physicalOffset);
+    m_contentOverflow.move(physicalOffset);
+    m_inkOverflow.move(physicalOffset);
+    if (m_ellipsisVisualRect.has_value())
+        m_ellipsisVisualRect->move(physicalOffset);
+
     m_lineBoxLogicalRect.move({ { }, offset });
-    m_scrollableOverflow.move({ { }, offset });
-    m_contentOverflow.move({ { }, offset });
-    m_inkOverflow.move({ { }, offset });
     m_enclosingLogicalTopAndBottom.top += offset;
     m_enclosingLogicalTopAndBottom.bottom += offset;
-    if (m_ellipsisVisualRect.has_value())
-        m_ellipsisVisualRect->move({ { }, offset });
 }
 
 inline FloatRect Line::visibleRectIgnoringBlockDirection() const

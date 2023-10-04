@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class ImageBuffer;
+
 class GPUCompositorIntegration : public RefCounted<GPUCompositorIntegration> {
 public:
     static Ref<GPUCompositorIntegration> create(Ref<WebGPU::CompositorIntegration>&& backing)
@@ -49,6 +51,8 @@ public:
 
     WebGPU::CompositorIntegration& backing() { return m_backing; }
     const WebGPU::CompositorIntegration& backing() const { return m_backing; }
+
+    void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t);
 
 private:
     GPUCompositorIntegration(Ref<WebGPU::CompositorIntegration>&& backing)

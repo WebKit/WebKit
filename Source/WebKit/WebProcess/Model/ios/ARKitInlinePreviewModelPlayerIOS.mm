@@ -31,6 +31,7 @@
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/GraphicsLayer.h>
+#import <wtf/WeakHashSet.h>
 
 namespace WebKit {
 
@@ -39,36 +40,36 @@ Ref<ARKitInlinePreviewModelPlayerIOS> ARKitInlinePreviewModelPlayerIOS::create(W
     return adoptRef(*new ARKitInlinePreviewModelPlayerIOS(page, client));
 }
 
-static HashSet<ARKitInlinePreviewModelPlayerIOS*>& instances()
+static WeakHashSet<ARKitInlinePreviewModelPlayerIOS>& instances()
 {
-    static NeverDestroyed<HashSet<ARKitInlinePreviewModelPlayerIOS*>> instances;
+    static NeverDestroyed<WeakHashSet<ARKitInlinePreviewModelPlayerIOS>> instances;
     return instances;
 }
 
 ARKitInlinePreviewModelPlayerIOS::ARKitInlinePreviewModelPlayerIOS(WebPage& page, WebCore::ModelPlayerClient& client)
     : ARKitInlinePreviewModelPlayer(page, client)
 {
-    instances().add(this);
+    instances().add(*this);
 }
 
 ARKitInlinePreviewModelPlayerIOS::~ARKitInlinePreviewModelPlayerIOS()
 {
-    instances().remove(this);
+    instances().remove(*this);
 }
 
 ARKitInlinePreviewModelPlayerIOS* ARKitInlinePreviewModelPlayerIOS::modelPlayerForPageAndLayerID(WebPage& page, PlatformLayerIdentifier layerID)
 {
-    for (auto* modelPlayer : instances()) {
-        if (!modelPlayer || !modelPlayer->client())
+    for (auto& modelPlayer : instances()) {
+        if (!modelPlayer.client())
             continue;
 
-        if (&page != modelPlayer->page())
+        if (&page != modelPlayer.page())
             continue;
 
-        if (modelPlayer->client()->platformLayerID() != layerID)
+        if (modelPlayer.client()->platformLayerID() != layerID)
             continue;
 
-        return modelPlayer;
+        return &modelPlayer;
     }
 
     return nullptr;

@@ -424,15 +424,7 @@ void WebLocalFrameLoaderClient::dispatchDidChangeLocationWithinPage()
     if (!webPage)
         return;
 
-    RefPtr<API::Object> userData;
-
-    auto navigationID = static_cast<WebDocumentLoader&>(*m_frame->coreLocalFrame()->loader().documentLoader()).navigationID();
-
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationType::AnchorNavigation, userData);
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), navigationID, SameDocumentNavigationType::AnchorNavigation, m_frame->coreLocalFrame()->document()->url(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->didSameDocumentNavigationForFrame(m_frame);
 }
 
 void WebLocalFrameLoaderClient::dispatchDidChangeMainDocument()
@@ -476,7 +468,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI
     NavigationActionData navigationActionData {
         WebCore::NavigationType::Other,
         { }, /* modifiers */
-        WebMouseEventButton::NoButton,
+        WebMouseEventButton::None,
         WebMouseEventSyntheticClickType::NoTap,
         WebProcess::singleton().userGestureTokenIdentifier(UserGestureIndicator::currentUserGesture()),
         UserGestureIndicator::currentUserGesture() ? UserGestureIndicator::currentUserGesture()->authorizationToken() : std::nullopt,
@@ -1959,6 +1951,14 @@ void WebLocalFrameLoaderClient::modelInlinePreviewUUIDs(CompletionHandler<void(V
     webPage->sendWithAsyncReply(Messages::WebPageProxy::ModelInlinePreviewUUIDs(), WTFMove(completionHandler));
 }
 #endif
+
+void WebLocalFrameLoaderClient::dispatchLoadEventToOwnerElementInAnotherProcess()
+{
+    auto* page = m_frame->page();
+    if (!page)
+        return;
+    page->send(Messages::WebPageProxy::DispatchLoadEventToFrameOwnerElement(m_frame->frameID()));
+}
 
 } // namespace WebKit
 

@@ -30,33 +30,57 @@
 #include "ArchiveResource.h"
 
 #include "SharedBuffer.h"
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-inline ArchiveResource::ArchiveResource(Ref<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
+inline ArchiveResource::ArchiveResource(Ref<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& fileName)
     : SubstituteResource(URL { url }, ResourceResponse { response }, WTFMove(data))
     , m_mimeType(mimeType)
     , m_textEncoding(textEncoding)
     , m_frameName(frameName)
+    , m_fileName(fileName)
     , m_shouldIgnoreWhenUnarchiving(false)
 {
 }
 
-RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
+RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& fileName)
 {
     if (!data)
         return nullptr;
     if (response.isNull()) {
         unsigned dataSize = data->size();
-        return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName,
-            ResourceResponse(url, mimeType, dataSize, textEncoding)));
+        return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, ResourceResponse(url, mimeType, dataSize, textEncoding), fileName));
     }
-    return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, response));
+    return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, response, fileName));
 }
 
 RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const ResourceResponse& response)
 {
     return create(WTFMove(data), url, response.mimeType(), response.textEncodingName(), String(), response);
+}
+
+Expected<String, ArchiveError> ArchiveResource::saveToDisk(const String& directory)
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (directory.isEmpty() || m_fileName.isEmpty())
+        return makeUnexpected(ArchiveError::InvalidFilePath);
+
+    auto filePath = FileSystem::pathByAppendingComponent(directory, m_fileName);
+    FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
+    auto fileData = data().extractData();
+    int bytesWritten = FileSystem::overwriteEntireFile(filePath, { fileData.data(), fileData.size() });
+
+    if (bytesWritten < 0)
+        return makeUnexpected(ArchiveError::FileSystemError);
+
+    if ((size_t)bytesWritten != fileData.size()) {
+        FileSystem::deleteFile(filePath);
+        return makeUnexpected(ArchiveError::FileSystemError);
+    }
+
+    return filePath;
 }
 
 }

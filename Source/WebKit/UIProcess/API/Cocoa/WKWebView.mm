@@ -124,6 +124,7 @@
 #import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import <WebCore/AppHighlight.h>
+#import <WebCore/ArchiveError.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
@@ -1239,18 +1240,20 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     WebKit::SnapshotOptions snapshotOptions = WebKit::SnapshotOptionsInViewCoordinates;
     if (!snapshotConfiguration._includesSelectionHighlighting)
         snapshotOptions |= WebKit::SnapshotOptionsExcludeSelectionHighlighting;
+    if (snapshotConfiguration._usesTransparentBackground)
+        snapshotOptions |= WebKit::SnapshotOptionsTransparentBackground;
 
     // Software snapshot will not capture elements rendered with hardware acceleration (WebGL, video, etc).
     // This code doesn't consider snapshotConfiguration.afterScreenUpdates since the software snapshot always
     // contains recent updates. If we ever have a UI-side snapshot mechanism on macOS, we will need to factor
     // in snapshotConfiguration.afterScreenUpdates at that time.
-    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, snapshotOptions, [handler, snapshotWidth, imageHeight](WebKit::ShareableBitmap::Handle&& imageHandle) {
-        if (imageHandle.isNull()) {
+    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, snapshotOptions, [handler, snapshotWidth, imageHeight](std::optional<WebKit::ShareableBitmap::Handle>&& imageHandle) {
+        if (!imageHandle) {
             tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
-        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
+        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         auto image = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSMakeSize(snapshotWidth, imageHeight)]);
         tracePoint(TakeSnapshotEnd, true);
@@ -1577,7 +1580,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
     _safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:self.bounds safeBrowsingWarning:warning completionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
-        completionHandler(WTFMove(result));
+        completionHandler(std::forward<decltype(result)>(result));
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -3318,6 +3321,17 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     _observedRenderingProgressEvents = observedRenderingProgressEvents;
     _page->listenForLayoutMilestones(layoutMilestones(observedRenderingProgressEvents));
+}
+
+- (void)_saveResources:(NSURL *)directory suggestedFileName:(NSString *)name completionHandler:(void (^)(NSError *error))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    _page->saveResources(_page->mainFrame(), directory.path, name, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+        if (!result)
+            return completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::errorDescription(result.error()) }]);
+
+        completionHandler(nil);
+    });
 }
 
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler

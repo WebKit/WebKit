@@ -28,6 +28,8 @@
 
 #include "EventNames.h"
 #include "Node.h"
+#include "PlatformMouseEvent.h"
+#include "PointerEventTypeNames.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -55,7 +57,7 @@ static AtomString pointerEventType(const AtomString& mouseEventType)
     return nullAtom();
 }
 
-RefPtr<PointerEvent> PointerEvent::create(short button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+RefPtr<PointerEvent> PointerEvent::create(MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     auto type = pointerEventType(mouseEvent.type());
     if (type.isEmpty())
@@ -64,7 +66,7 @@ RefPtr<PointerEvent> PointerEvent::create(short button, const MouseEvent& mouseE
     return create(type, button, mouseEvent, pointerId, pointerType);
 }
 
-Ref<PointerEvent> PointerEvent::create(const AtomString& type, short button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     return adoptRef(*new PointerEvent(type, button, mouseEvent, pointerId, pointerType));
 }
@@ -91,19 +93,25 @@ PointerEvent::PointerEvent(const AtomString& type, Init&& initializer)
 {
 }
 
-PointerEvent::PointerEvent(const AtomString& type, short button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
     : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(),
         { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.movementX(), mouseEvent.movementY(), mouseEvent.modifierKeys(), button, mouseEvent.buttons(),
         mouseEvent.syntheticClickType(), mouseEvent.relatedTarget())
     , m_pointerId(pointerId)
+    // MouseEvent is a misnomer in this context, and can represent events from a pressure sensitive input device if the pointer type is "Pen" or "Touch".
+    // If it does represent a pressure sensitive input device, we consult MouseEvent::force() for the event pressure, else we fall back to spec defaults.
+    , m_pressure(pointerType != mousePointerEventType() ? std::clamp(mouseEvent.force(), 0., 1.) : pressureForPressureInsensitiveInputDevices(buttons()))
     , m_pointerType(pointerType)
     , m_isPrimary(true)
 {
 }
 
 PointerEvent::PointerEvent(const AtomString& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
-    : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), nullptr, 0, { }, { }, 0, 0, { }, 0, 0, SyntheticClickType::NoTap, nullptr)
+    : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), nullptr, 0, { }, { }, 0, 0, { }, buttonForType(type), buttonsForType(type), SyntheticClickType::NoTap, nullptr)
     , m_pointerId(pointerId)
+    // FIXME: This may be wrong because we can create an event from a pressure sensitive device.
+    // We don't have a backing MouseEvent to consult pressure/force information from, though, so let's do the next best thing.
+    , m_pressure(pressureForPressureInsensitiveInputDevices(buttons()))
     , m_pointerType(pointerType)
     , m_isPrimary(isPrimary == IsPrimary::Yes)
 {

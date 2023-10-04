@@ -410,6 +410,8 @@ public:
     FloatSize deltaForPropagation(const FloatSize&) const;
     WEBCORE_EXPORT virtual float adjustVerticalPageScrollStepForFixedContent(float step);
     virtual bool needsAnimatedScroll() const { return false; }
+    virtual void updateScrollAnchoringElement() { }
+    virtual void updateScrollPositionForScrollAnchoringController() { }
 
 protected:
     WEBCORE_EXPORT ScrollableArea();

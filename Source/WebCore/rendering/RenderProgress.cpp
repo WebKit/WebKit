@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderProgress);
 
 RenderProgress::RenderProgress(HTMLElement& element, RenderStyle&& style)
-    : RenderBlockFlow(element, WTFMove(style))
+    : RenderBlockFlow(Type::Progress, element, WTFMove(style))
     , m_position(HTMLProgressElement::InvalidPosition)
     , m_animationTimer(*this, &RenderProgress::animationTimerFired)
 {

@@ -57,8 +57,18 @@ def optimize_plan_file(file_path):
             dictionary.pop(key, None)
 
     drop_keys(subtree, ['sha', 'size'])
+    tree_with_ordered_entries = []
     for entry in subtree['tree']:
         drop_keys(entry, ['sha', 'size', 'url'])
+        ordered_entry = OrderedDict()
+        for key in ['path', 'mode', 'type'] + sorted(entry.keys()):
+            if key in ordered_entry:
+                continue
+            if key not in entry:
+                continue
+            ordered_entry[key] = entry[key]
+        tree_with_ordered_entries.append(ordered_entry)
+    subtree['tree'] = tree_with_ordered_entries
 
     plan['github_subtree'] = subtree
     with open(file_path, 'w') as fp:

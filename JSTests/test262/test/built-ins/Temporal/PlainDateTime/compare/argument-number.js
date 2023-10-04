@@ -18,11 +18,11 @@ for (const arg of numbers) {
   assert.throws(
     TypeError,
     () => Temporal.PlainDateTime.compare(arg, new Temporal.PlainDateTime(1976, 11, 18)),
-    "A number is not a valid ISO string for PlainDateTime (first argument)"
+    `A number (${arg}) is not a valid ISO string for PlainDateTime (first argument)`
   );
   assert.throws(
     TypeError,
     () => Temporal.PlainDateTime.compare(new Temporal.PlainDateTime(1976, 11, 18), arg),
-    "A number is not a valid ISO string for PlainDateTime (second argument)"
+    `A number (${arg}) is not a valid ISO string for PlainDateTime (second argument)`
   );
 }

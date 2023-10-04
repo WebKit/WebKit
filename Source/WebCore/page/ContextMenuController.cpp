@@ -30,6 +30,7 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "BackForwardController.h"
+#include "BitmapImage.h"
 #include "Chrome.h"
 #include "ContextMenu.h"
 #include "ContextMenuClient.h"
@@ -206,14 +207,14 @@ static void prepareContextForQRCode(ContextMenuContext& context)
         return;
 
     auto nodeSnapshotImageBuffer = snapshotNode(*frame, *element, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
-    auto nodeSnapshotImage = ImageBuffer::sinkIntoImage(WTFMove(nodeSnapshotImageBuffer), PreserveResolution::Yes);
+    auto nodeSnapshotImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(nodeSnapshotImageBuffer)));
     context.setPotentialQRCodeNodeSnapshotImage(nodeSnapshotImage.get());
 
     // FIXME: Node snapshotting does not take transforms into account, making it unreliable for QR code detection.
     // As a fallback, also take a viewport-level snapshot. A node snapshot is still required to capture partially
     // obscured elements. This workaround can be removed once rdar://87204215 is fixed.
     auto viewportSnapshotImageBuffer = snapshotFrameRect(*frame, elementRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
-    auto viewportSnapshotImage = ImageBuffer::sinkIntoImage(WTFMove(viewportSnapshotImageBuffer), PreserveResolution::Yes);
+    auto viewportSnapshotImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(viewportSnapshotImageBuffer)));
     context.setPotentialQRCodeViewportSnapshotImage(viewportSnapshotImage.get());
 }
 
@@ -1778,7 +1779,7 @@ void ContextMenuController::showContextMenuAt(LocalFrame& frame, const IntPoint&
     clearContextMenu();
     
     // Simulate a click in the middle of the accessibility object.
-    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::Type::MousePressed, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap);
+    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, MouseButton::Right, PlatformEvent::Type::MousePressed, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap);
     frame.eventHandler().handleMousePressEvent(mouseEvent);
     bool handled = frame.eventHandler().sendContextMenuEvent(mouseEvent);
     if (handled)

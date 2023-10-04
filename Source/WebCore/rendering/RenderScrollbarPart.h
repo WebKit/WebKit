@@ -59,8 +59,6 @@ private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
-    bool isRenderScrollbarPart() const override { return true; }
-
     void layoutHorizontalPart();
     void layoutVerticalPart();
 

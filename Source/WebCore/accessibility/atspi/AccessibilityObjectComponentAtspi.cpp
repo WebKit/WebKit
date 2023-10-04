@@ -25,7 +25,7 @@
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObject.h"
-#include "AccessibilityObjectInterface.h"
+#include "AXCoreObject.h"
 #include "Document.h"
 #include "LocalFrameView.h"
 #include "RenderLayer.h"

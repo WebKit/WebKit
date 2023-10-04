@@ -181,10 +181,6 @@ NetworkProcess/storage/SessionStorageManager.cpp
 NetworkProcess/storage/StorageAreaBase.cpp
 NetworkProcess/storage/StorageAreaRegistry.cpp
 
-NetworkProcess/cache/CacheStorageEngine.cpp
-NetworkProcess/cache/CacheStorageEngineCache.cpp
-NetworkProcess/cache/CacheStorageEngineCaches.cpp
-NetworkProcess/cache/CacheStorageEngineConnection.cpp
 NetworkProcess/cache/AsyncRevalidation.cpp
 NetworkProcess/cache/NetworkCache.cpp
 NetworkProcess/cache/NetworkCacheBlobStorage.cpp
@@ -201,6 +197,11 @@ NetworkProcess/cache/PrefetchCache.cpp
 
 NetworkProcess/webrtc/NetworkMDNSRegister.cpp
 NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp
+
+NetworkProcess/webtransport/NetworkTransportBidirectionalStream.cpp
+NetworkProcess/webtransport/NetworkTransportSendStream.cpp
+NetworkProcess/webtransport/NetworkTransportSession.cpp
+NetworkProcess/webtransport/NetworkTransportReceiveStream.cpp
 
 Platform/IPC/DaemonCoders.cpp
 
@@ -265,8 +266,7 @@ Shared/WebPlatformTouchPoint.cpp
 Shared/WebPopupItem.cpp
 Shared/WebPreferencesDefaultValues.cpp
 Shared/WebPreferencesStore.cpp
-Shared/API/c/WKRenderLayer.cpp
-Shared/API/c/WKRenderObject.cpp
+Shared/WebPushMessage.cpp
 Shared/WebTouchEvent.cpp
 Shared/WebUserContentControllerDataTypes.cpp
 Shared/WebWheelEventCoalescer.cpp
@@ -294,6 +294,8 @@ Shared/API/c/WKMutableArray.cpp
 Shared/API/c/WKMutableDictionary.cpp
 Shared/API/c/WKNumber.cpp
 Shared/API/c/WKPluginInformation.cpp
+Shared/API/c/WKRenderLayer.cpp
+Shared/API/c/WKRenderObject.cpp
 Shared/API/c/WKSecurityOriginRef.cpp
 Shared/API/c/WKSerializedScriptValue.cpp
 Shared/API/c/WKString.cpp
@@ -383,7 +385,10 @@ Shared/XR/XRDeviceProxy.cpp
 
 UIProcess/AuxiliaryProcessProxy.cpp
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
+UIProcess/BrowsingContextGroup.cpp
 UIProcess/DeviceIdHashSaltStorage.cpp
+UIProcess/DisplayLink.cpp
+UIProcess/DisplayLinkProcessProxyClient.cpp
 UIProcess/DrawingAreaProxy.cpp
 UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
@@ -762,6 +767,9 @@ WebProcess/Network/WebResourceLoader.cpp
 WebProcess/Network/WebSocketChannel.cpp @no-unify
 WebProcess/Network/WebSocketChannelManager.cpp
 WebProcess/Network/WebSocketProvider.cpp
+WebProcess/Network/WebTransportReceiveStreamSource.cpp
+WebProcess/Network/WebTransportSendStreamSink.cpp
+WebProcess/Network/WebTransportSession.cpp
 
 WebProcess/Network/webrtc/LibWebRTCNetwork.cpp
 WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp
@@ -844,6 +852,7 @@ WebProcess/WebPage/WebBackForwardListProxy.cpp
 WebProcess/WebPage/WebContextMenu.cpp
 WebProcess/WebPage/WebCookieCache.cpp
 WebProcess/WebPage/WebCookieJar.cpp
+WebProcess/WebPage/WebDisplayRefreshMonitor.cpp
 WebProcess/WebPage/WebDocumentLoader.cpp
 WebProcess/WebPage/WebFoundTextRangeController.cpp
 WebProcess/WebPage/WebFrame.cpp
@@ -869,6 +878,7 @@ IPCStreamTesterProxyMessageReceiver.cpp
 IPCTesterMessageReceiver.cpp
 IPCTesterReceiverMessageReceiver.cpp
 NetworkBroadcastChannelRegistryMessageReceiver.cpp
+NetworkTransportSessionMessageReceiver.cpp
 RTCDataChannelRemoteManagerMessageReceiver.cpp
 RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
 RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessageReceiver.cpp
@@ -920,3 +930,4 @@ WebSharedWorkerContextManagerConnectionMessageReceiver.cpp
 WebSharedWorkerObjectConnectionMessageReceiver.cpp
 WebSharedWorkerServerConnectionMessageReceiver.cpp
 WebSharedWorkerServerToContextConnectionMessageReceiver.cpp
+WebTransportSessionMessageReceiver.cpp

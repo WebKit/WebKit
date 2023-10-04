@@ -1,6 +1,6 @@
 
 
-FAIL Horizontal LTR. assert_equals: expected 130 but got 150
+FAIL Horizontal LTR. assert_equals: expected 150 but got 120
 FAIL Horizontal RTL. assert_equals: expected 130 but got 150
 FAIL Vertical-LR LTR. assert_equals: expected 120 but got 150
 FAIL Vertical-LR RTL. assert_equals: expected 120 but got 150

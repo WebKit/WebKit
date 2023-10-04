@@ -78,8 +78,12 @@ template<typename CollectionType> RetainPtr<NSMutableArray> createNSArray(Collec
 template<typename CollectionType, typename MapFunctionType> RetainPtr<NSMutableArray> createNSArray(CollectionType&& collection, MapFunctionType&& function)
 {
     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:std::size(collection)]);
-    for (auto&& element : collection)
-        addUnlessNil(array.get(), getPtr(std::invoke(std::forward<MapFunctionType>(function), std::forward<decltype(element)>(element))));
+    for (auto&& element : std::forward<CollectionType>(collection)) {
+        if constexpr (std::is_rvalue_reference_v<CollectionType&&> && !std::is_const_v<std::remove_reference_t<decltype(element)>>)
+            addUnlessNil(array.get(), getPtr(function(WTFMove(element))));
+        else
+            addUnlessNil(array.get(), getPtr(function(element)));
+    }
     return array;
 }
 

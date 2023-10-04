@@ -17,18 +17,21 @@ function fn(a) {
   arguments[0] = 2;
   Object.defineProperty(arguments, "0", {configurable: false});
 
-  let propertyDescriptor = Object.getOwnPropertyDescriptor(arguments, "0");
-  assert.sameValue(propertyDescriptor.value, 1);
-  verifyNotEnumerable(arguments, "0");
-  verifyNotWritable(arguments, "0");
-  verifyNotConfigurable(arguments, "0");
+  verifyProperty(arguments, "0", {
+    value: 1,
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
 
   // Postcondition: Arguments mapping is removed.
   a = 3;
-  propertyDescriptor = Object.getOwnPropertyDescriptor(arguments, "0");
-  assert.sameValue(propertyDescriptor.value, 1);
-  verifyNotEnumerable(arguments, "0");
-  verifyNotWritable(arguments, "0");
-  verifyNotConfigurable(arguments, "0");
+
+  verifyProperty(arguments, "0", {
+    value: 1,
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
 }
 fn(1);

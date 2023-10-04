@@ -359,12 +359,13 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
 
 RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)
 {
-    auto absolutePoint = absolutePointIfNotClipped(documentScope(), clientPoint);
+    Ref document = protectedDocumentScope();
+    auto absolutePoint = absolutePointIfNotClipped(document, clientPoint);
     if (!absolutePoint)
         return nullptr;
 
     HitTestResult result(absolutePoint.value());
-    documentScope().hitTest(HitTestRequest(), result);
+    document->hitTest(HitTestRequest(), result);
     if (localPoint)
         *localPoint = result.localPoint();
     return result.innerNode();
@@ -395,8 +396,8 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
 {
     Vector<RefPtr<Element>> elements;
 
-    Document& document = documentScope();
-    if (!document.hasLivingRenderTree())
+    Ref document = protectedDocumentScope();
+    if (!document->hasLivingRenderTree())
         return elements;
 
     auto absolutePoint = absolutePointIfNotClipped(document, LayoutPoint(clientX, clientY));
@@ -405,7 +406,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::CollectMultipleElements, HitTestRequest::Type::IncludeAllElementsUnderPoint };
     HitTestResult result { absolutePoint.value() };
-    documentScope().hitTest(hitType, result);
+    document->hitTest(hitType, result);
 
     RefPtr<Node> lastNode;
     auto& nodeSet = result.listBasedTestResult();
@@ -484,13 +485,13 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* curren
 
 Element* TreeScope::focusedElementInScope()
 {
-    Document& document = documentScope();
-    Element* element = document.focusedElement();
+    Ref document = protectedDocumentScope();
+    RefPtr element = document->focusedElement();
 
-    if (!element && document.page())
-        element = focusedFrameOwnerElement(document.page()->focusController().focusedFrame(), document.frame());
+    if (!element && document->page())
+        element = focusedFrameOwnerElement(document->page()->focusController().focusedFrame(), document->frame());
 
-    return ancestorElementInThisScope(element);
+    return ancestorElementInThisScope(element.get());
 }
 
 #if ENABLE(POINTER_LOCK)
@@ -583,7 +584,7 @@ struct SVGResourcesMap {
 
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResources;
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResourcesForRemoval;
-    MemoryCompactRobinHoodHashMap<AtomString, RenderSVGResourceContainer*> resources;
+    MemoryCompactRobinHoodHashMap<AtomString, LegacyRenderSVGResourceContainer*> resources;
 };
 
 SVGResourcesMap& TreeScope::svgResourcesMap() const
@@ -593,7 +594,7 @@ SVGResourcesMap& TreeScope::svgResourcesMap() const
     return *m_svgResourcesMap;
 }
 
-void TreeScope::addSVGResource(const AtomString& id, RenderSVGResourceContainer& resource)
+void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
 {
     if (id.isEmpty())
         return;
@@ -610,7 +611,7 @@ void TreeScope::removeSVGResource(const AtomString& id)
     svgResourcesMap().resources.remove(id);
 }
 
-RenderSVGResourceContainer* TreeScope::svgResourceById(const AtomString& id) const
+LegacyRenderSVGResourceContainer* TreeScope::svgResourceById(const AtomString& id) const
 {
     if (id.isEmpty())
         return nullptr;
@@ -735,6 +736,11 @@ RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(co
         svgResourcesMap().pendingResourcesForRemoval.remove(id);
 
     return firstElement;
+}
+
+Ref<Document> TreeScope::protectedDocumentScope() const
+{
+    return m_documentScope.get();
 }
 
 } // namespace WebCore

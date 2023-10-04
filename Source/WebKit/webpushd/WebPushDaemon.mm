@@ -35,6 +35,8 @@
 #import "HandleMessage.h"
 #import "LaunchServicesSPI.h"
 
+#import <WebCore/NotificationData.h>
+#import <WebCore/NotificationPayload.h>
 #import <WebCore/SecurityOriginData.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <span>
@@ -264,31 +266,50 @@ void WebPushDaemon::deletePushAndNotificationRegistration(PushClientConnection& 
     });
 }
 
-void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection, const PushMessageForTesting& message, CompletionHandler<void(bool)>&& replySender)
+void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection, PushMessageForTesting&& message, CompletionHandler<void(const String&)>&& replySender)
 {
     if (!connection.hostAppHasPushInjectEntitlement()) {
-        connection.broadcastDebugMessage("Attempting to inject a push message from an unentitled process"_s);
-        replySender(false);
+        String error = "Attempting to inject a push message from an unentitled process"_s;
+        connection.broadcastDebugMessage(error);
+        replySender(error);
         return;
     }
 
     if (message.targetAppCodeSigningIdentifier.isEmpty() || !message.registrationURL.isValid()) {
-        connection.broadcastDebugMessage("Attempting to inject an invalid push message"_s);
-        replySender(false);
+        String error = "Attempting to inject an invalid push message"_s;
+        connection.broadcastDebugMessage(error);
+        replySender(error);
         return;
     }
 
-    connection.broadcastDebugMessage(makeString("Injected a test push message for ", message.targetAppCodeSigningIdentifier, " at ", message.registrationURL.string()));
-    connection.broadcastDebugMessage(message.message);
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    // Validate a Notification disposition message now by trying to parse it
+    // Only for the testing/development push service for now
+    if (m_machServiceName == "org.webkit.webpushtestdaemon.service"_s) {
+        if (message.disposition == PushMessageDisposition::Notification) {
+            auto exceptionOrPayload = WebCore::NotificationPayload::parseJSON(message.payload);
+            if (exceptionOrPayload.hasException()) {
+                replySender(exceptionOrPayload.exception().message());
+                return;
+            }
+
+            message.parsedPayload = exceptionOrPayload.returnValue();
+        }
+    }
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
     auto addResult = m_testingPushMessages.ensure(message.targetAppCodeSigningIdentifier, [] {
         return Deque<PushMessageForTesting> { };
     });
-    addResult.iterator->value.append(message);
+
+    connection.broadcastDebugMessage(makeString("Injected a test push message for ", message.targetAppCodeSigningIdentifier, " at ", message.registrationURL.string(), ", there are now ", addResult.iterator->value.size() + 1, " pending messages"));
+    connection.broadcastDebugMessage(message.payload);
+
+    addResult.iterator->value.append(WTFMove(message));
 
     notifyClientPushMessageIsAvailable(PushSubscriptionSetIdentifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString });
 
-    replySender(true);
+    replySender({ });
 }
 
 void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& connection, const String& message, CompletionHandler<void(bool)>&& replySender)
@@ -392,8 +413,12 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
     auto iterator = m_testingPushMessages.find(hostAppCodeSigningIdentifier);
     if (iterator != m_testingPushMessages.end()) {
         for (auto& message : iterator->value) {
-            auto data = message.message.utf8();
-            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL });
+            auto data = message.payload.utf8();
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) });
+#else
+            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, { } });
+#endif
         }
         m_testingPushMessages.remove(iterator);
     }

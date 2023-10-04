@@ -124,7 +124,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     

@@ -50,11 +50,12 @@ public:
     BlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState&);
 
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
+    void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
     LayoutUnit usedContentHeight() const override;
 
-    const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
+    const BlockFormattingState& formattingState() const { return m_blockFormattingState; }
     const BlockFormattingGeometry& formattingGeometry() const final { return m_blockFormattingGeometry; }
-    const BlockFormattingQuirks& formattingQuirks() const override { return m_blockFormattingQuirks; }
+    const BlockFormattingQuirks& formattingQuirks() const { return m_blockFormattingQuirks; }
 
 protected:
     struct ConstraintsPair {
@@ -80,7 +81,12 @@ protected:
     std::optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const ElementBox&, const ConstraintsPair&);
     void updateMarginAfterForPreviousSibling(const ElementBox&);
 
-    BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
+    void collectOutOfFlowDescendantsIfNeeded();
+    void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
+    void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
+    void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
+
+    BlockFormattingState& formattingState() { return m_blockFormattingState; }
     BlockMarginCollapse marginCollapse() const;
 
 #if ASSERT_ENABLED
@@ -93,6 +99,7 @@ private:
 #if ASSERT_ENABLED
     HashMap<const ElementBox*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
 #endif
+    BlockFormattingState& m_blockFormattingState;
     const BlockFormattingGeometry m_blockFormattingGeometry;
     const BlockFormattingQuirks m_blockFormattingQuirks;
 };

@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum RenderingBackendIdentifierType { };
+enum class RenderingBackendIdentifierType { };
 using RenderingBackendIdentifier = ObjectIdentifier<RenderingBackendIdentifierType>;
 
 } // namespace WebKit

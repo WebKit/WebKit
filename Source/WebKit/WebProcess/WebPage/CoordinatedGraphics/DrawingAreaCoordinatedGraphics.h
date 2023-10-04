@@ -85,7 +85,6 @@ private:
 
     // IPC message handlers.
     void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) override;
-    void targetRefreshRateDidChange(unsigned rate) override;
     void displayDidRefresh() override;
     void setDeviceScaleFactor(float) override;
     void forceUpdate() override;

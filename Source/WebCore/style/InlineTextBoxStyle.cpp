@@ -167,7 +167,7 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
     auto underlineOffset = context.lineStyle.textUnderlineOffset();
     auto& fontMetrics = context.lineStyle.metricsOfPrimaryFont();
 
-    float computedUnderlineOffset = fontMetrics.ascent() + gap;
+    float computedUnderlineOffset;
     switch (context.resolvedUnderlinePosition) {
     case TextUnderlinePosition::Auto:
         computedUnderlineOffset = fontMetrics.ascent() + underlineOffset.lengthOr(gap);
@@ -183,6 +183,7 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
         break;
     }
     default:
+        computedUnderlineOffset = fontMetrics.ascent() + gap;
         ASSERT_NOT_REACHED();
         break;
     }

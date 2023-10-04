@@ -197,7 +197,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // PolymorphicAccess.
         clearBufferedStructures();
         
-        InlineCacheCompiler compiler(vm, globalObject, ecmaMode, *this);
+        InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
         result = compiler.regenerate(locker, *m_stub, codeBlock);
         
         if (StructureStubInfoInternal::verbose)
@@ -530,15 +530,19 @@ static CodePtr<OperationPtrTag> slowOperationFromUnlinkedStructureStubInfo(const
     return { };
 }
 
-void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUnlinkedStructureStubInfo& unlinkedStubInfo)
+void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, const BaselineUnlinkedStructureStubInfo& unlinkedStubInfo)
 {
     accessType = unlinkedStubInfo.accessType;
     doneLocation = unlinkedStubInfo.doneLocation;
-    slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
     m_identifier = unlinkedStubInfo.m_identifier;
     callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedStubInfo.bytecodeIndex.offset()));
     codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
-    m_codePtr = slowPathStartLocation;
+    if (Options::useHandlerIC())
+        m_codePtr = InlineCacheCompiler::generateSlowPathCode(vm, accessType).code().template retagged<JITStubRoutinePtrTag>();
+    else {
+        m_codePtr = unlinkedStubInfo.slowPathStartLocation;
+        slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
+    }
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
     canBeMegamorphic = unlinkedStubInfo.canBeMegamorphic;
     isEnumerator = unlinkedStubInfo.isEnumerator;
@@ -547,12 +551,7 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUn
     if (unlinkedStubInfo.canBeMegamorphic)
         bufferingCountdown = 1;
 
-    auto usedJSRs = RegisterSetBuilder::stubUnavailableRegisters();
-    if (accessType == AccessType::GetById && unlinkedStubInfo.bytecodeIndex.checkpoint()) {
-        // For iterator_next, we can't clobber the "dontClobberJSR" register either.
-        usedJSRs.add(BaselineJITRegisters::GetById::dontClobberJSR, IgnoreVectors);
-    }
-    usedRegisters = usedJSRs.buildScalarRegisterSet();
+    usedRegisters = RegisterSetBuilder::stubUnavailableRegisters().buildScalarRegisterSet();
 
     m_slowOperation = slowOperationFromUnlinkedStructureStubInfo(unlinkedStubInfo);
 
@@ -737,11 +736,11 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::Un
 {
     accessType = unlinkedStubInfo.accessType;
     doneLocation = unlinkedStubInfo.doneLocation;
-    slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
     m_identifier = unlinkedStubInfo.m_identifier;
     callSiteIndex = unlinkedStubInfo.callSiteIndex;
     codeOrigin = unlinkedStubInfo.codeOrigin;
-    m_codePtr = slowPathStartLocation;
+    slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
+    m_codePtr = unlinkedStubInfo.slowPathStartLocation;
 
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
     propertyIsSymbol = unlinkedStubInfo.propertyIsSymbol;

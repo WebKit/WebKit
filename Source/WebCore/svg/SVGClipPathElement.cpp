@@ -25,7 +25,7 @@
 
 #include "Document.h"
 #include "ImageBuffer.h"
-#include "RenderSVGResourceClipper.h"
+#include "LegacyRenderSVGResourceClipper.h"
 #include "SVGNames.h"
 #include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
@@ -85,7 +85,7 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGResourceClipper>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourceClipper>(*this, WTFMove(style));
 }
 
 }

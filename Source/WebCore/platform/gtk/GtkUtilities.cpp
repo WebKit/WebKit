@@ -128,6 +128,8 @@ WallTime wallTimeForEvent(const GdkEvent* event)
     // g_get_monotonic_time() continues to do so as well, and so long as
     // MonotonicTime continues to use g_get_monotonic_time().
 #if USE(GTK4)
+    if (!event)
+        return WallTime::now();
     auto time = gdk_event_get_time(const_cast<GdkEvent*>(event));
 #else
     auto time = gdk_event_get_time(event);

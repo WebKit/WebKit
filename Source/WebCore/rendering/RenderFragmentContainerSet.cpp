@@ -35,8 +35,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentContainerSet);
 
-RenderFragmentContainerSet::RenderFragmentContainerSet(Document& document, RenderStyle&& style, RenderFragmentedFlow& fragmentedFlow)
-    : RenderFragmentContainer(document, WTFMove(style), &fragmentedFlow)
+RenderFragmentContainerSet::RenderFragmentContainerSet(Type type, Document& document, RenderStyle&& style, RenderFragmentedFlow& fragmentedFlow)
+    : RenderFragmentContainer(type, document, WTFMove(style), &fragmentedFlow)
 {
 }
 

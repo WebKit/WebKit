@@ -28,7 +28,9 @@
 #endif
 
 #import "config.h"
+#import "APIData.h"
 #import "CocoaHelpers.h"
+#import "WKNSData.h"
 
 namespace WebKit {
 
@@ -188,7 +190,79 @@ NSSet *objectForKey<NSSet>(NSDictionary *dictionary, id key, bool nilIfEmpty, Cl
     });
 }
 
-// MARK: NSDictionary helper methods.
+// MARK: JSON Helpers
+
+static inline NSJSONReadingOptions toReadingImpl(JSONOptionSet options)
+{
+    NSJSONReadingOptions result = 0;
+    if (options.contains(JSONOptions::FragmentsAllowed))
+        result |= NSJSONReadingFragmentsAllowed;
+    return result;
+}
+
+static inline NSJSONWritingOptions toWritingImpl(JSONOptionSet options)
+{
+    NSJSONWritingOptions result = 0;
+    if (options.contains(JSONOptions::FragmentsAllowed))
+        result |= NSJSONWritingFragmentsAllowed;
+    return result;
+}
+
+bool isValidJSONObject(id object, JSONOptionSet options)
+{
+    if (!object)
+        return false;
+
+    if (options.contains(JSONOptions::FragmentsAllowed))
+        return [object isKindOfClass:NSString.class] || [object isKindOfClass:NSNumber.class] || [object isKindOfClass:NSNull.class] || [NSJSONSerialization isValidJSONObject:object];
+
+    // NSJSONSerialization allows top-level arrays, but we only support dictionaries when not using FragmentsAllowed.
+    return [object isKindOfClass:NSDictionary.class] && [NSJSONSerialization isValidJSONObject:object];
+}
+
+id parseJSON(NSData *json, JSONOptionSet options, NSError **error)
+{
+    if (!json)
+        return nil;
+
+    id result = [NSJSONSerialization JSONObjectWithData:json options:toReadingImpl(options) error:error];
+    if (options.contains(JSONOptions::FragmentsAllowed))
+        return result;
+
+    return dynamic_objc_cast<NSDictionary>(result);
+}
+
+id parseJSON(NSString *json, JSONOptionSet options, NSError **error)
+{
+    return parseJSON([json dataUsingEncoding:NSUTF8StringEncoding], options, error);
+}
+
+id parseJSON(API::Data& json, JSONOptionSet options, NSError **error)
+{
+    return parseJSON(wrapper(json), options, error);
+}
+
+NSString *encodeJSONString(id object, JSONOptionSet options, NSError **error)
+{
+    if (auto *data = encodeJSONData(object, options, error))
+        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    return nil;
+}
+
+NSData *encodeJSONData(id object, JSONOptionSet options, NSError **error)
+{
+    if (!object)
+        return nil;
+
+    ASSERT(isValidJSONObject(object, options));
+
+    if (!options.contains(JSONOptions::FragmentsAllowed) && ![object isKindOfClass:NSDictionary.class])
+        return nil;
+
+    return [NSJSONSerialization dataWithJSONObject:object options:toWritingImpl(options) error:error];
+}
+
+// MARK: NSDictionary Helpers
 
 NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *dictionary)
 {
@@ -242,7 +316,7 @@ NSDictionary *mergeDictionariesAndSetValues(NSDictionary *dictionaryA, NSDiction
     return [newDictionary copy];
 }
 
-// MARK: NSError helper methods
+// MARK: NSError Helpers
 
 NSString *privacyPreservingDescription(NSError *error)
 {

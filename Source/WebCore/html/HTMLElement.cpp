@@ -834,8 +834,7 @@ std::optional<TextDirection> HTMLElement::directionalityIfDirIsAuto() const
 auto HTMLElement::computeDirectionalityFromText() const -> TextDirectionWithStrongDirectionalityNode
 {
     if (auto* textControl = dynamicDowncast<HTMLTextFormControlElement>(const_cast<HTMLElement*>(this))) {
-        auto* inputElement = dynamicDowncast<HTMLInputElement>(textControl);
-        if (!inputElement || (inputElement->isTextType() && !inputElement->isPasswordField())) {
+        if (textControl->dirAutoUsesValue()) {
             auto direction = textControl->value().defaultWritingDirection();
             if (!direction)
                 return { TextDirection::LTR, nullptr };
@@ -960,7 +959,7 @@ void HTMLElement::updateEffectiveDirectionalityOfDirAuto()
         invalidateStyleForSubtree();
 }
 
-void HTMLElement::updateTextDirectionalityAfterTelephoneInputTypeChange()
+void HTMLElement::updateTextDirectionalityAfterInputTypeChange()
 {
     dirAttributeChanged(attributeWithoutSynchronization(dirAttr));
 }
@@ -1414,6 +1413,11 @@ ExceptionOr<void> HTMLElement::showPopover(const HTMLFormControlElement* invoker
 
     queuePopoverToggleEventTask(PopoverVisibilityState::Hidden, PopoverVisibilityState::Showing);
 
+#if ENABLE(ACCESSIBILITY)
+    if (auto* cache = document->existingAXObjectCache())
+        cache->onPopoverToggle(*this);
+#endif
+
     return { };
 }
 
@@ -1470,6 +1474,11 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         }
         popoverData()->setPreviouslyFocusedElement(nullptr);
     }
+
+#if ENABLE(ACCESSIBILITY)
+    if (auto* cache = document().existingAXObjectCache())
+        cache->onPopoverToggle(*this);
+#endif
 
     return { };
 }

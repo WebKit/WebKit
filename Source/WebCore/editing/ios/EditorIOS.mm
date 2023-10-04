@@ -69,7 +69,8 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     // If the text has left or right alignment, flip left->right and right->left. 
     // Otherwise, do nothing.
 
-    auto selectionStyle = EditingStyle::styleAtSelectionStart(m_document.selection().selection());
+    Ref document = protectedDocument();
+    auto selectionStyle = EditingStyle::styleAtSelectionStart(document->selection().selection());
     if (!selectionStyle || !selectionStyle->style())
          return;
 
@@ -114,14 +115,14 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
         return;
     }
 
-    Element* focusedElement = m_document.focusedElement();
+    RefPtr focusedElement = document->focusedElement();
     if (focusedElement && (is<HTMLTextAreaElement>(*focusedElement) || (is<HTMLInputElement>(*focusedElement)
         && (downcast<HTMLInputElement>(*focusedElement).isTextField()
             || downcast<HTMLInputElement>(*focusedElement).isSearchField())))) {
         if (direction == WritingDirection::Natural)
             return;
         downcast<HTMLElement>(*focusedElement).setAttributeWithoutSynchronization(alignAttr, nameString(newValue));
-        m_document.updateStyleIfNeeded();
+        document->updateStyleIfNeeded();
         return;
     }
 
@@ -134,7 +135,7 @@ void Editor::removeUnchangeableStyles()
 {
     // This function removes styles that the user cannot modify by applying their default values.
     
-    auto editingStyle = EditingStyle::create(m_document.bodyOrFrameset());
+    auto editingStyle = EditingStyle::create(document().bodyOrFrameset());
     auto defaultStyle = editingStyle->style()->mutableCopy();
     
     // Text widgets implement background color via the UIView property. Their body element will not have one.
@@ -205,7 +206,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 {
     auto range = selectedRange();
     bool allowPlainText = options.contains(PasteOption::AllowPlainText);
-    WebContentReader reader(*m_document.frame(), *range, allowPlainText);
+    WebContentReader reader(*document().frame(), *range, allowPlainText);
     int numberOfPasteboardItems = client()->getPasteboardItemsCount();
     for (int i = 0; i < numberOfPasteboardItems; ++i) {
         auto fragment = client()->documentFragmentFromDelegate(i);
@@ -237,13 +238,14 @@ void Editor::platformPasteFont()
 
 void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, id metadata)
 {
-    if (m_document.selection().isNone())
+    Ref document = protectedDocument();
+    if (document->selection().isNone())
         return;
 
     if (dictationPhrases.isEmpty())
         return;
 
-    DictationCommandIOS::create(document(), WTFMove(dictationPhrases), metadata)->apply();
+    DictationCommandIOS::create(WTFMove(document), WTFMove(dictationPhrases), metadata)->apply();
 }
 
 void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& dictationPhrases, id metadata, Element& element)
@@ -255,7 +257,8 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
     // Some day we could make them Undoable, and let callers clear the Undo stack explicitly if they wish.
     clearUndoRedoOperations();
 
-    m_document.selection().clear();
+    Ref document = protectedDocument();
+    document->selection().clear();
 
     element.removeChildren();
 
@@ -275,7 +278,7 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
     WeakPtr weakElement { element };
 
     // We need a layout in order to add markers below.
-    document().updateLayout();
+    document->updateLayout();
 
     if (!weakElement)
         return;
@@ -307,11 +310,12 @@ void Editor::confirmMarkedText()
 {
     // FIXME: This is a hacky workaround for the keyboard calling this method too late -
     // after the selection and focus have already changed. See <rdar://problem/5975559>.
-    RefPtr focused = document().focusedElement();
+    Ref document = protectedDocument();
+    RefPtr focused = document->focusedElement();
     RefPtr composition = compositionNode();
     if (composition && focused && !composition->isDescendantOrShadowDescendantOf(*focused)) {
         cancelComposition();
-        document().setFocusedElement(focused.get());
+        document->setFocusedElement(focused.get());
     } else
         confirmComposition();
 }
@@ -332,14 +336,15 @@ void Editor::setTextAsChildOfElement(String&& text, Element& element)
 
     // As a side effect this function sets a caret selection after the inserted content.
     // What follows is more expensive if there is a selection, so clear it since it's going to change anyway.
-    m_document.selection().clear();
+    Ref document = protectedDocument();
+    document->selection().clear();
 
     element.stringReplaceAll(WTFMove(text));
 
     VisiblePosition afterContents = makeContainerOffsetPosition(&element, element.countChildNodes());
     if (afterContents.isNull())
         return;
-    m_document.selection().setSelection(afterContents);
+    document->selection().setSelection(afterContents);
 
     client()->respondToChangedContents();
 }
@@ -348,7 +353,8 @@ void Editor::setTextAsChildOfElement(String&& text, Element& element)
 // have a stale selection.
 void Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping()
 {
-    TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(m_document, m_document.selection().selection());
+    Ref document = protectedDocument();
+    TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(document, document->selection().selection());
 }
 
 } // namespace WebCore

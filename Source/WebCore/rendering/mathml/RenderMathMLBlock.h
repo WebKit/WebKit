@@ -41,8 +41,8 @@ class MathMLPresentationElement;
 class RenderMathMLBlock : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLBlock);
 public:
-    RenderMathMLBlock(MathMLPresentationElement&, RenderStyle&&);
-    RenderMathMLBlock(Document&, RenderStyle&&);
+    RenderMathMLBlock(Type, MathMLPresentationElement&, RenderStyle&&);
+    RenderMathMLBlock(Type, Document&, RenderStyle&&);
     virtual ~RenderMathMLBlock();
 
     MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
@@ -96,7 +96,6 @@ public:
     MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
 
 private:
-    bool isRenderMathMLTable() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderMathMLTable"_s; }
     std::optional<LayoutUnit> firstLineBaseline() const final;
 

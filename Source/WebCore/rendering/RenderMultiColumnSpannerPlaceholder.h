@@ -46,7 +46,6 @@ private:
     template<class T, class... Args> friend RenderPtr<T> createRenderer(Args&&...);
 
     RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow&, RenderBox& spanner, RenderStyle&&);
-    bool isRenderMultiColumnSpannerPlaceholder() const override { return true; }
 
     bool canHaveChildren() const override { return false; }
     void paint(PaintInfo&, const LayoutPoint&) override { }

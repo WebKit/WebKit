@@ -51,9 +51,9 @@ static InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect& li
     return lineLogicalRect;
 }
 
-InlineDisplayLineBuilder::InlineDisplayLineBuilder(const ConstraintsForInlineContent& constraints, const InlineFormattingContext& inlineFormattingContext)
-    : m_constraints(constraints)
-    , m_inlineFormattingContext(inlineFormattingContext)
+InlineDisplayLineBuilder::InlineDisplayLineBuilder(InlineFormattingContext& inlineFormattingContext, const ConstraintsForInlineContent& constraints)
+    : m_inlineFormattingContext(inlineFormattingContext)
+    , m_constraints(constraints)
 {
 }
 
@@ -96,11 +96,9 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
             borderBox.moveBy(lineBoxRect.topLeft());
         } else if (inlineLevelBox.isInlineBox()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            auto isContentful = [&] {
-                // In standards mode, inline boxes always start with an imaginary strut.
-                return layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
-            };
-            if (!isContentful())
+            // In standards mode, inline boxes always start with an imaginary strut.
+            auto isContentful = formattingContext().inlineLayoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
+            if (!isContentful)
                 continue;
             borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             borderBox.moveBy(lineBoxRect.topLeft());

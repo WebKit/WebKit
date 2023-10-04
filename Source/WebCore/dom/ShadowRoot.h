@@ -68,7 +68,7 @@ public:
     using TreeScope::getElementById;
     using TreeScope::rootNode;
 
-    WEBCORE_EXPORT Style::Scope& styleScope();
+    Style::Scope& styleScope() { return *m_styleScope; }
     StyleSheetList& styleSheets();
 
     bool delegatesFocus() const { return m_delegatesFocus; }
@@ -83,7 +83,8 @@ public:
     void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
 
     Element* host() const { return m_host.get(); }
-    void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTFMove(host); }
+    RefPtr<Element> protectedHost() const { return m_host.get(); }
+    void setHost(CheckedPtr<Element>&& host) { m_host = WTFMove(host); }
 
     String innerHTML() const;
     ExceptionOr<void> setInnerHTML(const String&);
@@ -150,7 +151,7 @@ private:
     ShadowRootMode m_mode { ShadowRootMode::UserAgent };
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_host;
+    CheckedPtr<Element> m_host;
     RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<Style::Scope> m_styleScope;

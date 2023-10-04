@@ -49,6 +49,7 @@ class MouseEvent;
 class UIEventWithKeyState;
 
 enum class SyntheticClickType : uint8_t;
+enum class MouseButton : int8_t;
 
 // NavigationAction should never hold a strong reference to the originating document either directly
 // or indirectly as doing so prevents its destruction even after navigating away from it because
@@ -83,7 +84,7 @@ public:
 
         LayoutPoint absoluteLocation;
         FloatPoint locationInRootViewCoordinates;
-        short button;
+        MouseButton button;
         SyntheticClickType syntheticClickType;
         bool buttonDown;
     };

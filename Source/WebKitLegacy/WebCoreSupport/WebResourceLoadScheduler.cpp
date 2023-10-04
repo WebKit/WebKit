@@ -61,23 +61,24 @@ WebResourceLoadScheduler& webResourceLoadScheduler()
     return static_cast<WebResourceLoadScheduler&>(*platformStrategies()->loaderStrategy());
 }
 
-WebResourceLoadScheduler::HostInformation* WebResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy createHostPolicy)
+auto WebResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy createHostPolicy) -> CheckedPtr<HostInformation>
 {
     if (!url.protocolIsInHTTPFamily())
-        return m_nonHTTPProtocolHost;
+        return m_nonHTTPProtocolHost.ptr();
 
     m_hosts.checkConsistency();
     String hostName = url.host().toString();
-    HostInformation* host = m_hosts.get(hostName);
+    CheckedPtr host = m_hosts.get(hostName);
     if (!host && createHostPolicy == CreateIfNotFound) {
-        host = new HostInformation(hostName, maxRequestsInFlightPerHost);
-        m_hosts.add(hostName, host);
+        auto newHost = makeUnique<HostInformation>(hostName, maxRequestsInFlightPerHost);
+        host = newHost.get();
+        m_hosts.add(hostName, WTFMove(newHost));
     }
     return host;
 }
 
 WebResourceLoadScheduler::WebResourceLoadScheduler()
-    : m_nonHTTPProtocolHost(new HostInformation(String(), maxRequestsInFlightForNonHTTPProtocols))
+    : m_nonHTTPProtocolHost(makeUniqueRef<HostInformation>(String(), maxRequestsInFlightForNonHTTPProtocols))
     , m_requestTimer(*this, &WebResourceLoadScheduler::requestTimerFired)
     , m_suspendPendingRequestsCount(0)
     , m_isSerialLoadingEnabled(false)
@@ -149,9 +150,9 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    HostInformation* host = hostForURL(resourceLoader->iOSOriginalRequest().url(), CreateIfNotFound);
+    CheckedRef host = hostForURL(resourceLoader->iOSOriginalRequest().url(), CreateIfNotFound).releaseNonNull();
 #else
-    HostInformation* host = hostForURL(resourceLoader->url(), CreateIfNotFound);
+    CheckedRef host = hostForURL(resourceLoader->url(), CreateIfNotFound).releaseNonNull();
 #endif
 
     ResourceLoadPriority priority = resourceLoader->request().priority();
@@ -163,7 +164,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
     if (ResourceRequest::resourcePrioritiesEnabled() && !isSuspendingPendingRequests()) {
         // Serve all requests at once to keep the pipeline full at the network layer.
         // FIXME: Does this code do anything useful, given that we also set maxRequestsInFlightPerHost to effectively unlimited on these platforms?
-        servePendingRequests(host, ResourceLoadPriority::VeryLow);
+        servePendingRequests(WTFMove(host), ResourceLoadPriority::VeryLow);
         return;
     }
 #endif
@@ -171,13 +172,13 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 #if PLATFORM(IOS_FAMILY)
     if ((priority > ResourceLoadPriority::Low || !resourceLoader->iOSOriginalRequest().url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriority::Low && !hadRequests)) && !isSuspendingPendingRequests()) {
         // Try to request important resources immediately.
-        servePendingRequests(host, priority);
+        servePendingRequests(WTFMove(host), priority);
         return;
     }
 #else
     if (priority > ResourceLoadPriority::Low || !resourceLoader->url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriority::Low && !hadRequests)) {
         // Try to request important resources immediately.
-        servePendingRequests(host, priority);
+        servePendingRequests(WTFMove(host), priority);
         return;
     }
 #endif
@@ -191,14 +192,14 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
 
-    HostInformation* host = hostForURL(resourceLoader->url());
+    CheckedPtr host = hostForURL(resourceLoader->url());
     if (host)
         host->remove(resourceLoader);
 #if PLATFORM(IOS_FAMILY)
     // ResourceLoader::url() doesn't start returning the correct value until the load starts. If we get canceled before that, we need to look for originalRequest url instead.
     // FIXME: ResourceLoader::url() should be made to return a sensible value at all times.
     if (!resourceLoader->iOSOriginalRequest().isNull()) {
-        HostInformation* originalHost = hostForURL(resourceLoader->iOSOriginalRequest().url());
+        CheckedPtr originalHost = hostForURL(resourceLoader->iOSOriginalRequest().url());
         if (originalHost && originalHost != host)
             originalHost->remove(resourceLoader);
     }
@@ -212,7 +213,8 @@ void WebResourceLoadScheduler::isResourceLoadFinished(CachedResource& resource, 
         callback(true);
         return;
     }
-    callback(!hostForURL(resource.loader()->url()));
+    bool didFinish = !hostForURL(resource.loader()->url());
+    callback(didFinish);
 }
 
 void WebResourceLoadScheduler::setDefersLoading(ResourceLoader& loader, bool defers)
@@ -225,12 +227,12 @@ void WebResourceLoadScheduler::setDefersLoading(ResourceLoader& loader, bool def
 
 void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const URL& redirectURL)
 {
-    HostInformation* oldHost = hostForURL(resourceLoader->url());
+    CheckedPtr oldHost = hostForURL(resourceLoader->url());
     ASSERT(oldHost);
     if (!oldHost)
         return;
 
-    HostInformation* newHost = hostForURL(redirectURL, CreateIfNotFound);
+    CheckedPtr newHost = hostForURL(redirectURL, CreateIfNotFound);
 
     if (oldHost->name() == newHost->name())
         return;
@@ -246,17 +248,22 @@ void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimum
 
     m_requestTimer.stop();
     
-    servePendingRequests(m_nonHTTPProtocolHost, minimumPriority);
+    servePendingRequests(m_nonHTTPProtocolHost.get(), minimumPriority);
 
-    for (auto* host : copyToVector(m_hosts.values())) {
+    auto hosts = WTF::map(m_hosts.values(), [](auto&& host) {
+        return WeakPtr { host.get() };
+    });
+    for (auto&& host : WTFMove(hosts)) {
+        if (!host)
+            continue;
         if (host->hasRequests())
-            servePendingRequests(host, minimumPriority);
+            servePendingRequests(*host, minimumPriority);
         else
-            delete m_hosts.take(host->name());
+            m_hosts.take(host->name());
     }
 }
 
-void WebResourceLoadScheduler::servePendingRequests(HostInformation* host, ResourceLoadPriority minimumPriority)
+void WebResourceLoadScheduler::servePendingRequests(CheckedRef<HostInformation>&& host, ResourceLoadPriority minimumPriority)
 {
     auto priority = ResourceLoadPriority::Highest;
     while (true) {

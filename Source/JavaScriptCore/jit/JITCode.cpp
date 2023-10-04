@@ -164,7 +164,7 @@ JITCodeWithCodeRef::JITCodeWithCodeRef(CodeRef<JSEntryPtrTag> ref, JITType jitTy
 
 JITCodeWithCodeRef::~JITCodeWithCodeRef()
 {
-    if ((Options::dumpDisassembly() || ((jitType() == JITType::BaselineJIT) && Options::dumpBaselineDisassembly()) || (isOptimizingJIT(jitType()) && Options::dumpDFGDisassembly()))
+    if ((Options::dumpDisassembly() || (isOptimizingJIT(jitType()) && Options::dumpDFGDisassembly()))
         && m_executableMemory)
         dataLog("Destroying JIT code at ", pointerDump(m_executableMemory.get()), "\n");
 }

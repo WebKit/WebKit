@@ -48,21 +48,6 @@ StreamConnectionBuffer::Handle StreamConnectionBuffer::createHandle()
     return { WTFMove(*handle) };
 }
 
-void StreamConnectionBuffer::Handle::encode(Encoder& encoder) &&
-{
-    encoder << WTFMove(memory);
-}
-
-std::optional<StreamConnectionBuffer::Handle> StreamConnectionBuffer::Handle::decode(Decoder& decoder)
-{
-    auto handle = decoder.decode<WebKit::SharedMemory::Handle>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    if (UNLIKELY(!sharedMemorySizeIsValid(handle->size())))
-        return std::nullopt;
-    return Handle { WTFMove(*handle) };
-}
-
 std::span<uint8_t> StreamConnectionBuffer::headerForTesting()
 {
     return { static_cast<uint8_t*>(m_sharedMemory->data()), headerSize() };

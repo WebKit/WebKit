@@ -140,8 +140,9 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     // On iOS, WebKit normally provides the location. However, if the client sets a coreLocationProvider, then we use that one instead.
     // This is useful for WebKitTestRunner to provide a dummy geolocation provider. It is also used by certain apps to deny all
     // geolocation authorization as a way to disable support for geolocation.
-    if (wrapper(processPool)._coreLocationProvider) {
-        _geolocationManager = processPool.supplement<WebKit::WebGeolocationManagerProxy>();
+    Ref protectedProcessPool { processPool };
+    if (wrapper(protectedProcessPool.get())._coreLocationProvider) {
+        _geolocationManager = protectedProcessPool->supplement<WebKit::WebGeolocationManagerProxy>();
         WKGeolocationProviderV1 providerCallback = {
             { 1, self },
             startUpdatingCallback,
@@ -149,7 +150,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
             setEnableHighAccuracy
         };
         WKGeolocationManagerSetProvider(toAPI(_geolocationManager.get()), &providerCallback.base);
-        _coreLocationProvider = wrapper(processPool)._coreLocationProvider;
+        _coreLocationProvider = wrapper(protectedProcessPool.get())._coreLocationProvider;
         [_coreLocationProvider setListener:self];
     }
     return self;

@@ -40,33 +40,42 @@
 
 namespace WebKit {
 
-void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
+void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType)
 {
     auto page = WebProcessProxy::webPage(identifier);
     if (!page)
         return;
+
+    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", type, (NSString *)toDebugString(contentWorldType));
 
     if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier)
         m_backgroundContentEventListeners.add(type);
 
-    auto result = m_eventListenerPages.add(type, WeakPageCountedSet { });
+    auto result = m_eventListenerPages.add({ type, contentWorldType }, WeakPageCountedSet { });
     result.iterator->value.add(*page);
 }
 
-void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
+void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType, size_t removedCount)
 {
+    ASSERT(removedCount);
+
     auto page = WebProcessProxy::webPage(identifier);
     if (!page)
         return;
 
-    if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier)
-        m_backgroundContentEventListeners.remove(type);
+    RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}zu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, type, (NSString *)toDebugString(contentWorldType));
 
-    auto iterator = m_eventListenerPages.find(type);
+    if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier) {
+        for (size_t i = 0; i < removedCount; ++i)
+            m_backgroundContentEventListeners.remove(type);
+    }
+
+    auto iterator = m_eventListenerPages.find({ type, contentWorldType });
     if (iterator == m_eventListenerPages.end())
         return;
 
-    iterator->value.remove(*page);
+    for (size_t i = 0; i < removedCount; ++i)
+        iterator->value.remove(*page);
 
     if (!iterator->value.isEmptyIgnoringNullReferences())
         return;

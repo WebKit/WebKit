@@ -1813,7 +1813,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setDefaultFontSize([_private->preferences defaultFontSize]);
     _private->page->settings().setDefaultFixedFontSize(13);
     _private->page->settings().setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
-    _private->page->settings().setDisplayListDrawingEnabled([preferences displayListDrawingEnabled]);
 
     _private->page->settings().setFontFallbackPrefersPictographs(true);
     _private->page->settings().setPictographFontFamily("AppleColorEmoji"_s);
@@ -1891,7 +1890,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
                 continue;
             auto *document = localFrame->document();
             if (document)
-                document->updateLayoutIgnorePendingStylesheets();
+                document->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
         }
     });
 }
@@ -2926,7 +2925,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    settings.setMediaKeysStorageDirectory([preferences mediaKeysStorageDirectory]);
+    _private->page->setMediaKeysStorageDirectory([preferences mediaKeysStorageDirectory]);
 #endif
 
     // FIXME: Is this relevent to WebKitLegacy? If not, we should remove it.
@@ -9790,7 +9789,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     auto* page = core(self);
     if (!page)
         return @[];
-    return createNSArray(page->editableElementsInRect(rect), [] (auto& coreElement) {
+    return createNSArray(page->editableElementsInRect(rect), [] (auto&& coreElement) {
         return kit(coreElement.ptr());
     }).autorelease();
 }

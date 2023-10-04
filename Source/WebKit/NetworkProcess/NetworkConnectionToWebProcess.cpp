@@ -27,7 +27,6 @@
 #include "NetworkConnectionToWebProcess.h"
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
-#include "CacheStorageEngineConnectionMessages.h"
 #include "DataReference.h"
 #include "LogInitialization.h"
 #include "Logging.h"
@@ -54,6 +53,8 @@
 #include "NetworkSocketChannel.h"
 #include "NetworkSocketChannelMessages.h"
 #include "NetworkStorageManager.h"
+#include "NetworkTransportSession.h"
+#include "NetworkTransportSessionMessages.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PingLoad.h"
 #include "PreconnectTask.h"
@@ -77,6 +78,7 @@
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/Cookie.h>
+#include <WebCore/CookieJar.h>
 #include <WebCore/CookieStoreGetOptions.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DocumentStorageAccess.h>
@@ -282,8 +284,9 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 #endif
 
-    if (decoder.messageReceiverName() == Messages::CacheStorageEngineConnection::messageReceiverName()) {
-        cacheStorageConnection().didReceiveMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::NetworkTransportSession::messageReceiverName()) {
+        if (auto* networkTransportSession = m_networkTransportSessions.get(WebTransportSessionIdentifier(decoder.destinationID())))
+            networkTransportSession->didReceiveMessage(connection, decoder);
         return;
     }
     
@@ -383,13 +386,6 @@ void NetworkConnectionToWebProcess::unregisterToRTCDataChannelProxy()
         m_networkProcess->rtcDataChannelProxy().unregisterConnectionToWebProcess(*this);
 }
 #endif
-
-CacheStorageEngineConnection& NetworkConnectionToWebProcess::cacheStorageConnection()
-{
-    if (!m_cacheStorageConnection)
-        m_cacheStorageConnection = CacheStorageEngineConnection::create(*this);
-    return *m_cacheStorageConnection;
-}
 
 bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& reply)
 {
@@ -848,7 +844,7 @@ void NetworkConnectionToWebProcess::deleteCookie(const URL& url, const String& c
     networkStorageSession->deleteCookie(url, cookieName, WTFMove(completionHandler));
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, WebCore::CookieStoreGetOptions&& options, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, WebCore::CookieStoreGetOptions&& options, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&& completionHandler)
 {
     NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler(std::nullopt));
 
@@ -865,7 +861,7 @@ void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, co
     completionHandler(WTFMove(result));
 }
 
-void NetworkConnectionToWebProcess::setCookieFromDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, WebCore::FrameIdentifier frameID, PageIdentifier pageID, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, WebCore::Cookie&& cookie, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::setCookieFromDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, WebCore::Cookie&& cookie, CompletionHandler<void(bool)>&& completionHandler)
 {
     NETWORK_PROCESS_MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty));
 
@@ -1036,7 +1032,7 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
     for (auto& file : fileReferences)
         file->prepareForFileAccess();
 
-    session->blobRegistry().writeBlobsToTemporaryFilesForIndexedDB(blobURLs, [this, protectedThis = Ref { *this }, fileReferences = WTFMove(fileReferences), completionHandler = WTFMove(completionHandler)](auto&& filePaths) mutable {
+    session->blobRegistry().writeBlobsToTemporaryFilesForIndexedDB(blobURLs, [this, protectedThis = Ref { *this }, fileReferences = WTFMove(fileReferences), completionHandler = WTFMove(completionHandler)](Vector<String>&& filePaths) mutable {
         for (auto& file : fileReferences)
             file->revokeFileAccess();
 
@@ -1392,7 +1388,7 @@ uint64_t NetworkConnectionToWebProcess::nextMessageBatchIdentifier(CompletionHan
 
 void NetworkConnectionToWebProcess::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, uint64_t)>&& callback)
 {
-    networkProcess().messagePortChannelRegistry().takeAllMessagesForPort(port, [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto&& messages, auto&& deliveryCallback) mutable {
+    networkProcess().messagePortChannelRegistry().takeAllMessagesForPort(port, [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<MessageWithMessagePorts>&& messages, CompletionHandler<void()>&& deliveryCallback) mutable {
         callback(WTFMove(messages), nextMessageBatchIdentifier(WTFMove(deliveryCallback)));
     });
 }
@@ -1494,6 +1490,79 @@ void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::
 {
     if (auto* loader = m_networkResourceLoaders.get(identifier))
         loader->useRedirectionForCurrentNavigation(WTFMove(response));
+}
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if (!session) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    auto registrableDomain = RegistrableDomain(scopeURL);
+    session->notificationManager().subscribeToPushService(WTFMove(scopeURL), WTFMove(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), registrableDomain = WTFMove(registrableDomain)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
+        if (auto resourceLoadStatistics = weakThis && weakThis->networkSession() ? weakThis->networkSession()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
+            return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTFMove(registrableDomain), [result = WTFMove(result), completionHandler = WTFMove(completionHandler)] () mutable {
+                completionHandler(WTFMove(result));
+            });
+        }
+        completionHandler(WTFMove(result));
+    });
+}
+
+void NetworkConnectionToWebProcess::navigatorUnsubscribeFromPushService(URL&& scopeURL, const PushSubscriptionIdentifier& subscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if (!session) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session->notificationManager().unsubscribeFromPushService(WTFMove(scopeURL), subscriptionIdentifier, WTFMove(completionHandler));
+
+}
+
+void NetworkConnectionToWebProcess::navigatorGetPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if (!session) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session->notificationManager().getPushSubscription(WTFMove(scopeURL), WTFMove(completionHandler));
+}
+
+void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if (!session) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session->notificationManager().getPushPermissionState(WTFMove(scopeURL), WTFMove(completionHandler));
+}
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
+void NetworkConnectionToWebProcess::initializeWebTransportSession(URL&& url, CompletionHandler<void(std::optional<WebTransportSessionIdentifier>)>&& completionHandler)
+{
+    NetworkTransportSession::initialize(*this, WTFMove(url), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (std::unique_ptr<NetworkTransportSession>&& session) mutable {
+        if (!session || !weakThis)
+            return completionHandler(std::nullopt);
+        auto identifier = session->identifier();
+        ASSERT(!m_networkTransportSessions.contains(identifier));
+        m_networkTransportSessions.set(identifier, makeUniqueRefFromNonNullUniquePtr(WTFMove(session)));
+        completionHandler(identifier);
+    });
+}
+
+void NetworkConnectionToWebProcess::destroyWebTransportSession(WebTransportSessionIdentifier identifier)
+{
+    ASSERT(m_networkTransportSessions.contains(identifier));
+    m_networkTransportSessions.remove(identifier);
 }
 
 } // namespace WebKit

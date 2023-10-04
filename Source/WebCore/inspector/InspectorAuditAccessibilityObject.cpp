@@ -27,9 +27,9 @@
 #include "config.h"
 #include "InspectorAuditAccessibilityObject.h"
 
+#include "AXCoreObject.h"
 #include "AXObjectCache.h"
 #include "AccessibilityNodeObject.h"
-#include "AccessibilityObjectInterface.h"
 #include "ContainerNode.h"
 #include "Document.h"
 #include "HTMLNames.h"

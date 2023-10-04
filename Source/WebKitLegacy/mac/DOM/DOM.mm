@@ -300,7 +300,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 #endif
 {
     auto& node = *core(self);
-    node.document().updateLayoutIgnorePendingStylesheets();
+    node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     auto* renderer = node.renderer();
     if (!renderer)
 #if PLATFORM(IOS_FAMILY)
@@ -327,7 +327,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (WKQuad)absoluteQuadAndInsideFixedPosition:(BOOL *)insideFixed
 {
     auto& node = *core(self);
-    node.document().updateLayoutIgnorePendingStylesheets();
+    node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     auto* renderer = node.renderer();
     if (!renderer) {
         if (insideFixed)
@@ -352,7 +352,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (CGRect)boundingBoxUsingTransforms
 {
     auto& node = *core(self);
-    node.document().updateLayoutIgnorePendingStylesheets();
+    node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     auto* renderer = node.renderer();
     if (!renderer)
         return CGRectZero;
@@ -363,7 +363,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (NSArray *)lineBoxQuads
 {
     auto& node = *core(self);
-    node.document().updateLayoutIgnorePendingStylesheets();
+    node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     WebCore::RenderObject *renderer = node.renderer();
     if (!renderer)
         return nil;
@@ -432,7 +432,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (WKQuad)innerFrameQuad // takes transforms into account
 {
     auto& node = *core(self);
-    node.document().updateLayoutIgnorePendingStylesheets();
+    node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     auto* renderer = node.renderer();
     if (!renderer)
         return zeroQuad();
@@ -494,7 +494,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (NSArray *)textRects
 {
     auto& node = *core(self);
-    node.document().updateLayoutIgnorePendingStylesheets();
+    node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     if (!node.renderer())
         return nil;
     return createNSArray(RenderObject::absoluteTextRects(makeRangeSelectingNodeContents(node))).autorelease();
@@ -571,7 +571,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 #endif
 {
     auto range = makeSimpleRange(*core(self));
-    range.start.document().updateLayoutIgnorePendingStylesheets();
+    range.start.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     return unionRect(RenderObject::absoluteTextRects(range));
 }
 
@@ -601,7 +601,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (NSArray *)textRects
 {
     auto range = makeSimpleRange(*core(self));
-    range.start.document().updateLayoutIgnorePendingStylesheets();
+    range.start.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     return createNSArray(RenderObject::absoluteTextRects(range)).autorelease();
 }
 

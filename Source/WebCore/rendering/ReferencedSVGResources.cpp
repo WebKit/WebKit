@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,8 @@
 #include "ReferencedSVGResources.h"
 
 #include "FilterOperations.h"
+#include "LegacyRenderSVGResourceClipper.h"
 #include "PathOperation.h"
-#include "RenderSVGResourceClipper.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderStyle.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -156,12 +155,19 @@ SVGFilterElement* ReferencedSVGResources::referencedFilterElement(TreeScope& tre
     return element ? downcast<SVGFilterElement>(element) : nullptr;
 }
 
-RenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(TreeScope& treeScope, const ReferencePathOperation& clipPath)
+LegacyRenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(TreeScope& treeScope, const ReferencePathOperation& clipPath)
 {
     if (clipPath.fragment().isEmpty())
         return nullptr;
     // For some reason, SVG stores a cache of id -> renderer, rather than just using getElementById() and renderer().
-    return getRenderSVGResourceById<RenderSVGResourceClipper>(treeScope, clipPath.fragment());
+    return getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, clipPath.fragment());
+}
+
+LegacyRenderSVGResourceContainer* ReferencedSVGResources::referencedRenderResource(TreeScope& treeScope, const AtomString& fragment)
+{
+    if (fragment.isEmpty())
+        return nullptr;
+    return getRenderSVGResourceContainerById(treeScope, fragment);
 }
 
 } // namespace WebCore

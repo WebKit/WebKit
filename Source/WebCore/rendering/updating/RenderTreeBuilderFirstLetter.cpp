@@ -185,9 +185,9 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderPtr<RenderBoxModelObject> newFirstLetter;
         if (pseudoStyle->display() == DisplayType::Inline)
-            newFirstLetter = createRenderer<RenderInline>(firstLetterBlock.document(), WTFMove(*pseudoStyle));
+            newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, firstLetterBlock.document(), WTFMove(*pseudoStyle));
         else
-            newFirstLetter = createRenderer<RenderBlockFlow>(firstLetterBlock.document(), WTFMove(*pseudoStyle));
+            newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, firstLetterBlock.document(), WTFMove(*pseudoStyle));
         newFirstLetter->initializeStyle();
         newFirstLetter->setIsFirstLetter();
 
@@ -231,9 +231,9 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
 
     RenderPtr<RenderBoxModelObject> newFirstLetter;
     if (pseudoStyle->display() == DisplayType::Inline)
-        newFirstLetter = createRenderer<RenderInline>(currentTextChild.document(), WTFMove(*pseudoStyle));
+        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, currentTextChild.document(), WTFMove(*pseudoStyle));
     else
-        newFirstLetter = createRenderer<RenderBlockFlow>(currentTextChild.document(), WTFMove(*pseudoStyle));
+        newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, currentTextChild.document(), WTFMove(*pseudoStyle));
     newFirstLetter->initializeStyle();
     newFirstLetter->setIsFirstLetter();
 

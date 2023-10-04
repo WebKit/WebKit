@@ -1,0 +1,26 @@
+This test ensures we compute the correct role for role='form' and role='region' elements.
+
+PASS: accessibilityController.accessibleElementById('form').computedRoleString === 'generic'
+PASS: accessibilityController.accessibleElementById('region').computedRoleStringrole === undefined
+document.getElementById('form').setAttribute('aria-label', 'i am a form')
+document.getElementById('region').setAttribute('aria-label', 'i am a region')
+PASS: accessibilityController.accessibleElementById('form').computedRoleString === 'form'
+PASS: accessibilityController.accessibleElementById('region').computedRoleString === 'region'
+document.getElementById('form').setAttribute('aria-label', '')
+document.getElementById('region').setAttribute('aria-label', '')
+PASS: accessibilityController.accessibleElementById('form').computedRoleString === 'generic'
+PASS: accessibilityController.accessibleElementById('region').computedRoleString === 'generic'
+document.getElementById('form').removeAttribute('aria-label')
+document.getElementById('region').removeAttribute('aria-label')
+document.getElementById('form').setAttribute('aria-labelledby', 'form-label')
+document.getElementById('region').setAttribute('aria-labelledby', 'region-label')
+PASS: accessibilityController.accessibleElementById('form').computedRoleString === 'form'
+PASS: accessibilityController.accessibleElementById('region').computedRoleString === 'region'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Text inside a region
+Foo
+Foo

@@ -25,12 +25,21 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import <WebKit/WebKit.h>
+#ifdef __OBJC__
 
-#import <WebKit/_WKWebExtensionControllerDelegate.h>
+#import <WebKit/WebKit.h>
+#import <WebKit/_WKWebExtensionAction.h>
+#import <WebKit/_WKWebExtensionContextPrivate.h>
+#import <WebKit/_WKWebExtensionControllerConfigurationPrivate.h>
+#import <WebKit/_WKWebExtensionControllerDelegatePrivate.h>
+#import <WebKit/_WKWebExtensionControllerPrivate.h>
 #import <WebKit/_WKWebExtensionMatchPattern.h>
+#import <WebKit/_WKWebExtensionMessagePort.h>
 #import <WebKit/_WKWebExtensionPermission.h>
+#import <WebKit/_WKWebExtensionPrivate.h>
 #import <WebKit/_WKWebExtensionTab.h>
+#import <WebKit/_WKWebExtensionTabCreationOptions.h>
+#import <WebKit/_WKWebExtensionWindow.h>
 
 @interface TestWebExtensionsDelegate : NSObject <_WKWebExtensionControllerDelegate>
 
@@ -43,6 +52,13 @@
 @property (nonatomic, copy) void (^promptForPermissions)(id <_WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<_WKWebExtensionPermission> *));
 @property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id <_WKWebExtensionTab>, NSSet<_WKWebExtensionMatchPattern *> *, void (^)(NSSet<_WKWebExtensionMatchPattern *> *));
 
+@property (nonatomic, copy) void (^sendMessage)(id message, NSString *applicationIdentifier, void (^)(id replyMessage, NSError *));
+@property (nonatomic, copy) void (^connectUsingMessagePort)(_WKWebExtensionMessagePort *);
+
+@property (nonatomic, copy) void (^presentActionPopup)(_WKWebExtensionAction *);
+
 @end
+
+#endif // __OBJC__
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -18,3 +18,5 @@ let iterator = (function* () {
 assert.throws(TypeError, function () {
   iterator.reduce(nonCallable);
 });
+
+iterator.reduce(() => {});

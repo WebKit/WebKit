@@ -47,16 +47,12 @@ public:
     template<typename BackendType>
     static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, bool avoidBackendSizeCheck = false)
     {
-        auto parameters = WebCore::ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
-        if (!avoidBackendSizeCheck && BackendType::calculateSafeBackendSize(parameters).isEmpty())
+        Parameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
+        auto backendParameters = ImageBuffer::backendParameters(parameters);
+        if (!avoidBackendSizeCheck && BackendType::calculateSafeBackendSize(backendParameters).isEmpty())
             return nullptr;
-        auto info = populateBackendInfo<BackendType>(parameters);
+        auto info = populateBackendInfo<BackendType>(backendParameters);
         return adoptRef(new RemoteImageBufferProxy(parameters, info, remoteRenderingBackendProxy));
-    }
-
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<WebCore::ImageBufferBackend>&& backend, WebCore::RenderingResourceIdentifier identifier)
-    {
-        return adoptRef(new RemoteImageBufferProxy(parameters, info, remoteRenderingBackendProxy, WTFMove(backend), identifier));
     }
 
     ~RemoteImageBufferProxy();
@@ -70,21 +66,18 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     // Messages
-    void didCreateBackend(ImageBufferBackendHandle&&);
+    void didCreateBackend(std::optional<ImageBufferBackendHandle>);
 
 private:
-    RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
+    RemoteImageBufferProxy(Parameters, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
 
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
-    RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::GraphicsContext&) const final;
+    RefPtr<WebCore::NativeImage> copyNativeImage() const final;
+    RefPtr<WebCore::NativeImage> createNativeImageReference() const final;
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
 
     RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread() final;
-    RefPtr<ImageBuffer> cloneForDifferentThread() final;
 
-    RefPtr<WebCore::Image> filteredImage(WebCore::Filter&) final;
-
-    void drawConsuming(WebCore::GraphicsContext& destContext, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) final;
+    RefPtr<WebCore::NativeImage> filteredNativeImage(WebCore::Filter&) final;
 
     WebCore::GraphicsContext& context() const final;
 
@@ -102,7 +95,7 @@ private:
 
     void assertDispatcherIsCurrent() const;
     template<typename T> void send(T&& message);
-    template<typename T> void sendSync(T&& message);
+    template<typename T> auto sendSync(T&& message);
 
     IPC::StreamClientConnection& streamConnection() const;
 
@@ -121,7 +114,7 @@ public:
 
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier() { return m_renderingResourceIdentifier; }
 
-    RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, const WebCore::RenderingResourceIdentifier&, RemoteRenderingBackendProxy&);
+    RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters, const WebCore::ImageBufferBackend::Info&, const WebCore::RenderingResourceIdentifier&, RemoteRenderingBackendProxy&);
 
     size_t memoryCost() final
     {
@@ -137,7 +130,7 @@ private:
 
     bool isRemoteSerializedImageBufferProxy() const final { return true; }
 
-    WebCore::ImageBufferBackend::Parameters m_parameters;
+    WebCore::ImageBuffer::Parameters m_parameters;
     WebCore::ImageBufferBackend::Info m_info;
     WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
     RefPtr<IPC::Connection> m_connection;

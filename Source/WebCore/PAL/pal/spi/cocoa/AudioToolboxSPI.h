@@ -31,5 +31,14 @@
 #else
 
 static constexpr OSType kAudioFormatProperty_AvailableDecodeChannelLayoutTags = 'adcl';
+static constexpr OSType kAudioFormatProperty_VorbisModeInfo = 'vnfo';
+
+struct AudioFormatVorbisModeInfo {
+    UInt32 mShortBlockSize;
+    UInt32 mLongBlockSize;
+    UInt32 mModeCount;
+    UInt64 mModeFlags;
+};
+typedef struct AudioFormatVorbisModeInfo AudioFormatVorbisModeInfo;
 
 #endif

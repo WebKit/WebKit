@@ -16,5 +16,5 @@ function f() {
     return "a";
 }
 if (("ab".replace("b", f)!=="aa") || (x!==undefined)) {
-        throw "'this' had incorrect value!";
+    throw "'this' had incorrect value!";
 }

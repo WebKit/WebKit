@@ -47,17 +47,17 @@ public:
 
     NodeKind kind() const override;
     Type type() const { return m_type; }
-    Sampling sampling() const { return m_sampling; }
+    std::optional<Sampling> sampling() const { return m_sampling; }
 
 private:
-    InterpolateAttribute(SourceSpan span, Type type, Sampling sampling)
+    InterpolateAttribute(SourceSpan span, Type type, std::optional<Sampling> sampling)
         : Attribute(span)
         , m_type(type)
-        , m_sampling(sampling)
+        , m_sampling(WTFMove(sampling))
     { }
 
     Type m_type;
-    Sampling m_sampling;
+    std::optional<Sampling> m_sampling;
 };
 
 } // namespace WGSL::AST

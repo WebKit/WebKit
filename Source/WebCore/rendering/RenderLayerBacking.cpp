@@ -354,7 +354,6 @@ Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, G
 
 #if PLATFORM(COCOA) && USE(CA)
     graphicsLayer->setAcceleratesDrawing(compositor().acceleratedDrawingEnabled());
-    graphicsLayer->setUsesDisplayListDrawing(compositor().displayListDrawingEnabled());
 #endif
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -557,6 +556,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
 #endif
+    updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
@@ -805,6 +805,14 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
 }
 #endif
 
+bool RenderLayerBacking::updateBackdropRoot()
+{
+    if (m_graphicsLayer->isBackdropRoot() == m_owningLayer.isBackdropRoot())
+        return false;
+    m_graphicsLayer->setIsBackdropRoot(m_owningLayer.isBackdropRoot());
+    return true;
+}
+
 #if ENABLE(CSS_COMPOSITING)
 void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 {
@@ -1029,6 +1037,7 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
 #if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
 #endif
+    updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
@@ -1200,6 +1209,9 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         m_graphicsLayer->setContentsRectClipsDescendants(true);
         updateContentsRects();
     }
+
+    if (updateBackdropRoot())
+        layerConfigChanged = true;
 
     if (layerConfigChanged)
         updatePaintingPhases();
@@ -1381,6 +1393,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 #if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
 #endif
+    updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
@@ -2655,8 +2668,10 @@ static inline bool hasVisibleBoxDecorations(const RenderStyle& style)
     return style.hasVisibleBorder() || style.hasBorderRadius() || style.hasOutline() || style.hasEffectiveAppearance() || style.boxShadow() || style.hasFilter();
 }
 
-static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& style)
+static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& renderer)
 {
+    const RenderStyle& style = renderer.style();
+
     if (!GraphicsLayer::supportsContentsTiling())
         return false;
 
@@ -2664,7 +2679,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& sty
     if (fillLayer.next())
         return false;
 
-    if (!fillLayer.imagesAreLoaded())
+    if (!fillLayer.imagesAreLoaded(&renderer))
         return false;
 
     if (fillLayer.attachment() != FillAttachment::ScrollBackground)
@@ -2687,15 +2702,17 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& sty
     return true;
 }
 
-static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderStyle& style)
+static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderElement& renderer)
 {
+    const RenderStyle& style = renderer.style();
+
     if (hasVisibleBoxDecorations(style))
         return true;
 
     if (!style.hasBackgroundImage())
         return false;
 
-    return !canDirectlyCompositeBackgroundBackgroundImage(style);
+    return !canDirectlyCompositeBackgroundBackgroundImage(renderer);
 }
 
 static inline bool hasPerspectiveOrPreserves3D(const RenderStyle& style)
@@ -2833,7 +2850,7 @@ static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObjec
     if (renderer.hasClip())
         return false;
 
-    if (hasPaintedBoxDecorationsOrBackgroundImage(style))
+    if (hasPaintedBoxDecorationsOrBackgroundImage(renderer))
         return false;
 
     // FIXME: We can't create a directly composited background if this
@@ -2910,7 +2927,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (renderer().isRenderReplaced() && !isCompositedPlugin(renderer()))
         return false;
 
-    if (renderer().isTextControl())
+    if (renderer().isRenderTextControl())
         return false;
 
     if (contentsInfo.paintsBoxDecorations() || contentsInfo.paintsContent())
@@ -3160,7 +3177,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     }
 #endif
 
-    if ((changeType == BackgroundImageChanged) && canDirectlyCompositeBackgroundBackgroundImage(renderer().style()))
+    if ((changeType == BackgroundImageChanged) && canDirectlyCompositeBackgroundBackgroundImage(renderer()))
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
     if ((changeType == MaskImageChanged) && m_maskLayer)
@@ -3924,16 +3941,18 @@ void RenderLayerBacking::verifyNotPainting()
 
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)
 {
+    bool shouldApplyAnimationsToTargetRenderer = renderer().isBox() || renderer().isSVGLayerAwareRenderer();
+
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
-    bool hasRotate = renderer().isBox() && keyframes.containsProperty(CSSPropertyRotate);
-    bool hasScale = renderer().isBox() && keyframes.containsProperty(CSSPropertyScale);
-    bool hasTranslate = renderer().isBox() && keyframes.containsProperty(CSSPropertyTranslate);
-    bool hasTransform = renderer().isBox() && keyframes.containsProperty(CSSPropertyTransform);
+    bool hasRotate = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyRotate);
+    bool hasScale = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyScale);
+    bool hasTranslate = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyTranslate);
+    bool hasTransform = shouldApplyAnimationsToTargetRenderer && keyframes.containsProperty(CSSPropertyTransform);
     bool hasFilter = keyframes.containsProperty(CSSPropertyFilter);
 
     bool hasBackdropFilter = false;
 #if ENABLE(FILTERS_LEVEL_2)
-    hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter);
+    hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter) || keyframes.containsProperty(CSSPropertyBackdropFilter);
 #endif
 
     if (!hasOpacity && !hasRotate && !hasScale && !hasTranslate && !hasTransform && !hasFilter && !hasBackdropFilter)
@@ -3977,7 +3996,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
             filterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->filter(), tf));
 
 #if ENABLE(FILTERS_LEVEL_2)
-        if (currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter))
+        if (currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.containsProperty(CSSPropertyBackdropFilter))
             backdropFilterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->backdropFilter(), tf));
 #endif
     }
@@ -3987,16 +4006,20 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 
     bool didAnimate = false;
 
-    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    auto referenceBoxRect = renderer().transformReferenceBoxRect(renderer().style());
+    if (!renderer().isSVGLayerAwareRenderer())
+        referenceBoxRect = snappedIntRect(LayoutRect(referenceBoxRect));
+
+    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
@@ -4191,6 +4214,7 @@ AnimatedProperty RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cs
     case CSSPropertyFilter:
         return AnimatedProperty::Filter;
 #if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return AnimatedProperty::WebkitBackdropFilter;
 #endif

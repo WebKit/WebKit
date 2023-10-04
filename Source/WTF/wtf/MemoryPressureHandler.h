@@ -71,6 +71,18 @@ enum class Synchronous : bool { No, Yes };
 
 typedef WTF::Function<void(Critical, Synchronous)> LowMemoryHandler;
 
+struct MemoryPressureHandlerConfiguration {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_EXPORT_PRIVATE MemoryPressureHandlerConfiguration();
+    WTF_EXPORT_PRIVATE MemoryPressureHandlerConfiguration(size_t, double, double, std::optional<double>, Seconds);
+
+    size_t baseThreshold;
+    double conservativeThresholdFraction;
+    double strictThresholdFraction;
+    std::optional<double> killThresholdFraction;
+    Seconds pollInterval;
+};
+
 class MemoryPressureHandler {
     WTF_MAKE_FAST_ALLOCATED;
     friend class WTF::LazyNeverDestroyed<MemoryPressureHandler>;
@@ -176,57 +188,8 @@ public:
         WTF_EXPORT_PRIVATE static bool s_loggingEnabled;
     };
 
-    struct Configuration {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        WTF_EXPORT_PRIVATE Configuration();
-        WTF_EXPORT_PRIVATE Configuration(size_t, double, double, std::optional<double>, Seconds);
+    using Configuration = MemoryPressureHandlerConfiguration;
 
-        template<class Encoder> void encode(Encoder& encoder) const
-        {
-            encoder << baseThreshold;
-            encoder << conservativeThresholdFraction;
-            encoder << strictThresholdFraction;
-            encoder << killThresholdFraction;
-            encoder << pollInterval;
-        }
-
-        template<class Decoder>
-        static std::optional<Configuration> decode(Decoder& decoder)
-        {
-            std::optional<size_t> baseThreshold;
-            decoder >> baseThreshold;
-            if (!baseThreshold)
-                return std::nullopt;
-
-            std::optional<double> conservativeThresholdFraction;
-            decoder >> conservativeThresholdFraction;
-            if (!conservativeThresholdFraction)
-                return std::nullopt;
-
-            std::optional<double> strictThresholdFraction;
-            decoder >> strictThresholdFraction;
-            if (!strictThresholdFraction)
-                return std::nullopt;
-
-            std::optional<std::optional<double>> killThresholdFraction;
-            decoder >> killThresholdFraction;
-            if (!killThresholdFraction)
-                return std::nullopt;
-
-            std::optional<Seconds> pollInterval;
-            decoder >> pollInterval;
-            if (!pollInterval)
-                return std::nullopt;
-
-            return {{ *baseThreshold, *conservativeThresholdFraction, *strictThresholdFraction, *killThresholdFraction, *pollInterval }};
-        }
-
-        size_t baseThreshold;
-        double conservativeThresholdFraction;
-        double strictThresholdFraction;
-        std::optional<double> killThresholdFraction;
-        Seconds pollInterval;
-    };
     void setConfiguration(Configuration&& configuration) { m_configuration = WTFMove(configuration); }
     void setConfiguration(const Configuration& configuration) { m_configuration = configuration; }
 

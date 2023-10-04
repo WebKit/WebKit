@@ -56,7 +56,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSearchField);
 
 RenderSearchField::RenderSearchField(HTMLInputElement& element, RenderStyle&& style)
-    : RenderTextControlSingleLine(element, WTFMove(style))
+    : RenderTextControlSingleLine(Type::SearchField, element, WTFMove(style))
     , m_searchPopupIsVisible(false)
     , m_searchPopup(nullptr)
 {

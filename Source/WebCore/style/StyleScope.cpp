@@ -480,14 +480,14 @@ Scope::StyleSheetChange Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSSSt
     if (newStylesheetCount < oldStylesheetCount)
         return { ResolverUpdateType::Reconstruct };
 
-    Vector<StyleSheetContents*> addedSheets;
+    Vector<CheckedRef<StyleSheetContents>> addedSheets;
     unsigned newIndex = 0;
     for (unsigned oldIndex = 0; oldIndex < oldStylesheetCount; ++oldIndex) {
         if (newIndex >= newStylesheetCount)
             return { ResolverUpdateType::Reconstruct };
 
         while (m_activeStyleSheets[oldIndex] != newStylesheets[newIndex]) {
-            addedSheets.append(&newStylesheets[newIndex]->contents());
+            addedSheets.append(newStylesheets[newIndex]->contents());
             ++newIndex;
             if (newIndex == newStylesheetCount)
                 return { ResolverUpdateType::Reconstruct };
@@ -496,7 +496,7 @@ Scope::StyleSheetChange Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSSSt
     }
     bool hasInsertions = !addedSheets.isEmpty();
     while (newIndex < newStylesheetCount) {
-        addedSheets.append(&newStylesheets[newIndex]->contents());
+        addedSheets.append(newStylesheets[newIndex]->contents());
         ++newIndex;
     }
 
@@ -644,14 +644,14 @@ const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector()
     return result;
 }
 
-bool Scope::activeStyleSheetsContains(const CSSStyleSheet* sheet) const
+bool Scope::activeStyleSheetsContains(const CSSStyleSheet& sheet) const
 {
     if (m_activeStyleSheets.isEmpty())
         return false;
 
     if (m_weakCopyOfActiveStyleSheetListForFastLookup.isEmpty()) {
         for (auto& activeStyleSheet : m_activeStyleSheets)
-            m_weakCopyOfActiveStyleSheetListForFastLookup.add(activeStyleSheet.get());
+            m_weakCopyOfActiveStyleSheetListForFastLookup.add(*activeStyleSheet);
     }
     return m_weakCopyOfActiveStyleSheetListForFastLookup.contains(sheet);
 }
@@ -930,7 +930,7 @@ bool Scope::updateQueryContainerState(QueryContainerUpdateContext& context)
         auto it = previousStates.find(*containerElement);
         bool changed = it == previousStates.end() || sizeChanged(it->value);
         // Protect against unstable layout by invalidating only once per container.
-        if (changed && context.invalidatedContainers.add(containerElement).isNewEntry)
+        if (changed && context.invalidatedContainers.add(*containerElement).isNewEntry)
             containersToInvalidate.append(containerElement);
         m_queryContainerStates.add(*containerElement, size);
     }

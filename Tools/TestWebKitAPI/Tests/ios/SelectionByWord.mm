@@ -30,7 +30,7 @@
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <wtf/BlockPtr.h>
 
 TEST(SelectionTests, ByWordAtEndOfDocument)

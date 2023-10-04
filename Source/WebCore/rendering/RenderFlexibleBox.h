@@ -45,13 +45,11 @@ class FlexLayout;
 class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderFlexibleBox);
 public:
-    RenderFlexibleBox(Element&, RenderStyle&&);
-    RenderFlexibleBox(Document&, RenderStyle&&);
+    RenderFlexibleBox(Type, Element&, RenderStyle&&);
+    RenderFlexibleBox(Type, Document&, RenderStyle&&);
     virtual ~RenderFlexibleBox();
 
     using Direction = BlockFlowDirection;
-
-    bool isFlexibleBox() const override { return true; }
 
     ASCIILiteral renderName() const override;
 
@@ -302,4 +300,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlexibleBox, isFlexibleBox())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlexibleBox, isRenderFlexibleBox())

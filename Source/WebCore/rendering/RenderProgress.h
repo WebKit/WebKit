@@ -43,7 +43,6 @@ public:
 
 private:
     ASCIILiteral renderName() const override { return "RenderProgress"_s; }
-    bool isProgress() const override { return true; }
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     void animationTimerFired();

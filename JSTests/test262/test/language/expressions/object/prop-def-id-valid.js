@@ -15,7 +15,9 @@ var obj;
 
 obj = { attr };
 
-assert.sameValue(obj.attr, 23);
-verifyEnumerable(obj, 'attr');
-verifyWritable(obj, 'attr');
-verifyConfigurable(obj, 'attr');
+verifyProperty(obj, "attr", {
+  value: 23,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

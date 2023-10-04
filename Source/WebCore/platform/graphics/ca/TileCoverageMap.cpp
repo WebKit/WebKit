@@ -35,10 +35,10 @@ namespace WebCore {
 TileCoverageMap::TileCoverageMap(const TileController& controller)
     : m_controller(controller)
     , m_updateTimer(*this, &TileCoverageMap::updateTimerFired)
-    , m_layer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeSimpleLayer, this))
-    , m_visibleViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
-    , m_layoutViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
-    , m_coverageRectIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
+    , m_layer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeSimpleLayer, this))
+    , m_visibleViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_layoutViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_coverageRectIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_position(FloatPoint(0, controller.topContentInset()))
 {
     m_layer.get().setOpacity(0.75);

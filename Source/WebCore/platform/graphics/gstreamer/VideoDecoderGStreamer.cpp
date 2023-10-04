@@ -241,6 +241,11 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         if (m_isClosed)
             return;
 
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [this] {
+            m_harness->dumpGraph("video-decoder");
+        });
+
         GST_TRACE_OBJECT(m_harness->element(), "Got frame with PTS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(outputBuffer.get())));
 
         if (m_presentationSize.isEmpty())

@@ -9,5 +9,5 @@ flags: [noStrict]
 
 function testcase() {
     arguments.callee;
- }
+}
 testcase();

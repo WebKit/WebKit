@@ -59,7 +59,7 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
 
 - (NSArray *)origins
 {
-    return createNSArray(WebKit::StorageTracker::tracker().origins(), [] (auto& origin) {
+    return createNSArray(WebKit::StorageTracker::tracker().origins(), [] (auto&& origin) {
         return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
     }).autorelease();
 }

@@ -164,12 +164,14 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
         [context->wrapper() didCloseTab:closedTab windowIsClosing:windowIsClosing];
 }
 
-- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<_WKWebExtensionTab>)previousTab
 {
     NSParameterAssert([activatedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+    if (previousTab)
+        NSParameterAssert([previousTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 
     for (auto& context : _webExtensionController->extensionContexts())
-        [context->wrapper() didActivateTab:activatedTab];
+        [context->wrapper() didActivateTab:activatedTab previousActiveTab:previousTab];
 }
 
 - (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
@@ -178,6 +180,14 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didSelectTabs:selectedTabs];
+}
+
+- (void)didDeselectTabs:(NSSet<id<_WKWebExtensionTab>> *)deselectedTabs
+{
+    NSParameterAssert([deselectedTabs isKindOfClass:NSSet.class]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didDeselectTabs:deselectedTabs];
 }
 
 - (void)didMoveTab:(id<_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(id<_WKWebExtensionWindow>)oldWindow
@@ -281,11 +291,15 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 {
 }
 
-- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<_WKWebExtensionTab>)previousTab
 {
 }
 
 - (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
+{
+}
+
+- (void)didDeselectTabs:(NSSet<id<_WKWebExtensionTab>> *)deselectedTabs
 {
 }
 

@@ -44,7 +44,7 @@ public:
 
     WebPage* page();
 
-    void disconnectFromPage() { m_page = 0; }
+    void disconnectFromPage() { m_page = nullptr; }
     void didChangeSelectedIndex(int newIndex);
     void setTextForIndex(int newIndex);
 #if PLATFORM(GTK)

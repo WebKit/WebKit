@@ -108,7 +108,7 @@ inline NSString *debugString(JSValue *value)
     return value._toSortedJSONString ?: @"undefined";
 }
 
-void WebExtensionAPITest::assertDeepEq(JSContextRef context, JSValue *expectedValue, JSValue *actualValue, NSString *message)
+void WebExtensionAPITest::assertDeepEq(JSContextRef context, JSValue *actualValue, JSValue *expectedValue, NSString *message)
 {
     NSString *expectedJSONValue = debugString(expectedValue);
     NSString *actualJSONValue = debugString(actualValue);
@@ -137,7 +137,7 @@ static void assertEquals(WebExtensionContextProxy& extensionContext, JSContextRe
     WebProcess::singleton().send(Messages::WebExtensionContext::TestEqual(result, expectedString, actualString, message, location.first, location.second), extensionContext.identifier());
 }
 
-void WebExtensionAPITest::assertEq(JSContextRef context, JSValue *expectedValue, JSValue *actualValue, NSString *message)
+void WebExtensionAPITest::assertEq(JSContextRef context, JSValue *actualValue, JSValue *expectedValue, NSString *message)
 {
     NSString *expectedJSONValue = debugString(expectedValue);
     NSString *actualJSONValue = debugString(actualValue);

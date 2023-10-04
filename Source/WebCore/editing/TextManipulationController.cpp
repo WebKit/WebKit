@@ -939,7 +939,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         auto parentContainer = insertion.parentIfDifferentFromCommonAncestor;
         if (!parentContainer) {
             parentContainer = commonAncestor;
-            parentContainer->insertBefore(insertion.child, insertionPointNode.get());
+            parentContainer->insertBefore(insertion.child, insertionPointNode.copyRef());
         } else
             parentContainer->appendChild(insertion.child);
 
@@ -958,7 +958,6 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 void TextManipulationController::removeNode(Node& node)
 {
     m_manipulatedNodes.remove(node);
-    m_textNodesWithNewRenderer.remove(node);
 }
 
 } // namespace WebCore

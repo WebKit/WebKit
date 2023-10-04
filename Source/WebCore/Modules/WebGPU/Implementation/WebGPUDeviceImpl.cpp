@@ -162,10 +162,11 @@ Ref<ExternalTexture> DeviceImpl::importExternalTexture(const ExternalTextureDesc
 {
     auto label = descriptor.label.utf8();
 
+    auto pixelBuffer = std::get_if<RetainPtr<CVPixelBufferRef>>(&descriptor.videoBacking);
     WGPUExternalTextureDescriptor backingDescriptor {
         .nextInChain = nullptr,
         label.data(),
-        .pixelBuffer = descriptor.pixelBuffer.get(),
+        .pixelBuffer = pixelBuffer ? pixelBuffer->get() : nullptr,
         .colorSpace = convertToWGPUColorSpace(descriptor.colorSpace),
     };
     return ExternalTextureImpl::create(adoptWebGPU(wgpuDeviceImportExternalTexture(m_backing.get(), &backingDescriptor)), descriptor, m_convertToBackingContext);

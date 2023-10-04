@@ -32,8 +32,9 @@
 #import "APIData.h"
 #import "APIOpenPanelParameters.h"
 #import "APIString.h"
+#import "CompactContextMenuPresenter.h"
 #import "PhotosUISPI.h"
-#import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
 #import "WKStringCF.h"
@@ -364,10 +365,10 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 
 @interface WKFileUploadPanel () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate
 #if USE(UICONTEXTMENU)
-, UIContextMenuInteractionDelegate
+    , UIContextMenuInteractionDelegate
 #endif
 #if HAVE(PHOTOS_UI)
-, PHPickerViewControllerDelegate
+    , PHPickerViewControllerDelegate
 #endif
 >
 @end
@@ -393,7 +394,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     BOOL _isRepositioningContextMenu;
-    RetainPtr<UIContextMenuInteraction> _documentContextMenuInteraction;
+    std::unique_ptr<WebKit::CompactContextMenuPresenter> _menuPresenter;
 #endif
     RetainPtr<UIDocumentPickerViewController> _documentPickerController;
     WebCore::MediaCaptureType _mediaCaptureType;
@@ -415,7 +416,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_cameraPicker setDelegate:nil];
     [_documentPickerController setDelegate:nil];
 #if USE(UICONTEXTMENU)
-    [self removeContextMenuInteraction];
+    [self resetContextMenuPresenter];
 #endif
     [super dealloc];
 }
@@ -544,7 +545,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // If there is any kind of view controller presented on this view, it will be removed.
 
     if (auto view = _view.get())
-        [[UIViewController _viewControllerForFullScreenPresentationFromView:view.get()] dismissViewControllerAnimated:NO completion:nil];
+        [[view _wk_viewControllerForFullScreenPresentation] dismissViewControllerAnimated:NO completion:nil];
 
     _presentationViewController = nil;
 
@@ -675,20 +676,9 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 #if USE(UICONTEXTMENU)
 
-#if HAVE(UI_CONTEXT_MENU_PREVIEW_ITEM_IDENTIFIER)
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
-#else
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-#endif
 {
     return [_view _createTargetedContextMenuHintPreviewIfPossible];
-}
-
-- (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-{
-    _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
-    style.preferredLayout = _UIContextMenuLayoutCompactMenu;
-    return style;
 }
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
@@ -734,34 +724,31 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
         return;
 
     [animator addCompletion:^{
-        [self removeContextMenuInteraction];
+        [self resetContextMenuPresenter];
         if (!self->_isPresentingSubMenu)
             [self _cancel];
     }];
 }
 
-- (void)removeContextMenuInteraction
+- (void)resetContextMenuPresenter
 {
-    if (_documentContextMenuInteraction) {
-        [_view removeInteraction:_documentContextMenuInteraction.get()];
-        _documentContextMenuInteraction = nil;
-        [_view _removeContextMenuHintContainerIfPossible];
-    }
+    if (!_menuPresenter)
+        return;
+
+    _menuPresenter = nullptr;
+    [_view _removeContextMenuHintContainerIfPossible];
 }
 
-- (UIContextMenuInteraction *)ensureContextMenuInteraction
+- (WebKit::CompactContextMenuPresenter&)contextMenuPresenter
 {
-    if (!_documentContextMenuInteraction) {
-        _documentContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
-        [_view addInteraction:_documentContextMenuInteraction.get()];
-        self->_isPresentingSubMenu = NO;
-    }
-    return _documentContextMenuInteraction.get();
+    if (!_menuPresenter)
+        _menuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(_view.get().get(), self);
+    return *_menuPresenter;
 }
 
 - (void)repositionContextMenuIfNeeded
 {
-    if (!_documentContextMenuInteraction)
+    if (!_menuPresenter)
         return;
 
     auto *webView = [_view webView];
@@ -780,8 +767,8 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
     SetForScope repositioningContextMenuScope { _isRepositioningContextMenu, YES };
     [UIView performWithoutAnimation:^{
-        [_documentContextMenuInteraction dismissMenu];
-        [_view presentContextMenu:_documentContextMenuInteraction.get() atLocation:_interactionPoint];
+        _menuPresenter->dismiss();
+        _menuPresenter->present(_interactionPoint);
     }];
 }
 
@@ -809,7 +796,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     // FIXME 49961589: Support picking media with UIImagePickerController
 #if HAVE(UICONTEXTMENU_LOCATION)
     if (_allowedImagePickerTypes.containsAny({ WKFileUploadPanelImagePickerType::Image, WKFileUploadPanelImagePickerType::Video }))
-        [_view presentContextMenu:self.ensureContextMenuInteraction atLocation:_interactionPoint];
+        self.contextMenuPresenter.present(_interactionPoint);
     else // Image and Video types are not accepted so bypass the menu and open the file picker directly.
 #endif
         [self showFilePickerMenu];
@@ -895,7 +882,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 {
     [self _dismissDisplayAnimated:animated];
 
-    _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_view.getAutoreleased()];
+    _presentationViewController = [_view _wk_viewControllerForFullScreenPresentation];
     [_presentationViewController presentViewController:viewController animated:animated completion:nil];
 }
 

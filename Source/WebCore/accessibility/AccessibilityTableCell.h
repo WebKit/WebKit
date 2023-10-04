@@ -44,8 +44,10 @@ public:
 
     bool isExposedTableCell() const final;
     bool isTableHeaderCell() const;
-    bool isColumnHeaderCell() const override;
-    bool isRowHeaderCell() const override;
+    bool isColumnHeader() const override;
+    bool isRowHeader() const override;
+
+    AXID rowGroupAncestorID() const final;
 
     virtual AccessibilityTable* parentTable() const;
 
@@ -86,15 +88,12 @@ protected:
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
     AccessibilityObject* titleUIElement() const final;
-    bool exposesTitleUIElement() const final { return true; }
     bool computeAccessibilityIsIgnored() const final;
     String expandedTextValue() const final;
     bool supportsExpandedTextValue() const final;
     AccessibilityTableRow* ariaOwnedByParent() const;
     void ensureIndexesUpToDate() const;
 
-    bool isTableCellInSameRowGroup(AXCoreObject*);
-    bool isTableCellInSameColGroup(AXCoreObject*);
 };
 
 } // namespace WebCore 

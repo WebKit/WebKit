@@ -14,22 +14,34 @@ includes: [propertyHelper.js]
 var locales = ['en-US', 'fr'];
 var result = Intl.getCanonicalLocales(locales);
 
-verifyEnumerable(result, 0);
-verifyWritable(result, 0);
-verifyConfigurable(result, 0);
+verifyProperty(result, 0, {
+  value: 'en-US',
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});
 
 result = Intl.getCanonicalLocales(locales);
-verifyEnumerable(result, 1);
-verifyWritable(result, 1);
-verifyConfigurable(result, 1);
+
+verifyProperty(result, 1, {
+  value: 'fr',
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});
 
 result = Intl.getCanonicalLocales(locales);
-verifyNotEnumerable(result, 'length');
-verifyNotConfigurable(result, 'length');
 
-assert.sameValue(result.length, 2);
+verifyProperty(result, "length", {
+  value: 2,
+  writable: true,
+  enumerable: false,
+  configurable: false,
+});
+
 result.length = 42;
 assert.sameValue(result.length, 42);
+
 assert.throws(RangeError, function() {
   result.length = "Leo";
 }, "a non-numeric value can't be set to result.length");

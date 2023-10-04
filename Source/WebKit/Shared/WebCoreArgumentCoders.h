@@ -119,7 +119,6 @@ class Font;
 class FontPlatformData;
 class FragmentedSharedBuffer;
 class LightSource;
-class Path;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
 class ResourceError;
@@ -134,7 +133,6 @@ struct CompositionUnderline;
 struct DataDetectorElementInfo;
 struct KeypressCommand;
 struct Length;
-struct SerializedAttachmentData;
 struct SoupNetworkProxySettings;
 struct TextRecognitionDataDetector;
 struct ViewportArguments;
@@ -154,18 +152,6 @@ template<> struct ArgumentCoder<WebCore::DOMCacheEngine::Record> {
     static void encode(Encoder&, const WebCore::DOMCacheEngine::Record&);
     static std::optional<WebCore::DOMCacheEngine::Record> decode(Decoder&);
 };
-
-template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
-    static void encode(Encoder&, const WebCore::RectEdges<bool>&);
-    static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
-};
-
-#if ENABLE(META_VIEWPORT)
-template<> struct ArgumentCoder<WebCore::ViewportArguments> {
-    static void encode(Encoder&, const WebCore::ViewportArguments&);
-    static std::optional<WebCore::ViewportArguments> decode(Decoder&);
-};
-#endif
 
 template<> struct ArgumentCoder<WebCore::Length> {
     static void encode(Encoder&, const WebCore::Length&);
@@ -275,11 +261,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::FilterOperation>> {
 };
 #endif
 
-template<> struct ArgumentCoder<WebCore::BlobPart> {
-    static void encode(Encoder&, const WebCore::BlobPart&);
-    static std::optional<WebCore::BlobPart> decode(Decoder&);
-};
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static void encode(Encoder&, const WebCore::MediaPlaybackTargetContext&);
@@ -336,29 +317,6 @@ template<> struct ArgumentCoder<WebCore::PaymentSessionError> {
 };
 
 #endif
-
-#if ENABLE(SERVICE_WORKER)
-
-template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientData> {
-    static void encode(Encoder&, const WebCore::ServiceWorkerOrClientData&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ServiceWorkerOrClientData&);
-};
-
-template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
-    static void encode(Encoder&, const WebCore::ServiceWorkerOrClientIdentifier&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ServiceWorkerOrClientIdentifier&);
-};
-
-#endif
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-template<> struct ArgumentCoder<WebCore::SerializedAttachmentData> {
-    static void encode(Encoder&, const WebCore::SerializedAttachmentData&);
-    static std::optional<WebCore::SerializedAttachmentData> decode(Decoder&);
-};
-
-#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(VIDEO)
 template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
@@ -432,12 +390,6 @@ template<> struct ArgumentCoder<WebCore::Filter> {
     static std::optional<Ref<WebCore::Filter>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::Path> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::Path&);
-    static std::optional<WebCore::Path> decode(Decoder&);
-};
-
 #if ENABLE(DATA_DETECTION)
 
 template<> struct ArgumentCoder<WebCore::DataDetectorElementInfo> {
@@ -488,20 +440,6 @@ template<> struct ArgumentCoder<WebCore::PixelBuffer> {
     static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
 };
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-
-template<> struct ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> {
-    static void encode(Encoder&, WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle&&);
-    static std::optional<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle> {
-    static void encode(Encoder&, WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle&&);
-    static std::optional<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle> decode(Decoder&);
-};
-
-#endif
-
 } // namespace IPC
 
 namespace WTF {
@@ -528,16 +466,6 @@ template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
 #endif
 
 #undef Always
-template<> struct EnumTraits<WTFLogLevel> {
-    using values = EnumValues<
-    WTFLogLevel,
-    WTFLogLevel::Always,
-    WTFLogLevel::Error,
-    WTFLogLevel::Warning,
-    WTFLogLevel::Info,
-    WTFLogLevel::Debug
-    >;
-};
 
 #if ENABLE(ENCRYPTED_MEDIA)
 template <> struct EnumTraits<WebCore::CDMInstanceSession::SessionLoadFailure> {

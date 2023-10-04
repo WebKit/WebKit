@@ -67,8 +67,8 @@ public:
     float contentLogicalTopAdjustedForPrecedingLineBox() const;
     float contentLogicalBottomAdjustedForFollowingLineBox() const;
 
-    float inkOverflowTop() const;
-    float inkOverflowBottom() const;
+    float inkOverflowLogicalTop() const;
+    float inkOverflowLogicalBottom() const;
     float scrollableOverflowTop() const;
     float scrollableOverflowBottom() const;
 
@@ -193,17 +193,17 @@ inline float LineBox::logicalWidth() const
     });
 }
 
-inline float LineBox::inkOverflowTop() const
+inline float LineBox::inkOverflowLogicalTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.inkOverflowTop();
+        return path.inkOverflowLogicalTop();
     });
 }
 
-inline float LineBox::inkOverflowBottom() const
+inline float LineBox::inkOverflowLogicalBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.inkOverflowBottom();
+        return path.inkOverflowLogicalBottom();
     });
 }
 

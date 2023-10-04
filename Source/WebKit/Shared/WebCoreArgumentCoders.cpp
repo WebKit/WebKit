@@ -133,11 +133,8 @@
 #include <WebCore/SearchFieldResultsPart.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/SerializedAttachmentData.h>
 #include <WebCore/SerializedPlatformDataCueValue.h>
 #include <WebCore/SerializedScriptValue.h>
-#include <WebCore/ServiceWorkerClientData.h>
-#include <WebCore/ServiceWorkerData.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SkewTransformOperation.h>
@@ -290,29 +287,6 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
 
     return {{ WTFMove(identifier), WTFMove(updateResponseCounter), WTFMove(requestHeadersGuard), WTFMove(request), WTFMove(options.value()), WTFMove(referrer), WTFMove(responseHeadersGuard), WTFMove(response), WTFMove(responseBody), responseBodySize }};
 }
-
-void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bool>& boxEdges)
-{
-    SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
-}
-    
-std::optional<RectEdges<bool>> ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder)
-{
-    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder);
-}
-
-#if ENABLE(META_VIEWPORT)
-void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportArguments& viewportArguments)
-{
-    SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
-}
-
-std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decoder& decoder)
-{
-    return SimpleArgumentCoder<ViewportArguments>::decode(decoder);
-}
-
-#endif // ENABLE(META_VIEWPORT)
 
 void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 {
@@ -915,47 +889,6 @@ WARN_UNUSED_RETURN bool ArgumentCoder<RefPtr<WebCore::FilterOperation>>::decode(
 
 #endif // !USE(COORDINATED_GRAPHICS)
 
-void ArgumentCoder<BlobPart>::encode(Encoder& encoder, const BlobPart& blobPart)
-{
-    encoder << blobPart.type();
-    switch (blobPart.type()) {
-    case BlobPart::Type::Data:
-        encoder << blobPart.data();
-        return;
-    case BlobPart::Type::Blob:
-        encoder << blobPart.url();
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<BlobPart> ArgumentCoder<BlobPart>::decode(Decoder& decoder)
-{
-    std::optional<BlobPart::Type> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    switch (*type) {
-    case BlobPart::Type::Data: {
-        std::optional<Vector<uint8_t>> data;
-        decoder >> data;
-        if (!data)
-            return std::nullopt;
-        return BlobPart(WTFMove(*data));
-    }
-    case BlobPart::Type::Blob: {
-        URL url;
-        if (!decoder.decode(url))
-            return std::nullopt;
-        return BlobPart(url);
-    }
-    }
-
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const MediaPlaybackTargetContext& target)
 {
@@ -1026,96 +959,6 @@ std::optional<RefPtr<WebCore::SerializedScriptValue>> ArgumentCoder<RefPtr<WebCo
 
     return { scriptValue };
 }
-
-#if ENABLE(SERVICE_WORKER)
-void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)
-{
-    bool isServiceWorkerData = std::holds_alternative<ServiceWorkerData>(data);
-    encoder << isServiceWorkerData;
-    if (isServiceWorkerData)
-        encoder << std::get<ServiceWorkerData>(data);
-    else
-        encoder << std::get<ServiceWorkerClientData>(data);
-}
-
-bool ArgumentCoder<ServiceWorkerOrClientData>::decode(Decoder& decoder, ServiceWorkerOrClientData& data)
-{
-    bool isServiceWorkerData;
-    if (!decoder.decode(isServiceWorkerData))
-        return false;
-    if (isServiceWorkerData) {
-        std::optional<ServiceWorkerData> workerData;
-        decoder >> workerData;
-        if (!workerData)
-            return false;
-
-        data = WTFMove(*workerData);
-    } else {
-        std::optional<ServiceWorkerClientData> clientData;
-        decoder >> clientData;
-        if (!clientData)
-            return false;
-
-        data = WTFMove(*clientData);
-    }
-    return true;
-}
-
-void ArgumentCoder<ServiceWorkerOrClientIdentifier>::encode(Encoder& encoder, const ServiceWorkerOrClientIdentifier& identifier)
-{
-    bool isServiceWorkerIdentifier = std::holds_alternative<ServiceWorkerIdentifier>(identifier);
-    encoder << isServiceWorkerIdentifier;
-    if (isServiceWorkerIdentifier)
-        encoder << std::get<ServiceWorkerIdentifier>(identifier);
-    else
-        encoder << std::get<ScriptExecutionContextIdentifier>(identifier);
-}
-
-bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, ServiceWorkerOrClientIdentifier& identifier)
-{
-    bool isServiceWorkerIdentifier;
-    if (!decoder.decode(isServiceWorkerIdentifier))
-        return false;
-    if (isServiceWorkerIdentifier) {
-        std::optional<ServiceWorkerIdentifier> workerIdentifier;
-        decoder >> workerIdentifier;
-        if (!workerIdentifier)
-            return false;
-
-        identifier = WTFMove(*workerIdentifier);
-    } else {
-        std::optional<ScriptExecutionContextIdentifier> clientIdentifier;
-        decoder >> clientIdentifier;
-        if (!clientIdentifier)
-            return false;
-
-        identifier = WTFMove(*clientIdentifier);
-    }
-    return true;
-}
-
-#endif
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-void ArgumentCoder<SerializedAttachmentData>::encode(IPC::Encoder& encoder, const WebCore::SerializedAttachmentData& data)
-{
-    encoder << data.identifier << data.mimeType << data.data;
-}
-
-std::optional<SerializedAttachmentData> ArgumentCoder<WebCore::SerializedAttachmentData>::decode(IPC::Decoder& decoder)
-{
-    auto identifier = decoder.decode<String>();
-    auto mimeType = decoder.decode<String>();
-    auto data = decoder.decode<Ref<SharedBuffer>>();
-
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-
-    return { { WTFMove(*identifier), WTFMove(*mimeType), WTFMove(*data) } };
-}
-
-#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(VIDEO)
 void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encode(Encoder& encoder, const SerializedPlatformDataCueValue& value)
@@ -1226,35 +1069,21 @@ std::optional<Ref<WebCore::SharedBuffer>> ArgumentCoder<WebCore::SharedBuffer>::
 }
 
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-static ShareableResource::Handle tryConvertToShareableResourceHandle(const ScriptBuffer& script)
+static std::optional<ShareableResource::Handle> tryConvertToShareableResourceHandle(const ScriptBuffer& script)
 {
     if (!script.containsSingleFileMappedSegment())
-        return ShareableResource::Handle { };
+        return std::nullopt;
 
     auto& segment = script.buffer()->begin()->segment;
     auto sharedMemory = SharedMemory::wrapMap(const_cast<uint8_t*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
-        return ShareableResource::Handle { };
+        return std::nullopt;
 
     auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, segment->size());
     if (!shareableResource)
-        return ShareableResource::Handle { };
-
-    ShareableResource::Handle shareableResourceHandle;
-    if (auto handle = shareableResource->createHandle())
-        return WTFMove(*handle);
-    return ShareableResource::Handle { };
-}
-
-static std::optional<WebCore::ScriptBuffer> decodeScriptBufferAsShareableResourceHandle(Decoder& decoder)
-{
-    ShareableResource::Handle handle;
-    if (!decoder.decode(handle) || handle.isNull())
         return std::nullopt;
-    auto buffer = WTFMove(handle).tryWrapInSharedBuffer();
-    if (!buffer)
-        return std::nullopt;
-    return WebCore::ScriptBuffer { WTFMove(buffer) };
+
+    return shareableResource->createHandle();
 }
 #endif
 
@@ -1262,12 +1091,10 @@ void ArgumentCoder<WebCore::ScriptBuffer>::encode(Encoder& encoder, const WebCor
 {
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     auto handle = tryConvertToShareableResourceHandle(script);
-    bool isShareableResourceHandle = !handle.isNull();
-    encoder << isShareableResourceHandle;
-    if (isShareableResourceHandle) {
-        encoder << WTFMove(handle);
+    bool isShareableResourceHandle = !!handle;
+    encoder << WTFMove(handle);
+    if (isShareableResourceHandle)
         return;
-    }
 #endif
     encoder << RefPtr { script.buffer() };
 }
@@ -1275,12 +1102,15 @@ void ArgumentCoder<WebCore::ScriptBuffer>::encode(Encoder& encoder, const WebCor
 std::optional<WebCore::ScriptBuffer> ArgumentCoder<WebCore::ScriptBuffer>::decode(Decoder& decoder)
 {
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-    std::optional<bool> isShareableResourceHandle;
-    decoder >> isShareableResourceHandle;
-    if (!isShareableResourceHandle)
+    auto handle = decoder.decode<std::optional<ShareableResource::Handle>>();
+    if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
-    if (*isShareableResourceHandle)
-        return decodeScriptBufferAsShareableResourceHandle(decoder);
+
+    if (*handle) {
+        if (auto buffer = WTFMove(**handle).tryWrapInSharedBuffer())
+            return WebCore::ScriptBuffer { WTFMove(buffer) };
+        return std::nullopt;
+    }
 #endif
 
     if (auto buffer = decoder.decode<RefPtr<FragmentedSharedBuffer>>())
@@ -2077,46 +1907,6 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
     (*filter)->setFilterRegion(*filterRegion);
 
     return filter;
-}
-
-template<typename Encoder>
-void ArgumentCoder<Path>::encode(Encoder& encoder, const Path& path)
-{
-    if (auto segment = path.singleSegment())
-        encoder << false << *segment;
-    else if (auto* segments = path.segmentsIfExists())
-        encoder << true << *segments;
-    else
-        encoder << true << path.segments();
-}
-
-template
-void ArgumentCoder<Path>::encode<Encoder>(Encoder&, const Path&);
-template
-void ArgumentCoder<Path>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Path&);
-
-std::optional<Path> ArgumentCoder<Path>::decode(Decoder& decoder)
-{
-    std::optional<bool> hasVector;
-    decoder >> hasVector;
-    if (!hasVector)
-        return std::nullopt;
-
-    if (!*hasVector) {
-        std::optional<PathSegment> segment;
-        decoder >> segment;
-        if (!segment)
-            return std::nullopt;
-
-        return Path(WTFMove(*segment));
-    }
-
-    std::optional<Vector<PathSegment>> segments;
-    decoder >> segments;
-    if (!segments)
-        return std::nullopt;
-
-    return Path(WTFMove(*segments));
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)

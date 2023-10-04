@@ -482,6 +482,20 @@ static GtkWidget *webViewCreate(WebKitWebView *webView, WebKitNavigationAction *
     return GTK_WIDGET(newWebView);
 }
 
+void browser_window_fullscreen(BrowserWindow *window)
+{
+    gtk_window_fullscreen(GTK_WINDOW(window));
+    gtk_widget_hide(window->toolbar);
+    window->fullScreenIsEnabled = TRUE;
+}
+
+static void browserWindowUnfullscreen(BrowserWindow *window)
+{
+    gtk_window_unfullscreen(GTK_WINDOW(window));
+    gtk_widget_show(window->toolbar);
+    window->fullScreenIsEnabled = FALSE;
+}
+
 static gboolean webViewEnterFullScreen(WebKitWebView *webView, BrowserWindow *window)
 {
     gtk_widget_hide(window->toolbar);
@@ -867,15 +881,10 @@ static void loadHomePage(GSimpleAction *action, GVariant *parameter, gpointer us
 static void toggleFullScreen(GSimpleAction *action, GVariant *parameter, gpointer userData)
 {
     BrowserWindow *window = BROWSER_WINDOW(userData);
-    if (!window->fullScreenIsEnabled) {
-        gtk_window_fullscreen(GTK_WINDOW(window));
-        gtk_widget_hide(window->toolbar);
-        window->fullScreenIsEnabled = TRUE;
-    } else {
-        gtk_window_unfullscreen(GTK_WINDOW(window));
-        gtk_widget_show(window->toolbar);
-        window->fullScreenIsEnabled = FALSE;
-    }
+    if (window->fullScreenIsEnabled)
+        browserWindowUnfullscreen(window);
+    else
+        browser_window_fullscreen(window);
 }
 
 static void webKitPrintOperationFailedCallback(WebKitPrintOperation *printOperation, GError *error)

@@ -36,6 +36,10 @@ namespace WebCore {
 
 static const unsigned kMaxCountOfUnparentedTiledLayers = 16;
 
+TileControllerMemoryHandler::TileControllerMemoryHandler() = default;
+
+TileControllerMemoryHandler::~TileControllerMemoryHandler() = default;
+
 void TileControllerMemoryHandler::removeTileController(TileController* controller)
 {
     if (m_tileControllers.contains(controller))
@@ -45,10 +49,8 @@ void TileControllerMemoryHandler::removeTileController(TileController* controlle
 unsigned TileControllerMemoryHandler::totalUnparentedTiledLayers() const
 {
     unsigned totalUnparentedLayers = 0;
-    for (ListHashSet<TileController*>::const_iterator it = m_tileControllers.begin(); it != m_tileControllers.end(); ++it) {
-        TileController* tileController = *it;
+    for (auto& tileController : m_tileControllers)
         totalUnparentedLayers += tileController->numberOfUnparentedTiles();
-    }
     return totalUnparentedLayers;
 }
 
@@ -71,8 +73,7 @@ void TileControllerMemoryHandler::tileControllerGainedUnparentedTiles(TileContro
 void TileControllerMemoryHandler::trimUnparentedTilesToTarget(int target)
 {
     while (!m_tileControllers.isEmpty()) {
-        TileController* tileController = m_tileControllers.first();
-        tileController->removeUnparentedTilesNow();
+        m_tileControllers.first()->removeUnparentedTilesNow();
         m_tileControllers.removeFirst();
 
         if (target > 0 && totalUnparentedTiledLayers() < static_cast<unsigned>(target))

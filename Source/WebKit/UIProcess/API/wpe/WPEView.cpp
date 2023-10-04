@@ -140,11 +140,8 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         },
 #if WPE_CHECK_VERSION(1, 13, 2)
         // target_refresh_rate_changed
-        [](void* data, uint32_t rate)
+        [](void*, uint32_t)
         {
-            auto& view = *reinterpret_cast<View*>(data);
-            if (view.page().drawingArea())
-                view.page().drawingArea()->targetRefreshRateDidChange(rate);
         },
 #else
         // padding

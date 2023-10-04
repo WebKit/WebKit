@@ -58,13 +58,18 @@ public:
         DeconstructUsingDrawDecomposedGlyphsCommands,
     };
 
-    WEBCORE_EXPORT Recorder(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode = DrawGlyphsMode::Normal);
+    Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& transform, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode = DrawGlyphsMode::Normal)
+        : Recorder(IsDeferred::Yes, state, initialClip, transform, colorSpace, drawGlyphsMode)
+    {
+    }
     WEBCORE_EXPORT virtual ~Recorder();
 
     // Records possible pending commands. Should be used when recording is known to end.
     WEBCORE_EXPORT void commitRecording();
 
 protected:
+    WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode);
+
     virtual void recordSave() = 0;
     virtual void recordRestore() = 0;
     virtual void recordTranslate(float x, float y) = 0;
@@ -181,8 +186,6 @@ protected:
     const ContextState& currentState() const;
     ContextState& currentState();
 
-    WEBCORE_EXPORT RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, float resolutionScale, const DestinationColorSpace&, std::optional<RenderingMode>, std::optional<RenderingMethod>) const override;
-
 private:
     bool hasPlatformContext() const final { return false; }
     PlatformGraphicsContext* platformContext() const final { return nullptr; }
@@ -231,6 +234,7 @@ private:
     WEBCORE_EXPORT void drawGlyphsAndCacheResources(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
 
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) final;
+    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) final;
     WEBCORE_EXPORT void drawNativeImageInternal(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
     WEBCORE_EXPORT void drawSystemImage(SystemImage&, const FloatRect&) final;
     WEBCORE_EXPORT void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) final;

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,9 @@
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSMeteringMode.h"
 #include "JSOverconstrainedError.h"
+#include "JSPhotoCapabilities.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
@@ -48,6 +50,7 @@
 #include "NotImplemented.h"
 #include "OverconstrainedError.h"
 #include "Page.h"
+#include "PhotoCapabilities.h"
 #include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "ScriptExecutionContext.h"
@@ -272,7 +275,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
     if (settings.supportsFrameRate())
         result.frameRate = settings.frameRate();
     if (settings.supportsFacingMode())
-        result.facingMode = RealtimeMediaSourceSettings::facingMode(settings.facingMode());
+        result.facingMode = convertEnumerationToString(settings.facingMode());
+    if (settings.supportsWhiteBalanceMode())
+        result.whiteBalanceMode = convertEnumerationToString(settings.whiteBalanceMode());
     if (settings.supportsVolume())
         result.volume = settings.volume();
     if (settings.supportsSampleRate())
@@ -302,6 +307,22 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
 
     return result;
+}
+
+void MediaStreamTrack::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&& promise) const
+{
+    m_private->getPhotoCapabilities([protectedThis = Ref { *this }, promise = WTFMove(promise)](auto&& result) mutable {
+        if (!result) {
+            // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
+            // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
+            // asynchronously), then reject p with a new DOMException whose name is OperationError, and
+            // abort these steps.
+            promise.reject(Exception { OperationError, WTFMove(result.errorMessage) });
+            return;
+        }
+
+        promise.resolve(WTFMove(*result.capabilities));
+    });
 }
 
 static MediaConstraints createMediaConstraints(const std::optional<MediaTrackConstraints>& constraints)

@@ -2479,6 +2479,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     case CSSPropertyTransform:
     case CSSPropertyFilter: // Why are filters layout-dependent?
 #if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter: // Ditto for backdrop-filter.
 #endif
         return true;
@@ -2927,7 +2928,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         }();
 
         if (forcedLayout == ForcedLayout::Yes)
-            document.updateLayoutIgnorePendingStylesheets();
+            document.updateLayoutIgnorePendingStylesheets(LayoutOptions::ContentVisibilityForceLayout, m_element.get());
         else if (forcedLayout == ForcedLayout::ParentDocument) {
             if (RefPtr owner = document.ownerElement())
                 owner->document().updateLayout();
@@ -4093,6 +4094,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForFilter(style, style.appleColorFilter());
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
+    case CSSPropertyBackdropFilter:
         return valueForFilter(style, style.backdropFilter());
 #endif
     case CSSPropertyMathStyle:

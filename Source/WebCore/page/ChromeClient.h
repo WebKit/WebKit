@@ -170,7 +170,7 @@ public:
     virtual void takeFocus(FocusDirection) = 0;
 
     virtual void focusedElementChanged(Element*) = 0;
-    virtual void focusedFrameChanged(LocalFrame*) = 0;
+    virtual void focusedFrameChanged(Frame*) = 0;
 
     // The Frame pointer provides the ChromeClient with context about which
     // Frame wants to create the new Page. Also, the newly created window
@@ -368,15 +368,15 @@ public:
     
     virtual DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const { return nullptr; }
 
-    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float, const DestinationColorSpace&, PixelFormat, bool avoidBackendSizeCheck = false) const { UNUSED_PARAM(avoidBackendSizeCheck); return nullptr; }
+    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingPurpose, float, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions>) const { return nullptr; }
     WEBCORE_EXPORT virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>);
 
 #if ENABLE(WEBGL)
     WEBCORE_EXPORT virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const;
 #endif
-
+#if HAVE(WEBGPU_IMPLEMENTATION)
     virtual RefPtr<WebGPU::GPU> createGPUForWebGPU() const { return nullptr; }
-
+#endif
     virtual RefPtr<ShapeDetection::BarcodeDetector> createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions&) const { return nullptr; }
     virtual void getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&& completionHandler) const { completionHandler({ }); }
     virtual RefPtr<ShapeDetection::FaceDetector> createFaceDetector(const ShapeDetection::FaceDetectorOptions&) const { return nullptr; }

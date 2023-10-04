@@ -303,9 +303,9 @@ Ref<Connection> Connection::createClientConnection(Identifier identifier)
     return adoptRef(*new Connection(identifier, false));
 }
 
-HashMap<IPC::Connection::UniqueID, Connection*>& Connection::connectionMap()
+HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& Connection::connectionMap()
 {
-    static NeverDestroyed<HashMap<IPC::Connection::UniqueID, Connection*>> map;
+    static NeverDestroyed<HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>> map;
     return map;
 }
 
@@ -338,7 +338,7 @@ RefPtr<Connection> Connection::connection(UniqueID uniqueID)
 {
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=238493): Removing with lock in destructor is not thread-safe.
     Locker locker { s_connectionMapLock };
-    return connectionMap().get(uniqueID);
+    return connectionMap().get(uniqueID).get();
 
 }
 

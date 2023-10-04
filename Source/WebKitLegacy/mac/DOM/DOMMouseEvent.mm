@@ -95,7 +95,7 @@
 - (short)button
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->button();
+    return IMPL->buttonAsShort();
 }
 
 - (id <DOMEventTarget>)relatedTarget

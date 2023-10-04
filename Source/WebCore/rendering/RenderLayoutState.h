@@ -202,6 +202,15 @@ private:
     LocalFrameViewLayoutContext& m_context;
 };
 
+class ContentVisibilityForceLayoutScope {
+public:
+    ContentVisibilityForceLayoutScope(RenderView&, const Element*);
+    ~ContentVisibilityForceLayoutScope();
+
+private:
+    LocalFrameViewLayoutContext* m_context { nullptr };
+};
+
 inline void RenderLayoutState::addTextBoxTrimStart()
 {
     if (m_textBoxTrim) {

@@ -875,10 +875,13 @@ bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functo
     return true;
 }
 
+// Function forEachOwnIndexedProperty should only used in the fast path
+// for copying own non-GetterSetter indexed properties.
 template<typename Functor>
-void JSObject::forEachIndexedProperty(JSGlobalObject* globalObject, const Functor& functor)
+void JSObject::forEachOwnIndexedProperty(JSGlobalObject* globalObject, const Functor& functor)
 {
     ASSERT(structure()->canPerformFastPropertyEnumerationCommon());
+    ASSERT(canHaveExistingOwnIndexedProperties() && !canHaveExistingOwnIndexedGetterSetterProperties());
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -916,8 +919,10 @@ void JSObject::forEachIndexedProperty(JSGlobalObject* globalObject, const Functo
 
         if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
             for (auto& [key, value] : *map) {
-                properties.append(key);
-                values.appendWithCrashOnOverflow(value.getNonSparseMode());
+                if (!(value.attributes() & PropertyAttribute::DontEnum)) {
+                    properties.append(key);
+                    values.appendWithCrashOnOverflow(value.get());
+                }
             }
         }
 

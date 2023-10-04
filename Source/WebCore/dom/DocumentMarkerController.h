@@ -76,8 +76,8 @@ public:
 
     void dismissMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
 
-    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersFor(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
-    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersInRange(const SimpleRange&, OptionSet<DocumentMarker::MarkerType>);
+    WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersFor(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
+    WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersInRange(const SimpleRange&, OptionSet<DocumentMarker::MarkerType>);
     WEBCORE_EXPORT Vector<SimpleRange> rangesForMarkersInRange(const SimpleRange&, OptionSet<DocumentMarker::MarkerType>);
     void clearDescriptionOnMarkersIntersectingRange(const SimpleRange&, OptionSet<DocumentMarker::MarkerType>);
 

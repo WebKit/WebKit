@@ -22,6 +22,7 @@
 #pragma once
 
 #include "RenderFlexibleBox.h"
+#include "RenderTextFragment.h"
 #include <memory>
 
 namespace WebCore {
@@ -59,6 +60,8 @@ public:
     void layout() override;
 #endif
 
+    RenderTextFragment* textRenderer() const { return m_buttonText.get(); }
+
     RenderBlock* innerRenderer() const { return m_inner.get(); }
     void setInnerRenderer(RenderBlock&);
 
@@ -68,7 +71,6 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderButton"_s; }
-    bool isRenderButton() const override { return true; }
 
     bool hasLineIfEmpty() const override;
 

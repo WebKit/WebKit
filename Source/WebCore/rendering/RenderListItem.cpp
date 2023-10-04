@@ -50,7 +50,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListItem);
 
 RenderListItem::RenderListItem(Element& element, RenderStyle&& style)
-    : RenderBlockFlow(element, WTFMove(style))
+    : RenderBlockFlow(Type::ListItem, element, WTFMove(style))
 {
     setInline(false);
 }

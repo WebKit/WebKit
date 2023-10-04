@@ -154,7 +154,7 @@ class TestFactory(Factory):
         self.addStep(KillOldProcesses())
         if self.LayoutTestClass:
             self.addStep(FindModifiedLayoutTests(skipBuildIfNoResult=False))
-            self.addStep(RunWebKitTestsInStressMode(num_iterations=10))
+            self.addStep(RunWebKitTestsInStressMode(num_iterations=10, layout_test_class=self.LayoutTestClass))
             self.addStep(self.LayoutTestClass())
         if self.APITestClass:
             self.addStep(self.APITestClass())

@@ -27,6 +27,7 @@
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 
 #include "Document.h"
+#include "ElementRareData.h"
 #include "FormAssociatedCustomElement.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -106,7 +107,7 @@ bool HTMLMaybeFormAssociatedCustomElement::matchesUserInvalidPseudoClass() const
 
 bool HTMLMaybeFormAssociatedCustomElement::supportsFocus() const
 {
-    return isFormAssociatedCustomElement() ? !formAssociatedCustomElementUnsafe().isDisabled() : HTMLElement::supportsFocus();
+    return isFormAssociatedCustomElement() ? (shadowRoot() && shadowRoot()->delegatesFocus()) || (HTMLElement::supportsFocus() && !formAssociatedCustomElementUnsafe().isDisabled()) : HTMLElement::supportsFocus();
 }
 
 bool HTMLMaybeFormAssociatedCustomElement::isLabelable() const

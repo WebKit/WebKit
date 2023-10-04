@@ -28,6 +28,7 @@
 
 #include "GPUCanvasConfiguration.h"
 #include "GPUTexture.h"
+#include "GPUTextureDescriptor.h"
 
 namespace WebCore {
 
@@ -44,8 +45,11 @@ void GPUPresentationContext::unconfigure()
 RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture()
 {
     if (!m_currentTexture) {
-        if (auto currentTexture = m_backing->getCurrentTexture())
-            m_currentTexture = GPUTexture::create(*currentTexture, GPUTextureFormat::Bgra8unorm).ptr();
+        if (auto currentTexture = m_backing->getCurrentTexture()) {
+            GPUTextureDescriptor textureDescriptor;
+            textureDescriptor.format = GPUTextureFormat::Bgra8unorm;
+            m_currentTexture = GPUTexture::create(*currentTexture, textureDescriptor).ptr();
+        }
     }
 
     return m_currentTexture;

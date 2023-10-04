@@ -69,7 +69,7 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
     dispatchModifiedEvent(oldData);
 
     if (auto* parent = parentNode()) {
-        auto insertResult = parent->insertBefore(newText, nextSibling());
+        auto insertResult = parent->insertBefore(newText, protectedNextSibling());
         if (insertResult.hasException())
             return insertResult.releaseException();
     }
@@ -184,7 +184,7 @@ RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
     if (style.hasTextCombine())
         return createRenderer<RenderCombineText>(*this, data());
 
-    return createRenderer<RenderText>(*this, data());
+    return createRenderer<RenderText>(RenderObject::Type::Text, *this, data());
 }
 
 Ref<Text> Text::virtualCreate(String&& data)

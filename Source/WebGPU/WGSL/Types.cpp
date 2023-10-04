@@ -27,6 +27,7 @@
 #include "Types.h"
 
 #include "ASTStructure.h"
+#include "TypeStore.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringHash.h>
@@ -115,76 +116,35 @@ void Type::dump(PrintStream& out) const
                 out.print("texture_storage_3d");
                 break;
             }
-            out.print("<");
-            switch (texture.format) {
-            case TexelFormat::BGRA8unorm:
-                out.print("bgra8unorm");
+            out.print("<", texture.format, ", ", texture.access, ">");
+        },
+        [&](const TextureDepth& texture) {
+            switch (texture.kind) {
+            case TextureDepth::Kind::TextureDepth2d:
+                out.print("texture_depth_2d");
                 break;
-            case TexelFormat::RGBA8unorm:
-                out.print("rgba8unorm");
+            case TextureDepth::Kind::TextureDepth2dArray:
+                out.print("texture_depth_2d_array");
                 break;
-            case TexelFormat::RGBA8snorm:
-                out.print("rbga8snorm");
+            case TextureDepth::Kind::TextureDepthCube:
+                out.print("texture_depth_cube");
                 break;
-            case TexelFormat::RGBA8uint:
-                out.print("rgba8uint");
+            case TextureDepth::Kind::TextureDepthCubeArray:
+                out.print("texture_depth_cube_array");
                 break;
-            case TexelFormat::RGBA8sint:
-                out.print("rgba8sint");
-                break;
-            case TexelFormat::RGBA16uint:
-                out.print("rgba16uint");
-                break;
-            case TexelFormat::RGBA16sint:
-                out.print("rgba16sint");
-                break;
-            case TexelFormat::RGBA16float:
-                out.print("rgba16float");
-                break;
-            case TexelFormat::R32uint:
-                out.print("r32uint");
-                break;
-            case TexelFormat::R32sint:
-                out.print("r32sint");
-                break;
-            case TexelFormat::R32float:
-                out.print("r32float");
-                break;
-            case TexelFormat::RG32uint:
-                out.print("rg32uint");
-                break;
-            case TexelFormat::RG32sint:
-                out.print("rg32sint");
-                break;
-            case TexelFormat::RG32float:
-                out.print("rg32float");
-                break;
-            case TexelFormat::RGBA32uint:
-                out.print("rgba32uint");
-                break;
-            case TexelFormat::RGBA32sint:
-                out.print("rgba32sint");
-                break;
-            case TexelFormat::RGBA32float:
-                out.print("rgba32float");
+            case TextureDepth::Kind::TextureDepthMultisampled2d:
+                out.print("texture_depth_multisampled_2d");
                 break;
             }
-            out.print(", ");
-            switch (texture.access) {
-            case AccessMode::Read:
-                out.print("read");
-                break;
-            case AccessMode::Write:
-                out.print("write");
-                break;
-            case AccessMode::ReadWrite:
-                out.print("read_write");
-                break;
-            }
-            out.print(">");
         },
         [&](const Reference& reference) {
             out.print("ref<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
+        },
+        [&](const Pointer& reference) {
+            out.print("ptr<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
+        },
+        [&](const Atomic& atomic) {
+            out.print("atomic<", *atomic.element, ">");
         },
         [&](const TypeConstructor& constructor) {
             out.print(constructor.name);
@@ -300,9 +260,11 @@ unsigned Type::size() const
             case Types::Primitive::AbstractInt:
             case Types::Primitive::AbstractFloat:
             case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
             case Types::Primitive::TextureExternal:
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -318,8 +280,7 @@ unsigned Type::size() const
             return matrix.columns * WTF::roundUpToMultipleOf(rowAlignment, rowSize);
         },
         [&](const Array& array) -> unsigned {
-            ASSERT(array.size.has_value());
-            return *array.size * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            return array.size.value_or(1) * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
         },
         [&](const Struct& structure) -> unsigned {
             unsigned alignment = 0;
@@ -341,7 +302,16 @@ unsigned Type::size() const
         [&](const TextureStorage&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const TextureDepth&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Reference&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Pointer&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Atomic&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) -> unsigned {
@@ -366,9 +336,11 @@ unsigned Type::alignment() const
             case Types::Primitive::AbstractInt:
             case Types::Primitive::AbstractFloat:
             case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
             case Types::Primitive::TextureExternal:
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -402,7 +374,16 @@ unsigned Type::alignment() const
         [&](const TextureStorage&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const TextureDepth&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Reference&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Pointer&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Atomic&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) -> unsigned {
@@ -429,47 +410,30 @@ bool isPrimitiveReference(const Type* type, Primitive::Kind kind)
     return isPrimitive(reference->element, kind);
 }
 
+const Type* shaderTypeForTexelFormat(TexelFormat format, const TypeStore& types)
+{
+    switch (format) {
+    case TexelFormat::BGRA8unorm:
+    case TexelFormat::RGBA8unorm:
+    case TexelFormat::RGBA8snorm:
+    case TexelFormat::RGBA16float:
+    case TexelFormat::R32float:
+    case TexelFormat::RG32float:
+    case TexelFormat::RGBA32float:
+        return types.f32Type();
+    case TexelFormat::RGBA8uint:
+    case TexelFormat::RGBA16uint:
+    case TexelFormat::R32uint:
+    case TexelFormat::RG32uint:
+    case TexelFormat::RGBA32uint:
+        return types.u32Type();
+    case TexelFormat::RGBA8sint:
+    case TexelFormat::RGBA16sint:
+    case TexelFormat::R32sint:
+    case TexelFormat::RG32sint:
+    case TexelFormat::RGBA32sint:
+        return types.i32Type();
+    }
+}
+
 } // namespace WGSL
-
-namespace WTF {
-
-void printInternal(PrintStream& out, WGSL::AddressSpace addressSpace)
-{
-    switch (addressSpace) {
-    case WGSL::AddressSpace::Function:
-        out.print("function");
-        return;
-    case WGSL::AddressSpace::Private:
-        out.print("private");
-        return;
-    case WGSL::AddressSpace::Workgroup:
-        out.print("workgroup");
-        return;
-    case WGSL::AddressSpace::Uniform:
-        out.print("uniform");
-        return;
-    case WGSL::AddressSpace::Storage:
-        out.print("storage");
-        return;
-    case WGSL::AddressSpace::Handle:
-        out.print("handle");
-        return;
-    }
-}
-
-void printInternal(PrintStream& out, WGSL::AccessMode accessMode)
-{
-    switch (accessMode) {
-    case WGSL::AccessMode::Read:
-        out.print("read");
-        return;
-    case WGSL::AccessMode::Write:
-        out.print("write");
-        return;
-    case WGSL::AccessMode::ReadWrite:
-        out.print("read_write");
-        return;
-    }
-}
-
-} // namespace WTF

@@ -58,6 +58,8 @@ public:
     void allCaches(uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
     void reference(IPC::Connection::UniqueID, WebCore::DOMCacheIdentifier);
     void dereference(IPC::Connection::UniqueID, WebCore::DOMCacheIdentifier);
+    void lockStorage(IPC::Connection::UniqueID);
+    void unlockStorage(IPC::Connection::UniqueID);
 
     void connectionClosed(IPC::Connection::UniqueID);
     bool hasDataInMemory();
@@ -87,6 +89,7 @@ private:
     Vector<std::unique_ptr<CacheStorageCache>> m_caches;
     HashMap<WebCore::DOMCacheIdentifier, std::unique_ptr<CacheStorageCache>> m_removedCaches;
     HashMap<WebCore::DOMCacheIdentifier, Vector<IPC::Connection::UniqueID>> m_cacheRefConnections;
+    HashSet<IPC::Connection::UniqueID> m_activeConnections;
     Ref<WorkQueue> m_queue;
     Deque<std::pair<uint64_t, CompletionHandler<void(bool)>>> m_pendingSpaceRequests;
 };

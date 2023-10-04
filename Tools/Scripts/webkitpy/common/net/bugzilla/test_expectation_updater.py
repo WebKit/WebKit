@@ -69,10 +69,11 @@ def configure_logging(debug=False):
 
 def argument_parser():
     description = """Update expected.txt files from patches submitted by EWS bots on bugzilla. Given id refers to a bug id by default."""
-    parser = argparse.ArgumentParser(prog='importupdate-test-expectations-from-bugzilla bugzilla_id', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-a', '--is-attachment-id', dest='is_bug_id', action='store_false', default=True, help='Whether the given id is a bugzilla attachment and not a bug id')
     parser.add_argument('-b', '--bot-filter', dest='bot_filter_name', action='store', default=None, help='Only process EWS results for bots where BOT_FILTER_NAME its part of the name')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true', default=False, help='Log debug messages')
+    parser.add_argument('bugzilla_id', help='Bugzilla ID to lookup')
     return parser
 
 
@@ -168,14 +169,9 @@ class TestExpectationUpdater(object):
 
 def main(_argv, _stdout, _stderr):
     parser = argument_parser()
-    options, args = parser.parse_known_args(_argv)
-
-    if not args:
-        msg = 'Please provide a bug id or use -a option'
-        raise Exception(msg)
+    options = parser.parse_args(_argv)
 
     configure_logging(options.debug)
 
-    bugzilla_id = args[0]
-    updater = TestExpectationUpdater(Host(), bugzilla_id, options.is_bug_id, options.bot_filter_name)
+    updater = TestExpectationUpdater(Host(), options.bugzilla_id, options.is_bug_id, options.bot_filter_name)
     updater.do_update()

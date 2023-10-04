@@ -28,7 +28,6 @@
 #include "APIObject.h"
 #include "ImageOptions.h"
 #include "ShareableBitmap.h"
-#include <WebCore/ImageBufferBackend.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -37,6 +36,7 @@ class GraphicsContext;
 class ImageBuffer;
 class IntSize;
 class NativeImage;
+struct ImageBufferParameters;
 }
 
 namespace WebKit {
@@ -46,11 +46,11 @@ namespace WebKit {
 class WebImage : public API::ObjectImpl<API::Object::Type::Image> {
 public:
     static RefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions, const WebCore::DestinationColorSpace&, WebCore::ChromeClient* = nullptr);
-    static RefPtr<WebImage> create(const WebCore::ImageBufferBackend::Parameters&, ShareableBitmap::Handle&&);
+    static RefPtr<WebImage> create(WebCore::ImageBufferParameters&&, ShareableBitmap::Handle&&);
     static Ref<WebImage> create(Ref<WebCore::ImageBuffer>&&);
 
     WebCore::IntSize size() const;
-    const WebCore::ImageBufferBackend::Parameters& parameters() const;
+    const WebCore::ImageBufferParameters& parameters() const;
 
     WebCore::GraphicsContext& context() const;
 
@@ -60,7 +60,7 @@ public:
     RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
-    ShareableBitmap::Handle createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
+    std::optional<ShareableBitmap::Handle> createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
 
 private:
     WebImage(Ref<WebCore::ImageBuffer>&&);

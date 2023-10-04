@@ -16,6 +16,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/CoreMLSoftLink.h
     cocoa/CryptoKitPrivateSoftLink.h
     cocoa/DataDetectorsCoreSoftLink.h
+    cocoa/LinkPresentationSoftLink.h
     cocoa/MediaToolboxSoftLink.h
     cocoa/NaturalLanguageSoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h
@@ -70,6 +71,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/IOSurfaceSPI.h
     spi/cocoa/IOTypesSPI.h
     spi/cocoa/LaunchServicesSPI.h
+    spi/cocoa/LinkPresentationSPI.h
     spi/cocoa/MediaToolboxSPI.h
     spi/cocoa/MetalSPI.h
     spi/cocoa/NEFilterSourceSPI.h
@@ -175,6 +177,7 @@ list(APPEND PAL_SOURCES
     cocoa/DataDetectorsCoreSoftLink.mm
     cocoa/FileSizeFormatterCocoa.mm
     cocoa/Gunzip.cpp
+    cocoa/LinkPresentationSoftLink.mm
     cocoa/MediaToolboxSoftLink.cpp
     cocoa/NaturalLanguageSoftLink.mm
     cocoa/OpenGLSoftLinkCocoa.mm

@@ -124,6 +124,8 @@ Modules/model-element/scenekit/SceneKitModelLoaderClient.mm
 Modules/model-element/scenekit/SceneKitModelLoaderUSD.mm
 Modules/model-element/scenekit/SceneKitModelPlayer.mm
 Modules/notifications/NotificationDataCocoa.mm
+Modules/notifications/NotificationOptionsPayloadCocoa.mm
+Modules/notifications/NotificationPayloadCocoa.mm
 Modules/push-api/cocoa/PushCryptoCocoa.cpp
 Modules/plugins/YouTubePluginReplacement.cpp
 Modules/speech/cocoa/SpeechRecognizerCocoa.mm
@@ -294,6 +296,7 @@ platform/cocoa/LowPowerModeNotifier.mm
 platform/cocoa/MIMETypeRegistryCocoa.mm
 platform/cocoa/MediaUtilities.cpp
 platform/cocoa/NetworkExtensionContentFilter.mm
+platform/cocoa/NSURLUtilities.mm
 platform/cocoa/ParentalControlsContentFilter.mm
 platform/cocoa/PasteboardCocoa.mm
 platform/cocoa/PasteboardCustomDataCocoa.mm
@@ -364,7 +367,7 @@ platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
-platform/graphics/avfoundation/objc/WebContentKeyGroup.mm
+platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/LayerPool.cpp
@@ -536,6 +539,7 @@ platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm
 platform/ios/TileControllerMemoryHandlerIOS.cpp
 platform/ios/UIFoundationSoftLink.mm
+platform/ios/UIViewControllerUtilities.mm
 platform/ios/UserAgentIOS.mm
 platform/ios/ValidationBubbleIOS.mm
 platform/ios/VideoFullscreenInterfaceAVKit.mm @no-unify

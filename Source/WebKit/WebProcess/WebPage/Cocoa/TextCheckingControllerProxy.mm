@@ -186,7 +186,7 @@ WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetween
             continue;
         [string appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:it.text().createNSStringWithoutCopying().get()]).get()];
         auto range = it.range();
-        for (auto* marker : range.start.document().markers().markersInRange(range, DocumentMarker::PlatformTextChecking)) {
+        for (auto& marker : range.start.document().markers().markersInRange(range, DocumentMarker::PlatformTextChecking)) {
             auto& data = std::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
             auto subrange = resolveCharacterRange(range, { marker->startOffset(), marker->endOffset() - marker->startOffset() }, behaviors);
             auto attributeRange = characterRange(*entireRange, subrange, behaviors);

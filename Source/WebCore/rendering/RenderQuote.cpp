@@ -37,7 +37,7 @@ using namespace WTF::Unicode;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderQuote);
 
 RenderQuote::RenderQuote(Document& document, RenderStyle&& style, QuoteType quote)
-    : RenderInline(document, WTFMove(style))
+    : RenderInline(Type::Quote, document, WTFMove(style))
     , m_type(quote)
     , m_text(emptyString())
 {

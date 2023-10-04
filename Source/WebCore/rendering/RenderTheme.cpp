@@ -231,6 +231,17 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         // Border
         LengthBox borderBox(style.borderTopWidth(), style.borderRightWidth(), style.borderBottomWidth(), style.borderLeftWidth());
         borderBox = Theme::singleton().controlBorder(appearance, style.fontCascade(), borderBox, style.effectiveZoom());
+
+        auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
+            return appearance == StyleAppearance::Button
+                || appearance == StyleAppearance::DefaultButton
+                || appearance == StyleAppearance::SquareButton
+                || appearance == StyleAppearance::PushButton;
+        };
+        // Transpose for vertical writing mode:
+        if (!style.isHorizontalWritingMode() && supportsVerticalWritingMode(appearance))
+            borderBox = LengthBox(borderBox.left().value(), borderBox.top().value(), borderBox.right().value(), borderBox.bottom().value());
+
         if (borderBox.top().value() != static_cast<int>(style.borderTopWidth())) {
             if (borderBox.top().value())
                 style.setBorderTopWidth(borderBox.top().value());

@@ -46,8 +46,9 @@ class ScriptElement {
 public:
     virtual ~ScriptElement() = default;
 
-    Element& element() { return m_element; }
-    const Element& element() const { return m_element; }
+    Element& element() { return m_element.get(); }
+    const Element& element() const { return m_element.get(); }
+    Ref<Element> protectedElement() const { return m_element.get(); }
 
     bool prepareScript(const TextPosition& scriptStartPosition = TextPosition());
 
@@ -127,7 +128,7 @@ private:
 
     virtual bool isScriptPreventedByAttributes() const { return false; }
 
-    Element& m_element;
+    CheckedRef<Element> m_element;
     OrdinalNumber m_startLineNumber { OrdinalNumber::beforeFirst() };
     JSC::SourceTaintedOrigin m_taintedOrigin;
     ParserInserted m_parserInserted : bitWidthOfParserInserted;

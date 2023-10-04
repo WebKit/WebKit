@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static Node* enclosingBlockToSplitTreeTo(Node* startNode);
+static RefPtr<Node> enclosingBlockToSplitTreeTo(Node* startNode);
 static bool isElementForFormatBlock(const QualifiedName& tagName);
 
 static inline bool isElementForFormatBlock(Node* node)
@@ -48,8 +48,8 @@ static inline bool isElementForFormatBlock(Node* node)
     return is<Element>(*node) && isElementForFormatBlock(downcast<Element>(*node).tagQName());
 }
 
-FormatBlockCommand::FormatBlockCommand(Document& document, const QualifiedName& tagName)
-    : ApplyBlockElementCommand(document, tagName)
+FormatBlockCommand::FormatBlockCommand(Ref<Document>&& document, const QualifiedName& tagName)
+    : ApplyBlockElementCommand(WTFMove(document), tagName)
     , m_didApply(false)
 {
 }
@@ -64,7 +64,7 @@ void FormatBlockCommand::formatSelection(const VisiblePosition& startOfSelection
 
 void FormatBlockCommand::formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>& blockNode)
 {
-    Node* nodeToSplitTo = enclosingBlockToSplitTreeTo(start.deprecatedNode());
+    RefPtr nodeToSplitTo = enclosingBlockToSplitTreeTo(start.deprecatedNode());
     ASSERT(nodeToSplitTo);
     RefPtr<Node> outerBlock = (start.deprecatedNode() == nodeToSplitTo) ? start.deprecatedNode() : splitTreeToNode(*start.deprecatedNode(), *nodeToSplitTo);
     if (!outerBlock)
@@ -73,8 +73,8 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     RefPtr<Node> nodeAfterInsertionPosition = outerBlock;
 
     auto range = makeSimpleRange(start, endOfSelection);
-    Element* refNode = enclosingBlockFlowElement(end);
-    Element* root = editableRootForPosition(start);
+    RefPtr refNode = enclosingBlockFlowElement(end);
+    RefPtr root = editableRootForPosition(start);
     // Root is null for elements with contenteditable=false.
     if (!root || !refNode)
         return;
@@ -84,7 +84,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
         // Already in a block element that only contains the current paragraph
         if (refNode->hasTagName(tagName()))
             return;
-        nodeAfterInsertionPosition = refNode;
+        nodeAfterInsertionPosition = WTFMove(refNode);
     }
 
     if (!blockNode) {
@@ -103,14 +103,14 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
         && !isEndOfParagraph(lastParagraphInBlockNode) && !isStartOfParagraph(lastParagraphInBlockNode))
         insertBlockPlaceholder(lastParagraphInBlockNode);
 }
-    
-Element* FormatBlockCommand::elementForFormatBlockCommand(const std::optional<SimpleRange>& range)
+
+RefPtr<Element> FormatBlockCommand::elementForFormatBlockCommand(const std::optional<SimpleRange>& range)
 {
     if (!range)
         return nullptr;
 
-    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(*range);
-    while (commonAncestor && !isElementForFormatBlock(commonAncestor))
+    RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(*range);
+    while (commonAncestor && !isElementForFormatBlock(commonAncestor.get()))
         commonAncestor = commonAncestor->parentNode();
     if (!is<Element>(commonAncestor))
         return nullptr;
@@ -119,7 +119,7 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(const std::optional<Si
     if (!rootEditableElement || commonAncestor->contains(rootEditableElement))
         return nullptr;
 
-    return &downcast<Element>(*commonAncestor);
+    return downcast<Element>(commonAncestor.releaseNonNull());
 }
 
 bool isElementForFormatBlock(const QualifiedName& tagName)
@@ -156,18 +156,21 @@ bool isElementForFormatBlock(const QualifiedName& tagName)
     return false;
 }
 
-Node* enclosingBlockToSplitTreeTo(Node* startNode)
+RefPtr<Node> enclosingBlockToSplitTreeTo(Node* startNode)
 {
-    Node* lastBlock = startNode;
-    for (Node* n = startNode; n; n = n->parentNode()) {
+    RefPtr lastBlock = startNode;
+    for (RefPtr n = startNode; n; n = n->parentNode()) {
         if (!n->hasEditableStyle())
             return lastBlock;
-        if (isTableCell(n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->hasEditableStyle() || isElementForFormatBlock(n))
+        if (isTableCell(*n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->hasEditableStyle() || isElementForFormatBlock(n.get()))
             return n;
-        if (isBlock(n))
+        if (isBlock(*n))
             lastBlock = n;
-        if (isListHTMLElement(n))
-            return n->parentNode()->hasEditableStyle() ? n->parentNode() : n;
+        if (isListHTMLElement(n.get())) {
+            if (n->parentNode()->hasEditableStyle())
+                return n->parentNode();
+            return n;
+        }
     }
     return lastBlock;
 }

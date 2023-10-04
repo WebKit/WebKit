@@ -1096,12 +1096,6 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
     return true;
 }
 
-const String& Quirks::staticRadioPlayerURLString()
-{
-    static NeverDestroyed<String> staticRadioPlayerURLString = "https://static.radioplayer.co.uk/"_s;
-    return staticRadioPlayerURLString;
-}
-
 Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&& completionHandler) const
 {
     auto firstPartyDomain = RegistrableDomain(m_document->topDocument().url());

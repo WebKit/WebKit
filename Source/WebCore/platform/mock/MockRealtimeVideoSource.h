@@ -74,6 +74,7 @@ private:
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
+    void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
 
     void startProducingData() override;
     void stopProducingData() override;
@@ -122,6 +123,7 @@ private:
     RunLoop::Timer m_emitFrameTimer;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    std::optional<PhotoCapabilities> m_photoCapabilities;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     Color m_fillColor { Color::black };
     Color m_fillColorWithZoom { Color::red };

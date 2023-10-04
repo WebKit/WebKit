@@ -34,7 +34,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderCombineText);
 const float textCombineMargin = 1.15f; // Allow em + 15% margin
 
 RenderCombineText::RenderCombineText(Text& textNode, const String& string)
-    : RenderText(textNode, string)
+    : RenderText(Type::CombineText, textNode, string)
     , m_isCombined(false)
     , m_needsFontUpdate(false)
 {

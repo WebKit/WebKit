@@ -47,12 +47,13 @@
             if (window.testRunner)
                 testRunner.dumpAsText();
 
-            var rules = document.getElementsByTagName('style')[1].sheet.cssRules;
+            var rules = document.styleSheets[1].cssRules;
 
-            var rule = rules.item(0);            
+            var rule = rules[0];
+            var mediaRule = rules[1];            
             var style = rule.style;
             var value = style.getPropertyCSSValue('color');
-            var mediaList = rules.item(1).media;
+            var mediaList = mediaRule.media;
 
 
             var listing = [
@@ -60,8 +61,7 @@
                     type: 'CSSRule',
                     elementToUse: rule,
                     attributes: [
-                         // for now, setting cssText does not doing anything. When it gets implemented, the expectedNull
-                         // should become the empty string. 
+                        // 'null' is not a valid rule, so the setter does nothing.
                         {name: 'cssText', expectedNull: '.foo { color: black; }'}
                     ]
                 },
@@ -69,9 +69,7 @@
                     type: 'CSSStyleRule',
                     elementToUse: rule,
                     attributes: [
-                         // for now, setting selectorText does not doing anything. When it gets implemented, the expectedNull
-                         // should become the empty string. 
-                        {name: 'selectorText', expectedNull: '.foo'}
+                         {name: 'selectorText', expectedNull: 'null'}
                     ]
                 },
                 {

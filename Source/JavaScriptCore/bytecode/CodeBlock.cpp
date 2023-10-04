@@ -735,7 +735,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         dumpBytecode();
 
     if (m_metadata)
-        vm.heap.reportExtraMemoryAllocated(m_metadata->sizeInBytesForGC());
+        vm.heap.reportExtraMemoryAllocated(this, m_metadata->sizeInBytesForGC());
 
     initializeTemplateObjects(topLevelExecutable, templateObjectIndices);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -775,7 +775,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
                 unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
                 BaselineUnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];
                 StructureStubInfo& stubInfo = baselineJITData->m_stubInfos[index];
-                stubInfo.initializeFromUnlinkedStructureStubInfo(unlinkedStubInfo);
+                stubInfo.initializeFromUnlinkedStructureStubInfo(vm(), unlinkedStubInfo);
                 baselineJITData->at(i) = &stubInfo;
                 break;
             }

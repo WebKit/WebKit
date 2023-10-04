@@ -38,6 +38,7 @@ struct SupportedLimits {
     uint32_t maxTextureDimension3D { 0 };
     uint32_t maxTextureArrayLayers { 0 };
     uint32_t maxBindGroups { 0 };
+    uint32_t maxBindGroupsPlusVertexBuffers { 0 };
     uint32_t maxBindingsPerBindGroup { 0 };
     uint32_t maxDynamicUniformBuffersPerPipelineLayout { 0 };
     uint32_t maxDynamicStorageBuffersPerPipelineLayout { 0 };

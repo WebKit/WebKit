@@ -31,7 +31,7 @@
 #import "TestCocoa.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKTextInputContext.h>
 #import <wtf/RetainPtr.h>

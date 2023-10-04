@@ -144,6 +144,7 @@ RegisterAtOffsetList WebAssemblyFunction::usedCalleeSaveRegisters() const
     return RegisterAtOffsetList { calleeSaves(), RegisterAtOffsetList::OffsetBaseType::FramePointerBased };
 }
 
+#if ENABLE(JIT)
 static size_t trampolineReservedStackSize()
 {
     // If we are jumping to the function which can have stack-overflow check,
@@ -435,6 +436,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     m_jsToWasmICCallee->setEntrypoint({ WTFMove(compilation), WTFMove(registersToSpill) });
     return m_jsToWasmICCallee->entrypoint().retagged<JSEntryPtrTag>();
 }
+#endif // ENABLE(JIT)
 
 WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, unsigned length, const String& name, JSWebAssemblyInstance* instance, Wasm::Callee& jsEntrypoint, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::TypeIndex typeIndex, RefPtr<const Wasm::RTT> rtt)
 {

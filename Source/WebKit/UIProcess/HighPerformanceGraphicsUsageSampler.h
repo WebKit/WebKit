@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {

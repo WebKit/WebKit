@@ -90,7 +90,6 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
             for (id<MLComputeDeviceProtocol> device in supportedComputeStageDevices[computeStage]) {
                 if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClass()]) {
                     [request setComputeDevice:device forComputeStage:computeStage];
-                    set = true;
                     break;
                 }
             }

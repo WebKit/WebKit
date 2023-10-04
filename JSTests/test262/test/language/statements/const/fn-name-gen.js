@@ -22,7 +22,9 @@ const gen = function*() {};
 
 assert(xGen.name !== 'xGen');
 
-assert.sameValue(gen.name, 'gen');
-verifyNotEnumerable(gen, 'name');
-verifyNotWritable(gen, 'name');
-verifyConfigurable(gen, 'name');
+verifyProperty(gen, 'name', {
+  value: 'gen',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

@@ -137,6 +137,9 @@ struct NetworkSessionCreationParameters {
     bool serviceWorkerProcessTerminationDelayEnabled { true };
     bool inspectionForServiceWorkersAllowed { true };
 #endif
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    bool isDeclarativeWebPushEnabled { false };
+#endif
 
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };

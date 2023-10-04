@@ -128,7 +128,7 @@ public:
     // Accessors for native image formats.
 #if USE(APPKIT)
     NSImage *nsImage() override;
-    RetainPtr<NSImage> snapshotNSImage() override;
+    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage() override;
 #endif
 
 #if PLATFORM(COCOA)
@@ -264,7 +264,7 @@ private:
 #if USE(CG)
     mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
 #endif
-    RefPtr<Image> m_cachedImage;
+    RefPtr<NativeImage> m_cachedImage;
 };
 
 } // namespace WebCore

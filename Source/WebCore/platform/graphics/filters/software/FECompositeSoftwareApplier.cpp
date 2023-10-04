@@ -153,12 +153,12 @@ bool FECompositeSoftwareApplier::applyArithmetic(FilterImage& input, FilterImage
 
 bool FECompositeSoftwareApplier::applyNonArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result) const
 {
-    auto resultImage = result.imageBuffer();
+    RefPtr resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
-    auto inputImage = input.imageBuffer();
-    auto inputImage2 = input2.imageBuffer();
+    RefPtr inputImage = input.imageBuffer();
+    RefPtr inputImage2 = input2.imageBuffer();
     if (!inputImage || !inputImage2)
         return false;
 

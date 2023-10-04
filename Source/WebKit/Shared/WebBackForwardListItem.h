@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "SessionState.h"
 #include "WebPageProxyIdentifier.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -47,13 +48,13 @@ class SuspendedPageProxy;
 class WebBackForwardCache;
 class WebBackForwardCacheEntry;
 
-class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem>, public CanMakeWeakPtr<WebBackForwardListItem> {
+class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem>, public CanMakeWeakPtr<WebBackForwardListItem>, public CanMakeCheckedPtr {
 public:
     static Ref<WebBackForwardListItem> create(BackForwardListItemState&&, WebPageProxyIdentifier);
     virtual ~WebBackForwardListItem();
 
     static WebBackForwardListItem* itemForID(const WebCore::BackForwardItemIdentifier&);
-    static HashMap<WebCore::BackForwardItemIdentifier, WebBackForwardListItem*>& allItems();
+    static HashMap<WebCore::BackForwardItemIdentifier, CheckedPtr<WebBackForwardListItem>>& allItems();
 
     const WebCore::BackForwardItemIdentifier& itemID() const { return m_itemState.identifier; }
     const BackForwardListItemState& itemState() { return m_itemState; }

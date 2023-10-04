@@ -50,7 +50,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteImageBufferProxy& imageBuffer, RemoteRenderingBackendProxy& renderingBackend, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : DisplayList::Recorder({ }, initialClip, initialCTM, imageBuffer.colorSpace(), DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
+    : DisplayList::Recorder(IsDeferred::No, { }, initialClip, initialCTM, imageBuffer.colorSpace(), DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
     , m_destinationBufferIdentifier(imageBuffer.renderingResourceIdentifier())
     , m_imageBuffer(imageBuffer)
     , m_renderingBackend(renderingBackend)
@@ -65,7 +65,7 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
         return;
 
     imageBuffer->backingStoreWillChange();
-    auto result = m_renderingBackend->streamConnection().send(WTFMove(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = m_renderingBackend->streamConnection().send(std::forward<T>(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(result != IPC::Error::NoError)) {
         auto& parameters = m_renderingBackend->parameters();
@@ -376,7 +376,7 @@ void RemoteDisplayListRecorderProxy::recordPaintVideoFrame(VideoFrame& frame, co
 #if PLATFORM(COCOA)
     auto sharedVideoFrame = ensureSharedVideoFrameWriter().write(frame, [&](auto& semaphore) {
         send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameSemaphore { semaphore });
-    }, [&](auto&& handle) {
+    }, [&](SharedMemory::Handle&& handle) {
         send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameMemory { WTFMove(handle) });
     });
     if (!sharedVideoFrame)
@@ -556,7 +556,11 @@ RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const Floa
 
     // FIXME: Ideally we'd plumb the purpose through for callers of GraphicsContext::createImageBuffer().
     RenderingPurpose purpose = RenderingPurpose::Unspecified;
-    return m_renderingBackend->createImageBuffer(size, renderingMode.value_or(this->renderingMode()), purpose, resolutionScale, colorSpace, PixelFormat::BGRA8);
+    // FIXME: Use purpose to decide the acceleration status and remove this.
+    OptionSet<ImageBufferOptions> options;
+    if (renderingMode.value_or(this->renderingMode()) == RenderingMode::Accelerated)
+        options.add(ImageBufferOptions::Accelerated);
+    return m_renderingBackend->createImageBuffer(size, purpose, resolutionScale, colorSpace, PixelFormat::BGRA8, options);
 }
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createAlignedImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const

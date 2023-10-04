@@ -265,6 +265,7 @@ namespace WebCore {
     macro(IIRFilterNode) \
     macro(ImageBitmap) \
     macro(ImageBitmapRenderingContext) \
+    macro(ImageCapture) \
     macro(IdleDeadline) \
     macro(InputDeviceInfo) \
     macro(InputEvent) \
@@ -339,6 +340,7 @@ namespace WebCore {
     macro(PushEvent) \
     macro(PushManager) \
     macro(PushMessageData) \
+    macro(PushNotificationEvent) \
     macro(PushSubscription) \
     macro(PushSubscriptionChangeEvent) \
     macro(PushSubscriptionOptions) \

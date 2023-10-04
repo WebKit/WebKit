@@ -39,8 +39,8 @@ namespace WTF::Persistence {
 
 #define DECLARE_CODER(class) \
 template<> struct Coder<class> { \
-    static void encode(Encoder&, const class&); \
-    static std::optional<class> decode(Decoder&); \
+    static void encodeForPersistence(Encoder&, const class&); \
+    static std::optional<class> decodeForPersistence(Decoder&); \
 }
 
 DECLARE_CODER(WebKit::NetworkCache::Key);

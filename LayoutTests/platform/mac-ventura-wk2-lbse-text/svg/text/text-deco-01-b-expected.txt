@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (10,5.33) size 382x276
-  RenderSVGTransformableContainer {g} at (10,5.33) size 381.89x274.77
-layer at (10,5.33) size 154x18
-  RenderSVGText {text} at (0,0) size 154x19 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 154x19
-      chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 23 width 153.85: "Test 'text-decoration'."
+layer at (10,5.52) size 382x276
+  RenderSVGTransformableContainer {g} at (10,5.52) size 381.89x274.58
+layer at (10,5.52) size 152x18
+  RenderSVGText {text} at (0,0) size 152x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 152x18
+      chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 23 width 151.95: "Test 'text-decoration'."
 layer at (25,43.27) size 367x238
-  RenderSVGTransformableContainer {g} at (15,37.94) size 366.89x236.83
+  RenderSVGTransformableContainer {g} at (15,37.75) size 366.89x236.83
 layer at (25,43.27) size 123x27
   RenderSVGText {text} at (0,0) size 123x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 123x27
@@ -50,9 +50,9 @@ layer at (25,253.27) size 367x27
       RenderSVGInlineText {#text} at (249,0) size 118x27
         chunk 1 text run 1 at (274.47,275.00) startOffset 0 endOffset 11 width 117.42: "underlining"
     RenderSVGInlineText {#text} at (0,0) size 0x0
-layer at (10,303.84) size 265x46
-  RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 265x47
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.9 $"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
 layer at (1,1) size 478x358
   RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

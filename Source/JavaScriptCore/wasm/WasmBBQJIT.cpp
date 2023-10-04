@@ -7512,10 +7512,7 @@ public:
 
             fallThrough.link(&m_jit);
         } else {
-            Vector<int64_t> cases;
-            cases.reserveInitialCapacity(targets.size());
-            for (size_t i = 0; i < targets.size(); ++i)
-                cases.uncheckedAppend(i);
+            Vector<int64_t> cases(targets.size(), [](size_t i) { return i; });
 
             BinarySwitch binarySwitch(wasmScratchGPR, cases, BinarySwitch::Int32);
             while (binarySwitch.advance(m_jit)) {
@@ -7718,18 +7715,13 @@ public:
         // We'll directly use these when passing parameters, since no other instructions we emit here should
         // overwrite registers currently occupied by values.
 
-        Vector<Value, N> resolvedArguments;
-        resolvedArguments.reserveInitialCapacity(arguments.size());
-        for (unsigned i = 0; i < arguments.size(); i ++) {
-            if (arguments[i].isConst())
-                resolvedArguments.uncheckedAppend(arguments[i]);
-            else
-                resolvedArguments.uncheckedAppend(Value::pinned(arguments[i].type(), locationOf(arguments[i])));
-
+        auto resolvedArguments = WTF::map<N>(arguments, [&](auto& argument) {
+            auto value = argument.isConst() ? argument : Value::pinned(argument.type(), locationOf(argument));
             // Like other value uses, we count this as a use here, and end the lifetimes of any temps we passed.
             // This saves us the work of having to spill them to their canonical slots.
-            consume(arguments[i]);
-        }
+            consume(argument);
+            return value;
+        });
 
         // At this point in the program, argumentLocations doesn't represent the state of the register allocator.
         // We need to be careful not to allocate any new registers before passing them to the function, since that
@@ -7755,10 +7747,9 @@ public:
         }
 
         // Finally, we parallel-move arguments to the parameter locations.
-        Vector<Location, N> parameterLocations;
-        parameterLocations.reserveInitialCapacity(callInfo.params.size());
-        for (const auto& param : callInfo.params)
-            parameterLocations.uncheckedAppend(Location::fromArgumentLocation(param));
+        auto parameterLocations = WTF::map<N>(callInfo.params, [](auto& param) {
+            return Location::fromArgumentLocation(param);
+        });
         emitShuffle(resolvedArguments, parameterLocations);
     }
 
@@ -7801,10 +7792,9 @@ public:
     {
         // Currently, we assume the Wasm calling convention is the same as the C calling convention
         Vector<Type, 16> resultTypes;
-        Vector<Type, 16> argumentTypes;
-        argumentTypes.reserveInitialCapacity(arguments.size());
-        for (const Value& value : arguments)
-            argumentTypes.uncheckedAppend(Type { value.type(), 0u });
+        auto argumentTypes = WTF::map<16>(arguments, [](auto& value) {
+            return Type { value.type(), 0u };
+        });
         RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
         CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
         Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);
@@ -7830,10 +7820,10 @@ public:
 
         // Currently, we assume the Wasm calling convention is the same as the C calling convention
         Vector<Type, 16> resultTypes = { Type { result.type(), 0u } };
-        Vector<Type, 16> argumentTypes;
-        argumentTypes.reserveInitialCapacity(arguments.size());
-        for (const Value& value : arguments)
-            argumentTypes.uncheckedAppend(Type { value.type(), 0u });
+        auto argumentTypes = WTF::map<16>(arguments, [](auto& value) {
+            return Type { value.type(), 0u };
+        });
+
         RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
         CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
         Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);

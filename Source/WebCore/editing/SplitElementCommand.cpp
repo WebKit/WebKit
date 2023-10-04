@@ -54,7 +54,7 @@ void SplitElementCommand::executeApply()
     auto* parent = m_element2->parentNode();
     if (!parent || !parent->hasEditableStyle())
         return;
-    if (parent->insertBefore(*m_element1, m_element2.ptr()).hasException())
+    if (parent->insertBefore(*m_element1, m_element2.copyRef()).hasException())
         return;
 
     // Delete id attribute from the second element because the same id cannot be used for more than one element
@@ -83,7 +83,7 @@ void SplitElementCommand::doUnapply()
     RefPtr<Node> refChild = m_element2->firstChild();
 
     for (auto& child : children)
-        m_element2->insertBefore(child, refChild.get());
+        m_element2->insertBefore(child, refChild.copyRef());
 
     // Recover the id attribute of the original element.
     const AtomString& id = m_element1->getIdAttribute();

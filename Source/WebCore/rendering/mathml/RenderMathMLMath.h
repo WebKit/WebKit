@@ -39,7 +39,6 @@ public:
     RenderMathMLMath(MathMLRowElement&, RenderStyle&&);
 
 private:
-    bool isRenderMathMLMath() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderMathMLMath"_s; }
 
     void centerChildren(LayoutUnit contentWidth);

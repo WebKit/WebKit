@@ -52,7 +52,7 @@ RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourcePr
 
 void RemoteRealtimeMediaSource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalts(), pageIdentifier(), [this, protectedThis = Ref { *this }](WebCore::CaptureSourceError&& error, auto&& settings, auto&& capabilities) {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalts(), pageIdentifier(), [this, protectedThis = Ref { *this }](WebCore::CaptureSourceError&& error, WebCore::RealtimeMediaSourceSettings&& settings, WebCore::RealtimeMediaSourceCapabilities&& capabilities) {
         if (error) {
             m_proxy.didFail(WTFMove(error));
             return;
@@ -78,6 +78,11 @@ void RemoteRealtimeMediaSource::setSettings(RealtimeMediaSourceSettings&& settin
     auto changed = m_settings.difference(settings);
     m_settings = WTFMove(settings);
     notifySettingsDidChangeObservers(changed);
+}
+
+void RemoteRealtimeMediaSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& callback)
+{
+    m_proxy.getPhotoCapabilities(WTFMove(callback));
 }
 
 void RemoteRealtimeMediaSource::configurationChanged(String&& persistentID, WebCore::RealtimeMediaSourceSettings&& settings, WebCore::RealtimeMediaSourceCapabilities&& capabilities)

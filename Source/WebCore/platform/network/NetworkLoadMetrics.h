@@ -64,15 +64,20 @@ class NetworkLoadMetrics {
     WTF_MAKE_FAST_ALLOCATED(NetworkLoadMetrics);
 public:
     WEBCORE_EXPORT NetworkLoadMetrics();
+    WEBCORE_EXPORT NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, PrivacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&&);
 
     WEBCORE_EXPORT static const NetworkLoadMetrics& emptyMetrics();
 
     WEBCORE_EXPORT NetworkLoadMetrics isolatedCopy() const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<NetworkLoadMetrics> decode(Decoder&);
-
     bool isComplete() const { return complete; }
+    bool isCellular() const { return cellular; }
+    bool isExpensive() const { return expensive; }
+    bool isConstrained() const { return constrained; }
+    bool isMultipath() const { return multipath; }
+    bool reusedConnection() const { return isReusedConnection; }
+    bool doesFailTAOCheck() const { return failsTAOCheck; }
+    bool crossOriginRedirect() const { return hasCrossOriginRedirect; }
     void markComplete() { complete = true; }
 
     void updateFromFinalMetrics(const NetworkLoadMetrics&);
@@ -115,10 +120,8 @@ public:
 struct AdditionalNetworkLoadMetricsForWebInspector : public RefCounted<AdditionalNetworkLoadMetricsForWebInspector> {
 
     static Ref<AdditionalNetworkLoadMetricsForWebInspector> create() { return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector()); }
+    WEBCORE_EXPORT static Ref<AdditionalNetworkLoadMetricsForWebInspector> create(NetworkLoadPriority&&, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
     Ref<AdditionalNetworkLoadMetricsForWebInspector> isolatedCopy() const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static RefPtr<AdditionalNetworkLoadMetricsForWebInspector> decode(Decoder&);
     Ref<AdditionalNetworkLoadMetricsForWebInspector> isolatedCopy();
 
     NetworkLoadPriority priority { NetworkLoadPriority::Unknown };
@@ -138,289 +141,12 @@ struct AdditionalNetworkLoadMetricsForWebInspector : public RefCounted<Additiona
     bool isProxyConnection { false };
 private:
     AdditionalNetworkLoadMetricsForWebInspector() { }
+    AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&&, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
 };
 
 #if PLATFORM(COCOA)
 Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *, const ResourceHandle&);
 WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetrics, const NetworkLoadMetrics&);
 #endif
-
-template<class Encoder>
-void NetworkLoadMetrics::encode(Encoder& encoder) const
-{
-    static_assert(Encoder::isIPCEncoder, "NetworkLoadMetrics should not be stored by the WTF::Persistence::Encoder");
-
-    encoder << redirectStart;
-    encoder << fetchStart;
-    encoder << domainLookupStart;
-    encoder << domainLookupEnd;
-    encoder << connectStart;
-    encoder << secureConnectionStart;
-    encoder << connectEnd;
-    encoder << requestStart;
-    encoder << responseStart;
-    encoder << responseEnd;
-    encoder << workerStart;
-
-    encoder << protocol;
-
-    encoder << redirectCount;
-
-    encoder << complete;
-    encoder << cellular;
-    encoder << expensive;
-    encoder << constrained;
-    encoder << multipath;
-    encoder << isReusedConnection;
-    encoder << failsTAOCheck;
-    encoder << hasCrossOriginRedirect;
-
-    encoder << privacyStance;
-
-    encoder << responseBodyBytesReceived;
-    encoder << responseBodyDecodedSize;
-    
-    if (additionalNetworkLoadMetricsForWebInspector) {
-        encoder << true;
-        encoder << *additionalNetworkLoadMetricsForWebInspector;
-    } else
-        encoder << false;
-}
-
-template<class Decoder>
-std::optional<NetworkLoadMetrics> NetworkLoadMetrics::decode(Decoder& decoder)
-{
-    static_assert(Decoder::isIPCDecoder, "NetworkLoadMetrics should not be stored by the WTF::Persistence::Encoder");
-
-    NetworkLoadMetrics metrics;
-
-    std::optional<MonotonicTime> redirectStart;
-    decoder >> redirectStart;
-    if (!redirectStart)
-        return std::nullopt;
-    metrics.redirectStart = WTFMove(*redirectStart);
-
-    std::optional<MonotonicTime> fetchStart;
-    decoder >> fetchStart;
-    if (!fetchStart)
-        return std::nullopt;
-    metrics.fetchStart = WTFMove(*fetchStart);
-
-    std::optional<MonotonicTime> domainLookupStart;
-    decoder >> domainLookupStart;
-    if (!domainLookupStart)
-        return std::nullopt;
-    metrics.domainLookupStart = WTFMove(*domainLookupStart);
-
-    std::optional<MonotonicTime> domainLookupEnd;
-    decoder >> domainLookupEnd;
-    if (!domainLookupEnd)
-        return std::nullopt;
-    metrics.domainLookupEnd = WTFMove(*domainLookupEnd);
-
-    std::optional<MonotonicTime> connectStart;
-    decoder >> connectStart;
-    if (!connectStart)
-        return std::nullopt;
-    metrics.connectStart = WTFMove(*connectStart);
-
-    std::optional<MonotonicTime> secureConnectionStart;
-    decoder >> secureConnectionStart;
-    if (!secureConnectionStart)
-        return std::nullopt;
-    metrics.secureConnectionStart = WTFMove(*secureConnectionStart);
-
-    std::optional<MonotonicTime> connectEnd;
-    decoder >> connectEnd;
-    if (!connectEnd)
-        return std::nullopt;
-    metrics.connectEnd = WTFMove(*connectEnd);
-
-    std::optional<MonotonicTime> requestStart;
-    decoder >> requestStart;
-    if (!requestStart)
-        return std::nullopt;
-    metrics.requestStart = WTFMove(*requestStart);
-
-    std::optional<MonotonicTime> responseStart;
-    decoder >> responseStart;
-    if (!responseStart)
-        return std::nullopt;
-    metrics.responseStart = WTFMove(*responseStart);
-
-    std::optional<MonotonicTime> responseEnd;
-    decoder >> responseEnd;
-    if (!responseEnd)
-        return std::nullopt;
-    metrics.responseEnd = WTFMove(*responseEnd);
-
-    std::optional<MonotonicTime> workerStart;
-    decoder >> workerStart;
-    if (!workerStart)
-        return std::nullopt;
-    metrics.workerStart = WTFMove(*workerStart);
-
-    std::optional<String> protocol;
-    decoder >> protocol;
-    if (!protocol)
-        return std::nullopt;
-    metrics.protocol = WTFMove(*protocol);
-
-    std::optional<uint16_t> redirectCount;
-    decoder >> redirectCount;
-    if (!redirectCount)
-        return std::nullopt;
-    metrics.redirectCount = WTFMove(*redirectCount);
-
-    std::optional<bool> complete;
-    decoder >> complete;
-    if (!complete)
-        return std::nullopt;
-    metrics.complete = WTFMove(*complete);
-
-    std::optional<bool> cellular;
-    decoder >> cellular;
-    if (!cellular)
-        return std::nullopt;
-    metrics.cellular = WTFMove(*cellular);
-
-    std::optional<bool> expensive;
-    decoder >> expensive;
-    if (!expensive)
-        return std::nullopt;
-    metrics.expensive = WTFMove(*expensive);
-
-    std::optional<bool> constrained;
-    decoder >> constrained;
-    if (!constrained)
-        return std::nullopt;
-    metrics.constrained = WTFMove(*constrained);
-
-    std::optional<bool> multipath;
-    decoder >> multipath;
-    if (!multipath)
-        return std::nullopt;
-    metrics.multipath = WTFMove(*multipath);
-
-    std::optional<bool> isReusedConnection;
-    decoder >> isReusedConnection;
-    if (!isReusedConnection)
-        return std::nullopt;
-    metrics.isReusedConnection = WTFMove(*isReusedConnection);
-
-    std::optional<bool> failsTAOCheck;
-    decoder >> failsTAOCheck;
-    if (!failsTAOCheck)
-        return std::nullopt;
-    metrics.failsTAOCheck = WTFMove(*failsTAOCheck);
-
-    std::optional<bool> hasCrossOriginRedirect;
-    decoder >> hasCrossOriginRedirect;
-    if (!hasCrossOriginRedirect)
-        return std::nullopt;
-    metrics.hasCrossOriginRedirect = WTFMove(*hasCrossOriginRedirect);
-
-    if (!(decoder.decode(metrics.privacyStance)
-        && decoder.decode(metrics.responseBodyBytesReceived)
-        && decoder.decode(metrics.responseBodyDecodedSize)))
-        return std::nullopt;
-
-    std::optional<bool> hasAdditionalNetworkLoadMetricsForWebInspector;
-    decoder >> hasAdditionalNetworkLoadMetricsForWebInspector;
-    if (!hasAdditionalNetworkLoadMetricsForWebInspector)
-        return std::nullopt;
-    if (*hasAdditionalNetworkLoadMetricsForWebInspector) {
-        metrics.additionalNetworkLoadMetricsForWebInspector = AdditionalNetworkLoadMetricsForWebInspector::decode(decoder);
-        if (!metrics.additionalNetworkLoadMetricsForWebInspector)
-            return std::nullopt;
-    }
-    return metrics;
-}
-
-template<class Encoder>
-void AdditionalNetworkLoadMetricsForWebInspector::encode(Encoder& encoder) const
-{
-    encoder << priority;
-    encoder << remoteAddress;
-    encoder << connectionIdentifier;
-
-    encoder << tlsProtocol;
-    encoder << tlsCipher;
-
-    encoder << requestHeaders;
-
-    encoder << requestHeaderBytesSent;
-    encoder << responseHeaderBytesReceived;
-    encoder << requestBodyBytesSent;
-
-    encoder << isProxyConnection;
-}
-
-template<class Decoder>
-RefPtr<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::decode(Decoder& decoder)
-{
-    std::optional<NetworkLoadPriority> priority;
-    decoder >> priority;
-    if (!priority)
-        return nullptr;
-    
-    std::optional<String> remoteAddress;
-    decoder >> remoteAddress;
-    if (!remoteAddress)
-        return nullptr;
-
-    std::optional<String> connectionIdentifier;
-    decoder >> connectionIdentifier;
-    if (!connectionIdentifier)
-        return nullptr;
-
-    std::optional<String> tlsProtocol;
-    decoder >> tlsProtocol;
-    if (!tlsProtocol)
-        return nullptr;
-
-    std::optional<String> tlsCipher;
-    decoder >> tlsCipher;
-    if (!tlsCipher)
-        return nullptr;
-
-    std::optional<HTTPHeaderMap> requestHeaders;
-    decoder >> requestHeaders;
-    if (!requestHeaders)
-        return nullptr;
-
-    std::optional<uint64_t> requestHeaderBytesSent;
-    decoder >> requestHeaderBytesSent;
-    if (!requestHeaderBytesSent)
-        return nullptr;
-
-    std::optional<uint64_t> responseHeaderBytesReceived;
-    decoder >> responseHeaderBytesReceived;
-    if (!responseHeaderBytesReceived)
-        return nullptr;
-
-    std::optional<uint64_t> requestBodyBytesSent;
-    decoder >> requestBodyBytesSent;
-    if (!requestBodyBytesSent)
-        return nullptr;
-
-    std::optional<bool> isProxyConnection;
-    decoder >> isProxyConnection;
-    if (!isProxyConnection)
-        return nullptr;
-
-    auto decoded = AdditionalNetworkLoadMetricsForWebInspector::create();
-    decoded->priority = WTFMove(*priority);
-    decoded->remoteAddress = WTFMove(*remoteAddress);
-    decoded->connectionIdentifier = WTFMove(*connectionIdentifier);
-    decoded->tlsProtocol = WTFMove(*tlsProtocol);
-    decoded->tlsCipher = WTFMove(*tlsCipher);
-    decoded->requestHeaders = WTFMove(*requestHeaders);
-    decoded->requestHeaderBytesSent = WTFMove(*requestHeaderBytesSent);
-    decoded->responseHeaderBytesReceived = WTFMove(*responseHeaderBytesReceived);
-    decoded->requestBodyBytesSent = WTFMove(*requestBodyBytesSent);
-    decoded->isProxyConnection = WTFMove(*isProxyConnection);
-    return decoded;
-}
 
 } // namespace WebCore

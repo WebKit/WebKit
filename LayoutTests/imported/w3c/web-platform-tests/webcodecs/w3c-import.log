@@ -79,6 +79,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.crossOriginIsolated.https.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-flush.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-h264.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.js
@@ -98,8 +99,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-odd-size.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.helper.html
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/vp8.webm

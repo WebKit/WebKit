@@ -39,6 +39,12 @@ namespace WebKit {
 class GPUProcessConnection;
 }
 
+namespace WebCore {
+class IntSize;
+class GraphicsContext;
+class NativeImage;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -60,6 +66,7 @@ public:
     void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::deref(); }
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::controlBlock(); }
+    void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
 
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
@@ -91,12 +98,12 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().send(std::forward<T>(message), backing(), defaultSendTimeout);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().sendSync(std::forward<T>(message), backing(), defaultSendTimeout);
     }
     IPC::Connection& connection() const { return m_gpuProcessConnection.get()->connection(); }
 

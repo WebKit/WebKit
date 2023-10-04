@@ -33,6 +33,7 @@
 #include "ProcessIdentity.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
+#include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -52,8 +53,7 @@ class ScriptExecutionContext;
 
 enum class ImageBufferOptions : uint8_t {
     Accelerated     = 1 << 0,
-    UseDisplayList  = 1 << 1,
-    AvoidBackendSizeCheckForTesting = 1 << 2,
+    AvoidBackendSizeCheckForTesting = 1 << 1,
 };
 
 class SerializedImageBuffer;
@@ -63,36 +63,38 @@ struct ImageBufferCreationContext {
     IOSurfacePool* surfacePool { nullptr };
     PlatformDisplayID displayID { 0 };
 #endif
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    enum class UseCGDisplayListImageCache : bool { No, Yes };
-    UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
-#endif
     WebCore::ProcessIdentity resourceOwner;
 
     ImageBufferCreationContext() = default; // To guarantee order in presence of ifdefs, use individual .property to initialize them.
 };
 
+struct ImageBufferParameters {
+    FloatSize logicalSize;
+    float resolutionScale;
+    DestinationColorSpace colorSpace;
+    PixelFormat pixelFormat;
+    RenderingPurpose purpose;
+};
+
 class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageBuffer> {
 public:
-
+    using Parameters = ImageBufferParameters;
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, GraphicsClient* graphicsClient = nullptr);
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)
     {
-        auto parameters = ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
-        auto backend = BackendType::create(parameters, creationContext);
+        Parameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
+        auto backendParameters = ImageBuffer::backendParameters(parameters);
+        auto backend = BackendType::create(backendParameters, creationContext);
         if (!backend)
             return nullptr;
-        auto backendInfo = populateBackendInfo<BackendType>(parameters);
+        auto backendInfo = populateBackendInfo<BackendType>(backendParameters);
         return create<ImageBufferType>(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...);
     }
 
-    template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize&, const GraphicsContext&, RenderingPurpose, Arguments&&...);
-
     template<typename ImageBufferType = ImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(Parameters parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)
     {
         return adoptRef(new ImageBufferType(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
@@ -111,6 +113,9 @@ public:
 
     WEBCORE_EXPORT virtual ~ImageBuffer();
 
+    WEBCORE_EXPORT static IntSize calculateBackendSize(FloatSize logicalSize, float resolutionScale);
+    WEBCORE_EXPORT static ImageBufferBackendParameters backendParameters(const Parameters&);
+
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
     static bool sizeNeedsClamping(const FloatSize&, FloatSize& scale);
@@ -119,7 +124,6 @@ public:
     static FloatRect clampedRect(const FloatRect&);
 
     WEBCORE_EXPORT RefPtr<ImageBuffer> clone() const;
-    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> cloneForDifferentThread();
 
     WEBCORE_EXPORT virtual GraphicsContext& context() const;
 
@@ -142,7 +146,7 @@ public:
     
     RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
     PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
-    const ImageBufferBackend::Parameters& parameters() const { return m_parameters; }
+    const Parameters& parameters() const { return m_parameters; }
 
     RenderingMode renderingMode() const { return m_backendInfo.renderingMode; }
     bool canMapBackingStore() const { return m_backendInfo.canMapBackingStore; }
@@ -151,30 +155,30 @@ public:
     size_t externalMemoryCost() const { return m_backendInfo.externalMemoryCost; }
     const ImageBufferBackend::Info& backendInfo() { return m_backendInfo; }
 
-    WEBCORE_EXPORT static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
+    // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage() const;
 
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(GraphicsContext& destination) const;
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
-    WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
-    WEBCORE_EXPORT virtual RefPtr<Image> filteredImage(Filter&);
-    RefPtr<Image> filteredImage(Filter&, std::function<void(GraphicsContext&)> drawCallback);
+    // Returns NativeImage referencing the back buffer. Changes to ImageBuffer might be reflected to the NativeImage.
+    // Useful when caller can guarantee the use of the NativeImage ends "immediately", before the next draw to this ImageBuffer.
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> createNativeImageReference() const;
+
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> filteredNativeImage(Filter&);
+    RefPtr<NativeImage> filteredNativeImage(Filter&, Function<void(GraphicsContext&)> drawCallback);
 
 #if USE(CAIRO)
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
-    static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
-    WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(RefPtr<ImageBuffer>, PreserveResolution = PreserveResolution::No);
-
+    // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
+    // Caller is responsible for ensuring that the passed reference is the only reference to the ImageBuffer.
+    // Has better performance than:
+    //     RefPtr<ImageBuffer> buffer = ..;
+    //     ASSERT(buffer.hasOneRef());
+    //     auto nativeImage = buffer.copyNativeImage();
+    //     buffer = nullptr;
+    WEBCORE_EXPORT static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
     static RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer>);
-
-    WEBCORE_EXPORT virtual void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
-    WEBCORE_EXPORT virtual void drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&);
-
-    WEBCORE_EXPORT virtual void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
-
-    static void drawConsuming(RefPtr<ImageBuffer>, GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { });
+    static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
 
     WEBCORE_EXPORT virtual void convertToLuminanceMask();
     WEBCORE_EXPORT virtual void transformToColorSpace(const DestinationColorSpace& newColorSpace);
@@ -187,9 +191,6 @@ public:
 
     WEBCORE_EXPORT virtual RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& = ImageBufferAllocator()) const;
     WEBCORE_EXPORT virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied);
-
-    PlatformLayer* platformLayer() const;
-    bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY) const;
 
     WEBCORE_EXPORT bool isInUse() const;
     WEBCORE_EXPORT void releaseGraphicsContext();
@@ -205,14 +206,15 @@ public:
     WEBCORE_EXPORT virtual String debugDescription() const;
 
 protected:
-    WEBCORE_EXPORT ImageBuffer(const ImageBufferBackend::Parameters&, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    WEBCORE_EXPORT ImageBuffer(ImageBufferParameters, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread();
     WEBCORE_EXPORT virtual std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer();
 
     WEBCORE_EXPORT void setBackend(std::unique_ptr<ImageBufferBackend>&&);
 
-    ImageBufferBackend::Parameters m_parameters;
+    Parameters m_parameters;
     ImageBufferBackend::Info m_backendInfo;
     std::unique_ptr<ImageBufferBackend> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;

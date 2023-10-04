@@ -109,4 +109,9 @@
     return _frameInfo->isLocalFrame();
 }
 
+- (BOOL)_isFocused
+{
+    return _frameInfo->isFocused();
+}
+
 @end

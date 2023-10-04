@@ -122,7 +122,6 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
     bool shouldAccelerate(const IntSize&) const;
-    bool shouldAccelerate(unsigned area) const;
 
     WEBCORE_EXPORT static void setMaxCanvasAreaForTesting(std::optional<size_t>);
 
@@ -151,6 +150,7 @@ protected:
 private:
     bool shouldInjectNoiseBeforeReadback() const;
     virtual void createImageBuffer() const { }
+    bool shouldAccelerate(uint64_t area) const;
 
     mutable IntSize m_size;
     mutable Lock m_imageBufferAssignmentLock;

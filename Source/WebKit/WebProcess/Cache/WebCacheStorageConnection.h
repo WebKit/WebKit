@@ -26,6 +26,8 @@
 #pragma once
 
 #include <WebCore/CacheStorageConnection.h>
+#include <WebCore/ClientOrigin.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 
 namespace IPC {
@@ -63,13 +65,16 @@ private:
 
     void reference(WebCore::DOMCacheIdentifier) final;
     void dereference(WebCore::DOMCacheIdentifier) final;
+    void lockStorage(const WebCore::ClientOrigin&) final;
+    void unlockStorage(const WebCore::ClientOrigin&) final;
 
     void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&) final;
     void engineRepresentation(CompletionHandler<void(const String&)>&&) final;
     void updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin&) final;
 
     WebCacheStorageProvider& m_provider;
-    HashSet<WebCore::DOMCacheIdentifier> m_connectedIdentifiers;
+    HashCountedSet<WebCore::DOMCacheIdentifier> m_connectedIdentifierCounters;
+    HashCountedSet<WebCore::ClientOrigin> m_clientOriginLockRequestCounters;
 };
 
 }

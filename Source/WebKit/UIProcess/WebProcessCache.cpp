@@ -174,6 +174,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
 
 void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 {
+#if ENABLE(WEBPROCESS_CACHE)
     if (!processPool.configuration().processSwapsOnNavigation() || !processPool.configuration().usesWebProcessCache() || LegacyGlobalSettings::singleton().cacheModel() != CacheModel::PrimaryWebBrowser || processPool.configuration().usesSingleWebProcess()) {
         if (!processPool.configuration().processSwapsOnNavigation())
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache is disabled because process swap on navigation is disabled", 0);
@@ -205,6 +206,7 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 
     if (!m_capacity)
         clear();
+#endif
 }
 
 void WebProcessCache::clear()

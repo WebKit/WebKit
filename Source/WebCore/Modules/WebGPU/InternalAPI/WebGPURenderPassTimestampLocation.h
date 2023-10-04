@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -36,15 +35,3 @@ enum class RenderPassTimestampLocation : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::RenderPassTimestampLocation> {
-    using values = EnumValues<
-        WebCore::WebGPU::RenderPassTimestampLocation,
-        WebCore::WebGPU::RenderPassTimestampLocation::Beginning,
-        WebCore::WebGPU::RenderPassTimestampLocation::End
-    >;
-};
-
-} // namespace WTF

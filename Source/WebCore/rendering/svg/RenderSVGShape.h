@@ -51,7 +51,7 @@ public:
         GlobalCoordinateSpace,
         LocalCoordinateSpace
     };
-    RenderSVGShape(SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGShape(Type, SVGGraphicsElement&, RenderStyle&&);
     virtual ~RenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;

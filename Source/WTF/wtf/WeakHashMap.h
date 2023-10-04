@@ -253,7 +253,7 @@ public:
         return m_map.take(*keyImpl);
     }
 
-    typename ValueTraits::PeekType get(const KeyType& key) const
+    typename ValueTraits::PeekType get(const KeyType& key)
     {
         increaseOperationCountSinceLastCleanup();
         auto* keyImpl = keyImplIfExists(key);

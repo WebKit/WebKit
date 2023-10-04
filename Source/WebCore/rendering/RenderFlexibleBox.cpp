@@ -80,14 +80,14 @@ struct RenderFlexibleBox::LineState {
     FlexItems flexItems;
 };
 
-RenderFlexibleBox::RenderFlexibleBox(Element& element, RenderStyle&& style)
-    : RenderBlock(element, WTFMove(style), 0)
+RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, RenderStyle&& style)
+    : RenderBlock(type, element, WTFMove(style), RenderFlexibleBoxFlag)
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::RenderFlexibleBox(Document& document, RenderStyle&& style)
-    : RenderBlock(document, WTFMove(style), 0)
+RenderFlexibleBox::RenderFlexibleBox(Type type, Document& document, RenderStyle&& style)
+    : RenderBlock(type, document, WTFMove(style), RenderFlexibleBoxFlag)
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
@@ -2137,8 +2137,7 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
     // addPercentHeightDescendant() is never called for them. This means that this method would always wrongly
     // return false for a child of a <button> with a percentage height.
     if (hasPercentHeightDescendants() && skipContainingBlockForPercentHeightCalculation(renderer, isHorizontalWritingMode() != renderer.isHorizontalWritingMode())) {
-        auto& descendants = *percentHeightDescendants();
-        for (auto& descendant : descendants) {
+        for (auto& descendant : *percentHeightDescendants()) {
             if (renderBlock.isContainingBlockAncestorFor(descendant))
                 return true;
         }
@@ -2151,9 +2150,9 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
     if (!percentHeightDescendants)
         return false;
 
-    for (auto it = percentHeightDescendants->begin(), end = percentHeightDescendants->end(); it != end; ++it) {
+    for (auto& descendant : *percentHeightDescendants) {
         bool hasOutOfFlowAncestor = false;
-        for (auto* ancestor = (*it).containingBlock(); ancestor && ancestor != &renderBlock; ancestor = ancestor->containingBlock()) {
+        for (auto* ancestor = descendant.containingBlock(); ancestor && ancestor != &renderBlock; ancestor = ancestor->containingBlock()) {
             if (ancestor->isOutOfFlowPositioned()) {
                 hasOutOfFlowAncestor = true;
                 break;

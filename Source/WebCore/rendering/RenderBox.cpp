@@ -53,6 +53,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LegacyRenderSVGResourceClipper.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "MotionPath.h"
@@ -76,7 +77,6 @@
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -151,14 +151,14 @@ static void removeControlStatesForRenderer(const RenderBox& renderer)
 
 bool RenderBox::s_hadNonVisibleOverflow = false;
 
-RenderBox::RenderBox(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBoxModelObject(element, WTFMove(style), baseTypeFlags)
+RenderBox::RenderBox(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderBoxModelObject(type, element, WTFMove(style), baseTypeFlags)
 {
     setIsBox();
 }
 
-RenderBox::RenderBox(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBoxModelObject(document, WTFMove(style), baseTypeFlags)
+RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderBoxModelObject(type, document, WTFMove(style), baseTypeFlags)
 {
     setIsBox();
 }
@@ -207,7 +207,7 @@ RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentCo
     // they overflow into, which makes no sense when this block doesn't exist in |fragment| at all.
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    if (!fragmentedFlow->getFragmentRangeForBox(*this, startFragment, endFragment))
+    if (!fragmentedFlow->getFragmentRangeForBox(this, startFragment, endFragment))
         return fragment;
 
     if (fragment->logicalTopForFragmentedFlowContent() < startFragment->logicalTopForFragmentedFlowContent())
@@ -227,9 +227,12 @@ bool RenderBox::hasFragmentRangeInFragmentedFlow() const
     return fragmentedFlow->hasCachedFragmentRangeForBox(*this);
 }
 
-LayoutRect RenderBox::clientBoxRectInFragment(const RenderFragmentContainer& fragment) const
+LayoutRect RenderBox::clientBoxRectInFragment(const RenderFragmentContainer* fragment) const
 {
-    LayoutRect clientBox = borderBoxRectInFragment(&fragment);
+    if (!fragment)
+        return clientBoxRect();
+
+    LayoutRect clientBox = borderBoxRectInFragment(fragment);
     clientBox.setLocation(clientBox.location() + LayoutSize(borderLeft(), borderTop()));
     clientBox.setSize(clientBox.size() - LayoutSize(borderLeft() + borderRight() + verticalScrollbarWidth(), borderTop() + borderBottom() + horizontalScrollbarHeight()));
 
@@ -651,7 +654,7 @@ void RenderBox::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accu
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
+    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         return;
 
     auto localRect = FloatRect { 0, 0, width(), height() };
@@ -1546,7 +1549,7 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
             break;
         if (!is<SVGClipPathElement>(*element))
             break;
-        auto& clipper = downcast<RenderSVGResourceClipper>(*element->renderer());
+        auto& clipper = downcast<LegacyRenderSVGResourceClipper>(*element->renderer());
         if (!clipper.hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint { hitTestLocationInLocalCoordinates }))
             return false;
         break;
@@ -1955,9 +1958,9 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
         // Don't render a masked element until all the mask images have loaded, to prevent a flash of unmasked content.
         if (auto* maskBorder = style().maskBorder().image())
-            allMaskImagesLoaded &= maskBorder->isLoaded();
+            allMaskImagesLoaded &= maskBorder->isLoaded(this);
 
-        allMaskImagesLoaded &= style().maskLayers().imagesAreLoaded();
+        allMaskImagesLoaded &= style().maskLayers().imagesAreLoaded(this);
 
         paintInfo.context().setCompositeOperation(CompositeOperator::DestinationIn);
         paintInfo.context().beginTransparencyLayer(1);
@@ -2062,7 +2065,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     RenderBox* layerRenderer = nullptr;
 
     for (auto* layer = &layers; layer; layer = layer->next()) {
-        if (layer->image() && image == layer->image()->data() && (layer->image()->isLoaded() || layer->image()->canRender(this, style().effectiveZoom()))) {
+        if (layer->image() && image == layer->image()->data() && (layer->image()->isLoaded(this) || layer->image()->canRender(this, style().effectiveZoom()))) {
             // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
             bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
             if (!layerRenderer) {
@@ -2076,6 +2079,13 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                         -layerRenderer->marginTop(),
                         std::max(layerRenderer->width() + layerRenderer->horizontalMarginExtent() + layerRenderer->borderLeft() + layerRenderer->borderRight(), rw),
                         std::max(layerRenderer->height() + layerRenderer->verticalMarginExtent() + layerRenderer->borderTop() + layerRenderer->borderBottom(), rh));
+
+                    // If we're drawing the root background, then we want to use the bounds of the view
+                    // (since root backgrounds cover the canvas, not just the element). If the root element
+                    // is composited though, we need to issue the repaint to that root element.
+                    auto documentElementRenderer = downcast<RenderBox>(document().documentElement()->renderer());
+                    if (documentElementRenderer->layer()->isComposited())
+                        layerRenderer = documentElementRenderer;
                 } else {
                     layerRenderer = this;
                     rendererRect = borderBoxRect();
@@ -2884,7 +2894,7 @@ bool RenderBox::isStretchingColumnFlexItem() const
         return true;
 
     // We don't stretch multiline flexboxes because they need to apply line spacing (align-content) first.
-    if (parent()->isFlexibleBox() && parent()->style().flexWrap() == FlexWrap::NoWrap && parent()->style().isColumnFlexDirection() && columnFlexItemHasStretchAlignment())
+    if (is<RenderFlexibleBox>(*parent()) && parent()->style().flexWrap() == FlexWrap::NoWrap && parent()->style().isColumnFlexDirection() && columnFlexItemHasStretchAlignment())
         return true;
     return false;
 }
@@ -2970,7 +2980,7 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     // Flexible box items should shrink wrap, so we lay them out at their intrinsic widths.
     // In the case of columns that have a stretch alignment, we layout at the stretched size
     // to avoid an extra layout when applying alignment.
-    if (parent()->isFlexibleBox()) {
+    if (is<RenderFlexibleBox>(*parent())) {
         // For multiline columns, we need to apply align-content first, so we can't stretch now.
         if (!parent()->style().isColumnFlexDirection() || parent()->style().flexWrap() != FlexWrap::NoWrap)
             return true;
@@ -3031,7 +3041,7 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
         return;
     }
 
-    if (containingBlock.isFlexibleBox()) {
+    if (is<RenderFlexibleBox>(containingBlock)) {
         // We need to let flexbox handle the margin adjustment - otherwise, flexbox
         // will think we're wider than we actually are and calculate line sizes
         // wrong. See also http://dev.w3.org/csswg/css-flexbox/#auto-margins
@@ -3141,7 +3151,7 @@ void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height)
     // FIXME: it should be enough with checking hasOverridingLogicalHeight() as this logic could be shared
     // by any layout system using overrides like grid or flex. However this causes a never ending sequence of calls
     // between layoutBlock() <-> relayoutToAvoidWidows().
-    if (isFloatingOrOutOfFlowPositioned() || !parent() || !parent()->isFlexibleBox() || hasOverridingLogicalHeight() || shouldComputeLogicalHeightFromAspectRatio())
+    if (isFloatingOrOutOfFlowPositioned() || !is<RenderFlexibleBox>(parent()) || hasOverridingLogicalHeight() || shouldComputeLogicalHeightFromAspectRatio())
         return;
     downcast<RenderFlexibleBox>(parent())->setCachedChildIntrinsicContentLogicalHeight(*this, height);
 }
@@ -4987,7 +4997,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
     for (auto& renderer : childrenOfType<RenderBox>(*this)) {
         if (is<RenderFragmentedFlow>(*this)) {
             ASSERT(fragment);
-            if (!downcast<RenderFragmentedFlow>(*this).objectShouldFragmentInFlowFragment(renderer, fragment))
+            if (!downcast<RenderFragmentedFlow>(*this).objectShouldFragmentInFlowFragment(&renderer, fragment))
                 continue;
         }
 
@@ -5060,24 +5070,6 @@ bool RenderBox::establishesIndependentFormattingContext() const
     return isGridItem() || RenderElement::establishesIndependentFormattingContext();
 }
 
-bool RenderBox::establishesBlockFormattingContext() const
-{
-    const auto& boxStyle = style();
-    if (!boxStyle.isDisplayBlockLevel())
-        return false;
-    auto isBlockWithOverFlowOtherThanVisibleAndClip = [&]() {
-        auto boxOverflowX = effectiveOverflowX();
-        auto boxOverflowY = effectiveOverflowY();
-        return boxOverflowX != Overflow::Visible && boxOverflowX != Overflow::Clip
-            && boxOverflowY != Overflow::Visible && boxOverflowY != Overflow::Clip;
-    };
-    return dynamicDowncast<HTMLHtmlElement>(element()) || isFloatingOrOutOfFlowPositioned() 
-    || isInlineBlockOrInlineTable() || isTableCell() || isTableCaption() || isBlockWithOverFlowOtherThanVisibleAndClip()
-    || boxStyle.display() == DisplayType::FlowRoot || boxStyle.containsLayoutOrPaint()
-    || isFlexItemIncludingDeprecated() || isGridItem() || boxStyle.specifiesColumns()
-    || boxStyle.columnSpan() == ColumnSpan::All || style().blockStepSize();
-}
-
 bool RenderBox::avoidsFloats() const
 {
     return isReplacedOrInlineBlock() || isLegend() || isFieldset() || createsNewFormattingContext();
@@ -5094,7 +5086,7 @@ void RenderBox::addVisualEffectOverflow()
     addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
 
     if (auto* fragmentedFlow = enclosingFragmentedFlow())
-        fragmentedFlow->addFragmentsVisualEffectOverflow(*this);
+        fragmentedFlow->addFragmentsVisualEffectOverflow(this);
 }
 
 LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) const
@@ -5141,20 +5133,20 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
     return LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY);
 }
 
-void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& delta)
+void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& delta)
 {
     // Never allow flow threads to propagate overflow up to a parent.
-    if (child.isRenderFragmentedFlow())
+    if (child->isRenderFragmentedFlow())
         return;
 
-    auto* fragmentedFlow = enclosingFragmentedFlow();
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow)
-        fragmentedFlow->addFragmentsOverflowFromChild(*this, child, delta);
+        fragmentedFlow->addFragmentsOverflowFromChild(this, child, delta);
 
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
     // its overflow is internal to it, and we don't care about it. layoutOverflowRectForPropagation takes care of this
     // and just propagates the border box rect instead.
-    LayoutRect childLayoutOverflowRect = child.layoutOverflowRectForPropagation(&style());
+    LayoutRect childLayoutOverflowRect = child->layoutOverflowRectForPropagation(&style());
     childLayoutOverflowRect.move(delta);
     addLayoutOverflow(childLayoutOverflowRect);
 
@@ -5169,17 +5161,17 @@ void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& d
 
     std::optional<LayoutRect> childVisualOverflowRect;
     auto computeChildVisualOverflowRect = [&] () {
-        childVisualOverflowRect = child.visualOverflowRectForPropagation(&style());
+        childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
         childVisualOverflowRect->move(delta);
     };
     // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
     if (fragmentedFlow) {
         computeChildVisualOverflowRect();
-        fragmentedFlow->addFragmentsVisualOverflow(*this, *childVisualOverflowRect);
+        fragmentedFlow->addFragmentsVisualOverflow(this, *childVisualOverflowRect);
     } else {
         // Update our visual overflow in case the child spills out the block, but only if we were going to paint
         // the child block ourselves.
-        if (child.hasSelfPaintingLayer())
+        if (child->hasSelfPaintingLayer())
             return;
     }
     if (!childVisualOverflowRect)
@@ -5238,8 +5230,9 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
 void RenderBox::clearOverflow()
 {
     m_overflow = nullptr;
-    if (auto* fragmentedFlow = enclosingFragmentedFlow())
-        fragmentedFlow->clearFragmentsOverflow(*this);
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (fragmentedFlow)
+        fragmentedFlow->clearFragmentsOverflow(this);
 }
     
 bool RenderBox::percentageLogicalHeightIsResolvable() const
@@ -5745,16 +5738,6 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
     auto height = style().containIntrinsicHeight();
     ASSERT(height.has_value());
     return std::optional<LayoutUnit> { height->value() };
-}
-
-const RenderBlockFlow* RenderBox::blockFormattingContextRoot() const
-{
-    // This method should probably not be called on the initial containing block
-    ASSERT(!is<HTMLHtmlElement>(element()));
-    auto blockContainer = containingBlock();
-    while (blockContainer && !blockContainer->establishesBlockFormattingContext())
-        blockContainer = blockContainer->containingBlock();
-    return dynamicDowncast<RenderBlockFlow>(blockContainer);
 }
 
 // hasAutoZIndex only returns true if the element is positioned or a flex-item since

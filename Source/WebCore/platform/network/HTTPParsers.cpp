@@ -798,6 +798,21 @@ size_t parseHTTPRequestBody(const uint8_t* data, size_t length, Vector<uint8_t>&
     return length;
 }
 
+std::optional<uint64_t> parseContentLength(StringView contentLengthValue)
+{
+    // Based on https://www.rfc-editor.org/rfc/rfc9110#field.content-length, we allow ',' values if they are all the same.
+    std::optional<uint64_t> value;
+    for (auto token : contentLengthValue.split(',')) {
+        if (auto expectedContentLength = parseInteger<uint64_t>(token)) {
+            if (value && *value != *expectedContentLength)
+                return { };
+            value = expectedContentLength;
+        } else if (value)
+            return { };
+    }
+    return value;
+}
+
 // Implements <https://fetch.spec.whatwg.org/#forbidden-header-name>.
 bool isForbiddenHeaderName(const String& name)
 {

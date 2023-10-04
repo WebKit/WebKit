@@ -400,7 +400,7 @@ button {
 }
 
 /* Every time a new control is supported in vertical writing mode, it should be removed from here and added in the horizontalFormControls.css rule */
-select, button, input:is([type="button"], [type="submit"], [type="reset"], [type="file"]) {
+select, input[type="file"] {
     writing-mode: horizontal-tb !important;
 }
 
@@ -860,11 +860,13 @@ input:is([type="button"], [type="submit"], [type="reset"]), input[type="file"]::
     cursor: default;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     color: ButtonText;
-    padding: 2px 6px 3px 6px;
+    padding-block: 2px 3px;
+    padding-inline: 6px;
     border: 2px outset ButtonFace;
     background-color: ButtonFace;
 #else
-    padding: 0 1.0em;
+    padding-block: 0;
+    padding-inline: 1em;
     border: 1px solid -webkit-control-background;
     font: 11px system-ui;
     color: -apple-system-blue;

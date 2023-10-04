@@ -32,6 +32,35 @@ namespace WebCore {
 
 NetworkLoadMetrics::NetworkLoadMetrics() = default;
 
+NetworkLoadMetrics::NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, PrivacyStance privacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&& additionalNetworkLoadMetricsForWebInspector)
+    : redirectStart(WTFMove(redirectStart))
+    , fetchStart(WTFMove(fetchStart))
+    , domainLookupStart(WTFMove(domainLookupStart))
+    , domainLookupEnd(WTFMove(domainLookupEnd))
+    , connectStart(WTFMove(connectStart))
+    , secureConnectionStart(WTFMove(secureConnectionStart))
+    , connectEnd(WTFMove(connectEnd))
+    , requestStart(WTFMove(requestStart))
+    , responseStart(WTFMove(responseStart))
+    , responseEnd(responseEnd)
+    , workerStart(workerStart)
+    , protocol(protocol)
+    , redirectCount(redirectCount)
+    , complete(complete)
+    , cellular(cellular)
+    , expensive(expensive)
+    , constrained(constrained)
+    , multipath(multipath)
+    , isReusedConnection(isReusedConnection)
+    , failsTAOCheck(failsTAOCheck)
+    , hasCrossOriginRedirect(hasCrossOriginRedirect)
+    , privacyStance(privacyStance)
+    , responseBodyBytesReceived(responseBodyBytesReceived)
+    , responseBodyDecodedSize(responseBodyDecodedSize)
+    , additionalNetworkLoadMetricsForWebInspector(WTFMove(additionalNetworkLoadMetricsForWebInspector))
+{
+}
+
 void NetworkLoadMetrics::updateFromFinalMetrics(const NetworkLoadMetrics& other)
 {
     MonotonicTime originalRedirectStart = redirectStart;
@@ -136,6 +165,26 @@ NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
         copy.additionalNetworkLoadMetricsForWebInspector = additionalNetworkLoadMetricsForWebInspector->isolatedCopy();
 
     return copy;
+}
+
+Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::create(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
+{
+    return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector(WTFMove(priority), WTFMove(remoteAddress), WTFMove(connectionIdentifier), WTFMove(tlsProtocol), WTFMove(tlsCipher), WTFMove(requestHeaders), requestHeaderBytesSent, responseHeaderBytesReceived, requestBodyBytesSent, isProxyConnection));
+}
+
+AdditionalNetworkLoadMetricsForWebInspector::AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
+    : priority(WTFMove(priority))
+    , remoteAddress(WTFMove(remoteAddress))
+    , connectionIdentifier(WTFMove(connectionIdentifier))
+    , tlsProtocol(WTFMove(tlsProtocol))
+    , tlsCipher(WTFMove(tlsCipher))
+    , requestHeaders(WTFMove(requestHeaders))
+    , requestHeaderBytesSent(requestHeaderBytesSent)
+    , responseHeaderBytesReceived(responseHeaderBytesReceived)
+    , requestBodyBytesSent(requestBodyBytesSent)
+    , isProxyConnection(isProxyConnection)
+{
+
 }
 
 } // namespace WebCore

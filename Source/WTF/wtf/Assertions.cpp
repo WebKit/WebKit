@@ -292,7 +292,10 @@ void WTFReportBacktraceWithPrefixAndPrintStream(PrintStream& out, const char* pr
     int frames = framesToShow + framesToSkip;
 
     WTFGetBacktrace(samples, &frames);
-    WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + framesToSkip, frames - framesToSkip, prefix);
+    if (frames > framesToSkip)
+        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + framesToSkip, frames - framesToSkip, prefix);
+    else
+        out.print("%sno stacktrace available", prefix);
 }
 
 void WTFReportBacktrace()
@@ -303,12 +306,15 @@ void WTFReportBacktrace()
     int frames = framesToShow + framesToSkip;
 
     WTFGetBacktrace(samples, &frames);
-    WTFPrintBacktrace(samples + framesToSkip, frames - framesToSkip);
+    if (frames > framesToSkip)
+        WTFPrintBacktrace(samples + framesToSkip, frames - framesToSkip);
+    else
+        CrashLogPrintStream { }.print("no stacktrace available");
 }
 
 void WTFPrintBacktraceWithPrefixAndPrintStream(PrintStream& out, void** stack, int size, const char* prefix)
 {
-    out.print(StackTracePrinter { { stack, static_cast<size_t>(size) }, prefix });
+    out.print(StackTracePrinter { { stack, static_cast<size_t>(std::max(0, size)) }, prefix });
 }
 
 void WTFPrintBacktrace(void** stack, int size)

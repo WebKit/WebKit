@@ -33,6 +33,7 @@
 
 #include "BaselineAlignmentInlines.h"
 #include "RenderBoxInlines.h"
+#include "RenderGrid.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {
@@ -76,7 +77,24 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
             return isFlippedWritingMode(m_blockFlow) ? child.size().width().toInt() + margin : margin;
         return child.size().height() + margin;
     }
-    return baseline + margin;
+
+    auto subgridOffset = [&] {
+        if (position == ItemPosition::LastBaseline || baselineAxis == GridAxis::GridRowAxis)
+            return 0_lu;
+
+        if (const auto* subgrid = dynamicDowncast<RenderGrid>(child.parent()); subgrid && subgrid->isSubgridRows()) {
+            auto isPlacedAtFirstTrackInSubgrid = [&] {
+                return !subgrid->gridSpanForChild(child, GridTrackSizingDirection::ForRows).startLine();
+            }();
+
+            if (!isPlacedAtFirstTrackInSubgrid || GridLayoutFunctions::isOrthogonalParent(*subgrid, *subgrid->parent()))
+                return 0_lu;
+            return subgrid->marginAndBorderAndPaddingBefore();
+        }
+        return 0_lu;
+    }();
+
+    return subgridOffset + margin + baseline;
 }
 
 LayoutUnit GridBaselineAlignment::descentForChild(const RenderBox& child, LayoutUnit ascent, GridAxis baselineAxis) const

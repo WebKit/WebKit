@@ -1,0 +1,62 @@
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+Verifies Canvas 2D Context accelerated backing store behavior.
+
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 7
+        (GraphicsLayer
+          (position 112.00 94.00)
+          (anchor 0.50 0.49)
+          (bounds 100.00 57.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 216.00 94.00)
+          (anchor 0.50 0.49)
+          (bounds 100.00 57.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 320.00 94.00)
+          (bounds 100.00 56.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 424.00 94.00)
+          (bounds 100.00 56.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 528.00 96.00)
+          (bounds 100.00 54.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 632.00 112.00)
+          (anchor 0.50 0.49)
+          (bounds 100.00 39.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 8.00 154.00)
+          (bounds 100.00 32.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+      )
+    )
+  )
+)
+

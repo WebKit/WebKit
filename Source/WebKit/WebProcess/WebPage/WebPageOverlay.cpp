@@ -31,14 +31,15 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/PageOverlay.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<PageOverlay*, WebPageOverlay*>& overlayMap()
+static HashMap<CheckedPtr<PageOverlay>, CheckedPtr<WebPageOverlay>>& overlayMap()
 {
-    static NeverDestroyed<HashMap<PageOverlay*, WebPageOverlay*>> map;
+    static NeverDestroyed<HashMap<CheckedPtr<PageOverlay>, CheckedPtr<WebPageOverlay>>> map;
     return map;
 }
 

@@ -3,5 +3,5 @@ inserted
 inline
 after
 
-FAIL Anchor selection descent into anonymous block boxes. assert_equals: expected 250 but got 150
+PASS Anchor selection descent into anonymous block boxes.
 

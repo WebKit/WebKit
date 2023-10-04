@@ -48,19 +48,17 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableRow);
 
 RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
-    : RenderBox(element, WTFMove(style), 0)
+    : RenderBox(Type::TableRow, element, WTFMove(style), 0)
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
-    setIsTableRow();
 }
 
 RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
-    : RenderBox(document, WTFMove(style), 0)
+    : RenderBox(Type::TableRow, document, WTFMove(style), 0)
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
-    setIsTableRow();
 }
 
 void RenderTableRow::willBeRemovedFromTree(IsInternalMove isInternalMove)

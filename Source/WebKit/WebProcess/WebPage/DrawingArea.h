@@ -124,14 +124,11 @@ public:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
     virtual void addRootFrame(WebCore::FrameIdentifier) { }
-    // FIXME: Add a corresponding removeRootFrame.
+    // FIXME: Add a corresponding removeRootFrame. <rdar://116202445>
 
     // Cause a rendering update to happen as soon as possible.
     virtual void triggerRenderingUpdate() = 0;
-    // Cause a rendering update to happen at the next suitable time,
-    // as determined by the drawing area.
     virtual bool scheduleRenderingUpdate() { return false; }
-
     virtual void renderingUpdateFramesPerSecondChanged() { }
 
     virtual void willStartRenderingUpdateDisplay();
@@ -191,7 +188,7 @@ protected:
     template<typename T> bool send(T&& message)
     {
         Ref webPage = m_webPage.get();
-        return webPage->send(WTFMove(message), m_identifier.toUInt64(), { });
+        return webPage->send(std::forward<T>(message), m_identifier.toUInt64(), { });
     }
 
     const DrawingAreaType m_type;
@@ -211,7 +208,6 @@ private:
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/,
                                          const WebCore::IntSize& /*scrollOffset*/) { }
-    virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
     virtual void setDeviceScaleFactor(float) { }
     virtual void forceUpdate() { }
     virtual void didDiscardBackingStore() { }

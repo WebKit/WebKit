@@ -33,7 +33,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUBufferDescriptor.h
     Modules/WebGPU/GPUBufferMapState.h
     Modules/WebGPU/GPUBufferUsage.h
-    Modules/WebGPU/GPUCanvasCompositingAlphaMode.h
+    Modules/WebGPU/GPUCanvasAlphaMode.h
     Modules/WebGPU/GPUCanvasConfiguration.h
     Modules/WebGPU/GPUColorDict.h
     Modules/WebGPU/GPUColorTargetState.h
@@ -49,7 +49,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUComputePassDescriptor.h
     Modules/WebGPU/GPUComputePassEncoder.h
     Modules/WebGPU/GPUComputePassTimestampLocation.h
-    Modules/WebGPU/GPUComputePassTimestampWrite.h
+    Modules/WebGPU/GPUComputePassTimestampWrites.h
     Modules/WebGPU/GPUComputePipeline.h
     Modules/WebGPU/GPUComputePipelineDescriptor.h
     Modules/WebGPU/GPUCullMode.h
@@ -107,7 +107,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPURenderPassEncoder.h
     Modules/WebGPU/GPURenderPassLayout.h
     Modules/WebGPU/GPURenderPassTimestampLocation.h
-    Modules/WebGPU/GPURenderPassTimestampWrite.h
+    Modules/WebGPU/GPURenderPassTimestampWrites.h
     Modules/WebGPU/GPURenderPipeline.h
     Modules/WebGPU/GPURenderPipelineDescriptor.h
     Modules/WebGPU/GPURequestAdapterOptions.h
@@ -193,7 +193,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPUBufferBindingType.h
     Modules/WebGPU/InternalAPI/WebGPUBufferDescriptor.h
     Modules/WebGPU/InternalAPI/WebGPUBufferUsage.h
-    Modules/WebGPU/InternalAPI/WebGPUCanvasCompositingAlphaMode.h
+    Modules/WebGPU/InternalAPI/WebGPUCanvasAlphaMode.h
     Modules/WebGPU/InternalAPI/WebGPUCanvasConfiguration.h
     Modules/WebGPU/InternalAPI/WebGPUColor.h
     Modules/WebGPU/InternalAPI/WebGPUColorTargetState.h
@@ -510,6 +510,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/notifications/NotificationData.h
     Modules/notifications/NotificationDirection.h
     Modules/notifications/NotificationEventType.h
+    Modules/notifications/NotificationOptionsPayload.h
+    Modules/notifications/NotificationPayload.h
     Modules/notifications/NotificationPermission.h
     Modules/notifications/NotificationPermissionCallback.h
     Modules/notifications/NotificationResources.h
@@ -531,6 +533,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/push-api/PushDatabase.h
     Modules/push-api/PushMessageCrypto.h
     Modules/push-api/PushPermissionState.h
+    Modules/push-api/PushStrategy.h
     Modules/push-api/PushSubscriptionData.h
     Modules/push-api/PushSubscriptionIdentifier.h
 
@@ -565,6 +568,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
+    Modules/streams/WritableStreamSink.h
 
     Modules/system-preview/ARKitBadgeSystemImage.h
 
@@ -635,6 +639,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/websockets/WebSocketIdentifier.h
     Modules/websockets/WebSocketHandshake.h
 
+    Modules/webtransport/WebTransportBidirectionalStreamConstructionParameters.h
+    Modules/webtransport/WebTransportReceiveStreamStats.h
+    Modules/webtransport/WebTransportSendStreamStats.h
+    Modules/webtransport/WebTransportSession.h
+    Modules/webtransport/WebTransportSessionClient.h
+
+    accessibility/AXCoreObject.h
     accessibility/AXGeometryManager.h
     accessibility/AXLogger.h
     accessibility/AXObjectCache.h
@@ -646,7 +657,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/AccessibilityMockObject.h
     accessibility/AccessibilityNodeObject.h
     accessibility/AccessibilityObject.h
-    accessibility/AccessibilityObjectInterface.h
     accessibility/AccessibilityRenderObject.h
     accessibility/AccessibilityScrollView.h
     accessibility/ForcedAccessibilityValue.h
@@ -1287,7 +1297,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
-    layout/floats/FloatingState.h
+    layout/floats/PlacedFloats.h
 
     layout/formattingContexts/FormattingConstraints.h
     layout/formattingContexts/FormattingContext.h
@@ -1306,6 +1316,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/inline/display/InlineDisplayContent.h
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/display/InlineDisplayLine.h
+
+    layout/formattingContexts/inline/ruby/RubyFormattingContext.h
 
     layout/formattingContexts/inline/text/TextUtil.h
 
@@ -1411,6 +1423,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/appcache/ApplicationCacheStorage.h
 
     loader/archive/Archive.h
+    loader/archive/ArchiveError.h
     loader/archive/ArchiveResource.h
 
     loader/archive/mhtml/MHTMLArchive.h
@@ -1905,6 +1918,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
     platform/graphics/ImageBufferBackendParameters.h
+    platform/graphics/ImageBufferPlatformBackend.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
     platform/graphics/ImageFrame.h
@@ -1944,6 +1958,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Model.h
     platform/graphics/NativeImage.h
     platform/graphics/NullGraphicsContext.h
+    platform/graphics/NullImageBufferBackend.h
     platform/graphics/Path.h
     platform/graphics/PathElement.h
     platform/graphics/PathImpl.h
@@ -1961,8 +1976,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformGraphicsContext.h
     platform/graphics/PlatformImage.h
-    platform/graphics/PlatformImageBuffer.h
-    platform/graphics/PlatformImageBufferBackend.h
     platform/graphics/PlatformLayer.h
     platform/graphics/PlatformLayerIdentifier.h
     platform/graphics/PlatformMediaResourceLoader.h
@@ -2034,7 +2047,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawingContext.h
-    platform/graphics/displaylists/DisplayListImageBuffer.h
     platform/graphics/displaylists/DisplayListItem.h
     platform/graphics/displaylists/DisplayListItems.h
     platform/graphics/displaylists/DisplayListRecorder.h
@@ -2131,11 +2143,16 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/CaptureDeviceWithCapabilities.h
     platform/mediastream/DisplayCaptureManager.h
     platform/mediastream/DisplayCapturePromptType.h
+    platform/mediastream/FillLightMode.h
     platform/mediastream/MDNSRegisterError.h
     platform/mediastream/MediaConstraints.h
+    platform/mediastream/MediaSettingsRange.h
     platform/mediastream/MediaStreamPrivate.h
     platform/mediastream/MediaStreamRequest.h
     platform/mediastream/MediaStreamTrackPrivate.h
+    platform/mediastream/MeteringMode.h
+    platform/mediastream/PhotoCapabilities.h
+    platform/mediastream/RedEyeReduction.h
     platform/mediastream/RTCDataChannelHandler.h
     platform/mediastream/RTCDataChannelHandlerClient.h
     platform/mediastream/RTCDataChannelIdentifier.h
@@ -2259,7 +2276,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/EventRegion.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
-    rendering/HighlightData.h
     rendering/HitTestLocation.h
     rendering/HitTestRequest.h
     rendering/HitTestResult.h
@@ -2295,6 +2311,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderFlexibleBox.h
     rendering/RenderFrame.h
     rendering/RenderFrameBase.h
+    rendering/RenderHighlight.h
     rendering/RenderImage.h
     rendering/RenderImageResource.h
     rendering/RenderInline.h
@@ -2312,7 +2329,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderOverflow.h
     rendering/RenderPtr.h
     rendering/RenderReplaced.h
-    rendering/RenderSelectionInfo.h
+    rendering/RenderSelection.h
+    rendering/RenderSelectionGeometry.h
     rendering/RenderText.h
     rendering/RenderTextControl.h
     rendering/RenderTextLineBoxes.h
@@ -2323,7 +2341,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderVideo.h
     rendering/RenderView.h
     rendering/RenderWidget.h
-    rendering/SelectionRangeData.h
     rendering/TextBoxSelectableRange.h
 
     rendering/line/LineWidth.h

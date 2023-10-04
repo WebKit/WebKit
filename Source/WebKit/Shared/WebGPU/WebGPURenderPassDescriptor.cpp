@@ -66,11 +66,9 @@ std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(co
             return std::nullopt;
     }
 
-    auto timestampWrites = convertToBacking(renderPassDescriptor.timestampWrites);
-    if (!timestampWrites)
-        return std::nullopt;
+    auto timestampWrites = renderPassDescriptor.timestampWrites ? convertToBacking(*renderPassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(*timestampWrites) } };
+    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(timestampWrites) } };
 }
 
 std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPassDescriptor& renderPassDescriptor)
@@ -106,11 +104,9 @@ std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::
             return std::nullopt;
     }
 
-    auto timestampWrites = convertFromBacking(renderPassDescriptor.timestampWrites);
-    if (!timestampWrites)
-        return std::nullopt;
+    auto timestampWrites = renderPassDescriptor.timestampWrites ? convertFromBacking(*renderPassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(*timestampWrites) } };
+    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(timestampWrites) } };
 }
 
 } // namespace WebKit

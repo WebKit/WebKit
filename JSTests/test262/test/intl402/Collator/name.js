@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.Collator.name, "Collator");
-
-verifyNotEnumerable(Intl.Collator, "name");
-verifyNotWritable(Intl.Collator, "name");
-verifyConfigurable(Intl.Collator, "name");
+verifyProperty(Intl.Collator, "name", {
+  value: "Collator",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

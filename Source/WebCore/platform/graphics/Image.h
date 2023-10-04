@@ -96,6 +96,7 @@ public:
     virtual bool isGradientImage() const { return false; }
     virtual bool isSVGImage() const { return false; }
     virtual bool isSVGImageForContainer() const { return false; }
+    virtual bool isSVGResourceImage() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }
     virtual bool isCustomPaintImage() const { return false; }
 
@@ -203,7 +204,7 @@ protected:
     static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);
 
 #if PLATFORM(WIN)
-    virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) { }
+    virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect&, const IntSize&, CompositeOperator) { }
 #endif
     virtual bool shouldDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual bool mustDrawFromCachedSubimage(GraphicsContext&) const { return false; }

@@ -124,7 +124,7 @@ public:
     // the network load. See also SecurityContext::isSecureTransitionTo.
     void didSecureTransitionTo(Document&);
 
-    class Observer {
+    class Observer : public CanMakeWeakPtr<Observer> {
     public:
         virtual ~Observer() { }
 
@@ -441,7 +441,7 @@ private:
     bool m_isSuspendingObservers { false };
     std::optional<bool> m_canShowModalDialogOverride;
 
-    HashSet<Observer*> m_observers;
+    WeakHashSet<Observer> m_observers;
 
     mutable RefPtr<Crypto> m_crypto;
     mutable RefPtr<History> m_history;

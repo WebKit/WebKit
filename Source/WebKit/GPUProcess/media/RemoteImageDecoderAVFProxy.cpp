@@ -44,12 +44,13 @@ using namespace WebCore;
 
 RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy(GPUConnectionToWebProcess& connectionToWebProcess)
     : m_connectionToWebProcess(connectionToWebProcess)
+    , m_resourceOwner(connectionToWebProcess.webProcessIdentity())
 {
 }
 
 void RemoteImageDecoderAVFProxy::createDecoder(const IPC::SharedBufferReference& data, const String& mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
 {
-    auto imageDecoder = ImageDecoderAVFObjC::create(data.isNull() ? SharedBuffer::create() : data.unsafeBuffer().releaseNonNull(), mimeType, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored);
+    auto imageDecoder = ImageDecoderAVFObjC::create(data.isNull() ? SharedBuffer::create() : data.unsafeBuffer().releaseNonNull(), mimeType, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored, m_resourceOwner);
 
     std::optional<ImageDecoderIdentifier> imageDecoderIdentifier;
     if (!imageDecoder)
@@ -120,40 +121,30 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
 {
     ASSERT(m_imageDecoders.contains(identifier));
 
-    ShareableBitmap::Handle imageHandle;
+    std::optional<ShareableBitmap::Handle> imageHandle;
 
     auto invokeCallbackAtScopeExit = makeScopeExit([&] {
-        auto handle = !imageHandle.isNull() ? WTFMove(imageHandle) : std::optional<ShareableBitmap::Handle> { };
-        completionHandler(WTFMove(handle));
+        completionHandler(WTFMove(imageHandle));
     });
 
     if (!m_imageDecoders.contains(identifier))
         return;
 
-    auto frameImage = m_imageDecoders.get(identifier)->createFrameImageAtIndex(index);
-    if (!frameImage)
+    auto nativeImage = NativeImage::createTransient(m_imageDecoders.get(identifier)->createFrameImageAtIndex(index));
+    if (!nativeImage)
         return;
-
-    size_t width = CGImageGetWidth(frameImage.get());
-    size_t height = CGImageGetHeight(frameImage.get());
-    if (width > std::numeric_limits<int>::max() || height > std::numeric_limits<int>::max())
-        return;
-    DestinationColorSpace colorSpace { CGImageGetColorSpace(frameImage.get()) };
     bool isOpaque = false;
-
-    auto bitmap = ShareableBitmap::create({ IntSize(width, height), WTFMove(colorSpace), isOpaque });
+    auto imageSize = nativeImage->size();
+    auto bitmap = ShareableBitmap::create({ imageSize, nativeImage->colorSpace(), isOpaque });
     if (!bitmap)
         return;
     auto context = bitmap->createGraphicsContext();
     if (!context)
         return;
 
-    auto nativeImage = NativeImage::create(frameImage.get());
-    FloatSize imageSize { float(width), float(height) };
     FloatRect imageRect { { }, imageSize };
     context->drawNativeImage(*nativeImage, imageSize, imageRect, imageRect, { CompositeOperator::Copy });
-    if (auto handle = bitmap->createHandle())
-        imageHandle = WTFMove(*handle);
+    imageHandle = bitmap->createHandle();
 }
 
 void RemoteImageDecoderAVFProxy::clearFrameBufferCache(ImageDecoderIdentifier identifier, size_t index)

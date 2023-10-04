@@ -27,6 +27,8 @@
 #include "ContentVisibilityDocumentState.h"
 
 #include "ContentVisibilityAutoStateChangeEvent.h"
+#include "DeclarativeAnimation.h"
+#include "DocumentTimeline.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
@@ -69,14 +71,16 @@ private:
 
 void ContentVisibilityDocumentState::observe(Element& element)
 {
-    auto& state = element.document().contentVisibilityDocumentState();
-    if (auto* intersectionObserver = state.intersectionObserver(element.document()))
+    Ref document = element.document();
+    auto& state = document->contentVisibilityDocumentState();
+    if (auto* intersectionObserver = state.intersectionObserver(document))
         intersectionObserver->observe(element);
 }
 
 void ContentVisibilityDocumentState::unobserve(Element& element)
 {
-    auto& state = element.document().contentVisibilityDocumentState();
+    Ref document = element.document();
+    auto& state = document->contentVisibilityDocumentState();
     if (auto& intersectionObserver = state.m_observer) {
         intersectionObserver->unobserve(element);
         state.removeViewportProximity(element);
@@ -137,11 +141,15 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
 
     if (oldRelevancy && oldRelevancy == newRelevancy)
         return false;
+
+    auto wasSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
     target.setContentRelevancy(newRelevancy);
+    auto isSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
     target.invalidateStyle();
+    updateAnimations(target, wasSkippedContent, isSkippedContent);
     if (target.isConnected()) {
         ContentVisibilityAutoStateChangeEvent::Init init;
-        init.skipped = newRelevancy.isEmpty();
+        init.skipped = isSkippedContent == IsSkippedContent::Yes;
         target.queueTaskToDispatchEvent(TaskSource::DOMManipulation, ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, init));
     }
     return true;
@@ -228,6 +236,24 @@ void ContentVisibilityDocumentState::updateViewportProximity(const Element& elem
 void ContentVisibilityDocumentState::removeViewportProximity(const Element& element)
 {
     m_elementViewportProximities.remove(element);
+}
+
+void ContentVisibilityDocumentState::updateAnimations(const Element& element, IsSkippedContent wasSkipped, IsSkippedContent becomesSkipped)
+{
+    if (wasSkipped == IsSkippedContent::No || becomesSkipped == IsSkippedContent::Yes)
+        return;
+    for (auto* animation : WebAnimation::instances()) {
+        if (!animation->isDeclarativeAnimation())
+            continue;
+
+        auto& declarativeAnimation = downcast<DeclarativeAnimation>(*animation);
+        auto owningElement = declarativeAnimation.owningElement();
+        if (!owningElement || !owningElement->element.isDescendantOrShadowDescendantOf(&element))
+            continue;
+
+        if (auto* timeline = declarativeAnimation.timeline())
+            timeline->animationTimingDidChange(declarativeAnimation);
+    }
 }
 
 }

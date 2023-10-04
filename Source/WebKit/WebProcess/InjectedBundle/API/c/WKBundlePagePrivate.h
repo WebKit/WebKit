@@ -130,6 +130,8 @@ WK_EXPORT void WKBundlePageSetApplicationCacheOriginQuota(WKBundlePageRef page, 
 WK_EXPORT void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin);
 WK_EXPORT WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page);
 
+WK_EXPORT void WKBundleSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode);
+
 enum {
     kWKEventThrottlingBehaviorResponsive = 0,
     kWKEventThrottlingBehaviorUnresponsive

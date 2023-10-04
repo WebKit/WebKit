@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPIRuntime.h"
+#include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 
 OBJC_CLASS NSDictionary;
@@ -36,11 +37,13 @@ OBJC_CLASS NSURL;
 
 namespace WebKit {
 
+class WebExtensionAPIPort;
 class WebExtensionAPIRuntime;
 
 class WebExtensionAPIRuntimeBase : public JSWebExtensionWrappable {
 public:
-    void reportErrorForCallbackHandler(WebExtensionCallbackHandler&, NSString *error, JSGlobalContextRef);
+    JSValue *reportError(NSString *errorMessage, JSGlobalContextRef, Function<void()>&& = nullptr);
+    JSValue *reportError(NSString *errorMessage, WebExtensionCallbackHandler&);
 
 private:
     friend class WebExtensionAPIRuntime;
@@ -59,17 +62,34 @@ public:
     WebExtensionAPIRuntime& runtime() final { return *this; }
 
 #if PLATFORM(COCOA)
-    NSURL *getURL(NSString *resourcePath, NSString **errorString);
+    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
+    NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
     NSDictionary *getManifest();
+    void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
 
     NSString *runtimeIdentifier();
 
-    void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
+    JSValue *lastError();
 
-    JSValueRef lastError();
+    void sendMessage(WebFrame*, NSString *extensionID, NSString *messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebFrame*, JSContextRef, NSString *extensionID, NSDictionary *options, NSString **outExceptionString);
+
+    void sendNativeMessage(WebFrame*, NSString *applicationID, NSString *messageJSON, Ref<WebExtensionCallbackHandler>&&);
+    RefPtr<WebExtensionAPIPort> connectNative(WebFrame*, JSContextRef, NSString *applicationID);
+
+    WebExtensionAPIEvent& onConnect();
+    WebExtensionAPIEvent& onMessage();
+
+private:
+    static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, NSString *sourceKey, NSString **outExceptionString);
+
+    RefPtr<WebExtensionAPIEvent> m_onConnect;
+    RefPtr<WebExtensionAPIEvent> m_onMessage;
 #endif
 };
+
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters&);
 
 } // namespace WebKit
 

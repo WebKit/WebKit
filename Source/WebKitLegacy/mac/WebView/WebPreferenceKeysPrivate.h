@@ -99,7 +99,6 @@
 #define WebKitZoomsTextOnlyPreferenceKey @"WebKitZoomsTextOnly"
 #define WebKitJavaScriptCanAccessClipboardPreferenceKey @"WebKitJavaScriptCanAccessClipboard"
 #define WebKitAcceleratedDrawingEnabledPreferenceKey @"WebKitAcceleratedDrawingEnabled"
-#define WebKitDisplayListDrawingEnabledPreferenceKey @"WebKitDisplayListDrawingEnabled"
 #define WebKitCanvasUsesAcceleratedDrawingPreferenceKey @"WebKitCanvasUsesAcceleratedDrawing"
 #define WebKitAcceleratedCompositingEnabledPreferenceKey @"WebKitAcceleratedCompositingEnabled"
 #define WebKitShowDebugBordersPreferenceKey @"WebKitShowDebugBorders"
@@ -277,3 +276,4 @@
 #define WebKitExperimentalNotificationsEnabledPreferenceKey @"WebKitExperimentalNotificationsEnabledPreferenceKey"
 #define WebKitXSSAuditorEnabledPreferenceKey @"WebKitXSSAuditorEnabled"
 #define WebKitAVFoundationNSURLSessionEnabledKey @"WebKitAVFoundationNSURLSessionEnabled"
+#define WebKitDisplayListDrawingEnabledPreferenceKey @"WebKitDisplayListDrawingEnabled"

@@ -29,6 +29,7 @@
 #import "RenderBundle.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -85,6 +86,7 @@ private:
     id<MTLIndirectRenderCommand> currentRenderCommand();
 
     void makeInvalid() { m_indirectCommandBuffer = nil; }
+    void executePreDrawCommands();
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
     MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
@@ -93,12 +95,29 @@ private:
     uint64_t m_currentCommandIndex { 0 };
     id<MTLBuffer> m_indexBuffer { nil };
     id<MTLRenderPipelineState> m_currentPipelineState { nil };
+    id<MTLDepthStencilState> m_depthStencilState { nil };
+    MTLCullMode m_cullMode { MTLCullModeNone };
+    MTLWinding m_frontFace { MTLWindingClockwise };
+    MTLDepthClipMode m_depthClipMode { MTLDepthClipModeClip };
+
     MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
     Vector<WTF::Function<void(void)>> m_recordedCommands;
-    Vector<BindableResources> m_resources;
+    NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>* m_resources;
+    struct BufferAndOffset {
+        id<MTLBuffer> buffer { nil };
+        uint64_t offset { 0 };
+        uint32_t dynamicOffsetCount { 0 };
+        const uint32_t* dynamicOffsets { nullptr };
+    };
+    Vector<BufferAndOffset> m_vertexBuffers;
+    Vector<BufferAndOffset> m_fragmentBuffers;
     const Ref<Device> m_device;
+    Vector<uint32_t> m_vertexDynamicOffsets;
+    Vector<uint32_t> m_fragmentDynamicOffsets;
+    const RenderPipeline* m_pipeline { nullptr };
+    HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
 };
 
 } // namespace WebGPU

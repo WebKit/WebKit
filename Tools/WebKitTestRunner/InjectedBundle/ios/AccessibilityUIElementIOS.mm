@@ -1046,16 +1046,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
     return createJSString();
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
-{
-    return createJSString();
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
-{
-    return createJSString();
-}
-
 void AccessibilityUIElement::assistiveTechnologySimulatedFocus()
 {
     [m_element accessibilityElementDidBecomeFocused];

@@ -26,13 +26,13 @@ namespace WebCore {
 
 class PointerEventsHitRules {
 public:
-    enum EHitTesting {
-        SVG_IMAGE_HITTESTING,
-        SVG_PATH_HITTESTING,
-        SVG_TEXT_HITTESTING
+    enum class HitTestingTargetType : uint8_t {
+        SVGImage,
+        SVGPath,
+        SVGText,
     };
 
-    PointerEventsHitRules(EHitTesting, const HitTestRequest&, PointerEvents);
+    PointerEventsHitRules(HitTestingTargetType, const HitTestRequest&, PointerEvents);
 
     bool requireVisible;
     bool requireFill;

@@ -40,7 +40,6 @@ public:
 
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLSpace"_s; }
-    bool isRenderMathMLSpace() const final { return true; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return false; }
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;

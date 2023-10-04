@@ -79,8 +79,7 @@ with (obj)
   }
   actual = f();
 }
-// Mozilla result, which contradicts IE and the ECMA spec: expect = 2;
-expect = 1;
+expect = 2;
 addThis();
 
 
@@ -99,8 +98,7 @@ with (obj)
   }
 }
 actual = f();
-// Mozilla result, which contradicts IE and the ECMA spec: expect = 2;
-expect = 1;
+expect = 2;
 addThis();
 
 
@@ -121,8 +119,7 @@ with (obj)
   }
 }
 actual = f();
-// Mozilla result, which contradicts IE and the ECMA spec: expect = 3;
-expect = 1;
+expect = 3;
 addThis();
 
 
@@ -142,8 +139,7 @@ with (obj)
 }
 delete obj;
 actual = f();
-// Mozilla result, which contradicts IE and the ECMA spec: expect = 2;
-expect = 1;
+expect = 2;
 addThis();
 
 
@@ -167,8 +163,7 @@ with (obj)
 {
   actual = f();
 }
-// Mozilla result, which contradicts IE and the ECMA spec: expect = 2;  // NOT 3 !!!
-expect = 1;
+expect = 2;
 addThis();
 
 

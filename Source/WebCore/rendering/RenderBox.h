@@ -136,7 +136,6 @@ public:
     FloatRect repaintRectInLocalCoordinates() const override { return borderBoxRect(); }
     FloatRect objectBoundingBox() const override { return borderBoxRect(); }
 
-    const RenderBlockFlow* blockFormattingContextRoot() const;    
     // Note these functions are not equivalent of childrenOfType<RenderBox>
     RenderBox* parentBox() const;
     RenderBox* firstChildBox() const;
@@ -170,8 +169,8 @@ public:
     
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
-    void addOverflowFromChild(const RenderBox& child) { addOverflowFromChild(child, child.locationOffset()); }
-    void addOverflowFromChild(const RenderBox& child, const LayoutSize& delta);
+    void addOverflowFromChild(const RenderBox* child) { addOverflowFromChild(child, child->locationOffset()); }
+    void addOverflowFromChild(const RenderBox* child, const LayoutSize& delta);
 
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const override;
 
@@ -355,7 +354,7 @@ public:
 
     enum RenderBoxFragmentInfoFlags { CacheRenderBoxFragmentInfo, DoNotCacheRenderBoxFragmentInfo };
     LayoutRect borderBoxRectInFragment(const RenderFragmentContainer*, RenderBoxFragmentInfoFlags = CacheRenderBoxFragmentInfo) const;
-    LayoutRect clientBoxRectInFragment(const RenderFragmentContainer&) const;
+    LayoutRect clientBoxRectInFragment(const RenderFragmentContainer*) const;
     RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
     bool hasFragmentRangeInFragmentedFlow() const;
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
@@ -636,7 +635,7 @@ public:
     virtual bool needsLayoutAfterFragmentRangeChange() const { return false; }
 
     bool isGridItem() const { return parent() && parent()->isRenderGrid() && !isExcludedFromNormalLayout(); }
-    bool isFlexItem() const { return parent() && parent()->isFlexibleBox() && !isExcludedFromNormalLayout(); }
+    bool isFlexItem() const { return parent() && parent()->isRenderFlexibleBox() && !isExcludedFromNormalLayout(); }
     inline bool isBlockLevelBox() const;
 
     virtual void adjustBorderBoxRectForPainting(LayoutRect&) { };
@@ -652,15 +651,14 @@ public:
     inline std::optional<LayoutUnit> explicitIntrinsicInnerLogicalHeight() const;
 
     bool establishesIndependentFormattingContext() const override;
-    bool establishesBlockFormattingContext() const;
 
     void updateFloatPainterAfterSelfPaintingLayerChange();
 
     bool computeHasTransformRelatedProperty(const RenderStyle&) const;
 
 protected:
-    RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
-    RenderBox(Document&, RenderStyle&&, BaseTypeFlags);
+    RenderBox(Type, Element&, RenderStyle&&, BaseTypeFlags);
+    RenderBox(Type, Document&, RenderStyle&&, BaseTypeFlags);
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

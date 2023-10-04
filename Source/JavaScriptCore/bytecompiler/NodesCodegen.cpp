@@ -967,6 +967,10 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
 RegisterID* DotAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
+
+    if (generator.shouldGetArgumentsDotLengthFast(this))
+        return generator.emitArgumentCount(finalDest.get());
+
     bool baseIsSuper = m_base->isSuperNode();
 
     RefPtr<RegisterID> base;
@@ -2191,8 +2195,11 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
     CallArguments callArguments(generator, m_args);
     bool baseIsSuper = m_base->isSuperNode();
+    bool shouldGetArgumentsDotLengthFast = generator.shouldGetArgumentsDotLengthFast(this);
     if (baseIsSuper)
         generator.move(callArguments.thisRegister(), generator.ensureThis());
+    else if (shouldGetArgumentsDotLengthFast)
+        generator.emitLoad(callArguments.thisRegister(), jsUndefined());
     else {
         generator.emitNode(callArguments.thisRegister(), m_base);
         if (m_base->isOptionalChainBase())
@@ -2200,8 +2207,12 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     }
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
 
-    RefPtr<RegisterID> base = baseIsSuper ? emitSuperBaseForCallee(generator) : callArguments.thisRegister();
-    emitGetPropertyValue(generator, function.get(), base.get());
+    if (shouldGetArgumentsDotLengthFast)
+        generator.emitArgumentCount(function.get());
+    else {
+        RefPtr<RegisterID> base = baseIsSuper ? emitSuperBaseForCallee(generator) : callArguments.thisRegister();
+        emitGetPropertyValue(generator, function.get(), base.get());
+    }
 
     if (isOptionalCall())
         generator.emitOptionalCheck(function.get());
@@ -5141,7 +5152,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
 void FuncDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    generator.hoistSloppyModeFunctionIfNecessary(metadata()->ident());
+    generator.hoistSloppyModeFunctionIfNecessary(metadata());
 }
 
 // ------------------------------ FuncExprNode ---------------------------------

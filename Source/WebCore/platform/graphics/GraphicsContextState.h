@@ -170,7 +170,7 @@ private:
         if (this->*property == value)
             return;
 #endif
-        this->*property = WTFMove(value);
+        this->*property = std::forward<T>(value);
         m_changeFlags.add(change);
     }
 

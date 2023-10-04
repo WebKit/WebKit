@@ -57,6 +57,7 @@ public:
     WebKit::WebPageProxy* page() { return m_page.get(); }
     RefPtr<FrameHandle> parentFrameHandle() const;
     ProcessID processID() const { return m_data.processID; }
+    bool isFocused() const { return m_data.isFocused; }
 
 private:
     FrameInfo(WebKit::FrameInfoData&&, RefPtr<WebKit::WebPageProxy>&&);

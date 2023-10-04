@@ -15,7 +15,7 @@ PASS nickname is an allowed autocomplete field name
 PASS username is an allowed autocomplete field name
 PASS new-password is an allowed autocomplete field name
 PASS current-password is an allowed autocomplete field name
-FAIL one-time-code is an allowed autocomplete field name assert_equals: expected "one-time-code" but got ""
+PASS one-time-code is an allowed autocomplete field name
 PASS organization-title is an allowed autocomplete field name
 PASS organization is an allowed autocomplete field name
 PASS street-address is an allowed autocomplete field name
@@ -65,7 +65,7 @@ PASS Test maximum number of tokens
 PASS Unknown field
 PASS Test 'wearing the autofill anchor mantle' with off/on
 PASS Serialize combinations of section, mode, contact, and field
-FAIL Serialize combinations of section, mode, contact, field, and credential assert_equals: expected "section-login shipping work tel webauthn" but got ""
+PASS Serialize combinations of section, mode, contact, field, and credential
 
 
 

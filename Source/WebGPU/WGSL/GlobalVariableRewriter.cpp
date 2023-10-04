@@ -435,11 +435,11 @@ void RewriteGlobalVariables::collectGlobals()
         std::optional<unsigned> binding;
         for (auto& attribute : globalVar.attributes()) {
             if (is<AST::GroupAttribute>(attribute)) {
-                group = { *AST::extractInteger(downcast<AST::GroupAttribute>(attribute).group()) };
+                group = downcast<AST::GroupAttribute>(attribute).group().constantValue()->toInt();
                 continue;
             }
             if (is<AST::BindingAttribute>(attribute)) {
-                binding = { *AST::extractInteger(downcast<AST::BindingAttribute>(attribute).binding()) };
+                binding = downcast<AST::BindingAttribute>(attribute).binding().constantValue()->toInt();
                 continue;
             }
         }
@@ -619,10 +619,15 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             return SamplerBindingLayout {
                 .type = SamplerBindingType::Filtering
             };
+        case Types::Primitive::SamplerComparison:
+            return SamplerBindingLayout {
+                .type = SamplerBindingType::Comparison
+            };
         case Types::Primitive::TextureExternal:
             return ExternalTextureBindingLayout { };
         case Types::Primitive::AccessMode:
         case Types::Primitive::TexelFormat:
+        case Types::Primitive::AddressSpace:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }, [&](const Vector& vector) -> BindGroupLayoutEntry::BindingMember {
@@ -707,7 +712,42 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         return StorageTextureBindingLayout {
             .viewDimension = viewDimension
         };
+    }, [&](const TextureDepth& texture) -> BindGroupLayoutEntry::BindingMember {
+        TextureViewDimension viewDimension;
+        bool multisampled = false;
+        switch (texture.kind) {
+        case Types::TextureDepth::Kind::TextureDepth2d:
+            viewDimension = TextureViewDimension::TwoDimensional;
+            break;
+        case Types::TextureDepth::Kind::TextureDepth2dArray:
+            viewDimension = TextureViewDimension::TwoDimensionalArray;
+            break;
+        case Types::TextureDepth::Kind::TextureDepthCube:
+            viewDimension = TextureViewDimension::Cube;
+            break;
+        case Types::TextureDepth::Kind::TextureDepthCubeArray:
+            viewDimension = TextureViewDimension::CubeArray;
+            break;
+        case Types::TextureDepth::Kind::TextureDepthMultisampled2d:
+            viewDimension = TextureViewDimension::TwoDimensional;
+            multisampled = true;
+            break;
+        }
+
+        return TextureBindingLayout {
+            .sampleType = TextureSampleType::Depth,
+            .viewDimension = viewDimension,
+            .multisampled = multisampled
+        };
+    }, [&](const Atomic&) -> BindGroupLayoutEntry::BindingMember {
+        return BufferBindingLayout {
+            .type = addressSpace(),
+            .hasDynamicOffset = false,
+            .minBindingSize = 0
+        };
     }, [&](const Reference&) -> BindGroupLayoutEntry::BindingMember {
+        RELEASE_ASSERT_NOT_REACHED();
+    }, [&](const Pointer&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Function&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
@@ -729,7 +769,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
         switch (variable.flavor()) {
         case AST::VariableFlavor::Override:
             usesOverride(variable);
-            break;
+            continue;
         case AST::VariableFlavor::Var:
         case AST::VariableFlavor::Let:
         case AST::VariableFlavor::Const:
@@ -791,9 +831,11 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
     case Types::Primitive::AbstractInt:
     case Types::Primitive::AbstractFloat:
     case Types::Primitive::Sampler:
+    case Types::Primitive::SamplerComparison:
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         RELEASE_ASSERT_NOT_REACHED();
     }
     m_entryPointInformation->specializationConstants.add(variable.name(), Reflection::SpecializationConstant { String(), constantType });
@@ -817,22 +859,25 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
         for (auto [binding, globalName] : bindingGlobalMap) {
             if (!usedBindings.contains(binding))
                 continue;
+            if (!m_reads.contains(globalName))
+                continue;
 
             auto it = m_globals.find(globalName);
             RELEASE_ASSERT(it != m_globals.end());
+
             auto& global = it->value;
             ASSERT(global.declaration->maybeTypeName());
+
             auto span = global.declaration->span();
+            auto& bindingValue = m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, binding);
+            bindingValue.m_inferredType = m_callGraph.ast().types().abstractIntType();
+            bindingValue.setConstantValue(binding);
+            auto& bindingAttribute = m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(span, bindingValue);
             structMembers.append(m_callGraph.ast().astBuilder().construct<AST::StructureMember>(
                 span,
                 AST::Identifier::make(global.declaration->name()),
                 *global.declaration->maybeReferenceType(),
-                AST::Attribute::List {
-                    m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(
-                        span,
-                        m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, binding)
-                    )
-                }
+                AST::Attribute::List { bindingAttribute }
             ));
         }
 
@@ -854,16 +899,15 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
         unsigned group = it.key;
         auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(span, argumentBufferStructName(group));
         type.m_inferredType = m_structTypes.get(group);
+        auto& groupValue = m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, group);
+        groupValue.m_inferredType = m_callGraph.ast().types().abstractIntType();
+        groupValue.setConstantValue(group);
+        auto& groupAttribute = m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(span, groupValue);
         m_callGraph.ast().append(function.parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
             span,
             argumentBufferParameterName(group),
             type,
-            AST::Attribute::List {
-                m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(
-                    span,
-                    m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, group)
-                )
-            },
+            AST::Attribute::List { groupAttribute },
             AST::ParameterRole::BindGroup
         ));
     }
@@ -926,37 +970,12 @@ void RewriteGlobalVariables::def(const AST::Identifier& name, AST::Variable* var
 
 void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier, AST::Variable& variable, Context context)
 {
-    if (variable.flavor() != AST::VariableFlavor::Const) {
-        if (context == Context::Global) {
-            dataLogLnIf(shouldLogGlobalVariableRewriting, "> read global: ", identifier.identifier(), " at line:", identifier.span().line, " column: ", identifier.span().lineOffset);
-            m_reads.add(identifier.identifier());
-        }
+    if (variable.flavor() == AST::VariableFlavor::Const)
         return;
+    if (context == Context::Global) {
+        dataLogLnIf(shouldLogGlobalVariableRewriting, "> read global: ", identifier.identifier(), " at line:", identifier.span().line, " column: ", identifier.span().lineOffset);
+        m_reads.add(identifier.identifier());
     }
-
-    String newName = makeString("__const", String::number(++m_constantId));
-    auto& newInitializer = m_callGraph.ast().astBuilder().construct<AST::IdentityExpression>(
-        variable.maybeInitializer()->span(),
-        *variable.maybeInitializer()
-    );
-    newInitializer.m_inferredType = identifier.inferredType();
-    auto& newVariable = m_callGraph.ast().astBuilder().construct<AST::Variable>(
-        variable.span(),
-        AST::VariableFlavor::Let,
-        AST::Identifier::make(newName),
-        nullptr,
-        variable.maybeTypeName(),
-        &newInitializer,
-        AST::Attribute::List { }
-    );
-
-    m_callGraph.ast().replace(&identifier.identifier(), AST::Identifier::make(newName));
-
-    auto& statement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
-        SourceSpan::empty(),
-        newVariable
-    );
-    insertBeforeCurrentStatement(statement);
 }
 
 void RewriteGlobalVariables::insertBeforeCurrentStatement(AST::Statement& statement)

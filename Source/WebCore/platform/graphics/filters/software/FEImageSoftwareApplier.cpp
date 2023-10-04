@@ -34,7 +34,7 @@ namespace WebCore {
 
 bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result) const
 {
-    auto resultImage = result.imageBuffer();
+    RefPtr resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 

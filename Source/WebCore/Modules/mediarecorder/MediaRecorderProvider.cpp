@@ -45,9 +45,11 @@ std::unique_ptr<MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorder
 {
 #if PLATFORM(COCOA) && USE(AVFOUNDATION)
     return MediaRecorderPrivateAVFImpl::create(stream, options);
-#endif
-#if USE(GSTREAMER_TRANSCODER)
+#elif USE(GSTREAMER_TRANSCODER)
     return MediaRecorderPrivateGStreamer::create(stream, options);
+#else
+    UNUSED_PARAM(stream);
+    UNUSED_PARAM(options);
 #endif
     return nullptr;
 }

@@ -45,7 +45,8 @@ void TextureMapperTile::updateContents(TextureMapper& textureMapper, Image* imag
         m_texture->reset(targetRect.size(), image->currentFrameKnownToBeOpaque() ? 0 : BitmapTexture::SupportsAlpha);
     }
 
-    m_texture->updateContents(image, targetRect, sourceOffset);
+    auto nativeImage = image->nativeImageForCurrentFrame();
+    m_texture->updateContents(nativeImage.get(), targetRect, sourceOffset);
 }
 
 void TextureMapperTile::updateContents(TextureMapper& textureMapper, GraphicsLayer* sourceLayer, const IntRect& dirtyRect, float scale)

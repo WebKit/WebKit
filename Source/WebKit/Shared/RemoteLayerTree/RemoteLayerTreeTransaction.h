@@ -54,6 +54,10 @@
 #include <WebCore/AcceleratedEffectValues.h>
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+#include <WebCore/Model.h>
+#endif
+
 namespace WebKit {
 
 struct LayerProperties;
@@ -95,7 +99,7 @@ public:
         >;
 
         WebCore::PlatformLayerIdentifier layerID;
-        WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerTypeLayer };
+        WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerType::LayerTypeLayer };
         std::optional<VideoElementData> videoElementData;
         AdditionalData additionalData;
 

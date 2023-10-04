@@ -38,7 +38,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "TestInputDelegate.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -806,6 +806,26 @@ TEST(WebKit, ScrollToFoundRangeAtTopWithContentInsets)
     EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, -[webView scrollView].contentInset.top)));
 }
 
+TEST(WebKit, ScrollToFoundRangeAtTopWithObscuredContentInsets)
+{
+    UIEdgeInsets obscuredInsets = UIEdgeInsetsMake(30, 0, 0, 0);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView scrollView].contentInset = obscuredInsets;
+    [webView _setObscuredInsets:obscuredInsets];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><div contenteditable><p>Top</p><p style='margin-top: 800px'>Bottom</p></div>"];
+    [webView objectByEvaluatingJavaScript:@"let p = document.querySelector('p'); document.getSelection().setBaseAndExtent(p, 0, p, 1)"];
+
+    CGPoint initialContentOffset = CGPointMake(0, -30);
+    [webView scrollView].contentOffset = initialContentOffset;
+
+    auto ranges = textRangesForQueryString(webView.get(), @"Top");
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+
+    TestWebKitAPI::Util::runFor(500_ms);
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, initialContentOffset));
+}
+
 TEST(WebKit, CannotHaveMultipleFindOverlays)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
@@ -832,6 +852,29 @@ TEST(WebKit, CannotHaveMultipleFindOverlays)
     [webView waitForNextPresentationUpdate];
 
     EXPECT_EQ(overlayCount(webView.get()), 1U);
+}
+
+TEST(WebKit, FindOverlayCloseWebViewCrash)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView setFindInteractionEnabled:YES];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto *findInteraction = [webView findInteraction];
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+
+    // Wait for two presentation updates, as the document overlay root layer is
+    // created lazily.
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(overlayCount(webView.get()), 1U);
+
+    [webView _close];
+    [webView removeFromSuperview];
 }
 
 TEST(WebKit, FindOverlaySPI)

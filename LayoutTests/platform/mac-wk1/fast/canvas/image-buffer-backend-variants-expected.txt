@@ -1,0 +1,603 @@
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
+Test enumerates the behavior of canvas with respect to dimensions and backends
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing 1x1 (area: 1)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1x1000 (area: 1000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1x2048 (area: 2048)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1x4096 (area: 4096)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1x8192 (area: 8192)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1x16384 (area: 16384)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1x32768 (area: 32768)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 1x32769 (area: 32769)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 1000x1 (area: 1000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1000x1000 (area: 1000000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1000x2048 (area: 2048000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1000x4096 (area: 4096000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1000x8192 (area: 8192000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1000x16384 (area: 16384000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 1000x32768 (area: 32768000)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 1000x32769 (area: 32769000)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 2048x1 (area: 2048)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 2048x1000 (area: 2048000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 2048x2048 (area: 4194304)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 2048x4096 (area: 8388608)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 2048x8192 (area: 16777216)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 2048x16384 (area: 33554432)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 2048x32768 (area: 67108864)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 2048x32769 (area: 67110912)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 4096x1 (area: 4096)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 4096x1000 (area: 4096000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 4096x2048 (area: 8388608)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 4096x4096 (area: 16777216)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 4096x8192 (area: 33554432)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 4096x16384 (area: 67108864)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 4096x32768 (area: 134217728)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 4096x32769 (area: 134221824)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 8192x1 (area: 8192)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 8192x1000 (area: 8192000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 8192x2048 (area: 16777216)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 8192x4096 (area: 33554432)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 8192x8192 (area: 67108864)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 8192x16384 (area: 134217728)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 8192x32768 (area: 268435456)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 8192x32769 (area: 268443648)
+PASS Context was lost
+Testing 16384x1 (area: 16384)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 16384x1000 (area: 16384000)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 16384x2048 (area: 33554432)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 16384x4096 (area: 67108864)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 16384x8192 (area: 134217728)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 16384x16384 (area: 268435456)
+PASS imageData.data is red
+Effective renderingMode: Accelerated
+Testing 16384x32768 (area: 536870912)
+PASS Context was lost
+Testing 16384x32769 (area: 536887296)
+PASS Context was lost
+Testing 32768x1 (area: 32768)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32768x1000 (area: 32768000)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32768x2048 (area: 67108864)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32768x4096 (area: 134217728)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32768x8192 (area: 268435456)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32768x16384 (area: 536870912)
+PASS Context was lost
+Testing 32768x32768 (area: 1073741824)
+PASS Context was lost
+Testing 32768x32769 (area: 1073774592)
+PASS Context was lost
+Testing 32769x1 (area: 32769)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32769x1000 (area: 32769000)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32769x2048 (area: 67110912)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32769x4096 (area: 134221824)
+PASS imageData.data is red
+Effective renderingMode: Unaccelerated
+Testing 32769x8192 (area: 268443648)
+PASS Context was lost
+Testing 32769x16384 (area: 536887296)
+PASS Context was lost
+Testing 32769x32768 (area: 1073774592)
+PASS Context was lost
+Testing 32769x32769 (area: 1073807361)
+PASS Context was lost
+Testing 0x0 (area: 0)
+PASS Context was lost
+Testing 0x100 (area: 0)
+PASS Context was lost
+Testing 100x0 (area: 0)
+PASS Context was lost
+Testing 1x1 forced 'Accelerated' (area: 1)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1x1000 forced 'Accelerated' (area: 1000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1x2048 forced 'Accelerated' (area: 2048)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1x4096 forced 'Accelerated' (area: 4096)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1x8192 forced 'Accelerated' (area: 8192)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1x16384 forced 'Accelerated' (area: 16384)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1x32768 forced 'Accelerated' (area: 32768)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 1x32769 forced 'Accelerated' (area: 32769)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 1000x1 forced 'Accelerated' (area: 1000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1000x1000 forced 'Accelerated' (area: 1000000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1000x2048 forced 'Accelerated' (area: 2048000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1000x4096 forced 'Accelerated' (area: 4096000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1000x8192 forced 'Accelerated' (area: 8192000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1000x16384 forced 'Accelerated' (area: 16384000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 1000x32768 forced 'Accelerated' (area: 32768000)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 1000x32769 forced 'Accelerated' (area: 32769000)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 2048x1 forced 'Accelerated' (area: 2048)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 2048x1000 forced 'Accelerated' (area: 2048000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 2048x2048 forced 'Accelerated' (area: 4194304)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 2048x4096 forced 'Accelerated' (area: 8388608)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 2048x8192 forced 'Accelerated' (area: 16777216)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 2048x16384 forced 'Accelerated' (area: 33554432)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 2048x32768 forced 'Accelerated' (area: 67108864)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 2048x32769 forced 'Accelerated' (area: 67110912)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 4096x1 forced 'Accelerated' (area: 4096)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 4096x1000 forced 'Accelerated' (area: 4096000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 4096x2048 forced 'Accelerated' (area: 8388608)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 4096x4096 forced 'Accelerated' (area: 16777216)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 4096x8192 forced 'Accelerated' (area: 33554432)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 4096x16384 forced 'Accelerated' (area: 67108864)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 4096x32768 forced 'Accelerated' (area: 134217728)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 4096x32769 forced 'Accelerated' (area: 134221824)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 8192x1 forced 'Accelerated' (area: 8192)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 8192x1000 forced 'Accelerated' (area: 8192000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 8192x2048 forced 'Accelerated' (area: 16777216)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 8192x4096 forced 'Accelerated' (area: 33554432)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 8192x8192 forced 'Accelerated' (area: 67108864)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 8192x16384 forced 'Accelerated' (area: 134217728)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 8192x32768 forced 'Accelerated' (area: 268435456)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 8192x32769 forced 'Accelerated' (area: 268443648)
+PASS Context was lost
+Testing 16384x1 forced 'Accelerated' (area: 16384)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 16384x1000 forced 'Accelerated' (area: 16384000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 16384x2048 forced 'Accelerated' (area: 33554432)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 16384x4096 forced 'Accelerated' (area: 67108864)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 16384x8192 forced 'Accelerated' (area: 134217728)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 16384x16384 forced 'Accelerated' (area: 268435456)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Accelerated'
+Testing 16384x32768 forced 'Accelerated' (area: 536870912)
+PASS Context was lost
+Testing 16384x32769 forced 'Accelerated' (area: 536887296)
+PASS Context was lost
+Testing 32768x1 forced 'Accelerated' (area: 32768)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32768x1000 forced 'Accelerated' (area: 32768000)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32768x2048 forced 'Accelerated' (area: 67108864)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32768x4096 forced 'Accelerated' (area: 134217728)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32768x8192 forced 'Accelerated' (area: 268435456)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32768x16384 forced 'Accelerated' (area: 536870912)
+PASS Context was lost
+Testing 32768x32768 forced 'Accelerated' (area: 1073741824)
+PASS Context was lost
+Testing 32768x32769 forced 'Accelerated' (area: 1073774592)
+PASS Context was lost
+Testing 32769x1 forced 'Accelerated' (area: 32769)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32769x1000 forced 'Accelerated' (area: 32769000)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32769x2048 forced 'Accelerated' (area: 67110912)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32769x4096 forced 'Accelerated' (area: 134221824)
+PASS imageData.data is red
+FAIL context.getEffectiveRenderingModeForTesting() should be Accelerated. Was Unaccelerated.
+Testing 32769x8192 forced 'Accelerated' (area: 268443648)
+PASS Context was lost
+Testing 32769x16384 forced 'Accelerated' (area: 536887296)
+PASS Context was lost
+Testing 32769x32768 forced 'Accelerated' (area: 1073774592)
+PASS Context was lost
+Testing 32769x32769 forced 'Accelerated' (area: 1073807361)
+PASS Context was lost
+Testing 0x0 forced 'Accelerated' (area: 0)
+PASS Context was lost
+Testing 0x100 forced 'Accelerated' (area: 0)
+PASS Context was lost
+Testing 100x0 forced 'Accelerated' (area: 0)
+PASS Context was lost
+Testing 1x1 forced 'Unaccelerated' (area: 1)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1x1000 forced 'Unaccelerated' (area: 1000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1x2048 forced 'Unaccelerated' (area: 2048)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1x4096 forced 'Unaccelerated' (area: 4096)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1x8192 forced 'Unaccelerated' (area: 8192)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1x16384 forced 'Unaccelerated' (area: 16384)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1x32768 forced 'Unaccelerated' (area: 32768)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1x32769 forced 'Unaccelerated' (area: 32769)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1000x1 forced 'Unaccelerated' (area: 1000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1000x1000 forced 'Unaccelerated' (area: 1000000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1000x2048 forced 'Unaccelerated' (area: 2048000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1000x4096 forced 'Unaccelerated' (area: 4096000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1000x8192 forced 'Unaccelerated' (area: 8192000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1000x16384 forced 'Unaccelerated' (area: 16384000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1000x32768 forced 'Unaccelerated' (area: 32768000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 1000x32769 forced 'Unaccelerated' (area: 32769000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 2048x1 forced 'Unaccelerated' (area: 2048)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 2048x1000 forced 'Unaccelerated' (area: 2048000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 2048x2048 forced 'Unaccelerated' (area: 4194304)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 2048x4096 forced 'Unaccelerated' (area: 8388608)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 2048x8192 forced 'Unaccelerated' (area: 16777216)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 2048x16384 forced 'Unaccelerated' (area: 33554432)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 2048x32768 forced 'Unaccelerated' (area: 67108864)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 2048x32769 forced 'Unaccelerated' (area: 67110912)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 4096x1 forced 'Unaccelerated' (area: 4096)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 4096x1000 forced 'Unaccelerated' (area: 4096000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 4096x2048 forced 'Unaccelerated' (area: 8388608)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 4096x4096 forced 'Unaccelerated' (area: 16777216)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 4096x8192 forced 'Unaccelerated' (area: 33554432)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 4096x16384 forced 'Unaccelerated' (area: 67108864)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 4096x32768 forced 'Unaccelerated' (area: 134217728)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 4096x32769 forced 'Unaccelerated' (area: 134221824)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 8192x1 forced 'Unaccelerated' (area: 8192)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 8192x1000 forced 'Unaccelerated' (area: 8192000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 8192x2048 forced 'Unaccelerated' (area: 16777216)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 8192x4096 forced 'Unaccelerated' (area: 33554432)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 8192x8192 forced 'Unaccelerated' (area: 67108864)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 8192x16384 forced 'Unaccelerated' (area: 134217728)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 8192x32768 forced 'Unaccelerated' (area: 268435456)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 8192x32769 forced 'Unaccelerated' (area: 268443648)
+PASS Context was lost
+Testing 16384x1 forced 'Unaccelerated' (area: 16384)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 16384x1000 forced 'Unaccelerated' (area: 16384000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 16384x2048 forced 'Unaccelerated' (area: 33554432)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 16384x4096 forced 'Unaccelerated' (area: 67108864)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 16384x8192 forced 'Unaccelerated' (area: 134217728)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 16384x16384 forced 'Unaccelerated' (area: 268435456)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 16384x32768 forced 'Unaccelerated' (area: 536870912)
+PASS Context was lost
+Testing 16384x32769 forced 'Unaccelerated' (area: 536887296)
+PASS Context was lost
+Testing 32768x1 forced 'Unaccelerated' (area: 32768)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32768x1000 forced 'Unaccelerated' (area: 32768000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32768x2048 forced 'Unaccelerated' (area: 67108864)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32768x4096 forced 'Unaccelerated' (area: 134217728)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32768x8192 forced 'Unaccelerated' (area: 268435456)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32768x16384 forced 'Unaccelerated' (area: 536870912)
+PASS Context was lost
+Testing 32768x32768 forced 'Unaccelerated' (area: 1073741824)
+PASS Context was lost
+Testing 32768x32769 forced 'Unaccelerated' (area: 1073774592)
+PASS Context was lost
+Testing 32769x1 forced 'Unaccelerated' (area: 32769)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32769x1000 forced 'Unaccelerated' (area: 32769000)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32769x2048 forced 'Unaccelerated' (area: 67110912)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32769x4096 forced 'Unaccelerated' (area: 134221824)
+PASS imageData.data is red
+PASS context.getEffectiveRenderingModeForTesting() is 'Unaccelerated'
+Testing 32769x8192 forced 'Unaccelerated' (area: 268443648)
+PASS Context was lost
+Testing 32769x16384 forced 'Unaccelerated' (area: 536887296)
+PASS Context was lost
+Testing 32769x32768 forced 'Unaccelerated' (area: 1073774592)
+PASS Context was lost
+Testing 32769x32769 forced 'Unaccelerated' (area: 1073807361)
+PASS Context was lost
+Testing 0x0 forced 'Unaccelerated' (area: 0)
+PASS Context was lost
+Testing 0x100 forced 'Unaccelerated' (area: 0)
+PASS Context was lost
+Testing 100x0 forced 'Unaccelerated' (area: 0)
+PASS Context was lost
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

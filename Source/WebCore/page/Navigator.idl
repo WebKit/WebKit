@@ -36,6 +36,7 @@ Navigator includes NavigatorMaxTouchPoints;
 Navigator includes NavigatorOnLine;
 Navigator includes NavigatorCookies;
 Navigator includes NavigatorPlugins;
+Navigator includes NavigatorPush;
 Navigator includes NavigatorServiceWorker;
 Navigator includes NavigatorShare;
 Navigator includes NavigatorStorage;

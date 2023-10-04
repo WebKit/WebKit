@@ -450,6 +450,7 @@
 		F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIScriptControllerCocoa.mm; sourceTree = "<group>"; };
 		F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestSpellChecker.mm; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.mm; sourceTree = "<group>"; };
 		F4C3578B20E8444000FA0748 /* LayoutTestSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutTestSpellChecker.h; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.h; sourceTree = "<group>"; };
+		F4F2894B2AC4ED290084A38D /* UIKitSPIForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIKitSPIForTesting.h; path = ../TestRunnerShared/spi/UIKitSPIForTesting.h; sourceTree = "<group>"; };
 		F4FED3212358215E003C139C /* NSPasteboardAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSPasteboardAdditions.h; path = ../TestRunnerShared/mac/NSPasteboardAdditions.h; sourceTree = "<group>"; };
 		F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NSPasteboardAdditions.mm; path = ../TestRunnerShared/mac/NSPasteboardAdditions.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -569,6 +570,7 @@
 				0F18E71B1D6BC4E60027E547 /* Bindings */,
 				F4B6C31620E84369008AC225 /* cocoa */,
 				F4FED31D23582120003C139C /* mac */,
+				F4F2894A2AC4ECC10084A38D /* spi */,
 				0F73B5471BA782FE004B3EF4 /* UIScriptContext */,
 				3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */,
 				3148A0541E6F85B600D3B316 /* IOSLayoutTestCommunication.h */,
@@ -979,6 +981,14 @@
 				F4010B7C24DA204800A876E2 /* PoseAsClass.mm */,
 			);
 			name = cocoa;
+			sourceTree = "<group>";
+		};
+		F4F2894A2AC4ECC10084A38D /* spi */ = {
+			isa = PBXGroup;
+			children = (
+				F4F2894B2AC4ED290084A38D /* UIKitSPIForTesting.h */,
+			);
+			name = spi;
 			sourceTree = "<group>";
 		};
 		F4FED31D23582120003C139C /* mac */ = {

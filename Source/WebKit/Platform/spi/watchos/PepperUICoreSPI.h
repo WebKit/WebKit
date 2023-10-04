@@ -231,11 +231,36 @@ extern UIButtonType const PUICButtonTypePill;
 - (void)addContentViewAnimations:(BOOL)isPresenting;
 @end
 
+#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
+@interface PUICCollectionView : UICollectionView
+@end
+
+@interface PUICListCollectionView : PUICCollectionView
+@end
+
+@interface PUICPlatterCell : UICollectionViewCell
+@end
+
+@interface PUICListPlatterCell : PUICPlatterCell
+@end
+
+@interface PUICListBodyPlatterCell : PUICListPlatterCell
+@property (nonatomic, readonly, strong) UILabel *bodyLabel;
+@end
+
+@interface PUICQuickboardListCollectionViewItemCell : PUICListBodyPlatterCell
+- (void)setText:(NSString *)text;
+@end
+#endif
+
 @interface PUICQuickboardListViewController : PUICQuickboardViewController
 @property (nonatomic, readonly) PUICTableView *listView;
 @property (strong, nonatomic, readonly) PUICQuickboardListViewSpecs *specs;
 @property (nonatomic, copy) UITextContentType textContentType;
 @property (nonatomic, strong) PUICTextInputContext *textInputContext;
+#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
+@property (nonatomic, readonly) PUICListCollectionView *collectionView;
+#endif
 - (instancetype)initWithDelegate:(id <PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_DESIGNATED_INITIALIZER;
 - (void)reloadListItems;
 - (void)reloadHeaderContentView;

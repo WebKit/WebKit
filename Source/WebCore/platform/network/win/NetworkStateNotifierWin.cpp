@@ -56,7 +56,7 @@ void NetworkStateNotifier::updateStateWithoutNotifying()
     m_isOnLine = false;
 }
 
-void CALLBACK NetworkStateNotifier::addressChangeCallback(void*, BOOLEAN timedOut)
+void CALLBACK NetworkStateNotifier::addressChangeCallback(void*, BOOLEAN)
 {
     callOnMainThread([] {
         // NotifyAddrChange only notifies us of a single address change. Now that we've been notified,

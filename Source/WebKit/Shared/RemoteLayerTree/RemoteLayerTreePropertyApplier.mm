@@ -117,11 +117,11 @@ static RetainPtr<CGColorRef> cgColorFromColor(const Color& color)
 static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 {
     switch (type) {
-    case PlatformCALayer::Linear:
+    case PlatformCALayer::FilterType::Linear:
         return kCAFilterLinear;
-    case PlatformCALayer::Nearest:
+    case PlatformCALayer::FilterType::Nearest:
         return kCAFilterNearest;
-    case PlatformCALayer::Trilinear:
+    case PlatformCALayer::FilterType::Trilinear:
         return kCAFilterTrilinear;
     };
 
@@ -256,7 +256,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
                 asyncContentsIdentifier = layerTreeNode->asyncContentsIdentifier();
             }
 
-            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayCGDisplayListsIntoBackingStore());
+            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayDynamicContentScalingDisplayListsIntoBackingStore());
         } else
             [layer _web_clearContents];
     }
@@ -272,6 +272,9 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
     if (properties.changedProperties & LayerChange::CustomAppearanceChanged)
         updateCustomAppearance(layer, properties.customAppearance);
+
+    if (properties.changedProperties & LayerChange::BackdropRootChanged)
+        layer.shouldRasterize = properties.backdropRoot;
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (properties.changedProperties & LayerChange::SeparatedChanged) {

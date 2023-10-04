@@ -25,56 +25,26 @@
 
 #pragma once
 
+#include <WebCore/NotificationPayload.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit::WebPushD {
 
-struct PushMessageForTesting {
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PushMessageForTesting> decode(Decoder&);
+enum class PushMessageDisposition : bool {
+    Legacy,
+    Notification,
+};
 
+struct PushMessageForTesting {
     String targetAppCodeSigningIdentifier;
     String pushPartitionString;
     URL registrationURL;
-    String message;
+    String payload;
+    PushMessageDisposition disposition;
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    std::optional<WebCore::NotificationPayload> parsedPayload;
+#endif
 };
-
-template<class Encoder>
-void PushMessageForTesting::encode(Encoder& encoder) const
-{
-    encoder << targetAppCodeSigningIdentifier << pushPartitionString << registrationURL << message;
-}
-
-template<class Decoder>
-std::optional<PushMessageForTesting> PushMessageForTesting::decode(Decoder& decoder)
-{
-    std::optional<String> targetAppCodeSigningIdentifier;
-    decoder >> targetAppCodeSigningIdentifier;
-    if (!targetAppCodeSigningIdentifier)
-        return std::nullopt;
-
-    std::optional<String> pushPartitionString;
-    decoder >> pushPartitionString;
-    if (!pushPartitionString)
-        return std::nullopt;
-
-    std::optional<URL> registrationURL;
-    decoder >> registrationURL;
-    if (!registrationURL)
-        return std::nullopt;
-
-    std::optional<String> message;
-    decoder >> message;
-    if (!message)
-        return std::nullopt;
-
-    return { {
-        WTFMove(*targetAppCodeSigningIdentifier),
-        WTFMove(*pushPartitionString),
-        WTFMove(*registrationURL),
-        WTFMove(*message),
-    } };
-}
 
 } // namespace WebKit::WebPushD

@@ -42,33 +42,33 @@ enum ShouldIncludeTypingStyle {
 
 class ApplyStyleCommand : public CompositeEditCommand {
 public:
-    enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
-    enum InlineStyleRemovalMode { RemoveIfNeeded, RemoveAlways, RemoveNone };
-    enum EAddStyledElement { AddStyledElement, DoNotAddStyledElement };
+    enum class PropertyLevel : bool { Default, ForceBlock };
+    enum class InlineStyleRemovalMode : uint8_t { IfNeeded, Always, None };
+    enum class AddStyledElement : bool { No, Yes };
     typedef bool (*IsInlineElementToRemoveFunction)(const Element*);
 
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, EditAction action = EditAction::ChangeAttributes, EPropertyLevel level = PropertyDefault)
+    static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, EditAction action = EditAction::ChangeAttributes, PropertyLevel level = PropertyLevel::Default)
     {
-        return adoptRef(*new ApplyStyleCommand(document, style, action, level));
+        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, action, level));
     }
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, const Position& start, const Position& end, EditAction action = EditAction::ChangeAttributes, EPropertyLevel level = PropertyDefault)
+    static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, const Position& start, const Position& end, EditAction action = EditAction::ChangeAttributes, PropertyLevel level = PropertyLevel::Default)
     {
-        return adoptRef(*new ApplyStyleCommand(document, style, start, end, action, level));
+        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, start, end, action, level));
     }
     static Ref<ApplyStyleCommand> create(Ref<Element>&& element, bool removeOnly = false, EditAction action = EditAction::ChangeAttributes)
     {
         return adoptRef(*new ApplyStyleCommand(WTFMove(element), removeOnly, action));
     }
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditAction::ChangeAttributes)
+    static Ref<ApplyStyleCommand> create(Ref<Document>&& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditAction::ChangeAttributes)
     {
-        return adoptRef(*new ApplyStyleCommand(document, style, isInlineElementToRemoveFunction, action));
+        return adoptRef(*new ApplyStyleCommand(WTFMove(document), style, isInlineElementToRemoveFunction, action));
     }
 
 private:
-    ApplyStyleCommand(Document&, const EditingStyle*, EditAction, EPropertyLevel);
-    ApplyStyleCommand(Document&, const EditingStyle*, const Position& start, const Position& end, EditAction, EPropertyLevel);
+    ApplyStyleCommand(Ref<Document>&&, const EditingStyle*, EditAction, PropertyLevel);
+    ApplyStyleCommand(Ref<Document>&&, const EditingStyle*, const Position& start, const Position& end, EditAction, PropertyLevel);
     ApplyStyleCommand(Ref<Element>&&, bool removeOnly, EditAction);
-    ApplyStyleCommand(Document&, const EditingStyle*, bool (*isInlineElementToRemove)(const Element*), EditAction);
+    ApplyStyleCommand(Ref<Document>&&, const EditingStyle*, bool (*isInlineElementToRemove)(const Element*), EditAction);
 
     void doApply() override;
     bool shouldDispatchInputEvents() const final { return false; }
@@ -77,11 +77,11 @@ private:
     bool isStyledInlineElementToRemove(Element*) const;
     bool shouldApplyInlineStyleToRun(EditingStyle&, Node* runStart, Node* pastEndNode);
     void removeConflictingInlineStyleFromRun(EditingStyle&, RefPtr<Node>& runStart, RefPtr<Node>& runEnd, Node* pastEndNode);
-    bool removeInlineStyleFromElement(EditingStyle&, HTMLElement&, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
-    inline bool shouldRemoveInlineStyleFromElement(EditingStyle& style, HTMLElement& element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
+    bool removeInlineStyleFromElement(EditingStyle&, HTMLElement&, InlineStyleRemovalMode = InlineStyleRemovalMode::IfNeeded, EditingStyle* extractedStyle = nullptr);
+    inline bool shouldRemoveInlineStyleFromElement(EditingStyle& style, HTMLElement& element) { return removeInlineStyleFromElement(style, element, InlineStyleRemovalMode::None); }
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement&);
     bool removeImplicitlyStyledElement(EditingStyle&, HTMLElement&, InlineStyleRemovalMode, EditingStyle* extractedStyle);
-    bool removeCSSStyle(EditingStyle&, HTMLElement&, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
+    bool removeCSSStyle(EditingStyle&, HTMLElement&, InlineStyleRemovalMode = InlineStyleRemovalMode::IfNeeded, EditingStyle* extractedStyle = nullptr);
     RefPtr<HTMLElement> highestAncestorWithConflictingInlineStyle(EditingStyle&, Node*);
     void applyInlineStyleToPushDown(Node&, EditingStyle*);
     void pushDownInlineStyleAroundNode(EditingStyle&, Node*);
@@ -96,9 +96,9 @@ private:
     void fixRangeAndApplyInlineStyle(EditingStyle&, const Position& start, const Position& end);
     void applyInlineStyleToNodeRange(EditingStyle&, Node& startNode, Node* pastEndNode);
     void addBlockStyle(const StyleChange&, HTMLElement&);
-    void addInlineStyleIfNeeded(EditingStyle*, Node& start, Node& end, EAddStyledElement = AddStyledElement);
+    void addInlineStyleIfNeeded(EditingStyle*, Node& start, Node& end, AddStyledElement = AddStyledElement::Yes);
     Position positionToComputeInlineStyleChange(Node&, RefPtr<Node>& dummyElement);
-    void applyInlineStyleChange(Node& startNode, Node& endNode, StyleChange&, EAddStyledElement);
+    void applyInlineStyleChange(Node& startNode, Node& endNode, StyleChange&, AddStyledElement);
     void splitTextAtStart(const Position& start, const Position& end);
     void splitTextAtEnd(const Position& start, const Position& end);
     void splitTextElementAtStart(const Position& start, const Position& end);
@@ -121,7 +121,7 @@ private:
     Position endPosition();
 
     RefPtr<EditingStyle> m_style;
-    EPropertyLevel m_propertyLevel;
+    PropertyLevel m_propertyLevel { PropertyLevel::Default };
     Position m_start;
     Position m_end;
     bool m_useEndingSelection;

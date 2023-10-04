@@ -30,69 +30,19 @@
 
 #include "JSWebExtensionAPINamespace.h"
 #include "JSWebExtensionWrapper.h"
-#include "WebExtensionContextMessages.h"
-#include "WebExtensionContextProxyMessages.h"
 #include "WebFrame.h"
 #include "WebPage.h"
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
 using namespace WebCore;
-
-static HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>& webExtensionContextProxies()
-{
-    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>> contexts;
-    return contexts;
-}
-
-RefPtr<WebExtensionContextProxy> WebExtensionContextProxy::get(WebExtensionContextIdentifier identifier)
-{
-    return webExtensionContextProxies().get(identifier).get();
-}
-
-Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExtensionContextParameters& parameters)
-{
-    auto updateProperties = [&](WebExtensionContextProxy& context) {
-        context.m_baseURL = parameters.baseURL;
-        context.m_uniqueIdentifier = parameters.uniqueIdentifier;
-        context.m_localization = parseLocalization(parameters.localizationJSON.get());
-        context.m_manifest = parseJSON(parameters.manifestJSON.get());
-        context.m_manifestVersion = parameters.manifestVersion;
-        context.m_testingMode = parameters.testingMode;
-    };
-
-    if (auto context = webExtensionContextProxies().get(parameters.identifier)) {
-        updateProperties(*context);
-        return *context;
-    }
-
-    auto result = adoptRef(new WebExtensionContextProxy(parameters));
-    updateProperties(*result);
-    return result.releaseNonNull();
-}
-
-WebExtensionContextProxy::WebExtensionContextProxy(const WebExtensionContextParameters& parameters)
-    : m_identifier(parameters.identifier)
-{
-    ASSERT(!webExtensionContextProxies().contains(m_identifier));
-    webExtensionContextProxies().add(m_identifier, this);
-
-    WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
-}
-
-WebExtensionContextProxy::~WebExtensionContextProxy()
-{
-    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
-}
 
 void WebExtensionContextProxy::addFrameWithExtensionContent(WebFrame& frame)
 {
     m_extensionContentFrames.add(frame);
 }
 
-void WebExtensionContextProxy::enumerateNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)
+void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)
 {
     for (auto& frame : m_extensionContentFrames) {
         auto* page = frame.page() ? frame.page()->corePage() : nullptr;
@@ -109,7 +59,7 @@ void WebExtensionContextProxy::enumerateNamespaceObjects(const Function<void(Web
         if (!namespaceObjectImpl)
             continue;
 
-        function(*namespaceObjectImpl);
+        function(frame, *namespaceObjectImpl);
     }
 }
 

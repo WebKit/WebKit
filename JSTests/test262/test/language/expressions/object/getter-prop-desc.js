@@ -29,8 +29,11 @@ includes: [propertyHelper.js]
 var obj = { get m() { return 1234; } };
 var desc = Object.getOwnPropertyDescriptor(obj, 'm');
 
-verifyEnumerable(obj, 'm');
-verifyConfigurable(obj, 'm');
+verifyProperty(obj, 'm', {
+  enumerable: true,
+  configurable: true,
+});
+
 assert.sameValue(desc.value, undefined, '`value` field');
 assert.sameValue(desc.set, undefined, '`set` field');
 assert.sameValue(typeof desc.get, 'function', 'type of `get` field');

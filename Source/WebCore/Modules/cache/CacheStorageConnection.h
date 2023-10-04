@@ -50,6 +50,8 @@ public:
 
     virtual void reference(DOMCacheIdentifier /* cacheIdentifier */) = 0;
     virtual void dereference(DOMCacheIdentifier /* cacheIdentifier */) = 0;
+    virtual void lockStorage(const ClientOrigin&) = 0;
+    virtual void unlockStorage(const ClientOrigin&) = 0;
 
     uint64_t computeRecordBodySize(const FetchResponse&, const DOMCacheEngine::ResponseBody&);
 

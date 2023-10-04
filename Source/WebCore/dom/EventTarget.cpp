@@ -58,7 +58,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(EventTarget);
 
-struct SameSizeAsEventTarget : public ScriptWrappable, public CanMakeWeakPtr<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
+struct SameSizeAsEventTarget : ScriptWrappable, CanMakeWeakPtr<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData>, CanMakeCheckedPtr {
     virtual ~SameSizeAsEventTarget() = default; // Allocate vtable pointer.
 };
 

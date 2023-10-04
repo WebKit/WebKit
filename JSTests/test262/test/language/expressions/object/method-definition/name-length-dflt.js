@@ -33,28 +33,36 @@ includes: [propertyHelper.js]
 
 var f1 = { m(x = 42) {} }.m;
 
-assert.sameValue(f1.length, 0, 'FormalsList: x = 42');
-verifyNotEnumerable(f1, 'length');
-verifyNotWritable(f1, 'length');
-verifyConfigurable(f1, 'length');
+verifyProperty(f1, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var f2 = { m(x = 42, y) {} }.m;
 
-assert.sameValue(f2.length, 0, 'FormalsList: x = 42, y');
-verifyNotEnumerable(f2, 'length');
-verifyNotWritable(f2, 'length');
-verifyConfigurable(f2, 'length');
+verifyProperty(f2, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var f3 = { m(x, y = 42) {} }.m;
 
-assert.sameValue(f3.length, 1, 'FormalsList: x, y = 42');
-verifyNotEnumerable(f3, 'length');
-verifyNotWritable(f3, 'length');
-verifyConfigurable(f3, 'length');
+verifyProperty(f3, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 var f4 = { m(x, y = 42, z) {} }.m;
 
-assert.sameValue(f4.length, 1, 'FormalsList: x, y = 42, z');
-verifyNotEnumerable(f4, 'length');
-verifyNotWritable(f4, 'length');
-verifyConfigurable(f4, 'length');
+verifyProperty(f4, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

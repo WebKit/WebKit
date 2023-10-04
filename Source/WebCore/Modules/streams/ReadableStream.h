@@ -52,10 +52,12 @@ public:
 
     InternalReadableStream& internalReadableStream() { return m_internalReadableStream.get(); }
 
-private:
+protected:
     static ExceptionOr<Ref<ReadableStream>> createFromJSValues(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue);
+    static ExceptionOr<Ref<InternalReadableStream>> createInternalReadableStream(JSDOMGlobalObject&, Ref<ReadableStreamSource>&&);
     explicit ReadableStream(Ref<InternalReadableStream>&&);
 
+private:
     Ref<InternalReadableStream> m_internalReadableStream;
 };
 

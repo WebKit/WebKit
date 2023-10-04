@@ -31,7 +31,7 @@
 #if !PLATFORM(IOS_FAMILY)
 #import <AppKit/AppKit.h>
 #else
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <WebKit/WAKWindow.h>
 #endif
 

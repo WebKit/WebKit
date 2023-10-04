@@ -305,7 +305,7 @@ void WebKitBrowserWindow::navigateForwardOrBackward(bool forward)
         WKPageGoBack(page);
 }
 
-void WebKitBrowserWindow::navigateToHistory(UINT menuID)
+void WebKitBrowserWindow::navigateToHistory(UINT)
 {
     // Not implemented
 }
@@ -385,7 +385,7 @@ void WebKitBrowserWindow::showLayerTree()
     WKPagePostMessageToInjectedBundle(page, name.get(), nullptr);
 }
 
-void WebKitBrowserWindow::updateStatistics(HWND hDlg)
+void WebKitBrowserWindow::updateStatistics(HWND)
 {
     // Not implemented
 }
@@ -498,7 +498,7 @@ void WebKitBrowserWindow::didChangeActiveURL(const void* clientInfo)
     thisWindow.m_client.activeURLChanged(createString(url.get()));
 }
 
-void WebKitBrowserWindow::decidePolicyForNavigationResponse(WKPageRef page, WKNavigationResponseRef navigationResponse, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+void WebKitBrowserWindow::decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef navigationResponse, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     auto response = adoptWK(WKNavigationResponseCopyResponse(navigationResponse));
@@ -529,7 +529,7 @@ void WebKitBrowserWindow::decidePolicyForNavigationResponse(WKPageRef page, WKNa
     }
 }
 
-void WebKitBrowserWindow::didFailProvisionalNavigation(WKPageRef page, WKNavigationRef navigation, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+void WebKitBrowserWindow::didFailProvisionalNavigation(WKPageRef, WKNavigationRef, WKErrorRef error, WKTypeRef, const void* clientInfo)
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     std::wstringstream text;
@@ -540,7 +540,7 @@ void WebKitBrowserWindow::didFailProvisionalNavigation(WKPageRef page, WKNavigat
     MessageBox(thisWindow.m_hMainWnd, text.str().c_str(), L"Provisional Navigation Failure", MB_OK | MB_ICONWARNING);
 }
 
-void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationChallengeRef challenge, const void* clientInfo)
+void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef challenge, const void* clientInfo)
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     auto protectionSpace = WKAuthenticationChallengeGetProtectionSpace(challenge);
@@ -657,7 +657,7 @@ void WebKitBrowserWindow::downloadDidFailWithError(WKDownloadRef, WKErrorRef err
     MessageBox(thisWindow.hwnd(), text.str().c_str(), L"Download Failure", MB_OK | MB_ICONWARNING);
 }
 
-WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfigurationRef pageConf, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
+WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef, WKPageConfigurationRef pageConf, WKNavigationActionRef, WKWindowFeaturesRef, const void*)
 {
     auto& newWindow = MainWindow::create().leakRef();
     auto factory = [pageConf](BrowserWindowClient& client, HWND mainWnd, bool) -> auto {
@@ -678,7 +678,7 @@ void WebKitBrowserWindow::didNotHandleKeyEvent(WKPageRef, WKNativeEventPtr event
     PostMessage(thisWindow.m_hMainWnd, event->message, event->wParam, event->lParam);
 }
 
-void WebKitBrowserWindow::runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptAlertResultListenerRef listener, const void *clientInfo)
+void WebKitBrowserWindow::runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptAlertResultListenerRef listener, const void* clientInfo)
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     std::wstring title = L"Alert: ";
@@ -688,7 +688,7 @@ void WebKitBrowserWindow::runJavaScriptAlert(WKPageRef page, WKStringRef alertTe
     WKPageRunJavaScriptAlertResultListenerCall(listener);
 }
 
-void WebKitBrowserWindow::runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptConfirmResultListenerRef listener, const void *clientInfo)
+void WebKitBrowserWindow::runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptConfirmResultListenerRef listener, const void* clientInfo)
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     std::wstring title = L"Confirm: ";
@@ -698,7 +698,7 @@ void WebKitBrowserWindow::runJavaScriptConfirm(WKPageRef page, WKStringRef messa
     WKPageRunJavaScriptConfirmResultListenerCall(listener, result);
 }
 
-void WebKitBrowserWindow::runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptPromptResultListenerRef listener, const void *clientInfo)
+void WebKitBrowserWindow::runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptPromptResultListenerRef listener, const void* clientInfo)
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     std::wstring title = L"Prompt: ";

@@ -53,7 +53,7 @@ Ref<MouseEvent> MouseEvent::create(const PlatformTouchEvent& event, unsigned ind
 {
     return adoptRef(*new MouseEvent(mouseEventType(event.touchPhaseAtIndex(index)), CanBubble::Yes, cancelable, IsComposed::Yes,
         event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), 0, 0,
-        event.modifiers(), 0, 0, nullptr, 0, SyntheticClickType::NoTap, IsSimulated::No, IsTrusted::Yes));
+        event.modifiers(), MouseButton::Left, 0, nullptr, 0, SyntheticClickType::NoTap, IsSimulated::No, IsTrusted::Yes));
 }
 
 } // namespace WebCore

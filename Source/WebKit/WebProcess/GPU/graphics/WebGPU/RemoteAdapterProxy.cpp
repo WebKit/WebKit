@@ -74,6 +74,7 @@ void RemoteAdapterProxy::requestDevice(const WebCore::WebGPU::DeviceDescriptor& 
         supportedLimits.maxTextureDimension3D,
         supportedLimits.maxTextureArrayLayers,
         supportedLimits.maxBindGroups,
+        supportedLimits.maxBindGroupsPlusVertexBuffers,
         supportedLimits.maxBindingsPerBindGroup,
         supportedLimits.maxDynamicUniformBuffersPerPipelineLayout,
         supportedLimits.maxDynamicStorageBuffersPerPipelineLayout,

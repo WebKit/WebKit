@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +21,7 @@
 #pragma once
 
 #include "ImageBuffer.h"
-#include "RenderSVGResourceContainer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
 
 #include <wtf/HashMap.h>
@@ -35,7 +36,7 @@ struct MaskerData {
     RefPtr<ImageBuffer> maskImage;
 };
 
-class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
+class RenderSVGResourceMasker final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceMasker);
 public:
     RenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
@@ -46,6 +47,8 @@ public:
     void removeAllClientsFromCache(bool markForInvalidation = true) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
+    bool drawContentIntoContext(GraphicsContext&, const FloatRect& objectBoundingBox);
+    bool drawContentIntoContext(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions&);
     FloatRect resourceBoundingBox(const RenderObject&) override;
 
     inline SVGUnitTypes::SVGUnitType maskUnits() const;
@@ -65,6 +68,6 @@ private:
     HashMap<RenderObject*, std::unique_ptr<MaskerData>> m_masker;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourceMasker, MaskerResourceType)

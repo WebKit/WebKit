@@ -711,7 +711,8 @@ test(function() {
 });
 
 for (let i = 0; i < 500; i++)
-    assert(foo() === 25);
+    assert(foo() === 20);
+
 function foo() { return 20; }
 
 {
@@ -721,7 +722,7 @@ function foo() { return 20; }
 assert(foo() === 25);
 
 for (let i = 0; i < 500; i++)
-    assert(bar() === "bar2");
+    assert(bar() === "bar1");
 function bar() { return "bar1"; }
 if (falsey()) {
     {
@@ -730,14 +731,14 @@ if (falsey()) {
         }
     }
 }
-assert(bar() === "bar2");
+assert(bar() === "bar1");
 
 for (let i = 0; i < 500; i++)
-    assert(baz() === "baz2");
+    assert(baz() === "baz1");
 function baz() { return "baz1"; }
 while (falsey()) {
     if (falsey()) {
         function baz() { return "baz2"; }
     }
 }
-assert(baz() === "baz2");
+assert(baz() === "baz1");

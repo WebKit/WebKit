@@ -348,7 +348,7 @@ public:
         bool done = false;
         Vector<RemovedPushRecord> removedRecords;
 
-        db->removeRecordsBySubscriptionSet(subscriptionSetIdentifier, [&done, &removedRecords](auto&& result) {
+        db->removeRecordsBySubscriptionSet(subscriptionSetIdentifier, [&done, &removedRecords](Vector<RemovedPushRecord>&& result) {
             removedRecords = WTFMove(result);
             done = true;
         });

@@ -339,9 +339,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicT
     }
 
     ALWAYS_LOG(LOGIDENTIFIER);
-#if PLATFORM(IOS_FAMILY)
     m_mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
-#endif
     m_playing = true;
     if (!shouldBePlaying())
         return;
@@ -418,22 +416,50 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::hasAudio() const
     return m_mediaSourcePrivate->hasAudio();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
+void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible, String&& sceneIdentifier)
 {
     if (m_visible == visible)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, visible);
     m_visible = visible;
-    if (m_visible)
+    if (m_visible) {
         acceleratedRenderingStateChanged();
 
+        // Rendering may have been interrupted while the page was in a non-visible
+        // state, which would require a flush to resume decoding.
+        if (m_mediaSourcePrivate) {
+            SetForScope(m_flushingActiveSourceBuffersDueToVisibilityChange, true, false);
+            m_mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
+        }
+    }
+
 #if PLATFORM(VISION)
+    NSError *error = nil;
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (!visible) {
-        AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+        if (NSString *sceneId = sceneIdentifier; sceneId.length) {
+            [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
+                @"AVAudioSessionSpatialExperienceOptionSoundStageSize" : @(AVAudioSessionSoundStageSizeAutomatic),
+                @"AVAudioSessionSpatialExperienceOptionAnchoringStrategy" : @(AVAudioSessionAnchoringStrategyScene),
+                @"AVAudioSessionSpatialExperienceOptionSceneIdentifier" : sceneId
+            } error:&error];
+        }
+
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
-    } else
+    } else {
+        [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
+            @"AVAudioSessionSpatialExperienceOptionSoundStageSize" : @(AVAudioSessionSoundStageSizeAutomatic),
+            @"AVAudioSessionSpatialExperienceOptionAnchoringStrategy" : @(AVAudioSessionAnchoringStrategyAutomatic)
+        } error:&error];
+
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = nil;
+    }
+
+    if (error)
+        ALWAYS_LOG(error.localizedDescription.UTF8String);
+#else
+    UNUSED_PARAM(sceneIdentifier);
 #endif
 }
 
@@ -925,7 +951,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     @try {
         [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", exception.name, ", reason : ", exception.reason);
         ASSERT_NOT_REACHED();
 
         setNetworkState(MediaPlayer::NetworkState::DecodeError);
@@ -991,7 +1017,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
 {
-    return m_playing && !seeking() && allRenderersHaveAvailableSamples() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
+    return m_playing && !seeking() && (m_flushingActiveSourceBuffersDueToVisibilityChange || allRenderersHaveAvailableSamples()) && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
@@ -1111,6 +1137,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
 {
+    ALWAYS_LOG(LOGIDENTIFIER, effectiveRate());
     m_playing = effectiveRate() != 0;
     if (auto player = m_player.get())
         player->rateChanged();
@@ -1335,7 +1362,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     @try {
         [m_synchronizer addRenderer:audioRenderer];
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", exception.name, ", reason : ", exception.reason);
         ASSERT_NOT_REACHED();
 
         setNetworkState(MediaPlayer::NetworkState::DecodeError);

@@ -118,7 +118,7 @@ private:
             return m_client.mouseUp(toAPI(&pageOverlay), WebKit::toAPI(event.position()), WebKit::toAPI(event.button()), m_client.base.clientInfo);
         }
         case WebCore::PlatformMouseEvent::Type::MouseMoved: {
-            if (event.button() == WebCore::MouseButton::NoButton) {
+            if (event.button() == WebCore::MouseButton::None) {
                 if (!m_client.mouseMoved)
                     return false;
 

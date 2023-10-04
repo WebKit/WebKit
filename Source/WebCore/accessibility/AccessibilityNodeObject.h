@@ -137,7 +137,6 @@ public:
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
 
-    void updateRole() override;
     bool matchesTextAreaRole() const;
 
     void increment() override;
@@ -156,7 +155,7 @@ protected:
 
     bool isDetached() const override { return !m_node; }
 
-    virtual AccessibilityRole determineAccessibilityRole();
+    AccessibilityRole determineAccessibilityRole() override;
     enum class TreatStyleFormatGroupAsInline : bool { No, Yes };
     AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
     AccessibilityRole ariaRoleAttribute() const override { return m_ariaRole; }
@@ -210,7 +209,6 @@ protected:
     AccessibilityObject* captionForFigure() const;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
     AccessibilityObject* titleUIElement() const override;
-    bool exposesTitleUIElement() const override;
 
 private:
     bool isAccessibilityNodeObject() const final { return true; }
@@ -232,7 +230,7 @@ private:
 
     bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
 
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
+    CheckedPtr<Node> m_node;
 };
 
 } // namespace WebCore

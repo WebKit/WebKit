@@ -1,0 +1,10 @@
+X
+X
+
+FAIL .first-baseline 1 assert_equals:
+<div data-offset-y="31" class="first-baseline">X</div>
+offsetTop expected 31 but got 16
+FAIL .first-baseline 2 assert_equals:
+<div data-offset-y="31" class="first-baseline">X</div>
+offsetTop expected 31 but got 16
+

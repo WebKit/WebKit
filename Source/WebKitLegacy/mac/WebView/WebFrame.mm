@@ -64,6 +64,7 @@
 #import <WebCore/AccessibilityObject.h>
 #import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/CachedResourceLoader.h>
+#import <WebCore/CaptionUserPreferences.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/CompositionHighlight.h>
@@ -94,6 +95,7 @@
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/OriginAccessPatterns.h>
 #import <WebCore/Page.h>
+#import <WebCore/PageGroup.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PluginData.h>
@@ -951,7 +953,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [view->platformWidget() window])),
-        WebCore::LeftButton, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap);
+        WebCore::MouseButton::Left, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap);
     _private->coreFrame->eventHandler().dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
 }
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
@@ -1701,7 +1703,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
     for (WebCore::Node* node = root; node; node = WebCore::NodeTraversal::next(*node)) {
         auto markers = document->markers().markersFor(*node);
-        for (auto* marker : markers) {
+        for (auto& marker : markers) {
             if (marker->type() != WebCore::DocumentMarker::DictationResult)
                 continue;
 
@@ -1910,6 +1912,25 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
 }
 #endif // ENABLE(TEXT_AUTOSIZING)
+
+- (void)_createCaptionPreferencesTestingModeToken
+{
+    auto* page = core(self)->page();
+    if (!page)
+        return;
+    _private->captionPreferencesTestingModeToken = page->group().ensureCaptionPreferences().createTestingModeToken().moveToUniquePtr();
+}
+
+- (void)_setCaptionDisplayMode:(NSString *)mode
+{
+    auto* page = core(self)->page();
+    if (!page)
+        return;
+    auto& captionPreferences = page->group().ensureCaptionPreferences();
+    auto displayMode = WTF::EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode>::fromString(mode);
+    if (displayMode.has_value())
+        captionPreferences.setCaptionDisplayMode(displayMode.value());
+}
 
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {

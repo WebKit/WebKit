@@ -43,7 +43,6 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
         return;
 
     GraphicsContext& context = imageBuffer->context();
-    context.setImageInterpolationQuality(InterpolationQuality::Default);
     context.setTextDrawingMode(TextDrawingMode::Fill);
 
     IntRect sourceRect(targetRect);
@@ -54,7 +53,7 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
 
     sourceLayer->paintGraphicsLayerContents(context, sourceRect);
 
-    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+    auto image = ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
     if (!image)
         return;
 

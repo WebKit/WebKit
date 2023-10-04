@@ -5,7 +5,7 @@ install-name: /System/Library/PrivateFrameworks/PepperUICore.framework/PepperUIC
 exports:
 -       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
         symbols: [_PUICButtonTypePill, _PUICStatusBarNavigationBackButtonPressedNotification, _PUICStatusBarTitleTappedNotification]
-        objc-classes: [PUICApplication, PUICCrownInputSequencer, PUICPickerView, PUICQuickboardController, PUICQuickboardListItemCell,
-                PUICQuickboardListTrayButton, PUICQuickboardListViewController, PUICQuickboardMessageViewController, PUICQuickboardRemoteViewController,
-                PUICQuickboardViewController, PUICResources, PUICTextInputContext]
+        objc-classes: [PUICApplication, PUICCrownInputSequencer, PUICPickerView, PUICQuickboardController, PUICQuickboardListCollectionViewItemCell,
+                PUICQuickboardListItemCell, PUICQuickboardListTrayButton, PUICQuickboardListViewController, PUICQuickboardMessageViewController,
+                PUICQuickboardRemoteViewController, PUICQuickboardViewController, PUICResources, PUICTextInputContext]
 ...

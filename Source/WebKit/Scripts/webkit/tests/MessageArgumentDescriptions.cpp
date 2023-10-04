@@ -28,6 +28,7 @@
 #if ENABLE(IPC_TESTING_API) || !LOG_DISABLED
 
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
+#include "Connection.h"
 #include "ContentWorldShared.h"
 #include "DataTaskIdentifier.h"
 #include "DownloadID.h"
@@ -47,7 +48,9 @@
 #include "QuotaIncreaseRequestIdentifier.h"
 #include "RemoteAudioDestinationIdentifier.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 #include "RemoteAudioSessionIdentifier.h"
+#endif
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMIdentifier.h"
 #endif
@@ -83,14 +86,16 @@
 #include "VideoEncoderIdentifier.h"
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionControllerIdentifier.h"
+#include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionPortChannelIdentifier.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionWindowIdentifier.h"
 #include "WebGPUIdentifier.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebTransportSession.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include <WebCore/BackgroundFetchRecordIdentifier.h>
 #include <WebCore/BroadcastChannelIdentifier.h>
-#include <WebCore/DOMCacheIdentifier.h>
 #include <WebCore/DictationContext.h>
 #include <WebCore/ElementIdentifier.h>
 #include <WebCore/FetchIdentifier.h>
@@ -103,7 +108,9 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include <WebCore/PlaybackTargetClientContextIdentifier.h>
+#endif
 #include <WebCore/PortIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
@@ -434,9 +441,9 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
 
 Vector<ASCIILiteral> serializedIdentifiers()
 {
+    static_assert(sizeof(uint64_t) == sizeof(IPC::AsyncReplyID));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BackgroundFetchRecordIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BroadcastChannelIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebCore::DOMCacheIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DictationContext));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ElementIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FetchIdentifier));
@@ -450,7 +457,9 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaSessionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::OpaqueOriginIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PageIdentifier));
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PlaybackTargetClientContextIdentifier));
+#endif
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PortIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ProcessIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PushSubscriptionIdentifier));
@@ -490,7 +499,9 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::QuotaIncreaseRequestIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioDestinationIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioHardwareListenerIdentifier));
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioSessionIdentifier));
+#endif
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteCDMIdentifier));
 #endif
@@ -527,15 +538,19 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoEncoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionContextIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionControllerIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionFrameIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionPortChannelIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionTabIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionWindowIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebGPUIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebPageProxyIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebTransportSessionIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebTransportStreamIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
+        "IPC::AsyncReplyID"_s,
         "WebCore::BackgroundFetchRecordIdentifier"_s,
         "WebCore::BroadcastChannelIdentifier"_s,
-        "WebCore::DOMCacheIdentifier"_s,
         "WebCore::DictationContext"_s,
         "WebCore::ElementIdentifier"_s,
         "WebCore::FetchIdentifier"_s,
@@ -549,7 +564,9 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::MediaSessionIdentifier"_s,
         "WebCore::OpaqueOriginIdentifier"_s,
         "WebCore::PageIdentifier"_s,
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
         "WebCore::PlaybackTargetClientContextIdentifier"_s,
+#endif
         "WebCore::PortIdentifier"_s,
         "WebCore::ProcessIdentifier"_s,
         "WebCore::PushSubscriptionIdentifier"_s,
@@ -589,7 +606,9 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::QuotaIncreaseRequestIdentifier"_s,
         "WebKit::RemoteAudioDestinationIdentifier"_s,
         "WebKit::RemoteAudioHardwareListenerIdentifier"_s,
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
         "WebKit::RemoteAudioSessionIdentifier"_s,
+#endif
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
         "WebKit::RemoteCDMIdentifier"_s,
 #endif
@@ -626,10 +645,14 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::VideoEncoderIdentifier"_s,
         "WebKit::WebExtensionContextIdentifier"_s,
         "WebKit::WebExtensionControllerIdentifier"_s,
+        "WebKit::WebExtensionFrameIdentifier"_s,
+        "WebKit::WebExtensionPortChannelIdentifier"_s,
         "WebKit::WebExtensionTabIdentifier"_s,
         "WebKit::WebExtensionWindowIdentifier"_s,
         "WebKit::WebGPUIdentifier"_s,
         "WebKit::WebPageProxyIdentifier"_s,
+        "WebKit::WebTransportSessionIdentifier"_s,
+        "WebKit::WebTransportStreamIdentifier"_s,
         "WebKit::WebURLSchemeHandlerIdentifier"_s,
     };
 }

@@ -24,7 +24,7 @@
   function doTest() {
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
-        document.getElementById('filter').style.backdropFilter = 'invert(1)';
+        document.getElementById('filter').style.webkitBackdropFilter = 'invert(1)';
         takeScreenshot();
       });
     });

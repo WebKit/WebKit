@@ -38,10 +38,9 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
 
+namespace WebPushD {
 using namespace WebKit;
 using namespace WebCore;
-
-namespace WebPushD {
 
 static void updateTopicLists(PushServiceConnection& connection, PushDatabase& database, CompletionHandler<void()> completionHandler)
 {
@@ -687,8 +686,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
         auto record = WTFMove(*recordResult);
 
         if (message.encoding == ContentEncoding::Empty) {
-            m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { { }, record.subscriptionSetIdentifier.pushPartition, URL { record.scope } });
-
+            m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { { }, record.subscriptionSetIdentifier.pushPartition, URL { record.scope }, { } });
             completionHandler();
             return;
         }
@@ -712,8 +710,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
 
         RELEASE_LOG(Push, "Decoded incoming push message for %{public}s %{sensitive}s", record.subscriptionSetIdentifier.debugDescription().utf8().data(), record.scope.utf8().data());
 
-        m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { WTFMove(*decryptedPayload), record.subscriptionSetIdentifier.pushPartition, URL { record.scope } });
-
+        m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { WTFMove(*decryptedPayload), record.subscriptionSetIdentifier.pushPartition, URL { record.scope }, { } });
         completionHandler();
     });
 }

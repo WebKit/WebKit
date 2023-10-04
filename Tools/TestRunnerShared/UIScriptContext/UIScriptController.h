@@ -293,6 +293,7 @@ public:
 
     // Child View Controllers
 
+    virtual bool isShowingFormValidationBubble() const { notImplemented(); return false; }
     virtual bool isShowingPopover() const { notImplemented(); return false; }
     virtual bool isPresentingModally() const { notImplemented(); return false; }
 

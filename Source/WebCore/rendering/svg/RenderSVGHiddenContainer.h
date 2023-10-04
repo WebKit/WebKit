@@ -29,7 +29,7 @@ class SVGElement;
 
 // This class is for containers which are never drawn, but do need to support style
 // <defs>, <linearGradient>, <radialGradient> are all good examples
-class RenderSVGHiddenContainer : public RenderSVGContainer {
+class RenderSVGHiddenContainer final : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGHiddenContainer);
 public:
     RenderSVGHiddenContainer(SVGElement&, RenderStyle&&);
@@ -38,7 +38,6 @@ protected:
     void layout() override;
 
 private:
-    bool isSVGHiddenContainer() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
 
     void paint(PaintInfo&, const LayoutPoint&) final { }

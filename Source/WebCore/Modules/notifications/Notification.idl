@@ -48,6 +48,7 @@
     attribute EventHandler onclick;
     attribute EventHandler onerror;
 
+    [Conditional=DECLARATIVE_WEB_PUSH, EnabledBySetting=DeclarativeWebPush] readonly attribute USVString defaultAction;
     readonly attribute DOMString title;
     readonly attribute NotificationDirection dir;
     readonly attribute DOMString lang;

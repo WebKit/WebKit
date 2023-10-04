@@ -28,6 +28,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "Logging.h"
+
 namespace WebKit {
 
 using namespace WebCore;

@@ -259,7 +259,6 @@ private:
     void createImageGenerator();
     void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const FloatRect&);
-    void paintWithImageGenerator(GraphicsContext&, const FloatRect&);
 
     enum class UpdateType { UpdateSynchronously, UpdateAsynchronously };
     void updateLastImage(UpdateType type = UpdateType::UpdateAsynchronously);

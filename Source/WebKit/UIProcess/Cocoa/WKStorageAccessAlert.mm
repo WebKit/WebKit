@@ -107,7 +107,7 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
     [alert addAction:doNotAllowAction];
     [alert addAction:allowAction];
 
-    [[UIViewController _viewControllerForFullScreenPresentationFromView:webView] presentViewController:alert.get() animated:YES completion:nil];
+    [webView._wk_viewControllerForFullScreenPresentation presentViewController:alert.get() animated:YES completion:nil];
 #endif
 }
 

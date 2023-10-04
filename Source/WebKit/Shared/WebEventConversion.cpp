@@ -65,7 +65,7 @@ public:
             break;
         case WebEventType::MouseUp:
             m_type = WebCore::PlatformEvent::Type::MouseReleased;
-            m_force = WebCore::ForceAtClick;
+            m_force = 0;
             break;
         case WebEventType::MouseMove:
             m_type = WebCore::PlatformEvent::Type::MouseMoved;
@@ -81,7 +81,7 @@ public:
             break;
         case WebEventType::MouseForceUp:
             m_type = WebCore::PlatformEvent::Type::MouseForceUp;
-            m_force = WebCore::ForceAtForceClick;
+            m_force = 0;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -94,20 +94,20 @@ public:
 
         // PlatformMouseEvent
         switch (webEvent.button()) {
-        case WebMouseEventButton::NoButton:
-            m_button = WebCore::NoButton;
+        case WebMouseEventButton::None:
+            m_button = WebCore::MouseButton::None;
             break;
-        case WebMouseEventButton::LeftButton:
-            m_button = WebCore::LeftButton;
+        case WebMouseEventButton::Left:
+            m_button = WebCore::MouseButton::Left;
             break;
-        case WebMouseEventButton::MiddleButton:
-            m_button = WebCore::MiddleButton;
+        case WebMouseEventButton::Middle:
+            m_button = WebCore::MouseButton::Middle;
             break;
-        case WebMouseEventButton::RightButton:
-            m_button = WebCore::RightButton;
+        case WebMouseEventButton::Right:
+            m_button = WebCore::MouseButton::Right;
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
 
         m_buttons = webEvent.buttons();

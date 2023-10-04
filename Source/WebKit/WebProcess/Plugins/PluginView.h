@@ -46,7 +46,7 @@ class LocalFrame;
 
 namespace WebKit {
 
-class PDFPlugin;
+class PDFPluginBase;
 class ShareableBitmap;
 class WebPage;
 
@@ -101,6 +101,8 @@ public:
     
     bool isUsingUISideCompositing() const;
 
+    void invalidateRect(const WebCore::IntRect&) final;
+
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();
@@ -119,6 +121,8 @@ private:
 
     bool shouldCreateTransientPaintingSnapshot() const;
 
+    void updateDocumentForPluginSizingBehavior();
+
     // WebCore::PluginViewBase
     PlatformLayer* platformLayer() const final;
     bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
@@ -132,7 +136,6 @@ private:
     // WebCore::Widget
     void setFrameRect(const WebCore::IntRect&) final;
     void paint(WebCore::GraphicsContext&, const WebCore::IntRect&, WebCore::Widget::SecurityOriginPaintPolicy, WebCore::RegionContext*) final;
-    void invalidateRect(const WebCore::IntRect&) final;
     void frameRectsChanged() final;
     void setParent(WebCore::ScrollView*) final;
     void handleEvent(WebCore::Event&) final;
@@ -144,7 +147,7 @@ private:
     void clipRectChanged() final;
 
     Ref<WebCore::HTMLPlugInElement> m_pluginElement;
-    Ref<PDFPlugin> m_plugin;
+    Ref<PDFPluginBase> m_plugin;
     WeakPtr<WebPage> m_webPage;
     URL m_mainResourceURL;
     String m_mainResourceContentType;

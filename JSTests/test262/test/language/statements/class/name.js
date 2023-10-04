@@ -15,7 +15,9 @@ includes: [propertyHelper.js]
 
 class Test262 {}
 
-assert.sameValue(Test262.name, 'Test262');
-verifyNotEnumerable(Test262, 'name');
-verifyNotWritable(Test262, 'name');
-verifyConfigurable(Test262, 'name');
+verifyProperty(Test262, "name", {
+  value: "Test262",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

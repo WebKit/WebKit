@@ -110,6 +110,7 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
 
 void IPIntPlan::didCompleteCompilation()
 {
+#if ENABLE(JIT)
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
         // IPInt entrypoint thunks generation
@@ -155,9 +156,12 @@ void IPIntPlan::didCompleteCompilation()
         if (!m_moduleInformation->clobberingTailCalls().isEmpty())
             computeTransitiveTailCalls();
     }
+#endif
+
     if (m_compilerMode == CompilerMode::Validation)
         return;
 
+#if ENABLE(JIT)
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
         if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
@@ -185,6 +189,7 @@ void IPIntPlan::didCompleteCompilation()
             ASSERT_UNUSED(result, result.isNewEntry);
         }
     }
+#endif
 
     for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
         for (auto& call : unlinked) {

@@ -1043,6 +1043,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemHandle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemSyncAccessHandle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemSyncAccessHandle.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillLightMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillLightMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFlacEncoderConfig.cpp
@@ -1107,8 +1109,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferMapState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferMapState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasCompositingAlphaMode.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasCompositingAlphaMode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasAlphaMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasAlphaMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasConfiguration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasConfiguration.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.cpp
@@ -1143,8 +1145,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassEncoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassEncoder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampLocation.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampWrite.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampWrite.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampWrites.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePassTimestampWrites.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePipeline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePipeline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePipelineDescriptor.cpp
@@ -1275,8 +1277,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassLayout.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassLayout.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampLocation.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampWrite.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampWrite.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampWrites.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPassTimestampWrites.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPipeline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPipeline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderPipelineDescriptor.cpp
@@ -1635,6 +1637,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContextSettings.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContextSettings.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageCapture.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageCapture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageData.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageDataSettings.cpp
@@ -1833,6 +1837,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaylistMixin.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaylistMixin.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionReadyState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionReadyState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSettingsRange.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSettingsRange.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStream.cpp
@@ -1863,6 +1869,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMessageEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMessageEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMessagePort.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMessagePort.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMeteringMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMeteringMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCDMFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCDMFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockContentFilterSettings.cpp
@@ -1959,6 +1967,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorOnLine.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorOnLine.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorPlugins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorPlugins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorPush.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorPush.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorServiceWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorServiceWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.cpp
@@ -2155,6 +2165,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionStatus.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionStatus.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPhotoCapabilities.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPhotoCapabilities.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPhotoSettings.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPhotoSettings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.cpp
@@ -2205,6 +2219,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushMessageData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushMessageData.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushNotificationEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushNotificationEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushNotificationEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushNotificationEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushPermissionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushPermissionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscription.cpp
@@ -2379,6 +2397,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSink.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSink.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSource.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRedEyeReduction.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRedEyeReduction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.cpp
@@ -2649,8 +2669,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRect.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRect.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRectElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRectElement.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRenderingIntent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGRenderingIntent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGSVGElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGSVGElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGScriptElement.cpp

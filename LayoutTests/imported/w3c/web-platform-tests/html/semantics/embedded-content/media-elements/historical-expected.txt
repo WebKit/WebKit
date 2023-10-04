@@ -47,7 +47,6 @@ PASS audio.mozPreservesPitch should not be supported
 PASS video.mozPreservesPitch should not be supported
 FAIL audio.webkitPreservesPitch should not be supported assert_false: expected false got true
 FAIL video.webkitPreservesPitch should not be supported assert_false: expected false got true
-PASS TextTrackCue constructor should not be supported
 FAIL audio.mediaGroup should not be supported assert_false: expected false got true
 FAIL video.mediaGroup should not be supported assert_false: expected false got true
 FAIL audio.controller should not be supported assert_false: expected false got true

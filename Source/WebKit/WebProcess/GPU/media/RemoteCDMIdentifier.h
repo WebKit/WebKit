@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum RemoteCDMIdentifierType { };
+enum class RemoteCDMIdentifierType { };
 using RemoteCDMIdentifier = ObjectIdentifier<RemoteCDMIdentifierType>;
 
 } // namespace WebKit

@@ -205,7 +205,7 @@ public:
     
 #if PLATFORM(COCOA)
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
-    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context);
+    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context, const String& mainResourceFileName = { });
 #endif
 
     RefPtr<WebImage> createSelectionSnapshot() const;
@@ -232,6 +232,8 @@ public:
     bool handleContextMenuEvent(const WebCore::PlatformMouseEvent&);
     WebCore::HandleMouseEventResult handleMouseEvent(const WebMouseEvent&);
     bool handleKeyEvent(const WebKeyboardEvent&);
+
+    bool isFocused() const;
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 

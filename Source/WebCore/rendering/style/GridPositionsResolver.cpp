@@ -381,10 +381,10 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
 
         if (initialPosition.isAuto()) {
             // Set initial position to span <line names - 1>
-            initialPosition.setSpanPosition(std::max(1, lineCount - 1), emptyString());
+            initialPosition.setSpanPosition(std::max(1, lineCount - 1), String());
         } else {
             // Set final position to span <line names - 1>
-            finalPosition.setSpanPosition(std::max(1, lineCount - 1), emptyString());
+            finalPosition.setSpanPosition(std::max(1, lineCount - 1), String());
         }
     }
 }

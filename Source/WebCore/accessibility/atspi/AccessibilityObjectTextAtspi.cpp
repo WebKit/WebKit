@@ -27,7 +27,7 @@
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObject.h"
-#include "AccessibilityObjectInterface.h"
+#include "AXCoreObject.h"
 #include "Editing.h"
 #include "PlatformScreen.h"
 #include "RenderLayer.h"
@@ -404,7 +404,7 @@ IntPoint AccessibilityObjectAtspi::boundaryOffset(unsigned utf16Offset, TextGran
         if (!utf16Offset && m_hasListMarkerAtStart)
             return { 0, 1 };
 
-        startPosition = isStartOfWord(offsetPosition) && deprecatedIsEditingWhitespace(offsetPosition.characterBefore()) ? offsetPosition : startOfWord(offsetPosition, LeftWordIfOnBoundary);
+        startPosition = isStartOfWord(offsetPosition) && deprecatedIsEditingWhitespace(offsetPosition.characterBefore()) ? offsetPosition : startOfWord(offsetPosition, WordSide::LeftWordIfOnBoundary);
         endPostion = nextWordPosition(startPosition);
         auto positionAfterSpacingAndFollowingWord = nextWordPosition(endPostion);
         if (positionAfterSpacingAndFollowingWord != endPostion) {
@@ -850,7 +850,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     }
 
     VisiblePosition offsetPosition = m_coreObject->visiblePositionForIndex(adjustInputOffset(*utf16Offset, m_hasListMarkerAtStart));
-    auto* childNode = offsetPosition.deepEquivalent().deprecatedNode();
+    auto childNode = offsetPosition.deepEquivalent().protectedDeprecatedNode();
     if (!childNode)
         return { WTFMove(defaultAttributes), -1, -1 };
 

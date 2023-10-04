@@ -45,12 +45,12 @@ test( test => {
     let validCue = new TextTrackCue(0, 10, fragment);
 
     fragment.firstChild.removeAttribute('cuebackground')
-    assert_throws_dom("InvalidStateError", _ => { new TextTrackCue(0, 10, fragment) });
+    assert_throws_dom("InvalidNodeTypeError", _ => { new TextTrackCue(0, 10, fragment) });
 
     fragment = createValidCueFragment();
     fragment.firstChild.firstChild.removeAttribute('cue')
-    assert_throws_dom("InvalidStateError", _ => { new TextTrackCue(0, 10, fragment) });
-}, `TextTrackCue should throw "InvalidStateError" if documentFragment doesn't have 'cuebackground' and 'cue' nodes`);
+    assert_throws_dom("InvalidNodeTypeError", _ => { new TextTrackCue(0, 10, fragment) });
+}, `TextTrackCue should throw "InvalidNodeTypeError" if documentFragment doesn't have 'cuebackground' and 'cue' nodes`);
 
 test( test => {
     let fragment = createValidCueFragment();
@@ -60,9 +60,6 @@ test( test => {
     validCue = new TextTrackCue(0, 10, fragment);
 
     fragment.firstChild.appendChild(document.createElement('div'));
-    validCue = new TextTrackCue(0, 10, fragment);
-
-    fragment.firstChild.appendChild(document.createElement('img'));
     validCue = new TextTrackCue(0, 10, fragment);
 
     fragment.firstChild.appendChild(document.createElement('p'));

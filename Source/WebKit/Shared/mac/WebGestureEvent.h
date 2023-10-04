@@ -43,7 +43,6 @@ namespace WebKit {
 
 class WebGestureEvent : public WebEvent {
 public:
-    WebGestureEvent() { }
     WebGestureEvent(WebEvent&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation)
         : WebEvent(WTFMove(event))
         , m_position(position)

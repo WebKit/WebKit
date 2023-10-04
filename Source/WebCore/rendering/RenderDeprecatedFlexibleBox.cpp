@@ -129,8 +129,8 @@ private:
     unsigned m_ordinalIteration;
 };
 
-RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, RenderStyle&& style)
-    : RenderBlock(element, WTFMove(style), 0)
+RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Type type, Element& element, RenderStyle&& style)
+    : RenderBlock(type, element, WTFMove(style), 0)
 {
     setChildrenInline(false); // All of our children must be block-level
     m_stretchingChildren = false;

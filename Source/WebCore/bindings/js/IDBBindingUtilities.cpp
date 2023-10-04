@@ -360,14 +360,15 @@ RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSGlobalObject& lexica
 {
     if (std::holds_alternative<Vector<String>>(keyPath)) {
         auto& array = std::get<Vector<String>>(keyPath);
-        Vector<RefPtr<IDBKey>> result;
-        result.reserveInitialCapacity(array.size());
-        for (auto& string : array) {
-            RefPtr<IDBKey> key = internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, string);
+        bool hasNullKey = false;
+        auto result = WTF::map(array, [&](auto& string) -> RefPtr<IDBKey> {
+            auto key = internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, string);
             if (!key)
-                return nullptr;
-            result.uncheckedAppend(WTFMove(key));
-        }
+                hasNullKey = true;
+            return key;
+        });
+        if (hasNullKey)
+            return nullptr;
         return IDBKey::createArray(WTFMove(result));
     }
 

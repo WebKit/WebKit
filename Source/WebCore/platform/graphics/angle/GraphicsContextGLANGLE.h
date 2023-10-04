@@ -118,7 +118,6 @@ public:
     GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) final;
     GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) final;
     String getProgramInfoLog(PlatformGLObject) final;
-    String getUnmangledInfoLog(PlatformGLObject[2], GCGLsizei, const String&);
     GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) final;
     GCGLint getShaderi(PlatformGLObject, GCGLenum pname) final;
     String getShaderInfoLog(PlatformGLObject) final;

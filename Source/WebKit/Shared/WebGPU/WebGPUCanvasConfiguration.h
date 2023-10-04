@@ -28,7 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUCanvasCompositingAlphaMode.h>
+#include <WebCore/WebGPUCanvasAlphaMode.h>
 #include <WebCore/WebGPUPredefinedColorSpace.h>
 #include <WebCore/WebGPUTextureFormat.h>
 #include <WebCore/WebGPUTextureUsage.h>
@@ -45,7 +45,7 @@ struct CanvasConfiguration {
     WebCore::WebGPU::TextureUsageFlags usage { WebCore::WebGPU::TextureUsage::RenderAttachment };
     Vector<WebCore::WebGPU::TextureFormat> viewFormats;
     WebCore::WebGPU::PredefinedColorSpace colorSpace { WebCore::WebGPU::PredefinedColorSpace::SRGB };
-    WebCore::WebGPU::CanvasCompositingAlphaMode compositingAlphaMode { WebCore::WebGPU::CanvasCompositingAlphaMode::Opaque };
+    WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode { WebCore::WebGPU::CanvasAlphaMode::Opaque };
 };
 
 } // namespace WebKit::WebGPU

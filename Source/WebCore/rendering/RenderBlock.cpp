@@ -80,8 +80,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
-#include <wtf/WeakHashMap.h>
-#include <wtf/WeakHashSet.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -158,11 +156,11 @@ public:
         // Protect against double insert where a descendant would end up with multiple containing blocks.
         auto previousContainingBlock = m_containerMap.get(positionedDescendant);
         if (previousContainingBlock && previousContainingBlock != &containingBlock) {
-            if (auto* descendants = m_descendantsMap.get(*previousContainingBlock))
+            if (auto* descendants = m_descendantsMap.get(previousContainingBlock.get()))
                 descendants->remove(positionedDescendant);
         }
 
-        auto& descendants = m_descendantsMap.ensure(containingBlock, [] {
+        auto& descendants = m_descendantsMap.ensure(&containingBlock, [] {
             return makeUnique<TrackedRendererListHashSet>();
         }).iterator->value;
 
@@ -192,7 +190,7 @@ public:
             ASSERT(m_containerMap.contains(positionedDescendant));
             return;
         }
-        m_containerMap.set(positionedDescendant, &containingBlock);
+        m_containerMap.set(positionedDescendant, containingBlock);
     }
 
     void removeDescendant(const RenderBox& positionedDescendant)
@@ -201,7 +199,7 @@ public:
         if (!containingBlock)
             return;
 
-        auto descendantsIterator = m_descendantsMap.find(*containingBlock);
+        auto descendantsIterator = m_descendantsMap.find(containingBlock.get());
         ASSERT(descendantsIterator != m_descendantsMap.end());
         if (descendantsIterator == m_descendantsMap.end())
             return;
@@ -216,7 +214,7 @@ public:
     
     void removeContainingBlock(const RenderBlock& containingBlock)
     {
-        auto descendants = m_descendantsMap.take(containingBlock);
+        auto descendants = m_descendantsMap.take(&containingBlock);
         if (!descendants)
             return;
 
@@ -226,11 +224,11 @@ public:
     
     TrackedRendererListHashSet* positionedRenderers(const RenderBlock& containingBlock) const
     {
-        return const_cast<TrackedRendererListHashSet*>(m_descendantsMap.get(containingBlock));
+        return m_descendantsMap.get(&containingBlock);
     }
 
 private:
-    using DescendantsMap = WeakHashMap<const RenderBlock, std::unique_ptr<TrackedRendererListHashSet>>;
+    using DescendantsMap = HashMap<CheckedPtr<const RenderBlock>, std::unique_ptr<TrackedRendererListHashSet>>;
     using ContainerMap = WeakHashMap<const RenderBox, WeakPtr<const RenderBlock>>;
     
     DescendantsMap m_descendantsMap;
@@ -243,7 +241,7 @@ static PositionedDescendantsMap& positionedDescendantsMap()
     return mapForPositionedDescendants;
 }
 
-using ContinuationOutlineTableMap = WeakHashMap<RenderBlock, std::unique_ptr<WeakListHashSet<RenderInline>>>;
+using ContinuationOutlineTableMap = HashMap<CheckedPtr<RenderBlock>, std::unique_ptr<ListHashSet<CheckedPtr<RenderInline>>>>;
 
 // Allocated only when some of these fields have non-default values
 
@@ -261,7 +259,7 @@ public:
     std::optional<WeakPtr<RenderFragmentedFlow>> m_enclosingFragmentedFlow;
 };
 
-using RenderBlockRareDataMap = WeakHashMap<const RenderBlock, std::unique_ptr<RenderBlockRareData>>;
+typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;
 static RenderBlockRareDataMap* gRareDataMap;
 
 // This class helps dispatching the 'overflow' event on layout change. overflow can be set on RenderBoxes, yet the existing code
@@ -306,13 +304,13 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderBox(type, element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
 }
 
-RenderBlock::RenderBlock(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderBox(type, document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
 }
 
@@ -320,7 +318,7 @@ static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock& blo
 {
     if (!percentHeightDescendantsMap)
         return;
-    std::unique_ptr<TrackedRendererListHashSet> descendantSet = percentHeightDescendantsMap->take(block);
+    auto descendantSet = percentHeightDescendantsMap->take(block);
     if (!descendantSet)
         return;
     
@@ -341,7 +339,7 @@ RenderBlock::~RenderBlock()
 {
     // Blocks can be added to gRareDataMap during willBeDestroyed(), so this code can't move there.
     if (gRareDataMap)
-        gRareDataMap->remove(*this);
+        gRareDataMap->remove(this);
 
     // Do not add any more code here. Add it to willBeDestroyed() instead.
 }
@@ -369,7 +367,7 @@ void RenderBlock::blockWillBeDestroyed()
 
 bool RenderBlock::hasRareData() const
 {
-    return gRareDataMap ? gRareDataMap->contains(*this) : false;
+    return gRareDataMap ? gRareDataMap->contains(this) : false;
 }
 
 void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
@@ -593,7 +591,7 @@ void RenderBlock::layout()
 
 static RenderBlockRareData* getBlockRareData(const RenderBlock& block)
 {
-    return gRareDataMap ? gRareDataMap->get(block) : nullptr;
+    return gRareDataMap ? gRareDataMap->get(&block) : nullptr;
 }
 
 static RenderBlockRareData& ensureBlockRareData(const RenderBlock& block)
@@ -601,7 +599,7 @@ static RenderBlockRareData& ensureBlockRareData(const RenderBlock& block)
     if (!gRareDataMap)
         gRareDataMap = new RenderBlockRareDataMap;
     
-    auto& rareData = gRareDataMap->add(block, nullptr).iterator->value;
+    auto& rareData = gRareDataMap->add(&block, nullptr).iterator->value;
     if (!rareData)
         rareData = makeUnique<RenderBlockRareData>();
     return *rareData.get();
@@ -612,7 +610,7 @@ void RenderBlock::preparePaginationBeforeBlockLayout(bool& relayoutChildren)
     // Fragments changing widths can force us to relayout our children.
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow)
-        fragmentedFlow->logicalWidthChangedInFragmentsForBlock(*this, relayoutChildren);
+        fragmentedFlow->logicalWidthChangedInFragmentsForBlock(this, relayoutChildren);
 }
 
 bool RenderBlock::recomputeLogicalWidth()
@@ -641,7 +639,7 @@ void RenderBlock::addOverflowFromChildren()
         // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
         if (m_overflow) {
             if (auto* flow = enclosingFragmentedFlow())
-                flow->addFragmentsVisualOverflow(*this, m_overflow->visualOverflowRect());
+                flow->addFragmentsVisualOverflow(this, m_overflow->visualOverflowRect());
         }
     } else
         addOverflowFromBlockChildren();
@@ -735,7 +733,7 @@ void RenderBlock::addOverflowFromBlockChildren()
 {
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (!child->isFloatingOrOutOfFlowPositioned())
-            addOverflowFromChild(*child);
+            addOverflowFromChild(child);
     }
 }
 
@@ -748,7 +746,7 @@ void RenderBlock::addOverflowFromPositionedObjects()
     for (auto& positionedObject : *positionedDescendants) {
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (positionedObject.style().position() != PositionType::Fixed)
-            addOverflowFromChild(positionedObject, { positionedObject.x(), positionedObject.y() });
+            addOverflowFromChild(&positionedObject, { positionedObject.x(), positionedObject.y() });
     }
 }
 
@@ -761,8 +759,8 @@ void RenderBlock::addVisualOverflowFromTheme()
     theme().adjustRepaintRect(*this, inflatedRect);
     addVisualOverflow(snappedIntRect(LayoutRect(inflatedRect)));
 
-    if (auto* fragmentedFlow = enclosingFragmentedFlow())
-        fragmentedFlow->addFragmentsVisualOverflowFromTheme(*this);
+    if (RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow())
+        fragmentedFlow->addFragmentsVisualOverflowFromTheme(this);
 }
 
 void RenderBlock::setLogicalLeftForChild(RenderBox& child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode applyDelta)
@@ -827,7 +825,7 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
         if (!descendantNeedsLayout)
             continue;
 
-        RenderElement* renderer = &descendant;
+        CheckedPtr<RenderElement> renderer = &descendant;
         while (renderer != this) {
             if (renderer->normalChildNeedsLayout())
                 break;
@@ -953,6 +951,12 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
 
 void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
+    if (isSkippedContentRoot()) {
+        r.clearNeedsLayoutForDescendants();
+        r.clearNeedsLayout();
+        return;
+    }
+
     estimateFragmentRangeForBoxChild(r);
 
     // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So
@@ -999,7 +1003,7 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
     
     auto* parent = r.parent();
     bool layoutChanged = false;
-    if (parent->isFlexibleBox() && downcast<RenderFlexibleBox>(parent)->setStaticPositionForPositionedLayout(r)) {
+    if (is<RenderFlexibleBox>(*parent) && downcast<RenderFlexibleBox>(parent)->setStaticPositionForPositionedLayout(r)) {
         // The static position of an abspos child of a flexbox depends on its size
         // (for example, they can be centered). So we may have to reposition the
         // item after layout.
@@ -1024,7 +1028,7 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
 
 void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    TrackedRendererListHashSet* positionedDescendants = positionedObjects();
+    auto* positionedDescendants = positionedObjects();
     if (!positionedDescendants)
         return;
     
@@ -1036,7 +1040,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPosit
 
 void RenderBlock::markPositionedObjectsForLayout()
 {
-    TrackedRendererListHashSet* positionedDescendants = positionedObjects();
+    auto* positionedDescendants = positionedObjects();
     if (!positionedDescendants)
         return;
 
@@ -1235,7 +1239,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         if (paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeBackground) && visibleToHitTesting()) {
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
             LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRegion << " event listener types " << style().eventListenerRegionTypes());
-            paintInfo.eventRegionContext()->unite(borderRegion, *this, style(), isTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
+            paintInfo.eventRegionContext()->unite(borderRegion, *this, style(), isRenderTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
         }
 
         if (!paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeForeground))
@@ -1256,7 +1260,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         // We treat the entire text control as editable to match users' expectation even
         // though it's actually the inner text element of the control that is editable.
         // So, no need to traverse to find the inner text element in this case.
-        if (!isTextControl()) {
+        if (!isRenderTextControl()) {
             needsTraverseDescendants |= document().mayHaveEditableElements() && page().shouldBuildEditableRegion();
             LOG_WITH_STREAM(EventRegions, stream << "  needs editable event region: " << (document().mayHaveEditableElements() && page().shouldBuildEditableRegion()));
         }
@@ -1326,7 +1330,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             // anonymous block (i.e. have our own layer), paint them straightaway instead. This is because a block depends on renderers in its continuation table being
             // in the same layer. 
             if (!inlineEnclosedInSelfPaintingLayer && !hasLayer())
-                containingBlock->addContinuationWithOutline(*inlineRenderer);
+                containingBlock->addContinuationWithOutline(inlineRenderer);
             else if (!InlineIterator::firstInlineBoxFor(*inlineRenderer) || (!inlineEnclosedInSelfPaintingLayer && hasLayer()))
                 inlineRenderer->paintOutline(paintInfo, paintOffset - locationOffset() + inlineRenderer->containingBlock()->location());
         }
@@ -1345,32 +1349,36 @@ static ContinuationOutlineTableMap* continuationOutlineTable()
     return &table.get();
 }
 
-void RenderBlock::addContinuationWithOutline(RenderInline& flow)
+void RenderBlock::addContinuationWithOutline(RenderInline* flow)
 {
     // We can't make this work if the inline is in a layer.  We'll just rely on the broken
     // way of painting.
-    ASSERT(!flow.layer() && !flow.isContinuation());
+    ASSERT(!flow->layer() && !flow->isContinuation());
     
     auto* table = continuationOutlineTable();
-    auto* continuations = table->get(*this);
+    auto* continuations = table->get(this);
     if (!continuations) {
-        auto newSet = makeUnique<WeakListHashSet<RenderInline>>();
-        continuations = newSet.get();
-        table->set(*this, WTFMove(newSet));
+        continuations = new ListHashSet<CheckedPtr<RenderInline>>;
+        table->set(this, std::unique_ptr<ListHashSet<CheckedPtr<RenderInline>>>(continuations));
     }
     
     continuations->add(flow);
 }
 
-bool RenderBlock::paintsContinuationOutline(RenderInline& flow)
+bool RenderBlock::paintsContinuationOutline(RenderInline* flow)
 {
-    auto* continuations = continuationOutlineTable()->get(*this);
-    return continuations && continuations->contains(flow);
+    auto* table = continuationOutlineTable();
+    auto* continuations = table->get(this);
+    if (!continuations)
+        return false;
+
+    return continuations->contains(flow);
 }
 
 void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    auto continuations = continuationOutlineTable()->take(*this);
+    auto* table = continuationOutlineTable();
+    auto continuations = table->take(this);
     if (!continuations)
         return;
 
@@ -1378,11 +1386,11 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
     // Paint each continuation outline.
     for (auto& flow : *continuations) {
         // Need to add in the coordinates of the intervening blocks.
-        RenderBlock* block = flow.containingBlock();
+        RenderBlock* block = flow.get()->containingBlock();
         for ( ; block && block != this; block = block->containingBlock())
             accumulatedPaintOffset.moveBy(block->location());
-        ASSERT(block);   
-        flow.paintOutline(info, accumulatedPaintOffset);
+        ASSERT(block);
+        flow.get()->paintOutline(info, accumulatedPaintOffset);
     }
 }
 
@@ -1472,8 +1480,8 @@ static void clipOutPositionedObjects(const PaintInfo* paintInfo, const LayoutPoi
     if (!positionedObjects)
         return;
     
-    for (auto& r : *positionedObjects)
-        paintInfo->context().clipOut(IntRect(offset.x() + r.x(), offset.y() + r.y(), r.width(), r.height()));
+    for (auto& renderer : *positionedObjects)
+        paintInfo->context().clipOut(IntRect(offset.x() + renderer.x(), offset.y() + renderer.y(), renderer.width(), renderer.height()));
 }
 
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock)
@@ -1760,7 +1768,7 @@ void RenderBlock::removePositionedObjects(const RenderBlock* newContainingBlockC
     if (!positionedDescendants)
         return;
     
-    Vector<WeakPtr<RenderBox>, 16> renderersToRemove;
+    Vector<CheckedRef<RenderBox>, 16> renderersToRemove;
     for (auto& renderer : *positionedDescendants) {
         if (newContainingBlockCandidate && !renderer.isDescendantOf(newContainingBlockCandidate))
             continue;
@@ -1791,7 +1799,7 @@ void RenderBlock::removePositionedObjects(const RenderBlock* newContainingBlockC
         }
     }
     for (auto& renderer : renderersToRemove)
-        removePositionedObject(*renderer);
+        removePositionedObject(renderer);
 }
 
 void RenderBlock::addPercentHeightDescendant(RenderBox& descendant)
@@ -2300,16 +2308,8 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         // A margin basically has three types: fixed, percentage, and auto (variable).
         // Auto and percentage margins simply become 0 when computing min/max width.
         // Fixed margins can be added in as is.
-        //
-        // Floats inside a block level box may not use their margins in their
-        // intrinsic size contributions if margin-trim is set for that margin type
-        Length startMarginLength;
-        Length endMarginLength;
-        if (auto* renderElement = dynamicDowncast<RenderElement>(child); renderElement && shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineStart, *renderElement))
-            startMarginLength = childStyle.marginStartUsing(&styleToUse);
-        if (auto* renderElement = dynamicDowncast<RenderElement>(child); renderElement && shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineEnd, *renderElement))
-            endMarginLength = shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineEnd, *dynamicDowncast<RenderElement>(child)) ? childStyle.marginEndUsing(&styleToUse) : Length { 0, LengthType::Fixed };
-
+        Length startMarginLength = childStyle.marginStartUsing(&styleToUse);
+        Length endMarginLength = childStyle.marginEndUsing(&styleToUse);
         LayoutUnit margin;
         LayoutUnit marginStart;
         LayoutUnit marginEnd;
@@ -2762,7 +2762,7 @@ void RenderBlock::absoluteQuadsIgnoringContinuation(const FloatRect& logicalRect
     // FIXME: This is wrong for block-flows that are horizontal.
     // https://bugs.webkit.org/show_bug.cgi?id=46781
     auto* fragmentedFlow = enclosingFragmentedFlow();
-    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
+    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         quads.append(localToAbsoluteQuad(logicalRect, UseTransforms, wasFixed));
 }
 
@@ -2846,9 +2846,9 @@ RenderPtr<RenderBlock> RenderBlock::createAnonymousBlockWithStyleAndDisplay(Docu
     // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
     RenderPtr<RenderBlock> newBox;
     if (display == DisplayType::Flex || display == DisplayType::InlineFlex)
-        newBox = createRenderer<RenderFlexibleBox>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Flex));
+        newBox = createRenderer<RenderFlexibleBox>(RenderObject::Type::FlexibleBox, document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Flex));
     else
-        newBox = createRenderer<RenderBlockFlow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Block));
+        newBox = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Block));
     
     newBox->initializeStyle();
     return newBox;
@@ -2953,13 +2953,13 @@ bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
 
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    fragmentedFlow->getFragmentRangeForBox(box, startFragment, endFragment);
+    fragmentedFlow->getFragmentRangeForBox(&box, startFragment, endFragment);
 
     computeFragmentRangeForBoxChild(box);
 
     RenderFragmentContainer* newStartFragment = nullptr;
     RenderFragmentContainer* newEndFragment = nullptr;
-    fragmentedFlow->getFragmentRangeForBox(box, newStartFragment, newEndFragment);
+    fragmentedFlow->getFragmentRangeForBox(&box, newStartFragment, newEndFragment);
 
 
     // Changing the start fragment means we shift everything and a relayout is needed.

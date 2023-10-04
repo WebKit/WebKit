@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmToJS.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
 
 #include "CCallHelpers.h"
 #include "JSCJSValueInlines.h"
@@ -556,4 +556,4 @@ void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::Ex
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY) && ENABLE(JIT)

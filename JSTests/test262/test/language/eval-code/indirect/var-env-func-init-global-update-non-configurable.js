@@ -37,8 +37,11 @@ Object.defineProperty(this, 'f', {
 
 (0,eval)('initial = f; function f() { return 2222; }');
 
-verifyEnumerable(this, 'f');
-verifyWritable(this, 'f');
-verifyNotConfigurable(this, 'f');
+verifyProperty(this, 'f', {
+  writable: true,
+  enumerable: true,
+  configurable: false,
+});
+
 assert.sameValue(typeof initial, 'function');
 assert.sameValue(initial(), 2222);

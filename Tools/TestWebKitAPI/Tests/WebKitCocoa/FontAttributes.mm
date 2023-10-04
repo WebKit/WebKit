@@ -42,7 +42,7 @@
 #import <wtf/Vector.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #endif
 
 @interface FontTextStyleUIDelegate : NSObject <WKUIDelegatePrivate> {

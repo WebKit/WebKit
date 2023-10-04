@@ -115,9 +115,8 @@ bool PermissionStatus::virtualHasPendingActivity() const
     if (!m_hasChangeEventListener)
         return false;
 
-    RefPtr context = scriptExecutionContext();
-    if (is<Document>(context.get()))
-        return downcast<Document>(*context).hasBrowsingContext();
+    if (WeakPtr document = dynamicDowncast<Document>(scriptExecutionContext()))
+        return document->hasBrowsingContext();
 
     return true;
 }

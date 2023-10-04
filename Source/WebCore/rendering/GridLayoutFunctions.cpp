@@ -30,6 +30,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderGrid.h"
+#include "RenderStyleConstants.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {
@@ -192,6 +193,14 @@ bool isSubgridReversedDirection(const RenderGrid& grid, GridTrackSizingDirection
     GridTrackSizingDirection childDirection = flowAwareDirectionForChild(grid, subgrid, outerDirection);
     ASSERT(subgrid.isSubgrid(childDirection));
     return isFlippedDirection(grid, outerDirection) != isFlippedDirection(subgrid, childDirection);
+}
+
+unsigned alignmentContextForBaselineAlignment(const GridSpan& span, const ItemPosition& alignment)
+{
+    ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
+    if (alignment == ItemPosition::Baseline)
+        return span.startLine();
+    return span.endLine() - 1;
 }
 
 } // namespace GridLayoutFunctions

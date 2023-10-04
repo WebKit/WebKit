@@ -70,6 +70,11 @@ private:
     const Font* m_fonts[GlyphPage::size] { };
 };
 
+inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPage>&& singleFont)
+    : m_singleFont(WTFMove(singleFont))
+{
+}
+
 GlyphData FontCascadeFonts::GlyphPageCacheEntry::glyphDataForCharacter(UChar32 character)
 {
     ASSERT(!(m_singleFont && m_mixedFont));
@@ -507,11 +512,10 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDe
 
     const unsigned pageNumber = GlyphPage::pageNumberForCodePoint(c);
 
-    auto& cacheEntry = m_cachedPages[resolvedEmojiPolicy].add(pageNumber, GlyphPageCacheEntry()).iterator->value;
-
-    // Initialize cache with a full page of glyph mappings from a single font.
-    if (cacheEntry.isNull())
-        cacheEntry.setSingleFontPage(glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(description, 0)));
+    auto& cacheEntry = m_cachedPages[resolvedEmojiPolicy].ensure(pageNumber, [&] {
+        // Initialize cache with a full page of glyph mappings from a single font.
+        return GlyphPageCacheEntry { glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(description, 0)) };
+    }).iterator->value;
 
     GlyphData glyphData = cacheEntry.glyphDataForCharacter(c);
     if (!glyphData.glyph) {

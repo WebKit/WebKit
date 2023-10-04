@@ -10,27 +10,31 @@ var AsyncGeneratorFunction = async function*(){}.constructor;
 var f = Function(`return 42`);
 shouldBe(typeof anonymous, `undefined`);
 shouldBe(f.toString(),
-`function anonymous() {
+`function anonymous(
+) {
 return 42
 }`);
 
 var gf = GeneratorFunction(`return 42`);
 shouldBe(typeof anonymous, `undefined`);
 shouldBe(gf.toString(),
-`function *anonymous() {
+`function* anonymous(
+) {
 return 42
 }`);
 
 var af = AsyncFunction(`return 42`);
 shouldBe(typeof anonymous, `undefined`);
 shouldBe(af.toString(),
-`async function anonymous() {
+`async function anonymous(
+) {
 return 42
 }`);
 
 var agf = AsyncGeneratorFunction(`return 42`);
 shouldBe(typeof anonymous, `undefined`);
 shouldBe(agf.toString(),
-`async function*anonymous() {
+`async function* anonymous(
+) {
 return 42
 }`);

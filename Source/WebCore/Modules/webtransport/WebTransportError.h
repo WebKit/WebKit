@@ -27,17 +27,20 @@
 
 #include "DOMException.h"
 #include "WebTransportErrorOptions.h"
-#include "WebTransportErrorSource.h"
 
 namespace WebCore {
 
+enum class WebTransportErrorSource : bool;
+
 class WebTransportError : public DOMException {
 public:
-    static Ref<WebTransportError> create(String&&, WebTransportErrorOptions&&);
+    static Ref<WebTransportError> create(String&& message, WebTransportErrorOptions&&);
     WebTransportErrorSource source();
     std::optional<unsigned> streamErrorCode();
 private:
     WebTransportError(String&&, WebTransportErrorOptions&&);
+
+    WebTransportErrorOptions m_options;
 };
 
 }

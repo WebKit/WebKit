@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FilterData);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceFilter);
 
 RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
-    : RenderSVGResourceContainer(element, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(Type::SVGResourceFilter, element, WTFMove(style))
 {
 }
 
@@ -94,7 +94,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         }
         
         ASSERT(filterData->targetSwitcher);
-        if (!filterData->targetSwitcher->needsRedrawSourceImage())
+        if (filterData->targetSwitcher->hasSourceImage())
             return false;
 
         filterData->targetSwitcher->beginDrawSourceImage(*context);

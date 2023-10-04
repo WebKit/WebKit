@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum StorageAreaMapIdentifierType { };
+enum class StorageAreaMapIdentifierType { };
 using StorageAreaMapIdentifier = ObjectIdentifier<StorageAreaMapIdentifierType>;
 
 } // namespace WebKit

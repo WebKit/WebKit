@@ -387,6 +387,8 @@ TextStream& operator<<(TextStream& ts, const Image& image)
         ts << "gradient image";
     else if (image.isSVGImage())
         ts << "svg image";
+    else if (image.isSVGResourceImage())
+        ts << "svg resource image";
     else if (image.isSVGImageForContainer())
         ts << "svg image for container";
     else if (image.isPDFDocumentImage())

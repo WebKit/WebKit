@@ -24,6 +24,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "WritingMode.h"
+#include <wtf/BitSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -78,12 +79,18 @@ public:
     static bool isInLogicalPropertyGroup(CSSPropertyID);
     static bool areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID, CSSPropertyID);
     static bool isDescriptorOnly(CSSPropertyID);
-    static bool isColorProperty(CSSPropertyID);
     static UChar listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
     static bool allowsNumberOrIntegerInput(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
+    static bool isColorProperty(CSSPropertyID propertyId)
+    {
+        return colorProperties.get(propertyId);
+    }
+
+    static const WEBCORE_EXPORT WTF::BitSet<numCSSProperties> colorProperties;
+    static const WEBCORE_EXPORT WTF::BitSet<numCSSProperties> physicalProperties;
 
     bool operator==(const CSSProperty& other) const
     {

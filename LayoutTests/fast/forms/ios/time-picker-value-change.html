@@ -17,11 +17,13 @@ async function runTest() {
     if (!window.testRunner)
         return;
 
-    await UIHelper.activateElementAndWaitForInputSession(time);
+    await UIHelper.activateElement(time);
+    await UIHelper.waitForContextMenuToShow();
     await UIHelper.setTimePickerValue(9, 41);
     await UIHelper.dismissFormAccessoryView();
     await UIHelper.waitForInputSessionToDismiss();
-    await UIHelper.activateElementAndWaitForInputSession(time);
+    await UIHelper.activateElement(time);
+    await UIHelper.waitForContextMenuToShow();
     pickerValues = await UIHelper.timerPickerValues();
 
     shouldBe("pickerValues.hour", "9");

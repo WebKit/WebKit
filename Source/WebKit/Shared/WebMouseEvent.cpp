@@ -32,8 +32,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebMouseEvent::WebMouseEvent() = default;
-
 #if PLATFORM(MAC)
 WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, int eventNumber, int menuType, GestureWasCancelled gestureWasCancelled)
 #elif PLATFORM(GTK)
@@ -77,7 +75,7 @@ WebMouseEventButton mouseButton(const WebCore::NavigationAction& navigationActio
     auto& mouseEventData = navigationAction.mouseEventData();
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
         return static_cast<WebMouseEventButton>(mouseEventData->button);
-    return WebMouseEventButton::NoButton;
+    return WebMouseEventButton::None;
 }
 
 WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationAction& navigationAction)

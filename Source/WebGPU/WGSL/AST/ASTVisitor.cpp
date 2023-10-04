@@ -133,8 +133,9 @@ void Visitor::visit(AST::IdAttribute& attribute)
     visit(attribute.value());
 }
 
-void Visitor::visit(AST::InterpolateAttribute&)
+void Visitor::visit(AST::InterpolateAttribute& attribute)
 {
+    visit(attribute.type(), attribute.sampling());
 }
 
 void Visitor::visit(AST::InvariantAttribute&)
@@ -333,6 +334,9 @@ void Visitor::visit(Statement& statement)
     case AST::NodeKind::BreakStatement:
         checkErrorAndVisit(downcast<AST::BreakStatement>(statement));
         break;
+    case AST::NodeKind::CallStatement:
+        checkErrorAndVisit(downcast<AST::CallStatement>(statement));
+        break;
     case AST::NodeKind::CompoundAssignmentStatement:
         checkErrorAndVisit(downcast<AST::CompoundAssignmentStatement>(statement));
         break;
@@ -388,6 +392,11 @@ void Visitor::visit(AST::AssignmentStatement& assignmentStatement)
 
 void Visitor::visit(AST::BreakStatement&)
 {
+}
+
+void Visitor::visit(AST::CallStatement& callStatement)
+{
+    checkErrorAndVisit(callStatement.call());
 }
 
 void Visitor::visit(AST::CompoundAssignmentStatement& compoundAssignmentStatement)
@@ -517,21 +526,6 @@ void Visitor::visit(AST::Variable& variable)
 
 void Visitor::visit(VariableQualifier&)
 {
-}
-
-std::optional<unsigned> extractInteger(const AST::Expression& expression)
-{
-    switch (expression.kind()) {
-    case AST::NodeKind::AbstractIntegerLiteral:
-        return { static_cast<unsigned>(downcast<AST::AbstractIntegerLiteral>(expression).value()) };
-    case AST::NodeKind::Unsigned32Literal:
-        return { static_cast<unsigned>(downcast<AST::Unsigned32Literal>(expression).value()) };
-    case AST::NodeKind::Signed32Literal:
-        return { static_cast<unsigned>(downcast<AST::Signed32Literal>(expression).value()) };
-    default:
-        // FIXME: handle constants and overrides
-        return std::nullopt;
-    }
 }
 
 } // namespace WGSL::AST

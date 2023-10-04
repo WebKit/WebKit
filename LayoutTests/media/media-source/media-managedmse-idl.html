@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=false] -->
+<html>
+<head>
+    <title>ManagedMSE track IDL check</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+
+    var source;
+    var videoSourceBuffer;
+    var audioSourceBuffer;
+    var initVideoSegment;
+    var initAudioSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest() {
+        findMediaElement();
+        video.disableRemotePlayback = true;
+        run('source = new ManagedMediaSource()');
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run('videoSourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        run('audioSourceBuffer = source.addSourceBuffer("audio/mock; codecs=mock")');
+
+        initVideoSegment = makeAInit(100, [
+            makeATrack(1, 'mock', TRACK_KIND.VIDEO),
+        ]);
+        initAudioSegment = makeAInit(101, [
+            makeATrack(1, 'mock', TRACK_KIND.AUDIO),
+        ]);
+        run('videoSourceBuffer.appendBuffer(initVideoSegment)');
+        run('audioSourceBuffer.appendBuffer(initAudioSegment)');
+        testExpected('source.sourceBuffers.length', 2);
+        testExpected('videoSourceBuffer.updating', true);
+        testExpected('audioSourceBuffer.updating', true);
+        await Promise.all([waitFor(videoSourceBuffer, 'updateend', true), waitFor(audioSourceBuffer, 'updateend', true)]);
+        consoleWrite('got all updateend');
+
+        testExpected('videoSourceBuffer.updating', false);
+        testExpected('audioSourceBuffer.updating', false);
+        testExpected('videoSourceBuffer.videoTracks.length', 1);
+        testExpected('audioSourceBuffer.audioTracks.length', 1);
+        testExpected('source.activeSourceBuffers.length', 2);
+
+        testExpected('video.videoTracks.length', 1);
+        testExpected('video.audioTracks.length', 1);
+
+        testExpected('video.videoTracks[0].sourceBuffer', videoSourceBuffer);
+        testExpected('video.audioTracks[0].sourceBuffer', audioSourceBuffer);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

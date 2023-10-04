@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import <wtf/RetainPtr.h>
 
 @implementation WKActionSheet {
@@ -121,7 +122,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_popoverPresentationControllerDelegateWhileRotating)
         presentationController.delegate = _popoverPresentationControllerDelegateWhileRotating.get();
 
-    _currentPresentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
+    _currentPresentingViewController = view._wk_viewControllerForFullScreenPresentation;
     [_currentPresentingViewController presentViewController:presentedViewController animated:YES completion:nil];
 
     return YES;
@@ -163,7 +164,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!view)
         return;
 
-    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
+    auto presentingViewController = view._wk_viewControllerForFullScreenPresentation;
 
     // topPresentedViewController is either self (cases (a) and (b) above) or an action's view controller
     // (case (c) above).

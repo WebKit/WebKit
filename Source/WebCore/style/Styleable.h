@@ -103,12 +103,12 @@ struct Styleable {
         return element.animations(pseudoId);
     }
 
-    bool hasCompletedTransitionForProperty(AnimatableProperty property) const
+    bool hasCompletedTransitionForProperty(const AnimatableProperty& property) const
     {
         return element.hasCompletedTransitionForProperty(pseudoId, property);
     }
 
-    bool hasRunningTransitionForProperty(AnimatableProperty property) const
+    bool hasRunningTransitionForProperty(const AnimatableProperty& property) const
     {
         return element.hasRunningTransitionForProperty(pseudoId, property);
     }

@@ -31,7 +31,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGHiddenContainer);
 
 RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGElement& element, RenderStyle&& style)
-    : RenderSVGContainer(element, WTFMove(style))
+    : RenderSVGContainer(Type::SVGHiddenContainer, element, WTFMove(style))
 {
 }
 

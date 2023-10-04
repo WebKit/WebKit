@@ -269,11 +269,9 @@ ExceptionOr<void> WebCodecsVideoDecoder::closeDecoder(Exception&& exception)
         return result;
     m_state = WebCodecsCodecState::Closed;
     m_internalDecoder = nullptr;
-    if (exception.code() != AbortError) {
-        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, exception = WTFMove(exception)]() mutable {
-            m_error->handleEvent(DOMException::create(WTFMove(exception)));
-        });
-    }
+    if (exception.code() != AbortError)
+        m_error->handleEvent(DOMException::create(WTFMove(exception)));
+
     return { };
 }
 

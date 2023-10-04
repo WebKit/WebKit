@@ -123,5 +123,9 @@ inline WebCoreOpaqueRoot Node::opaqueRoot() const
 
 inline bool Document::wasLastFocusByClick() const { return m_latestFocusTrigger == FocusTrigger::Click; }
 
+inline Ref<Document> Node::protectedDocument() const
+{
+    return document();
+}
 
 } // namespace WebCore

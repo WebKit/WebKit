@@ -452,6 +452,71 @@ TextStream& operator<<(TextStream& stream, AccessibilityObjectInclusion inclusio
     return stream;
 }
 
+TextStream& operator<<(TextStream& stream, AXRelationType relationType)
+{
+    switch (relationType) {
+    case AXRelationType::None:
+        stream << "None";
+        break;
+    case AXRelationType::ActiveDescendant:
+        stream << "ActiveDescendant";
+        break;
+    case AXRelationType::ActiveDescendantOf:
+        stream << "ActiveDescendantOf";
+        break;
+    case AXRelationType::ControlledBy:
+        stream << "ControlledBy";
+        break;
+    case AXRelationType::ControllerFor:
+        stream << "ControllerFor";
+        break;
+    case AXRelationType::DescribedBy:
+        stream << "DescribedBy";
+        break;
+    case AXRelationType::DescriptionFor:
+        stream << "DescriptionFor";
+        break;
+    case AXRelationType::Details:
+        stream << "Details";
+        break;
+    case AXRelationType::DetailsFor:
+        stream << "DetailsFor";
+        break;
+    case AXRelationType::ErrorMessage:
+        stream << "ErrorMessage";
+        break;
+    case AXRelationType::ErrorMessageFor:
+        stream << "ErrorMessageFor";
+        break;
+    case AXRelationType::FlowsFrom:
+        stream << "FlowsFrom";
+        break;
+    case AXRelationType::FlowsTo:
+        stream << "FlowsTo";
+        break;
+    case AXRelationType::Headers:
+        stream << "Headers";
+        break;
+    case AXRelationType::HeaderFor:
+        stream << "HeaderFor";
+        break;
+    case AXRelationType::LabelledBy:
+        stream << "LabelledBy";
+        break;
+    case AXRelationType::LabelFor:
+        stream << "LabelFor";
+        break;
+    case AXRelationType::OwnedBy:
+        stream << "OwnedBy";
+        break;
+    case AXRelationType::OwnerFor:
+        stream << "OwnerFor";
+        break;
+    }
+
+    return stream;
+}
+
 TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notification)
 {
     switch (notification) {
@@ -502,6 +567,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXFlowToChanged:
         stream << "AXFlowToChanged";
+        break;
+    case AXObjectCache::AXNotification::AXFocusableStateChanged:
+        stream << "AXFocusableStateChanged";
         break;
     case AXObjectCache::AXNotification::AXFocusedUIElementChanged:
         stream << "AXFocusedUIElementChanged";
@@ -560,6 +628,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXPageScrolled:
         stream << "AXPageScrolled";
         break;
+    case AXObjectCache::AXNotification::AXPopoverTargetChanged:
+        stream << "AXPopoverTargetChanged";
+        break;
     case AXObjectCache::AXNotification::AXPositionInSetChanged:
         stream << "AXPositionInSetChanged";
         break;
@@ -574,6 +645,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXRowSpanChanged:
         stream << "AXRowSpanChanged";
+        break;
+    case AXObjectCache::AXNotification::AXCellScopeChanged:
+        stream << "AXCellScopeChanged";
         break;
     case AXObjectCache::AXNotification::AXSelectedChildrenChanged:
         stream << "AXSelectedChildrenChanged";

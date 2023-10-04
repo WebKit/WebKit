@@ -28,10 +28,16 @@
 #include "Connection.h"
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
+#include "WebGPUIdentifier.h"
 #include <WebCore/WorkerClient.h>
+
+namespace WebCore::WebGPU {
+class GPU;
+}
 
 namespace WebKit {
 
+class GPUProcessConnection;
 class WebPage;
 class RemoteRenderingBackendProxy;
 
@@ -50,7 +56,7 @@ public:
     // nested worker.
 #if ENABLE(GPU_PROCESS)
 #if ENABLE(VIDEO)
-    WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+    WebWorkerClient(GPUProcessConnection&, IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
 #else
     WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&);
 #endif
@@ -63,9 +69,13 @@ public:
     WebCore::PlatformDisplayID displayID() const final;
 
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) final;
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, bool avoidBackendSizeCheck = false) const final;
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, OptionSet<WebCore::ImageBufferOptions>) const final;
 #if ENABLE(WEBGL)
     RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&) const final;
+#endif
+
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    RefPtr<WebCore::WebGPU::GPU> createGPUForWebGPU() const final;
 #endif
 
 private:
@@ -75,6 +85,7 @@ private:
 
     SerialFunctionDispatcher& m_dispatcher;
 #if ENABLE(GPU_PROCESS)
+    GPUProcessConnection& m_gpuProcessConnection;
     Ref<IPC::Connection> m_connection;
     mutable std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteRenderingBackendCreationParameters m_creationParameters;

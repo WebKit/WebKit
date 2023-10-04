@@ -30,11 +30,10 @@
 
 namespace WGSL {
 
-struct NumericVariable {
+struct ValueVariable {
     unsigned id;
 };
-
-using AbstractValue = std::variant<NumericVariable, unsigned>;
+using AbstractValue = std::variant<ValueVariable, unsigned>;
 
 struct TypeVariable {
     unsigned id;
@@ -44,38 +43,74 @@ struct TypeVariable {
 struct AbstractVector;
 struct AbstractMatrix;
 struct AbstractTexture;
-using AbstractType = std::variant<
+struct AbstractTextureStorage;
+struct AbstractChannelFormat;
+struct AbstractReference;
+struct AbstractPointer;
+struct AbstractArray;
+
+using AbstractTypeImpl = std::variant<
     AbstractVector,
     AbstractMatrix,
     AbstractTexture,
+    AbstractTextureStorage,
+    AbstractChannelFormat,
+    AbstractReference,
+    AbstractPointer,
+    AbstractArray,
     TypeVariable,
     const Type*
 >;
-
-using AbstractScalarType = std::variant<
-    TypeVariable,
-    const Type*
->;
+using AbstractType = std::unique_ptr<AbstractTypeImpl>;
 
 struct AbstractVector {
-    AbstractScalarType element;
     AbstractValue size;
+    AbstractType element;
 };
 
 struct AbstractMatrix {
-    AbstractScalarType element;
     AbstractValue columns;
     AbstractValue rows;
+    AbstractType element;
 };
 
 struct AbstractTexture {
-    AbstractScalarType element;
     Types::Texture::Kind kind;
+    AbstractType element;
+};
+
+struct AbstractTextureStorage {
+    Types::TextureStorage::Kind kind;
+    AbstractValue format;
+    AbstractValue access;
+};
+
+struct AbstractChannelFormat {
+    AbstractValue format;
+};
+
+struct AbstractReference {
+    AbstractValue addressSpace;
+    AbstractType element;
+    AbstractValue accessMode;
+};
+
+struct AbstractPointer {
+    AbstractValue addressSpace;
+    AbstractType element;
+    AbstractValue accessMode;
+
+    AbstractPointer(AbstractValue, AbstractType);
+    AbstractPointer(AbstractValue, AbstractType, AbstractValue);
+};
+
+struct AbstractArray {
+    AbstractType element;
 };
 
 struct OverloadCandidate {
     Vector<TypeVariable, 1> typeVariables;
-    Vector<NumericVariable, 2> numericVariables;
+    Vector<ValueVariable, 2> valueVariables;
     Vector<AbstractType, 2> parameters;
     AbstractType result;
 };
@@ -87,14 +122,26 @@ struct SelectedOverload {
 
 std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments);
 
+template<typename T>
+static AbstractType allocateAbstractType(const T& type)
+{
+    return std::unique_ptr<AbstractTypeImpl>(new AbstractTypeImpl(type));
+}
+
+template<typename T>
+static AbstractType allocateAbstractType(T&& type)
+{
+    return std::unique_ptr<AbstractTypeImpl>(new AbstractTypeImpl(WTFMove(type)));
+}
+
 } // namespace WGSL
 
 namespace WTF {
-void printInternal(PrintStream&, const WGSL::NumericVariable&);
+void printInternal(PrintStream&, const WGSL::ValueVariable&);
 void printInternal(PrintStream&, const WGSL::AbstractValue&);
 void printInternal(PrintStream&, const WGSL::TypeVariable&);
 void printInternal(PrintStream&, const WGSL::AbstractType&);
-void printInternal(PrintStream&, const WGSL::AbstractScalarType&);
 void printInternal(PrintStream&, const WGSL::OverloadCandidate&);
 void printInternal(PrintStream&, WGSL::Types::Texture::Kind);
+void printInternal(PrintStream&, WGSL::Types::TextureStorage::Kind);
 } // namespace WTF

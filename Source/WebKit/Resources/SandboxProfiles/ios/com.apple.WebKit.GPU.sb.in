@@ -105,6 +105,10 @@
            (global-name "com.apple.coremedia.cpe.xpc") ; Needed for HDR playback.
            (global-name "com.apple.coremedia.remotequeue"))
     (allow mach-lookup
+#if HAVE(REFACTORED_MEDIASERVERD)
+           (global-name "com.apple.airplay.endpoint.xpc")
+           (global-name "com.apple.mediaexperience.endpoint.xpc")
+#endif
            (global-name "com.apple.coremedia.admin")
            (global-name "com.apple.coremedia.asset.xpc")
            (global-name "com.apple.coremedia.audioprocessingtap.xpc")

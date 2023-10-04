@@ -426,8 +426,7 @@ void wgpuBufferSetLabel(WGPUBuffer buffer, const char* label)
     WebGPU::fromAPI(buffer).setLabel(WebGPU::fromAPI(label));
 }
 
-WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer)
+WGPUBufferUsageFlags wgpuBufferGetUsage(WGPUBuffer buffer)
 {
-    // FIXME: this shouldn't need a cast - https://github.com/webgpu-native/webgpu-headers/issues/172
-    return static_cast<WGPUBufferUsage>(WebGPU::fromAPI(buffer).usage());
+    return WebGPU::fromAPI(buffer).usage();
 }

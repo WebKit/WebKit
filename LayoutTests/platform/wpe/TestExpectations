@@ -1093,6 +1093,7 @@ webkit.org/b/212144 http/tests/xmlhttprequest/on-network-timeout-error-during-pr
 
 # webkit.org/b/188506 fast/dom/timer-throttling-hidden-page.html [ Failure ]
 webkit.org/b/212350 fast/dom/timer-throttling-hidden-page.html [ Timeout ]
+webkit.org/b/212350 fast/dom/timer-throttling-hidden-page-2.html [ Timeout ]
 
 webkit.org/b/244480 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 
@@ -1349,6 +1350,11 @@ webkit.org/b/188509 fast/dom/Window/window-resize-update-scrollbars.html [ Timeo
 webkit.org/b/188658 fast/shadow-dom/trusted-event-scoped-flags.html [ Failure ]
 
 webkit.org/b/188659 fast/masking/clip-path-selection.html [ Failure ]
+
+webkit.org/b/261887 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3b.html [ ImageOnlyFailure ]
+webkit.org/b/261887 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3c.html [ ImageOnlyFailure ]
+webkit.org/b/261887 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3d.html [ ImageOnlyFailure ]
+webkit.org/b/261887 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3e.html [ ImageOnlyFailure ]
 
 webkit.org/b/188660 fast/loader/local-CSS-from-local.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-JavaScript-from-local.html [ Failure ]
@@ -1656,8 +1662,6 @@ webkit.org/b/261024 http/tests/notifications/notification.html [ Crash Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/css/selectors/invalidation/media-pseudo-classes-in-has.html [ Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html [ Crash Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/html/anonymous-iframe/embedding.tentative.https.window.html [ Crash Failure Pass ]
-webkit.org/b/261024 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-5.html [ ImageOnlyFailure Pass ]
-webkit.org/b/261024 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-6.html [ ImageOnlyFailure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-state-change.https.html [ Pass Timeout ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html [ Crash Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html [ Crash Failure Pass ]
@@ -1672,3 +1676,5 @@ webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout ]
 imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]

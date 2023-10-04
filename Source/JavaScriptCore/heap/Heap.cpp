@@ -588,9 +588,49 @@ void Heap::releaseDelayedReleasedObjects()
 #endif
 }
 
-void Heap::reportExtraMemoryAllocatedSlowCase(GCDeferralContext* deferralContext, size_t size)
+void Heap::reportExtraMemoryAllocatedPossiblyFromAlreadyMarkedCell(const JSCell* cell, size_t size)
+{
+    ASSERT(cell);
+
+    // Increasing extraMemory of already marked objects will not be visible as a retained memory.
+    // We need to report this additionally to tell GC that we get additional extra memory now,
+    // and GC needs to consider scheduling GC based on this increase.
+
+    if (UNLIKELY(mutatorShouldBeFenced())) {
+        // In this case, the barrierThreshold is the tautological threshold, so cell could still be
+        // not black. But we can't know for sure until we fire off a fence.
+        WTF::storeLoadFence();
+        if (cell->cellState() != CellState::PossiblyBlack)
+            return;
+
+        WTF::loadLoadFence();
+        if (!isMarked(cell)) {
+            // During a full collection a store into an unmarked object that had surivived past
+            // collections will manifest as a store to an unmarked PossiblyBlack object. If the
+            // object gets marked at some time after this then it will go down the normal marking
+            // path. So, we don't have to remember this object. We could return here. But we go
+            // further and attempt to re-white the object.
+            ASSERT(m_collectionScope && m_collectionScope.value() == CollectionScope::Full);
+            return;
+        }
+    } else
+        ASSERT(isMarked(cell));
+
+    // It could be that the object was *just* marked. This means that the collector may set the
+    // state to DefinitelyGrey and then to PossiblyOldOrBlack at any time. It's OK for us to
+    // race with the collector here. If we win then this is accurate because the object _will_
+    // get scanned again. If we lose then someone else will barrier the object again. That would
+    // be unfortunate but not the end of the world.
+    reportExtraMemoryVisited(size);
+}
+
+void Heap::reportExtraMemoryAllocatedSlowCase(GCDeferralContext* deferralContext, const JSCell* cell, size_t size)
 {
     didAllocate(size);
+    if (cell) {
+        if (UNLIKELY(isWithinThreshold(cell->cellState(), barrierThreshold())))
+            reportExtraMemoryAllocatedPossiblyFromAlreadyMarkedCell(cell, size);
+    }
     collectIfNecessaryOrDefer(deferralContext);
 }
 
@@ -601,7 +641,7 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
     CheckedSize checkedNewSize = m_deprecatedExtraMemorySize;
     checkedNewSize += size;
     m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.value();
-    reportExtraMemoryAllocatedSlowCase(nullptr, size);
+    reportExtraMemoryAllocatedSlowCase(nullptr, nullptr, size);
 }
 
 bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)
@@ -895,8 +935,10 @@ void Heap::removeDeadHeapSnapshotNodes(HeapProfiler& heapProfiler)
 
 void Heap::updateObjectCounts()
 {
-    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full)
+    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
+        m_totalBytesVisitedAfterLastFullCollect = m_totalBytesVisited;
         m_totalBytesVisited = 0;
+    }
 
     m_totalBytesVisitedThisCycle = bytesVisited();
     
@@ -1650,6 +1692,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_verifier->verify(HeapVerifier::Phase::AfterGC);
     }
 
+    auto endingCollectionScope = *m_collectionScope;
+
     didFinishCollection();
     
     if (m_currentRequest.didFinishEndPhase)
@@ -1680,7 +1724,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     m_lastGCStartTime = m_currentGCStartTime;
     m_lastGCEndTime = MonotonicTime::now();
     m_totalGCTime += m_lastGCEndTime - m_lastGCStartTime;
-        
+    if (endingCollectionScope == CollectionScope::Full)
+        m_lastFullGCEndTime = m_lastGCEndTime;
     return changePhase(conn, CollectorPhase::NotRunning);
 }
 
@@ -2284,7 +2329,7 @@ void Heap::willStartCollection()
 #if ENABLE(RESOURCE_USAGE)
         m_externalMemorySize = 0;
 #endif
-
+        m_shouldDoOpportunisticFullCollection = false;
         if (m_fullActivityCallback)
             m_fullActivityCallback->willCollect();
     } else {
@@ -2385,9 +2430,11 @@ void Heap::updateAllocationLimits()
         // To avoid pathological GC churn in very small and very large heaps, we set
         // the new allocation limit based on the current size of the heap, with a
         // fixed minimum.
-        m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
-        if (verbose)
-            dataLog("Full: maxHeapSize = ", m_maxHeapSize, "\n");
+        if (!m_isInOpportunisticTask) {
+            m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
+            if (verbose)
+                dataLog("Full: maxHeapSize = ", m_maxHeapSize, "\n");
+        }
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
         if (verbose)
             dataLog("Full: maxEdenSize = ", m_maxEdenSize, "\n");
@@ -3210,6 +3257,12 @@ void Heap::verifyGC()
     });
 
     m_verifierSlotVisitor = nullptr;
+}
+
+void Heap::scheduleOpportunisticFullCollectionIfNeeded()
+{
+    if (shouldDoFullCollection())
+        m_shouldDoOpportunisticFullCollection = true;
 }
 
 #define DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW(name, heapCellType, type) \

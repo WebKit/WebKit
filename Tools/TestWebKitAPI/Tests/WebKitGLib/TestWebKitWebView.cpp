@@ -2134,6 +2134,35 @@ static void testWebViewDisableWebSecurity(WebViewTest* test, gconstpointer)
     g_assert_cmpint(waitForFooChanged(), ==, 200);
 }
 
+static void testWebViewEnableHTML5Database(WebViewTest* test, gconstpointer)
+{
+    char html[] = "<html><script>let foo = 0; try { indexedDB.open(\"library\"); foo = 200; } catch { foo = -1; };</script></html>";
+
+    auto waitForFooChanged = [&test]() {
+        int fooValue;
+        do {
+            GUniqueOutPtr<GError> error;
+            JSCValue* jscvalue = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
+            g_assert_no_error(error.get());
+            fooValue = jsc_value_to_int32(jscvalue);
+        } while (!fooValue);
+        return fooValue;
+    };
+
+    // By default indexedDB API is enabled, there should not be an exception after calling indexedDB API, foo should be 200.
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(waitForFooChanged(), ==, 200);
+
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    // Disable indexedDB API, any call with indexedDB API will throw an exception, so foo should be -1.
+    webkit_settings_set_enable_html5_database(settings, FALSE);
+
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(waitForFooChanged(), ==, -1);
+}
+
 #if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 #else
@@ -2210,6 +2239,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "default-content-security-policy", testWebViewDefaultContentSecurityPolicy);
     WebViewTest::add("WebKitWebView", "web-extension-mode", testWebViewWebExtensionMode);
     WebViewTest::add("WebKitWebView", "disable-web-security", testWebViewDisableWebSecurity);
+    WebViewTest::add("WebKitWebView", "enable-html5-database", testWebViewEnableHTML5Database);
 }
 
 void afterAll()

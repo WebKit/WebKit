@@ -27,7 +27,6 @@
 
 #include "WebGPUIntegralTypes.h"
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore::WebGPU {
@@ -42,19 +41,3 @@ enum class TextureUsage : uint8_t {
 using TextureUsageFlags = OptionSet<TextureUsage>;
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::TextureUsage> {
-    using values = EnumValues<
-        WebCore::WebGPU::TextureUsage,
-        WebCore::WebGPU::TextureUsage::CopySource,
-        WebCore::WebGPU::TextureUsage::CopyDestination,
-        WebCore::WebGPU::TextureUsage::TextureBinding,
-        WebCore::WebGPU::TextureUsage::StorageBinding,
-        WebCore::WebGPU::TextureUsage::RenderAttachment
-    >;
-};
-
-} // namespace WTF
-

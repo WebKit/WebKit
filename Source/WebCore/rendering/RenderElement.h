@@ -25,6 +25,7 @@
 #include "HitTestRequest.h"
 #include "LengthFunctions.h"
 #include "RenderObject.h"
+#include <wtf/Packed.h>
 
 namespace WebCore {
 
@@ -83,11 +84,12 @@ public:
 
     // This is null for anonymous renderers.
     Element* element() const { return downcast<Element>(RenderObject::node()); }
+    RefPtr<Element> protectedElement() const { return element(); }
     Element* nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
     Element* generatingElement() const;
 
-    RenderObject* firstChild() const { return m_firstChild; }
-    RenderObject* lastChild() const { return m_lastChild; }
+    RenderObject* firstChild() const { return m_firstChild.get(); }
+    RenderObject* lastChild() const { return m_lastChild.get(); }
     RenderObject* firstInFlowChild() const;
     RenderObject* lastInFlowChild() const;
 
@@ -125,6 +127,8 @@ public:
     bool isRenderBlockFlow() const;
     bool isRenderReplaced() const;
     bool isRenderInline() const;
+    bool isRenderFlexibleBox() const;
+    bool isRenderTextControl() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     void didAttachChild(RenderObject& child, RenderObject* beforeChild);
@@ -159,7 +163,7 @@ public:
     virtual void layout();
 
     /* This function performs a layout only if one is needed. */
-    void layoutIfNeeded() { if (needsLayout()) layout(); }
+    void layoutIfNeeded();
 
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
@@ -291,6 +295,8 @@ public:
 
     bool isSkippedContentRoot() const;
 
+    void clearNeedsLayoutForDescendants();
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
@@ -299,12 +305,14 @@ protected:
         RenderReplacedFlag          = 1 << 3,
         RenderBlockFlag             = 1 << 4,
         RenderBlockFlowFlag         = 1 << 5,
+        RenderFlexibleBoxFlag       = 1 << 6,
+        RenderTextControlFlag       = 1 << 7,
     };
     
     typedef unsigned BaseTypeFlags;
 
-    RenderElement(Element&, RenderStyle&&, BaseTypeFlags);
-    RenderElement(Document&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Type, Element&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Type, Document&, RenderStyle&&, BaseTypeFlags);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -347,7 +355,7 @@ protected:
     inline bool shouldApplySizeOrStyleContainment(bool) const;
 
 private:
-    RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Type, ContainerNode&, RenderStyle&&, BaseTypeFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;
@@ -387,7 +395,8 @@ private:
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();
 
-    unsigned m_baseTypeFlags : 6;
+    PackedPtr<RenderObject> m_firstChild;
+    unsigned m_baseTypeFlags : 8;
     unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
 
@@ -395,6 +404,9 @@ private:
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuationChainNode : 1;
+
+    PackedPtr<RenderObject> m_lastChild;
+
     unsigned m_isContinuation : 1;
     unsigned m_isFirstLetter : 1;
 
@@ -408,9 +420,6 @@ private:
     unsigned m_visibleInViewportState : 2;
 
     unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1;
-
-    RenderObject* m_firstChild;
-    RenderObject* m_lastChild;
 
     RenderStyle m_style;
 };
@@ -466,6 +475,16 @@ inline bool RenderElement::isRenderInline() const
     return m_baseTypeFlags & RenderInlineFlag;
 }
 
+inline bool RenderElement::isRenderFlexibleBox() const
+{
+    return m_baseTypeFlags & RenderFlexibleBoxFlag;
+}
+
+inline bool RenderElement::isRenderTextControl() const
+{
+    return m_baseTypeFlags & RenderTextControlFlag;
+}
+
 inline Element* RenderElement::generatingElement() const
 {
     return downcast<Element>(RenderObject::generatingNode());
@@ -504,6 +523,21 @@ inline bool RenderObject::isRenderReplaced() const
 inline bool RenderObject::isRenderInline() const
 {
     return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderInline();
+}
+
+inline bool RenderObject::isRenderFlexibleBox() const
+{
+    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderFlexibleBox();
+}
+
+inline bool RenderObject::isRenderTextControl() const
+{
+    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderTextControl();
+}
+
+inline bool RenderObject::isFlexibleBoxIncludingDeprecated() const
+{
+    return isRenderFlexibleBox() || isDeprecatedFlexibleBox();
 }
 
 inline const RenderStyle& RenderObject::style() const

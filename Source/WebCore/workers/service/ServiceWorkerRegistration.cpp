@@ -311,7 +311,24 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
         return;
     }
 
-    if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context)) {
+    RefPtr serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context);
+
+    // If we're handling a PushNotificationEvent, this Notification will override the proposed notification
+    // instead of being shown directly.
+    if (serviceWorkerGlobalScope) {
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+        if (RefPtr pushNotificationEvent = serviceWorkerGlobalScope->pushNotificationEvent()) {
+            auto notification = notificationResult.releaseReturnValue();
+            if (!notification->defaultAction().isValid()) {
+                promise->reject(Exception { TypeError, "Call to showNotification() while handling a `pushnotification` event did not include NotificationOptions that specify a valid defaultAction url"_s });
+                return;
+            }
+
+            pushNotificationEvent->setUpdatedNotificationData(notification->data());
+            return;
+        }
+#endif
+
         if (auto* pushEvent = serviceWorkerGlobalScope->pushEvent()) {
             auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(promise->globalObject());
             auto& jsPromise = *JSC::jsCast<JSC::JSPromise*>(promise->promise());
@@ -322,7 +339,6 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
             serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "showNotification was called outside of any push event lifetime. PushEvent.waitUntil can be used to extend the push event lifetime as necessary."_s, 0);
         else
             serviceWorkerGlobalScope->setHasPendingSilentPushEvent(false);
-
     }
 
     auto notification = notificationResult.releaseReturnValue();

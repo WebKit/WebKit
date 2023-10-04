@@ -521,6 +521,7 @@ public:
     void didReplaceMultipartContent(const WebFrame&);
     void didFinishDocumentLoad(WebFrame&);
     void didFinishLoad(WebFrame&);
+    void didSameDocumentNavigationForFrame(WebFrame&);
     void show();
     String userAgent(const URL&) const;
     String platformUserAgent(const URL&) const;
@@ -699,8 +700,8 @@ public:
     void exitAcceleratedCompositingMode(WebCore::Frame&);
 
 #if ENABLE(PDFKIT_PLUGIN)
-    void addPluginView(PluginView*);
-    void removePluginView(PluginView*);
+    void addPluginView(PluginView&);
+    void removePluginView(PluginView&);
 #endif
 
     inline bool isVisible() const;
@@ -1116,8 +1117,8 @@ public:
     void computePagesForPrintingImpl(WebCore::FrameIdentifier, const PrintInfo&, Vector<WebCore::IntRect>& pageRects, double& totalScaleFactor, WebCore::FloatBoxExtent& computedMargin);
 
 #if PLATFORM(COCOA)
-    void drawRectToImage(WebCore::FrameIdentifier, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&&);
-    void drawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&& completionHandler) { drawRectToImage(frameID, printInfo, rect, imageSize, WTFMove(completionHandler)); }
+    void drawRectToImage(WebCore::FrameIdentifier, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&&);
+    void drawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&& completionHandler) { drawRectToImage(frameID, printInfo, rect, imageSize, WTFMove(completionHandler)); }
     void drawPagesToPDF(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
     void drawPagesToPDFDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler) { drawPagesToPDF(frameID, printInfo, first, count, WTFMove(completionHandler)); }
     void drawPagesToPDFImpl(WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData);
@@ -1126,7 +1127,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(size_t)>&&);
     void drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
-    void drawToImage(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&&);
+    void drawToImage(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&&);
 #endif
 
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground,  CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
@@ -1182,10 +1183,8 @@ public:
     void recomputeShortCircuitHorizontalWheelEventsState();
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void gestureEvent(const WebGestureEvent&, CompletionHandler<void(WebEventType, bool)>&&);
+    void gestureEvent(const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool)>&&);
 #endif
-
-    void updateVisibilityState(bool isInitialState = false);
 
 #if PLATFORM(IOS_FAMILY)
     void setDeviceOrientation(WebCore::IntDegrees);
@@ -1405,8 +1404,8 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CompletionHandler<void()>&&);
     void updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferReference& enclosingImageData, CompletionHandler<void()>&&);
-    void updateAttachmentThumbnail(const String& identifier, ShareableBitmap::Handle&& qlThumbnailHandle);
-    void updateAttachmentIcon(const String& identifier, ShareableBitmap::Handle&& icon, const WebCore::FloatSize&);
+    void updateAttachmentThumbnail(const String& identifier, std::optional<ShareableBitmap::Handle>&& qlThumbnailHandle);
+    void updateAttachmentIcon(const String& identifier, std::optional<ShareableBitmap::Handle>&& icon, const WebCore::FloatSize&);
     void requestAttachmentIcon(const String& identifier, const WebCore::FloatSize&);
 #endif
 
@@ -1438,7 +1437,7 @@ public:
     SendSyncResult<T> sendSyncWithDelayedReply(T&& message, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
         cancelCurrentInteractionInformationRequest();
-        return sendSync(WTFMove(message), Seconds::infinity(), sendSyncOptions);
+        return sendSync(std::forward<T>(message), Seconds::infinity(), sendSyncOptions);
     }
 
     WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const String& originIdentifier);
@@ -1490,6 +1489,7 @@ public:
 
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
 
+    void setSceneIdentifier(String&&);
 #endif // PLATFORM(IOS_FAMILY)
 
 #if USE(QUICK_LOOK)
@@ -1537,7 +1537,7 @@ public:
     void startVisualTranslation(const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);
 #endif
 
-    void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(ShareableBitmap::Handle&&, const String& sourceMIMEType)>&&);
+    void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&, const String& sourceMIMEType)>&&);
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
@@ -1774,7 +1774,7 @@ private:
     void goToBackForwardItem(GoToBackForwardItemParameters&&);
     [[noreturn]] void goToBackForwardItemWaitingForProcessLaunch(GoToBackForwardItemParameters&&, WebKit::WebPageProxyIdentifier);
     void tryRestoreScrollPosition();
-    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CompletionHandler<void()>&&);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, const std::optional<WebKeyboardEvent>&, CompletionHandler<void()>&&);
     void updateIsInWindow(bool isInitialState = false);
     void visibilityDidChange();
     void setActivityState(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, CompletionHandler<void()>&&);
@@ -1792,15 +1792,15 @@ private:
 
     void setNeedsFontAttributes(bool);
 
-    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions, CompletionHandler<void(WebEventType, bool, std::optional<WebCore::RemoteMouseEventData>)>&&);
-    void keyEvent(WebCore::FrameIdentifier, const WebKeyboardEvent&, CompletionHandler<void(WebEventType, bool)>&&);
+    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteMouseEventData>)>&&);
+    void keyEvent(WebCore::FrameIdentifier, const WebKeyboardEvent&, CompletionHandler<void(std::optional<WebEventType>, bool)>&&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEventSync(const WebTouchEvent&, CompletionHandler<void(bool)>&&);
     void resetPotentialTapSecurityOrigin();
     void updatePotentialTapSecurityOrigin(const WebTouchEvent&, bool wasHandled);
 #elif ENABLE(TOUCH_EVENTS)
-    void touchEvent(const WebTouchEvent&, CompletionHandler<void(WebEventType, bool)>&&);
+    void touchEvent(const WebTouchEvent&, CompletionHandler<void(std::optional<WebEventType>, bool)>&&);
 #endif
 
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
@@ -1857,11 +1857,12 @@ private:
     void getSelectionAsWebArchiveData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&&);
     void getSourceForFrame(WebCore::FrameIdentifier, CompletionHandler<void(const String&)>&&);
     void getWebArchiveOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&&);
+    void getWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier, const String& fileName, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&&);
     void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, ContentWorldIdentifier, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, std::optional<WebCore::FrameIdentifier>, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&)>&&);
     void getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);
-    void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&&);
+    void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&&);
 
     void preferencesDidChange(const WebPreferencesStore&);
     void preferencesDidChangeDuringDOMPrintOperation(const WebPreferencesStore& store) { preferencesDidChange(store); }
@@ -2119,6 +2120,10 @@ private:
 
     void useRedirectionForCurrentNavigation(WebCore::ResourceResponse&&);
 
+    void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
+
+    void frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier);
+
     WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -2133,7 +2138,7 @@ private:
     DrawingAreaType m_drawingAreaType;
 
 #if ENABLE(PDFKIT_PLUGIN)
-    HashSet<PluginView*> m_pluginViews;
+    WeakHashSet<PluginView> m_pluginViews;
 #endif
 
     HashMap<TextCheckerRequestID, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
@@ -2363,9 +2368,9 @@ private:
     unsigned m_cachedPageCount { 0 };
 
     struct DeferredMouseEventCompletionHandler {
-        WebEventType type { WebEventType::NoType };
+        std::optional<WebEventType> type;
         bool handled { false };
-        CompletionHandler<void(WebEventType, bool, std::optional<WebCore::RemoteMouseEventData>)> completionHandler;
+        CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteMouseEventData>)> completionHandler;
     };
     std::optional<DeferredMouseEventCompletionHandler> m_deferredMouseEventCompletionHandler;
 
@@ -2520,7 +2525,7 @@ private:
 #endif
 
     HashMap<String, RefPtr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
-    HashMap<WebURLSchemeHandlerIdentifier, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;
+    HashMap<WebURLSchemeHandlerIdentifier, CheckedPtr<WebURLSchemeHandlerProxy>> m_identifierToURLSchemeHandlerProxyMap;
 
     HashMap<uint64_t, Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
 

@@ -371,6 +371,8 @@ invalid("for (let i = 20 in b) { }");
 invalid("for (const i = 20 in b) { }");
 invalid("for (const {i} = 20 in b) { }");
 invalid("for (let {i} = 20 in b) { }");
+invalid("{ for (a in []) }");
+invalid("{ for (a of []) }");
 valid("function x(i) { for (let i in {}) { } }");
 valid("function x(i) { for (let i of []) { } }");
 valid("function x(i) { for (let i of []) { } }");
@@ -469,16 +471,23 @@ valid("function foo() { { function f1(a) {}; } let f1; }")
 valid("function foo() { { function foo() { }; function foo() { } } }")
 invalid("function foo() { 'use strict'; { function foo() { }; function foo() { } } }")
 invalid("function foo() { let f1; function f1(a) {}; }")
+invalid("function foo() { let f1; async function f1(a) {}; }")
 invalid("let f1; function f1(a) {};")
 invalid("{ function f1(a) {}; let f1; }")
 invalid("{ function f1(a) {}; const f1 = 25; }")
 invalid("{ function f1(a) {}; class f1{}; }")
+invalid("{ if (false) {{ var foo; }} function foo() {} }");
+invalid("{ { if (true) {{ var foo; }} } async function* foo() {} }");
 invalid("function foo() { { let bar; function bar() { } } }")
 invalid("function foo() { { function bar() { }; let bar; } }")
 invalid("function foo() { { const bar; function bar() { } } }")
 invalid("function foo() { { function bar() { }; const bar; } }")
 invalid("function foo() { { class bar{}; function bar() { } } }")
 invalid("function foo() { { function bar() { }; class bar{}; } }")
+invalid("{ function foo() function* foo() }")
+invalid("{ function* foo() function foo() }")
+invalid("{ function foo() async function foo() }")
+invalid("{ async function* function foo() function foo() }")
 valid("switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; }")
 invalid("switch('foo') { case 1: let foo; function foo() {}; break; case 2: function foo() {}; break; }")
 invalid("switch('foo') { case 1: function foo() {}; let foo; break; case 2: function foo() {}; break; }")

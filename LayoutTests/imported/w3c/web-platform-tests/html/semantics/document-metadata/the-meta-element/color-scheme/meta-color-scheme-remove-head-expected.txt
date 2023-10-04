@@ -1,4 +1,4 @@
 
 PASS Meta color-scheme applies.
-FAIL Initial value after removing head including meta color-scheme. assert_equals: expected "light" but got "dark"
+PASS Initial value after removing head including meta color-scheme.
 

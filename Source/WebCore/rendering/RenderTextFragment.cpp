@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextFragment);
 
 RenderTextFragment::RenderTextFragment(Text& textNode, const String& text, int startOffset, int length)
-    : RenderText(textNode, text.substring(startOffset, length))
+    : RenderText(Type::TextFragment, textNode, text.substring(startOffset, length))
     , m_start(startOffset)
     , m_end(length)
     , m_firstLetter(nullptr)
@@ -44,7 +44,7 @@ RenderTextFragment::RenderTextFragment(Text& textNode, const String& text, int s
 }
 
 RenderTextFragment::RenderTextFragment(Document& document, const String& text, int startOffset, int length)
-    : RenderText(document, text.substring(startOffset, length))
+    : RenderText(Type::TextFragment, document, text.substring(startOffset, length))
     , m_start(startOffset)
     , m_end(length)
     , m_firstLetter(nullptr)
@@ -52,7 +52,7 @@ RenderTextFragment::RenderTextFragment(Document& document, const String& text, i
 }
 
 RenderTextFragment::RenderTextFragment(Document& textNode, const String& text)
-    : RenderText(textNode, text)
+    : RenderText(Type::TextFragment, textNode, text)
     , m_start(0)
     , m_end(text.length())
     , m_contentString(text)

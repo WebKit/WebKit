@@ -90,7 +90,7 @@ class RenderSliderContainer final : public RenderFlexibleBox {
     WTF_MAKE_ISO_ALLOCATED_INLINE(RenderSliderContainer);
 public:
     RenderSliderContainer(SliderContainerElement& element, RenderStyle&& style)
-        : RenderFlexibleBox(element, WTFMove(style))
+        : RenderFlexibleBox(Type::SliderContainer, element, WTFMove(style))
     {
     }
 
@@ -326,7 +326,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
     }
 
     MouseEvent& mouseEvent = downcast<MouseEvent>(event);
-    bool isLeftButton = mouseEvent.button() == LeftButton;
+    bool isLeftButton = mouseEvent.button() == MouseButton::Left;
     const AtomString& eventType = mouseEvent.type();
 
     // We intentionally do not call event->setDefaultHandled() here because

@@ -30,9 +30,9 @@
 
 #include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
+#include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
-#include "PlatformImageBufferShareableBackend.h"
 #include "RemoteBarcodeDetector.h"
 #include "RemoteBarcodeDetectorMessages.h"
 #include "RemoteDisplayListRecorder.h"
@@ -52,6 +52,7 @@
 #include "SwapBuffersDisplayRequirement.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/HTMLCanvasElement.h>
+#include <WebCore/NullImageBufferBackend.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RunLoop.h>
@@ -59,6 +60,9 @@
 #include <wtf/SystemTracing.h>
 
 #if HAVE(IOSURFACE)
+#include "ImageBufferRemoteIOSurfaceBackend.h"
+#include "ImageBufferShareableMappedIOSurfaceBackend.h"
+#include "ImageBufferShareableMappedIOSurfaceBitmapBackend.h"
 #include <WebCore/IOSurfacePool.h>
 #endif
 
@@ -66,10 +70,6 @@
 #import <WebCore/BarcodeDetectorImplementation.h>
 #import <WebCore/FaceDetectorImplementation.h>
 #import <WebCore/TextDetectorImplementation.h>
-#endif
-
-#if PLATFORM(COCOA)
-#include "ImageBufferShareableMappedIOSurfaceBitmapBackend.h"
 #endif
 
 #define MESSAGE_CHECK(assertion, message) do { \
@@ -83,11 +83,11 @@ namespace WebKit {
 using namespace WebCore;
 
 #if PLATFORM(COCOA)
-static bool isSmallLayerBacking(const ImageBufferBackendParameters& parameters)
+static bool isSmallLayerBacking(const ImageBufferParameters& parameters)
 {
     const unsigned maxSmallLayerBackingArea = 64u * 64u; // 4096 == 16kb backing store which equals 1 page on AS.
     return parameters.purpose == RenderingPurpose::LayerBacking
-        && ImageBufferBackend::calculateBackendSize(parameters).area() <= maxSmallLayerBackingArea
+        && ImageBuffer::calculateBackendSize(parameters.logicalSize, parameters.resolutionScale).area() <= maxSmallLayerBackingArea
         && (parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
 }
 #endif
@@ -163,17 +163,26 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
+void RemoteRenderingBackend::didFailCreateImageBuffer(RenderingResourceIdentifier imageBufferIdentifier)
+{
+    // On failure to create a remote image buffer we still create a null display list recorder.
+    // Commands to draw to the failed image might have already be issued and we must process
+    // them.
+    auto errorImage = ImageBuffer::create<NullImageBufferBackend>({ 0, 0 }, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::Unspecified, { }, imageBufferIdentifier);
+    RELEASE_ASSERT(errorImage);
+    m_remoteDisplayLists.add(imageBufferIdentifier, RemoteDisplayListRecorder::create(*errorImage, imageBufferIdentifier, *this));
+    m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(errorImage.releaseNonNull(), *this));
+    send(Messages::RemoteImageBufferProxy::DidCreateBackend(std::nullopt), imageBufferIdentifier);
+}
+
 void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
 {
-    assertIsCurrent(workQueue());
     auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
-    auto remoteDisplayList = RemoteDisplayListRecorder::create(imageBuffer.get(), imageBufferIdentifier, *this);
-    m_remoteDisplayLists.add(imageBufferIdentifier, WTFMove(remoteDisplayList));
     auto* sharing = imageBuffer->backend()->toBackendSharing();
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
-    auto remoteImageBuffer = RemoteImageBuffer::create(WTFMove(imageBuffer), *this);
-    m_remoteImageBuffers.add(imageBufferIdentifier, WTFMove(remoteImageBuffer));
-    send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(handle)), imageBufferIdentifier);
+    m_remoteDisplayLists.add(imageBufferIdentifier, RemoteDisplayListRecorder::create(imageBuffer.get(), imageBufferIdentifier, *this));
+    m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(WTFMove(imageBuffer), *this));
+    send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(*handle)), imageBufferIdentifier);
 }
 
 void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier imageBufferIdentifier)
@@ -215,28 +224,27 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     assertIsCurrent(workQueue());
     RefPtr<ImageBuffer> imageBuffer;
     ImageBufferCreationContext creationContext;
-#if HAVE(IOSURFACE)
-    creationContext.surfacePool = &ioSurfacePool();
-#endif
     creationContext.resourceOwner = m_resourceOwner;
 
+#if HAVE(IOSURFACE)
+    creationContext.surfacePool = &ioSurfacePool();
     if (renderingMode == RenderingMode::Accelerated) {
-#if PLATFORM(COCOA)
         if (isSmallLayerBacking({ logicalSize, resolutionScale, colorSpace, pixelFormat, purpose }))
             imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBitmapBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
-#endif
         if (!imageBuffer)
-            imageBuffer = ImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
-    }
+            imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
+    } else
+        imageBuffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
+#else
+    imageBuffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
+#endif
 
-    if (!imageBuffer)
-        imageBuffer = ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
-
-    if (!imageBuffer) {
-        ASSERT_NOT_REACHED();
-        return;
+    if (imageBuffer)
+        didCreateImageBuffer(imageBuffer.releaseNonNull());
+    else {
+        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackend::createImageBuffer - failed to allocate image buffer %" PRIu64, m_renderingBackendIdentifier.toUInt64(), imageBufferIdentifier.toUInt64());
+        didFailCreateImageBuffer(imageBufferIdentifier);
     }
-    didCreateImageBuffer(imageBuffer.releaseNonNull());
 }
 
 void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)

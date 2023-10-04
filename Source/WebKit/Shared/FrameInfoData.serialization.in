@@ -32,5 +32,6 @@ struct WebKit::FrameInfoData {
     String frameName
     WebCore::FrameIdentifier frameID
     std::optional<WebCore::FrameIdentifier> parentFrameID
-    WTF::ProcessID processID;
+    WTF::ProcessID processID
+    bool isFocused
 }

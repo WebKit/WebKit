@@ -50,7 +50,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderRubyRun);
 
 RenderRubyRun::RenderRubyRun(Document& document, RenderStyle&& style)
-    : RenderBlockFlow(document, WTFMove(style))
+    : RenderBlockFlow(Type::RubyRun, document, WTFMove(style))
     , m_lastCharacter(0)
     , m_secondToLastCharacter(0)
 {

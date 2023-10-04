@@ -25,6 +25,7 @@
 #include <variant>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -35,7 +36,7 @@ namespace WebCore {
 
 // A range of a node within a document that is "marked", such as the range of a misspelled word.
 // It optionally includes a description that could be displayed in the user interface.
-class DocumentMarker {
+class DocumentMarker : public CanMakeWeakPtr<DocumentMarker> {
 public:
     enum MarkerType {
         Spelling = 1 << 0,

@@ -60,10 +60,10 @@ WebBackForwardListItem::~WebBackForwardListItem()
     removeFromBackForwardCache();
 }
 
-HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>& WebBackForwardListItem::allItems()
+HashMap<BackForwardItemIdentifier, CheckedPtr<WebBackForwardListItem>>& WebBackForwardListItem::allItems()
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>> items;
+    static NeverDestroyed<HashMap<BackForwardItemIdentifier, CheckedPtr<WebBackForwardListItem>>> items;
     return items;
 }
 

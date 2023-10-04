@@ -138,7 +138,7 @@ class Squash(Command):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
             return 1
 
-        branch_point = Branch.branch_point(repository)
+        branch_point = repository.branch_point()
         if not branch_point:
             return 1
 

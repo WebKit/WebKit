@@ -41,6 +41,9 @@ void RemoteScrollingUIState::encode(IPC::Encoder& encoder) const
 
     if (m_changes.contains(Changes::UserScrollNodes))
         encoder << m_nodesWithActiveUserScrolls;
+
+    if (m_changes.contains(Changes::RubberbandingNodes))
+        encoder << m_nodesWithActiveRubberband;
 }
 
 std::optional<RemoteScrollingUIState> RemoteScrollingUIState::decode(IPC::Decoder& decoder)
@@ -60,6 +63,11 @@ std::optional<RemoteScrollingUIState> RemoteScrollingUIState::decode(IPC::Decode
             return std::nullopt;
     }
 
+    if (uiState.m_changes.contains(Changes::RubberbandingNodes)) {
+        if (!decoder.decode(uiState.m_nodesWithActiveRubberband))
+            return std::nullopt;
+    }
+
     return uiState;
 }
 
@@ -68,6 +76,7 @@ void RemoteScrollingUIState::reset()
     clearChanges();
     m_nodesWithActiveScrollSnap.clear();
     m_nodesWithActiveUserScrolls.clear();
+    m_nodesWithActiveRubberband.clear();
 }
 
 void RemoteScrollingUIState::addNodeWithActiveScrollSnap(WebCore::ScrollingNodeID nodeID)
@@ -103,6 +112,28 @@ void RemoteScrollingUIState::clearNodesWithActiveUserScroll()
 
     m_nodesWithActiveUserScrolls.clear();
     m_changes.add(Changes::UserScrollNodes);
+}
+
+void RemoteScrollingUIState::addNodeWithActiveRubberband(WebCore::ScrollingNodeID nodeID)
+{
+    auto addResult = m_nodesWithActiveRubberband.add(nodeID);
+    if (addResult.isNewEntry)
+        m_changes.add(Changes::RubberbandingNodes);
+}
+
+void RemoteScrollingUIState::removeNodeWithActiveRubberband(WebCore::ScrollingNodeID nodeID)
+{
+    if (m_nodesWithActiveRubberband.remove(nodeID))
+        m_changes.add(Changes::RubberbandingNodes);
+}
+
+void RemoteScrollingUIState::clearNodesWithActiveRubberband()
+{
+    if (m_nodesWithActiveRubberband.isEmpty())
+        return;
+
+    m_nodesWithActiveRubberband.clear();
+    m_changes.add(Changes::RubberbandingNodes);
 }
 
 } // namespace WebKit

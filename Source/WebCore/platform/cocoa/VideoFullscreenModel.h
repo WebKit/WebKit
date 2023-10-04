@@ -34,6 +34,7 @@
 #include "MediaPlayerEnums.h"
 #include "MediaPlayerIdentifier.h"
 #include "PlaybackSessionModel.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 
@@ -97,7 +98,7 @@ public:
 #endif
 };
 
-class VideoFullscreenModelClient : public CanMakeWeakPtr<VideoFullscreenModelClient> {
+class VideoFullscreenModelClient : public CanMakeWeakPtr<VideoFullscreenModelClient>, public CanMakeCheckedPtr {
 public:
     virtual ~VideoFullscreenModelClient() = default;
     virtual void hasVideoChanged(bool) { }

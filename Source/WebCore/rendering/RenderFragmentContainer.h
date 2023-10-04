@@ -101,13 +101,13 @@ public:
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
-    void addLayoutOverflowForBox(const RenderBox&, const LayoutRect&);
-    void addVisualOverflowForBox(const RenderBox&, const LayoutRect&);
+    void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
+    void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);
     LayoutRect visualOverflowRectForBox(const RenderBoxModelObject&) const;
-    LayoutRect layoutOverflowRectForBoxForPropagation(const RenderBox&);
+    LayoutRect layoutOverflowRectForBoxForPropagation(const RenderBox*);
     LayoutRect visualOverflowRectForBoxForPropagation(const RenderBoxModelObject&);
 
-    LayoutRect rectFlowPortionForBox(const RenderBox&, const LayoutRect&) const;
+    LayoutRect rectFlowPortionForBox(const RenderBox*, const LayoutRect&) const;
     
     void setFragmentObjectsFragmentStyle();
     void restoreFragmentObjectsOriginalStyle();
@@ -119,10 +119,10 @@ public:
     virtual Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) const;
 
 protected:
-    RenderFragmentContainer(Element&, RenderStyle&&, RenderFragmentedFlow*);
-    RenderFragmentContainer(Document&, RenderStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Element&, RenderStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Document&, RenderStyle&&, RenderFragmentedFlow*);
 
-    void ensureOverflowForBox(const RenderBox&, RefPtr<RenderOverflow>&, bool) const;
+    void ensureOverflowForBox(const RenderBox*, RefPtr<RenderOverflow>&, bool) const;
 
     void computePreferredLogicalWidths() override;
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;

@@ -44,8 +44,6 @@ public:
 private:
     void element() const = delete;
 
-    bool isFileUploadControl() const override { return true; }
-
     ASCIILiteral renderName() const override { return "RenderFileUploadControl"_s; }
 
     void updateFromElement() override;

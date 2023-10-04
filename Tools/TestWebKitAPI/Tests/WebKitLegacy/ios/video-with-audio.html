@@ -10,9 +10,7 @@
     function playing() {
         try {
             window.webkit.messageHandlers.testHandler.postMessage('playing');
-        } catch(e) {
-            window.location = 'callback:playing';
-        }
+        } catch(e) { }
     }
 
     function paused() {

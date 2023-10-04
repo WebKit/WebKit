@@ -38,7 +38,6 @@ namespace WebKit {
 
 class WebKeyboardEvent : public WebEvent {
 public:
-    WebKeyboardEvent();
     ~WebKeyboardEvent();
 
 #if USE(APPKIT)

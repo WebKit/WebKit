@@ -54,10 +54,7 @@ void WebTextTrackRepresentationCocoa::update()
     if (!m_mediaElement || !is<WebCore::HTMLVideoElement>(m_mediaElement))
         return;
     
-    auto representation = m_client.createTextTrackRepresentationImage();
-    if (!representation)
-        return;
-    auto image = representation->nativeImage();
+    auto image = m_client.createTextTrackRepresentationImage();
     if (!image)
         return;
     auto imageSize = image->size();

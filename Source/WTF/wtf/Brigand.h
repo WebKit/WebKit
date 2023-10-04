@@ -38,7 +38,7 @@
 #elif _MSC_VER == 1800
 #define BRIGAND_COMP_MSVC_2013
 #endif
-#elif __GNUC__
+#elif defined(__GNUC__)
 #ifndef __clang__
 #define BRIGAND_COMP_GCC
 #else

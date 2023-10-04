@@ -6,8 +6,9 @@ description: Intl.NumberFormat.prototype.formatToParts.length.
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.NumberFormat.prototype.formatToParts.length, 1);
-
-verifyNotEnumerable(Intl.NumberFormat.prototype.formatToParts, "length");
-verifyNotWritable(Intl.NumberFormat.prototype.formatToParts, "length");
-verifyConfigurable(Intl.NumberFormat.prototype.formatToParts, "length");
+verifyProperty(Intl.NumberFormat.prototype.formatToParts, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

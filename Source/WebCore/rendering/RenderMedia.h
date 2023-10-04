@@ -35,8 +35,8 @@ namespace WebCore {
 class RenderMedia : public RenderImage {
     WTF_MAKE_ISO_ALLOCATED(RenderMedia);
 public:
-    RenderMedia(HTMLMediaElement&, RenderStyle&&);
-    RenderMedia(HTMLMediaElement&, RenderStyle&&, const IntSize& intrinsicSize);
+    RenderMedia(Type, HTMLMediaElement&, RenderStyle&&);
+    RenderMedia(Type, HTMLMediaElement&, RenderStyle&&, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
 
     HTMLMediaElement& mediaElement() const { return downcast<HTMLMediaElement>(nodeForNonAnonymous()); }

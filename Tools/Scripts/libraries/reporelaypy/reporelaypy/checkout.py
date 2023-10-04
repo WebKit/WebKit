@@ -25,6 +25,7 @@ import multiprocessing
 import os
 import shutil
 import sys
+import time
 
 from webkitcorepy import run
 from webkitscmpy import local, remote
@@ -293,7 +294,7 @@ class Checkout(object):
         self.repository.cache.populate(branch=branch)
         return True
 
-    def update_all(self, remote=None):
+    def update_all(self, remote=None, throttle=None):
         if not self.repository:
             sys.stderr.write("Cannot update checkout, clone still pending...\n")
             return None
@@ -304,7 +305,7 @@ class Checkout(object):
                 key = key.split(':')[0]
                 if key in updated:
                     continue
-                self.update_all(remote=key)
+                self.update_all(remote=key, throttle=throttle)
                 updated.add(key)
             return
 
@@ -322,6 +323,8 @@ class Checkout(object):
         for branch in self.repository.branches_for(remote=False):
             if branch not in all_branches:
                 continue
+            if throttle:
+                time.sleep(throttle)
             all_branches.remove(branch)
             if not self.update_for(branch=branch, remote=remote):
                 print("    Failed to update '{}' from '{}'".format(branch, remote or self.repository.default_remote))
@@ -330,6 +333,8 @@ class Checkout(object):
         # Then, track all untracked branches
         print('Tracking new branches...')
         for branch in all_branches:
+            if throttle:
+                time.sleep(throttle)
             run(
                 [self.repository.executable(), 'branch', '--track', branch, 'remotes/{}/{}'.format(remote, branch)],
                 cwd=self.repository.root_path,
@@ -346,5 +351,7 @@ class Checkout(object):
                 continue
             remote_tags = set(self.repository.tags(remote=target_remote))
             for tag in origin_tags - remote_tags:
+                if throttle:
+                    time.sleep(throttle)
                 print(f'    {tag}')
                 self.forward_update(tag=tag, remote=remote)

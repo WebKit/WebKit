@@ -31,5 +31,7 @@ var desc = Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, "format"
 assert.sameValue(desc.set, undefined);
 assert.sameValue(typeof desc.get, "function");
 
-verifyNotEnumerable(Intl.NumberFormat.prototype, "format");
-verifyConfigurable(Intl.NumberFormat.prototype, "format");
+verifyProperty(Intl.NumberFormat.prototype, "format", {
+  enumerable: false,
+  configurable: true,
+});

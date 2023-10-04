@@ -105,16 +105,18 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderElement);
 
 struct SameSizeAsRenderElement : public RenderObject {
-    unsigned bitfields : 25;
-    void* firstChild;
-    void* lastChild;
+    PackedPtr<RenderObject> firstChild;
+    unsigned bitfields1 : 12;
+    PackedPtr<RenderObject> lastChild;
+    unsigned bitfields2 : 13;
     RenderStyle style;
 };
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
 
-inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderObject(elementOrDocument)
+inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderObject(type, elementOrDocument)
+    , m_firstChild(nullptr)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
@@ -122,6 +124,7 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_hasPausedImageAnimations(false)
     , m_hasCounterNodeMap(false)
     , m_hasContinuationChainNode(false)
+    , m_lastChild(nullptr)
     , m_isContinuation(false)
     , m_isFirstLetter(false)
     , m_renderBlockHasMarginBeforeQuirk(false)
@@ -132,19 +135,17 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_isRegisteredForVisibleInViewportCallback(false)
     , m_visibleInViewportState(static_cast<unsigned>(VisibleInViewportState::Unknown))
     , m_didContributeToVisuallyNonEmptyPixelCount(false)
-    , m_firstChild(nullptr)
-    , m_lastChild(nullptr)
     , m_style(WTFMove(style))
 {
 }
 
-RenderElement::RenderElement(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderElement(static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
+RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderElement(type, static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
 {
 }
 
-RenderElement::RenderElement(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderElement(static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
+RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : RenderElement(type, static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
 {
 }
 
@@ -179,7 +180,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     if (!rendererTypeOverride && contentData && isContentDataSupported(*contentData) && !element.isPseudoElement()) {
         Style::loadPendingResources(style, element.document(), &element);
         auto& styleImage = downcast<ImageContentData>(*contentData).image();
-        auto image = createRenderer<RenderImage>(element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
+        auto image = createRenderer<RenderImage>(RenderObject::Type::Image, element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
         image->setIsGeneratedContent();
         return image;
     }
@@ -190,42 +191,42 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
         return nullptr;
     case DisplayType::Inline:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::Inline))
-            return createRenderer<RenderBlockFlow>(element, WTFMove(style));
-        return createRenderer<RenderInline>(element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
     case DisplayType::Block:
     case DisplayType::FlowRoot:
     case DisplayType::InlineBlock:
-        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
     case DisplayType::ListItem:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::ListItem))
-            return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
         return createRenderer<RenderListItem>(element, WTFMove(style));
     case DisplayType::Flex:
     case DisplayType::InlineFlex:
-        return createRenderer<RenderFlexibleBox>(element, WTFMove(style));
+        return createRenderer<RenderFlexibleBox>(RenderObject::Type::FlexibleBox, element, WTFMove(style));
     case DisplayType::Grid:
     case DisplayType::InlineGrid:
         return createRenderer<RenderGrid>(element, WTFMove(style));
     case DisplayType::Box:
     case DisplayType::InlineBox:
-        return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
+        return createRenderer<RenderDeprecatedFlexibleBox>(RenderObject::Type::DeprecatedFlexibleBox, element, WTFMove(style));
     case DisplayType::RubyBase:
-        return createRenderer<RenderInline>(element, WTFMove(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
     case DisplayType::RubyAnnotation:
-        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
     case DisplayType::Ruby:
-        return createRenderer<RenderInline>(element, WTFMove(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
     case DisplayType::RubyBlock:
-        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
 
     default: {
         if (style.isDisplayTableOrTablePart() && rendererTypeOverride.contains(ConstructBlockLevelRendererFor::TableOrTablePart))
-            return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
 
         switch (style.display()) {
         case DisplayType::Table:
         case DisplayType::InlineTable:
-            return createRenderer<RenderTable>(element, WTFMove(style));
+            return createRenderer<RenderTable>(RenderObject::Type::Table, element, WTFMove(style));
         case DisplayType::TableCell:
             return createRenderer<RenderTableCell>(element, WTFMove(style));
         case DisplayType::TableCaption:
@@ -589,7 +590,7 @@ RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> chil
     }
     if (m_lastChild)
         m_lastChild->setNextSibling(child.get());
-    child->setPreviousSibling(m_lastChild);
+    child->setPreviousSibling(m_lastChild.get());
     m_lastChild = child.get();
     return child.release();
 }
@@ -746,8 +747,8 @@ bool RenderElement::layerCreationAllowedForSubtree() const
     // simply omit the layer creation for any children of a <defs> element (or in general
     // any "hidden container"). For LBSE layers are needed for painting, even if a
     // RenderSVGHiddenContainer is in the render tree ancestor chain -- however they are
-    // never painted directly, only indirectly through the "RenderSVGResourceContainer
-    // elements (such as RenderSVGResourceClipper, RenderSVGResourceMasker, etc.)
+    // never painted directly, only indirectly through the "LegacyRenderSVGResourceContainer
+    // elements (such as LegacyRenderSVGResourceClipper, RenderSVGResourceMasker, etc.)
     if (document().settings().layerBasedSVGEngineEnabled())
         return true;
 #endif
@@ -813,6 +814,9 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (contentVisibilityChanged) {
             if (oldStyle->contentVisibility() == ContentVisibility::Auto)
                 ContentVisibilityDocumentState::unobserve(*element());
+            auto wasSkippedContent = oldStyle->contentVisibility() == ContentVisibility::Hidden ? IsSkippedContent::Yes : IsSkippedContent::No;
+            auto isSkippedContent = newStyle.contentVisibility() == ContentVisibility::Hidden ? IsSkippedContent::Yes : IsSkippedContent::No;
+            ContentVisibilityDocumentState::updateAnimations(*element(), wasSkippedContent, isSkippedContent);
         }
         if ((contentVisibilityChanged || !oldStyle) && newStyle.contentVisibility() == ContentVisibility::Auto)
             ContentVisibilityDocumentState::observe(*element());
@@ -1408,7 +1412,7 @@ bool RenderElement::borderImageIsLoadedAndCanBeRendered() const
     ASSERT(style().hasBorder());
 
     StyleImage* borderImage = style().borderImage().image();
-    return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded();
+    return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded(this);
 }
 
 bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewportRect) const
@@ -1972,6 +1976,7 @@ void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(con
     auto mayNotBeContainingBlockForDescendantsAnymore = oldStyle.position() != m_style.position()
         || oldStyle.hasTransformRelatedProperty() != m_style.hasTransformRelatedProperty()
         || oldStyle.willChange() != newStyle.willChange()
+        || oldStyle.hasBackdropFilter() != newStyle.hasBackdropFilter()
         || oldStyle.containsLayout() != newStyle.containsLayout()
         || oldStyle.containsSize() != newStyle.containsSize();
     if (!mayNotBeContainingBlockForDescendantsAnymore)
@@ -2258,11 +2263,11 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
     };
 
     switch (boxType) {
-    case CSSBoxType::BoxMissing:
     case CSSBoxType::ContentBox:
     case CSSBoxType::PaddingBox:
     case CSSBoxType::FillBox:
         return alignReferenceBox(objectBoundingBox());
+    case CSSBoxType::BoxMissing:
     case CSSBoxType::BorderBox:
     case CSSBoxType::MarginBox:
     case CSSBoxType::StrokeBox:
@@ -2297,5 +2302,22 @@ bool RenderElement::hasEligibleContainmentForSizeQuery() const
     return false;
 }
 
+void RenderElement::clearNeedsLayoutForDescendants()
+{
+    for (auto& descendant : descendantsOfType<RenderObject>(*this))
+        descendant.clearNeedsLayout();
+}
+
+void RenderElement::layoutIfNeeded()
+{
+    if (!needsLayout())
+        return;
+    if (isSkippedContentForLayout()) {
+        clearNeedsLayoutForDescendants();
+        clearNeedsLayout();
+        return;
+    }
+    layout();
+}
 
 }

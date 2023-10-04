@@ -124,7 +124,8 @@ OptionSet<FilterRenderingMode> FEColorMatrix::supportedFilterRenderingModes() co
     if (FEColorMatrixCoreImageApplier::supportsCoreImageRendering(*this))
         modes.add(FilterRenderingMode::Accelerated);
 #endif
-#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+    // FIXME: Ensure the correctness of the CG ColorMatrix filter (http://webkit.org/b/243816).
+#if 0 && HAVE(CGSTYLE_COLORMATRIX_BLUR)
     if (m_type == FECOLORMATRIX_TYPE_MATRIX)
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif

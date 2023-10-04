@@ -575,7 +575,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay&, const PlatformMouseEven
     determineActiveHighlight(mouseIsOverActiveHighlightButton);
 
     // Cancel the potential click if any button other than the left button changes state, and ignore the event.
-    if (event.button() != MouseButton::LeftButton) {
+    if (event.button() != MouseButton::Left) {
         m_currentMouseDownOnButtonHighlight = nullptr;
         return false;
     }

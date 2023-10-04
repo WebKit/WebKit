@@ -67,7 +67,7 @@ public:
 
     using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
     using WebExtensionSet = HashSet<Ref<WebExtension>>;
-    using WebExtensionContextBaseURLMap = HashMap<URL, Ref<WebExtensionContext>>;
+    using WebExtensionContextBaseURLMap = HashMap<String, Ref<WebExtensionContext>>;
     using WebExtensionURLSchemeHandlerMap = HashMap<String, Ref<WebExtensionURLSchemeHandler>>;
 
     using WebProcessProxySet = WeakHashSet<WebProcessProxy>;

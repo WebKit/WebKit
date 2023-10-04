@@ -5,11 +5,11 @@
 esid: sec-Intl.DurationFormat.prototype.format
 description: Test if format method formats duration correctly with different "style" arguments
 locale: [en-US]
+includes: [testIntl.js]
 features: [Intl.DurationFormat]
 ---*/
 
 const style = "narrow";
-const expected = "1y 2m 3w 3d 4h 5m 6s 7ms 8μs 9ns";
 
 const duration = {
   years: 1,
@@ -23,6 +23,8 @@ const duration = {
   microseconds: 8,
   nanoseconds: 9,
 };
+
+const expected = formatDurationFormatPattern(duration, style);
 
 const df = new Intl.DurationFormat("en", {style});
 assert.sameValue(df.format(duration), expected, `Assert DurationFormat format output using ${style} style option`);

@@ -30,15 +30,14 @@ use lib $FindBin::Bin;
 
 use File::Basename;
 use File::Spec;
-use File::Find;
 use Getopt::Long;
 
 my $perl = $^X;
 my $scriptDir = $FindBin::Bin;
-my @idlDirectories;
 my $outputDirectory;
 my $idlFilesList;
 my $ppIDLFilesList;
+my $idlFileNamesList;
 my $generator;
 my @generatorDependency;
 my $defines;
@@ -50,10 +49,10 @@ my $numOfJobs = 1;
 my $idlAttributesFile;
 my $showProgress;
 
-GetOptions('include=s@' => \@idlDirectories,
-           'outputDir=s' => \$outputDirectory,
+GetOptions('outputDir=s' => \$outputDirectory,
            'idlFilesList=s' => \$idlFilesList,
            'ppIDLFilesList=s' => \$ppIDLFilesList,
+           'idlFileNamesList=s' => \$idlFileNamesList,
            'generator=s' => \$generator,
            'generatorDependency=s@' => \@generatorDependency,
            'defines=s' => \$defines,
@@ -101,8 +100,8 @@ my @args = (File::Spec->catfile($scriptDir, 'generate-bindings.pl'),
             '--outputDir', $outputDirectory,
             '--preprocessor', $preprocessor,
             '--idlAttributesFile', $idlAttributesFile,
+            '--idlFileNamesList', $idlFileNamesList,
             '--write-dependencies');
-push @args, map { ('--include', $_) } @idlDirectories;
 push @args, '--supplementalDependencyFile', $supplementalDependencyFile if $supplementalDependencyFile;
 
 my %directoryCache;
@@ -185,11 +184,13 @@ sub spawnGenerateBindingsIfNeeded
 
 sub buildDirectoryCache
 {
-    my $wanted = sub {
-        $directoryCache{$_} = $File::Find::name;
-        $File::Find::prune = 1 unless ~/\./;
-    };
-    find($wanted, @idlDirectories);
+    open my $fh, "<", $idlFileNamesList or die "cannot open $idlFileNamesList for reading";
+    while (<$fh>) {
+        chomp $_;
+        my $name = fileparse($_);
+        $directoryCache{$_} = $name;
+    }
+    close $fh;
 }
 
 sub implicitDependencies

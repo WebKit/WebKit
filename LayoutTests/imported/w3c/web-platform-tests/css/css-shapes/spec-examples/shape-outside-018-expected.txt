@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_approx_equals: Line 0 is positioned properly expected 48 +/- 2 but got 180
 The test passes if the longest green horizontal bar is beneath the triangle and the rest of them are to its right and none intersect it. There should be no red.
 
 XXXXXXXXXX XXXXXXXX XXXXXX XXXX XXX XXXXXXXXXXXX
 
-FAIL CSS Test: shape-margin offset from a polygonal shape-outside Unhandled rejection: assert_approx_equals: Line 0 is positioned properly expected 48 +/- 2 but got 180
+PASS CSS Test: shape-margin offset from a polygonal shape-outside
 

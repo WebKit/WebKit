@@ -87,6 +87,8 @@ public:
     TransformationMatrix sublayerTransform() const override;
     void setSublayerTransform(const TransformationMatrix&) override;
 
+    void setIsBackdropRoot(bool) override;
+
     bool isHidden() const override;
     void setHidden(bool) override;
 

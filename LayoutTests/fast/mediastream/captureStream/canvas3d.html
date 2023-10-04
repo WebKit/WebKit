@@ -42,6 +42,8 @@ promise_test(async test => {
     var stream = canvas1.captureStream();
     video1.srcObject = stream;
 
+    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+
     const promise = new Promise((resolve, reject) => {
         const identifier = video1.requestVideoFrameCallback((now, metadata) => {
             resolve(new VideoFrame(video1));
@@ -70,6 +72,8 @@ promise_test(async test => {
 promise_test(async test => {
     var stream = canvas2.captureStream();
     video2.srcObject = stream;
+
+    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
 
     const promise = new Promise((resolve, reject) => {
         const identifier = video2.requestVideoFrameCallback((now, metadata) => {

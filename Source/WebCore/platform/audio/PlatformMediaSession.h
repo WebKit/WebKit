@@ -66,6 +66,11 @@ enum class PlatformMediaSessionRemoteControlCommandType : uint8_t {
     EndScrubbingCommand,
 };
 
+struct PlatformMediaSessionRemoteCommandArgument {
+    std::optional<double> time;
+    std::optional<bool> fastSeek;
+};
+
 class PlatformMediaSession
     : public CanMakeWeakPtr<PlatformMediaSession>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -137,14 +142,8 @@ public:
 
     virtual void suspendBuffering() { }
     virtual void resumeBuffering() { }
-    
-    struct RemoteCommandArgument {
-        std::optional<double> time;
-        std::optional<bool> fastSeek;
 
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<RemoteCommandArgument> decode(Decoder&);
-    };
+    using RemoteCommandArgument = PlatformMediaSessionRemoteCommandArgument;
 
     using RemoteControlCommandType = PlatformMediaSessionRemoteControlCommandType;
     bool canReceiveRemoteControlCommands() const;
@@ -293,27 +292,6 @@ protected:
 String convertEnumerationToString(PlatformMediaSession::State);
 String convertEnumerationToString(PlatformMediaSession::InterruptionType);
 WEBCORE_EXPORT String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType);
-
-template<class Encoder> inline void PlatformMediaSession::RemoteCommandArgument::encode(Encoder& encoder) const
-{
-    encoder << time << fastSeek;
-}
-
-template<class Decoder> inline std::optional<PlatformMediaSession::RemoteCommandArgument> PlatformMediaSession::RemoteCommandArgument::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<std::optional<type>> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(time, double);
-    DECODE(fastSeek, bool);
-
-#undef DECODE
-
-    return { { *time, *fastSeek } };
-}
 
 } // namespace WebCore
 

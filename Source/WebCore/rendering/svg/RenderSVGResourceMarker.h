@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "RenderSVGResourceContainer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 
 namespace WebCore {
 
@@ -27,7 +27,7 @@ class AffineTransform;
 class RenderObject;
 class SVGMarkerElement;
 
-class RenderSVGResourceMarker final : public RenderSVGResourceContainer {
+class RenderSVGResourceMarker final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceMarker);
 public:
     RenderSVGResourceMarker(SVGMarkerElement&, RenderStyle&&);

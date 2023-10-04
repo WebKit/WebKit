@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-CreateLinkCommand::CreateLinkCommand(Document& document, const String& url)
-    : CompositeEditCommand(document)
+CreateLinkCommand::CreateLinkCommand(Ref<Document>&& document, const String& url)
+    : CompositeEditCommand(WTFMove(document))
     , m_url(url)
 {
 }
@@ -43,14 +43,15 @@ void CreateLinkCommand::doApply()
     if (endingSelection().isNoneOrOrphaned())
         return;
 
-    auto anchorElement = HTMLAnchorElement::create(document());
+    auto document = protectedDocument();
+    auto anchorElement = HTMLAnchorElement::create(document);
     anchorElement->setHref(AtomString { m_url });
     
     if (endingSelection().isRange())
         applyStyledElement(WTFMove(anchorElement));
     else {
         insertNodeAt(anchorElement.copyRef(), endingSelection().start());
-        appendNode(Text::create(document(), String { m_url }), anchorElement.copyRef());
+        appendNode(Text::create(document, String { m_url }), anchorElement.copyRef());
         setEndingSelection(VisibleSelection(positionInParentBeforeNode(anchorElement.ptr()), positionInParentAfterNode(anchorElement.ptr()), Affinity::Downstream, endingSelection().isDirectional()));
     }
 }

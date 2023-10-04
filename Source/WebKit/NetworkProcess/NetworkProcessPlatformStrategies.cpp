@@ -72,4 +72,11 @@ BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
     return &blobRegistry.get();
 }
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+PushStrategy* NetworkProcessPlatformStrategies::createPushStrategy()
+{
+    return nullptr;
+}
+#endif
+
 }

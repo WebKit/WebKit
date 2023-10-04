@@ -211,7 +211,7 @@ void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& 
 {
     ASSERT(isMainThread());
 
-    ERROR_LOG_IF(loggerPtr() && error, LOGIDENTIFIER, message, " with error '", [[error localizedDescription] UTF8String], "'");
+    ERROR_LOG_IF(loggerPtr() && error, LOGIDENTIFIER, message, " with error '", error.get(), "'");
     ERROR_LOG_IF(loggerPtr() && !error, LOGIDENTIFIER, message);
 
     captureFailed();

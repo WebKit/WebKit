@@ -145,6 +145,9 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     for (auto& host : TestController::singleton().allowedHosts())
         WKArrayAppendItem(allowedHostsValue.get(), toWK(host.c_str()).get());
     setValue(beginTestMessageBody, "AllowedHosts", allowedHostsValue);
+#if ENABLE(VIDEO)
+    setValue(beginTestMessageBody, "CaptionDisplayMode", options().captionDisplayMode().c_str());
+#endif
     return beginTestMessageBody;
 }
 
@@ -562,6 +565,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetShouldLogDownloadSize")) {
         TestController::singleton().setShouldLogDownloadSize(booleanValue(messageBody));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetShouldLogDownloadExpectedSize")) {
+        TestController::singleton().setShouldLogDownloadExpectedSize(booleanValue(messageBody));
         return;
     }
 

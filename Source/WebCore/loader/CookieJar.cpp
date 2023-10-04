@@ -35,6 +35,7 @@
 #include "FrameLoader.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "NetworkStorageSession.h"
 #include "NetworkingContext.h"
 #include "Page.h"
@@ -65,6 +66,12 @@ IncludeSecureCookies CookieJar::shouldIncludeSecureCookies(const Document& docum
 
 SameSiteInfo CookieJar::sameSiteInfo(const Document& document, IsForDOMCookieAccess isAccessForDOM)
 {
+    RefPtr frame = document.frame();
+    if (frame && frame->loader().client().isRemoteWorkerFrameLoaderClient()) {
+        auto domain = RegistrableDomain(document.securityOrigin().data());
+        return { domain.matches(document.firstPartyForCookies()), false, true };
+    }
+
     if (auto* loader = document.loader())
         return SameSiteInfo::create(loader->request(), isAccessForDOM);
     return { };

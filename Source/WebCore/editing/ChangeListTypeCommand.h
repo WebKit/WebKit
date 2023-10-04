@@ -38,14 +38,14 @@ class ChangeListTypeCommand final : public CompositeEditCommand {
 public:
     enum class Type : uint8_t { ConvertToOrderedList, ConvertToUnorderedList };
     static std::optional<Type> listConversionType(Document&);
-    static Ref<ChangeListTypeCommand> create(Document& document, Type type)
+    static Ref<ChangeListTypeCommand> create(Ref<Document>&& document, Type type)
     {
-        return adoptRef(*new ChangeListTypeCommand(document, type));
+        return adoptRef(*new ChangeListTypeCommand(WTFMove(document), type));
     }
 
 private:
-    ChangeListTypeCommand(Document& document, Type type)
-        : CompositeEditCommand(document)
+    ChangeListTypeCommand(Ref<Document>&& document, Type type)
+        : CompositeEditCommand(WTFMove(document))
         , m_type(type)
     {
     }

@@ -41,6 +41,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
+#include "TemplateTest.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
 #include <Namespace/ReturnRefClass.h>
@@ -70,29 +71,10 @@ template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struc
 };
 
 template<bool, bool> struct VirtualTableAndRefCountOverhead;
-template<> struct VirtualTableAndRefCountOverhead<true, true> {
+template<> struct VirtualTableAndRefCountOverhead<true, true> : public RefCounted<VirtualTableAndRefCountOverhead<true, true>> {
     virtual ~VirtualTableAndRefCountOverhead() { }
-    unsigned refCount;
-#if ASSERT_ENABLED
-    bool m_isOwnedByMainThread;
-    bool m_areThreadingChecksEnabled;
-#endif
-#if CHECK_REF_COUNTED_LIFECYCLE
-    bool m_deletionHasBegun;
-    bool m_adoptionIsRequired;
-#endif
 };
-template<> struct VirtualTableAndRefCountOverhead<false, true> {
-    unsigned refCount;
-#if ASSERT_ENABLED
-    bool m_isOwnedByMainThread;
-    bool m_areThreadingChecksEnabled;
-#endif
-#if CHECK_REF_COUNTED_LIFECYCLE
-    bool m_deletionHasBegun;
-    bool m_adoptionIsRequired;
-#endif
-};
+template<> struct VirtualTableAndRefCountOverhead<false, true> : public RefCounted<VirtualTableAndRefCountOverhead<false, true>> { };
 template<> struct VirtualTableAndRefCountOverhead<true, false> {
     virtual ~VirtualTableAndRefCountOverhead() { }
 };
@@ -871,6 +853,106 @@ std::optional<WebKit::LayerProperties> ArgumentCoder<WebKit::LayerProperties>::d
     return { WTFMove(result) };
 }
 
+void ArgumentCoder<WebKit::TemplateTest<WebKit::Fabulous>>::encode(Encoder& encoder, const WebKit::TemplateTest<WebKit::Fabulous>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, bool>);
+    struct ShouldBeSameSizeAsTemplateTest : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TemplateTest>, false> {
+        bool value;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTemplateTest) == sizeof(WebKit::TemplateTest));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::TemplateTest, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<WebKit::TemplateTest<WebKit::Fabulous>> ArgumentCoder<WebKit::TemplateTest<WebKit::Fabulous>>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::TemplateTest<WebKit::Fabulous> {
+            WTFMove(*value)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TemplateTest<WebCore::Amazing>>::encode(Encoder& encoder, const WebKit::TemplateTest<WebCore::Amazing>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, bool>);
+    struct ShouldBeSameSizeAsTemplateTest : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TemplateTest>, false> {
+        bool value;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTemplateTest) == sizeof(WebKit::TemplateTest));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::TemplateTest, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<WebKit::TemplateTest<WebCore::Amazing>> ArgumentCoder<WebKit::TemplateTest<WebCore::Amazing>>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::TemplateTest<WebCore::Amazing> {
+            WTFMove(*value)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TemplateTest<JSC::Incredible>>::encode(Encoder& encoder, const WebKit::TemplateTest<JSC::Incredible>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, bool>);
+    struct ShouldBeSameSizeAsTemplateTest : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TemplateTest>, false> {
+        bool value;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTemplateTest) == sizeof(WebKit::TemplateTest));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::TemplateTest, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<WebKit::TemplateTest<JSC::Incredible>> ArgumentCoder<WebKit::TemplateTest<JSC::Incredible>>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::TemplateTest<JSC::Incredible> {
+            WTFMove(*value)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TemplateTest<Testing::StorageSize>>::encode(Encoder& encoder, const WebKit::TemplateTest<Testing::StorageSize>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, bool>);
+    struct ShouldBeSameSizeAsTemplateTest : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TemplateTest>, false> {
+        bool value;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTemplateTest) == sizeof(WebKit::TemplateTest));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::TemplateTest, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<WebKit::TemplateTest<Testing::StorageSize>> ArgumentCoder<WebKit::TemplateTest<Testing::StorageSize>>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::TemplateTest<Testing::StorageSize> {
+            WTFMove(*value)
+        }
+    };
+}
+
 } // namespace IPC
 
 namespace WTF {
@@ -931,6 +1013,9 @@ template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<En
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue)
 #if ENABLE(OPTION_SET_SECOND_VALUE)
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue)
+#endif
+#if !ENABLE(OPTION_SET_SECOND_VALUE)
+        | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValueElse)
 #endif
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue)
         | 0;

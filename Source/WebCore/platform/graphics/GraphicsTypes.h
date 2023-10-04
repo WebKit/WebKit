@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -102,6 +102,18 @@ enum class GradientSpreadMethod : uint8_t {
     Repeat
 };
 
+// InterpolationQuality::Default
+// For ImagePaintingOptions, it means:
+//  - Use context image interpolation quality.
+// For GraphicsContext CG it means:
+//  - If the CGImage has shouldInterpolate == true, use High
+//  - Else use None
+// For GraphicsContext Cairo it means:
+//  - Use Medium
+//
+// FIXME: Remove InterpolationQuality::Default since it does not mean what it should
+// obviously mean and because the CG context behavior is unusable in general case where
+// the draw call sites cannot track where the native images are generated from.
 enum class InterpolationQuality : uint8_t {
     Default,
     DoNotInterpolate,

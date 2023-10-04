@@ -29,17 +29,19 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteCompositorIntegrationMessages.h"
+#include "RemoteGPU.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCompositorIntegration.h>
 
 namespace WebKit {
 
-RemoteCompositorIntegration::RemoteCompositorIntegration(WebCore::WebGPU::CompositorIntegration& compositorIntegration, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteCompositorIntegration::RemoteCompositorIntegration(WebCore::WebGPU::CompositorIntegration& compositorIntegration, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(compositorIntegration)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
+    , m_gpu(gpu)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -49,6 +51,15 @@ RemoteCompositorIntegration::~RemoteCompositorIntegration() = default;
 void RemoteCompositorIntegration::destruct()
 {
     m_objectHeap.removeObject(m_identifier);
+}
+
+void RemoteCompositorIntegration::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&& completionHandler)
+{
+    UNUSED_PARAM(imageBufferIdentifier);
+    m_backing->withDisplayBufferAsNativeImage(bufferIndex, [&](WebCore::NativeImage& image) {
+        m_gpu.paintNativeImageToImageBuffer(image, imageBufferIdentifier);
+        completionHandler();
+    });
 }
 
 void RemoteCompositorIntegration::stopListeningForIPC()

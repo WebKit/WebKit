@@ -14,7 +14,6 @@ PASS Test invalid stride.
 PASS Test address overflow.
 PASS Test codedRect.
 PASS Test empty rect.
-PASS Test unaligned rect.
 PASS Test left crop.
 PASS Test invalid rect.
 

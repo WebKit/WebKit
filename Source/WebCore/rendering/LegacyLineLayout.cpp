@@ -1174,14 +1174,12 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
     // of the resolver owning the runs.
     ASSERT(&topResolver.runs() == &bidiRuns);
     ASSERT(topResolver.position() != endOfRuns);
-    RenderObject* currentRoot = topResolver.position().root();
     topResolver.createBidiRunsForLine(endOfRuns, override, previousLineBrokeCleanly);
 
     while (!topResolver.isolatedRuns().isEmpty()) {
         // It does not matter which order we resolve the runs as long as we resolve them all.
         auto isolatedRun = WTFMove(topResolver.isolatedRuns().last());
         topResolver.isolatedRuns().removeLast();
-        currentRoot = &isolatedRun.root;
 
         RenderObject& startObject = isolatedRun.object;
 
@@ -1190,7 +1188,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         // tree to see which parent inline is the isolate. We could change enterIsolate
         // to take a RenderObject and do this logic there, but that would be a layering
         // violation for BidiResolver (which knows nothing about RenderObject).
-        RenderInline* isolatedInline = downcast<RenderInline>(highestContainingIsolateWithinRoot(startObject, currentRoot));
+        RenderInline* isolatedInline = downcast<RenderInline>(highestContainingIsolateWithinRoot(startObject, &isolatedRun.root));
         ASSERT(isolatedInline);
 
         InlineBidiResolver isolatedResolver;
@@ -1710,10 +1708,6 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
 {
     m_flow.setLogicalHeight(m_flow.borderAndPaddingBefore());
     
-    // Lay out our hypothetical grid line as though it occurs at the top of the block.
-    if (layoutContext().layoutState() && layoutContext().layoutState()->lineGrid() == &m_flow)
-        m_flow.layoutLineGridBox();
-
     RenderFragmentedFlow* fragmentedFlow = m_flow.enclosingFragmentedFlow();
     bool clearLinesForPagination = firstRootBox() && fragmentedFlow && !fragmentedFlow->hasFragments();
 
@@ -2158,12 +2152,12 @@ void LegacyLineLayout::addOverflowFromInlineChildren()
         m_flow.addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
         RenderFragmentContainer* fragment = m_flow.enclosingFragmentedFlow() ? curr->containingFragment() : nullptr;
         if (fragment)
-            fragment->addLayoutOverflowForBox(m_flow, curr->paddedLayoutOverflowRect(endPadding));
+            fragment->addLayoutOverflowForBox(&m_flow, curr->paddedLayoutOverflowRect(endPadding));
         if (!m_flow.hasNonVisibleOverflow()) {
             LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
             m_flow.addVisualOverflow(childVisualOverflowRect);
             if (fragment)
-                fragment->addVisualOverflowForBox(m_flow, childVisualOverflowRect);
+                fragment->addVisualOverflowForBox(&m_flow, childVisualOverflowRect);
         }
     }
 }

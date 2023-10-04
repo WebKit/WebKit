@@ -2268,11 +2268,11 @@ sub getMSBuildPlatformArgument()
 
 sub getCMakeWindowsToolsetArgument()
 {
+    my @args;
     my $toolset = getVisualStudioToolset();
-    if (defined($toolset) && length($toolset)) {
-        return "-A $toolset";
-    }
-    return "";
+    push(@args, '-A', $toolset) if defined($toolset) && length($toolset);
+    push(@args, '-T', 'ClangCL') if defined($ENV{CC}) && $ENV{CC} =~ 'clang-cl';
+    return @args;
 }
 
 sub buildVisualStudioProject
@@ -2562,6 +2562,11 @@ sub shouldRemoveCMakeCache(@)
 
     my $globalConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "OptionsCommon.cmake");
     if ($cacheFileModifiedTime < stat($globalConfiguration)->mtime) {
+        return 1;
+    }
+
+    my $compilerFlagsCMake = File::Spec->catdir(sourceDir(), "Source", "cmake", "WebKitCompilerFlags.cmake");
+    if ($cacheFileModifiedTime < stat($compilerFlagsCMake)->mtime) {
         return 1;
     }
 

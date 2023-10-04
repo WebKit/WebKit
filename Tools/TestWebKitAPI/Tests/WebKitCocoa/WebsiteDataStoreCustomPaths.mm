@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import <JavaScriptCore/JSCConfig.h>
 #import <WebCore/SQLiteFileSystem.h>
+#import <WebCore/SecurityOriginData.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRef.h>
@@ -48,6 +49,7 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Deque.h>
+#import <wtf/FileSystem.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>
@@ -1811,4 +1813,45 @@ TEST(WKWebsiteDataStore, RemoveServiceWorkerDataByOrigin)
     }];
     TestWebKitAPI::Util::run(&done);
     EXPECT_EQ([records count], 0u);
+}
+
+TEST(WKWebsiteDataStore, FetchAndDeleteMediaKeysData)
+{
+    NSURL *customMediaKeysStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/MediaKeys" stringByExpandingTildeInPath] isDirectory:YES];
+    WebCore::SecurityOriginData origin("https"_s, "webkit.org"_s, 443);
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *customWebKitDirectory = [customMediaKeysStorageDirectory URLByAppendingPathComponent:origin.databaseIdentifier()];
+    [fileManager createDirectoryAtURL:customWebKitDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *customMediaKeysStorageFile = [customWebKitDirectory URLByAppendingPathComponent:@"SecureStop.plist"];
+    [fileManager createFileAtPath:customMediaKeysStorageFile.path contents:nil attributes:nil];
+    FileSystem::updateFileModificationTime(customMediaKeysStorageFile.path);
+    NSURL *customVersionDirectory = [customMediaKeysStorageDirectory URLByAppendingPathComponent:@"v1"];
+    [fileManager createDirectoryAtURL:customVersionDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    [fileManager copyItemAtURL:resourceSalt toURL:[customVersionDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    NSURL *newWebKitDirectory = [customVersionDirectory URLByAppendingPathComponent:@"XLb5EY_51d2Xcs65bSUthGKAVscdhhcHXCR6DndbBnc"];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().mediaKeysStorageDirectory = customMediaKeysStorageDirectory;
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    auto mediaKeysType = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeMediaKeys, nil]);
+
+    done = false;
+    __block RetainPtr<NSArray<WKWebsiteDataRecord *>> dataRecords;
+    [websiteDataStore fetchDataRecordsOfTypes:mediaKeysType.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        dataRecords = records;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_EQ([dataRecords count], 1u);
+    EXPECT_TRUE([[[dataRecords firstObject] displayName] isEqual:@"webkit.org"]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:newWebKitDirectory.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:customMediaKeysStorageFile.path]);
+
+    done = false;
+    [websiteDataStore removeDataOfTypes:mediaKeysType.get() forDataRecords:dataRecords.get() completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE([fileManager fileExistsAtPath:newWebKitDirectory.path]);
 }

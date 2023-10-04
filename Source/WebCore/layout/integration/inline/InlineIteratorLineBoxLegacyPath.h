@@ -51,8 +51,8 @@ public:
     float logicalTop() const { return m_rootInlineBox->lineBoxTop().toFloat(); }
     float logicalBottom() const { return m_rootInlineBox->lineBoxBottom().toFloat(); }
     float logicalWidth() const { return m_rootInlineBox->lineBoxWidth().toFloat(); }
-    float inkOverflowTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
-    float inkOverflowBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
+    float inkOverflowLogicalTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
+    float inkOverflowLogicalBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
     float scrollableOverflowTop() const { return m_rootInlineBox->logicalTopLayoutOverflow(); }
     float scrollableOverflowBottom() const { return m_rootInlineBox->logicalBottomLayoutOverflow(); }
 

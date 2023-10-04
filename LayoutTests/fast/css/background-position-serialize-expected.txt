@@ -59,17 +59,17 @@ PASS: t.style.backgroundPositionY should be 0% and is.
 PASS: t.style.cssText should be background-position: 0% 0%; and is.
 PASS: t.getAttribute('style') should be background-position: 0% 0%; and is.
 t.style.backgroundPosition = 'center';
-PASS: t.style.backgroundPosition should be center and is.
+PASS: t.style.backgroundPosition should be center center and is.
 PASS: t.style.backgroundPositionX should be center and is.
 PASS: t.style.backgroundPositionY should be center and is.
-PASS: t.style.cssText should be background-position: center; and is.
-PASS: t.getAttribute('style') should be background-position: center; and is.
+PASS: t.style.cssText should be background-position: center center; and is.
+PASS: t.getAttribute('style') should be background-position: center center; and is.
 t.style.backgroundPosition = '0% center';
-PASS: t.style.backgroundPosition should be 0% and is.
+PASS: t.style.backgroundPosition should be 0% center and is.
 PASS: t.style.backgroundPositionX should be 0% and is.
 PASS: t.style.backgroundPositionY should be center and is.
-PASS: t.style.cssText should be background-position: 0%; and is.
-PASS: t.getAttribute('style') should be background-position: 0%; and is.
+PASS: t.style.cssText should be background-position: 0% center; and is.
+PASS: t.getAttribute('style') should be background-position: 0% center; and is.
 t.style.backgroundPosition = 'center 0%';
 PASS: t.style.backgroundPosition should be center 0% and is.
 PASS: t.style.backgroundPositionX should be center and is.

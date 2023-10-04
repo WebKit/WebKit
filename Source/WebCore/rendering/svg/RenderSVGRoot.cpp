@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "RenderBoxInlines.h"
@@ -40,7 +41,6 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
@@ -68,7 +68,7 @@ const int defaultWidth = 300;
 const int defaultHeight = 150;
 
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
-    : RenderReplaced(element, WTFMove(style))
+    : RenderReplaced(Type::SVGRoot, element, WTFMove(style))
 {
     LayoutSize intrinsicSize(calculateIntrinsicSize());
     if (!intrinsicSize.width())
@@ -345,7 +345,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         if (!resources || !resources->filter()) {
             if (paintInfo.phase == PaintPhase::Foreground)
-                page().addRelevantUnpaintedObject(this, visualOverflowRect());
+                page().addRelevantUnpaintedObject(*this, visualOverflowRect());
             return;
         }
         return;
@@ -513,7 +513,7 @@ bool RenderSVGRoot::hasRelativeDimensions() const
     return svgSVGElement().intrinsicHeight().isPercentOrCalculated() || svgSVGElement().intrinsicWidth().isPercentOrCalculated();
 }
 
-void RenderSVGRoot::addResourceForClientInvalidation(RenderSVGResourceContainer* resource)
+void RenderSVGRoot::addResourceForClientInvalidation(LegacyRenderSVGResourceContainer* resource)
 {
     UNUSED_PARAM(resource);
     /* FIXME: [LBSE] Rename findTreeRootObject -> findLegacyTreeRootObject, and re-add findTreeRootObject for RenderSVGRoot
@@ -642,7 +642,7 @@ void RenderSVGRoot::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& 
 void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     auto* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
+    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         return;
 
     quads.append(localToAbsoluteQuad(FloatRect { borderBoxRect() }, UseTransforms, wasFixed));

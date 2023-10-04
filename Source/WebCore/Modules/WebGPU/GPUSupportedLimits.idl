@@ -27,7 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
+    Exposed=(Window,DedicatedWorker),
     SecureContext
 ]
 interface GPUSupportedLimits {
@@ -36,6 +36,7 @@ interface GPUSupportedLimits {
     readonly attribute unsigned long maxTextureDimension3D;
     readonly attribute unsigned long maxTextureArrayLayers;
     readonly attribute unsigned long maxBindGroups;
+    readonly attribute unsigned long maxBindGroupsPlusVertexBuffers;
     readonly attribute unsigned long maxBindingsPerBindGroup;
     readonly attribute unsigned long maxDynamicUniformBuffersPerPipelineLayout;
     readonly attribute unsigned long maxDynamicStorageBuffersPerPipelineLayout;

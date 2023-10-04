@@ -24,8 +24,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Date.prototype.toLocaleDateString.length, 0);
-
-verifyNotEnumerable(Date.prototype.toLocaleDateString, "length");
-verifyNotWritable(Date.prototype.toLocaleDateString, "length");
-verifyConfigurable(Date.prototype.toLocaleDateString, "length");
+verifyProperty(Date.prototype.toLocaleDateString, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

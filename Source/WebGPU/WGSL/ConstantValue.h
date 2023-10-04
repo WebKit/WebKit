@@ -30,8 +30,6 @@
 
 namespace WGSL {
 
-struct Type;
-
 // A constant value might be:
 // - a scalar
 // - a vector
@@ -72,38 +70,28 @@ using BaseValue = std::variant<double, int64_t, bool, ConstantArray, ConstantVec
 struct ConstantValue : BaseValue {
     ConstantValue() = default;
 
-    template<typename T>
-    ConstantValue(const Type* type, T&& value)
-        : BaseValue(std::forward<T>(value))
-        , type(type)
-    {
-    }
-
-    static void constructDeletedValue(ConstantValue& slot)
-    {
-        slot.type = bitwise_cast<Type*>(static_cast<intptr_t>(-1));
-    }
-    static bool isDeletedValue(const ConstantValue& value)
-    {
-        return value.type == bitwise_cast<Type*>(static_cast<intptr_t>(-1));
-    }
+    using BaseValue::BaseValue;
 
     void dump(PrintStream&) const;
 
-    bool isNumber() const
-    {
-        return std::holds_alternative<int64_t>(*this) || std::holds_alternative<double>(*this);
-    }
+    bool isInt() const { return std::holds_alternative<int64_t>(*this); }
+    bool isNumber() const { return isInt() || std::holds_alternative<double>(*this); }
 
+    bool toBool() const { return std::get<bool>(*this); }
+    int64_t toInt() const
+    {
+        ASSERT(isNumber());
+        if (auto* i = std::get_if<int64_t>(this))
+            return *i;
+        return static_cast<int64_t>(std::get<double>(*this));
+    }
     double toDouble() const
     {
         ASSERT(isNumber());
-        if (std::holds_alternative<double>(*this))
-            return std::get<double>(*this);
+        if (auto* d = std::get_if<double>(this))
+            return *d;
         return static_cast<double>(std::get<int64_t>(*this));
     }
-
-    const Type* type;
 };
 
 } // namespace WGSL

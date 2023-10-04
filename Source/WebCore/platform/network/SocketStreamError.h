@@ -31,11 +31,14 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class SocketStreamError {
+private:
+    friend struct IPC::ArgumentCoder<SocketStreamError, void>;
 public:
     SocketStreamError() = default;
 
@@ -45,11 +48,11 @@ public:
     {
     }
 
-    SocketStreamError(int errorCode, const String& failingURL, const String& localizedDescription)
+    SocketStreamError(int errorCode, const String& failingURL, const String& localizedDescription, bool isNull = false)
         : m_errorCode(errorCode)
         , m_failingURL(failingURL)
         , m_localizedDescription(localizedDescription)
-        , m_isNull(false)
+        , m_isNull(isNull)
     {
     }
 
@@ -58,41 +61,11 @@ public:
     const String& failingURL() const { return m_failingURL; }
     const String& localizedDescription() const { return m_localizedDescription; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, SocketStreamError&);
-
 private:
     int m_errorCode { 0 };
     String m_failingURL;
     String m_localizedDescription;
     bool m_isNull { true };
 };
-
-template<class Encoder>
-void SocketStreamError::encode(Encoder& encoder) const
-{
-    encoder << m_isNull;
-    if (m_isNull)
-        return;
-    encoder << m_errorCode;
-    encoder << m_failingURL;
-    encoder << m_localizedDescription;
-}
-
-template<class Decoder>
-bool SocketStreamError::decode(Decoder& decoder, SocketStreamError& error)
-{
-    if (!decoder.decode(error.m_isNull))
-        return false;
-    if (error.m_isNull)
-        return true;
-    if (!decoder.decode(error.m_errorCode))
-        return false;
-    if (!decoder.decode(error.m_failingURL))
-        return false;
-    if (!decoder.decode(error.m_localizedDescription))
-        return false;
-    return true;
-}
 
 }

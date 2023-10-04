@@ -1,5 +1,5 @@
 
 
 
-FAIL Anchor selection can select empty inline-blocks assert_equals: expected 200 but got 150
+PASS Anchor selection can select empty inline-blocks
 

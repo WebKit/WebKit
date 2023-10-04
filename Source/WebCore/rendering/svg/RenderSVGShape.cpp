@@ -54,8 +54,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGShape);
 
-RenderSVGShape::RenderSVGShape(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGModelObject(element, WTFMove(style))
+RenderSVGShape::RenderSVGShape(Type type, SVGGraphicsElement& element, RenderStyle&& style)
+    : RenderSVGModelObject(type, element, WTFMove(style))
 {
 }
 
@@ -351,7 +351,7 @@ bool RenderSVGShape::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
 
     SVGHitTestCycleDetectionScope hitTestScope(*this);
 
-    PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, request, style().effectivePointerEvents());
+    PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGPath, request, style().effectivePointerEvents());
     bool isVisible = (style().visibility() == Visibility::Visible);
     if (isVisible || !hitRules.requireVisible) {
         const SVGRenderStyle& svgStyle = style().svgStyle();

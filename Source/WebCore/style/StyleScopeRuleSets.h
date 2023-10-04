@@ -67,6 +67,7 @@ public:
     const RuleFeatureSet& features() const;
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
+    RuleSet* scopeBreakingHasPseudoClassInvalidationRuleSet() const { return m_scopeBreakingHasPseudoClassInvalidationRuleSet.get(); }
 
     const Vector<InvalidationRuleSet>* idInvalidationRuleSets(const AtomString&) const;
     const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString&) const;
@@ -108,6 +109,7 @@ private:
     mutable RuleFeatureSet m_features;
     mutable RefPtr<RuleSet> m_siblingRuleSet;
     mutable RefPtr<RuleSet> m_uncommonAttributeRuleSet;
+    mutable RefPtr<RuleSet> m_scopeBreakingHasPseudoClassInvalidationRuleSet;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;

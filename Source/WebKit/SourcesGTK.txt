@@ -79,7 +79,6 @@ Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
 Shared/CoordinatedGraphics/SimpleViewportController.cpp
 
 Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
-Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
 
 Shared/cairo/ShareableBitmapCairo.cpp
@@ -260,6 +259,10 @@ UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 
 UIProcess/cairo/BackingStoreCairo.cpp @no-unify
 
+UIProcess/glib/DisplayLinkGLib.cpp
+UIProcess/glib/DisplayVBlankMonitor.cpp
+UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+UIProcess/glib/DisplayVBlankMonitorTimer.cpp
 UIProcess/glib/WebPageProxyGLib.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp

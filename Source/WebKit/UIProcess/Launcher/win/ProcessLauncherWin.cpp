@@ -29,8 +29,8 @@
 
 #include "Connection.h"
 #include "IPCUtilities.h"
-#include <WTF/RunLoop.h>
 #include <shlwapi.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {

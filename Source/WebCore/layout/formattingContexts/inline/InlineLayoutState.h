@@ -27,14 +27,13 @@
 
 #include "AvailableLineWidthOverride.h"
 #include "BlockLayoutState.h"
-#include "FloatingState.h"
 
 namespace WebCore {
 namespace Layout {
 
 class InlineLayoutState {
 public:
-    InlineLayoutState(BlockLayoutState&, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets);
+    InlineLayoutState(BlockLayoutState&);
 
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
@@ -45,27 +44,42 @@ public:
     const BlockLayoutState& parentBlockLayoutState() const { return m_parentBlockLayoutState; }
     BlockLayoutState& parentBlockLayoutState() { return m_parentBlockLayoutState; }
 
-    LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(&listMarkerBox); }
-
     void setAvailableLineWidthOverride(AvailableLineWidthOverride availableLineWidthOverride) { m_availableLineWidthOverride = availableLineWidthOverride; }
     const AvailableLineWidthOverride& availableLineWidthOverride() const { return m_availableLineWidthOverride; }
 
     void setClampedLineIndex(size_t lineIndex) { m_clampedLineIndex = lineIndex; }
     std::optional<size_t> clampedLineIndex() const { return m_clampedLineIndex; }
 
+    void setHyphenationLimitLines(size_t hyphenationLimitLines) { m_hyphenationLimitLines = hyphenationLimitLines; }
+    void incrementSuccessiveHyphenatedLineCount() { ++m_successiveHyphenatedLineCount; }
+    void resetSuccessiveHyphenatedLineCount() { m_successiveHyphenatedLineCount = 0; }
+    bool isHyphenationDisabled() const { return m_hyphenationLimitLines && *m_hyphenationLimitLines <= m_successiveHyphenatedLineCount; }
+
+    void setInStandardsMode() { m_inStandardsMode = true; }
+    bool inStandardsMode() const { return m_inStandardsMode; }
+
+    // Integration codepath
+    void setNestedListMarkerOffsets(HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets) { m_nestedListMarkerOffsets = WTFMove(nestedListMarkerOffsets); }
+    LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(&listMarkerBox); }
+    void setShouldNotSynthesizeInlineBlockBaseline() { m_shouldNotSynthesizeInlineBlockBaseline = true; }
+    bool shouldNotSynthesizeInlineBlockBaseline() const { return m_shouldNotSynthesizeInlineBlockBaseline; }
+
 private:
     BlockLayoutState& m_parentBlockLayoutState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
     InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
     std::optional<size_t> m_clampedLineIndex { };
+    std::optional<size_t> m_hyphenationLimitLines { };
+    size_t m_successiveHyphenatedLineCount { 0 };
     // FIXME: This is required by the integaration codepath.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
     AvailableLineWidthOverride m_availableLineWidthOverride;
+    bool m_shouldNotSynthesizeInlineBlockBaseline { false };
+    bool m_inStandardsMode { false };
 };
 
-inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets)
+inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState)
     : m_parentBlockLayoutState(parentBlockLayoutState)
-    , m_nestedListMarkerOffsets(WTFMove(nestedListMarkerOffsets))
 {
 }
 

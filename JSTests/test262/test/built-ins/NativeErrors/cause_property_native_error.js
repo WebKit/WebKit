@@ -36,7 +36,7 @@ for (var i = 0; i < nativeErrors.length; ++i) {
   verifyProperty(error, "cause", {
     configurable: true,
     enumerable: false,
-    writeable: true,
+    writable: true,
     value: cause,
   });
 

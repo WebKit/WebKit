@@ -49,6 +49,7 @@
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Assertions.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -278,7 +279,7 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<Render
 };
 
 
-class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page> {
+class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page>, public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(Page);
     WTF_MAKE_FAST_ALLOCATED;
     friend class SettingsBase;
@@ -479,6 +480,8 @@ public:
     void didStartProvisionalLoad();
     void didCommitLoad();
     void didFinishLoad();
+
+    void willChangeLocationInCompletelyLoadedSubframe();
 
     bool delegatesScaling() const { return m_delegatesScaling; }
     WEBCORE_EXPORT void setDelegatesScaling(bool);
@@ -770,8 +773,8 @@ public:
     void setIsCountingRelevantRepaintedObjects(bool isCounting) { m_isCountingRelevantRepaintedObjects = isCounting; }
     void startCountingRelevantRepaintedObjects();
     void resetRelevantPaintedObjectCounter();
-    void addRelevantRepaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
-    void addRelevantUnpaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
+    void addRelevantRepaintedObject(const RenderObject&, const LayoutRect& objectPaintRect);
+    void addRelevantUnpaintedObject(const RenderObject&, const LayoutRect& objectPaintRect);
 
     WEBCORE_EXPORT void suspendActiveDOMObjectsAndAnimations();
     WEBCORE_EXPORT void resumeActiveDOMObjectsAndAnimations();
@@ -981,8 +984,8 @@ public:
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
-    static void forEachDocumentFromMainFrame(const LocalFrame&, const Function<void(Document&)>&);
-    void forEachFrame(const Function<void(LocalFrame&)>&);
+    static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
+    void forEachLocalFrame(const Function<void(LocalFrame&)>&);
     void forEachWindowEventLoop(const Function<void(WindowEventLoop&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
@@ -1055,8 +1058,15 @@ public:
 
     void opportunisticallyRunIdleCallbacks();
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
+    String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&);
+    WEBCORE_EXPORT void setMediaKeysStorageDirectory(const String&);
 
     bool isWaitingForLoadToFinish() const { return m_isWaitingForLoadToFinish; }
+
+#if PLATFORM(IOS_FAMILY)
+    WEBCORE_EXPORT void setSceneIdentifier(String&&);
+#endif
+    WEBCORE_EXPORT String sceneIdentifier() const;
 
 private:
     struct Navigation {
@@ -1244,8 +1254,8 @@ private:
     int m_footerHeight { 0 };
 
     std::unique_ptr<RenderingUpdateScheduler> m_renderingUpdateScheduler;
+    WeakHashSet<const RenderObject> m_relevantUnpaintedRenderObjects;
 
-    HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
     Region m_topRelevantPaintedRegion;
     Region m_bottomRelevantPaintedRegion;
     Region m_relevantUnpaintedRegion;
@@ -1432,6 +1442,10 @@ private:
     Ref<HistoryItemClient> m_historyItemClient;
 
     HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
+
+#if PLATFORM(IOS_FAMILY)
+    String m_sceneIdentifier;
+#endif
 };
 
 inline PageGroup& Page::group()

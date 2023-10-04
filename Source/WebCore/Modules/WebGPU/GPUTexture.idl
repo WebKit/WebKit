@@ -27,12 +27,26 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
+    Exposed=(Window,DedicatedWorker),
     SecureContext
 ]
 interface GPUTexture {
     GPUTextureView createView(optional GPUTextureViewDescriptor descriptor);
 
     undefined destroy();
+
+    readonly attribute GPUIntegerCoordinateOut width;
+    readonly attribute GPUIntegerCoordinateOut height;
+    readonly attribute GPUIntegerCoordinateOut depthOrArrayLayers;
+    readonly attribute GPUIntegerCoordinateOut mipLevelCount;
+    readonly attribute GPUSize32Out sampleCount;
+    readonly attribute GPUTextureDimension dimension;
+    readonly attribute GPUTextureFormat format;
+    readonly attribute GPUFlagsConstant usage;
 };
 GPUTexture includes GPUObjectBase;
+
+typedef unsigned long GPUIntegerCoordinateOut;
+typedef unsigned long GPUSize32Out;
+
+typedef unsigned long GPUFlagsConstant;

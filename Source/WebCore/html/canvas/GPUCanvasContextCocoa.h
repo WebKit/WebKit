@@ -65,9 +65,8 @@ public:
     PixelFormat pixelFormat() const override;
     void reshape(int width, int height) override;
 
-    // FIXME: implement these to allow for painting
-    void prepareForDisplayWithPaint() override { }
-    void paintRenderingResultsToCanvas() override { }
+    void prepareForDisplayWithPaint() override;
+    void paintRenderingResultsToCanvas() override;
     // GPUCanvasContext methods:
     CanvasType canvas() override;
     void configure(GPUCanvasConfiguration&&) override;
@@ -90,13 +89,15 @@ private:
         return static_cast<bool>(m_configuration);
     }
 
+    CanvasType htmlOrOffscreenCanvas() const;
+
     struct Configuration {
         Ref<GPUDevice> device;
         GPUTextureFormat format { GPUTextureFormat::R8unorm };
         GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
         Vector<GPUTextureFormat> viewFormats;
         GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
-        GPUCanvasCompositingAlphaMode compositingAlphaMode { GPUCanvasCompositingAlphaMode::Opaque };
+        GPUCanvasAlphaMode compositingAlphaMode { GPUCanvasAlphaMode::Opaque };
         Vector<MachSendRight> renderBuffers;
         unsigned frameCount { 0 };
     };

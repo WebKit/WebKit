@@ -98,7 +98,7 @@ struct Cookie {
 
     SameSitePolicy sameSite { SameSitePolicy::None };
 
-    Cookie(String&& name, String&& value, String&& domain, String&& path, double created, std::optional<double> expires, bool httpOnly, bool secure, bool session, String&& comment, URL&& commentURL, Vector<uint16_t>&& ports, SameSitePolicy sameSite)
+    Cookie(String&& name, String&& value, String&& domain, String&& path, double created, std::optional<double> expires, bool httpOnly, bool secure, bool session, String&& comment, URL&& commentURL, Vector<uint16_t> ports, SameSitePolicy sameSite)
         : name(WTFMove(name))
         , value(WTFMove(value))
         , domain(WTFMove(domain))
@@ -114,6 +114,9 @@ struct Cookie {
         , sameSite(sameSite)
     {
     }
+
+    Cookie isolatedCopy() const & { return { name.isolatedCopy(), value.isolatedCopy(), domain.isolatedCopy(), path.isolatedCopy(), created, expires, httpOnly, secure, session, comment.isolatedCopy(), commentURL.isolatedCopy(), ports, sameSite }; }
+    Cookie isolatedCopy() && { return { WTFMove(name).isolatedCopy(), WTFMove(value).isolatedCopy(), WTFMove(domain).isolatedCopy(), WTFMove(path).isolatedCopy(), created, expires, httpOnly, secure, session, WTFMove(comment).isolatedCopy(), WTFMove(commentURL).isolatedCopy(), WTFMove(ports), sameSite }; }
 };
 
 struct CookieHash {

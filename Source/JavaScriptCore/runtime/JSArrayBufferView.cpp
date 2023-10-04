@@ -99,7 +99,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(VM& vm, Structure* s
     if (!m_vector)
         return;
 
-    vm.heap.reportExtraMemoryAllocated(size.value());
+    vm.heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), size.value());
     
     m_structure = structure;
     m_mode = OversizeTypedArray;

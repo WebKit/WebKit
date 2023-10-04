@@ -50,7 +50,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <wtf/SoftLinking.h>
 SOFT_LINK_FRAMEWORK(UIKit)

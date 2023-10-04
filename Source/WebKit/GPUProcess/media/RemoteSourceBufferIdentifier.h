@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum RemoteSourceBufferIdentifierType { };
+enum class RemoteSourceBufferIdentifierType { };
 using RemoteSourceBufferIdentifier = ObjectIdentifier<RemoteSourceBufferIdentifierType>;
 
 } // namespace WebKit

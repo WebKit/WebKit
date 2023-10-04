@@ -283,26 +283,26 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
             // last word to the line break (also RightWordIfOnBoundary);
             VisiblePosition start = VisiblePosition(m_start, m_affinity);
             VisiblePosition originalEnd(m_end, m_affinity);
-            EWordSide side = RightWordIfOnBoundary;
+            WordSide side = WordSide::RightWordIfOnBoundary;
             if (isEndOfEditableOrNonEditableContent(start) || (isEndOfLine(start) && !isStartOfLine(start) && !isEndOfParagraph(start)))
-                side = LeftWordIfOnBoundary;
+                side = WordSide::LeftWordIfOnBoundary;
             m_start = startOfWord(start, side).deepEquivalent();
-            side = RightWordIfOnBoundary;
+            side = WordSide::RightWordIfOnBoundary;
             if (isEndOfEditableOrNonEditableContent(originalEnd) || (isEndOfLine(originalEnd) && !isStartOfLine(originalEnd) && !isEndOfParagraph(originalEnd)))
-                side = LeftWordIfOnBoundary;
+                side = WordSide::LeftWordIfOnBoundary;
 
             VisiblePosition wordEnd(endOfWord(originalEnd, side));
             VisiblePosition end(wordEnd);
             
-            if (isEndOfParagraph(originalEnd) && !isEmptyTableCell(m_start.deprecatedNode())) {
+            if (isEndOfParagraph(originalEnd) && !isEmptyTableCell(m_start.protectedDeprecatedNode().get())) {
                 // Select the paragraph break (the space from the end of a paragraph to the start of 
                 // the next one) to match TextEdit.
                 end = wordEnd.next();
                 
-                if (auto* table = isFirstPositionAfterTable(end)) {
+                if (RefPtr table = isFirstPositionAfterTable(end)) {
                     // The paragraph break after the last paragraph in the last cell of a block table ends
                     // at the start of the paragraph after the table.
-                    if (isBlock(table))
+                    if (isBlock(*table))
                         end = end.next(CannotCrossEditingBoundary);
                     else
                         end = wordEnd;
@@ -352,10 +352,10 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
             // of the next one) in the selection.
             VisiblePosition end(visibleParagraphEnd.next());
 
-            if (Node* table = isFirstPositionAfterTable(end)) {
+            if (RefPtr table = isFirstPositionAfterTable(end)) {
                 // The paragraph break after the last paragraph in the last cell of a block table ends
                 // at the start of the paragraph after the table, not at the position just after the table.
-                if (isBlock(table))
+                if (isBlock(*table))
                     end = end.next(CannotCrossEditingBoundary);
                 // There is no parargraph break after the last paragraph in the last cell of an inline table.
                 else
@@ -559,11 +559,11 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
     if (m_base == m_start && m_base == m_end)
         return;
 
-    auto* baseRoot = highestEditableRoot(m_base);
-    auto* startRoot = highestEditableRoot(m_start);
-    auto* endRoot = highestEditableRoot(m_end);
+    auto baseRoot = highestEditableRoot(m_base);
+    auto startRoot = highestEditableRoot(m_start);
+    auto endRoot = highestEditableRoot(m_end);
     
-    auto* baseEditableAncestor = lowestEditableAncestor(m_base.containerNode());
+    auto* baseEditableAncestor = lowestEditableAncestor(m_base.protectedContainerNode().get());
     
     // The base, start and end are all in the same region.  No adjustment necessary.
     if (baseRoot == startRoot && baseRoot == endRoot)
@@ -575,7 +575,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
         // If the start is in non-editable content that is inside the base's editable root, put it
         // at the first editable position after start inside the base's editable root.
         if (startRoot != baseRoot) {
-            VisiblePosition first = firstEditablePositionAfterPositionInRoot(m_start, baseRoot);
+            VisiblePosition first = firstEditablePositionAfterPositionInRoot(m_start, baseRoot.get());
             m_start = first.deepEquivalent();
             if (m_start.isNull()) {
                 ASSERT_NOT_REACHED();
@@ -586,7 +586,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
         // If the end is in non-editable content that is inside the base's root, put it
         // at the last editable position before the end inside the base's root.
         if (endRoot != baseRoot) {
-            VisiblePosition last = lastEditablePositionBeforePositionInRoot(m_end, baseRoot);
+            VisiblePosition last = lastEditablePositionBeforePositionInRoot(m_end, baseRoot.get());
             m_end = last.deepEquivalent();
             if (m_end.isNull())
                 m_end = m_start;
@@ -598,7 +598,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
     
         // The selection ends in editable content or non-editable content inside a different editable ancestor, 
         // move backward until non-editable content inside the same lowest editable ancestor is reached.
-        auto* endEditableAncestor = lowestEditableAncestor(m_end.containerNode());
+        auto* endEditableAncestor = lowestEditableAncestor(m_end.protectedContainerNode().get());
         if (endRoot || endEditableAncestor != baseEditableAncestor) {
             
             Position p = previousVisuallyDistinctCandidate(m_end);

@@ -428,18 +428,18 @@ AlternateFullScreenControlDesignEnabled:
 
 AlternateWebMPlayerEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: media
   humanReadableName: "Alternate WebM Player"
   humanReadableDescription: "Enable Alternate WebM Player"
-  condition: ENABLE(ALTERNATE_WEBM_PLAYER)
+  condition: ENABLE(ALTERNATE_WEBM_PLAYER) && ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKitLegacy:
-     default: false
+     default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 AlwaysZoomOnDoubleTap:
   type: bool
@@ -1046,17 +1046,17 @@ CSSContainmentEnabled:
 
 CSSContentVisibilityEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS Content Visibility"
   humanReadableDescription: "Enable CSS content-visibility"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSCounterStyleAtRuleImageSymbolsEnabled:
   type: bool
@@ -1494,6 +1494,25 @@ CSSTypedOMEnabled:
       default: true
     WebCore:
       default: true
+
+CSSUnprefixedBackdropFilterEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS Unprefixed Backdrop Filter"
+  humanReadableDescription: "Enable unprefixed backdrop-filter CSS property"
+  condition: ENABLE(FILTERS_LEVEL_2)
+  defaultValue:
+    WebKitLegacy:
+      "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
+      default: false
+    WebKit:
+      "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
+      default: false
+    WebCore:
+      "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
+      default: false
+
 
 CSSWhiteSpaceLonghandsEnabled:
   type: bool
@@ -2172,6 +2191,22 @@ DeclarativeShadowDOMInDOMParserEnabled:
     WebCore:
       default: false
 
+DeclarativeWebPush:
+  type: bool
+  status: unstable
+  category: dom
+  defaultsOverridable: true
+  condition: ENABLE(DECLARATIVE_WEB_PUSH)
+  humanReadableName: "Declarative Web Push"
+  humanReadableDescription: "Enable Declarative Web Push"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DefaultARIAForCustomElementsEnabled:
   type: bool
   status: stable
@@ -2419,20 +2454,6 @@ DisallowSyncXHRDuringPageDismissalEnabled:
       default: true
     WebCore:
       default: true
-
-DisplayListDrawingEnabled:
-  type: bool
-  status: unstable
-  defaultsOverridable: true
-  humanReadableName: "DisplayList Drawing"
-  humanReadableDescription: "Enable display-list drawing"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 DownloadAttributeEnabled:
@@ -2992,18 +3013,19 @@ GoogleAntiFlickerOptimizationQuirkEnabled:
 
 GraphicsContextFiltersEnabled:
    type: bool
-   status: unstable
+   status: stable
+   category: media
    webcoreOnChange: setNeedsRelayoutAllFrames
    humanReadableName: "GraphicsContext Filter Rendering"
    humanReadableDescription: "GraphicsContext Filter Rendering"
    condition: USE(GRAPHICS_CONTEXT_FILTERS)
    defaultValue:
      WebKitLegacy:
-       default: false
+       default: true
      WebKit:
-       default: false
+       default: true
      WebCore:
-       default: false
+       default: true
 
 HTTPEquivEnabled:
   type: bool
@@ -3085,7 +3107,7 @@ HighlightAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
 
 HyperlinkAuditingEnabled:
   type: bool
@@ -5377,10 +5399,10 @@ RemoveBackgroundEnabled:
 ReplayCGDisplayListsIntoBackingStore:
   type: bool
   status: internal
-  humanReadableName: "CG Display Lists: Replay for Testing"
-  humanReadableDescription: "Replay CG Display Lists into layer contents for testing"
+  humanReadableName: "Dynamic Content Scaling: Replay for Testing"
+  humanReadableDescription: "Replay Dynamic Content Scaling Display Lists into layer contents for testing"
   webcoreBinding: none
-  condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+  condition: ENABLE(RE_DYNAMIC_CONTENT_SCALING)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
@@ -6778,6 +6800,20 @@ UndoManagerAPIEnabled:
     WebCore:
       default: false
 
+UnifiedPDFEnabled:
+  type: bool
+  status: internal
+  category: security
+  humanReadableName: "Unified PDF Viewer"
+  humanReadableDescription: "Enable Unified PDF Viewer"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UnprefixedFullscreenAPIEnabled:
   type: bool
   status: stable
@@ -6816,25 +6852,27 @@ UseARKitForModel:
     WebKit:
       default: true
 
-UseCGDisplayListImageCache:
+UseAsyncUIKitInteractions:
   type: bool
   status: internal
-  humanReadableName: "CG Display Lists: Image Cache"
-  humanReadableDescription: "Cache and transmit surfaces out-of-line for CG Display List image buffers."
-  webcoreBinding: none
-  condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-  exposed: [ WebKit ]
+  humanReadableName: "Async UIKit Interactions"
+  humanReadableDescription: "Use Async UIKit Interactions"
+  condition: PLATFORM(IOS_FAMILY)
   defaultValue:
+    WebKitLegacy:
+      default: false
     WebKit:
-      default: true
+      default: false
+    WebCore:
+      default: false
 
 UseCGDisplayListsForDOMRendering:
   type: bool
   status: internal
-  humanReadableName: "CG Display Lists: DOM Rendering"
-  humanReadableDescription: "Use CG Display Lists for DOM rendering"
+  humanReadableName: "Dynamic Content Scaling: DOM Rendering"
+  humanReadableDescription: "Use Dynamic Content Scaling for DOM rendering"
   webcoreBinding: none
-  condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+  condition: ENABLE(RE_DYNAMIC_CONTENT_SCALING)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
@@ -7784,7 +7822,7 @@ WebRTCMediaPipelineAdditionalLoggingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
 

@@ -52,8 +52,8 @@ public:
     float logicalTop() const { return line().lineBoxLogicalRect().y(); }
     float logicalBottom() const { return line().lineBoxLogicalRect().maxY(); }
     float logicalWidth() const { return line().lineBoxLogicalRect().width(); }
-    float inkOverflowTop() const { return line().inkOverflow().y(); }
-    float inkOverflowBottom() const { return line().inkOverflow().maxY(); }
+    float inkOverflowLogicalTop() const { return line().isHorizontal() ? line().inkOverflow().y() : line().inkOverflow().x(); }
+    float inkOverflowLogicalBottom() const { return line().isHorizontal() ? line().inkOverflow().maxY() : line().inkOverflow().maxX(); }
     float scrollableOverflowTop() const { return line().scrollableOverflow().y(); }
     float scrollableOverflowBottom() const { return line().scrollableOverflow().maxY(); }
 
@@ -61,9 +61,18 @@ public:
     FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return *line().ellipsisVisualRect(); }
     TextRun ellipsisText() const { return line().ellipsisText(); }
 
-    float contentLogicalTopAdjustedForPrecedingLineBox() const { return !m_lineIndex ? contentLogicalTop() : LineBoxIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLineBox(); }
-    // FIXME: Implement.
-    float contentLogicalBottomAdjustedForFollowingLineBox() const { return contentLogicalBottom(); }
+    float contentLogicalTopAdjustedForPrecedingLineBox() const
+    {
+        if (isFlippedLinesWritingMode(formattingContextRoot().style().writingMode()) || !m_lineIndex)
+            return contentLogicalTop();
+        return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex - 1 }.contentLogicalBottom();
+    }
+    float contentLogicalBottomAdjustedForFollowingLineBox() const
+    {
+        if (!isFlippedLinesWritingMode(formattingContextRoot().style().writingMode()) || m_lineIndex == lines().size() - 1)
+            return contentLogicalBottom();
+        return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 }.contentLogicalTop();
+    }
 
     float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLogicalLeftIgnoringInlineDirection(); }
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentLogicalWidth(); }

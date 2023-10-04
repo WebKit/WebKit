@@ -28,6 +28,7 @@
 #include "config.h"
 #include "HTMLCanvasElement.h"
 
+#include "BitmapImage.h"
 #include "Blob.h"
 #include "BlobCallback.h"
 #include "CanvasGradient.h"
@@ -823,7 +824,7 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
         return downcast<WebGLRenderingContextBase>(*m_context).paintCompositedResultsToVideoFrame();
     }
 #endif
-    auto* imageBuffer = buffer();
+    RefPtr imageBuffer = buffer();
     if (!imageBuffer)
         return nullptr;
     if (document().settings().webAPIStatisticsEnabled())
@@ -923,7 +924,7 @@ Image* HTMLCanvasElement::copiedImage() const
     if (!m_copiedImage && buffer()) {
         if (m_context)
             m_context->paintRenderingResultsToCanvas();
-        m_copiedImage = buffer()->copyImage(CopyBackingStore, PreserveResolution::Yes);
+        m_copiedImage = BitmapImage::create(buffer()->copyNativeImage());
     }
     return m_copiedImage.get();
 }

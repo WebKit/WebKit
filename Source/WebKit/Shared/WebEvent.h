@@ -67,9 +67,6 @@ public:
 
     WTF::UUID authorizationToken() const { return m_authorizationToken; }
 
-protected:
-    WebEvent();
-
 private:
     WebEventType m_type;
     OptionSet<WebEventModifier> m_modifiers;

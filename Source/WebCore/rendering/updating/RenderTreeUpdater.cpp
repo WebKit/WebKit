@@ -446,7 +446,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
     if (is<RenderText>(renderingParent.previousChildRenderer))
         return true;
     // This text node has nothing but white space. We may still need a renderer in some cases.
-    if (parentRenderer.isTable() || parentRenderer.isTableRow() || parentRenderer.isTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isFlexibleBox() && !parentRenderer.isRenderButton()))
+    if (parentRenderer.isTable() || parentRenderer.isTableRow() || parentRenderer.isTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isRenderFlexibleBox() && !parentRenderer.isRenderButton()))
         return false;
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
@@ -492,7 +492,7 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
     if (textUpdate && textUpdate->inheritedDisplayContentsStyle && *textUpdate->inheritedDisplayContentsStyle) {
         // Wrap text renderer into anonymous inline so we can give it a style.
         // This is to support "<div style='display:contents;color:green'>text</div>" type cases
-        auto newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderInline>(textNode.document(), RenderStyle::clone(**textUpdate->inheritedDisplayContentsStyle));
+        auto newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, textNode.document(), RenderStyle::clone(**textUpdate->inheritedDisplayContentsStyle));
         newDisplayContentsAnonymousWrapper->initializeStyle();
         auto& displayContentsAnonymousWrapper = *newDisplayContentsAnonymousWrapper;
         m_builder.attach(renderTreePosition.parent(), WTFMove(newDisplayContentsAnonymousWrapper), renderTreePosition.nextSibling());

@@ -20,6 +20,8 @@
     </li>
 </div>
 
+<button id="foo-button">I am foo button</button>
+
 <script>
     var testOutput = "This test ensures that tree and treeitem objects report the most up-to-date children and rows after dynamic page changes.\n\n";
 
@@ -77,6 +79,10 @@
             testOutput += `#treeitem2 had disclosed row #${firstDisclosedRow.domIdentifier}\n`;
             testOutput += `#treeitem2 had disclosed row #${secondDisclosedRow.domIdentifier}\n`;
             verifyTreeRows();
+
+            document.getElementById('treeitem2').appendChild(document.getElementById('foo-button'));
+            await waitFor(() => accessibilityController.accessibleElementById("treeitem2").childrenCount >= 1);
+            verifyChildren("treeitem2");
 
             debug(testOutput);
             finishJSTest();

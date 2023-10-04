@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum ElementIdentifierType { };
+enum class ElementIdentifierType { };
 using ElementIdentifier = ObjectIdentifier<ElementIdentifierType>;
 
 }

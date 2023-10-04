@@ -26,6 +26,7 @@ depends:
 - sdk/icecc.bst
 - sdk/krb5.bst
 - sdk/libavif.bst
+- sdk/libbacktrace.bst
 - sdk/libevent.bst
 - sdk/libjxl.bst
 - sdk/libmanette.bst

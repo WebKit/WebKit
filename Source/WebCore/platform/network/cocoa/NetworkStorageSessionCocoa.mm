@@ -735,7 +735,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         auto cookies = nsCookiesToCookieVector(addedCookies, [](NSHTTPCookie *cookie) { return !cookie.HTTPOnly; });
         if (cookies.isEmpty())
             return;
-        for (auto* observer : it->value)
+        for (auto& observer : it->value)
             observer->cookiesAdded(host, cookies);
     }).get() onQueue:dispatch_get_main_queue()];
 
@@ -744,7 +744,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
             return;
         if (removeAllCookies) {
             for (auto& observers : m_cookieChangeObservers.values()) {
-                for (auto* observer : observers)
+                for (auto& observer : observers)
                     observer->allCookiesDeleted();
             }
             return;
@@ -758,7 +758,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         auto cookies = nsCookiesToCookieVector(removedCookies, [](NSHTTPCookie *cookie) { return !cookie.HTTPOnly; });
         if (cookies.isEmpty())
             return;
-        for (auto* observer : it->value)
+        for (auto& observer : it->value)
             observer->cookiesDeleted(host, cookies);
     }).get() onQueue:dispatch_get_main_queue()];
 }
@@ -780,7 +780,7 @@ void NetworkStorageSession::startListeningForCookieChangeNotifications(CookieCha
     registerCookieChangeListenersIfNecessary();
 
     auto& observers = m_cookieChangeObservers.ensure(host, [] {
-        return HashSet<CookieChangeObserver*> { };
+        return HashSet<CheckedPtr<CookieChangeObserver>> { };
     }).iterator->value;
     ASSERT(!observers.contains(&observer));
     observers.add(&observer);

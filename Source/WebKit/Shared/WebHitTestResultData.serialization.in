@@ -28,6 +28,12 @@ headers: "ArgumentCoders.h"
     Horizontal
 };
 
+[Nested] enum class WebKit::WebHitTestResultData::ElementType : uint8_t {
+    None,
+    Audio,
+    Video
+};
+
 struct WebKit::WebHitTestResultData {
     String absoluteImageURL;
     String absolutePDFURL;
@@ -43,7 +49,7 @@ struct WebKit::WebHitTestResultData {
     bool isTextNode;
     bool isOverTextInsideFormControlElement;
     bool isDownloadableMedia;
-
+    WebKit::WebHitTestResultData::ElementType elementType;
     String lookupText;
     String toolTipText;
     String imageText;

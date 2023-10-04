@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,11 +32,13 @@
 #include "ActiveDOMObject.h"
 #include "DoubleRange.h"
 #include "EventTarget.h"
+#include "IDLTypes.h"
 #include "LongRange.h"
 #include "MediaProducer.h"
 #include "MediaStreamTrackPrivate.h"
 #include "MediaTrackCapabilities.h"
 #include "MediaTrackConstraints.h"
+#include "PhotoCapabilities.h"
 #include "PlatformMediaSession.h"
 #include <wtf/LoggerHelper.h>
 
@@ -110,6 +112,7 @@ public:
         std::optional<double> aspectRatio;
         std::optional<double> frameRate;
         String facingMode;
+        String whiteBalanceMode;
         std::optional<double> volume;
         std::optional<int> sampleRate;
         std::optional<int> sampleSize;
@@ -123,6 +126,8 @@ public:
 
     using TrackCapabilities = MediaTrackCapabilities;
     TrackCapabilities getCapabilities() const;
+
+    void getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&&) const;
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
     void setConstraints(MediaTrackConstraints&& constraints) { m_constraints = WTFMove(constraints); }

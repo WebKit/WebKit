@@ -24,8 +24,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.NumberFormat.prototype.resolvedOptions.length, 0);
-
-verifyNotEnumerable(Intl.NumberFormat.prototype.resolvedOptions, "length");
-verifyNotWritable(Intl.NumberFormat.prototype.resolvedOptions, "length");
-verifyConfigurable(Intl.NumberFormat.prototype.resolvedOptions, "length");
+verifyProperty(Intl.NumberFormat.prototype.resolvedOptions, "length", {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

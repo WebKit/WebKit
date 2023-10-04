@@ -27,22 +27,9 @@
 
 #include "ASTBuilder.h"
 #include "ASTNode.h"
+#include "WGSLEnums.h"
 
 namespace WGSL::AST {
-
-enum class StorageClass : uint8_t {
-    Function,
-    Private,
-    Workgroup,
-    Uniform,
-    Storage
-};
-
-enum class AccessMode : uint8_t {
-    Read,
-    Write,
-    ReadWrite
-};
 
 // FIXME: Perhaps this class is not needed if we have spanned identifier?
 class VariableQualifier final : public Node {
@@ -52,17 +39,17 @@ public:
     using Ptr = VariableQualifier*;
 
     NodeKind kind() const override;
-    StorageClass storageClass() const { return m_storageClass; }
+    AddressSpace addressSpace() const { return m_addressSpace; }
     AccessMode accessMode() const { return m_accessMode; }
 
 private:
-    VariableQualifier(SourceSpan span, StorageClass storageClass, AccessMode accessMode)
+    VariableQualifier(SourceSpan span, AddressSpace addressSpace, AccessMode accessMode)
         : Node(span)
-        , m_storageClass(storageClass)
+        , m_addressSpace(addressSpace)
         , m_accessMode(accessMode)
     { }
 
-    StorageClass m_storageClass;
+    AddressSpace m_addressSpace;
     AccessMode m_accessMode;
 };
 

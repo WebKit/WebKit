@@ -153,7 +153,7 @@ public:
     void setMuted(bool) final;
     MediaPlayer::NetworkState networkState() const final;
     MediaPlayer::ReadyState readyState() const final;
-    void setPageIsVisible(bool visible) final { m_visible = visible; }
+    void setPageIsVisible(bool visible, String&&) final { m_visible = visible; }
     void setVisibleInViewport(bool isVisible) final;
     void setPresentationSize(const IntSize&) final;
     // Prefer MediaTime based methods over float based.
@@ -255,6 +255,16 @@ protected:
         StreamCollectionChanged = 1 << 7
     };
 
+    enum class PlaybackRatePausedState {
+        ManuallyPaused, // Initialization or user explicitly paused. This takes preference over RatePaused. You don't
+                        // transition from Manually to Rate Paused unless there is a play while rate == 0.
+        RatePaused, // Pipeline was playing and rate was set to zero.
+        ShouldMoveToPlaying, // Pipeline was paused because of zero rate and it should be playing. This is not a
+                             // definitive state, just an operational transition from RatePaused to Playing to keep the
+                             // pipeline state changes contained in updateStates.
+        Playing, // Pipeline is playing and it should be.
+    };
+
     static bool isAvailable();
 
     virtual void durationChanged();
@@ -318,9 +328,6 @@ protected:
     void ensureSeekFlags();
 
     static void sourceSetupCallback(MediaPlayerPrivateGStreamer*, GstElement*);
-    static void videoChangedCallback(MediaPlayerPrivateGStreamer*);
-    static void audioChangedCallback(MediaPlayerPrivateGStreamer*);
-    static void textChangedCallback(MediaPlayerPrivateGStreamer*);
 
     void timeChanged(const MediaTime&); // If MediaTime is valid, indicates that a seek has completed.
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
@@ -355,6 +362,7 @@ protected:
     // https://bugs.webkit.org/show_bug.cgi?id=260385
     bool m_isPaused { true };
     float m_playbackRate { 1 };
+    PlaybackRatePausedState m_playbackRatePausedState { PlaybackRatePausedState::ManuallyPaused };
     GstState m_currentState { GST_STATE_NULL };
     GstState m_oldState { GST_STATE_NULL };
     GstState m_requestedState { GST_STATE_VOID_PENDING };
@@ -521,7 +529,6 @@ private:
     GRefPtr<GstElement> m_textSink;
     GUniquePtr<GstStructure> m_mediaLocations;
     int m_mediaLocationCurrentIndex { 0 };
-    bool m_isPlaybackRatePaused { false };
     MediaTime m_timeOfOverlappingSeek;
     // Last playback rate sent through a GStreamer seek.
     float m_lastPlaybackRate { 1 };

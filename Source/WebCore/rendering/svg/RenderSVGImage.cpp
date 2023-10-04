@@ -57,7 +57,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGImage);
 
 RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
-    : RenderSVGModelObject(element, WTFMove(style))
+    : RenderSVGModelObject(Type::SVGImage, element, WTFMove(style))
     , m_imageResource(makeUnique<RenderImageResource>())
 {
     imageResource().initialize(*this);
@@ -203,13 +203,13 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
     }
 
     if (!imageResource().cachedImage()) {
-        page().addRelevantUnpaintedObject(this, visualOverflowRectEquivalent());
+        page().addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
 
     RefPtr<Image> image = imageResource().image();
     if (!image || image->isNull()) {
-        page().addRelevantUnpaintedObject(this, visualOverflowRectEquivalent());
+        page().addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
 
@@ -226,9 +226,9 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
         // to refine this in the future to account for the portion of the image that has painted.
         FloatRect visibleRect = intersection(replacedContentRect, contentBoxRect);
         if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
-            page().addRelevantUnpaintedObject(this, enclosingLayoutRect(visibleRect));
+            page().addRelevantUnpaintedObject(*this, enclosingLayoutRect(visibleRect));
         else
-            page().addRelevantRepaintedObject(this, enclosingLayoutRect(visibleRect));
+            page().addRelevantRepaintedObject(*this, enclosingLayoutRect(visibleRect));
     }
 }
 
@@ -252,7 +252,7 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;
 
-    PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_IMAGE_HITTESTING, request, style().pointerEvents());
+    PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGImage, request, style().pointerEvents());
     bool isVisible = (style().visibility() == Visibility::Visible);
     if (isVisible || !hitRules.requireVisible) {
         SVGHitTestCycleDetectionScope hitTestScope(*this);

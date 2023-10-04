@@ -41,8 +41,10 @@
 #include "Logging.h"
 #include "NotificationData.h"
 #include "NotificationEvent.h"
+#include "NotificationPayload.h"
 #include "PlatformStrategies.h"
 #include "PushEvent.h"
+#include "PushNotificationEvent.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionChangeEvent.h"
 #include "SWContextManager.h"
@@ -226,8 +228,18 @@ void ServiceWorkerThread::queueTaskToFireActivateEvent()
     });
 }
 
-void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>>&& data, Function<void(bool)>&& callback)
+void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>>&& data, std::optional<NotificationPayload>&& payload, Function<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    // Logic for pushnotification events is different enough to not share this same implementation body.
+    if (payload) {
+        queueTaskToFirePushNotificationEvent(WTFMove(*payload), WTFMove(callback));
+        return;
+    }
+#else
+    UNUSED_PARAM(payload);
+#endif
+
     auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
     serviceWorkerGlobalScope.eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
@@ -254,10 +266,57 @@ void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>
 
             RELEASE_LOG_ERROR_IF(!success, ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent failed to process push event (rejectedPromise = %d, showedNotification = %d)", hasRejectedAnyPromise, showedNotification);
 
-            callback(success);
+            callback(success, std::nullopt);
         });
     });
 }
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+void ServiceWorkerThread::queueTaskToFirePushNotificationEvent(NotificationPayload&& proposedPayload, Function<void(bool, std::optional<NotificationPayload>&&)>&& callback)
+{
+    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
+    auto scopeURL = serviceWorkerGlobalScope->registration().data().scopeURL;
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, proposedPayload = WTFMove(proposedPayload), callback = WTFMove(callback), scopeURL]() mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushNotificationEvent firing pushnotification event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
+
+        auto notification = Notification::create(serviceWorkerGlobalScope.get(), scopeURL, proposedPayload);
+        auto pushNotificationEvent = PushNotificationEvent::create(eventNames().pushnotificationEvent, { }, notification.get(), proposedPayload.appBadge, ExtendableEvent::IsTrusted::Yes);
+        serviceWorkerGlobalScope->dispatchPushNotificationEvent(pushNotificationEvent);
+
+        pushNotificationEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, proposedPayload = WTFMove(proposedPayload), pushNotificationEvent = WTFMove(pushNotificationEvent), callback = WTFMove(callback)](auto&& extendLifetimePromises) mutable {
+            serviceWorkerGlobalScope->clearPushNotificationEvent();
+
+            bool hasRejectedAnyPromise = false;
+            for (auto& promise : extendLifetimePromises) {
+                if (promise->status() == DOMPromise::Status::Rejected) {
+                    hasRejectedAnyPromise = true;
+                    break;
+                }
+            }
+
+            bool showedNotification = !serviceWorkerGlobalScope->hasPendingSilentPushEvent();
+            serviceWorkerGlobalScope->setHasPendingSilentPushEvent(false);
+            if (!showedNotification)
+                serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, "Push event ended without showing any notification may trigger removal of the push subscription."_s, 0);
+            bool success = !hasRejectedAnyPromise && showedNotification;
+
+            RELEASE_LOG_ERROR_IF(!success, ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent failed to process push event (rejectedPromise = %d, showedNotification = %d)", hasRejectedAnyPromise, showedNotification);
+
+            auto proposedAppBadge = proposedPayload.appBadge;
+            auto data = pushNotificationEvent->updatedNotificationData();
+            std::optional<NotificationPayload> resultPayload = data ? NotificationPayload::fromNotificationData(*data) : WTFMove(proposedPayload);
+            RELEASE_ASSERT(resultPayload);
+
+            if (auto updatedAppBadge = pushNotificationEvent->updatedAppBadge())
+                resultPayload->appBadge = *updatedAppBadge;
+            else
+                resultPayload->appBadge = proposedAppBadge;
+
+            callback(true, WTFMove(*resultPayload));
+        });
+    });
+}
+#endif
 
 void ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)
 {
@@ -432,6 +491,12 @@ void ServiceWorkerThread::startFunctionalEventMonitoring()
     startHeartBeatTimer();
 }
 
+void ServiceWorkerThread::startNotificationPayloadFunctionalEventMonitoring()
+{
+    m_isHandlingNotificationPayloadFunctionalEvent = true;
+    startHeartBeatTimer();
+}
+
 void ServiceWorkerThread::startHeartBeatTimer()
 {
     // We cannot detect responsiveness for service workers running on the main thread by using a main thread timer.
@@ -454,7 +519,7 @@ void ServiceWorkerThread::startHeartBeatTimer()
 void ServiceWorkerThread::heartBeatTimerFired()
 {
     if (!m_ongoingHeartBeatCheck) {
-        if (m_state == State::Installing || m_state == State::Activating || m_isHandlingFetchEvent || m_isHandlingFunctionalEvent || m_pushSubscriptionChangeEventCount || m_messageEventCount)
+        if (m_state == State::Installing || m_state == State::Activating || m_isHandlingFetchEvent || m_isHandlingFunctionalEvent || m_isHandlingNotificationPayloadFunctionalEvent || m_pushSubscriptionChangeEventCount || m_messageEventCount)
             startHeartBeatTimer();
         return;
     }

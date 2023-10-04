@@ -35,6 +35,7 @@
 #import "PlaybackSessionManagerProxy.h"
 #import "VideoFullscreenManagerMessages.h"
 #import "VideoFullscreenManagerProxyMessages.h"
+#import "WKVideoView.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
@@ -618,23 +619,23 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
     }
 }
 
-void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
     if (!gpuProcess) {
-        completionHandler({ });
+        completionHandler(std::nullopt);
         return;
     }
 
     auto* interface = findInterface(identifier);
     if (!interface) {
-        completionHandler({ });
+        completionHandler(std::nullopt);
         return;
     }
 
     auto playerIdentifier = valueOrDefault(interface->playerIdentifier());
     if (!playerIdentifier) {
-        completionHandler({ });
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -712,38 +713,40 @@ RetainPtr<WKLayerHostView> VideoFullscreenManagerProxy::createLayerHostViewWithI
 }
 
 #if PLATFORM(IOS_FAMILY)
-RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
+RetainPtr<WKVideoView> VideoFullscreenManagerProxy::createViewWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
 
     RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 
-    if (!model->playerView()) {
+    if (!model->videoView()) {
         ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayerView");
-        auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
+        auto initialFrame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
+        auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() initWithFrame:initialFrame]);
 
         RetainPtr playerLayer { (WebAVPlayerLayer *)[playerView layer] };
 
         [playerLayer setVideoDimensions:nativeSize];
         [playerLayer setFullscreenModel:model.get()];
-
         [playerLayer setVideoSublayer:[view layer]];
+
+        [playerView addSubview:view.get()];
 
         // The videoView may already be reparented in fullscreen, so only parent the view
         // if it has no existing parent:
         if (![[view layer] superlayer])
             [playerLayer addSublayer:[view layer]];
 
+        auto videoView = adoptNS([[WKVideoView alloc] initWithFrame:initialFrame]);
+        [videoView addSubview:playerView.get()];
+
         model->setPlayerLayer(WTFMove(playerLayer));
         model->setPlayerView(playerView.get());
-
-        [playerView setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
-        [playerView setNeedsLayout];
-        [playerView layoutIfNeeded];
+        model->setVideoView(videoView.get());
     }
 
-    return model->playerView();
+    return model->videoView();
 }
 #endif
 

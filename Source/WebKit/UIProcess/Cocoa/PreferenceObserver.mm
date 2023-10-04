@@ -163,7 +163,7 @@
             WTFLogAlways("Could not init user defaults instance for domain %s", String(domain).utf8().data());
             continue;
         }
-        userDefaults.get()->m_observer = self;
+        userDefaults->m_observer = self;
         // Start observing a dummy key in order to make the preference daemon become aware of our NSUserDefaults instance.
         // This is to make sure we receive KVO notifications. We cannot use normal KVO techniques here, since we are looking
         // for _any_ changes in a preference domain. For normal KVO techniques to work, we need to provide the specific

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GeolocationIdentifier.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
@@ -41,6 +42,7 @@ class GeolocationPermissionRequestManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GeolocationPermissionRequestManager(WebPage&);
+    ~GeolocationPermissionRequestManager();
 
     void startRequestForGeolocation(WebCore::Geolocation&);
     void cancelRequestForGeolocation(WebCore::Geolocation&);
@@ -49,8 +51,8 @@ public:
     void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
 
 private:
-    typedef HashMap<GeolocationIdentifier, WebCore::Geolocation*> IDToGeolocationMap;
-    typedef HashMap<WebCore::Geolocation*, GeolocationIdentifier> GeolocationToIDMap;
+    using IDToGeolocationMap = HashMap<GeolocationIdentifier, CheckedPtr<WebCore::Geolocation>>;
+    using GeolocationToIDMap = HashMap<CheckedPtr<WebCore::Geolocation>, GeolocationIdentifier>;
     IDToGeolocationMap m_idToGeolocationMap;
     GeolocationToIDMap m_geolocationToIDMap;
 

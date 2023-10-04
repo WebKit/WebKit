@@ -123,6 +123,7 @@ public:
     bool mediaPlaying() const;
     bool mediaSupportsFullscreen() const;
     void toggleMediaPlayState() const;
+    WEBCORE_EXPORT bool hasMediaElement() const;
     WEBCORE_EXPORT bool mediaHasAudio() const;
     WEBCORE_EXPORT bool mediaIsVideo() const;
     bool mediaMuted() const;

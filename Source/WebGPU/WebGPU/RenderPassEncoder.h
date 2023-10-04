@@ -27,6 +27,7 @@
 
 #import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -92,6 +93,7 @@ private:
     bool validatePopDebugGroup() const;
 
     void makeInvalid();
+    void executePreDrawCommands();
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
@@ -111,6 +113,10 @@ private:
     NSUInteger m_visibilityResultBufferSize { 0 };
     bool m_depthReadOnly { false };
     bool m_stencilReadOnly { false };
+    Vector<uint32_t> m_vertexDynamicOffsets;
+    Vector<uint32_t> m_fragmentDynamicOffsets;
+    const RenderPipeline* m_pipeline { nullptr };
+    HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
 };
 
 } // namespace WebGPU

@@ -26,7 +26,7 @@
 #pragma once
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-#include "AccessibilityObjectInterface.h"
+#include "AXCoreObject.h"
 #include "IntRectHash.h"
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>

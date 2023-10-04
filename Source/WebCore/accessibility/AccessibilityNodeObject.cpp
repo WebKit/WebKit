@@ -108,7 +108,7 @@ void AccessibilityNodeObject::init()
     ASSERT(!m_initialized);
     m_initialized = true;
 #endif
-    m_role = determineAccessibilityRole();
+    AccessibilityObject::init();
 }
 
 Ref<AccessibilityNodeObject> AccessibilityNodeObject::create(Node& node)
@@ -121,16 +121,6 @@ void AccessibilityNodeObject::detachRemoteParts(AccessibilityDetachmentType deta
     // AccessibilityObject calls clearChildren.
     AccessibilityObject::detachRemoteParts(detachmentType);
     m_node = nullptr;
-}
-
-void AccessibilityNodeObject::updateRole()
-{
-    auto previousRole = m_role;
-    m_role = determineAccessibilityRole();
-    if (previousRole != m_role) {
-        if (auto* cache = axObjectCache())
-            cache->handleRoleChanged(this);
-    }
 }
 
 AccessibilityObject* AccessibilityNodeObject::firstChild() const
@@ -249,7 +239,13 @@ static Vector<HTMLLabelElement*> labelsForNode(Node* node)
 static HTMLLabelElement* labelForNode(Node* node)
 {
     auto labels = labelsForNode(node);
-    return labels.isEmpty() ? nullptr : labels.first();
+#if PLATFORM(COCOA)
+    // We impose the restriction that if there is more than one label element for the given Node, then we should return none.
+    // FIXME: the behavior should be the same in all platforms.
+    return labels.size() == 1 ? labels.first() : nullptr;
+#else
+    return labels.size() >= 1 ? labels.first() : nullptr;
+#endif
 }
 
 LayoutRect AccessibilityNodeObject::checkboxOrRadioRect() const
@@ -663,10 +659,8 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
     if (isDescendantOfBarrenParent())
         return true;
 
-    if (roleValue() == AccessibilityRole::Ignored)
-        return true;
-    
-    return m_role == AccessibilityRole::Unknown;
+    auto role = roleValue();
+    return role == AccessibilityRole::Ignored || role == AccessibilityRole::Unknown;
 }
 
 bool AccessibilityNodeObject::canvasHasFallbackContent() const
@@ -1824,52 +1818,13 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
 
 AccessibilityObject* AccessibilityNodeObject::titleUIElement() const
 {
-    if (!exposesTitleUIElement())
+    // If aria-label is a non-empty string, return null to force clients to use the aria-label.
+    if (!getAttribute(aria_labelAttr).isEmpty())
         return nullptr;
 
     if (isFigureElement())
         return captionForFigure();
-
     return axObjectCache()->getOrCreate(labelForNode(node()));
-}
-
-bool AccessibilityNodeObject::exposesTitleUIElement() const
-{
-    if (!isControl() && !isFigureElement())
-        return false;
-
-    // If this control is ignored (because it's invisible),
-    // then the label needs to be exposed so it can be visible to accessibility.
-    if (accessibilityIsIgnored())
-        return true;
-
-    // When controls have their own descriptions, the title element should be ignored.
-    if (hasTextAlternative())
-        return false;
-
-    // When <label> element has aria-label or aria-labelledby on it, we shouldn't expose it as the
-    // titleUIElement, otherwise its inner text will be announced by a screenreader.
-    if (isLabelable()) {
-        auto labels = labelsForNode(node());
-        // If this element is associated with multiple labels (title UI elements), then claiming to expose
-        // a single title UI element is not correct and will result in some ATs outputting the wrong thing.
-        if (labels.size() >= 2)
-            return false;
-        if (auto* label = labels.isEmpty() ? nullptr : labels[0]) {
-            if (!label->attributeWithoutSynchronization(aria_labelAttr).isEmpty())
-                return false;
-            if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label)) {
-                if (!labelObject->ariaLabeledByAttribute().isEmpty())
-                    return false;
-                // To simplify instances where the labeling element includes widget descendants
-                // which it does not label.
-                if (is<AccessibilityLabel>(*labelObject)
-                    && downcast<AccessibilityLabel>(*labelObject).containsUnrelatedControls())
-                    return false;
-            }
-        }
-    }
-    return true;
 }
 
 bool AccessibilityNodeObject::hasTextAlternative() const
@@ -2415,8 +2370,8 @@ String AccessibilityNodeObject::title() const
 
     if (isLabelable()) {
         auto labels = labelsForNode(node.get());
-        // Use the label text as the title if 1) the title element is NOT an exposed element and 2) there's no ARIA override.
-        if (!labels.isEmpty() && !exposesTitleUIElement() && !ariaAccessibilityDescription().length())
+        // Use the label text as the title if there's no ARIA override.
+        if (!labels.isEmpty() && !ariaAccessibilityDescription().length())
             return textForLabelElements(WTFMove(labels));
     }
 
@@ -2865,11 +2820,11 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     if (role == AccessibilityRole::Presentational && supportsARIAAttributes())
         role = AccessibilityRole::Unknown;
     
-    // The ARIA spec states, "Authors must give each element with role region a brief label that
-    // describes the purpose of the content in the region." The Core AAM states, "Special case:
-    // if the region does not have an accessible name, do not expose the element as a landmark.
-    // Use the native host language role of the element instead."
-    if (role == AccessibilityRole::LandmarkRegion && !hasAttribute(aria_labelAttr) && !hasAttribute(aria_labelledbyAttr))
+    // https://w3c.github.io/aria/#document-handling_author-errors_roles
+    // In situations where an author has not specified names for the form and
+    // region landmarks, it is considered an authoring error. The user agent
+    // MUST treat such element as if no role had been provided.
+    if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && getAttribute(aria_labelAttr).isEmpty() && getAttribute(aria_labelledbyAttr).isEmpty() && getAttribute(aria_labeledbyAttr).isEmpty())
         role = AccessibilityRole::Unknown;
 
     if (static_cast<int>(role))

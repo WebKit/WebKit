@@ -8,7 +8,7 @@ features: [Temporal]
 ---*/
 
 let timeZone = "2021-08-19T17:30";
-assert.throws(RangeError, () => Temporal.Duration.compare(new Temporal.Duration(), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } }), "bare date-time string is not a time zone");
+assert.throws(RangeError, () => Temporal.Duration.compare(new Temporal.Duration(1), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } }), "bare date-time string is not a time zone");
 
 [
   "2021-08-19T17:30-07:00:01",
@@ -34,7 +34,7 @@ assert.throws(RangeError, () => Temporal.Duration.compare(new Temporal.Duration(
 ].forEach((timeZone) => {
   assert.throws(
     RangeError,
-    () => Temporal.Duration.compare(new Temporal.Duration(), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } }),
+    () => Temporal.Duration.compare(new Temporal.Duration(1), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } }),
     `ISO string ${timeZone} with a sub-minute offset is not a valid time zone`
   );
 });
@@ -57,5 +57,5 @@ assert.throws(RangeError, () => Temporal.Duration.compare(new Temporal.Duration(
   "2021-08-19T17:30-0700[UTC]",
   "2021-08-19T1730-0700[UTC]",
 ].forEach((timeZone) => {
-  Temporal.Duration.compare(new Temporal.Duration(), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } });
+  Temporal.Duration.compare(new Temporal.Duration(1), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } });
 });

@@ -1662,4 +1662,13 @@ std::optional<Seconds> WebAnimation::convertAnimationTimeToTimelineTime(Seconds 
     return animationTime * (1 / m_playbackRate) + *m_startTime;
 }
 
+bool WebAnimation::isSkippedContentAnimation() const
+{
+    if (auto animation = dynamicDowncast<DeclarativeAnimation>(this)) {
+        if (auto element = animation->owningElement())
+            return element->element.renderer() && element->element.renderer()->isSkippedContent();
+    }
+    return false;
+}
+
 } // namespace WebCore

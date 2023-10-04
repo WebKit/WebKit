@@ -28,6 +28,7 @@
 
 #include "API.h"
 #include "AST.h"
+#include "ASTInterpolateAttribute.h"
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
@@ -89,14 +90,20 @@ public:
 
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
+    void visit(AST::CallStatement&) override;
+    void visit(AST::CompoundAssignmentStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::DecrementIncrementStatement&) override;
+    void visit(AST::DiscardStatement&) override;
     void visit(AST::IfStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::WhileStatement&) override;
     void visit(AST::BreakStatement&) override;
     void visit(AST::ContinueStatement&) override;
+
+    void visit(AST::InterpolateAttribute::Type, std::optional<AST::InterpolateAttribute::Sampling>) override;
 
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
@@ -111,6 +118,7 @@ private:
     void serializeVariable(AST::Variable&);
     void generatePackingHelpers(AST::Structure&);
     bool emitPackedVector(const Types::Vector&);
+    void serializeConstant(const Type*, ConstantValue);
 
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
@@ -146,6 +154,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_stringBuilder.append(m_indent, "texture2d<float> SecondPlane;\n");
             m_stringBuilder.append(m_indent, "float3x2 UVRemapMatrix;\n");
             m_stringBuilder.append(m_indent, "float4x3 ColorSpaceConversionMatrix;\n");
+            m_stringBuilder.append(m_indent, "uint get_width(uint lod = 0) const { return FirstPlane.get_width(lod); }\n");
+            m_stringBuilder.append(m_indent, "uint get_height(uint lod = 0) const { return FirstPlane.get_height(lod); }\n");
         }
         m_stringBuilder.append("};\n\n");
     }
@@ -182,6 +192,21 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
                 m_stringBuilder.append(m_indent, "unpacked[i] = __unpack(packed[i]);\n");
             }
             m_stringBuilder.append(m_indent, "return unpacked;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
+
+    if (m_callGraph.ast().usesWorkgroupUniformLoad()) {
+        m_callGraph.ast().clearUsesWorkgroupUniformLoad();
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n");
+            m_stringBuilder.append(m_indent, "auto result = *ptr;\n");
+            m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n");
+            m_stringBuilder.append(m_indent, "return result;\n");
         }
         m_stringBuilder.append(m_indent, "}\n\n");
     }
@@ -275,9 +300,9 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 explicitSize = fieldSize;
                 for (auto &attribute : member.attributes()) {
                     if (is<AST::SizeAttribute>(attribute))
-                        explicitSize = *AST::extractInteger(downcast<AST::SizeAttribute>(attribute).size());
+                        explicitSize = downcast<AST::SizeAttribute>(attribute).size().constantValue()->toInt();
                     else if (is<AST::AlignAttribute>(attribute))
-                        fieldAlignment = *AST::extractInteger(downcast<AST::AlignAttribute>(attribute).alignment());
+                        fieldAlignment = downcast<AST::AlignAttribute>(attribute).alignment().constantValue()->toInt();
                 }
 
                 offset = WTF::roundUpToMultipleOf(fieldAlignment, size);
@@ -309,7 +334,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 addPadding(finalSize - size);
         }
 
-        if (structDecl.role() == AST::StructureRole::VertexOutput) {
+        if (structDecl.role() == AST::StructureRole::VertexOutput || structDecl.role() == AST::StructureRole::FragmentOutput) {
             m_stringBuilder.append("\n");
             m_stringBuilder.append(m_indent, "template<typename T>\n");
             m_stringBuilder.append(m_indent, structDecl.name(), "(const thread T& other)\n");
@@ -391,9 +416,11 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
     case Types::Primitive::Bool:
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
+    case Types::Primitive::SamplerComparison:
     case Types::Primitive::TextureExternal:
     case Types::Primitive::AccessMode:
     case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
         RELEASE_ASSERT_NOT_REACHED();
     }
     return true;
@@ -434,9 +461,23 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
         return;
     }
 
+    if (auto* qualifier = variable.maybeQualifier()) {
+        switch (qualifier->addressSpace()) {
+        case AddressSpace::Workgroup:
+            m_stringBuilder.append("threadgroup ");
+            break;
+        case AddressSpace::Function:
+        case AddressSpace::Handle:
+        case AddressSpace::Private:
+        case AddressSpace::Storage:
+        case AddressSpace::Uniform:
+            break;
+        }
+    }
+
     visit(type);
     m_stringBuilder.append(" ", variable.name());
-    if (variable.maybeInitializer()) {
+    if (variable.maybeInitializer() && variable.flavor() != AST::VariableFlavor::Override) {
         m_stringBuilder.append(" = ");
         visit(type, *variable.maybeInitializer());
     }
@@ -499,9 +540,10 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 
 void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
-    unsigned bufferIndex = *AST::extractInteger(group.group());
+    unsigned bufferIndex = group.group().constantValue()->toInt();
     if (m_entryPointStage.has_value() && *m_entryPointStage == AST::StageAttribute::Stage::Vertex) {
-        auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage;
+        ASSERT(m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
+        auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
     }
     m_stringBuilder.append("[[buffer(", bufferIndex, ")]]");
@@ -509,7 +551,7 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 
 void FunctionDefinitionWriter::visit(AST::BindingAttribute& binding)
 {
-    m_stringBuilder.append("[[id(", *AST::extractInteger(binding.binding()), ")]]");
+    m_stringBuilder.append("[[id(", binding.binding().constantValue()->toInt(), ")]]");
 }
 
 void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
@@ -519,7 +561,7 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         switch (role) {
         case AST::StructureRole::VertexOutput:
         case AST::StructureRole::FragmentInput:
-            m_stringBuilder.append("[[user(loc", *AST::extractInteger(location.location()), ")]]");
+            m_stringBuilder.append("[[user(loc", location.location().constantValue()->toInt(), ")]]");
             return;
         case AST::StructureRole::BindGroup:
         case AST::StructureRole::UserDefined:
@@ -527,8 +569,11 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::UserDefinedResource:
         case AST::StructureRole::PackedResource:
             return;
+        case AST::StructureRole::FragmentOutput:
+            m_stringBuilder.append("[[color(", location.location().constantValue()->toInt(), ")]]");
+            return;
         case AST::StructureRole::VertexInput:
-            m_stringBuilder.append("[[attribute(", *AST::extractInteger(location.location()), ")]]");
+            m_stringBuilder.append("[[attribute(", location.location().constantValue()->toInt(), ")]]");
             break;
         }
     }
@@ -550,6 +595,41 @@ void FunctionDefinitionWriter::visit(AST::AlignAttribute&)
 {
     // This attribute shouldn't generate any code. The alignment is used when
     // serializing structs.
+}
+
+static const char* convertToSampleMode(AST::InterpolateAttribute::Type type, std::optional<AST::InterpolateAttribute::Sampling> sampling)
+{
+    auto sampleType = sampling ? *sampling : AST::InterpolateAttribute::Sampling::Center;
+    switch (type) {
+    case AST::InterpolateAttribute::Type::Flat:
+        return "flat";
+    case AST::InterpolateAttribute::Type::Linear:
+        switch (sampleType) {
+        case AST::InterpolateAttribute::Sampling::Center:
+            return "center_no_perspective";
+        case AST::InterpolateAttribute::Sampling::Centroid:
+            return "centroid_no_perspective";
+        case AST::InterpolateAttribute::Sampling::Sample:
+            return "sample_no_perspective";
+        }
+    case AST::InterpolateAttribute::Type::Perspective:
+        switch (sampleType) {
+        case AST::InterpolateAttribute::Sampling::Center:
+            return "center_perspective";
+        case AST::InterpolateAttribute::Sampling::Centroid:
+            return "centroid_perspective";
+        case AST::InterpolateAttribute::Sampling::Sample:
+            return "sample_perspective";
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+    return "flat";
+}
+
+void FunctionDefinitionWriter::visit(AST::InterpolateAttribute::Type type, std::optional<AST::InterpolateAttribute::Sampling> sampling)
+{
+    m_stringBuilder.append("[[", convertToSampleMode(type, sampling), "]]");
 }
 
 // Types
@@ -575,11 +655,15 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::Sampler:
                 m_stringBuilder.append(*type);
                 break;
+            case Types::Primitive::SamplerComparison:
+                m_stringBuilder.append("sampler");
+                break;
             case Types::Primitive::TextureExternal:
                 m_stringBuilder.append("texture_external");
                 break;
             case Types::Primitive::AccessMode:
             case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
@@ -605,6 +689,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Texture& texture) {
             const char* type;
+            const char* access = "sample";
             switch (texture.kind) {
             case Types::Texture::Kind::Texture1d:
                 type = "texture1d";
@@ -626,15 +711,15 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 break;
             case Types::Texture::Kind::TextureMultisampled2d:
                 type = "texture2d_ms";
+                access = "read";
                 break;
             }
             m_stringBuilder.append(type, "<");
             visit(texture.element);
-            m_stringBuilder.append(", access::sample>");
+            m_stringBuilder.append(", access::", access, ">");
         },
         [&](const TextureStorage& texture) {
             const char* base;
-            const char* type;
             const char* mode;
             switch (texture.kind) {
             case Types::TextureStorage::Kind::TextureStorage1d:
@@ -644,35 +729,10 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 base = "texture2d";
                 break;
             case Types::TextureStorage::Kind::TextureStorage2dArray:
-                base = "texture2d_aray";
+                base = "texture2d_array";
                 break;
             case Types::TextureStorage::Kind::TextureStorage3d:
                 base = "texture3d";
-                break;
-            }
-            switch (texture.format) {
-            case TexelFormat::BGRA8unorm:
-            case TexelFormat::RGBA8unorm:
-            case TexelFormat::RGBA8snorm:
-            case TexelFormat::RGBA16float:
-            case TexelFormat::R32float:
-            case TexelFormat::RG32float:
-            case TexelFormat::RGBA32float:
-                type = "float";
-                break;
-            case TexelFormat::RGBA8uint:
-            case TexelFormat::RGBA16uint:
-            case TexelFormat::R32uint:
-            case TexelFormat::RG32uint:
-            case TexelFormat::RGBA32uint:
-                type = "uint";
-                break;
-            case TexelFormat::RGBA8sint:
-            case TexelFormat::RGBA16sint:
-            case TexelFormat::R32sint:
-            case TexelFormat::RG32sint:
-            case TexelFormat::RGBA32sint:
-                type = "int";
                 break;
             }
             switch (texture.access) {
@@ -686,7 +746,30 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 mode = "read_write";
                 break;
             }
-            m_stringBuilder.append(base, "<", type, ", access::", mode, ">");
+            m_stringBuilder.append(base, "<");
+            visit(shaderTypeForTexelFormat(texture.format, m_callGraph.ast().types()));
+            m_stringBuilder.append(", access::", mode, ">");
+        },
+        [&](const TextureDepth& texture) {
+            const char* base;
+            switch (texture.kind) {
+            case TextureDepth::Kind::TextureDepth2d:
+                base = "depth2d";
+                break;
+            case TextureDepth::Kind::TextureDepth2dArray:
+                base = "depth2d_array";
+                break;
+            case TextureDepth::Kind::TextureDepthCube:
+                base = "depthcube";
+                break;
+            case TextureDepth::Kind::TextureDepthCubeArray:
+                base = "depthcube_array";
+                break;
+            case TextureDepth::Kind::TextureDepthMultisampled2d:
+                base = "depth2d_ms";
+                break;
+            }
+            m_stringBuilder.append(base, "<float>");
         },
         [&](const Reference& reference) {
             const char* addressSpace = nullptr;
@@ -716,6 +799,38 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(addressSpace, " ");
             visit(reference.element);
             m_stringBuilder.append("&");
+        },
+        [&](const Pointer& pointer) {
+            const char* addressSpace = nullptr;
+            switch (pointer.addressSpace) {
+            case AddressSpace::Function:
+            case AddressSpace::Private:
+                addressSpace = "thread";
+                break;
+            case AddressSpace::Workgroup:
+                addressSpace = "threadgroup";
+                break;
+            case AddressSpace::Uniform:
+                addressSpace = "constant";
+                break;
+            case AddressSpace::Storage:
+                addressSpace = "device";
+                break;
+            case AddressSpace::Handle:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            if (pointer.accessMode == AccessMode::Read)
+                m_stringBuilder.append("const ");
+            if (addressSpace)
+                m_stringBuilder.append(addressSpace, " ");
+            visit(pointer.element);
+            m_stringBuilder.append("*");
+        },
+        [&](const Atomic& atomic) {
+            if (atomic.element == m_callGraph.ast().types().i32Type())
+                m_stringBuilder.append("atomic_int");
+            else
+                m_stringBuilder.append("atomic_uint");
         },
         [&](const Function&) {
             RELEASE_ASSERT_NOT_REACHED();
@@ -756,6 +871,11 @@ void FunctionDefinitionWriter::visit(AST::Expression& expression)
 
 void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expression)
 {
+    if (auto constantValue = expression.constantValue()) {
+        serializeConstant(type, *constantValue);
+        return;
+    }
+
     switch (expression.kind()) {
     case AST::NodeKind::CallExpression:
         visit(type, downcast<AST::CallExpression>(expression));
@@ -771,14 +891,292 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expressi
 
 static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned startOffset = 0)
 {
-    bool first = true;
     writer->stringBuilder().append("(");
     for (unsigned i = startOffset; i < call.arguments().size(); ++i) {
-        if (!first)
+        if (i != startOffset)
             writer->stringBuilder().append(", ");
         writer->visit(call.arguments()[i]);
-        first = false;
     }
+    writer->stringBuilder().append(")");
+}
+
+static void emitTextureDimensions(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    const auto& get = [&](const char* property) {
+        writer->visit(call.arguments()[0]);
+        writer->stringBuilder().append(".get_", property, "(");
+        if (call.arguments().size() > 1)
+            writer->visit(call.arguments()[1]);
+        writer->stringBuilder().append(")");
+    };
+
+    const auto* vector = std::get_if<Types::Vector>(call.inferredType());
+    if (!vector) {
+        get("width");
+        return;
+    }
+
+    auto size = vector->size;
+    ASSERT(size >= 2 && size <= 3);
+    writer->stringBuilder().append("uint", String::number(size), "(");
+    get("width");
+    writer->stringBuilder().append(", ");
+    get("height");
+    if (size > 2) {
+        writer->stringBuilder().append(", ");
+        get("depth");
+    }
+    writer->stringBuilder().append(")");
+}
+
+static void emitTextureLoad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    auto& texture = call.arguments()[0];
+    auto* textureType = texture.inferredType();
+
+    // FIXME: this should become isPrimitiveReference once PR#14299 lands
+    auto* primitive = std::get_if<Types::Primitive>(textureType);
+    bool isExternalTexture = primitive && primitive->kind == Types::Primitive::TextureExternal;
+    if (!isExternalTexture) {
+        writer->visit(call.arguments()[0]);
+        writer->stringBuilder().append(".read");
+        bool first = true;
+        writer->stringBuilder().append("(");
+        const char* cast = "uint";
+        if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
+            switch (vector->size) {
+            case 2:
+                cast = "uint2";
+                break;
+            case 3:
+                cast = "uint3";
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+        for (unsigned i = 1; i < call.arguments().size(); ++i) {
+            if (first) {
+                writer->stringBuilder().append(cast, "(");
+                writer->visit(call.arguments()[i]);
+                writer->stringBuilder().append(")");
+            } else {
+                writer->stringBuilder().append(", ");
+                writer->visit(call.arguments()[i]);
+            }
+            first = false;
+        }
+        writer->stringBuilder().append(")");
+        return;
+    }
+
+    auto& coordinates = call.arguments()[1];
+    writer->stringBuilder().append("({\n");
+    {
+        IndentationScope scope(writer->indent());
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __coords = uint2((");
+            writer->visit(texture);
+            writer->stringBuilder().append(".UVRemapMatrix * float3(float2(");
+            writer->visit(coordinates);
+            writer->stringBuilder().append("), 1)).xy);\n");
+        }
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __y = float(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".FirstPlane.read(__coords).r);\n");
+        }
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".SecondPlane.read(__coords).rg);\n");
+        }
+        writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
+        {
+            writer->stringBuilder().append(writer->indent(), "float4(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+        }
+    }
+    writer->stringBuilder().append(writer->indent(), "})");
+}
+
+static void emitTextureSample(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    ASSERT(call.arguments().size() > 1);
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(".sample");
+    visitArguments(writer, call, 1);
+}
+
+static void emitTextureSampleCompare(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    ASSERT(call.arguments().size() > 1);
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(".sample_compare");
+    visitArguments(writer, call, 1);
+}
+
+
+static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    bool isArray = false;
+    auto& texture = call.arguments()[0];
+    if (auto* textureType = std::get_if<Types::Texture>(texture.inferredType())) {
+        switch (textureType->kind) {
+        case Types::Texture::Kind::Texture2dArray:
+        case Types::Texture::Kind::TextureCubeArray:
+            isArray = true;
+            break;
+        case Types::Texture::Kind::Texture1d:
+        case Types::Texture::Kind::Texture2d:
+        case Types::Texture::Kind::Texture3d:
+        case Types::Texture::Kind::TextureCube:
+        case Types::Texture::Kind::TextureMultisampled2d:
+            break;
+        }
+    } else if (auto* textureStorageType = std::get_if<Types::TextureStorage>(texture.inferredType())) {
+        switch (textureStorageType->kind) {
+        case Types::TextureStorage::Kind::TextureStorage2dArray:
+            isArray = true;
+            break;
+        case Types::TextureStorage::Kind::TextureStorage1d:
+        case Types::TextureStorage::Kind::TextureStorage2d:
+        case Types::TextureStorage::Kind::TextureStorage3d:
+            break;
+        }
+    } else {
+        auto& textureDepthType = std::get<Types::TextureDepth>(*texture.inferredType());
+        switch (textureDepthType.kind) {
+        case Types::TextureDepth::Kind::TextureDepth2dArray:
+        case Types::TextureDepth::Kind::TextureDepthCubeArray:
+            isArray = true;
+            break;
+        case Types::TextureDepth::Kind::TextureDepth2d:
+        case Types::TextureDepth::Kind::TextureDepthCube:
+        case Types::TextureDepth::Kind::TextureDepthMultisampled2d:
+            break;
+        }
+    }
+
+    unsigned levelIndex = isArray ? 4 : 3;
+    writer->visit(texture);
+    writer->stringBuilder().append(".sample(");
+    for (unsigned i = 1; i < levelIndex; ++i) {
+        if (i != 1)
+            writer->stringBuilder().append(",");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(", level(");
+    writer->visit(call.arguments()[levelIndex]);
+    writer->stringBuilder().append(")");
+    for (unsigned i = levelIndex + 1; i < call.arguments().size(); ++i) {
+        writer->stringBuilder().append(",");
+        writer->visit(call.arguments()[i]);
+    }
+    writer->stringBuilder().append(")");
+}
+
+static void emitTextureSampleClampToEdge(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    // FIXME: we need to handle `texture2d<T>` here too, not only `texture_external`
+    auto& texture = call.arguments()[0];
+    auto& sampler = call.arguments()[1];
+    auto& coordinates = call.arguments()[2];
+    writer->stringBuilder().append("({\n");
+    {
+        IndentationScope scope(writer->indent());
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __coords = (");
+            writer->visit(texture);
+            writer->stringBuilder().append(".UVRemapMatrix * float3(");
+            writer->visit(coordinates);
+            writer->stringBuilder().append(", 1)).xy;\n");
+        }
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __y = float(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".FirstPlane.sample(");
+            writer->visit(sampler);
+            writer->stringBuilder().append(", __coords).r);\n");
+        }
+        {
+            writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".SecondPlane.sample(");
+            writer->visit(sampler);
+            writer->stringBuilder().append(", __coords).rg);\n");
+        }
+        writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
+        {
+            writer->stringBuilder().append(writer->indent(), "float4(");
+            writer->visit(texture);
+            writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+        }
+    }
+    writer->stringBuilder().append(writer->indent(), "})");
+}
+
+static void emitTextureNumLevels(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(".get_num_mip_levels()");
+}
+
+static void emitTextureStore(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    const char* cast = "uint";
+    if (const auto* vector = std::get_if<Types::Vector>(call.arguments()[1].inferredType())) {
+        switch (vector->size) {
+        case 2:
+            cast = "uint2";
+            break;
+        case 3:
+            cast = "uint3";
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    AST::Expression& texture = call.arguments()[0];
+    AST::Expression& coords = call.arguments()[1];
+    AST::Expression* arrayIndex = nullptr;
+    AST::Expression* value = nullptr;
+    if (call.arguments().size() == 3)
+        value = &call.arguments()[2];
+    else {
+        arrayIndex = &call.arguments()[2];
+        value = &call.arguments()[3];
+    }
+
+    writer->visit(texture);
+    writer->stringBuilder().append(".write(");
+    writer->visit(*value);
+    writer->stringBuilder().append(", ", cast, "(");
+    writer->visit(coords);
+    writer->stringBuilder().append(")");
+    if (arrayIndex) {
+        writer->stringBuilder().append(", ");
+        writer->visit(*arrayIndex);
+    }
+    writer->stringBuilder().append(")");
+}
+
+static void emitStorageBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
+{
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_device)");
+}
+
+static void emitWorkgroupBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
+{
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_threadgroup)");
+}
+
+static void emitWorkgroupUniformLoad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("__workgroup_uniform_load(");
+    writer->visit(call.arguments()[0]);
     writer->stringBuilder().append(")");
 }
 
@@ -795,19 +1193,15 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         if (isArray)
             arrayElementType = std::get<Types::Array>(*type).element;
 
-        const auto& visitArgument = [&](auto& argument) {
-            if (isStruct)
-                visit(argument);
-            else
-                visit(arrayElementType, argument);
-        };
-
         m_stringBuilder.append("{\n");
         {
             IndentationScope scope(m_indent);
             for (auto& argument : call.arguments()) {
                 m_stringBuilder.append(m_indent);
-                visitArgument(argument);
+                if (isStruct)
+                    visit(argument);
+                else
+                    visit(arrayElementType, argument);
                 m_stringBuilder.append(",\n");
             }
         }
@@ -817,94 +1211,17 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
-            { "textureLoad", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
-                auto& texture = call.arguments()[0];
-                auto* textureType = texture.inferredType();
-
-                // FIXME: this should become isPrimitiveReference once PR#14299 lands
-                auto* primitive = std::get_if<Types::Primitive>(textureType);
-                bool isExternalTexture = primitive && primitive->kind == Types::Primitive::TextureExternal;
-                if (!isExternalTexture) {
-                    writer->visit(call.arguments()[0]);
-                    writer->stringBuilder().append(".read");
-                    visitArguments(writer, call, 1);
-                    return;
-                }
-
-                auto& coordinates = call.arguments()[1];
-                writer->stringBuilder().append("({\n");
-                {
-                    IndentationScope scope(writer->indent());
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __coords = (");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".UVRemapMatrix * float3(");
-                        writer->visit(coordinates);
-                        writer->stringBuilder().append(", 1)).xy;\n");
-                    }
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __y = float(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".FirstPlane.read(__cords).r);\n");
-                    }
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".SecondPlane.read(__coords).rg);\n");
-                    }
-                    writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
-                    {
-                        writer->stringBuilder().append(writer->indent(), "float4(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
-                    }
-                }
-                writer->stringBuilder().append(writer->indent(), "})");
-            } },
-            { "textureSample", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
-                ASSERT(call.arguments().size() > 1);
-                writer->visit(call.arguments()[0]);
-                writer->stringBuilder().append(".sample");
-                visitArguments(writer, call, 1);
-            } },
-            { "textureSampleBaseClampToEdge", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
-                // FIXME: we need to handle `texture2d<T>` here too, not only `texture_external`
-                auto& texture = call.arguments()[0];
-                auto& sampler = call.arguments()[1];
-                auto& coordinates = call.arguments()[2];
-                writer->stringBuilder().append("({\n");
-                {
-                    IndentationScope scope(writer->indent());
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __coords = (");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".UVRemapMatrix * float3(");
-                        writer->visit(coordinates);
-                        writer->stringBuilder().append(", 1)).xy;\n");
-                    }
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __y = float(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".FirstPlane.sample(");
-                        writer->visit(sampler);
-                        writer->stringBuilder().append(", __coords).r);\n");
-                    }
-                    {
-                        writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".SecondPlane.sample(");
-                        writer->visit(sampler);
-                        writer->stringBuilder().append(", __coords).rg);\n");
-                    }
-                    writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
-                    {
-                        writer->stringBuilder().append(writer->indent(), "float4(");
-                        writer->visit(texture);
-                        writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
-                    }
-                }
-                writer->stringBuilder().append(writer->indent(), "})");
-            } },
+            { "storageBarrier", emitStorageBarrier },
+            { "textureDimensions", emitTextureDimensions },
+            { "textureLoad", emitTextureLoad },
+            { "textureNumLevels", emitTextureNumLevels },
+            { "textureSample", emitTextureSample },
+            { "textureSampleBaseClampToEdge", emitTextureSampleClampToEdge },
+            { "textureSampleCompare", emitTextureSampleCompare },
+            { "textureSampleLevel", emitTextureSampleLevel },
+            { "textureStore", emitTextureStore },
+            { "workgroupBarrier", emitWorkgroupBarrier },
+            { "workgroupUniformLoad", emitWorkgroupUniformLoad },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
         const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();
@@ -916,6 +1233,15 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> baseTypesMappings[] {
             { "f32", "float"_s },
             { "i32", "int"_s },
+            { "mat2x2f", "float2x2"_s },
+            { "mat2x3f", "float2x3"_s },
+            { "mat2x4f", "float2x4"_s },
+            { "mat3x2f", "float3x2"_s },
+            { "mat3x3f", "float3x3"_s },
+            { "mat3x4f", "float3x4"_s },
+            { "mat4x2f", "float4x2"_s },
+            { "mat4x3f", "float4x3"_s },
+            { "mat4x4f", "float4x4"_s },
             { "u32", "uint"_s },
             { "vec2f", "float2"_s },
             { "vec2i", "int2"_s },
@@ -983,11 +1309,11 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
     case AST::UnaryOperation::Not:
         m_stringBuilder.append("!");
         break;
-
     case AST::UnaryOperation::AddressOf:
+        m_stringBuilder.append("&");
+        break;
     case AST::UnaryOperation::Dereference:
-        // FIXME: Implement these
-        RELEASE_ASSERT_NOT_REACHED();
+        m_stringBuilder.append("*");
         break;
     }
     visit(unary.expression());
@@ -1127,13 +1453,19 @@ void FunctionDefinitionWriter::visit(AST::Unsigned32Literal& literal)
 void FunctionDefinitionWriter::visit(AST::AbstractFloatLiteral& literal)
 {
     // FIXME: this might not serialize all values correctly
-    m_stringBuilder.append(literal.value());
+    NumberToStringBuffer buffer;
+    WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
+
+    m_stringBuilder.append(&buffer[0]);
 }
 
 void FunctionDefinitionWriter::visit(AST::Float32Literal& literal)
 {
     // FIXME: this might not serialize all values correctly
-    m_stringBuilder.append(literal.value());
+    NumberToStringBuffer buffer;
+    WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
+
+    m_stringBuilder.append(&buffer[0]);
 }
 
 void FunctionDefinitionWriter::visit(AST::Statement& statement)
@@ -1145,7 +1477,28 @@ void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
 {
     visit(assignment.lhs());
     m_stringBuilder.append(" = ");
-    visit(assignment.rhs());
+    const auto* assignmentType = assignment.lhs().inferredType();
+    if (!assignmentType) {
+        // In theory this should never happen, but the assignments generated by
+        // the EntryPointRewriter do not have inferred types
+        visit(assignment.rhs());
+        return;
+    }
+
+    const auto& reference = std::get<Types::Reference>(*assignmentType);
+    visit(reference.element, assignment.rhs());
+}
+
+void FunctionDefinitionWriter::visit(AST::CallStatement& statement)
+{
+    visit(statement.call().inferredType(), statement.call());
+}
+
+void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
+{
+    visit(statement.leftExpression());
+    m_stringBuilder.append(" ", toASCIILiteral(statement.operation()), "= ");
+    visit(statement.rightExpression());
 }
 
 void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
@@ -1189,6 +1542,11 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
         m_stringBuilder.append("--");
         break;
     }
+}
+
+void FunctionDefinitionWriter::visit(AST::DiscardStatement&)
+{
+    m_stringBuilder.append("discard_fragment()");
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)
@@ -1238,6 +1596,14 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
     visit(statement.body());
 }
 
+void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
+{
+    m_stringBuilder.append("while (");
+    visit(statement.test());
+    m_stringBuilder.append(") ");
+    visit(statement.body());
+}
+
 void FunctionDefinitionWriter::visit(AST::BreakStatement&)
 {
     m_stringBuilder.append("break");
@@ -1246,6 +1612,103 @@ void FunctionDefinitionWriter::visit(AST::BreakStatement&)
 void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
 {
     m_stringBuilder.append("continue");
+}
+
+void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue value)
+{
+    using namespace Types;
+
+    WTF::switchOn(*type,
+        [&](const Primitive& primitive) {
+            switch (primitive.kind) {
+            case Primitive::AbstractInt:
+            case Primitive::I32:
+                m_stringBuilder.append(value.toInt());
+                break;
+            case Primitive::U32:
+                m_stringBuilder.append(value.toInt(), "u");
+                break;
+            case Primitive::AbstractFloat:
+            case Primitive::F32: {
+                NumberToStringBuffer buffer;
+                WTF::numberToStringWithTrailingPoint(value.toDouble(), buffer);
+                m_stringBuilder.append(&buffer[0]);
+                break;
+            }
+            case Primitive::Bool:
+                m_stringBuilder.append(std::get<bool>(value) ? "true" : "false");
+                break;
+            case Primitive::Void:
+            case Primitive::Sampler:
+            case Primitive::SamplerComparison:
+            case Primitive::TextureExternal:
+            case Primitive::AccessMode:
+            case Primitive::TexelFormat:
+            case Primitive::AddressSpace:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        },
+        [&](const Reference& reference) {
+            return serializeConstant(reference.element, value);
+        },
+        [&](const Vector& vectorType) {
+            auto& vector = std::get<ConstantVector>(value);
+            visit(type);
+            m_stringBuilder.append("(");
+            bool first = true;
+            for (auto& element : vector.elements) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                serializeConstant(vectorType.element, element);
+            }
+            m_stringBuilder.append(")");
+        },
+        [&](const Array& arrayType) {
+            auto& array = std::get<ConstantArray>(value);
+            visit(type);
+            m_stringBuilder.append("{");
+            bool first = true;
+            for (auto& element : array.elements) {
+                if (!first)
+                    m_stringBuilder.append(", ");
+                first = false;
+                serializeConstant(arrayType.element, element);
+            }
+            m_stringBuilder.append("}");
+        },
+        [&](const Matrix&) {
+            // Not supported yet
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Struct&) {
+            // Not supported yet
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Pointer&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Function&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Texture&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureStorage&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TextureDepth&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Atomic&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TypeConstructor&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
 }
 
 void emitMetalFunctions(StringBuilder& stringBuilder, CallGraph& callGraph)

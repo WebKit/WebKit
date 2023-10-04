@@ -50,7 +50,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderHTMLCanvas);
 
 RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, RenderStyle&& style)
-    : RenderReplaced(element, WTFMove(style), element.size())
+    : RenderReplaced(Type::HTMLCanvas, element, WTFMove(style), element.size())
 {
 }
 
@@ -93,7 +93,7 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
         paintInfo.context().clip(snappedIntRect(contentBoxRect));
 
     if (paintInfo.phase == PaintPhase::Foreground)
-        page().addRelevantRepaintedObject(this, intersection(replacedContentRect, contentBoxRect));
+        page().addRelevantRepaintedObject(*this, intersection(replacedContentRect, contentBoxRect));
 
     InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
 

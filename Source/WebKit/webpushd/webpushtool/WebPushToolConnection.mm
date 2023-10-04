@@ -141,8 +141,12 @@ void Connection::sendPushMessage()
 
     printf("Injecting push message\n");
 
-    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(*m_pushMessage), [shouldExitAfterInject = !m_action] (bool injected) {
-        printf("Push message injected - %i\n", injected);
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(*m_pushMessage), [shouldExitAfterInject = !m_action] (const String& error) {
+        if (!error.isEmpty())
+            printf("Push message injected. Error: %s\n", error.utf8().data());
+        else
+            printf("Push message injected.\n");
+
         if (shouldExitAfterInject)
             CFRunLoopStop(CFRunLoopGetMain());
     });

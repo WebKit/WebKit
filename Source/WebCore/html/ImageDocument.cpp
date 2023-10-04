@@ -257,7 +257,7 @@ void ImageDocument::createDocumentStructure()
     if (m_shouldShrinkImage) {
 #if PLATFORM(IOS_FAMILY)
         // Set the viewport to be in device pixels (rather than the default of 980).
-        processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::ImageDocument);
+        processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::Type::ImageDocument);
 #else
         auto listener = ImageEventListener::create(*this);
         imageElement->addEventListener(eventNames().clickEvent, WTFMove(listener), false);
@@ -284,7 +284,7 @@ void ImageDocument::imageUpdated()
 #if PLATFORM(IOS_FAMILY)
         FloatSize screenSize = page()->chrome().screenSize();
         if (imageSize.width() > screenSize.width())
-            processViewport(makeString("width=", imageSize.width().toInt(), ",viewport-fit=cover"), ViewportArguments::ImageDocument);
+            processViewport(makeString("width=", imageSize.width().toInt(), ",viewport-fit=cover"), ViewportArguments::Type::ImageDocument);
 
         if (page())
             page()->chrome().client().imageOrMediaDocumentSizeChanged(IntSize(imageSize.width(), imageSize.height()));

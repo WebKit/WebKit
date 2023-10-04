@@ -70,7 +70,7 @@
 #include <wtf/MachSendRight.h>
 #endif
 
-#if PLATFORM(GTK) && USE(EGL)
+#if PLATFORM(GTK)
 #include <WebCore/PlatformDisplay.h>
 #endif
 
@@ -146,6 +146,7 @@ class WebLoaderStrategy;
 class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
+class WebTransportSession;
 
 struct RemoteWorkerInitializationData;
 struct UserMessage;
@@ -154,11 +155,14 @@ struct WebProcessDataStoreParameters;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
+struct WebTransportSessionIdentifierType;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
 enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
+
+using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
 
 #if PLATFORM(IOS_FAMILY)
 class LayerHostingContext;
@@ -243,6 +247,10 @@ public:
     IPC::Connection::UniqueID networkProcessConnectionID();
     WebLoaderStrategy& webLoaderStrategy();
     WebFileSystemStorageConnection& fileSystemStorageConnection();
+
+    WebTransportSession* webTransportSession(WebTransportSessionIdentifier);
+    void addWebTransportSession(WebTransportSessionIdentifier, WebTransportSession&);
+    void removeWebTransportSession(WebTransportSessionIdentifier);
 
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
@@ -420,6 +428,9 @@ public:
     const OptionSet<DMABufRendererBufferMode>& dmaBufRendererBufferMode() const { return m_dmaBufRendererBufferMode; }
 #endif
 
+    String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
+    FileSystem::Salt mediaKeysStorageSalt() const { return m_mediaKeysStorageSalt; }
+
 private:
     WebProcess();
     ~WebProcess();
@@ -558,7 +569,7 @@ private:
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     void displayDidRefresh(uint32_t displayID, const WebCore::DisplayUpdate&);
 #endif
 
@@ -800,6 +811,10 @@ private:
     bool m_imageAnimationEnabled { true };
 
     HashSet<WebCore::RegistrableDomain> m_allowedFirstPartiesForCookies;
+    String m_mediaKeysStorageDirectory;
+    FileSystem::Salt m_mediaKeysStorageSalt;
+
+    HashMap<WebTransportSessionIdentifier, WeakPtr<WebTransportSession>> m_webTransportSessions;
 };
 
 } // namespace WebKit

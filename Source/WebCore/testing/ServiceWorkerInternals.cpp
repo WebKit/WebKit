@@ -32,6 +32,7 @@
 #include "FetchRequest.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
+#include "NotificationPayload.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionData.h"
 #include "SWContextManager.h"
@@ -76,7 +77,7 @@ void ServiceWorkerInternals::schedulePushEvent(const String& message, RefPtr<Def
         data = Vector<uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length()};
     }
     callOnMainThread([identifier = m_identifier, data = WTFMove(data), weakThis = WeakPtr { *this }, counter]() mutable {
-        SWContextManager::singleton().firePushEvent(identifier, WTFMove(data), [identifier, weakThis = WTFMove(weakThis), counter](bool result) mutable {
+        SWContextManager::singleton().firePushEvent(identifier, WTFMove(data), std::nullopt, [identifier, weakThis = WTFMove(weakThis), counter](bool result, std::optional<NotificationPayload>&&) mutable {
             if (auto* proxy = SWContextManager::singleton().serviceWorkerThreadProxy(identifier)) {
                 proxy->thread().runLoop().postTaskForMode([weakThis = WTFMove(weakThis), counter, result](auto&) {
                     if (!weakThis)

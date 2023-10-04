@@ -27,6 +27,7 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
+#include <wtf/BitSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Markable.h>
@@ -70,6 +71,10 @@ using CSSAnimationCollection = ListHashSet<Ref<CSSAnimation>>;
 
 using AnimatableProperty = std::variant<CSSPropertyID, AtomString>;
 using AnimatablePropertyToTransitionMap = HashMap<AnimatableProperty, Ref<CSSTransition>>;
+
+struct CSSPropertiesBitSet {
+    WTF::BitSet<numCSSProperties> m_properties { };
+};
 
 } // namespace WebCore
 

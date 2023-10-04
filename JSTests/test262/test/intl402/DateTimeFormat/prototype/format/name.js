@@ -21,8 +21,9 @@ includes: [propertyHelper.js]
 
 var desc = Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, "format");
 
-assert.sameValue(desc.get.name, "get format");
-
-verifyNotEnumerable(desc.get, "name");
-verifyNotWritable(desc.get, "name");
-verifyConfigurable(desc.get, "name");
+verifyProperty(desc.get, "name", {
+  value: "get format",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

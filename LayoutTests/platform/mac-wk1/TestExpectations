@@ -781,14 +781,7 @@ imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.sharedworker
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/close.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/close.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/connect.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/connect.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/constructor.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/constructor.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/datagrams.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/datagrams.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/ [ Skip ]
 
 # WebKitLegacy doesn't support https-based WPT
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]
@@ -830,7 +823,7 @@ accessibility/page-reload-deadlock.html [ Skip ]
 # Skip because WK1 doesn't seem to support Element::setAttribute.
 accessibility/dynamic-rowspan.html [ Skip ]
 accessibility/dynamic-colspan.html [ Skip ]
-accessibility/dynamic-table-descendants.html [ Skip ] 
+accessibility/dynamic-table-descendants.html [ Skip ]
 
 # Missing AccessibilityUIElement::isIndeterminate() implementation.
 accessibility/progress-indeterminate-value.html [ Skip ]
@@ -941,12 +934,12 @@ http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py [ Sk
 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py [ Skip ]
 http/tests/security/referrer-policy-header.html [ Skip ]
 http/tests/security/referrer-policy-header-multipart.html [ Skip ]
-http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
-http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
+http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ]
+http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ]
 http/tests/navigation/ping-attribute/secure-anchor-cross-origin.html [ Skip ]
-http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ] 
-http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ] 
-http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ] 
+http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
+http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ]
+http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
 http/tests/referrer-policy-img/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http-http.html [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https.html [ Skip ]
@@ -1009,6 +1002,11 @@ media/now-playing-status-without-media.html [ Skip ]
 
 # WebM not supported in WK1 on macOS.
 http/tests/media/video-webm-stall.html
+media/W3C/video/canPlayType/canPlayType_codecs_order_1.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_two_implies_one_1.html [ Failure ]
+media/W3C/video/canPlayType/canPlayType_two_implies_one_2.html [ Failure ]
+media/media-can-play-webm.html [ Failure ]
 
 # Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
 webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
@@ -1615,7 +1613,7 @@ webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 # rdar://92764272 ([ Ventura wk1 ] 18 X fast/html/details (layout-tests) are flaky text failures)
 fast/html/details-add-summary-1-and-click.html [ Pass Failure ]
 fast/html/details-add-summary-10-and-click.html [ Pass Failure ]
-fast/html/details-add-summary-2-and-click.html [ Pass Failure ] 
+fast/html/details-add-summary-2-and-click.html [ Pass Failure ]
 fast/html/details-add-summary-3-and-click.html [ Pass Failure ]
 fast/html/details-add-summary-4-and-click.html [ Pass Failure ]
 fast/html/details-add-summary-5-and-click.html [ Pass Failure ]
@@ -1814,7 +1812,7 @@ webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass I
 
 webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/190627 compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
+webkit.org/b/190627 [ Monterey+ ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
 
 webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Skip ]
 
@@ -1873,7 +1871,6 @@ imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 # rdar://53137847 (macOS WK1: editing/spelling/retro-correction-spelling-markers.html, editing/spelling/grammar.html, and editing/spelling/markers.html are flaky)
 webkit.org/b/206071 editing/spelling/grammar.html [ Skip ]
 webkit.org/b/206071 editing/spelling/markers.html [ Skip ]
-webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Pass Failure ]
 
 webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement-types.html [ Timeout ]
 
@@ -2323,20 +2320,20 @@ webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/show-modal-focusing-steps.html [ Skip ]
 
-# webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1. 
+# webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1.
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
-imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ] 
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ]
 
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 
-# webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.  
+# webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.
 [ Monterey+ release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
 [ Monterey+ release ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 # Push subscription tests don't work without service worker support.
 http/tests/push-api [ Skip ]
 
-# webkit.org/b/236128 [ Mac wk1 ] 7X imported/w3c/web-platform-tests/pointerevents/pointerevent (layout-tests) are flaky text failures 
+# webkit.org/b/236128 [ Mac wk1 ] 7X imported/w3c/web-platform-tests/pointerevents/pointerevent (layout-tests) are flaky text failures
 imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_at_implicit_release_hoverable_pointers.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_click_during_capture.html [ Pass Failure ]
@@ -2530,7 +2527,7 @@ imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ WontFix 
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
 
 # IPC is for WK2
-ipc/shared-video-frame-size.html [ Skip ]
+ipc [ WontFix ]
 
 # Displays blank on WK1
 fullscreen/fullscreen-iframe-navigation.html [ Skip ]
@@ -2639,11 +2636,7 @@ css3/masking/mask-repeat-space-content.html [ Pass ImageOnlyFailure ]
 # rdar://105915702 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] Nine imported/w3c/web-platform-tests/css/css tests are a consistent failure)
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3f.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3g.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-4a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-4b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-size-cover.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-002.html [ ImageOnlyFailure ]
 
@@ -2664,6 +2657,14 @@ fast/mediastream/device-change-event-2.html [ Failure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ Pass ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg.html [ Pass ]
 
+# WK1-specific subtle blending differences
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-parent.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-sibling.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-parent.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-sibling.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph-background-image.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph.html [ ImageOnlyFailure ]
+
 webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-lists.html [ Crash ]
 
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
@@ -2677,11 +2678,23 @@ webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-li
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ImageOnlyFailure ]
 
-# webkit.org/b/261306 Batch mark expectations for constant failures following Sonoma OpenSource expectations migration.
-[ Monterey+ ] fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ]
-[ Monterey+ ] fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html [ Failure ]
-
 webkit.org/b/261339 [ Monterey+ Debug ] editing/selection/cleared-by-relayout.html [ Crash ]
 webkit.org/b/261339 [ Monterey+ Debug ] imported/w3c/web-platform-tests/editing/crashtests/designMode-document-will-be-blurred-by-focus-event-listener.html [ Crash ]
 
 webkit.org/b/261427 [ Ventura+ ] media/track/track-in-band-mode.html [ Pass Crash ]
+
+webkit.org/b/261618 [ Monterey+ Debug ] imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html [ Pass Crash ]
+
+webkit.org/b/262130 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-cross-frame.html [ Pass Failure ]
+
+webkit.org/b/262133 [ Release ] js/ShadowRealm-importValue.html [ Pass Timeout ]
+
+webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure ]
+webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Failure ]
+webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html [ Failure ]
+
+# rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
+[ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ ImageOnlyFailure ]
+
+# rdar://114345450 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] fast/images/animated-webp-as-image.html is a consistent failure)
+[ Sonoma+ ] fast/images/animated-webp-as-image.html [ ImageOnlyFailure ]

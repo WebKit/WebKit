@@ -183,6 +183,11 @@ const RealtimeMediaSourceCapabilities& MediaStreamTrackPrivate::capabilities() c
     return m_source->capabilities();
 }
 
+void MediaStreamTrackPrivate::getPhotoCapabilities(RealtimeMediaSource::PhotoCapabilitiesHandler&& completion)
+{
+    m_source->getPhotoCapabilities(WTFMove(completion));
+}
+
 void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::ApplyConstraintsHandler&& completionHandler)
 {
     m_source->applyConstraints(constraints, WTFMove(completionHandler));

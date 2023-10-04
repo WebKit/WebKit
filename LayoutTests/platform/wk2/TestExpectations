@@ -66,6 +66,7 @@ webkit.org/b/243444 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/input/setting-input-value-cancel-ime-composition.html
 svg/text/caret-in-svg-text.xhtml
+editing/inserting/caret-position.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 editing/selection/move-left-right.html
@@ -883,4 +884,10 @@ webkit.org/b/260834 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasI
 
 webkit.org/b/260926 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-button-click.html [ Pass Failure ]
 
-webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Failure ]
+webkit.org/b/261920 fast/mediastream/video-srcObject-set-twice.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/262088 [ Debug ] imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.https.window.html [ Pass Failure ]
+
+webkit.org/b/262157 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ Pass ImageOnlyFailure Crash ]
+
+webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Pass Failure ]

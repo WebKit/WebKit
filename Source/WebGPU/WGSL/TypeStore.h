@@ -48,6 +48,7 @@ public:
         Texture,
         TextureStorage,
         Reference,
+        Pointer,
     };
 
     using EncodedKey = std::tuple<uint8_t, uint8_t, uint16_t, uint32_t, uintptr_t>;
@@ -77,18 +78,28 @@ public:
     const Type* abstractFloatType() const { return m_abstractFloat; }
     const Type* f32Type() const { return m_f32; }
     const Type* samplerType() const { return m_sampler; }
+    const Type* samplerComparisonType() const { return m_samplerComparison; }
     const Type* textureExternalType() const { return m_textureExternal; }
     const Type* accessModeType() const { return m_accessMode; }
     const Type* texelFormatType() const { return m_texelFormat; }
+    const Type* addressSpaceType() const { return m_addressSpace; }
+
+    const Type* textureDepth2dType() const { return m_textureDepth2d; }
+    const Type* textureDepth2dArrayType() const { return m_textureDepthArray2d; }
+    const Type* textureDepthCubeType() const { return m_textureDepthCube; }
+    const Type* textureDepthCubeArrayType() const { return m_textureDepthArrayCube; }
+    const Type* textureDepthMultisampled2dType() const { return m_textureDepthMultisampled2d; }
 
     const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
     const Type* arrayType(const Type*, std::optional<unsigned>);
-    const Type* vectorType(const Type*, uint8_t);
-    const Type* matrixType(const Type*, uint8_t columns, uint8_t rows);
-    const Type* textureType(const Type*, Types::Texture::Kind);
+    const Type* vectorType(uint8_t, const Type*);
+    const Type* matrixType(uint8_t columns, uint8_t rows, const Type*);
+    const Type* textureType(Types::Texture::Kind, const Type*);
     const Type* textureStorageType(Types::TextureStorage::Kind, TexelFormat, AccessMode);
     const Type* functionType(Vector<const Type*>&&, const Type*);
     const Type* referenceType(AddressSpace, const Type*, AccessMode);
+    const Type* pointerType(AddressSpace, const Type*, AccessMode);
+    const Type* atomicType(const Type*);
     const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
 
 private:
@@ -107,9 +118,18 @@ private:
     const Type* m_u32;
     const Type* m_f32;
     const Type* m_sampler;
+    const Type* m_samplerComparison;
     const Type* m_textureExternal;
     const Type* m_accessMode;
     const Type* m_texelFormat;
+    const Type* m_addressSpace;
+    const Type* m_textureDepth2d;
+    const Type* m_textureDepthArray2d;
+    const Type* m_textureDepthCube;
+    const Type* m_textureDepthArrayCube;
+    const Type* m_textureDepthMultisampled2d;
+    const Type* m_atomicI32;
+    const Type* m_atomicU32;
 };
 
 } // namespace WGSL

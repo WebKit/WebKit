@@ -54,6 +54,12 @@ public:
         PtrTraits::unwrap(m_ptr)->incrementPtrCount();
     }
 
+    enum AdoptTag { Adopt };
+    CheckedRef(T& object, AdoptTag)
+        : m_ptr(&object)
+    {
+    }
+
     ALWAYS_INLINE CheckedRef(const CheckedRef& other)
         : m_ptr { PtrTraits::unwrap(other.m_ptr) }
     {
@@ -246,6 +252,8 @@ public:
     PtrCounterType ptrCount() const { return m_count; }
     void incrementPtrCount() const { ++m_count; }
     void decrementPtrCount() const { ASSERT(m_count); --m_count; }
+
+    friend bool operator==(const CanMakeCheckedPtrBase&, const CanMakeCheckedPtrBase&) { return true; }
 
 private:
     mutable StorageType m_count { 0 };

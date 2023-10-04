@@ -130,6 +130,7 @@ public:
 
 #if ENABLE(MANAGED_MEDIA_SOURCE)
     virtual bool isManaged() const { return false; }
+    virtual bool streaming() const { return false; }
     void memoryPressure();
 #endif
 

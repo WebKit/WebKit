@@ -40,16 +40,23 @@ std::optional<ExternalTextureDescriptor> ConvertToBackingContext::convertToBacki
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), externalTextureDescriptor.mediaIdentifier, externalTextureDescriptor.colorSpace } };
+    std::optional<WebCore::MediaPlayerIdentifier> optionalMediaIdentifier { std::nullopt };
+    if (auto* mediaIdentifier = std::get_if<WebCore::MediaPlayerIdentifier>(&externalTextureDescriptor.videoBacking))
+        optionalMediaIdentifier = *mediaIdentifier;
+    return { { WTFMove(*base), optionalMediaIdentifier, externalTextureDescriptor.colorSpace
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+        , std::nullopt
+#endif
+    } };
 }
 
-std::optional<WebCore::WebGPU::ExternalTextureDescriptor> ConvertFromBackingContext::convertFromBacking(const ExternalTextureDescriptor& externalTextureDescriptor)
+std::optional<WebCore::WebGPU::ExternalTextureDescriptor> ConvertFromBackingContext::convertFromBacking(const ExternalTextureDescriptor& externalTextureDescriptor, ConvertFromBackingContext::PixelBufferType pixelBuffer)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(externalTextureDescriptor));
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), externalTextureDescriptor.mediaIdentifier, externalTextureDescriptor.colorSpace } };
+    return { { WTFMove(*base), pixelBuffer, externalTextureDescriptor.colorSpace } };
 }
 
 } // namespace WebKit

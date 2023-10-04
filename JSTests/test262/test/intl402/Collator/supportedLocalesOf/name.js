@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.Collator.supportedLocalesOf.name, "supportedLocalesOf");
-
-verifyNotEnumerable(Intl.Collator.supportedLocalesOf, "name");
-verifyNotWritable(Intl.Collator.supportedLocalesOf, "name");
-verifyConfigurable(Intl.Collator.supportedLocalesOf, "name");
+verifyProperty(Intl.Collator.supportedLocalesOf, "name", {
+  value: "supportedLocalesOf",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

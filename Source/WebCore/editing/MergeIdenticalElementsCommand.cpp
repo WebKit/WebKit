@@ -40,38 +40,42 @@ MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(Ref<Element>&& firs
 
 void MergeIdenticalElementsCommand::doApply()
 {
-    if (m_element1->nextSibling() != m_element2.ptr() || !m_element1->hasEditableStyle() || !m_element2->hasEditableStyle())
+    Ref element1 = protectedElement1();
+    Ref element2 = protectedElement2();
+    if (element1->nextSibling() != element2.ptr() || !element1->hasEditableStyle() || !element2->hasEditableStyle())
         return;
 
-    m_atChild = m_element2->firstChild();
+    m_atChild = element2->firstChild();
 
     Vector<Ref<Node>> children;
-    for (Node* child = m_element1->firstChild(); child; child = child->nextSibling())
+    for (Node* child = element1->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
     for (auto& child : children)
-        m_element2->insertBefore(child, m_atChild.get());
+        element2->insertBefore(child, m_atChild.copyRef());
 
-    m_element1->remove();
+    element1->remove();
 }
 
 void MergeIdenticalElementsCommand::doUnapply()
 {
     RefPtr<Node> atChild = WTFMove(m_atChild);
 
-    auto* parent = m_element2->parentNode();
+    Ref element2 = protectedElement2();
+    RefPtr parent = element2->parentNode();
     if (!parent || !parent->hasEditableStyle())
         return;
 
-    if (parent->insertBefore(m_element1, m_element2.ptr()).hasException())
+    Ref element1 = protectedElement1();
+    if (parent->insertBefore(element1, element2.copyRef()).hasException())
         return;
 
     Vector<Ref<Node>> children;
-    for (Node* child = m_element2->firstChild(); child && child != atChild; child = child->nextSibling())
+    for (Node* child = element2->firstChild(); child && child != atChild; child = child->nextSibling())
         children.append(*child);
 
     for (auto& child : children)
-        m_element1->appendChild(child);
+        element1->appendChild(child);
 }
 
 #ifndef NDEBUG

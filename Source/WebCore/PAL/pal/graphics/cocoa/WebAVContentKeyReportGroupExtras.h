@@ -25,12 +25,12 @@
 
 #if HAVE(AVCONTENTKEYREPORTGROUP)
 
-#import <pal/graphics/cocoa/WebContentKeyGrouping.h>
+#import <pal/graphics/cocoa/WebAVContentKeyGrouping.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AVContentKeyReportGroup (PALExtras) <WebContentKeyGrouping>
+@interface AVContentKeyReportGroup (PALExtras) <WebAVContentKeyGrouping>
 @end
 
 NS_ASSUME_NONNULL_END

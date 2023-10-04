@@ -81,7 +81,7 @@ static constexpr auto replacementTextColor = SRGBA<uint8_t> { 240, 240, 240 };
 static constexpr auto unavailablePluginBorderColor = Color::white.colorWithAlphaByte(216);
 
 RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, RenderStyle&& style)
-    : RenderWidget(element, WTFMove(style))
+    : RenderWidget(Type::EmbeddedObject, element, WTFMove(style))
     , m_isPluginUnavailable(false)
     , m_unavailablePluginIndicatorIsPressed(false)
     , m_mouseDownWasInUnavailablePluginIndicator(false)
@@ -186,13 +186,13 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintO
 
     if (isPluginUnavailable()) {
         if (countsTowardsRelevantObjects)
-            page().addRelevantUnpaintedObject(this, visualOverflowRect());
+            page().addRelevantUnpaintedObject(*this, visualOverflowRect());
         RenderReplaced::paint(paintInfo, paintOffset);
         return;
     }
 
     if (countsTowardsRelevantObjects)
-        page().addRelevantRepaintedObject(this, visualOverflowRect());
+        page().addRelevantRepaintedObject(*this, visualOverflowRect());
 
     RenderWidget::paint(paintInfo, paintOffset);
 }
@@ -418,7 +418,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
 
     Ref mouseEvent = downcast<MouseEvent>(*event);
     Ref element = downcast<HTMLPlugInElement>(frameOwnerElement());
-    if (mouseEvent->type() == eventNames().mousedownEvent && mouseEvent->button() == LeftButton) {
+    if (mouseEvent->type() == eventNames().mousedownEvent && mouseEvent->button() == MouseButton::Left) {
         m_mouseDownWasInUnavailablePluginIndicator = isInUnavailablePluginIndicator(mouseEvent);
         if (m_mouseDownWasInUnavailablePluginIndicator) {
             frame().eventHandler().setCapturingMouseEventsElement(element.copyRef());
@@ -427,7 +427,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
         }
         mouseEvent->setDefaultHandled();
     }
-    if (mouseEvent->type() == eventNames().mouseupEvent && mouseEvent->button() == LeftButton) {
+    if (mouseEvent->type() == eventNames().mouseupEvent && mouseEvent->button() == MouseButton::Left) {
         if (m_unavailablePluginIndicatorIsPressed) {
             frame().eventHandler().setCapturingMouseEventsElement(nullptr);
             element->setIsCapturingMouseEvents(false);

@@ -274,7 +274,7 @@ std::optional<InlineContentBreaker::Result> InlineContentBreaker::simplifiedMini
     return Result { !lineStatus.trailingSoftHyphenWidth ? Result::Action::Wrap : Result::Action::RevertToLastNonOverflowingWrapOpportunity, IsEndOfLine::Yes };
 }
 
-static std::optional<size_t> findTrailingRunIndex(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t breakableRunIndex)
+static std::optional<size_t> findTrailingRunIndexBeforeBreakableRun(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t breakableRunIndex)
 {
     // When the breaking position is at the beginning of the run, the trailing run is the previous one.
     if (!breakableRunIndex)
@@ -564,7 +564,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     if (partialOverflowingRun->length)
         return OverflowingTextContent::BreakingPosition { overflowingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { false, partialOverflowingRun } };
     // When the breaking position is at the beginning of the run, the trailing run is the previous one.
-    if (auto trailingRunIndex = findTrailingRunIndex(runs, overflowingRunIndex))
+    if (auto trailingRunIndex = findTrailingRunIndexBeforeBreakableRun(runs, overflowingRunIndex))
         return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { } };
     // Sometimes we can't accommodate even the very first character.
     // Note that this is different from when there's no breakable run in this set.
@@ -629,9 +629,11 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
                 // We managed to break this text run mid content. It has to be either an arbitrary mid-word or a hyphen break.
                 return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { true, partialRun } };
             }
-            if (auto trailingRunIndex = findTrailingRunIndex(runs, index)) {
-                // At worst we are back to the overflowing run, like in the example above.
-                ASSERT(*trailingRunIndex >= overflowingRunIndex);
+            if (auto trailingRunIndex = findTrailingRunIndexBeforeBreakableRun(runs, index)) {
+                // We may end up _before_ the overflowing run e.g.
+                // <span></span><span style="border: 10px solid">breakable</span>
+                // with 0px constraint, where while the second (non-empty) [inline box start] overflows, the trailing
+                // run ends up being the first [inline box end] inline item.
                 return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
             }
             // This happens when the overflowing run is also the first run in this set, no trailing run.

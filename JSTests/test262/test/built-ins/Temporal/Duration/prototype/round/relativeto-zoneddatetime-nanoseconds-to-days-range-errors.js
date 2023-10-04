@@ -43,7 +43,6 @@ let zdt = new Temporal.ZonedDateTime(
   timeZoneSubstituteValues(
     [[epochInstant]], // Returned for NanosecondsToDays step 14, setting _intermediateNs_
     [
-      0, // Returned for RoundDuration step 6.c.i, setting _intermediate_ - making _startNs_ 0 in NanosecondsToDays
       dayNs - 1, // Returned for NanosecondsToDays step 7, setting _startDateTime_
       -dayNs + 1, // Returned for NanosecondsToDays step 11, setting _endDateTime_
     ]
@@ -64,7 +63,6 @@ zdt = new Temporal.ZonedDateTime(
   timeZoneSubstituteValues(
     [[epochInstant]], // Returned for NanosecondsToDays step 14, setting _intermediateNs_
     [
-      0, // Returned for RoundDuration step 6.c.i, setting _intermediate_ - making _startNs_ 0 in NanosecondsToDays
       -dayNs + 1, // Returned for NanosecondsToDays step 7, setting _startDateTime_
       dayNs - 1, // Returned for NanosecondsToDays step 11, setting _endDateTime_
     ]
@@ -88,7 +86,6 @@ zdt = new Temporal.ZonedDateTime(
       [new Temporal.Instant(-4n)], // Returned for NanosecondsToDays step 18.a, setting _oneDayFartherNs_
     ],
     [
-      0, // Returned for RoundDuration step 6.c.i, setting _intermediate_ - making _startNs_ 0 in NanosecondsToDays
       dayNs - 1, // Returned for NanosecondsToDays step 7, setting _startDateTime_
       -dayNs + 1, // Returned for NanosecondsToDays step 11, setting _endDateTime_
     ]

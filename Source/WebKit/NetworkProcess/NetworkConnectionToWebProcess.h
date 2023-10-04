@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CacheStorageEngineConnection.h"
 #include "Connection.h"
 #include "DownloadID.h"
 #include "NetworkActivityTracker.h"
@@ -39,6 +38,7 @@
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebResourceLoadObserver.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/ExceptionData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/LoadSchedulingMode.h>
@@ -48,6 +48,8 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/PushSubscriptionData.h>
+#include <WebCore/PushSubscriptionIdentifier.h>
 #include <WebCore/RTCDataChannelIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/WebSocketIdentifier.h>
@@ -94,6 +96,7 @@ class NetworkResourceLoader;
 class NetworkResourceLoadParameters;
 class NetworkSession;
 class NetworkSocketChannel;
+class NetworkTransportSession;
 class ServiceWorkerFetchTask;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
@@ -101,6 +104,9 @@ class WebSharedWorkerServerConnection;
 class WebSharedWorkerServerToContextConnection;
 
 struct NetworkProcessConnectionParameters;
+struct WebTransportSessionIdentifierType;
+
+using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
 
 enum class PrivateRelayed : bool;
 
@@ -261,8 +267,8 @@ private:
     void setRawCookie(const WebCore::Cookie&);
     void deleteCookie(const URL&, const String& cookieName, CompletionHandler<void()>&&);
 
-    void cookiesForDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::CookieStoreGetOptions&&, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&);
-    void setCookieFromDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::Cookie&&, CompletionHandler<void(bool)>&&);
+    void cookiesForDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::CookieStoreGetOptions&&, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&);
+    void setCookieFromDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::Cookie&&, CompletionHandler<void(bool)>&&);
 
     void registerInternalFileBlobURL(const URL&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
     void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
@@ -323,8 +329,6 @@ private:
         
     bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
 
-    CacheStorageEngineConnection& cacheStorageConnection();
-
     void clearPageSpecificData(WebCore::PageIdentifier);
 
 #if ENABLE(TRACKING_PREVENTION)
@@ -354,6 +358,16 @@ private:
     void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&) final;
     void allCookiesDeleted() final;
 #endif
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    void navigatorSubscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
+    void navigatorUnsubscribeFromPushService(URL&& scopeURL, const WebCore::PushSubscriptionIdentifier&, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&&);
+    void navigatorGetPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
+    void navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&&);
+#endif
+
+    void initializeWebTransportSession(URL&&, CompletionHandler<void(std::optional<WebTransportSessionIdentifier>)>&&);
+    void destroyWebTransportSession(WebTransportSessionIdentifier);
 
     struct ResourceNetworkActivityTracker {
         ResourceNetworkActivityTracker() = default;
@@ -431,8 +445,6 @@ private:
 
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
 
-    RefPtr<CacheStorageEngineConnection> m_cacheStorageConnection;
-
 #if ENABLE(SERVICE_WORKER)
     WeakPtr<WebSWServerConnection> m_swConnection;
     std::unique_ptr<WebSWServerToContextConnection> m_swContextConnection;
@@ -461,6 +473,8 @@ private:
     IPCTester m_ipcTester;
 #endif
     bool m_allowTestOnlyIPC { false };
+
+    HashMap<WebTransportSessionIdentifier, UniqueRef<NetworkTransportSession>> m_networkTransportSessions;
 };
 
 } // namespace WebKit

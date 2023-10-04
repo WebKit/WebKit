@@ -47,8 +47,10 @@ BackingStore::~BackingStore()
 void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
 {
     ASSERT(m_size == updateInfo.viewSize);
-    
-    auto bitmap = ShareableBitmap::create(WTFMove(updateInfo.bitmapHandle));
+    if (!updateInfo.bitmapHandle)
+        return;
+
+    auto bitmap = ShareableBitmap::create(WTFMove(*updateInfo.bitmapHandle));
     if (!bitmap)
         return;
 

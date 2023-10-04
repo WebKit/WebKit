@@ -1,0 +1,5 @@
+
+FAIL Test dragging across inner div assert_equals: Move to origin: Event  mismatch expected "mouseout@outer" but got "mousemove@outer"
+FAIL Test dragging into inner div assert_equals: Move over outer element: Event  mismatch expected "mouseover@outer" but got "mouseout@outer"
+FAIL Test dragging out of inner div assert_equals: Move over inner element: Event  mismatch expected "mouseover@inner" but got "mouseleave@outer"
+

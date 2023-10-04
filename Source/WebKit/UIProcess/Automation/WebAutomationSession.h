@@ -259,7 +259,7 @@ private:
 
     // Called by WebAutomationSession messages.
     void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);
-    void didTakeScreenshot(uint64_t callbackID, ShareableBitmap::Handle&&, const String& errorType);
+    void didTakeScreenshot(uint64_t callbackID, std::optional<ShareableBitmap::Handle>&&, const String& errorType);
 
     // Platform-dependent implementations.
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
@@ -362,6 +362,7 @@ private:
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     MonotonicTime m_lastClickTime;
     MouseButton m_lastClickButton { MouseButton::None };
+    MouseButton m_mouseButtonCurrentlyDown { MouseButton::None };
     WebCore::IntPoint m_lastClickPosition;
     unsigned m_clickCount { 1 };
 #endif

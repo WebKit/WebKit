@@ -1017,14 +1017,14 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     @try {
         m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw an exception: ", exception.name, ", reason : ", exception.reason);
         cocoaURL = canonicalURL(conformFragmentIdentifierForURL(url));
 
         @try {
             m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
         } @catch(NSException *exception) {
             ASSERT_NOT_REACHED();
-            ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw a second exception, bailing: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+            ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw a second exception, bailing: ", exception.name, ", reason : ", exception.reason);
             setNetworkState(MediaPlayer::NetworkState::FormatError);
             return;
         }
@@ -1929,7 +1929,7 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
             AVKeyValueStatus keyStatus = [m_avAsset statusOfValueForKey:keyName error:&error];
 
             if (error)
-                ERROR_LOG(LOGIDENTIFIER, "failed for ", [keyName UTF8String], ", error = ", [[error localizedDescription] UTF8String]);
+                ERROR_LOG(LOGIDENTIFIER, "failed for ", keyName, ", error = ", error);
 
             if (keyStatus < AVKeyValueStatusLoaded)
                 return MediaPlayerAVAssetStatusLoading; // At least one key is not loaded yet.
@@ -2006,21 +2006,6 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext& context, const F
         return;
 
     paintCurrentFrameInContext(context, rect);
-}
-
-void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext& context, const FloatRect& rect)
-{
-    INFO_LOG(LOGIDENTIFIER);
-
-    RetainPtr<CGImageRef> image = createImageForTimeInRect(currentTime(), rect);
-    if (image) {
-        GraphicsContextStateSaver stateSaver(context);
-        context.translate(rect.x(), rect.y() + rect.height());
-        context.scale(FloatSize(1.0f, -1.0f));
-        context.setImageInterpolationQuality(InterpolationQuality::Low);
-        IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-        CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
-    }
 }
 
 RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect(float time, const FloatRect& rect)
@@ -2264,7 +2249,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity(ShouldAnimate s
         return;
 
     bool shouldDisableActions = shouldAnimate == ShouldAnimate::No;
-    ALWAYS_LOG(LOGIDENTIFIER, "Setting gravity to \"", String { videoGravity }, "\", animated: ", !shouldDisableActions);
+    ALWAYS_LOG(LOGIDENTIFIER, "Setting gravity to \"", videoGravity, "\", animated: ", !shouldDisableActions);
 
     [CATransaction begin];
     [CATransaction setDisableActions:shouldDisableActions];
@@ -2785,7 +2770,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
     INFO_LOG(LOGIDENTIFIER);
 
     FloatRect imageRect { FloatPoint::zero(), m_lastImage->size() };
-    context.drawNativeImage(*m_lastImage, imageRect.size(), outputRect, imageRect);
+    context.drawNativeImage(Ref { *m_lastImage }, imageRect.size(), outputRect, imageRect);
 
     // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
     // video frame, destroy it now that it is no longer needed.
@@ -2796,6 +2781,12 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 RefPtr<VideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime()
 {
+    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
+        return nullptr;
+
+    if (!m_lastPixelBuffer && !videoOutputHasAvailableFrame())
+        waitForVideoOutputMediaDataWillChange();
+
     updateLastPixelBuffer();
     if (!m_lastPixelBuffer)
         return nullptr;

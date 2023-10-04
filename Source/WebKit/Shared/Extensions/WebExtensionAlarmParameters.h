@@ -29,6 +29,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

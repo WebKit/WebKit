@@ -73,7 +73,7 @@ ImageBufferShareableMappedIOSurfaceBitmapBackend::~ImageBufferShareableMappedIOS
     IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
 }
 
-ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBitmapBackend::createBackendHandle(SharedMemory::Protection) const
+std::optional<ImageBufferBackendHandle> ImageBufferShareableMappedIOSurfaceBitmapBackend::createBackendHandle(SharedMemory::Protection) const
 {
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
@@ -119,23 +119,18 @@ void ImageBufferShareableMappedIOSurfaceBitmapBackend::setOwnershipIdentity(cons
     m_surface->setOwnershipIdentity(resourceOwner);
 }
 
-IntSize ImageBufferShareableMappedIOSurfaceBitmapBackend::backendSize() const
-{
-    return m_surface->size();
-}
-
 unsigned ImageBufferShareableMappedIOSurfaceBitmapBackend::bytesPerRow() const
 {
     return m_surface->bytesPerRow();
 }
 
-RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior)
+RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBitmapBackend::copyNativeImage()
 {
     ASSERT_NOT_REACHED(); // Not applicable for LayerBacking.
     return nullptr;
 }
 
-RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBitmapBackend::copyNativeImageForDrawing(GraphicsContext&)
+RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBitmapBackend::createNativeImageReference()
 {
     ASSERT_NOT_REACHED(); // Not applicable for LayerBacking.
     return nullptr;

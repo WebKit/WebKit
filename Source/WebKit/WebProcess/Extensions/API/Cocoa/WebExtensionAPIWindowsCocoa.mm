@@ -325,8 +325,14 @@ bool WebExtensionAPIWindows::parseWindowUpdateOptions(NSDictionary *options, Web
     if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
-    if (NSString *state = objectForKey<NSString>(options, stateKey, true))
+    if (NSString *state = objectForKey<NSString>(options, stateKey, true)) {
         parameters.state = toStateImpl(state);
+
+        if (!parameters.state) {
+            *outExceptionString = toErrorString(nil, stateKey, @"it must specify 'normal', 'minimized', 'maximized', or 'fullscreen'");
+            return false;
+        }
+    }
 
     if (NSNumber *focused = objectForKey<NSNumber>(options, focusedKey))
         parameters.focused = focused.boolValue;
@@ -338,7 +344,7 @@ bool WebExtensionAPIWindows::parseWindowUpdateOptions(NSDictionary *options, Web
 
     if (left || top || width || height) {
         if (parameters.state && parameters.state.value() != WebExtensionWindow::State::Normal) {
-            *outExceptionString = toErrorString(nil, sourceKey, @"when 'top', 'left', 'width', or 'height' are specified, 'state' must be 'normal'.");
+            *outExceptionString = toErrorString(nil, sourceKey, @"when 'top', 'left', 'width', or 'height' are specified, 'state' must specify 'normal'.");
             return false;
         }
 
@@ -589,7 +595,7 @@ inline WebExtensionAPIWindows::WindowTypeFilter toWindowTypeFilter(WebExtensionW
     }
 }
 
-void WebExtensionContextProxy::dispatchWindowsEvent(WebExtensionEventListenerType type, std::optional<WebExtensionWindowParameters> windowParameters)
+void WebExtensionContextProxy::dispatchWindowsEvent(WebExtensionEventListenerType type, const std::optional<WebExtensionWindowParameters>& windowParameters)
 {
     auto filter = windowParameters ? toWindowTypeFilter(windowParameters.value().type.value()) : WebExtensionAPIWindows::WindowTypeFilter::All;
 

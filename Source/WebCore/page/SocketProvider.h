@@ -31,12 +31,15 @@
 namespace WebCore {
 
 class Document;
+class ScriptExecutionContext;
 class ThreadableWebSocketChannel;
 class WebSocketChannelClient;
+class WebTransportSession;
 
 class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:
     virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&) = 0;
+    virtual void initializeWebTransportSession(ScriptExecutionContext&, const URL&, CompletionHandler<void(RefPtr<WebTransportSession>&&)>&&) = 0;
 
     virtual ~SocketProvider() { };
 };

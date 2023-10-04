@@ -21,18 +21,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-header: <WebCore/WebGPUExternalTextureDescriptor.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::WebGPU::HTMLVideoElementIdentifier {
-    uint64_t identifier;
-};
-
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::WebGPU::WebCodecsVideoFrameIdentifier {
-    std::pair<uint64_t, uint64_t> identifier;
-};
-
 header: "WebGPUExternalTextureDescriptor.h"
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ExternalTextureDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    WebCore::WebGPU::VideoSourceIdentifier mediaIdentifier;
+[RValue] struct WebKit::WebGPU::ExternalTextureDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
+    std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
     WebCore::WebGPU::PredefinedColorSpace colorSpace;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    std::optional<WebKit::SharedVideoFrame> sharedFrame;
+#endif
 };
 #endif

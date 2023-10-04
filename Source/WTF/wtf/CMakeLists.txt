@@ -165,6 +165,7 @@ set(WTF_PUBLIC_HEADERS
     MonotonicTime.h
     NakedPtr.h
     NakedRef.h
+    NativePromise.h
     NaturalLoops.h
     NeverDestroyed.h
     NoLock.h
@@ -200,6 +201,7 @@ set(WTF_PUBLIC_HEADERS
     PlatformCPU.h
     PlatformEnable.h
     PlatformEnableCocoa.h
+    PlatformEnableGlib.h
     PlatformEnablePlayStation.h
     PlatformEnableWinCairo.h
     PlatformHave.h
@@ -307,6 +309,7 @@ set(WTF_PUBLIC_HEADERS
     TranslatedProcess.h
     TriState.h
     TypeCasts.h
+    TypeTraits.h
     URL.h
     URLHelpers.h
     URLHash.h
@@ -478,6 +481,7 @@ set(WTF_SOURCES
     MemoryPressureHandler.cpp
     MetaAllocator.cpp
     MonotonicTime.cpp
+    NativePromise.cpp
     NumberOfCores.cpp
     OSRandomSource.cpp
     ObjectIdentifier.cpp

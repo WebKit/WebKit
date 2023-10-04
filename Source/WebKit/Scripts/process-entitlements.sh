@@ -196,13 +196,6 @@ function mac_process_webcontent_shared_entitlements()
 {
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 101400 ))
-        then
-            plistbuddy Add :com.apple.tcc.delegated-services array
-            plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
-            plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
-        fi
-
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
@@ -374,9 +367,6 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
-    plistbuddy Add :com.apple.tcc.delegated-services array
-    plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
-    plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
     webcontent_sandbox_entitlements
 }

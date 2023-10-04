@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,13 +84,14 @@ private:
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
+    void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
     double facingModeFitnessScoreAdjustment() const final;
     void startProducingData() final;
     void stopProducingData() final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     void monitorOrientation(OrientationNotifier&) final;
-    void beginConfiguration() final;
-    void commitConfiguration() final;
+    void startApplyingConstraints() final;
+    void endApplyingConstraints() final;
     bool isCaptureSource() const final { return true; }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
     bool interrupted() const final;
@@ -121,11 +122,17 @@ private:
     const char* logClassName() const override { return "AVVideoCaptureSource"; }
 #endif
 
+    void beginConfiguration();
+    void commitConfiguration();
+    void beginConfigurationForConstraintsIfNeeded();
+
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
 
     std::optional<double> computeMinZoom() const;
     std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
+
+    void updateWhiteBalanceMode();
 
     RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
@@ -137,6 +144,7 @@ private:
 
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    std::optional<PhotoCapabilities> m_photoCapabilities;
     RetainPtr<WebCoreAVVideoCaptureSourceObserver> m_objcObserver;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
@@ -149,8 +157,10 @@ private:
     double m_currentFrameRate;
     double m_currentZoom { 1 };
     double m_zoomScaleFactor { 1 };
+    uint64_t m_beginConfigurationCount { 0 };
     bool m_interrupted { false };
     bool m_isRunning { false };
+    bool m_hasBegunConfigurationForConstraints { false };
 
     static constexpr Seconds verifyCaptureInterval = 30_s;
     static const uint64_t framesToDropWhenStarting = 4;

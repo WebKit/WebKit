@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,8 @@
 #include "RenderIterator.h"
 #include "RenderLineBreak.h"
 #include "RenderText.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGTextElement.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -104,8 +106,8 @@ static Node* previousRenderedEditable(Node* node)
     return nullptr;
 }
 
-Position::Position(Node* anchorNode, unsigned offset, LegacyEditingPositionFlag)
-    : m_anchorNode(anchorNode)
+Position::Position(RefPtr<Node>&& anchorNode, unsigned offset, LegacyEditingPositionFlag)
+    : m_anchorNode(WTFMove(anchorNode))
     , m_offset(offset)
     , m_anchorType(anchorTypeForLegacyEditingPosition(m_anchorNode.get(), m_offset))
     , m_isLegacyEditingPosition(true)
@@ -114,8 +116,8 @@ Position::Position(Node* anchorNode, unsigned offset, LegacyEditingPositionFlag)
     ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());
 }
 
-Position::Position(Node* anchorNode, AnchorType anchorType)
-    : m_anchorNode(anchorNode)
+Position::Position(RefPtr<Node>&& anchorNode, AnchorType anchorType)
+    : m_anchorNode(WTFMove(anchorNode))
     , m_offset(0)
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
@@ -127,8 +129,8 @@ Position::Position(Node* anchorNode, AnchorType anchorType)
         && (is<Text>(*m_anchorNode) || editingIgnoresContent(*m_anchorNode))));
 }
 
-Position::Position(Node* anchorNode, unsigned offset, AnchorType anchorType)
-    : m_anchorNode(anchorNode)
+Position::Position(RefPtr<Node>&& anchorNode, unsigned offset, AnchorType anchorType)
+    : m_anchorNode(WTFMove(anchorNode))
     , m_offset(offset)
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
@@ -136,8 +138,8 @@ Position::Position(Node* anchorNode, unsigned offset, AnchorType anchorType)
     ASSERT(anchorType == PositionIsOffsetInAnchor);
 }
 
-Position::Position(Text* textNode, unsigned offset)
-    : m_anchorNode(textNode)
+Position::Position(RefPtr<Text>&& textNode, unsigned offset)
+    : m_anchorNode(WTFMove(textNode))
     , m_offset(offset)
     , m_anchorType(PositionIsOffsetInAnchor)
     , m_isLegacyEditingPosition(false)
@@ -198,6 +200,11 @@ Text* Position::containerText() const
     return nullptr;
 }
 
+RefPtr<Text> Position::protectedContainerText() const
+{
+    return containerText();
+}
+
 Element* Position::containerOrParentElement() const
 {
     auto* container = containerNode();
@@ -233,29 +240,31 @@ int Position::offsetForPositionAfterAnchor() const
 {
     ASSERT(m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren);
     ASSERT(!m_isLegacyEditingPosition);
-    ASSERT(m_anchorNode);
-    return m_anchorNode ? lastOffsetForEditing(*m_anchorNode) : 0;
+    auto anchorNode = protectedAnchorNode();
+    ASSERT(anchorNode);
+    return anchorNode ? lastOffsetForEditing(*anchorNode) : 0;
 }
 
 // Neighbor-anchored positions are invalid DOM positions, so they need to be
 // fixed up before handing them off to the Range object.
 Position Position::parentAnchoredEquivalent() const
 {
-    if (!m_anchorNode)
+    auto anchorNode = protectedAnchorNode();
+    if (!anchorNode)
         return { };
     
     // FIXME: This should only be necessary for legacy positions, but is also needed for positions before and after Tables
     if (!m_offset && (m_anchorType != PositionIsAfterAnchor && m_anchorType != PositionIsAfterChildren)) {
-        if (m_anchorNode->parentNode() && (editingIgnoresContent(*m_anchorNode) || isRenderedTable(m_anchorNode.get())))
-            return positionInParentBeforeNode(m_anchorNode.get());
-        return Position(m_anchorNode.get(), 0, PositionIsOffsetInAnchor);
+        if (anchorNode->parentNode() && (editingIgnoresContent(*anchorNode) || isRenderedTable(anchorNode.get())))
+            return positionInParentBeforeNode(anchorNode.get());
+        return Position(anchorNode.get(), 0, PositionIsOffsetInAnchor);
     }
 
-    if (!m_anchorNode->isCharacterDataNode()
-        && (m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || static_cast<unsigned>(m_offset) == m_anchorNode->countChildNodes())
-        && (editingIgnoresContent(*m_anchorNode) || isRenderedTable(m_anchorNode.get()))
+    if (!anchorNode->isCharacterDataNode()
+        && (m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || static_cast<unsigned>(m_offset) == anchorNode->countChildNodes())
+        && (editingIgnoresContent(*anchorNode) || isRenderedTable(anchorNode.get()))
         && containerNode()) {
-        return positionInParentAfterNode(m_anchorNode.get());
+        return positionInParentAfterNode(anchorNode.get());
     }
 
     return { containerNode(), static_cast<unsigned>(computeOffsetInContainerNode()), PositionIsOffsetInAnchor };
@@ -338,7 +347,7 @@ Element* Position::element() const
 
 Position Position::previous(PositionMoveType moveType) const
 {
-    Node* node = deprecatedNode();
+    auto node = protectedDeprecatedNode();
     if (!node)
         return *this;
 
@@ -366,33 +375,36 @@ Position Position::previous(PositionMoveType moveType) const
         //      Going from 1 to 0 is correct.
         switch (moveType) {
         case CodePoint:
-            return makeDeprecatedLegacyPosition(node, offset - 1);
-        case Character:
-            return makeDeprecatedLegacyPosition(node, uncheckedPreviousOffset(node, offset));
-        case BackwardDeletion:
-            return makeDeprecatedLegacyPosition(node, uncheckedPreviousOffsetForBackwardDeletion(node, offset));
+            return makeDeprecatedLegacyPosition(WTFMove(node), offset - 1);
+        case Character: {
+            auto previousOffset = uncheckedPreviousOffset(node.get(), offset);
+            return makeDeprecatedLegacyPosition(WTFMove(node), previousOffset);
+        } case BackwardDeletion: {
+            auto previousOffset = uncheckedPreviousOffsetForBackwardDeletion(node.get(), offset);
+            return makeDeprecatedLegacyPosition(WTFMove(node), previousOffset);
+        }
         }
     }
 
-    ContainerNode* parent = node->parentNode();
+    RefPtr parent = node->parentNode();
     if (!parent)
         return *this;
 
     if (positionBeforeOrAfterNodeIsCandidate(*node))
-        return positionBeforeNode(node);
+        return positionBeforeNode(node.get());
 
     Node* previousSibling = node->previousSibling();
     if (previousSibling && positionBeforeOrAfterNodeIsCandidate(*previousSibling))
         return positionAfterNode(previousSibling);
 
-    return makeContainerOffsetPosition(parent, node->computeNodeIndex());
+    return makeContainerOffsetPosition(WTFMove(parent), node->computeNodeIndex());
 }
 
 Position Position::next(PositionMoveType moveType) const
 {
     ASSERT(moveType != BackwardDeletion);
 
-    Node* node = deprecatedNode();
+    auto node = protectedDeprecatedNode();
     if (!node)
         return *this;
 
@@ -409,31 +421,32 @@ Position Position::next(PositionMoveType moveType) const
         offset = computeOffsetInContainerNode();
     }
 
-    Node* child = node->traverseToChildAt(offset);
+    RefPtr child = node->traverseToChildAt(offset);
     if (child || (!node->hasChildNodes() && offset < static_cast<unsigned>(lastOffsetForEditing(*node)))) {
         if (child)
-            return firstPositionInOrBeforeNode(child);
+            return firstPositionInOrBeforeNode(child.get());
 
         // There are two reasons child might be 0:
         //   1) The node is node like a text node that is not an element, and therefore has no children.
         //      Going forward one character at a time is correct.
         //   2) The new offset is a bogus offset like (<br>, 1), and there is no child.
         //      Going from 0 to 1 is correct.
-        return makeDeprecatedLegacyPosition(node, (moveType == Character) ? uncheckedNextOffset(node, offset) : offset + 1);
+        auto nextOffset = moveType == Character ? uncheckedNextOffset(node.get(), offset) : offset + 1;
+        return makeDeprecatedLegacyPosition(WTFMove(node), nextOffset);
     }
 
-    ContainerNode* parent = node->parentNode();
+    RefPtr parent = node->parentNode();
     if (!parent)
         return *this;
 
-    if (isRenderedTable(node) || editingIgnoresContent(*node))
-        return positionAfterNode(node);
+    if (isRenderedTable(node.get()) || editingIgnoresContent(*node))
+        return positionAfterNode(node.get());
 
-    Node* nextSibling = node->nextSibling();
+    RefPtr nextSibling = node->nextSibling();
     if (nextSibling && positionBeforeOrAfterNodeIsCandidate(*nextSibling))
-        return positionBeforeNode(nextSibling);
+        return positionBeforeNode(nextSibling.get());
 
-    return makeContainerOffsetPosition(parent, node->computeNodeIndex() + 1);
+    return makeContainerOffsetPosition(WTFMove(parent), node->computeNodeIndex() + 1);
 }
 
 int Position::uncheckedPreviousOffset(const Node* n, unsigned current)
@@ -465,7 +478,7 @@ bool Position::atFirstEditingPositionForNode() const
         return true;
     case PositionIsAfterChildren:
     case PositionIsAfterAnchor:
-        return !lastOffsetForEditing(*deprecatedNode());
+        return !lastOffsetForEditing(*protectedDeprecatedNode());
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -476,7 +489,7 @@ bool Position::atLastEditingPositionForNode() const
     if (isNull())
         return true;
     // FIXME: Position after anchor shouldn't be considered as at the first editing position for node since that position resides outside of the node.
-    return m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || m_offset >= static_cast<unsigned>(lastOffsetForEditing(*deprecatedNode()));
+    return m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || m_offset >= static_cast<unsigned>(lastOffsetForEditing(*protectedDeprecatedNode()));
 }
 
 // A position is considered at editing boundary if one of the following is true:
@@ -536,7 +549,7 @@ bool Position::atStartOfTree() const
     case PositionIsBeforeChildren:
         return true;
     case PositionIsAfterChildren:
-        return !lastOffsetForEditing(*m_anchorNode);
+        return !lastOffsetForEditing(*protectedAnchorNode());
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -553,13 +566,13 @@ bool Position::atEndOfTree() const
 
     switch (m_anchorType) {
     case PositionIsOffsetInAnchor:
-        return m_offset >= static_cast<unsigned>(lastOffsetForEditing(*m_anchorNode));
+        return m_offset >= static_cast<unsigned>(lastOffsetForEditing(*protectedAnchorNode()));
     case PositionIsBeforeAnchor:
         return false;
     case PositionIsAfterAnchor:
         return !m_anchorNode->nextSibling();
     case PositionIsBeforeChildren:
-        return !lastOffsetForEditing(*m_anchorNode);
+        return !lastOffsetForEditing(*protectedAnchorNode());
     case PositionIsAfterChildren:
         return true;
     }
@@ -678,24 +691,24 @@ static bool isStreamer(const PositionIterator& pos)
 // in boundary, where endsOfNodeAreVisuallyDistinctPositions(boundary) is true.
 Position Position::upstream(EditingBoundaryCrossingRule rule) const
 {
-    Node* startNode = deprecatedNode();
+    auto startNode = protectedDeprecatedNode();
     if (!startNode)
         return { };
     
     // iterate backward from there, looking for a qualified position
-    Node* boundary = enclosingVisualBoundary(startNode);
+    Node* boundary = enclosingVisualBoundary(startNode.get());
     // FIXME: PositionIterator should respect Before and After positions.
     PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? makeDeprecatedLegacyPosition(m_anchorNode.get(), caretMaxOffset(*m_anchorNode)) : *this;
     PositionIterator currentPosition = lastVisible;
     bool startEditable = startNode->hasEditableStyle();
-    Node* lastNode = startNode;
+    RefPtr lastNode = startNode;
     bool boundaryCrossed = false;
     for (; !currentPosition.atStart(); currentPosition.decrement()) {
         auto& currentNode = *currentPosition.node();
         
         // Don't check for an editability change if we haven't moved to a different node,
         // to avoid the expense of computing hasEditableStyle().
-        if (&currentNode != lastNode) {
+        if (&currentNode != lastNode.get()) {
             // Don't change editability.
             bool currentEditable = currentNode.hasEditableStyle();
             if (startEditable != currentEditable) {
@@ -705,6 +718,10 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
             }
             lastNode = &currentNode;
         }
+
+        // There is no caret position in non-text svg elements.
+        if (currentNode.isSVGElement() && !is<SVGTextElement>(currentNode))
+            continue;
 
         // If we've moved to a position that is visually distinct, return the last saved position. There 
         // is code below that terminates early if we're *about* to move to a visually distinct position.
@@ -780,24 +797,24 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
 // FIXME: This function should never be called when the line box tree is dirty. See https://bugs.webkit.org/show_bug.cgi?id=97264
 Position Position::downstream(EditingBoundaryCrossingRule rule) const
 {
-    Node* startNode = deprecatedNode();
+    auto startNode = protectedDeprecatedNode();
     if (!startNode)
         return { };
 
     // iterate forward from there, looking for a qualified position
-    Node* boundary = enclosingVisualBoundary(startNode);
+    Node* boundary = enclosingVisualBoundary(startNode.get());
     // FIXME: PositionIterator should respect Before and After positions.
-    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? makeDeprecatedLegacyPosition(m_anchorNode.get(), caretMaxOffset(*m_anchorNode)) : *this;
+    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? makeDeprecatedLegacyPosition(m_anchorNode.copyRef(), caretMaxOffset(*m_anchorNode)) : *this;
     PositionIterator currentPosition = lastVisible;
     bool startEditable = startNode->hasEditableStyle();
-    Node* lastNode = startNode;
+    auto lastNode = startNode;
     bool boundaryCrossed = false;
     for (; !currentPosition.atEnd(); currentPosition.increment()) {
         auto& currentNode = *currentPosition.node();
 
         // Don't check for an editability change if we haven't moved to a different node,
         // to avoid the expense of computing hasEditableStyle().
-        if (&currentNode != lastNode) {
+        if (&currentNode != lastNode.get()) {
             // Don't change editability.
             bool currentEditable = currentNode.hasEditableStyle();
             if (startEditable != currentEditable) {
@@ -813,6 +830,10 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         // return the last visible streamer position
         if (is<HTMLBodyElement>(currentNode) && currentPosition.atEndOfNode())
             break;
+
+        // There is no caret position in non-text svg elements.
+        if (currentNode.isSVGElement() && !is<SVGTextElement>(currentNode))
+            continue;
 
         // Do not move to a visually distinct position.
         if (endsOfNodeAreVisuallyDistinctPositions(&currentNode) && &currentNode != boundary)
@@ -1205,7 +1226,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
 {
     auto caretOffset = static_cast<unsigned>(deprecatedEditingOffset());
 
-    auto node = deprecatedNode();
+    auto node = protectedDeprecatedNode();
     if (!node)
         return { { }, caretOffset };
     auto renderer = node->renderer();
@@ -1600,12 +1621,12 @@ Position positionInParentAfterNode(Node* node)
 
 Position makeContainerOffsetPosition(const BoundaryPoint& point)
 {
-    return makeContainerOffsetPosition(point.container.ptr(), point.offset);
+    return makeContainerOffsetPosition(point.container.copyRef(), point.offset);
 }
 
 Position makeDeprecatedLegacyPosition(const BoundaryPoint& point)
 {
-    return makeDeprecatedLegacyPosition(point.container.ptr(), point.offset);
+    return makeDeprecatedLegacyPosition(point.container.copyRef(), point.offset);
 }
 
 std::optional<BoundaryPoint> makeBoundaryPoint(const Position& position)

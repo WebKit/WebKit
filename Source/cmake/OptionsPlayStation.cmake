@@ -17,6 +17,11 @@ add_definitions(-DSCE_LIBC_DISABLE_CPP14_HEADER_WARNING= -DSCE_LIBC_DISABLE_CPP1
 # bug-224462
 WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-dll-attribute-on-redeclaration)
 
+# Disable warning for builtin-macro-redefinition
+# The redef wass necessary because our library provides a definition for __cpp_char8_t which
+# other code then assumes we have things like std::u8string which we do not.
+WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-builtin-macro-redefined)
+
 set(ENABLE_WEBKIT_LEGACY OFF)
 set(ENABLE_WEBINSPECTORUI OFF)
 

@@ -213,9 +213,9 @@
 
 namespace WebCore {
 
-static HashSet<Page*>& allPages()
+static HashSet<CheckedPtr<Page>>& allPages()
 {
-    static NeverDestroyed<HashSet<Page*>> set;
+    static NeverDestroyed<HashSet<CheckedPtr<Page>>> set;
     return set;
 }
 
@@ -235,7 +235,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
 void Page::forEachPage(const Function<void(Page&)>& function)
 {
-    for (auto* page : allPages())
+    for (auto& page : allPages())
         function(*page);
 }
 
@@ -250,7 +250,7 @@ static void networkStateChanged(bool isOnLine)
     Vector<Ref<LocalFrame>> frames;
 
     // Get all the frames of all the pages in all the page groups
-    for (auto* page : allPages()) {
+    for (auto& page : allPages()) {
         for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
@@ -444,7 +444,7 @@ Page::~Page()
 
     m_inspectorController->inspectedPageDestroyed();
 
-    forEachFrame([] (LocalFrame& frame) {
+    forEachLocalFrame([] (LocalFrame& frame) {
         frame.willDetachPage();
         frame.detachFromPage();
     });
@@ -476,7 +476,7 @@ void Page::firstTimeInitialization()
 
 void Page::clearPreviousItemFromAllPages(HistoryItem* item)
 {
-    for (auto* page : allPages()) {
+    for (auto& page : allPages()) {
         auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
         if (!localMainFrame)
             return;
@@ -756,7 +756,7 @@ void Page::updateStyleAfterChangeInEnvironment()
 
 void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 {
-    for (auto* page : allPages())
+    for (auto& page : allPages())
         page->updateStyleAfterChangeInEnvironment();
 }
 
@@ -770,13 +770,13 @@ void Page::setNeedsRecalcStyleInAllFrames()
 
 void Page::refreshPlugins(bool reload)
 {
-    HashSet<PluginInfoProvider*> pluginInfoProviders;
+    WeakHashSet<PluginInfoProvider> pluginInfoProviders;
 
-    for (auto* page : allPages())
-        pluginInfoProviders.add(&page->pluginInfoProvider());
+    for (auto& page : allPages())
+        pluginInfoProviders.add(page->pluginInfoProvider());
 
     for (auto& pluginInfoProvider : pluginInfoProviders)
-        pluginInfoProvider->refresh(reload);
+        pluginInfoProvider.refresh(reload);
 }
 
 PluginData& Page::pluginData()
@@ -3131,16 +3131,16 @@ static LayoutRect relevantViewRect(RenderView* view)
     return relevantViewRect;
 }
 
-void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& objectPaintRect)
+void Page::addRelevantRepaintedObject(const RenderObject& object, const LayoutRect& objectPaintRect)
 {
     if (!isCountingRelevantRepaintedObjects())
         return;
 
     // Objects inside sub-frames are not considered to be relevant.
-    if (&object->frame() != &mainFrame())
+    if (&object.frame() != &mainFrame())
         return;
 
-    LayoutRect relevantRect = relevantViewRect(&object->view());
+    LayoutRect relevantRect = relevantViewRect(&object.view());
 
     // The objects are only relevant if they are being painted within the viewRect().
     if (!objectPaintRect.intersects(snappedIntRect(relevantRect)))
@@ -3192,13 +3192,13 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
     }
 }
 
-void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& objectPaintRect)
+void Page::addRelevantUnpaintedObject(const RenderObject& object, const LayoutRect& objectPaintRect)
 {
     if (!isCountingRelevantRepaintedObjects())
         return;
 
     // The objects are only relevant if they are being painted within the relevantViewRect().
-    if (!objectPaintRect.intersects(snappedIntRect(relevantViewRect(&object->view()))))
+    if (!objectPaintRect.intersects(snappedIntRect(relevantViewRect(&object.view()))))
         return;
 
     m_relevantUnpaintedRenderObjects.add(object);
@@ -3391,7 +3391,7 @@ void Page::notifyToInjectUserScripts()
 {
     m_hasBeenNotifiedToInjectUserScripts = true;
 
-    forEachFrame([] (LocalFrame& frame) {
+    forEachLocalFrame([] (LocalFrame& frame) {
         frame.injectUserScriptsAwaitingNotification();
     });
 }
@@ -3827,7 +3827,7 @@ RenderingUpdateScheduler* Page::existingRenderingUpdateScheduler()
     return m_renderingUpdateScheduler.get();
 }
 
-void Page::forEachDocumentFromMainFrame(const LocalFrame& mainFrame, const Function<void(Document&)>& functor)
+void Page::forEachDocumentFromMainFrame(const Frame& mainFrame, const Function<void(Document&)>& functor)
 {
     Vector<Ref<Document>> documents;
     for (const Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
@@ -3845,8 +3845,7 @@ void Page::forEachDocumentFromMainFrame(const LocalFrame& mainFrame, const Funct
 
 void Page::forEachDocument(const Function<void(Document&)>& functor) const
 {
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
-        forEachDocumentFromMainFrame(*localMainFrame, functor);
+    forEachDocumentFromMainFrame(mainFrame(), functor);
 }
 
 void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
@@ -3860,7 +3859,7 @@ void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 #endif
 }
 
-void Page::forEachFrame(const Function<void(LocalFrame&)>& functor)
+void Page::forEachLocalFrame(const Function<void(LocalFrame&)>& functor)
 {
     Vector<Ref<LocalFrame>> frames;
     for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -4511,6 +4510,19 @@ void Page::removeRootFrame(LocalFrame& frame)
     m_rootFrames.remove(frame);
 }
 
+String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin)
+{
+    if (usesEphemeralSession())
+        return emptyString();
+
+    return m_storageProvider->ensureMediaKeysStorageDirectoryForOrigin(origin);
+}
+
+void Page::setMediaKeysStorageDirectory(const String& directory)
+{
+    m_storageProvider->setMediaKeysStorageDirectory(directory);
+}
+
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
@@ -4540,6 +4552,11 @@ void Page::opportunisticallyRunIdleCallbacks()
     });
 }
 
+void Page::willChangeLocationInCompletelyLoadedSubframe()
+{
+    commonVM().heap.scheduleOpportunisticFullCollectionIfNeeded();
+}
+
 void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
 {
     OptionSet<JSC::VM::SchedulerOptions> options;
@@ -4547,5 +4564,21 @@ void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
         options.add(JSC::VM::SchedulerOptions::HasImminentlyScheduledWork);
     commonVM().performOpportunisticallyScheduledTasks(deadline, options);
 }
+
+String Page::sceneIdentifier() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return m_sceneIdentifier;
+#else
+    return emptyString();
+#endif
+}
+
+#if PLATFORM(IOS_FAMILY)
+void Page::setSceneIdentifier(String&& sceneIdentifier)
+{
+    m_sceneIdentifier = WTFMove(sceneIdentifier);
+}
+#endif
 
 } // namespace WebCore

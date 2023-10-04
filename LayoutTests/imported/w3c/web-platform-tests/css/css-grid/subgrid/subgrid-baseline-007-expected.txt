@@ -9,48 +9,42 @@ FAIL .item 1 assert_equals:
 <div data-offset-y="36" class="item first">
         <span></span><br><span></span>
       </div>
-offsetTop expected 36 but got 61
+offsetTop expected 36 but got 48
 FAIL .item 2 assert_equals:
 <div data-offset-y="58" class="item last">
         <span></span><br><span></span>
       </div>
-offsetTop expected 58 but got 61
-FAIL .item 3 assert_equals:
-<div data-offset-y="151" class="item first">
-        <span></span><br><span></span>
-      </div>
-offsetTop expected 151 but got 164
+offsetTop expected 58 but got 48
+PASS .item 3
 FAIL .item 4 assert_equals:
 <div data-offset-y="181" class="item last">
         <span></span><br><span></span>
       </div>
-offsetTop expected 181 but got 164
+offsetTop expected 181 but got 151
 FAIL .item 5 assert_equals:
 <div data-offset-y="291" class="item first">
       <span></span><br><span></span>
     </div>
-offsetTop expected 291 but got 279
+offsetTop expected 291 but got 266
 FAIL .item 6 assert_equals:
 <div data-offset-y="321" class="item last">
       <span></span><br><span></span>
     </div>
-offsetTop expected 321 but got 279
+offsetTop expected 321 but got 266
 FAIL .item 7 assert_equals:
 <div data-offset-y="11" class="item small first"></div>
 offsetTop expected 11 but got 3
-FAIL .item 8 assert_equals:
-<div data-offset-y="3" class="item small last"></div>
-offsetTop expected 3 but got 16
+PASS .item 8
 FAIL .item 9 assert_equals:
 <div data-offset-y="126" class="item small first"></div>
-offsetTop expected 126 but got 129
+offsetTop expected 126 but got 116
 FAIL .item 10 assert_equals:
 <div data-offset-y="126" class="item small last"></div>
-offsetTop expected 126 but got 136
+offsetTop expected 126 but got 123
 FAIL .item 11 assert_equals:
 <div data-offset-y="266" class="item small first"></div>
-offsetTop expected 266 but got 249
+offsetTop expected 266 but got 236
 FAIL .item 12 assert_equals:
 <div data-offset-y="266" class="item small last"></div>
-offsetTop expected 266 but got 259
+offsetTop expected 266 but got 246
 

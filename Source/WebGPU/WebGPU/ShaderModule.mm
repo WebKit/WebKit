@@ -114,7 +114,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
     if (!shaderModuleParameters)
         return ShaderModule::createInvalid(*this);
 
-    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage() });
+    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage(), maxBuffersForFragmentStage(), maxBuffersForComputeStage() });
 
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
         if (shaderModuleParameters->hints && descriptor.hintCount) {
@@ -331,7 +331,7 @@ static WGSL::BindGroupLayoutEntry::BindingMember convertBindingLayout(const Bind
     return WTF::switchOn(bindingLayout, [](const WGPUBufferBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::BufferBindingLayout {
             .type = wgslBindingType(bindingLayout.type),
-            .hasDynamicOffset = bindingLayout.hasDynamicOffset,
+            .hasDynamicOffset = !!bindingLayout.hasDynamicOffset,
             .minBindingSize = bindingLayout.minBindingSize
         };
     }, [](const WGPUSamplerBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
@@ -342,7 +342,7 @@ static WGSL::BindGroupLayoutEntry::BindingMember convertBindingLayout(const Bind
         return WGSL::TextureBindingLayout {
             .sampleType = wgslSampleType(bindingLayout.sampleType),
             .viewDimension = wgslViewDimension(bindingLayout.viewDimension),
-            .multisampled = bindingLayout.multisampled
+            .multisampled = !!bindingLayout.multisampled
         };
     }, [](const WGPUStorageTextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::StorageTextureBindingLayout {
@@ -363,9 +363,12 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
         WGSL::BindGroupLayout wgslBindGroupLayout;
         for (auto& entry : bindGroupLayout.entries()) {
             WGSL::BindGroupLayoutEntry wgslEntry;
-            wgslEntry.binding = entry.binding;
-            wgslEntry.visibility.fromRaw(entry.visibility);
-            wgslEntry.bindingMember = convertBindingLayout(entry.bindingLayout);
+            wgslEntry.binding = entry.value.binding;
+            wgslEntry.visibility.fromRaw(entry.value.visibility);
+            wgslEntry.bindingMember = convertBindingLayout(entry.value.bindingLayout);
+            wgslEntry.vertexBufferDynamicOffset = entry.value.vertexDynamicOffset;
+            wgslEntry.fragmentBufferDynamicOffset = entry.value.fragmentDynamicOffset;
+            wgslEntry.computeBufferDynamicOffset = entry.value.computeDynamicOffset;
             wgslBindGroupLayout.entries.append(wgslEntry);
         }
 

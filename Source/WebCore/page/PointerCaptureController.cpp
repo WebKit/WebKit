@@ -312,6 +312,27 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 }
 #endif
 
+static AtomString pointerEventType(const AtomString& mouseEventType)
+{
+    auto& names = eventNames();
+    if (mouseEventType == names.mousedownEvent)
+        return names.pointerdownEvent;
+    if (mouseEventType == names.mouseoverEvent)
+        return names.pointeroverEvent;
+    if (mouseEventType == names.mouseenterEvent)
+        return names.pointerenterEvent;
+    if (mouseEventType == names.mousemoveEvent)
+        return names.pointermoveEvent;
+    if (mouseEventType == names.mouseleaveEvent)
+        return names.pointerleaveEvent;
+    if (mouseEventType == names.mouseoutEvent)
+        return names.pointeroutEvent;
+    if (mouseEventType == names.mouseupEvent)
+        return names.pointerupEvent;
+
+    return nullAtom();
+}
+
 RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     // If we already have known touches then we cannot dispatch a mouse event,
@@ -327,9 +348,13 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
     RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
     bool pointerIsPressed = capturingData ? capturingData->pointerIsPressed : false;
 
-    short newButton = mouseEvent.button();
-    short previousMouseButton = capturingData ? capturingData->previousMouseButton : -1;
-    short button = (type == names.mousemoveEvent && newButton == previousMouseButton) ? -1 : newButton;
+    MouseButton newButton = mouseEvent.button();
+    MouseButton previousMouseButton = capturingData ? capturingData->previousMouseButton : MouseButton::PointerHasNotChanged;
+    MouseButton button = [newButton, previousMouseButton, type = pointerEventType(type)] {
+        if (newButton == previousMouseButton)
+            return PointerEvent::buttonForType(type);
+        return PointerEvent::typeIsUpOrDown(type) ? newButton : MouseButton::PointerHasNotChanged;
+    }();
 
     // https://w3c.github.io/pointerevents/#chorded-button-interactions
     // Some pointer devices, such as mouse or pen, support multiple buttons. In the Mouse Event model, each button

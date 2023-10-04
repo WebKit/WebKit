@@ -30,7 +30,7 @@ namespace WebCore {
 class RenderTextControlSingleLine : public RenderTextControl {
     WTF_MAKE_ISO_ALLOCATED(RenderTextControlSingleLine);
 public:
-    RenderTextControlSingleLine(HTMLInputElement&, RenderStyle&&);
+    RenderTextControlSingleLine(Type, HTMLInputElement&, RenderStyle&&);
     virtual ~RenderTextControlSingleLine();
 
 protected:
@@ -90,7 +90,6 @@ public:
 
 private:
     bool hasLineIfEmpty() const override { return true; }
-    bool isTextControlInnerBlock() const override { return true; }
     bool canBeProgramaticallyScrolled() const override
     {
         auto* shadowHost = element()->shadowHost();

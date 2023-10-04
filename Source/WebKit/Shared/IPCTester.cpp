@@ -203,14 +203,14 @@ void IPCTester::releaseConnectionTester(IPCConnectionTesterIdentifier identifier
     completionHandler();
 }
 
-void IPCTester::asyncPing(IPC::Connection&, CompletionHandler<void()>&& completionHandler)
+void IPCTester::asyncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
-    completionHandler();
+    completionHandler(value + 1);
 }
 
-void IPCTester::syncPing(IPC::Connection&, CompletionHandler<void()>&& completionHandler)
+void IPCTester::syncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
-    completionHandler();
+    completionHandler(value + 1);
 }
 
 void IPCTester::stopIfNeeded()

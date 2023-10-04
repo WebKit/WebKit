@@ -221,10 +221,7 @@ using namespace WebKit;
 {
     NSString *path = [NSString stringWithFormat:pathToJSONFile, locale];
     NSData *data = [NSData dataWithData:webExtension.resourceDataForPath(path)];
-    if (!data)
-        return nil;
-
-    return [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];;
+    return parseJSON(data);
 }
 
 - (LocalizationDictionary *)_predefinedMessagesForLocale:(NSLocale *)locale

@@ -176,6 +176,8 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/cmaps/UniKS-UTF8-V.bcmap
     ${THIRDPARTY_DIR}/pdfjs/web/cmaps/V.bcmap
     ${THIRDPARTY_DIR}/pdfjs/web/cmaps/WP-Symbol.bcmap
+    ${THIRDPARTY_DIR}/pdfjs/web/images/altText_add.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/altText_done.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-check.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-comment.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-help.svg

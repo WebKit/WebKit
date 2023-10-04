@@ -47,6 +47,7 @@ public:
     void decrement();
 
     Node* node() const { return m_anchorNode.get(); }
+    RefPtr<Node> protectedNode() const { return m_anchorNode; }
     int offsetInLeafNode() const { return m_offsetInAnchor; }
 
     bool atStart() const;

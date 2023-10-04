@@ -3021,6 +3021,16 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionAction {
+    header "_WKWebExtensionAction.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionActionPrivate {
+    header "_WKWebExtensionActionPrivate.h"
+    export *
+  }
+
   explicit module _WKWebExtensionContext {
     header "_WKWebExtensionContext.h"
     export *
@@ -3068,6 +3078,16 @@ framework module WebKit_Private [system] {
 
   explicit module _WKWebExtensionMatchPatternPrivate {
     header "_WKWebExtensionMatchPatternPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionMessagePort {
+    header "_WKWebExtensionMessagePort.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionMessagePortPrivate {
+    header "_WKWebExtensionMessagePortPrivate.h"
     export *
   }
 

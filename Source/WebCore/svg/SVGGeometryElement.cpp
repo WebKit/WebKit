@@ -47,7 +47,7 @@ SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& d
 
 float SVGGeometryElement::getTotalLength() const
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     auto* renderer = this->renderer();
     if (!renderer)
@@ -67,7 +67,7 @@ float SVGGeometryElement::getTotalLength() const
 
 ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) const
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     // Spec: Clamp distance to [0, length].
     distance = clampTo<float>(distance, 0, getTotalLength());
@@ -93,7 +93,7 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
 
 bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     auto* renderer = this->renderer();
     if (!renderer)
@@ -114,7 +114,7 @@ bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
 
 bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     auto* renderer = this->renderer();
     if (!renderer)

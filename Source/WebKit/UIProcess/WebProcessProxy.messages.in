@@ -59,7 +59,7 @@ messages -> WebProcessProxy LegacyReceiver {
     ReleaseHighPerformanceGPU()
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond)
     StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
     SetDisplayLinkPreferredFramesPerSecond(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond);

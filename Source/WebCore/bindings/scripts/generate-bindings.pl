@@ -44,7 +44,6 @@ use JSON::PP;
 use IDLParser;
 use CodeGenerator;
 
-my @idlDirectories;
 my $outputDirectory;
 my $outputHeadersDirectory;
 my $generator;
@@ -56,9 +55,9 @@ my $writeDependencies;
 my $verbose;
 my $supplementalDependencyFile;
 my $idlAttributesFile;
+my $idlFileNamesList;
 
-GetOptions('include=s@' => \@idlDirectories,
-           'outputDir=s' => \$outputDirectory,
+GetOptions('outputDir=s' => \$outputDirectory,
            'outputHeadersDir=s' => \$outputHeadersDirectory,
            'generator=s' => \$generator,
            'defines=s' => \$defines,
@@ -68,7 +67,8 @@ GetOptions('include=s@' => \@idlDirectories,
            'verbose' => \$verbose,
            'write-dependencies' => \$writeDependencies,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
-           'idlAttributesFile=s' => \$idlAttributesFile);
+           'idlAttributesFile=s' => \$idlAttributesFile,
+           'idlFileNamesList=s' => \$idlFileNamesList);
 
 die('Must specify input file.') unless @ARGV;
 die('Must specify generator') unless defined($generator);
@@ -128,6 +128,6 @@ sub generateBindings
     my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $preprocessor, $idlAttributes);
 
     # Generate desired output for the target IDL file.
-    my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, $outputHeadersDirectory, $preprocessor, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes, \%supplementalDependencies);
+    my $codeGen = CodeGenerator->new($generator, $outputDirectory, $outputHeadersDirectory, $preprocessor, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes, \%supplementalDependencies, $idlFileNamesList);
     $codeGen->ProcessDocument($targetDocument, $defines);
 }

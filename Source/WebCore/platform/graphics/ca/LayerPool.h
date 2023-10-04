@@ -30,6 +30,7 @@
 #include "IntSizeHash.h"
 #include "PlatformCALayer.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -37,13 +38,13 @@
 
 namespace WebCore {
     
-class LayerPool {
+class LayerPool : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(LayerPool);
 public:
     WEBCORE_EXPORT LayerPool();
     WEBCORE_EXPORT ~LayerPool();
 
-    static HashSet<LayerPool*>& allLayerPools();
+    static HashSet<CheckedPtr<LayerPool>>& allLayerPools();
     
     void addLayer(const RefPtr<PlatformCALayer>&);
     RefPtr<PlatformCALayer> takeLayerWithSize(const IntSize&);

@@ -38,11 +38,6 @@
 namespace WebCore {
 namespace Layout {
 
-inline bool Line::Run::hasTextCombine() const
-{
-    return m_style.hasTextCombine();
-}
-
 Line::Line(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_trimmableTrailingContent(m_runs)
@@ -106,7 +101,8 @@ Line::Result Line::close()
 
 void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
 {
-    ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify || formattingContext().root().style().textAlignLast() == TextAlignLast::Justify);
+    auto& rootBox = formattingContext().root();
+    ASSERT(rootBox.isRubyAnnotationBox() || rootBox.style().textAlign() == TextAlignMode::Justify || rootBox.style().textAlignLast() == TextAlignLast::Justify);
     // Text is justified according to the method specified by the text-justify property,
     // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
     // the last line before a forced break or the end of the block is start-aligned.
@@ -115,84 +111,73 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     auto spaceToDistribute = horizontalAvailableSpace - contentLogicalWidth() + m_hangingContent.trailingWhitespaceWidth();
     if (spaceToDistribute <= 0)
         return;
-    // Collect and distribute the expansion opportunities.
-    size_t lineExpansionOpportunities = 0;
-    Vector<size_t> runsExpansionOpportunities(m_runs.size());
-    Vector<ExpansionBehavior> runsExpansionBehaviors(m_runs.size());
-    auto lastRunIndexWithContent = std::optional<size_t> { };
 
-    // Line start behaves as if we had an expansion here (i.e. fist runs should not start with allowing left expansion).
-    auto runIsAfterExpansion = true;
-    auto hangingTrailingWhitespaceLength = m_hangingContent.trailingWhitespaceLength();
-    auto lastTextRunIndexForTrimming = [&]() -> std::optional<size_t> {
-        if (!hangingTrailingWhitespaceLength)
-            return { };
-        for (auto index = m_runs.size(); index--;) {
-            if (m_runs[index].isText())
-                return index;
+    auto expansion = ExpansionInfo { };
+    TextUtil::computedExpansions(m_runs, { 0, m_runs.size() }, m_hangingContent.trailingWhitespaceLength(), expansion);
+
+    if (rootBox.isRubyAnnotationBox()) {
+        // FIXME: This is a workaround until after we generate inline boxes for annotation content.
+        if (expansion.opportunityCount) {
+            // ruby-align: space-around
+            auto contentInset = spaceToDistribute / (expansion.opportunityCount + 1) / 2;
+            spaceToDistribute -= contentInset;
+            applyExpansionOnRange({ 0, m_runs.size() }, expansion, spaceToDistribute);
+            moveRunsBy(0, contentInset / 2);
+            return;
         }
-        return { };
-    }();
-    for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
-        auto& run = m_runs[runIndex];
-        auto expansionBehavior = ExpansionBehavior::defaultBehavior();
-        size_t expansionOpportunitiesInRun = 0;
-
-        // According to the CSS3 spec, a UA can determine whether or not
-        // it wishes to apply text-align: justify to text with collapsible spaces (and this behavior matches Blink).
-        auto mayAlterSpacingWithinText = !TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox()) || hangingTrailingWhitespaceLength;
-        if (run.isText() && mayAlterSpacingWithinText) {
-            if (run.hasTextCombine())
-                expansionBehavior = ExpansionBehavior::forbidAll();
-            else {
-                expansionBehavior.left = runIsAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow;
-                expansionBehavior.right = ExpansionBehavior::Behavior::Allow;
-                auto& textContent = *run.textContent();
-                auto length = textContent.length;
-                if (lastTextRunIndexForTrimming && runIndex == *lastTextRunIndexForTrimming) {
-                    // Trailing hanging whitespace sequence is ignored when computing the expansion opportunities.
-                    length -= hangingTrailingWhitespaceLength;
-                }
-                std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(textContent.start, length), run.inlineDirection(), expansionBehavior);
-            }
-        } else if (run.isBox())
-            runIsAfterExpansion = false;
-
-        runsExpansionBehaviors[runIndex] = expansionBehavior;
-        runsExpansionOpportunities[runIndex] = expansionOpportunitiesInRun;
-        lineExpansionOpportunities += expansionOpportunitiesInRun;
-
-        if (run.isText() || run.isBox())
-            lastRunIndexWithContent = runIndex;
-    }
-    // Forbid right expansion in the last run to prevent trailing expansion at the end of the line.
-    if (lastRunIndexWithContent && runsExpansionOpportunities[*lastRunIndexWithContent]) {
-        runsExpansionBehaviors[*lastRunIndexWithContent].right = ExpansionBehavior::Behavior::Forbid;
-        if (runIsAfterExpansion) {
-            // When the last run has an after expansion (e.g. CJK ideograph) we need to remove this trailing expansion opportunity.
-            // Note that this is not about trailing collapsible whitespace as at this point we trimmed them all.
-            ASSERT(lineExpansionOpportunities && runsExpansionOpportunities[*lastRunIndexWithContent]);
-            --lineExpansionOpportunities;
-            --runsExpansionOpportunities[*lastRunIndexWithContent];
-        }
+        auto centerOffset = spaceToDistribute / 2;
+        moveRunsBy(0, centerOffset);
+        expandBy(0, centerOffset);
+        return;
     }
     // Anything to distribute?
-    if (!lineExpansionOpportunities)
+    if (!expansion.opportunityCount)
         return;
+    applyExpansionOnRange({ 0, m_runs.size() }, expansion, spaceToDistribute);
+}
+
+void Line::applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo& expansion, InlineLayoutUnit spaceToDistribute)
+{
+    ASSERT(spaceToDistribute > 0);
+    ASSERT(expansion.opportunityCount);
     // Distribute the extra space.
-    auto expansionToDistribute = spaceToDistribute / lineExpansionOpportunities;
+    auto expansionToDistribute = spaceToDistribute / expansion.opportunityCount;
     auto accumulatedExpansion = InlineLayoutUnit { };
-    for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
+    for (auto runIndex = runRange.begin(); runIndex < runRange.end(); ++runIndex) {
         auto& run = m_runs[runIndex];
         // Expand and move runs by the accumulated expansion.
         run.moveHorizontally(accumulatedExpansion);
-        auto computedExpansion = expansionToDistribute * runsExpansionOpportunities[runIndex];
-        run.setExpansion({ runsExpansionBehaviors[runIndex], computedExpansion });
+        auto computedExpansion = expansionToDistribute * expansion.opportunityList[runIndex];
+        run.setExpansion({ expansion.behaviorList[runIndex], computedExpansion });
         run.shrinkHorizontally(-computedExpansion);
         accumulatedExpansion += computedExpansion;
     }
     // Content grows as runs expand.
     m_contentLogicalWidth += accumulatedExpansion;
+}
+
+void Line::moveRunsBy(size_t startRunIndex, InlineLayoutUnit offset)
+{
+    if (startRunIndex >= m_runs.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    for (auto index = startRunIndex; index < m_runs.size(); ++index)
+        m_runs[index].moveHorizontally(offset);
+    m_contentLogicalWidth += offset;
+}
+
+void Line::expandBy(size_t runIndex, InlineLayoutUnit logicalWidth)
+{
+    if (runIndex >= m_runs.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_runs[runIndex].shrinkHorizontally(-logicalWidth);
+    if (runIndex < m_runs.size() - 1)
+        moveRunsBy(runIndex + 1, logicalWidth);
+    else
+        m_contentLogicalWidth += logicalWidth;
 }
 
 InlineLayoutUnit Line::handleTrailingTrimmableContent(TrailingContentAction trailingTrimmableContentAction)
@@ -1042,6 +1027,11 @@ bool Line::Run::isContentfulOrHasDecoration(const Run& run, const InlineFormatti
         }
     }
     return false;
+}
+
+bool Line::Run::hasTextCombine() const
+{
+    return m_style.hasTextCombine();
 }
 
 }

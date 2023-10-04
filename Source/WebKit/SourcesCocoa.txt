@@ -216,8 +216,8 @@ Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp
 Shared/mac/MediaFormatReader/MediaSampleCursor.cpp
 Shared/mac/MediaFormatReader/MediaTrackReader.cpp
 
-Shared/RemoteLayerTree/CGDisplayList.cpp
-Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.mm
+Shared/RemoteLayerTree/DynamicContentScalingDisplayList.cpp
+Shared/RemoteLayerTree/DynamicContentScalingImageBufferBackend.mm
 Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
 Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm
 Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm
@@ -441,10 +441,12 @@ UIProcess/Inspector/mac/WKInspectorWKWebView.mm
 UIProcess/Network/NetworkProcessProxyCocoa.mm
 
 UIProcess/ios/forms/WKAirPlayRoutePicker.mm
+UIProcess/ios/forms/WKDatePickerPopoverController.mm
 UIProcess/ios/forms/WKDatePickerViewController.mm
 UIProcess/ios/forms/WKDateTimeInputControl.mm
 UIProcess/ios/forms/WKFileUploadPanel.mm
 UIProcess/ios/forms/WKFocusedFormControlView.mm
+UIProcess/ios/forms/WKFormAccessoryView.mm
 UIProcess/ios/forms/WKFormColorControl.mm
 UIProcess/ios/forms/WKFormPeripheralBase.mm
 UIProcess/ios/forms/WKFormPopover.mm
@@ -463,6 +465,7 @@ UIProcess/ios/fullscreen/WKFullScreenViewController.mm
 UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
 
 UIProcess/ios/AppKitSoftLink.mm
+UIProcess/ios/CompactContextMenuPresenter.mm
 UIProcess/ios/DragDropInteractionState.mm
 UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm
 UIProcess/ios/PageClientImplIOS.mm
@@ -496,10 +499,12 @@ UIProcess/ios/WKScrollView.mm
 UIProcess/ios/WKStylusDeviceObserver.mm
 UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm
 UIProcess/ios/WKSyntheticTapGestureRecognizer.mm
+UIProcess/ios/WKTapHighlightView.mm
 UIProcess/ios/WKTouchActionGestureRecognizer.mm
 UIProcess/ios/WKTouchEventsGestureRecognizer.mm
 UIProcess/ios/WKTextSelectionRect.mm
 UIProcess/ios/WKUSDPreviewView.mm
+UIProcess/ios/WKVideoView.mm
 UIProcess/ios/WKWebEvent.mm
 UIProcess/ios/WKWebGeolocationPolicyDeciderIOS.mm
 
@@ -507,8 +512,7 @@ UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 
 UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
-UIProcess/mac/DisplayLink.cpp
-UIProcess/mac/DisplayLinkProcessProxyClient.cpp
+UIProcess/mac/DisplayLinkMac.cpp
 UIProcess/mac/HighPerformanceGPUManager.mm
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
@@ -660,10 +664,13 @@ WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm
 WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm
 
 WebProcess/Plugins/PDF/PDFPlugin.mm
+WebProcess/Plugins/PDF/PDFPluginBase.mm
 WebProcess/Plugins/PDF/PDFPluginAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginPasswordField.mm
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
+WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDocumentLayout.mm
 
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
@@ -694,7 +701,6 @@ WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
 WebProcess/WebPage/ios/FindControllerIOS.mm
 WebProcess/WebPage/ios/WebPageIOS.mm
 
-WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp
 WebProcess/WebPage/mac/PageBannerMac.mm
 WebProcess/WebPage/mac/RemoteLayerTreeDrawingAreaMac.mm
 WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm

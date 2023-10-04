@@ -25,11 +25,11 @@
 
 #import "config.h"
 #import "PointerEvent.h"
-#import "PlatformMouseEvent.h"
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 
 #import "EventNames.h"
+#import "PlatformMouseEvent.h"
 
 namespace WebCore {
 
@@ -49,18 +49,6 @@ static const AtomString& pointerEventType(PlatformTouchPoint::TouchPhaseType pha
     }
     ASSERT_NOT_REACHED();
     return nullAtom();
-}
-
-static short buttonForType(const AtomString& type)
-{
-    return type == eventNames().pointermoveEvent ? -1 : 0;
-}
-
-static unsigned short buttonsForType(const AtomString& type)
-{
-    // We have contact with the touch surface for most events except when we've released the touch or canceled it.
-    auto& eventNames = WebCore::eventNames();
-    return (type == eventNames.pointerupEvent || type == eventNames.pointeroutEvent || type == eventNames.pointerleaveEvent || type == eventNames.pointercancelEvent) ? 0 : 1;
 }
 
 Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)

@@ -517,8 +517,7 @@
         (literal "/private/var/run/syslog"))
 )
 
-(allow mach-lookup
-    (global-name "com.apple.system.notification_center")
+(allow mach-lookup (global-name "com.apple.system.notification_center")
     (apply-message-filter
         (deny mach-message-send)
         (deny mach-message-send (with no-report) (message-number 1023))
@@ -526,7 +525,11 @@
             1002 1011 1012 1016 1017 1018 1021 1025 1026 1028 1029 1030 1031 1032))))
 
 (allow ipc-posix-shm-read*
-       (ipc-posix-name "apple.shm.notification_center"))
+    (ipc-posix-name "apple.shm.notification_center"))
+
+(with-filter (state-flag "EnableExperimentalSandbox")
+    (deny mach-lookup (global-name "com.apple.system.notification_center")))
+
 
 (managed-configuration-read-public)
 
@@ -926,10 +929,13 @@
             "com.apple.frontboard.systemappservices"
             "com.apple.iphone.axserver-systemwide"
             "com.apple.mobileassetd.v2"
-            "com.apple.mobilegestalt.xpc"
-            "com.apple.tccd"
-            "com.apple.webinspector"
-)))
+            "com.apple.mobilegestalt.xpc")))
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (system-attribute apple-internal)
+        (global-name "com.apple.webinspector")))
 
 ;; Silence warnings about these connections if we have decided not to extend access to them:
 (deny mach-lookup (with no-report)
@@ -1064,6 +1070,7 @@
         SYS_sysctl
         SYS_thread_selfid
         SYS_ulock_wait
+        SYS_ulock_wait2 ;; <rdar://problem/58743778>
         SYS_ulock_wake
         SYS_workq_kernreturn
         SYS_write_nocancel))
@@ -1093,8 +1100,7 @@
     SYS_sem_close
     SYS_sem_open
     SYS_shared_region_map_and_slide_2_np ;; <rdar://problem/60294880>
-    SYS_sysctlbyname
-    SYS_ulock_wait2)) ;; <rdar://problem/58743778>
+    SYS_sysctlbyname))
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
@@ -1375,7 +1381,6 @@
         host_get_io_master
         io_registry_entry_from_path
         io_registry_entry_get_property_bin_buf
-        io_service_get_matching_service_bin
         mach_memory_entry_ownership
         mach_port_extract_right
         mach_port_get_context_from_user
@@ -1399,8 +1404,7 @@
     (kernel-mig-routine
         io_iterator_next
         io_registry_entry_get_property_bytes
-        io_registry_entry_get_registry_entry_id
-        io_service_get_matching_services_bin))
+        io_registry_entry_get_registry_entry_id))
 
 (define (kernel-mig-routine-rarely-used-need-backtrace)
     (kernel-mig-routine
@@ -1456,6 +1460,12 @@
                 (with telemetry)
                 (with message "kernel mig routine used after launch")
                 (kernel-mig-routine-only-in-use-during-launch)))
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+        (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+            (allow mach-message-send
+                io_service_get_matching_service_bin
+                io_service_get_matching_services_bin))
+#endif
 #endif
 
         (with-filter (require-not (lockdown-mode))

@@ -27,7 +27,11 @@
 #include "config.h"
 #include "WorkerNavigator.h"
 
+#include "Chrome.h"
+#include "GPU.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PushNotificationEvent.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "WorkerBadgeProxy.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
@@ -53,13 +57,48 @@ bool WorkerNavigator::onLine() const
 
 GPU* WorkerNavigator::gpu()
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 Implement this.
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    if (!m_gpuForWebGPU) {
+        auto scriptExecutionContext = this->scriptExecutionContext();
+        if (scriptExecutionContext->isWorkerGlobalScope()) {
+            WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
+            RELEASE_ASSERT(workerGlobalScope.graphicsClient());
+            auto gpu = workerGlobalScope.graphicsClient()->createGPUForWebGPU();
+            if (!gpu)
+                return nullptr;
+
+            m_gpuForWebGPU = GPU::create(*gpu);
+        } else if (scriptExecutionContext->isDocument()) {
+            auto& document = downcast<Document>(*scriptExecutionContext);
+            auto* page = document.page();
+            if (!page)
+                return nullptr;
+            auto gpu = page->chrome().createGPUForWebGPU();
+            if (!gpu)
+                return nullptr;
+
+            m_gpuForWebGPU = GPU::create(*gpu);
+        }
+    }
+
+    return m_gpuForWebGPU.get();
+#else
     return nullptr;
+#endif
 }
 
 #if ENABLE(BADGING)
 void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    if (is<ServiceWorkerGlobalScope>(scriptExecutionContext())) {
+        if (RefPtr pushNotificationEvent = downcast<ServiceWorkerGlobalScope>(scriptExecutionContext())->pushNotificationEvent()) {
+            pushNotificationEvent->setUpdatedAppBadge(WTFMove(badge));
+            return;
+        }
+    }
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
     auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
     if (!scope) {
         promise->reject(InvalidStateError);

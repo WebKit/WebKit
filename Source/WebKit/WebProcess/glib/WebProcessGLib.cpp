@@ -141,7 +141,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::GBMDevice::singleton().initialize(parameters.renderDeviceFile);
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(EGL)
     m_dmaBufRendererBufferMode = parameters.dmaBufRendererBufferMode;
     if (!m_dmaBufRendererBufferMode.isEmpty()) {
 #if USE(GBM)

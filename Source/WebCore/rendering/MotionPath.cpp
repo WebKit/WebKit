@@ -65,7 +65,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
         if (offsetPosition.x().isNormal())
             return normalPositionForOffsetPath(pathOperation, referenceRect);
         // If offset-position is auto, use top / left corner of the box.
-        if (offsetPosition.x().isAuto() && offsetPosition.y().isAuto())
+        if (offsetPosition.x().isAuto())
             return offsetFromContainer(renderer, container, referenceRect);
         return floatPointForLengthPoint(offsetPosition, referenceRect.size());
     };
@@ -224,7 +224,7 @@ std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pa
         if (is<BasicShapeCircleOrEllipse>(shape)) {
             auto& centerCoordShape = downcast<BasicShapeCircleOrEllipse>(shape);
             if (centerCoordShape.positionWasOmitted())
-                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, currentOffsetForData(*motionPathData));
+                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, motionPathData->usedStartingPosition);
         }
         return pathOperation.pathForReferenceRect(containingBlockRect);
     }

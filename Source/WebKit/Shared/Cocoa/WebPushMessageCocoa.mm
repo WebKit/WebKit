@@ -33,6 +33,7 @@ namespace WebKit {
 #define WebKitPushDataKey @"WebKitPushData"
 #define WebKitPushRegistrationURLKey @"WebKitPushRegistrationURL"
 #define WebKitPushPartitionKey @"WebKitPushPartition"
+#define WebKitNotificationPayloadKey @"WebKitNotificationPayload"
 
 std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dictionary)
 {
@@ -51,7 +52,25 @@ std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dicti
     if (!pushPartition || ![pushPartition isKindOfClass:[NSString class]])
         return std::nullopt;
 
-    WebPushMessage message { { }, String { pushPartition }, URL { url } };
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    id payloadDictionary = [dictionary objectForKey:WebKitNotificationPayloadKey];
+    isNull = [payloadDictionary isEqual:[NSNull null]];
+    BOOL isCorrectType = [payloadDictionary isKindOfClass:[NSDictionary class]];
+
+    if (!isNull && !isCorrectType)
+        return std::nullopt;
+
+    std::optional<WebCore::NotificationPayload> payload;
+    if (isCorrectType) {
+        payload = WebCore::NotificationPayload::fromDictionary(payloadDictionary);
+        if (!payload)
+            return std::nullopt;
+    }
+
+    WebPushMessage message { { }, String { pushPartition }, URL { url }, WTFMove(payload) };
+#else
+    WebPushMessage message { { }, String { pushPartition }, URL { url }, { } };
+#endif
 
     if (isData) {
         NSData *data = (NSData *)pushData;
@@ -67,10 +86,17 @@ NSDictionary *WebPushMessage::toDictionary() const
     if (pushData)
         nsData = nsData = adoptNS([[NSData alloc] initWithBytes:pushData->data() length:pushData->size()]);
 
+    NSDictionary *nsPayload = nil;
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    if (notificationPayload)
+        nsPayload = notificationPayload->dictionaryRepresentation();
+#endif
+
     return @{
         WebKitPushDataKey : nsData ? nsData.get() : [NSNull null],
         WebKitPushRegistrationURLKey : (NSURL *)registrationURL,
-        WebKitPushPartitionKey : (NSString *)pushPartitionString
+        WebKitPushPartitionKey : (NSString *)pushPartitionString,
+        WebKitNotificationPayloadKey : nsPayload ? nsPayload : [NSNull null]
     };
 }
 

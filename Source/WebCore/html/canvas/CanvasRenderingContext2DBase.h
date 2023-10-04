@@ -69,9 +69,6 @@ class WebCodecsVideoFrame;
 
 struct DOMMatrix2DInit;
 
-namespace DisplayList {
-class DrawingContext;
-}
 
 using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
     , RefPtr<SVGImageElement>
@@ -98,6 +95,8 @@ public:
     virtual ~CanvasRenderingContext2DBase();
 
     const CanvasRenderingContext2DSettings& getContextAttributes() const { return m_settings; }
+    using RenderingMode = WebCore::RenderingMode;
+    std::optional<RenderingMode> getEffectiveRenderingModeForTesting();
 
     double lineWidth() const { return state().lineWidth; }
     void setLineWidth(double);
@@ -223,8 +222,6 @@ public:
 
     void setPath(Path2D&);
     Ref<Path2D> getPath() const;
-
-    void setUsesDisplayListDrawing(bool flag) { m_usesDisplayListDrawing = flag; };
 
     String font() const { return state().fontString(); }
 
@@ -354,7 +351,6 @@ private:
     template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider);
 
     bool is2dBase() const final { return true; }
-    void paintRenderingResultsToCanvas() override;
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 
@@ -439,8 +435,6 @@ private:
     FloatRect m_dirtyRect;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
-    bool m_usesDisplayListDrawing { false };
-    mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
     HashSet<uint32_t> m_suppliedColors;
     mutable std::optional<CachedImageData> m_cachedImageData;
     CanvasRenderingContext2DSettings m_settings;

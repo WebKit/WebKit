@@ -21,7 +21,7 @@
 #include "SVGResourcesCache.h"
 
 #include "ElementInlines.h"
-#include "RenderSVGResourceContainer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "SVGRenderStyle.h"
 #include "SVGResources.h"
 #include "SVGResourcesCycleSolver.h"
@@ -48,7 +48,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
     SVGResourcesCycleSolver::resolveCycles(renderer, resources);
 
     // Walk resources and register the render object at each resources.
-    WeakHashSet<RenderSVGResourceContainer> resourceSet;
+    WeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
     resources.buildSetOfResources(resourceSet);
 
     for (auto& resourceContainer : resourceSet)
@@ -62,7 +62,7 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
         return;
 
     // Walk resources and register the render object at each resources.
-    WeakHashSet<RenderSVGResourceContainer> resourceSet;
+    WeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
     resources->buildSetOfResources(resourceSet);
 
     for (auto& resourceContainer : resourceSet)
@@ -204,7 +204,7 @@ void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
     resourcesCacheFromRenderer(renderer).removeResourcesFromRenderer(renderer);
 }
 
-void SVGResourcesCache::resourceDestroyed(RenderSVGResourceContainer& resource)
+void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
 {
     auto& cache = resourcesCacheFromRenderer(resource);
 

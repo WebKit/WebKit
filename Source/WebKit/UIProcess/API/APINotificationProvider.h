@@ -46,7 +46,7 @@ class NotificationProvider {
 public:
     virtual ~NotificationProvider() = default;
 
-    virtual void show(WebKit::WebPageProxy*, WebKit::WebNotification&, RefPtr<WebCore::NotificationResources>&&) { }
+    virtual bool show(WebKit::WebPageProxy*, WebKit::WebNotification&, RefPtr<WebCore::NotificationResources>&&) { return false; }
     virtual void cancel(WebKit::WebNotification&) { }
     virtual void didDestroyNotification(WebKit::WebNotification&) { }
     virtual void clearNotifications(const Vector<uint64_t>& /*notificationIDs*/) { }

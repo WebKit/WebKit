@@ -28,37 +28,49 @@ class A {
 }
 
 setter = Object.getOwnPropertyDescriptor(A.prototype, 'id').set;
-assert.sameValue(setter.name, 'set id');
-verifyNotEnumerable(setter, 'name');
-verifyNotWritable(setter, 'name');
-verifyConfigurable(setter, 'name');
+verifyProperty(setter, 'name', {
+  value: 'set id',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 setter = Object.getOwnPropertyDescriptor(A.prototype, anonSym).set;
-assert.sameValue(setter.name, 'set ');
-verifyNotEnumerable(setter, 'name');
-verifyNotWritable(setter, 'name');
-verifyConfigurable(setter, 'name');
+verifyProperty(setter, 'name', {
+  value: 'set ',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 setter = Object.getOwnPropertyDescriptor(A.prototype, namedSym).set;
-assert.sameValue(setter.name, 'set [test262]');
-verifyNotEnumerable(setter, 'name');
-verifyNotWritable(setter, 'name');
-verifyConfigurable(setter, 'name');
+verifyProperty(setter, 'name', {
+  value: 'set [test262]',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 setter = Object.getOwnPropertyDescriptor(A, 'id').set;
-assert.sameValue(setter.name, 'set id');
-verifyNotEnumerable(setter, 'name');
-verifyNotWritable(setter, 'name');
-verifyConfigurable(setter, 'name');
+verifyProperty(setter, 'name', {
+  value: 'set id',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 setter = Object.getOwnPropertyDescriptor(A, anonSym).set;
-assert.sameValue(setter.name, 'set ');
-verifyNotEnumerable(setter, 'name');
-verifyNotWritable(setter, 'name');
-verifyConfigurable(setter, 'name');
+verifyProperty(setter, 'name', {
+  value: 'set ',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});
 
 setter = Object.getOwnPropertyDescriptor(A, namedSym).set;
-assert.sameValue(setter.name, 'set [test262]');
-verifyNotEnumerable(setter, 'name');
-verifyNotWritable(setter, 'name');
-verifyConfigurable(setter, 'name');
+verifyProperty(setter, 'name', {
+  value: 'set [test262]',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

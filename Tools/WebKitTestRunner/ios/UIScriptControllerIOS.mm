@@ -35,7 +35,7 @@
 #import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/OpaqueJSString.h>
@@ -1196,6 +1196,11 @@ void UIScriptControllerIOS::chooseMenuAction(JSStringRef jsAction, JSValueRef ca
 bool UIScriptControllerIOS::isShowingPopover() const
 {
     return webView().showingPopover;
+}
+
+bool UIScriptControllerIOS::isShowingFormValidationBubble() const
+{
+    return webView().showingFormValidationBubble;
 }
 
 void UIScriptControllerIOS::setWillPresentPopoverCallback(JSValueRef callback)

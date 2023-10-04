@@ -61,6 +61,6 @@ fn main()
     // CHECK: function\d\(local\d\)
     _ = i();
 
-    // CHECK: function\d\(function\d\(42, local\d\), local\d\)
+    // CHECK: function\d\(function\d\(42., local\d\), local\d\)
     _ = j(j(42));
 }

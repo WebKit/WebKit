@@ -28,12 +28,14 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPINamespace.h"
+#include "WebExtensionAPIAction.h"
 #include "WebExtensionAPIAlarms.h"
 #include "WebExtensionAPIExtension.h"
 #include "WebExtensionAPILocalization.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIRuntime.h"
+#include "WebExtensionAPIScripting.h"
 #include "WebExtensionAPITabs.h"
 #include "WebExtensionAPITest.h"
 #include "WebExtensionAPIWebNavigation.h"
@@ -51,23 +53,29 @@ public:
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
+    WebExtensionAPIAction& action();
     WebExtensionAPIAlarms& alarms();
+    WebExtensionAPIAction& browserAction() { return action(); }
     WebExtensionAPIExtension& extension();
     WebExtensionAPILocalization& i18n();
+    WebExtensionAPIAction& pageAction() { return action(); }
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() final;
-    WebExtensionAPITest& test();
+    WebExtensionAPIScripting& scripting();
     WebExtensionAPITabs& tabs();
+    WebExtensionAPITest& test();
     WebExtensionAPIWindows& windows();
     WebExtensionAPIWebNavigation& webNavigation();
 #endif
 
 private:
+    RefPtr<WebExtensionAPIAction> m_action;
     RefPtr<WebExtensionAPIAlarms> m_alarms;
     RefPtr<WebExtensionAPIExtension> m_extension;
     RefPtr<WebExtensionAPILocalization> m_i18n;
     RefPtr<WebExtensionAPIPermissions> m_permissions;
     RefPtr<WebExtensionAPIRuntime> m_runtime;
+    RefPtr<WebExtensionAPIScripting> m_scripting;
     RefPtr<WebExtensionAPITabs> m_tabs;
     RefPtr<WebExtensionAPITest> m_test;
     RefPtr<WebExtensionAPIWindows> m_windows;

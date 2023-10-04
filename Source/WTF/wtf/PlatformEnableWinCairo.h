@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -39,6 +39,15 @@
 
 /* --------- Windows port --------- */
 
+
+#if !defined(ENABLE_GEOLOCATION)
+#define ENABLE_GEOLOCATION 1
+#endif
+
+#if !defined(ENABLE_OPENTYPE_MATH)
+#define ENABLE_OPENTYPE_MATH 1
+#endif
+
 #if !defined(ENABLE_WEB_ARCHIVE)
 #define ENABLE_WEB_ARCHIVE 1
 #endif
@@ -47,6 +56,6 @@
 #define ENABLE_WEBGL 1
 #endif
 
-#if !defined(ENABLE_GEOLOCATION)
-#define ENABLE_GEOLOCATION 1
+#if !defined(ENABLE_WEBPROCESS_CACHE)
+#define ENABLE_WEBPROCESS_CACHE 1
 #endif

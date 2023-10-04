@@ -145,8 +145,8 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
-    : RenderReplaced(element, WTFMove(style), IntSize())
+RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
+    : RenderReplaced(type, element, WTFMove(style), IntSize())
     , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
     , m_hasImageOverlay(is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element)))
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
@@ -158,8 +158,8 @@ RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styl
 #endif
 }
 
-RenderImage::RenderImage(Document& document, RenderStyle&& style, StyleImage* styleImage)
-    : RenderReplaced(document, WTFMove(style), IntSize())
+RenderImage::RenderImage(Type type, Document& document, RenderStyle&& style, StyleImage* styleImage)
+    : RenderReplaced(type, document, WTFMove(style), IntSize())
     , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
 {
 }
@@ -490,7 +490,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             return;
 
         if (paintInfo.phase == PaintPhase::Foreground)
-            page().addRelevantUnpaintedObject(this, visualOverflowRect());
+            page().addRelevantUnpaintedObject(*this, visualOverflowRect());
 
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 
@@ -591,7 +591,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 
         if (paintInfo.phase == PaintPhase::Foreground)
-            page().addRelevantUnpaintedObject(this, visualOverflowRect());
+            page().addRelevantUnpaintedObject(*this, visualOverflowRect());
         return;
     }
 
@@ -614,9 +614,9 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // to refine this in the future to account for the portion of the image that has painted.
         LayoutRect visibleRect = intersection(replacedContentRect, contentBoxRect);
         if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
-            page().addRelevantUnpaintedObject(this, visibleRect);
+            page().addRelevantUnpaintedObject(*this, visibleRect);
         else
-            page().addRelevantRepaintedObject(this, visibleRect);
+            page().addRelevantRepaintedObject(*this, visibleRect);
     }
 }
 

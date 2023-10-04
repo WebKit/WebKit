@@ -251,6 +251,7 @@ void ScopeRuleSets::collectFeatures() const
 
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
+    m_scopeBreakingHasPseudoClassInvalidationRuleSet = makeRuleSet(m_features.scopeBreakingHasPseudoClassRules);
 
     m_idInvalidationRuleSets.clear();
     m_classInvalidationRuleSets.clear();

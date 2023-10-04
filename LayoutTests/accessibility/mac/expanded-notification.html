@@ -20,8 +20,8 @@ function notificationCallback(element, notification) {
     if (notification == "AXExpandedChanged") {
         notificationCount++;
 
-        output += `Received notification: ${notification}\n`;
-        output += `Expanded status: ${element.isExpanded}\n`;
+        output += `Received ${notification} for #${element.domIdentifier}\n`;
+        output += `element.isExpanded: ${element.isExpanded}\n`;
     }
 }
 
@@ -30,9 +30,12 @@ if (window.accessibilityController) {
 
     accessibilityController.addNotificationListener(notificationCallback);
     let button = accessibilityController.accessibleElementById("button");
-    output += `Initial expanded status: ${button.isExpanded}\n`;
+    output += `Initial #button expanded status: ${button.isExpanded}\n`;
 
     document.getElementById("button").setAttribute("aria-expanded", "true");
+
+    var showPopoverButton = accessibilityController.accessibleElementById("show-popover-btn");
+    var hidePopoverButton = accessibilityController.accessibleElementById("hide-popover-btn");
     setTimeout(async () => {
         await waitFor(() => button.isExpanded);
 
@@ -41,17 +44,28 @@ if (window.accessibilityController) {
         await waitFor(() => notificationCount == 2);
 
         // Now test popover.
-        output += expect("accessibilityController.accessibleElementById('show-popover-btn').isExpanded", "false");
-        output += expect("accessibilityController.accessibleElementById('hide-popover-btn').isExpanded", "false");
+        output += expect("showPopoverButton.isExpanded", "false");
+        output += expect("hidePopoverButton.isExpanded", "false");
 
-        document.getElementById("show-popover-btn").click();
-        await waitFor(() => notificationCount == 3);
+        output += evalAndReturn("document.getElementById('show-popover-btn').click()");
         // We expanded the popover via #show-popover-btn, but #hide-popover-btn (which is also linked to the popover) should be considered expanded now as well.
-        output += await expectAsync("accessibilityController.accessibleElementById('hide-popover-btn').isExpanded", "true");
+        output += await expectAsync("hidePopoverButton.isExpanded", "true");
+        output += await expectAsync("showPopoverButton.isExpanded", "true");
 
-        document.getElementById("hide-popover-btn").click();
-        await waitFor(() => notificationCount == 4);
-        output += await expectAsync("accessibilityController.accessibleElementById('show-popover-btn').isExpanded", "false");
+        output += evalAndReturn("document.getElementById('hide-popover-btn').click()");
+        output += await expectAsync("showPopoverButton.isExpanded", "false");
+        output += await expectAsync("hidePopoverButton.isExpanded", "false");
+
+        output += evalAndReturn("document.getElementById('show-popover-btn').click()");
+        output += await expectAsync("showPopoverButton.isExpanded", "true");
+        // Point popovertarget at non-existent ID.
+        output += evalAndReturn("document.getElementById('show-popover-btn').setAttribute('popovertarget', 'non-existent')");
+        output += await expectAsync("showPopoverButton.isExpanded", "false");
+        output += await expectAsync("showPopoverButton.isAttributeSupported('AXExpanded')", "false");
+
+        output += evalAndReturn("document.getElementById('show-popover-btn').setAttribute('popovertarget', 'mypopover')");
+        output += await expectAsync("showPopoverButton.isExpanded", "true");
+        output += await expectAsync("showPopoverButton.isAttributeSupported('AXExpanded')", "true");
 
         debug(output);
         accessibilityController.removeNotificationListener();

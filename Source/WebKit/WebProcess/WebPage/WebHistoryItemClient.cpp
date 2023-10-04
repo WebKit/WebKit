@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebHistoryItemClient.h"
 
+#include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"

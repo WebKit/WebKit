@@ -1,8 +1,7 @@
 {
     "timeout": 600,
     "count": 4,
-    "remote_archive":"https://github.com/WebKit/Speedometer/archive/refs/heads/main.zip",
-    "github_source": "https://github.com/WebKit/WebKit/tree/d0bce574a12b3524176d177f737f324e1694dcfc/PerformanceTests/Speedometer",
+    "git_repository": "https://github.com/WebKit/Speedometer.git",
     "webserver_benchmark_patch": "data/patches/webserver/Speedometer3.patch",
     "signpost_patch": "data/patches/signposts/Speedometer3.patch",
     "entry_point": "index.html",

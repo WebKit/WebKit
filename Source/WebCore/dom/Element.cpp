@@ -242,6 +242,12 @@ static bool shouldAutofocus(const Element& element)
     return true;
 }
 
+static HashMap<CheckedPtr<Element>, ElementIdentifier>& elementIdentifiersMap()
+{
+    static MainThreadNeverDestroyed<HashMap<CheckedPtr<Element>, ElementIdentifier>> map;
+    return map;
+}
+
 Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new Element(tagName, document, CreateElement));
@@ -258,6 +264,7 @@ Element::~Element()
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
 
+    elementIdentifiersMap().remove(this);
     disconnectFromIntersectionObservers();
 
     disconnectFromResizeObservers();
@@ -628,7 +635,7 @@ Ref<Attr> Element::detachAttribute(unsigned index)
     if (attrNode)
         detachAttrNodeFromElementWithValue(attrNode.get(), attribute.value());
     else
-        attrNode = Attr::create(document(), attribute.name(), attribute.value());
+        attrNode = Attr::create(protectedDocument(), attribute.name(), attribute.value());
 
     removeAttributeInternal(index, InSynchronizationOfLazyAttribute::No);
     return attrNode.releaseNonNull();
@@ -1339,7 +1346,7 @@ int Element::offsetLeftForBindings()
 
 int Element::offsetLeft()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
         return adjustOffsetForZoomAndSubpixelLayout(*renderer, renderer->offsetLeft());
     return 0;
@@ -1368,7 +1375,7 @@ int Element::offsetTopForBindings()
 
 int Element::offsetTop()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
         return adjustOffsetForZoomAndSubpixelLayout(*renderer, renderer->offsetTop());
     return 0;
@@ -1406,7 +1413,7 @@ Element* Element::offsetParentForBindings()
 
 Element* Element::offsetParent()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     auto renderer = this->renderer();
     if (!renderer)
         return nullptr;
@@ -1418,7 +1425,7 @@ Element* Element::offsetParent()
 
 int Element::clientLeft()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (auto* renderer = renderBox()) {
         auto clientLeft = LayoutUnit { roundToInt(renderer->clientLeft()) };
@@ -1429,7 +1436,7 @@ int Element::clientLeft()
 
 int Element::clientTop()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (auto* renderer = renderBox()) {
         auto clientTop = LayoutUnit { roundToInt(renderer->clientTop()) };
@@ -1513,7 +1520,7 @@ ALWAYS_INLINE LocalFrame* Element::documentFrameWithNonNullView() const
 
 int Element::scrollLeft()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (document().scrollingElement() == this) {
         if (auto* frame = documentFrameWithNonNullView())
@@ -1528,7 +1535,7 @@ int Element::scrollLeft()
 
 int Element::scrollTop()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     if (document().scrollingElement() == this) {
         if (auto* frame = documentFrameWithNonNullView())
@@ -1543,7 +1550,7 @@ int Element::scrollTop()
 
 void Element::setScrollLeft(int newLeft)
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     auto options = ScrollPositionChangeOptions::createProgrammatic();
     options.animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
@@ -1566,7 +1573,7 @@ void Element::setScrollLeft(int newLeft)
 
 void Element::setScrollTop(int newTop)
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     auto options = ScrollPositionChangeOptions::createProgrammatic();
     options.animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
@@ -1690,7 +1697,7 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
         for (auto& positionedBox : *viewPositionedObjects) {
             if (&positionedBox == &renderBox)
                 continue;
-            if (positionedBox.isFixedPositioned() && renderBox.element()->contains(positionedBox.element()))
+            if (positionedBox.isFixedPositioned() && renderBox.element()->contains(positionedBox.protectedElement().get()))
                 return false;
         }
     }
@@ -1706,7 +1713,7 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
             for (auto& positionedBox : *positionedObjects) {
                 if (&positionedBox == &renderBox)
                     continue;
-                if (renderBox.element()->contains(positionedBox.element()))
+                if (renderBox.protectedElement()->contains(positionedBox.protectedElement().get()))
                     return false;
             }
         }
@@ -1738,7 +1745,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
             if (RenderFragmentedFlow* fragmentedFlow = box.enclosingFragmentedFlow()) {
                 bool wasFixed = false;
                 Vector<FloatQuad> quads;
-                if (fragmentedFlow->absoluteQuadsForBox(quads, &wasFixed, box)) {
+                if (fragmentedFlow->absoluteQuadsForBox(quads, &wasFixed, &box)) {
                     result = LayoutRect(unitedBoundingBoxes(quads));
                     computedBounds = true;
                 } else {
@@ -1823,9 +1830,10 @@ static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundin
 
 Ref<DOMRectList> Element::getClientRects()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     RenderObject* renderer = this->renderer();
+
     Vector<FloatQuad> quads;
 
     if (shouldObtainBoundsFromSVGModel(this)) {
@@ -1867,7 +1875,7 @@ std::optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRect
 
 FloatRect Element::boundingClientRect()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
         return { };
@@ -2255,11 +2263,7 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
 
     setAttribute(attributeName, emptyAtom());
 
-    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> newElements;
-    newElements.reserveInitialCapacity(elements->size());
-    for (auto element : elements.value()) {
-        newElements.uncheckedAppend(element);
-    }
+    auto newElements = copyToVectorOf<WeakPtr<Element, WeakPtrImplWithEventTargetData>>(*elements);
     explicitlySetAttrElementsMap().set(attributeName, WTFMove(newElements));
     
     if (auto* cache = document().existingAXObjectCache()) {
@@ -2647,7 +2651,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     if (parentOfInsertedTree.isInTreeScope()) {
         bool becomeConnected = insertionType.connectedToDocument;
         auto* newScope = &parentOfInsertedTree.treeScope();
-        auto* newDocument = becomeConnected ? dynamicDowncast<HTMLDocument>(newScope->documentScope()) : nullptr;
+        RefPtr newDocument = becomeConnected ? dynamicDowncast<HTMLDocument>(newScope->documentScope()) : nullptr;
         if (!insertionType.treeScopeChanged)
             newScope = nullptr;
 
@@ -2821,7 +2825,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
         ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
 
-        shadowRoot.setHost(*this);
+        shadowRoot.setHost(this);
         shadowRoot.setParentTreeScope(treeScope());
 
         NodeVector postInsertionNotificationTargets;
@@ -3223,7 +3227,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), attribute.value());
         else
-            oldAttrNode = Attr::create(document(), attrNode.qualifiedName(), attribute.value());
+            oldAttrNode = Attr::create(protectedDocument(), attrNode.qualifiedName(), attribute.value());
 
         attachAttributeNodeIfNeeded(attrNode);
 
@@ -3264,7 +3268,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
             if (oldAttrNode)
                 detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData.attributeAt(index).value());
             else
-                oldAttrNode = Attr::create(document(), attrNode.qualifiedName(), elementData.attributeAt(index).value());
+                oldAttrNode = Attr::create(protectedDocument(), attrNode.qualifiedName(), elementData.attributeAt(index).value());
         }
     }
 
@@ -3689,7 +3693,7 @@ bool Element::dispatchMouseForceWillBegin()
     if (!frame)
         return false;
 
-    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap };
+    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), MouseButton::None, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap };
     auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(Ref { *this });
     dispatchEvent(mouseForceWillBeginEvent);
@@ -4510,14 +4514,14 @@ const AnimationCollection* Element::animations(PseudoId pseudoId) const
     return nullptr;
 }
 
-bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, AnimatableProperty property) const
+bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, const AnimatableProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return animationData->completedTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, AnimatableProperty property) const
+bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, const AnimatableProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoId))
         return animationData->runningTransitionsByProperty().contains(property);
@@ -4529,6 +4533,20 @@ bool Element::hasRunningTransitions(PseudoId pseudoId) const
     if (auto* animationData = animationRareData(pseudoId))
         return !animationData->runningTransitionsByProperty().isEmpty();
     return false;
+}
+
+const AnimatablePropertyToTransitionMap* Element::completedTransitionsByProperty(PseudoId pseudoId) const
+{
+    if (auto* animationData = animationRareData(pseudoId))
+        return &animationData->completedTransitionsByProperty();
+    return nullptr;
+}
+
+const AnimatablePropertyToTransitionMap* Element::runningTransitionsByProperty(PseudoId pseudoId) const
+{
+    if (auto* animationData = animationRareData(pseudoId))
+        return &animationData->runningTransitionsByProperty();
+    return nullptr;
 }
 
 AnimationCollection& Element::ensureAnimations(PseudoId pseudoId)
@@ -4744,7 +4762,7 @@ inline void Element::updateId(const AtomString& oldId, const AtomString& newId, 
         return;
     if (!is<HTMLDocument>(document()))
         return;
-    updateIdForDocument(downcast<HTMLDocument>(document()), oldId, newId, HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute);
+    updateIdForDocument(downcast<HTMLDocument>(protectedDocument()), oldId, newId, HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute);
 }
 
 void Element::updateIdForTreeScope(TreeScope& scope, const AtomString& oldId, const AtomString& newId, NotifyObservers notifyObservers)
@@ -4813,27 +4831,27 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomString& o
     if (auto recipients = MutationObserverInterestGroup::createForAttributesMutation(*this, name))
         recipients->enqueueMutationRecord(MutationRecord::createAttributes(*this, name, oldValue));
 
-    InspectorInstrumentation::willModifyDOMAttr(document(), *this, oldValue, newValue);
+    InspectorInstrumentation::willModifyDOMAttr(protectedDocument(), *this, oldValue, newValue);
 }
 
 void Element::didAddAttribute(const QualifiedName& name, const AtomString& value)
 {
     notifyAttributeChanged(name, nullAtom(), value);
-    InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.toAtomString(), value);
+    InspectorInstrumentation::didModifyDOMAttr(protectedDocument(), *this, name.toAtomString(), value);
     dispatchSubtreeModifiedEvent();
 }
 
 void Element::didModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
 {
     notifyAttributeChanged(name, oldValue, newValue);
-    InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.toAtomString(), newValue);
+    InspectorInstrumentation::didModifyDOMAttr(protectedDocument(), *this, name.toAtomString(), newValue);
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
 void Element::didRemoveAttribute(const QualifiedName& name, const AtomString& oldValue)
 {
     notifyAttributeChanged(name, oldValue, nullAtom());
-    InspectorInstrumentation::didRemoveDOMAttr(document(), *this, name.toAtomString());
+    InspectorInstrumentation::didRemoveDOMAttr(protectedDocument(), *this, name.toAtomString());
     dispatchSubtreeModifiedEvent();
 }
 
@@ -5121,7 +5139,7 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
     }
 
     if (equalLettersIgnoringASCIICase(where, "afterbegin"_s)) {
-        auto result = insertBefore(newChild, firstChild());
+        auto result = insertBefore(newChild, protectedFirstChild());
         if (result.hasException())
             return result.releaseException();
         return newChild.ptr();
@@ -5138,7 +5156,7 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
         auto* parent = this->parentNode();
         if (!parent)
             return nullptr;
-        auto result = parent->insertBefore(newChild, nextSibling());
+        auto result = parent->insertBefore(newChild, protectedNextSibling());
         if (result.hasException())
             return result.releaseException();
         return newChild.ptr();
@@ -5308,22 +5326,16 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     return animations;
 }
 
-static WeakHashMap<Element, ElementIdentifier, WeakPtrImplWithEventTargetData>& elementIdentifiersMap()
-{
-    static MainThreadNeverDestroyed<WeakHashMap<Element, ElementIdentifier, WeakPtrImplWithEventTargetData>> map;
-    return map;
-}
-
 ElementIdentifier Element::identifier() const
 {
-    return elementIdentifiersMap().ensure(*this, [] { return ElementIdentifier::generate(); }).iterator->value;
+    return elementIdentifiersMap().ensure(const_cast<Element*>(this), [] { return ElementIdentifier::generate(); }).iterator->value;
 }
 
 Element* Element::fromIdentifier(ElementIdentifier identifier)
 {
-    for (auto [element, elementIdentifier] : elementIdentifiersMap()) {
+    for (auto& [element, elementIdentifier] : elementIdentifiersMap()) {
         if (elementIdentifier == identifier)
-            return &element;
+            return element.get();
     }
     return nullptr;
 }

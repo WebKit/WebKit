@@ -345,60 +345,6 @@ ALWAYS_INLINE double JIT::getOperandConstantDouble(VirtualRegister src)
 }
 #endif
 
-ALWAYS_INLINE void JIT::emitGetVirtualRegisters(std::initializer_list<std::tuple<VirtualRegister, JSValueRegs>> tuples)
-{
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-#if USE(JSVALUE64)
-    Vector<std::tuple<VirtualRegister, JSValueRegs>, 8> targets;
-#if ASSERT_ENABLED
-    ScalarRegisterSet registerSet;
-#endif
-    for (auto [ src, dst ] : tuples) {
-#if ASSERT_ENABLED
-        ASSERT(!registerSet.contains(dst.payloadGPR(), IgnoreVectors));
-        registerSet.add(dst.payloadGPR(), IgnoreVectors);
-#endif
-        if (src.isConstant())
-            emitGetVirtualRegister(src, dst);
-        else
-            targets.append(std::tuple { src, dst });
-    }
-
-    std::sort(targets.begin(), targets.end(),
-        [](const auto& lhs, const auto& rhs) {
-            auto [lsrc, ldst] = lhs;
-            auto [rsrc, rdst] = rhs;
-            UNUSED_PARAM(ldst);
-            UNUSED_PARAM(rdst);
-            return lsrc.offset() < rsrc.offset();
-        });
-
-    unsigned index = 0;
-    while (index < targets.size()) {
-        if ((index + 1) == targets.size()) {
-            auto [src, dst] = targets[index];
-            emitGetVirtualRegister(src, dst);
-            ++index;
-            continue;
-        }
-
-        auto [src1, dst1] = targets[index];
-        auto [src2, dst2] = targets[index + 1];
-        if ((src1.offset() + 1) == src2.offset()) {
-            loadPair64(addressFor(src1), dst1.payloadGPR(), dst2.payloadGPR());
-            index += 2;
-            continue;
-        }
-
-        emitGetVirtualRegister(src1, dst1);
-        ++index;
-    }
-#else
-    for (auto [ src, dst ] : tuples)
-        emitGetVirtualRegister(src, dst);
-#endif
-}
-
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst)
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.

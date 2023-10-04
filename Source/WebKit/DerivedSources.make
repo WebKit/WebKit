@@ -126,7 +126,6 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
 	NetworkProcess/NetworkContentRuleListManager \
-	NetworkProcess/cache/CacheStorageEngineConnection \
 	NetworkProcess/CustomProtocols/LegacyCustomProtocolManager \
 	NetworkProcess/NetworkSocketChannel \
 	NetworkProcess/ServiceWorker/WebSWServerConnection \
@@ -141,6 +140,7 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/webrtc/NetworkRTCProvider \
 	NetworkProcess/webrtc/NetworkRTCMonitor \
 	NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy \
+	NetworkProcess/webtransport/NetworkTransportSession \
 	NetworkProcess/Cookies/WebCookieManager \
 	NetworkProcess/storage/NetworkStorageManager \
 	Shared/AuxiliaryProcess \
@@ -224,6 +224,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Network/WebSocketChannel \
 	WebProcess/Network/NetworkProcessConnection \
 	WebProcess/Network/WebResourceLoader \
+	WebProcess/Network/WebTransportSession \
 	WebProcess/Network/webrtc/LibWebRTCNetwork \
 	WebProcess/Network/webrtc/RTCDataChannelRemoteManager \
 	WebProcess/Network/webrtc/WebRTCMonitor \
@@ -480,6 +481,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
+	Platform/IPC/StreamServerConnection.serialization.in \
 	Platform/SharedMemory.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	Shared/API/APIData.serialization.in \
@@ -501,9 +503,11 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/DisplayListArgumentCoders.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
+	Shared/Extensions/WebExtensionContentWorldType.serialization.in \
 	Shared/Extensions/WebExtensionContextParameters.serialization.in \
 	Shared/Extensions/WebExtensionControllerParameters.serialization.in \
 	Shared/Extensions/WebExtensionEventListenerType.serialization.in \
+	Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in \
 	Shared/Extensions/WebExtensionTab.serialization.in \
 	Shared/Extensions/WebExtensionWindow.serialization.in \
 	Shared/FileSystemSyncAccessHandleInfo.serialization.in \
@@ -527,6 +531,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Pasteboard.serialization.in \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \
+	Shared/PushMessageForTesting.serialization.in \
 	Shared/RemoteWorkerType.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \
@@ -640,10 +645,12 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 	ActivityState.serialization.in \
 	DragActions.serialization.in \
 	InbandTextTrackPrivate.serialization.in \
+	IndexedDB.serialization.in \
 	LayoutMilestones.serialization.in \
 	MediaPlaybackTargetContext.serialization.in \
 	MediaProducer.serialization.in \
 	MDNSRegisterError.serialization.in \
+	PlatformCALayer.messages.in \
 	PlatformEvent.serialization.in \
 	PlatformMediaSession.serialization.in \
 	PlatformScreen.serialization.in \
@@ -665,6 +672,7 @@ EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions
 EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts
 EXTENSIONS_INTERFACES_DIR = $(EXTENSIONS_DIR)/Interfaces
 IDL_ATTRIBUTES_FILE = $(EXTENSIONS_SCRIPTS_DIR)/IDLAttributes.json
+IDL_FILE_NAMES_LIST = WebExtensionIDLFileNamesList.txt
 
 BINDINGS_SCRIPTS = \
     $(WebCorePrivateHeaders)/generate-bindings.pl \
@@ -674,13 +682,16 @@ BINDINGS_SCRIPTS = \
 #
 
 EXTENSION_INTERFACES = \
+    WebExtensionAPIAction \
     WebExtensionAPIAlarms \
     WebExtensionAPIEvent \
     WebExtensionAPIExtension \
     WebExtensionAPILocalization \
     WebExtensionAPINamespace \
     WebExtensionAPIPermissions \
+    WebExtensionAPIPort \
     WebExtensionAPIRuntime \
+    WebExtensionAPIScripting \
     WebExtensionAPITabs \
     WebExtensionAPITest \
     WebExtensionAPIWebNavigation \
@@ -689,9 +700,12 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIWindowsEvent \
 #
 
-JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(IDL_FILE_NAMES_LIST) : $(EXTENSION_INTERFACES:%=%.idl)
+	echo $^ | tr " " "\n" > $@
+
+JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES) $(IDL_FILE_NAMES_LIST)
 	@echo Generating bindings for $*...
-	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --include $(EXTENSIONS_INTERFACES_DIR) --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
+	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --idlFileNamesList $(IDL_FILE_NAMES_LIST) $<
 
 all : $(EXTENSION_INTERFACES:%=JS%.h) $(EXTENSION_INTERFACES:%=JS%.mm)
 

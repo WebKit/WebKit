@@ -45,13 +45,13 @@ namespace WebCore {
 // This information is needed by spell checking service to update user specific data.
 class SpellingCorrectionRecordUndoCommand : public SimpleEditCommand {
 public:
-    static Ref<SpellingCorrectionRecordUndoCommand> create(Document& document, const String& corrected, const String& correction)
+    static Ref<SpellingCorrectionRecordUndoCommand> create(Ref<Document>&& document, const String& corrected, const String& correction)
     {
-        return adoptRef(*new SpellingCorrectionRecordUndoCommand(document, corrected, correction));
+        return adoptRef(*new SpellingCorrectionRecordUndoCommand(WTFMove(document), corrected, correction));
     }
 private:
-    SpellingCorrectionRecordUndoCommand(Document& document, const String& corrected, const String& correction)
-        : SimpleEditCommand(document)
+    SpellingCorrectionRecordUndoCommand(Ref<Document>&& document, const String& corrected, const String& correction)
+        : SimpleEditCommand(WTFMove(document))
         , m_corrected(corrected)
         , m_correction(correction)
         , m_hasBeenUndone(false)
@@ -116,7 +116,7 @@ void SpellingCorrectionCommand::doApply()
     applyCommandToComposite(SpellingCorrectionRecordUndoCommand::create(document(), m_corrected, m_correction));
 #endif
 
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(m_correctionFragment), ReplaceSelectionCommand::MatchStyle, EditAction::Paste));
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), m_correctionFragment.copyRef(), ReplaceSelectionCommand::MatchStyle, EditAction::Paste));
 }
 
 String SpellingCorrectionCommand::inputEventData() const

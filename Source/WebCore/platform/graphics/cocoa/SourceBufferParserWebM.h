@@ -52,6 +52,7 @@ class WebmParser;
 
 namespace WebCore {
 
+class PacketDurationParser;
 struct TrackInfo;
 
 class WebMParser
@@ -240,15 +241,18 @@ public:
         }
 
         AudioTrackData(CodecType, const webm::TrackEntry&, WebMParser&);
+        ~AudioTrackData();
 
     private:
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
         void resetCompletedFramesState() final;
         const char* logClassName() const { return "AudioTrackData"; }
 
-        MediaTime m_packetDuration;
-        uint8_t m_framesPerPacket { 0 };
+        std::unique_ptr<PacketDurationParser> m_packetDurationParser;
+#if !HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
         Seconds m_frameDuration { 0_s };
+        uint8_t m_framesPerPacket { 0 };
+#endif
         size_t mNumFramesInCompleteBlock { 0 };
         MediaTime m_lastPresentationEndTime { MediaTime::invalidTime() };
         MediaTime m_remainingTrimDuration;
@@ -278,7 +282,7 @@ private:
     webm::Status OnBlockGroupBegin(const webm::ElementMetadata& , webm::Action*);
     webm::Status OnBlockGroupEnd(const webm::ElementMetadata&, const webm::BlockGroup&);
     webm::Status OnFrame(const webm::FrameMetadata&, webm::Reader*, uint64_t* bytesRemaining) final;
-        
+
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
@@ -318,9 +322,8 @@ public:
     static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
     static std::span<const ASCIILiteral> supportedMIMETypes();
-    WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create(const ContentType&);
+    WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create();
 
-    SourceBufferParserWebM();
     ~SourceBufferParserWebM();
 
     static bool isAvailable();
@@ -341,10 +344,11 @@ public:
 
     void flushPendingAudioSamples();
     void setMinimumAudioSampleDuration(float);
-    
+
     WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier) final;
 
 private:
+    SourceBufferParserWebM();
     // WebMParser::Callback
     void parsedInitializationData(SourceBufferParser::InitializationSegment&&) final;
     void parsedMediaData(MediaSamplesBlock&&) final;
@@ -354,7 +358,7 @@ private:
     void formatDescriptionChangedForTrackID(Ref<TrackInfo>&&, uint64_t) final;
 
     void returnSamples(MediaSamplesBlock&&, CMFormatDescriptionRef);
-        
+
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }

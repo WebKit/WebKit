@@ -23,12 +23,13 @@ class Err extends ReferenceError {}
 Err.prototype.message = 'custom-reference-error';
 
 var err1 = new Err('foo 42');
-assert.sameValue(err1.message, 'foo 42');
-assert(err1.hasOwnProperty('message'));
 
-verifyWritable(err1, 'message');
-verifyNotEnumerable(err1, 'message');
-verifyConfigurable(err1, 'message');
+verifyProperty(err1, 'message', {
+  value: 'foo 42',
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});
 
 var err2 = new Err();
 assert.sameValue(err2.hasOwnProperty('message'), false);

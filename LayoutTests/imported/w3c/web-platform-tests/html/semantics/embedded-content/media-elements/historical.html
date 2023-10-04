@@ -39,13 +39,6 @@ t('mozSrcObject'); // never in the spec
 t('mozPreservesPitch'); // prefixed version should be removed.
 t('webkitPreservesPitch'); // prefixed version should be removed.
 
-// TextTrackCue constructor: added in r5723, removed in r7742.
-test(function() {
-  assert_throws_js(TypeError, function() {
-    new TextTrackCue(0, 0, '');
-  });
-}, 'TextTrackCue constructor should not be supported');
-
 // added in https://github.com/whatwg/html/commit/66c5b32240c202c74f475872e7ea2cd163777b4a
 // removed in https://github.com/whatwg/html/commit/634698e70ea4586d58c989fa7d2cbfcad20d33e6
 t('mediaGroup');

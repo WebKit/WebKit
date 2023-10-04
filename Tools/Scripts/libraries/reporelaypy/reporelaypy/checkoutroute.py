@@ -153,6 +153,8 @@ class Redirector(object):
 
 
 class CheckoutRoute(AuthedBlueprint):
+    VALID_REF_RE = re.compile(r'^[a-zA-Z0-9\/\.\@-]+$')
+
     @classmethod
     def find_newer(cls, a, b):
         if not a or not b:
@@ -161,8 +163,8 @@ class CheckoutRoute(AuthedBlueprint):
             return b, a
         return a, b
 
-    def __init__(self, checkout, redirectors=None, import_name=__name__, auth_decorator=None, database=None):
-        super(CheckoutRoute, self).__init__('checkout', import_name, url_prefix=None, auth_decorator=auth_decorator)
+    def __init__(self, checkout, redirectors=None, import_name=__name__, auth_decorator=None, database=None, blocked_user_agents=None):
+        super(CheckoutRoute, self).__init__('checkout', import_name, url_prefix=None, auth_decorator=auth_decorator, blocked_user_agents=blocked_user_agents)
 
         self.checkout = checkout
         self.database = database or Database()
@@ -201,6 +203,9 @@ class CheckoutRoute(AuthedBlueprint):
         self.add_url_rule('/changeset/<path:revision>/webkit', 'trac', self.trac, methods=('GET',))
 
     def commit(self, ref=None):
+        if ref and (not isinstance(ref, str) or not self.VALID_REF_RE.match(ref)):
+            return None
+
         try:
             retrieved = self.database.get(ref)
             if retrieved:

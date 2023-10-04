@@ -125,7 +125,7 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTab
 void PropertyTable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    vm.heap.reportExtraMemoryAllocated(dataSize(isCompact()));
+    vm.heap.reportExtraMemoryAllocated(this, dataSize(isCompact()));
 }
 
 template<typename Visitor>

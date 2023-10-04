@@ -30,8 +30,8 @@
 
 #include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
+#include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
-#include "PlatformImageBufferShareableBackend.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include "RemoteImageBufferMessages.h"
 #include "RemoteImageBufferProxy.h"
@@ -45,6 +45,11 @@
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <WebCore/FontCustomPlatformData.h>
 #include <wtf/text/TextStream.h>
+
+#if HAVE(IOSURFACE)
+#include "ImageBufferRemoteIOSurfaceBackend.h"
+#include "ImageBufferShareableMappedIOSurfaceBackend.h"
+#endif
 
 namespace WebKit {
 
@@ -85,9 +90,10 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 {
     if (!m_streamConnection) {
         static constexpr auto connectionBufferSizeLog2 = 21;
-        auto [streamConnection, serverHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
-        if (!streamConnection)
+        auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+        if (!connectionPair)
             CRASH();
+        auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
         m_streamConnection = WTFMove(streamConnection);
         // RemoteRenderingBackendProxy behaves as the dispatcher for the connection to obtain isolated state for its
         // connection. This prevents waits on RemoteRenderingBackendProxy to process messages from other connections.
@@ -102,7 +108,7 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 template<typename T, typename U, typename V>
 auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V> destination)
 {
-    auto result = streamConnection().send(WTFMove(message), destination, defaultTimeout);
+    auto result = streamConnection().send(std::forward<T>(message), destination, defaultTimeout);
     if (UNLIKELY(result != IPC::Error::NoError)) {
         RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result));
@@ -113,7 +119,7 @@ auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V
 template<typename T, typename U, typename V>
 auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destination)
 {
-    auto result = streamConnection().sendSync(WTFMove(message), destination, defaultTimeout);
+    auto result = streamConnection().sendSync(std::forward<T>(message), destination, defaultTimeout);
     if (UNLIKELY(!result.succeeded())) {
         RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error));
@@ -146,22 +152,25 @@ void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuff
     send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.renderingPurpose(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
 }
 
-RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck)
+RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options)
 {
     RefPtr<ImageBuffer> imageBuffer;
 
-    if (renderingMode == RenderingMode::Accelerated) {
+    bool avoidBackendSizeCheckForTesting = options.contains(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
+
+#if HAVE(IOSURFACE)
+    if (options.contains(ImageBufferOptions::Accelerated)) {
         // Unless DOM rendering is always enabled when any GPU process rendering is enabled,
         // we need to create ImageBuffers for e.g. Canvas that are actually mapped into the
         // Web Content process, so they can be painted into the tiles.
         if (!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
-            imageBuffer = RemoteImageBufferProxy::create<AcceleratedImageBufferShareableMappedBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheck);
+            imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableMappedIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheckForTesting);
         else
-            imageBuffer = RemoteImageBufferProxy::create<AcceleratedImageBufferRemoteBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheck);
+            imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheckForTesting);
     }
-
+#endif
     if (!imageBuffer)
-        imageBuffer = RemoteImageBufferProxy::create<UnacceleratedImageBufferShareableBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheck);
+        imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheckForTesting);
 
     if (imageBuffer) {
         createRemoteImageBuffer(*imageBuffer);
@@ -244,26 +253,11 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
     auto sendResult = sendSync(Messages::RemoteImageBuffer::GetShareableBitmap(preserveResolution), imageBuffer);
-    auto [handle] = sendResult.takeReplyOr(ShareableBitmap::Handle { });
-    if (handle.isNull())
+    auto [handle] = sendResult.takeReply();
+    if (!handle)
         return { };
-    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
-    return ShareableBitmap::create(WTFMove(handle));
-}
-
-RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
-{
-    auto sendResult = sendSync(Messages::RemoteImageBuffer::GetFilteredImage(filter), imageBuffer);
-    auto [handle] = sendResult.takeReplyOr(ShareableBitmap::Handle { });
-    if (handle.isNull())
-        return { };
-
-    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
-    auto bitmap = ShareableBitmap::create(WTFMove(handle));
-    if (!bitmap)
-        return { };
-
-    return bitmap->createImage();
+    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+    return ShareableBitmap::create(WTFMove(*handle));
 }
 
 void RemoteRenderingBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& handle, RenderingResourceIdentifier renderingResourceIdentifier)

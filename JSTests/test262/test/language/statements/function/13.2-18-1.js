@@ -30,9 +30,11 @@ try {
     assert.notSameValue(fun.prototype, 100);
     assert.sameValue(fun.prototype.toString(), "[object Object]");
 
-    verifyNotEnumerable(fun, "prototype");
-    verifyWritable(fun, "prototype");
-    verifyNotConfigurable(fun, "prototype");
+    verifyProperty(fun, "prototype", {
+        writable: true,
+        enumerable: false,
+        configurable: false,
+    });
 
     assert.sameValue(data, "data");
 } finally {

@@ -31,10 +31,6 @@
 
 namespace WebKit {
 
-WebKeyboardEvent::WebKeyboardEvent()
-{
-}
-
 #if USE(APPKIT)
 
 WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands, bool isAutoRepeat, bool isKeypad, bool isSystemKey)

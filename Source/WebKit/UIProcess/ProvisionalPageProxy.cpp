@@ -104,7 +104,6 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
         ASSERT(&suspendedPage->process() == m_process.ptr());
         suspendedPage->unsuspend();
         m_mainFrame = &suspendedPage->mainFrame();
-        m_remotePageMap = suspendedPage->takeRemotePageMap();
     }
 
     initializeWebPage(websitePolicies);
@@ -164,11 +163,6 @@ void ProvisionalPageProxy::setNavigation(API::Navigation& navigation)
     navigation.setProcessID(m_process->coreProcessIdentifier());
 }
 
-std::optional<HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>>> ProvisionalPageProxy::takeRemotePageMap()
-{
-    return std::exchange(m_remotePageMap, std::nullopt);
-}
-
 void ProvisionalPageProxy::cancel()
 {
     // If the provisional load started, then indicate that it failed due to cancellation by calling didFailProvisionalLoadForFrame().
@@ -189,7 +183,8 @@ void ProvisionalPageProxy::cancel()
         { },
         m_mainFrame->frameID(),
         std::nullopt,
-        m_mainFrame->processID()
+        m_mainFrame->processID(),
+        m_mainFrame->isFocused()
     };
     didFailProvisionalLoadForFrame(WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL.string(), error, WebCore::WillContinueLoading::No, UserData { }, WebCore::WillInternallyHandleFailure::No); // Will delete |this|.
 }

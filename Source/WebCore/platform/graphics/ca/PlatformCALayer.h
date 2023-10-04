@@ -27,6 +27,7 @@
 
 #include "FloatRoundedRect.h"
 #include "GraphicsLayer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -58,15 +59,13 @@ struct AcceleratedEffectValues;
 
 enum class MediaPlayerVideoGravity : uint8_t;
 
-class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main> {
-    friend class PlatformCALayerCocoa;
-public:
-    static CFTimeInterval currentTimeToMediaTime(MonotonicTime);
+enum class PlatformCALayerFilterType : uint8_t {
+    Linear,
+    Nearest,
+    Trilinear
+};
 
-    // LayerTypeRootLayer is used on some platforms. It has no backing store, so setNeedsDisplay
-    // should not call CACFLayerSetNeedsDisplay, but rather just notify the renderer that it
-    // has changed and should be re-rendered.
-    enum LayerType {
+enum class PlatformCALayerLayerType : uint8_t {
         LayerTypeLayer,
         LayerTypeWebLayer,
         LayerTypeSimpleLayer,
@@ -85,8 +84,18 @@ public:
 #endif
         LayerTypeCustom,
         LayerTypeHost,
-    };
-    enum FilterType { Linear, Nearest, Trilinear };
+};
+
+class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main>, public CanMakeCheckedPtr {
+    friend class PlatformCALayerCocoa;
+public:
+    static CFTimeInterval currentTimeToMediaTime(MonotonicTime);
+
+    // LayerTypeRootLayer is used on some platforms. It has no backing store, so setNeedsDisplay
+    // should not call CACFLayerSetNeedsDisplay, but rather just notify the renderer that it
+    // has changed and should be re-rendered.
+    using LayerType = PlatformCALayerLayerType;
+    using FilterType = PlatformCALayerFilterType;
 
     virtual Ref<PlatformCALayer> clone(PlatformCALayerClient*) const = 0;
 
@@ -109,9 +118,9 @@ public:
 
     virtual PlatformLayer* platformLayer() const { return m_layer.get(); }
 
-    bool usesTiledBackingLayer() const { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
+    bool usesTiledBackingLayer() const { return layerType() == LayerType::LayerTypePageTiledBackingLayer || layerType() == LayerType::LayerTypeTiledBackingLayer; } // NOLINT(build/webcore_export)
 
-    bool isPageTiledBackingLayer() const { return layerType() == LayerTypePageTiledBackingLayer; }
+    bool isPageTiledBackingLayer() const { return layerType() == LayerType::LayerTypePageTiledBackingLayer; } // NOLINT(build/webcore_export)
 
     PlatformCALayerClient* owner() const { return m_owner; }
     virtual void setOwner(PlatformCALayerClient* owner) { m_owner = owner; }
@@ -174,6 +183,8 @@ public:
 
     virtual TransformationMatrix sublayerTransform() const = 0;
     virtual void setSublayerTransform(const TransformationMatrix&) = 0;
+
+    virtual void setIsBackdropRoot(bool) = 0;
 
     virtual bool isHidden() const = 0;
     virtual void setHidden(bool) = 0;
@@ -345,40 +356,3 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCALayer::Fi
 SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
     static bool isType(const WebCore::PlatformCALayer& layer) { return layer.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PlatformCALayer::FilterType> {
-    using values = EnumValues<
-        WebCore::PlatformCALayer::FilterType,
-        WebCore::PlatformCALayer::FilterType::Linear,
-        WebCore::PlatformCALayer::FilterType::Nearest,
-        WebCore::PlatformCALayer::FilterType::Trilinear
-    >;
-};
-
-template<> struct EnumTraits<WebCore::PlatformCALayer::LayerType> {
-    using values = EnumValues<
-        WebCore::PlatformCALayer::LayerType,
-        WebCore::PlatformCALayer::LayerType::LayerTypeLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeWebLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeSimpleLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeTransformLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeRootLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeAVPlayerLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeBackdropLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeShapeLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeScrollContainerLayer,
-#if ENABLE(MODEL_ELEMENT)
-        WebCore::PlatformCALayer::LayerType::LayerTypeModelLayer,
-#endif
-        WebCore::PlatformCALayer::LayerType::LayerTypeCustom,
-        WebCore::PlatformCALayer::LayerType::LayerTypeHost
-    >;
-};
-
-} // namespace WTF

@@ -1,10 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
+<body>
+
 <div id="content">
 <svg>
   <circle id="test1" aria-labelledby="t1" aria-label="bob" cx="50" cy="100" r="15" data-expected="name: end">
@@ -307,21 +308,21 @@
   </line>
 </svg>
 </div>
-<p id="description"></p>
-<div id="console"></div>
+
 <script>
-    description("This tests the accessible text alternatives results for SVG.");
-    if (window.accessibilityController) {
-        for (var i = 1; i <= 46; i++) {
-            var element = document.getElementById("test" + i);
-            var axElement = accessibilityController.accessibleElementById("test" + i);
-            var result = platformTextAlternatives(axElement, true);
-            debug("test" + i + ":\n\tExpected " + element.getAttribute("data-expected") + "\n" + result);
-        }
-        document.getElementById("content").style.visibility = "hidden";
+let output = "This tests the accessible text alternatives results for SVG.\n\n";
+
+if (window.accessibilityController) {
+    for (let i = 1; i <= 46; i++) {
+        let element = document.getElementById(`test${i}`);
+        let axElement = accessibilityController.accessibleElementById(`test${i}`);
+        let result = platformTextAlternatives(axElement, true);
+        output += `test${i}:\n\tExpected ${element.getAttribute("data-expected")}\n${result}\n`;
     }
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
-

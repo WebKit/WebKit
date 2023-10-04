@@ -435,5 +435,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
             addReason(WI.UIString("Element is the root element"));
         if (compositingReasons.blending)
             addReason(WI.UIString("Element has \u201Cblend-mode\u201D style"));
+        if (compositingReasons.backdropRoot)
+            addReason(WI.UIString("Element is a backdrop root"));
     }
 };

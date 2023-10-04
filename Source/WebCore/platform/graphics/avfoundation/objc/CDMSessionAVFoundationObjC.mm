@@ -97,7 +97,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!keyRequest) {
-        ERROR_LOG(LOGIDENTIFIER, "failed to generate key request with error: ", String(nsError.localizedDescription));
+        ERROR_LOG(LOGIDENTIFIER, "failed to generate key request with error: ", nsError);
         errorCode = LegacyCDM::DomainError;
         systemCode = mediaKeyErrorSystemCode(nsError);
         return nullptr;
@@ -142,7 +142,7 @@ void CDMSessionAVFoundationObjC::playerDidReceiveError(NSError *error)
     if (!m_client)
         return;
 
-    ERROR_LOG(LOGIDENTIFIER, String(error.localizedDescription));
+    ERROR_LOG(LOGIDENTIFIER, error);
 
     unsigned long code = mediaKeyErrorSystemCode(error);
     m_client->sendError(LegacyCDMSessionClient::MediaKeyErrorDomain, code);

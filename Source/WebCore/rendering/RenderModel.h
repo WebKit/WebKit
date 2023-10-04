@@ -44,7 +44,6 @@ public:
 private:
     void element() const = delete;
     ASCIILiteral renderName() const final { return "RenderModel"_s; }
-    bool isRenderModel() const final { return true; }
 
     bool requiresLayer() const final;
     void updateFromElement() final;

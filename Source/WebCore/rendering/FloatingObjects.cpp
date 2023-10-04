@@ -45,7 +45,7 @@ struct SameSizeAsFloatingObject {
 static_assert(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), "FloatingObject should stay small");
 #if !ASSERT_ENABLED
 static_assert(sizeof(WeakPtr<RenderBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
-static_assert(sizeof(WeakPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
+static_assert(sizeof(CheckedPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
 FloatingObject::FloatingObject(RenderBox& renderer)
@@ -105,17 +105,6 @@ LayoutSize FloatingObject::translationOffsetToAncestor() const
 {
     return locationOffsetOfBorderBox() - renderer().locationOffset();
 }
-
-#if ASSERT_ENABLED
-
-bool FloatingObject::isLowestPlacedFloatBottomInBlockFormattingContext() const
-{
-    if (auto bfcRoot = m_renderer->blockFormattingContextRoot())
-        return bfcRoot->lowestFloatLogicalBottom() == bfcRoot->logicalBottomForFloat(*this);
-    return false;
-}
-
-#endif
 
 #if ENABLE(TREE_DEBUGGING)
 

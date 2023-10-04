@@ -27,7 +27,6 @@
 
 #include "WebGPUIntegralTypes.h"
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore::WebGPU {
@@ -40,16 +39,3 @@ enum class ShaderStage : uint8_t {
 using ShaderStageFlags = OptionSet<ShaderStage>;
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::ShaderStage> {
-    using values = EnumValues<
-        WebCore::WebGPU::ShaderStage,
-        WebCore::WebGPU::ShaderStage::Vertex,
-        WebCore::WebGPU::ShaderStage::Fragment,
-        WebCore::WebGPU::ShaderStage::Compute
-    >;
-};
-
-} // namespace WTF

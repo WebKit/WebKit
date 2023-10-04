@@ -272,7 +272,7 @@ const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities()
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
         capabilities.setDeviceId(hashedId());
         capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
-        capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
+        capabilities.setVolume(CapabilityRange(0.0, 1.0));
         capabilities.setSampleRate(unit().sampleRateCapacities());
         m_capabilities = WTFMove(capabilities);
     }

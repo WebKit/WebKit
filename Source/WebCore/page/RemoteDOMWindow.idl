@@ -43,7 +43,7 @@
 ] interface RemoteDOMWindow {
     [LegacyUnforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
     [Replaceable] readonly attribute WindowProxy self;
-    [PutForwards=href, LegacyUnforgeable] readonly attribute Location? location; // FIXME: Should not be nullable.
+    [PutForwards=href, LegacyUnforgeable] readonly attribute Location? location; // FIXME: Should not be nullable. <rdar://116203895>
     [CallWith=IncumbentDocument] undefined close();
     readonly attribute boolean closed;
     [CallWith=IncumbentWindow] undefined focus();

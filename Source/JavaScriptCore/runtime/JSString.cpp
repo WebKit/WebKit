@@ -217,7 +217,7 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
 
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
     if (atomString.impl()->hasOneRef())
-        vm.heap.reportExtraMemoryAllocated(atomString.impl()->cost());
+        vm.heap.reportExtraMemoryAllocated(this, atomString.impl()->cost());
 
     convertToNonRope(String { atomString });
 
@@ -281,7 +281,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
             outOfMemory(nullOrGlobalObjectForOOM);
             return nullString();
         }
-        vm.heap.reportExtraMemoryAllocated(newImpl->cost());
+        vm.heap.reportExtraMemoryAllocated(this, newImpl->cost());
 
         uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
         resolveRopeInternalNoSubstring(buffer, stackLimit);
@@ -295,7 +295,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
         outOfMemory(nullOrGlobalObjectForOOM);
         return nullString();
     }
-    vm.heap.reportExtraMemoryAllocated(newImpl->cost());
+    vm.heap.reportExtraMemoryAllocated(this, newImpl->cost());
     
     uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
     resolveRopeInternalNoSubstring(buffer, stackLimit);

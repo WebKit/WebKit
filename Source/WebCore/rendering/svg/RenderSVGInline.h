@@ -29,7 +29,7 @@ class SVGGraphicsElement;
 class RenderSVGInline : public RenderInline {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGInline);
 public:
-    RenderSVGInline(SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGInline(Type, SVGGraphicsElement&, RenderStyle&&);
 
     inline SVGGraphicsElement& graphicsElement() const;
 
@@ -38,7 +38,6 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderSVGInline"_s; }
     bool requiresLayer() const final { return false; }
-    bool isSVGInline() const final { return true; }
 
     void updateFromStyle() final;
 

@@ -250,6 +250,12 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
                 ownerDocument->decrementLoadEventDelayCount();
             };
         }
+
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame); localFrame && localFrame->loader().isComplete()) {
+            if (auto* page = localFrame->page())
+                page->willChangeLocationInCompletelyLoadedSubframe();
+        }
+
         frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument.securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList, WTFMove(stopDelayingLoadEvent));
     } else
         frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame.loader().outgoingReferrer());

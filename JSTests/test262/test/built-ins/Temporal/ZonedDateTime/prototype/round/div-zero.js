@@ -18,7 +18,7 @@ class Calendar extends Temporal.Calendar {
 
 const zdt = new Temporal.ZonedDateTime(0n, "UTC", new Calendar());
 
-const units = ["day", "hour", "minute", "second", "millisecond", "microsecond", "nanosecond"];
+const units = ["hour", "minute", "second", "millisecond", "microsecond", "nanosecond"];
 for (const smallestUnit of units) {
-  assert.throws(RangeError, () => zdt.round({ smallestUnit }));
+  assert.throws(RangeError, () => zdt.round({ smallestUnit, roundingIncrement: 2 }));
 }

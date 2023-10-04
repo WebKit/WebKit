@@ -30,6 +30,7 @@
 
 #import "AVAssetMIMETypeCache.h"
 #import "AffineTransform.h"
+#import "CVUtilities.h"
 #import "ContentType.h"
 #import "FloatQuad.h"
 #import "FloatRect.h"
@@ -310,7 +311,7 @@ ImageDecoderAVFObjCSample* toSample(Iterator iter)
 
 #pragma mark - ImageDecoderAVFObjC
 
-RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption, ProcessIdentity resourceOwner)
 {
     // AVFoundation may not be available at runtime.
     if (!AVAssetMIMETypeCache::singleton().isAvailable())
@@ -319,16 +320,17 @@ RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBu
     if (!canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer())
         return nullptr;
 
-    return adoptRef(*new ImageDecoderAVFObjC(data, mimeType, alphaOption, gammaAndColorProfileOption));
+    return adoptRef(*new ImageDecoderAVFObjC(data, mimeType, alphaOption, gammaAndColorProfileOption, WTFMove(resourceOwner)));
 }
 
-ImageDecoderAVFObjC::ImageDecoderAVFObjC(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderAVFObjC::ImageDecoderAVFObjC(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner)
     : ImageDecoder()
     , m_mimeType(mimeType)
     , m_uti(WebCore::UTIFromMIMEType(mimeType))
     , m_asset(adoptNS([PAL::allocAVURLAssetInstance() initWithURL:customSchemeURL() options:imageDecoderAssetOptions()]))
     , m_loader(adoptNS([[WebCoreSharedBufferResourceLoaderDelegate alloc] initWithParent:this]))
     , m_decompressionSession(WebCoreDecompressionSession::createRGB())
+    , m_resourceOwner(WTFMove(resourceOwner))
 {
     [m_loader updateData:data.makeContiguous()->createNSData().get() complete:NO];
 
@@ -425,6 +427,11 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
         return false;
     }
 
+    // Set the ownership of the original even though we might end up using the rotated.
+    // For some duration, the original is alive and it has to be attributed to the owner.
+    if (m_resourceOwner)
+        setOwnershipIdentityForCVPixelBuffer(pixelBuffer.get(), m_resourceOwner);
+
     auto presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer));
     auto iter = m_sampleData.presentationOrder().findSampleWithPresentationTime(presentationTime);
     if (iter == m_sampleData.presentationOrder().end()) {
@@ -432,14 +439,21 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
         return false;
     }
 
-    if (m_imageRotationSession)
+    if (m_imageRotationSession) {
         pixelBuffer = m_imageRotationSession->rotate(pixelBuffer.get());
+        setOwnershipIdentityForCVPixelBuffer(pixelBuffer.get(), m_resourceOwner);
+    }
 
     CGImageRef rawImage = nullptr;
     if (noErr != VTCreateCGImageFromCVPixelBuffer(pixelBuffer.get(), nullptr, &rawImage)) {
         RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not create CGImage from pixelBuffer", this);
         return false;
     }
+
+    // FIXME(rdar://115887662): The pixel buffer being passed to the VTCreateCGImageFromCVPixelBuffer may
+    // not be the pixel buffer that will be used. It is unclear if the request to
+    // obtain RGBA IOSurface-backed CVPixelBuffer from the decoding session is enough
+    // to ensure the pixel buffer is not replaced in VTCreateCGImageFromCVPixelBuffer.
 
     toSample(iter)->setImage(adoptCF(rawImage));
 

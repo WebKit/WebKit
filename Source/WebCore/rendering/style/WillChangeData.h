@@ -48,9 +48,10 @@ public:
     bool containsContents() const;
     bool containsProperty(CSSPropertyID) const;
 
-    bool createsContainingBlockForAbsolutelyPositioned() const;
-    bool createsContainingBlockForOutOfFlowPositioned() const;
+    bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const;
+    bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const;
     bool canCreateStackingContext() const { return m_canCreateStackingContext; }
+    bool canBeBackdropRoot() const;
     bool canTriggerCompositing() const { return m_canTriggerCompositing; }
     bool canTriggerCompositingOnInline() const { return m_canTriggerCompositingOnInline; }
 

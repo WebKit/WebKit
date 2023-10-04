@@ -361,6 +361,7 @@ public:
     virtual bool shouldAppearIndeterminate() const;
     virtual bool isPresentingAttachedView() const;
     virtual bool supportsSelectionAPI() const;
+    virtual bool dirAutoUsesValue() const;
 #if ENABLE(DATALIST_ELEMENT)
     virtual bool isFocusingWithDataListDropdown() const { return false; };
 #endif

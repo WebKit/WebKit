@@ -22,6 +22,7 @@
 #pragma once
 
 #include "JSDOMGlobalObject.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -30,7 +31,7 @@ class WindowProxy;
 
 typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
 
-class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
+class DOMWrapperWorld : public RefCounted<DOMWrapperWorld>, public CanMakeCheckedPtr {
 public:
     enum class Type {
         Normal,   // Main (e.g. Page)

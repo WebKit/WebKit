@@ -33,8 +33,8 @@ class RenderFragmentContainer;
 class RenderInline : public RenderBoxModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderInline);
 public:
-    RenderInline(Element&, RenderStyle&&);
-    RenderInline(Document&, RenderStyle&&);
+    RenderInline(Type, Element&, RenderStyle&&);
+    RenderInline(Type, Document&, RenderStyle&&);
 
     LayoutUnit marginLeft() const final;
     LayoutUnit marginRight() const final;

@@ -47,6 +47,7 @@ struct Result;
 }
 
 class ResourceResponse;
+struct ResourceResponseBaseCrossThreadData;
 
 bool isScriptAllowedByNosniff(const ResourceResponse&);
 
@@ -58,66 +59,24 @@ enum class WasPrivateRelayed : bool { No, Yes };
 static constexpr unsigned bitWidthOfWasPrivateRelayed = 1;
 static_assert(static_cast<unsigned>(WasPrivateRelayed::Yes) <= ((1U << bitWidthOfWasPrivateRelayed) - 1));
 
+enum class ResourceResponseBaseType : uint8_t { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
+enum class ResourceResponseBaseTainting : uint8_t { Basic, Cors, Opaque, Opaqueredirect };
+enum class ResourceResponseBaseSource : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache, DOMCache, InspectorOverride };
+
 // Do not use this class directly, use the class ResourceResponse instead
 class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Type : uint8_t { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
+    using Type = ResourceResponseBaseType;
     static constexpr unsigned bitWidthOfType = 3;
-    enum class Tainting : uint8_t { Basic, Cors, Opaque, Opaqueredirect };
+    using Tainting = ResourceResponseBaseTainting;
     static constexpr unsigned bitWidthOfTainting = 2;
-    enum class Source : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache, DOMCache, InspectorOverride };
+    using Source = ResourceResponseBaseSource;
     static constexpr unsigned bitWidthOfSource = 4;
 
     static bool isRedirectionStatusCode(int code) { return code == 301 || code == 302 || code == 303 || code == 307 || code == 308; }
 
-    struct CrossThreadData {
-        CrossThreadData(const CrossThreadData&) = delete;
-        CrossThreadData& operator=(const CrossThreadData&) = delete;
-        CrossThreadData() = default;
-        CrossThreadData(CrossThreadData&&) = default;
-        CrossThreadData& operator=(CrossThreadData&&) = default;
-        CrossThreadData(URL&& url, String&& mimeType, long long expectedContentLength, String&& textEncodingName, int httpStatusCode, String&& httpStatusText, String&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, Source source, Type type, Tainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, bool isRangeRequested, std::optional<CertificateInfo> certificateInfo)
-            : url(WTFMove(url))
-            , mimeType(WTFMove(mimeType))
-            , expectedContentLength(expectedContentLength)
-            , textEncodingName(WTFMove(textEncodingName))
-            , httpStatusCode(httpStatusCode)
-            , httpStatusText(WTFMove(httpStatusText))
-            , httpVersion(WTFMove(httpVersion))
-            , httpHeaderFields(WTFMove(httpHeaderFields))
-            , networkLoadMetrics(WTFMove(networkLoadMetrics))
-            , source(source)
-            , type(type)
-            , tainting(tainting)
-            , isRedirected(isRedirected)
-            , usedLegacyTLS(usedLegacyTLS)
-            , wasPrivateRelayed(wasPrivateRelayed)
-            , isRangeRequested(isRangeRequested)
-            , certificateInfo(certificateInfo)
-        {
-        }
-
-        WEBCORE_EXPORT CrossThreadData isolatedCopy() const;
-
-        URL url;
-        String mimeType;
-        long long expectedContentLength;
-        String textEncodingName;
-        short httpStatusCode;
-        String httpStatusText;
-        String httpVersion;
-        HTTPHeaderMap httpHeaderFields;
-        std::optional<NetworkLoadMetrics> networkLoadMetrics;
-        Source source;
-        Type type;
-        Tainting tainting;
-        bool isRedirected;
-        UsedLegacyTLS usedLegacyTLS;
-        WasPrivateRelayed wasPrivateRelayed;
-        bool isRangeRequested;
-        std::optional<CertificateInfo> certificateInfo;
-    };
+    using CrossThreadData = ResourceResponseBaseCrossThreadData;
     
     struct ResponseData {
         URL m_url;
@@ -353,6 +312,54 @@ private:
     Type m_type : bitWidthOfType { Type::Default };
 };
 
+struct ResourceResponseBaseCrossThreadData {
+    ResourceResponseBaseCrossThreadData(const ResourceResponseBaseCrossThreadData&) = delete;
+    ResourceResponseBaseCrossThreadData& operator=(const ResourceResponseBaseCrossThreadData&) = delete;
+    ResourceResponseBaseCrossThreadData() = default;
+    ResourceResponseBaseCrossThreadData(ResourceResponseBaseCrossThreadData&&) = default;
+    ResourceResponseBaseCrossThreadData& operator=(ResourceResponseBaseCrossThreadData&&) = default;
+    ResourceResponseBaseCrossThreadData(URL&& url, String&& mimeType, long long expectedContentLength, String&& textEncodingName, int httpStatusCode, String&& httpStatusText, String&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, ResourceResponseBaseSource source, ResourceResponseBaseType type, ResourceResponseBaseTainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, bool isRangeRequested, std::optional<CertificateInfo> certificateInfo)
+        : url(WTFMove(url))
+        , mimeType(WTFMove(mimeType))
+        , expectedContentLength(expectedContentLength)
+        , textEncodingName(WTFMove(textEncodingName))
+        , httpStatusCode(httpStatusCode)
+        , httpStatusText(WTFMove(httpStatusText))
+        , httpVersion(WTFMove(httpVersion))
+        , httpHeaderFields(WTFMove(httpHeaderFields))
+        , networkLoadMetrics(WTFMove(networkLoadMetrics))
+        , source(source)
+        , type(type)
+        , tainting(tainting)
+        , isRedirected(isRedirected)
+        , usedLegacyTLS(usedLegacyTLS)
+        , wasPrivateRelayed(wasPrivateRelayed)
+        , isRangeRequested(isRangeRequested)
+        , certificateInfo(certificateInfo)
+    {
+    }
+
+    WEBCORE_EXPORT ResourceResponseBaseCrossThreadData isolatedCopy() const;
+
+    URL url;
+    String mimeType;
+    long long expectedContentLength;
+    String textEncodingName;
+    short httpStatusCode;
+    String httpStatusText;
+    String httpVersion;
+    HTTPHeaderMap httpHeaderFields;
+    std::optional<NetworkLoadMetrics> networkLoadMetrics;
+    ResourceResponseBase::Source source;
+    ResourceResponseBase::Type type;
+    ResourceResponseBase::Tainting tainting;
+    bool isRedirected;
+    UsedLegacyTLS usedLegacyTLS;
+    WasPrivateRelayed wasPrivateRelayed;
+    bool isRangeRequested;
+    std::optional<CertificateInfo> certificateInfo;
+};
+
 template<class Encoder, typename>
 void ResourceResponseBase::encode(Encoder& encoder) const
 {
@@ -542,8 +549,8 @@ class Decoder;
 class Encoder;
 
 template<> struct Coder<WebCore::ResourceResponseBase::CrossThreadData> {
-    WEBCORE_EXPORT static void encode(Encoder&, const WebCore::ResourceResponseBase::CrossThreadData&);
-    WEBCORE_EXPORT static std::optional<WebCore::ResourceResponseBase::CrossThreadData> decode(Decoder&);
+    WEBCORE_EXPORT static void encodeForPersistence(Encoder&, const WebCore::ResourceResponseBase::CrossThreadData&);
+    WEBCORE_EXPORT static std::optional<WebCore::ResourceResponseBase::CrossThreadData> decodeForPersistence(Decoder&);
 };
 
 } // namespace Persistence

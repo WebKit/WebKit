@@ -226,7 +226,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     localFrame->selection().setSelection(oldSelection);
     frameView->setPaintBehavior(oldPaintBehavior);
 
-    auto image = ImageBuffer::sinkIntoImage(WTFMove(buffer));
+    auto image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(buffer)));
     if (!image)
         return nil;
 

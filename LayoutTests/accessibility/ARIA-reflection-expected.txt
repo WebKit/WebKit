@@ -88,6 +88,13 @@ PASS element.getAttribute(currentAttribute) is ""
 element.setAttribute("aria-describedby", otherData);
 PASS element[currentProperty] is otherDataProperty
 
+Test ariaDescription < - > aria-description
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-description", otherData);
+PASS element[currentProperty] is otherDataProperty
+
 Test ariaDetailsElements < - > aria-details
 PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
@@ -334,7 +341,7 @@ element.setAttribute("aria-valuetext", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 
-PASS count is 46
+PASS count is 47
 PASS successfullyParsed is true
 
 TEST COMPLETE

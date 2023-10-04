@@ -30,7 +30,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceRadialGradient);
 
 RenderSVGResourceRadialGradient::RenderSVGResourceRadialGradient(SVGRadialGradientElement& element, RenderStyle&& style)
-    : RenderSVGResourceGradient(element, WTFMove(style))
+    : RenderSVGResourceGradient(Type::SVGResourceRadialGradient, element, WTFMove(style))
 {
 }
 

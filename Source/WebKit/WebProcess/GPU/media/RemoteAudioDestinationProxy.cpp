@@ -93,7 +93,12 @@ void RemoteAudioDestinationProxy::startRenderingThread()
 
         } while (!m_shouldStopThread);
     };
-    m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::UserInteractive);
+    m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::UserInteractive, Thread::SchedulingPolicy::Realtime);
+
+#if PLATFORM(COCOA)
+    // Roughly match the priority of the Audio IO thread in the GPU process
+    m_renderThread->changePriority(60);
+#endif
 }
 
 void RemoteAudioDestinationProxy::stopRenderingThread()

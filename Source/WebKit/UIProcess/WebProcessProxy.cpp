@@ -128,10 +128,10 @@ using namespace WebCore;
 
 static unsigned s_maxProcessCount { 400 };
 
-static ListHashSet<WebProcessProxy*>& liveProcessesLRU()
+static WeakListHashSet<WebProcessProxy>& liveProcessesLRU()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<ListHashSet<WebProcessProxy*>> processes;
+    static NeverDestroyed<WeakListHashSet<WebProcessProxy>> processes;
     return processes;
 }
 
@@ -142,7 +142,7 @@ void WebProcessProxy::setProcessCountLimit(unsigned limit)
 
 bool WebProcessProxy::hasReachedProcessCountLimit()
 {
-    return liveProcessesLRU().size() >= s_maxProcessCount;
+    return liveProcessesLRU().computeSize() >= s_maxProcessCount;
 }
 
 static bool isMainThreadOrCheckDisabled()
@@ -219,14 +219,14 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
 {
     auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, lockdownMode));
     if (shouldLaunchProcess == ShouldLaunchProcess::Yes) {
-        if (liveProcessesLRU().size() >= s_maxProcessCount) {
+        if (liveProcessesLRU().computeSize() >= s_maxProcessCount) {
             for (auto& processPool : WebProcessPool::allProcessPools())
                 processPool->webProcessCache().clear();
-            if (liveProcessesLRU().size() >= s_maxProcessCount)
-                liveProcessesLRU().first()->requestTermination(ProcessTerminationReason::ExceededProcessCountLimit);
+            if (liveProcessesLRU().computeSize() >= s_maxProcessCount)
+                Ref { liveProcessesLRU().first() }->requestTermination(ProcessTerminationReason::ExceededProcessCountLimit);
         }
-        ASSERT(liveProcessesLRU().size() < s_maxProcessCount);
-        liveProcessesLRU().add(proxy.ptr());
+        ASSERT(liveProcessesLRU().computeSize() < s_maxProcessCount);
+        liveProcessesLRU().add(proxy.get());
         proxy->connect();
     }
     return proxy;
@@ -327,7 +327,7 @@ WebProcessProxy::~WebProcessProxy()
     ASSERT(m_pageURLRetainCountMap.isEmpty());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "destructor:");
 
-    liveProcessesLRU().remove(this);
+    liveProcessesLRU().remove(*this);
 
     for (auto identifier : m_speechRecognitionServerMap.keys())
         removeMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier);
@@ -342,7 +342,7 @@ WebProcessProxy::~WebProcessProxy()
 
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 
@@ -459,38 +459,22 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
     }
 }
 
-void WebProcessProxy::addProvisionalFrameProxy(ProvisionalFrameProxy& provisionalFrame)
+void WebProcessProxy::addRemotePageProxy(RemotePageProxy& remotePage)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(Loading, "addProvisionalFrameProxy: provisionalFrame=%p", &provisionalFrame);
+    WEBPROCESSPROXY_RELEASE_LOG(Loading, "addRemotePageProxy: remotePage=%p", &remotePage);
 
     ASSERT(!m_isInProcessCache);
-    ASSERT(!m_provisionalFrames.contains(provisionalFrame));
+    ASSERT(!m_remotePages.contains(remotePage));
+    m_remotePages.add(remotePage);
     markProcessAsRecentlyUsed();
-    m_provisionalFrames.add(provisionalFrame);
-    updateRegistrationWithDataStore();
 }
 
-void WebProcessProxy::removeProvisionalFrameProxy(ProvisionalFrameProxy& provisionalFrame)
+void WebProcessProxy::removeRemotePageProxy(RemotePageProxy& remotePage)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeProvisionalFrameProxy: provisionalFrame=%p", &provisionalFrame);
-
-    ASSERT(m_provisionalFrames.contains(provisionalFrame));
-    m_provisionalFrames.remove(provisionalFrame);
-    updateRegistrationWithDataStore();
-    if (m_provisionalFrames.isEmptyIgnoringNullReferences())
+    WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeRemotePageProxy: remotePage=%p", &remotePage);
+    m_remotePages.remove(remotePage);
+    if (m_remotePages.isEmptyIgnoringNullReferences())
         maybeShutDown();
-}
-
-void WebProcessProxy::provisionalFrameCommitted(WebFrameProxy& frame)
-{
-    ASSERT(!m_frameMap.contains(frame.frameID()));
-    m_frameMap.set(frame.frameID(), WeakPtr { frame });
-}
-
-void WebProcessProxy::removeFrameWithRemoteFrameProcess(WebFrameProxy& frame)
-{
-    ASSERT(m_frameMap.contains(frame.frameID()));
-    m_frameMap.remove(frame.frameID());
 }
 
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -595,7 +579,7 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
     // reply from the UIProcess, which would be unsafe.
     connection.setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     m_displayLinkClient.setConnection(&connection);
 #endif
 }
@@ -605,11 +589,39 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
     WEBPROCESSPROXY_RELEASE_LOG(Process, "processWillShutDown:");
     ASSERT_UNUSED(connection, this->connection() == &connection);
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     m_displayLinkClient.setConnection(nullptr);
     processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 }
+
+#if HAVE(DISPLAY_LINK)
+std::optional<unsigned> WebProcessProxy::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
+{
+    return processPool().displayLinks().nominalFramesPerSecondForDisplay(displayID);
+}
+
+void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    processPool().displayLinks().startDisplayLink(m_displayLinkClient, observerID, displayID, preferredFramesPerSecond);
+}
+
+void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
+{
+    processPool().displayLinks().stopDisplayLink(m_displayLinkClient, observerID, displayID);
+}
+
+void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+{
+    processPool().displayLinks().setDisplayLinkPreferredFramesPerSecond(m_displayLinkClient, observerID, displayID, preferredFramesPerSecond);
+}
+
+void WebProcessProxy::setDisplayLinkForDisplayWantsFullSpeedUpdates(WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
+{
+    processPool().displayLinks().setDisplayLinkForDisplayWantsFullSpeedUpdates(m_displayLinkClient, displayID, wantsFullSpeedUpdates);
+}
+#endif
 
 void WebProcessProxy::shutDown()
 {
@@ -639,8 +651,8 @@ void WebProcessProxy::shutDown()
             page->disconnectFramesFromPage();
     }
 
-    for (auto* webUserContentControllerProxy : m_webUserContentControllerProxies)
-        webUserContentControllerProxy->removeProcess(*this);
+    for (auto& webUserContentControllerProxy : m_webUserContentControllerProxies)
+        webUserContentControllerProxy.removeProcess(*this);
     m_webUserContentControllerProxies.clear();
 
     m_userInitiatedActionMap.clear();
@@ -825,7 +837,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
 
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
-    auto& users = m_visitedLinkStoresWithUsers.ensure(&visitedLinkStore, [] {
+    auto& users = m_visitedLinkStoresWithUsers.ensure(visitedLinkStore, [] {
         return HashSet<WebPageProxyIdentifier> { };
     }).iterator->value;
 
@@ -838,7 +850,7 @@ void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore
 
 void WebProcessProxy::removeVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
-    auto it = m_visitedLinkStoresWithUsers.find(&visitedLinkStore);
+    auto it = m_visitedLinkStoresWithUsers.find(visitedLinkStore);
     if (it == m_visitedLinkStoresWithUsers.end())
         return;
 
@@ -852,14 +864,14 @@ void WebProcessProxy::removeVisitedLinkStoreUser(VisitedLinkStore& visitedLinkSt
 
 void WebProcessProxy::addWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)
 {
-    m_webUserContentControllerProxies.add(&proxy);
+    m_webUserContentControllerProxies.add(proxy);
     proxy.addProcess(*this);
 }
 
 void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)
 {
-    ASSERT(m_webUserContentControllerProxies.contains(&proxy));
-    m_webUserContentControllerProxies.remove(&proxy);
+    ASSERT(m_webUserContentControllerProxies.contains(proxy));
+    m_webUserContentControllerProxies.remove(proxy);
 }
 
 void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString)
@@ -1086,7 +1098,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     // to be deleted before we can finish our work.
     Ref protectedThis { *this };
 
-    liveProcessesLRU().remove(this);
+    liveProcessesLRU().remove(*this);
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     m_userMediaCaptureManagerProxy->clear();
@@ -1448,10 +1460,9 @@ void WebProcessProxy::maybeShutDown()
 bool WebProcessProxy::canTerminateAuxiliaryProcess()
 {
     if (!m_pageMap.isEmpty()
-        || !m_frameMap.isEmpty()
+        || !m_remotePages.isEmptyIgnoringNullReferences()
         || !m_suspendedPages.isEmptyIgnoringNullReferences()
         || !m_provisionalPages.isEmptyIgnoringNullReferences()
-        || !m_provisionalFrames.isEmptyIgnoringNullReferences()
         || m_isInProcessCache
         || m_shutdownPreventingScopeCounter.value()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canTerminateAuxiliaryProcess: returns false (pageCount=%u, provisionalPageCount=%u, suspendedPageCount=%u, m_isInProcessCache=%d, m_shutdownPreventingScopeCounter=%lu)", m_pageMap.size(), m_provisionalPages.computeSize(), m_suspendedPages.computeSize(), m_isInProcessCache, m_shutdownPreventingScopeCounter.value());
@@ -2147,7 +2158,7 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
     MESSAGE_CHECK(!m_speechRecognitionServerMap.contains(identifier));
 
     auto& speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr).iterator->value;
-    auto permissionChecker = [weakPage = WeakPtr { targetPage }](auto& request, auto&& completionHandler) mutable {
+    auto permissionChecker = [weakPage = WeakPtr { targetPage }](auto& request, SpeechRecognitionPermissionRequestCallback&& completionHandler) mutable {
         if (!weakPage) {
             completionHandler(WebCore::SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Page no longer exists"_s });
             return;
@@ -2461,8 +2472,7 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Use
 
 void WebProcessProxy::markProcessAsRecentlyUsed()
 {
-    if (liveProcessesLRU().contains(this))
-        liveProcessesLRU().appendOrMoveToLast(this);
+    liveProcessesLRU().moveToLastIfPresent(*this);
 }
 
 void WebProcessProxy::systemBeep()

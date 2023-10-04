@@ -858,7 +858,7 @@ bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMedia>(*this, WTFMove(style));
+    return createRenderer<RenderMedia>(RenderObject::Type::Media, *this, WTFMove(style));
 }
 
 bool HTMLMediaElement::childShouldCreateRenderer(const Node& child) const
@@ -2985,15 +2985,7 @@ void HTMLMediaElement::mediaPlayerKeyNeeded(const SharedBuffer& initData)
 
 String HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory() const
 {
-    auto* page = document().page();
-    if (!page || page->usesEphemeralSession())
-        return emptyString();
-
-    String storageDirectory = document().settings().mediaKeysStorageDirectory();
-    if (storageDirectory.isEmpty())
-        return emptyString();
-
-    return FileSystem::pathByAppendingComponent(storageDirectory, document().securityOrigin().data().databaseIdentifier());
+    return document().mediaKeysStorageDirectory();
 }
 
 void HTMLMediaElement::webkitSetMediaKeys(WebKitMediaKeys* mediaKeys)
@@ -6440,8 +6432,10 @@ void HTMLMediaElement::visibilityStateChanged()
 
     updateSleepDisabling();
     mediaSession().visibilityChanged();
-    if (m_player)
-        m_player->setPageIsVisible(!m_elementIsHidden);
+    if (m_player) {
+        auto page = document().page();
+        m_player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
+    }
 }
 
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
@@ -7383,7 +7377,8 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_player->setPreferredDynamicRangeMode(m_overrideDynamicRangeMode.value_or(preferredDynamicRangeMode(document().view())));
     m_player->setShouldDisableHDR(shouldDisableHDR());
     m_player->setMuted(effectiveMuted());
-    m_player->setPageIsVisible(!m_elementIsHidden);
+    auto page = document().page();
+    m_player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
     m_player->setVisibleInViewport(isVisibleInViewport());
     schedulePlaybackControlsManagerUpdate();
 

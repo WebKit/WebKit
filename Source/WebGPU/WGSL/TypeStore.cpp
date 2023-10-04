@@ -78,6 +78,14 @@ struct ReferenceKey {
     TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
 };
 
+struct PointerKey {
+    const Type* elementType;
+    AddressSpace addressSpace;
+    AccessMode accessMode;
+
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
+};
+
 template<typename Key>
 const Type* TypeCache::find(const Key& key) const
 {
@@ -105,9 +113,18 @@ TypeStore::TypeStore()
     m_u32 = allocateType<Primitive>(Primitive::U32);
     m_f32 = allocateType<Primitive>(Primitive::F32);
     m_sampler = allocateType<Primitive>(Primitive::Sampler);
+    m_samplerComparison = allocateType<Primitive>(Primitive::SamplerComparison);
     m_textureExternal = allocateType<Primitive>(Primitive::TextureExternal);
     m_accessMode = allocateType<Primitive>(Primitive::AccessMode);
     m_texelFormat = allocateType<Primitive>(Primitive::TexelFormat);
+    m_addressSpace = allocateType<Primitive>(Primitive::AddressSpace);
+    m_textureDepth2d = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepth2d);
+    m_textureDepthArray2d = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepth2dArray);
+    m_textureDepthCube = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepthCube);
+    m_textureDepthArrayCube = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepthCubeArray);
+    m_textureDepthMultisampled2d = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepthMultisampled2d);
+    m_atomicI32 = allocateType<Atomic>(m_i32);
+    m_atomicU32 = allocateType<Atomic>(m_u32);
 }
 
 const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, const Type*>&& fields)
@@ -126,7 +143,7 @@ const Type* TypeStore::arrayType(const Type* elementType, std::optional<unsigned
     return type;
 }
 
-const Type* TypeStore::vectorType(const Type* elementType, uint8_t size)
+const Type* TypeStore::vectorType(uint8_t size, const Type* elementType)
 {
     VectorKey key { elementType, size };
     const Type* type = m_cache.find(key);
@@ -137,7 +154,7 @@ const Type* TypeStore::vectorType(const Type* elementType, uint8_t size)
     return type;
 }
 
-const Type* TypeStore::matrixType(const Type* elementType, uint8_t columns, uint8_t rows)
+const Type* TypeStore::matrixType(uint8_t columns, uint8_t rows, const Type* elementType)
 {
     MatrixKey key { elementType, columns, rows };
     const Type* type = m_cache.find(key);
@@ -148,7 +165,7 @@ const Type* TypeStore::matrixType(const Type* elementType, uint8_t columns, uint
     return type;
 }
 
-const Type* TypeStore::textureType(const Type* elementType, Texture::Kind kind)
+const Type* TypeStore::textureType(Texture::Kind kind, const Type* elementType)
 {
     TextureKey key { elementType, kind };
     const Type* type = m_cache.find(key);
@@ -184,6 +201,25 @@ const Type* TypeStore::referenceType(AddressSpace addressSpace, const Type* elem
     type = allocateType<Reference>(addressSpace, accessMode, element);
     m_cache.insert(key, type);
     return type;
+}
+
+const Type* TypeStore::pointerType(AddressSpace addressSpace, const Type* element, AccessMode accessMode)
+{
+    PointerKey key { element, addressSpace, accessMode };
+    const Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Pointer>(addressSpace, accessMode, element);
+    m_cache.insert(key, type);
+    return type;
+}
+
+const Type* TypeStore::atomicType(const Type* type)
+{
+    if (type == m_i32)
+        return m_atomicI32;
+    ASSERT(type == m_u32);
+    return m_atomicU32;
 }
 
 const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<const Type*(AST::ElaboratedTypeExpression&)>&& constructor)

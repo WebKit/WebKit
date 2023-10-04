@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class NotificationDirection : uint8_t {
@@ -33,4 +35,17 @@ enum class NotificationDirection : uint8_t {
     Rtl
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::NotificationDirection> {
+    using values = EnumValues<
+        WebCore::NotificationDirection,
+        WebCore::NotificationDirection::Auto,
+        WebCore::NotificationDirection::Ltr,
+        WebCore::NotificationDirection::Rtl
+    >;
+};
+
+} // namespace WTF

@@ -121,7 +121,7 @@ public:
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
 #if ENABLE(VIDEO)
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)

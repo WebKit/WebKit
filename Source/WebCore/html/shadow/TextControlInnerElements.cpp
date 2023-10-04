@@ -272,7 +272,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 {
     // On mousedown, bring up a menu, if needed
     RefPtr input = downcast<HTMLInputElement>(shadowHost());
-    if (input && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
+    if (input && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == MouseButton::Left) {
         input->focus();
         input->select();
 #if !PLATFORM(IOS_FAMILY)
@@ -341,7 +341,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
         return;
     }
 
-    if (event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
+    if (event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == MouseButton::Left) {
         input->focus();
         input->select();
         event.setDefaultHandled();

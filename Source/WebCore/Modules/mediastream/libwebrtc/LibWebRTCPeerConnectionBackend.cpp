@@ -159,7 +159,6 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
         rtcConfiguration.servers.push_back(WTFMove(iceServer));
     }
 
-    rtcConfiguration.set_cpu_adaptation(false);
     // FIXME: Activate ice candidate pool size once it no longer bothers test bots.
     // rtcConfiguration.ice_candidate_pool_size = configuration.iceCandidatePoolSize;
 
@@ -339,7 +338,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> LibWebRTCPeerConnectionBackend::addTransceiv
         return result.releaseException();
 
     auto backends = result.releaseReturnValue();
-    auto sender = RTCRtpSender::create(m_peerConnection, WTFMove(trackOrKind), WTFMove(backends.senderBackend));
+    auto sender = RTCRtpSender::create(m_peerConnection, std::forward<T>(trackOrKind), WTFMove(backends.senderBackend));
     auto receiver = createReceiver(WTFMove(backends.receiverBackend));
     auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver), WTFMove(backends.transceiverBackend));
     m_peerConnection.addInternalTransceiver(transceiver.copyRef());

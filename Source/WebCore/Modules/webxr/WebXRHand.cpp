@@ -86,7 +86,7 @@ WebXRSession* WebXRHand::session()
     if (!m_inputSource)
         return nullptr;
 
-    return m_inputSource.get()->session();
+    return m_inputSource->session();
 }
 
 void WebXRHand::updateFromInputSource(const PlatformXR::Device::FrameData::InputSource& inputSource)

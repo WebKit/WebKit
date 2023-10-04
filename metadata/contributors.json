@@ -3039,6 +3039,17 @@
    },
    {
       "emails" : [
+         "ggabrielli@suse.de",
+         "crazybyte@protonmail.com"
+      ],
+      "github" : "staypirate",
+      "name" : "Gianluca Gabrielli",
+      "nicks" : [
+         "crazybyte"
+      ]
+   },
+   {
+      "emails" : [
          "girish@forwardbias.in",
          "ramakrishnan.girish@gmail.com"
       ],
@@ -3381,6 +3392,13 @@
       "nicks" : [
          "iana"
       ]
+   },
+   {
+      "emails" : [
+         "ian.grunert@gmail.com"
+      ],
+      "github" : "iangrunert",
+      "name" : "Ian Grunert"
    },
    {
       "emails" : [
@@ -4265,6 +4283,16 @@
    },
    {
       "emails" : [
+         "jhoffman23@apple.com"
+      ],
+      "github" : "hoffmanjoshua",
+      "name" : "Joshua Hoffman",
+      "nicks" : [
+         "hoffmanjoshua"
+      ]
+   },
+   {
+      "emails" : [
          "jberta.u-szeged@partner.samsung.com",
          "jberta@inf.u-szeged.hu"
       ],
@@ -4707,6 +4735,13 @@
       "github" : "kocsenc",
       "name" : "Kocsen Chung",
       "status" : "committer"
+   },
+   {
+      "emails" : [
+         "kohei.ueno119@gmail.com"
+      ],
+      "github" : "cola119",
+      "name" : "Kohei Ueno"
    },
    {
       "emails" : [

@@ -182,8 +182,10 @@ bool AudioFileReader::isMaybeWebM(const uint8_t* data, size_t dataSize) const
 
 std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const uint8_t* data, size_t dataSize) const
 {
+    auto parser = SourceBufferParserWebM::create();
+    if (!parser)
+        return nullptr;
     auto buffer = SharedBuffer::create(data, dataSize);
-    auto parser = adoptRef(new SourceBufferParserWebM());
     bool error = false;
     std::optional<uint64_t> audioTrackId;
     MediaTime duration;
@@ -218,7 +220,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
     });
     SourceBufferParser::Segment segment(Ref { buffer.get() });
     parser->appendData(WTFMove(segment));
-    if (!track)
+    if (!track || error)
         return nullptr;
     parser->flushPendingAudioSamples();
     return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(buffer), track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });

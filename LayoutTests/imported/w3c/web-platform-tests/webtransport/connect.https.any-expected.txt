@@ -1,9 +1,11 @@
 
-FAIL WebTransport session is established with status code 200 promise_test: Unhandled rejection with value: null
-FAIL WebTransport session is established with status code 204 promise_test: Unhandled rejection with value: null
-FAIL WebTransport session establishment fails with status code 301 assert_true: expected true got false
-FAIL WebTransport session establishment with status code 401 assert_true: expected true got false
-FAIL WebTransport session establishment fails with status code 404 assert_true: expected true got false
-FAIL Echo back request headers promise_test: Unhandled rejection with value: null
-FAIL Cookie header is not echoed back promise_test: Unhandled rejection with value: null
+Harness Error (TIMEOUT), message = null
+
+PASS WebTransport session is established with status code 200
+PASS WebTransport session is established with status code 204
+TIMEOUT WebTransport session establishment fails with status code 301 Test timed out
+NOTRUN WebTransport session establishment with status code 401
+NOTRUN WebTransport session establishment fails with status code 404
+NOTRUN Echo back request headers
+NOTRUN Cookie header is not echoed back
 

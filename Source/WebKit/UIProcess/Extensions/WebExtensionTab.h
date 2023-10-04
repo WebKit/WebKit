@@ -27,6 +27,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "CocoaImage.h"
+#include "WebExtensionEventListenerType.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
@@ -41,10 +43,11 @@ namespace WebKit {
 
 class WebExtensionContext;
 class WebExtensionWindow;
+class WebProcessProxy;
 struct WebExtensionTabParameters;
 struct WebExtensionTabQueryParameters;
 
-class WebExtensionTab : public RefCounted<WebExtensionTab> {
+class WebExtensionTab : public RefCounted<WebExtensionTab>, public CanMakeWeakPtr<WebExtensionTab> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -71,13 +74,21 @@ public:
         All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
     };
 
+    enum class ImageFormat : uint8_t {
+        PNG,
+        JPEG,
+    };
+
     enum class AssumeWindowMatches : bool { No, Yes };
+    enum class SkipContainsCheck : bool { No, Yes };
+    enum class MainWebViewOnly : bool { No, Yes };
 
     using Error = std::optional<String>;
+    using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionTabParameters parameters() const;
-    WebExtensionTabParameters minimalParameters() const;
+    WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties>) const;
 
     WebExtensionContext* extensionContext() const;
 
@@ -87,7 +98,7 @@ public:
 
     bool extensionHasAccess() const;
 
-    RefPtr<WebExtensionWindow> window() const;
+    RefPtr<WebExtensionWindow> window(SkipContainsCheck = SkipContainsCheck::No) const;
     size_t index() const;
 
     RefPtr<WebExtensionTab> parentTab() const;
@@ -129,6 +140,7 @@ public:
     bool isLoadingComplete() const;
 
     void detectWebpageLocale(CompletionHandler<void(NSLocale *, Error)>&&);
+    void captureVisibleWebpage(CompletionHandler<void(CocoaImage *, Error)>&&);
 
     void loadURL(URL, CompletionHandler<void(Error)>&&);
 
@@ -145,6 +157,8 @@ public:
     void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&&);
 
     void close(CompletionHandler<void(Error)>&&);
+
+    WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType, MainWebViewOnly = MainWebViewOnly::Yes) const;
 
 #ifdef __OBJC__
     _WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }
@@ -180,6 +194,7 @@ private:
     bool m_respondsToPendingURL : 1 { false };
     bool m_respondsToIsLoadingComplete : 1 { false };
     bool m_respondsToDetectWebpageLocale : 1 { false };
+    bool m_respondsToCaptureVisibleWebpage : 1 { false };
     bool m_respondsToLoadURL : 1 { false };
     bool m_respondsToReload : 1 { false };
     bool m_respondsToReloadFromOrigin : 1 { false };
@@ -193,5 +208,17 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebExtensionTab::ImageFormat> {
+    using values = EnumValues<
+        WebKit::WebExtensionTab::ImageFormat,
+        WebKit::WebExtensionTab::ImageFormat::PNG,
+        WebKit::WebExtensionTab::ImageFormat::JPEG
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

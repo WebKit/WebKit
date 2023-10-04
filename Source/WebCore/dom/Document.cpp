@@ -36,6 +36,7 @@
 #include "CSSAnimation.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
+#include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
@@ -191,6 +192,7 @@
 #include "PointerLockController.h"
 #include "PolicyChecker.h"
 #include "PopStateEvent.h"
+#include "Position.h"
 #include "ProcessingInstruction.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "PublicSuffix.h"
@@ -202,6 +204,7 @@
 #include "RenderChildIterator.h"
 #include "RenderInline.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -720,7 +723,7 @@ Document::~Document()
     ASSERT(m_backForwardCacheState != InBackForwardCache);
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_disabledFieldsetElementsCount);
-    ASSERT(m_ranges.isEmptyIgnoringNullReferences());
+    ASSERT(m_ranges.isEmpty());
     ASSERT(m_inDocumentShadowRoots.isEmptyIgnoringNullReferences());
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
@@ -1127,7 +1130,7 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
 
 Ref<DocumentFragment> Document::createDocumentFragment()
 {
-    return DocumentFragment::create(document());
+    return DocumentFragment::create(*this);
 }
 
 Ref<Text> Document::createTextNode(String&& data)
@@ -1833,8 +1836,9 @@ void Document::setTitle(String&& title)
     RefPtr element = documentElement();
     if (is<SVGSVGElement>(element)) {
         if (!m_titleElement) {
-            m_titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
-            element->insertBefore(*m_titleElement, element->firstChild());
+            auto titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
+            m_titleElement = titleElement.copyRef();
+            element->insertBefore(titleElement, element->protectedFirstChild());
         }
         // insertBefore above may have ran scripts which removed m_titleElement.
         if (m_titleElement)
@@ -2303,8 +2307,26 @@ bool Document::updateStyleIfNeeded()
     return true;
 }
 
-void Document::updateLayout()
+void Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> layoutOptions, const Element* context)
 {
+    layoutOptions.add(LayoutOptions::IgnorePendingStylesheets);
+    updateLayout(layoutOptions, context);
+}
+
+void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Element* context)
+{
+    bool oldIgnore = m_ignorePendingStylesheets;
+
+    if (layoutOptions.contains(LayoutOptions::IgnorePendingStylesheets)) {
+        if (!haveStylesheetsLoaded()) {
+            m_ignorePendingStylesheets = true;
+            // FIXME: This should just invalidate elements with missing styles.
+            if (m_hasNodesWithMissingStyle)
+                scheduleFullStyleRebuild();
+        }
+        updateRelevancyOfContentVisibilityElements();
+    }
+
     ASSERT(isMainThread());
 
     RefPtr frameView = view();
@@ -2314,41 +2336,38 @@ void Document::updateLayout()
         return;
     }
 
-    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    {
+        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (RefPtr owner = ownerElement())
-        owner->document().updateLayout();
+        if (RefPtr owner = ownerElement())
+            owner->document().updateLayout(layoutOptions, context);
 
-    updateStyleIfNeeded();
+        updateStyleIfNeeded();
 
-    StackStats::LayoutCheckPoint layoutCheckPoint;
+        StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    if (!frameView || !renderView())
-        return;
-    if (!frameView->layoutContext().isLayoutPending() && !renderView()->needsLayout())
-        return;
-
-    frameView->layoutContext().layout();
-}
-
-void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks runPostLayoutTasks)
-{
-    bool oldIgnore = m_ignorePendingStylesheets;
-
-    if (!haveStylesheetsLoaded()) {
-        m_ignorePendingStylesheets = true;
-        // FIXME: This should just invalidate elements with missing styles.
-        if (m_hasNodesWithMissingStyle)
-            scheduleFullStyleRebuild();
+        if (frameView && renderView()) {
+            if (context && layoutOptions.contains(LayoutOptions::ContentVisibilityForceLayout)) {
+                if (context->renderer() && context->renderer()->style().skippedContentReason().has_value())
+                    context->renderer()->setNeedsLayout();
+                else
+                    context = nullptr;
+            }
+            if (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()) {
+                ContentVisibilityForceLayoutScope scope(*renderView(), context);
+                frameView->layoutContext().layout();
+            }
+        }
     }
 
-    updateRelevancyOfContentVisibilityElements();
-
-    updateLayout();
-
-    if (runPostLayoutTasks == RunPostLayoutTasks::Synchronously && view())
+    if (layoutOptions.contains(LayoutOptions::RunPostLayoutTasksSynchronously) && view())
         view()->flushAnyPendingPostLayoutTasks();
+
+    if (layoutOptions.contains(LayoutOptions::IgnorePendingStylesheets)) {
+        if (RefPtr frameView = view())
+            frameView->updateScrollAnchoringPositionForScrollableAreas();
+    }
 
     m_ignorePendingStylesheets = oldIgnore;
 }
@@ -2489,7 +2508,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     // Only do a layout if changes have occurred that make it necessary.
     if (requireFullLayout)
-        updateLayout();
+        updateLayout({ }, &element);
 
     return requireFullLayout;
 }
@@ -3018,55 +3037,63 @@ AppHighlightStorage& Document::appHighlightStorage()
     return *m_appHighlightStorage;
 }
 #endif
-void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>& rangesData, const HighlightRegister& highlightRegister)
+void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>& highlightRanges, const HighlightRegister& highlightRegister)
 {
     for (auto& highlight : highlightRegister.map()) {
-        for (auto& rangeData : highlight.value->rangesData()) {
-            if (rangeData->startPosition().isNotNull() && rangeData->endPosition().isNotNull() && !rangeData->range().isLiveRange())
+        for (auto& highlightRange : highlight.value->highlightRanges()) {
+            if (highlightRange->startPosition().isNotNull() && highlightRange->endPosition().isNotNull() && !highlightRange->range().isLiveRange())
                 continue;
 
-            if (auto* liveRange = dynamicDowncast<Range>(rangeData->range()); liveRange && !liveRange->didChangeHighlight())
+            if (auto liveRange = RefPtr { dynamicDowncast<Range>(highlightRange->range()) }; liveRange && !liveRange->didChangeForHighlight())
                 continue;
 
-            auto simpleRange = makeSimpleRange(rangeData->range());
+            auto simpleRange = makeSimpleRange(highlightRange->range());
             if (&simpleRange.startContainer().treeScope() != &simpleRange.endContainer().treeScope())
                 continue;
-            rangesData.append(rangeData.get());
+            highlightRanges.append(highlightRange.get());
         }
     }
 
     // One range can belong to multiple highlights so resetting a range's flag cannot be done in the loops above.
     for (auto& highlight : highlightRegister.map()) {
-        for (auto& rangeData : highlight.value->rangesData()) {
-            if (auto* liveRange = dynamicDowncast<Range>(rangeData->range()); liveRange && liveRange->didChangeHighlight())
-                liveRange->resetDidChangeHighlight();
+        for (auto& highlightRange : highlight.value->highlightRanges()) {
+            if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && liveRange->didChangeForHighlight())
+                liveRange->resetDidChangeForHighlight();
         }
     }
 }
 
 void Document::updateHighlightPositions()
 {
-    Vector<WeakPtr<HighlightRangeData>> rangesData;
+    Vector<WeakPtr<HighlightRange>> highlightRanges;
     if (m_highlightRegister)
-        collectRangeDataFromRegister(rangesData, *m_highlightRegister.get());
+        collectHighlightRangesFromRegister(highlightRanges, *m_highlightRegister.get());
     if (m_fragmentHighlightRegister)
-        collectRangeDataFromRegister(rangesData, *m_fragmentHighlightRegister.get());
+        collectHighlightRangesFromRegister(highlightRanges, *m_fragmentHighlightRegister.get());
 #if ENABLE(APP_HIGHLIGHTS)
     if (m_appHighlightRegister)
-        collectRangeDataFromRegister(rangesData, *m_appHighlightRegister.get());
+        collectHighlightRangesFromRegister(highlightRanges, *m_appHighlightRegister.get());
 #endif
 
-    for (auto& weakRangeData : rangesData) {
-        if (auto* rangeData = weakRangeData.get()) {
-            VisibleSelection visibleSelection(makeSimpleRange(rangeData->range()));
+    for (auto& weakRangeData : highlightRanges) {
+        if (auto* highlightRange = weakRangeData.get()) {
+            VisibleSelection visibleSelection(makeSimpleRange(highlightRange->range()));
+            auto range = makeSimpleRange(highlightRange->range());
+
             auto startPosition = visibleSelection.visibleStart().deepEquivalent();
             auto endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
+
+            if (auto simpleRange = makeSimpleRange(highlightRange->startPosition(), highlightRange->endPosition()))
+                Highlight::repaintRange(StaticRange::create(*simpleRange));
+
             if (!startPosition.isNull())
-                rangeData->setStartPosition(WTFMove(startPosition));
+                highlightRange->setStartPosition(WTFMove(startPosition));
             if (!endPosition.isNull())
-                rangeData->setEndPosition(WTFMove(endPosition));
+                highlightRange->setEndPosition(WTFMove(endPosition));
+
+            Highlight::repaintRange(highlightRange->range());
         }
     }
 }
@@ -3438,6 +3465,15 @@ bool Document::shouldScheduleLayout() const
     if (styleScope().hasPendingSheetsBeforeBody())
         return false;
     if (view() && !view()->isVisuallyNonEmpty())
+        return false;
+    auto isInsideDisplayNone = [&] {
+        for (auto* ownerElement = this->ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
+            if (!ownerElement->renderer())
+                return true;
+        }
+        return false;
+    };
+    if (isInsideDisplayNone())
         return false;
     return true;
 }
@@ -4265,6 +4301,21 @@ void Document::processColorScheme(const String& colorSchemeString)
     if (auto* page = this->page())
         page->updateStyleAfterChangeInEnvironment();
 }
+
+void Document::metaElementColorSchemeChanged()
+{
+    RefPtr<CSSValue> colorScheme;
+    auto colorSchemeString = emptyString();
+    auto cssParserContext = CSSParserContext(document());
+    for (auto& metaElement : descendantsOfType<HTMLMetaElement>(rootNode())) {
+        const AtomString& nameValue = metaElement.attributeWithoutSynchronization(nameAttr);
+        if ((equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) || equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s)) && (colorScheme = CSSParser::parseSingleValue(CSSPropertyColorScheme, metaElement.attributeWithoutSynchronization(contentAttr), cssParserContext))) {
+            colorSchemeString = colorScheme->cssText();
+            break;
+        }
+    }
+    processColorScheme(colorSchemeString);
+}
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -4609,6 +4660,9 @@ void Document::runScrollSteps()
         }
         if (scrollAnimationsInProgress)
             page()->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+
+        frameView->updateScrollAnchoringElement();
+        frameView->updateScrollAnchoringPositionForScrollableAreas();
     }
 
     // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/66.
@@ -5249,7 +5303,7 @@ void Document::moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
 void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 {
     for (auto& range : m_ranges)
-        range.nodeChildrenChanged(container);
+        range->nodeChildrenChanged(container);
 }
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
@@ -5260,7 +5314,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
     adjustFocusNavigationNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
 
     for (auto& range : m_ranges)
-        range.nodeChildrenWillBeRemoved(container);
+        range->nodeChildrenWillBeRemoved(container);
 
     for (auto& it : m_nodeIterators) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling())
@@ -5292,7 +5346,7 @@ void Document::nodeWillBeRemoved(Node& node)
         it.nodeWillBeRemoved(node);
 
     for (auto& range : m_ranges)
-        range.nodeWillBeRemoved(node);
+        range->nodeWillBeRemoved(node);
 
     if (RefPtr frame = this->frame()) {
         frame->eventHandler().nodeWillBeRemoved(node);
@@ -5309,8 +5363,8 @@ void Document::parentlessNodeMovedToNewDocument(Node& node)
     Vector<WeakPtr<Range>, 5> rangesAffected;
 
     for (auto& range : m_ranges) {
-        if (range.parentlessNodeMovedToNewDocumentAffectsRange(node))
-            rangesAffected.append(range);
+        if (range->parentlessNodeMovedToNewDocumentAffectsRange(node))
+            rangesAffected.append(range.get());
     }
 
     for (auto& range : rangesAffected) {
@@ -5338,10 +5392,8 @@ void Document::adjustFocusNavigationNodeOnNodeRemoval(Node& node, NodeRemoval no
 
 void Document::textInserted(Node& text, unsigned offset, unsigned length)
 {
-    if (!m_ranges.isEmptyIgnoringNullReferences()) {
-        for (auto& range : m_ranges)
-            range.textInserted(text, offset, length);
-    }
+    for (auto& range : m_ranges)
+        range->textInserted(text, offset, length);
 
     // Update the markers for spelling and grammar checking.
     m_markers->shiftMarkers(text, offset, length);
@@ -5354,10 +5406,8 @@ void Document::textInserted(Node& text, unsigned offset, unsigned length)
 
 void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 {
-    if (!m_ranges.isEmptyIgnoringNullReferences()) {
-        for (auto& range : m_ranges)
-            range.textRemoved(text, offset, length);
-    }
+    for (auto& range : m_ranges)
+        range->textRemoved(text, offset, length);
 
     // Update the markers for spelling and grammar checking.
     m_markers->removeMarkers(text, { offset, offset + length });
@@ -5366,10 +5416,10 @@ void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 
 void Document::textNodesMerged(Text& oldNode, unsigned offset)
 {
-    if (!m_ranges.isEmptyIgnoringNullReferences()) {
+    if (!m_ranges.isEmpty()) {
         NodeWithIndex oldNodeWithIndex(&oldNode);
         for (auto& range : m_ranges)
-            range.textNodesMerged(oldNodeWithIndex, offset);
+            range->textNodesMerged(oldNodeWithIndex, offset);
     }
 
     // FIXME: This should update markers for spelling and grammar checking.
@@ -5378,7 +5428,7 @@ void Document::textNodesMerged(Text& oldNode, unsigned offset)
 void Document::textNodeSplit(Text& oldNode)
 {
     for (auto& range : m_ranges)
-        range.textNodeSplit(oldNode);
+        range->textNodeSplit(oldNode);
 
     // FIXME: This should update markers for spelling and grammar checking.
 }
@@ -6824,7 +6874,8 @@ bool Document::isSecureContext() const
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (!isDocumentSecure(*localFrame->document()))
+        Ref<Document> ancestorDocument = *localFrame->document();
+        if (!isDocumentSecure(ancestorDocument))
             return false;
     }
 
@@ -8052,13 +8103,11 @@ void Document::didAssociateFormControl(Element& element)
 
 void Document::didAssociateFormControlsTimerFired()
 {
-    Vector<RefPtr<Element>> controls;
-    controls.reserveInitialCapacity(m_associatedFormControls.computeSize());
-    for (auto& element : std::exchange(m_associatedFormControls, { })) {
+    auto controls = WTF::compactMap(std::exchange(m_associatedFormControls, { }), [](auto&& element) -> std::optional<RefPtr<Element>> {
         if (element.isConnected())
-            controls.uncheckedAppend(&element);
-    }
-    controls.shrinkToFit();
+            return RefPtr { &element };
+        return std::nullopt;
+    });
 
     if (auto page = this->page(); page && !controls.isEmpty()) {
         ASSERT(m_frame);
@@ -8668,12 +8717,12 @@ std::optional<FrameIdentifier> Document::frameID() const
 
 void Document::registerArticleElement(Element& article)
 {
-    m_articleElements.add(article);
+    m_articleElements.add(&article);
 }
 
 void Document::unregisterArticleElement(Element& article)
 {
-    m_articleElements.remove(article);
+    m_articleElements.remove(&article);
     if (m_mainArticleElement == &article)
         m_mainArticleElement = nullptr;
 }
@@ -8693,7 +8742,7 @@ void Document::updateMainArticleElementAfterLayout()
 
     m_mainArticleElement = nullptr;
 
-    auto numberOfArticles = m_articleElements.computeSize();
+    auto numberOfArticles = m_articleElements.size();
     if (!numberOfArticles || numberOfArticles > maxNumberOfArticlesBeforeIgnoringMainContentArticle)
         return;
 
@@ -8703,19 +8752,19 @@ void Document::updateMainArticleElementAfterLayout()
     float secondTallestArticleHeight = 0;
 
     for (auto& article : m_articleElements) {
-        auto* box = article.renderBox();
+        auto* box = article->renderBox();
         float height = box ? box->height().toFloat() : 0;
         if (height >= tallestArticleHeight) {
             secondTallestArticleHeight = tallestArticleHeight;
             tallestArticleHeight = height;
             tallestArticleWidth = box ? box->width().toFloat() : 0;
-            tallestArticle = &article;
+            tallestArticle = article.get();
         } else if (height >= secondTallestArticleHeight)
             secondTallestArticleHeight = height;
     }
 
     if (numberOfArticles == 1) {
-        m_mainArticleElement = tallestArticle;
+        m_mainArticleElement = tallestArticle.get();
         return;
     }
 
@@ -8729,7 +8778,7 @@ void Document::updateMainArticleElementAfterLayout()
     if (tallestArticleWidth * tallestArticleHeight < minimumViewportAreaFactor * (viewportSize.width() * viewportSize.height()).toFloat())
         return;
 
-    m_mainArticleElement = tallestArticle;
+    m_mainArticleElement = tallestArticle.get();
 }
 
 #if ENABLE(TRACKING_PREVENTION)
@@ -9663,6 +9712,15 @@ void Document::updateContentRelevancyForScrollIfNeeded(const Element& scrollAnch
     if (!m_contentVisibilityDocumentState)
         return;
     return m_contentVisibilityDocumentState->updateContentRelevancyForScrollIfNeeded(scrollAnchor);
+}
+
+String Document::mediaKeysStorageDirectory()
+{
+    auto* currentPage = page();
+    if (!currentPage)
+        return emptyString();
+
+    return currentPage->ensureMediaKeysStorageDirectoryForOrigin(securityOrigin().data());
 }
 
 } // namespace WebCore

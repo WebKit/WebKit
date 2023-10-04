@@ -163,7 +163,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     if (!document)
         return std::nullopt;
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     HashSet<Ref<Node>> allTextNodes;
     HashMap<unsigned, unsigned> fontSizeToCountMap;

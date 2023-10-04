@@ -110,7 +110,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (is<SVGElement>(parentNode()) && downcast<SVGElement>(*parentNode()).isTextContent())
-        return createRenderer<RenderSVGInline>(*this, WTFMove(style));
+        return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTFMove(style));
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())

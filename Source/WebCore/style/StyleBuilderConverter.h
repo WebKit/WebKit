@@ -770,9 +770,8 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
         return nullptr;
     }
 
-    if (is<CSSRayValue>(value)) {
+    if (is<CSSRayValue>(value))
         return convertRayPathOperation(builderState, value);
-    }
 
     RefPtr<PathOperation> operation;
     auto referenceBox = CSSBoxType::BoxMissing;
@@ -1026,7 +1025,7 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
         return ShapeValue::create(builderState.createStyleImage(value).releaseNonNull());
 
     RefPtr<BasicShape> shape;
-    CSSBoxType referenceBox = CSSBoxType::BoxMissing;
+    auto referenceBox = CSSBoxType::BoxMissing;
     auto processSingleValue = [&](const CSSValue& currentValue) {
         if (!currentValue.isValueID())
             shape = basicShapeForValue(builderState.cssToLengthConversionData(), currentValue);

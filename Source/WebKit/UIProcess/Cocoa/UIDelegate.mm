@@ -310,6 +310,8 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowF
     ASSERT(delegate);
 
     auto configuration = adoptNS([m_uiDelegate->m_webView.get()->_configuration copy]);
+    // FIXME: after calling triggerBrowsingContextGroupSwitchForNavigation this configuration's BrowsingContextGroup is incorrect. <rdar://116203642>
+    // The fix should go into platform-independent code, though. Needs some refactoring. And also needs switching browsing context group.
     [configuration _setRelatedWebView:m_uiDelegate->m_webView.get().get()];
 
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
@@ -1204,7 +1206,7 @@ void UIDelegate::UIClient::promptForDisplayCapturePermission(WebPageProxy& page,
     std::optional<WebCore::FrameIdentifier> mainFrameID;
     if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
         mainFrameID = mainFrame->frameID();
-    FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID, frame.process().processID() };
+    FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID, frame.process().processID(), frame.isFocused() };
     RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
 
     BOOL requestSystemAudio = !!request.requiresDisplayCaptureWithAudio();
@@ -1270,7 +1272,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         std::optional<WebCore::FrameIdentifier> mainFrameID;
         if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
             mainFrameID = mainFrame->frameID();
-        FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID, frame.process().processID() };
+        FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID, frame.process().processID(), frame.isFocused() };
         RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
 
         WKMediaCaptureType type = WKMediaCaptureTypeCamera;

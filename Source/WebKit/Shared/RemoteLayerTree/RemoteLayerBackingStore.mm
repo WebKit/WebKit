@@ -27,10 +27,10 @@
 #import "RemoteLayerBackingStore.h"
 
 #import "ArgumentCoders.h"
-#import "CGDisplayListImageBufferBackend.h"
+#import "DynamicContentScalingImageBufferBackend.h"
+#import "ImageBufferBackendHandleSharing.h"
 #import "Logging.h"
 #import "PlatformCALayerRemote.h"
-#import "PlatformImageBufferShareableBackend.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeLayers.h"
@@ -41,6 +41,7 @@
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/BifurcatedGraphicsContext.h>
+#import <WebCore/DynamicContentScalingTypes.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/ImageBuffer.h>
@@ -54,10 +55,6 @@
 #import <wtf/Scope.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/TextStream.h>
-
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-#import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
-#endif
 
 namespace WebKit {
 
@@ -158,7 +155,7 @@ void RemoteLayerBackingStore::clearBackingStore()
     m_backBuffer.discard();
     m_secondaryBackBuffer.discard();
     m_contentsBufferHandle = std::nullopt;
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     m_displayListBuffer = nullptr;
 #endif
 }
@@ -168,13 +165,13 @@ static bool hasValue(const ImageBufferBackendHandle& backendHandle)
 {
     return WTF::switchOn(backendHandle,
         [&] (const ShareableBitmap::Handle& handle) {
-            return !handle.isNull();
+            return true;
         },
         [&] (const MachSendRight& machSendRight) {
             return !!machSendRight;
         }
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        , [&] (const CGDisplayList& handle) {
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+        , [&] (const DynamicContentScalingDisplayList& handle) {
             return !!handle.buffer();
         }
 #endif
@@ -231,7 +228,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
     encoder << m_previouslyPaintedRect;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<ImageBufferBackendHandle> displayListHandle;
     if (m_displayListBuffer)
         displayListHandle = handleFromBuffer(*m_displayListBuffer);
@@ -263,7 +260,7 @@ bool RemoteLayerBackingStoreProperties::decode(IPC::Decoder& decoder, RemoteLaye
     if (!decoder.decode(result.m_paintedRect))
         return false;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (!decoder.decode(result.m_displayListBufferHandle))
         return false;
 #endif
@@ -303,12 +300,17 @@ bool RemoteLayerBackingStore::layerWillBeDisplayed()
 
 void RemoteLayerBackingStore::setNeedsDisplay(const IntRect rect)
 {
-    m_dirtyRegion.unite(rect);
+    m_dirtyRegion.unite(intersection(layerBounds(), rect));
 }
 
 void RemoteLayerBackingStore::setNeedsDisplay()
 {
-    setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_parameters.size)));
+    m_dirtyRegion.unite(layerBounds());
+}
+
+WebCore::IntRect RemoteLayerBackingStore::layerBounds() const
+{
+    return IntRect { { }, expandedIntSize(m_parameters.size) };
 }
 
 bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
@@ -359,7 +361,7 @@ SetNonVolatileResult RemoteLayerBackingStore::swapToValidFrontBuffer()
         }
     }
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_displayListBuffer)
         m_displayListBuffer->releaseGraphicsContext();
 #endif
@@ -394,7 +396,7 @@ void RemoteLayerBackingStore::applySwappedBuffers(RefPtr<ImageBuffer>&& front, R
 
 bool RemoteLayerBackingStore::supportsPartialRepaint() const
 {
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     // FIXME: Find a way to support partial repaint for backing store that
     // includes a display list without allowing unbounded memory growth.
     return m_parameters.includeDisplayList == IncludeDisplayList::No;
@@ -508,14 +510,13 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
     m_frontBuffer.imageBuffer = collection->allocateBufferForBackingStore(*this);
     m_frontBuffer.isCleared = true;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (!m_displayListBuffer && m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
         ImageBufferCreationContext creationContext;
-        creationContext.useCGDisplayListImageCache = m_parameters.useCGDisplayListImageCache;
         if (type() == RemoteLayerBackingStore::Type::IOSurface)
-            m_displayListBuffer = ImageBuffer::create<CGDisplayListAcceleratedImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
+            m_displayListBuffer = ImageBuffer::create<DynamicContentScalingAcceleratedImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
         else
-            m_displayListBuffer = ImageBuffer::create<CGDisplayListImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
+            m_displayListBuffer = ImageBuffer::create<DynamicContentScalingImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
     }
 #endif
 }
@@ -560,15 +561,12 @@ void RemoteLayerBackingStore::paintContents()
 
     m_lastDisplayTime = MonotonicTime::now();
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
         auto& displayListContext = m_displayListBuffer->context();
 
         BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
-        drawInContext(context, [&] {
-            displayListContext.scale(FloatSize(1, -1));
-            displayListContext.translate(0, -m_parameters.size.height());
-        });
+        drawInContext(context);
         return;
     }
 #endif
@@ -577,15 +575,12 @@ void RemoteLayerBackingStore::paintContents()
     drawInContext(context);
 }
 
-void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Function<void()>&& additionalContextSetupCallback)
+void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
 {
     auto markFrontBufferNotCleared = makeScopeExit([&]() {
         m_frontBuffer.isCleared = false;
     });
     GraphicsContextStateSaver stateSaver(context);
-
-    if (additionalContextSetupCallback)
-        additionalContextSetupCallback();
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
@@ -607,7 +602,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
         m_paintingRects.append(scaledRect);
     }
 
-    IntRect layerBounds(IntPoint(), expandedIntSize(m_parameters.size));
+    IntRect layerBounds = this->layerBounds();
     if (RefPtr imageBuffer = m_backBuffer.imageBuffer; !m_dirtyRegion.contains(layerBounds) && imageBuffer) {
         if (!m_previouslyPaintedRect)
             context.drawImageBuffer(*imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
@@ -643,28 +638,28 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
     
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {
-    case PlatformCALayer::LayerTypeSimpleLayer:
-    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+    case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
+    case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
         m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds, paintBehavior);
         break;
-    case PlatformCALayer::LayerTypeWebLayer:
-    case PlatformCALayer::LayerTypeBackdropLayer:
+    case PlatformCALayer::LayerType::LayerTypeWebLayer:
+    case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
         PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, paintBehavior);
         break;
-    case PlatformCALayer::LayerTypeLayer:
-    case PlatformCALayer::LayerTypeTransformLayer:
-    case PlatformCALayer::LayerTypeTiledBackingLayer:
-    case PlatformCALayer::LayerTypePageTiledBackingLayer:
-    case PlatformCALayer::LayerTypeRootLayer:
-    case PlatformCALayer::LayerTypeAVPlayerLayer:
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
-    case PlatformCALayer::LayerTypeShapeLayer:
-    case PlatformCALayer::LayerTypeScrollContainerLayer:
+    case PlatformCALayer::LayerType::LayerTypeLayer:
+    case PlatformCALayer::LayerType::LayerTypeTransformLayer:
+    case PlatformCALayer::LayerType::LayerTypeTiledBackingLayer:
+    case PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer:
+    case PlatformCALayer::LayerType::LayerTypeRootLayer:
+    case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
+    case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer:
+    case PlatformCALayer::LayerType::LayerTypeShapeLayer:
+    case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
 #if ENABLE(MODEL_ELEMENT)
-    case PlatformCALayer::LayerTypeModelLayer:
+    case PlatformCALayer::LayerType::LayerTypeModelLayer:
 #endif
-    case PlatformCALayer::LayerTypeCustom:
-    case PlatformCALayer::LayerTypeHost:
+    case PlatformCALayer::LayerType::LayerTypeCustom:
+    case PlatformCALayer::LayerType::LayerTypeHost:
         ASSERT_NOT_REACHED();
         break;
     };
@@ -680,7 +675,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
     m_previouslyPaintedRect = dirtyBounds;
 
     m_frontBufferFlushers.append(m_frontBuffer.imageBuffer->createFlusher());
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_parameters.includeDisplayList == IncludeDisplayList::Yes)
         m_frontBufferFlushers.append(m_displayListBuffer->createFlusher());
 #endif
@@ -725,8 +720,8 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
                 break;
             }
         }
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        , [&] (CGDisplayList& handle) {
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+        , [&] (DynamicContentScalingDisplayList& handle) {
             ASSERT_NOT_REACHED();
         }
 #endif
@@ -735,7 +730,7 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
     return contents;
 }
 
-void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier, bool replayCGDisplayListsIntoBackingStore)
+void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier, bool replayDynamicContentScalingDisplayListsIntoBackingStore)
 {
     if (asyncContentsIdentifier && m_frontBufferInfo && *asyncContentsIdentifier >= m_frontBufferInfo->resourceIdentifier)
         return;
@@ -754,7 +749,7 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
         return;
     }
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_displayListBufferHandle) {
         ASSERT([layer isKindOfClass:[WKCompositingLayer class]]);
         if (![layer isKindOfClass:[WKCompositingLayer class]])
@@ -762,17 +757,18 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
 
         layer.drawsAsynchronously = (m_type == RemoteLayerBackingStore::Type::IOSurface);
 
-        if (!replayCGDisplayListsIntoBackingStore) {
-            [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
-            [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
+        if (!replayDynamicContentScalingDisplayListsIntoBackingStore) {
+            [layer setValue:@1 forKeyPath:WKDynamicContentScalingEnabledKey];
+            [layer setValue:@1 forKeyPath:WKDynamicContentScalingBifurcationEnabledKey];
+            [layer setValue:@(layer.contentsScale) forKeyPath:WKDynamicContentScalingBifurcationScaleKey];
         } else
             layer.opaque = m_isOpaque;
-        [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<CGDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayCGDisplayListsIntoBackingStore];
+        [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<DynamicContentScalingDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayDynamicContentScalingDisplayListsIntoBackingStore];
         return;
     } else
-        [layer _web_clearCGDisplayListIfNeeded];
+        [layer _web_clearDynamicContentScalingDisplayListIfNeeded];
 #else
-    UNUSED_PARAM(replayCGDisplayListsIntoBackingStore);
+    UNUSED_PARAM(replayDynamicContentScalingDisplayListsIntoBackingStore);
 #endif
 
     layer.contents = contents.get();

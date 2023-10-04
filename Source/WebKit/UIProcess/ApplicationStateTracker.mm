@@ -33,6 +33,7 @@
 #import "ProcessAssertion.h"
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
+#import <WebCore/UIViewControllerUtilities.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -139,7 +140,7 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         UIViewController *serviceViewController = nil;
 
         for (UIView *view = m_view.get().get(); view; view = view.superview) {
-            UIViewController *viewController = [UIViewController viewControllerForView:view];
+            auto viewController = WebCore::viewController(view);
 
             if (viewController._hostProcessIdentifier) {
                 serviceViewController = viewController;

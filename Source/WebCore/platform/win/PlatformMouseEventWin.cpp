@@ -38,7 +38,7 @@ namespace WebCore {
 
 #define HIGH_BIT_MASK_SHORT 0x8000
 
-static IntPoint positionForEvent(HWND hWnd, LPARAM lParam)
+static IntPoint positionForEvent(HWND, LPARAM lParam)
 {
     IntPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     return point;
@@ -92,28 +92,28 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
         case WM_LBUTTONDBLCLK:
-            m_button = LeftButton;
+            m_button = MouseButton::Left;
             break;
         case WM_RBUTTONDOWN:
         case WM_RBUTTONUP:
         case WM_RBUTTONDBLCLK:
-            m_button = RightButton;
+            m_button = MouseButton::Right;
             break;
         case WM_MBUTTONDOWN:
         case WM_MBUTTONUP:
         case WM_MBUTTONDBLCLK:
-            m_button = MiddleButton;
+            m_button = MouseButton::Middle;
             break;
         case WM_MOUSEMOVE:
         case WM_MOUSELEAVE:
             if (wParam & MK_LBUTTON)
-                m_button = LeftButton;
+                m_button = MouseButton::Left;
             else if (wParam & MK_MBUTTON)
-                m_button = MiddleButton;
+                m_button = MouseButton::Middle;
             else if (wParam & MK_RBUTTON)
-                m_button = RightButton;
+                m_button = MouseButton::Right;
             else
-                m_button = NoButton;
+                m_button = MouseButton::None;
             break;
         default:
             ASSERT_NOT_REACHED();

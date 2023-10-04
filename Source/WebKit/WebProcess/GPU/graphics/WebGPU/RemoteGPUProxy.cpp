@@ -46,10 +46,11 @@ namespace WebKit {
 RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
 {
     constexpr size_t connectionBufferSizeLog2 = 21;
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
-    if (!clientConnection)
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+    if (!connectionPair)
         return nullptr;
-    auto remoteGPUProxy = adoptRef(new RemoteGPUProxy(gpuProcessConnection, clientConnection.releaseNonNull(), convertToBackingContext, identifier));
+    auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
+    auto remoteGPUProxy = adoptRef(new RemoteGPUProxy(gpuProcessConnection, clientConnection, convertToBackingContext, identifier));
     remoteGPUProxy->initializeIPC(WTFMove(serverConnectionHandle), renderingBackend);
     return remoteGPUProxy;
 }
@@ -154,6 +155,7 @@ void RemoteGPUProxy::requestAdapter(const WebCore::WebGPU::RequestAdapterOptions
         response->limits.maxTextureDimension3D,
         response->limits.maxTextureArrayLayers,
         response->limits.maxBindGroups,
+        response->limits.maxBindGroupsPlusVertexBuffers,
         response->limits.maxBindingsPerBindGroup,
         response->limits.maxDynamicUniformBuffersPerPipelineLayout,
         response->limits.maxDynamicStorageBuffersPerPipelineLayout,
@@ -216,6 +218,11 @@ Ref<WebCore::WebGPU::CompositorIntegration> RemoteGPUProxy::createCompositorInte
     UNUSED_VARIABLE(sendResult);
 
     return WebGPU::RemoteCompositorIntegrationProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+void RemoteGPUProxy::paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&)
+{
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

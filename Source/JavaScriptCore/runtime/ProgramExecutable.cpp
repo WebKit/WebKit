@@ -93,13 +93,13 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
     }
     
     JSGlobalLexicalEnvironment* globalLexicalEnvironment = globalObject->globalLexicalEnvironment();
+    bool hasGlobalLexicalDeclarations = !globalLexicalEnvironment->isEmpty();
     const VariableEnvironment& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
     const VariableEnvironment& lexicalDeclarations = unlinkedCodeBlock->lexicalDeclarations();
     size_t numberOfFunctions = unlinkedCodeBlock->numberOfFunctionDecls();
     // The ES6 spec says that no vars/global properties/let/const can be duplicated in the global scope.
     // This carried out section 15.1.8 of the ES6 spec: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-globaldeclarationinstantiation
     {
-        bool hasGlobalLexicalDeclarations = !globalLexicalEnvironment->isEmpty();
         // Check for intersection of "var" and "let"/"const"/"class"
         // Check if any new "let"/"const"/"class" will shadow any pre-existing global property names (with configurable = false), or "var"/"let"/"const" variables.
         // It's an error to introduce a shadow.
@@ -144,6 +144,8 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
         // It's an error to introduce a shadow.
         if (hasGlobalLexicalDeclarations) {
             for (auto& entry : variableDeclarations) {
+                if (entry.value.isSloppyModeHoistedFunction())
+                    continue;
                 bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, entry.key.get());
                 throwScope.assertNoExceptionExceptTermination();
                 if (hasProperty)
@@ -162,7 +164,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
 
         if (!globalObject->isStructureExtensible()) {
             for (auto& entry : variableDeclarations) {
-                if (entry.value.isFunction())
+                if (entry.value.isFunction() || entry.value.isSloppyModeHoistedFunction())
                     continue;
                 ASSERT(entry.value.isVar());
                 const Identifier& ident = Identifier::fromUid(vm, entry.key.get());
@@ -178,6 +180,31 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
 
     BatchedTransitionOptimizer optimizer(vm, globalObject);
 
+    // https://tc39.es/ecma262/#sec-web-compat-globaldeclarationinstantiation (excluding last step)
+    if (!isInStrictContext()) {
+        for (auto& entry : variableDeclarations) {
+            if (!entry.value.isSloppyModeHoistedFunction())
+                continue;
+
+            const Identifier& ident = Identifier::fromUid(vm, entry.key.get());
+
+            if (hasGlobalLexicalDeclarations) {
+                bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, ident);
+                throwScope.assertNoExceptionExceptTermination();
+                if (hasProperty)
+                    continue;
+            }
+
+            bool canDeclare = globalObject->canDeclareGlobalVar(ident);
+            throwScope.assertNoExceptionExceptTermination();
+            if (!canDeclare)
+                continue;
+
+            globalObject->createGlobalVarBinding<BindingCreationContext::Global>(ident);
+            throwScope.assertNoExceptionExceptTermination();
+        }
+    }
+
     for (size_t i = 0; i < numberOfFunctions; ++i) {
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = unlinkedCodeBlock->functionDecl(i);
         ASSERT(!unlinkedFunctionExecutable->name().isEmpty());
@@ -191,7 +218,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
     }
 
     for (auto& entry : variableDeclarations) {
-        if (entry.value.isFunction())
+        if (entry.value.isFunction() || entry.value.isSloppyModeHoistedFunction())
             continue;
         ASSERT(entry.value.isVar());
         globalObject->createGlobalVarBinding<BindingCreationContext::Global>(Identifier::fromUid(vm, entry.key.get()));

@@ -8,12 +8,12 @@ Object.defineProperty(globalThis, "foo", { get() {}, set() { fooSetCalls++; }, e
 
 let didThrow = false;
 try {
-    $262.evalScript(`
-        function foo() {}
-
+    eval(`
         if (true) {
             function bar() {}
         }
+
+        function foo() {}
     `);
 } catch (err) {
     didThrow = true;

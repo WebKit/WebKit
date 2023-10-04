@@ -81,7 +81,7 @@ private:
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
 
-    const RenderObject* m_renderer { nullptr };
+    CheckedPtr<const RenderObject> m_renderer;
     InlineIterator::LeafBoxIterator m_box;
     unsigned m_offset { 0 };
 

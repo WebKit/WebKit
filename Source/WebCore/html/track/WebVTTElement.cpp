@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,9 @@
 
 #include "ElementInlines.h"
 #include "HTMLSpanElement.h"
+#include "RenderRuby.h"
+#include "RenderRubyText.h"
+#include "RenderTreePosition.h"
 #include "RubyElement.h"
 #include "RubyTextElement.h"
 #include "TextTrack.h"
@@ -38,6 +41,8 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebVTTElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebVTTRubyElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebVTTRubyTextElement);
 
 static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 {
@@ -73,26 +78,37 @@ static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
     }
 }
 
-WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, Document& document)
-    : Element(nodeTypeToTagName(nodeType), document, CreateElement)
-    , m_isPastNode(0)
-    , m_webVTTNodeType(nodeType)
+WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, AtomString language, Document& document)
+    : WebVTTElementImpl(nodeType, language)
+    , Element(nodeTypeToTagName(nodeType), document, CreateElement)
 {
 }
 
-Ref<WebVTTElement> WebVTTElement::create(WebVTTNodeType nodeType, Document& document)
+Ref<Element> WebVTTElementImpl::create(WebVTTNodeType nodeType, AtomString language, Document& document)
 {
-    return adoptRef(*new WebVTTElement(nodeType, document));
+    switch (nodeType) {
+    default:
+    case WebVTTNodeTypeNone:
+    case WebVTTNodeTypeClass:
+    case WebVTTNodeTypeItalic:
+    case WebVTTNodeTypeLanguage:
+    case WebVTTNodeTypeBold:
+    case WebVTTNodeTypeUnderline:
+    case WebVTTNodeTypeVoice:
+        return adoptRef(*new WebVTTElement(nodeType, language, document));
+    case WebVTTNodeTypeRuby:
+        return adoptRef(*new WebVTTRubyElement(language, document));
+    case WebVTTNodeTypeRubyText:
+        return adoptRef(*new WebVTTRubyTextElement(language, document));
+    }
 }
 
-Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+Ref<Element> WebVTTElementImpl::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
 {
-    Ref<WebVTTElement> clone = create(static_cast<WebVTTNodeType>(m_webVTTNodeType), targetDocument);
-    clone->setLanguage(m_language);
-    return clone;
+    return create(static_cast<WebVTTNodeType>(m_webVTTNodeType), m_language, targetDocument);
 }
 
-Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
+Ref<HTMLElement> WebVTTElementImpl::createEquivalentHTMLElement(Document& document)
 {
     RefPtr<HTMLElement> htmlElement;
 
@@ -101,8 +117,8 @@ Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
     case WebVTTNodeTypeLanguage:
     case WebVTTNodeTypeVoice:
         htmlElement = HTMLSpanElement::create(document);
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::titleAttr, attributeWithoutSynchronization(voiceAttributeName()));
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::langAttr, attributeWithoutSynchronization(langAttributeName()));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::titleAttr, toElement().attributeWithoutSynchronization(voiceAttributeName()));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::langAttr, toElement().attributeWithoutSynchronization(langAttributeName()));
         break;
     case WebVTTNodeTypeItalic:
         htmlElement = HTMLElement::create(HTMLNames::iTag, document);
@@ -123,7 +139,7 @@ Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
 
     ASSERT(htmlElement);
     if (htmlElement)
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, attributeWithoutSynchronization(HTMLNames::classAttr));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, toElement().attributeWithoutSynchronization(HTMLNames::classAttr));
     return htmlElement.releaseNonNull();
 }
 

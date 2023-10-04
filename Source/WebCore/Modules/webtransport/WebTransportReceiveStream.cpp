@@ -27,12 +27,27 @@
 #include "WebTransportReceiveStream.h"
 
 #include "JSDOMPromiseDeferred.h"
+#include "WebTransportReceiveStreamStats.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
+ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportReceiveStream::create(JSDOMGlobalObject& globalObject, Ref<ReadableStreamSource>&& source)
+{
+    auto result = createInternalReadableStream(globalObject, WTFMove(source));
+    if (result.hasException())
+        return result.releaseException();
+
+    return adoptRef(*new WebTransportReceiveStream(result.releaseReturnValue()));
+}
+
+WebTransportReceiveStream::WebTransportReceiveStream(Ref<InternalReadableStream>&& stream)
+    : ReadableStream(WTFMove(stream)) { }
+
 void WebTransportReceiveStream::getStats(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(nullptr);
+    // FIXME: Resolve promise with stats.
+    return promise->reject(NotSupportedError);
 }
 
 }

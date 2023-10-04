@@ -564,11 +564,7 @@ void CairoOperationRecorder::drawImageBuffer(ImageBuffer& buffer, const FloatRec
         }
     };
 
-    RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
-    if (!image)
-        return;
-
-    auto nativeImage = image->nativeImageForCurrentFrame();
+    auto nativeImage = buffer.createNativeImageReference();
     if (!nativeImage)
         return;
 
@@ -602,11 +598,7 @@ void CairoOperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, cons
     if (!imageBuffer)
         return;
 
-    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
-    if (!image)
-        return;
-
-    auto nativeImage = image->nativeImageForCurrentFrame();
+    auto nativeImage = imageBuffer->createNativeImageReference();
     if (!nativeImage)
         return;
 
@@ -1161,11 +1153,7 @@ void CairoOperationRecorder::clipToImageBuffer(ImageBuffer& buffer, const FloatR
         }
     };
 
-    RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
-    if (!image)
-        return;
-
-    if (auto nativeImage = image->nativeImageForCurrentFrame())
+    if (auto nativeImage = buffer.createNativeImageReference())
         append(createCommand<ClipToImageBuffer>(nativeImage->platformImage(), destRect));
 }
 

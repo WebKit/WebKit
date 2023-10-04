@@ -1824,7 +1824,7 @@ ExceptionOr<Ref<DOMRect>> Internals::absoluteLineRectFromPoint(int x, int y)
 
     auto& frame = *document.frame();
     auto& view = *document.view();
-    document.updateLayoutIgnorePendingStylesheets();
+    document.updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     auto position = frame.visiblePositionForPoint(view.rootViewToContents(IntPoint { x, y }));
     return DOMRect::create(position.absoluteSelectionBoundsForLine());
@@ -1850,7 +1850,7 @@ ExceptionOr<bool> Internals::isCaretBlinkingSuspended()
 
 Ref<DOMRect> Internals::boundingBox(Element& element)
 {
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     auto renderer = element.renderer();
     if (!renderer)
         return DOMRect::create();
@@ -1907,7 +1907,7 @@ ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& ma
 
 ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const String& markerType, unsigned index)
 {
-    node.document().updateLayoutIgnorePendingStylesheets();
+    node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     OptionSet<DocumentMarker::MarkerType> markerTypes;
     if (!markerTypesFrom(markerType, markerTypes))
@@ -1915,10 +1915,10 @@ ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const Strin
 
     node.document().editor().updateEditorUINowIfScheduled();
 
-    Vector<RenderedDocumentMarker*> markers = node.document().markers().markersFor(node, markerTypes);
+    auto markers = node.document().markers().markersFor(node, markerTypes);
     if (markers.size() <= index)
         return nullptr;
-    return markers[index];
+    return markers[index].get();
 }
 
 ExceptionOr<RefPtr<Range>> Internals::markerRangeForNode(Node& node, const String& markerType, unsigned index)
@@ -2090,7 +2090,7 @@ ExceptionOr<Ref<DOMRect>> Internals::layoutViewportRect()
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     auto& frameView = *document->view();
     return DOMRect::create(frameView.layoutViewportRect());
@@ -2102,7 +2102,7 @@ ExceptionOr<Ref<DOMRect>> Internals::visualViewportRect()
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     auto& frameView = *document->view();
     return DOMRect::create(frameView.visualViewportRect());
@@ -2178,7 +2178,7 @@ ExceptionOr<uint64_t> Internals::lineIndexAfterPageBreak(Element& element)
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     if (!element.renderer() || !is<RenderBlockFlow>(element.renderer()))
         return Exception { NotFoundError };
@@ -2302,7 +2302,7 @@ Vector<String> Internals::recentSearches(const HTMLInputElement& element)
     if (!element.isSearchField())
         return { };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
     auto* renderer = element.renderer();
     if (!is<RenderSearchField>(renderer))
         return { };
@@ -2566,7 +2566,7 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
     if (!renderView)
         return nullptr;
 
-    document.updateLayoutIgnorePendingStylesheets();
+    document.updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     float zoomFactor = frame->pageZoomFactor();
     LayoutPoint point(centerX * zoomFactor + frameView->scrollX(), centerY * zoomFactor + frameView->scrollY());
@@ -2638,7 +2638,7 @@ String Internals::parserMetaData(JSC::JSValue code)
     else
         return String();
 
-    const char* prefix = "";
+    const char* prefix;
     String functionName;
     const char* suffix = "";
 
@@ -2653,7 +2653,7 @@ String Internals::parserMetaData(JSC::JSValue code)
     else if (executable->isProgramExecutable())
         prefix = "program";
     else
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 
     return makeString(prefix, functionName, suffix, " { ",
         executable->firstLine(), ':', executable->startColumn(), " - ",
@@ -3129,7 +3129,7 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     if (!element.renderer() || !element.renderer()->hasLayer())
         return Exception { NotFoundError };
@@ -3194,7 +3194,7 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
         return Exception { InvalidAccessError };
 
     Ref nodeRef { *node };
-    nodeRef->document().updateLayoutIgnorePendingStylesheets();
+    nodeRef->document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     ScrollableArea* scrollableArea = nullptr;
     if (is<Document>(nodeRef)) {
@@ -3289,7 +3289,7 @@ ExceptionOr<String> Internals::scrollingStateTreeAsText() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     Page* page = document->page();
     if (!page)
@@ -3304,7 +3304,7 @@ ExceptionOr<String> Internals::scrollingTreeAsText() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     auto page = document->page();
     if (!page)
@@ -3324,7 +3324,7 @@ ExceptionOr<bool> Internals::haveScrollingTree() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     auto page = document->page();
     if (!page)
@@ -3369,7 +3369,7 @@ ExceptionOr<void> Internals::setElementUsesDisplayListDrawing(Element& element, 
     if (!document || !document->renderView())
         return Exception { InvalidAccessError };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     if (!element.renderer())
         return Exception { InvalidAccessError };
@@ -3391,7 +3391,7 @@ ExceptionOr<void> Internals::setElementTracksDisplayListReplay(Element& element,
     if (!document || !document->renderView())
         return Exception { InvalidAccessError };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     if (!element.renderer())
         return Exception { InvalidAccessError };
@@ -3423,7 +3423,7 @@ ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned 
     if (!document || !document->renderView())
         return Exception { InvalidAccessError };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     if (!element.renderer())
         return Exception { InvalidAccessError };
@@ -3444,7 +3444,7 @@ ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, uns
     if (!document || !document->renderView())
         return Exception { InvalidAccessError };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     if (!element.renderer())
         return Exception { InvalidAccessError };
@@ -3478,7 +3478,7 @@ ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, un
     if (!is<Text>(node))
         return Exception { InvalidAccessError };
 
-    node.document().updateLayoutIgnorePendingStylesheets();
+    node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     if (!node.renderer())
         return Exception { InvalidAccessError };
@@ -4005,7 +4005,7 @@ ExceptionOr<void> Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayou
     else
         return Exception { TypeError };
 
-    document->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
+    document->updateLayout({ LayoutOptions::IgnorePendingStylesheets, LayoutOptions::RunPostLayoutTasksSynchronously });
     document->flushDeferredAXObjectCacheUpdate();
 
     return { };
@@ -4325,7 +4325,7 @@ ExceptionOr<void> Internals::setOverridePreferredDynamicRangeMode(HTMLMediaEleme
 
 bool Internals::isSelectPopupVisible(HTMLSelectElement& element)
 {
-    element.document().updateLayoutIgnorePendingStylesheets();
+    element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     auto* renderer = element.renderer();
     if (!is<RenderMenuList>(renderer))
@@ -4502,14 +4502,14 @@ void Internals::initializeMockMediaSource()
 
 void Internals::bufferedSamplesForTrackId(SourceBuffer& buffer, const AtomString& trackId, BufferedSamplesPromise&& promise)
 {
-    buffer.bufferedSamplesForTrackId(trackId, [promise = WTFMove(promise)](auto&& samples) mutable {
+    buffer.bufferedSamplesForTrackId(trackId, [promise = WTFMove(promise)](Vector<String>&& samples) mutable {
         promise.resolve(WTFMove(samples));
     });
 }
 
 void Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, const AtomString& trackID, BufferedSamplesPromise&& promise)
 {
-    return buffer.enqueuedSamplesForTrackID(trackID, [promise = WTFMove(promise)](auto&& samples) mutable {
+    return buffer.enqueuedSamplesForTrackID(trackID, [promise = WTFMove(promise)](Vector<String>&& samples) mutable {
         promise.resolve(WTFMove(samples));
     });
 }
@@ -5013,7 +5013,7 @@ ExceptionOr<String> Internals::pageOverlayLayerTreeAsText(unsigned short flags) 
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     return MockPageOverlayClient::singleton().layerTreeAsText(*document->page(), toLayerTreeAsTextOptions(flags));
 }
@@ -6753,7 +6753,7 @@ unsigned Internals::numberOfAppHighlights()
         return 0;
     unsigned numHighlights = 0;
     for (auto& highlight : appHighlightRegister->map())
-        numHighlights += highlight.value->rangesData().size();
+        numHighlights += highlight.value->highlightRanges().size();
     return numHighlights;
 }
 #endif

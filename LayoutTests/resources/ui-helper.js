@@ -710,10 +710,10 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static isShowingPopover()
+    static isShowingFormValidationBubble()
     {
         return new Promise(resolve => {
-            testRunner.runUIScript("uiController.isShowingPopover", result => resolve(result === "true"));
+            testRunner.runUIScript("uiController.isShowingFormValidationBubble", result => resolve(result === "true"));
         });
     }
 
@@ -1867,6 +1867,9 @@ window.UIHelper = class UIHelper {
 
     static async setSpellCheckerResults(results)
     {
+        if (!this.isMac() && !this.isIOSFamily())
+            return Promise.resolve();
+
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
                 uiController.setSpellCheckerResults(${JSON.stringify(results)});

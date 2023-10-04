@@ -49,7 +49,6 @@ public:
     FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
 private:
-    bool isSVGForeignObject() const override { return true; }
     void graphicsElement() const = delete;
     ASCIILiteral renderName() const override { return "RenderSVGForeignObject"_s; }
 

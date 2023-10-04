@@ -357,6 +357,8 @@ void LocalSampleBufferDisplayLayer::flushAndRemoveImage()
 static void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
 {
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
+    if (!attachmentsArray)
+        return;
     for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
         CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
         CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);

@@ -29,6 +29,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/OptionSet.h>
+#import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {

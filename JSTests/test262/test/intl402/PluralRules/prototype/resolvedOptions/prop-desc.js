@@ -24,6 +24,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Intl.PluralRules.prototype, "resolvedOptions");
-verifyWritable(Intl.PluralRules.prototype, "resolvedOptions");
-verifyConfigurable(Intl.PluralRules.prototype, "resolvedOptions");
+verifyProperty(Intl.PluralRules.prototype, "resolvedOptions", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

@@ -26,6 +26,7 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -65,12 +66,34 @@ public:
 
     Device& device() const { return m_device; }
     void makeInvalid();
+    size_t sizeOfVertexDynamicOffsets() const;
+    size_t sizeOfFragmentDynamicOffsets() const;
+    size_t sizeOfComputeDynamicOffsets() const;
+
+    size_t vertexOffsetForBindGroup(uint32_t) const;
+    size_t fragmentOffsetForBindGroup(uint32_t) const;
+    size_t computeOffsetForBindGroup(uint32_t) const;
+
+    const Vector<uint32_t>* vertexOffsets(uint32_t, const Vector<uint32_t>&);
+    const Vector<uint32_t>* fragmentOffsets(uint32_t, const Vector<uint32_t>&);
+    const Vector<uint32_t>* computeOffsets(uint32_t, const Vector<uint32_t>&);
 
 private:
     PipelineLayout(std::optional<Vector<Ref<BindGroupLayout>>>&&, Device&);
     PipelineLayout(Device&);
 
     std::optional<Vector<Ref<BindGroupLayout>>> m_bindGroupLayouts;
+    using DynamicOffsetMap = HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    DynamicOffsetMap m_vertexDynamicOffsets;
+    DynamicOffsetMap m_fragmentDynamicOffsets;
+    DynamicOffsetMap m_computeDynamicOffsets;
+
+    using DynamicOffsetBufferMap = HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    mutable DynamicOffsetBufferMap m_vertexOffsets;
+    mutable DynamicOffsetBufferMap m_fragmentOffsets;
+    mutable DynamicOffsetBufferMap m_computeOffsets;
+    const Vector<uint32_t>* offsetVectorForBindGroup(uint32_t bindGroupIndex, DynamicOffsetBufferMap& stageOffsets, const Vector<uint32_t>& dynamicOffsets, WGPUShaderStage);
+
 
     const Ref<Device> m_device;
     bool m_isValid { true };

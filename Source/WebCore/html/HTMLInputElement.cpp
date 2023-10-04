@@ -536,13 +536,15 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
     m_inputType->detachFromElement();
     auto oldType = m_inputType->type();
 
+    bool didDirAutoUseValue = m_inputType->dirAutoUsesValue();
     bool previouslySelectable = m_inputType->supportsSelectionAPI();
 
     m_inputType = WTFMove(newType);
     m_inputType->createShadowSubtreeIfNeeded();
 
-    if (oldType == InputType::Type::Telephone || m_inputType->type() == InputType::Type::Telephone)
-        updateTextDirectionalityAfterTelephoneInputTypeChange();
+    // https://html.spec.whatwg.org/multipage/dom.html#auto-directionality
+    if (oldType == InputType::Type::Telephone || m_inputType->type() == InputType::Type::Telephone || (hasDirectionAuto() && didDirAutoUseValue != m_inputType->dirAutoUsesValue()))
+        updateTextDirectionalityAfterInputTypeChange();
 
     if (UNLIKELY(didSupportReadOnly != willSupportReadOnly && hasAttributeWithoutSynchronization(readonlyAttr))) {
         emplace(readWriteInvalidation, *this, { { CSSSelector::PseudoClassType::ReadWrite, !willSupportReadOnly }, { CSSSelector::PseudoClassType::ReadOnly, willSupportReadOnly } });
@@ -1209,7 +1211,7 @@ void HTMLInputElement::willDispatchEvent(Event& event, InputElementClickState& s
     auto& eventNames = WebCore::eventNames();
     if (event.type() == eventNames.textInputEvent && m_inputType->shouldSubmitImplicitly(event))
         event.stopPropagation();
-    if (event.type() == eventNames.clickEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
+    if (event.type() == eventNames.clickEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == MouseButton::Left) {
         m_inputType->willDispatchClick(state);
         state.stateful = true;
     }
@@ -1227,7 +1229,7 @@ void HTMLInputElement::didBlur()
 
 void HTMLInputElement::defaultEventHandler(Event& event)
 {
-    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->type() == eventNames().clickEvent && mouseEvent->button() == LeftButton) {
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->type() == eventNames().clickEvent && mouseEvent->button() == MouseButton::Left) {
         m_inputType->handleClickEvent(*mouseEvent);
         if (mouseEvent->defaultHandled())
             return;
@@ -2279,6 +2281,11 @@ String HTMLInputElement::placeholder() const
     return attributeValue.removeCharacters([](UChar c) {
         return c == newlineCharacter || c == carriageReturn;
     });
+}
+
+bool HTMLInputElement::dirAutoUsesValue() const
+{
+    return m_inputType->dirAutoUsesValue();
 }
 
 } // namespace

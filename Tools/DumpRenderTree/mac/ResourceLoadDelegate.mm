@@ -35,6 +35,7 @@
 #import <WebCore/ProtectionSpaceCocoa.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitLegacy.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <wtf/Assertions.h>
 
 using namespace std;
@@ -117,6 +118,14 @@ using namespace std;
 @end
 
 @implementation ResourceLoadDelegate
+
+@synthesize mainResourceURL;
+
+- (void)dealloc
+{
+    self.mainResourceURL = nil;
+    [super dealloc];
+}
 
 - (id)webView: (WebView *)wv identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
@@ -263,7 +272,13 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
 
 -(void)webView: (WebView *)wv resource:identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource
 {
-    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
+    if (!gUsingServerMode && done) {
+        NSURL *failingURL = [error.userInfo[@"NSErrorFailingURLKey"] _webkit_canonicalize_with_wtf];
+        if ([self.mainResourceURL isEqual:failingURL]) {
+            NSString *string = [NSString stringWithFormat:@"Failed to load %@\n%@", identifier, [error _drt_descriptionSuitableForTestResult]];
+            printf("%s\n", string.UTF8String);
+        }
+    } else if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailLoadingWithError: %@", identifier, [error _drt_descriptionSuitableForTestResult]];
         printf("%s\n", [string UTF8String]);
     }

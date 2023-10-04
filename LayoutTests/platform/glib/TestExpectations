@@ -186,9 +186,6 @@ imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-005.h
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html [ Pass ]
 
-# Passing since r260062.
-imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass ]
-
 # css-values passing for us.
 imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-004.html [ Pass ]
@@ -314,8 +311,13 @@ fast/css/accent-color/text.html [ Pass ]
 
 # Only GStreamer is honoring the CodecDelay field
 webkit.org/b/254222 media/media-source/media-webm-opus-codecdelay.html [ Pass ]
+
 # GStreamer seeks to the wrong frame
 webkit.org/b/261335 media/media-source/media-managedmse-seek.html [ Failure ]
+
+# Support to pause with 0 rate playback seems to work only in GStreamer ports
+media/media-source/media-source-play-zero-playbackrate.html [ Pass ]
+
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
 http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
@@ -632,7 +634,6 @@ webkit.org/b/214417 [ Debug ] css3/color/composited-solid-backgrounds.html [ Cra
 # Failures related with ENABLE_CSS_COMPOSITING=ON
 webkit.org/b/169916 css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-body-composited-child-background-color.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-body-composited-child.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-child.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-double.html [ ImageOnlyFailure ]
@@ -722,6 +723,7 @@ webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 webkit.org/b/221308 [ Debug ] fast/selectors/matches-backtracking.html [ Timeout ]
 webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 
+fast/forms/vertical-writing-mode/meter.html [ ImageOnlyFailure ]
 fast/forms/vertical-writing-mode/progress.html [ ImageOnlyFailure ]
 
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-011.xht [ ImageOnlyFailure ]
@@ -1739,6 +1741,7 @@ webkit.org/b/258142 fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnly
 webgl/webgl-via-metal-flag-on.html [ Skip ]
 webgl/webgl-via-metal-flag-off.html [ Skip ]
 webgl/webgl-backend-type.html [ Skip ]
+ipc/restrictedendpoints/allow-access-webGPU.html  [ Skip ]
 
 # Failing with ANGLE backend
 fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html [ Failure ]
@@ -1818,6 +1821,8 @@ fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failur
 fast/mediastream/video-rotation.html [ Skip ]
 webrtc/video-rotation-no-cvo.html [ Failure Timeout ]
 webrtc/video-rotation-black.html [ Crash Failure Pass Timeout ]
+
+webkit.org/b/261329 webrtc/video-clone-track.html [ Failure ]
 
 webkit.org/b/256758 fast/mediastream/captureStream/canvas3d.html [ Failure ]
 
@@ -2063,6 +2068,7 @@ webkit.org/b/212741 imported/w3c/web-platform-tests/content-security-policy/navi
 webkit.org/b/213709 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Pass DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/214029 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
+webkit.org/b/262391 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure ]
 
 webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html [ Failure ]
 
@@ -3084,6 +3090,7 @@ webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
+webkit.org/b/262482 media/video-layer-crash.html [ Pass Crash ]
 
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
 
@@ -3328,7 +3335,6 @@ webkit.org/b/236298 fast/text/strikethrough-int.html [ ImageOnlyFailure ]
 
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
 
-
 # NetworkStorageSession::deleteCookies() doesn't obey partitioning for glib ports.
 http/wpt/clear-site-data/partitioning.html [ Skip ]
 
@@ -3455,9 +3461,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPoi
 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.scaleddashes.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.worker.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-1.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-3.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-4.html [ ImageOnlyFailure ]
 
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.w.html [ Timeout ]
 
@@ -3474,6 +3477,7 @@ webkit.org/b/261024 svg/text/small-fonts-in-html5.html [ Failure ImageOnlyFailur
 webkit.org/b/261024 webrtc/video-maxFramerate.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/video-replace-muted-track.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/video-unmute.html [ Pass Timeout ]
+webkit.org/b/261024 webrtc/video-disabled-black.html [ Crash Pass ]
 
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/canvas-composite-modes.html [ ImageOnlyFailure ]
@@ -3487,6 +3491,51 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pl
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg-basic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-sibling-with-3D-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-with-transform-and-preserve-3D.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002.html [ ImageOnlyFailure ]
+
+# These tests are slow but eventually pass.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html?5-6 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html?7-8 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?3-4 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?1-2 [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?3-4 [ Slow ]
 
 # End: Common failures between GTK and WPE.
 

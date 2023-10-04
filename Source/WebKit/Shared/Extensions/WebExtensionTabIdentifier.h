@@ -74,7 +74,7 @@ inline std::optional<WebExtensionTabIdentifier> toWebExtensionTabIdentifier(doub
     return result;
 }
 
-inline double toWebAPI(WebExtensionTabIdentifier identifier)
+inline double toWebAPI(const WebExtensionTabIdentifier& identifier)
 {
     ASSERT(identifier.isValid());
 

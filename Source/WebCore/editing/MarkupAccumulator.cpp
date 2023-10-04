@@ -185,10 +185,11 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax)
+MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, HashMap<String, String>&& replacementURLStrings)
     : m_nodes(nodes)
     , m_resolveURLs(resolveURLs)
     , m_serializationSyntax(serializationSyntax)
+    , m_replacementURLStrings(WTFMove(replacementURLStrings))
 {
 }
 
@@ -214,12 +215,12 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
     } else
         namespaceStack.constructAndAppend();
 
-    const Node* current = &targetNode;
+    RefPtr<const Node> current = &targetNode;
     do {
         bool shouldSkipNode = false;
         if (tagNamesToSkip && is<Element>(current)) {
             for (auto& name : *tagNamesToSkip) {
-                if (downcast<Element>(current)->hasTagName(name))
+                if (downcast<Element>(*current).hasTagName(name))
                     shouldSkipNode = true;
             }
         }
@@ -231,7 +232,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
         bool shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
         shouldSkipNode = shouldSkipNode || !shouldEmitCloseTag;
         if (!shouldSkipNode) {
-            auto firstChild = current->hasTagName(templateTag) ? downcast<HTMLTemplateElement>(current)->content().firstChild() : current->firstChild();
+            auto firstChild = current->hasTagName(templateTag) ? downcast<HTMLTemplateElement>(*current).content().firstChild() : current->firstChild();
             if (firstChild) {
                 current = firstChild;
                 namespaceStack.append(namespaceStack.last());
@@ -243,16 +244,15 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
             endAppendingNode(*current);
 
         while (current != &targetNode) {
-            auto nextSibling = current->nextSibling();
-            if (nextSibling) {
-                current = nextSibling;
+            if (RefPtr nextSibling = current->nextSibling()) {
+                current = WTFMove(nextSibling);
                 namespaceStack.removeLast();
                 namespaceStack.append(namespaceStack.last());
                 break;
             }
             current = current->parentNode();
             namespaceStack.removeLast();
-            if (auto* fragment = dynamicDowncast<TemplateContentDocumentFragment>(current)) {
+            if (RefPtr fragment = dynamicDowncast<TemplateContentDocumentFragment>(current.get())) {
                 if (current != &targetNode)
                     current = fragment->host();
             }
@@ -267,6 +267,13 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
 
 String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
 {
+    if (!m_replacementURLStrings.isEmpty()) {
+        auto resolvedURLString = element.resolveURLStringIfNeeded(urlString);
+        auto replacementURLString = m_replacementURLStrings.get(resolvedURLString);
+        if (!replacementURLString.isEmpty())
+            return replacementURLString;
+    }
+
     return element.resolveURLStringIfNeeded(urlString, m_resolveURLs);
 }
 
@@ -278,7 +285,7 @@ void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespa
         appendNonElementNode(m_markup, node, namespaces);
 
     if (m_nodes)
-        m_nodes->append(const_cast<Node*>(&node));
+        m_nodes->append(const_cast<Node&>(node));
 }
 
 void MarkupAccumulator::appendEndTag(StringBuilder& result, const Element& element)
@@ -377,7 +384,7 @@ OptionSet<EntityMask> MarkupAccumulator::entityMaskForText(const Text& text) con
     if (inXMLFragmentSerialization())
         return EntityMaskInPCDATA;
 
-    if (auto* element = text.parentElement()) {
+    if (RefPtr element = text.parentElement()) {
         switch (element->elementName()) {
         case HTML::noscript:
             if (!isScriptEnabled(*element))
@@ -521,8 +528,8 @@ QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attr
             AtomStringImpl* foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : nullptr;
             bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().impl();
             if (attribute.prefix().isEmpty() || !foundNS || prefixIsAlreadyMappedToOtherNS) {
-                if (AtomStringImpl* prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : nullptr)
-                    prefixedName.setPrefix(AtomString(prefix));
+                if (RefPtr prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : nullptr)
+                    prefixedName.setPrefix(AtomString(WTFMove(prefix)));
                 else {
                     bool shouldBeDeclaredUsingAppendNamespace = !attribute.prefix().isEmpty() && !foundNS;
                     if (!shouldBeDeclaredUsingAppendNamespace && attribute.localName() != xmlnsAtom() && namespaces)

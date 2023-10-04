@@ -92,6 +92,7 @@
 #include "PageTransitionEvent.h"
 #include "Performance.h"
 #include "PerformanceNavigationTiming.h"
+#include "RemoteFrame.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
@@ -490,20 +491,18 @@ void LocalDOMWindow::willDestroyCachedFrame()
 {
     // It is necessary to copy m_observers to a separate vector because the Observer may
     // unregister themselves from the LocalDOMWindow as a result of the call to willDestroyGlobalObjectInCachedFrame.
-    for (auto* observer : copyToVector(m_observers)) {
-        if (m_observers.contains(observer))
-            observer->willDestroyGlobalObjectInCachedFrame();
-    }
+    m_observers.forEach([](auto& observer) {
+        observer.willDestroyGlobalObjectInCachedFrame();
+    });
 }
 
 void LocalDOMWindow::willDestroyDocumentInFrame()
 {
     // It is necessary to copy m_observers to a separate vector because the Observer may
     // unregister themselves from the LocalDOMWindow as a result of the call to willDestroyGlobalObjectInFrame.
-    for (auto* observer : copyToVector(m_observers)) {
-        if (m_observers.contains(observer))
-            observer->willDestroyGlobalObjectInFrame();
-    }
+    m_observers.forEach([](auto& observer) {
+        observer.willDestroyGlobalObjectInFrame();
+    });
 }
 
 void LocalDOMWindow::willDetachDocumentFromFrame()
@@ -515,10 +514,9 @@ void LocalDOMWindow::willDetachDocumentFromFrame()
 
     // It is necessary to copy m_observers to a separate vector because the Observer may
     // unregister themselves from the LocalDOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
-    for (auto& observer : copyToVector(m_observers)) {
-        if (m_observers.contains(observer))
-            observer->willDetachGlobalObjectFromFrame();
-    }
+    m_observers.forEach([](auto& observer) {
+        observer.willDetachGlobalObjectFromFrame();
+    });
 
     if (m_performance)
         m_performance->clearResourceTimings();
@@ -549,12 +547,12 @@ void LocalDOMWindow::decrementGamepadEventListenerCount()
 
 void LocalDOMWindow::registerObserver(Observer& observer)
 {
-    m_observers.add(&observer);
+    m_observers.add(observer);
 }
 
 void LocalDOMWindow::unregisterObserver(Observer& observer)
 {
-    m_observers.remove(&observer);
+    m_observers.remove(observer);
 }
 
 void LocalDOMWindow::resetUnlessSuspendedForDocumentSuspension()
@@ -569,10 +567,9 @@ void LocalDOMWindow::suspendForBackForwardCache()
     SetForScope isSuspendingObservers(m_isSuspendingObservers, true);
     RELEASE_ASSERT(frame());
 
-    for (auto* observer : copyToVector(m_observers)) {
-        if (m_observers.contains(observer))
-            observer->suspendForBackForwardCache();
-    }
+    m_observers.forEach([](auto& observer) {
+        observer.suspendForBackForwardCache();
+    });
     RELEASE_ASSERT(frame());
 
     m_suspendedForDocumentSuspension = true;
@@ -580,10 +577,9 @@ void LocalDOMWindow::suspendForBackForwardCache()
 
 void LocalDOMWindow::resumeFromBackForwardCache()
 {
-    for (auto* observer : copyToVector(m_observers)) {
-        if (m_observers.contains(observer))
-            observer->resumeFromBackForwardCache();
-    }
+    m_observers.forEach([](auto& observer) {
+        observer.resumeFromBackForwardCache();
+    });
 
     m_suspendedForDocumentSuspension = false;
 }
@@ -1055,7 +1051,7 @@ void LocalDOMWindow::focus(bool allowFocus)
         return;
 
     // Clear the current frame's focused node if a new frame is about to be focused.
-    RefPtr focusedFrame = CheckedRef(page->focusController())->focusedFrame();
+    RefPtr focusedFrame = CheckedRef(page->focusController())->focusedLocalFrame();
     if (focusedFrame && focusedFrame != frame)
         focusedFrame->document()->setFocusedElement(nullptr);
 
@@ -2348,7 +2344,9 @@ void LocalDOMWindow::dispatchLoadEvent()
 
     // Send a separate load event to the element that owns this frame.
     if (RefPtr ownerFrame = frame()) {
-        if (RefPtr owner = ownerFrame->ownerElement())
+        if (is<RemoteFrame>(ownerFrame->tree().parent()))
+            ownerFrame->loader().client().dispatchLoadEventToOwnerElementInAnotherProcess();
+        else if (RefPtr owner = ownerFrame->ownerElement())
             owner->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
 

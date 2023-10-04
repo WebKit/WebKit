@@ -36,11 +36,13 @@
 #import "WKWebViewPrivate.h"
 #import "_WKAutomationSession.h"
 #import <Carbon/Carbon.h>
+#import <Foundation/Foundation.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntSize.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <objc/runtime.h>
 #import <pal/spi/mac/NSEventSPI.h>
+#import <wtf/Scope.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -77,6 +79,24 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
 {
     NSWindow *window = page.platformWindow();
     auto webView = page.cocoaView();
+
+    // +[NSEvent pressedMouseButtons] does not account for the NSEvent objects created through eventSender JS in tests.
+    // As such, that method always returns 0. To fix this, we swizzle out +[NSEvent pressedMouseButtons], keep track of
+    // the mouse button currently being pressed down, and supply the appropriate return value as specified in documentation.
+    auto methodToSwizzle = class_getClassMethod(objc_getMetaClass(NSStringFromClass([NSEvent class]).UTF8String), @selector(pressedMouseButtons));
+    auto originalImplementation = method_setImplementation(methodToSwizzle, imp_implementationWithBlock([&mouseButtonCurrentlyDown = m_mouseButtonCurrentlyDown] {
+        switch (mouseButtonCurrentlyDown) {
+        case MouseButton::Left:
+            return 1 << 0;
+        case MouseButton::Right:
+            return 1 << 1;
+        default:
+            return 0;
+        }
+    }));
+    auto patchOriginalFunction = makeScopeExit([&methodToSwizzle, &originalImplementation] {
+        method_setImplementation(methodToSwizzle, originalImplementation);
+    });
 
     for (NSEvent *event in eventsToSend) {
         LOG(Automation, "Sending event[%p] to window[%p]: %@", event, window, event);
@@ -153,11 +173,11 @@ static WebCore::IntPoint viewportLocationToWindowLocation(WebCore::IntPoint loca
 static WebMouseEventButton automationMouseButtonToPlatformMouseButton(MouseButton button)
 {
     switch (button) {
-    case MouseButton::Left:   return WebMouseEventButton::LeftButton;
-    case MouseButton::Middle: return WebMouseEventButton::MiddleButton;
-    case MouseButton::Right:  return WebMouseEventButton::RightButton;
-    case MouseButton::None:   return WebMouseEventButton::NoButton;
-    default: ASSERT_NOT_REACHED();
+    case MouseButton::Left:   return WebMouseEventButton::Left;
+    case MouseButton::Middle: return WebMouseEventButton::Middle;
+    case MouseButton::Right:  return WebMouseEventButton::Right;
+    case MouseButton::None:   return WebMouseEventButton::None;
+    default: RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -187,20 +207,20 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     NSEventType dragEventType = (NSEventType)0;
     NSEventType upEventType = (NSEventType)0;
     switch (automationMouseButtonToPlatformMouseButton(button)) {
-    case WebMouseEventButton::NoButton:
+    case WebMouseEventButton::None:
         downEventType = upEventType = dragEventType = NSEventTypeMouseMoved;
         break;
-    case WebMouseEventButton::LeftButton:
+    case WebMouseEventButton::Left:
         downEventType = NSEventTypeLeftMouseDown;
         dragEventType = NSEventTypeLeftMouseDragged;
         upEventType = NSEventTypeLeftMouseUp;
         break;
-    case WebMouseEventButton::MiddleButton:
+    case WebMouseEventButton::Middle:
         downEventType = NSEventTypeOtherMouseDown;
         dragEventType = NSEventTypeLeftMouseDragged;
         upEventType = NSEventTypeOtherMouseUp;
         break;
-    case WebMouseEventButton::RightButton:
+    case WebMouseEventButton::Right:
         downEventType = NSEventTypeRightMouseDown;
         upEventType = NSEventTypeRightMouseUp;
         break;
@@ -223,6 +243,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     }
     case MouseInteraction::Down:
         ASSERT(downEventType);
+        m_mouseButtonCurrentlyDown = button;
 
         // Hard-code the click count to one, since clients don't expect successive simulated
         // down/up events to be potentially counted as a double click event.
@@ -230,6 +251,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     case MouseInteraction::Up:
         ASSERT(upEventType);
+        m_mouseButtonCurrentlyDown = MouseButton::None;
 
         // Hard-code the click count to one, since clients don't expect successive simulated
         // down/up events to be potentially counted as a double click event.

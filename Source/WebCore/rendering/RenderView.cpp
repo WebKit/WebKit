@@ -76,15 +76,13 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderView);
 
 RenderView::RenderView(Document& document, RenderStyle&& style)
-    : RenderBlockFlow(document, WTFMove(style))
+    : RenderBlockFlow(Type::View, document, WTFMove(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
-    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::FormattingContextIntegrationType::Inline))
+    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock))
     , m_selection(*this)
     , m_lazyRepaintTimer(*this, &RenderView::lazyRepaintTimerFired)
 {
-    setIsRenderView();
-
     // FIXME: We should find a way to enforce this at compile time.
     ASSERT(document.view());
 
@@ -440,7 +438,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         }
     }
 
-    if (document().ownerElement())
+    if (!shouldPaintBaseBackground())
         return;
 
     if (paintInfo.skipRootBackground())
@@ -464,7 +462,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
 
     // If painting will entirely fill the view, no need to fill the background.
-    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1)
+    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1 && rootElementShouldPaintBaseBackground())
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden,
@@ -692,6 +690,18 @@ bool RenderView::shouldPaintBaseBackground() const
         return !frameView.isTransparent();
 
     return false;
+}
+
+bool RenderView::rootElementShouldPaintBaseBackground() const
+{
+    auto* documentElement = document().documentElement();
+    if (RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr) {
+        // The document element's renderer is currently forced to be a block, but may not always be.
+        auto* rootBox = dynamicDowncast<RenderBox>(*rootRenderer);
+        if (rootBox && rootBox->hasLayer() && rootBox->layer()->isolatesBlending())
+            return false;
+    }
+    return shouldPaintBaseBackground();
 }
     
 LayoutRect RenderView::unextendedBackgroundRect() const
@@ -1031,7 +1041,7 @@ RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
         return;
     if (!m_rootView)
         return;
-    m_rootView.get()->flushAccumulatedRepaintRegion();
+    m_rootView->flushAccumulatedRepaintRegion();
 }
 
 unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const

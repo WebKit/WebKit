@@ -31,13 +31,14 @@
 #include "FormattingContext.h"
 #include "InlineDisplayContent.h"
 #include "InlineFormattingContext.h"
-#include "InlineFormattingQuirks.h"
 #include "InlineLevelBoxInlines.h"
 #include "InlineLineBoxVerticalAligner.h"
+#include "InlineQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutElementBox.h"
 #include "LengthFunctions.h"
 #include "RenderStyleInlines.h"
+#include "RubyFormattingContext.h"
 
 namespace WebCore {
 namespace Layout {
@@ -68,11 +69,10 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineLayou
         // Floats must have prevented us placing any content on the line.
         // Move next line below the intrusive float(s).
         ASSERT(lineLayoutResult.inlineContent.isEmpty() || lineLayoutResult.inlineContent[0].isLineSpanningInlineBoxStart());
-        ASSERT(lineLayoutResult.floatContent.hasIntrusiveFloat);
         auto nextLineLogicalTop = [&]() -> LayoutUnit {
             if (auto nextLineLogicalTopCandidate = lineLayoutResult.hintForNextLineTopToAvoidIntrusiveFloat)
                 return LayoutUnit { *nextLineLogicalTopCandidate };
-            // We have to have a hit when intrusive floats prevented any inline content placement.
+            // We have to have a hint when intrusive floats prevented any inline content placement.
             ASSERT_NOT_REACHED();
             return LayoutUnit { lineLogicalRect.top() + formattingContext().root().style().computedLineHeight() };
         };
@@ -144,9 +144,9 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
     if (inlineLevelBox.isListMarker())
         return true;
     if (inlineLevelBox.isInlineBox())
-        return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineBoxAffectsLineBox(inlineLevelBox);
+        return inlineLayoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
     if (inlineLevelBox.isAtomicInlineLevelBox())
-        return true;
+        return !inlineLevelBox.layoutBox().isRubyAnnotationBox();
     return false;
 }
 
@@ -212,9 +212,9 @@ InlineLayoutUnit InlineFormattingGeometry::computedTextIndent(IsIntrinsicWidthMo
 
 InlineLayoutUnit InlineFormattingGeometry::initialLineHeight(bool isFirstLine) const
 {
-    if (layoutState().inStandardsMode())
+    if (inlineLayoutState().inStandardsMode())
         return isFirstLine ? formattingContext().root().firstLineStyle().computedLineHeight() : formattingContext().root().style().computedLineHeight();
-    return formattingContext().formattingQuirks().initialLineHeight();
+    return formattingContext().quirks().initialLineHeight();
 }
 
 FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext& floatingContext) const
@@ -441,7 +441,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
     return true;
 }
 
-size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItems& inlineItems)
+size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList& inlineItemList)
 {
     // 1. Find the start candidate by skipping leading non-content items e.g "<span><span>start". Opportunity is after "<span><span>".
     // 2. Find the end candidate by skipping non-content items inbetween e.g. "<span><span>start</span>end". Opportunity is after "</span>".
@@ -453,15 +453,17 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
     // [ex-][inline box start][line break][ample] (ex-<span><br>ample). Wrap index is after [br].
     auto previousInlineItemIndex = std::optional<size_t> { };
     for (auto index = startIndex; index < layoutRange.endIndex(); ++index) {
-        auto& currentItem = inlineItems[index];
+        auto& currentItem = inlineItemList[index];
         if (currentItem.isLineBreak() || currentItem.isWordBreakOpportunity()) {
             // We always stop at explicit wrapping opportunities e.g. <br>. However the wrap position may be at later position.
             // e.g. <span><span><br></span></span> <- wrap position is after the second </span>
             // but in case of <span><br><span></span></span> <- wrap position is right after <br>.
-            for (++index; index < layoutRange.endIndex() && inlineItems[index].isInlineBoxEnd(); ++index) { }
+            for (++index; index < layoutRange.endIndex() && inlineItemList[index].isInlineBoxEnd(); ++index) { }
             return index;
         }
         if (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) {
+            if (auto nextWrapOpportunityForRuby = RubyFormattingContext::nextWrapOpportunity(index, previousInlineItemIndex, layoutRange, inlineItemList))
+                return *nextWrapOpportunityForRuby;
             // Need to see what comes next to decide.
             continue;
         }
@@ -484,7 +486,7 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             continue;
         }
         // At this point previous and current items are not necessarily adjacent items e.g "previous<span>current</span>"
-        auto& previousItem = inlineItems[*previousInlineItemIndex];
+        auto& previousItem = inlineItemList[*previousInlineItemIndex];
         if (isAtSoftWrapOpportunity(previousItem, currentItem)) {
             if (*previousInlineItemIndex + 1 == index && (!previousItem.isText() || !currentItem.isText())) {
                 // We only know the exact soft wrap opportunity index when the previous and current items are next to each other.
@@ -511,8 +513,8 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             auto end = index;
             // Soft wrap opportunity is at the first inline box that encloses the trailing content.
             for (auto candidateIndex = start + 1; candidateIndex < end; ++candidateIndex) {
-                auto& inlineItem = inlineItems[candidateIndex];
-                ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
+                auto& inlineItem = inlineItemList[candidateIndex];
+                ASSERT((inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque()) && !inlineItem.layoutBox().isRuby());
                 if (inlineItem.isInlineBoxStart())
                     inlineBoxStack.append({ &inlineItem.layoutBox(), candidateIndex });
                 else if (inlineItem.isInlineBoxEnd() && !inlineBoxStack.isEmpty())
@@ -525,6 +527,10 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
     return layoutRange.endIndex();
 }
 
+const InlineLayoutState& InlineFormattingGeometry::inlineLayoutState() const
+{
+    return formattingContext().inlineLayoutState();
+}
 
 }
 }

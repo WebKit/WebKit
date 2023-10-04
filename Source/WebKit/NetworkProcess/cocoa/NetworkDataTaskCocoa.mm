@@ -459,13 +459,13 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     if (isTopLevelNavigation())
         request.setFirstPartyForCookies(request.url());
 
-    NetworkTaskCocoa::willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = ThreadSafeWeakPtr { *this }, redirectResponse] (auto&& request) mutable {
+    NetworkTaskCocoa::willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = ThreadSafeWeakPtr { *this }, redirectResponse] (WebCore::ResourceRequest&& request) mutable {
         auto strongThis = weakThis.get();
         if (!strongThis)
             return completionHandler({ });
         if (!m_client)
             return completionHandler({ });
-        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis] (auto&& request) mutable {
+        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis] (WebCore::ResourceRequest&& request) mutable {
             auto strongThis = weakThis.get();
             if (!strongThis || !m_session)
                 return completionHandler({ });

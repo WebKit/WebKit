@@ -629,11 +629,13 @@ namespace WebKit {
 
 RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction() = default;
 
-RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&& scrollingStateTree, bool clearScrollLatching)
+RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&& scrollingStateTree, bool clearScrollLatching, FromDeserialization fromDeserialization)
     : m_scrollingStateTree(WTFMove(scrollingStateTree))
     , m_clearScrollLatching(clearScrollLatching)
 {
-    if (m_scrollingStateTree)
+    if (!m_scrollingStateTree)
+        m_scrollingStateTree = makeUnique<WebCore::ScrollingStateTree>();
+    if (fromDeserialization == FromDeserialization::Yes)
         m_scrollingStateTree->attachDeserializedNodes();
 }
 

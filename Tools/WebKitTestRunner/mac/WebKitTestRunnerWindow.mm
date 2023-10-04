@@ -103,4 +103,10 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
     return NSMakeRect(_fakeOrigin.x, _fakeOrigin.y, currentFrame.size.width, currentFrame.size.height);
 }
 
+- (void)_adjustWindowResolution
+{
+    // Do not call super, so that AppKit can't update the resolution from the screen,
+    // except when we do so explicitly via `_setWindowResolution`.
+}
+
 @end

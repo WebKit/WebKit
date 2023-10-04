@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>ImageCapture track torch</title>
+    <script src='../../resources/testharness.js'></script>
+    <script src='../../resources/testharnessreport.js'></script>
+</head>
+<body>
+    <canvas id='canvas'></canvas>
+    <video controls autoplay width=640 height=480 playsInline id='video'></video>
+    <script>
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            const [track] = stream.getVideoTracks();
+
+            assert_equals(track.readyState, 'live');
+            track.stop();
+            assert_equals(track.readyState, 'ended');
+
+            const imageCapture = new ImageCapture(track);
+            return promise_rejects_dom(test, 'InvalidStateError', imageCapture.getPhotoCapabilities())
+
+        }, `getPhotoCapabilities() on an 'ended' track should throw "InvalidStateError"`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const [track] = stream.getVideoTracks();
+
+            const imageCapture = new ImageCapture(track);
+            const photoCapabilities = await imageCapture.getPhotoCapabilities();
+            const trackCapabilities = track.getCapabilities();
+
+            assert_equals(photoCapabilities.imageHeight.max, trackCapabilities.height.max);
+            assert_equals(photoCapabilities.imageHeight.min, trackCapabilities.height.min);
+            assert_equals(photoCapabilities.imageHeight.step, 1);
+
+            assert_equals(photoCapabilities.imageWidth.max, trackCapabilities.width.max);
+            assert_equals(photoCapabilities.imageWidth.min, trackCapabilities.width.min);
+            assert_equals(photoCapabilities.imageWidth.step, 1);
+
+        }, `Check getPhotoCapabilities()`);
+
+
+
+    </script>
+</body>
+</html>

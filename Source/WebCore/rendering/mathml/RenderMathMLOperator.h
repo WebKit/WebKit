@@ -38,8 +38,8 @@ class MathMLOperatorElement;
 class RenderMathMLOperator : public RenderMathMLToken {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLOperator);
 public:
-    RenderMathMLOperator(MathMLOperatorElement&, RenderStyle&&);
-    RenderMathMLOperator(Document&, RenderStyle&&);
+    RenderMathMLOperator(Type, MathMLOperatorElement&, RenderStyle&&);
+    RenderMathMLOperator(Type, Document&, RenderStyle&&);
     MathMLOperatorElement& element() const;
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);

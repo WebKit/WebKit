@@ -83,6 +83,8 @@
     CacheStorageAllCaches(struct WebCore::ClientOrigin origin, uint64_t updateCounter) -> (WebCore::DOMCacheEngine::CacheInfosOrError result)
     CacheStorageReference(WebCore::DOMCacheIdentifier cacheIdentifier)
     CacheStorageDereference(WebCore::DOMCacheIdentifier cacheIdentifier)
+    LockCacheStorage(struct WebCore::ClientOrigin origin)
+    UnlockCacheStorage(struct WebCore::ClientOrigin origin)
     CacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::CrossThreadRecordsOrError result)
     CacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
     CacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord> records) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)

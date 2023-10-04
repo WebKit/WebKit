@@ -87,7 +87,6 @@ private:
     };
 
     ASCIILiteral renderName() const override { return "RenderFrameSet"_s; }
-    bool isFrameSet() const override { return true; }
 
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;

@@ -379,7 +379,6 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createSum(Vector<Ref<CSSCalcE
     auto newCategory = determineCategory(values, CalcOperator::Add);
     if (newCategory == CalculationCategory::Other) {
         LOG_WITH_STREAM(Calc, stream << "Failed to create sum node because unable to determine category from " << prettyPrintNodes(values));
-        newCategory = determineCategory(values, CalcOperator::Add);
         return nullptr;
     }
 

@@ -30,7 +30,7 @@
 #include <openssl/aes.h>
 #include <openssl/evp.h>
 #include <stdint.h>
-#include <wtf/NonCopyable.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(WEB_CRYPTO)

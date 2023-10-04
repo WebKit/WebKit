@@ -746,6 +746,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite))
             mediaKeyStorageDirectoryExtensionHandle = WTFMove(*handle);
     }
+    auto mediaKeyStorageSalt = websiteDataStore.mediaKeysStorageSalt();
 
     String javaScriptConfigurationDirectory;
     if (!m_javaScriptConfigurationDirectory.isEmpty())
@@ -789,6 +790,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(mediaCacheDirectoryExtensionHandle),
         WTFMove(mediaKeyStorageDirectory),
         WTFMove(mediaKeyStorageDirectoryExtensionHandle),
+        WTFMove(mediaKeyStorageSalt),
         WTFMove(javaScriptConfigurationDirectory),
         WTFMove(javaScriptConfigurationDirectoryExtensionHandle),
 #if ENABLE(TRACKING_PREVENTION)
@@ -1855,8 +1857,8 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 completionHandler(Ref { page.mainFrame()->process() }, nullptr, "Found process for the same registration domain as mainFrame domain"_s);
                 return;
             }
-            if (auto* remotePageProxy = page.remotePageProxyForRegistrableDomain(registrableDomain)) {
-                completionHandler(Ref { remotePageProxy->process() }, nullptr, "Found process for the same registration domain"_s);
+            if (auto* process = page.processForRegistrableDomain(registrableDomain)) {
+                completionHandler(Ref { *process }, nullptr, "Found process for the same registration domain"_s);
                 return;
             }
         }
@@ -1941,7 +1943,7 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     if (m_automationSession)
         return { WTFMove(sourceProcess), nullptr, "An automation session is active"_s };
 
-    // FIXME: We ought to be able to re-use processes that haven't committed anything with site isolation enabled, but cross-site redirects are tricky.
+    // FIXME: We ought to be able to re-use processes that haven't committed anything with site isolation enabled, but cross-site redirects are tricky. <rdar://116203552>
     if (!sourceProcess->hasCommittedAnyProvisionalLoads() && !page.preferences().siteIsolationEnabled()) {
         tryPrewarmWithDomainInformation(sourceProcess, targetRegistrableDomain);
         return { WTFMove(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s };

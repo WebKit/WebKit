@@ -64,77 +64,77 @@ static void buildAndPerformTest(NSEventType buttonEvent, NSEventModifierFlags mo
 
 TEST(WebKitLegacy, MenuAndButtonForNormalLeftClick)
 {
-    buildAndPerformTest(NSEventTypeLeftMouseDown, 0, WebCore::LeftButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeLeftMouseDown, 0, WebCore::MouseButton::Left, NSMenuTypeNone);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForNormalRightClick)
 {
-    buildAndPerformTest(NSEventTypeRightMouseDown, 0, WebCore::RightButton, NSMenuTypeContextMenu);
+    buildAndPerformTest(NSEventTypeRightMouseDown, 0, WebCore::MouseButton::Right, NSMenuTypeContextMenu);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForNormalMiddleClick)
 {
-    buildAndPerformTest(NSEventTypeOtherMouseDown, 0, WebCore::MiddleButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeOtherMouseDown, 0, WebCore::MouseButton::Middle, NSMenuTypeNone);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForControlLeftClick)
 {
-    buildAndPerformTest(NSEventTypeLeftMouseDown, NSEventModifierFlagControl, WebCore::LeftButton, NSMenuTypeContextMenu);
+    buildAndPerformTest(NSEventTypeLeftMouseDown, NSEventModifierFlagControl, WebCore::MouseButton::Left, NSMenuTypeContextMenu);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForControlRightClick)
 {
-    buildAndPerformTest(NSEventTypeRightMouseDown, NSEventModifierFlagControl, WebCore::RightButton, NSMenuTypeContextMenu);
+    buildAndPerformTest(NSEventTypeRightMouseDown, NSEventModifierFlagControl, WebCore::MouseButton::Right, NSMenuTypeContextMenu);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForControlMiddleClick)
 {
-    buildAndPerformTest(NSEventTypeOtherMouseDown, NSEventModifierFlagControl, WebCore::MiddleButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeOtherMouseDown, NSEventModifierFlagControl, WebCore::MouseButton::Middle, NSMenuTypeNone);
 }
     
 TEST(WebKitLegacy, MenuAndButtonForShiftLeftClick)
 {
-    buildAndPerformTest(NSEventTypeLeftMouseDown, NSEventModifierFlagShift, WebCore::LeftButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeLeftMouseDown, NSEventModifierFlagShift, WebCore::MouseButton::Left, NSMenuTypeNone);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForShiftRightClick)
 {
-    buildAndPerformTest(NSEventTypeRightMouseDown, NSEventModifierFlagShift, WebCore::RightButton, NSMenuTypeContextMenu);
+    buildAndPerformTest(NSEventTypeRightMouseDown, NSEventModifierFlagShift, WebCore::MouseButton::Right, NSMenuTypeContextMenu);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForShiftMiddleClick)
 {
-    buildAndPerformTest(NSEventTypeOtherMouseDown, NSEventModifierFlagShift, WebCore::MiddleButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeOtherMouseDown, NSEventModifierFlagShift, WebCore::MouseButton::Middle, NSMenuTypeNone);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForCommandLeftClick)
 {
-    buildAndPerformTest(NSEventTypeLeftMouseDown, NSEventModifierFlagCommand, WebCore::LeftButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeLeftMouseDown, NSEventModifierFlagCommand, WebCore::MouseButton::Left, NSMenuTypeNone);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForCommandRightClick)
 {
-    buildAndPerformTest(NSEventTypeRightMouseDown, NSEventModifierFlagCommand, WebCore::RightButton, NSMenuTypeContextMenu);
+    buildAndPerformTest(NSEventTypeRightMouseDown, NSEventModifierFlagCommand, WebCore::MouseButton::Right, NSMenuTypeContextMenu);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForCommandMiddleClick)
 {
-    buildAndPerformTest(NSEventTypeOtherMouseDown, NSEventModifierFlagCommand, WebCore::MiddleButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeOtherMouseDown, NSEventModifierFlagCommand, WebCore::MouseButton::Middle, NSMenuTypeNone);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForAltLeftClick)
 {
-    buildAndPerformTest(NSEventTypeLeftMouseDown, NSEventModifierFlagOption, WebCore::LeftButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeLeftMouseDown, NSEventModifierFlagOption, WebCore::MouseButton::Left, NSMenuTypeNone);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForAltRightClick)
 {
-    buildAndPerformTest(NSEventTypeRightMouseDown, NSEventModifierFlagOption, WebCore::RightButton, NSMenuTypeContextMenu);
+    buildAndPerformTest(NSEventTypeRightMouseDown, NSEventModifierFlagOption, WebCore::MouseButton::Right, NSMenuTypeContextMenu);
 }
 
 TEST(WebKitLegacy, MenuAndButtonForAltMiddleClick)
 {
-    buildAndPerformTest(NSEventTypeOtherMouseDown, NSEventModifierFlagOption, WebCore::MiddleButton, NSMenuTypeNone);
+    buildAndPerformTest(NSEventTypeOtherMouseDown, NSEventModifierFlagOption, WebCore::MouseButton::Middle, NSMenuTypeNone);
 }
 
 

@@ -45,10 +45,23 @@
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #endif
 
+#if PLATFORM(VISION)
+#import <WebCore/ThermalMitigationNotifier.h>
+#endif
+
 namespace WebKit {
 
+static Seconds adjustedTimeoutForThermalState(Seconds timeout)
+{
+#if PLATFORM(VISION)
+    return WebCore::ThermalMitigationNotifier::isThermalMitigationEnabled() ? (timeout * 20) : timeout;
+#else
+    return timeout;
+#endif
+}
+
 AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
-    : m_responsivenessTimer(*this, responsivenessTimeout)
+    : m_responsivenessTimer(*this, adjustedTimeoutForThermalState(responsivenessTimeout))
     , m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
 #if USE(RUNNINGBOARD)
     , m_timedActivityForIPC(3_s)

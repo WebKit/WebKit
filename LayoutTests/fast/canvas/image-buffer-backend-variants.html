@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+description("Test enumerates the behavior of canvas with respect to dimensions and backends")
+var subcases = [];
+var dims = [1, 1000, 2048, 4096, 8192, 16384, 32768, 32769];
+for (let renderingMode of [undefined, "Accelerated", "Unaccelerated"]) {
+    for (let width of dims) {
+        for (let height of dims)
+            subcases.push({renderingMode, width, height});
+    }
+    subcases.push({renderingMode, width: 0, height: 0});
+    subcases.push({renderingMode, width: 0, height: 100});
+    subcases.push({renderingMode, width: 100, height: 0});
+}
+// In case some of the cases fail, use this to debug the failure, edit the parameters:
+// subcases = [{width: 32768, height: 1, renderingMode: "Accelerated"}];
+
+function pixelsEqual(a, b) {
+    for (let i = 0; i < 4; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+    return true;
+}
+
+var transparentBlack = [0, 0, 0, 0];
+var red = [255, 0, 0, 255];
+var imageData;
+var context;
+for (var subcase of subcases) {
+    let renderingModeTitle = subcase.renderingMode ? `forced '${subcase.renderingMode}' ` : "";
+    debug(`Testing ${subcase.width}x${subcase.height} ${renderingModeTitle}(area: ${subcase.width * subcase.height})`);
+    let canvas = document.createElement('canvas');
+    canvas.height = subcase.width;
+    canvas.width = subcase.height;
+    let canvasSettings;
+    if (subcase.renderingMode)
+        canvasSettings = { renderingModeForTesting: subcase.renderingMode };
+    context = canvas.getContext("2d", canvasSettings);
+    if (!context) {
+        testPassed("Context not created");
+        continue;
+    }
+    context.fillStyle = "red";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    imageData = context.getImageData(0, 0, 1, 1);
+    if (!imageData) {
+        testPassed("Context failed to allocate imageData");
+        continue;
+    } else if (pixelsEqual(imageData.data, transparentBlack)) {
+        testPassed("Context was lost");
+        continue;
+    } 
+    shouldBe("imageData.data", "red");
+    if (typeof context.getEffectiveRenderingModeForTesting !== "undefined") {
+        if (subcase.renderingMode)
+            shouldBe("context.getEffectiveRenderingModeForTesting()", `'${"" + subcase.renderingMode}'`);
+        else
+            debug(`Effective renderingMode: ${context.getEffectiveRenderingModeForTesting()}`);
+    }
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

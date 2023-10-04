@@ -2,12 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: >
-  AssertClause may not have duplicate keys (import declaration with binding)
+  WithClause may not have duplicate keys (import declaration with binding)
 esid: sec-modules
 info: |
-  AssertClause:assert{AssertEntries,opt}
+  WithClause: AttributesKeyword { WithEntries,opt }
 
-  - It is a Syntax Error if AssertClauseToAssertions of AssertClause has two
+  - It is a Syntax Error if WithClauseToAttributes of WithClause has two
     entries a and b such that a.[[Key]] is b.[[Key]].
 features: [import-assertions]
 flags: [module]
@@ -19,7 +19,6 @@ negative:
 $DONOTEVALUATE();
 
 import x from './import-assertion-1_FIXTURE.js' assert {
-  test262_a: '',
-  test262_b: '',
-  'test262_\u0061': ''
+  type: 'json',
+  'typ\u0065': ''
 };

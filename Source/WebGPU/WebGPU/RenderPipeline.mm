@@ -500,7 +500,7 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
                 };
                 entries.append(bufferEntry);
 
-                bufferEntry.binding = newEntry.binding + 1;
+                bufferEntry.binding = newEntry.binding + 2;
                 bufferEntry.buffer = WGPUBufferBindingLayout {
                     .nextInChain = nullptr,
                     .type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float4x3),
@@ -744,6 +744,11 @@ bool RenderPipeline::validateDepthStencilState(bool depthReadOnly, bool stencilR
         return false;
 
     return true;
+}
+
+PipelineLayout& RenderPipeline::pipelineLayout() const
+{
+    return m_pipelineLayout;
 }
 
 } // namespace WebGPU

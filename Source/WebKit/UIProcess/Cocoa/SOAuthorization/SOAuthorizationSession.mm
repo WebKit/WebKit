@@ -235,6 +235,18 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
         SOAuthorizationOptionInitiatorOrigin: (NSString *)initiatorOrigin,
         SOAuthorizationOptionInitiatingAction: @(static_cast<NSInteger>(m_action))
     };
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<WKWebView> webView = m_page->cocoaView();
+    id webViewUIDelegate = [webView UIDelegate];
+    if ([webViewUIDelegate respondsToSelector:@selector(_hostSceneIdentifierForWebView:)]) {
+        NSString *callerSceneID = [webViewUIDelegate _hostSceneIdentifierForWebView:webView.get()];
+        if (callerSceneID) {
+            NSMutableDictionary *mutableAuthorizationOptions = [authorizationOptions mutableCopy];
+            mutableAuthorizationOptions[@"callerSceneIdentifier"] = callerSceneID;
+            authorizationOptions = mutableAuthorizationOptions;
+        }
+    }
+#endif
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
 #if PLATFORM(IOS) || PLATFORM(VISION)

@@ -33,6 +33,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessID.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 
 namespace API {
 class Attachment;
@@ -135,6 +136,7 @@ enum ScrollbarOverlayStyle : uint8_t;
 enum class ActivityState : uint16_t;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class AlternativeTextType : uint8_t;
+enum class ArchiveError : uint8_t;
 enum class AutocorrectionResponse : uint8_t;
 enum class AutoplayEvent : uint8_t;
 enum class AutoplayEventFlags : uint8_t;
@@ -223,7 +225,7 @@ struct FrameIdentifierType;
 struct GrammarDetail;
 struct HTMLMediaElementIdentifierType;
 struct HTMLModelElementCamera;
-struct ImageBufferBackendParameters;
+struct ImageBufferParameters;
 struct InspectorOverlayHighlight;
 struct LinkIcon;
 struct LinkDecorationFilteringData;
@@ -317,6 +319,7 @@ namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
 class AuthenticationChallengeProxy;
+class BrowsingContextGroup;
 class CallbackID;
 class ContextMenuContextData;
 class DownloadProxy;
@@ -478,7 +481,7 @@ enum class UndoOrRedo : bool;
 enum class WasNavigationIntercepted : bool;
 enum class WebContentMode : uint8_t;
 enum class WebEventModifier : uint8_t;
-enum class WebEventType : int8_t;
+enum class WebEventType : uint8_t;
 enum class WindowKind : uint8_t;
 
 template<typename> class MonotonicObjectIdentifier;
@@ -603,6 +606,10 @@ public:
     void loadServiceWorker(const URL&, bool usingModules, CompletionHandler<void(bool success)>&&);
 
     WebUserContentControllerProxy& userContentController() { return m_userContentController.get(); }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    WebExtensionController* webExtensionController();
+#endif
 
     bool hasSleepDisabler() const;
 
@@ -778,7 +785,7 @@ public:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
-    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CompletionHandler<void()>&&);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, const std::optional<WebKeyboardEvent>&, CompletionHandler<void()>&&);
     
     void clearSelection();
     void restoreSelectionInFocusedEditableElement();
@@ -895,6 +902,7 @@ public:
     void dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate&);
 
     void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor, double minimumEffectiveDeviceWidth);
+    void setSceneIdentifier(String&&);
     void setDeviceOrientation(WebCore::IntDegrees);
     WebCore::IntDegrees deviceOrientation() const { return m_deviceOrientation; }
     void setOverrideViewportArguments(const std::optional<WebCore::ViewportArguments>&);
@@ -1111,6 +1119,7 @@ public:
     void wheelEventHandlingCompleted(bool wasHandled);
 
     bool isProcessingKeyboardEvents() const;
+    void sendKeyEvent(const NativeWebKeyboardEvent&);
     bool handleKeyboardEvent(const NativeWebKeyboardEvent&);
 #if PLATFORM(WIN)
     void dispatchPendingCharEvents(const NativeWebKeyboardEvent&);
@@ -1301,7 +1310,7 @@ public:
     void getImageForFindMatch(int32_t matchIndex);
     void selectFindMatch(int32_t matchIndex);
     void indicateFindMatch(int32_t matchIndex);
-    void didGetImageForFindMatch(const WebCore::ImageBufferBackendParameters&, ShareableBitmapHandle contentImageHandle, uint32_t matchIndex);
+    void didGetImageForFindMatch(WebCore::ImageBufferParameters&&, ShareableBitmapHandle&& contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
     void hideFindIndicator();
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
@@ -1336,6 +1345,7 @@ public:
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(CompletionHandler<void(API::Data*)>&&);
 #endif
+    void saveResources(WebFrameProxy*, const String& directory, const String& suggestedMainResourceName, CompletionHandler<void(Expected<void, WebCore::ArchiveError>)>&&);
     void getMainResourceDataOfFrame(WebFrameProxy*, CompletionHandler<void(API::Data*)>&&);
     void getResourceDataFromFrame(WebFrameProxy&, API::URL*, CompletionHandler<void(API::Data*)>&&);
     void getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&&);
@@ -1385,7 +1395,7 @@ public:
         const String& title, const String& url, const String& visibleURL, SharedMemoryHandle&& archiveHandle, const String& originIdentifier);
 #endif
 #if PLATFORM(GTK)
-    void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, ShareableBitmapHandle&& dragImage, WebCore::IntPoint&& dragImageHotspot);
+    void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, std::optional<ShareableBitmapHandle>&& dragImage, WebCore::IntPoint&& dragImageHotspot);
 #endif
 #endif
 
@@ -1510,12 +1520,12 @@ public:
     IPC::AsyncReplyID computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
 #if PLATFORM(COCOA)
-    IPC::AsyncReplyID drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(ShareableBitmapHandle&&)>&&);
+    IPC::AsyncReplyID drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&&);
     IPC::AsyncReplyID drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&&);
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground,  CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #if PLATFORM(IOS_FAMILY)
     size_t computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&);
-    IPC::AsyncReplyID drawToImage(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(ShareableBitmapHandle&&)>&&);
+    IPC::AsyncReplyID drawToImage(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&&);
     IPC::AsyncReplyID drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #endif
 #elif PLATFORM(GTK)
@@ -1645,7 +1655,7 @@ public:
     void unwrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(bool, Vector<uint8_t>&&)>&&);
 #endif
 
-    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, CompletionHandler<void(ShareableBitmapHandle&&)>&&);
+    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&&);
 
     void navigationGestureDidBegin();
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
@@ -2155,12 +2165,12 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    RemotePageProxy* remotePageProxyForRegistrableDomain(WebCore::RegistrableDomain) const;
-    void addRemotePageProxy(const WebCore::RegistrableDomain&, WeakPtr<RemotePageProxy>&&);
+    WebProcessProxy* processForRegistrableDomain(const WebCore::RegistrableDomain&);
+    RemotePageProxy* remotePageProxyForRegistrableDomain(const WebCore::RegistrableDomain&) const;
+    void addRemotePageProxy(const WebCore::RegistrableDomain&, RemotePageProxy&);
     void removeRemotePageProxy(const WebCore::RegistrableDomain&);
     void setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&&);
     void addOpenedRemotePageProxy(Ref<RemotePageProxy>&&);
-    HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> takeRemotePageMap();
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
     void broadcastFrameRemovalToOtherProcesses(IPC::Connection&, WebCore::FrameIdentifier);
@@ -2168,7 +2178,7 @@ public:
     void addOpenedPage(WebPageProxy&);
     bool hasOpenedPage() const;
 
-    void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(ShareableBitmapHandle&&, const String& sourceMIMEType)>&&);
+    void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&, const String& sourceMIMEType)>&&);
 
 #if PLATFORM(MAC)
     bool isQuarantinedAndNotUserApproved(const String&);
@@ -2278,7 +2288,6 @@ private:
 
     bool shouldForceForegroundPriorityForClientNavigation() const;
 
-    using WebFrameProxyMap = HashMap<WebCore::FrameIdentifier, Ref<WebFrameProxy>>;
     bool canCreateFrame(WebCore::FrameIdentifier) const;
 
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&, WebCore::FrameLoadType);
@@ -2584,7 +2593,7 @@ private:
     static WebCore::ScreenOrientationType toScreenOrientationType(WebCore::IntDegrees);
 #endif
 
-    void focusedFrameChanged(const std::optional<WebCore::FrameIdentifier>&);
+    void focusedFrameChanged(IPC::Connection&, const std::optional<WebCore::FrameIdentifier>&);
 
     void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&);
 
@@ -2655,7 +2664,7 @@ private:
 
     WebWheelEventCoalescer& wheelEventCoalescer();
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
     void updateDisplayLinkFrequency();
 #endif
@@ -2809,6 +2818,10 @@ private:
 
     bool useGPUProcessForDOMRenderingEnabled() const;
 
+    void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
+
+    void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, const WebCore::FrameIdentifier&);
+
     struct Internals;
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }
@@ -2959,7 +2972,7 @@ private:
     RetainPtr<NSArray> m_dataDetectionResults;
 #endif
 
-    HashSet<WebEditCommandProxy*> m_editCommandSet;
+    WeakHashSet<WebEditCommandProxy> m_editCommandSet;
 
 #if PLATFORM(COCOA)
     HashSet<String> m_knownKeypressCommandNames;
@@ -3307,6 +3320,7 @@ private:
 #endif
 
     RefPtr<WebPageProxy> m_pageToCloneSessionStorageFrom;
+    Ref<BrowsingContextGroup> m_browsingContextGroup;
 };
 
 } // namespace WebKit

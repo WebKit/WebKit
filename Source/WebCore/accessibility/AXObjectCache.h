@@ -195,7 +195,7 @@ public:
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void onFocusChange(Node* oldFocusedNode, Node* newFocusedNode);
-    void onPopoverTargetToggle(const HTMLFormControlElement&);
+    void onPopoverToggle(const HTMLElement&);
     void onScrollbarFrameRectChange(const Scrollbar&);
     void onSelectedChanged(Node*);
     void onTextSecurityChanged(HTMLInputElement&);
@@ -345,6 +345,7 @@ public:
         AXDisabledStateChanged,
         AXDropEffectChanged,
         AXFlowToChanged,
+        AXFocusableStateChanged,
         AXFocusedUIElementChanged,
         AXFrameLoadComplete,
         AXGrabbedStateChanged,
@@ -360,11 +361,13 @@ public:
         AXNewDocumentLoadComplete,
         AXPageScrolled,
         AXPlaceholderChanged,
+        AXPopoverTargetChanged,
         AXPositionInSetChanged,
         AXRoleChanged,
         AXRoleDescriptionChanged,
         AXRowIndexChanged,
         AXRowSpanChanged,
+        AXCellScopeChanged,
         AXSelectedChildrenChanged,
         AXSelectedCellsChanged,
         AXSelectedStateChanged,
@@ -486,6 +489,8 @@ private:
     void updateIsolatedTree(AccessibilityObject&, AXNotification);
     void updateIsolatedTree(AccessibilityObject*, AXNotification);
     void updateIsolatedTree(const Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>>&);
+    void updateIsolatedTree(AccessibilityObject*, AXPropertyName) const;
+    void updateIsolatedTree(AccessibilityObject&, AXPropertyName) const;
 #endif
 
 protected:
@@ -505,7 +510,7 @@ protected:
 #endif
 
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
-    void labelChanged(Element*);
+    void handleLabelForChanged(HTMLLabelElement&, const AtomString& /* oldValue */);
 
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
     void setNodeInUse(Node* n) { m_textMarkerNodes.add(n); }
@@ -528,8 +533,8 @@ protected:
     enum class NeedsContextAtParagraphStart : bool { No, Yes };
     CharacterOffset previousBoundary(const CharacterOffset&, BoundarySearchFunction, NeedsContextAtParagraphStart = NeedsContextAtParagraphStart::No);
     CharacterOffset nextBoundary(const CharacterOffset&, BoundarySearchFunction);
-    CharacterOffset startCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);
-    CharacterOffset endCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);
+    CharacterOffset startCharacterOffsetOfWord(const CharacterOffset&, WordSide = WordSide::RightWordIfOnBoundary);
+    CharacterOffset endCharacterOffsetOfWord(const CharacterOffset&, WordSide = WordSide::RightWordIfOnBoundary);
     CharacterOffset startCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
     CharacterOffset endCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
     CharacterOffset startCharacterOffsetOfSentence(const CharacterOffset&);
@@ -654,7 +659,9 @@ private:
     Timer m_performCacheUpdateTimer;
 
     AXTextStateChangeIntent m_textSelectionIntent;
-    HashSet<AXID> m_deferredRemovedObjects;
+    // An object can be "replaced" when we create an AX object from the backing element before it has
+    // attached a renderer, but then want to replace it with a new AX object after the renderer has been attached.
+    HashSet<AXID> m_deferredReplacedObjects;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
     WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
     WeakHashSet<AccessibilityTable> m_deferredRecomputeTableCellSlotsList;
@@ -750,7 +757,7 @@ inline void AXObjectCache::onTextCompositionChange(Node&, CompositionState, bool
 inline void AXObjectCache::valueChanged(Element*) { }
 inline void AXObjectCache::onFocusChange(Node*, Node*) { }
 inline void AXObjectCache::onPageActivityStateChange(OptionSet<ActivityState>) { }
-inline void AXObjectCache::onPopoverTargetToggle(const HTMLFormControlElement&) { }
+inline void AXObjectCache::onPopoverToggle(const HTMLElement&) { }
 inline void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar&) { }
 inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }
 inline void AXObjectCache::deferRecomputeIsIgnored(Element*) { }

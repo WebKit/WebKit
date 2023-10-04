@@ -43,8 +43,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FlexFormattingContext);
 
-FlexFormattingContext::FlexFormattingContext(const ElementBox& formattingContextRoot, FlexFormattingState& formattingState)
-    : FormattingContext(formattingContextRoot, formattingState)
+FlexFormattingContext::FlexFormattingContext(const ElementBox& formattingContextRoot, FlexFormattingState& flexFormattingState)
+    : FormattingContext(formattingContextRoot, flexFormattingState.layoutState())
+    , m_flexFormattingState(flexFormattingState)
     , m_flexFormattingGeometry(*this)
     , m_flexFormattingQuirks(*this)
 {
@@ -220,7 +221,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
             ASSERT_NOT_REACHED();
             break;
         }
-        flexItemGeometry.setLogicalTopLeft(borderBoxTopLeft);
+        flexItemGeometry.setTopLeft(borderBoxTopLeft);
 
         auto contentBoxWidth = isMainAxisParallelWithInlineAxis ? logicalRect.width() : logicalRect.height();
         auto contentBoxHeight = isMainAxisParallelWithInlineAxis ? logicalRect.height() : logicalRect.width();

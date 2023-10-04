@@ -150,7 +150,7 @@ class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLMetaElement;
 class HTMLVideoElement;
-class HighlightRangeData;
+class HighlightRange;
 class HighlightRegister;
 class HitTestLocation;
 class HitTestRequest;
@@ -334,6 +334,12 @@ enum class DimensionsCheck : uint8_t {
     All = 1 << 2, // FIXME: This is probably meant to be Width | Height instead.
 };
 
+enum class LayoutOptions : uint8_t {
+    RunPostLayoutTasksSynchronously = 1 << 0,
+    IgnorePendingStylesheets = 1 << 1,
+    ContentVisibilityForceLayout = 1 << 2,
+};
+
 enum class HttpEquivPolicy {
     Enabled,
     DisabledBySettings,
@@ -390,6 +396,10 @@ public:
     static Ref<Document> create(Document&);
 
     virtual ~Document();
+
+    // Resolve ambiguity for CanMakeCheckedPtr.
+    void incrementPtrCount() const { static_cast<const ContainerNode*>(this)->incrementPtrCount(); }
+    void decrementPtrCount() const { static_cast<const ContainerNode*>(this)->decrementPtrCount(); }
 
     // Nodes belonging to this document increase referencingNodeCount -
     // these are enough to keep the document from being destroyed, but
@@ -662,12 +672,11 @@ public:
     bool needsStyleRecalc() const;
     unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }
 
-    WEBCORE_EXPORT void updateLayout();
-    
+    WEBCORE_EXPORT void updateLayout(OptionSet<LayoutOptions> = { }, const Element* = nullptr);
+
     // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
     // so calling this may cause a flash of unstyled content (FOUC).
-    enum class RunPostLayoutTasks : bool { Asynchronously, Synchronously };
-    WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
+    void updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> = { }, const Element* = nullptr);
 
     std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, PseudoId = PseudoId::None);
 
@@ -1002,6 +1011,7 @@ public:
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
+    void metaElementColorSchemeChanged();
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -1612,6 +1622,7 @@ public:
 #endif
 
     Logger& logger();
+    const Logger& logger() const { return const_cast<Document&>(*this).logger(); }
     WEBCORE_EXPORT static const Logger& sharedLogger();
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
@@ -1788,6 +1799,8 @@ public:
     void scheduleContentRelevancyUpdate(ContentRelevancy);
     void updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor);
 
+    String mediaKeysStorageDirectory();
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,
@@ -1901,7 +1914,7 @@ private:
 
     void platformSuspendOrStopActiveDOMObjects();
 
-    void collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&, const HighlightRegister&);
+    void collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>&, const HighlightRegister&);
 
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 
@@ -1974,7 +1987,7 @@ private:
     mutable String m_uniqueIdentifier;
 
     WeakHashSet<NodeIterator> m_nodeIterators;
-    WeakHashSet<Range> m_ranges;
+    HashSet<CheckedRef<Range>> m_ranges;
 
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
@@ -2004,7 +2017,7 @@ private:
 
     std::unique_ptr<Style::Update> m_pendingRenderTreeUpdate;
 
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_cssTarget;
+    CheckedPtr<Element> m_cssTarget;
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
 
@@ -2062,8 +2075,8 @@ private:
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElementShowingTextTrack;
 #endif
 
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_mainArticleElement;
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_articleElements;
+    CheckedPtr<Element> m_mainArticleElement;
+    HashSet<CheckedPtr<Element>> m_articleElements;
 
     WeakHashSet<VisibilityChangeClient> m_visibilityStateCallbackClients;
 

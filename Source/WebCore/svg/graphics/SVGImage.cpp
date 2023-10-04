@@ -83,7 +83,7 @@ SVGImage::~SVGImage()
     }
 }
 
-inline RefPtr<SVGSVGElement> SVGImage::rootElement() const
+RefPtr<SVGSVGElement> SVGImage::rootElement() const
 {
     if (!m_page)
         return nullptr;
@@ -264,7 +264,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
-    RefPtr<Image> image = ImageBuffer::sinkIntoImage(WTFMove(buffer), PreserveResolution::Yes);
+    auto image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
     if (!image)
         return;
 
@@ -275,7 +275,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
     context.setDrawLuminanceMask(false);
-    image->drawPattern(context, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
+    context.drawPattern(*image, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
 ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

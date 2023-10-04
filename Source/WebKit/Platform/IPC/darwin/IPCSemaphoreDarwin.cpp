@@ -106,7 +106,6 @@ std::optional<Semaphore> Semaphore::decode(Decoder& decoder)
     return std::optional<Semaphore> { std::in_place, WTFMove(sendRight) };
 }
 
-
 void Semaphore::destroy()
 {
     if (m_sendRight) {

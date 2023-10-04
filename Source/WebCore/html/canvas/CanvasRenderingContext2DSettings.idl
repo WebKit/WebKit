@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum CanvasRenderingContext2DRenderingMode {
-    "Default",
+enum RenderingMode {
     "Unaccelerated",
     "Accelerated",
 };
@@ -37,5 +36,5 @@ enum CanvasRenderingContext2DRenderingMode {
     // boolean alpha = true;
     boolean desynchronized = false;
     [EnabledBySetting=CanvasColorSpaceEnabled] PredefinedColorSpace colorSpace = "srgb";
-    [EnabledBySetting=DOMTestingAPIsEnabled] CanvasRenderingContext2DRenderingMode renderingModeForTesting;
+    [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode? renderingModeForTesting;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,7 @@ enum class MediaConstraintType : uint8_t {
     LogicalSurface,
     FocusDistance,
     Zoom,
+    WhiteBalanceMode,
 };
 
 class RealtimeMediaSourceSupportedConstraints {
@@ -61,12 +62,13 @@ public:
     {
     }
     
-    RealtimeMediaSourceSupportedConstraints(bool supportsWidth, bool supportsHeight, bool supportsAspectRatio, bool supportsFrameRate, bool supportsFacingMode, bool supportsVolume, bool supportsSampleRate, bool supportsSampleSize, bool supportsEchoCancellation, bool supportsDeviceId, bool supportsGroupId, bool supportsDisplaySurface, bool supportsLogicalSurface, bool supportsFocusDistance, bool supportsZoom)
+    RealtimeMediaSourceSupportedConstraints(bool supportsWidth, bool supportsHeight, bool supportsAspectRatio, bool supportsFrameRate, bool supportsFacingMode, bool supportsWhiteBalanceMode, bool supportsVolume, bool supportsSampleRate, bool supportsSampleSize, bool supportsEchoCancellation, bool supportsDeviceId, bool supportsGroupId, bool supportsDisplaySurface, bool supportsLogicalSurface, bool supportsFocusDistance, bool supportsZoom)
         : m_supportsWidth(supportsWidth)
         , m_supportsHeight(supportsHeight)
         , m_supportsAspectRatio(supportsAspectRatio)
         , m_supportsFrameRate(supportsFrameRate)
         , m_supportsFacingMode(supportsFacingMode)
+        , m_supportsWhiteBalanceMode(supportsWhiteBalanceMode)
         , m_supportsVolume(supportsVolume)
         , m_supportsSampleRate(supportsSampleRate)
         , m_supportsSampleSize(supportsSampleSize)
@@ -94,6 +96,9 @@ public:
 
     bool supportsFacingMode() const { return m_supportsFacingMode; }
     void setSupportsFacingMode(bool value) { m_supportsFacingMode = value; }
+
+    bool supportsWhiteBalanceMode() const { return m_supportsWhiteBalanceMode; }
+    void setSupportsWhiteBalanceMode(bool value) { m_supportsWhiteBalanceMode = value; }
 
     bool supportsVolume() const { return m_supportsVolume; }
     void setSupportsVolume(bool value) { m_supportsVolume = value; }
@@ -133,6 +138,7 @@ private:
     bool m_supportsAspectRatio { false };
     bool m_supportsFrameRate { false };
     bool m_supportsFacingMode { false };
+    bool m_supportsWhiteBalanceMode { false };
     bool m_supportsVolume { false };
     bool m_supportsSampleRate { false };
     bool m_supportsSampleSize { false };

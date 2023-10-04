@@ -43,6 +43,9 @@ class ScreenManager {
 public:
     static ScreenManager& singleton();
 
+    PlatformDisplayID displayID(GdkMonitor*) const;
+    GdkMonitor* monitor(PlatformDisplayID) const;
+
     WebCore::ScreenProperties collectScreenProperties() const;
 
 private:

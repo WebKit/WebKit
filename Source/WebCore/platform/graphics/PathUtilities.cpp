@@ -358,6 +358,19 @@ Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, f
     return unionPath;
 }
 
+Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, const FloatRoundedRect::Radii& radii)
+{
+    if (radii.isUniformCornerRadius())
+        return pathWithShrinkWrappedRects(rects, radii.topLeft().width());
+
+    // FIXME: This could potentially take non-uniform radii into account when running the
+    // shrink-wrap algorithm above, by averaging corner radii between adjacent edges.
+    Path path;
+    for (auto& rect : rects)
+        path.addRoundedRect(FloatRoundedRect { rect, radii });
+    return path;
+}
+
 static std::pair<FloatPoint, FloatPoint> startAndEndPointsForCorner(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
 {
     FloatPoint startPoint;

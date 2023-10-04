@@ -31,5 +31,7 @@ var desc = Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, "forma
 assert.sameValue(desc.set, undefined);
 assert.sameValue(typeof desc.get, "function");
 
-verifyNotEnumerable(Intl.DateTimeFormat.prototype, "format");
-verifyConfigurable(Intl.DateTimeFormat.prototype, "format");
+verifyProperty(Intl.DateTimeFormat.prototype, "format", {
+  enumerable: false,
+  configurable: true,
+});

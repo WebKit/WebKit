@@ -76,7 +76,7 @@ ExceptionOr<void> HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&&
     deleteCaption();
     if (!newCaption)
         return { };
-    return insertBefore(*newCaption, firstChild());
+    return insertBefore(*newCaption, protectedFirstChild());
 }
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tHead() const
@@ -103,7 +103,7 @@ ExceptionOr<void> HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& n
             break;
     }
 
-    return insertBefore(*newHead, child.get());
+    return insertBefore(*newHead, WTFMove(child));
 }
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tFoot() const
@@ -159,7 +159,7 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTBody()
 {
     auto body = HTMLTableSectionElement::create(tbodyTag, document());
     RefPtr<Node> referenceElement = lastBody() ? lastBody()->nextSibling() : nullptr;
-    insertBefore(body, referenceElement.get());
+    insertBefore(body, WTFMove(referenceElement));
     return body;
 }
 
@@ -228,7 +228,7 @@ ExceptionOr<Ref<HTMLElement>> HTMLTableElement::insertRow(int index)
     }
 
     auto newRow = HTMLTableRowElement::create(document());
-    auto result = parent->insertBefore(newRow, row.get());
+    auto result = parent->insertBefore(newRow, WTFMove(row));
     if (result.hasException())
         return result.releaseException();
     return Ref<HTMLElement> { WTFMove(newRow) };

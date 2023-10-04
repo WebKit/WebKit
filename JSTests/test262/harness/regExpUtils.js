@@ -78,6 +78,8 @@ function testPropertyOfStrings(args) {
     }
   }
 
+  if (!nonMatchStrings) return;
+
   const allNonMatchStrings = nonMatchStrings.join('');
   if (regExp.test(allNonMatchStrings)) {
     for (const string of nonMatchStrings) {

@@ -51,10 +51,6 @@ private:
     void deleteSource(WebCore::RealtimeMediaSourceIdentifier);
     void start(WebCore::RealtimeMediaSourceIdentifier);
     void stop(WebCore::RealtimeMediaSourceIdentifier);
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void grantSandboxExtensions(SandboxExtension::Handle&&, SandboxExtension::Handle&&, SandboxExtension::Handle&&);
-    void revokeSandboxExtensions();
-#endif
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

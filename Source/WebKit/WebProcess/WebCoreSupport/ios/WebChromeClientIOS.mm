@@ -53,7 +53,7 @@ using namespace WebCore;
 
 void WebChromeClient::didPreventDefaultForEvent()
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page().mainFrame());
     if (!localMainFrame)
         return;
     ContentChangeObserver::didPreventDefaultForEvent(*localMainFrame);
@@ -63,7 +63,7 @@ void WebChromeClient::didPreventDefaultForEvent()
 
 void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
 {
-    m_page.didReceiveMobileDocType(isMobileDoctype);
+    protectedPage()->didReceiveMobileDocType(isMobileDoctype);
 }
 
 void WebChromeClient::setNeedsScrollNotifications(WebCore::LocalFrame&, bool)
@@ -73,12 +73,12 @@ void WebChromeClient::setNeedsScrollNotifications(WebCore::LocalFrame&, bool)
 
 void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame&, WKContentChange observedContentChange)
 {
-    m_page.didFinishContentChangeObserving(observedContentChange);
+    protectedPage()->didFinishContentChangeObserving(observedContentChange);
 }
 
 void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame&)
 {
-    m_page.didScrollSelection();
+    protectedPage()->didScrollSelection();
 }
 
 bool WebChromeClient::isStopping()
@@ -90,24 +90,24 @@ bool WebChromeClient::isStopping()
 void WebChromeClient::didLayout(LayoutType type)
 {
     if (type == Scroll)
-        m_page.didScrollSelection();
+        protectedPage()->didScrollSelection();
 }
 
 void WebChromeClient::didStartOverflowScroll()
 {
     // FIXME: This is only relevant for legacy touch-driven overflow in the web process (see ScrollAnimatorIOS::handleTouchEvent), and should be removed.
-    m_page.send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll(0));
+    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll(0));
 }
 
 void WebChromeClient::didEndOverflowScroll()
 {
     // FIXME: This is only relevant for legacy touch-driven overflow in the web process (see ScrollAnimatorIOS::handleTouchEvent), and should be removed.
-    m_page.send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll(0));
+    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll(0));
 }
 
 bool WebChromeClient::hasStablePageScaleFactor() const
 {
-    return m_page.hasStablePageScaleFactor();
+    return protectedPage()->hasStablePageScaleFactor();
 }
 
 void WebChromeClient::suppressFormNotifications()
@@ -137,18 +137,19 @@ void WebChromeClient::webAppOrientationsUpdated()
 
 void WebChromeClient::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy policy, const String& routingContextUID)
 {
-    m_page.send(Messages::WebPageProxy::ShowPlaybackTargetPicker(hasVideo, m_page.rectForElementAtInteractionLocation(), policy, routingContextUID));
+    auto page = protectedPage();
+    page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(hasVideo, page->rectForElementAtInteractionLocation(), policy, routingContextUID));
 }
 
 Seconds WebChromeClient::eventThrottlingDelay()
 {
-    return m_page.eventThrottlingDelay();
+    return protectedPage()->eventThrottlingDelay();
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
 IntDegrees WebChromeClient::deviceOrientation() const
 {
-    return m_page.deviceOrientation();
+    return protectedPage()->deviceOrientation();
 }
 #endif
 
@@ -172,8 +173,9 @@ bool WebChromeClient::showDataDetectorsUIForElement(const Element& element, cons
     auto& mouseEvent = downcast<MouseEvent>(event);
     auto request = InteractionInformationRequest { roundedIntPoint(mouseEvent.locationInRootViewCoordinates()) };
     request.includeLinkIndicator = true;
-    auto positionInformation = m_page.positionInformation(request);
-    m_page.send(Messages::WebPageProxy::ShowDataDetectorsUIForPositionInformation(positionInformation));
+    auto page = protectedPage();
+    auto positionInformation = page->positionInformation(request);
+    page->send(Messages::WebPageProxy::ShowDataDetectorsUIForPositionInformation(positionInformation));
     return true;
 }
 

@@ -26,13 +26,10 @@
 #import "config.h"
 #import "WebCoreCALayerExtras.h"
 
+#import "DynamicContentScalingTypes.h"
 #import "TransformationMatrix.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
-
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-#import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
-#endif
 
 @implementation CALayer (WebCoreCALayerExtras)
 
@@ -128,21 +125,21 @@
     self.contents = nil;
     self.contentsOpaque = NO;
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    [self _web_clearCGDisplayListIfNeeded];
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    [self _web_clearDynamicContentScalingDisplayListIfNeeded];
 #endif
 
 }
 
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-- (void)_web_clearCGDisplayListIfNeeded
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+- (void)_web_clearDynamicContentScalingDisplayListIfNeeded
 {
-    if (![self valueForKeyPath:WKCGDisplayListContentsKey])
+    if (![self valueForKeyPath:WKDynamicContentScalingContentsKey])
         return;
-    [self setValue:nil forKeyPath:WKCGDisplayListContentsKey];
-    [self setValue:nil forKeyPath:WKCGDisplayListPortsKey];
-    [self setValue:@NO forKeyPath:WKCGDisplayListEnabledKey];
-    [self setValue:@NO forKeyPath:WKCGDisplayListBifurcationEnabledKey];
+    [self setValue:nil forKeyPath:WKDynamicContentScalingContentsKey];
+    [self setValue:nil forKeyPath:WKDynamicContentScalingPortsKey];
+    [self setValue:@NO forKeyPath:WKDynamicContentScalingEnabledKey];
+    [self setValue:@NO forKeyPath:WKDynamicContentScalingBifurcationEnabledKey];
 }
 #endif
 

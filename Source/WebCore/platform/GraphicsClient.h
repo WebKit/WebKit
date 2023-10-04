@@ -36,9 +36,14 @@ class SerializedImageBuffer;
 
 struct GraphicsContextGLAttributes;
 
+enum class ImageBufferOptions : uint8_t;
 enum class PixelFormat : uint8_t;
 enum class RenderingMode : bool;
 enum class RenderingPurpose : uint8_t;
+
+namespace WebGPU {
+class GPU;
+}
 
 class GraphicsClient {
     WTF_MAKE_NONCOPYABLE(GraphicsClient); WTF_MAKE_FAST_ALLOCATED;
@@ -51,10 +56,13 @@ public:
 #if ENABLE(WEBGL)
     virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const = 0;
 #endif
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    virtual RefPtr<WebCore::WebGPU::GPU> createGPUForWebGPU() const = 0;
+#endif
 
 private:
     // Called by passing GraphicsClient into ImageBuffer functions.
-    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, bool avoidBackendSizeCheck = false) const = 0;
+    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions>) const = 0;
 
     // Called by passing GraphicsClient into SerializedImageBuffer functions.
     virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) = 0;

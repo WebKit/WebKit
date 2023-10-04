@@ -456,7 +456,7 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePos
     if (position.isNull())
         return position;
     
-    auto* highestRoot = highestEditableRoot(deepEquivalent());
+    auto highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if pos is not somewhere inside the editable region containing this position
     if (highestRoot && !position.deepEquivalent().deprecatedNode()->isDescendantOf(*highestRoot)) {
@@ -483,7 +483,7 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePos
     }
 
     // Return the last position before pos that is in the same editable region as this position
-    return lastEditablePositionBeforePositionInRoot(position.deepEquivalent(), highestRoot);
+    return lastEditablePositionBeforePositionInRoot(position.deepEquivalent(), highestRoot.get());
 }
 
 VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosition& otherPosition, bool* reachedBoundary) const
@@ -493,7 +493,7 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosi
     if (otherPosition.isNull())
         return otherPosition;
     
-    auto* highestRoot = highestEditableRoot(deepEquivalent());
+    auto highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if otherPosition is not somewhere inside the editable region containing this position
     if (highestRoot && !otherPosition.deepEquivalent().deprecatedNode()->isDescendantOf(*highestRoot)) {
@@ -520,7 +520,7 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosi
     }
 
     // Return the next position after pos that is in the same editable region as this position
-    return firstEditablePositionAfterPositionInRoot(otherPosition.deepEquivalent(), highestRoot);
+    return firstEditablePositionAfterPositionInRoot(otherPosition.deepEquivalent(), highestRoot.get());
 }
 
 static Position canonicalizeCandidate(const Position& candidate)
@@ -565,8 +565,8 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     // blocks or enter new ones), we search forward and backward until we find one.
     Position next = canonicalizeCandidate(nextCandidate(position));
     Position prev = canonicalizeCandidate(previousCandidate(position));
-    Node* nextNode = next.deprecatedNode();
-    Node* prevNode = prev.deprecatedNode();
+    auto nextNode = next.protectedDeprecatedNode();
+    auto prevNode = prev.protectedDeprecatedNode();
 
     // The new position must be in the same editable element. Enforce that first.
     // Unless the descent is from a non-editable html element to an editable body.

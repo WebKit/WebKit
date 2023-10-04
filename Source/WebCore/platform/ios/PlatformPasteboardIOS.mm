@@ -30,6 +30,7 @@
 
 #import "ColorCocoa.h"
 #import "Image.h"
+#import "NSURLUtilities.h"
 #import "Pasteboard.h"
 #import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
@@ -50,7 +51,6 @@
 
 #define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS_FAMILY) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
 #define PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA (PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && !PLATFORM(MACCATALYST))
-#define NSURL_SUPPORTS_TITLE (!PLATFORM(MACCATALYST))
 
 namespace WebCore {
 
@@ -525,8 +525,8 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
     // the URL (i.e. the anchor's href attribute) to be a higher fidelity representation.
     auto& pasteboardURL = pasteboardImage.url;
     if (NSURL *nsURL = pasteboardURL.url) {
-#if NSURL_SUPPORTS_TITLE
-        nsURL._title = pasteboardURL.title.isEmpty() ? WTF::userVisibleString(pasteboardURL.url) : (NSString *)pasteboardURL.title;
+#if HAVE(NSURL_TITLE)
+        [nsURL _web_setTitle:pasteboardURL.title.isEmpty() ? WTF::userVisibleString(pasteboardURL.url) : (NSString *)pasteboardURL.title];
 #endif
         [representationsToRegister addRepresentingObject:nsURL];
     }
@@ -559,9 +559,9 @@ void PlatformPasteboard::write(const PasteboardURL& url)
     [representationsToRegister setPreferredPresentationStyle:WebPreferredPresentationStyleInline];
 
     if (NSURL *nsURL = url.url) {
-#if NSURL_SUPPORTS_TITLE
+#if HAVE(NSURL_TITLE)
         if (!url.title.isEmpty())
-            nsURL._title = url.title;
+            [nsURL _web_setTitle:url.title];
 #endif
         [representationsToRegister addRepresentingObject:nsURL];
         [representationsToRegister addRepresentingObject:(NSString *)url.url.string()];
@@ -823,8 +823,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!allowReadingURLAtIndex(url.get(), index))
         return { };
 
-#if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && NSURL_SUPPORTS_TITLE
-    title = [url _title];
+#if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && HAVE(NSURL_TITLE)
+    title = [url _web_title];
 #else
     UNUSED_PARAM(title);
 #endif

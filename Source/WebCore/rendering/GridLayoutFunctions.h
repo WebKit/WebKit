@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+enum class ItemPosition : uint8_t;
 class RenderBox;
 class RenderElement;
 class RenderGrid;
@@ -54,6 +55,8 @@ std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const Ren
 bool isFlippedDirection(const RenderGrid&, GridTrackSizingDirection);
 bool isSubgridReversedDirection(const RenderGrid&, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid);
 LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection, const RenderBox& child);
+
+unsigned alignmentContextForBaselineAlignment(const GridSpan&, const ItemPosition& alignment);
 
 }
 

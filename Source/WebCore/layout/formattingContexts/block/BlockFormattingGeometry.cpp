@@ -29,7 +29,6 @@
 #include "BlockFormattingContext.h"
 #include "BlockFormattingQuirks.h"
 #include "BlockMarginCollapse.h"
-#include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"

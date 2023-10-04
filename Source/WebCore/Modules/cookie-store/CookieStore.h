@@ -41,11 +41,12 @@ struct CookieStoreDeleteOptions;
 struct CookieStoreGetOptions;
 class Document;
 class DeferredPromise;
+class ScriptExecutionContext;
 
 class CookieStore final : public RefCounted<CookieStore>, public EventTarget, public ActiveDOMObject, public CookieChangeListener {
     WTF_MAKE_ISO_ALLOCATED(CookieStore);
 public:
-    static Ref<CookieStore> create(Document*);
+    static Ref<CookieStore> create(ScriptExecutionContext*);
     ~CookieStore();
 
     void get(String&& name, Ref<DeferredPromise>&&);
@@ -63,8 +64,11 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
+    using EventTarget::weakPtrFactory;
+    using EventTarget::WeakValueType;
+
 private:
-    explicit CookieStore(Document*);
+    explicit CookieStore(ScriptExecutionContext*);
 
     // CookieChangeListener
     void cookiesAdded(const String& host, const Vector<Cookie>&) final;
@@ -82,9 +86,16 @@ private:
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
 
+    RefPtr<DeferredPromise> takePromise(uint64_t promiseIdentifier);
+
+    class MainThreadBridge;
+    Ref<MainThreadBridge> m_mainThreadBridge;
+
     bool m_hasChangeEventListener { false };
     WeakPtr<CookieJar> m_cookieJar;
     String m_host;
+    uint64_t m_nextPromiseIdentifier { 0 };
+    HashMap<uint64_t, Ref<DeferredPromise>> m_promises;
 };
 
 }

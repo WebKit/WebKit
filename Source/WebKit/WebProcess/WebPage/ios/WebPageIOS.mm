@@ -383,7 +383,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 #if USE(DICTATION_ALTERNATIVES)
     if (selectedRange) {
         auto markers = frame.document()->markers().markersInRange(*selectedRange, DocumentMarker::MarkerType::DictationAlternatives);
-        postLayoutData.dictationContextsForSelection = WTF::map(markers, [] (auto* marker) {
+        postLayoutData.dictationContextsForSelection = WTF::map(markers, [] (auto& marker) {
             return std::get<DocumentMarker::DictationData>(marker->data()).context;
         });
     }
@@ -714,7 +714,7 @@ void WebPage::updateSelectionAppearance()
 static void dispatchSyntheticMouseMove(LocalFrame& mainFrame, const WebCore::FloatPoint& location, OptionSet<WebEventModifier> modifiers, WebCore::PointerID pointerId = WebCore::mousePointerID)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
-    auto mouseEvent = PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::Type::MouseMoved, 0, platform(modifiers), WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::OneFingerTap, pointerId);
+    auto mouseEvent = PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::None, PlatformEvent::Type::MouseMoved, 0, platform(modifiers), WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::OneFingerTap, pointerId);
     // FIXME: Pass caps lock state.
     mainFrame.eventHandler().dispatchSyntheticMouseMove(mouseEvent);
 }
@@ -877,7 +877,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (!localMainFrame)
         return;
 
-    RefPtr oldFocusedFrame = CheckedRef(m_page->focusController())->focusedFrame();
+    RefPtr oldFocusedFrame = CheckedRef(m_page->focusController())->focusedLocalFrame();
     RefPtr<Element> oldFocusedElement = oldFocusedFrame ? oldFocusedFrame->document()->focusedElement() : nullptr;
 
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
@@ -887,7 +887,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     // FIXME: Pass caps lock state.
     auto platformModifiers = platform(modifiers);
 
-    bool handledPress = localMainFrame->eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::MousePressed, 1, platformModifiers, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId)).wasHandled();
+    bool handledPress = localMainFrame->eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, platformModifiers, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId)).wasHandled();
     if (m_isClosed)
         return;
 
@@ -896,11 +896,11 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     else if (!handledPress)
         clearSelectionAfterTapIfNeeded();
 
-    bool handledRelease = localMainFrame->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::MouseReleased, 1, platformModifiers, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId)).wasHandled();
+    bool handledRelease = localMainFrame->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 1, platformModifiers, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId)).wasHandled();
     if (m_isClosed)
         return;
 
-    RefPtr newFocusedFrame = CheckedRef(m_page->focusController())->focusedFrame();
+    RefPtr newFocusedFrame = CheckedRef(m_page->focusController())->focusedLocalFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
 
     if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled() && !nodeRespondingToClick.document().quirks().shouldDisableContentChangeObserver()) {
@@ -908,7 +908,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
         // Dispatch mouseOut to dismiss tooltip content when tapping on the control bar buttons (cc, settings).
         if (document.quirks().needsYouTubeMouseOutQuirk()) {
             if (auto* frame = document.frame())
-                frame->eventHandler().dispatchSyntheticMouseOut(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::NoType, 0, platformModifiers, WallTime::now(), 0, WebCore::SyntheticClickType::NoTap, pointerId));
+                frame->eventHandler().dispatchSyntheticMouseOut(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::NoType, 0, platformModifiers, WallTime::now(), 0, WebCore::SyntheticClickType::NoTap, pointerId));
         }
     }
 
@@ -953,10 +953,10 @@ void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, Option
 
     auto platformModifiers = platform(modifiers);
     auto roundedAdjustedPoint = roundedIntPoint(adjustedPoint);
-    nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::MousePressed, 2, platformModifiers, WallTime::now(), 0, WebCore::SyntheticClickType::OneFingerTap));
+    nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 2, platformModifiers, WallTime::now(), 0, WebCore::SyntheticClickType::OneFingerTap));
     if (m_isClosed)
         return;
-    nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::MouseReleased, 2, platformModifiers, WallTime::now(), 0, WebCore::SyntheticClickType::OneFingerTap));
+    nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 2, platformModifiers, WallTime::now(), 0, WebCore::SyntheticClickType::OneFingerTap));
 }
 
 void WebPage::requestFocusedElementInformation(CompletionHandler<void(const std::optional<FocusedElementInformation>&)>&& completionHandler)
@@ -985,7 +985,7 @@ void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPositio
     // To augment the platform drag session with additional items, end the current drag session and begin a new drag session with the new drag item.
     // This process is opaque to the UI process, which still maintains the old drag item in its drag session. Similarly, this persistent drag session
     // is opaque to the web process, which only sees that the current drag has ended, and that a new one is beginning.
-    PlatformMouseEvent event(clientPosition, globalPosition, LeftButton, PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), 0, WebCore::SyntheticClickType::NoTap);
+    PlatformMouseEvent event(clientPosition, globalPosition, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), 0, WebCore::SyntheticClickType::NoTap);
     m_page->dragController().dragEnded();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!localMainFrame)
@@ -1281,7 +1281,7 @@ void WebPage::inspectorNodeSearchMovedToPosition(const FloatPoint& position)
         return;
     IntPoint adjustedPoint = roundedIntPoint(position);
 
-    localMainFrame->eventHandler().mouseMoved(PlatformMouseEvent(adjustedPoint, adjustedPoint, NoButton, PlatformEvent::Type::MouseMoved, 0, { }, { }, 0, WebCore::SyntheticClickType::NoTap));
+    localMainFrame->eventHandler().mouseMoved(PlatformMouseEvent(adjustedPoint, adjustedPoint, MouseButton::None, PlatformEvent::Type::MouseMoved, 0, { }, { }, 0, WebCore::SyntheticClickType::NoTap));
     localMainFrame->document()->updateStyleIfNeeded();
 }
 
@@ -1366,7 +1366,7 @@ void WebPage::setForceAlwaysUserScalable(bool userScalable)
 
 static IntRect elementBoundsInFrame(const LocalFrame& frame, const Element& focusedElement)
 {
-    frame.document()->updateLayoutIgnorePendingStylesheets();
+    frame.document()->updateLayout(LayoutOptions::IgnorePendingStylesheets);
     
     if (focusedElement.hasTagName(HTMLNames::textareaTag) || focusedElement.hasTagName(HTMLNames::inputTag) || focusedElement.hasTagName(HTMLNames::selectTag))
         return WebPage::absoluteInteractionBounds(focusedElement);
@@ -1410,8 +1410,8 @@ static bool insideImageOverlay(const VisiblePosition& position)
 
 static std::optional<SimpleRange> expandForImageOverlay(const SimpleRange& range)
 {
-    VisiblePosition expandedStart(makeContainerOffsetPosition(&range.startContainer(), range.startOffset()));
-    VisiblePosition expandedEnd(makeContainerOffsetPosition(&range.endContainer(), range.endOffset()));
+    VisiblePosition expandedStart(makeContainerOffsetPosition(range.protectedStartContainer(), range.startOffset()));
+    VisiblePosition expandedEnd(makeContainerOffsetPosition(range.protectedEndContainer(), range.endOffset()));
 
     for (auto start = expandedStart; insideImageOverlay(start); start = start.previous()) {
         if (RefPtr container = start.deepEquivalent().containerNode(); is<Text>(container)) {
@@ -1797,16 +1797,16 @@ void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch tou
     auto& eventHandler = localMainFrame->eventHandler();
     switch (touch) {
     case SelectionTouch::Started:
-        eventHandler.handleMousePressEvent({ adjustedPoint, adjustedPoint, LeftButton, PlatformEvent::Type::MousePressed, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap });
+        eventHandler.handleMousePressEvent({ adjustedPoint, adjustedPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap });
         break;
     case SelectionTouch::Moved:
-        eventHandler.dispatchSyntheticMouseMove({ adjustedPoint, adjustedPoint, LeftButton, PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap });
+        eventHandler.dispatchSyntheticMouseMove({ adjustedPoint, adjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap });
         break;
     case SelectionTouch::Ended:
     case SelectionTouch::EndedMovingForward:
     case SelectionTouch::EndedMovingBackward:
     case SelectionTouch::EndedNotMoving:
-        eventHandler.handleMouseReleaseEvent({ adjustedPoint, adjustedPoint, LeftButton, PlatformEvent::Type::MouseReleased, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap });
+        eventHandler.handleMouseReleaseEvent({ adjustedPoint, adjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap });
         break;
     }
 }
@@ -1891,7 +1891,7 @@ void WebPage::extendSelectionForReplacement(CompletionHandler<void()>&& completi
     if (!container)
         return;
 
-    auto markerRanges = document->markers().markersFor(*container, { DocumentMarker::DictationAlternatives, DocumentMarker::CorrectionIndicator }).map([&](auto* marker) {
+    auto markerRanges = document->markers().markersFor(*container, { DocumentMarker::DictationAlternatives, DocumentMarker::CorrectionIndicator }).map([&](auto& marker) {
         return makeSimpleRange(*container, *marker);
     });
 
@@ -4209,7 +4209,7 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
 
     auto* mainFrameView = this->localMainFrameView();
     if (!mainFrameView) {
-        // FIXME: This is hit in some site isolation tests on iOS. Investigate and fix.
+        // FIXME: This is hit in some site isolation tests on iOS. Investigate and fix. <rdar://116201382>
         return;
     }
 
@@ -4436,10 +4436,8 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
             send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFromUIProcess.value()));
         }
 
-        if (!hasSetPageScale && m_isInStableState) {
+        if (!hasSetPageScale && m_isInStableState)
             m_page->setPageScaleFactor(scaleToUse, scrollPosition, true);
-            hasSetPageScale = true;
-        }
     }
 
     if (scrollPosition != frameView.scrollPosition())
@@ -4549,7 +4547,7 @@ void WebPage::computePagesForPrintingiOS(WebCore::FrameIdentifier frameID, const
     reply(pageRects.size());
 }
 
-void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&& reply)
+void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&& reply)
 {  
     Vector<WebCore::IntRect> pageRects;
     double totalScaleFactor;
@@ -4611,13 +4609,7 @@ void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& pri
     }
 
     auto handle = bitmap->createHandle(SharedMemory::Protection::ReadOnly);
-    if (!handle) {
-        reply({ });
-        endPrinting();
-        return;
-    }
-
-    reply(WTFMove(*handle));
+    reply(WTFMove(handle));
     endPrinting();
 }
 
@@ -4660,7 +4652,7 @@ String WebPage::platformUserAgent(const URL&) const
 
     auto* mainFrame = m_mainFrame->coreLocalFrame();
     if (!mainFrame) {
-        // FIXME: Add a user agent for loads from iframe processes.
+        // FIXME: Add a user agent for loads from iframe processes. <rdar://116201535>
         return { };
     }
 
@@ -4735,7 +4727,7 @@ void WebPage::hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
 {
     m_keyboardIsAttached = keyboardIsAttached;
 
-    if (RefPtr focusedFrame = CheckedRef(m_page->focusController())->focusedFrame())
+    if (RefPtr focusedFrame = CheckedRef(m_page->focusController())->focusedLocalFrame())
         focusedFrame->eventHandler().capsLockStateMayHaveChanged();
 }
 
@@ -4856,7 +4848,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     }
 
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    RefPtr { frame->document() }->updateLayoutIgnorePendingStylesheets();
+    RefPtr { frame->document() }->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     VisibleSelection selection = frame->selection().selection();
 
@@ -5104,7 +5096,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
     ASSERT(target->document().frame());
     Ref targetFrame = *target->document().frame();
 
-    targetFrame->document()->updateLayoutIgnorePendingStylesheets();
+    targetFrame->document()->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     // Performing layout could have could torn down the element's renderer. Check that we still
     // have one. Otherwise, bail out as this function only focuses elements that have a visual

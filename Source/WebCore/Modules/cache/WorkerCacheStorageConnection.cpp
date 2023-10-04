@@ -62,6 +62,8 @@ private:
     void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
     void reference(DOMCacheIdentifier)  final { }
     void dereference(DOMCacheIdentifier)  final { }
+    void lockStorage(const ClientOrigin&) final { }
+    void unlockStorage(const ClientOrigin&) final { }
 };
 
 static Ref<CacheStorageConnection> createMainThreadConnection(WorkerGlobalScope& scope)
@@ -162,7 +164,7 @@ void WorkerCacheStorageConnection::retrieveRecords(DOMCacheIdentifier cacheIdent
 
     callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, options = WTFMove(options).isolatedCopy()]() mutable {
         mainThreadConnection->retrieveRecords(cacheIdentifier, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier](auto&& result) mutable {
-            workerThread->runLoop().postTaskForMode([result = isolatedCopyCrossThreadRecordsOrError(WTFMove(result)), requestIdentifier] (auto& scope) mutable {
+            workerThread->runLoop().postTaskForMode([result = isolatedCopyCrossThreadRecordsOrError(std::forward<decltype(result)>(result)), requestIdentifier] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().retrieveRecordsCompleted(requestIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         });
@@ -226,6 +228,20 @@ void WorkerCacheStorageConnection::dereference(DOMCacheIdentifier cacheIdentifie
 {
     callOnMainThread([mainThreadConnection = m_mainThreadConnection, cacheIdentifier]() {
         mainThreadConnection->dereference(cacheIdentifier);
+    });
+}
+
+void WorkerCacheStorageConnection::lockStorage(const ClientOrigin& origin)
+{
+    callOnMainThread([mainThreadConnection = m_mainThreadConnection, origin = origin.isolatedCopy()]() {
+        mainThreadConnection->lockStorage(origin);
+    });
+}
+
+void WorkerCacheStorageConnection::unlockStorage(const ClientOrigin& origin)
+{
+    callOnMainThread([mainThreadConnection = m_mainThreadConnection, origin = origin.isolatedCopy()]() {
+        mainThreadConnection->unlockStorage(origin);
     });
 }
 

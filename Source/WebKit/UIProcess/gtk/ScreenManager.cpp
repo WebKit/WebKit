@@ -84,6 +84,20 @@ ScreenManager::ScreenManager()
 #endif
 }
 
+PlatformDisplayID ScreenManager::displayID(GdkMonitor* monitor) const
+{
+    return m_monitorToDisplayIDMap.get(monitor);
+}
+
+GdkMonitor* ScreenManager::monitor(PlatformDisplayID displayID) const
+{
+    for (const auto& iter : m_monitorToDisplayIDMap) {
+        if (iter.value == displayID)
+            return iter.key;
+    }
+    return nullptr;
+}
+
 void ScreenManager::addMonitor(GdkMonitor* monitor)
 {
     m_monitors.append(monitor);

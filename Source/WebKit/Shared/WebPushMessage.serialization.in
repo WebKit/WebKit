@@ -20,8 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-struct WebKit::WebPushMessage {
+webkit_platform_headers: "ArgumentCoders.h" "WebPushMessage.h"
+
+[CustomHeader, WebKitPlatform] struct WebKit::WebPushMessage {
     std::optional<Vector<uint8_t>> pushData;
     String pushPartitionString;
     URL registrationURL;
+    std::optional<WebCore::NotificationPayload> notificationPayload;
 };

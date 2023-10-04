@@ -133,6 +133,7 @@ public:
     // the list, it is moved to the end.
     AddResult appendOrMoveToLast(const ValueType&);
     AddResult appendOrMoveToLast(ValueType&&);
+    bool moveToLastIfPresent(const ValueType&);
 
     // Add the value to the beginning of the collection. If the value was already in
     // the list, it is moved to the beginning.
@@ -581,6 +582,18 @@ auto ListHashSet<T, U>::appendOrMoveToLast(ValueType&& value) -> AddResult
     appendNode(node);
 
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+}
+
+template<typename T, typename U>
+bool ListHashSet<T, U>::moveToLastIfPresent(const ValueType& value)
+{
+    auto iterator = m_impl.template find<BaseTranslator>(value);
+    if (iterator == m_impl.end())
+        return false;
+    Node* node = *iterator;
+    unlink(node);
+    appendNode(node);
+    return true;
 }
 
 template<typename T, typename U>

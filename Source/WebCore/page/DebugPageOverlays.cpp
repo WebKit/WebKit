@@ -595,7 +595,7 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
         if (!rectForSettingAtIndex(i).contains(eventInContentsCoordinates))
             continue;
         cursorToSet = handCursor();
-        if (event.button() == LeftButton && event.type() == PlatformEvent::Type::MousePressed) {
+        if (event.button() == MouseButton::Left && event.type() == PlatformEvent::Type::MousePressed) {
             m_settings[i].value = !m_settings[i].value;
             m_page.forceRepaintAllFrames();
             return true;

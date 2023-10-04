@@ -67,16 +67,22 @@ public:
 
     CodePtr<JSEntryPtrTag> jsCallEntrypoint()
     {
+#if ENABLE(JIT)
         if (m_jsToWasmICCallee)
             return m_jsToWasmICCallee->entrypoint().retagged<JSEntryPtrTag>();
         return jsCallEntrypointSlow();
+#else
+        return nullptr;
+#endif
     }
 
 private:
     DECLARE_VISIT_CHILDREN;
     WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
 
+#if ENABLE(JIT)
     CodePtr<JSEntryPtrTag> jsCallEntrypointSlow();
+#endif
     bool usesTagRegisters() const;
     RegisterAtOffsetList usedCalleeSaveRegisters() const;
 
@@ -86,7 +92,9 @@ private:
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature/code doesn't get deallocated.
     CodePtr<WasmEntryPtrTag> m_jsEntrypoint;
+#if ENABLE(JIT)
     RefPtr<Wasm::JSToWasmICCallee> m_jsToWasmICCallee;
+#endif
 };
 
 } // namespace JSC

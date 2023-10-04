@@ -44,7 +44,7 @@ public:
 
     static bool isTypeSupported(ScriptExecutionContext&, const String& type);
 
-    bool streaming() const { return m_streaming; }
+    bool streaming() const override { return m_streaming; }
     bool streamingAllowed() const { return m_streamingAllowed; }
 
     bool isManaged() const final { return true; }

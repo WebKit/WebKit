@@ -32,7 +32,7 @@
 
 namespace WTF::Persistence {
 
-void Coder<WebKit::NetworkCache::Key>::encode(WTF::Persistence::Encoder& encoder, const WebKit::NetworkCache::Key& instance)
+void Coder<WebKit::NetworkCache::Key>::encodeForPersistence(WTF::Persistence::Encoder& encoder, const WebKit::NetworkCache::Key& instance)
 {
     encoder << instance.partition();
     encoder << instance.type();
@@ -42,7 +42,7 @@ void Coder<WebKit::NetworkCache::Key>::encode(WTF::Persistence::Encoder& encoder
     encoder << instance.partitionHash();
 }
 
-std::optional<WebKit::NetworkCache::Key> Coder<WebKit::NetworkCache::Key>::decode(WTF::Persistence::Decoder& decoder)
+std::optional<WebKit::NetworkCache::Key> Coder<WebKit::NetworkCache::Key>::decodeForPersistence(WTF::Persistence::Decoder& decoder)
 {
     WebKit::NetworkCache::Key key;
 
@@ -86,7 +86,7 @@ std::optional<WebKit::NetworkCache::Key> Coder<WebKit::NetworkCache::Key>::decod
 }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-void Coder<WebKit::NetworkCache::SubresourceInfo>::encode(WTF::Persistence::Encoder& encoder, const WebKit::NetworkCache::SubresourceInfo& instance)
+void Coder<WebKit::NetworkCache::SubresourceInfo>::encodeForPersistence(WTF::Persistence::Encoder& encoder, const WebKit::NetworkCache::SubresourceInfo& instance)
 {
     encoder << instance.key();
     encoder << instance.lastSeen();
@@ -104,7 +104,7 @@ void Coder<WebKit::NetworkCache::SubresourceInfo>::encode(WTF::Persistence::Enco
     encoder << instance.priority();
 }
 
-std::optional<WebKit::NetworkCache::SubresourceInfo> Coder<WebKit::NetworkCache::SubresourceInfo>::decode(WTF::Persistence::Decoder& decoder)
+std::optional<WebKit::NetworkCache::SubresourceInfo> Coder<WebKit::NetworkCache::SubresourceInfo>::decodeForPersistence(WTF::Persistence::Decoder& decoder)
 {
     std::optional<WebKit::NetworkCache::Key> key;
     decoder >> key;

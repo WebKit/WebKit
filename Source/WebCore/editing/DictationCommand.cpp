@@ -40,31 +40,32 @@ namespace WebCore {
 
 class DictationCommandLineOperation {
 public:
-    DictationCommandLineOperation(DictationCommand* dictationCommand)
-    : m_dictationCommand(dictationCommand)
+    DictationCommandLineOperation(DictationCommand& dictationCommand)
+        : m_dictationCommand(dictationCommand)
     { }
     
     void operator()(size_t lineOffset, size_t lineLength, bool isLastLine) const
     {
         if (lineLength > 0)
-            m_dictationCommand->insertTextRunWithoutNewlines(lineOffset, lineLength);
+            Ref { m_dictationCommand.get() }->insertTextRunWithoutNewlines(lineOffset, lineLength);
         if (!isLastLine)
-            m_dictationCommand->insertParagraphSeparator();
+            Ref { m_dictationCommand.get() }->insertParagraphSeparator();
     }
 private:
-    DictationCommand* m_dictationCommand;
+    CheckedRef<DictationCommand> m_dictationCommand;
 };
 
 class DictationMarkerSupplier : public TextInsertionMarkerSupplier {
 public:
-    static Ref<DictationMarkerSupplier> create(const Vector<DictationAlternative>& alternatives)
+    static Ref<DictationMarkerSupplier> create(Vector<DictationAlternative>&& alternatives)
     {
-        return adoptRef(*new DictationMarkerSupplier(alternatives));
+        return adoptRef(*new DictationMarkerSupplier(WTFMove(alternatives)));
     }
 
     void addMarkersToTextNode(Text& textNode, unsigned offsetOfInsertion, const String& textToBeInserted) override
     {
-        auto& markerController = textNode.document().markers();
+        Ref document = textNode.document();
+        auto& markerController = document->markers();
         for (auto& alternative : m_alternatives) {
             DocumentMarker::DictationData data { alternative.context, textToBeInserted.substring(alternative.range.location, alternative.range.length) };
             markerController.addMarker(textNode, alternative.range.location + offsetOfInsertion, alternative.range.length, DocumentMarker::DictationAlternatives, WTFMove(data));
@@ -73,24 +74,24 @@ public:
     }
 
 protected:
-    DictationMarkerSupplier(const Vector<DictationAlternative>& alternatives)
-    : m_alternatives(alternatives)
+    DictationMarkerSupplier(Vector<DictationAlternative>&& alternatives)
+        : m_alternatives(WTFMove(alternatives))
     {
     }
 private:
     Vector<DictationAlternative> m_alternatives;
 };
 
-DictationCommand::DictationCommand(Document& document, const String& text, const Vector<DictationAlternative>& alternatives)
-    : TextInsertionBaseCommand(document)
+DictationCommand::DictationCommand(Ref<Document>&& document, const String& text, const Vector<DictationAlternative>& alternatives)
+    : TextInsertionBaseCommand(WTFMove(document))
     , m_textToInsert(text)
     , m_alternatives(alternatives)
 {
 }
 
-void DictationCommand::insertText(Document& document, const String& text, const Vector<DictationAlternative>& alternatives, const VisibleSelection& selectionForInsertion)
+void DictationCommand::insertText(Ref<Document>&& document, const String& text, const Vector<DictationAlternative>& alternatives, const VisibleSelection& selectionForInsertion)
 {
-    RefPtr frame { document.frame() };
+    RefPtr frame { document->frame() };
     ASSERT(frame);
 
     VisibleSelection currentSelection = frame->selection().selection();
@@ -99,17 +100,18 @@ void DictationCommand::insertText(Document& document, const String& text, const 
 
     RefPtr<DictationCommand> cmd;
     if (newText == text)
-        cmd = DictationCommand::create(document, newText, alternatives);
-    else
+        cmd = DictationCommand::create(WTFMove(document), newText, alternatives);
+    else {
         // If the text was modified before insertion, the location of dictation alternatives
         // will not be valid anymore. We will just drop the alternatives.
-        cmd = DictationCommand::create(document, newText, Vector<DictationAlternative>());
+        cmd = DictationCommand::create(WTFMove(document), newText, Vector<DictationAlternative>());
+    }
     applyTextInsertionCommand(frame.get(), *cmd, selectionForInsertion, currentSelection);
 }
 
 void DictationCommand::doApply()
 {
-    DictationCommandLineOperation operation(this);
+    DictationCommandLineOperation operation(*this);
     forEachLineInString(m_textToInsert, operation);
     postTextStateChangeNotification(AXTextEditTypeDictation, m_textToInsert);
 }
@@ -118,7 +120,7 @@ void DictationCommand::insertTextRunWithoutNewlines(size_t lineStart, size_t lin
 {
     Vector<DictationAlternative> alternativesInLine;
     collectDictationAlternativesInRange(lineStart, lineLength, alternativesInLine);
-    auto command = InsertTextCommand::createWithMarkerSupplier(document(), m_textToInsert.substring(lineStart, lineLength), DictationMarkerSupplier::create(alternativesInLine), EditAction::Dictation);
+    auto command = InsertTextCommand::createWithMarkerSupplier(protectedDocument(), m_textToInsert.substring(lineStart, lineLength), DictationMarkerSupplier::create(WTFMove(alternativesInLine)), EditAction::Dictation);
     applyCommandToComposite(WTFMove(command), endingSelection());
 }
 
@@ -127,7 +129,7 @@ void DictationCommand::insertParagraphSeparator()
     if (!canAppendNewLineFeedToSelection(endingSelection()))
         return;
 
-    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditAction::Dictation));
+    applyCommandToComposite(InsertParagraphSeparatorCommand::create(protectedDocument(), false, false, EditAction::Dictation));
 }
 
 void DictationCommand::collectDictationAlternativesInRange(size_t rangeStart, size_t rangeLength, Vector<DictationAlternative>& alternatives)

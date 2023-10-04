@@ -110,7 +110,7 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
     }
 }
 
-void JSWebAssemblyStruct::set(JSGlobalObject* globalObject, uint32_t fieldIndex, JSValue argument)
+void JSWebAssemblyStruct::set(uint32_t fieldIndex, EncodedJSValue argument)
 {
     using Wasm::TypeKind;
 
@@ -121,20 +121,14 @@ void JSWebAssemblyStruct::set(JSGlobalObject* globalObject, uint32_t fieldIndex,
     ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
 
     switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind) {
-    case TypeKind::I32: {
-        *bitwise_cast<int32_t*>(targetPointer) = argument.toInt32(globalObject);
-        return;
-    }
+    case TypeKind::I32:
     case TypeKind::F32: {
-        *bitwise_cast<uint32_t*>(targetPointer) = bitwise_cast<uint32_t>(argument.toFloat(globalObject));
+        *bitwise_cast<uint32_t*>(targetPointer) = static_cast<uint32_t>(argument);
         return;
     }
-    case TypeKind::I64: {
-        *bitwise_cast<uint64_t*>(targetPointer) = bitwise_cast<uint64_t>(argument.toBigInt64(globalObject));
-        return;
-    }
+    case TypeKind::I64:
     case TypeKind::F64: {
-        *bitwise_cast<uint64_t*>(targetPointer) = bitwise_cast<uint64_t>(argument.toNumber(globalObject));
+        *bitwise_cast<uint64_t*>(targetPointer) = argument;
         return;
     }
     case TypeKind::Arrayref:
@@ -143,7 +137,7 @@ void JSWebAssemblyStruct::set(JSGlobalObject* globalObject, uint32_t fieldIndex,
     case TypeKind::Funcref:
     case TypeKind::Ref:
     case TypeKind::RefNull: {
-        bitwise_cast<WriteBarrierBase<Unknown>*>(targetPointer)->set(vm(), this, argument);
+        bitwise_cast<WriteBarrierBase<Unknown>*>(targetPointer)->set(vm(), this, JSValue::decode(argument));
         return;
     }
     case TypeKind::V128:

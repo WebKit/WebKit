@@ -28,6 +28,7 @@ messages -> RemoteCompositorIntegration NotRefCounted Stream {
 void RecreateRenderBuffers(int width, int height) -> (Vector<MachSendRight> renderBuffers) Synchronous NotStreamEncodableReply
 #endif
 void PrepareForDisplay() -> (bool dummy) Synchronous NotStreamEncodableReply // Because CanvasRenderingContext::prepareForDisplay() requires the layer contents synchronously, this needs to be Synchronous.
+void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, uint32_t bufferIndex) -> () Synchronous
 void Destruct()
 }
 

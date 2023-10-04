@@ -50,6 +50,7 @@ struct NotificationData {
 
     bool isPersistent() const { return !serviceWorkerRegistrationURL.isNull(); }
 
+    URL defaultActionURL;
     String title;
     String body;
     String iconURL;

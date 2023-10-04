@@ -35,8 +35,7 @@ class WebKit::WebEvent {
     WTF::UUID authorizationToken();
 };
 
-enum class WebKit::WebEventType : int8_t {
-    NoType,
+enum class WebKit::WebEventType : uint8_t {
     MouseDown,
     MouseUp,
     MouseMove,
@@ -146,11 +145,11 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
-[CustomHeader] enum class WebKit::WebMouseEventButton : int32_t {
-    LeftButton,
-    MiddleButton,
-    RightButton,
-    NoButton
+[CustomHeader] enum class WebKit::WebMouseEventButton : int8_t {
+    Left,
+    Middle,
+    Right,
+    None
 };
 
 [CustomHeader] enum class WebKit::WebMouseEventSyntheticClickType : uint8_t {

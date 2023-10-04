@@ -175,7 +175,7 @@
 #include <WebCore/ImageDecoderCG.h>
 #endif
 
-#if PLATFORM(MAC)
+#if HAVE(DISPLAY_LINK)
 #include <WebCore/DisplayRefreshMonitorManager.h>
 #endif
 
@@ -661,6 +661,8 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
     
 #endif
 
+    m_mediaKeysStorageDirectory = parameters.mediaKeyStorageDirectory;
+    m_mediaKeysStorageSalt = parameters.mediaKeysStorageSalt;
     for (auto& supplement : m_supplements.values())
         supplement->setWebsiteDataStore(parameters);
 
@@ -1609,6 +1611,11 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
         platformMediaSessionManager->processWillSuspend();
 #endif
 
+#if !ENABLE(WEBPROCESS_CACHE)
+    if (!m_suppressMemoryPressureHandler)
+        releaseMemory([] { });
+#endif
+
     freezeAllLayerTrees();
 
 #if PLATFORM(COCOA)
@@ -2143,7 +2150,7 @@ void WebProcess::setClientBadge(WebPageProxyIdentifier pageIdentifier, const Web
     parentProcessConnection()->send(Messages::WebProcessProxy::SetClientBadge(pageIdentifier, origin, badge), 0);
 }
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
 void WebProcess::displayDidRefresh(uint32_t displayID, const DisplayUpdate& displayUpdate)
 {
     ASSERT(RunLoop::isMain());
@@ -2354,6 +2361,23 @@ bool WebProcess::allowsFirstPartyForCookies(const URL& firstParty)
     return AuxiliaryProcess::allowsFirstPartyForCookies(firstParty, [&] {
         return AuxiliaryProcess::allowsFirstPartyForCookies(WebCore::RegistrableDomain { firstParty }, m_allowedFirstPartiesForCookies);
     });
+}
+
+WebTransportSession* WebProcess::webTransportSession(WebTransportSessionIdentifier identifier)
+{
+    return m_webTransportSessions.get(identifier).get();
+}
+
+void WebProcess::addWebTransportSession(WebTransportSessionIdentifier identifier, WebTransportSession& session)
+{
+    ASSERT(!m_webTransportSessions.contains(identifier));
+    m_webTransportSessions.set(identifier, session);
+}
+
+void WebProcess::removeWebTransportSession(WebTransportSessionIdentifier identifier)
+{
+    ASSERT(m_webTransportSessions.contains(identifier));
+    m_webTransportSessions.remove(identifier);
 }
 
 } // namespace WebKit

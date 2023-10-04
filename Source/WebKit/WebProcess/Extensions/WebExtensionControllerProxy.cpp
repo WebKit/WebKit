@@ -58,7 +58,7 @@ Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(WebExt
 
         for (auto& contextParameters : parameters.contextParameters) {
             auto context = WebExtensionContextProxy::getOrCreate(contextParameters);
-            baseURLMap.add(contextParameters.baseURL, context);
+            baseURLMap.add(contextParameters.baseURL.protocolHostAndPort(), context);
             contexts.add(context);
         }
 
@@ -93,7 +93,7 @@ WebExtensionControllerProxy::~WebExtensionControllerProxy()
 void WebExtensionControllerProxy::load(const WebExtensionContextParameters& contextParameters)
 {
     auto context = WebExtensionContextProxy::getOrCreate(contextParameters);
-    m_extensionContextBaseURLMap.add(contextParameters.baseURL, context);
+    m_extensionContextBaseURLMap.add(contextParameters.baseURL.protocolHostAndPort(), context);
     m_extensionContexts.add(context);
 }
 
@@ -120,7 +120,7 @@ RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(c
 
 RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(const URL& url) const
 {
-    return m_extensionContextBaseURLMap.get(url.truncatedForUseAsBase());
+    return m_extensionContextBaseURLMap.get(url.protocolHostAndPort());
 }
 
 RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(WebFrame& frame, DOMWrapperWorld& world) const

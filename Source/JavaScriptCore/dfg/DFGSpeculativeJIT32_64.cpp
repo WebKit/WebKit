@@ -179,6 +179,7 @@ void SpeculativeJIT::cachedGetById(
     GPRReg scratchGPR, CacheableIdentifier identifier, Jump slowPathTarget, SpillRegistersMode spillMode, AccessType type)
 {
     UNUSED_PARAM(stubInfoGPR);
+    UNUSED_PARAM(scratchGPR);
     // This is a hacky fix for when the register allocator decides to alias the base payload with the result tag. This only happens
     // in the case of GetByIdFlush/GetByIdDirectFlush, which has a relatively expensive register allocation story already so we probably don't need to
     // trip over one move instruction.
@@ -206,7 +207,7 @@ void SpeculativeJIT::cachedGetById(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(resultTagGPR, resultPayloadGPR), InvalidGPRReg, type);
     
-    gen.generateFastPath(*this, scratchGPR);
+    gen.generateFastPath(*this);
     
     JumpList slowCases;
     if (slowPathTarget.isSet())
@@ -235,6 +236,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(Node* node,
     CacheableIdentifier identifier, const JumpList& slowPathTarget)
 {
     UNUSED_PARAM(stubInfoGPR);
+    UNUSED_PARAM(scratchGPR);
     RegisterSetBuilder usedRegisters = this->usedRegisters();
     
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
@@ -243,7 +245,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(Node* node,
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(resultTagGPR, resultPayloadGPR), JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(thisTagGPR, thisPayloadGPR), InvalidGPRReg);
     
-    gen.generateFastPath(*this, scratchGPR);
+    gen.generateFastPath(*this);
     
     JumpList slowCases;
     if (!slowPathTarget.empty())

@@ -34,8 +34,6 @@ public:
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
 private:
-    bool isTableCaption() const override { return true; }
-
     void insertedIntoTree(IsInternalMove) override;
     void willBeRemovedFromTree(IsInternalMove) override;
     LayoutUnit containingBlockLogicalWidthForContent() const final;

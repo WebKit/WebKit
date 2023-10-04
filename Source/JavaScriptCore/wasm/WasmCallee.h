@@ -85,6 +85,7 @@ protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
 };
 
+#if ENABLE(JIT)
 class JITCallee : public Callee {
 public:
     friend class Callee;
@@ -127,6 +128,34 @@ private:
     }
 };
 
+#else
+
+class JSEntrypointCallee final : public Callee {
+public:
+    friend class Callee;
+
+    static Ref<JSEntrypointCallee> create()
+    {
+        return adoptRef(*new JSEntrypointCallee);
+    }
+
+private:
+    JSEntrypointCallee()
+        : Callee(Wasm::CompilationMode::JSEntrypointMode)
+    {
+    }
+
+    std::tuple<void*, void*> rangeImpl() const
+    {
+        return { nullptr, nullptr };
+    }
+
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
+
+    RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
+};
+#endif // ENABLE(JIT)
+
 class WasmToJSCallee final : public Callee {
 public:
     friend class Callee;
@@ -149,7 +178,7 @@ private:
     RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
 };
 
-
+#if ENABLE(JIT)
 class JSToWasmICCallee final : public JITCallee {
 public:
     static Ref<JSToWasmICCallee> create()
@@ -165,7 +194,7 @@ private:
     {
     }
 };
-
+#endif
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 

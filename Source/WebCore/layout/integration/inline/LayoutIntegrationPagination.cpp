@@ -28,6 +28,7 @@
 
 #include "FontCascade.h"
 #include "InlineIteratorLineBox.h"
+#include "PlacedFloats.h"
 #include "RenderBlockFlow.h"
 #include "RenderStyleInlines.h"
 #include "RenderTableCell.h"
@@ -35,10 +36,43 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, RenderBlockFlow& flow)
+Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, RenderBlockFlow& flow)
 {
     auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
+
+    HashMap<size_t, LayoutUnit, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>  lineFloatBottomMap;
+    for (auto& floatBox : placedFloats.list()) {
+        if (!floatBox.layoutBox())
+            continue;
+
+        auto& renderer = downcast<RenderBox>(inlineContent.rendererForLayoutBox(*floatBox.layoutBox()));
+        bool isUsplittable = renderer.isUnsplittableForPagination();
+
+        auto placedByLine = floatBox.placedByLine();
+        if (!placedByLine) {
+            if (isUsplittable) {
+                auto rect = floatBox.absoluteRectWithMargin();
+                flow.updateMinimumPageHeight(rect.top(), rect.height());
+            }
+            continue;
+        }
+
+        auto floatMinimumBottom = [&] {
+            if (isUsplittable)
+                return floatBox.absoluteRectWithMargin().bottom();
+
+            if (auto* block = dynamicDowncast<RenderBlockFlow>(renderer)) {
+                if (auto firstLine = InlineIterator::firstLineBoxFor(*block))
+                    return LayoutUnit { firstLine->logicalBottom() };
+            }
+            return 0_lu;
+        }();
+
+        auto result = lineFloatBottomMap.add(*placedByLine, floatMinimumBottom);
+        if (!result.isNewEntry)
+            result.iterator->value = std::max(floatMinimumBottom, result.iterator->value);
+    }
 
     std::optional<size_t> previousPageBreakIndex;
 
@@ -48,8 +82,9 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
     auto accumulatedOffset = 0_lu;
     for (size_t lineIndex = 0; lineIndex < lineCount;) {
         auto line = InlineIterator::lineBoxFor(inlineContent, lineIndex);
+        auto floatMinimumBottom = lineFloatBottomMap.getOptional(lineIndex).value_or(0_lu);
 
-        auto adjustment = flow.computeLineAdjustmentForPagination(line, accumulatedOffset);
+        auto adjustment = flow.computeLineAdjustmentForPagination(line, accumulatedOffset, floatMinimumBottom);
 
         if (adjustment.isFirstAfterPageBreak) {
             auto remainingLines = lineCount - lineIndex;
@@ -73,6 +108,10 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
         }
 
         accumulatedOffset += adjustment.strut;
+
+        if (adjustment.isFirstAfterPageBreak && !lineIndex)
+            accumulatedOffset += inlineContent.clearGapBeforeFirstLine;
+
         adjustments[lineIndex] = LineAdjustment { accumulatedOffset, adjustment.isFirstAfterPageBreak };
 
         ++lineIndex;
@@ -91,18 +130,26 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
     if (adjustments.isEmpty())
         return;
 
-    inlineContent.isPaginated = true;
+    auto writingMode = inlineContent.formattingContextRoot().style().writingMode();
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+
     auto& displayContent = inlineContent.displayContent();
     for (size_t lineIndex = 0; lineIndex < displayContent.lines.size(); ++lineIndex) {
         auto& line = displayContent.lines[lineIndex];
         auto& adjustment = adjustments[lineIndex];
-        line.moveVertically(adjustment.offset);
+        line.moveInBlockDirection(adjustment.offset, isHorizontalWritingMode);
         if (adjustment.isFirstAfterPageBreak)
             line.setIsFirstAfterPageBreak();
     }
-    for (auto& box : displayContent.boxes)
-        box.moveVertically(adjustments[box.lineIndex()].offset);
+    for (auto& box : displayContent.boxes) {
+        auto offset = adjustments[box.lineIndex()].offset;
+        if (isHorizontalWritingMode)
+            box.moveVertically(offset);
+        else
+            box.moveHorizontally(offset);
+    }
 
+    inlineContent.isPaginated = true;
     inlineContent.firstLinePaginationOffset = adjustments[0].offset;
 }
 

@@ -90,7 +90,7 @@ inline std::optional<WebExtensionWindowIdentifier> toWebExtensionWindowIdentifie
     return result;
 }
 
-inline double toWebAPI(WebExtensionWindowIdentifier identifier)
+inline double toWebAPI(const WebExtensionWindowIdentifier& identifier)
 {
     ASSERT(identifier.isValid());
 

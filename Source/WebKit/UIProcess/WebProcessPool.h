@@ -70,11 +70,13 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #endif
 
 #if PLATFORM(MAC)
-#include "DisplayLink.h"
 #include <WebCore/PowerObserverMac.h>
 #include <pal/system/SystemSleepListener.h>
 #endif
 
+#if HAVE(DISPLAY_LINK)
+#include "DisplayLink.h"
+#endif
 
 #if ENABLE(IPC_TESTING_API)
 #include "IPCTester.h"
@@ -244,7 +246,7 @@ public:
     void displayPropertiesChanged(const WebCore::ScreenProperties&, WebCore::PlatformDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     DisplayLinkCollection& displayLinks() { return m_displayLinks; }
 #endif
 
@@ -785,7 +787,7 @@ private:
 
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     DisplayLinkCollection m_displayLinks;
 #endif
 

@@ -58,7 +58,6 @@ TextStream& operator<<(TextStream& ts, RenderingMethod method)
 {
     switch (method) {
     case RenderingMethod::Local: ts << "Local"; break;
-    case RenderingMethod::DisplayList: ts << "DisplayList"; break;
     }
 
     return ts;

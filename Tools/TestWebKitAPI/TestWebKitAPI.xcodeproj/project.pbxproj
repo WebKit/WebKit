@@ -64,6 +64,7 @@
 		0794742D25CB33FD00C597EB /* media-remote.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EB /* media-remote.html */; };
 		0794742D25CB33FD00C597EC /* webrtc-remote.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EC /* webrtc-remote.html */; };
 		0794742D25CB33FD00C597ED /* webrtc-remote-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597ED /* webrtc-remote-iframe.html */; };
+		0794742D25CB33FD00C597EE /* camera-to-canvas.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EE /* camera-to-canvas.html */; };
 		0799C34B1EBA3301003B7532 /* disableGetUserMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */; };
 		079D45F22A2A6BBE003830C7 /* Viewport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D45F12A2A6BBE003830C7 /* Viewport.mm */; };
 		07C046CA1E4262A8007201E7 /* CARingBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C046C91E42573E007201E7 /* CARingBufferTest.cpp */; };
@@ -331,6 +332,7 @@
 		5159F267260D43E300B2DA3C /* NowPlayingInfoTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5159F266260D43E300B2DA3C /* NowPlayingInfoTests.cpp */; };
 		515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */; };
 		516281252325C18000BB7E42 /* TestPDFDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516281242325C17B00BB7E42 /* TestPDFDocument.mm */; };
+		516404382AB1D9BC0042B1C3 /* NativePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516404372AB1D9BB0042B1C3 /* NativePromise.cpp */; };
 		51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */; };
 		51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */; };
 		5175C7A226F876230003AF5C /* BundlePageConsoleMessage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5175C7A126F876230003AF5C /* BundlePageConsoleMessage.mm */; };
@@ -913,6 +915,7 @@
 		A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */; };
 		A155022C1E050D0300A24C57 /* duplicate-completion-handler-calls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A155022B1E050BC500A24C57 /* duplicate-completion-handler-calls.html */; };
 		A16F66BA1C40EB4F00BD4D24 /* ContentFiltering.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */; };
+		A170E3AA2ABA7857009EA799 /* VectorCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A170E3A22ABA7857009EA799 /* VectorCocoa.mm */; };
 		A1798B7F22431D2B000764BD /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A1798B7E22431D2B000764BD /* libWebCoreTestSupport.dylib */; };
 		A1798B8522433647000764BD /* WebProcessPlugInWithInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */; };
 		A1798B872243449B000764BD /* apple-pay-availability.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1798B862243446B000764BD /* apple-pay-availability.html */; };
@@ -922,6 +925,7 @@
 		A17EAC55208305A00084B41B /* find.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = A17EAC542083056E0084B41B /* find.pdf */; };
 		A1C142C224AA7B2E00444207 /* ContextMenuMouseEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C142C124AA7B2E00444207 /* ContextMenuMouseEvents.mm */; };
 		A1C4FB731BACD1CA003742D0 /* pages.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1C4FB721BACD1B7003742D0 /* pages.pages */; };
+		A1C7D7D32AB817A90055AD62 /* LoggerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C7D7D22AB817A90055AD62 /* LoggerCocoa.mm */; };
 		A1EC11881F42541200D0146E /* PreviewConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EC11871F42541200D0146E /* PreviewConverter.cpp */; };
 		A1FB503D22A1CBE200D4D979 /* apple-pay-availability-existing-object.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1FB503C22A1C24400D4D979 /* apple-pay-availability-existing-object.html */; };
 		A1FB503F22A20F6400D4D979 /* apple-pay-can-make-payments.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1FB503E22A1E3B300D4D979 /* apple-pay-can-make-payments.html */; };
@@ -935,6 +939,7 @@
 		A57D54F91F3397B400A97AA7 /* LifecycleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D54F71F3397B400A97AA7 /* LifecycleLogger.cpp */; };
 		A5B149DE1F5A19EA00C6DAFF /* MIMETypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B149DD1F5A19DC00C6DAFF /* MIMETypeRegistry.cpp */; };
 		A5E2027515B21F6E00C13E14 /* WindowlessWebViewWithMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */; };
+		A73E66C42AB29574005FC327 /* EventTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73E66C32AB29574005FC327 /* EventTests.cpp */; };
 		AA96CAB621C7DB5000FD2F97 /* ParsedContentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA96CAB421C7DB4200FD2F97 /* ParsedContentType.cpp */; };
 		AD57AC201DA7465000FF1BDE /* DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD57AC1E1DA7464D00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp */; };
 		AD57AC211DA7465B00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD57AC1F1DA7464D00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp */; };
@@ -1295,6 +1300,13 @@
 			remoteGlobalIDString = 3A15783C28D1505B00142DB1;
 			remoteInfo = TestWGSL;
 		};
+		44134E622AC128AA00D2BFCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
+		};
 		5C9D922122D7DC84008E9266 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -1519,6 +1531,7 @@
 				46C3AEB323D0E529001B0680 /* beforeunload.html in Copy Resources */,
 				2DE71B001D49C3ED00904094 /* blinking-div.html in Copy Resources */,
 				7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */,
+				0794742D25CB33FD00C597EE /* camera-to-canvas.html in Copy Resources */,
 				26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */,
 				F4D0A6382A2D520800D47257 /* canvas-fingerprinting.html in Copy Resources */,
 				F4E7A66327222CA900E74D36 /* canvas-image-data.html in Copy Resources */,
@@ -1991,6 +2004,7 @@
 		0794742C25CB33B000C597EB /* media-remote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "media-remote.html"; sourceTree = "<group>"; };
 		0794742C25CB33B000C597EC /* webrtc-remote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webrtc-remote.html"; sourceTree = "<group>"; };
 		0794742C25CB33B000C597ED /* webrtc-remote-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webrtc-remote-iframe.html"; sourceTree = "<group>"; };
+		0794742C25CB33B000C597EE /* camera-to-canvas.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "camera-to-canvas.html"; sourceTree = "<group>"; };
 		0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = disableGetUserMedia.html; sourceTree = "<group>"; };
 		079D45F12A2A6BBE003830C7 /* Viewport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Viewport.mm; sourceTree = "<group>"; };
 		07C046C91E42573E007201E7 /* CARingBufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBufferTest.cpp; sourceTree = "<group>"; };
@@ -2102,6 +2116,7 @@
 		1CC4C74B28890C5400A3B23D /* SVGFont.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = SVGFont.html; sourceTree = "<group>"; };
 		1CC4C74C28890CE100A3B23D /* Helvetica_light.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = Helvetica_light.svg; sourceTree = "<group>"; };
 		1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "idempotent-mode-autosizing-only-honors-percentages.html"; sourceTree = "<group>"; };
+		1CC94E3D2AC75AB10045F269 /* WKWebExtensionAPIAction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIAction.mm; sourceTree = "<group>"; };
 		1CE6FAC12320264F00E48F6E /* rich-color-filtered.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "rich-color-filtered.html"; sourceTree = "<group>"; };
 		1CF087D725ED7F73004148CB /* MobileAssetSandboxCheck.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MobileAssetSandboxCheck.mm; sourceTree = "<group>"; };
 		1CF0D3781BBF2F3D00B4EF54 /* WKRetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRetainPtr.cpp; sourceTree = "<group>"; };
@@ -2454,6 +2469,7 @@
 		516281242325C17B00BB7E42 /* TestPDFDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestPDFDocument.mm; path = cocoa/TestPDFDocument.mm; sourceTree = "<group>"; };
 		516281262325C19100BB7E42 /* PDFSnapshot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFSnapshot.mm; sourceTree = "<group>"; };
 		516281282325C45400BB7E42 /* PDFKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PDFKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/PDFKit.framework; sourceTree = DEVELOPER_DIR; };
+		516404372AB1D9BB0042B1C3 /* NativePromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativePromise.cpp; sourceTree = "<group>"; };
 		5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MessagePortProviders.mm; sourceTree = "<group>"; };
 		51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-1.html"; sourceTree = "<group>"; };
 		51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-2.html"; sourceTree = "<group>"; };
@@ -3065,6 +3081,7 @@
 		A15502281E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DuplicateCompletionHandlerCalls.mm; sourceTree = "<group>"; };
 		A155022B1E050BC500A24C57 /* duplicate-completion-handler-calls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "duplicate-completion-handler-calls.html"; sourceTree = "<group>"; };
 		A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContentFiltering.html; sourceTree = "<group>"; };
+		A170E3A22ABA7857009EA799 /* VectorCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VectorCocoa.mm; sourceTree = "<group>"; };
 		A1798B7E22431D2B000764BD /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1798B8122431D65000764BD /* ApplePay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePay.mm; sourceTree = "<group>"; };
 		A1798B8322433647000764BD /* WebProcessPlugInWithInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebProcessPlugInWithInternals.h; sourceTree = "<group>"; };
@@ -3082,6 +3099,7 @@
 		A1C142C124AA7B2E00444207 /* ContextMenuMouseEvents.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuMouseEvents.mm; sourceTree = "<group>"; };
 		A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
 		A1C4FB721BACD1B7003742D0 /* pages.pages */ = {isa = PBXFileReference; lastKnownFileType = file; name = pages.pages; path = ios/pages.pages; sourceTree = SOURCE_ROOT; };
+		A1C7D7D22AB817A90055AD62 /* LoggerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggerCocoa.mm; sourceTree = "<group>"; };
 		A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AlwaysRevalidatedURLSchemes.mm; sourceTree = "<group>"; };
 		A1EC11871F42541200D0146E /* PreviewConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PreviewConverter.cpp; sourceTree = "<group>"; };
 		A1FB503C22A1C24400D4D979 /* apple-pay-availability-existing-object.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-availability-existing-object.html"; sourceTree = "<group>"; };
@@ -3102,6 +3120,7 @@
 		A5B149DD1F5A19DC00C6DAFF /* MIMETypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIMETypeRegistry.cpp; sourceTree = "<group>"; };
 		A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WindowlessWebViewWithMedia.html; sourceTree = "<group>"; };
 		A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowlessWebViewWithMedia.mm; sourceTree = "<group>"; };
+		A73E66C32AB29574005FC327 /* EventTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTests.cpp; sourceTree = "<group>"; };
 		A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckedArithmeticOperations.cpp; sourceTree = "<group>"; };
 		AA96CAB421C7DB4200FD2F97 /* ParsedContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentType.cpp; sourceTree = "<group>"; };
 		ABF510632A19B8AC7EC40E17 /* AbortableTaskQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbortableTaskQueue.cpp; sourceTree = "<group>"; };
@@ -3117,6 +3136,7 @@
 		B61EB1642994734A0048DFC0 /* WKWebExtensionAPIPermissions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIPermissions.mm; sourceTree = "<group>"; };
 		B63EF53E2995797F00A190A3 /* TestWebExtensionsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestWebExtensionsDelegate.h; path = cocoa/TestWebExtensionsDelegate.h; sourceTree = "<group>"; };
 		B63EF5462995797F00A190A3 /* TestWebExtensionsDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestWebExtensionsDelegate.mm; path = cocoa/TestWebExtensionsDelegate.mm; sourceTree = "<group>"; };
+		B67543F12ABA3F21005E4184 /* WKWebExtensionAPIScripting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIScripting.mm; sourceTree = "<group>"; };
 		B6D1708E2A9F9C9F004C72E6 /* WKWebExtensionAPILocalization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPILocalization.mm; sourceTree = "<group>"; };
 		B6E1E1E02942B0DD00F314D2 /* WKWebExtensionAPIEvent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIEvent.mm; sourceTree = "<group>"; };
 		BC029B161486AD6400817DA9 /* RetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RetainPtr.cpp; sourceTree = "<group>"; };
@@ -3524,7 +3544,6 @@
 		F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferredContentMode.mm; sourceTree = "<group>"; };
 		F491536E2901CEED004E2E97 /* CustomContentViewGestures.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomContentViewGestures.mm; sourceTree = "<group>"; };
 		F491DBAD281DE0980081705F /* image-controls.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-controls.html"; sourceTree = "<group>"; };
-		F493247C1F44DF8D006F4336 /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		F494B369263120780060A310 /* TextServicesTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextServicesTests.mm; sourceTree = "<group>"; };
 		F49992C5248DABE400034167 /* overflow-hidden.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "overflow-hidden.html"; sourceTree = "<group>"; };
 		F4A2E64C284541BA0001FEEF /* FocusWebView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FocusWebView.mm; sourceTree = "<group>"; };
@@ -3590,6 +3609,7 @@
 		F4EB4E902328AC3000574DAB /* NSItemProviderAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = NSItemProviderAdditions.mm; path = cocoa/NSItemProviderAdditions.mm; sourceTree = SOURCE_ROOT; };
 		F4EC8093260D2E620010311D /* simple-image-overlay.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-image-overlay.html"; sourceTree = "<group>"; };
 		F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-test-now-playing.html"; sourceTree = "<group>"; };
+		F4F2894C2AC4EEF70084A38D /* UIKitSPIForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPIForTesting.h; sourceTree = "<group>"; };
 		F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-size-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
 		F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "skinny-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
 		F4F5BB5021667BAA002D06B9 /* TestFontOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFontOptions.h; sourceTree = "<group>"; };
@@ -3725,8 +3745,8 @@
 				3AA7856029B6C8AA00C4374A /* TestWebKitAPIPrefix.h */,
 				DDF3A82928930475005920CF /* gtest.xcodeproj */,
 				49AEEF682407276F00C87E4C /* Info.plist */,
-				5C9D922622D7DD7B008E9266 /* Derived Sources */,
 				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
+				5C9D922622D7DD7B008E9266 /* Derived Sources */,
 				5C9D921E22D7DBF8008E9266 /* SourcesCocoa.txt */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				BCB9EB66112366D800A137E0 /* Tests */,
@@ -4207,6 +4227,7 @@
 				51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */,
 				5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */,
 				1CFAA40828947999009F894D /* WKWebExtension.mm */,
+				1CC94E3D2AC75AB10045F269 /* WKWebExtensionAPIAction.mm */,
 				1C2B4D4C2A81F42800C528A1 /* WKWebExtensionAPIAlarms.mm */,
 				B6E1E1E02942B0DD00F314D2 /* WKWebExtensionAPIEvent.mm */,
 				1C1549A2292ADB64001B9E5B /* WKWebExtensionAPIExtension.mm */,
@@ -4214,6 +4235,7 @@
 				330E135E2943C92000367438 /* WKWebExtensionAPINamespace.mm */,
 				B61EB1642994734A0048DFC0 /* WKWebExtensionAPIPermissions.mm */,
 				1C1549852926F4CA001B9E5B /* WKWebExtensionAPIRuntime.mm */,
+				B67543F12ABA3F21005E4184 /* WKWebExtensionAPIScripting.mm */,
 				1CF7FFA72AA7C302003609F0 /* WKWebExtensionAPITabs.mm */,
 				3378222C2947C095002106BB /* WKWebExtensionAPIWebNavigation.mm */,
 				1C9A2E182A9FB6F400D1B4A5 /* WKWebExtensionAPIWindows.mm */,
@@ -4266,7 +4288,6 @@
 				F4517B652054C49500C26721 /* TestWKWebViewController.h */,
 				F4517B662054C49500C26721 /* TestWKWebViewController.mm */,
 				2D2171C3262F8B8200C209DC /* UIKitMacHelperSPI.h */,
-				F493247C1F44DF8D006F4336 /* UIKitSPI.h */,
 				F4CDAB3322489FE10057A2D9 /* UserInterfaceSwizzler.h */,
 			);
 			path = ios;
@@ -4542,6 +4563,7 @@
 			children = (
 				2D83D08A29194B0100C5C051 /* ArgumentCoderTests.cpp */,
 				7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */,
+				A73E66C32AB29574005FC327 /* EventTests.cpp */,
 				7B7392EB28F84BD2007297FC /* IPCTestUtilities.cpp */,
 				7B7392EA28F849F3007297FC /* IPCTestUtilities.h */,
 				7B7392E128F849EC007297FC /* MessageSenderTests.cpp */,
@@ -4660,6 +4682,7 @@
 				F41AB9971EF4692C0083FA08 /* background-image-link-and-input.html */,
 				464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */,
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
+				0794742C25CB33B000C597EE /* camera-to-canvas.html */,
 				F4D0A6362A2D51F900D47257 /* canvas-fingerprinting.html */,
 				F4E7A66227222BB100E74D36 /* canvas-image-data.html */,
 				2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */,
@@ -4953,6 +4976,7 @@
 			isa = PBXGroup;
 			children = (
 				A17A5A3422A887EC0065C5F0 /* AppKitTestSPI.h */,
+				F4F2894C2AC4EEF70084A38D /* UIKitSPIForTesting.h */,
 			);
 			path = spi;
 			sourceTree = "<group>";
@@ -5241,6 +5265,7 @@
 				CE78705D2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.cpp */,
 				CE78705C2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.h */,
 				FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */,
+				516404372AB1D9BB0042B1C3 /* NativePromise.cpp */,
 				A57D54F21F338C3600A97AA7 /* NeverDestroyed.cpp */,
 				CD48A87224C8A66F00F5800C /* Observer.cpp */,
 				CE50D8C81C8665CE0072EA5A /* OptionSet.cpp */,
@@ -5758,12 +5783,14 @@
 			isa = PBXGroup;
 			children = (
 				1CA6FBAC2A1D818C001D4402 /* ContextualizedNSString.mm */,
+				A1C7D7D22AB817A90055AD62 /* LoggerCocoa.mm */,
 				1C4616A626BB172F00F8C9F6 /* TextStreamCocoa.cpp */,
 				1C46169E26BA510700F8C9F6 /* TextStreamCocoa.mm */,
 				44CDE4D326EE6E41009F6ACB /* TypeCastsCocoa.mm */,
 				44652CB626FCD405005EC272 /* TypeCastsCocoaARC.mm */,
 				E3C21A7B21B25CA2003B31A3 /* URLExtras.mm */,
 				3A31EA7529C0D1AA0045E65B /* UUIDCocoa.mm */,
+				A170E3A22ABA7857009EA799 /* VectorCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -5829,6 +5856,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				44134E632AC128AA00D2BFCB /* PBXTargetDependency */,
 			);
 			name = TestWTFLibrary;
 			productName = TestWebKitAPILibrary;
@@ -6144,6 +6172,7 @@
 			files = (
 				2D83D08B29194B0100C5C051 /* ArgumentCoderTests.cpp in Sources */,
 				7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */,
+				A73E66C42AB29574005FC327 /* EventTests.cpp in Sources */,
 				7B7392EC28F84BD3007297FC /* IPCTestUtilities.cpp in Sources */,
 				7B9FC39F28A26137007570E7 /* mainIOS.mm in Sources */,
 				7B9FC3A028A26137007570E7 /* mainMac.mm in Sources */,
@@ -6208,6 +6237,7 @@
 				7C83DEE81D0A590C00FEBCF3 /* ListHashSet.cpp in Sources */,
 				7C83DF1D1D0A590C00FEBCF3 /* Lock.cpp in Sources */,
 				A57D54F61F3395D000A97AA7 /* Logger.cpp in Sources */,
+				A1C7D7D32AB817A90055AD62 /* LoggerCocoa.mm in Sources */,
 				D04CF93F285C77CA005D6337 /* MachSendRight.cpp in Sources */,
 				4909EE3A2D09480C88982D56 /* Markable.cpp in Sources */,
 				7C83DEED1D0A590C00FEBCF3 /* MathExtras.cpp in Sources */,
@@ -6215,6 +6245,7 @@
 				7C83DEF61D0A590C00FEBCF3 /* MetaAllocator.cpp in Sources */,
 				CE78705F2107AB980053AC67 /* MoveOnlyLifecycleLogger.cpp in Sources */,
 				7C83DEFE1D0A590C00FEBCF3 /* NakedPtr.cpp in Sources */,
+				516404382AB1D9BC0042B1C3 /* NativePromise.cpp in Sources */,
 				A57D54F31F338C3600A97AA7 /* NeverDestroyed.cpp in Sources */,
 				CD48A87324C8A66F00F5800C /* Observer.cpp in Sources */,
 				1A77BAA31D9AFFFC005FC568 /* OptionSet.cpp in Sources */,
@@ -6285,6 +6316,7 @@
 				3A31EA7D29C0D1AA0045E65B /* UUIDCocoa.mm in Sources */,
 				7C83DF4C1D0A590C00FEBCF3 /* Vector.cpp in Sources */,
 				44B28A0728D18ADA0010172C /* VectorCF.cpp in Sources */,
+				A170E3AA2ABA7857009EA799 /* VectorCocoa.mm in Sources */,
 				37C7CC2D1EA4146B007BD956 /* WeakLinking.cpp in Sources */,
 				57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */,
 				46BBEA1B25F9835700D4987A /* WorkQueue.cpp in Sources */,
@@ -6897,6 +6929,11 @@
 			isa = PBXTargetDependency;
 			target = 3A15783C28D1505B00142DB1 /* TestWGSL */;
 			targetProxy = 3A5DDAFB28D3F2A7004DA950 /* PBXContainerItemProxy */;
+		};
+		44134E632AC128AA00D2BFCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = 44134E622AC128AA00D2BFCB /* PBXContainerItemProxy */;
 		};
 		5C9D922222D7DC84008E9266 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

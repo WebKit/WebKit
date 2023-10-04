@@ -154,8 +154,7 @@ private:
         ASSERT(!m_workset->isEmpty());
 
         liveAtHead.reserveCapacity(liveAtHead.size() + m_workset->size());
-        for (unsigned newValue : *m_workset)
-            liveAtHead.uncheckedAppend(newValue);
+        liveAtHead.appendRange(m_workset->begin(), m_workset->end());
 
         bool changedPredecessor = false;
         for (BasicBlock* predecessor : block->predecessors) {

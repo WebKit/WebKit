@@ -76,6 +76,7 @@ public:
 
     Rect clone() const;
     operator LayoutRect() const;
+    operator FloatRect() const;
 
 private:
 #if ASSERT_ENABLED
@@ -315,7 +316,13 @@ inline Rect Rect::clone() const
 
 inline Rect::operator LayoutRect() const
 {
-    ASSERT(hasValidGeometry()); 
+    ASSERT(hasValidGeometry());
+    return m_rect;
+}
+
+inline Rect::operator FloatRect() const
+{
+    ASSERT(hasValidGeometry());
     return m_rect;
 }
 

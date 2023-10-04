@@ -62,7 +62,7 @@ WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS) -Wglobal-constructors -
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
 WK_FIXME_WARNING_CFLAGS = -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-macro-redefined -Wno-undef -Wno-unused-parameter;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
 // This is overridden in ANGLE-dynamic.xcconfig.

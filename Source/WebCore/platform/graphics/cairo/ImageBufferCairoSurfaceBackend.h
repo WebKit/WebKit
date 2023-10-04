@@ -40,9 +40,8 @@ class ImageBufferCairoSurfaceBackend : public ImageBufferCairoBackend {
 public:
     GraphicsContext& context() override;
 
-    IntSize backendSize() const override;
-
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) override;
+    RefPtr<NativeImage> copyNativeImage() override;
+    RefPtr<NativeImage> createNativeImageReference() override;
 
     RefPtr<cairo_surface_t> createCairoSurface() override;
 

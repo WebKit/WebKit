@@ -116,7 +116,7 @@ AccessibilityTable* AccessibilityTableRow::parentTable() const
     return nullptr;
 }
 
-AXCoreObject* AccessibilityTableRow::headerObject()
+AXCoreObject* AccessibilityTableRow::rowHeader()
 {
     const auto& rowChildren = children();
     if (rowChildren.isEmpty())

@@ -540,7 +540,7 @@ void Pasteboard::writeSelection(const SimpleRange& selectedRange, bool canSmartC
     writeRangeToDataObject(selectedRange, frame);
 }
 
-void Pasteboard::writePlainTextToDataObject(const String& text, SmartReplaceOption smartReplaceOption)
+void Pasteboard::writePlainTextToDataObject(const String& text, SmartReplaceOption)
 {
     if (!m_writableDataObject)
         return;

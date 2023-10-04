@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-enum WindowIdentifierType { };
+enum class WindowIdentifierType { };
 using WindowIdentifier = ObjectIdentifier<WindowIdentifierType>;
 
 // Window identifier that is unique across all WebContent processes.

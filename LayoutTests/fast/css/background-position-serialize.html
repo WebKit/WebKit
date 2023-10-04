@@ -115,18 +115,18 @@ shouldBe("t.style.cssText", "background-position: 0% 0%;");
 shouldBe("t.getAttribute('style')", "background-position: 0% 0%;");
 
 run("t.style.backgroundPosition = 'center';");
-shouldBe("t.style.backgroundPosition", "center");
+shouldBe("t.style.backgroundPosition", "center center");
 shouldBe("t.style.backgroundPositionX", "center");
 shouldBe("t.style.backgroundPositionY", "center");
-shouldBe("t.style.cssText", "background-position: center;");
-shouldBe("t.getAttribute('style')", "background-position: center;");
+shouldBe("t.style.cssText", "background-position: center center;");
+shouldBe("t.getAttribute('style')", "background-position: center center;");
 
 run("t.style.backgroundPosition = '0% center';");
-shouldBe("t.style.backgroundPosition", "0%");
+shouldBe("t.style.backgroundPosition", "0% center");
 shouldBe("t.style.backgroundPositionX", "0%");
 shouldBe("t.style.backgroundPositionY", "center");
-shouldBe("t.style.cssText", "background-position: 0%;");
-shouldBe("t.getAttribute('style')", "background-position: 0%;");
+shouldBe("t.style.cssText", "background-position: 0% center;");
+shouldBe("t.getAttribute('style')", "background-position: 0% center;");
 
 run("t.style.backgroundPosition = 'center 0%';");
 shouldBe("t.style.backgroundPosition", "center 0%");

@@ -83,7 +83,7 @@ public:
     RemoteFrame* remoteFrame() const;
 
 protected:
-    RenderWidget(HTMLFrameOwnerElement&, RenderStyle&&);
+    RenderWidget(Type, HTMLFrameOwnerElement&, RenderStyle&&);
 
     void willBeDestroyed() override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;

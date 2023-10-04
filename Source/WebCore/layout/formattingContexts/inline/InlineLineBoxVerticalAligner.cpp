@@ -49,7 +49,7 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
         if (rootBox().style().lineBoxContain() != RenderStyle::initialLineBoxContain())
             return false;
         auto& rootInlineBox = lineBox.rootInlineBox();
-        if (!layoutState().inStandardsMode() || !rootInlineBox.isPreferredLineHeightFontMetricsBased() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
+        if (!inlineLayoutState().inStandardsMode() || !rootInlineBox.isPreferredLineHeightFontMetricsBased() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
             return false;
         if (rootInlineBox.hasAnnotation())
             return false;
@@ -267,8 +267,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
         maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.layoutBounds().ascent;
 
     auto affectsRootInlineBoxVerticalPosition = [&](auto& inlineLevelBox) {
-        auto inlineLevelBoxStrechesLineBox = formattingGeometry.inlineLevelBoxAffectsLineBox(inlineLevelBox);
-        return inlineLevelBoxStrechesLineBox || ((inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isListMarker()) && inlineLevelBox.layoutBounds().ascent && inlineLevelBox.mayStretchLineBox());
+        return formattingGeometry.inlineLevelBoxAffectsLineBox(inlineLevelBox);
     };
 
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {

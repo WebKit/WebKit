@@ -56,7 +56,7 @@ void RemoteMediaResourceProxy::responseReceived(WebCore::PlatformMediaResource&,
 
 void RemoteMediaResourceProxy::redirectReceived(WebCore::PlatformMediaResource&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::RedirectReceived(m_id, request, response), [completionHandler = WTFMove(completionHandler)](auto&& request) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::RedirectReceived(m_id, request, response), [completionHandler = WTFMove(completionHandler)](WebCore::ResourceRequest&& request) mutable {
         completionHandler(WTFMove(request));
     });
 }

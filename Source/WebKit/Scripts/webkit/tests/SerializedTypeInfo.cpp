@@ -42,6 +42,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
+#include "TemplateTest.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
 #include <Namespace/ReturnRefClass.h>
@@ -251,12 +252,28 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "optionalTuple"_s
             },
         } },
+        { "WebKit::TemplateTest"_s, {
+            {
+                "bool"_s,
+                "value"_s
+            },
+        } },
         { "WebCore::SharedStringHash"_s, {
             { "uint32_t"_s, "alias"_s }
         } },
         { "WebCore::UsingWithSemicolon"_s, {
             { "uint32_t"_s, "alias"_s }
         } },
+#if OS(WINDOWS)
+        { "WTF::ProcessID"_s, {
+            { "int"_s, "alias"_s }
+        } },
+#endif
+#if !OS(WINDOWS)
+        { "WTF::ProcessID"_s, {
+            { "pid_t"_s, "alias"_s }
+        } },
+#endif
     };
 }
 
@@ -285,6 +302,9 @@ Vector<SerializedEnumInfo> allSerializedEnums()
             static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue),
 #if ENABLE(OPTION_SET_SECOND_VALUE)
             static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue),
+#endif
+#if !ENABLE(OPTION_SET_SECOND_VALUE)
+            static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValueElse),
 #endif
             static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue),
         } },

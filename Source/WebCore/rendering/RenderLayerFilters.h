@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,7 @@ public:
     
     bool hasFilterThatMovesPixels() const;
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
+    bool hasSourceImage() const;
 
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();

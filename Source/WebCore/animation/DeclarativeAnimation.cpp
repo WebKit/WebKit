@@ -58,7 +58,7 @@ DeclarativeAnimation::~DeclarativeAnimation()
 const std::optional<const Styleable> DeclarativeAnimation::owningElement() const
 {
     if (m_owningElement)
-        return Styleable(*m_owningElement.get(), m_owningPseudoId);
+        return Styleable(*m_owningElement, m_owningPseudoId);
     return std::nullopt;
 }
 

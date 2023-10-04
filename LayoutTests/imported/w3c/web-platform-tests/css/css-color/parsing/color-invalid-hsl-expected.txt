@@ -18,4 +18,10 @@ PASS e.style['color'] = "hsla()" should not set the property value
 PASS e.style['color'] = "hsla(0)" should not set the property value
 PASS e.style['color'] = "hsla(0, 0%)" should not set the property value
 PASS e.style['color'] = "hsla(0, 0%, 0%, 1, 0%)" should not set the property value
+PASS e.style['color'] = "hsl(90 calc(infinity) 50%)" should not set the property value
+PASS e.style['color'] = "hsl(90 calc(0) 50%)" should not set the property value
+PASS e.style['color'] = "hsl(90 calc(0 / 0) 50%)" should not set the property value
+PASS e.style['color'] = "hsl(90 50% calc(infinity))" should not set the property value
+PASS e.style['color'] = "hsl(90 50% calc(-infinity))" should not set the property value
+PASS e.style['color'] = "hsl(90 50% calc(0 / 0))" should not set the property value
 

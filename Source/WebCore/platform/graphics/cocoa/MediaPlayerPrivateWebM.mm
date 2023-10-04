@@ -86,7 +86,7 @@ static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     : m_player(player)
     , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstance() init]))
-    , m_parser(adoptRef(*new SourceBufferParserWebM()))
+    , m_parser(SourceBufferParserWebM::create().releaseNonNull())
     , m_appendQueue(WorkQueue::create("MediaPlayerPrivateWebM data parser queue"))
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
@@ -214,7 +214,8 @@ void MediaPlayerPrivateWebM::loadFailed(const ResourceError& error)
 void MediaPlayerPrivateWebM::loadFinished(const FragmentedSharedBuffer&)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    setNetworkState(MediaPlayer::NetworkState::Idle);
+    if (m_readyState >= MediaPlayer::ReadyState::HaveMetadata)
+        setNetworkState(MediaPlayer::NetworkState::Idle);
     m_loadFinished = true;
 }
 
@@ -255,7 +256,7 @@ bool MediaPlayerPrivateWebM::paused() const
     return ![m_synchronizer rate];
 }
 
-void MediaPlayerPrivateWebM::setPageIsVisible(bool visible)
+void MediaPlayerPrivateWebM::setPageIsVisible(bool visible, String&&)
 {
     if (m_visible == visible)
         return;
@@ -512,10 +513,13 @@ void MediaPlayerPrivateWebM::setNaturalSize(FloatSize size)
         INFO_LOG(LOGIDENTIFIER, "was ", oldSize, ", is ", size);
         if (auto player = m_player.get())
             player->sizeChanged();
-        
-        if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
-            setReadyState(MediaPlayer::ReadyState::HaveMetadata);
     }
+
+    if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
+        setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+
+    if (m_loadFinished)
+        setNetworkState(MediaPlayer::NetworkState::Idle);
 }
 
 void MediaPlayerPrivateWebM::setHasAudio(bool hasAudio)
@@ -1131,6 +1135,8 @@ void MediaPlayerPrivateWebM::append(SharedBuffer& buffer)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "data length = ", buffer.size());
 
+    setNetworkState(MediaPlayer::NetworkState::Loading);
+
     m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled.load()] (InitializationSegment&& segment) {
         if (!weakThis || abortCalled != weakThis->m_abortCalled)
             return;
@@ -1288,7 +1294,7 @@ void MediaPlayerPrivateWebM::ensureLayer()
     @try {
         [m_synchronizer addRenderer:m_displayLayer.get()];
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", exception.name, ", reason : ", exception.reason);
         ASSERT_NOT_REACHED();
 
         setNetworkState(MediaPlayer::NetworkState::DecodeError);
@@ -1369,7 +1375,7 @@ void MediaPlayerPrivateWebM::addAudioRenderer(uint64_t trackId)
     @try {
         [m_synchronizer addRenderer:renderer.get()];
     } @catch(NSException *exception) {
-        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", exception.name, ", reason : ", exception.reason);
         ASSERT_NOT_REACHED();
 
         setNetworkState(MediaPlayer::NetworkState::DecodeError);
@@ -1557,7 +1563,8 @@ void MediaPlayerPrivateWebM::registerMediaEngine(MediaEngineRegistrar registrar)
 
 bool MediaPlayerPrivateWebM::isAvailable()
 {
-    return PAL::isAVFoundationFrameworkAvailable()
+    return SourceBufferParserWebM::isAvailable()
+        && PAL::isAVFoundationFrameworkAvailable()
         && PAL::isCoreMediaFrameworkAvailable()
         && PAL::getAVSampleBufferAudioRendererClass()
         && PAL::getAVSampleBufferRenderSynchronizerClass()

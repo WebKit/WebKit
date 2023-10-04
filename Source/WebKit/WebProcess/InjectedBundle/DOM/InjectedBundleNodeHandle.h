@@ -29,6 +29,7 @@
 #include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
 #include <WebCore/ActiveDOMObject.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -45,7 +46,7 @@ class InjectedBundleScriptWorld;
 class WebFrame;
 class WebImage;
 
-class InjectedBundleNodeHandle : public API::ObjectImpl<API::Object::Type::BundleNodeHandle>, public WebCore::ActiveDOMObject {
+class InjectedBundleNodeHandle : public API::ObjectImpl<API::Object::Type::BundleNodeHandle>, public WebCore::ActiveDOMObject, public CanMakeCheckedPtr {
 public:
     static RefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static RefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);

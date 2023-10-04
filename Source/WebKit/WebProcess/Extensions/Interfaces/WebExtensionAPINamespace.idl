@@ -28,7 +28,11 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPINamespace {
 
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction action;
+
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction browserAction;
 
     readonly attribute WebExtensionAPIExtension extension;
 
@@ -36,7 +40,11 @@
 
     readonly attribute WebExtensionAPIRuntime runtime;
 
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction pageAction;
+
     [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIScripting scripting;
 
     [MainWorldOnly] readonly attribute WebExtensionAPITabs tabs;
 

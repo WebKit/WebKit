@@ -521,7 +521,7 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         decidePolicyForPluginLoad,
         nullptr, // didStartProvisionalNavigation
         didReceiveServerRedirectForProvisionalNavigation,
-        nullptr, // didFailProvisionalNavigation
+        didFailProvisionalNavigation,
         nullptr, // didCommitNavigation
         nullptr, // didFinishNavigation
         nullptr, // didFailNavigation
@@ -983,7 +983,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         decidePolicyForPluginLoad,
         nullptr, // didStartProvisionalNavigation
         didReceiveServerRedirectForProvisionalNavigation,
-        nullptr, // didFailProvisionalNavigation
+        didFailProvisionalNavigation,
         didCommitNavigation,
         didFinishNavigation,
         nullptr, // didFailNavigation
@@ -1070,7 +1070,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
         if (enableAllExperimentalFeatures) {
             WKPreferencesEnableAllExperimentalFeatures(preferences);
-            WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("AlternateWebMPlayerEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("SiteIsolationEnabled").get());
         }
 
@@ -1212,6 +1211,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setPluginSupportedMode({ });
 
     m_shouldLogDownloadSize = false;
+    m_shouldLogDownloadExpectedSize = false;
     m_shouldLogDownloadCallbacks = false;
     m_shouldLogHistoryClientCallbacks = false;
     m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
@@ -1465,17 +1465,26 @@ WKRetainPtr<WKStringRef> TestController::backgroundFetchState(WKStringRef)
 
 WKURLRef TestController::createTestURL(const char* pathOrURL)
 {
-    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://") || strstr(pathOrURL, "file://"))
+    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://"))
         return WKURLCreateWithUTF8CString(pathOrURL);
 
-    // Creating from filesytem path.
     size_t length = strlen(pathOrURL);
     if (!length)
         return 0;
 
+    if (length >= 7 && strstr(pathOrURL, "file://")) {
+        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(pathOrURL + 7, length - 7))) {
+            printf("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathOrURL);
+            return 0;
+        }
+        return WKURLCreateWithUTF8CString(pathOrURL);
+    }
+
+    // Creating from filesytem path.
+
 #if PLATFORM(WIN)
     bool isAbsolutePath = false;
-    if (strlen(pathOrURL) >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == pathSeparator)
+    if (length >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == pathSeparator)
         isAbsolutePath = true;
 #else
     bool isAbsolutePath = pathOrURL[0] == pathSeparator;
@@ -1498,7 +1507,12 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
         strcpy(buffer.get() + numCharacters + 1, pathOrURL);
     }
 
-    return WKURLCreateWithUTF8CString(buffer.get());
+    auto cPath = buffer.get();
+    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(cPath + 7, strlen(cPath) - 7))) {
+        printf("Failed: File ‘%s’ was not found or is inaccessible\n", pathOrURL);
+        return 0;
+    }
+    return WKURLCreateWithUTF8CString(cPath);
 }
 
 TestOptions TestController::testOptionsForTest(const TestCommand& command) const
@@ -1667,7 +1681,11 @@ bool TestController::runTest(const char* inputLine)
     
     TestOptions options = testOptionsForTest(command);
 
-    m_currentInvocation = makeUnique<TestInvocation>(adoptWK(createTestURL(command.pathOrURL.c_str())).get(), options);
+    m_mainResourceURL = adoptWK(createTestURL(command.pathOrURL.c_str()));
+    if (!m_mainResourceURL)
+        return false;
+
+    m_currentInvocation = makeUnique<TestInvocation>(m_mainResourceURL.get(), options);
 
     if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
@@ -1684,6 +1702,7 @@ bool TestController::runTest(const char* inputLine)
 
     m_currentInvocation->invoke();
     m_currentInvocation = nullptr;
+    m_mainResourceURL = nullptr;
 
     return true;
 }
@@ -2182,6 +2201,11 @@ void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigat
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishNavigation(page, navigation);
 }
 
+void TestController::didFailProvisionalNavigation(WKPageRef page, WKNavigationRef navigation, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didFailProvisionalNavigation(page, error);
+}
+
 void TestController::didReceiveServerRedirectForProvisionalNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef userData, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveServerRedirectForProvisionalNavigation(page, navigation, userData);
@@ -2355,6 +2379,23 @@ void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigat
     singleton().notifyDone();
 }
 
+void TestController::didFailProvisionalNavigation(WKPageRef page, WKErrorRef error)
+{
+    if (m_usingServerMode)
+        return;
+
+    auto failingURL = adoptWK(WKErrorCopyFailingURL(error));
+    if (!m_mainResourceURL || !failingURL || !WKURLIsEqual(failingURL.get(), m_mainResourceURL.get()))
+        return;
+
+    auto failingURLString = toWTFString(adoptWK(WKURLCopyString(failingURL.get())));
+    auto errorDomain = toWTFString(adoptWK(WKErrorCopyDomain(error)));
+    auto errorDescription = toWTFString(adoptWK(WKErrorCopyLocalizedDescription(error)));
+    int errorCode = WKErrorGetErrorCode(error);
+    auto errorMessage = makeString("Failed: ", errorDescription, " (errorDomain=", errorDomain, ", code=", errorCode, ") for URL ", failingURLString);
+    printf("%s\n", errorMessage.utf8().data());
+}
+
 void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationChallengeRef authenticationChallenge)
 {
     WKProtectionSpaceRef protectionSpace = WKAuthenticationChallengeGetProtectionSpace(authenticationChallenge);
@@ -2460,6 +2501,8 @@ void TestController::downloadDidFinish(WKDownloadRef)
 {
     if (m_shouldLogDownloadSize)
         m_currentInvocation->outputText(makeString("Download size: ", m_downloadTotalBytesWritten.value_or(0), ".\n"));
+    if (m_shouldLogDownloadExpectedSize)
+        m_currentInvocation->outputText(makeString("Download expected size: ", m_downloadTotalBytesExpectedToWrite.value_or(0), ".\n"));
     if (m_shouldLogDownloadCallbacks)
         m_currentInvocation->outputText("Download completed.\n"_s);
     m_currentInvocation->notifyDownloadDone();
@@ -2497,16 +2540,17 @@ void TestController::downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WK
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallenge(nullptr, authenticationChallenge);
 }
 
-void TestController::downloadDidWriteData(long long totalBytesWritten)
+void TestController::downloadDidWriteData(long long totalBytesWritten, long long totalBytesExpectedToWrite)
 {
     if (!m_shouldLogDownloadCallbacks)
         return;
     m_downloadTotalBytesWritten = totalBytesWritten;
+    m_downloadTotalBytesExpectedToWrite = totalBytesExpectedToWrite;
 }
 
 void TestController::downloadDidWriteData(WKDownloadRef download, long long bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidWriteData(totalBytesWritten);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidWriteData(totalBytesWritten, totalBytesExpectedToWrite);
 }
 
 void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
@@ -2892,7 +2936,7 @@ WTF::String pathSuitableForTestResult(WKURLRef fileURL, WKPageRef page)
     String pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
     String mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_s;
     auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind('/') + 1);
-    
+
     if (!basePath.isEmpty() && pathString.startsWith(basePath))
         return pathString.substring(basePath.length());
     return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileURL))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.

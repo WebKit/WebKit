@@ -108,6 +108,14 @@ void Range::updateAssociatedSelection()
         m_ownerDocument->selection().updateFromAssociatedLiveRange();
 }
 
+void Range::updateAssociatedHighlight()
+{
+    if (m_isAssociatedWithHighlight) {
+        m_didChangeForHighlight = true;
+        m_ownerDocument->scheduleRenderingUpdate({ });
+    }
+}
+
 void Range::updateDocument()
 {
     auto& document = startContainer().document();
@@ -130,7 +138,7 @@ ExceptionOr<void> Range::setStart(Ref<Node>&& container, unsigned offset)
         m_end = m_start;
     updateAssociatedSelection();
     updateDocument();
-    m_didChangeHighlight = true;
+    updateAssociatedHighlight();
     return { };
 }
 
@@ -145,7 +153,7 @@ ExceptionOr<void> Range::setEnd(Ref<Node>&& container, unsigned offset)
         m_start = m_end;
     updateAssociatedSelection();
     updateDocument();
-    m_didChangeHighlight = true;
+    updateAssociatedHighlight();
     return { };
 }
 
@@ -338,8 +346,8 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
         RangeBoundaryPoint originalEnd(m_end);
 
         // what is the highest node that partially selects the start / end of the range?
-        RefPtr partialStart = highestAncestorUnderCommonRoot(&originalStart.container(), commonRoot.get());
-        RefPtr partialEnd = highestAncestorUnderCommonRoot(&originalEnd.container(), commonRoot.get());
+        RefPtr partialStart = highestAncestorUnderCommonRoot(originalStart.protectedContainer().ptr(), commonRoot.get());
+        RefPtr partialEnd = highestAncestorUnderCommonRoot(originalEnd.protectedContainer().ptr(), commonRoot.get());
 
         // Start and end containers are different.
         // There are three possibilities here:
@@ -615,7 +623,7 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
                     if (result.hasException())
                         return result.releaseException();
                 } else {
-                    auto result = clonedContainer->insertBefore(child, clonedContainer->firstChild());
+                    auto result = clonedContainer->insertBefore(child, clonedContainer->protectedFirstChild());
                     if (result.hasException())
                         return result.releaseException();
                 }
@@ -626,7 +634,7 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
                     if (result.hasException())
                         return result.releaseException();
                 } else {
-                    auto result = clonedContainer->insertBefore(child->cloneNode(true), clonedContainer->firstChild());
+                    auto result = clonedContainer->insertBefore(child->cloneNode(true), clonedContainer->protectedFirstChild());
                     if (result.hasException())
                         return result.releaseException();
                 }
@@ -699,7 +707,7 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
     else
         ++newOffset;
 
-    auto insertResult = parent->insertBefore(node, referenceNode.get());
+    auto insertResult = parent->insertBefore(node, WTFMove(referenceNode));
     if (insertResult.hasException())
         return insertResult.releaseException();
 
@@ -899,7 +907,7 @@ void Range::nodeChildrenChanged(ContainerNode& container)
     ASSERT(&container.document() == m_ownerDocument.ptr());
     boundaryNodeChildrenChanged(m_start, container);
     boundaryNodeChildrenChanged(m_end, container);
-    m_didChangeHighlight = true;
+    m_didChangeForHighlight = true;
 }
 
 static inline void boundaryNodeChildrenWillBeRemoved(RangeBoundaryPoint& boundary, ContainerNode& containerOfNodesToBeRemoved)
@@ -913,14 +921,14 @@ void Range::nodeChildrenWillBeRemoved(ContainerNode& container)
     ASSERT(&container.document() == m_ownerDocument.ptr());
     boundaryNodeChildrenWillBeRemoved(m_start, container);
     boundaryNodeChildrenWillBeRemoved(m_end, container);
-    m_didChangeHighlight = true;
+    m_didChangeForHighlight = true;
 }
 
 static inline void boundaryNodeWillBeRemoved(RangeBoundaryPoint& boundary, Node& nodeToBeRemoved)
 {
     if (boundary.childBefore() == &nodeToBeRemoved)
         boundary.childBeforeWillBeRemoved();
-    else if (nodeToBeRemoved.contains(&boundary.container()))
+    else if (nodeToBeRemoved.contains(boundary.protectedContainer().ptr()))
         boundary.setToBeforeNode(nodeToBeRemoved);
 }
 
@@ -931,7 +939,7 @@ void Range::nodeWillBeRemoved(Node& node)
     ASSERT(node.parentNode());
     boundaryNodeWillBeRemoved(m_start, node);
     boundaryNodeWillBeRemoved(m_end, node);
-    m_didChangeHighlight = true;
+    m_didChangeForHighlight = true;
 }
 
 bool Range::parentlessNodeMovedToNewDocumentAffectsRange(Node& node)
@@ -961,7 +969,7 @@ void Range::textInserted(Node& text, unsigned offset, unsigned length)
     ASSERT(&text.document() == m_ownerDocument.ptr());
     boundaryTextInserted(m_start, text, offset, length);
     boundaryTextInserted(m_end, text, offset, length);
-    m_didChangeHighlight = true;
+    m_didChangeForHighlight = true;
 }
 
 static inline void boundaryTextRemoved(RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
@@ -982,7 +990,7 @@ void Range::textRemoved(Node& text, unsigned offset, unsigned length)
     ASSERT(&text.document() == m_ownerDocument.ptr());
     boundaryTextRemoved(m_start, text, offset, length);
     boundaryTextRemoved(m_end, text, offset, length);
-    m_didChangeHighlight = true;
+    m_didChangeForHighlight = true;
 }
 
 static inline void boundaryTextNodesMerged(RangeBoundaryPoint& boundary, NodeWithIndex& oldNode, unsigned offset)
@@ -1003,7 +1011,7 @@ void Range::textNodesMerged(NodeWithIndex& oldNode, unsigned offset)
     ASSERT(oldNode.node()->previousSibling()->isTextNode());
     boundaryTextNodesMerged(m_start, oldNode, offset);
     boundaryTextNodesMerged(m_end, oldNode, offset);
-    m_didChangeHighlight = true;
+    m_didChangeForHighlight = true;
 }
 
 static inline void boundaryTextNodesSplit(RangeBoundaryPoint& boundary, Text& oldNode)
@@ -1036,13 +1044,13 @@ void Range::textNodeSplit(Text& oldNode)
     ASSERT(!oldNode.parentNode() || oldNode.nextSibling()->isTextNode());
     boundaryTextNodesSplit(m_start, oldNode);
     boundaryTextNodesSplit(m_end, oldNode);
-    m_didChangeHighlight = true;
+    m_didChangeForHighlight = true;
 }
 
 ExceptionOr<void> Range::expand(const String& unit)
 {
-    auto start = VisiblePosition { makeContainerOffsetPosition(&startContainer(), startOffset()) };
-    auto end = VisiblePosition { makeContainerOffsetPosition(&endContainer(), endOffset()) };
+    auto start = VisiblePosition { makeContainerOffsetPosition(protectedStartContainer(), startOffset()) };
+    auto end = VisiblePosition { makeContainerOffsetPosition(protectedEndContainer(), endOffset()) };
     if (unit == "word"_s) {
         start = startOfWord(start);
         end = endOfWord(end);

@@ -117,7 +117,7 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
         }
         return { fetchRequest->resourceRequest(), fetchRequest->fetchOptions(), fetchRequest->headers().guard(), fetchRequest->headers().internalHeaders(), fetchRequest->internalRequestReferrer(), WTFMove(responseHeaders) };
     });
-    SWClientConnection::fromScriptExecutionContext(context)->startBackgroundFetch(m_identifier, fetchIdentifier, WTFMove(requests), WTFMove(options), [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTFMove(promise)](auto&& result) mutable {
+    SWClientConnection::fromScriptExecutionContext(context)->startBackgroundFetch(m_identifier, fetchIdentifier, WTFMove(requests), WTFMove(options), [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTFMove(promise)](ExceptionOr<BackgroundFetchInformation>&& result) mutable {
         if (!weakContext)
             return;
         weakContext->postTask([weakThis = WTFMove(weakThis), promise = WTFMove(promise), result = WTFMove(result)](auto& context) mutable {
@@ -170,7 +170,7 @@ void BackgroundFetchManager::get(ScriptExecutionContext& context, const String& 
 
 void BackgroundFetchManager::getIds(ScriptExecutionContext& context, DOMPromiseDeferred<IDLSequence<IDLDOMString>>&& promise)
 {
-    SWClientConnection::fromScriptExecutionContext(context)->backgroundFetchIdentifiers(m_identifier, [promise = WTFMove(promise)](auto&& result) mutable {
+    SWClientConnection::fromScriptExecutionContext(context)->backgroundFetchIdentifiers(m_identifier, [promise = WTFMove(promise)](Vector<String>&& result) mutable {
         promise.resolve(WTFMove(result));
     });
 }

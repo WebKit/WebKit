@@ -38,7 +38,6 @@ public:
     virtual LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const;
 
     bool isBlockFormattingQuirks() const { return formattingContext().isBlockFormattingContext(); }
-    bool isInlineFormattingQuirks() const { return formattingContext().isInlineFormattingContext(); }
     bool isTableFormattingQuirks() const { return formattingContext().isTableFormattingContext(); }
 
 protected:

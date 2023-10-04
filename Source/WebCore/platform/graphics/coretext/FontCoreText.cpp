@@ -183,7 +183,9 @@ void Font::platformInit()
 #endif
 
     // Compute line spacing before the line metrics hacks are applied.
-    float lineSpacing = lroundf(ascent) + lroundf(descent) + lroundf(lineGap);
+#if !PLATFORM(IOS_FAMILY)
+    float lineSpacing = std::lround(ascent) + std::lround(descent) + std::lround(lineGap);
+#endif
 
 #if PLATFORM(MAC)
     // Hack Hiragino line metrics to allow room for marked text underlines.
@@ -201,7 +203,7 @@ void Font::platformInit()
     CGFloat adjustment = shouldUseAdjustment(m_platformData.font()) ? ceil((ascent + descent) * kLineHeightAdjustment) : 0;
 
     lineGap = ceilf(lineGap);
-    lineSpacing = ceil(ascent) + adjustment + ceil(descent) + lineGap;
+    float lineSpacing = std::ceil(ascent) + adjustment + std::ceil(descent) + lineGap;
     ascent = ceilf(ascent + adjustment);
     descent = ceilf(descent);
 

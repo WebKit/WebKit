@@ -1,0 +1,24 @@
+あいなき あいなき あいなき あいなき
+あいなき     あいなき あいなき あいなき あいなき あいなき あいなき
+あいなき あいなき あいなき
+あいなき
+
+PASS horizontal-button block size should match height and inline size should match width
+PASS horizontal-button's height is less than its multi-line counterpart, but width is identical.
+PASS horizontal-button-multiline block size should match height and inline size should match width
+PASS horizontal-input block size should match height and inline size should match width
+PASS horizontal-input's height is less than its multi-line counterpart, but width is identical.
+PASS horizontal-input-multiline block size should match height and inline size should match width
+PASS vertical-lr-button block size should match width and inline size should match height
+PASS vertical-lr-button's width is less than its multi-line counterpart, but height is identical.
+PASS vertical-rl-button block size should match width and inline size should match height
+PASS vertical-rl-button's width is less than its multi-line counterpart, but height is identical.
+PASS vertical-lr-button-multiline block size should match width and inline size should match height
+PASS vertical-rl-button-multiline block size should match width and inline size should match height
+PASS vertical-lr-input block size should match width and inline size should match height
+PASS vertical-lr-input's width is less than its multi-line counterpart, but height is identical.
+PASS vertical-rl-input block size should match width and inline size should match height
+PASS vertical-rl-input's width is less than its multi-line counterpart, but height is identical.
+PASS vertical-lr-input-multiline block size should match width and inline size should match height
+PASS vertical-rl-input-multiline block size should match width and inline size should match height
+

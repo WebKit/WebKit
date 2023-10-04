@@ -131,7 +131,7 @@ bool isDraggableLink(const Element& element)
 static PlatformMouseEvent createMouseEvent(const DragData& dragData)
 {
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
-    return PlatformMouseEvent(dragData.clientPosition(), dragData.globalPosition(), LeftButton, PlatformEvent::Type::MouseMoved, 0, modifiers, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap);
+    return PlatformMouseEvent(dragData.clientPosition(), dragData.globalPosition(), MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, modifiers, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap);
 }
 
 DragController::DragController(Page& page, std::unique_ptr<DragClient>&& client)
@@ -1193,9 +1193,8 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
             // selected.  In this case, we should expand the selection to
             // the enclosing anchor element
             Position pos = sourceSelection.base();
-            Node* node = enclosingAnchorElement(pos);
-            if (node)
-                src.selection().setSelection(VisibleSelection::selectionFromContentsOfNode(node));
+            if (RefPtr node = enclosingAnchorElement(pos))
+                src.selection().setSelection(VisibleSelection::selectionFromContentsOfNode(node.get()));
         }
 
         client().willPerformDragSourceAction(DragSourceAction::Link, dragOrigin, dataTransfer);

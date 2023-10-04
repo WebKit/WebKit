@@ -1,12 +1,12 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Datagrams are echoed successfully promise_test: Unhandled rejection with value: null
-FAIL Successfully reading datagrams with BYOB reader. promise_test: Unhandled rejection with value: null
-FAIL Reading datagrams with insufficient buffer should be rejected. promise_test: Unhandled rejection with value: null
-FAIL Transfer max-size datagram promise_test: Unhandled rejection with value: null
-FAIL Fail to transfer max-size+1 datagram promise_test: Unhandled rejection with value: null
-TIMEOUT Sending and receiving datagrams is ready to use before session is established Test timed out
+TIMEOUT Datagrams are echoed successfully Test timed out
+NOTRUN Successfully reading datagrams with BYOB reader.
+NOTRUN Reading datagrams with insufficient buffer should be rejected.
+NOTRUN Transfer max-size datagram
+NOTRUN Fail to transfer max-size+1 datagram
+NOTRUN Sending and receiving datagrams is ready to use before session is established
 NOTRUN Datagram's outgoingHighWaterMark correctly regulates written datagrams
 NOTRUN Datagrams read is less than or equal to the incomingHighWaterMark
 NOTRUN Datagram MaxAge getters/setters work correctly

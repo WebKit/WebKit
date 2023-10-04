@@ -220,7 +220,6 @@ LocalFrameView::LocalFrameView(LocalFrame& frame)
 #endif
     if (frame.document() && frame.document()->settings().cssScrollAnchoringEnabled())
         m_scrollAnchoringController = WTF::makeUnique<ScrollAnchoringController>(*this);
-
 }
 
 Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame)
@@ -1333,7 +1332,7 @@ void LocalFrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
         m_firstLayoutCallbackPending = true;
     }
     adjustScrollbarsForLayout(firstLayout);
-        
+
     auto oldSize = m_lastUsedSizeForLayout;
     auto newSize = layoutSize();
     if (oldSize != newSize) {
@@ -1406,7 +1405,7 @@ RenderBox* LocalFrameView::embeddedContentBox() const
 void LocalFrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
     if (!m_embeddedObjectsToUpdate)
-        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<RenderEmbeddedObject*>>();
+        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<CheckedPtr<RenderEmbeddedObject>>>();
 
     auto& element = embeddedObject.frameOwnerElement();
     if (is<HTMLPlugInImageElement>(element))
@@ -2848,8 +2847,6 @@ void LocalFrameView::didChangeScrollOffset()
     if (auto* page = m_frame->page())
         page->pageOverlayController().didScrollFrame(m_frame.get());
     m_frame->loader().client().didChangeScrollOffset();
-    if (m_scrollAnchoringController)
-        m_scrollAnchoringController->invalidateAnchorElement();
 }
 
 void LocalFrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& oldOffset, const ScrollOffset& newOffset)
@@ -2890,6 +2887,7 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
     }
 
     LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView " << this << " scrollPositionChanged from " << oldPosition << " to " << newPosition << " (scale " << frameScaleFactor() << " )");
+
     updateLayoutViewport();
     viewportContentsChanged();
 
@@ -2897,6 +2895,9 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
         if (auto* layer = renderView->layer())
             m_frame->editor().renderLayerDidScroll(*layer);
     }
+
+    invalidateScrollAnchoringElement();
+    updateScrollAnchoringElement();
 }
 
 void LocalFrameView::applyRecursivelyWithVisibleRect(const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>& apply)
@@ -3866,6 +3867,41 @@ void LocalFrameView::performPostLayoutTasks()
     m_frame->document()->scheduleDeferredAXObjectCacheUpdate();
 }
 
+void LocalFrameView::invalidateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->invalidateAnchorElement();
+}
+
+void LocalFrameView::updateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->updateAnchorElement();
+}
+
+void LocalFrameView::updateScrollPositionForScrollAnchoringController()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->adjustScrollPositionForAnchoring();
+}
+
+void LocalFrameView::dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableArea& scrollableArea)
+{
+    m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate.remove(scrollableArea);
+}
+
+void LocalFrameView::queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea& scrollableArea)
+{
+    m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate.add(scrollableArea);
+}
+
+void LocalFrameView::updateScrollAnchoringPositionForScrollableAreas()
+{
+    auto scrollableAreasNeedingUpdate = std::exchange(m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate, { });
+    for (auto& scrollableArea : scrollableAreasNeedingUpdate)
+        scrollableArea.updateScrollPositionForScrollAnchoringController();
+}
+
 IntSize LocalFrameView::sizeForResizeEvent() const
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3918,6 +3954,10 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
         FRAMEVIEW_RELEASE_LOG(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
         return;
     }
+
+    // TODO: move this to a method called for all scrollable areas
+    invalidateScrollAnchoringElement();
+    updateScrollAnchoringElement();
 
     LOG_WITH_STREAM(Events, stream << "LocalFrameView " << this << " scheduleResizeEventIfNeeded scheduling resize event for document" << document << ", size " << currentSize);
     document->setNeedsDOMWindowResizeEvent();
@@ -4393,9 +4433,11 @@ bool LocalFrameView::isScrollable(Scrollability definitionOfScrollable)
     if (!didFirstLayout())
         return false;
 
+#if HAVE(RUBBER_BANDING)
     bool requiresActualOverflowToBeConsideredScrollable = !m_frame->isMainFrame() || definitionOfScrollable != Scrollability::ScrollableOrRubberbandable;
-#if !HAVE(RUBBER_BANDING)
-    requiresActualOverflowToBeConsideredScrollable = true;
+#else
+    UNUSED_PARAM(definitionOfScrollable);
+    bool requiresActualOverflowToBeConsideredScrollable = true;
 #endif
 
     // Covers #1
@@ -5001,21 +5043,25 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive()
     ASSERT(!needsLayout());
 }
 
-void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText)
-{
-    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold && m_hasReachedSignificantRenderedTextThreshold)
-        return;
+#include <span>
 
-    auto nonWhitespaceLength = [](auto& inlineText) {
-        auto length = inlineText.length();
-        for (unsigned i = 0; i < inlineText.length(); ++i) {
-            if (!isASCIIWhitespace(inlineText[i]))
-                continue;
-            --length;
-        }
-        return length;
-    };
-    m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText);
+template<typename CharacterType>
+static unsigned nonWhitespaceLength(const CharacterType* characters, unsigned length)
+{
+    unsigned result = length;
+    for (unsigned i = 0; i < length; ++i) {
+        if (isASCIIWhitespace(characters[i]))
+            --result;
+    }
+    return result;
+}
+
+void LocalFrameView::incrementVisuallyNonEmptyCharacterCountSlowCase(const String& inlineText)
+{
+    if (inlineText.is8Bit())
+        m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText.characters8(), inlineText.length());
+    else
+        m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText.characters16(), inlineText.length());
     ++m_textRendererCountForVisuallyNonEmptyCharacters;
 }
 
@@ -6011,9 +6057,11 @@ void LocalFrameView::willRemoveWidgetFromRenderTree(Widget& widget)
     m_widgetsInRenderTree.remove(&widget);
 }
 
-static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<Widget*>& set)
+static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<CheckedPtr<Widget>>& set)
 {
-    return copyToVectorOf<RefPtr<Widget>>(set);
+    return WTF::map(set, [](auto& widget) -> RefPtr<Widget> {
+        return widget.get();
+    });
 }
 
 void LocalFrameView::updateWidgetPositions()

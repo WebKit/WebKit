@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://html.spec.whatwg.org/multipage/canvas.html#textmetrics
+
 [
     Exposed=(Window,Worker),
 ] interface TextMetrics {
-    // FIXME: All the unrestricted float attributes below should be doubles.
-
     // x-direction
-    readonly attribute unrestricted float width; // advance width
-    readonly attribute unrestricted float actualBoundingBoxLeft;
-    readonly attribute unrestricted float actualBoundingBoxRight;
+    readonly attribute double width; // advance width
+    readonly attribute double actualBoundingBoxLeft;
+    readonly attribute double actualBoundingBoxRight;
 
     // y-direction
-    readonly attribute unrestricted float fontBoundingBoxAscent;
-    readonly attribute unrestricted float fontBoundingBoxDescent;
-    readonly attribute unrestricted float actualBoundingBoxAscent;
-    readonly attribute unrestricted float actualBoundingBoxDescent;
-    readonly attribute unrestricted float emHeightAscent;
-    readonly attribute unrestricted float emHeightDescent;
-    readonly attribute unrestricted float hangingBaseline;
-    readonly attribute unrestricted float alphabeticBaseline;
-    readonly attribute unrestricted float ideographicBaseline;
+    readonly attribute double fontBoundingBoxAscent;
+    readonly attribute double fontBoundingBoxDescent;
+    readonly attribute double actualBoundingBoxAscent;
+    readonly attribute double actualBoundingBoxDescent;
+    readonly attribute double emHeightAscent;
+    readonly attribute double emHeightDescent;
+    readonly attribute double hangingBaseline;
+    readonly attribute double alphabeticBaseline;
+    readonly attribute double ideographicBaseline;
 };
 

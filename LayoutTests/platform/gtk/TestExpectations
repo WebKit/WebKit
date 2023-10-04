@@ -66,6 +66,7 @@ webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_p
 imported/w3c/web-platform-tests/pointerevents/capturing_boundary_event_handler_at_ua_shadowdom.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes_under_load.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html?pen [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_rightbutton.html?mouse [ Skip ]
@@ -1419,7 +1420,6 @@ webkit.org/b/259653 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html [ Failure ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/named_targeting.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/remove-element-unblocks-rendering.optional.html [ Failure ]
 
 # Flaky tests detected from 29Jan2023 to 23Feb2023
@@ -2657,4 +2657,7 @@ webkit.org/b/261024 webgl/2.0.y/conformance/offscreencanvas/context-attribute-pr
 webkit.org/b/261024 webgl/2.0.y/conformance/renderbuffers/framebuffer-state-restoration.html [ Pass Timeout ]
 webkit.org/b/261024 webgl/2.0.y/conformance/rendering/color-mask-preserved-during-implicit-clears.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/utf8-sdp.html [ Pass Timeout ]
-webkit.org/b/261024 webrtc/video-disabled-black.html [ Crash Pass ]
+
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
+
+fast/line-grid [ Skip ]

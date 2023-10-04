@@ -33,6 +33,9 @@
 #include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebGPUPresentationContextDescriptor.h"
 #include "WebGPUPresentationContextImpl.h"
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/NativeImage.h>
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
 
@@ -59,6 +62,7 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
         nullptr,
         nullptr,
         options.powerPreference ? m_convertToBackingContext->convertToBacking(*options.powerPreference) : static_cast<WGPUPowerPreference>(WGPUPowerPreference_Undefined),
+        WGPUBackendType_Metal,
         options.forceFallbackAdapter,
     };
 
@@ -107,6 +111,15 @@ Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationCo
 Ref<CompositorIntegration> GPUImpl::createCompositorIntegration()
 {
     return CompositorIntegrationImpl::create(m_convertToBackingContext);
+}
+
+void GPUImpl::paintToCanvas(WebCore::NativeImage& image, const WebCore::IntSize& canvasSize, WebCore::GraphicsContext& context)
+{
+    auto imageSize = image.size();
+    FloatRect canvasRect(FloatPoint(), canvasSize);
+    GraphicsContextStateSaver stateSaver(context);
+    context.setImageInterpolationQuality(InterpolationQuality::DoNotInterpolate);
+    context.drawNativeImage(image, imageSize, canvasRect, FloatRect(FloatPoint(), imageSize), { CompositeOperator::Copy });
 }
 
 } // namespace WebCore::WebGPU

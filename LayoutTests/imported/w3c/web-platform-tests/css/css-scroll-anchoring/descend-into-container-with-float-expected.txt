@@ -1,4 +1,4 @@
 after
 
-FAIL Zero-height container with float. assert_equals: expected 100 but got 50
+PASS Zero-height container with float.
 

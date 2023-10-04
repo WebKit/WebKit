@@ -68,7 +68,7 @@ static FloatRect inlineVideoFrame(HTMLVideoElement& element)
     if (!document->hasLivingRenderTree() || document->activeDOMObjectsAreStopped())
         return { };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
     auto* renderer = element.renderer();
     if (!renderer)
         return { };

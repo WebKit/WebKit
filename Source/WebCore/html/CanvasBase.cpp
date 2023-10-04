@@ -53,11 +53,9 @@ static std::atomic<size_t> s_activePixelMemory { 0 };
 namespace WebCore {
 
 #if USE(CG)
-// FIXME: It seems strange that the default quality is not the one that is literally named "default".
-// Should fix names to make this easier to understand, or write an excellent comment here explaining why not.
-const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
+constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
 #else
-const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Default;
+constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Medium;
 #endif
 
 static std::optional<size_t> maxCanvasAreaForTesting;
@@ -294,7 +292,7 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
         m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(m_imageBuffer->context());
 
         JSC::JSLockHolder lock(scriptExecutionContext()->vm());
-        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(memoryCost());
+        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), memoryCost());
     }
 
     return returnBuffer;
@@ -302,38 +300,33 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
 
 bool CanvasBase::shouldAccelerate(const IntSize& size) const
 {
-    auto checkedArea = size.area<RecordOverflow>();
-    if (checkedArea.hasOverflowed())
-        return false;
-
-    return shouldAccelerate(checkedArea.value());
+    return shouldAccelerate(size.unclampedArea());
 }
 
-bool CanvasBase::shouldAccelerate(unsigned area) const
+bool CanvasBase::shouldAccelerate(uint64_t area) const
 {
-    if (area > scriptExecutionContext()->settingsValues().maximumAccelerated2dCanvasSize)
-        return false;
-
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    return scriptExecutionContext()->settingsValues().canvasUsesAcceleratedDrawing;
+    if (!scriptExecutionContext()->settingsValues().canvasUsesAcceleratedDrawing)
+        return false;
+    if (area < scriptExecutionContext()->settingsValues().minimumAccelerated2DContextArea)
+        return false;
+    return true;
 #else
+    UNUSED_PARAM(area);
     return false;
 #endif
 }
 
 RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
 {
-    auto checkedArea = size().area<RecordOverflow>();
-
-    if (checkedArea.hasOverflowed() || checkedArea > maxCanvasArea()) {
+    uint64_t area = size().unclampedArea();
+    if (!area)
+        return nullptr;
+    if (area > maxCanvasArea()) {
         auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea(), ").");
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return nullptr;
     }
-
-    unsigned area = checkedArea.value();
-    if (!area)
-        return nullptr;
 
     OptionSet<ImageBufferOptions> bufferOptions;
     if (shouldAccelerate(area))

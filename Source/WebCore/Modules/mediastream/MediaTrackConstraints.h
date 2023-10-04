@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,6 +67,7 @@ struct MediaTrackConstraintSet {
     std::optional<ConstrainDouble> aspectRatio;
     std::optional<ConstrainDouble> frameRate;
     std::optional<ConstrainDOMString> facingMode;
+    std::optional<ConstrainDOMString> whiteBalanceMode;
     std::optional<ConstrainDouble> volume;
     std::optional<ConstrainLong> sampleRate;
     std::optional<ConstrainLong> sampleSize;

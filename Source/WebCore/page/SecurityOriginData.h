@@ -36,7 +36,7 @@ namespace WebCore {
 class LocalFrame;
 class SecurityOrigin;
 
-enum OpaqueOriginIdentifierType { };
+enum class OpaqueOriginIdentifierType { };
 using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>;
 
 class SecurityOriginData {

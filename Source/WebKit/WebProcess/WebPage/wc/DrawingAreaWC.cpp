@@ -30,8 +30,8 @@
 
 #include "DrawingAreaProxyMessages.h"
 #include "GraphicsLayerWC.h"
+#include "ImageBufferShareableBitmapBackend.h"
 #include "MessageSenderInlines.h"
-#include "PlatformImageBufferShareableBackend.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteWCLayerTreeHostProxy.h"
 #include "UpdateInfo.h"
@@ -379,13 +379,14 @@ void DrawingAreaWC::sendUpdateNonAC()
                 return;
             }
 
-            ImageBufferBackendHandle handle;
             if (auto* backend = image->ensureBackendCreated()) {
                 auto* sharing = backend->toBackendSharing();
-                if (is<ImageBufferBackendHandleSharing>(sharing))
-                    handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
+                if (is<ImageBufferBackendHandleSharing>(sharing)) {
+                    if (auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle())
+                        updateInfo.bitmapHandle = std::get<ShareableBitmap::Handle>(WTFMove(*handle));
+                }
             }
-            updateInfo.bitmapHandle = std::get<ShareableBitmap::Handle>(WTFMove(handle));
+
             send(Messages::DrawingAreaProxy::Update(stateID, WTFMove(updateInfo)));
         });
     });
@@ -411,8 +412,8 @@ void DrawingAreaWC::commitLayerUpdateInfo(WCLayerUpdateInfo&& info)
 RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
 {
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
-        return Ref { m_webPage.get() }->ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingMode::Unaccelerated, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    return ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::DOM, { });
+        return Ref { m_webPage.get() }->ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { });
+    return ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::DOM, { });
 }
 
 void DrawingAreaWC::displayDidRefresh()

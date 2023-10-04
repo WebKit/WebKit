@@ -33,9 +33,11 @@
 #import "PluginView.h"
 #import "UserMediaCaptureManager.h"
 #import "WKAccessibilityWebPageObjectBase.h"
+#import "WebFrame.h"
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardOverrides.h"
 #import "WebPaymentCoordinator.h"
+#import "WebProcess.h"
 #import "WebRemoteObjectRegistry.h"
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/DictionaryLookup.h>
@@ -45,6 +47,7 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/HTMLBodyElement.h>
@@ -66,6 +69,8 @@
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
+#import <WebCore/UTIRegistry.h>
+#import <WebCore/UTIUtilities.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
@@ -82,6 +87,8 @@
 #if PLATFORM(COCOA)
 
 namespace WebKit {
+
+using namespace WebCore;
 
 void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 {
@@ -104,6 +111,8 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 #if PLATFORM(IOS_FAMILY)
     setInsertionPointColor(parameters.insertionPointColor);
 #endif
+    WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
+    WebCore::setImageSourceAllowableTypes(WebCore::allowableImageTypes());
 }
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
@@ -327,7 +336,7 @@ void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<Dic
 
     auto markers = document->markers().markersInRange(*expandedSelectionRange, DocumentMarker::DictationAlternatives);
     contexts.reserveInitialCapacity(markers.size());
-    for (auto* marker : markers) {
+    for (auto& marker : markers) {
         if (std::holds_alternative<DocumentMarker::DictationData>(marker->data()))
             contexts.uncheckedAppend(std::get<DocumentMarker::DictationData>(marker->data()).context);
     }

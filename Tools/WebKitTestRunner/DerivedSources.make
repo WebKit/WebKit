@@ -81,11 +81,15 @@ SCRIPTS = \
 
 IDL_ATTRIBUTES_FILE = $(WebCoreScripts)/IDLAttributes.json
 
+IDL_FILE_NAMES_LIST = IDLFileNamesList.txt
+$(IDL_FILE_NAMES_LIST) : $(INJECTED_BUNDLE_INTERFACES:%=%.idl) $(UICONTEXT_INTERFACES:%=%.idl)
+	echo $^ | tr " " "\n" > $@
+
 .PHONY : all
 
-JS%.h JS%.cpp : %.idl $(SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+JS%.h JS%.cpp : %.idl $(SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(IDL_FILE_NAMES_LIST) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	@echo Generating bindings for $*...
-	$(PERL) -I $(WebCoreScripts) -I $(WebKitTestRunner)/InjectedBundle/Bindings -I $(WebKitTestRunner)/UIScriptContext/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --include InjectedBundle/Bindings --include UIScriptContext/Bindings --outputDir . --generator TestRunner --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
+	$(PERL) -I $(WebCoreScripts) -I $(WebKitTestRunner)/InjectedBundle/Bindings -I $(WebKitTestRunner)/UIScriptContext/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --idlFileNamesList $(IDL_FILE_NAMES_LIST) --outputDir . --generator TestRunner --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
 
 all : \
     $(INJECTED_BUNDLE_INTERFACES:%=JS%.h) \

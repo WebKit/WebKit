@@ -47,13 +47,13 @@ using namespace MathMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLToken);
 
-RenderMathMLToken::RenderMathMLToken(MathMLTokenElement& element, RenderStyle&& style)
-    : RenderMathMLBlock(element, WTFMove(style))
+RenderMathMLToken::RenderMathMLToken(Type type, MathMLTokenElement& element, RenderStyle&& style)
+    : RenderMathMLBlock(type, element, WTFMove(style))
 {
 }
 
-RenderMathMLToken::RenderMathMLToken(Document& document, RenderStyle&& style)
-    : RenderMathMLBlock(document, WTFMove(style))
+RenderMathMLToken::RenderMathMLToken(Type type, Document& document, RenderStyle&& style)
+    : RenderMathMLBlock(type, document, WTFMove(style))
 {
 }
 

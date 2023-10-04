@@ -29,6 +29,7 @@
 #if ENABLE(WEBGL)
 
 #include "ANGLEInstancedArrays.h"
+#include "BitmapImage.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "DiagnosticLoggingClient.h"
@@ -3527,12 +3528,12 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!validateTexFunc(functionID, SourceImageBitmap, target, level, internalformat, width, height, depth, border, format, type, xoffset, yoffset, zoffset))
         return { };
 
-    ImageBuffer* buffer = source.buffer();
+    RefPtr buffer = source.buffer();
     if (!buffer)
         return { };
 
     // Fallback pure SW path.
-    RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
+    RefPtr<Image> image = BitmapImage::create(buffer->createNativeImageReference());
     // The premultiplyAlpha and flipY pixel unpack parameters are ignored for ImageBitmaps.
     if (image)
         texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Image, false, source.premultiplyAlpha(), source.forciblyPremultiplyAlpha(), sourceImageRect, depth, unpackImageHeight);
@@ -3702,7 +3703,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     }
 
     // Fallback pure SW path.
-    RefPtr<Image> image = videoFrameToImage(source, DontCopyBackingStore, functionName);
+    RefPtr<Image> image = videoFrameToImage(source, functionName);
     if (!image)
         return { };
     texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
@@ -4457,7 +4458,7 @@ RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int w
 {
     IntSize size(width, height);
     size.scale(deviceScaleFactor);
-    ImageBuffer* buf = m_generatedImageCache.imageBuffer(size, DestinationColorSpace::SRGB());
+    RefPtr buf = m_generatedImageCache.imageBuffer(size, DestinationColorSpace::SRGB());
     if (!buf) {
         synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
         return nullptr;
@@ -4466,14 +4467,16 @@ RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int w
     FloatRect srcRect(FloatPoint(), image.size());
     FloatRect destRect(FloatPoint(), size);
     buf->context().drawImage(image, destRect, srcRect);
-    return buf->copyImage(DontCopyBackingStore);
+    // FIXME: createNativeImageReference() does not make sense for GPUP.
+    // Instead, should fix by GPUP side upload.
+    return BitmapImage::create(buf->createNativeImageReference());
 }
 
 #if ENABLE(VIDEO)
 
-RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& video, BackingStoreCopy backingStoreCopy, const char* functionName)
+RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& video, const char* functionName)
 {
-    ImageBuffer* imageBuffer = nullptr;
+    RefPtr<ImageBuffer> imageBuffer;
     // FIXME: When texImage2D is passed an HTMLVideoElement, implementations
     // interoperably use the native RGB color values of the video frame (e.g.
     // Rec.601 color space values) for the texture. But nativeImageForCurrentTime
@@ -4518,7 +4521,7 @@ RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& vid
         }
         video.paintCurrentFrameInContext(imageBuffer->context(), { { }, videoSize });
     }
-    RefPtr<Image> image = imageBuffer->copyImage(backingStoreCopy);
+    RefPtr<Image> image = BitmapImage::create(imageBuffer->createNativeImageReference());
     if (!image) {
         synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
         return nullptr;
@@ -5676,19 +5679,19 @@ WebGLRenderingContextBase::LRUImageBufferCache::LRUImageBufferCache(int capacity
 {
 }
 
-ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size, DestinationColorSpace colorSpace, CompositeOperator fillOperator)
+RefPtr<ImageBuffer> WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size, DestinationColorSpace colorSpace, CompositeOperator fillOperator)
 {
     size_t i;
     for (i = 0; i < m_buffers.size(); ++i) {
         if (!m_buffers[i])
             break;
-        ImageBuffer& buf = m_buffers[i]->second.get();
-        if (m_buffers[i]->first != colorSpace || buf.truncatedLogicalSize() != size)
+        RefPtr<ImageBuffer> buf = m_buffers[i]->second.ptr();
+        if (m_buffers[i]->first != colorSpace || buf->truncatedLogicalSize() != size)
             continue;
         bubbleToFront(i);
         if (fillOperator != CompositeOperator::Copy && fillOperator != CompositeOperator::Clear)
-            buf.context().clearRect({ { }, size });
-        return &buf;
+            buf->context().clearRect({ { }, size });
+        return buf;
     }
 
     // FIXME (149423): Should this ImageBuffer be unconditionally unaccelerated?
@@ -5699,9 +5702,9 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
     i = std::min(m_buffers.size() - 1, i);
     m_buffers[i] = { colorSpace, temp.releaseNonNull() };
 
-    ImageBuffer& buf = m_buffers[i]->second.get();
+    RefPtr<ImageBuffer> buf = m_buffers[i]->second.ptr();
     bubbleToFront(i);
-    return &buf;
+    return buf;
 }
 
 void WebGLRenderingContextBase::LRUImageBufferCache::bubbleToFront(size_t idx)

@@ -2223,6 +2223,29 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
 
+    def test_success_wk1(self):
+        self.setupStep(RunWebKitTestsInStressMode(layout_test_class=RunWebKit1Tests))
+        self.property_exceed_failure_limit = 'first_results_exceed_failure_limit'
+        self.property_failures = 'first_run_failures'
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--iterations', 100, 'test1', 'test2'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.runStep()
+
     def test_failure(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')

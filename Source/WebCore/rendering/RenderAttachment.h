@@ -53,7 +53,6 @@ public:
 
 private:
     void element() const = delete;
-    bool isAttachment() const override { return true; }
     ASCIILiteral renderName() const override { return "RenderAttachment"_s; }
     LayoutSize layoutWideLayoutAttachmentOnly();
     void layoutShadowContent(const LayoutSize&);

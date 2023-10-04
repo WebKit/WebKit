@@ -213,7 +213,7 @@ class PullRequest(Command):
             sys.stderr.write("'--remote={}' is incompatible with '--redacted'\n".format(args.remote))
             return None
 
-        branch_point = Branch.branch_point(repository)
+        branch_point = repository.branch_point()
         if not branch_point:
             sys.stderr.write('Failed to determine where pull-request diverged from production branch\n')
             return None
@@ -314,10 +314,11 @@ class PullRequest(Command):
         return branch_point
 
     @classmethod
-    def find_existing_pull_request(cls, repository, remote):
+    def find_existing_pull_request(cls, repository, remote, branch=None):
+        branch = branch or repository.branch
         existing_pr = None
         user, _ = remote.credentials(required=False)
-        for pr in remote.pull_requests.find(opened=None, head=repository.branch):
+        for pr in remote.pull_requests.find(opened=None, head=branch):
             existing_pr = pr
             if not existing_pr.opened:
                 continue

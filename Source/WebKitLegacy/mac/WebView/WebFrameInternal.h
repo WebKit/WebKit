@@ -30,6 +30,7 @@
 
 #import "WebFramePrivate.h"
 #import "WebPreferencesPrivate.h"
+#import <WebCore/CaptionUserPreferences.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameSelection.h>
@@ -88,6 +89,7 @@ WebView *getWebView(WebFrame *webFrame);
     NakedPtr<WebCore::LocalFrame> coreFrame;
     RetainPtr<WebFrameView> webFrameView;
     std::unique_ptr<WebScriptDebugger> scriptDebugger;
+    std::unique_ptr<WebCore::CaptionUserPreferencesTestingModeToken> captionPreferencesTestingModeToken;
     id internalLoadDelegate;
     BOOL shouldCreateRenderers;
     BOOL includedInWebKitStatistics;

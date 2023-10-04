@@ -245,8 +245,8 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
     return textBox.fontCascade().offsetForPosition(textBox.textRun(InlineIterator::TextRunMode::Editing), x - textBox.logicalLeftIgnoringInlineDirection(), true);
 }
 
-inline RenderText::RenderText(Node& node, const String& text)
-    : RenderObject(node)
+inline RenderText::RenderText(Type type, Node& node, const String& text)
+    : RenderObject(type, node)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
     , m_text(text)
 {
@@ -255,13 +255,13 @@ inline RenderText::RenderText(Node& node, const String& text)
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
 }
 
-RenderText::RenderText(Text& textNode, const String& text)
-    : RenderText(static_cast<Node&>(textNode), text)
+RenderText::RenderText(Type type, Text& textNode, const String& text)
+    : RenderText(type, static_cast<Node&>(textNode), text)
 {
 }
 
-RenderText::RenderText(Document& document, const String& text)
-    : RenderText(static_cast<Node&>(document), text)
+RenderText::RenderText(Type type, Document& document, const String& text)
+    : RenderText(type, static_cast<Node&>(document), text)
 {
 }
 
@@ -279,11 +279,6 @@ ASCIILiteral RenderText::renderName() const
 Text* RenderText::textNode() const
 {
     return downcast<Text>(RenderObject::node());
-}
-
-bool RenderText::isTextFragment() const
-{
-    return false;
 }
 
 bool RenderText::computeUseBackslashAsYenSymbol() const
@@ -1399,7 +1394,7 @@ Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOff
         return { };
 
     Vector<std::pair<unsigned, unsigned>> draggedContentRanges;
-    for (auto* marker : markers) {
+    for (auto& marker : markers) {
         unsigned markerStart = std::max(marker->startOffset(), startOffset);
         unsigned markerEnd = std::min(marker->endOffset(), endOffset);
         if (markerStart >= markerEnd || markerStart > endOffset || markerEnd < startOffset)
@@ -1770,7 +1765,8 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
                 // The rare case of when we switch between IFC and legacy preferred width computation.
                 if (!m_maxWidth)
                     width = maxLogicalWidth();
-                width = *m_maxWidth;
+                else
+                    width = *m_maxWidth;
             } else
                 width = maxLogicalWidth();
         } else

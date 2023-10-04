@@ -53,11 +53,7 @@ public:
         return String::number(m_identifier);
     }
 
-    template<typename Encoder> void encode(Encoder& encoder) const
-    {
-        ASSERT(isValidIdentifier(m_identifier));
-        encoder << m_identifier;
-    }
+    static bool isValidIdentifier(uint64_t identifier) { return identifier && identifier != hashTableDeletedValue(); }
 
 protected:
     explicit constexpr ObjectIdentifierGenericBase(uint64_t identifier)
@@ -70,16 +66,6 @@ protected:
     ObjectIdentifierGenericBase(HashTableDeletedValueType) : m_identifier(hashTableDeletedValue()) { }
 
     static uint64_t hashTableDeletedValue() { return std::numeric_limits<uint64_t>::max(); }
-    static bool isValidIdentifier(uint64_t identifier) { return identifier && identifier != hashTableDeletedValue(); }
-
-    template<typename Decoder> static std::optional<uint64_t> decode(Decoder& decoder)
-    {
-        std::optional<uint64_t> identifier;
-        decoder >> identifier;
-        if (!identifier || !isValidIdentifier(*identifier))
-            return std::nullopt;
-        return identifier;
-    }
 
 private:
     uint64_t m_identifier { 0 };
@@ -106,13 +92,6 @@ public:
 
     ObjectIdentifierGeneric() = default;
     ObjectIdentifierGeneric(HashTableDeletedValueType) : ObjectIdentifierGenericBase(HashTableDeletedValue) { }
-
-    template<typename Decoder> static std::optional<ObjectIdentifierGeneric> decode(Decoder& decoder)
-    {
-        if (auto identifier = ObjectIdentifierGenericBase::decode(decoder))
-            return ObjectIdentifierGeneric { *identifier };
-        return std::nullopt;
-    }
 
     struct MarkableTraits {
         static bool isEmptyValue(ObjectIdentifierGeneric identifier) { return !identifier; }

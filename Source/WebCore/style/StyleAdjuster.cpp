@@ -226,10 +226,14 @@ static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const
     // Media elements have a special rendering where the media controls do not use a proper containing
     // block model which means we need to manually stop text-decorations to apply to text inside media controls.
     auto isAtMediaUAShadowBoundary = [&] {
+#if ENABLE(VIDEO)
         if (!element)
             return false;
         auto* parentNode = element->parentNode();
         return parentNode && parentNode->isUserAgentShadowRoot() && parentNode->parentOrShadowHostElement()->isMediaElement();
+#else
+        return false;
+#endif
     }();
 
     // Outermost <svg> roots are considered to be atomic inline-level.

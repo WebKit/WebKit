@@ -32,7 +32,6 @@
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif
 
-
 #define ENABLE(WTF_FEATURE) (defined ENABLE_##WTF_FEATURE && ENABLE_##WTF_FEATURE)
 
 /* Use this file to list _all_ ENABLE() macros. Define the macros to be one of the following values:
@@ -55,7 +54,6 @@
  * Get the list of features enabled by default for a PLATFORM(XXX): gcc -E -dM -I. -DWTF_PLATFORM_XXX "wtf/Platform.h" | grep "ENABLE_\w\+ 1" | cut -d' ' -f2 | sort
  */
 
-
 /* FIXME: This should be renamed to ENABLE_ASSERTS for consistency and so it can be used as ENABLE(ASSERTS). */
 /* ASSERT_ENABLED should be true if we want the current compilation unit to
    do debug assertion checks unconditionally (e.g. treat a debug ASSERT
@@ -69,14 +67,11 @@
 #endif
 #endif
 
-
 /* ==== Platform additions: additions to PlatformEnable.h from outside the main repository ==== */
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
 #include <WebKitAdditions/AdditionalFeatureDefines.h>
 #endif
-
-
 
 /* ==== Platform specific defaults ==== */
 
@@ -95,28 +90,57 @@
 #include <wtf/PlatformEnablePlayStation.h>
 #endif
 
+/* --------- GTK/WPE port --------- */
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include <wtf/PlatformEnableGlib.h>
+#endif
+
 /* ---------  ENABLE macro defaults --------- */
 
 /* Do not use PLATFORM() tests in this section ! */
 
-#if !defined(ENABLE_WEBPROCESS_NSRUNLOOP)
-#define ENABLE_WEBPROCESS_NSRUNLOOP 0
+#if !defined(ENABLE_3D_TRANSFORMS)
+#define ENABLE_3D_TRANSFORMS 0
 #endif
 
-#if !defined(ENABLE_MAC_GESTURE_EVENTS)
-#define ENABLE_MAC_GESTURE_EVENTS 0
+#if !defined(ENABLE_ACCESSIBILITY)
+#define ENABLE_ACCESSIBILITY 1
 #endif
 
-#if !defined(ENABLE_CURSOR_VISIBILITY)
-#define ENABLE_CURSOR_VISIBILITY 0
+#if !defined(ENABLE_ACCESSIBILITY_ANIMATION_CONTROL)
+#define ENABLE_ACCESSIBILITY_ANIMATION_CONTROL 0
+#endif
+
+#if !defined(ENABLE_ADVANCED_PRIVACY_PROTECTIONS)
+#define ENABLE_ADVANCED_PRIVACY_PROTECTIONS 0
 #endif
 
 #if !defined(ENABLE_AIRPLAY_PICKER)
 #define ENABLE_AIRPLAY_PICKER 0
 #endif
 
+#if !defined(ENABLE_ALTERNATIVE_TEXT_REQUIRES_AUTOMATIC_SPELLING_CORRECTION)
+#define ENABLE_ALTERNATIVE_TEXT_REQUIRES_AUTOMATIC_SPELLING_CORRECTION 0
+#endif
+
+#if !defined(ENABLE_ALTERNATE_WEBM_PLAYER)
+#define ENABLE_ALTERNATE_WEBM_PLAYER 0
+#endif
+
+#if !defined(ENABLE_APNG)
+#define ENABLE_APNG 1
+#endif
+
+#if !defined(ENABLE_APP_HIGHLIGHTS)
+#define ENABLE_APP_HIGHLIGHTS 0
+#endif
+
 #if !defined(ENABLE_APPLE_PAY_REMOTE_UI)
 #define ENABLE_APPLE_PAY_REMOTE_UI 0
+#endif
+
+#if !defined(ENABLE_ASYNC_SCROLLING)
+#define ENABLE_ASYNC_SCROLLING 0
 #endif
 
 #if !defined(ENABLE_AUTOCORRECT)
@@ -127,56 +151,8 @@
 #define ENABLE_AUTOCAPITALIZE 0
 #endif
 
-#if !defined(ENABLE_TEXT_AUTOSIZING)
-#define ENABLE_TEXT_AUTOSIZING 0
-#endif
-
-#if !defined(ENABLE_IOS_GESTURE_EVENTS)
-#define ENABLE_IOS_GESTURE_EVENTS 0
-#endif
-
-#if !defined(ENABLE_IOS_TOUCH_EVENTS)
-#define ENABLE_IOS_TOUCH_EVENTS 0
-#endif
-
-#if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-#define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 0
-#endif
-
-#if !defined(ENABLE_WKPDFVIEW)
-#define ENABLE_WKPDFVIEW 0
-#endif
-
-#if !defined(ENABLE_PREVIEW_CONVERTER)
-#define ENABLE_PREVIEW_CONVERTER 0
-#endif
-
-#if !defined(ENABLE_META_VIEWPORT)
-#define ENABLE_META_VIEWPORT 0
-#endif
-
-#if !defined(ENABLE_FILE_REPLACEMENT)
-#define ENABLE_FILE_REPLACEMENT 0
-#endif
-
-#if !defined(ENABLE_UI_SIDE_COMPOSITING)
-#define ENABLE_UI_SIDE_COMPOSITING 0
-#endif
-
-#if !defined(ENABLE_3D_TRANSFORMS)
-#define ENABLE_3D_TRANSFORMS 0
-#endif
-
-#if !defined(ENABLE_ACCESSIBILITY)
-#define ENABLE_ACCESSIBILITY 1
-#endif
-
-#if !defined(ENABLE_OVERFLOW_SCROLLING_TOUCH)
-#define ENABLE_OVERFLOW_SCROLLING_TOUCH 0
-#endif
-
-#if !defined(ENABLE_APNG)
-#define ENABLE_APNG 1
+#if !defined(ENABLE_BADGING)
+#define ENABLE_BADGING 1
 #endif
 
 #if !defined(ENABLE_CHANNEL_MESSAGING)
@@ -219,12 +195,34 @@
 #define ENABLE_CUSTOM_CURSOR_SUPPORT 1
 #endif
 
+#if !defined(ENABLE_CURSOR_VISIBILITY)
+#define ENABLE_CURSOR_VISIBILITY 0
+#endif
+
 #if !defined(ENABLE_DARK_MODE_CSS)
 #define ENABLE_DARK_MODE_CSS 0
 #endif
 
+#if !defined(ENABLE_DATA_DETECTION)
+#define ENABLE_DATA_DETECTION 0
+#endif
+
+#if !defined(ENABLE_DATACUE_VALUE)
+#define ENABLE_DATACUE_VALUE 0
+#endif
+
 #if !defined(ENABLE_DATALIST_ELEMENT)
 #define ENABLE_DATALIST_ELEMENT 0
+#endif
+
+#if ENABLE(INPUT_TYPE_DATE) || ENABLE(INPUT_TYPE_DATETIMELOCAL) || ENABLE(INPUT_TYPE_MONTH) || ENABLE(INPUT_TYPE_TIME) || ENABLE(INPUT_TYPE_WEEK)
+#if !defined(ENABLE_DATE_AND_TIME_INPUT_TYPES)
+#define ENABLE_DATE_AND_TIME_INPUT_TYPES 1
+#endif
+#endif
+
+#if !defined(ENABLE_DECLARATIVE_WEB_PUSH)
+#define ENABLE_DECLARATIVE_WEB_PUSH 0
 #endif
 
 #if !defined(ENABLE_DEVICE_ORIENTATION)
@@ -251,6 +249,14 @@
 #define ENABLE_ENCRYPTED_MEDIA 0
 #endif
 
+#if !defined(ENABLE_FILE_REPLACEMENT)
+#define ENABLE_FILE_REPLACEMENT 0
+#endif
+
+#if !defined(ENABLE_FILE_SHARE)
+#define ENABLE_FILE_SHARE 1
+#endif
+
 #if !defined(ENABLE_FILTERS_LEVEL_2)
 #define ENABLE_FILTERS_LEVEL_2 0
 #endif
@@ -259,14 +265,12 @@
 #define ENABLE_FTPDIR 1
 #endif
 
-#if !defined(ENABLE_FULLSCREEN_API)
-#define ENABLE_FULLSCREEN_API 0
+#if !defined(ENABLE_FULL_KEYBOARD_ACCESS)
+#define ENABLE_FULL_KEYBOARD_ACCESS 0
 #endif
 
-#if ((PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)) && HAVE(AVKIT)) || PLATFORM(MAC)
-#if !defined(ENABLE_VIDEO_PRESENTATION_MODE)
-#define ENABLE_VIDEO_PRESENTATION_MODE 1
-#endif
+#if !defined(ENABLE_FULLSCREEN_API)
+#define ENABLE_FULLSCREEN_API 0
 #endif
 
 #if !defined(ENABLE_GAMEPAD)
@@ -275,6 +279,30 @@
 
 #if !defined(ENABLE_GEOLOCATION)
 #define ENABLE_GEOLOCATION 0
+#endif
+
+#if !defined(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
+#define ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT 0
+#endif
+
+#if !defined(ENABLE_GPU_PROCESS_WEBGL_BY_DEFAULT)
+#define ENABLE_GPU_PROCESS_WEBGL_BY_DEFAULT 0
+#endif
+
+#if !defined(ENABLE_IMAGE_ANALYSIS)
+#define ENABLE_IMAGE_ANALYSIS 0
+#endif
+
+#if !defined(ENABLE_IMAGE_ANALYSIS_ENHANCEMENTS)
+#define ENABLE_IMAGE_ANALYSIS_ENHANCEMENTS 0
+#endif
+
+#if !defined(ENABLE_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+#define ENABLE_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES 0
+#endif
+
+#if !defined(ENABLE_INLINE_PATH_DATA)
+#define ENABLE_INLINE_PATH_DATA 0
 #endif
 
 #if !defined(ENABLE_INPUT_TYPE_COLOR)
@@ -301,6 +329,14 @@
 #define ENABLE_INPUT_TYPE_WEEK 0
 #endif
 
+#if !defined(ENABLE_IOS_GESTURE_EVENTS)
+#define ENABLE_IOS_GESTURE_EVENTS 0
+#endif
+
+#if !defined(ENABLE_IOS_TOUCH_EVENTS)
+#define ENABLE_IOS_TOUCH_EVENTS 0
+#endif
+
 #if !defined(ENABLE_IOS_FORM_CONTROL_REFRESH)
 #define ENABLE_IOS_FORM_CONTROL_REFRESH 0
 #endif
@@ -309,12 +345,6 @@
 /* Enable IPC testing on all ASAN builds and debug builds. */
 #if (ASAN_ENABLED || !defined(NDEBUG)) && PLATFORM(COCOA)
 #define ENABLE_IPC_TESTING_API 1
-#endif
-#endif
-
-#if ENABLE(INPUT_TYPE_DATE) || ENABLE(INPUT_TYPE_DATETIMELOCAL) || ENABLE(INPUT_TYPE_MONTH) || ENABLE(INPUT_TYPE_TIME) || ENABLE(INPUT_TYPE_WEEK)
-#if !defined(ENABLE_DATE_AND_TIME_INPUT_TYPES)
-#define ENABLE_DATE_AND_TIME_INPUT_TYPES 1
 #endif
 #endif
 
@@ -330,12 +360,24 @@
 #define ENABLE_INSPECTOR_TELEMETRY 0
 #endif
 
+#if !defined(ENABLE_KINETIC_SCROLLING)
+#define ENABLE_KINETIC_SCROLLING 0
+#endif
+
 #if !defined(ENABLE_LAYER_BASED_SVG_ENGINE)
 #define ENABLE_LAYER_BASED_SVG_ENGINE 0
 #endif
 
 #if !defined(ENABLE_LLVM_PROFILE_GENERATION)
 #define ENABLE_LLVM_PROFILE_GENERATION 0
+#endif
+
+#if !defined(ENABLE_MAC_GESTURE_EVENTS)
+#define ENABLE_MAC_GESTURE_EVENTS 0
+#endif
+
+#if !defined(ENABLE_MANAGED_MEDIA_SOURCE)
+#define ENABLE_MANAGED_MEDIA_SOURCE 0
 #endif
 
 #if !defined(ENABLE_MATHML)
@@ -358,10 +400,6 @@
 #define ENABLE_MEDIA_SOURCE 0
 #endif
 
-#if !defined(ENABLE_MANAGED_MEDIA_SOURCE)
-#define ENABLE_MANAGED_MEDIA_SOURCE 0
-#endif
-
 #if !defined(ENABLE_MEDIA_STATISTICS)
 #define ENABLE_MEDIA_STATISTICS 0
 #endif
@@ -370,12 +408,20 @@
 #define ENABLE_MEDIA_STREAM 0
 #endif
 
+#if !defined(ENABLE_META_VIEWPORT)
+#define ENABLE_META_VIEWPORT 0
+#endif
+
 #if !defined(ENABLE_MHTML)
 #define ENABLE_MHTML 0
 #endif
 
 #if !defined(ENABLE_MODERN_MEDIA_CONTROLS)
 #define ENABLE_MODERN_MEDIA_CONTROLS 0
+#endif
+
+#if !defined(ENABLE_MONOSPACE_FONT_EXCEPTION)
+#define ENABLE_MONOSPACE_FONT_EXCEPTION 0
 #endif
 
 #if !defined(ENABLE_MOUSE_CURSOR_SCALE)
@@ -390,6 +436,10 @@
 #define ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE 0
 #endif
 
+#if !defined(ENABLE_NOTIFICATION_EVENT)
+#define ENABLE_NOTIFICATION_EVENT 0
+#endif
+
 #if !defined(ENABLE_NOTIFICATIONS)
 #define ENABLE_NOTIFICATIONS 0
 #endif
@@ -402,13 +452,21 @@
 #define ENABLE_OFFSCREEN_CANVAS_IN_WORKERS 1
 #endif
 
-#if !defined(ENABLE_THUNDER)
-#define ENABLE_THUNDER 0
+#if !defined(ENABLE_OPENTYPE_MATH)
+#define ENABLE_OPENTYPE_MATH 0
+#endif
+
+#if !defined(ENABLE_OPENTYPE_VERTICAL)
+#define ENABLE_OPENTYPE_VERTICAL 0
 #endif
 
 // ORIENTATION_EVENTS should never get enabled on Desktop, only Mobile.
 #if !defined(ENABLE_ORIENTATION_EVENTS)
 #define ENABLE_ORIENTATION_EVENTS 0
+#endif
+
+#if !defined(ENABLE_OVERFLOW_SCROLLING_TOUCH)
+#define ENABLE_OVERFLOW_SCROLLING_TOUCH 0
 #endif
 
 #if OS(WINDOWS)
@@ -421,24 +479,60 @@
 #define ENABLE_PAYMENT_REQUEST 0
 #endif
 
-#if !defined(ENABLE_PERIODIC_MEMORY_MONITOR)
-#define ENABLE_PERIODIC_MEMORY_MONITOR 0
-#endif
-
-#if !defined(ENABLE_POINTER_LOCK)
-#define ENABLE_POINTER_LOCK 1
+#if !defined(ENABLE_PDFJS)
+#define ENABLE_PDFJS 0
 #endif
 
 #if !defined(ENABLE_PENCIL_HOVER)
 #define ENABLE_PENCIL_HOVER 0
 #endif
 
+#if !defined(ENABLE_PERIODIC_MEMORY_MONITOR)
+#define ENABLE_PERIODIC_MEMORY_MONITOR 0
+#endif
+
+#if !defined(ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING)
+#define ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING 0
+#endif
+
+#if !defined(ENABLE_POINTER_LOCK)
+#define ENABLE_POINTER_LOCK 1
+#endif
+
+#if !defined(ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+#define ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3 0
+#endif
+
+#if !defined(ENABLE_PREVIEW_CONVERTER)
+#define ENABLE_PREVIEW_CONVERTER 0
+#endif
+
+#if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+#define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 0
+#endif
+
 #if !defined(ENABLE_REMOTE_INSPECTOR)
 #define ENABLE_REMOTE_INSPECTOR 0
 #endif
 
+#if !defined(ENABLE_REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
+#define ENABLE_REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT 0
+#endif
+
+#if !defined(ENABLE_RESOURCE_USAGE)
+#define ENABLE_RESOURCE_USAGE 0
+#endif
+
 #if !defined(ENABLE_RUBBER_BANDING)
 #define ENABLE_RUBBER_BANDING 0
+#endif
+
+#if !defined(ENABLE_SCROLLING_THREAD)
+#define ENABLE_SCROLLING_THREAD 0
+#endif
+
+#if !defined(ENABLE_SEC_ITEM_SHIM)
+#define ENABLE_SEC_ITEM_SHIM 0
 #endif
 
 #if !defined(ENABLE_SECURITY_ASSERTIONS)
@@ -452,12 +546,24 @@
 #define ENABLE_SEPARATED_WX_HEAP 0
 #endif
 
+#if !defined(ENABLE_SERVICE_WORKER)
+#define ENABLE_SERVICE_WORKER 1
+#endif
+
 #if !defined(ENABLE_SPEECH_SYNTHESIS)
 #define ENABLE_SPEECH_SYNTHESIS 0
 #endif
 
 #if !defined(ENABLE_SPELLCHECK)
 #define ENABLE_SPELLCHECK 0
+#endif
+
+#if !defined(ENABLE_STATIC_IPAD_USER_AGENT_VALUE)
+#define ENABLE_STATIC_IPAD_USER_AGENT_VALUE 0
+#endif
+
+#if !defined(ENABLE_TEXT_AUTOSIZING)
+#define ENABLE_TEXT_AUTOSIZING 0
 #endif
 
 #if !defined(ENABLE_TEXT_CARET)
@@ -468,8 +574,8 @@
 #define ENABLE_TEXT_SELECTION 1
 #endif
 
-#if !defined(ENABLE_ASYNC_SCROLLING)
-#define ENABLE_ASYNC_SCROLLING 0
+#if !defined(ENABLE_THUNDER)
+#define ENABLE_THUNDER 0
 #endif
 
 #if !defined(ENABLE_TOUCH_EVENTS)
@@ -480,20 +586,24 @@
 #define ENABLE_TOUCH_ACTION_REGIONS 0
 #endif
 
-#if !defined(ENABLE_WHEEL_EVENT_REGIONS)
-#define ENABLE_WHEEL_EVENT_REGIONS 0
+#if !defined(ENABLE_UI_SIDE_COMPOSITING)
+#define ENABLE_UI_SIDE_COMPOSITING 0
 #endif
 
 #if !defined(ENABLE_VIDEO)
 #define ENABLE_VIDEO 0
 #endif
 
-#if !defined(ENABLE_DATACUE_VALUE)
-#define ENABLE_DATACUE_VALUE 0
+#if !defined(ENABLE_VIDEO_PRESENTATION_MODE)
+#define ENABLE_VIDEO_PRESENTATION_MODE 0
 #endif
 
 #if !defined(ENABLE_WEBGL)
 #define ENABLE_WEBGL 0
+#endif
+
+#if !defined(ENABLE_WEBPROCESS_NSRUNLOOP)
+#define ENABLE_WEBPROCESS_NSRUNLOOP 0
 #endif
 
 #if !defined(ENABLE_WEB_ARCHIVE)
@@ -504,48 +614,8 @@
 #define ENABLE_WEB_AUDIO 0
 #endif
 
-#if !defined(ENABLE_WK_WEB_EXTENSIONS)
-#define ENABLE_WK_WEB_EXTENSIONS 0
-#endif
-
-#if !defined(ENABLE_XSLT)
-#define ENABLE_XSLT 1
-#endif
-
-#if !defined(ENABLE_SERVICE_WORKER)
-#define ENABLE_SERVICE_WORKER 1
-#endif
-
-#if !defined(ENABLE_MONOSPACE_FONT_EXCEPTION)
-#define ENABLE_MONOSPACE_FONT_EXCEPTION 0
-#endif
-
-#if !defined(ENABLE_FULL_KEYBOARD_ACCESS)
-#define ENABLE_FULL_KEYBOARD_ACCESS 0
-#endif
-
-#if !defined(ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING)
-#define ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING 0
-#endif
-
 #if !defined(ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER)
 #define ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER 0
-#endif
-
-#if !defined(ENABLE_RESOURCE_USAGE)
-#define ENABLE_RESOURCE_USAGE 0
-#endif
-
-#if !defined(ENABLE_SEC_ITEM_SHIM)
-#define ENABLE_SEC_ITEM_SHIM 0
-#endif
-
-#if !defined(ENABLE_DATA_DETECTION)
-#define ENABLE_DATA_DETECTION 0
-#endif
-
-#if !defined(ENABLE_FILE_SHARE)
-#define ENABLE_FILE_SHARE 1
 #endif
 
 #if !defined(ENABLE_WEBXR)
@@ -556,8 +626,24 @@
 #define ENABLE_WEBXR_HANDS 0
 #endif
 
-#if !defined(ENABLE_BADGING)
-#define ENABLE_BADGING 1
+#if !defined(ENABLE_WHEEL_EVENT_LATCHING)
+#define ENABLE_WHEEL_EVENT_LATCHING 0
+#endif
+
+#if !defined(ENABLE_WHEEL_EVENT_REGIONS)
+#define ENABLE_WHEEL_EVENT_REGIONS 0
+#endif
+
+#if !defined(ENABLE_WKPDFVIEW)
+#define ENABLE_WKPDFVIEW 0
+#endif
+
+#if !defined(ENABLE_WK_WEB_EXTENSIONS)
+#define ENABLE_WK_WEB_EXTENSIONS 0
+#endif
+
+#if !defined(ENABLE_XSLT)
+#define ENABLE_XSLT 1
 #endif
 
 /*
@@ -572,16 +658,18 @@
 #define ENABLE_CFPREFS_DIRECT_MODE 0
 #endif
 
-
+#if !defined(ENABLE_UNPREFIXED_BACKDROP_FILTER)
+#define ENABLE_UNPREFIXED_BACKDROP_FILTER 0
+#endif
 
 /* FIXME: This section of the file has not been cleaned up yet and needs major work. */
 
 /* FIXME: JSC_OBJC_API_ENABLED does not match the normal ENABLE naming convention. */
-//#if !PLATFORM(COCOA)
-//#if !defined(JSC_OBJC_API_ENABLED)
+// #if !PLATFORM(COCOA)
+// #if !defined(JSC_OBJC_API_ENABLED)
 #define JSC_OBJC_API_ENABLED 0
-//#endif
-//#endif
+// #endif
+// #endif
 
 /* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
 #if !defined(ENABLE_JIT) && (CPU(X86_64) || (CPU(ARM64) && CPU(ADDRESS64)))
@@ -884,44 +972,6 @@
 #define ENABLE_TREE_DEBUGGING 1
 #endif
 
-#if !defined(ENABLE_OPENTYPE_VERTICAL) && PLATFORM(GTK) || PLATFORM(WPE)
-#define ENABLE_OPENTYPE_VERTICAL 1
-#endif
-
-#if !defined(ENABLE_OPENTYPE_MATH) && (OS(DARWIN) && USE(CG)) || PLATFORM(WIN) || PLATFORM(PLAYSTATION)
-#define ENABLE_OPENTYPE_MATH 1
-#endif
-
-#if !defined(ENABLE_INLINE_PATH_DATA) && USE(CG)
-#define ENABLE_INLINE_PATH_DATA 1
-#endif
-
-#if ((PLATFORM(COCOA) || PLATFORM(PLAYSTATION) || PLATFORM(WPE)) && ENABLE(ASYNC_SCROLLING)) || PLATFORM(GTK)
-#define ENABLE_KINETIC_SCROLLING 1
-#endif
-
-#if PLATFORM(MAC)
-// FIXME: Maybe this can be combined with ENABLE_KINETIC_SCROLLING.
-#define ENABLE_WHEEL_EVENT_LATCHING 1
-#endif
-
-#if PLATFORM(MAC)
-#define ENABLE_MOMENTUM_EVENT_DISPATCHER 1
-#endif
-
-#if !defined(ENABLE_SCROLLING_THREAD)
-#if USE(NICOSIA)
-#define ENABLE_SCROLLING_THREAD 1
-#else
-#define ENABLE_SCROLLING_THREAD 0
-#endif
-#endif
-
-// FIXME: Reenable PDFJS by default for Cocoa (https://bugs.webkit.org/show_bug.cgi?id=242263).
-#if !defined(ENABLE_PDFJS) && ( /* PLATFORM(COCOA) || */ PLATFORM(GTK) || PLATFORM(WPE))
-#define ENABLE_PDFJS 1
-#endif
-
 /* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
    that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
    OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
@@ -930,27 +980,14 @@
 #define ENABLE_LLINT_EMBEDDED_OPCODE_ID 1
 #endif
 
-#if !defined(ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3)
-#define ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3 0
-#endif
-
-#if !defined(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT) && (PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(VISION) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000))
-#define ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT 1
-#endif
-
-
-#if !defined(ENABLE_GPU_PROCESS_WEBGL_BY_DEFAULT) && (PLATFORM(IOS_FAMILY) || PLATFORM(MAC)) && !PLATFORM(WATCHOS) && !HAVE(UIKIT_WEBKIT_INTERNALS)
-#define ENABLE_GPU_PROCESS_WEBGL_BY_DEFAULT 1
-#endif
-
-#if !defined(ENABLE_REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
-#define ENABLE_REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT 1
-#endif
-
 /* Asserts, invariants for macro definitions */
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT) && !ENABLE(VIDEO)
-#error "ENABLE(MEDIA_CONTROLS_SCRIPT) requires ENABLE(VIDEO)"
+#if ENABLE(ALTERNATE_WEBM_PLAYER) && !ENABLE(MEDIA_SOURCE)
+#error "ENABLE(ALTERNATE_WEBM_PLAYER) requires ENABLE(MEDIA_SOURCE)"
+#endif
+
+#if ENABLE(DECLARATIVE_WEB_PUSH) && !ENABLE(NOTIFICATION_EVENT)
+#error "ENABLE(DECLARATIVE_WEB_PUSH) requires ENABLE(NOTIFICATION_EVENT)"
 #endif
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS) && !ENABLE(REMOTE_INSPECTOR)
@@ -965,8 +1002,16 @@
 #error "ENABLE(OFFSCREEN_CANVAS_IN_WORKERS) requires ENABLE(OFFSCREEN_CANVAS)"
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT) && !ENABLE(VIDEO)
+#error "ENABLE(MEDIA_CONTROLS_SCRIPT) requires ENABLE(VIDEO)"
+#endif
+
 #if ENABLE(MEDIA_RECORDER) && !ENABLE(MEDIA_STREAM)
 #error "ENABLE(MEDIA_RECORDER) requires ENABLE(MEDIA_STREAM)"
+#endif
+
+#if ENABLE(NOTIFICATION_EVENT) && (!ENABLE(SERVICE_WORKER) || !ENABLE(NOTIFICATIONS))
+#error "ENABLE(NOTIFICATION_EVENT) requires ENABLE(SERVICE_WORKER) and ENABLE(NOTIFICATIONS)"
 #endif
 
 #if USE(CG)
@@ -989,35 +1034,6 @@
 #error "ENABLE(WEBXR_HANDS) requires ENABLE(WEBXR)"
 #endif
 
-#if ENABLE(SERVICE_WORKER) && ENABLE(NOTIFICATIONS) \
-    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000) || (PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(GTK) || PLATFORM(WPE)))
-#if !defined(ENABLE_NOTIFICATION_EVENT)
-#define ENABLE_NOTIFICATION_EVENT 1
-#endif
-#endif
-
-#if !defined(ENABLE_IMAGE_ANALYSIS_ENHANCEMENTS) \
-    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000) \
-    || (PLATFORM(IOS) || PLATFORM(MACCATALYST)))
-#define ENABLE_IMAGE_ANALYSIS_ENHANCEMENTS 1
-#endif
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000) \
-    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170000) \
-    || PLATFORM(VISION)
-#define ENABLE_ACCESSIBILITY_ANIMATION_CONTROL 1
-#endif
-
-#if !defined(ENABLE_ALTERNATIVE_TEXT_REQUIRES_AUTOMATIC_SPELLING_CORRECTION) \
-    && (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 140000)
-#define ENABLE_ALTERNATIVE_TEXT_REQUIRES_AUTOMATIC_SPELLING_CORRECTION 1
-#endif
-
-#if !defined(ENABLE_ADVANCED_PRIVACY_PROTECTIONS) \
-    && (PLATFORM(MAC) \
-    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170000) \
-    || PLATFORM(VISION) \
-    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 100000) \
-    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 170000))
-#define ENABLE_ADVANCED_PRIVACY_PROTECTIONS 1
+#if !defined(ENABLE_WEBPROCESS_CACHE)
+#define ENABLE_WEBPROCESS_CACHE 0
 #endif

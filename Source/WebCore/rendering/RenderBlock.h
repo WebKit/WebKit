@@ -59,8 +59,8 @@ public:
     virtual ~RenderBlock();
 
 protected:
-    RenderBlock(Element&, RenderStyle&&, BaseTypeFlags);
-    RenderBlock(Document&, RenderStyle&&, BaseTypeFlags);
+    RenderBlock(Type, Element&, RenderStyle&&, BaseTypeFlags);
+    RenderBlock(Type, Document&, RenderStyle&&, BaseTypeFlags);
 
 public:
     // These two functions are overridden for inline-block.
@@ -166,8 +166,8 @@ public:
 
     LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
 
-    void addContinuationWithOutline(RenderInline&);
-    bool paintsContinuationOutline(RenderInline&);
+    void addContinuationWithOutline(RenderInline*);
+    bool paintsContinuationOutline(RenderInline*);
 
     static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, DisplayType = DisplayType::Block);
     RenderPtr<RenderBlock> createAnonymousBlock(DisplayType = DisplayType::Block) const;
@@ -222,7 +222,6 @@ public:
     LayoutSize logicalSizeForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.size() : child.size().transposedSize(); }
     LayoutUnit logicalTopForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.y() : child.x(); }
     LayoutUnit logicalLeftForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.x() : child.y(); }
-    LayoutUnit logicalMarginBoxTopForChild(const RenderBox& child) const { return logicalTopForChild(child) - marginBeforeForChild(child); }
     void setLogicalLeftForChild(RenderBox& child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     void setLogicalTopForChild(RenderBox& child, LayoutUnit logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     LayoutUnit marginBeforeForChild(const RenderBoxModelObject& child) const { return child.marginBefore(&style()); }

@@ -46,13 +46,14 @@ public:
     FullscreenManager(Document&);
     ~FullscreenManager();
 
-    Document& document() { return m_document; }
-    const Document& document() const { return m_document; }
-    Page* page() const { return m_document.page(); }
-    LocalFrame* frame() const { return m_document.frame(); }
-    Element* documentElement() const { return m_document.documentElement(); }
+    Document& document() { return m_document.get(); }
+    const Document& document() const { return m_document.get(); }
+    Ref<Document> protectedDocument() const { return m_document.get(); }
+    Page* page() const { return document().page(); }
+    LocalFrame* frame() const { return document().frame(); }
+    Element* documentElement() const { return document().documentElement(); }
     bool isSimpleFullscreenDocument() const;
-    Document::BackForwardCacheState backForwardCacheState() const { return m_document.backForwardCacheState(); }
+    Document::BackForwardCacheState backForwardCacheState() const { return document().backForwardCacheState(); }
 
     // WHATWG Fullscreen API
     WEBCORE_EXPORT Element* fullscreenElement() const;
@@ -102,7 +103,7 @@ protected:
 
 private:
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_document.logger(); }
+    const Logger& logger() const { return document().logger(); }
     const void* logIdentifier() const { return m_logIdentifier; }
     const char* logClassName() const { return "FullscreenManager"; }
     WTFLogChannel& logChannel() const;
@@ -110,7 +111,7 @@ private:
 
     Document& topDocument() { return m_topDocument ? *m_topDocument : document().topDocument(); }
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_topDocument;
 
     RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }

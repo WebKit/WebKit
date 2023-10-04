@@ -81,10 +81,11 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::C
     unsigned connectionBufferSizeLog2 = defaultConnectionBufferSizeLog2;
     if (attributes.failContextCreationForTesting == WebCore::GraphicsContextGLAttributes::SimulatedCreationFailure::IPCBufferOOM)
         connectionBufferSizeLog2 = 50; // Expect this to fail.
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
-    if (!clientConnection)
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+    if (!connectionPair)
         return nullptr;
-    auto instance = platformCreate(connection, clientConnection.releaseNonNull(), attributes
+    auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
+    auto instance = platformCreate(connection, clientConnection, attributes
 #if ENABLE(VIDEO)
         , WTFMove(videoFrameObjectHeapProxy)
 #endif
@@ -256,7 +257,7 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::paintCompositedResults
     auto [result] = sendResult.takeReply();
     if (!result)
         return nullptr;
-    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy(), WTFMove(*result));
+    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().protectedConnection(), WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy(), WTFMove(*result));
 }
 #endif
 
@@ -280,7 +281,7 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
         auto sendResult = send(Messages::RemoteGraphicsContextGL::SetSharedVideoFrameSemaphore { semaphore });
         if (sendResult != IPC::Error::NoError)
             markContextLost();
-    }, [this](auto&& handle) {
+    }, [this](SharedMemory::Handle&& handle) {
         auto sendResult = send(Messages::RemoteGraphicsContextGL::SetSharedVideoFrameMemory { WTFMove(handle) });
         if (sendResult != IPC::Error::NoError)
             markContextLost();

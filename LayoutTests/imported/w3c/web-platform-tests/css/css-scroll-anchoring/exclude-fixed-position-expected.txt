@@ -1,5 +1,5 @@
 fixed
 content
 
-FAIL Fixed-position header. assert_equals: expected 150 but got 100
+PASS Fixed-position header.
 

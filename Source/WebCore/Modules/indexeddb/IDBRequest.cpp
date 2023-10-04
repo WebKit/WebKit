@@ -263,7 +263,7 @@ const char* IDBRequest::activeDOMObjectName() const
 bool IDBRequest::virtualHasPendingActivity() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()) || Thread::mayBeGCThread());
-    return m_hasPendingActivity;
+    return m_pendingActivity != PendingActivityType::None;
 }
 
 void IDBRequest::stop()
@@ -275,6 +275,7 @@ void IDBRequest::stop()
     removeAllEventListeners();
 
     clearWrappers();
+    m_pendingActivity = PendingActivityType::None;
 }
 
 void IDBRequest::cancelForStop()
@@ -304,11 +305,22 @@ void IDBRequest::dispatchEvent(Event& event)
         return;
     }
 
-    ASSERT(m_hasPendingActivity);
     m_eventBeingDispatched = &event;
 
-    if (event.type() != eventNames().blockedEvent)
+    if (event.type() != eventNames().blockedEvent) {
         m_readyState = ReadyState::Done;
+        if (m_pendingActivity != PendingActivityType::None && (event.type() == eventNames().successEvent || event.type() == eventNames().errorEvent)) {
+            WTF::switchOn(m_result, [&] (const RefPtr<IDBCursor>& cursor) mutable {
+                if (!!cursor.get() && m_transaction && !m_transaction->isFinishedOrFinishing())
+                    m_pendingActivity = PendingActivityType::CursorIteration;
+                else
+                    m_pendingActivity = PendingActivityType::None;
+                }, [&] (const auto&) mutable {
+                    m_pendingActivity = PendingActivityType::None;
+                }
+            );
+        }
+    }
 
     Vector<EventTarget*> targets { this };
 
@@ -317,16 +329,10 @@ void IDBRequest::dispatchEvent(Event& event)
     else if (m_transaction && !m_transaction->didDispatchAbortOrCommit())
         targets = { this, m_transaction.get(), &m_transaction->database() };
 
-    m_hasPendingActivity = false;
     {
         TransactionActivator activator(m_transaction.get());
         EventDispatcher::dispatchEvent(targets, event);
     }
-
-    // Dispatching the event might have set the pending activity flag back to true, suggesting the request will be reused.
-    // We might also re-use the request if this event was the upgradeneeded event for an IDBOpenDBRequest.
-    if (!m_hasPendingActivity)
-        m_hasPendingActivity = isOpenDBRequest() && (event.type() == eventNames().upgradeneededEvent || event.type() == eventNames().blockedEvent);
 
     m_eventBeingDispatched = nullptr;
     if (!m_transaction)
@@ -467,8 +473,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     ASSERT(&cursor == resultCursor());
 
     m_pendingCursor = &cursor;
-    m_hasPendingActivity = true;
-    m_result = NullResultType::Empty;
+    m_result = NullResultType::Undefined;
 
     RefPtr context = scriptExecutionContext();
     if (!context)
@@ -582,6 +587,16 @@ bool IDBRequest::willAbortTransactionAfterDispatchingEvent() const
 WebCoreOpaqueRoot root(IDBRequest* request)
 {
     return WebCoreOpaqueRoot { request };
+}
+
+void IDBRequest::transactionTransitionedToFinishing()
+{
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+
+    if (m_pendingActivity != PendingActivityType::CursorIteration)
+        return;
+
+    m_pendingActivity = PendingActivityType::None;
 }
 
 } // namespace WebCore

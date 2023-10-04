@@ -171,44 +171,38 @@ void RemoteDevice::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 }
 #endif
 
-void RemoteDevice::importExternalTexture(const WebGPU::ExternalTextureDescriptor& descriptor, WebGPUIdentifier identifier)
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor& descriptor, WebGPUIdentifier identifier)
 {
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    importExternalTextureFromPixelBuffer(descriptor, std::nullopt, identifier);
-}
-
-void RemoteDevice::importExternalTextureFromPixelBuffer(const WebGPU::ExternalTextureDescriptor& descriptor, std::optional<WebKit::SharedVideoFrame::Buffer> sharedBuffer, WebGPUIdentifier identifier)
-{
-#endif
-    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
-
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    if (sharedBuffer)
-        convertedDescriptor->pixelBuffer = m_sharedVideoFrameReader.readBuffer(WTFMove(*sharedBuffer));
-    else {
-        WTF::switchOn(descriptor.mediaIdentifier, [&] (WebCore::WebGPU::HTMLVideoElementIdentifier i) {
-            m_gpuConnectionToWebProcess.performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier(i.identifier), [&convertedDescriptor] (auto& player) mutable {
-                auto videoFrame = player.videoFrameForCurrentTime();
-                convertedDescriptor->pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
-            });
-        }, [&] (WebCore::WebGPU::WebCodecsVideoFrameIdentifier i) {
-            auto readReference = RemoteVideoFrameReadReference(RemoteVideoFrameReference(RemoteVideoFrameIdentifier(i.identifier.first), i.identifier.second));
-            auto videoFrame = m_videoFrameObjectHeap.get().get(WTFMove(readReference));
-            convertedDescriptor->pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
+    std::optional<WebKit::SharedVideoFrame> sharedVideoFrame = descriptor.sharedFrame;
+    RetainPtr<CVPixelBufferRef> pixelBuffer { nullptr };
+    if (sharedVideoFrame) {
+        if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(*sharedVideoFrame)))
+            pixelBuffer = videoFrame->pixelBuffer();
+    } else {
+        m_gpuConnectionToWebProcess.performWithMediaPlayerOnMainThread(*descriptor.mediaIdentifier, [&] (auto& player) mutable {
+            auto videoFrame = player.videoFrameForCurrentTime();
+            pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
         });
     }
-#endif
 
-    if (!convertedDescriptor->pixelBuffer)
+    if (!pixelBuffer)
+        return;
+
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor, pixelBuffer);
+    ASSERT(convertedDescriptor);
+    if (!convertedDescriptor)
         return;
 
     auto externalTexture = m_backing->importExternalTexture(*convertedDescriptor);
     auto remoteExternalTexture = RemoteExternalTexture::create(externalTexture, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteExternalTexture);
+#else
+    UNUSED_PARAM(identifier);
+#endif
 }
+#endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 
 void RemoteDevice::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor& descriptor, WebGPUIdentifier identifier)
 {

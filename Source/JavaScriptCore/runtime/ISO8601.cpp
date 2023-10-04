@@ -598,10 +598,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneBrackete
         if (!isValidComponent(currentNameComponentStartIndex, nameLength))
             return std::nullopt;
 
-        Vector<LChar> result;
-        result.reserveInitialCapacity(nameLength);
-        for (unsigned index = 0; index < nameLength; ++index)
-            result.uncheckedAppend(buffer[index]);
+        Vector<LChar> result(buffer.position(), nameLength);
         buffer.advanceBy(nameLength);
 
         if (buffer.atEnd())
@@ -739,10 +736,7 @@ static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<Character
     if (!isValidComponent(currentNameComponentStartIndex, nameLength))
         return std::nullopt;
 
-    Vector<LChar, maxCalendarLength> result;
-    result.reserveInitialCapacity(nameLength);
-    for (unsigned index = 0; index < nameLength; ++index)
-        result.uncheckedAppend(buffer[index]);
+    Vector<LChar, maxCalendarLength> result(buffer.position(), nameLength);
     buffer.advanceBy(nameLength);
 
     if (buffer.atEnd())

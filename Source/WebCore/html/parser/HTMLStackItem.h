@@ -53,6 +53,7 @@ public:
 
     ContainerNode& node() const { return *m_node; }
     Element& element() const { return downcast<Element>(node()); }
+    Ref<Element> protectedElement() const { return element(); }
     Element* elementOrNull() const { return downcast<Element>(m_node.get()); }
 
     const AtomString& localName() const { return isElement() ? element().localName() : nullAtom(); }

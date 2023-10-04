@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    margin-top: 100px;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+<input id="textfield" type="text">
+<br>
+<input id="date" type="date" value="1976-04-01">
+<script>
+jsTestIsAsync = true;
+
+description("Tests that focusing a text field and then immediately focusing a date input on iOS does not result in a hang.");
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    const textField = document.getElementById("textfield");
+    const dateInput = document.getElementById("date");
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.activateElementAndWaitForInputSession(textField);
+
+    await UIHelper.activateElement(dateInput);
+    await UIHelper.waitForContextMenuToShow();
+    testPassed("Showed date picker");
+
+    dateInput.blur();
+    await UIHelper.waitForContextMenuToHide();
+    testPassed("Dismissed date picker");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

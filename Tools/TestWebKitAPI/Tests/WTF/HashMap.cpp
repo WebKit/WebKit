@@ -1215,4 +1215,52 @@ TEST(WTF_HashMap, Clear_Reenter)
     EXPECT_TRUE(map.isEmpty());
 }
 
+TEST(WTF_HashMap, GetOptional)
+{
+    {
+        struct Value {
+            int a;
+            int b;
+        };
+
+        HashMap<unsigned, Value> map;
+        map.add(2, Value { 1, 2 });
+        map.add(1000, Value { 3, 4 });
+
+        auto optionalValue = map.getOptional(1);
+        EXPECT_FALSE(optionalValue.has_value());
+
+        optionalValue = map.getOptional(2);
+        EXPECT_TRUE(optionalValue.has_value());
+        EXPECT_EQ(1, optionalValue->a);
+        EXPECT_EQ(2, optionalValue->b);
+
+        optionalValue = map.getOptional(1000);
+        EXPECT_TRUE(optionalValue.has_value());
+        EXPECT_EQ(3, optionalValue->a);
+        EXPECT_EQ(4, optionalValue->b);
+
+        optionalValue = map.getOptional(10000);
+        EXPECT_FALSE(optionalValue.has_value());
+    }
+
+    {
+        struct CountedValue : public RefCounted<CountedValue> {
+            CountedValue() = default;
+            int a { 123 };
+        };
+
+        HashMap<unsigned, Ref<CountedValue>> map;
+        map.add(2, adoptRef(*new CountedValue { }));
+
+        auto optionalValue = map.getOptional(1);
+        EXPECT_FALSE(optionalValue.has_value());
+
+        optionalValue = map.getOptional(2);
+        EXPECT_TRUE(optionalValue.has_value());
+        EXPECT_EQ(123, optionalValue.value().get().a);
+    }
+
+}
+
 } // namespace TestWebKitAPI

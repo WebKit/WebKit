@@ -12,6 +12,8 @@ features: [generators]
 
 var obj = { *method() {} };
 
-verifyEnumerable(obj, 'method');
-verifyWritable(obj, 'method');
-verifyConfigurable(obj, 'method');
+verifyProperty(obj, "method", {
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

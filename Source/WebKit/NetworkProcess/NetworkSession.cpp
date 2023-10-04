@@ -29,7 +29,6 @@
 #include "BackgroundFetchLoad.h"
 #include "BackgroundFetchState.h"
 #include "BackgroundFetchStoreImpl.h"
-#include "CacheStorageEngine.h"
 #include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
@@ -226,7 +225,6 @@ void NetworkSession::invalidateAndCancel()
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
 #endif
-    m_cacheEngine = nullptr;
 #if ASSERT_ENABLED
     m_isInvalidated = true;
 #endif
@@ -706,19 +704,6 @@ WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
 Ref<NetworkStorageManager> NetworkSession::protectedStorageManager()
 {
     return m_storageManager.copyRef();
-}
-
-CacheStorage::Engine& NetworkSession::ensureCacheEngine()
-{
-    if (!m_cacheEngine)
-        m_cacheEngine = CacheStorage::Engine::create(*this, m_cacheStorageDirectory);
-
-    return *m_cacheEngine;
-}
-
-void NetworkSession::clearCacheEngine()
-{
-    m_cacheEngine = nullptr;
 }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

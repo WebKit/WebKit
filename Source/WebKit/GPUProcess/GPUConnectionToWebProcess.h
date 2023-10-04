@@ -142,6 +142,7 @@ public:
     using WebCore::NowPlayingManager::Client::WeakPtrImplType;
 
     IPC::Connection& connection() { return m_connection.get(); }
+    Ref<IPC::Connection> protectedConnection() { return m_connection; }
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
     GPUProcess& gpuProcess() { return m_gpuProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }

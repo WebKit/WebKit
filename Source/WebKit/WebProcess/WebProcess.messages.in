@@ -188,7 +188,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DidWriteToPasteboardAsynchronously(String pasteboardName) CanDispatchOutOfOrder
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if HAVE(DISPLAY_LINK)
     DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update)
 #endif
 

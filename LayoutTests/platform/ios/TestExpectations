@@ -249,8 +249,9 @@ media/video-size-intrinsic-scale.html [ WontFix ]
 media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Pass ]
 
 # MediaSource is not currently supported on iOS.
-media/media-source/media-managedmse-airplay.html [ Pass ]
 media/media-source
+media/media-source/media-managedmse-airplay.html [ Pass ]
+media/media-source/media-managedmse-idl.html [ Pass ]
 http/tests/media/media-source [ Skip ]
 imported/w3c/web-platform-tests/media-source/ [ Skip ]
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
@@ -376,6 +377,7 @@ fast/events/mouse-force-up.html [ Skip ]
 
 # testRunner.setPageVisibility is not implemented for iOS
 webkit.org/b/165799 fast/dom/timer-throttling-hidden-page.html [ Skip ]
+webkit.org/b/165799 fast/dom/timer-throttling-hidden-page-2.html [ Skip ]
 webkit.org/b/165799 fast/dom/timer-throttling-hidden-page-non-nested.html [ Skip ]
 webkit.org/b/165799 fast/events/page-visibility-onvisibilitychange.html [ Skip ]
 webkit.org/b/165799 media/media-playback-page-visibility.html [ Skip ]
@@ -1140,6 +1142,7 @@ fast/css/resize-below-min-size-zoomed.html [ Skip ]
 fast/css/resize-below-min-size.html [ Skip ]
 fast/css/resize-corner-tracking.html [ Skip ]
 fast/css/resize-orthogonal-containing-block.html [ Skip ]
+fast/css/resize-rtl.html [ Skip ]
 fast/css/resize-single-axis.html [ Skip ]
 fast/events/mouse-events-on-textarea-resize.html [ Skip ]
 
@@ -1178,8 +1181,6 @@ css3/color-filters/color-filter-caret-color.html [ Skip ]
 
 # Not relevant for iOS.
 css3/color-filters/color-filter-ignore-semantic.html [ Skip ]
-
-fast/forms/vertical-writing-mode/progress.html [ ImageOnlyFailure ]
 
 # WebCryptoAPI features that enabled only for iOS 11/High Sierra+
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
@@ -2307,7 +2308,6 @@ imported/blink/fast/pagination/div-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/div-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/viewport-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
 imported/blink/fast/pagination/viewport-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
-fast/multicol/newmulticol/hide-box-vertical-lr.html [ ImageOnlyFailure ]
 
 # Failing tests related to picture element
 webkit.org/b/152141 fast/picture/image-picture-1x.html [ Skip ]
@@ -3639,6 +3639,9 @@ webkit.org/b/237955 imported/w3c/web-platform-tests/css/css-contain/content-visi
 
 webkit.org/b/239625 imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002.html [ ImageOnlyFailure ]
+
 webkit.org/b/239567 tables/mozilla/bugs/bug26178.html [ Pass Failure ]
 
 webkit.org/b/240037 css3/background/background-repeat-space-content.html [ Pass ImageOnlyFailure ]
@@ -3939,6 +3942,7 @@ imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearan
 # <select> are always menulists on iOS, regardless of multiple/size attributes, these tests assume the listbox appearance that desktop platforms have.
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-scrolling.optional.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-size-scrolling-and-sizing.optional.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-options-visual-order.html [ Failure ]
 fast/forms/select/multiselect-in-listbox-mouse-release-outside.html [ Skip ]
 
 # To investigate: might need to relax the tests, or adapt native thumb appearance.
@@ -4373,8 +4377,6 @@ imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-tex
 
 webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
 
-webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]
-
 # rdar://102857582 (iOS17-iOS-Simulator queues timing out before finishing layout tests)
 fast/events/ios/rotation/ [ Skip ]
 
@@ -4595,6 +4597,9 @@ imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-match
 
 webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
 
+# This test can't be enabled on iOS until EventSenderProxyIOS::keyDown() is implemented.
+http/tests/site-isolation/key-events.html [ Skip ]
+
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-both-parent-and-blended-with-3D-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ ImageOnlyFailure ]
@@ -4604,3 +4609,45 @@ imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-001.
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-image-root-filter.html [ ImageOnlyFailure ]
+
+# rdar://113930861 (3D transforms with scaleZ(0) don't get rendered, even when combined with other transforms using preserve-3d (260224))
+compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
+compositing/overlap-blending/opacity-and-infinity.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-with-perspective.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/preserve3d-pseudo-element.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/transform-table-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/transform-table-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]
+
+# rdar://114289511 (REGRESSION ( Sonoma ): [ iOS17 ] 9* fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
+fast/text/canvas-color-fonts/COLR.html [ ImageOnlyFailure ]
+fast/text/canvas-color-fonts/fill-color-shadow-COLR.html [ ImageOnlyFailure ]
+fast/text/canvas-color-fonts/fill-color-shadow-ctm-COLR.html [ ImageOnlyFailure ]
+fast/text/canvas-color-fonts/linedash-COLR.html [ ImageOnlyFailure ]
+fast/text/canvas-color-fonts/stroke-color-COLR.html [ ImageOnlyFailure ]
+fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html [ ImageOnlyFailure ]
+fast/text/canvas-color-fonts/stroke-color-shadow-ctm-COLR.html [ ImageOnlyFailure ]
+fast/text/canvas-color-fonts/stroke-gradient-COLR-3.html [ ImageOnlyFailure ]
+fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
+
+# rdar://114471087 (REGRESSION ( Sonoma ): [ iOS17 ] 18 imported/w3c/web-platform-tests/css/css-fonts/ tests are a consistent image failure)
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-13.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-16.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-17.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-18.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-19.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-22.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-4.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-5.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-6.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-7.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-8.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-9.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-add.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-modify.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-palette-remove.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]

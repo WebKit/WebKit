@@ -59,7 +59,7 @@ using namespace metal;
 
 [[fragment]] vec<float, 4> function0()
 {
-    return vec<float, 4>(1, 0, 0, 1);
+    return vec<float, 4>(1., 0., 0., 1.);
 }
 
 )"_s);

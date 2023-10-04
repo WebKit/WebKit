@@ -41,7 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCGBitmapBackend);
 
 IntSize ImageBufferCGBitmapBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
-    IntSize backendSize = calculateBackendSize(parameters);
+    IntSize backendSize = parameters.backendSize;
     if (backendSize.isEmpty())
         return backendSize;
     
@@ -58,8 +58,7 @@ IntSize ImageBufferCGBitmapBackend::calculateSafeBackendSize(const Parameters& p
 
 size_t ImageBufferCGBitmapBackend::calculateMemoryCost(const Parameters& parameters)
 {
-    IntSize backendSize = calculateBackendSize(parameters);
-    return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
+    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
 }
 
 std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
@@ -113,33 +112,23 @@ GraphicsContext& ImageBufferCGBitmapBackend::context()
     return *m_context;
 }
 
-IntSize ImageBufferCGBitmapBackend::backendSize() const
-{
-    return calculateBackendSize(m_parameters);
-}
-
 unsigned ImageBufferCGBitmapBackend::bytesPerRow() const
 {
-    IntSize backendSize = calculateBackendSize(m_parameters);
-    return calculateBytesPerRow(backendSize);
+    return calculateBytesPerRow(m_parameters.backendSize);
 }
 
-RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior)
+RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage()
 {
-    switch (copyBehavior) {
-    case CopyBackingStore:
-        return NativeImage::create(adoptCF(CGBitmapContextCreateImage(context().platformContext())));
+    return NativeImage::create(adoptCF(CGBitmapContextCreateImage(context().platformContext())));
+}
 
-    case DontCopyBackingStore:
-        auto backendSize = this->backendSize();
-        return NativeImage::create(adoptCF(CGImageCreate(
-            backendSize.width(), backendSize.height(), 8, 32, bytesPerRow(),
-            colorSpace().platformColorSpace(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host), m_dataProvider.get(),
-            0, true, kCGRenderingIntentDefault)));
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
+RefPtr<NativeImage> ImageBufferCGBitmapBackend::createNativeImageReference()
+{
+    auto backendSize = size();
+    return NativeImage::create(adoptCF(CGImageCreate(
+        backendSize.width(), backendSize.height(), 8, 32, bytesPerRow(),
+        colorSpace().platformColorSpace(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host), m_dataProvider.get(),
+        0, true, kCGRenderingIntentDefault)));
 }
 
 void ImageBufferCGBitmapBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)

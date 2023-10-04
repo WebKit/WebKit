@@ -30,7 +30,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableCaption);
 
 RenderTableCaption::RenderTableCaption(Element& element, RenderStyle&& style)
-    : RenderBlockFlow(element, WTFMove(style))
+    : RenderBlockFlow(Type::TableCaption, element, WTFMove(style))
 {
 }
 

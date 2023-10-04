@@ -128,7 +128,7 @@ void StorageAreaMap::removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImp
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, auto&& allItems) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, HashMap<String, String>&& allItems) mutable {
         if (weakThis)
             weakThis->didRemoveItem(seed, key, hasError, WTFMove(allItems));
     };

@@ -68,6 +68,7 @@
 @property (nonatomic, readonly, getter=isShowingKeyboard) BOOL showingKeyboard;
 @property (nonatomic, readonly, getter=isDismissingMenu) BOOL dismissingMenu;
 @property (nonatomic, readonly, getter=isShowingPopover) BOOL showingPopover;
+@property (nonatomic, readonly, getter=isShowingFormValidationBubble) BOOL showingFormValidationBubble;
 @property (nonatomic, assign) BOOL usesSafariLikeRotation;
 @property (nonatomic, readonly, getter=isInteractingWithFormControl) BOOL interactingWithFormControl;
 @property (nonatomic) _WKFocusStartsInputSessionPolicy focusStartsInputSessionPolicy;

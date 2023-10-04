@@ -52,7 +52,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-typedef HashMap<BackForwardList*, WebBackForwardList*> BackForwardListMap;
+using BackForwardListMap = HashMap<CheckedRef<BackForwardList>, WebBackForwardList*>;
 
 // FIXME: Instead of this we could just create a class derived from BackForwardList
 // with a pointer to a WebBackForwardList in it.
@@ -77,7 +77,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     if (!backForwardList)
         return nil;
 
-    if (WebBackForwardList *webBackForwardList = backForwardLists().get(backForwardList))
+    if (WebBackForwardList *webBackForwardList = backForwardLists().get(*backForwardList))
         return webBackForwardList;
 
     return adoptNS([[WebBackForwardList alloc] initWithBackForwardList:*backForwardList]).autorelease();
@@ -91,7 +91,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
         return nil;
 
     _private = reinterpret_cast<WebBackForwardListPrivate*>(&backForwardList.leakRef());
-    backForwardLists().set(core(self), self);
+    backForwardLists().set(*core(self), self);
     return self;
 }
 
@@ -118,7 +118,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     ASSERT(backForwardList);
     if (backForwardList) {
         ASSERT(backForwardList->closed());
-        backForwardLists().remove(backForwardList);
+        backForwardLists().remove(*backForwardList);
         backForwardList->deref();
     }
 

@@ -42,13 +42,13 @@ class Encoder;
 
 template<typename T, typename U> struct Coder<std::pair<T, U>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const std::pair<T, U>& pair)
+    static void encodeForPersistence(Encoder& encoder, const std::pair<T, U>& pair)
     {
         encoder << pair.first << pair.second;
     }
 
     template<typename Decoder>
-    static std::optional<std::pair<T, U>> decode(Decoder& decoder)
+    static std::optional<std::pair<T, U>> decodeForPersistence(Decoder& decoder)
     {
         std::optional<T> first;
         decoder >> first;
@@ -66,7 +66,7 @@ template<typename T, typename U> struct Coder<std::pair<T, U>> {
 
 template<typename T> struct Coder<std::optional<T>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const std::optional<T>& optional)
+    static void encodeForPersistence(Encoder& encoder, const std::optional<T>& optional)
     {
         if (!optional) {
             encoder << false;
@@ -78,7 +78,7 @@ template<typename T> struct Coder<std::optional<T>> {
     }
     
     template<typename Decoder>
-    static std::optional<std::optional<T>> decode(Decoder& decoder)
+    static std::optional<std::optional<T>> decodeForPersistence(Decoder& decoder)
     {
         std::optional<bool> isEngaged;
         decoder >> isEngaged;
@@ -98,13 +98,13 @@ template<typename T> struct Coder<std::optional<T>> {
 
 template<typename KeyType, typename ValueType> struct Coder<WTF::KeyValuePair<KeyType, ValueType>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
+    static void encodeForPersistence(Encoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         encoder << pair.key << pair.value;
     }
 
     template<typename Decoder>
-    static std::optional<WTF::KeyValuePair<KeyType, ValueType>> decode(Decoder& decoder)
+    static std::optional<WTF::KeyValuePair<KeyType, ValueType>> decodeForPersistence(Decoder& decoder)
     {
         std::optional<KeyType> key;
         decoder >> key;
@@ -124,7 +124,7 @@ template<bool fixedSizeElements, typename T, size_t inlineCapacity> struct Vecto
 
 template<typename T, size_t inlineCapacity> struct VectorCoder<false, T, inlineCapacity> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
+    static void encodeForPersistence(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
         for (size_t i = 0; i < vector.size(); ++i)
@@ -132,7 +132,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<false, T, inlineC
     }
 
     template<typename Decoder>
-    static std::optional<Vector<T, inlineCapacity>> decode(Decoder& decoder)
+    static std::optional<Vector<T, inlineCapacity>> decodeForPersistence(Decoder& decoder)
     {
         std::optional<uint64_t> size;
         decoder >> size;
@@ -155,14 +155,14 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<false, T, inlineC
 
 template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCapacity> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
+    static void encodeForPersistence(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
         encoder.encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T) });
     }
     
     template<typename Decoder>
-    static std::optional<Vector<T, inlineCapacity>> decode(Decoder& decoder)
+    static std::optional<Vector<T, inlineCapacity>> decodeForPersistence(Decoder& decoder)
     {
         std::optional<uint64_t> decodedSize;
         decoder >> decodedSize;
@@ -196,7 +196,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
 
     template<typename Encoder>
-    static void encode(Encoder& encoder, const HashMapType& hashMap)
+    static void encodeForPersistence(Encoder& encoder, const HashMapType& hashMap)
     {
         encoder << static_cast<uint64_t>(hashMap.size());
         for (typename HashMapType::const_iterator it = hashMap.begin(), end = hashMap.end(); it != end; ++it)
@@ -204,7 +204,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
     }
 
     template<typename Decoder>
-    static std::optional<HashMapType> decode(Decoder& decoder)
+    static std::optional<HashMapType> decodeForPersistence(Decoder& decoder)
     {
         std::optional<uint64_t> hashMapSize;
         decoder >> hashMapSize;
@@ -237,7 +237,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
     typedef HashSet<KeyArg, HashArg, KeyTraitsArg> HashSetType;
 
     template<typename Encoder>
-    static void encode(Encoder& encoder, const HashSetType& hashSet)
+    static void encodeForPersistence(Encoder& encoder, const HashSetType& hashSet)
     {
         encoder << static_cast<uint64_t>(hashSet.size());
         for (typename HashSetType::const_iterator it = hashSet.begin(), end = hashSet.end(); it != end; ++it)
@@ -245,7 +245,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
     }
 
     template<typename Decoder>
-    static std::optional<HashSetType> decode(Decoder& decoder)
+    static std::optional<HashSetType> decodeForPersistence(Decoder& decoder)
     {
         std::optional<uint64_t> hashSetSize;
         decoder >> hashSetSize;
@@ -271,8 +271,8 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
 
 #define DECLARE_CODER(class) \
 template<> struct Coder<class> { \
-    WTF_EXPORT_PRIVATE static void encode(Encoder&, const class&); \
-    WTF_EXPORT_PRIVATE static std::optional<class> decode(Decoder&); \
+    WTF_EXPORT_PRIVATE static void encodeForPersistence(Encoder&, const class&); \
+    WTF_EXPORT_PRIVATE static std::optional<class> decodeForPersistence(Decoder&); \
 }
 
 DECLARE_CODER(AtomString);

@@ -432,7 +432,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-@implementation WKSelectPopover(WKTesting)
+@implementation WKSelectPopover (WKTesting)
 
 - (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection
 {

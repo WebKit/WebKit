@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -39,15 +40,18 @@ public:
     friend TileControllerMemoryHandler& tileControllerMemoryHandler();
     friend class NeverDestroyed<TileControllerMemoryHandler>;
 
+    ~TileControllerMemoryHandler();
+
     void removeTileController(TileController*);
     void tileControllerGainedUnparentedTiles(TileController*);
     WEBCORE_EXPORT void trimUnparentedTilesToTarget(int target);
 
 private:
-    TileControllerMemoryHandler() { }
+    TileControllerMemoryHandler();
+
     unsigned totalUnparentedTiledLayers() const;
 
-    typedef ListHashSet<TileController*> TileControllerList;
+    using TileControllerList = ListHashSet<CheckedPtr<TileController>>;
     TileControllerList m_tileControllers;
 };
 

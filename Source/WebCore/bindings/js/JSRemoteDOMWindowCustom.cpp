@@ -38,6 +38,10 @@ bool JSRemoteDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lex
     if (std::optional<unsigned> index = parseIndex(propertyName))
         return getOwnPropertySlotByIndex(object, lexicalGlobalObject, index.value(), slot);
 
+    // FIXME (rdar://115751655): This should be replaced with a same-origin check between the active and target document.
+    if (propertyName == "$vm"_s)
+        return true;
+
     auto* thisObject = jsCast<JSRemoteDOMWindow*>(object);
     return jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, thisObject->wrapped(), *lexicalGlobalObject, propertyName, slot, String());
 }

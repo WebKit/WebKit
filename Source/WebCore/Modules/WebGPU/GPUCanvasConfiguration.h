@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GPUCanvasCompositingAlphaMode.h"
+#include "GPUCanvasAlphaMode.h"
 #include "GPUDevice.h"
 #include "GPUPredefinedColorSpace.h"
 #include "GPUTextureFormat.h"
@@ -47,7 +47,7 @@ struct GPUCanvasConfiguration {
                 return WebCore::convertToBacking(viewFormat);
             }),
             WebCore::convertToBacking(colorSpace),
-            WebCore::convertToBacking(compositingAlphaMode),
+            WebCore::convertToBacking(alphaMode),
         };
     }
 
@@ -56,7 +56,7 @@ struct GPUCanvasConfiguration {
     GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
     Vector<GPUTextureFormat> viewFormats;
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
-    GPUCanvasCompositingAlphaMode compositingAlphaMode { GPUCanvasCompositingAlphaMode::Opaque };
+    GPUCanvasAlphaMode alphaMode { GPUCanvasAlphaMode::Opaque };
 };
 
 }

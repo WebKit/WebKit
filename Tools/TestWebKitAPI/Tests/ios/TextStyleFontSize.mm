@@ -27,7 +27,7 @@
 
 #import "InstanceMethodSwizzler.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 #import <WebCore/FontCacheCoreText.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRef.h>

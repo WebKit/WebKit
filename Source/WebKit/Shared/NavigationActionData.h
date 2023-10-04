@@ -49,7 +49,7 @@ namespace WebKit {
 struct NavigationActionData {
     WebCore::NavigationType navigationType { WebCore::NavigationType::Other };
     OptionSet<WebEventModifier> modifiers;
-    WebMouseEventButton mouseButton { WebMouseEventButton::NoButton };
+    WebMouseEventButton mouseButton { WebMouseEventButton::None };
     WebMouseEventSyntheticClickType syntheticClickType { WebMouseEventSyntheticClickType::NoTap };
     uint64_t userGestureTokenIdentifier { 0 };
     std::optional<WTF::UUID> userGestureAuthorizationToken;

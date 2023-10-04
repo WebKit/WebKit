@@ -32,6 +32,7 @@
 
 #include "ColorSerialization.h"
 #include "LegacyRenderSVGImage.h"
+#include "LegacyRenderSVGResourceClipperInlines.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "NodeRenderStyle.h"
@@ -41,7 +42,6 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStopInlines.h"
 #include "RenderSVGInlineText.h"
-#include "RenderSVGResourceClipperInlines.h"
 #include "RenderSVGResourceFilterInlines.h"
 #include "RenderSVGResourceLinearGradientInlines.h"
 #include "RenderSVGResourceMarkerInlines.h"
@@ -169,8 +169,8 @@ static void writeSVGPaintingResource(TextStream& ts, const RenderSVGResource& re
     else if (resourceType == RadialGradientResourceType)
         ts << "[type=RADIAL-GRADIENT]";
 
-    // All other resources derive from RenderSVGResourceContainer
-    const auto& container = static_cast<const RenderSVGResourceContainer&>(resource);
+    // All other resources derive from LegacyRenderSVGResourceContainer
+    const auto& container = static_cast<const LegacyRenderSVGResourceContainer&>(resource);
     ts << " [id=\"" << container.element().getIdAttribute() << "\"]";
 }
 
@@ -455,7 +455,7 @@ static inline void writeCommonGradientProperties(TextStream& ts, SVGSpreadMethod
         ts << " [gradientTransform=" << gradientTransform << "]";
 }
 
-void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer& resource, OptionSet<RenderAsTextFlag> behavior)
+void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceContainer& resource, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, resource, behavior);
 
@@ -481,7 +481,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
             dummyFilter->externalRepresentation(ts, FilterRepresentation::TestOutput);
         }
     } else if (resource.resourceType() == ClipperResourceType) {
-        const auto& clipper = static_cast<const RenderSVGResourceClipper&>(resource);
+        const auto& clipper = static_cast<const LegacyRenderSVGResourceClipper&>(resource);
         writeNameValuePair(ts, "clipPathUnits", clipper.clipPathUnits());
         ts << "\n";
     } else if (resource.resourceType() == MarkerResourceType) {
@@ -605,8 +605,11 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
     // For now leave the DRT output as is, but later on we should change this so cycles are properly ignored in the DRT output.
     if (style.hasPositionedMask()) {
         auto* maskImage = style.maskImage();
-        if (is<StyleCachedImage>(maskImage)) {
-            auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(downcast<StyleCachedImage>(*maskImage).reresolvedURL(renderer.document()).string(), renderer.document());
+        auto& document = renderer.document();
+        auto reresolvedURL = maskImage->reresolvedURL(document);
+
+        if (!reresolvedURL.isEmpty()) {
+            auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), document);
             if (auto* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(renderer.treeScopeForSVGReferences(), resourceID)) {
                 ts << indent << " ";
                 writeNameAndQuotedValue(ts, "masker", resourceID);
@@ -619,7 +622,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
     if (style.clipPath() && is<ReferencePathOperation>(style.clipPath())) {
         auto resourceClipPath = downcast<ReferencePathOperation>(style.clipPath());
         AtomString id = resourceClipPath->fragment();
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(renderer.treeScopeForSVGReferences(), id)) {
+        if (LegacyRenderSVGResourceClipper* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(renderer.treeScopeForSVGReferences(), id)) {
             ts << indent << " ";
             writeNameAndQuotedValue(ts, "clipPath", resourceClipPath->fragment());
             ts << " ";

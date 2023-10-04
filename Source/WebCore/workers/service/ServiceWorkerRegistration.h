@@ -35,6 +35,7 @@
 #include "NotificationOptions.h"
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
+#include "PushSubscriptionOwner.h"
 #include "SWClientConnection.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "Supplementable.h"
@@ -52,7 +53,7 @@ class ServiceWorker;
 class ServiceWorkerContainer;
 class WebCoreOpaqueRoot;
 
-class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public Supplementable<ServiceWorkerRegistration>, public EventTarget, public ActiveDOMObject {
+class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public Supplementable<ServiceWorkerRegistration>, public EventTarget, public ActiveDOMObject, public PushSubscriptionOwner {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(ServiceWorkerRegistration, WEBCORE_EXPORT);
 public:
     static Ref<ServiceWorkerRegistration> getOrCreate(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);
@@ -64,6 +65,8 @@ public:
     ServiceWorker* installing();
     ServiceWorker* waiting();
     ServiceWorker* active();
+
+    bool isActive() const final { return !!m_activeWorker; }
 
     ServiceWorker* getNewestWorker() const;
 
@@ -85,9 +88,9 @@ public:
     void getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);
     void getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 
-    using RefCounted::ref;
-    using RefCounted::deref;
-    
+    void ref() const final { RefCounted::ref(); };
+    void deref() const final { RefCounted::deref(); };
+
     const ServiceWorkerRegistrationData& data() const { return m_registrationData; }
 
     void updateStateFromServer(ServiceWorkerRegistrationState, RefPtr<ServiceWorker>&&);

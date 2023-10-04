@@ -30,6 +30,7 @@
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
 #include "PlaybackSessionModel.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -117,7 +118,7 @@ private:
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     bool m_isListening { false };
-    HashSet<PlaybackSessionModelClient*> m_clients;
+    HashSet<CheckedPtr<PlaybackSessionModelClient>> m_clients;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
 

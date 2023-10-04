@@ -145,7 +145,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     auto role = AccessibilityRole::List;
 
     // Temporarily set role so that we can query children (otherwise canHaveChildren returns false).
-    m_role = role;
+    SetForScope temporaryRole(m_role, role);
 
     unsigned listItemCount = 0;
     bool hasVisibleMarkers = false;
@@ -193,11 +193,5 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
 
     return role;
 }
-    
-AccessibilityRole AccessibilityList::roleValue() const
-{
-    ASSERT(m_role != AccessibilityRole::Unknown);
-    return m_role;
-}
-    
+
 } // namespace WebCore

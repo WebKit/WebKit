@@ -28,7 +28,11 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "BitmapImage.h"
 #include "CanvasRenderingContext.h"
+#include "DisplayListDrawingContext.h"
+#include "DisplayListRecorder.h"
+#include "DisplayListReplayer.h"
 #include "ImageBitmap.h"
 #include "PaintRenderingContext2D.h"
 #include "ScriptExecutionContext.h"
@@ -60,49 +64,44 @@ RefPtr<PaintRenderingContext2D> CustomPaintCanvas::getContext()
         return &downcast<PaintRenderingContext2D>(*m_context);
 
     m_context = PaintRenderingContext2D::create(*this);
-    downcast<PaintRenderingContext2D>(*m_context).setUsesDisplayListDrawing(true);
 
     return &downcast<PaintRenderingContext2D>(*m_context);
 }
 
-void CustomPaintCanvas::replayDisplayList(GraphicsContext* ctx) const
+void CustomPaintCanvas::replayDisplayList(GraphicsContext& target)
 {
-    ASSERT(!m_destinationGraphicsContext);
     if (!width() || !height())
         return;
-
     // FIXME: Using an intermediate buffer is not needed if there are no composite operations.
-    auto clipBounds = ctx->clipBounds();
-
-    auto image = ctx->createAlignedImageBuffer(clipBounds.size());
+    auto clipBounds = target.clipBounds();
+    auto image = target.createAlignedImageBuffer(clipBounds.size());
     if (!image)
         return;
+    auto& imageTarget = image->context();
+    imageTarget.translate(-clipBounds.location());
+    replayDisplayListImpl(imageTarget);
+    target.drawImageBuffer(*image, clipBounds);
+}
 
-    m_destinationGraphicsContext = &image->context();
-    m_destinationGraphicsContext->translate(-clipBounds.location());
-    if (m_context)
-        m_context->paintRenderingResultsToCanvas();
-    m_destinationGraphicsContext = nullptr;
-
-    ctx->drawImageBuffer(*image, clipBounds);
+AffineTransform CustomPaintCanvas::baseTransform() const
+{
+    // The base transform of the display list.
+    // FIXME: this is actually correct, but the display list will not behave correctly with respect to
+    // playback. The GraphicsContext should be fixed to start at identity transform, and the
+    // device transform should be a separate concept that the display list or context2d cannot reset.
+    return { };
 }
 
 Image* CustomPaintCanvas::copiedImage() const
 {
-    ASSERT(!m_destinationGraphicsContext);
     if (!width() || !height())
         return nullptr;
-
-    m_copiedBuffer = ImageBuffer::create(size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (!m_copiedBuffer)
-        return nullptr;
-
-    m_destinationGraphicsContext = &m_copiedBuffer->context();
-    if (m_context)
-        m_context->paintRenderingResultsToCanvas();
-    m_destinationGraphicsContext = nullptr;
-
-    m_copiedImage = m_copiedBuffer->copyImage(DontCopyBackingStore, PreserveResolution::Yes);
+    m_copiedImage = nullptr;
+    auto buffer = ImageBuffer::create(size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (buffer) {
+        replayDisplayListImpl(buffer->context());
+        m_copiedImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(buffer));
+    }
     return m_copiedImage.get();
 }
 
@@ -113,12 +112,26 @@ void CustomPaintCanvas::clearCopiedImage() const
 
 GraphicsContext* CustomPaintCanvas::drawingContext() const
 {
-    return m_destinationGraphicsContext;
+    if (!m_recordingContext)
+        m_recordingContext = makeUnique<DisplayList::DrawingContext>(size());
+    return &m_recordingContext->context();
 }
 
 GraphicsContext* CustomPaintCanvas::existingDrawingContext() const
 {
-    return drawingContext();
+    return m_recordingContext ? &m_recordingContext->context() : nullptr;
+}
+
+void CustomPaintCanvas::replayDisplayListImpl(GraphicsContext& target) const
+{
+    if (!m_recordingContext)
+        return;
+    auto& displayList = m_recordingContext->displayList();
+    if (!displayList.isEmpty()) {
+        DisplayList::Replayer replayer(target, displayList);
+        replayer.replay(FloatRect { { }, size() });
+        displayList.clear();
+    }
 }
 
 }

@@ -329,6 +329,7 @@ public:
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
     JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
+    JS_EXPORT_PRIVATE void scheduleOpportunisticFullCollectionIfNeeded();
 
     JS_EXPORT_PRIVATE IncrementalSweeper& sweeper();
 
@@ -388,8 +389,8 @@ public:
     // Use this API to report non-GC memory referenced by GC objects. Be sure to
     // call both of these functions: Calling only one may trigger catastropic
     // memory growth.
-    void reportExtraMemoryAllocated(size_t);
-    void reportExtraMemoryAllocated(GCDeferralContext*, size_t);
+    void reportExtraMemoryAllocated(const JSCell*, size_t);
+    void reportExtraMemoryAllocated(GCDeferralContext*, const JSCell*, size_t);
     JS_EXPORT_PRIVATE void reportExtraMemoryVisited(size_t);
 
 #if ENABLE(RESOURCE_USAGE)
@@ -614,7 +615,8 @@ private:
 
     Lock& lock() { return m_lock; }
 
-    JS_EXPORT_PRIVATE void reportExtraMemoryAllocatedSlowCase(GCDeferralContext*, size_t);
+    void reportExtraMemoryAllocatedPossiblyFromAlreadyMarkedCell(const JSCell*, size_t);
+    JS_EXPORT_PRIVATE void reportExtraMemoryAllocatedSlowCase(GCDeferralContext*, const JSCell*, size_t);
     JS_EXPORT_PRIVATE void deprecatedReportExtraMemorySlowCase(size_t);
     
     bool shouldCollectInCollectorThread(const AbstractLocker&);
@@ -771,10 +773,13 @@ private:
     size_t m_maxEdenSize;
     size_t m_maxEdenSizeWhenCritical;
     size_t m_maxHeapSize;
+    size_t m_totalBytesVisitedAfterLastFullCollect { 0 };
     size_t m_totalBytesVisited { 0 };
     size_t m_totalBytesVisitedThisCycle { 0 };
     double m_incrementBalance { 0 };
     
+    bool m_shouldDoOpportunisticFullCollection { false };
+    bool m_isInOpportunisticTask { false };
     bool m_shouldDoFullCollection { false };
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_collectionScope;
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_lastCollectionScope;
@@ -907,6 +912,7 @@ private:
     MonotonicTime m_lastGCStartTime;
     MonotonicTime m_lastGCEndTime;
     MonotonicTime m_currentGCStartTime;
+    MonotonicTime m_lastFullGCEndTime;
     Seconds m_totalGCTime;
     
     uintptr_t m_barriersExecuted { 0 };

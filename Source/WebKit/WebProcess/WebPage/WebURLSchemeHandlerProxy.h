@@ -27,6 +27,7 @@
 
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WebURLSchemeTaskProxy.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
@@ -42,7 +43,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebURLSchemeHandlerProxy : public RefCounted<WebURLSchemeHandlerProxy> {
+class WebURLSchemeHandlerProxy : public RefCounted<WebURLSchemeHandlerProxy>, public CanMakeCheckedPtr {
 public:
     static Ref<WebURLSchemeHandlerProxy> create(WebPage& page, WebURLSchemeHandlerIdentifier identifier)
     {

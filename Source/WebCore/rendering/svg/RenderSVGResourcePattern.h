@@ -22,9 +22,9 @@
 #pragma once
 
 #include "ImageBuffer.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "Pattern.h"
 #include "PatternAttributes.h"
-#include "RenderSVGResourceContainer.h"
 #include "SVGPatternElement.h"
 #include <memory>
 #include <wtf/IsoMallocInlines.h>
@@ -39,7 +39,7 @@ public:
     AffineTransform transform;
 };
 
-class RenderSVGResourcePattern final : public RenderSVGResourceContainer {
+class RenderSVGResourcePattern final : public LegacyRenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourcePattern);
 public:
     RenderSVGResourcePattern(SVGPatternElement&, RenderStyle&&);

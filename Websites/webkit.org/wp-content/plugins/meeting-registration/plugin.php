@@ -17,7 +17,7 @@ class WebKit_Meeting_Registration {
     const MEETING_TAXONOMY = 'webkit_meeting';
     const CURRENT_MEETING_OPTION = 'current_webkit_meeting';
     const MEETING_REGISTRATION_STATE_SETTING = 'meeting-registration-state';
-    const CONTRIBUTORS_JSON = 'https://github.com/WebKit/WebKit/raw/main/metadata/contributors.json';
+    const CONTRIBUTORS_JSON = '/var/www/data/contributors.json';
     const EXTRA_FIELDS = [
         'slack'       => FILTER_SANITIZE_STRING,
         'affiliation' => FILTER_SANITIZE_STRING,

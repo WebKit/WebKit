@@ -17,5 +17,5 @@ function f() {
 }
 
 if ( (!(function() {"use strict"; return "ab".replace("b", f)==="aa";}())) || (x!==this)) {
-     throw "'this' had incorrect value!";
+    throw "'this' had incorrect value!";
 }

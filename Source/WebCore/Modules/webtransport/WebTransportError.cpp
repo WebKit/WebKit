@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebTransportError.h"
 
-#include "WebTransportErrorSource.h"
-
 namespace WebCore {
 
 Ref<WebTransportError> WebTransportError::create(String&& message, WebTransportErrorOptions&& options)
@@ -35,19 +33,20 @@ Ref<WebTransportError> WebTransportError::create(String&& message, WebTransportE
     return adoptRef(*new WebTransportError(WTFMove(message), WTFMove(options)));
 }
 
-WebTransportError::WebTransportError(String&&, WebTransportErrorOptions&&)
-    : DOMException(0, emptyString(), emptyString())
+WebTransportError::WebTransportError(String&& message, WebTransportErrorOptions&& options)
+    : DOMException(0, "WebTransportError"_s, WTFMove(message))
+    , m_options(WTFMove(options))
 {
 }
 
 WebTransportErrorSource WebTransportError::source()
 {
-    return WebTransportErrorSource::Stream;
+    return m_options.source;
 }
 
 std::optional<unsigned> WebTransportError::streamErrorCode()
 {
-    return std::nullopt;
+    return m_options.streamErrorCode;
 }
 
 }

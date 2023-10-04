@@ -297,7 +297,7 @@ layer at (8,1268) size 784x404
 layer at (10,1270) size 382x670 backgroundClip at (0,0) size 1188x1680 clip at (0,0) size 1188x1680
   RenderMultiColumnFlowThread at (2,2) size 382x670
     RenderImage {IMG} at (0,0) size 382x380 [bgcolor=#0000FF]
-    RenderInline {SPAN} at (0,0) size 379x268
+    RenderInline {SPAN} at (0,0) size 382x664
       RenderImage {IMG} at (0,400) size 100x20 [bgcolor=#008000]
       RenderText {#text} at (100,401) size 209x28
         text run at (100,401) width 209: "Longer text designed "

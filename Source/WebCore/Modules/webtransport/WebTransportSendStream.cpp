@@ -26,22 +26,29 @@
 #include "config.h"
 #include "WebTransportSendStream.h"
 
+#include "InternalWritableStream.h"
 #include "JSDOMPromiseDeferred.h"
+#include "WebTransportSendStreamStats.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
+ExceptionOr<Ref<WebTransportSendStream>> WebTransportSendStream::create(JSDOMGlobalObject& globalObject, Ref<WritableStreamSink>&& sink)
+{
+    auto result = createInternalWritableStream(globalObject, WTFMove(sink));
+    if (result.hasException())
+        return result.releaseException();
+
+    return adoptRef(*new WebTransportSendStream(result.releaseReturnValue()));
+}
+
+WebTransportSendStream::WebTransportSendStream(Ref<InternalWritableStream>&& stream)
+    : WritableStream(WTFMove(stream)) { }
+
 void WebTransportSendStream::getStats(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(nullptr);
-}
-
-std::optional<int64_t> WebTransportSendStream::sendOrder()
-{
-    return std::nullopt;
-}
-
-void WebTransportSendStream::setSendOrder(std::optional<int64_t>)
-{
+    // FIXME: Resolve promise with stats.
+    return promise->reject(NotSupportedError);
 }
 
 }

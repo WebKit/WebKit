@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UIKitSPI.h"
+#import "UIKitSPIForTesting.h"
 
 #import <CoreGraphics/CGGeometry.h>
 #import <wtf/RetainPtr.h>

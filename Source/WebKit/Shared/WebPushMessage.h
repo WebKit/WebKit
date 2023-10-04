@@ -25,11 +25,17 @@
 
 #pragma once
 
+#include <WebCore/NotificationPayload.h>
 #include <optional>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 
+
 OBJC_CLASS NSDictionary;
+
+namespace WebCore {
+struct NotificationData;
+}
 
 namespace WebKit {
 
@@ -37,6 +43,11 @@ struct WebPushMessage {
     std::optional<Vector<uint8_t>> pushData;
     String pushPartitionString;
     URL registrationURL;
+    std::optional<WebCore::NotificationPayload> notificationPayload;
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    WebCore::NotificationData notificationPayloadToCoreData() const;
+#endif
 
 #if PLATFORM(COCOA)
     static std::optional<WebPushMessage> fromDictionary(NSDictionary *);

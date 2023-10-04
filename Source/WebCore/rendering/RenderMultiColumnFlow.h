@@ -99,7 +99,6 @@ public:
     SpannerMap& spannerMap() { return *m_spannerMap; }
 
 private:
-    bool isRenderMultiColumnFlow() const override { return true; }
     ASCIILiteral renderName() const override;
     void addFragmentToThread(RenderFragmentContainer*) override;
     void willBeRemovedFromTree(IsInternalMove) override;

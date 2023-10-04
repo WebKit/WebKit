@@ -40,12 +40,12 @@ bool FEBlendSoftwareApplier::apply(const Filter&, const FilterImageVector& input
     auto& input = inputs[0].get();
     auto& input2 = inputs[1].get();
 
-    auto resultImage = result.imageBuffer();
+    RefPtr resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
-    auto inputImage = input.imageBuffer();
-    auto inputImage2 = input2.imageBuffer();
+    RefPtr inputImage = input.imageBuffer();
+    RefPtr inputImage2 = input2.imageBuffer();
     if (!inputImage || !inputImage2)
         return false;
 

@@ -1,0 +1,110 @@
+
+FAIL Property color value 'rgb(from color(display-p3 0 1 0) r g b / alpha)' Colors do not match.
+Actual:   rgb(0, 249, 66)
+Expected: color(srgb -0.511814 1.01832 -0.310726).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -0.511814 +/- 0.01, expected -0.511814 but got 0
+FAIL Property color value 'rgb(from lab(100 104.3 -50.9) r g b)' Colors do not match.
+Actual:   rgb(255, 255, 255)
+Expected: color(srgb 1.59343 0.58802 1.40564).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59343 +/- 0.01, expected 1.59343 but got 255
+FAIL Property color value 'rgb(from lab(0 104.3 -50.9) r g b)' Colors do not match.
+Actual:   rgb(42, 0, 34)
+Expected: color(srgb 0.351376 -0.213938 0.299501).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.351376 +/- 0.01, expected 0.351376 but got 42
+FAIL Property color value 'rgb(from lch(100 116 334) r g b)' Colors do not match.
+Actual:   rgb(255, 255, 255)
+Expected: color(srgb 1.59328 0.58828 1.40527).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59328 +/- 0.01, expected 1.59328 but got 255
+FAIL Property color value 'rgb(from lch(0 116 334) r g b)' Colors do not match.
+Actual:   rgb(42, 0, 34)
+Expected: color(srgb 0.351307 -0.213865 0.299236).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.351307 +/- 0.01, expected 0.351307 but got 42
+FAIL Property color value 'rgb(from oklab(1 0.365 -0.16) r g b)' Colors do not match.
+Actual:   rgb(255, 249, 255)
+Expected: color(srgb 1.59295 0.360371 1.38571).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59295 +/- 0.01, expected 1.59295 but got 255
+FAIL Property color value 'rgb(from oklab(0 0.365 -0.16) r g b)' Colors do not match.
+Actual:   rgb(0, 0, 0)
+Expected: color(srgb 0.0763893 -0.0456266 0.0932598).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.0763893 +/- 0.01, expected 0.0763893 but got 0
+FAIL Property color value 'rgb(from oklch(1 0.399 336.3) r g b)' Colors do not match.
+Actual:   rgb(255, 249, 255)
+Expected: color(srgb 1.59328 0.358736 1.38663).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59328 +/- 0.01, expected 1.59328 but got 255
+FAIL Property color value 'rgb(from oklch(0 0.399 336.3) r g b)' Colors do not match.
+Actual:   rgb(0, 0, 0)
+Expected: color(srgb 0.0765362 -0.045825 0.0937443).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.0765362 +/- 0.01, expected 0.0765362 but got 0
+FAIL Property color value 'hsl(from color(display-p3 0 1 0) h s l / alpha)' Colors do not match.
+Actual:   rgb(0, 249, 66)
+Expected: color(srgb -0.511814 1.01832 -0.310726).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -0.511814 +/- 0.01, expected -0.511814 but got 0
+FAIL Property color value 'hsl(from lab(100 104.3 -50.9) h s l)' Colors do not match.
+Actual:   rgb(255, 255, 255)
+Expected: color(srgb 1.59343 0.58802 1.40564).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59343 +/- 0.01, expected 1.59343 but got 255
+FAIL Property color value 'hsl(from lab(0 104.3 -50.9) h s l)' Colors do not match.
+Actual:   rgb(42, 0, 34)
+Expected: color(srgb 0.351376 -0.213938 0.299502).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.351376 +/- 0.01, expected 0.351376 but got 42
+FAIL Property color value 'hsl(from lch(100 116 334) h s l)' Colors do not match.
+Actual:   rgb(255, 255, 255)
+Expected: color(srgb 1.59328 0.58828 1.40527).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59328 +/- 0.01, expected 1.59328 but got 255
+FAIL Property color value 'hsl(from lch(0 116 334) h s l)' Colors do not match.
+Actual:   rgb(42, 0, 34)
+Expected: color(srgb 0.351307 -0.213865 0.299236).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.351307 +/- 0.01, expected 0.351307 but got 42
+FAIL Property color value 'hsl(from oklab(1 0.365 -0.16) h s l)' Colors do not match.
+Actual:   rgb(255, 249, 255)
+Expected: color(srgb 1.59295 0.360371 1.38571).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59295 +/- 0.01, expected 1.59295 but got 255
+FAIL Property color value 'hsl(from oklab(0 0.365 -0.16) h s l)' Colors do not match.
+Actual:   rgb(0, 0, 0)
+Expected: color(srgb 0.0763893 -0.0456266 0.0932598).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.0763893 +/- 0.01, expected 0.0763893 but got 0
+FAIL Property color value 'hsl(from oklch(1 0.399 336.3) h s l)' Colors do not match.
+Actual:   rgb(255, 249, 255)
+Expected: color(srgb 1.59328 0.358736 1.38663).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59328 +/- 0.01, expected 1.59328 but got 255
+FAIL Property color value 'hsl(from oklch(0 0.399 336.3) h s l)' Colors do not match.
+Actual:   rgb(0, 0, 0)
+Expected: color(srgb 0.0765362 -0.045825 0.0937443).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.0765362 +/- 0.01, expected 0.0765362 but got 0
+FAIL Property color value 'hwb(from color(display-p3 0 1 0) h w b / alpha)' Colors do not match.
+Actual:   rgb(0, 249, 66)
+Expected: color(srgb -0.511814 1.01832 -0.310726).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -0.511814 +/- 0.01, expected -0.511814 but got 0
+FAIL Property color value 'hwb(from lab(100 104.3 -50.9) h w b)' Colors do not match.
+Actual:   rgb(255, 255, 255)
+Expected: color(srgb 1.59343 0.58802 1.40564).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59343 +/- 0.01, expected 1.59343 but got 255
+FAIL Property color value 'hwb(from lab(0 104.3 -50.9) h w b)' Colors do not match.
+Actual:   rgb(42, 0, 34)
+Expected: color(srgb 0.351376 -0.213938 0.299502).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.351376 +/- 0.01, expected 0.351376 but got 42
+FAIL Property color value 'hwb(from lch(100 116 334) h w b)' Colors do not match.
+Actual:   rgb(255, 255, 255)
+Expected: color(srgb 1.59328 0.58828 1.40527).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59328 +/- 0.01, expected 1.59328 but got 255
+FAIL Property color value 'hwb(from lch(0 116 334) h w b)' Colors do not match.
+Actual:   rgb(42, 0, 34)
+Expected: color(srgb 0.351307 -0.213865 0.299236).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.351307 +/- 0.01, expected 0.351307 but got 42
+FAIL Property color value 'hwb(from oklab(1 0.365 -0.16) h w b)' Colors do not match.
+Actual:   rgb(255, 249, 255)
+Expected: color(srgb 1.59295 0.360371 1.38571).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59295 +/- 0.01, expected 1.59295 but got 255
+FAIL Property color value 'hwb(from oklab(0 0.365 -0.16) h w b)' Colors do not match.
+Actual:   rgb(0, 0, 0)
+Expected: color(srgb 0.0763894 -0.0456266 0.0932598).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.0763894 +/- 0.01, expected 0.0763894 but got 0
+FAIL Property color value 'hwb(from oklch(1 0.399 336.3) h w b)' Colors do not match.
+Actual:   rgb(255, 249, 255)
+Expected: color(srgb 1.59328 0.358736 1.38664).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1.59328 +/- 0.01, expected 1.59328 but got 255
+FAIL Property color value 'hwb(from oklch(0 0.399 336.3) h w b)' Colors do not match.
+Actual:   rgb(0, 0, 0)
+Expected: color(srgb 0.0765362 -0.045825 0.0937443).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.0765362 +/- 0.01, expected 0.0765362 but got 0
+

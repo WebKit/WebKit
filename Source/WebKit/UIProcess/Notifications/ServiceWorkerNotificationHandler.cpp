@@ -60,7 +60,7 @@ void ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connect
         return;
 
     m_notificationToSessionMap.add(data.notificationID, data.sourceSession);
-    dataStore->showServiceWorkerNotification(connection, data);
+    dataStore->showPersistentNotification(&connection, data);
 }
 
 void ServiceWorkerNotificationHandler::cancelNotification(const WTF::UUID& notificationID)

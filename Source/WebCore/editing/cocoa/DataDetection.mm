@@ -596,16 +596,13 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
             if (lastTextNodeToUpdate != &currentTextNode) {
                 if (lastTextNodeToUpdate)
                     lastTextNodeToUpdate->setData(lastNodeContent);
-                contentOffset = 0;
                 if (range.start.offset > 0)
                     textNodeData = currentTextNode.data().left(range.start.offset);
             } else
                 textNodeData = currentTextNode.data().substring(contentOffset, range.start.offset - contentOffset);
 
-            if (!textNodeData.isEmpty()) {
+            if (!textNodeData.isEmpty())
                 parentNode->insertBefore(Text::create(document, WTFMove(textNodeData)), &currentTextNode);
-                contentOffset = range.start.offset;
-            }
 
             // Create the actual anchor node and insert it before the current node.
             textNodeData = currentTextNode.data().substring(range.start.offset, range.end.offset - range.start.offset);

@@ -33,6 +33,9 @@
 namespace WebCore {
 
 struct CookieInit {
+    CookieInit isolatedCopy() const & { return { name.isolatedCopy(), value.isolatedCopy(), expires, domain.isolatedCopy(), path.isolatedCopy(), sameSite }; }
+    CookieInit isolatedCopy() && { return { WTFMove(name).isolatedCopy(), WTFMove(value).isolatedCopy(), expires, WTFMove(domain).isolatedCopy(), WTFMove(path).isolatedCopy(), sameSite }; }
+
     String name;
     String value;
     std::optional<DOMHighResTimeStamp> expires { };

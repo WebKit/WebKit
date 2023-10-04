@@ -147,9 +147,8 @@ WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
     : m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
     ASSERT(manifest);
-    ASSERT([NSJSONSerialization isValidJSONObject:manifest]);
 
-    NSData *manifestData = [NSJSONSerialization dataWithJSONObject:manifest options:0 error:nullptr];
+    NSData *manifestData = encodeJSONData(manifest);
     RELEASE_ASSERT(manifestData);
 
     [m_resources setObject:manifestData forKey:@"manifest.json"];
@@ -171,7 +170,7 @@ bool WebExtension::manifestParsedSuccessfully()
 bool WebExtension::parseManifest(NSData *manifestData)
 {
     NSError *parseError;
-    m_manifest = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:manifestData options:0 error:&parseError]);
+    m_manifest = parseJSON(manifestData, { }, &parseError);
     if (!m_manifest) {
         recordError(createError(Error::InvalidManifest, nil, parseError));
         return false;
@@ -211,7 +210,7 @@ NSDictionary *WebExtension::manifest()
 
 Ref<API::Data> WebExtension::serializeManifest()
 {
-    return API::Data::createWithoutCopying([NSJSONSerialization dataWithJSONObject:manifest() options:0 error:nullptr]);
+    return API::Data::createWithoutCopying(encodeJSONData(manifest()));
 }
 
 double WebExtension::manifestVersion()
@@ -223,7 +222,7 @@ double WebExtension::manifestVersion()
 
 Ref<API::Data> WebExtension::serializeLocalization()
 {
-    return API::Data::createWithoutCopying([NSJSONSerialization dataWithJSONObject:m_localization.get().localizationDictionary options:0 error:nullptr]);
+    return API::Data::createWithoutCopying(encodeJSONData(m_localization.get().localizationDictionary));
 }
 
 #if PLATFORM(MAC)
@@ -308,6 +307,24 @@ NSURL *WebExtension::resourceFileURLForPath(NSString *path)
     return resourceURL;
 }
 
+UTType *WebExtension::resourceTypeForPath(NSString *path)
+{
+    UTType *result;
+
+    if ([path hasPrefix:@"data:"]) {
+        auto mimeTypeRange = [path rangeOfString:@";"];
+        if (mimeTypeRange.location != NSNotFound) {
+            auto *mimeType = [path substringWithRange:NSMakeRange(5, mimeTypeRange.location - 5)];
+            result = [UTType typeWithMIMEType:mimeType];
+        }
+    } else {
+        auto *fileURL = resourceFileURLForPath(path);
+        [fileURL getResourceValue:&result forKey:NSURLContentTypeKey error:nil];
+    }
+
+    return result;
+}
+
 NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheResult)
 {
     ASSERT(path);
@@ -342,6 +359,22 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
 {
     ASSERT(path);
 
+    if ([path hasPrefix:@"data:"]) {
+        if (auto base64Range = [path rangeOfString:@";base64,"]; base64Range.location != NSNotFound) {
+            auto *base64String = [path substringFromIndex:NSMaxRange(base64Range)];
+            return [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+        }
+
+        if (auto commaRange = [path rangeOfString:@","]; commaRange.location != NSNotFound) {
+            auto *urlEncodedString = [path substringFromIndex:NSMaxRange(commaRange)];
+            auto *decodedString = [urlEncodedString stringByRemovingPercentEncoding];
+            return [decodedString dataUsingEncoding:NSUTF8StringEncoding];
+        }
+
+        ASSERT([path isEqualToString:@"data:"]);
+        return [NSData data];
+    }
+
     // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
     if ([path hasPrefix:@"/"])
         path = [path substringFromIndex:1];
@@ -353,7 +386,7 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
         return [cachedString dataUsingEncoding:NSUTF8StringEncoding];
 
     if (NSDictionary *cachedDictionary = objectForKey<NSDictionary>(m_resources, path))
-        return [NSJSONSerialization dataWithJSONObject:cachedDictionary options:0 error:nullptr];
+        return encodeJSONData(cachedDictionary);
 
     if ([path isEqualToString:generatedBackgroundPageFilename])
         return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];
@@ -790,16 +823,10 @@ CocoaImage *WebExtension::imageForPath(NSString *imagePath)
     if (!imageData)
         return nil;
 
-    NSURL *imageURL = resourceFileURLForPath(imagePath);
-
-    UTType *imageType;
-    [imageURL getResourceValue:&imageType forKey:NSURLContentTypeKey error:nil];
-
+#if !USE(NSIMAGE_FOR_SVG_SUPPORT)
+    UTType *imageType = resourceTypeForPath(imagePath);
     if ([imageType.identifier isEqualToString:UTTypeSVG.identifier]) {
-#if PLATFORM(MAC)
-#if USE(NSIMAGE_FOR_SVG_SUPPORT)
-        return [[NSImage alloc] initWithData:imageData];
-#else // not USE(NSIMAGE_FOR_SVG_SUPPORT)
+#if USE(APPKIT)
         static Class svgImageRep = NSClassFromString(@"_NSSVGImageRep");
         RELEASE_ASSERT(svgImageRep);
 
@@ -812,10 +839,7 @@ CocoaImage *WebExtension::imageForPath(NSString *imagePath)
         result.size = imageRep.size;
 
         return result;
-#endif // not USE(NSIMAGE_FOR_SVG_SUPPORT)
-#endif // PLATFORM(MAC)
-
-#if PLATFORM(IOS_FAMILY)
+#else
         CGSVGDocumentRef document = CGSVGDocumentCreateFromData((__bridge CFDataRef)imageData, nullptr);
         if (!document)
             return nil;
@@ -824,8 +848,9 @@ CocoaImage *WebExtension::imageForPath(NSString *imagePath)
         CGSVGDocumentRelease(document);
 
         return result;
-#endif // PLATFORM(IOS_FAMILY)
+#endif // not USE(APPKIT)
     }
+#endif // !USE(NSIMAGE_FOR_SVG_SUPPORT)
 
     return [[CocoaImage alloc] initWithData:imageData];
 }

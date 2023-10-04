@@ -114,7 +114,7 @@ Expected<Ref<JSON::ArrayOf<Protocol::ApplicationCache::FrameWithManifest>>, Prot
         return makeUnexpected("Page domain must be enabled"_s);
 
     auto result = JSON::ArrayOf<Protocol::ApplicationCache::FrameWithManifest>::create();
-    m_inspectedPage.forEachFrame([&](LocalFrame& frame) {
+    m_inspectedPage.forEachLocalFrame([&](LocalFrame& frame) {
         auto* documentLoader = frame.loader().documentLoader();
         if (!documentLoader)
             return;

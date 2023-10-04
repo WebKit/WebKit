@@ -103,14 +103,15 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         { },
         WTFMove(originatingFrameID),
         WTFMove(parentFrameID),
-        getCurrentProcessID()
+        getCurrentProcessID(),
+        requestingFrame ? requestingFrame->isFocused() : false
     };
 
     std::optional<WebPageProxyIdentifier> originatingPageID;
     if (auto* webPage = requester.pageID ? WebProcess::singleton().webPage(*requester.pageID) : nullptr)
         originatingPageID = webPage->webPageProxyIdentifier();
 
-    // FIXME: Move all this DocumentLoader stuff to the caller, pass in the results.
+    // FIXME: Move all this DocumentLoader stuff to the caller, pass in the results. <rdar://116202776>
     RefPtr coreFrame = m_frame->coreLocalFrame();
 
     // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,

@@ -134,7 +134,7 @@ Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescript
 
 Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDescriptor)
 {
-    return GPUTexture::create(m_backing->createTexture(textureDescriptor.convertToBacking()), textureDescriptor.format);
+    return GPUTexture::create(m_backing->createTexture(textureDescriptor.convertToBacking()), textureDescriptor);
 }
 
 static WebGPU::SamplerDescriptor convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)

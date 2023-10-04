@@ -80,9 +80,7 @@ StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String&
 }
 
 StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
-    : RefCounted<StyleSheetContents>()
-    , m_ownerRule(nullptr)
-    , m_originalURL(o.m_originalURL)
+    : m_originalURL(o.m_originalURL)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
     , m_layerRulesBeforeImportRules(o.m_layerRulesBeforeImportRules.size())
     , m_importRules(o.m_importRules.size())
@@ -384,8 +382,13 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     bool isSameOriginRequest = securityOrigin && securityOrigin->canRequest(baseURL(), OriginAccessPatternsForWebProcess::singleton());
     CachedCSSStyleSheet::MIMETypeCheckHint mimeTypeCheckHint = isStrictParserMode(m_parserContext.mode) || !isSameOriginRequest ? CachedCSSStyleSheet::MIMETypeCheckHint::Strict : CachedCSSStyleSheet::MIMETypeCheckHint::Lax;
     bool hasValidMIMEType = true;
-    String sheetText = cachedStyleSheet->sheetText(mimeTypeCheckHint, &hasValidMIMEType);
+    bool hasHTTPStatusOK = true;
+    String sheetText = cachedStyleSheet->sheetText(mimeTypeCheckHint, &hasValidMIMEType, &hasHTTPStatusOK);
 
+    if (!hasHTTPStatusOK) {
+        ASSERT(sheetText.isNull());
+        return false;
+    }
     if (!hasValidMIMEType) {
         ASSERT(sheetText.isNull());
         if (auto* document = singleOwnerDocument()) {

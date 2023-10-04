@@ -545,8 +545,8 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (NSArray *)subresources
 {
-    return createNSArray(toPrivate(_private)->loader->subresources(), [] (auto& resource) {
-        return adoptNS([[WebResource alloc] _initWithCoreResource:resource.copyRef()]);
+    return createNSArray(toPrivate(_private)->loader->subresources(), [] (auto&& resource) {
+        return adoptNS([[WebResource alloc] _initWithCoreResource:WTFMove(resource)]);
     }).autorelease();
 }
 

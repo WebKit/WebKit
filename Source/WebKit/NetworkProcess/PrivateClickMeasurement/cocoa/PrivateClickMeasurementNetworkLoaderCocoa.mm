@@ -78,7 +78,7 @@ static bool trustsServerForLocalTests(NSURLAuthenticationChallenge *challenge)
 
 namespace WebKit::PCM {
 
-enum LoadTaskIdentifierType { };
+enum class LoadTaskIdentifierType { };
 using LoadTaskIdentifier = ObjectIdentifier<LoadTaskIdentifierType>;
 static HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>& taskMap()
 {

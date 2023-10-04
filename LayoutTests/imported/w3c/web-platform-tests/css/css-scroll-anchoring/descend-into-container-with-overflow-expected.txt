@@ -1,4 +1,4 @@
 bottom
 
-FAIL Zero-height container with visible overflow. assert_equals: expected 300 but got 200
+PASS Zero-height container with visible overflow.
 

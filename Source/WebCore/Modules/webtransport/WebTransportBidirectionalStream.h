@@ -35,8 +35,16 @@ class WebTransportSendStream;
 
 class WebTransportBidirectionalStream : public RefCounted<WebTransportBidirectionalStream> {
 public:
-    ExceptionOr<Ref<WebTransportReceiveStream>> readable();
-    ExceptionOr<Ref<WebTransportSendStream>> writable();
+    static Ref<WebTransportBidirectionalStream> create(Ref<WebTransportReceiveStream>&&, Ref<WebTransportSendStream>&&);
+    ~WebTransportBidirectionalStream();
+
+    WebTransportReceiveStream& readable() { return m_readable.get(); }
+    WebTransportSendStream& writable() { return m_writable.get(); }
+private:
+    WebTransportBidirectionalStream(Ref<WebTransportReceiveStream>&&, Ref<WebTransportSendStream>&&);
+
+    Ref<WebTransportReceiveStream> m_readable;
+    Ref<WebTransportSendStream> m_writable;
 };
 
 }

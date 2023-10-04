@@ -219,8 +219,9 @@ Worklist::Worklist()
     unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? Options::numberOfWasmCompilerThreads() : 1;
     m_threads.reserveInitialCapacity(numberOfCompilationThreads);
     Locker locker { *m_lock };
-    for (unsigned i = 0; i < numberOfCompilationThreads; ++i)
-        m_threads.uncheckedAppend(makeUnique<Worklist::Thread>(locker, *this));
+    m_threads = Vector<std::unique_ptr<Thread>>(numberOfCompilationThreads, [&](size_t) {
+        return makeUnique<Worklist::Thread>(locker, *this);
+    });
 }
 
 Worklist::~Worklist()

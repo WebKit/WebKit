@@ -93,12 +93,11 @@ public:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // Messages to be sent.
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, bool avoidBackendSizeCheck = false);
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, OptionSet<WebCore::ImageBufferOptions>);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
     bool getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, std::span<uint8_t> result);
     void putPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat);
     RefPtr<ShareableBitmap> getShareableBitmap(WebCore::RenderingResourceIdentifier, WebCore::PreserveResolution);
-    RefPtr<WebCore::Image> getFilteredImage(WebCore::RenderingResourceIdentifier, WebCore::Filter&);
     void cacheNativeImage(ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheFont(const WebCore::Font::Attributes&, const WebCore::FontPlatformData::Attributes&, std::optional<WebCore::RenderingResourceIdentifier>);
     void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&);
@@ -155,9 +154,9 @@ private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
     template<typename T, typename U, typename V> auto send(T&& message, ObjectIdentifierGeneric<U, V>);
-    template<typename T> auto send(T&& message) { return send(WTFMove(message), renderingBackendIdentifier()); }
+    template<typename T> auto send(T&& message) { return send(std::forward<T>(message), renderingBackendIdentifier()); }
     template<typename T, typename U, typename V> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V>);
-    template<typename T> auto sendSync(T&& message) { return sendSync(WTFMove(message), renderingBackendIdentifier()); }
+    template<typename T> auto sendSync(T&& message) { return sendSync(std::forward<T>(message), renderingBackendIdentifier()); }
 
     // Connection::Client
     void didClose(IPC::Connection&) final;

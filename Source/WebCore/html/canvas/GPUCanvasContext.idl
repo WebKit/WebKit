@@ -28,7 +28,7 @@
 [
     ActiveDOMObject,
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
+    Exposed=(Window,DedicatedWorker),
     SecureContext,
     SkipVTableValidation,
 ]

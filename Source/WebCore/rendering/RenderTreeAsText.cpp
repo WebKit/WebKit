@@ -38,6 +38,7 @@
 #include "InlineIteratorTextBox.h"
 #include "LegacyRenderSVGContainer.h"
 #include "LegacyRenderSVGImage.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
@@ -67,7 +68,6 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGInlineText.h"
-#include "RenderSVGResourceContainer.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
@@ -596,8 +596,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         writeSVGGradientStop(ts, downcast<RenderSVGGradientStop>(o), behavior);
         return;
     }
-    if (is<RenderSVGResourceContainer>(o)) {
-        writeSVGResourceContainer(ts, downcast<RenderSVGResourceContainer>(o), behavior);
+    if (is<LegacyRenderSVGResourceContainer>(o)) {
+        writeSVGResourceContainer(ts, downcast<LegacyRenderSVGResourceContainer>(o), behavior);
         return;
     }
     if (is<LegacyRenderSVGContainer>(o)) {
