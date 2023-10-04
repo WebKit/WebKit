@@ -101,6 +101,9 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     if (UNLIKELY(!page))
         return;
 
+    if (!page->settings().opportunisticSweepingAndGarbageCollectionEnabled())
+        return;
+
     page->performOpportunisticallyScheduledTasks(deadline);
 }
 
