@@ -6744,6 +6744,3 @@ imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-l
 webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
 
 webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]
-
-# rdar://116291539
-[ Debug ] http/tests/site-isolation/window-properties.html [ Pass Crash ]
