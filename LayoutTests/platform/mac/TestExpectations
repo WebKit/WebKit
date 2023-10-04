@@ -208,7 +208,6 @@ media/track/track-webvtt-snap-to-lines-inline-style.html [ Pass Crash ]
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
-webkit.org/b/113598 animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 
 webkit.org/b/184608 [ Debug ] animations/added-while-suspended.html [ Skip ]
