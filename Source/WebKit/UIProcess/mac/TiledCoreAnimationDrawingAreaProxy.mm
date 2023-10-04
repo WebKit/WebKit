@@ -191,7 +191,7 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
     ASSERT(!m_isWaitingForDidUpdateGeometry);
 
     willSendUpdateGeometry();
-    protectedWebPageProxy()->sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, std::nullopt, true /* flushSynchronously */, createFence()), [weakThis = WeakPtr { *this }] {
+    protectedWebPageProxy()->sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, true /* flushSynchronously */, createFence()), [weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->didUpdateGeometry();

@@ -150,7 +150,7 @@ public:
     virtual bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) { return false; }
 
 #if PLATFORM(COCOA)
-    virtual void updateGeometry(const WebCore::IntSize& viewSize, const std::optional<VisibleContentRectUpdateInfo>&, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) = 0;
+    virtual void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) = 0;
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)

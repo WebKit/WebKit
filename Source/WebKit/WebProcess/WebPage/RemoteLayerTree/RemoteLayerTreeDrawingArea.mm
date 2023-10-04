@@ -149,16 +149,12 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(WebCore::Frame& frame, 
     triggerRenderingUpdate();
 }
 
-void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const std::optional<VisibleContentRectUpdateInfo>& info, bool flushSynchronously, const WTF::MachSendRight&, CompletionHandler<void()>&& completionHandler)
+void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight&, CompletionHandler<void()>&& completionHandler)
 {
     IntSize size = viewSize;
     IntSize contentSize = IntSize(-1, -1);
 
     Ref webPage = m_webPage.get();
-
-    if (info)
-        webPage->updateVisibleContentRects(*info, info->timestamp());
-
     if (!webPage->minimumSizeForAutoLayout().width() || webPage->autoSizingShouldExpandToViewHeight() || (!webPage->sizeToContentAutoSizeMaximumSize().width() && !webPage->sizeToContentAutoSizeMaximumSize().height()))
         webPage->setSize(size);
 

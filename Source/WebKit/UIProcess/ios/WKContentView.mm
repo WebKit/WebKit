@@ -515,7 +515,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     return unobscuredContentRect;
 }
 
-- (std::optional<WebKit::VisibleContentRectUpdateInfo>)createVisibleContentRectUpdateInfoFromVisibleRect:(CGRect)visibleContentRect
+- (void)didUpdateVisibleRect:(CGRect)visibleContentRect
     unobscuredRect:(CGRect)unobscuredContentRect
     contentInsets:(UIEdgeInsets)contentInsets
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
@@ -529,7 +529,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 {
     auto drawingArea = _page->drawingArea();
     if (!drawingArea)
-        return std::nullopt;
+        return;
 
     MonotonicTime timestamp = MonotonicTime::now();
     WebCore::VelocityData velocityData;
@@ -544,7 +544,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     CGRect unobscuredContentRectRespectingInputViewBounds = [self _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredContentRect inputViewBounds:inputViewBounds];
     WebCore::FloatRect fixedPositionRectForLayout = _page->computeLayoutViewportRect(unobscuredContentRect, unobscuredContentRectRespectingInputViewBounds, _page->layoutViewportRect(), zoomScale, WebCore::LayoutViewportConstraint::ConstrainedToDocumentRect);
 
-    return WebKit::VisibleContentRectUpdateInfo {
+    WebKit::VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
         visibleContentRect,
         unobscuredContentRect,
         floatBoxExtent(contentInsets),
@@ -559,41 +559,20 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         !!self.webView._allowsViewportShrinkToFit,
         !!enclosedInScrollableAncestorView,
         velocityData,
-        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID()
-    };
-}
+        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID());
 
-- (void)didUpdateVisibleRect:(CGRect)visibleContentRect
-    unobscuredRect:(CGRect)unobscuredContentRect
-    contentInsets:(UIEdgeInsets)contentInsets
-    unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
-    obscuredInsets:(UIEdgeInsets)obscuredInsets
-    unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets
-    inputViewBounds:(CGRect)inputViewBounds
-    scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale
-    viewStability:(OptionSet<WebKit::ViewStabilityFlag>)viewStability
-    enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
-    sendEvenIfUnchanged:(BOOL)sendEvenIfUnchanged
-{
-    auto visibleContentRectUpdateInfo = [self createVisibleContentRectUpdateInfoFromVisibleRect:visibleContentRect unobscuredRect:unobscuredContentRect contentInsets:contentInsets unobscuredRectInScrollViewCoordinates:unobscuredRectInScrollViewCoordinates obscuredInsets:obscuredInsets unobscuredSafeAreaInsets:unobscuredSafeAreaInsets inputViewBounds:inputViewBounds scale:zoomScale minimumScale:minimumScale viewStability:viewStability enclosedInScrollableAncestorView:enclosedInScrollableAncestorView sendEvenIfUnchanged:sendEvenIfUnchanged];
-
-    if (!visibleContentRectUpdateInfo)
-        return;
-
-    bool inStableState = viewStability.isEmpty();
-
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo->dump());
+    LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo.dump());
 
     bool wasStableState = _page->inStableState();
 
-    _page->updateVisibleContentRects(*visibleContentRectUpdateInfo, sendEvenIfUnchanged);
+    _page->updateVisibleContentRects(visibleContentRectUpdateInfo, sendEvenIfUnchanged);
 
     auto layoutViewport = _page->unconstrainedLayoutViewportRect();
     _page->adjustLayersForLayoutViewport(_page->unobscuredContentRect().location(), layoutViewport, _page->displayedContentScale());
 
     _sizeChangedSinceLastVisibleContentRectUpdate = NO;
 
-    _page->drawingArea()->updateDebugIndicator();
+    drawingArea->updateDebugIndicator();
 
     [self updateFixedClippingView:layoutViewport];
 

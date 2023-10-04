@@ -506,7 +506,7 @@ void TiledCoreAnimationDrawingArea::setExposedContentRect(const FloatRect&)
     ASSERT_NOT_REACHED();
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const std::optional<VisibleContentRectUpdateInfo>&, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&& completionHandler)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&& completionHandler)
 {
     m_inUpdateGeometry = true;
 
