@@ -75,10 +75,10 @@ public:
 
     static unsigned count() { return s_count; }
 
-    static const unsigned size = 16;
+    static const unsigned size = 1 << 8; // 256 wold be enough for fitting all Latin-1 chars.
 
-    static unsigned sizeForPageNumber(unsigned) { return 16; }
-    static unsigned indexForCodePoint(UChar32 c) { return c % size; }
+    static unsigned sizeForPageNumber(unsigned) { return size; }
+    static unsigned indexForCodePoint(UChar32 c) { return c & 0xFF; }
     static unsigned pageNumberForCodePoint(UChar32 c) { return c / size; }
     static UChar32 startingCodePointInPageNumber(unsigned pageNumber) { return pageNumber * size; }
     static bool pageNumberIsUsedForArabic(unsigned pageNumber) { return startingCodePointInPageNumber(pageNumber) >= 0x600 && startingCodePointInPageNumber(pageNumber) + sizeForPageNumber(pageNumber) < 0x700; }
