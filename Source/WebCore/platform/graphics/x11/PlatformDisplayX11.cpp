@@ -117,6 +117,10 @@ EGLDisplay PlatformDisplayX11::gtkEGLDisplay()
     if (m_eglDisplay != EGL_NO_DISPLAY) {
         m_eglDisplayOwned = false;
         PlatformDisplay::initializeEGLDisplay();
+#if ENABLE(WEBGL)
+        m_anglePlatform = EGL_PLATFORM_X11_KHR;
+        m_angleNativeDisplay = m_display;
+#endif
         return m_eglDisplay;
     }
 #endif
@@ -141,6 +145,11 @@ void PlatformDisplayX11::initializeEGLDisplay()
         m_eglDisplay = eglGetDisplay(m_display);
 
     PlatformDisplay::initializeEGLDisplay();
+
+#if ENABLE(WEBGL)
+    m_anglePlatform = EGL_PLATFORM_X11_KHR;
+    m_angleNativeDisplay = m_display;
+#endif
 }
 #endif // USE(EGL)
 
