@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,14 +52,12 @@ void ClockGeneric::setCurrentTime(double time)
 
 double ClockGeneric::currentTime() const
 {
-    if (m_running)
-        m_lastTime = now();
-    return ((m_lastTime - m_startTime).seconds() * m_rate) + m_offset;
+    return currentDelta() + m_offset;
 }
 
 void ClockGeneric::setPlayRate(double rate)
 {
-    m_offset = currentTime();
+    m_offset += currentDelta();
     m_lastTime = m_startTime = now();
     m_rate = rate;
 }
@@ -77,7 +76,7 @@ void ClockGeneric::stop()
     if (!m_running)
         return;
 
-    m_offset = currentTime();
+    m_offset += currentDelta();
     m_lastTime = m_startTime = now();
     m_running = false;
 }
@@ -85,6 +84,13 @@ void ClockGeneric::stop()
 MonotonicTime ClockGeneric::now() const
 {
     return MonotonicTime::now();
+}
+
+double ClockGeneric::currentDelta() const
+{
+    if (m_running)
+        m_lastTime = now();
+    return (m_lastTime - m_startTime).seconds() * m_rate;
 }
 
 }
