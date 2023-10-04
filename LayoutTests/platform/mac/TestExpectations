@@ -2882,6 +2882,10 @@ webkit.org/b/261306 imported/w3c/web-platform-tests/content-security-policy/repo
 [ Sonoma ] fast/forms/input-disabled-color.html [ Failure ]
 [ Sonoma ] fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
 [ Sonoma ] fast/forms/placeholder-pseudo-style.html [ Failure ]
+# webkit.org/b/262595 (REGRESSION(Sonoma): [ Sonoma ] 2 lookup menu-related tests are constant text failures.)
+[ Sonoma ] editing/mac/dictionary-lookup/dictionary-lookup.html [ Failure ]
+[ Sonoma ] editing/selection/context-menu-text-selection-lookup.html [ Failure ]
+
 # rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
 [ Sonoma+ ] fast/text/canvas-color-fonts/linedash-COLR.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/text/canvas-color-fonts/stroke-color-COLR.html [ ImageOnlyFailure ]
