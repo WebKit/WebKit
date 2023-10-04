@@ -214,11 +214,9 @@ class YarrBoyerMooreData {
 public:
     YarrBoyerMooreData() = default;
 
-    void saveMaps(Vector<UniqueRef<BoyerMooreBitmap::Map>> maps)
+    void saveMaps(Vector<UniqueRef<BoyerMooreBitmap::Map>>&& maps)
     {
-        m_maps.reserveCapacity(m_maps.size() + maps.size());
-        for (unsigned index = 0; index < maps.size(); ++index)
-            m_maps.uncheckedAppend(WTFMove(maps[index]));
+        m_maps.appendVector(WTFMove(maps));
     }
 
     void clearMaps()
