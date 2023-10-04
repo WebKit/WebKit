@@ -329,9 +329,9 @@ VTTCueBox* VTTCue::displayTreeInternal()
     return m_displayTree.get();
 }
 
-void VTTCue::didChange()
+void VTTCue::didChange(bool affectOrder)
 {
-    TextTrackCue::didChange();
+    TextTrackCue::didChange(affectOrder);
     m_displayTreeShouldChange = true;
 }
 

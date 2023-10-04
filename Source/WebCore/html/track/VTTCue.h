@@ -199,7 +199,7 @@ public:
     CueType cueType() const override { return WebVTT; }
     bool isRenderable() const final { return !m_content.isEmpty(); }
 
-    void didChange() final;
+    void didChange(bool = false) final;
 
     double calculateComputedTextPosition() const;
     PositionAlignSetting calculateComputedPositionAlignment() const;

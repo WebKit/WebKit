@@ -246,7 +246,7 @@ void TextTrackCue::willChange()
         m_track->cueWillChange(*this);
 }
 
-void TextTrackCue::didChange()
+void TextTrackCue::didChange(bool affectOrder)
 {
     ASSERT(m_processingCueChanges);
     if (--m_processingCueChanges)
@@ -255,7 +255,7 @@ void TextTrackCue::didChange()
     m_displayTreeNeedsUpdate = true;
 
     if (m_track)
-        m_track->cueDidChange(*this);
+        m_track->cueDidChange(*this, affectOrder);
 }
 
 TextTrack* TextTrackCue::track() const
@@ -290,7 +290,7 @@ void TextTrackCue::setStartTime(const MediaTime& value)
 {
     willChange();
     m_startTime = value;
-    didChange();
+    didChange(true);
 }
 
 void TextTrackCue::setEndTime(double value)
@@ -305,7 +305,7 @@ void TextTrackCue::setEndTime(const MediaTime& value)
 {
     willChange();
     m_endTime = value;
-    didChange();
+    didChange(true);
 }
 
 void TextTrackCue::setPauseOnExit(bool value)
