@@ -45,8 +45,8 @@ fn j(x: f32) -> f32
 @compute @workgroup_size(1)
 fn main()
 {
-    // CHECK: int local\d;
-    // CHECK: int local\d;
+    // CHECK: int local\d
+    // CHECK: int local\d
     _ = x;
 
     // CHECK: function\d\(local\d\)
