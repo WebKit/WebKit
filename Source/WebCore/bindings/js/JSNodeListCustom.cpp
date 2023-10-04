@@ -27,6 +27,8 @@
 #include "JSNodeList.h"
 
 #include "ChildNodeList.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNullable.h"
 #include "JSNode.h"
 #include "LiveNodeList.h"
 #include "Node.h"
@@ -37,6 +39,37 @@
 
 namespace WebCore {
 using namespace JSC;
+
+unsigned JSNodeList::getFastIterableLength(JSObject* object)
+{
+    return jsCast<JSNodeList*>(object)->wrapped().length();
+}
+
+JSValue JSNodeList::getFastIterableIndexedElement(JSGlobalObject* lexicalGlobalObject, JSObject* object, unsigned index)
+{
+    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* thisObject = jsCast<JSNodeList*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    if (LIKELY(index <= MAX_ARRAY_INDEX)) {
+        if (auto item = thisObject->wrapped().item(index); LIKELY(!!item)) {
+            JSValue value = toJS<IDLNullable<IDLInterface<Node>>>(*lexicalGlobalObject, *thisObject->globalObject(), throwScope, WTFMove(item));
+            RETURN_IF_EXCEPTION(throwScope, { });
+            return value;
+        }
+    }
+    return { };
+}
+
+JSDOMGlobalObject* JSNodeList::globalObject() const
+{
+    return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject());
+}
+
+ScriptExecutionContext* JSNodeList::scriptExecutionContext() const
+{
+    return globalObject()->scriptExecutionContext();
+}
 
 bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {

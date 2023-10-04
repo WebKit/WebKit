@@ -7938,18 +7938,19 @@ void ByteCodeParser::parseBlock(unsigned limit)
             BytecodeIndex startIndex = m_currentIndex;
 
             Node* symbolIterator = get(bytecode.m_symbolIterator);
-            auto& arrayIteratorProtocolWatchpointSet = globalObject->arrayIteratorProtocolWatchpointSet();
+            auto& arrayIteratorNextWatchpointSet = globalObject->arrayIteratorNextWatchpointSet();
 
-            if (seenModes & IterationMode::FastArray && arrayIteratorProtocolWatchpointSet.isStillValid()) {
+            if (isFastIteration(seenModes) && arrayIteratorNextWatchpointSet.isStillValid()) {
                 // First set up the watchpoint conditions we need for correctness.
-                m_graph.watchpoints().addLazily(arrayIteratorProtocolWatchpointSet);
+                m_graph.watchpoints().addLazily(arrayIteratorNextWatchpointSet);
 
                 ASSERT_WITH_MESSAGE(globalObject->arrayProtoValuesFunctionConcurrently(), "The only way we could have seen FastArray is if we saw this function in the LLInt/Baseline so the iterator function should be allocated.");
                 FrozenValue* frozenSymbolIteratorFunction = m_graph.freeze(globalObject->arrayProtoValuesFunctionConcurrently());
                 numberOfRemainingModes--;
                 if (!numberOfRemainingModes) {
                     addToGraph(CheckIsConstant, OpInfo(frozenSymbolIteratorFunction), symbolIterator);
-                    addToGraph(Check, Edge(get(bytecode.m_iterable), ArrayUse));
+                    if (static_cast<IterationMode>(seenModes) == IterationMode::FastArray)
+                        addToGraph(Check, Edge(get(bytecode.m_iterable), ArrayUse));
                 } else {
                     BasicBlock* fastArrayBlock = allocateUntargetableBlock();
                     genericBlock = allocateUntargetableBlock();
@@ -8090,13 +8091,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             BytecodeIndex startIndex = m_currentIndex;
             JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin());
-            auto& arrayIteratorProtocolWatchpointSet = globalObject->arrayIteratorProtocolWatchpointSet();
+            auto& arrayIteratorNextWatchpointSet = globalObject->arrayIteratorNextWatchpointSet();
             BasicBlock* genericBlock = nullptr;
             BasicBlock* continuation = allocateUntargetableBlock();
 
-            if (seenModes & IterationMode::FastArray && arrayIteratorProtocolWatchpointSet.isStillValid()) {
+            if (isFastIteration(seenModes) && arrayIteratorNextWatchpointSet.isStillValid()) {
                 // First set up the watchpoint conditions we need for correctness.
-                m_graph.watchpoints().addLazily(arrayIteratorProtocolWatchpointSet);
+                m_graph.watchpoints().addLazily(arrayIteratorNextWatchpointSet);
 
                 if (numberOfRemainingModes != 1) {
                     Node* hasNext = addToGraph(IsEmpty, get(bytecode.m_next));
@@ -8130,8 +8131,17 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     Node* isDone = addToGraph(CompareStrictEq, index, doneIndex);
 
                     Node* iterable = get(bytecode.m_iterable);
-                    Node* butterfly = addToGraph(GetButterfly, iterable);
-                    Node* length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), iterable, butterfly);
+
+                    Node* length;
+                    if (static_cast<IterationMode>(seenModes) == IterationMode::FastNodeList) {
+                        auto* lengthImpl = m_vm->propertyNames->length.impl();
+                        CacheableIdentifier lengthIdentifier = CacheableIdentifier::createFromImmortalIdentifier(lengthImpl);
+                        length = addToGraph(GetById, OpInfo(lengthIdentifier), OpInfo(SpecNonBoolInt32), iterable);
+                    } else {
+                        Node* butterfly = addToGraph(GetButterfly, iterable);
+                        length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), iterable, butterfly);
+                    }
+
                     // GetArrayLength is pessimized prior to fixup.
                     m_exitOK = true;
                     addToGraph(ExitOK);

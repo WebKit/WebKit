@@ -37,6 +37,7 @@
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSIDBSerializationGlobalObject.h"
 #include "JSLocalDOMWindow.h"
+#include "JSNodeList.h"
 #include "JSObservableArray.h"
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSRemoteDOMWindow.h"
@@ -75,6 +76,7 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_heapCellTypeForJSWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSWorkerGlobalScope>())
     , m_heapCellTypeForJSSharedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSSharedWorkerGlobalScope>())
     , m_heapCellTypeForJSShadowRealmGlobalScope(JSC::IsoHeapCellType::Args<JSShadowRealmGlobalScope>())
+    , m_heapCellTypeForJSNodeList(JSC::IsoHeapCellType::Args<JSNodeList>())
 #if ENABLE(SERVICE_WORKER)
     , m_heapCellTypeForJSServiceWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSServiceWorkerGlobalScope>())
 #endif

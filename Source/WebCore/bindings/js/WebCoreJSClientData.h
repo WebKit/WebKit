@@ -74,6 +74,7 @@ public:
     JSC::IsoHeapCellType m_heapCellTypeForJSWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSSharedWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSShadowRealmGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSNodeList;
 #if ENABLE(SERVICE_WORKER)
     JSC::IsoHeapCellType m_heapCellTypeForJSServiceWorkerGlobalScope;
 #endif

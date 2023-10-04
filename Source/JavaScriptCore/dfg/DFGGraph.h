@@ -844,8 +844,8 @@ public:
     bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
     {
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
-        InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::ArrayIteratorProtocolWatchpointSet);
+        return isWatchingGlobalObjectWatchpoint(globalObject, globalObject->arrayIteratorNextWatchpointSet(), LinkerIR::Type::ArrayIteratorNextWatchpointSet)
+            && isWatchingGlobalObjectWatchpoint(globalObject, globalObject->arrayIteratorWatchpointSet(), LinkerIR::Type::ArrayIteratorWatchpointSet);
     }
 
     bool isWatchingNumberToStringWatchpoint(Node* node)

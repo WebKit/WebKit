@@ -2980,6 +2980,11 @@ sub GenerateHeader
         }
     }
 
+    if ($interfaceName eq "NodeList") {
+        $headerIncludes{"JavaScriptCore/JSFastIterable.h"} = 1;
+        $parentClassName = "JSC::JSWrapper<NodeList>";
+    }
+
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
     my $implType = GetImplClassName($interface);
@@ -3151,6 +3156,13 @@ sub GenerateHeader
         push(@headerContent, "    static void destroy(JSC::JSCell*);\n");
     }
 
+    if ($interfaceName eq "NodeList") {
+        push(@headerContent, "    static unsigned getFastIterableLength(JSC::JSObject* object);\n");
+        push(@headerContent, "    static JSC::JSValue getFastIterableIndexedElement(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSObject* object, unsigned index);\n");
+        push(@headerContent, "    JSDOMGlobalObject* globalObject() const;\n");
+        push(@headerContent, "    ScriptExecutionContext* scriptExecutionContext() const;\n");
+    }
+
     # Class info
     if ($interfaceName eq "Node") {
         push(@headerContent, "\n");
@@ -3174,6 +3186,8 @@ sub GenerateHeader
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType($type), StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Event")) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSEventType), StructureFlags), info(), $indexingModeIncludingHistory);\n");
+    } elsif ($interfaceName eq "NodeList" || $interfaceName eq "RadioNodeList") {
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::FastIterableType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } else {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
     }
@@ -4389,6 +4403,10 @@ sub GenerateImplementation
     my $namedGetterOperation = GetNamedGetterOperation($interface);
     my $indexedGetterOperation = GetIndexedGetterOperation($interface);
 
+    if ($interfaceName eq "NodeList") {
+        $parentClassName = "JSC::JSWrapper<NodeList>";
+    }
+
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($interface));
 
@@ -4823,6 +4841,7 @@ sub GenerateImplementation
     } else {
         push(@implContent, ", nullptr");
     }
+
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
     # Constructor
@@ -5082,13 +5101,17 @@ sub GenerateImplementation
     push(@implContent, "JSC::GCClient::IsoSubspace* ${className}::subspaceForImpl(JSC::VM& vm)\n");
     push(@implContent, "{\n");
 
-    my $isGlobal = IsDOMGlobalObject($interface);
-    push(@implContent, "    return WebCore::subspaceForImpl<${className}, UseCustomHeapCellType::" . ($isGlobal ? "Yes" : "No") . ">(vm,\n");
+    my $isNodeList = $interfaceName eq "NodeList" || $interfaceName eq "RadioNodeList";
+    my $useCustomHeapCellType = IsDOMGlobalObject($interface) || $isNodeList;
+    push(@implContent, "    return WebCore::subspaceForImpl<${className}, UseCustomHeapCellType::" . ($useCustomHeapCellType ? "Yes" : "No") . ">(vm,\n");
     push(@implContent, "        [] (auto& spaces) { return spaces.m_clientSubspaceFor${interfaceName}.get(); },\n");
     push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceFor${interfaceName} = std::forward<decltype(space)>(space); },\n");
     push(@implContent, "        [] (auto& spaces) { return spaces.m_subspaceFor${interfaceName}.get(); },\n");
-    push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_subspaceFor${interfaceName} = std::forward<decltype(space)>(space); }" . ($isGlobal ? "," : "") . "\n");
-    push(@implContent, "        [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeFor${className}; }\n") if $isGlobal;
+    push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_subspaceFor${interfaceName} = std::forward<decltype(space)>(space); }" . ($useCustomHeapCellType ? "," : "") . "\n");
+    if ($useCustomHeapCellType) {
+        my $tmpClassName = $isNodeList ? "JSNodeList" : $className;
+        push(@implContent, "        [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeFor${tmpClassName}; }\n");
+    }
     push(@implContent, "    );\n");
     push(@implContent, "}\n\n");
 

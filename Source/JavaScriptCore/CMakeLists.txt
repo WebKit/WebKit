@@ -1106,6 +1106,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSDestructibleObject.h
     runtime/JSDestructibleObjectHeapCellType.h
     runtime/JSExportMacros.h
+    runtime/JSFastIterable.h
     runtime/JSFunction.h
     runtime/JSFunctionInlines.h
     runtime/JSGenerator.h

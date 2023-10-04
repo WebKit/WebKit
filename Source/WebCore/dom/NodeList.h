@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "ScriptWrappable.h"
+#include <JavaScriptCore/JSFastIterable.h>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
@@ -33,7 +33,7 @@ namespace WebCore {
 class Node;
 class ScriptExecutionContext;
 
-class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
+class NodeList : public RefCounted<NodeList> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(NodeList, WEBCORE_EXPORT);
 public:
     virtual ~NodeList() = default;
@@ -59,6 +59,8 @@ public:
     virtual bool isChildNodeList() const { return false; }
     virtual bool isEmptyNodeList() const { return false; }
     virtual size_t memoryCost() const { return 0; }
+
+    JSC::Weak<JSC::JSFastIterable> m_wrapper;
 };
 
 } // namespace WebCore
