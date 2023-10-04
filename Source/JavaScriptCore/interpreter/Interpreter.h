@@ -56,7 +56,7 @@ struct WasmOpcodeTraits;
 using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
 
-using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruction*>;
+using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruction*, uintptr_t /* IPIntOffset */>;
 
     class ArgList;
     class CachedCall;
@@ -115,6 +115,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         CodePtr<ExceptionHandlerPtrTag> m_nativeCodeForDispatchAndCatch;
 #endif
         JSOrWasmInstruction m_catchPCForInterpreter;
+        uintptr_t m_catchMetadataPCForInterpreter { 0 };
     };
 
     class Interpreter {

@@ -328,7 +328,7 @@ class WebEvent;
 class WebFoundTextRangeController;
 class WebHistoryItemClient;
 class PlaybackSessionManager;
-class VideoFullscreenManager;
+class VideoPresentationManager;
 class WebBackForwardListItem;
 class WebFrame;
 class WebFullScreenManager;
@@ -489,7 +489,7 @@ public:
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    VideoFullscreenManager& videoFullscreenManager();
+    VideoPresentationManager& videoPresentationManager();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2256,7 +2256,7 @@ private:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr<PlaybackSessionManager> m_playbackSessionManager;
-    RefPtr<VideoFullscreenManager> m_videoFullscreenManager;
+    RefPtr<VideoPresentationManager> m_videoPresentationManager;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

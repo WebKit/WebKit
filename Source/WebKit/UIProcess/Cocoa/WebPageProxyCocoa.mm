@@ -44,7 +44,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferReference.h"
 #import "SynapseSPI.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "WKErrorInternal.h"
 #import "WKWebView.h"
 #import "WebContextMenuProxy.h"
@@ -576,30 +576,30 @@ void WebPageProxy::updateFullscreenVideoTextRecognition()
         return;
 
 #if PLATFORM(IOS_FAMILY)
-    if (RetainPtr controller = m_videoFullscreenManager->playerViewController(*internals().currentFullscreenVideoSessionIdentifier))
+    if (RetainPtr controller = m_videoPresentationManager->playerViewController(*internals().currentFullscreenVideoSessionIdentifier))
         pageClient().cancelTextRecognitionForFullscreenVideo(controller.get());
 #endif
 }
 
 void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 {
-    if (!internals().currentFullscreenVideoSessionIdentifier || !m_videoFullscreenManager)
+    if (!internals().currentFullscreenVideoSessionIdentifier || !m_videoPresentationManager)
         return;
 
     auto identifier = *internals().currentFullscreenVideoSessionIdentifier;
-    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](std::optional<ShareableBitmap::Handle>&& imageHandle) {
+    m_videoPresentationManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](std::optional<ShareableBitmap::Handle>&& imageHandle) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->internals().currentFullscreenVideoSessionIdentifier != identifier)
             return;
 
-        auto fullscreenManager = protectedThis->m_videoFullscreenManager;
-        if (!fullscreenManager)
+        auto presentationManager = protectedThis->m_videoPresentationManager;
+        if (!presentationManager)
             return;
         if (!imageHandle)
             return;
 
 #if PLATFORM(IOS_FAMILY)
-        if (RetainPtr controller = fullscreenManager->playerViewController(identifier))
+        if (RetainPtr controller = presentationManager->playerViewController(identifier))
             protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(WTFMove(*imageHandle), controller.get());
 #endif
     });

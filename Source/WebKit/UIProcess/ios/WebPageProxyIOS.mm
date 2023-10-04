@@ -47,7 +47,6 @@
 #import "PaymentAuthorizationViewController.h"
 #import "PrintInfo.h"
 #import "ProvisionalPageProxy.h"
-#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -57,7 +56,7 @@
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebAutocorrectionContext.h"
@@ -692,8 +691,8 @@ void WebPageProxy::applicationWillEnterForegroundForMedia()
 void WebPageProxy::applicationDidBecomeActive()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (m_videoFullscreenManager)
-        m_videoFullscreenManager->applicationDidBecomeActive();
+    if (m_videoPresentationManager)
+        m_videoPresentationManager->applicationDidBecomeActive();
 #endif
     m_process->send(Messages::WebPage::ApplicationDidBecomeActive(), webPageID());
 }

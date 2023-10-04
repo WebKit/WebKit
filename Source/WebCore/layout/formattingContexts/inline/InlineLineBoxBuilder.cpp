@@ -65,6 +65,10 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
     adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
     computeLineBoxGeometry(lineBox);
     adjustOutsideListMarkersPosition(lineBox);
+
+    if (auto adjustment = formattingContext().quirks().adjustmentForLineGridLineSnap(lineBox))
+        expandAboveRootInlineBox(lineBox, *adjustment);
+
     return lineBox;
 }
 
@@ -735,6 +739,14 @@ void LineBoxBuilder::adjustMarginStartForListMarker(const ElementBox& listMarker
     // Make sure that the line content does not get pulled in to logical left direction due to
     // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
     listMarkerGeometry.setHorizontalMargin({ listMarkerGeometry.marginStart() + nestedListMarkerMarginStart - LayoutUnit { rootInlineBoxOffset }, listMarkerGeometry.marginEnd() - nestedListMarkerMarginStart + LayoutUnit { rootInlineBoxOffset } });
+}
+
+void LineBoxBuilder::expandAboveRootInlineBox(LineBox& lineBox, InlineLayoutUnit expansion) const
+{
+    lineBox.rootInlineBox().setLogicalTop(lineBox.rootInlineBox().logicalTop() + expansion);
+    auto lineBoxRect = lineBox.logicalRect();
+    lineBoxRect.expandVertically(expansion);
+    lineBox.setLogicalRect(lineBoxRect);
 }
 
 }

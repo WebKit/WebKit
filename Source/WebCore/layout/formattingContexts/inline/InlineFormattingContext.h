@@ -29,7 +29,7 @@
 #include "FormattingState.h"
 #include "InlineDisplayContent.h"
 #include "InlineFormattingConstraints.h"
-#include "InlineFormattingGeometry.h"
+#include "InlineFormattingUtils.h"
 #include "InlineLayoutState.h"
 #include "InlineQuirks.h"
 #include "IntrinsicWidthHandler.h"
@@ -54,7 +54,7 @@ struct InlineLayoutResult {
 
 // This class implements the layout logic for inline formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
-class InlineFormattingContext final : public FormattingContext {
+class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
@@ -63,7 +63,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicSizes(const InlineDamage*);
     LayoutUnit maximumContentSize();
 
-    const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
+    const InlineFormattingUtils& formattingUtils() const { return m_inlineFormattingUtils; }
     const InlineQuirks& quirks() const { return m_inlineQuirks; }
     // FIXME: This should just be "layout state" (pending on renaming LayoutState).
     InlineLayoutState& inlineLayoutState() { return m_inlineLayoutState; }
@@ -88,7 +88,7 @@ private:
 
 private:
     InlineContentCache& m_inlineContentCache;
-    const InlineFormattingGeometry m_inlineFormattingGeometry;
+    const InlineFormattingUtils m_inlineFormattingUtils;
     const InlineQuirks m_inlineQuirks;
     InlineLayoutState m_inlineLayoutState;
 };

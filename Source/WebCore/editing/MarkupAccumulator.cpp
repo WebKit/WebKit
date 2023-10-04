@@ -32,10 +32,13 @@
 #include "Comment.h"
 #include "CommonAtomStrings.h"
 #include "DocumentFragment.h"
+#include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "Editor.h"
 #include "ElementInlines.h"
+#include "FrameLoader.h"
 #include "HTMLElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLTemplateElement.h"
 #include "NodeName.h"
@@ -447,10 +450,18 @@ void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& ele
 {
     appendOpenTag(result, element, namespaces);
 
+    bool hasURLAttribute = false;
     if (element.hasAttributes()) {
-        for (const Attribute& attribute : element.attributesIterator())
-            appendAttribute(result, element, attribute, namespaces);
+        for (const Attribute& attribute : element.attributesIterator()) {
+            if (!hasURLAttribute && (element.isURLAttribute(attribute) || element.isHTMLContentAttribute(attribute)))
+                hasURLAttribute = true;
+            auto updatedAttribute = replaceAttributeIfNecessary(element, attribute);
+            appendAttribute(result, element, updatedAttribute, namespaces);
+        }
     }
+
+    if (!hasURLAttribute)
+        appendURLAttributeIfNecessary(result, element, namespaces);
 
     // Give an opportunity to subclasses to add their own attributes.
     appendCustomAttributes(result, element, namespaces);
@@ -539,6 +550,46 @@ QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attr
         }
     }
     return prefixedName;
+}
+
+LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& element)
+{
+    if (inXMLFragmentSerialization() || m_replacementURLStrings.isEmpty())
+        return nullptr;
+
+    auto* currentElement = const_cast<Element*>(&element);
+    if (!is<HTMLIFrameElement>(currentElement))
+        return nullptr;
+
+    auto& iframeElement = downcast<HTMLIFrameElement>(*currentElement);
+    return dynamicDowncast<LocalFrame>(iframeElement.contentFrame());
+}
+
+Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element, const Attribute& attribute)
+{
+    if (!element.isHTMLContentAttribute(attribute))
+        return attribute;
+
+    auto frame = frameForAttributeReplacement(element);
+    if (!frame || !frame->loader().documentLoader()->response().url().isAboutSrcDoc())
+        return attribute;
+
+    auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
+    if (replacementURLString.isNull())
+        return attribute;
+
+    return { srcAttr, AtomString { replacementURLString } };
+}
+
+void MarkupAccumulator::appendURLAttributeIfNecessary(StringBuilder& result, const Element& element, Namespaces* namespaces)
+{
+    auto frame = frameForAttributeReplacement(element);
+    if (!frame)
+        return;
+
+    auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
+    if (!replacementURLString.isNull())
+        appendAttribute(result, element, Attribute { srcAttr, AtomString { replacementURLString } }, namespaces);
 }
 
 void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& element, const Attribute& attribute, Namespaces* namespaces)

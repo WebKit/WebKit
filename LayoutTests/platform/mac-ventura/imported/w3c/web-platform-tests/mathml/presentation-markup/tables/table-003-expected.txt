@@ -1,6 +1,0 @@
-
-FAIL Vertical alignment of cells assert_approx_equals: Baselines of cells 0 and 1 should be aligned. expected 19.78125 +/- 1 but got 99.78125
-PASS Horizontal alignment of cells
-
-
-

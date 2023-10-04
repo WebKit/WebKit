@@ -39,7 +39,7 @@
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "TapHandlingResult.h"
 #import "UIKitUtilities.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "ViewGestureController.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKBackForwardListItemInternal.h"
@@ -226,10 +226,10 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
 - (BOOL)_isShowingVideoPictureInPicture
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (!_page || !_page->videoFullscreenManager())
+    if (!_page || !_page->videoPresentationManager())
         return false;
 
-    return _page->videoFullscreenManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+    return _page->videoPresentationManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 #else
     return false;
 #endif
@@ -238,10 +238,10 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
 - (BOOL)_mayAutomaticallyShowVideoPictureInPicture
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (!_page || !_page->videoFullscreenManager())
+    if (!_page || !_page->videoPresentationManager())
         return false;
 
-    return _page->videoFullscreenManager()->mayAutomaticallyShowVideoPictureInPicture();
+    return _page->videoPresentationManager()->mayAutomaticallyShowVideoPictureInPicture();
 #else
     return false;
 #endif
@@ -2552,38 +2552,6 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     return _perProcessState.liveResizeParameters || _perProcessState.dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing;
 }
 
-- (std::optional<WebKit::VisibleContentRectUpdateInfo>)_createVisibleContentRectUpdateInfo
-{
-    auto viewStability = _viewStabilityWhenVisibleContentRectUpdateScheduled;
-
-    CGRect visibleRectInContentCoordinates = [self _visibleContentRect];
-
-    UIEdgeInsets computedContentInsetUnadjustedForKeyboard = [self _computedObscuredInset];
-    if (!_haveSetObscuredInsets)
-        computedContentInsetUnadjustedForKeyboard.bottom -= _totalScrollViewBottomInsetAdjustmentForKeyboard;
-
-    CGFloat scaleFactor = contentZoomScale(self);
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, computedContentInsetUnadjustedForKeyboard);
-    WebCore::FloatRect unobscuredRectInContentCoordinates = WebCore::FloatRect(_perProcessState.frozenUnobscuredContentRect ? _perProcessState.frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()]);
-    if (![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
-        unobscuredRectInContentCoordinates.intersect([self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
-
-    auto contentInsets = [self currentlyVisibleContentInsetsWithScale:scaleFactor obscuredInsets:computedContentInsetUnadjustedForKeyboard];
-
-    return [_contentView createVisibleContentRectUpdateInfoFromVisibleRect:visibleRectInContentCoordinates
-        unobscuredRect:unobscuredRectInContentCoordinates
-        contentInsets:contentInsets
-        unobscuredRectInScrollViewCoordinates:unobscuredRect
-        obscuredInsets:_obscuredInsets
-        unobscuredSafeAreaInsets:[self _computedUnobscuredSafeAreaInset]
-        inputViewBounds:_inputViewBoundsInWindow
-        scale:scaleFactor
-        minimumScale:[_scrollView minimumZoomScale]
-        viewStability:viewStability
-        enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])
-        sendEvenIfUnchanged:_alwaysSendNextVisibleContentRectUpdate];
-}
-
 - (void)_updateVisibleContentRects
 {
     auto viewStability = _viewStabilityWhenVisibleContentRectUpdateScheduled;
@@ -2812,9 +2780,6 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 - (void)_didStopDeferringGeometryUpdates
 {
     [self _scheduleVisibleContentRectUpdate];
-
-    // This should do at least all the things that had been skipped in `-[WKWebView _frameOrBoundsMayHaveChanged]`,
-    // since geometry updates were deferred then.
 
     CGRect newBounds = self.bounds;
     auto newViewLayoutSize = [self activeViewLayoutSize:newBounds];

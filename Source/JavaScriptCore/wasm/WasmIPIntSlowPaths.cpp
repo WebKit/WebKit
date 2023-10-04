@@ -35,6 +35,7 @@
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntData.h"
+#include "LLIntExceptions.h"
 #include "WasmBBQPlan.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
@@ -287,6 +288,67 @@ WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
 #endif
 #endif
 
+WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, v128_t* stackPointer)
+{
+    VM& vm = instance->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_ASSERT(!!throwScope.exception());
+
+    if (stackPointer) {
+        // We only have a stack pointer if we're doing a catch not a catch_all
+        Exception* exception = throwScope.exception();
+        auto* wasmException = jsSecureCast<JSWebAssemblyException*>(exception->value());
+
+        ASSERT(wasmException->payload().size() == wasmException->tag().parameterCount());
+        uint64_t size = wasmException->payload().size();
+
+#if ASSERT_ENABLED
+        constexpr uint64_t hole = 0x1BADBEEF;
+#else
+        constexpr uint64_t hole = 0;
+#endif
+        for (unsigned i = 0; i < size; ++i)
+            stackPointer[size - i - 1] = { hole, wasmException->payload()[i] };
+    }
+
+    // We want to clear the exception here rather than in the catch prologue
+    // JIT code because clearing it also entails clearing a bit in an Atomic
+    // bit field in VMTraps.
+    throwScope.clearException();
+
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(throw_exception, CallFrame* callFrame, v128_t* stack, unsigned exceptionIndex)
+{
+    VM& vm = instance->vm();
+    SlowPathFrameTracer tracer(vm, callFrame);
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_ASSERT(!throwScope.exception());
+
+    JSGlobalObject* globalObject = instance->globalObject();
+    const Wasm::Tag& tag = instance->tag(exceptionIndex);
+
+    size_t size = tag.parameterCount();
+    FixedVector<uint64_t> values(size);
+    for (unsigned i = 0; i < size; ++i)
+        values[i] = stack[size - i - 1].u64x2[1];
+
+    ASSERT(tag.type().returnsVoid());
+    if (tag.type().numVectors()) {
+        // Note: the spec is still in flux on what to do here, so we conservatively just disallow throwing any vectors.
+        throwException(globalObject, throwScope, createTypeError(globalObject, errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use)));
+    } else {
+        JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
+        throwException(globalObject, throwScope, exception);
+    }
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
+}
 
 WASM_IPINT_EXTERN_CPP_DECL(table_get, unsigned tableIndex, unsigned index)
 {

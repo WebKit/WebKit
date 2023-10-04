@@ -57,18 +57,18 @@ class FloatRect;
 class FloatPoint {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FloatPoint() { }
-    FloatPoint(float x, float y) : m_x(x), m_y(y) { }
+    constexpr FloatPoint() = default;
+    constexpr FloatPoint(float x, float y) : m_x(x), m_y(y) { }
     WEBCORE_EXPORT FloatPoint(const IntPoint&);
     explicit FloatPoint(const FloatSize& size) : m_x(size.width()), m_y(size.height()) { }
 
-    static FloatPoint zero() { return FloatPoint(); }
-    bool isZero() const { return !m_x && !m_y; }
+    static constexpr FloatPoint zero() { return FloatPoint(); }
+    constexpr bool isZero() const { return !m_x && !m_y; }
 
     WEBCORE_EXPORT static FloatPoint narrowPrecision(double x, double y);
 
-    float x() const { return m_x; }
-    float y() const { return m_y; }
+    constexpr float x() const { return m_x; }
+    constexpr float y() const { return m_y; }
 
     void setX(float x) { m_x = x; }
     void setY(float y) { m_y = y; }
@@ -121,30 +121,21 @@ public:
         m_y *= scaleY;
     }
 
-    FloatPoint scaled(float scale) const
+    constexpr FloatPoint scaled(float scale) const
     {
         return { m_x * scale, m_y * scale };
     }
 
-    FloatPoint scaled(float scaleX, float scaleY) const
+    constexpr FloatPoint scaled(float scaleX, float scaleY) const
     {
         return { m_x * scaleX, m_y * scaleY };
     }
 
-    void rotate(double angleInRadians, const FloatPoint& aboutPoint = { })
-    {
-        auto sinAngle = sin(angleInRadians);
-        auto cosAngle = cos(angleInRadians);
-        m_x -= aboutPoint.x();
-        m_y -= aboutPoint.y();
-        auto newX = m_x * cosAngle - m_y * sinAngle + aboutPoint.x();
-        m_y = m_x * sinAngle + m_y * cosAngle + aboutPoint.y();
-        m_x = newX;
-    }
+    void rotate(double angleInRadians, const FloatPoint& aboutPoint);
 
     WEBCORE_EXPORT void normalize();
 
-    float dot(const FloatPoint& a) const
+    constexpr float dot(const FloatPoint& a) const
     {
         return m_x * a.x() + m_y * a.y();
     }
@@ -156,7 +147,7 @@ public:
         return std::hypot(m_x, m_y);
     }
 
-    float lengthSquared() const
+    constexpr float lengthSquared() const
     {
         return m_x * m_x + m_y * m_y;
     }
@@ -165,17 +156,17 @@ public:
     
     WEBCORE_EXPORT FloatPoint constrainedWithin(const FloatRect&) const;
 
-    FloatPoint shrunkTo(const FloatPoint& other) const
+    constexpr FloatPoint shrunkTo(const FloatPoint& other) const
     {
         return { std::min(m_x, other.m_x), std::min(m_y, other.m_y) };
     }
 
-    FloatPoint expandedTo(const FloatPoint& other) const
+    constexpr FloatPoint expandedTo(const FloatPoint& other) const
     {
         return { std::max(m_x, other.m_x), std::max(m_y, other.m_y) };
     }
 
-    FloatPoint transposedPoint() const
+    constexpr FloatPoint transposedPoint() const
     {
         return { m_y, m_x };
     }
@@ -222,35 +213,46 @@ inline FloatPoint& operator-=(FloatPoint& a, const FloatSize& b)
     return a;
 }
 
-inline FloatPoint operator+(const FloatPoint& a, const FloatSize& b)
+constexpr FloatPoint operator+(const FloatPoint& a, const FloatSize& b)
 {
     return FloatPoint(a.x() + b.width(), a.y() + b.height());
 }
 
-inline FloatPoint operator+(const FloatPoint& a, const FloatPoint& b)
+constexpr FloatPoint operator+(const FloatPoint& a, const FloatPoint& b)
 {
     return FloatPoint(a.x() + b.x(), a.y() + b.y());
 }
 
-inline FloatSize operator-(const FloatPoint& a, const FloatPoint& b)
+constexpr FloatSize operator-(const FloatPoint& a, const FloatPoint& b)
 {
     return FloatSize(a.x() - b.x(), a.y() - b.y());
 }
 
-inline FloatPoint operator-(const FloatPoint& a, const FloatSize& b)
+constexpr FloatPoint operator-(const FloatPoint& a, const FloatSize& b)
 {
     return FloatPoint(a.x() - b.width(), a.y() - b.height());
 }
 
-inline FloatPoint operator-(const FloatPoint& a)
+constexpr FloatPoint operator-(const FloatPoint& a)
 {
     return FloatPoint(-a.x(), -a.y());
 }
 
-inline float operator*(const FloatPoint& a, const FloatPoint& b)
+constexpr float operator*(const FloatPoint& a, const FloatPoint& b)
 {
     // dot product
     return a.dot(b);
+}
+
+inline void FloatPoint::rotate(double angleInRadians, const FloatPoint& aboutPoint = { })
+{
+    auto sinAngle = sin(angleInRadians);
+    auto cosAngle = cos(angleInRadians);
+    m_x -= aboutPoint.x();
+    m_y -= aboutPoint.y();
+    auto newX = m_x * cosAngle - m_y * sinAngle + aboutPoint.x();
+    m_y = m_x * sinAngle + m_y * cosAngle + aboutPoint.y();
+    m_x = newX;
 }
 
 inline IntSize flooredIntSize(const FloatPoint& p)

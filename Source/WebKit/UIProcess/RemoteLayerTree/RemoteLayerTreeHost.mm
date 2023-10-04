@@ -31,7 +31,7 @@
 #import "RemoteLayerTreePropertyApplier.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "ShareableBitmap.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "WKAnimationDelegate.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -254,7 +254,7 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::PlatformLayerIdentifier la
 #if HAVE(AVKIT)
     auto videoLayerIter = m_videoLayers.find(layerID);
     if (videoLayerIter != m_videoLayers.end()) {
-        if (auto videoManager = m_drawingArea->page().videoFullscreenManager())
+        if (auto videoManager = m_drawingArea->page().videoPresentationManager())
             videoManager->willRemoveLayerForID(videoLayerIter->value);
         m_videoLayers.remove(videoLayerIter);
     }
@@ -409,7 +409,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
 #if HAVE(AVKIT)
         if (properties.videoElementData) {
-            if (auto videoManager = m_drawingArea->page().videoFullscreenManager()) {
+            if (auto videoManager = m_drawingArea->page().videoPresentationManager()) {
                 m_videoLayers.add(properties.layerID, properties.videoElementData->playerIdentifier);
                 return makeWithLayer(videoManager->createLayerWithID(properties.videoElementData->playerIdentifier, properties.hostingContextID(), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
             }

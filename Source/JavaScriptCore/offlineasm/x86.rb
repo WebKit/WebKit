@@ -1023,7 +1023,7 @@ class Instruction
             else
                 $asm.puts "xor#{x86Suffix(:ptr)} #{operands[1].x86Operand(:ptr)}, #{operands[1].x86Operand(:ptr)}"
             end
-        elsif operands[0] != operands[1]
+        elsif operands[0].x86Operand(:quad) != operands[1].x86Operand(:quad)
             if isX64
                 $asm.puts "mov#{x86Suffix(:quad)} #{x86Operands(:quad, :quad)}"
             else

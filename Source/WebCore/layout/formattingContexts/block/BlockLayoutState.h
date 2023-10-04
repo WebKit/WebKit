@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Font.h"
 #include "PlacedFloats.h"
 
 namespace WebCore {
@@ -46,8 +47,14 @@ public:
     using TextBoxTrim = OptionSet<TextBoxTrimSide>;
 
     struct LineGrid {
-        LayoutSize logicalOffset;
+        LayoutSize layoutOffset;
+        LayoutSize gridOffset;
         InlineLayoutUnit columnWidth;
+        LayoutUnit rowHeight;
+        LayoutUnit topRowOffset;
+        Ref<const Font> primaryFont;
+        std::optional<LayoutSize> paginationOrigin;
+        LayoutUnit pageLogicalTop;
     };
 
     BlockLayoutState(PlacedFloats&, std::optional<LineClamp> = { }, TextBoxTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });

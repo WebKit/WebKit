@@ -68,7 +68,7 @@ public:
     void invalidate() { m_manager = nullptr; }
 
 private:
-    friend class VideoFullscreenInterfaceContext;
+    friend class VideoPresentationInterfaceContext;
 
     // PlaybackSessionModelClient
     void durationChanged(double) final;
@@ -116,7 +116,7 @@ public:
 
 private:
     friend class PlaybackSessionInterfaceContext;
-    friend class VideoFullscreenManager;
+    friend class VideoPresentationManager;
 
     explicit PlaybackSessionManager(WebPage&);
 
@@ -173,7 +173,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "VideoFullscreenManager"; }
+    const char* logClassName() const { return "VideoPresentationManager"; }
     WTFLogChannel& logChannel() const;
 #endif
 

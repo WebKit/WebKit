@@ -124,7 +124,7 @@ private:
     friend class LineBox;
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
-    friend class InlineFormattingGeometry;
+    friend class InlineFormattingUtils;
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }

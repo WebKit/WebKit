@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -949,8 +949,8 @@
 		3AB0C59429C8162300141B5E /* NetworkQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */; };
 		3AE104C029CBC8BB00661165 /* OriginQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */; };
 		3CAECB6627465AE400AB78D0 /* UnifiedSource113.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */; };
-		3F418EF91887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */; };
-		3F418EFB1887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF71887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp */; };
+		3F418EF91887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF51887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp */; };
+		3F418EFB1887BD97002795FD /* VideoPresentationManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF71887BD97002795FD /* VideoPresentationManagerProxyMessageReceiver.cpp */; };
 		3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BB15893F630090FF62 /* WebColorChooser.h */; };
 		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
 		3FB08E431F60B240005E5312 /* iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FB08E421F60B240005E5312 /* iOS.xcassets */; };
@@ -1219,7 +1219,7 @@
 		52CDC5C82731DA0D00A3E3EB /* VirtualService.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5C12731DA0C00A3E3EB /* VirtualService.h */; };
 		52CDC5C92731DA0D00A3E3EB /* VirtualLocalConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52CDC5C22731DA0C00A3E3EB /* VirtualLocalConnection.mm */; };
 		52CDC5CA2731DA0D00A3E3EB /* VirtualAuthenticatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5C32731DA0C00A3E3EB /* VirtualAuthenticatorManager.h */; };
-		52D5A1B01C57495A00DE34A3 /* VideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */; };
+		52D5A1B01C57495A00DE34A3 /* VideoPresentationManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* VideoPresentationManagerProxy.h */; };
 		52EDB40328C2B8DD002DCF33 /* AuthenticatorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED852147363A0016B847 /* AuthenticatorManager.cpp */; settings = {COMPILER_FLAGS = "-DRELEASE_WITHOUT_OPTIMIZATIONS -O0"; }; };
 		52EDB40428C2B8FD002DCF33 /* WebAuthenticatorCoordinatorProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */; settings = {COMPILER_FLAGS = "-DRELEASE_WITHOUT_OPTIMIZATIONS -O0"; }; };
 		52F060E11654318500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */; };
@@ -4665,10 +4665,10 @@
 		3AF5B4732A244FDC004C3D4D /* RemoteGraphicsContextGLProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLProxyMessages.h; sourceTree = "<group>"; };
 		3AF5B4742A244FDD004C3D4D /* RemoteGraphicsContextGLProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource113.cpp; sourceTree = "<group>"; };
-		3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoFullscreenManagerMessageReceiver.cpp; sourceTree = "<group>"; };
-		3F418EF61887BD97002795FD /* VideoFullscreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerMessages.h; sourceTree = "<group>"; };
-		3F418EF71887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoFullscreenManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		3F418EF81887BD97002795FD /* VideoFullscreenManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerProxyMessages.h; sourceTree = "<group>"; };
+		3F418EF51887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPresentationManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		3F418EF61887BD97002795FD /* VideoPresentationManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPresentationManagerMessages.h; sourceTree = "<group>"; };
+		3F418EF71887BD97002795FD /* VideoPresentationManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPresentationManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		3F418EF81887BD97002795FD /* VideoPresentationManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPresentationManagerProxyMessages.h; sourceTree = "<group>"; };
 		3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooser.cpp; sourceTree = "<group>"; };
 		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
 		3F87B9BF158940D80090FF62 /* WebColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPicker.h; sourceTree = "<group>"; };
@@ -5283,12 +5283,12 @@
 		52CDC5C12731DA0C00A3E3EB /* VirtualService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualService.h; sourceTree = "<group>"; };
 		52CDC5C22731DA0C00A3E3EB /* VirtualLocalConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualLocalConnection.mm; sourceTree = "<group>"; };
 		52CDC5C32731DA0C00A3E3EB /* VirtualAuthenticatorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorManager.h; sourceTree = "<group>"; };
-		52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerProxy.h; sourceTree = "<group>"; };
-		52D5A1AB1C57494E00DE34A3 /* VideoFullscreenManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoFullscreenManagerProxy.messages.in; sourceTree = "<group>"; };
-		52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenManagerProxy.mm; sourceTree = "<group>"; };
-		52D5A1B21C5749F200DE34A3 /* VideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManager.h; sourceTree = "<group>"; };
-		52D5A1B31C5749F200DE34A3 /* VideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoFullscreenManager.messages.in; sourceTree = "<group>"; };
-		52D5A1B41C5749F200DE34A3 /* VideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenManager.mm; sourceTree = "<group>"; };
+		52D5A1AA1C57494E00DE34A3 /* VideoPresentationManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPresentationManagerProxy.h; sourceTree = "<group>"; };
+		52D5A1AB1C57494E00DE34A3 /* VideoPresentationManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoPresentationManagerProxy.messages.in; sourceTree = "<group>"; };
+		52D5A1AC1C57494E00DE34A3 /* VideoPresentationManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoPresentationManagerProxy.mm; sourceTree = "<group>"; };
+		52D5A1B21C5749F200DE34A3 /* VideoPresentationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPresentationManager.h; sourceTree = "<group>"; };
+		52D5A1B31C5749F200DE34A3 /* VideoPresentationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoPresentationManager.messages.in; sourceTree = "<group>"; };
+		52D5A1B41C5749F200DE34A3 /* VideoPresentationManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoPresentationManager.mm; sourceTree = "<group>"; };
 		52EB68CB279E2145005C98D9 /* ARKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitSoftLink.h; sourceTree = "<group>"; };
 		52EB68CC279E2145005C98D9 /* ARKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitSoftLink.mm; sourceTree = "<group>"; };
 		52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkContentRuleListManagerMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -8688,9 +8688,9 @@
 				CD491B111E73482100009066 /* UserMediaCaptureManagerProxy.h */,
 				CD491B141E7349F300009066 /* UserMediaCaptureManagerProxy.messages.in */,
 				070259BE2522841C00153405 /* UserMediaPermissionRequestManagerProxy.mm */,
-				52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */,
-				52D5A1AB1C57494E00DE34A3 /* VideoFullscreenManagerProxy.messages.in */,
-				52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */,
+				52D5A1AA1C57494E00DE34A3 /* VideoPresentationManagerProxy.h */,
+				52D5A1AB1C57494E00DE34A3 /* VideoPresentationManagerProxy.messages.in */,
+				52D5A1AC1C57494E00DE34A3 /* VideoPresentationManagerProxy.mm */,
 				46DA285727B73E760089D339 /* WebGeolocationManagerProxyCocoa.cpp */,
 				C18F3A13256332A600797E66 /* WebInspectorPreferenceObserver.h */,
 				C18F3A142563334300797E66 /* WebInspectorPreferenceObserver.mm */,
@@ -11866,9 +11866,9 @@
 				CD491B051E70D05F00009066 /* UserMediaCaptureManager.cpp */,
 				CD491B061E70D05F00009066 /* UserMediaCaptureManager.h */,
 				CD491B0A1E732D1200009066 /* UserMediaCaptureManager.messages.in */,
-				52D5A1B21C5749F200DE34A3 /* VideoFullscreenManager.h */,
-				52D5A1B31C5749F200DE34A3 /* VideoFullscreenManager.messages.in */,
-				52D5A1B41C5749F200DE34A3 /* VideoFullscreenManager.mm */,
+				52D5A1B21C5749F200DE34A3 /* VideoPresentationManager.h */,
+				52D5A1B31C5749F200DE34A3 /* VideoPresentationManager.messages.in */,
+				52D5A1B41C5749F200DE34A3 /* VideoPresentationManager.mm */,
 				7C6E70F918B2D4A000F24E2E /* WebProcessCocoa.mm */,
 			);
 			path = cocoa;
@@ -13899,10 +13899,10 @@
 				CD491B0C1E732E4D00009066 /* UserMediaCaptureManagerMessages.h */,
 				CD491B151E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp */,
 				CD491B161E73525500009066 /* UserMediaCaptureManagerProxyMessages.h */,
-				3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */,
-				3F418EF61887BD97002795FD /* VideoFullscreenManagerMessages.h */,
-				3F418EF71887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp */,
-				3F418EF81887BD97002795FD /* VideoFullscreenManagerProxyMessages.h */,
+				3F418EF51887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp */,
+				3F418EF61887BD97002795FD /* VideoPresentationManagerMessages.h */,
+				3F418EF71887BD97002795FD /* VideoPresentationManagerProxyMessageReceiver.cpp */,
+				3F418EF81887BD97002795FD /* VideoPresentationManagerProxyMessages.h */,
 				2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */,
 				2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */,
 				2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */,
@@ -15238,7 +15238,7 @@
 				4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */,
 				4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */,
 				074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */,
-				52D5A1B01C57495A00DE34A3 /* VideoFullscreenManagerProxy.h in Headers */,
+				52D5A1B01C57495A00DE34A3 /* VideoPresentationManagerProxy.h in Headers */,
 				2D125C5E1857EA05003BA3CB /* ViewGestureController.h in Headers */,
 				2D1B5D5E185869C8006C6596 /* ViewGestureControllerMessages.h in Headers */,
 				2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */,
@@ -17967,8 +17967,8 @@
 				5C411DA727CED4220068241A /* UnifiedSource130.cpp in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,
-				3F418EF91887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp in Sources */,
-				3F418EFB1887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp in Sources */,
+				3F418EF91887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp in Sources */,
+				3F418EFB1887BD97002795FD /* VideoPresentationManagerProxyMessageReceiver.cpp in Sources */,
 				2D1B5D5D185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp in Sources */,
 				2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */,
 				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,

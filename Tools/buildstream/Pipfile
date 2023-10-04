@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-buildstream = "==1.6.9"
-buildstream-external = "*"
-pygobject = "==3.42"
+buildstream = {git = "https://github.com/apache/buildstream", editable = true, ref = "bst-1"}
+buildstream-external = "==0.30.0"
+pygobject = "==3.46"
+charset-normalizer = "==3.2.0"

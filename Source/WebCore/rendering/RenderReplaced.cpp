@@ -34,7 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
-#include "HighlightRegister.h"
+#include "HighlightRegistry.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLineBoxInlines.h"
 #include "LayoutRepainter.h"
@@ -156,9 +156,9 @@ Color RenderReplaced::calculateHighlightColor() const
 {
     RenderHighlight renderHighlight;
 #if ENABLE(APP_HIGHLIGHTS)
-    if (auto appHighlightRegister = document().appHighlightRegisterIfExists()) {
-        if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
-            for (auto& highlight : appHighlightRegister->map()) {
+    if (auto appHighlightRegistry = document().appHighlightRegistryIfExists()) {
+        if (appHighlightRegistry->highlightsVisibility() == HighlightVisibility::Visible) {
+            for (auto& highlight : appHighlightRegistry->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
                     if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
@@ -175,8 +175,8 @@ Color RenderReplaced::calculateHighlightColor() const
     }
 #endif
     if (DeprecatedGlobalSettings::highlightAPIEnabled()) {
-        if (auto highlightRegister = document().highlightRegisterIfExists()) {
-            for (auto& highlight : highlightRegister->map()) {
+        if (auto highlightRegistry = document().highlightRegistryIfExists()) {
+            for (auto& highlight : highlightRegistry->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
                     if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
@@ -192,8 +192,8 @@ Color RenderReplaced::calculateHighlightColor() const
         }
     }
     if (document().settings().scrollToTextFragmentEnabled()) {
-        if (auto highlightRegister = document().fragmentHighlightRegisterIfExists()) {
-            for (auto& highlight : highlightRegister->map()) {
+        if (auto highlightRegistry = document().fragmentHighlightRegistryIfExists()) {
+            for (auto& highlight : highlightRegistry->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
                     if (!renderHighlight.setRenderRange(highlightRange))
                         continue;

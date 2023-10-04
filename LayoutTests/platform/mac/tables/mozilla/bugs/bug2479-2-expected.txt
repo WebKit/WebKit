@@ -50,7 +50,7 @@ layer at (0,0) size 800x553
                       text run at (0,6) width 137: "First Name (required)"
                 RenderTableRow (anonymous) at (0,28) size 137x32
                   RenderTableCell (anonymous) at (0,28) size 137x32 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (0,8) size 120x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderTextControl {INPUT} at (0,8) size 120x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
             RenderText {#text} at (136,6) size 7x19
               text run at (136,6) width 7: " "
             RenderTable {SPAN} at (142,3) size 137x60
@@ -61,7 +61,7 @@ layer at (0,0) size 800x553
                       text run at (0,6) width 137: "Last Name (required)"
                 RenderTableRow (anonymous) at (0,28) size 137x32
                   RenderTableCell (anonymous) at (0,28) size 137x32 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (0,8) size 120x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderTextControl {INPUT} at (0,8) size 120x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,127) size 568x63
             RenderTable {SPAN} at (0,3) size 288x60
@@ -72,7 +72,7 @@ layer at (0,0) size 800x553
                       text run at (0,6) width 93: "Email Address"
                 RenderTableRow (anonymous) at (0,28) size 288x32
                   RenderTableCell (anonymous) at (0,28) size 288x32 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (0,8) size 288x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderTextControl {INPUT} at (0,8) size 288x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,190) size 568x63
             RenderTable {SPAN} at (0,3) size 120x60
@@ -83,7 +83,7 @@ layer at (0,0) size 800x553
                       text run at (0,6) width 105: "Company Name"
                 RenderTableRow (anonymous) at (0,28) size 120x32
                   RenderTableCell (anonymous) at (0,28) size 120x32 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (0,8) size 120x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderTextControl {INPUT} at (0,8) size 120x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
             RenderText {#text} at (119,6) size 7x19
               text run at (119,6) width 7: " "
             RenderTable {SPAN} at (125,3) size 121x60
@@ -94,7 +94,7 @@ layer at (0,0) size 800x553
                       text run at (0,6) width 27: "Title"
                 RenderTableRow (anonymous) at (0,28) size 120x32
                   RenderTableCell (anonymous) at (0,28) size 120x32 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (0,8) size 120x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderTextControl {INPUT} at (0,8) size 120x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,253) size 568x32
             RenderButton {INPUT} at (0,9) size 57x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]

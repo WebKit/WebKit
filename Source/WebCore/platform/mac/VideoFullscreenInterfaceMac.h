@@ -32,7 +32,7 @@
 #include "PlaybackSessionInterfaceMac.h"
 #include "PlaybackSessionModel.h"
 #include "VideoFullscreenCaptions.h"
-#include "VideoFullscreenModel.h"
+#include "VideoPresentationModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -42,13 +42,13 @@ OBJC_CLASS NSWindow;
 OBJC_CLASS WebVideoFullscreenInterfaceMacObjC;
 
 namespace WebCore {
+
 class IntRect;
 class FloatSize;
 class PlaybackSessionInterfaceMac;
-class VideoFullscreenModelAndObserver;
 
 class VideoFullscreenInterfaceMac
-    : public VideoFullscreenModelClient
+    : public VideoPresentationModelClient
     , private PlaybackSessionModelClient
     , public VideoFullscreenCaptions
     , public RefCounted<VideoFullscreenInterfaceMac> {
@@ -60,16 +60,16 @@ public:
     }
     virtual ~VideoFullscreenInterfaceMac();
     PlaybackSessionInterfaceMac& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
-    RefPtr<VideoFullscreenModel> videoFullscreenModel() const { return m_videoFullscreenModel.get(); }
+    RefPtr<VideoPresentationModel> videoPresentationModel() const { return m_videoPresentationModel.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
-    WEBCORE_EXPORT void setVideoFullscreenModel(VideoFullscreenModel*);
+    WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);
 
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate) override;
     WEBCORE_EXPORT void externalPlaybackChanged(bool  enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
     WEBCORE_EXPORT void ensureControlsManager() override;
 
-    // VideoFullscreenModelClient
+    // VideoPresentationModelClient
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier) final { m_playerIdentifier = identifier; }
@@ -112,12 +112,11 @@ private:
     WEBCORE_EXPORT VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac&);
     Ref<PlaybackSessionInterfaceMac> m_playbackSessionInterface;
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
-    ThreadSafeWeakPtr<VideoFullscreenModel> m_videoFullscreenModel;
+    ThreadSafeWeakPtr<VideoPresentationModel> m_videoPresentationModel;
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
     RetainPtr<WebVideoFullscreenInterfaceMacObjC> m_webVideoFullscreenInterfaceObjC;
 };
 
-}
+} // namespace WebCore
 
-#endif
-
+#endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

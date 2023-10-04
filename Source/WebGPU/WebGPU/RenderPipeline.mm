@@ -442,10 +442,16 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
         auto& bindGroupLayout = pipelineLayout.bindGroupLayouts[pipelineLayoutIndex];
         auto& entries = pipelineEntries[pipelineLayoutIndex];
         for (auto& entry : bindGroupLayout.entries) {
+            if (auto existingIndex = entries.findIf([&](auto& existingEntry) {
+                return existingEntry.binding == entry.binding;
+            }); existingIndex != WTF::notFound) {
+                entries[existingIndex].visibility |= convertVisibility(entry.visibility);
+                continue;
+            }
+
             WGPUBindGroupLayoutEntry newEntry = { };
             newEntry.binding = entry.binding;
             newEntry.visibility = convertVisibility(entry.visibility);
-            bool isExternalTexture = false;
             WTF::switchOn(entry.bindingMember, [&](const WGSL::BufferBindingLayout& bufferBinding) {
                 newEntry.buffer = WGPUBufferBindingLayout {
                     .nextInChain = nullptr,
@@ -473,42 +479,15 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
                     .viewDimension = convertViewDimension(storageTexture.viewDimension)
                 };
             }, [&](const WGSL::ExternalTextureBindingLayout&) {
-                isExternalTexture = true;
                 newEntry.texture = WGPUTextureBindingLayout {
                     .nextInChain = nullptr,
-                    .sampleType = WGPUTextureSampleType_Float,
+                    .sampleType = static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture),
                     .viewDimension = WGPUTextureViewDimension_2D,
                     .multisampled = false
                 };
             });
 
             entries.append(newEntry);
-            // FIXME: - https://bugs.webkit.org/show_bug.cgi?id=257978
-            // perform breakdown in BindGroupLayout.mm
-            if (isExternalTexture) {
-                ++newEntry.binding;
-                entries.append(newEntry);
-
-                WGPUBindGroupLayoutEntry bufferEntry = { };
-                bufferEntry.binding = newEntry.binding + 1;
-                bufferEntry.visibility = newEntry.binding;
-                bufferEntry.buffer = WGPUBufferBindingLayout {
-                    .nextInChain = nullptr,
-                    .type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float3x2),
-                    .hasDynamicOffset = false,
-                    .minBindingSize = 0,
-                };
-                entries.append(bufferEntry);
-
-                bufferEntry.binding = newEntry.binding + 2;
-                bufferEntry.buffer = WGPUBufferBindingLayout {
-                    .nextInChain = nullptr,
-                    .type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float4x3),
-                    .hasDynamicOffset = false,
-                    .minBindingSize = 0,
-                };
-                entries.append(bufferEntry);
-            }
         }
     }
 }

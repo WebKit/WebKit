@@ -107,7 +107,7 @@ public:
     bool isEqual(const TextTrackCue&, CueMatchRules) const;
 
     void willChange();
-    virtual void didChange();
+    virtual void didChange(bool = false);
 
     virtual RefPtr<TextTrackCueBox> getDisplayTree();
     virtual void removeDisplayTree();

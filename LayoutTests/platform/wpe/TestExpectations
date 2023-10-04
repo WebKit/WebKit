@@ -1678,3 +1678,5 @@ imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-002.h
 imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
+
+fast/line-grid [ Skip ]

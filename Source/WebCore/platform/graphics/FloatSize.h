@@ -75,7 +75,7 @@ public:
     void setHeight(float height) { m_height = height; }
 
     constexpr bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
-    WEBCORE_EXPORT bool isZero() const;
+    constexpr bool isZero() const;
     bool isExpressibleAsIntSize() const;
 
     constexpr float aspectRatio() const { return m_width / m_height; }
@@ -162,6 +162,11 @@ private:
     float m_width { 0 };
     float m_height { 0 };
 };
+
+constexpr bool FloatSize::isZero() const
+{
+    return std::abs(m_width) < std::numeric_limits<float>::epsilon() && std::abs(m_height) < std::numeric_limits<float>::epsilon();
+}
 
 inline FloatSize& operator+=(FloatSize& a, const FloatSize& b)
 {

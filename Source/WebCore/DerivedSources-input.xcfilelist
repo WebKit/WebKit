@@ -498,7 +498,7 @@ $(PROJECT_DIR)/Modules/geolocation/PositionError.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionErrorCallback.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionOptions.idl
 $(PROJECT_DIR)/Modules/highlight/Highlight.idl
-$(PROJECT_DIR)/Modules/highlight/HighlightRegister.idl
+$(PROJECT_DIR)/Modules/highlight/HighlightRegistry.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursor.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorDirection.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorWithValue.idl

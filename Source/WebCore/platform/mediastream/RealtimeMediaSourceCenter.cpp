@@ -63,11 +63,13 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
     m_supportedConstraints.setSupportsAspectRatio(true);
     m_supportedConstraints.setSupportsFrameRate(true);
     m_supportedConstraints.setSupportsFacingMode(true);
-    m_supportedConstraints.setSupportsWhiteBalanceMode(true);
     m_supportedConstraints.setSupportsVolume(true);
     m_supportedConstraints.setSupportsDeviceId(true);
     m_supportedConstraints.setSupportsDisplaySurface(true);
+
+    m_supportedConstraints.setSupportsWhiteBalanceMode(true);
     m_supportedConstraints.setSupportsZoom(true);
+    m_supportedConstraints.setSupportsTorch(true);
 }
 
 RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;

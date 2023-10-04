@@ -582,9 +582,9 @@ static void checkCastRect(const WebCore::FloatRect& rect)
 
 TEST(FloatRect, Casting)
 {
+#if USE(CG)
     WebCore::FloatRect rect(10.0f, 20.0f, 30.0f, 40.0f);
 
-#if USE(CG)
     CGRect cgRect = rect;
 
     EXPECT_FLOAT_EQ(10.0f, cgRect.origin.x);

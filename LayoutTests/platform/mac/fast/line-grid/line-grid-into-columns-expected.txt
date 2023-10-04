@@ -5,43 +5,43 @@ layer at (0,0) size 800x540 scrollWidth 1216
   RenderBlock (positioned) zI: -1 {DIV} at (0,0) size 800x540 [color=#00FF00]
     RenderText zI: -1 {#text} at (0,6) size 1216x32
       text run at (0,6) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,6) size 0x32
     RenderText zI: -1 {#text} at (0,47) size 1216x32
       text run at (0,47) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,47) size 0x32
     RenderText zI: -1 {#text} at (0,88) size 1216x32
       text run at (0,88) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,88) size 0x32
     RenderText zI: -1 {#text} at (0,129) size 1216x32
       text run at (0,129) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,129) size 0x32
     RenderText zI: -1 {#text} at (0,170) size 1216x32
       text run at (0,170) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,170) size 0x32
     RenderText zI: -1 {#text} at (0,211) size 1216x32
       text run at (0,211) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,211) size 0x32
     RenderText zI: -1 {#text} at (0,252) size 1216x32
       text run at (0,252) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,252) size 0x32
     RenderText zI: -1 {#text} at (0,293) size 1216x32
       text run at (0,293) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,293) size 0x32
     RenderText zI: -1 {#text} at (0,334) size 1216x32
       text run at (0,334) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,334) size 0x32
     RenderText zI: -1 {#text} at (0,375) size 1216x32
       text run at (0,375) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,375) size 0x32
     RenderText zI: -1 {#text} at (0,416) size 1216x32
       text run at (0,416) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,416) size 0x32
     RenderText zI: -1 {#text} at (0,457) size 1216x32
       text run at (0,457) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,457) size 0x32
     RenderText zI: -1 {#text} at (0,498) size 1216x32
       text run at (0,498) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (1216,498) size 0x32
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600

@@ -67,7 +67,6 @@ struct MediaTrackConstraintSet {
     std::optional<ConstrainDouble> aspectRatio;
     std::optional<ConstrainDouble> frameRate;
     std::optional<ConstrainDOMString> facingMode;
-    std::optional<ConstrainDOMString> whiteBalanceMode;
     std::optional<ConstrainDouble> volume;
     std::optional<ConstrainLong> sampleRate;
     std::optional<ConstrainLong> sampleSize;
@@ -76,7 +75,10 @@ struct MediaTrackConstraintSet {
     std::optional<ConstrainDOMString> groupId;
     std::optional<ConstrainDOMString> displaySurface;
     std::optional<ConstrainBoolean> logicalSurface;
+
+    std::optional<ConstrainDOMString> whiteBalanceMode;
     std::optional<ConstrainDouble> zoom;
+    std::optional<ConstrainBoolean> torch;
 };
 
 struct MediaTrackConstraints : MediaTrackConstraintSet {

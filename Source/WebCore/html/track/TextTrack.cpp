@@ -437,10 +437,11 @@ void TextTrack::cueWillChange(TextTrackCue& cue)
     });
 }
 
-void TextTrack::cueDidChange(TextTrackCue& cue)
+void TextTrack::cueDidChange(TextTrackCue& cue, bool updateCueOrder)
 {
     // Make sure the TextTrackCueList order is up-to-date.
-    ensureTextTrackCueList().updateCueIndex(cue);
+    if (updateCueOrder)
+        ensureTextTrackCueList().updateCueIndex(cue);
 
     // ... and add it back again.
     m_clients.forEach([&] (auto& client) {

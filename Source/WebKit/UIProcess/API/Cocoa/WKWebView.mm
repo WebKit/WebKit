@@ -58,7 +58,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SessionStateCoding.h"
 #import "UIDelegate.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
@@ -990,8 +990,8 @@ static bool validateArgument(id argument)
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
 #if ENABLE(FULLSCREEN_API)
-    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
-        videoFullscreenManager->forEachSession([callbackAggregator] (auto& model, auto& interface) mutable {
+    if (auto videoPresentationManager = _page->videoPresentationManager()) {
+        videoPresentationManager->forEachSession([callbackAggregator] (auto& model, auto& interface) mutable {
             model.requestCloseAllMediaPresentations(false, [callbackAggregator] { });
         });
     }
@@ -3194,9 +3194,9 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
 #if ENABLE(FULLSCREEN_API)
     bool hasOpenMediaPresentations = false;
-    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
-        hasOpenMediaPresentations = videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
-            || videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    if (auto videoPresentationManager = _page->videoPresentationManager()) {
+        hasOpenMediaPresentations = videoPresentationManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+            || videoPresentationManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
     }
 
     if (!hasOpenMediaPresentations && _page->fullScreenManager() && _page->fullScreenManager()->isFullScreen())

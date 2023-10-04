@@ -125,6 +125,7 @@ private:
     void beginConfiguration();
     void commitConfiguration();
     void beginConfigurationForConstraintsIfNeeded();
+    bool lockForConfiguration();
 
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
@@ -133,6 +134,7 @@ private:
     std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
 
     void updateWhiteBalanceMode();
+    void updateTorch();
 
     RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
@@ -168,6 +170,7 @@ private:
     Timer m_verifyCapturingTimer;
     uint64_t m_framesCount { 0 };
     uint64_t m_lastFramesCount { 0 };
+    int64_t m_defaultTorchMode;
 };
 
 } // namespace WebCore

@@ -156,6 +156,14 @@ public:
     };
     bool localIsInitialized(uint32_t localIndex) { return m_localInitFlags.quickGet(localIndex); }
 
+    uint32_t getStackHeightInValues() const
+    {
+        uint32_t result = m_expressionStack.size();
+        for (const ControlEntry& entry : m_controlStack)
+            result += entry.enclosedExpressionStack.size();
+        return result;
+    }
+
 private:
     static constexpr bool verbose = false;
 

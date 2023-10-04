@@ -156,9 +156,11 @@ private:
     CatchKind m_catchKind;
 
     Vector<uint32_t> m_awaitingUpdate;
-    int32_t m_pendingOffset = -1;
-    int32_t m_pc = -1;
-    int32_t m_mc = -1;
+    int32_t m_pendingOffset { -1 };
+    int32_t m_pc { -1 };
+    int32_t m_mc { -1 };
+    int32_t m_pcEnd { -1 };
+    uint32_t m_tryDepth { 0 };
 };
 
 class IPIntGenerator {
@@ -484,10 +486,13 @@ public:
     void didPopValueFromStack(ExpressionType, String) { }
     void willParseOpcode() { }
     void didParseOpcode() { }
-    void dump(const ControlStack&, const Stack*) { }
+    void dump(const ControlStack&, const Stack*);
+
+    void convertTryToCatch(ControlType& tryBlock, CatchKind);
 
     static constexpr bool tierSupportsSIMD = true;
 private:
+    Checked<uint32_t> m_tryDepth { 0 };
     FunctionParser<IPIntGenerator>* m_parser { nullptr };
     ModuleInformation& m_info;
     std::unique_ptr<FunctionIPIntMetadataGenerator> m_metadata;
@@ -1022,7 +1027,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSelect(ExpressionType, Expre
 
 inline void IPIntGenerator::condenseControlFlowInstructions()
 {
-    // Peek at the next instruction: if it's not a block or loop, go through and resolve all the metadata entries
+    // Peek at the next instruction: if it's not a block, go through and resolve all the metadata entries
     auto nextOpcode = m_metadata->m_bytecode[m_parser->offset()];
     if (nextOpcode != OpType::Block) {
         // next PC (to skip type signature)
@@ -1127,22 +1132,68 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElseToUnreachable(ControlTyp
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTry(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack)
 {
+    m_tryDepth++;
+
     splitStack(signature, oldStack, newStack);
     block = ControlType(signature, BlockType::Try);
+    block.m_pc = m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset;
+    block.m_tryDepth = m_tryDepth;
+
+    // FIXME: Should this participate the same skipping that block does?
+    // The upside is that we skip a bunch of sequential try/block instructions.
+    // The downside is that try needs more metadata.
+    // It's not clear that code would want to have many nested try blocks
+    // though.
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
+}
+
+void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKind)
+{
+    ASSERT(ControlType::isTry(tryBlock));
+    ControlType catchBlock = ControlType(tryBlock.signature(), BlockType::Catch, catchKind);
+    catchBlock.m_pc = tryBlock.m_pc;
+    catchBlock.m_pcEnd = m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset;
+    catchBlock.m_tryDepth = tryBlock.m_tryDepth;
+
+    tryBlock = WTFMove(catchBlock);
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack&, ControlType& block, ResultList& results)
 {
+
     return addCatchToUnreachable(exceptionIndex, exceptionSignature, block, results);
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchToUnreachable(unsigned, const TypeDefinition& exceptionSignature, ControlType& block, ResultList& results)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, ControlType& block, ResultList& results)
 {
+    if (ControlType::isTry(block))
+        convertTryToCatch(block, CatchKind::Catch);
+
     const FunctionSignature& signature = *exceptionSignature.as<FunctionSignature>();
-    for (unsigned i = 0; i < signature.argumentCount(); i ++)
+    for (unsigned i = 0; i < signature.argumentCount(); i++)
         results.append(Value { });
-    block = ControlType(block.signature(), BlockType::Catch);
+
+    // FIXME: If this is actually unreachable we shouldn't need metadata.
+    auto size = m_metadata->m_metadata.size();
+    block.m_awaitingUpdate.append(size);
+    m_metadata->addBlankSpace(8);
+
+    m_metadata->m_exceptionHandlers.append({
+        HandlerType::Catch,
+        static_cast<uint32_t>(block.m_pc),
+        static_cast<uint32_t>(block.m_pcEnd),
+        static_cast<uint32_t>(m_parser->offset() - m_metadata->m_bytecodeOffset),
+        static_cast<uint32_t>(m_metadata->m_metadata.size()),
+        m_tryDepth,
+        exceptionIndex
+    });
+
+    m_metadata->addBlankSpace(4);
+    // IPInt stack entries are 16 bytes to keep the stack aligned. With the exception of locals, which are only 8 bytes.
+    uint32_t stackSizeInV128 = results.size() + m_parser->getStackHeightInValues() + roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 8, stackSizeInV128, uint32_t);
+
     return { };
 }
 
@@ -1153,13 +1204,70 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchAll(Stack&, ControlType
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchAllToUnreachable(ControlType& block)
 {
-    block = ControlType(block.signature(), BlockType::Catch, CatchKind::CatchAll);
+    if (ControlType::isTry(block))
+        convertTryToCatch(block, CatchKind::CatchAll);
+    else
+        block.m_catchKind = CatchKind::CatchAll;
+
+    // FIXME: If this is actually unreachable we shouldn't need metadata.
+    auto size = m_metadata->m_metadata.size();
+    block.m_awaitingUpdate.append(size);
+    m_metadata->addBlankSpace(8);
+
+    m_metadata->m_exceptionHandlers.append({
+        HandlerType::CatchAll,
+        static_cast<uint32_t>(block.m_pc),
+        static_cast<uint32_t>(block.m_pcEnd),
+        static_cast<uint32_t>(m_parser->offset() - m_metadata->m_bytecodeOffset),
+        static_cast<uint32_t>(m_metadata->m_metadata.size()),
+        m_tryDepth,
+        0
+    });
+
+    m_metadata->addBlankSpace(4);
+    // IPInt stack entries are 16 bytes to keep the stack aligned. With the exception of locals, which are only 8 bytes.
+    uint32_t stackSizeInV128 = m_parser->getStackHeightInValues() + roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 8, stackSizeInV128, uint32_t);
+
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDelegate(ControlType&, ControlType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDelegateToUnreachable(ControlType&, ControlType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addThrow(unsigned, Vector<ExpressionType>&, Stack&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDelegate(ControlType& target, ControlType& data)
+{
+    return addDelegateToUnreachable(target, data);
+}
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDelegateToUnreachable(ControlType& target, ControlType& data)
+{
+    // FIXME: If this is actually unreachable we shouldn't need metadata.
+    auto size = m_metadata->m_metadata.size();
+    data.m_awaitingUpdate.append(size);
+    m_metadata->addBlankSpace(8);
+
+    ASSERT(ControlType::isTry(target) || ControlType::isTopLevel(target));
+    unsigned targetDepth = ControlType::isTry(target) ? target.m_tryDepth : 0;
+
+    m_metadata->m_exceptionHandlers.append({
+        HandlerType::Delegate,
+        static_cast<uint32_t>(data.m_pc),
+        static_cast<uint32_t>(data.m_pcEnd),
+        static_cast<uint32_t>(m_parser->offset() - m_metadata->m_bytecodeOffset),
+        static_cast<uint32_t>(m_metadata->m_metadata.size()),
+        m_tryDepth,
+        targetDepth
+    });
+
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>&, Stack&)
+{
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(4);
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, exceptionIndex, uint32_t);
+
+    return { };
+}
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRethrow(unsigned, ControlType&) { return { }; }
 
 // Control Flow Branches
@@ -1216,6 +1324,9 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
         entry.enclosedExpressionStack.constructAndAppend(signature.returnType(i), Value { });
     auto block = entry.controlData;
 
+    if (ControlType::isTry(block) || ControlType::isAnyCatch(block))
+        --m_tryDepth;
+
     if (ControlType::isTopLevel(block)) {
         // Hit the end
         // Resolve all condensing ends to jump here
@@ -1247,12 +1358,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
     if (ControlType::isIf(block)) {
         // if .. end
         m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(entry.controlData.m_pendingOffset);
-    } else if (ControlType::isBlock(block)) {
+    } else if (ControlType::isBlock(block) || ControlType::isAnyCatch(block) || ControlType::isTry(block)) {
         if (block.m_pendingOffset != -1) {
             // (if..) else .. end
             m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(entry.controlData.m_pendingOffset);
         } else {
-            // If it's a block, resolve all the jumps
+            // If it's a block or catch or try (delegate), resolve all the jumps
             for (auto x : block.m_awaitingUpdate) {
                 m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(x);
             }
@@ -1450,6 +1561,10 @@ Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompil
     return generator.finalize();
 }
 
+void IPIntGenerator::dump(const ControlStack&, const Stack*)
+{
+    dataLogLn("PC: ", m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset, " MC: ", m_metadata->m_metadata.size());
+}
 
 } } // namespace JSC::Wasm
 

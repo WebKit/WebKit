@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodePtr<Ex
     m_start = unlinkedInfo.m_start;
     m_end = unlinkedInfo.m_end;
     m_target = unlinkedInfo.m_target;
+    m_targetMetadata = unlinkedInfo.m_targetMetadata;
     m_tryDepth = unlinkedInfo.m_tryDepth;
     m_nativeCode = label;
 

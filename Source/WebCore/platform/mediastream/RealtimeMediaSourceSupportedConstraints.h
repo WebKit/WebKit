@@ -52,8 +52,9 @@ enum class MediaConstraintType : uint8_t {
     DisplaySurface,
     LogicalSurface,
     FocusDistance,
-    Zoom,
     WhiteBalanceMode,
+    Zoom,
+    Torch,
 };
 
 class RealtimeMediaSourceSupportedConstraints {
@@ -62,13 +63,12 @@ public:
     {
     }
     
-    RealtimeMediaSourceSupportedConstraints(bool supportsWidth, bool supportsHeight, bool supportsAspectRatio, bool supportsFrameRate, bool supportsFacingMode, bool supportsWhiteBalanceMode, bool supportsVolume, bool supportsSampleRate, bool supportsSampleSize, bool supportsEchoCancellation, bool supportsDeviceId, bool supportsGroupId, bool supportsDisplaySurface, bool supportsLogicalSurface, bool supportsFocusDistance, bool supportsZoom)
+    RealtimeMediaSourceSupportedConstraints(bool supportsWidth, bool supportsHeight, bool supportsAspectRatio, bool supportsFrameRate, bool supportsFacingMode, bool supportsVolume, bool supportsSampleRate, bool supportsSampleSize, bool supportsEchoCancellation, bool supportsDeviceId, bool supportsGroupId, bool supportsDisplaySurface, bool supportsLogicalSurface, bool supportsFocusDistance, bool supportsWhiteBalanceMode, bool supportsZoom, bool supportsTorch)
         : m_supportsWidth(supportsWidth)
         , m_supportsHeight(supportsHeight)
         , m_supportsAspectRatio(supportsAspectRatio)
         , m_supportsFrameRate(supportsFrameRate)
         , m_supportsFacingMode(supportsFacingMode)
-        , m_supportsWhiteBalanceMode(supportsWhiteBalanceMode)
         , m_supportsVolume(supportsVolume)
         , m_supportsSampleRate(supportsSampleRate)
         , m_supportsSampleSize(supportsSampleSize)
@@ -78,7 +78,9 @@ public:
         , m_supportsDisplaySurface(supportsDisplaySurface)
         , m_supportsLogicalSurface(supportsLogicalSurface)
         , m_supportsFocusDistance(supportsFocusDistance)
+        , m_supportsWhiteBalanceMode(supportsWhiteBalanceMode)
         , m_supportsZoom(supportsZoom)
+        , m_supportsTorch(supportsTorch)
     {
     }
 
@@ -96,9 +98,6 @@ public:
 
     bool supportsFacingMode() const { return m_supportsFacingMode; }
     void setSupportsFacingMode(bool value) { m_supportsFacingMode = value; }
-
-    bool supportsWhiteBalanceMode() const { return m_supportsWhiteBalanceMode; }
-    void setSupportsWhiteBalanceMode(bool value) { m_supportsWhiteBalanceMode = value; }
 
     bool supportsVolume() const { return m_supportsVolume; }
     void setSupportsVolume(bool value) { m_supportsVolume = value; }
@@ -129,8 +128,14 @@ public:
     bool supportsFocusDistance() const { return m_supportsFocusDistance; }
     void setSupportsFocusDistance(bool value) { m_supportsFocusDistance = value; }
 
+    bool supportsWhiteBalanceMode() const { return m_supportsWhiteBalanceMode; }
+    void setSupportsWhiteBalanceMode(bool value) { m_supportsWhiteBalanceMode = value; }
+
     bool supportsZoom() const { return m_supportsZoom; }
     void setSupportsZoom(bool value) { m_supportsZoom = value; }
+
+    bool supportsTorch() const { return m_supportsTorch; }
+    void setSupportsTorch(bool value) { m_supportsTorch = value; }
 
 private:
     bool m_supportsWidth { false };
@@ -138,7 +143,6 @@ private:
     bool m_supportsAspectRatio { false };
     bool m_supportsFrameRate { false };
     bool m_supportsFacingMode { false };
-    bool m_supportsWhiteBalanceMode { false };
     bool m_supportsVolume { false };
     bool m_supportsSampleRate { false };
     bool m_supportsSampleSize { false };
@@ -148,7 +152,9 @@ private:
     bool m_supportsDisplaySurface { false };
     bool m_supportsLogicalSurface { false };
     bool m_supportsFocusDistance { false };
+    bool m_supportsWhiteBalanceMode { false };
     bool m_supportsZoom { false };
+    bool m_supportsTorch { false };
 };
 
 } // namespace WebCore

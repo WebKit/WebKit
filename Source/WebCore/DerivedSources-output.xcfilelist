@@ -1583,8 +1583,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHdrMetadataType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHdrMetadataType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlight.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlight.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRegister.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRegister.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRegistry.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRegistry.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHkdfParams.cpp

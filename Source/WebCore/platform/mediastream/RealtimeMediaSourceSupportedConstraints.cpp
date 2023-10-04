@@ -63,10 +63,12 @@ bool RealtimeMediaSourceSupportedConstraints::supportsConstraint(MediaConstraint
         return supportsLogicalSurface();
     case MediaConstraintType::FocusDistance:
         return supportsFocusDistance();
-    case MediaConstraintType::Zoom:
-        return supportsZoom();
     case MediaConstraintType::WhiteBalanceMode:
         return supportsWhiteBalanceMode();
+    case MediaConstraintType::Zoom:
+        return supportsZoom();
+    case MediaConstraintType::Torch:
+        return supportsTorch();
     }
 
     ASSERT_NOT_REACHED();

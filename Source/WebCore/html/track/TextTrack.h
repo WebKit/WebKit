@@ -89,7 +89,7 @@ public:
     VTTRegionList* regions();
 
     void cueWillChange(TextTrackCue&);
-    void cueDidChange(TextTrackCue&);
+    void cueDidChange(TextTrackCue&, bool);
 
     enum TextTrackType { TrackElement, AddTrack, InBand };
     TextTrackType trackType() const { return m_trackType; }

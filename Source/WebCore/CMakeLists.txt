@@ -369,7 +369,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/geolocation/PositionOptions.idl
 
     Modules/highlight/Highlight.idl
-    Modules/highlight/HighlightRegister.idl
+    Modules/highlight/HighlightRegistry.idl
 
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl

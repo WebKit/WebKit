@@ -106,7 +106,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
-#include "HighlightRegister.h"
+#include "HighlightRegistry.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
@@ -6748,11 +6748,11 @@ unsigned Internals::numberOfAppHighlights()
     Document* document = contextDocument();
     if (!document)
         return 0;
-    auto appHighlightRegister = document->appHighlightRegisterIfExists();
-    if (!appHighlightRegister)
+    auto appHighlightRegistry = document->appHighlightRegistryIfExists();
+    if (!appHighlightRegistry)
         return 0;
     unsigned numHighlights = 0;
-    for (auto& highlight : appHighlightRegister->map())
+    for (auto& highlight : appHighlightRegistry->map())
         numHighlights += highlight.value->highlightRanges().size();
     return numHighlights;
 }

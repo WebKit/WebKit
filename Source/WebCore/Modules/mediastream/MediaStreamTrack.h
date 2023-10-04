@@ -112,7 +112,6 @@ public:
         std::optional<double> aspectRatio;
         std::optional<double> frameRate;
         String facingMode;
-        String whiteBalanceMode;
         std::optional<double> volume;
         std::optional<int> sampleRate;
         std::optional<int> sampleSize;
@@ -120,7 +119,10 @@ public:
         String displaySurface;
         String deviceId;
         String groupId;
+
+        String whiteBalanceMode;
         std::optional<double> zoom;
+        std::optional<bool> torch;
     };
     TrackSettings getSettings() const;
 

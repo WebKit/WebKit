@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <wtf/EnumeratedArray.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashTraits.h>
@@ -49,11 +50,15 @@ class Device;
 class BindGroupLayout : public WGPUBindGroupLayoutImpl, public RefCounted<BindGroupLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    template <typename T>
+    using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
+    using ArgumentBufferIndices = ShaderStageArray<std::optional<uint32_t>>;
     struct Entry {
         uint32_t binding;
         WGPUShaderStageFlags visibility;
         using BindingLayout = std::variant<WGPUBufferBindingLayout, WGPUSamplerBindingLayout, WGPUTextureBindingLayout, WGPUStorageTextureBindingLayout, WGPUExternalTextureBindingLayout>;
         BindingLayout bindingLayout;
+        ArgumentBufferIndices argumentBufferIndices;
         std::optional<uint32_t> vertexDynamicOffset;
         std::optional<uint32_t> fragmentDynamicOffset;
         std::optional<uint32_t> computeDynamicOffset;
@@ -96,12 +101,12 @@ public:
     id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
     std::optional<StageMapValue> bindingAccessForBindingIndex(uint32_t bindingIndex, ShaderStage renderStage) const;
+    NSUInteger argumentBufferIndexForEntryIndex(uint32_t bindingIndex, ShaderStage renderStage) const;
 
     static bool isPresent(const WGPUBufferBindingLayout&);
     static bool isPresent(const WGPUSamplerBindingLayout&);
     static bool isPresent(const WGPUTextureBindingLayout&);
     static bool isPresent(const WGPUStorageTextureBindingLayout&);
-    static bool isPresent(const WGPUExternalTextureBindingLayout&);
 
     const EntriesContainer& entries() const { return m_bindGroupLayoutEntries; }
     uint32_t sizeOfVertexDynamicOffsets() const;

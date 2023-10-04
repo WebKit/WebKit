@@ -187,7 +187,7 @@
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-#include "VideoFullscreenModel.h"
+#include "VideoPresentationModel.h"
 #endif
 
 #if ENABLE(MEDIA_SESSION)
@@ -9076,6 +9076,6 @@ bool HTMLMediaElement::shouldDisableHDR() const
     return !screenSupportsHighDynamicRange(document().view());
 }
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(VIDEO)

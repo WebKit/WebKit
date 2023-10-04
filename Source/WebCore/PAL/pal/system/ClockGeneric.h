@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,6 +48,7 @@ private:
     bool isRunning() const override { return m_running; }
 
     MonotonicTime now() const;
+    double currentDelta() const;
 
     bool m_running;
     double m_rate;

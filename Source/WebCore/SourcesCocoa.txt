@@ -314,7 +314,7 @@ platform/cocoa/TextRecognitionResultCocoa.mm
 platform/cocoa/ThemeCocoa.mm
 platform/cocoa/ThermalMitigationNotifier.mm
 platform/cocoa/UserAgentCocoa.mm
-platform/cocoa/VideoFullscreenModelVideoElement.mm
+platform/cocoa/VideoPresentationModelVideoElement.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreAdditions.mm @no-unify
 platform/cocoa/WebCoreNSErrorExtras.mm

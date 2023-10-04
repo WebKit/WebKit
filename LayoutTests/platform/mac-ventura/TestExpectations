@@ -13,7 +13,6 @@ editing/selection/caret-in-empty-inline-1.html [ Failure ]
 editing/selection/caret-in-empty-inline-2.html [ Failure ]
 editing/selection/internal-caret-rect.html [ Failure ]
 editing/selection/simple-line-layout-caret-is-gone.html [ Failure ]
-fast/forms/auto-fill-button/input-credit-card-auto-fill-button.html [ Failure ]
 imported/w3c/web-platform-tests/xhr/open-method-case-sensitive.htm [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
 

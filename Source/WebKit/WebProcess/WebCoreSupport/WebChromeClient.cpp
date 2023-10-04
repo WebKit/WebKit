@@ -122,7 +122,7 @@
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-#include "VideoFullscreenManager.h"
+#include "VideoPresentationManager.h"
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -1161,22 +1161,22 @@ std::unique_ptr<ScrollbarsController> WebChromeClient::createScrollbarsControlle
 
 void WebChromeClient::prepareForVideoFullscreen()
 {
-    protectedPage()->videoFullscreenManager();
+    protectedPage()->videoPresentationManager();
 }
 
 bool WebChromeClient::canEnterVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode) const
 {
-    return protectedPage()->videoFullscreenManager().canEnterVideoFullscreen(mode);
+    return protectedPage()->videoPresentationManager().canEnterVideoFullscreen(mode);
 }
 
 bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    return protectedPage()->videoFullscreenManager().supportsVideoFullscreen(mode);
+    return protectedPage()->videoPresentationManager().supportsVideoFullscreen(mode);
 }
 
 bool WebChromeClient::supportsVideoFullscreenStandby()
 {
-    return protectedPage()->videoFullscreenManager().supportsVideoFullscreenStandby();
+    return protectedPage()->videoPresentationManager().supportsVideoFullscreenStandby();
 }
 
 void WebChromeClient::setMockVideoPresentationModeEnabled(bool enabled)
@@ -1191,12 +1191,12 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
 #else
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
 #endif
-    protectedPage()->videoFullscreenManager().enterVideoFullscreenForVideoElement(videoElement, mode, standby);
+    protectedPage()->videoPresentationManager().enterVideoFullscreenForVideoElement(videoElement, mode, standby);
 }
 
 void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
 {
-    protectedPage()->videoFullscreenManager().exitVideoFullscreenForVideoElement(videoElement, WTFMove(completionHandler));
+    protectedPage()->videoPresentationManager().exitVideoFullscreenForVideoElement(videoElement, WTFMove(completionHandler));
 }
 
 void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& mediaElement)
@@ -1237,7 +1237,7 @@ void WebChromeClient::removeMediaUsageManagerSession(MediaSessionIdentifier iden
 
 void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
-    protectedPage()->videoFullscreenManager().exitVideoFullscreenToModeWithoutAnimation(videoElement, targetMode);
+    protectedPage()->videoPresentationManager().exitVideoFullscreenToModeWithoutAnimation(videoElement, targetMode);
 }
 
 #endif

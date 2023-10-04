@@ -36,13 +36,13 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
 
 namespace WebCore {
-class VideoFullscreenModel;
+class VideoPresentationModel;
 }
 
 WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @property (nonatomic, retain, nullable) NSString *videoGravity;
 @property (nonatomic, getter=isReadyForDisplay) BOOL readyForDisplay;
-@property (nonatomic, assign, nullable) WebCore::VideoFullscreenModel* fullscreenModel;
+@property (nonatomic, assign, nullable) WebCore::VideoPresentationModel* presentationModel;
 @property (nonatomic, retain, nonnull) AVPlayerController *playerController;
 @property (nonatomic, retain, nonnull) CALayer *videoSublayer;
 @property (nonatomic, copy, nullable) NSDictionary *pixelBufferAttributes;
@@ -51,4 +51,3 @@ WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @end
 
 #endif // HAVE(AVKIT)
-

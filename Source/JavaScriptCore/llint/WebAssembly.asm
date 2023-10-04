@@ -25,7 +25,7 @@
 const CalleeSaveSpaceAsVirtualRegisters = constexpr Wasm::numberOfLLIntCalleeSaveRegisters + constexpr Wasm::numberOfLLIntInternalRegisters
 const CalleeSaveSpaceStackAligned = (CalleeSaveSpaceAsVirtualRegisters * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
 const WasmEntryPtrTag = constexpr WasmEntryPtrTag
-const WasmCodeBlock = CallerFrame - constexpr Wasm::numberOfLLIntCalleeSaveRegisters * SlotSize - MachineRegisterSize
+const UnboxedWasmCalleeStackSlot = CallerFrame - constexpr Wasm::numberOfLLIntCalleeSaveRegisters * SlotSize - MachineRegisterSize
 
 if HAVE_FAST_TLS
     const WTF_WASM_CONTEXT_KEY = constexpr WTF_WASM_CONTEXT_KEY
@@ -145,7 +145,7 @@ macro wasmNextInstructionWide32()
 end
 
 macro checkSwitchToJIT(increment, action)
-    loadp WasmCodeBlock[cfr], ws0
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::LLIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
     action()
     .continue:
@@ -195,7 +195,7 @@ end
                 jmp ws0, WasmEntryPtrTag
             end
         .recover:
-            loadp WasmCodeBlock[cfr], codeBlockRegister
+            loadp UnboxedWasmCalleeStackSlot[cfr], codeBlockRegister
         end)
     end
 end
@@ -205,7 +205,7 @@ macro checkSwitchToJITForLoop()
     checkSwitchToJIT(
         1,
         macro()
-            storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+            storei PC, CallSiteIndex[cfr]
             prepareStateForCCall()
             move cfr, a0
             move PC, a1
@@ -223,7 +223,7 @@ macro checkSwitchToJITForLoop()
                 jmp r1, WasmEntryPtrTag
             end
         .recover:
-            loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+            loadi CallSiteIndex[cfr], PC
         end)
     end
 end
@@ -330,7 +330,7 @@ macro throwException(exception)
 end
 
 macro callWasmSlowPath(slowPath)
-    storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+    storei PC, CallSiteIndex[cfr]
     prepareStateForCCall()
     move cfr, a0
     move PC, a1
@@ -340,7 +340,7 @@ macro callWasmSlowPath(slowPath)
 end
 
 macro callWasmCallSlowPath(slowPath, action)
-    storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+    storei PC, CallSiteIndex[cfr]
     prepareStateForCCall()
     move cfr, a0
     move PC, a1
@@ -350,7 +350,7 @@ macro callWasmCallSlowPath(slowPath, action)
 end
 
 macro restoreStackPointerAfterCall()
-    loadp WasmCodeBlock[cfr], ws1
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws1
     loadi Wasm::LLIntCallee::m_numCalleeLocals[ws1], ws1
     lshiftp 3, ws1
     addp maxFrameExtentForSlowPathCall, ws1
@@ -376,7 +376,7 @@ end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0
-    storep ws0, WasmCodeBlock[cfr]
+    storep ws0, UnboxedWasmCalleeStackSlot[cfr]
 
     # Get new sp in ws1 and check stack height.
     loadi Wasm::LLIntCallee::m_numCalleeLocals[ws0], ws1
@@ -420,7 +420,7 @@ else
     end)
 end
 
-    loadp WasmCodeBlock[cfr], ws0
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     checkSwitchToJITForPrologue(ws0)
 
     # Set up the PC.
@@ -470,7 +470,7 @@ end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0
-    storep ws0, WasmCodeBlock[cfr]
+    storep ws0, UnboxedWasmCalleeStackSlot[cfr]
 
     # Get new sp in ws1 and check stack height.
     # This should match the calculation of m_stackSize, but with double the size for fpr arg storage and no locals.
@@ -613,7 +613,7 @@ macro loadConstantOrVariable(ctx, index, loader)
         loader([cfr, index, 8])
         jmp .done
     .constant:
-        loadp WasmCodeBlock[cfr], t6
+        loadp UnboxedWasmCalleeStackSlot[cfr], t6
         loadp Wasm::LLIntCallee::m_constants[t6], t6
         subp firstConstantIndex, index
         loader((constexpr (Int64FixedVector::Storage::offsetOfData()))[t6, index, 8])
@@ -784,7 +784,7 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     move wasmInstance, a2
     # Slow paths and the throwException macro store the exception code in the ArgumentCountIncludingThis slot
     loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a3
-    storei 0, ArgumentCountIncludingThis + TagOffset[cfr]
+    storei 0, CallSiteIndex[cfr]
     cCall4(_slow_path_wasm_throw_exception)
     jumpToException()
 end)
@@ -798,7 +798,7 @@ macro wasm_throw_from_fault_handler(instance)
     move constexpr Wasm::ExceptionType::OutOfBoundsMemoryAccess, a3
     move 0, a1
     move cfr, a0
-    storei 0, ArgumentCountIncludingThis + TagOffset[cfr]
+    storei 0, CallSiteIndex[cfr]
     cCall4(_slow_path_wasm_throw_exception)
     jumpToException()
 end
@@ -850,8 +850,8 @@ _wasm_wide32:
 _wasm_enter:
     traceExecution()
     checkStackPointerAlignment(t2, 0xdead00e1)
-    loadp WasmCodeBlock[cfr], t2                // t2<WasmCodeBlock> = cfr.WasmCodeBlock
-    loadi Wasm::LLIntCallee::m_numVars[t2], t2      // t2<size_t> = t2<WasmCodeBlock>.m_numVars
+    loadp UnboxedWasmCalleeStackSlot[cfr], t2 // t2<UnboxedWasmCalleeStackSlot> = cfr.UnboxedWasmCalleeStackSlot
+    loadi Wasm::LLIntCallee::m_numVars[t2], t2 // t2<size_t> = t2<UnboxedWasmCalleeStackSlot>.m_numVars
     subi CalleeSaveSpaceAsVirtualRegisters + NumberOfWasmArguments, t2
     btiz t2, .opEnterDone
     subp cfr, (CalleeSaveSpaceAsVirtualRegisters + NumberOfWasmArguments) * SlotSize, t1
@@ -901,7 +901,7 @@ wasmOp(switch, WasmSwitch, macro(ctx)
     mloadi(ctx, m_scrutinee, t0)
     wgetu(ctx, m_tableIndex, t1)
 
-    loadp WasmCodeBlock[cfr], t2
+    loadp UnboxedWasmCalleeStackSlot[cfr], t2
     loadp Wasm::LLIntCallee::m_jumpTables[t2], t2
     muli sizeof Wasm::JumpTable, t1
     addp t1, t2
@@ -975,7 +975,7 @@ macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
         macro (calleeEntryPoint, targetWasmInstance)
             move calleeEntryPoint, ws0
 
-            loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+            loadi CallSiteIndex[cfr], PC
 
             # the call might throw (e.g. indirect call with bad signature)
             btpz targetWasmInstance, .throw
@@ -1067,8 +1067,8 @@ else
             move PC, memoryBase
 end
             move PB, wasmInstance
-            loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
-            loadp WasmCodeBlock[cfr], PB
+            loadi CallSiteIndex[cfr], PC
+            loadp UnboxedWasmCalleeStackSlot[cfr], PB
             loadp Wasm::LLIntCallee::m_instructionsRawPointer[PB], PB
 
             wgetu(ctx, m_stackOffset, ws1)
@@ -1111,7 +1111,7 @@ else
             end)
 end
 
-            loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+            loadi CallSiteIndex[cfr], PC
 
             storeWasmInstance(wasmInstance)
             reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
@@ -1131,7 +1131,7 @@ macro slowPathForWasmTailCall(ctx, slowPath, storeWasmInstance, restoreCalleeSav
         macro (calleeEntryPoint, targetWasmInstance)
             move calleeEntryPoint, ws0
 
-            loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+            loadi CallSiteIndex[cfr], PC
 
             # the call might throw (e.g. indirect call with bad signature)
             btpz targetWasmInstance, .throw
@@ -1185,7 +1185,7 @@ end
             move PC, ws1
 
             # Reload PC
-            loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+            loadi CallSiteIndex[cfr], PC
 
             # Compute old stack size
             wgetu(ctx, m_numberOfCallerStackArgs, wa0)
@@ -2112,7 +2112,7 @@ macro commonCatchImpl(ctx)
     loadp CodeBlock[cfr], wasmInstance
     reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
 
-    loadp WasmCodeBlock[cfr], PB
+    loadp UnboxedWasmCalleeStackSlot[cfr], PB
     loadp Wasm::LLIntCallee::m_instructionsRawPointer[PB], PB
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC

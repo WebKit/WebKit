@@ -367,8 +367,11 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
             wgslEntry.binding = entry.value.binding;
             wgslEntry.visibility.fromRaw(entry.value.visibility);
             wgslEntry.bindingMember = convertBindingLayout(entry.value.bindingLayout);
+            wgslEntry.vertexArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Vertex];
             wgslEntry.vertexBufferDynamicOffset = entry.value.vertexDynamicOffset;
+            wgslEntry.fragmentArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Fragment];
             wgslEntry.fragmentBufferDynamicOffset = entry.value.fragmentDynamicOffset;
+            wgslEntry.computeArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Compute];
             wgslEntry.computeBufferDynamicOffset = entry.value.computeDynamicOffset;
             wgslBindGroupLayout.entries.append(wgslEntry);
         }
