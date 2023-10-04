@@ -26,22 +26,30 @@
 
 namespace WebCore {
 
-LocalCurrentContextSaver::LocalCurrentContextSaver(CGContextRef cgContext, bool)
+LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphicsContext, bool)
+    : m_savedGraphicsContext(graphicsContext)
 {
-    if (!cgContext) {
-        ASSERT_NOT_REACHED();
+    m_savedGraphicsContext.save();
+
+    if (!m_savedGraphicsContext.hasPlatformContext()) {
+        WTFLogAlways("LocalCurrentGraphicsContext is not setting the global context because the provided GraphicsContext does not have a platform context (likely display list recording)");
         return;
     }
+
+    CGContextRef cgContext = this->cgContext();
     if (cgContext == UIGraphicsGetCurrentContext())
         return;
+
     UIGraphicsPushContext(cgContext);
     m_didSetGraphicsContext = true;
 }
 
-LocalCurrentContextSaver::~LocalCurrentContextSaver()
+LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext()
 {
     if (m_didSetGraphicsContext)
         UIGraphicsPopContext();
+
+    m_savedGraphicsContext.restore();
 }
 
 }
