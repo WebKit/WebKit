@@ -80,7 +80,7 @@ public:
 
     void setInitialVideoSize(const FloatSize&);
 
-    void asyncStateChangeDone() override;
+    void didPreroll() override;
 
     void startSource(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks);
     WebKitMediaSrc* webKitMediaSrc() { return reinterpret_cast<WebKitMediaSrc*>(m_source.get()); }

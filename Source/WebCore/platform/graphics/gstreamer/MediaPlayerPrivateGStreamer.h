@@ -473,7 +473,7 @@ private:
 
     virtual void updateStates();
     void finishSeek();
-    virtual void asyncStateChangeDone() { }
+    virtual void didPreroll() { }
 
     void createGSTPlayBin(const URL&);
 
