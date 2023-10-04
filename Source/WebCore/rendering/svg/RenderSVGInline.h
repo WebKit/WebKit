@@ -49,6 +49,7 @@ private:
     FloatRect objectBoundingBox() const final;
     FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates() const final;
+    FloatRect repaintRectInLocalCoordinatesForHitTesting() const final;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     LayoutPoint currentSVGLayoutLocation() const final { return { }; }

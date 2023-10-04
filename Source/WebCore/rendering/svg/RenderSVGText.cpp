@@ -605,6 +605,11 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
     return repaintRect;
 }
 
+FloatRect RenderSVGText::repaintRectInLocalCoordinatesForHitTesting() const
+{
+    return repaintRectInLocalCoordinates();
+}
+
 void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

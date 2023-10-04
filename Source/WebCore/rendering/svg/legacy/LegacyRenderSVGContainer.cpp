@@ -28,6 +28,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGShape.h"
 #include "RenderIterator.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderTreeBuilder.h"
@@ -154,8 +155,23 @@ void LegacyRenderSVGContainer::addFocusRingRects(Vector<LayoutRect>& rects, cons
 
 void LegacyRenderSVGContainer::updateCachedBoundaries()
 {
-    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
+    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_repaintBoundingBox);
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
+    m_strokeBoundingBox = FloatRect::nanRect();
+}
+
+FloatRect LegacyRenderSVGContainer::repaintRectInLocalCoordinatesForHitTesting() const
+{
+    FloatRect strokeBoundingBox = this->strokeBoundingBox();
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, strokeBoundingBox);
+    return strokeBoundingBox;
+}
+
+FloatRect LegacyRenderSVGContainer::strokeBoundingBox() const
+{
+    if (m_strokeBoundingBox.isNaN())
+        SVGRenderSupport::computeContainerStrokeBoundingBox(*this, m_strokeBoundingBox);
+    return m_strokeBoundingBox;
 }
 
 bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

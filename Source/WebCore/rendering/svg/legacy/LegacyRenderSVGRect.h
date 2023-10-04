@@ -45,7 +45,7 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderSVGRect"_s; }
 
-    void updateShapeFromElement() override;
+    FloatRect updateShapeFromElement() override;
     bool isEmpty() const override { return hasPath() ? LegacyRenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); }
     bool isRenderingDisabled() const override;
     void fillShape(GraphicsContext&) const override;
@@ -53,9 +53,8 @@ private:
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
     bool shapeDependentFillContains(const FloatPoint&, const WindRule) const override;
 
-private:
-    FloatRect m_innerStrokeRect;
-    FloatRect m_outerStrokeRect;
+    bool definitelyHasSimpleStroke() const;
+    bool canUseStrokeHitTestFastPath() const;
 };
 
 } // namespace WebCore

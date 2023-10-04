@@ -177,7 +177,7 @@ bool LegacyRenderSVGModelObject::checkIntersection(RenderElement* renderer, cons
     SVGElement* svgElement = downcast<SVGElement>(renderer->element());
     getElementCTM(svgElement, ctm);
     ASSERT(svgElement->renderer());
-    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
+    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinatesForHitTesting()));
 }
 
 bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
@@ -190,7 +190,7 @@ bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const F
     SVGElement* svgElement = downcast<SVGElement>(renderer->element());
     getElementCTM(svgElement, ctm);
     ASSERT(svgElement->renderer());
-    return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
+    return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinatesForHitTesting()));
 }
 
 } // namespace WebCore

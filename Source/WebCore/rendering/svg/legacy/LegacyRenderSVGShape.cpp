@@ -35,6 +35,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGPath.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGResourceMarker.h"
@@ -48,6 +49,16 @@
 #include "SVGURIReference.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <math.h>
+// MSVC may not define this constant.
+// https://learn.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=msvc-170
+#ifndef M_SQRT2
+#define M_SQRT2 1.41421356237309504880
+#endif
 
 namespace WebCore {
 
@@ -63,14 +74,23 @@ LegacyRenderSVGShape::LegacyRenderSVGShape(Type type, SVGGraphicsElement& elemen
 
 LegacyRenderSVGShape::~LegacyRenderSVGShape() = default;
 
-void LegacyRenderSVGShape::updateShapeFromElement()
+#if ASSERT_ENABLED
+static bool canUseSimpleStrokeApproximation(LegacyRenderSVGShape::ShapeType shapeType)
 {
-    m_path = createPath();
-    processMarkerPositions();
-
-    m_fillBoundingBox = calculateObjectBoundingBox();
-    m_strokeBoundingBox = calculateStrokeBoundingBox();
+    switch (shapeType) {
+    case LegacyRenderSVGShape::ShapeType::Empty:
+    case LegacyRenderSVGShape::ShapeType::Ellipse:
+    case LegacyRenderSVGShape::ShapeType::Circle:
+    case LegacyRenderSVGShape::ShapeType::Rectangle:
+    case LegacyRenderSVGShape::ShapeType::RoundedRectangle:
+        return true;
+    case LegacyRenderSVGShape::ShapeType::Path:
+    case LegacyRenderSVGShape::ShapeType::Line:
+        return false;
+    }
+    return false;
 }
+#endif
 
 bool LegacyRenderSVGShape::isEmpty() const
 {
@@ -133,7 +153,8 @@ bool LegacyRenderSVGShape::fillContains(const FloatPoint& point, bool requiresFi
 
 bool LegacyRenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke)
 {
-    if (strokeBoundingBox().isEmpty() || !strokeBoundingBox().contains(point))
+    FloatRect strokeBoundingBox = this->strokeBoundingBox();
+    if (strokeBoundingBox.isEmpty() || !strokeBoundingBox.contains(point))
         return false;
 
     Color fallbackColor;
@@ -151,11 +172,29 @@ void LegacyRenderSVGShape::layout()
     bool updateCachedBoundariesInParents = false;
 
     if (m_needsShapeUpdate || m_needsBoundariesUpdate) {
-        updateShapeFromElement();
+        m_strokeBoundingBox = FloatRect::nanRect();
+        FloatRect newObjectBoundingBox = updateShapeFromElement();
+        m_fillBoundingBox = newObjectBoundingBox;
         m_needsShapeUpdate = false;
-        updateRepaintBoundingBox();
         m_needsBoundariesUpdate = false;
         updateCachedBoundariesInParents = true;
+        switch (m_shapeType) {
+        case ShapeType::Empty:
+            m_decoratedBoundingBox = m_fillBoundingBox;
+            break;
+        case ShapeType::Ellipse:
+        case ShapeType::Circle:
+        case ShapeType::Rectangle:
+        case ShapeType::RoundedRectangle:
+            m_decoratedBoundingBox = calculateDecoratedBoundingBox();
+            break;
+        case ShapeType::Path:
+        case ShapeType::Line:
+            m_decoratedBoundingBox = downcast<LegacyRenderSVGPath>(*this).updateMarkerBounds(calculateDecoratedBoundingBox());
+            break;
+        }
+        m_repaintBoundingBox = m_decoratedBoundingBox;
+        SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
     }
 
     if (m_needsTransformUpdate) {
@@ -200,21 +239,6 @@ bool LegacyRenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeT
 AffineTransform LegacyRenderSVGShape::nonScalingStrokeTransform() const
 {
     return graphicsElement().getScreenCTM(SVGLocatable::DisallowStyleUpdate);
-}
-
-bool LegacyRenderSVGShape::shouldGenerateMarkerPositions() const
-{
-    if (!style().svgStyle().hasMarkers())
-        return false;
-
-    if (!graphicsElement().supportsMarkers())
-        return false;
-
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    if (!resources)
-        return false;
-
-    return resources->markerStart() || resources->markerMid() || resources->markerEnd();
 }
 
 void LegacyRenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)
@@ -273,10 +297,21 @@ void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
         case PaintType::Stroke:
             strokeShape(style(), childPaintInfo.context());
             break;
-        case PaintType::Markers:
-            if (!m_markerPositions.isEmpty())
-                drawMarkers(childPaintInfo);
+        case PaintType::Markers: {
+            switch (m_shapeType) {
+            case ShapeType::Empty:
+            case ShapeType::Ellipse:
+            case ShapeType::Circle:
+            case ShapeType::Rectangle:
+            case ShapeType::RoundedRectangle:
+                break;
+            case ShapeType::Path:
+            case ShapeType::Line:
+                downcast<LegacyRenderSVGPath>(*this).drawMarkers(childPaintInfo);
+                break;
+            }
             break;
+        }
         }
     }
 }
@@ -373,82 +408,141 @@ bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTe
     return false;
 }
 
-static inline RenderSVGResourceMarker* markerForType(SVGMarkerType type, RenderSVGResourceMarker* markerStart, RenderSVGResourceMarker* markerMid, RenderSVGResourceMarker* markerEnd)
+FloatRect LegacyRenderSVGShape::calculateApproximateDecoratedBoundingBox(const FloatRect& shapeBounds) const
 {
-    switch (type) {
-    case StartMarker:
-        return markerStart;
-    case MidMarker:
-        return markerMid;
-    case EndMarker:
-        return markerEnd;
+    FloatRect strokeBox = shapeBounds;
+
+    // Implementation of
+    // https://drafts.fxtf.org/css-masking/#compute-stroke-bounding-box
+    // except that we ignore whether the stroke is none.
+
+    const float strokeWidth = this->strokeWidth();
+    if (strokeWidth <= 0)
+        return strokeBox;
+
+    float delta = strokeWidth / 2;
+    switch (m_shapeType) {
+    case ShapeType::Empty: {
+        // // Spec: "A negative value is illegal. A value of zero disables rendering of the element."
+        return strokeBox;
+    }
+    case ShapeType::Ellipse:
+    case ShapeType::Circle: {
+        break;
+    }
+    case ShapeType::Rectangle:
+    case ShapeType::RoundedRectangle: {
+#if USE(CG)
+        // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
+        if (style().svgStyle().shapeRendering() == ShapeRendering::CrispEdges)
+            delta += 1;
+#endif
+        break;
+    }
+    case ShapeType::Path:
+    case ShapeType::Line: {
+        auto& style = this->style();
+        if (m_shapeType == ShapeType::Path && style.joinStyle() == LineJoin::Miter) {
+            const float miter = style.strokeMiterLimit();
+            if (miter < M_SQRT2 && style.capStyle() == LineCap::Square)
+                delta *= M_SQRT2;
+            else
+                delta *= std::max(miter, 1.0f);
+        } else if (style.capStyle() == LineCap::Square)
+            delta *= M_SQRT2;
+        break;
+    }
     }
 
-    ASSERT_NOT_REACHED();
-    return 0;
+    strokeBox.inflate(delta);
+    return strokeBox;
 }
 
-FloatRect LegacyRenderSVGShape::markerRect(float strokeWidth) const
+FloatRect LegacyRenderSVGShape::calculateDecoratedBoundingBox() const
 {
-    ASSERT(!m_markerPositions.isEmpty());
+    if (!style().svgStyle().hasStroke())
+        return m_fillBoundingBox;
+#if 0
+    if (hasNonScalingStroke())
+        return calculateNonScalingDecoratedBoundingBox();
+    return calculateApproximateDecoratedBoundingBox(m_fillBoundingBox);
+#else
+    return strokeBoundingBox();
+#endif
+}
 
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    ASSERT(resources);
+FloatRect LegacyRenderSVGShape::calculateNonScalingDecoratedBoundingBox() const
+{
+    ASSERT(hasPath());
+    ASSERT(style().svgStyle().hasStroke());
+    ASSERT(hasNonScalingStroke());
 
-    RenderSVGResourceMarker* markerStart = resources->markerStart();
-    RenderSVGResourceMarker* markerMid = resources->markerMid();
-    RenderSVGResourceMarker* markerEnd = resources->markerEnd();
-    ASSERT(markerStart || markerMid || markerEnd);
-
-    FloatRect boundaries;
-    unsigned size = m_markerPositions.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (RenderSVGResourceMarker* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
-            boundaries.unite(marker->markerBoundaries(marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth)));
+    FloatRect strokeBoundingBox = m_fillBoundingBox;
+    AffineTransform nonScalingTransform = nonScalingStrokeTransform();
+    if (std::optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
+        Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
+        FloatRect strokeBoundingRect = calculateApproximateDecoratedBoundingBox(usePath->fastBoundingRect());
+        strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
+        strokeBoundingBox.unite(strokeBoundingRect);
     }
-    return boundaries;
+    return strokeBoundingBox;
 }
 
-FloatRect LegacyRenderSVGShape::calculateObjectBoundingBox() const
+FloatRect LegacyRenderSVGShape::repaintRectInLocalCoordinatesForHitTesting() const
 {
-    return path().boundingRect();
+    FloatRect strokeBoundingBox = this->strokeBoundingBox();
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, strokeBoundingBox);
+    return strokeBoundingBox;
+}
+
+FloatRect LegacyRenderSVGShape::strokeBoundingBox() const
+{
+    if (m_strokeBoundingBox.isNaN()) {
+        switch (m_shapeType) {
+        case ShapeType::Empty:
+        case ShapeType::Ellipse:
+        case ShapeType::Circle:
+        case ShapeType::Rectangle:
+        case ShapeType::RoundedRectangle:
+            m_strokeBoundingBox = calculateStrokeBoundingBox();
+            break;
+        case ShapeType::Path:
+        case ShapeType::Line:
+            m_strokeBoundingBox = downcast<LegacyRenderSVGPath>(*this).updateMarkerBounds(calculateStrokeBoundingBox());
+            break;
+        }
+    }
+    return m_strokeBoundingBox;
 }
 
 FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
 {
-    ASSERT(m_path);
-    FloatRect strokeBoundingBox = m_fillBoundingBox;
+    if (!style().svgStyle().hasStroke())
+        return m_fillBoundingBox;
 
-    if (style().svgStyle().hasStroke()) {
-        if (hasNonScalingStroke()) {
-            AffineTransform nonScalingTransform = nonScalingStrokeTransform();
-            if (std::optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
-                Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
-                FloatRect strokeBoundingRect = usePath->strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
-                    SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-                } });
-                strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
-                strokeBoundingBox.unite(strokeBoundingRect);
-            }
-        } else {
-            strokeBoundingBox.unite(path().strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
-                SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-            } }));
-        }
+    if (!hasPath()) {
+        // No path means that calculateApproximateDecoratedBoundingBox can return exact strokeBoundingBox.
+        ASSERT(canUseSimpleStrokeApproximation(m_shapeType));
+        return calculateApproximateDecoratedBoundingBox(m_fillBoundingBox);
     }
 
-    if (!m_markerPositions.isEmpty())
-        strokeBoundingBox.unite(markerRect(strokeWidth()));
-
+    FloatRect strokeBoundingBox = m_fillBoundingBox;
+    if (hasNonScalingStroke()) {
+        AffineTransform nonScalingTransform = nonScalingStrokeTransform();
+        if (std::optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
+            Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
+            FloatRect strokeBoundingRect = usePath->strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
+                SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+            } });
+            strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
+            strokeBoundingBox.unite(strokeBoundingRect);
+        }
+    } else {
+        strokeBoundingBox.unite(path().strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
+            SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+        } }));
+    }
     return strokeBoundingBox;
-}
-
-void LegacyRenderSVGShape::updateRepaintBoundingBox()
-{
-    m_repaintBoundingBoxExcludingShadow = strokeBoundingBox();
-    SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBoxExcludingShadow);
-
-    m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
 }
 
 float LegacyRenderSVGShape::strokeWidth() const
@@ -466,47 +560,16 @@ bool LegacyRenderSVGShape::hasSmoothStroke() const
         && style().capStyle() == LineCap::Butt;
 }
 
-void LegacyRenderSVGShape::drawMarkers(PaintInfo& paintInfo)
+Path& LegacyRenderSVGShape::ensurePath() const
 {
-    ASSERT(!m_markerPositions.isEmpty());
-
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    if (!resources)
-        return;
-
-    RenderSVGResourceMarker* markerStart = resources->markerStart();
-    RenderSVGResourceMarker* markerMid = resources->markerMid();
-    RenderSVGResourceMarker* markerEnd = resources->markerEnd();
-    if (!markerStart && !markerMid && !markerEnd)
-        return;
-
-    float strokeWidth = this->strokeWidth();
-    unsigned size = m_markerPositions.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (RenderSVGResourceMarker* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
-            marker->draw(paintInfo, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth));
-    }
+    if (!m_path)
+        m_path = createPath();
+    return *m_path.get();
 }
 
 std::unique_ptr<Path> LegacyRenderSVGShape::createPath() const
 {
     return makeUnique<Path>(pathFromGraphicsElement(&graphicsElement()));
-}
-
-void LegacyRenderSVGShape::processMarkerPositions()
-{
-    m_markerPositions.clear();
-
-    if (!shouldGenerateMarkerPositions())
-        return;
-
-    ASSERT(m_path);
-
-    SVGMarkerData markerData(m_markerPositions, SVGResourcesCache::cachedResourcesForRenderer(*this)->markerReverseStart());
-    m_path->applyElements([&markerData](const PathElement& pathElement) {
-        SVGMarkerData::updateFromPathElement(markerData, pathElement);
-    });
-    markerData.pathIsDone();
 }
 
 }

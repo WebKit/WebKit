@@ -28,6 +28,7 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResourceContainer.h"
+#include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "RenderBoxInlines.h"
@@ -414,9 +415,24 @@ const RenderObject* LegacyRenderSVGRoot::pushMappingToContainer(const RenderLaye
 
 void LegacyRenderSVGRoot::updateCachedBoundaries()
 {
-    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
+    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_repaintBoundingBox);
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
     m_repaintBoundingBox.inflate(horizontalBorderAndPaddingExtent());
+    m_strokeBoundingBox = FloatRect::nanRect();
+}
+
+FloatRect LegacyRenderSVGRoot::repaintRectInLocalCoordinatesForHitTesting() const
+{
+    FloatRect strokeBoundingBox = this->strokeBoundingBox();
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, strokeBoundingBox);
+    return strokeBoundingBox;
+}
+
+FloatRect LegacyRenderSVGRoot::strokeBoundingBox() const
+{
+    if (m_strokeBoundingBox.isNaN())
+        SVGRenderSupport::computeContainerStrokeBoundingBox(*this, m_strokeBoundingBox);
+    return m_strokeBoundingBox;
 }
 
 bool LegacyRenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

@@ -507,6 +507,10 @@ public:
     // respecting clipping, masking, filters, opacity, stroke-width and markers
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
+    // repaintRectInLocalCoordinates, but more precise, "sensitive to hit detection".
+    // https://svgwg.org/svg2-draft/struct.html#__svg__SVGSVGElement__checkIntersection
+    virtual FloatRect repaintRectInLocalCoordinatesForHitTesting() const;
+
     // This only returns the transform="" value from the element
     // most callsites want localToParentTransform() instead.
     virtual AffineTransform localTransform() const;

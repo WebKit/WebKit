@@ -224,7 +224,7 @@ bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const Floa
     SVGElement* svgElement = downcast<SVGElement>(renderer->element());
     ASSERT(is<SVGGraphicsElement>(svgElement));
     auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
-    return intersectsAllowingEmpty(rect, ctm.mapRect(renderer->repaintRectInLocalCoordinates()));
+    return intersectsAllowingEmpty(rect, ctm.mapRect(renderer->repaintRectInLocalCoordinatesForHitTesting()));
 }
 
 bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
@@ -236,7 +236,7 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
     SVGElement* svgElement = downcast<SVGElement>(renderer->element());
     ASSERT(is<SVGGraphicsElement>(svgElement));
     auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
-    return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinates()));
+    return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinatesForHitTesting()));
 }
 
 LayoutSize RenderSVGModelObject::cachedSizeForOverflowClip() const

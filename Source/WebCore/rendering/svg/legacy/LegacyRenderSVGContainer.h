@@ -51,8 +51,9 @@ protected:
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const final;
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates() const final { return m_repaintBoundingBox; }
+    FloatRect repaintRectInLocalCoordinatesForHitTesting() const final;
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
@@ -73,8 +74,8 @@ private:
     bool isLegacySVGContainer() const final { return true; }
 
     FloatRect m_objectBoundingBox;
-    FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
+    mutable FloatRect m_strokeBoundingBox { FloatRect::nanRect() };
 
     bool m_objectBoundingBoxValid { false };
     bool m_needsBoundariesUpdate { true };

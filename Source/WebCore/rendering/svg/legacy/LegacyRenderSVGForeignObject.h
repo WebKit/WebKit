@@ -45,6 +45,7 @@ public:
     FloatRect objectBoundingBox() const override { return FloatRect(FloatPoint(), m_viewport.size()); }
     FloatRect strokeBoundingBox() const override { return FloatRect(FloatPoint(), m_viewport.size()); }
     FloatRect repaintRectInLocalCoordinates() const override { return FloatRect(FloatPoint(), m_viewport.size()); }
+    FloatRect repaintRectInLocalCoordinatesForHitTesting() const override { return FloatRect(FloatPoint(), m_viewport.size()); }
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 

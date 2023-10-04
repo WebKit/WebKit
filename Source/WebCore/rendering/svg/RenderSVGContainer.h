@@ -46,6 +46,7 @@ public:
     FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
     FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
     FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    FloatRect repaintRectInLocalCoordinatesForHitTesting() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
 protected:
     RenderSVGContainer(Type, Document&, RenderStyle&&);

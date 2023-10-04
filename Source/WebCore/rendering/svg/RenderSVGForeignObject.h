@@ -47,6 +47,7 @@ public:
     FloatRect objectBoundingBox() const final { return m_viewport; }
     FloatRect strokeBoundingBox() const final { return m_viewport; }
     FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    FloatRect repaintRectInLocalCoordinatesForHitTesting() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
 private:
     void graphicsElement() const = delete;

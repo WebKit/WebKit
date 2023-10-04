@@ -39,7 +39,7 @@ public:
 private:
     ASCIILiteral renderName() const override { return "RenderSVGEllipse"_s; }
 
-    void updateShapeFromElement() override;
+    FloatRect updateShapeFromElement() override;
     bool isEmpty() const override { return hasPath() ? LegacyRenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); }
     bool isRenderingDisabled() const override;
     void fillShape(GraphicsContext&) const override;

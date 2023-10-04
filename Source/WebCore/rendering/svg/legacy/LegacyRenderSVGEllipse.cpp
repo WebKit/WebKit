@@ -45,32 +45,32 @@ LegacyRenderSVGEllipse::LegacyRenderSVGEllipse(SVGGraphicsElement& element, Rend
 
 LegacyRenderSVGEllipse::~LegacyRenderSVGEllipse() = default;
 
-void LegacyRenderSVGEllipse::updateShapeFromElement()
+FloatRect LegacyRenderSVGEllipse::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
-    m_fillBoundingBox = FloatRect();
-    m_strokeBoundingBox = FloatRect();
     m_center = FloatPoint();
     m_radii = FloatSize();
+    m_shapeType = ShapeType::Empty;
     clearPath();
 
     calculateRadiiAndCenter();
 
     // Spec: "A negative value is illegal. A value of zero disables rendering of the element."
     if (m_radii.isEmpty())
-        return;
+        return { };
 
-    if (hasNonScalingStroke()) {
-        // Fallback to LegacyRenderSVGShape if shape has a non-scaling stroke.
-        LegacyRenderSVGShape::updateShapeFromElement();
-        return;
+    if (m_radii.width() && m_radii.height()) {
+        if (m_radii.width() == m_radii.height())
+            m_shapeType = ShapeType::Circle;
+        else
+            m_shapeType = ShapeType::Ellipse;
     }
 
-    m_fillBoundingBox = FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
-    m_strokeBoundingBox = m_fillBoundingBox;
-    if (style().svgStyle().hasStroke())
-        m_strokeBoundingBox.inflate(strokeWidth() / 2);
+    if (hasNonScalingStroke())
+        ensurePath();
+
+    return FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
 }
 
 void LegacyRenderSVGEllipse::calculateRadiiAndCenter()
@@ -118,8 +118,8 @@ bool LegacyRenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& poin
 {
     // The optimized code below does not support non-smooth strokes so we need to
     // fall back to LegacyRenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (!hasSmoothStroke() && !hasPath())
-        LegacyRenderSVGShape::updateShapeFromElement();
+    if (!hasSmoothStroke())
+        ensurePath();
 
     if (hasPath())
         return LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
@@ -139,10 +139,10 @@ bool LegacyRenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& poin
     return xrXInner * xrXInner + yrYInner * yrYInner >= 1.0;
 }
 
-bool LegacyRenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
+bool LegacyRenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule) const
 {
-    if (hasPath())
-        return LegacyRenderSVGShape::shapeDependentFillContains(point, fillRule);
+    if (!m_radii.width() || !m_radii.height())
+        return false;
 
     FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());
 

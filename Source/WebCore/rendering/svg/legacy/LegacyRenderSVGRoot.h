@@ -86,8 +86,9 @@ private:
     const AffineTransform& localToParentTransform() const override;
 
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }
-    FloatRect strokeBoundingBox() const override { return m_strokeBoundingBox; }
+    FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates() const override { return m_repaintBoundingBox; }
+    FloatRect repaintRectInLocalCoordinatesForHitTesting() const override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
@@ -108,13 +109,13 @@ private:
 
     IntSize m_containerSize;
     FloatRect m_objectBoundingBox;
-    bool m_objectBoundingBoxValid { false };
-    bool m_inLayout { false };
-    FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
+    mutable FloatRect m_strokeBoundingBox { FloatRect::nanRect() };
     mutable AffineTransform m_localToParentTransform;
     AffineTransform m_localToBorderBoxTransform;
     WeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
+    bool m_objectBoundingBoxValid { false };
+    bool m_inLayout { false };
     bool m_isLayoutSizeChanged : 1;
     bool m_needsBoundariesOrTransformUpdate : 1;
     bool m_hasBoxDecorations : 1;

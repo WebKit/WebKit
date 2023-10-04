@@ -73,6 +73,11 @@ FloatRect RenderSVGInline::repaintRectInLocalCoordinates() const
     return FloatRect();
 }
 
+FloatRect RenderSVGInline::repaintRectInLocalCoordinatesForHitTesting() const
+{
+    return repaintRectInLocalCoordinates();
+}
+
 LayoutRect RenderSVGInline::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
