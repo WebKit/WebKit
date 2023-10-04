@@ -474,7 +474,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (rootStyle.textWrap() == TextWrap::Balance)
         return false;
-    if (rootStyle.lineAlign() != LineAlign::None)
+    if (rootStyle.lineAlign() != LineAlign::None || rootStyle.lineSnap() != LineSnap::None)
         return false;
 
     return true;

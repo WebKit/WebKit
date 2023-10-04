@@ -531,12 +531,27 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
         if (lineGrid->style().writingMode() != rootRenderer.style().writingMode())
             return { };
 
-        auto offset = layoutState.layoutOffset() - layoutState.lineGridOffset();
-        if (lineGrid->style().isVerticalWritingMode())
-            offset = offset.transposedSize();
+        auto layoutOffset = layoutState.layoutOffset();
+        auto lineGridOffset = layoutState.lineGridOffset();
+        if (lineGrid->style().isVerticalWritingMode()) {
+            layoutOffset = layoutOffset.transposedSize();
+            lineGridOffset = lineGridOffset.transposedSize();
+        }
 
         auto columnWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
-        return Layout::BlockLayoutState::LineGrid { offset, columnWidth };
+        auto rowHeight = lineGrid->style().computedLineHeight();
+        auto topRowOffset = lineGrid->borderAndPaddingBefore();
+
+        std::optional<LayoutSize> paginationOrigin;
+        auto pageLogicalTop = 0_lu;
+        if (layoutState.isPaginated()) {
+            paginationOrigin = layoutState.lineGridPaginationOrigin();
+            if (lineGrid->style().isVerticalWritingMode())
+                paginationOrigin = paginationOrigin->transposedSize();
+            pageLogicalTop = rootRenderer.pageLogicalTopForOffset(0_lu);
+        }
+
+        return Layout::BlockLayoutState::LineGrid { layoutOffset, lineGridOffset, columnWidth, rowHeight, topRowOffset, lineGrid->style().fontCascade().primaryFont(), paginationOrigin, pageLogicalTop };
     }
 
     return { };
@@ -588,7 +603,8 @@ std::optional<LayoutRect> LineLayout::layout()
     inlineFormattingContext.inlineLayoutState().setNestedListMarkerOffsets(WTFMove(m_nestedListMarkerOffsets));
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
     auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.inlineLayoutState(), WTFMove(layoutResult)) };
-    auto adjustments = adjustContent();
+    auto adjustments = adjustContent(parentBlockLayoutState);
+
     updateRenderTreePositions(adjustments);
 
     m_lineDamage = { };
@@ -995,7 +1011,7 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
     }
 }
 
-Vector<LineAdjustment> LineLayout::adjustContent()
+Vector<LineAdjustment> LineLayout::adjustContent(const Layout::BlockLayoutState& blockLayoutState)
 {
     if (!m_inlineContent)
         return { };
@@ -1004,7 +1020,7 @@ Vector<LineAdjustment> LineLayout::adjustContent()
     if (!layoutState.isPaginated())
         return { };
 
-    auto adjustments = computeAdjustmentsForPagination(*m_inlineContent, m_blockFormattingState.placedFloats(), flow());
+    auto adjustments = computeAdjustmentsForPagination(*m_inlineContent, m_blockFormattingState.placedFloats(), blockLayoutState, flow());
     adjustLinePositionsForPagination(*m_inlineContent, adjustments);
 
     return adjustments;

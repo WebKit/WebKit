@@ -55,6 +55,7 @@ private:
     void constructInlineLevelBoxes(LineBox&);
     void adjustIdeographicBaselineIfApplicable(LineBox&);
     void adjustOutsideListMarkersPosition(LineBox&);
+    void expandAboveRootInlineBox(LineBox&, InlineLayoutUnit) const;
 
     bool isFirstLine() const { return lineLayoutResult().isFirstLast.isFirstFormattedLine != LineLayoutResult::IsFirstLast::FirstFormattedLine::No; }
     bool isLastLine() const { return lineLayoutResult().isFirstLast.isLastLineWithInlineContent; }

@@ -150,7 +150,7 @@ private:
     void prepareLayoutState();
     void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
-    Vector<LineAdjustment> adjustContent();
+    Vector<LineAdjustment> adjustContent(const Layout::BlockLayoutState&);
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
 
     InlineContent& ensureInlineContent();

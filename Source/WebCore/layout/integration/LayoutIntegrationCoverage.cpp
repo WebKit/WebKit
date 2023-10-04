@@ -53,16 +53,6 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-static std::optional<AvoidanceReason> canUseForBlockStyle(const RenderBlockFlow& blockContainer)
-{
-    ASSERT(is<RenderBlockFlow>(blockContainer));
-
-    auto& style = blockContainer.style();
-    if (style.lineSnap() != LineSnap::None)
-        return AvoidanceReason::FlowHasLineSnap;
-    return { };
-}
-
 static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
 {
     if (is<RenderText>(child)) {
@@ -121,7 +111,7 @@ static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const Render
         if (auto childReason = canUseForChild(child))
             return *childReason;
     }
-    return canUseForBlockStyle(flow);
+    return { };
 }
 
 bool canUseForLineLayout(const RenderBlockFlow& flow)

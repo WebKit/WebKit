@@ -6,33 +6,33 @@ layer at (10,10) size 620x305
     RenderBlock {DIV} at (10,10) size 600x285 [color=#00FF00]
       RenderText {#text} at (0,3) size 612x36
         text run at (0,3) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,3) size 0x36
       RenderText {#text} at (0,44) size 612x36
         text run at (0,44) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,44) size 0x36
       RenderText {#text} at (0,85) size 612x36
         text run at (0,85) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,85) size 0x36
       RenderText {#text} at (0,126) size 612x36
         text run at (0,126) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,126) size 0x36
       RenderText {#text} at (0,167) size 612x36
         text run at (0,167) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,167) size 0x36
       RenderText {#text} at (0,208) size 612x36
         text run at (0,208) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,208) size 0x36
       RenderText {#text} at (0,249) size 612x36
         text run at (0,249) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,249) size 0x36
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (10,10) size 620x301
   RenderBlock (positioned) {DIV} at (10,10) size 620x301
     RenderBlock {DIV} at (10,10) size 600x151
-      RenderText {#text} at (0,13) size 598x138
-        text run at (0,13) width 598: "This header should be centered"
+      RenderText {#text} at (0,14) size 598x137
+        text run at (0,14) width 598: "This header should be centered"
         text run at (0,95) width 312: "in the grid lines."
     RenderBlock {DIV} at (10,160) size 600x131
       RenderText {#text} at (0,34) size 103x14

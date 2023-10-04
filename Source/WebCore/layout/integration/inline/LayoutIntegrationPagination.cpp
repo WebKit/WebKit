@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationPagination.h"
 
+#include "BlockLayoutState.h"
 #include "FontCascade.h"
 #include "InlineIteratorLineBox.h"
 #include "PlacedFloats.h"
@@ -36,7 +37,23 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, RenderBlockFlow& flow)
+static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::Line& line, const Layout::BlockLayoutState::LineGrid& lineGrid)
+{
+    auto gridLineHeight = lineGrid.rowHeight;
+
+    auto& gridFontMetrics = lineGrid.primaryFont->fontMetrics();
+    auto lineGridFontAscent = gridFontMetrics.ascent(line.baselineType());
+    auto lineGridFontHeight = gridFontMetrics.height();
+    auto lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
+    auto firstLineTop = lineGrid.topRowOffset;
+    auto firstTextTop = firstLineTop + lineGridHalfLeading;
+    auto firstBaselinePosition = firstTextTop + lineGridFontAscent;
+
+    auto baseline =  LayoutUnit { line.baseline() };
+    return lineGrid.paginationOrigin.value_or(LayoutSize { }).height() + firstBaselinePosition - baseline;
+}
+
+Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, const Layout::BlockLayoutState& blockLayoutState, RenderBlockFlow& flow)
 {
     auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
@@ -109,8 +126,13 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
 
         accumulatedOffset += adjustment.strut;
 
-        if (adjustment.isFirstAfterPageBreak && !lineIndex)
-            accumulatedOffset += inlineContent.clearGapBeforeFirstLine;
+        if (adjustment.isFirstAfterPageBreak) {
+            if (!lineIndex)
+                accumulatedOffset += inlineContent.clearGapBeforeFirstLine;
+
+            if (flow.style().lineSnap() != LineSnap::None && blockLayoutState.lineGrid())
+                accumulatedOffset += computeFirstLineSnapAdjustment(inlineContent.displayContent().lines[lineIndex], *blockLayoutState.lineGrid());
+        }
 
         adjustments[lineIndex] = LineAdjustment { accumulatedOffset, adjustment.isFirstAfterPageBreak };
 

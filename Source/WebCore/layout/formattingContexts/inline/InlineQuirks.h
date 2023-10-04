@@ -31,6 +31,7 @@ namespace WebCore {
 namespace Layout {
 
 class InlineFormattingContext;
+class LineBox;
 
 class InlineQuirks {
 public:
@@ -42,6 +43,7 @@ public:
     static bool lineBreakBoxAffectsParentInlineBox(const LineBox&);
     std::optional<LayoutUnit> initialLetterAlignmentOffset(const Box& floatBox, const RenderStyle& lineBoxStyle) const;
     std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&) const;
+    std::optional<InlineLayoutUnit> adjustmentForLineGridLineSnap(const LineBox&) const;
 
 private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
