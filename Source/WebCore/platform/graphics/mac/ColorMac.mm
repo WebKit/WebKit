@@ -85,12 +85,10 @@ static std::optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
         // FIXME: It might be better to use an average of the colors in the pattern instead.
         RetainPtr<NSBitmapImageRep> offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
             bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4 bitsPerPixel:32]);
-
-        GraphicsContextCG bitmapContext([NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext);
-        LocalCurrentGraphicsContext localContext(bitmapContext);
-
-        [color drawSwatchInRect:NSMakeRect(0, 0, 1, 1)];
-
+        {
+            LocalCurrentCGContext localContext { [NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext };
+            [color drawSwatchInRect:NSMakeRect(0, 0, 1, 1)];
+        }
         NSUInteger pixel[4];
         [offscreenRep getPixel:pixel atX:0 y:0];
 
