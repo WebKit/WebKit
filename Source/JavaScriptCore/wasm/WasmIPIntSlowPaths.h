@@ -57,6 +57,9 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, u
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(epilogue_osr, CallFrame* callFrame);
 #endif
 
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(retrieve_and_clear_exception, v128_t* stack);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw_exception, CallFrame*, v128_t* stack, unsigned exceptionIndex);
+
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_func, unsigned index);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_get, unsigned, unsigned);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_set, unsigned tableIndex, unsigned index, EncodedJSValue value);

@@ -113,6 +113,7 @@ private:
 
     Vector<const TypeDefinition*> m_signatures;
     HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
+    Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
     // Optimization to skip large numbers of blocks
 

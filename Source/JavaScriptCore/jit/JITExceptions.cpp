@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,8 +59,10 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     void* catchRoutine = nullptr;
     void* dispatchAndCatchRoutine = nullptr;
     JSOrWasmInstruction catchPCForInterpreter = { static_cast<JSInstruction*>(nullptr) };
+    uintptr_t catchMetadataPCForInterpreter = 0;
     if (handler.m_valid) {
         catchPCForInterpreter = handler.m_catchPCForInterpreter;
+        catchMetadataPCForInterpreter = handler.m_catchMetadataPCForInterpreter;
 #if ENABLE(JIT)
         catchRoutine = handler.m_nativeCode.taggedPtr();
         if (handler.m_nativeCodeForDispatchAndCatch)
@@ -74,6 +76,7 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
             return LLInt::getCodePtr(pc->opcodeID());
         };
 
+        ASSERT_WITH_MESSAGE(!std::holds_alternative<uintptr_t>(catchPCForInterpreter), "IPInt does not support no JIT");
         catchRoutine = std::holds_alternative<const JSInstruction*>(catchPCForInterpreter)
             ? getCatchRoutine(std::get<const JSInstruction*>(catchPCForInterpreter))
             : getCatchRoutine(std::get<const WasmInstruction*>(catchPCForInterpreter));
@@ -88,6 +91,7 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     vm.targetMachinePCForThrow = catchRoutine;
     vm.targetMachinePCAfterCatch = dispatchAndCatchRoutine;
     vm.targetInterpreterPCForThrow = catchPCForInterpreter;
+    vm.targetInterpreterMetadataPCForThrow = catchMetadataPCForInterpreter;
     
     RELEASE_ASSERT(catchRoutine);
 }

@@ -24,11 +24,11 @@
 
 # Utilities.
 macro storePC()
-    storei PC, LLIntReturnPC[cfr]
+    storei PC, CallSiteIndex[cfr]
 end
 
 macro loadPC()
-    loadi LLIntReturnPC[cfr], PC
+    loadi CallSiteIndex[cfr], PC
 end
 
 macro getuOperandNarrow(opcodeStruct, fieldName, dst)
@@ -503,7 +503,7 @@ macro callTrapHandler(throwHandler)
     move PC, a1
     cCall2(_llint_slow_path_handle_traps)
     btpnz r0, throwHandler
-    loadi LLIntReturnPC[cfr], PC
+    loadi CallSiteIndex[cfr], PC
 end
 
 if JIT

@@ -29,6 +29,8 @@
 
 extern "C" void ipint_entry();
 extern "C" void ipint_entry_simd();
+extern "C" void ipint_catch_entry();
+extern "C" void ipint_catch_all_entry();
 
 #define IPINT_VALIDATE_DEFINE_FUNCTION(opcode, name) \
     extern "C" void ipint_ ## name ## _validate() REFERENCED_FROM_ASM WTF_INTERNAL NO_REORDER;
@@ -40,6 +42,9 @@ extern "C" void ipint_entry_simd();
     m(0x03, loop) \
     m(0x04, if) \
     m(0x05, else) \
+    m(0x06, try) \
+    m(0x07, catch) \
+    m(0x08, throw) \
     m(0x0b, end) \
     m(0x0c, br) \
     m(0x0d, br_if) \
@@ -47,6 +52,8 @@ extern "C" void ipint_entry_simd();
     m(0x0f, return) \
     m(0x10, call) \
     m(0x11, call_indirect) \
+    m(0x18, delegate) \
+    m(0x19, catch_all) \
     m(0x1a, drop) \
     m(0x1b, select) \
     m(0x1c, select_t) \
