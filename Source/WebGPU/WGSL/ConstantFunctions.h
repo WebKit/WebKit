@@ -81,10 +81,8 @@ static ConstantValue constantMinus(const Type*, const FixedVector<ConstantValue>
 
     const auto& binaryMinus = [&]() -> ConstantValue {
         return scalarOrVector([&](const auto& left, auto& right) -> ConstantValue {
-            if (left.isInt()) {
-                ASSERT(right.isInt());
+            if (left.isInt() && right.isInt())
                 return left.toInt() - right.toInt();
-            }
             return left.toDouble() - right.toDouble();
         }, arguments[0], arguments[1]);
     };

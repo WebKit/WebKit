@@ -53,6 +53,12 @@ fn testAbstractIntPromotion()
     const f = pow(vec2(0), vec2(0));
 }
 
+fn testMixedConstantValue()
+{
+    const x = 1 - 0.5;
+    _ = x;
+}
+
 // Attribute constants
 const group = 0;
 const binding = 1;
