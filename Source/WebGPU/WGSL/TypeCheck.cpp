@@ -621,8 +621,11 @@ void TypeChecker::visit(AST::PhonyAssignmentStatement& statement)
 
 void TypeChecker::visit(AST::ReturnStatement& statement)
 {
-    // FIXME: handle functions that return void
-    auto* type = infer(*statement.maybeExpression());
+    const Type* type;
+    if (auto* expression = statement.maybeExpression())
+        type = infer(*expression);
+    else
+        type = m_types.bottomType();
 
     // FIXME: unify type with the curent function's return type
     UNUSED_PARAM(type);

@@ -850,11 +850,15 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
         if (usedResource == usedResources.end())
             continue;
 
-        const auto& bindingGlobalMap = groupBinding.value;
+        auto& bindingGlobalMap = groupBinding.value;
         const IndexMap<Global*>& usedBindings = usedResource->value;
 
         AST::Identifier structName = argumentBufferStructName(group);
         AST::StructureMember::List structMembers;
+
+        std::sort(bindingGlobalMap.begin(), bindingGlobalMap.end(), [&](auto& a, auto& b) {
+            return a.first < b.first;
+        });
 
         for (auto [binding, globalName] : bindingGlobalMap) {
             if (!usedBindings.contains(binding))
