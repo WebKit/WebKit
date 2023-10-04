@@ -1082,12 +1082,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @property (nonatomic, readonly) BOOL inGesture;
 @end
 
-#if ENABLE(DRAG_SUPPORT)
-@interface UIDragInteraction (IPI)
-@property (nonatomic, readonly, getter=_initiationDriver) id initiationDriver;
-@end
-#endif // ENABLE(DRAG_SUPPORT)
-
 #if USE(UICONTEXTMENU)
 
 @interface UIContextMenuConfiguration (IPI)

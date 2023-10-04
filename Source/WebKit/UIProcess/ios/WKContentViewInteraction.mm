@@ -2533,6 +2533,22 @@ static BOOL isBuiltInScrollViewGestureRecognizer(UIGestureRecognizer *recognizer
     return [gestureRecognizer.name isEqualToString:@"com.apple.UIKit.clickPresentationFailure"] && gestureRecognizer.view == self;
 }
 
+#if ENABLE(DRAG_SUPPORT)
+
+- (BOOL)_isDragInitiationGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+    if (!_dragInteraction)
+        return NO;
+
+    id gestureDelegate = gestureRecognizer.delegate;
+    if (![gestureDelegate respondsToSelector:@selector(delegate)])
+        return NO;
+
+    return _dragInteraction == [gestureDelegate delegate];
+}
+
+#endif // ENABLE(DRAG_SUPPORT)
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
 {
     // A long-press gesture can not be recognized while panning, but a pan can be recognized
@@ -8899,7 +8915,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
             return YES;
 
 #if ENABLE(DRAG_SUPPORT)
-        if (gestureRecognizer.delegate == [_dragInteraction _initiationDriver])
+        if ([self _isDragInitiationGestureRecognizer:gestureRecognizer])
             return YES;
 #endif
 
