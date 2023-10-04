@@ -1359,4 +1359,31 @@ TEST(SiteIsolation, SetFocusedFrame)
     } while (!mainFrameInfo.get()._isFocused || childFrameInfo.get()._isFocused);
 }
 
+TEST(SiteIsolation, EvaluateJavaScriptInFrame)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<script>test = 'abc';</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    [webView evaluateJavaScript:@"window.test" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_STREQ([result UTF8String], "abc");
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 }
