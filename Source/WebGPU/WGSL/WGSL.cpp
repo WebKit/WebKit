@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WGSL.h"
 
+#include "ASTIdentifierExpression.h"
 #include "CallGraph.h"
 #include "EntryPointRewriter.h"
 #include "GlobalSorting.h"
@@ -124,6 +125,14 @@ PrepareResult prepare(ShaderModule& ast, const String& entryPointName, const std
     HashMap<String, std::optional<PipelineLayout>> pipelineLayouts;
     pipelineLayouts.add(entryPointName, pipelineLayout);
     return prepareImpl(ast, pipelineLayouts);
+}
+
+ConstantValue evaluate(const AST::Expression& expression, const HashMap<String, ConstantValue>& constants)
+{
+    if (auto constantValue = expression.constantValue())
+        return *constantValue;
+    ASSERT(is<const AST::IdentifierExpression>(expression));
+    return constants.get(downcast<const AST::IdentifierExpression>(expression).identifier());
 }
 
 }

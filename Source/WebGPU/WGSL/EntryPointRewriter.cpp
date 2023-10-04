@@ -82,21 +82,13 @@ EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Fu
 {
     switch (m_stage) {
     case AST::StageAttribute::Stage::Compute: {
-        unsigned x = 0;
-        unsigned y = 1;
-        unsigned z = 1;
         for (auto& attribute : function.attributes()) {
             if (!is<AST::WorkgroupSizeAttribute>(attribute))
                 continue;
             auto& workgroupSize = downcast<AST::WorkgroupSizeAttribute>(attribute);
-            x = workgroupSize.x().constantValue()->toInt();
-            if (auto* maybeY = workgroupSize.maybeY())
-                y = maybeY->constantValue()->toInt();
-            if (auto* maybeZ = workgroupSize.maybeZ())
-                z = maybeZ->constantValue()->toInt();
+            m_information.typedEntryPoint = Reflection::Compute { &workgroupSize.x(), workgroupSize.maybeY(), workgroupSize.maybeZ() };
+            break;
         }
-        ASSERT(x);
-        m_information.typedEntryPoint = Reflection::Compute { x, y, z };
         break;
     }
     case AST::StageAttribute::Stage::Vertex:

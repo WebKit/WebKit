@@ -35,12 +35,12 @@
 
 namespace WebGPU {
 
-static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const WGSL::Reflection::Compute& computeInformation, NSString *label)
+static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const MTLSize& size, NSString *label)
 {
     auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
     computePipelineDescriptor.computeFunction = function;
     // FIXME: check this calculation for overflow
-    computePipelineDescriptor.maxTotalThreadsPerThreadgroup = computeInformation.workgroupSize.width * computeInformation.workgroupSize.height * computeInformation.workgroupSize.depth;
+    computePipelineDescriptor.maxTotalThreadsPerThreadgroup = size.width * size.height * size.depth;
     for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i)
         computePipelineDescriptor.buffers[i].mutability = MTLMutabilityImmutable; // Argument buffers are always immutable in WebGPU.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=249345 don't unconditionally set this to YES
@@ -55,9 +55,13 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     return computePipelineState;
 }
 
-static MTLSize metalSize(auto workgroupSize)
+static MTLSize metalSize(auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
 {
-    return MTLSizeMake(workgroupSize.width, workgroupSize.height, workgroupSize.depth);
+    auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues).toInt();
+    auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues).toInt() : 1;
+    auto depth = workgroupSize.depth ? WGSL::evaluate(*workgroupSize.depth, wgslConstantValues).toInt() : 1;
+
+    return MTLSizeMake(width, height, depth);
 }
 
 Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor)
@@ -82,21 +86,22 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
         return ComputePipeline::createInvalid(*this);
     WGSL::Reflection::Compute computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
-    auto function = createFunction(library, entryPointInformation, descriptor.compute.constantCount, descriptor.compute.constants, label);
+    auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.compute.constantCount, descriptor.compute.constants, entryPointInformation);
+    auto function = createFunction(library, entryPointInformation, constantValues, label);
     if (!function)
         return ComputePipeline::createInvalid(*this);
 
+    auto size = metalSize(computeInformation.workgroupSize, wgslConstantValues);
     if (pipelineLayout.isAutoLayout() && entryPointInformation.defaultLayout) {
         Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
         addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
 
-        auto computePipelineState = createComputePipelineState(m_device, function, generatePipelineLayout(bindGroupEntries), computeInformation, label);
-        return ComputePipeline::create(computePipelineState, generatePipelineLayout(bindGroupEntries), metalSize(computeInformation.workgroupSize), *this);
+        auto computePipelineState = createComputePipelineState(m_device, function, generatePipelineLayout(bindGroupEntries), size, label);
+        return ComputePipeline::create(computePipelineState, generatePipelineLayout(bindGroupEntries), size, *this);
     }
 
-    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, computeInformation, label);
-
-    return ComputePipeline::create(computePipelineState, pipelineLayout, metalSize(computeInformation.workgroupSize), *this);
+    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label);
+    return ComputePipeline::create(computePipelineState, pipelineLayout, size, *this);
 }
 
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)

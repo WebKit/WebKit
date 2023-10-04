@@ -572,7 +572,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
         if (!pipelineLayout)
             addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
-        auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, descriptor.vertex.constantCount, descriptor.vertex.constants, label);
+        auto [constantValues, _] = createConstantValues(descriptor.vertex.constantCount, descriptor.vertex.constants, entryPointInformation);
+        auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
         if (!vertexFunction)
             return RenderPipeline::createInvalid(*this);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
@@ -599,7 +600,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (!pipelineLayout)
             addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
 
-        auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, fragmentDescriptor.constantCount, fragmentDescriptor.constants, label);
+        auto [constantValues, _] = createConstantValues(fragmentDescriptor.constantCount, fragmentDescriptor.constants, entryPointInformation);
+        auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
         if (!fragmentFunction)
             return RenderPipeline::createInvalid(*this);
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
