@@ -1,0 +1,5 @@
+<script>
+fetch("/site-isolation/resources/fetch-https.html").then(()=>{
+    window.parent.postMessage("fetched https successfully", "*")
+})
+</script>

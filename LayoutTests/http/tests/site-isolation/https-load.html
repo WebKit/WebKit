@@ -1,0 +1,12 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+addEventListener("message", (event) => {
+    alert("received '" + event.data + "'");
+    testRunner.notifyDone();
+});
+</script>
+<iframe src="https://localhost:8443/site-isolation/resources/fetch-https.html" id="frame"></iframe>
