@@ -304,7 +304,7 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
         queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise), result = WTFMove(result)]() mutable {
             if (!result) {
                 if (promise)
-                    promise.value()->reject(Exception { result.error(), "Decoding failed"_s });
+                    promise.value()->reject(WTFMove(result.error()));
                 if (errorCallback)
                     errorCallback->handleEvent(nullptr);
                 return;

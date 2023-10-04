@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,13 +31,17 @@
 
 #pragma once
 
+#include <tuple>
 #include <type_traits>
+#include <variant>
 #include <wtf/Assertions.h>
+#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TypeTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -68,7 +72,9 @@ struct CrossThreadCopierBaseHelper {
 };
 
 template<typename T> struct CrossThreadCopierPassThrough {
-    typedef T Type;
+    static_assert(CrossThreadCopierBaseHelper::IsEnumOrConvertibleToInteger<T>::value, "CrossThreadCopierPassThrough only used for enums or integers");
+    using Type = T;
+    static constexpr bool IsNeeded = false;
     static Type copy(const T& parameter)
     {
         return parameter;
@@ -82,37 +88,89 @@ template<typename T> struct CrossThreadCopierBase<true, false, T> : public Cross
 };
 
 // Classes that have an isolatedCopy() method get a default specialization.
-template<class T> struct CrossThreadCopierBase<false, false, T> {
-    template<typename U> static auto copy(U&& value)
+template<typename T>
+struct CrossThreadCopierBase<false, false, T> {
+    using Type = T;
+    static constexpr bool IsNeeded = HasIsolatedCopy<T>::value;
+    template<typename U> static auto copy(U&& value) -> Type
     {
-        return std::forward<U>(value).isolatedCopy();
+        if constexpr (HasIsolatedCopy<U>::value)
+            return std::forward<U>(value).isolatedCopy();
+        else
+            return std::forward<U>(value);
     }
 };
 
 // Custom copy methods.
 template<typename T> struct CrossThreadCopierBase<false, true, T> {
-    typedef typename CrossThreadCopierBaseHelper::RemovePointer<T>::Type RefCountedType;
+    using RefCountedType = typename CrossThreadCopierBaseHelper::RemovePointer<T>::Type;
     static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCountedBase*>::value, "T is not convertible to ThreadSafeRefCounted!");
 
-    typedef RefPtr<RefCountedType> Type;
+    using Type = RefPtr<RefCountedType>;
+    static constexpr bool IsNeeded = false;
+
     static Type copy(const T& refPtr)
     {
         return refPtr;
+    }
+    static Type copy(T&& refPtr)
+    {
+        return WTFMove(refPtr);
+    }
+};
+
+// Can only be moved
+template<typename T> struct CrossThreadCopierBase<false, false, Ref<T>> {
+    using Type = Ref<T>;
+    static constexpr bool IsNeeded = false;
+    static Type copy(Type&& ref)
+    {
+        return WTFMove(ref);
+    }
+};
+
+// Can only be moved
+template<typename T> struct CrossThreadCopierBase<false, false, RefPtr<T>> {
+    using Type = RefPtr<T>;
+    static constexpr bool IsNeeded = false;
+    static Type copy(Type&& ref)
+    {
+        return WTFMove(ref);
     }
 };
 
 template<typename T> struct CrossThreadCopierBase<false, true, Ref<T>> {
     static_assert(std::is_convertible<T*, ThreadSafeRefCountedBase*>::value, "T is not convertible to ThreadSafeRefCounted!");
+    static constexpr bool IsNeeded = false;
 
-    typedef Ref<T> Type;
+    using Type = Ref<T>;
     static Type copy(const Type& ref)
     {
         return ref;
     }
+    static Type copy(Type&& ref)
+    {
+        return WTFMove(ref);
+    }
+};
+
+// Default specialization for AtomString of CrossThreadCopyable classes.
+template<> struct CrossThreadCopierBase<false, false, AtomString> {
+    using Type = String;
+    static constexpr bool IsNeeded = true;
+    static Type copy(const AtomString& source)
+    {
+        return source.string().isolatedCopy();
+    }
+    static Type copy(AtomString&& source)
+    {
+        return source.releaseString().isolatedCopy();
+    }
 };
 
 template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
-    typedef WTF::ASCIILiteral Type;
+    using Type = WTF::ASCIILiteral;
+    static constexpr bool IsNeeded = false;
     static Type copy(const Type& source)
     {
         return source;
@@ -120,7 +178,8 @@ template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
 };
 
 template<typename T, typename U> struct CrossThreadCopierBase<false, false, ObjectIdentifierGeneric<T, U>> {
-    typedef ObjectIdentifierGeneric<T, U> Type;
+    using Type = ObjectIdentifierGeneric<T, U>;
+    static constexpr bool IsNeeded = false;
     static Type copy(const Type& source)
     {
         return source;
@@ -134,6 +193,7 @@ struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHel
 // Default specialization for Vectors of CrossThreadCopyable classes.
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct CrossThreadCopierBase<false, false, Vector<T, inlineCapacity, OverflowHandler, minCapacity>> {
     using Type = Vector<T, inlineCapacity, OverflowHandler, minCapacity>;
+    static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
     static Type copy(const Type& source)
     {
         return WTF::map<inlineCapacity, OverflowHandler, minCapacity>(source, [](auto& object) {
@@ -147,10 +207,11 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
         return WTFMove(source);
     }
 };
-    
+
 // Default specialization for HashSets of CrossThreadCopyable classes
 template<typename T> struct CrossThreadCopierBase<false, false, HashSet<T> > {
-    typedef HashSet<T> Type;
+    using Type = HashSet<T>;
+    static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
     static Type copy(const Type& source)
     {
         Type destination;
@@ -171,7 +232,8 @@ template<typename T> struct CrossThreadCopierBase<false, false, HashSet<T> > {
 // Default specialization for HashMaps of CrossThreadCopyable classes
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg>
 struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>> {
-    typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg> Type;
+    using Type = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>;
+    static constexpr bool IsNeeded = CrossThreadCopier<KeyArg>::IsNeeded || CrossThreadCopier<MappedArg>::IsNeeded;
     static Type copy(const Type& source)
     {
         Type destination;
@@ -191,7 +253,8 @@ struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, K
 
 // Default specialization for pairs of CrossThreadCopyable classes
 template<typename F, typename S> struct CrossThreadCopierBase<false, false, std::pair<F, S> > {
-    typedef std::pair<F, S> Type;
+    using Type = std::pair<F, S>;
+    static constexpr bool IsNeeded = CrossThreadCopier<F>::IsNeeded || CrossThreadCopier<S>::IsNeeded;
     template<typename U> static Type copy(U&& source)
     {
         return std::make_pair(CrossThreadCopier<F>::copy(std::get<0>(std::forward<U>(source))), CrossThreadCopier<S>::copy(std::get<1>(std::forward<U>(source))));
@@ -200,6 +263,8 @@ template<typename F, typename S> struct CrossThreadCopierBase<false, false, std:
 
 // Default specialization for std::optional of CrossThreadCopyable class.
 template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>> {
+    using Type = std::optional<T>;
+    static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
     template<typename U> static std::optional<T> copy(U&& source)
     {
         if (!source)
@@ -210,7 +275,9 @@ template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>
 
 // Default specialization for Markable of CrossThreadCopyable class.
 template<typename T, typename U> struct CrossThreadCopierBase<false, false, Markable<T, U>> {
-    template<typename V> static Markable<T, U> copy(V&& source)
+    using Type = Markable<T, U>;
+    static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
+    template<typename V> static Type copy(V&& source)
     {
         if (!source)
             return std::nullopt;
@@ -219,12 +286,14 @@ template<typename T, typename U> struct CrossThreadCopierBase<false, false, Mark
 };
 
 template<> struct CrossThreadCopierBase<false, false, std::nullptr_t> {
+    static constexpr bool IsNeeded = false;
     static std::nullptr_t copy(std::nullptr_t) { return nullptr; }
 };
 
 // Default specialization for std::variant of CrossThreadCopyable classes.
 template<typename... Types> struct CrossThreadCopierBase<false, false, std::variant<Types...>> {
     using Type = std::variant<Types...>;
+    static constexpr bool IsNeeded = (CrossThreadCopier<std::remove_cvref_t<Types>>::IsNeeded || ...);
     static std::variant<Types...> copy(const Type& source)
     {
         return std::visit([] (auto& type) -> std::variant<Types...> {
@@ -239,11 +308,61 @@ template<typename... Types> struct CrossThreadCopierBase<false, false, std::vari
     }
 };
 
+template<>
+struct CrossThreadCopierBase<false, false, void> {
+    static constexpr bool IsNeeded = false;
+    using Type = void;
+};
+
+template<typename T, typename U> struct CrossThreadCopierBase<false, false, Expected<T, U> > {
+    using Type = Expected<T, U>;
+    static constexpr bool IsNeeded = CrossThreadCopier<std::remove_cvref_t<T>>::IsNeeded || CrossThreadCopier<std::remove_cvref_t<U>>::IsNeeded;
+    static Type copy(const Type& source)
+    {
+        if (source.has_value()) {
+            if constexpr (std::is_void_v<T>)
+                return source;
+            else
+                return CrossThreadCopier<T>::copy(source.value());
+        }
+        return Unexpected<U>(CrossThreadCopier<U>::copy(source.error()));
+    }
+
+    static Type copy(Type&& source)
+    {
+        if (source.has_value()) {
+            if constexpr (std::is_void_v<T>)
+                return WTFMove(source);
+            else
+                return CrossThreadCopier<T>::copy(WTFMove(source.value()));
+        }
+        return Unexpected<U>(CrossThreadCopier<U>::copy(WTFMove(source.error())));
+    }
+};
+
+// Default specialization for std::tuple of CrossThreadCopyable classes.
+template<typename... Types> struct CrossThreadCopierBase<false, false, std::tuple<Types...>> {
+    using Type = std::tuple<Types...>;
+    static constexpr bool IsNeeded = (CrossThreadCopier<std::remove_cvref_t<Types>>::IsNeeded || ...);
+    static Type copy(const Type& source)
+    {
+        return std::apply([]<typename ...Ts>(Ts const&... ts) {
+            return std::make_tuple((CrossThreadCopier<std::remove_cvref_t<Ts>>::copy(ts), ...));
+        }, source);
+    }
+    static Type copy(Type&& source)
+    {
+        return std::apply([]<typename ...Ts>(Ts&&... ts) {
+            return std::make_tuple((CrossThreadCopier<std::remove_cvref_t<Ts>>::copy(WTFMove(ts)), ...));
+        }, WTFMove(source));
+    }
+};
+
 template<typename T> auto crossThreadCopy(T&& source)
 {
     return CrossThreadCopier<std::remove_cvref_t<T>>::copy(std::forward<T>(source));
 }
-    
+
 } // namespace WTF
 
 using WTF::CrossThreadCopierBaseHelper;

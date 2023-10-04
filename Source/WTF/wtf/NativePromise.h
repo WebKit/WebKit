@@ -33,7 +33,9 @@
 #include <type_traits>
 #include <utility>
 #include <wtf/Assertions.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/Expected.h>
+#include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -70,6 +72,10 @@ namespace WTF {
  * - values are passed to the resolve/reject callbacks through either const references or pointers.
  * - the resolve or reject object will be deleted on the last SerialFunctionDispatcher that got used.
  *
+ * By default, a NativePromise will use crossThreadCopy() on the resolved or rejected object if it contains a type with the `isolatedCopy()` method
+ * or an AtomString (be it directly, or in a composited object (e.g. Vector<AtomString>).
+ * This behaviour can be overridden with either PromiseOption::WithCrossThreadCopy or PromiseOption::WithoutCrossThreadCopy
+ *
  * A typical workflow would be as follow:
  * If the work is to be done immediately:
  * From the producer side:
@@ -94,7 +100,8 @@ namespace WTF {
  *
  * By disconnecting the NativePromiseRequest (via NativePromiseRequest::disconnect(), the then()/whenSettled() callbacks will not be run.
  *
- * For now, care should be taken by the Producer to only return an object that is usable on the target's queue (don't return an AtomString for example)
+ * The object given to resolve, reject or resolveOrReject must have a CrossThreadCopier specialisation as needed.
+ * The type of this object may not be identical to ResolveValueType or RejectValueType as the methods allow for implicit conversion.
  *
  * Examples:
  * 1. Basic usage. methodA runs on the main thread, methodB must run on a WorkQueue, and expects a std::unique<int>.
@@ -207,13 +214,40 @@ enum class PromiseDispatchMode : uint8_t {
 
 };
 
-template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
+enum class PromiseOption : uint8_t {
+    Default = 0, // Exclusive | WithAutomaticCrossThreadCopy
+    NonExclusive = (1 << 0),
+    WithCrossThreadCopy = (1 << 2),
+    WithoutCrossThreadCopy = (1 << 3),
+};
+constexpr unsigned operator|(PromiseOption a, PromiseOption b)
+{
+    return static_cast<unsigned>(a) | static_cast<unsigned>(b);
+}
+constexpr unsigned operator|(unsigned a, PromiseOption b)
+{
+    return a | static_cast<unsigned>(b);
+}
+constexpr unsigned operator&(PromiseOption a, PromiseOption b)
+{
+    return static_cast<unsigned>(a) & static_cast<unsigned>(b);
+}
+constexpr unsigned operator&(unsigned a, PromiseOption b)
+{
+    return a & static_cast<unsigned>(b);
+}
+
+template<typename ResolveValueT, typename RejectValueT, unsigned options>
 class NativePromise final : public NativePromiseBase, public ConvertibleToNativePromise {
 public:
-    using Result = Expected<ResolveValueT, RejectValueT>;
-    using Error = Unexpected<RejectValueT>;
-    using ResolveValueType = ResolveValueT;
-    using RejectValueType = RejectValueT;
+    static constexpr bool IsExclusive = !(options & PromiseOption::NonExclusive);
+    static constexpr bool WithCrossThreadCopy = !!(options & PromiseOption::WithCrossThreadCopy);
+    static constexpr bool WithAutomaticCrossThreadCopy = !(options & (PromiseOption::WithCrossThreadCopy | PromiseOption::WithoutCrossThreadCopy)) && (CrossThreadCopier<ResolveValueT>::IsNeeded || CrossThreadCopier<RejectValueT>::IsNeeded);
+    static_assert(!WithAutomaticCrossThreadCopy || IsExclusive, "Using Non-Exclusive NativePromise with a ResolveValueT or RejectValueT requiring a call to isolatedCopy() must be explicitly set with WithCrossThreadCopy or WithoutCrossThreadCopy option");
+    using ResolveValueType = std::conditional_t<WithAutomaticCrossThreadCopy || WithCrossThreadCopy, typename CrossThreadCopier<ResolveValueT>::Type, ResolveValueT>;
+    using RejectValueType = std::conditional_t<WithAutomaticCrossThreadCopy || WithCrossThreadCopy, typename CrossThreadCopier<RejectValueT>::Type, RejectValueT>;
+    using Result = Expected<ResolveValueType, RejectValueType>;
+    using Error = Unexpected<RejectValueType>;
 
     // used by IsConvertibleToNativePromise to determine how to cast the result.
     using PromiseType = NativePromise;
@@ -328,8 +362,8 @@ public:
         return p;
     }
 
-    using AllPromiseType = NativePromise<Vector<ResolveValueType>, RejectValueType, IsExclusive>;
-    using AllSettledPromiseType = NativePromise<Vector<Result>, bool, IsExclusive>;
+    using AllPromiseType = NativePromise<Vector<ResolveValueType>, RejectValueType, options>;
+    using AllSettledPromiseType = NativePromise<Vector<Result>, bool, options>;
 
 private:
     friend class Producer;
@@ -340,7 +374,10 @@ private:
         Locker lock { m_lock };
         PROMISE_LOG(resolveSite, " resolving ", *this);
         ASSERT(isNothing());
-        m_result = std::forward<ResolveValueType_>(resolveValue);
+        if constexpr (WithCrossThreadCopy || WithAutomaticCrossThreadCopy)
+            m_result = crossThreadCopy(std::forward<ResolveValueType_>(resolveValue));
+        else
+            m_result = std::forward<ResolveValueType_>(resolveValue);
         dispatchAll(lock);
     }
 
@@ -361,17 +398,24 @@ private:
         Locker lock { m_lock };
         PROMISE_LOG(rejectSite, " rejecting ", *this);
         ASSERT(isNothing());
-        m_result = Unexpected<RejectValueT>(std::forward<RejectValueType_>(rejectValue));
+        if constexpr (WithCrossThreadCopy || WithAutomaticCrossThreadCopy)
+            m_result = Unexpected<RejectValueT>(crossThreadCopy(std::forward<RejectValueType_>(rejectValue)));
+        else
+            m_result = Unexpected<RejectValueT>(std::forward<RejectValueType_>(rejectValue));
         dispatchAll(lock);
     }
 
     template<typename ResolveOrRejectValue_>
     void resolveOrReject(ResolveOrRejectValue_&& result, const Logger::LogSiteIdentifier& site)
     {
+        static_assert(std::is_convertible_v<ResolveOrRejectValue_, Result>, "resolveOrReject() argument must be implicitly convertible to NativePromise's Result");
         Locker lock { m_lock };
         ASSERT(isNothing());
         PROMISE_LOG(site, " resolveOrRejecting ", *this);
-        m_result = std::forward<ResolveOrRejectValue_>(result);
+        if constexpr (WithCrossThreadCopy || WithAutomaticCrossThreadCopy)
+            m_result = crossThreadCopy(std::forward<ResolveOrRejectValue_>(result));
+        else
+            m_result = std::forward<ResolveOrRejectValue_>(result);
         dispatchAll(lock);
     }
 
@@ -675,7 +719,7 @@ private:
     template<typename ThenCallbackType>
     class ThenCommand : public ConvertibleToNativePromise {
         // Allow Promise::then() to access the private constructor,
-        template<typename, typename, bool>
+        template<typename, typename, unsigned>
         friend class NativePromise;
 
         // used by IsConvertibleToNativePromise to determine how to cast the result.
@@ -979,12 +1023,12 @@ private:
     std::atomic<PromiseDispatchMode> m_dispatchMode { PromiseDispatchMode::Default };
 };
 
-template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
-class NativePromise<ResolveValueT, RejectValueT, IsExclusive>::Producer final : public ConvertibleToNativePromise {
+template<typename ResolveValueT, typename RejectValueT, unsigned options>
+class NativePromise<ResolveValueT, RejectValueT, options>::Producer final : public ConvertibleToNativePromise {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // used by IsConvertibleToNativePromise to determine how to cast the result.
-    using PromiseType = NativePromise<ResolveValueT, RejectValueT, IsExclusive>;
+    using PromiseType = NativePromise<ResolveValueT, RejectValueT, options>;
 
     explicit Producer(PromiseDispatchMode dispatchMode = PromiseDispatchMode::Default, const Logger::LogSiteIdentifier& creationSite = DEFAULT_LOGSITEIDENTIFIER)
         : m_promise(adoptRef(new PromiseType(creationSite)))
@@ -1120,10 +1164,10 @@ private:
 };
 
 // A generic promise type that does the trick for simple use cases.
-using GenericPromise = NativePromise<void, int, /* IsExclusive = */ true>;
+using GenericPromise = NativePromise<void, int>;
 
 // A generic, non-exclusive promise type that does the trick for simple use cases.
-using GenericNonExclusivePromise = NativePromise<void, int, /* IsExclusive = */ false>;
+using GenericNonExclusivePromise = NativePromise<void, int, PromiseOption::Default | PromiseOption::NonExclusive>;
 
 template<typename PromiseType>
 class NativePromiseRequest final {
@@ -1184,9 +1228,9 @@ static auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& functi
     return promise;
 }
 
-template<typename ResolveValueT, typename RejectValueT, bool IsExclusive>
-struct LogArgument<NativePromise<ResolveValueT, RejectValueT, IsExclusive>> {
-    static String toString(const NativePromise<ResolveValueT, RejectValueT, IsExclusive>& p)
+template<typename ResolveValueT, typename RejectValueT, unsigned options>
+struct LogArgument<NativePromise<ResolveValueT, RejectValueT, options>> {
+    static String toString(const NativePromise<ResolveValueT, RejectValueT, options>& p)
     {
         return makeString("NativePromise", LogArgument<const void*>::toString(&p), '<', LogArgument<Logger::LogSiteIdentifier>::toString(p.logSiteIdentifier()), '>');
     }

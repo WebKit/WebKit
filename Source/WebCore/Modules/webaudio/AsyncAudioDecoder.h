@@ -24,7 +24,8 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
+#include "Exception.h"
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RunLoop.h>
 
@@ -32,18 +33,13 @@ namespace JSC {
 class ArrayBuffer;
 }
 
-namespace WTF {
-template<typename TypeResolve, typename TypeReject, bool IsExclusive>
-class NativePromise;
-}
-
 namespace WebCore {
 class AudioBuffer;
 
 // AsyncAudioDecoder asynchronously decodes audio file data from an ArrayBuffer in a worker thread.
 // Upon successful decoding, the DecodingTaskPromise will be resolved with the decoded AudioBuffer
-// otherwise an ExceptionCode will be returned.
-using DecodingTaskPromise = WTF::NativePromise<Ref<WebCore::AudioBuffer>, ExceptionCode, true /* isExclusive */>;
+// otherwise an Exception will be returned.
+using DecodingTaskPromise = WTF::NativePromise<Ref<WebCore::AudioBuffer>, Exception>;
 
 class AsyncAudioDecoder final {
     WTF_MAKE_FAST_ALLOCATED;
