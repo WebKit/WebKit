@@ -1180,6 +1180,65 @@ static void emitWorkgroupUniformLoad(FunctionDefinitionWriter* writer, AST::Call
     writer->stringBuilder().append(")");
 }
 
+static void atomicFunction(const char* name, FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append(name, "(");
+    bool first = true;
+    for (auto& argument : call.arguments()) {
+        if (!first)
+            writer->stringBuilder().append(", ");
+        first = false;
+        writer->visit(argument);
+    }
+    writer->stringBuilder().append(", memory_order_relaxed)");
+}
+
+static void emitAtomicLoad(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_load_explicit", writer, call);
+}
+
+static void emitAtomicStore(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_store_explicit", writer, call);
+}
+
+static void emitAtomicAdd(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_fetch_add_explicit", writer, call);
+}
+
+static void emitAtomicSub(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_fetch_sub_explicit", writer, call);
+}
+
+static void emitAtomicMax(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_fetch_max_explicit", writer, call);
+}
+
+static void emitAtomicMin(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_fetch_min_explicit", writer, call);
+}
+
+static void emitAtomicOr(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_fetch_or_explicit", writer, call);
+}
+
+static void emitAtomicXor(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_fetch_xor_explicit", writer, call);
+}
+
+static void emitAtomicExchange(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_exchange_explicit", writer, call);
+}
+
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
@@ -1211,6 +1270,15 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
+            { "atomicAdd", emitAtomicAdd },
+            { "atomicExchange", emitAtomicExchange },
+            { "atomicLoad", emitAtomicLoad },
+            { "atomicMax", emitAtomicMax },
+            { "atomicMin", emitAtomicMin },
+            { "atomicOr", emitAtomicOr },
+            { "atomicStore", emitAtomicStore },
+            { "atomicSub", emitAtomicSub },
+            { "atomicXor", emitAtomicXor },
             { "storageBarrier", emitStorageBarrier },
             { "textureDimensions", emitTextureDimensions },
             { "textureLoad", emitTextureLoad },

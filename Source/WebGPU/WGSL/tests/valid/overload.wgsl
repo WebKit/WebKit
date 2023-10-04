@@ -2614,6 +2614,47 @@ fn testTextureStore()
     textureStore(ts3d, vec3(0), vec4f(0));
 }
 
+// 16.8. Atomic Built-in Functions (https://www.w3.org/TR/WGSL/#atomic-builtin-functions)
+var<workgroup> x: atomic<i32>;
+
+// RUN: %metal-compile testAtomicFunctions
+@compute @workgroup_size(1)
+fn testAtomicFunctions()
+{
+    testAtomicLoad();
+    testAtomicStore();
+    testAtomicReadWriteModify();
+}
+
+// 16.8.1
+fn testAtomicLoad()
+{
+    // [AS, T].(ptr[AS, atomic[T], read_write]) => T,
+    _ = atomicLoad(&x);
+}
+
+// 16.8.2
+fn testAtomicStore()
+{
+    /*[AS, T].(ptr[AS, atomic[T], read_write], T) => void,*/
+    atomicStore(&x, 42);
+}
+
+// 16.8.3. Atomic Read-modify-write (this spec entry contains several functions)
+fn testAtomicReadWriteModify()
+{
+    // [AS, T].(ptr[AS, atomic[T], read_write], T) => T,
+    _ = atomicAdd(&x, 42);
+    _ = atomicSub(&x, 42);
+    _ = atomicMax(&x, 42);
+    _ = atomicMin(&x, 42);
+    _ = atomicOr(&x, 42);
+    _ = atomicXor(&x, 42);
+    _ = atomicExchange(&x, 42);
+}
+
+// FIXME: Implement atomicCompareExchangeWeak (which depends on the result struct that is not currently supported)
+
 // 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
 
 // 16.11.1.

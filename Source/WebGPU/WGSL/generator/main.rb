@@ -350,6 +350,7 @@ module DSL
         array = AbstractType.new(:Array)
         ptr = AbstractType.new(:Pointer)
         ref = AbstractType.new(:Reference)
+        atomic = AbstractType.new(:Atomic)
 
         # texture kinds
         Texture1d = Variable.new(:"Types::Texture::Kind::Texture1d", nil)
