@@ -62,10 +62,13 @@ typedef NS_ENUM(NSInteger, _WKApplicationManifestIconPurpose) {
 WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @interface _WKApplicationManifest : NSObject <NSSecureCoding>
 
+@property (nonatomic, readonly, nullable, copy) NSString *rawJSON;
 @property (nonatomic, readonly, nullable, copy) NSString *name;
 @property (nonatomic, readonly, nullable, copy) NSString *shortName;
 @property (nonatomic, readonly, nullable, copy) NSString *applicationDescription;
 @property (nonatomic, readonly, nullable, copy) NSURL *scope;
+@property (nonatomic, readonly) BOOL isDefaultScope;
+@property (nonatomic, readonly, copy) NSURL *manifestURL;
 @property (nonatomic, readonly, copy) NSURL *startURL;
 @property (nonatomic, readonly, copy) NSURL *manifestId WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, readonly) _WKApplicationManifestDisplayMode displayMode;
