@@ -285,9 +285,17 @@ class Publish(Command):
                 return_code += 1
 
         if not return_code and tags_to_publish:
+            # Update target remote so git know tag commits are already present there
+            if branches_to_publish:
+                run([repository.executable(), 'fetch', args.remote], cwd=repository.root_path, capture_output=True)
+
             print('Pushing tags to {}...'.format(args.remote))
             command = [repository.executable(), 'push', '--atomic', remote_arg] + list(tags_to_publish)
             log.info("Invoking '{}'".format(' '.join(command)))
+
+            # Tags should never be novel commits, so disable 'publish' mode in pre-push hook
+            del push_env['PUSH_HOOK_MODE']
+
             if run(
                 command,
                 cwd=repository.root_path,
