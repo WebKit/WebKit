@@ -311,6 +311,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
     m_constantFunctions.add("pow"_s, constantPow);
     m_constantFunctions.add("-"_s, constantMinus);
+    m_constantFunctions.add("*"_s, constantMultiply);
     m_constantFunctions.add("vec2"_s, constantVector2);
     m_constantFunctions.add("vec2f"_s, constantVector2);
     m_constantFunctions.add("vec2i"_s, constantVector2);
