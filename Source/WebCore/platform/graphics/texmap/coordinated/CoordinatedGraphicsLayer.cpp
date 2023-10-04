@@ -241,11 +241,9 @@ bool CoordinatedGraphicsLayer::replaceChild(GraphicsLayer* oldChild, Ref<Graphic
     return true;
 }
 
-void CoordinatedGraphicsLayer::removeFromParent()
+void CoordinatedGraphicsLayer::willModifyChildren()
 {
-    if (CoordinatedGraphicsLayer* parentLayer = downcast<CoordinatedGraphicsLayer>(parent()))
-        parentLayer->didChangeChildren();
-    GraphicsLayer::removeFromParent();
+    didChangeChildren();
 }
 
 void CoordinatedGraphicsLayer::setEventRegion(EventRegion&& eventRegion)

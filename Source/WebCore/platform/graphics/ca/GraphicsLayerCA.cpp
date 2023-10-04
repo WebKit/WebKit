@@ -532,11 +532,9 @@ bool GraphicsLayerCA::replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&&
     return false;
 }
 
-void GraphicsLayerCA::removeFromParent()
+void GraphicsLayerCA::willModifyChildren()
 {
-    if (m_parent)
-        downcast<GraphicsLayerCA>(*m_parent).noteSublayersChanged();
-    GraphicsLayer::removeFromParent();
+    noteSublayersChanged();
 }
 
 void GraphicsLayerCA::setMaskLayer(RefPtr<GraphicsLayer>&& layer)

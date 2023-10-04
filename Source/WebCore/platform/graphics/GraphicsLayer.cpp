@@ -322,12 +322,15 @@ bool GraphicsLayer::replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& n
 
 void GraphicsLayer::removeAllChildren()
 {
-    while (m_children.size()) {
-        GraphicsLayer* curLayer = m_children[0].ptr();
-        ASSERT(curLayer->parent());
-        curLayer->removeFromParent();
-        // curLayer may be destroyed here.
-    }
+    if (m_children.isEmpty())
+        return;
+
+    willModifyChildren();
+
+    for (auto& child : m_children)
+        child->setParent(nullptr);
+
+    m_children.clear();
 }
 
 void GraphicsLayer::removeFromParentInternal()
@@ -401,6 +404,9 @@ void GraphicsLayer::setOpacity(float opacity)
 
 void GraphicsLayer::removeFromParent()
 {
+    if (m_parent)
+        m_parent->willModifyChildren();
+
     // removeFromParentInternal is nonvirtual, for use in willBeDestroyed,
     // which is called from destructors.
     removeFromParentInternal();

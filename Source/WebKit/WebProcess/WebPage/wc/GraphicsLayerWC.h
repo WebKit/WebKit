@@ -63,7 +63,7 @@ public:
     void addChildAbove(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
     void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
     bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild) override;
-    void removeFromParent() override;
+    void willModifyChildren() override;
     void setMaskLayer(RefPtr<GraphicsLayer>&&) override;
     void setReplicatedLayer(GraphicsLayer*) override;
     void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;

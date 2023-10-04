@@ -330,7 +330,7 @@ public:
     WEBCORE_EXPORT virtual bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild);
 
     WEBCORE_EXPORT void removeAllChildren();
-    WEBCORE_EXPORT virtual void removeFromParent();
+    WEBCORE_EXPORT void removeFromParent();
 
     // The parent() of a maskLayer is set to the layer being masked.
     GraphicsLayer* maskLayer() const { return m_maskLayer.get(); }
@@ -696,6 +696,8 @@ protected:
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
     WEBCORE_EXPORT void willBeDestroyed();
     bool beingDestroyed() const { return m_beingDestroyed; }
+
+    virtual void willModifyChildren() { }
 
     // This method is used by platform GraphicsLayer classes to clear the filters
     // when compositing is not done in hardware. It is not virtual, so the caller
