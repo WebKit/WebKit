@@ -11,13 +11,6 @@
 # For more info see Chromium's test_suite_exceptions.pyl in testing/buildbot.
 
 {
-  'angle_capture_tests': {
-    'remove_from': [
-      # TODO(b/286067106): Not implemented on Android
-      'android-arm64-pixel4',
-    ],
-  },
-
   'angle_end2end_tests': {
     'modifications': {
       # anglebug.com/7874 suspecting device lost caused by multiprocess

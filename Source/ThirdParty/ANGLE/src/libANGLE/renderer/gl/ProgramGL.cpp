@@ -91,6 +91,75 @@ std::string GetTransformFeedbackVaryingMappedName(const gl::SharedCompiledShader
 
 }  // anonymous namespace
 
+class ProgramGL::LinkTaskGL final : public LinkTask
+{
+  public:
+    LinkTaskGL(ProgramGL *program,
+               bool hasNativeParallelCompile,
+               const FunctionsGL *functions,
+               const gl::Extensions &extensions,
+               GLuint programID)
+        : mProgram(program),
+          mHasNativeParallelCompile(hasNativeParallelCompile),
+          mFunctions(functions),
+          mExtensions(extensions),
+          mProgramID(programID)
+    {}
+    ~LinkTaskGL() override = default;
+
+    std::vector<std::shared_ptr<LinkSubTask>> link(
+        const gl::ProgramLinkedResources &resources,
+        const gl::ProgramMergedVaryings &mergedVaryings) override
+    {
+        mProgram->linkJobImpl(mExtensions);
+
+        // If there is no native parallel compile, do the post-link right away.
+        if (!mHasNativeParallelCompile)
+        {
+            mResult = mProgram->postLinkJobImpl(resources);
+        }
+
+        // See comment on mResources
+        mResources = &resources;
+        return {};
+    }
+
+    angle::Result getResult(const gl::Context *context, gl::InfoLog &infoLog) override
+    {
+        ANGLE_TRACE_EVENT0("gpu.angle", "LinkTaskGL::getResult");
+
+        if (mHasNativeParallelCompile)
+        {
+            mResult = mProgram->postLinkJobImpl(*mResources);
+        }
+
+        return mResult;
+    }
+
+    bool isLinkingInternally() override
+    {
+        GLint completionStatus = GL_TRUE;
+        if (mHasNativeParallelCompile)
+        {
+            mFunctions->getProgramiv(mProgramID, GL_COMPLETION_STATUS, &completionStatus);
+        }
+        return completionStatus == GL_FALSE;
+    }
+
+  private:
+    ProgramGL *mProgram;
+    const bool mHasNativeParallelCompile;
+    const FunctionsGL *mFunctions;
+    const gl::Extensions &mExtensions;
+    const GLuint mProgramID;
+
+    angle::Result mResult = angle::Result::Continue;
+
+    // Note: resources are kept alive by the front-end for the entire duration of the link,
+    // including during resolve when getResult() and postLink() are called.
+    const gl::ProgramLinkedResources *mResources = nullptr;
+};
+
 ProgramGL::ProgramGL(const gl::ProgramState &data,
                      const FunctionsGL *functions,
                      const angle::FeaturesGL &features,
@@ -117,13 +186,12 @@ void ProgramGL::destroy(const gl::Context *context)
     mProgramID = 0;
 }
 
-std::unique_ptr<LinkEvent> ProgramGL::load(const gl::Context *context,
-                                           gl::BinaryInputStream *stream)
+angle::Result ProgramGL::load(const gl::Context *context,
+                              gl::BinaryInputStream *stream,
+                              std::shared_ptr<LinkTask> *loadTaskOut)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::load");
     ProgramExecutableGL *executableGL = getExecutable();
-
-    executableGL->reset();
 
     // Read the binary format, size and blob
     GLenum binaryFormat   = stream->readInt<GLenum>();
@@ -137,13 +205,15 @@ std::unique_ptr<LinkEvent> ProgramGL::load(const gl::Context *context,
     // Verify that the program linked
     if (!checkLinkStatus())
     {
-        return std::make_unique<LinkEventDone>(angle::Result::Stop);
+        return angle::Result::Incomplete;
     }
 
-    executableGL->postLink(mFunctions, mFeatures, mProgramID);
+    executableGL->postLink(mFunctions, mStateManager, mFeatures, mProgramID);
     reapplyUBOBindingsIfNeeded(context);
 
-    return std::make_unique<LinkEventDone>(angle::Result::Continue);
+    *loadTaskOut = {};
+
+    return angle::Result::Continue;
 }
 
 void ProgramGL::save(const gl::Context *context, gl::BinaryOutputStream *stream)
@@ -169,10 +239,10 @@ void ProgramGL::reapplyUBOBindingsIfNeeded(const gl::Context *context)
     const angle::FeaturesGL &features = GetImplAs<ContextGL>(context)->getFeaturesGL();
     if (features.reapplyUBOBindingsAfterUsingBinaryProgram.enabled)
     {
-        const auto &blocks = mState.getUniformBlocks();
-        for (size_t blockIndex : mState.getActiveUniformBlockBindingsMask())
+        const auto &blocks = mState.getExecutable().getUniformBlocks();
+        for (size_t blockIndex : mState.getExecutable().getActiveUniformBlockBindings())
         {
-            setUniformBlockBinding(static_cast<GLuint>(blockIndex), blocks[blockIndex].binding);
+            setUniformBlockBinding(static_cast<GLuint>(blockIndex), blocks[blockIndex].pod.binding);
         }
     }
 }
@@ -192,44 +262,6 @@ void ProgramGL::setSeparable(bool separable)
     mFunctions->programParameteri(mProgramID, GL_PROGRAM_SEPARABLE, separable ? GL_TRUE : GL_FALSE);
 }
 
-using PostLinkImplFunctor = std::function<angle::Result()>;
-
-// The event for a parallelized linking using the native driver extension.
-class ProgramGL::LinkEventNativeParallel final : public LinkEvent
-{
-  public:
-    LinkEventNativeParallel(PostLinkImplFunctor &&functor,
-                            const FunctionsGL *functions,
-                            GLuint programID)
-        : mPostLinkImplFunctor(functor), mFunctions(functions), mProgramID(programID)
-    {}
-
-    angle::Result wait(const gl::Context *context) override
-    {
-        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::LinkEventNativeParallel::wait");
-
-        GLint linkStatus = GL_FALSE;
-        mFunctions->getProgramiv(mProgramID, GL_LINK_STATUS, &linkStatus);
-        if (linkStatus == GL_TRUE)
-        {
-            return mPostLinkImplFunctor();
-        }
-        return angle::Result::Incomplete;
-    }
-
-    bool isLinking() override
-    {
-        GLint completionStatus = GL_FALSE;
-        mFunctions->getProgramiv(mProgramID, GL_COMPLETION_STATUS, &completionStatus);
-        return completionStatus == GL_FALSE;
-    }
-
-  private:
-    PostLinkImplFunctor mPostLinkImplFunctor;
-    const FunctionsGL *mFunctions;
-    GLuint mProgramID;
-};
-
 void ProgramGL::prepareForLink(const gl::ShaderMap<ShaderImpl *> &shaders)
 {
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
@@ -244,14 +276,21 @@ void ProgramGL::prepareForLink(const gl::ShaderMap<ShaderImpl *> &shaders)
     }
 }
 
-std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
-                                           const gl::ProgramLinkedResources &resources,
-                                           gl::ProgramMergedVaryings && /*mergedVaryings*/)
+angle::Result ProgramGL::link(const gl::Context *context, std::shared_ptr<LinkTask> *linkTaskOut)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::link");
-    ProgramExecutableGL *executableGL = getExecutable();
 
-    executableGL->reset();
+    *linkTaskOut = std::make_shared<LinkTaskGL>(this, mRenderer->hasNativeParallelCompile(),
+                                                mFunctions, context->getExtensions(), mProgramID);
+
+    return angle::Result::Continue;
+}
+
+void ProgramGL::linkJobImpl(const gl::Extensions &extensions)
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::linkJobImpl");
+    const gl::ProgramExecutable &executable = mState.getExecutable();
+    ProgramExecutableGL *executableGL       = getExecutable();
 
     if (mAttachedShaders[gl::ShaderType::Compute] != 0)
     {
@@ -261,14 +300,14 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
     {
         // Set the transform feedback state
         std::vector<std::string> transformFeedbackVaryingMappedNames;
+        const gl::ShaderType tfShaderType =
+            executable.hasLinkedShaderStage(gl::ShaderType::Geometry) ? gl::ShaderType::Geometry
+                                                                      : gl::ShaderType::Vertex;
+        const gl::SharedCompiledShaderState &tfShaderState = mState.getAttachedShader(tfShaderType);
         for (const auto &tfVarying : mState.getTransformFeedbackVaryingNames())
         {
-            gl::ShaderType tfShaderType =
-                mState.getExecutable().hasLinkedShaderStage(gl::ShaderType::Geometry)
-                    ? gl::ShaderType::Geometry
-                    : gl::ShaderType::Vertex;
-            std::string tfVaryingMappedName = GetTransformFeedbackVaryingMappedName(
-                mState.getAttachedShader(tfShaderType), tfVarying);
+            std::string tfVaryingMappedName =
+                GetTransformFeedbackVaryingMappedName(tfShaderState, tfVarying);
             transformFeedbackVaryingMappedNames.push_back(tfVaryingMappedName);
         }
 
@@ -307,7 +346,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         }
 
         // Bind attribute locations to match the GL layer.
-        for (const gl::ProgramInput &attribute : mState.getProgramInputs())
+        for (const gl::ProgramInput &attribute : executable.getProgramInputs())
         {
             if (!attribute.isActive() || attribute.isBuiltIn())
             {
@@ -321,7 +360,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         // Bind the secondary fragment color outputs defined in EXT_blend_func_extended. We only use
         // the API to bind fragment output locations in case EXT_blend_func_extended is enabled.
         // Otherwise shader-assigned locations will work.
-        if (context->getExtensions().blendFuncExtendedEXT)
+        if (extensions.blendFuncExtendedEXT)
         {
             const gl::SharedCompiledShaderState &fragmentShader =
                 mState.getAttachedShader(gl::ShaderType::Fragment);
@@ -372,8 +411,8 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
             else if (fragmentShader && fragmentShader->shaderVersion >= 300)
             {
                 // ESSL 3.00 and up.
-                const auto &outputLocations          = mState.getOutputLocations();
-                const auto &secondaryOutputLocations = mState.getSecondaryOutputLocations();
+                const auto &outputLocations          = executable.getOutputLocations();
+                const auto &secondaryOutputLocations = executable.getSecondaryOutputLocations();
                 for (size_t outputLocationIndex = 0u; outputLocationIndex < outputLocations.size();
                      ++outputLocationIndex)
                 {
@@ -382,15 +421,15 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                     if (outputLocation.arrayIndex == 0 && outputLocation.used() &&
                         !outputLocation.ignored)
                     {
-                        const sh::ShaderVariable &outputVar =
-                            mState.getOutputVariables()[outputLocation.index];
-                        if (outputVar.location == -1 || outputVar.index == -1)
+                        const gl::ProgramOutput &outputVar =
+                            executable.getOutputVariables()[outputLocation.index];
+                        if (outputVar.pod.location == -1 || outputVar.pod.index == -1)
                         {
                             // We only need to assign the location and index via the API in case the
                             // variable doesn't have a shader-assigned location and index. If a
                             // variable doesn't have its location set in the shader it doesn't have
                             // the index set either.
-                            ASSERT(outputVar.index == -1);
+                            ASSERT(outputVar.pod.index == -1);
                             mFunctions->bindFragDataLocationIndexed(
                                 mProgramID, static_cast<int>(outputLocationIndex), 0,
                                 outputVar.mappedName.c_str());
@@ -405,15 +444,15 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                     if (outputLocation.arrayIndex == 0 && outputLocation.used() &&
                         !outputLocation.ignored)
                     {
-                        const sh::ShaderVariable &outputVar =
-                            mState.getOutputVariables()[outputLocation.index];
-                        if (outputVar.location == -1 || outputVar.index == -1)
+                        const gl::ProgramOutput &outputVar =
+                            executable.getOutputVariables()[outputLocation.index];
+                        if (outputVar.pod.location == -1 || outputVar.pod.index == -1)
                         {
                             // We only need to assign the location and index via the API in case the
                             // variable doesn't have a shader-assigned location and index.  If a
                             // variable doesn't have its location set in the shader it doesn't have
                             // the index set either.
-                            ASSERT(outputVar.index == -1);
+                            ASSERT(outputVar.pod.index == -1);
                             mFunctions->bindFragDataLocationIndexed(
                                 mProgramID, static_cast<int>(outputLocationIndex), 1,
                                 outputVar.mappedName.c_str());
@@ -423,49 +462,44 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
             }
         }
     }
-    auto workerPool = context->getShaderCompileThreadPool();
-
-    auto postLinkImplTask = [this, &resources]() {
-        if (mAttachedShaders[gl::ShaderType::Compute] != 0)
-        {
-            mFunctions->detachShader(mProgramID, mAttachedShaders[gl::ShaderType::Compute]);
-        }
-        else
-        {
-            for (const gl::ShaderType shaderType : gl::kAllGraphicsShaderTypes)
-            {
-                if (mAttachedShaders[shaderType] != 0)
-                {
-                    mFunctions->detachShader(mProgramID, mAttachedShaders[shaderType]);
-                }
-            }
-        }
-        // Verify the link
-        if (!checkLinkStatus())
-        {
-            return angle::Result::Incomplete;
-        }
-
-        if (mFeatures.alwaysCallUseProgramAfterLink.enabled)
-        {
-            mStateManager->forceUseProgram(mProgramID);
-        }
-
-        linkResources(resources);
-        getExecutable()->postLink(mFunctions, mFeatures, mProgramID);
-
-        return angle::Result::Continue;
-    };
 
     mFunctions->linkProgram(mProgramID);
-    if (mRenderer->hasNativeParallelCompile())
+}
+
+angle::Result ProgramGL::postLinkJobImpl(const gl::ProgramLinkedResources &resources)
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::postLinkJobImpl");
+
+    if (mAttachedShaders[gl::ShaderType::Compute] != 0)
     {
-        return std::make_unique<LinkEventNativeParallel>(postLinkImplTask, mFunctions, mProgramID);
+        mFunctions->detachShader(mProgramID, mAttachedShaders[gl::ShaderType::Compute]);
     }
     else
     {
-        return std::make_unique<LinkEventDone>(postLinkImplTask());
+        for (const gl::ShaderType shaderType : gl::kAllGraphicsShaderTypes)
+        {
+            if (mAttachedShaders[shaderType] != 0)
+            {
+                mFunctions->detachShader(mProgramID, mAttachedShaders[shaderType]);
+            }
+        }
     }
+
+    // Verify the link
+    if (!checkLinkStatus())
+    {
+        return angle::Result::Stop;
+    }
+
+    if (mFeatures.alwaysCallUseProgramAfterLink.enabled)
+    {
+        mStateManager->forceUseProgram(mProgramID);
+    }
+
+    linkResources(resources);
+    getExecutable()->postLink(mFunctions, mStateManager, mFeatures, mProgramID);
+
+    return angle::Result::Continue;
 }
 
 GLboolean ProgramGL::validate(const gl::Caps & /*caps*/)
@@ -474,321 +508,16 @@ GLboolean ProgramGL::validate(const gl::Caps & /*caps*/)
     return true;
 }
 
-void ProgramGL::setUniform1fv(GLint location, GLsizei count, const GLfloat *v)
-{
-    if (mFunctions->programUniform1fv != nullptr)
-    {
-        mFunctions->programUniform1fv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform1fv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform2fv(GLint location, GLsizei count, const GLfloat *v)
-{
-    if (mFunctions->programUniform2fv != nullptr)
-    {
-        mFunctions->programUniform2fv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform2fv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform3fv(GLint location, GLsizei count, const GLfloat *v)
-{
-    if (mFunctions->programUniform3fv != nullptr)
-    {
-        mFunctions->programUniform3fv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform3fv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform4fv(GLint location, GLsizei count, const GLfloat *v)
-{
-    if (mFunctions->programUniform4fv != nullptr)
-    {
-        mFunctions->programUniform4fv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform4fv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform1iv(GLint location, GLsizei count, const GLint *v)
-{
-    if (mFunctions->programUniform1iv != nullptr)
-    {
-        mFunctions->programUniform1iv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform1iv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform2iv(GLint location, GLsizei count, const GLint *v)
-{
-    if (mFunctions->programUniform2iv != nullptr)
-    {
-        mFunctions->programUniform2iv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform2iv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform3iv(GLint location, GLsizei count, const GLint *v)
-{
-    if (mFunctions->programUniform3iv != nullptr)
-    {
-        mFunctions->programUniform3iv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform3iv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform4iv(GLint location, GLsizei count, const GLint *v)
-{
-    if (mFunctions->programUniform4iv != nullptr)
-    {
-        mFunctions->programUniform4iv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform4iv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform1uiv(GLint location, GLsizei count, const GLuint *v)
-{
-    if (mFunctions->programUniform1uiv != nullptr)
-    {
-        mFunctions->programUniform1uiv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform1uiv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform2uiv(GLint location, GLsizei count, const GLuint *v)
-{
-    if (mFunctions->programUniform2uiv != nullptr)
-    {
-        mFunctions->programUniform2uiv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform2uiv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform3uiv(GLint location, GLsizei count, const GLuint *v)
-{
-    if (mFunctions->programUniform3uiv != nullptr)
-    {
-        mFunctions->programUniform3uiv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform3uiv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniform4uiv(GLint location, GLsizei count, const GLuint *v)
-{
-    if (mFunctions->programUniform4uiv != nullptr)
-    {
-        mFunctions->programUniform4uiv(mProgramID, uniLoc(location), count, v);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniform4uiv(uniLoc(location), count, v);
-    }
-}
-
-void ProgramGL::setUniformMatrix2fv(GLint location,
-                                    GLsizei count,
-                                    GLboolean transpose,
-                                    const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix2fv != nullptr)
-    {
-        mFunctions->programUniformMatrix2fv(mProgramID, uniLoc(location), count, transpose, value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix2fv(uniLoc(location), count, transpose, value);
-    }
-}
-
-void ProgramGL::setUniformMatrix3fv(GLint location,
-                                    GLsizei count,
-                                    GLboolean transpose,
-                                    const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix3fv != nullptr)
-    {
-        mFunctions->programUniformMatrix3fv(mProgramID, uniLoc(location), count, transpose, value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix3fv(uniLoc(location), count, transpose, value);
-    }
-}
-
-void ProgramGL::setUniformMatrix4fv(GLint location,
-                                    GLsizei count,
-                                    GLboolean transpose,
-                                    const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix4fv != nullptr)
-    {
-        mFunctions->programUniformMatrix4fv(mProgramID, uniLoc(location), count, transpose, value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix4fv(uniLoc(location), count, transpose, value);
-    }
-}
-
-void ProgramGL::setUniformMatrix2x3fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix2x3fv != nullptr)
-    {
-        mFunctions->programUniformMatrix2x3fv(mProgramID, uniLoc(location), count, transpose,
-                                              value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix2x3fv(uniLoc(location), count, transpose, value);
-    }
-}
-
-void ProgramGL::setUniformMatrix3x2fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix3x2fv != nullptr)
-    {
-        mFunctions->programUniformMatrix3x2fv(mProgramID, uniLoc(location), count, transpose,
-                                              value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix3x2fv(uniLoc(location), count, transpose, value);
-    }
-}
-
-void ProgramGL::setUniformMatrix2x4fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix2x4fv != nullptr)
-    {
-        mFunctions->programUniformMatrix2x4fv(mProgramID, uniLoc(location), count, transpose,
-                                              value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix2x4fv(uniLoc(location), count, transpose, value);
-    }
-}
-
-void ProgramGL::setUniformMatrix4x2fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix4x2fv != nullptr)
-    {
-        mFunctions->programUniformMatrix4x2fv(mProgramID, uniLoc(location), count, transpose,
-                                              value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix4x2fv(uniLoc(location), count, transpose, value);
-    }
-}
-
-void ProgramGL::setUniformMatrix3x4fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix3x4fv != nullptr)
-    {
-        mFunctions->programUniformMatrix3x4fv(mProgramID, uniLoc(location), count, transpose,
-                                              value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix3x4fv(uniLoc(location), count, transpose, value);
-    }
-}
-
-void ProgramGL::setUniformMatrix4x3fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    if (mFunctions->programUniformMatrix4x3fv != nullptr)
-    {
-        mFunctions->programUniformMatrix4x3fv(mProgramID, uniLoc(location), count, transpose,
-                                              value);
-    }
-    else
-    {
-        mStateManager->useProgram(mProgramID);
-        mFunctions->uniformMatrix4x3fv(uniLoc(location), count, transpose, value);
-    }
-}
-
 void ProgramGL::setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding)
 {
-    ProgramExecutableGL *executableGL = getExecutable();
+    const gl::ProgramExecutable &executable = mState.getExecutable();
+    ProgramExecutableGL *executableGL       = getExecutable();
 
     // Lazy init
     if (executableGL->mUniformBlockRealLocationMap.empty())
     {
-        executableGL->mUniformBlockRealLocationMap.reserve(mState.getUniformBlocks().size());
-        for (const gl::InterfaceBlock &uniformBlock : mState.getUniformBlocks())
+        executableGL->mUniformBlockRealLocationMap.reserve(executable.getUniformBlocks().size());
+        for (const gl::InterfaceBlock &uniformBlock : executable.getUniformBlocks())
         {
             const std::string &mappedNameWithIndex = uniformBlock.mappedNameWithArrayIndex();
             GLuint blockIndex =
@@ -968,54 +697,22 @@ bool ProgramGL::checkLinkStatus()
     return true;
 }
 
-void ProgramGL::updateEnabledClipDistances(uint8_t enabledClipDistancesPacked) const
-{
-    ASSERT(mState.getExecutable().hasClipDistance());
-    ASSERT(getExecutable()->mClipDistanceEnabledUniformLocation != -1);
-
-    ASSERT(mFunctions->programUniform1ui != nullptr);
-    mFunctions->programUniform1ui(mProgramID, getExecutable()->mClipDistanceEnabledUniformLocation,
-                                  enabledClipDistancesPacked);
-}
-
-void ProgramGL::enableLayeredRenderingPath(int baseViewIndex) const
-{
-    ASSERT(mState.getExecutable().usesMultiview());
-    ASSERT(getExecutable()->mMultiviewBaseViewLayerIndexUniformLocation != -1);
-
-    ASSERT(mFunctions->programUniform1i != nullptr);
-    mFunctions->programUniform1i(
-        mProgramID, getExecutable()->mMultiviewBaseViewLayerIndexUniformLocation, baseViewIndex);
-}
-
-void ProgramGL::getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const
-{
-    mFunctions->getUniformfv(mProgramID, uniLoc(location), params);
-}
-
-void ProgramGL::getUniformiv(const gl::Context *context, GLint location, GLint *params) const
-{
-    mFunctions->getUniformiv(mProgramID, uniLoc(location), params);
-}
-
-void ProgramGL::getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const
-{
-    mFunctions->getUniformuiv(mProgramID, uniLoc(location), params);
-}
-
 void ProgramGL::markUnusedUniformLocations(std::vector<gl::VariableLocation> *uniformLocations,
                                            std::vector<gl::SamplerBinding> *samplerBindings,
                                            std::vector<gl::ImageBinding> *imageBindings)
 {
+    const gl::ProgramExecutable &executable = mState.getExecutable();
+    const ProgramExecutableGL *executableGL = getExecutable();
+
     GLint maxLocation = static_cast<GLint>(uniformLocations->size());
     for (GLint location = 0; location < maxLocation; ++location)
     {
-        if (uniLoc(location) == -1)
+        if (executableGL->mUniformRealLocationMap[location] == -1)
         {
             auto &locationRef = (*uniformLocations)[location];
-            if (mState.isSamplerUniformIndex(locationRef.index))
+            if (executable.isSamplerUniformIndex(locationRef.index))
             {
-                GLuint samplerIndex = mState.getSamplerIndexFromUniformIndex(locationRef.index);
+                GLuint samplerIndex = executable.getSamplerIndexFromUniformIndex(locationRef.index);
                 gl::SamplerBinding &samplerBinding = (*samplerBindings)[samplerIndex];
                 if (locationRef.arrayIndex <
                     static_cast<unsigned int>(samplerBinding.textureUnitsCount))
@@ -1024,9 +721,9 @@ void ProgramGL::markUnusedUniformLocations(std::vector<gl::VariableLocation> *un
                     SetBitField(samplerBinding.textureUnitsCount, locationRef.arrayIndex);
                 }
             }
-            else if (mState.isImageUniformIndex(locationRef.index))
+            else if (executable.isImageUniformIndex(locationRef.index))
             {
-                GLuint imageIndex = mState.getImageIndexFromUniformIndex(locationRef.index);
+                GLuint imageIndex = executable.getImageIndexFromUniformIndex(locationRef.index);
                 gl::ImageBinding &imageBinding = (*imageBindings)[imageIndex];
                 if (locationRef.arrayIndex < imageBinding.boundImageUnits.size())
                 {
@@ -1085,11 +782,13 @@ void ProgramGL::linkResources(const gl::ProgramLinkedResources &resources)
 angle::Result ProgramGL::syncState(const gl::Context *context,
                                    const gl::Program::DirtyBits &dirtyBits)
 {
+    const gl::ProgramExecutable &executable = mState.getExecutable();
+
     for (size_t dirtyBit : dirtyBits)
     {
         ASSERT(dirtyBit <= gl::Program::DIRTY_BIT_UNIFORM_BLOCK_BINDING_MAX);
         GLuint binding = static_cast<GLuint>(dirtyBit);
-        setUniformBlockBinding(binding, mState.getUniformBlockBinding(binding));
+        setUniformBlockBinding(binding, executable.getUniformBlockBinding(binding));
     }
     return angle::Result::Continue;
 }

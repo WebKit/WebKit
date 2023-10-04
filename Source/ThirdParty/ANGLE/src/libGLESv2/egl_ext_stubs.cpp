@@ -28,16 +28,37 @@ EGLint ClientWaitSyncKHR(Thread *thread,
                          EGLint flags,
                          EGLTimeKHR timeout)
 {
-    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglClientWaitSync",
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglClientWaitSyncKHR",
                          GetDisplayIfValid(display), EGL_FALSE);
     gl::Context *currentContext = thread->getContext();
     EGLint syncStatus           = EGL_FALSE;
     Sync *sync                  = display->getSync(syncID);
     ANGLE_EGL_TRY_RETURN(thread,
                          sync->clientWait(display, currentContext, flags, timeout, &syncStatus),
-                         "eglClientWaitSync", GetSyncIfValid(display, syncID), EGL_FALSE);
+                         "eglClientWaitSyncKHR", GetSyncIfValid(display, syncID), EGL_FALSE);
 
-    thread->setSuccess();
+    // When performing CPU wait through UnlockedTailCall we need to handle any error conditions
+    if (egl::Display::GetCurrentThreadUnlockedTailCall()->any())
+    {
+        auto handleErrorStatus = [thread, display, syncID](void *result) {
+            EGLint *eglResult = static_cast<EGLint *>(result);
+            ASSERT(eglResult);
+            if (*eglResult == EGL_FALSE)
+            {
+                thread->setError(egl::Error(EGL_BAD_ALLOC), "eglClientWaitSyncKHR",
+                                 GetSyncIfValid(display, syncID));
+            }
+            else
+            {
+                thread->setSuccess();
+            }
+        };
+        egl::Display::GetCurrentThreadUnlockedTailCall()->add(handleErrorStatus);
+    }
+    else
+    {
+        thread->setSuccess();
+    }
     return syncStatus;
 }
 

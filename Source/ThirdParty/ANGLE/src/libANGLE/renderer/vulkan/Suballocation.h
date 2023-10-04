@@ -36,13 +36,13 @@ class BufferBlock final : angle::NonCopyable
     ~BufferBlock();
 
     void destroy(RendererVk *renderer);
-    angle::Result init(Context *context,
-                       Buffer &buffer,
-                       uint32_t memoryTypeIndex,
-                       vma::VirtualBlockCreateFlags flags,
-                       DeviceMemory &deviceMemory,
-                       VkMemoryPropertyFlags memoryPropertyFlags,
-                       VkDeviceSize size);
+    VkResult init(Context *context,
+                  Buffer &buffer,
+                  uint32_t memoryTypeIndex,
+                  vma::VirtualBlockCreateFlags flags,
+                  DeviceMemory &deviceMemory,
+                  VkMemoryPropertyFlags memoryPropertyFlags,
+                  VkDeviceSize size);
     void initWithoutVirtualBlock(Context *context,
                                  Buffer &buffer,
                                  MemoryAllocationType memoryAllocationType,

@@ -85,7 +85,9 @@ VkMemoryPropertyFlags GetPreferredMemoryType(RendererVk *renderer,
         case gl::BufferUsage::StreamDraw:
             // For non-static usage where the CPU performs a write-only access, request
             // a host uncached memory
-            return kHostUncachedFlags;
+            return renderer->getFeatures().preferHostCachedForNonStaticBufferUsage.enabled
+                       ? kHostCachedFlags
+                       : kHostUncachedFlags;
         case gl::BufferUsage::DynamicCopy:
         case gl::BufferUsage::DynamicRead:
         case gl::BufferUsage::StreamCopy:
@@ -297,15 +299,15 @@ void BufferVk::destroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
-    release(contextVk);
+    (void)release(contextVk);
 }
 
-void BufferVk::release(ContextVk *contextVk)
+angle::Result BufferVk::release(ContextVk *contextVk)
 {
     RendererVk *renderer = contextVk->getRenderer();
     if (mBuffer.valid())
     {
-        mBuffer.releaseBufferAndDescriptorSetCache(renderer);
+        ANGLE_TRY(contextVk->releaseBufferAllocation(&mBuffer));
     }
     if (mStagingBuffer.valid())
     {
@@ -317,6 +319,8 @@ void BufferVk::release(ContextVk *contextVk)
         buffer.data->release(renderer);
     }
     mVertexConversionBuffers.clear();
+
+    return angle::Result::Continue;
 }
 
 angle::Result BufferVk::setExternalBufferData(const gl::Context *context,
@@ -328,7 +332,7 @@ angle::Result BufferVk::setExternalBufferData(const gl::Context *context,
     ContextVk *contextVk = vk::GetImpl(context);
 
     // Release and re-create the memory and buffer.
-    release(contextVk);
+    ANGLE_TRY(release(contextVk));
 
     VkBufferCreateInfo createInfo    = {};
     createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -435,6 +439,10 @@ angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
         ANGLE_TRY(GetMemoryTypeIndex(contextVk, size, memoryPropertyFlags, &mMemoryTypeIndex));
         ANGLE_TRY(acquireBufferHelper(contextVk, size, mUsageType));
     }
+    else if (size != static_cast<size_t>(mState.getSize()))
+    {
+        mBuffer.onBufferUserSizeChange(renderer);
+    }
 
     if (data != nullptr)
     {
@@ -507,7 +515,7 @@ angle::Result BufferVk::allocStagingBuffer(ContextVk *contextVk,
     }
 
     ANGLE_TRY(
-        mStagingBuffer.allocateForCopyBuffer(contextVk, static_cast<size_t>(size), coherency));
+        contextVk->initBufferForBufferCopy(&mStagingBuffer, static_cast<size_t>(size), coherency));
     *mapPtr                = mStagingBuffer.getMappedMemory();
     mIsStagingBufferMapped = true;
 
@@ -623,7 +631,7 @@ angle::Result BufferVk::ghostMappedBuffer(ContextVk *contextVk,
         memcpy(dstMapPtr, srcMapPtr, static_cast<size_t>(mState.getSize()));
     }
 
-    src.releaseBufferAndDescriptorSetCache(contextVk->getRenderer());
+    ANGLE_TRY(contextVk->releaseBufferAllocation(&src));
 
     // Return the already mapped pointer with the offset adjustment to avoid the call to unmap().
     *mapPtr = dstMapPtr + offset;
@@ -1029,7 +1037,7 @@ angle::Result BufferVk::acquireAndUpdate(ContextVk *contextVk,
 
     if (prevBuffer.valid())
     {
-        prevBuffer.releaseBufferAndDescriptorSetCache(contextVk->getRenderer());
+        ANGLE_TRY(contextVk->releaseBufferAllocation(&prevBuffer));
     }
 
     return angle::Result::Continue;
@@ -1151,11 +1159,12 @@ angle::Result BufferVk::acquireBufferHelper(ContextVk *contextVk,
 
     if (mBuffer.valid())
     {
-        mBuffer.releaseBufferAndDescriptorSetCache(renderer);
+        ANGLE_TRY(contextVk->releaseBufferAllocation(&mBuffer));
     }
 
     // Allocate the buffer directly
-    ANGLE_TRY(mBuffer.initSuballocation(contextVk, mMemoryTypeIndex, size, alignment, usageType));
+    ANGLE_TRY(
+        contextVk->initBufferAllocation(&mBuffer, mMemoryTypeIndex, size, alignment, usageType));
 
     // Tell the observers (front end) that a new buffer was created, so the necessary
     // dirty bits can be set. This allows the buffer views pointing to the old buffer to

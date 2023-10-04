@@ -53,6 +53,7 @@ bool CompressBlobCacheData(const size_t cacheSize,
                            angle::MemoryBuffer *compressedData);
 bool DecompressBlobCacheData(const uint8_t *compressedData,
                              const size_t compressedSize,
+                             size_t maxUncompressedDataSize,
                              angle::MemoryBuffer *uncompressedData);
 
 class BlobCache final : angle::NonCopyable
@@ -132,6 +133,7 @@ class BlobCache final : angle::NonCopyable
     [[nodiscard]] GetAndDecompressResult getAndDecompress(
         angle::ScratchBuffer *scratchBuffer,
         const BlobCache::Key &key,
+        size_t maxUncompressedDataSize,
         angle::MemoryBuffer *uncompressedValueOut);
 
     // Evict a blob from the binary cache.

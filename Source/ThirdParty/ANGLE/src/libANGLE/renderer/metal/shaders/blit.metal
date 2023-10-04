@@ -12,8 +12,9 @@ using namespace rx::mtl_shader;
 // function_constant(0) is already used by common.h
 constant bool kPremultiplyAlpha [[function_constant(1)]];
 constant bool kUnmultiplyAlpha [[function_constant(2)]];
-constant int kSourceTextureType [[function_constant(3)]];   // Source color/depth texture type.
-constant int kSourceTexture2Type [[function_constant(4)]];  // Source stencil texture type.
+constant bool kTransformLinearToSrgb [[function_constant(3)]];
+constant int kSourceTextureType [[function_constant(4)]];   // Source color/depth texture type.
+constant int kSourceTexture2Type [[function_constant(5)]];  // Source stencil texture type.
 
 constant bool kSourceTextureType2D      = kSourceTextureType == kTextureType2D;
 constant bool kSourceTextureType2DArray = kSourceTextureType == kTextureType2DArray;
@@ -136,16 +137,21 @@ static inline vec<T, 4> blitReadTexture(BLIT_COLOR_FS_PARAMS(T))
             break;
     }
 
-    if (kPremultiplyAlpha)
-    {
-        output.xyz *= output.a;
+    if (kTransformLinearToSrgb) {
+        output.x = linearToSRGB(output.x);
+        output.y = linearToSRGB(output.y);
+        output.z = linearToSRGB(output.z);
     }
-    else if (kUnmultiplyAlpha)
+    if (kUnmultiplyAlpha)
     {
         if (output.a != 0.0)
         {
             output.xyz /= output.a;
         }
+    }
+    if (kPremultiplyAlpha)
+    {
+        output.xyz *= output.a;
     }
 
     if (options.dstLuminance)

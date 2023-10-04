@@ -128,6 +128,59 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
     angle::Result load(ContextMtl *contextMtl, gl::BinaryInputStream *stream);
     void save(gl::BinaryOutputStream *stream);
 
+    void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
+    void setUniform2fv(GLint location, GLsizei count, const GLfloat *v) override;
+    void setUniform3fv(GLint location, GLsizei count, const GLfloat *v) override;
+    void setUniform4fv(GLint location, GLsizei count, const GLfloat *v) override;
+    void setUniform1iv(GLint location, GLsizei count, const GLint *v) override;
+    void setUniform2iv(GLint location, GLsizei count, const GLint *v) override;
+    void setUniform3iv(GLint location, GLsizei count, const GLint *v) override;
+    void setUniform4iv(GLint location, GLsizei count, const GLint *v) override;
+    void setUniform1uiv(GLint location, GLsizei count, const GLuint *v) override;
+    void setUniform2uiv(GLint location, GLsizei count, const GLuint *v) override;
+    void setUniform3uiv(GLint location, GLsizei count, const GLuint *v) override;
+    void setUniform4uiv(GLint location, GLsizei count, const GLuint *v) override;
+    void setUniformMatrix2fv(GLint location,
+                             GLsizei count,
+                             GLboolean transpose,
+                             const GLfloat *value) override;
+    void setUniformMatrix3fv(GLint location,
+                             GLsizei count,
+                             GLboolean transpose,
+                             const GLfloat *value) override;
+    void setUniformMatrix4fv(GLint location,
+                             GLsizei count,
+                             GLboolean transpose,
+                             const GLfloat *value) override;
+    void setUniformMatrix2x3fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix3x2fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix2x4fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix4x2fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix3x4fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix4x3fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+
+    void getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const override;
+    void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
+    void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
+
     bool hasFlatAttribute() const { return mProgramHasFlatAttributes; }
 
     // Calls this before drawing, changedPipelineDesc is passed when vertex attributes desc and/or
@@ -143,6 +196,17 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
     friend class ProgramMtl;
 
     void reset(ContextMtl *context);
+
+    template <int cols, int rows>
+    void setUniformMatrixfv(GLint location,
+                            GLsizei count,
+                            GLboolean transpose,
+                            const GLfloat *value);
+    template <class T>
+    void getUniformImpl(GLint location, T *v, GLenum entryPointType) const;
+
+    template <typename T>
+    void setUniformImpl(GLint location, GLsizei count, const T *v, GLenum entryPointType);
 
     void saveTranslatedShaders(gl::BinaryOutputStream *stream);
     void loadTranslatedShaders(gl::BinaryInputStream *stream);
@@ -166,7 +230,7 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
                                                    const gl::ShaderMap<size_t> &requiredBufferSize);
     void initUniformBlocksRemapper(const gl::SharedCompiledShaderState &shader);
 
-    mtl::BufferPool *getBufferPool(ContextMtl *context);
+    mtl::BufferPool *getBufferPool(ContextMtl *context, gl::ShaderType shaderType);
 
     angle::Result getSpecializedShader(ContextMtl *context,
                                        gl::ShaderType shaderType,
@@ -234,7 +298,7 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
 
     uint32_t mShadowCompareModes[mtl::kMaxShaderSamplers];
 
-    mtl::BufferPool *mAuxBufferPool;
+    gl::ShaderMap<std::unique_ptr<mtl::BufferPool>> mDefaultUniformBufferPools;
 };
 
 angle::Result CreateMslShaderLib(ContextMtl *context,

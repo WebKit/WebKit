@@ -23,6 +23,10 @@ namespace rx
 {
 namespace
 {
+
+// Limit decompressed vulkan pipelines to 10MB per program.
+static constexpr size_t kMaxLocalPipelineCacheSize = 10 * 1024 * 1024;
+
 uint8_t GetGraphicsProgramIndex(ProgramTransformOptions transformOptions)
 {
     return gl::bitCast<uint8_t, ProgramTransformOptions>(transformOptions);
@@ -38,8 +42,7 @@ bool ValidateTransformedSpirV(vk::Context *context,
     for (gl::ShaderType shaderType : linkedShaderStages)
     {
         SpvTransformOptions options;
-        options.shaderType                = shaderType;
-        options.negativeViewportSupported = false;
+        options.shaderType = shaderType;
         options.isLastPreFragmentStage =
             shaderType == lastPreFragmentStage && shaderType != gl::ShaderType::TessControl;
         options.isTransformFeedbackStage = options.isLastPreFragmentStage;
@@ -61,12 +64,12 @@ uint32_t GetInterfaceBlockArraySize(const std::vector<gl::InterfaceBlock> &block
 {
     const gl::InterfaceBlock &block = blocks[bufferIndex];
 
-    if (!block.isArray)
+    if (!block.pod.isArray)
     {
         return 1;
     }
 
-    ASSERT(block.arrayElement == 0);
+    ASSERT(block.pod.arrayElement == 0);
 
     // Search consecutively until all array indices of this block are visited.
     uint32_t arraySize;
@@ -74,7 +77,7 @@ uint32_t GetInterfaceBlockArraySize(const std::vector<gl::InterfaceBlock> &block
     {
         const gl::InterfaceBlock &nextBlock = blocks[bufferIndex + arraySize];
 
-        if (nextBlock.arrayElement != arraySize)
+        if (nextBlock.pod.arrayElement != arraySize)
         {
             break;
         }
@@ -82,7 +85,7 @@ uint32_t GetInterfaceBlockArraySize(const std::vector<gl::InterfaceBlock> &block
         // It's unexpected for an array to start at a non-zero array size, so we can always rely on
         // the sequential `arrayElement`s to belong to the same block.
         ASSERT(nextBlock.name == block.name);
-        ASSERT(nextBlock.isArray);
+        ASSERT(nextBlock.pod.isArray);
     }
 
     return arraySize;
@@ -104,14 +107,14 @@ void SetupDefaultPipelineState(const vk::Context *context,
     graphicsPipelineDescOut->setVertexShaderComponentTypes(
         glExecutable.getNonBuiltinAttribLocationsMask(), glExecutable.getAttributesTypeMask());
 
-    const std::vector<sh::ShaderVariable> &outputVariables   = glExecutable.getOutputVariables();
+    const std::vector<gl::ProgramOutput> &outputVariables    = glExecutable.getOutputVariables();
     const std::vector<gl::VariableLocation> &outputLocations = glExecutable.getOutputLocations();
 
     for (const gl::VariableLocation &outputLocation : outputLocations)
     {
         if (outputLocation.arrayIndex == 0 && outputLocation.used() && !outputLocation.ignored)
         {
-            const sh::ShaderVariable &outputVar = outputVariables[outputLocation.index];
+            const gl::ProgramOutput &outputVar = outputVariables[outputLocation.index];
 
             if (angle::BeginsWith(outputVar.name, "gl_") && outputVar.name != "gl_FragColor")
             {
@@ -119,12 +122,12 @@ void SetupDefaultPipelineState(const vk::Context *context,
             }
 
             uint32_t location = 0;
-            if (outputVar.location != -1)
+            if (outputVar.pod.location != -1)
             {
-                location = outputVar.location;
+                location = outputVar.pod.location;
             }
 
-            GLenum type            = gl::VariableComponentType(outputVar.type);
+            GLenum type            = gl::VariableComponentType(outputVar.pod.type);
             angle::FormatID format = angle::FormatID::R8G8B8A8_UNORM;
             if (type == GL_INT)
             {
@@ -144,7 +147,7 @@ void SetupDefaultPipelineState(const vk::Context *context,
         }
     }
 
-    for (const sh::ShaderVariable &outputVar : outputVariables)
+    for (const gl::ProgramOutput &outputVar : outputVariables)
     {
         if (outputVar.name == "gl_FragColor" || outputVar.name == "gl_FragData")
         {
@@ -223,6 +226,66 @@ vk::SpecializationConstants MakeSpecConsts(ProgramTransformOptions transformOpti
 
     return specConsts;
 }
+
+template <typename T>
+void UpdateDefaultUniformBlock(GLsizei count,
+                               uint32_t arrayIndex,
+                               int componentCount,
+                               const T *v,
+                               const sh::BlockMemberInfo &layoutInfo,
+                               angle::MemoryBuffer *uniformData)
+{
+    const int elementSize = sizeof(T) * componentCount;
+
+    uint8_t *dst = uniformData->data() + layoutInfo.offset;
+    if (layoutInfo.arrayStride == 0 || layoutInfo.arrayStride == elementSize)
+    {
+        uint32_t arrayOffset = arrayIndex * layoutInfo.arrayStride;
+        uint8_t *writePtr    = dst + arrayOffset;
+        ASSERT(writePtr + (elementSize * count) <= uniformData->data() + uniformData->size());
+        memcpy(writePtr, v, elementSize * count);
+    }
+    else
+    {
+        // Have to respect the arrayStride between each element of the array.
+        int maxIndex = arrayIndex + count;
+        for (int writeIndex = arrayIndex, readIndex = 0; writeIndex < maxIndex;
+             writeIndex++, readIndex++)
+        {
+            const int arrayOffset = writeIndex * layoutInfo.arrayStride;
+            uint8_t *writePtr     = dst + arrayOffset;
+            const T *readPtr      = v + (readIndex * componentCount);
+            ASSERT(writePtr + elementSize <= uniformData->data() + uniformData->size());
+            memcpy(writePtr, readPtr, elementSize);
+        }
+    }
+}
+
+template <typename T>
+void ReadFromDefaultUniformBlock(int componentCount,
+                                 uint32_t arrayIndex,
+                                 T *dst,
+                                 const sh::BlockMemberInfo &layoutInfo,
+                                 const angle::MemoryBuffer *uniformData)
+{
+    ASSERT(layoutInfo.offset != -1);
+
+    const int elementSize = sizeof(T) * componentCount;
+    const uint8_t *source = uniformData->data() + layoutInfo.offset;
+
+    if (layoutInfo.arrayStride == 0 || layoutInfo.arrayStride == elementSize)
+    {
+        const uint8_t *readPtr = source + arrayIndex * layoutInfo.arrayStride;
+        memcpy(dst, readPtr, elementSize);
+    }
+    else
+    {
+        // Have to respect the arrayStride between each element of the array.
+        const int arrayOffset  = arrayIndex * layoutInfo.arrayStride;
+        const uint8_t *readPtr = source + arrayOffset;
+        memcpy(dst, readPtr, elementSize);
+    }
+}
 }  // namespace
 
 DefaultUniformBlockVk::DefaultUniformBlockVk() = default;
@@ -282,22 +345,10 @@ void ShaderInfo::load(gl::BinaryInputStream *stream)
 {
     clear();
 
-    // Read in shader code sizes for all shader types
-    gl::ShaderMap<uint32_t> blobSizes;
-    stream->readBytes(reinterpret_cast<uint8_t *>(blobSizes.data()),
-                      blobSizes.size() * sizeof(*blobSizes.data()));
     // Read in shader codes for all shader types
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        angle::spirv::Blob *blob = &mSpirvBlobs[shaderType];
-        ASSERT(blob->empty());
-        if (blobSizes[shaderType] > 0)
-        {
-            blob->resize(blobSizes[shaderType]);
-            // Read the SPIR-V
-            stream->readBytes(reinterpret_cast<uint8_t *>(blob->data()),
-                              blobSizes[shaderType] * sizeof(*blob->data()));
-        }
+        stream->readVector(&mSpirvBlobs[shaderType]);
     }
 
     mIsInitialized = true;
@@ -307,25 +358,10 @@ void ShaderInfo::save(gl::BinaryOutputStream *stream)
 {
     ASSERT(valid());
 
-    // Write out shader codes size for all shader types
-    gl::ShaderMap<uint32_t> blobSizes;
-    for (gl::ShaderType shaderType : gl::AllShaderTypes())
-    {
-        blobSizes[shaderType] = static_cast<uint32_t>(mSpirvBlobs[shaderType].size());
-    }
-    stream->writeBytes(reinterpret_cast<const uint8_t *>(blobSizes.data()),
-                       blobSizes.size() * sizeof(*blobSizes.data()));
-
     // Write out shader codes for all shader types
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        if (blobSizes[shaderType] > 0)
-        {
-            // Write the SPIR-V
-            const angle::spirv::Blob &blob = mSpirvBlobs[shaderType];
-            stream->writeBytes(reinterpret_cast<const uint8_t *>(blob.data()),
-                               blobSizes[shaderType] * sizeof(*blob.data()));
-        }
+        stream->writeVector(mSpirvBlobs[shaderType]);
     }
 }
 
@@ -353,7 +389,6 @@ angle::Result ProgramInfo::initProgram(vk::Context *context,
     options.isTransformFeedbackStage = isLastPreFragmentStage && isTransformFeedbackProgram &&
                                        !optionBits.removeTransformFeedbackEmulation;
     options.isTransformFeedbackEmulated = context->getFeatures().emulateTransformFeedback.enabled;
-    options.negativeViewportSupported   = context->getFeatures().supportsNegativeViewport.enabled;
     options.isMultisampledFramebufferFetch =
         optionBits.multiSampleFramebufferFetch && shaderType == gl::ShaderType::Fragment;
     options.enableSampleShading = optionBits.enableSampleShading;
@@ -389,6 +424,7 @@ ProgramExecutableVk::ProgramExecutableVk(const gl::ProgramExecutable *executable
       mUniformBufferDescriptorType(VK_DESCRIPTOR_TYPE_MAX_ENUM),
       mDynamicUniformDescriptorOffsets{}
 {
+    mDescriptorSets.fill(VK_NULL_HANDLE);
     for (std::shared_ptr<DefaultUniformBlockVk> &defaultBlock : mDefaultUniformBlocks)
     {
         defaultBlock = std::make_shared<DefaultUniformBlockVk>();
@@ -478,7 +514,8 @@ angle::Result ProgramExecutableVk::initializePipelineCache(vk::Context *context,
     angle::MemoryBuffer uncompressedData;
     if (compressed)
     {
-        if (!egl::DecompressBlobCacheData(dataPointer, dataSize, &uncompressedData))
+        if (!egl::DecompressBlobCacheData(dataPointer, dataSize, kMaxLocalPipelineCacheSize,
+                                          &uncompressedData))
         {
             return angle::Result::Stop;
         }
@@ -526,33 +563,22 @@ angle::Result ProgramExecutableVk::ensurePipelineCacheInitialized(vk::Context *c
     return angle::Result::Continue;
 }
 
-std::unique_ptr<rx::LinkEvent> ProgramExecutableVk::load(ContextVk *contextVk,
-                                                         bool isSeparable,
-                                                         gl::BinaryInputStream *stream)
+angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
+                                        bool isSeparable,
+                                        gl::BinaryInputStream *stream)
 {
     mVariableInfoMap.load(stream);
-
     mOriginalShaderInfo.load(stream);
 
     // Deserializes the uniformLayout data of mDefaultUniformBlocks
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        const size_t uniformCount = stream->readInt<size_t>();
-        for (unsigned int uniformIndex = 0; uniformIndex < uniformCount; ++uniformIndex)
-        {
-            sh::BlockMemberInfo blockInfo;
-            gl::LoadBlockMemberInfo(stream, &blockInfo);
-            mDefaultUniformBlocks[shaderType]->uniformLayout.push_back(blockInfo);
-        }
+        stream->readVector(&mDefaultUniformBlocks[shaderType]->uniformLayout);
     }
 
-    gl::ShaderMap<size_t> requiredBufferSize;
-    requiredBufferSize.fill(0);
     // Deserializes required uniform block memory sizes
-    for (gl::ShaderType shaderType : gl::AllShaderTypes())
-    {
-        requiredBufferSize[shaderType] = stream->readInt<size_t>();
-    }
+    gl::ShaderMap<size_t> requiredBufferSize;
+    stream->readPackedEnumMap(&requiredBufferSize);
 
     if (!isSeparable)
     {
@@ -566,33 +592,19 @@ std::unique_ptr<rx::LinkEvent> ProgramExecutableVk::load(ContextVk *contextVk,
             stream->readBool(&compressedData);
             stream->readBytes(compressedPipelineData.data(), compressedPipelineDataSize);
             // Initialize the pipeline cache based on cached data.
-            angle::Result status =
-                initializePipelineCache(contextVk, compressedData, compressedPipelineData);
-            if (status != angle::Result::Continue)
-            {
-                return std::make_unique<LinkEventDone>(status);
-            }
+            ANGLE_TRY(initializePipelineCache(contextVk, compressedData, compressedPipelineData));
         }
     }
 
     // Initialize and resize the mDefaultUniformBlocks' memory
-    angle::Result status = resizeUniformBlockMemory(contextVk, requiredBufferSize);
-    if (status != angle::Result::Continue)
-    {
-        return std::make_unique<LinkEventDone>(status);
-    }
+    ANGLE_TRY(resizeUniformBlockMemory(contextVk, requiredBufferSize));
 
     resetLayout(contextVk);
-    status = createPipelineLayout(contextVk, &contextVk->getPipelineLayoutCache(),
-                                  &contextVk->getDescriptorSetLayoutCache(), nullptr);
-    if (status != angle::Result::Continue)
-    {
-        return std::make_unique<LinkEventDone>(status);
-    }
+    ANGLE_TRY(createPipelineLayout(contextVk, &contextVk->getPipelineLayoutCache(),
+                                   &contextVk->getDescriptorSetLayoutCache(), nullptr));
 
-    status = initializeDescriptorPools(contextVk, &contextVk->getDescriptorSetLayoutCache(),
-                                       &contextVk->getMetaDescriptorPools());
-    return std::make_unique<LinkEventDone>(status);
+    return initializeDescriptorPools(contextVk, &contextVk->getDescriptorSetLayoutCache(),
+                                     &contextVk->getMetaDescriptorPools());
 }
 
 void ProgramExecutableVk::save(ContextVk *contextVk,
@@ -605,21 +617,16 @@ void ProgramExecutableVk::save(ContextVk *contextVk,
     // Serializes the uniformLayout data of mDefaultUniformBlocks
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        const size_t uniformCount = mDefaultUniformBlocks[shaderType]->uniformLayout.size();
-        stream->writeInt(uniformCount);
-        for (unsigned int uniformIndex = 0; uniformIndex < uniformCount; ++uniformIndex)
-        {
-            sh::BlockMemberInfo &blockInfo =
-                mDefaultUniformBlocks[shaderType]->uniformLayout[uniformIndex];
-            gl::WriteBlockMemberInfo(stream, blockInfo);
-        }
+        stream->writeVector(mDefaultUniformBlocks[shaderType]->uniformLayout);
     }
 
     // Serializes required uniform block memory sizes
+    gl::ShaderMap<size_t> uniformDataSize;
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        stream->writeInt(mDefaultUniformBlocks[shaderType]->uniformData.size());
+        uniformDataSize[shaderType] = mDefaultUniformBlocks[shaderType]->uniformData.size();
     }
+    stream->writePackedEnumMap(uniformDataSize);
 
     // Compress and save mPipelineCache.  Separable programs don't warm up the cache, while program
     // pipelines do.  However, currently ANGLE doesn't sync program pipelines to cache.  ANGLE could
@@ -1755,5 +1762,294 @@ angle::Result ProgramExecutableVk::resizeUniformBlockMemory(
     }
 
     return angle::Result::Continue;
+}
+
+template <typename T>
+void ProgramExecutableVk::setUniformImpl(GLint location,
+                                         GLsizei count,
+                                         const T *v,
+                                         GLenum entryPointType)
+{
+    const gl::VariableLocation &locationInfo = mExecutable->getUniformLocations()[location];
+    const gl::LinkedUniform &linkedUniform   = mExecutable->getUniforms()[locationInfo.index];
+
+    ASSERT(!linkedUniform.isSampler());
+
+    if (linkedUniform.pod.type == entryPointType)
+    {
+        for (const gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
+        {
+            DefaultUniformBlockVk &uniformBlock   = *mDefaultUniformBlocks[shaderType];
+            const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+            // Assume an offset of -1 means the block is unused.
+            if (layoutInfo.offset == -1)
+            {
+                continue;
+            }
+
+            const GLint componentCount = linkedUniform.getElementComponents();
+            UpdateDefaultUniformBlock(count, locationInfo.arrayIndex, componentCount, v, layoutInfo,
+                                      &uniformBlock.uniformData);
+            mDefaultUniformBlocksDirty.set(shaderType);
+        }
+    }
+    else
+    {
+        for (const gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
+        {
+            DefaultUniformBlockVk &uniformBlock   = *mDefaultUniformBlocks[shaderType];
+            const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+            // Assume an offset of -1 means the block is unused.
+            if (layoutInfo.offset == -1)
+            {
+                continue;
+            }
+
+            const GLint componentCount = linkedUniform.getElementComponents();
+
+            ASSERT(linkedUniform.pod.type == gl::VariableBoolVectorType(entryPointType));
+
+            GLint initialArrayOffset =
+                locationInfo.arrayIndex * layoutInfo.arrayStride + layoutInfo.offset;
+            for (GLint i = 0; i < count; i++)
+            {
+                GLint elementOffset = i * layoutInfo.arrayStride + initialArrayOffset;
+                GLint *dst =
+                    reinterpret_cast<GLint *>(uniformBlock.uniformData.data() + elementOffset);
+                const T *source = v + i * componentCount;
+
+                for (int c = 0; c < componentCount; c++)
+                {
+                    dst[c] = (source[c] == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
+                }
+            }
+
+            mDefaultUniformBlocksDirty.set(shaderType);
+        }
+    }
+}
+
+template <typename T>
+void ProgramExecutableVk::getUniformImpl(GLint location, T *v, GLenum entryPointType) const
+{
+    const gl::VariableLocation &locationInfo = mExecutable->getUniformLocations()[location];
+    const gl::LinkedUniform &linkedUniform   = mExecutable->getUniforms()[locationInfo.index];
+
+    ASSERT(!linkedUniform.isSampler() && !linkedUniform.isImage());
+
+    const gl::ShaderType shaderType = linkedUniform.getFirstActiveShaderType();
+    ASSERT(shaderType != gl::ShaderType::InvalidEnum);
+
+    const DefaultUniformBlockVk &uniformBlock = *mDefaultUniformBlocks[shaderType];
+    const sh::BlockMemberInfo &layoutInfo     = uniformBlock.uniformLayout[location];
+
+    ASSERT(gl::GetUniformTypeInfo(linkedUniform.pod.type).componentType == entryPointType ||
+           gl::GetUniformTypeInfo(linkedUniform.pod.type).componentType ==
+               gl::VariableBoolVectorType(entryPointType));
+
+    if (gl::IsMatrixType(linkedUniform.getType()))
+    {
+        const uint8_t *ptrToElement = uniformBlock.uniformData.data() + layoutInfo.offset +
+                                      (locationInfo.arrayIndex * layoutInfo.arrayStride);
+        GetMatrixUniform(linkedUniform.getType(), v, reinterpret_cast<const T *>(ptrToElement),
+                         false);
+    }
+    else
+    {
+        ReadFromDefaultUniformBlock(linkedUniform.getElementComponents(), locationInfo.arrayIndex,
+                                    v, layoutInfo, &uniformBlock.uniformData);
+    }
+}
+
+void ProgramExecutableVk::setUniform1fv(GLint location, GLsizei count, const GLfloat *v)
+{
+    setUniformImpl(location, count, v, GL_FLOAT);
+}
+
+void ProgramExecutableVk::setUniform2fv(GLint location, GLsizei count, const GLfloat *v)
+{
+    setUniformImpl(location, count, v, GL_FLOAT_VEC2);
+}
+
+void ProgramExecutableVk::setUniform3fv(GLint location, GLsizei count, const GLfloat *v)
+{
+    setUniformImpl(location, count, v, GL_FLOAT_VEC3);
+}
+
+void ProgramExecutableVk::setUniform4fv(GLint location, GLsizei count, const GLfloat *v)
+{
+    setUniformImpl(location, count, v, GL_FLOAT_VEC4);
+}
+
+void ProgramExecutableVk::setUniform1iv(GLint location, GLsizei count, const GLint *v)
+{
+    const gl::VariableLocation &locationInfo = mExecutable->getUniformLocations()[location];
+    const gl::LinkedUniform &linkedUniform   = mExecutable->getUniforms()[locationInfo.index];
+    if (linkedUniform.isSampler())
+    {
+        // We could potentially cache some indexing here. For now this is a no-op since the mapping
+        // is handled entirely in ContextVk.
+        return;
+    }
+
+    setUniformImpl(location, count, v, GL_INT);
+}
+
+void ProgramExecutableVk::setUniform2iv(GLint location, GLsizei count, const GLint *v)
+{
+    setUniformImpl(location, count, v, GL_INT_VEC2);
+}
+
+void ProgramExecutableVk::setUniform3iv(GLint location, GLsizei count, const GLint *v)
+{
+    setUniformImpl(location, count, v, GL_INT_VEC3);
+}
+
+void ProgramExecutableVk::setUniform4iv(GLint location, GLsizei count, const GLint *v)
+{
+    setUniformImpl(location, count, v, GL_INT_VEC4);
+}
+
+void ProgramExecutableVk::setUniform1uiv(GLint location, GLsizei count, const GLuint *v)
+{
+    setUniformImpl(location, count, v, GL_UNSIGNED_INT);
+}
+
+void ProgramExecutableVk::setUniform2uiv(GLint location, GLsizei count, const GLuint *v)
+{
+    setUniformImpl(location, count, v, GL_UNSIGNED_INT_VEC2);
+}
+
+void ProgramExecutableVk::setUniform3uiv(GLint location, GLsizei count, const GLuint *v)
+{
+    setUniformImpl(location, count, v, GL_UNSIGNED_INT_VEC3);
+}
+
+void ProgramExecutableVk::setUniform4uiv(GLint location, GLsizei count, const GLuint *v)
+{
+    setUniformImpl(location, count, v, GL_UNSIGNED_INT_VEC4);
+}
+
+template <int cols, int rows>
+void ProgramExecutableVk::setUniformMatrixfv(GLint location,
+                                             GLsizei count,
+                                             GLboolean transpose,
+                                             const GLfloat *value)
+{
+    const gl::VariableLocation &locationInfo = mExecutable->getUniformLocations()[location];
+    const gl::LinkedUniform &linkedUniform   = mExecutable->getUniforms()[locationInfo.index];
+
+    for (const gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
+    {
+        DefaultUniformBlockVk &uniformBlock   = *mDefaultUniformBlocks[shaderType];
+        const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+        // Assume an offset of -1 means the block is unused.
+        if (layoutInfo.offset == -1)
+        {
+            continue;
+        }
+
+        SetFloatUniformMatrixGLSL<cols, rows>::Run(
+            locationInfo.arrayIndex, linkedUniform.getBasicTypeElementCount(), count, transpose,
+            value, uniformBlock.uniformData.data() + layoutInfo.offset);
+
+        mDefaultUniformBlocksDirty.set(shaderType);
+    }
+}
+
+void ProgramExecutableVk::setUniformMatrix2fv(GLint location,
+                                              GLsizei count,
+                                              GLboolean transpose,
+                                              const GLfloat *value)
+{
+    setUniformMatrixfv<2, 2>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::setUniformMatrix3fv(GLint location,
+                                              GLsizei count,
+                                              GLboolean transpose,
+                                              const GLfloat *value)
+{
+    setUniformMatrixfv<3, 3>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::setUniformMatrix4fv(GLint location,
+                                              GLsizei count,
+                                              GLboolean transpose,
+                                              const GLfloat *value)
+{
+    setUniformMatrixfv<4, 4>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::setUniformMatrix2x3fv(GLint location,
+                                                GLsizei count,
+                                                GLboolean transpose,
+                                                const GLfloat *value)
+{
+    setUniformMatrixfv<2, 3>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::setUniformMatrix3x2fv(GLint location,
+                                                GLsizei count,
+                                                GLboolean transpose,
+                                                const GLfloat *value)
+{
+    setUniformMatrixfv<3, 2>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::setUniformMatrix2x4fv(GLint location,
+                                                GLsizei count,
+                                                GLboolean transpose,
+                                                const GLfloat *value)
+{
+    setUniformMatrixfv<2, 4>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::setUniformMatrix4x2fv(GLint location,
+                                                GLsizei count,
+                                                GLboolean transpose,
+                                                const GLfloat *value)
+{
+    setUniformMatrixfv<4, 2>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::setUniformMatrix3x4fv(GLint location,
+                                                GLsizei count,
+                                                GLboolean transpose,
+                                                const GLfloat *value)
+{
+    setUniformMatrixfv<3, 4>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::setUniformMatrix4x3fv(GLint location,
+                                                GLsizei count,
+                                                GLboolean transpose,
+                                                const GLfloat *value)
+{
+    setUniformMatrixfv<4, 3>(location, count, transpose, value);
+}
+
+void ProgramExecutableVk::getUniformfv(const gl::Context *context,
+                                       GLint location,
+                                       GLfloat *params) const
+{
+    getUniformImpl(location, params, GL_FLOAT);
+}
+
+void ProgramExecutableVk::getUniformiv(const gl::Context *context,
+                                       GLint location,
+                                       GLint *params) const
+{
+    getUniformImpl(location, params, GL_INT);
+}
+
+void ProgramExecutableVk::getUniformuiv(const gl::Context *context,
+                                        GLint location,
+                                        GLuint *params) const
+{
+    getUniformImpl(location, params, GL_UNSIGNED_INT);
 }
 }  // namespace rx

@@ -670,13 +670,6 @@
             "issue": "http://anglebug.com/5535"
         },
         {
-            "name": "supports_negative_viewport",
-            "category": "Features",
-            "description": [
-                "The driver supports inverting the viewport with a negative height."
-            ]
-        },
-        {
             "name": "force_fragment_shader_precision_highp_to_mediump",
             "category": "Workarounds",
             "description": [
@@ -1361,12 +1354,42 @@
             ]
         },
         {
+            "name": "supports_format_feature_flags2",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_format_feature_flags2 extension"
+            ]
+        },
+        {
+            "name": "supports_host_image_copy",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_host_image_copy extension"
+            ]
+        },
+        {
+            "name": "allow_host_image_copy_despite_non_identical_layout",
+            "category": "Features",
+            "description": [
+                "When using VK_EXT_host_image_copy, allow VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT even if",
+                "perf query indicates only optimalDeviceAccess, but not identicalMemoryLayout"
+            ]
+        },
+        {
             "name": "enable_parallel_compile_and_link",
             "category": "Features",
             "description": [
                 "Expose the GL_KHR_parallel_shader_compile extension"
             ],
             "issue": "http://anglebug.com/8297"
+        },
+        {
+            "name": "prefer_host_cached_for_non_static_buffer_usage",
+            "category": "Features",
+            "description": [
+                "prefer host cached memory for non static buffer usage"
+            ],
+            "issue": "https://issuetracker.google.com/288119108"
         }
     ]
 }

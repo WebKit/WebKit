@@ -18124,14 +18124,36 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that the ScalarizeVecAndMatConstructorArgs workaround works correctly with constructors that
+// have no precision.  Regression test for a bug where the generated helper has no precision
+// specified on the parameters and return value.
+TEST_P(GLSLTest, ScalarizeVectorWorkaroundVsPrecisionlessConstructor)
+{
+    constexpr char kFS[] = R"(precision highp float;
+void main() {
+    bool b1 = true;
+    float f1 = dot(vec4(b1 ? 1.0 : 0.0, 0.0, 0.0, 0.0), vec4(1.0));
+    gl_FragColor = vec4(f1,0.0,0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
 }  // anonymous namespace
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(GLSLTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
+    GLSLTest,
+    ES3_OPENGL().enable(Feature::ScalarizeVecAndMatConstructorArgs),
+    ES3_OPENGLES().enable(Feature::ScalarizeVecAndMatConstructorArgs));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(GLSLTestNoValidation);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTest_ES3);
-ANGLE_INSTANTIATE_TEST_ES3(GLSLTest_ES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(GLSLTest_ES3,
+                               ES3_OPENGL().enable(Feature::ScalarizeVecAndMatConstructorArgs),
+                               ES3_OPENGLES().enable(Feature::ScalarizeVecAndMatConstructorArgs));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTestLoops);
 ANGLE_INSTANTIATE_TEST_ES3(GLSLTestLoops);

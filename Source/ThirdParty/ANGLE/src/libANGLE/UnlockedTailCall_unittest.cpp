@@ -14,7 +14,10 @@ namespace angle
 {
 void SetUpTailCall(UnlockedTailCall *unlockedTailCall, int *result)
 {
-    unlockedTailCall->add([result]() { ++*result; });
+    unlockedTailCall->add([result](void *resultOut) {
+        (void)resultOut;
+        ++*result;
+    });
 }
 
 // Test basic functionality
@@ -32,7 +35,7 @@ TEST(UnlockedTailCall, Basic)
     SetUpTailCall(&unlockedTailCall, &b);
     ASSERT_TRUE(unlockedTailCall.any());
 
-    unlockedTailCall.run();
+    unlockedTailCall.run(nullptr);
     ASSERT_EQ(a, 11);
     ASSERT_EQ(b, 501);
 }

@@ -731,6 +731,12 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
                 Initialize4ComponentData<GLuint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>;
             break;
 
+        case angle::FormatID::R8G8B8X8_UNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            break;
+
         case angle::FormatID::R8G8B8_SINT:
 
             this->metalFormat    = MTLPixelFormatRGBA8Sint;

@@ -362,7 +362,7 @@ TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
                           EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, GetParam().getDeviceType(),
                           EGL_NONE};
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 50; i++)  // Note: this test is fairly slow b/303089709
     {
         std::thread thread = std::thread([&]() {
             dpy = eglGetPlatformDisplayEXT(

@@ -79,11 +79,10 @@ angle::Result TransformFeedbackMtl::getBufferOffsets(ContextMtl *contextMtl,
                                                      int32_t *offsetsOut)
 {
     int64_t verticesDrawn = static_cast<int64_t>(mState.getVerticesDrawn()) + skippedVertices;
-    const std::vector<GLsizei> &bufferStrides =
-        mState.getBoundProgram()->getTransformFeedbackStrides();
     const gl::ProgramExecutable *executable = contextMtl->getState().getProgramExecutable();
     ASSERT(executable);
-    size_t xfbBufferCount = executable->getTransformFeedbackBufferCount();
+    const std::vector<GLsizei> &bufferStrides = executable->getTransformFeedbackStrides();
+    size_t xfbBufferCount                     = executable->getTransformFeedbackBufferCount();
 
     ASSERT(xfbBufferCount > 0);
 

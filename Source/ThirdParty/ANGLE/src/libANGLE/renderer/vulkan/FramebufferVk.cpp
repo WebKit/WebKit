@@ -400,11 +400,11 @@ angle::Result FramebufferVk::invalidateSub(const gl::Context *context,
         return invalidate(context, count, attachments);
     }
 
-    // If there are deferred clears, redefer them.  syncState may have accumulated deferred clears,
+    // If there are deferred clears, restage them.  syncState may have accumulated deferred clears,
     // but if the framebuffer's attachments are used after this call not through the framebuffer,
     // those clears wouldn't get flushed otherwise (for example as the destination of
     // glCopyTex[Sub]Image, shader storage image, etc).
-    redeferClears(contextVk);
+    restageDeferredClears(contextVk);
 
     if (contextVk->hasActiveRenderPass() &&
         rotatedInvalidateArea.encloses(contextVk->getStartedRenderPassCommands().getRenderArea()))
@@ -456,7 +456,11 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
     ContextVk *contextVk = vk::GetImpl(context);
 
     const gl::Rectangle scissoredRenderArea = getRotatedScissoredRenderArea(contextVk);
-    ASSERT(scissoredRenderArea.width != 0 && scissoredRenderArea.height != 0);
+    if (scissoredRenderArea.width == 0 || scissoredRenderArea.height == 0)
+    {
+        restageDeferredClears(contextVk);
+        return angle::Result::Continue;
+    }
 
     // This function assumes that only enabled attachments are asked to be cleared.
     ASSERT((clearColorBuffers & mState.getEnabledDrawBuffers()) == clearColorBuffers);
@@ -620,7 +624,7 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
             }
             else
             {
-                redeferClears(contextVk);
+                restageDeferredClears(contextVk);
             }
         }
 
@@ -996,7 +1000,7 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
     RendererVk *renderer = contextVk->getRenderer();
     UtilsVk &utilsVk     = contextVk->getUtils();
 
-    // If any clears were picked up when syncing the read framebuffer (as the blit source), redefer
+    // If any clears were picked up when syncing the read framebuffer (as the blit source), restage
     // them.  They correspond to attachments that are not used in the blit.  This will cause the
     // read framebuffer to become dirty, so the attachments will be synced again on the next command
     // that might be using them.
@@ -1005,7 +1009,7 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
     FramebufferVk *srcFramebufferVk       = vk::GetImpl(srcFramebuffer);
     if (srcFramebufferVk->mDeferredClears.any())
     {
-        srcFramebufferVk->redeferClearsForReadFramebuffer(contextVk);
+        srcFramebufferVk->restageDeferredClearsForReadFramebuffer(contextVk);
     }
 
     // We can sometimes end up in a blit with some clear commands saved. Ensure all clear commands
@@ -1688,8 +1692,8 @@ angle::Result FramebufferVk::invalidateImpl(ContextVk *contextVk,
         }
     }
 
-    // If there are still deferred clears, redefer them.  See relevant comment in invalidateSub.
-    redeferClears(contextVk);
+    // If there are still deferred clears, restage them. See relevant comment in invalidateSub.
+    restageDeferredClears(contextVk);
 
     const auto &colorRenderTargets           = mRenderTargetCache.getColors();
     RenderTargetVk *depthStencilRenderTarget = mRenderTargetCache.getDepthStencil();
@@ -2596,23 +2600,23 @@ VkClearValue FramebufferVk::getCorrectedColorClearValue(size_t colorIndexGL,
     return clearValue;
 }
 
-void FramebufferVk::redeferClears(ContextVk *contextVk)
+void FramebufferVk::restageDeferredClears(ContextVk *contextVk)
 {
-    // Called when redeferring clears of the draw framebuffer.  In that case, there can't be any
+    // Called when restaging clears of the draw framebuffer.  In that case, there can't be any
     // render passes open, otherwise the clear would have applied to the render pass.  In the
     // exceptional occasion in blit where the read framebuffer accumulates deferred clears, it can
-    // be deferred while this assumption doesn't hold (and redeferClearsForReadFramebuffer should be
-    // used instead).
+    // be deferred while this assumption doesn't hold (and restageDeferredClearsForReadFramebuffer
+    // should be used instead).
     ASSERT(!contextVk->hasActiveRenderPass() || !mDeferredClears.any());
-    redeferClearsImpl(contextVk);
+    restageDeferredClearsImpl(contextVk);
 }
 
-void FramebufferVk::redeferClearsForReadFramebuffer(ContextVk *contextVk)
+void FramebufferVk::restageDeferredClearsForReadFramebuffer(ContextVk *contextVk)
 {
-    redeferClearsImpl(contextVk);
+    restageDeferredClearsImpl(contextVk);
 }
 
-void FramebufferVk::redeferClearsImpl(ContextVk *contextVk)
+void FramebufferVk::restageDeferredClearsImpl(ContextVk *contextVk)
 {
     // Set the appropriate aspect and clear values for depth and stencil.
     VkImageAspectFlags dsAspectFlags  = 0;

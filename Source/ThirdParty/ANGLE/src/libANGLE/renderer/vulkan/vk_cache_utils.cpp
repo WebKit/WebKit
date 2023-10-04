@@ -5130,7 +5130,7 @@ void WriteDescriptorDescs::updateShaderBuffers(
         const ShaderInterfaceVariableInfo &info =
             variableInfoMap.getVariableById(firstShaderType, block.getId(firstShaderType));
 
-        if (block.isArray && block.arrayElement > 0)
+        if (block.pod.isArray && block.pod.arrayElement > 0)
         {
             incrementDescriptorCount(info.binding, 1);
             mCurrentInfoIndex++;
@@ -5750,10 +5750,10 @@ void DescriptorSetDescBuilder::updateOneShaderBuffer(
         variableInfoMap.getVariableById(firstShaderType, block.getId(firstShaderType));
 
     uint32_t binding       = info.binding;
-    uint32_t arrayElement  = block.isArray ? block.arrayElement : 0;
+    uint32_t arrayElement  = block.pod.isArray ? block.pod.arrayElement : 0;
     uint32_t infoDescIndex = writeDescriptorDescs[binding].descriptorInfoIndex + arrayElement;
 
-    const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = buffers[block.binding];
+    const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = buffers[block.pod.binding];
     if (bufferBinding.get() == nullptr)
     {
         setEmptyBuffer(infoDescIndex, descriptorType, emptyBuffer);
@@ -5783,7 +5783,7 @@ void DescriptorSetDescBuilder::updateOneShaderBuffer(
     {
         ASSERT(descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER ||
                descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC);
-        if (block.isReadOnly)
+        if (block.pod.isReadOnly)
         {
             // Avoid unnecessary barriers for readonly SSBOs by making sure the buffers are
             // marked read-only.  This also helps BufferVk make better decisions during
@@ -5880,7 +5880,7 @@ void DescriptorSetDescBuilder::updateAtomicCounters(
 
     for (const gl::AtomicCounterBuffer &atomicCounterBuffer : atomicCounterBuffers)
     {
-        int arrayElement                                          = atomicCounterBuffer.binding;
+        int arrayElement                                          = atomicCounterBuffer.pod.binding;
         const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = buffers[arrayElement];
 
         uint32_t infoIndex = baseInfoIndex + arrayElement;

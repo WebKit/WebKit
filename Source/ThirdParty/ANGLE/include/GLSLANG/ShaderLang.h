@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 339
+#define ANGLE_SH_VERSION 341
 
 enum ShShaderSpec
 {
@@ -972,9 +972,10 @@ enum NonSemanticInstruction
     kNonSemanticOverview,
     // The instruction identifying the entry to the shader, i.e. at the start of main()
     kNonSemanticEnter,
-    // The instruction identifying where vertex data is output.  This is before return from main()
-    // in vertex and tessellation shaders, and before OpEmitVertex in geometry shaders.
-    kNonSemanticVertexOutput,
+    // The instruction identifying where vertex or fragment data is output.
+    // This is before return from main() in vertex, tessellation, and fragment shaders,
+    // and before OpEmitVertex in geometry shaders.
+    kNonSemanticOutput,
     // The instruction identifying the location where transform feedback emulation should be
     // written.
     kNonSemanticTransformFeedbackEmulation,

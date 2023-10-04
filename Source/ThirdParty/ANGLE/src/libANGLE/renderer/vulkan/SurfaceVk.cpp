@@ -603,8 +603,9 @@ angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(DisplayVk *display
     {
         flags |= VK_MEMORY_PROPERTY_PROTECTED_BIT;
     }
-    ANGLE_TRY(image.initMemory(displayVk, hasProtectedContent, renderer->getMemoryProperties(),
-                               flags, vk::MemoryAllocationType::OffscreenSurfaceAttachmentImage));
+    ANGLE_TRY(image.initMemoryAndNonZeroFillIfNeeded(
+        displayVk, hasProtectedContent, renderer->getMemoryProperties(), flags,
+        vk::MemoryAllocationType::OffscreenSurfaceAttachmentImage));
 
     imageViews.init(renderer);
 
@@ -1088,10 +1089,12 @@ void WindowSurfaceVk::destroy(const egl::Display *display)
     // has returned.
     if (mSurface)
     {
-        egl::Display::GetCurrentThreadUnlockedTailCall()->add([surface = mSurface, instance]() {
-            ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::destroy:vkDestroySurfaceKHR");
-            vkDestroySurfaceKHR(instance, surface, nullptr);
-        });
+        egl::Display::GetCurrentThreadUnlockedTailCall()->add(
+            [surface = mSurface, instance](void *resultOut) {
+                ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::destroy:vkDestroySurfaceKHR");
+                ANGLE_UNUSED_VARIABLE(resultOut);
+                vkDestroySurfaceKHR(instance, surface, nullptr);
+            });
         mSurface = VK_NULL_HANDLE;
     }
 }
@@ -1710,7 +1713,7 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         ANGLE_TRY(mColorImageMS.initMSAASwapchain(
             context, gl::TextureType::_2D, vkExtents, Is90DegreeRotation(getPreTransform()), format,
             samples, usage, gl::LevelIndex(0), 1, 1, robustInit, mState.hasProtectedContent()));
-        ANGLE_TRY(mColorImageMS.initMemory(
+        ANGLE_TRY(mColorImageMS.initMemoryAndNonZeroFillIfNeeded(
             context, mState.hasProtectedContent(), renderer->getMemoryProperties(),
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vk::MemoryAllocationType::SwapchainMSAAImage));
 
@@ -1744,7 +1747,7 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         ANGLE_TRY(mDepthStencilImage.init(context, gl::TextureType::_2D, vkExtents, dsFormat,
                                           samples, dsUsage, gl::LevelIndex(0), 1, 1, robustInit,
                                           mState.hasProtectedContent()));
-        ANGLE_TRY(mDepthStencilImage.initMemory(
+        ANGLE_TRY(mDepthStencilImage.initMemoryAndNonZeroFillIfNeeded(
             context, mState.hasProtectedContent(), renderer->getMemoryProperties(),
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             vk::MemoryAllocationType::SwapchainDepthStencilImage));
@@ -2000,8 +2003,10 @@ egl::Error WindowSurfaceVk::prepareSwap(const gl::Context *context)
     // calling it (likely the eglSwapBuffers call that follows)
 
     egl::Display::GetCurrentThreadUnlockedTailCall()->add(
-        [device = renderer->getDevice(), swapchain = mSwapchain, acquire = &mAcquireOperation]() {
+        [device = renderer->getDevice(), swapchain = mSwapchain,
+         acquire = &mAcquireOperation](void *resultOut) {
             ANGLE_TRACE_EVENT0("gpu.angle", "Acquire Swap Image Before Swap");
+            ANGLE_UNUSED_VARIABLE(resultOut);
             TryAcquireNextImageUnlocked(device, swapchain, acquire);
         });
 
@@ -2326,10 +2331,12 @@ angle::Result WindowSurfaceVk::throttleCPU(DisplayVk *displayVk,
         // As this is an unlocked tail call, it must not access anything else in RendererVk.  The
         // display passed to |finishQueueSerial| is a |vk::Context|, and the only possible
         // modification to it is through |handleError()|.
-        egl::Display::GetCurrentThreadUnlockedTailCall()->add([displayVk, swapSerial]() {
-            ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::throttleCPU");
-            (void)displayVk->getRenderer()->finishQueueSerial(displayVk, swapSerial);
-        });
+        egl::Display::GetCurrentThreadUnlockedTailCall()->add(
+            [displayVk, swapSerial](void *resultOut) {
+                ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::throttleCPU");
+                ANGLE_UNUSED_VARIABLE(resultOut);
+                (void)displayVk->getRenderer()->finishQueueSerial(displayVk, swapSerial);
+            });
     }
 
     return angle::Result::Continue;

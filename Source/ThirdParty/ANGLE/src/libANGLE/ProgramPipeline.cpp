@@ -54,7 +54,8 @@ void ProgramPipelineState::activeShaderProgram(Program *shaderProgram)
 void ProgramPipelineState::useProgramStage(const Context *context,
                                            const ShaderType shaderType,
                                            Program *shaderProgram,
-                                           angle::ObserverBinding *programObserverBindings)
+                                           angle::ObserverBinding *programObserverBinding,
+                                           angle::ObserverBinding *programExecutableObserverBinding)
 {
     Program *oldProgram = mPrograms[shaderType];
     if (oldProgram)
@@ -86,20 +87,22 @@ void ProgramPipelineState::useProgramStage(const Context *context,
         UninstallExecutable(context, &mProgramExecutables[shaderType]);
     }
 
-    Program *program = mPrograms[shaderType];
-    programObserverBindings->bind(program);
+    programObserverBinding->bind(mPrograms[shaderType]);
+    programExecutableObserverBinding->bind(mProgramExecutables[shaderType].get());
 }
 
 void ProgramPipelineState::useProgramStages(
     const Context *context,
     const ShaderBitSet &shaderTypes,
     Program *shaderProgram,
-    std::vector<angle::ObserverBinding> *programObserverBindings)
+    std::vector<angle::ObserverBinding> *programObserverBindings,
+    std::vector<angle::ObserverBinding> *programExecutableObserverBindings)
 {
     for (ShaderType shaderType : shaderTypes)
     {
         useProgramStage(context, shaderType, shaderProgram,
-                        &programObserverBindings->at(static_cast<size_t>(shaderType)));
+                        &programObserverBindings->at(static_cast<size_t>(shaderType)),
+                        &programExecutableObserverBindings->at(static_cast<size_t>(shaderType)));
     }
 }
 
@@ -140,7 +143,7 @@ void ProgramPipelineState::updateExecutableSpecConstUsageBits()
         ASSERT(programExecutable);
         specConstUsageBits |= programExecutable->getSpecConstUsageBits();
     }
-    mExecutable->mPODStruct.specConstUsageBits = specConstUsageBits;
+    mExecutable->mPod.specConstUsageBits = specConstUsageBits;
 }
 
 ProgramPipeline::ProgramPipeline(rx::GLImplFactory *factory, ProgramPipelineID handle)
@@ -154,6 +157,8 @@ ProgramPipeline::ProgramPipeline(rx::GLImplFactory *factory, ProgramPipelineID h
     for (const ShaderType shaderType : AllShaderTypes())
     {
         mProgramObserverBindings.emplace_back(this, static_cast<angle::SubjectIndex>(shaderType));
+        mProgramExecutableObserverBindings.emplace_back(
+            this, static_cast<angle::SubjectIndex>(shaderType));
     }
     mExecutableObserverBinding.bind(mState.mExecutable.get());
 }
@@ -263,7 +268,8 @@ angle::Result ProgramPipeline::useProgramStages(const Context *context,
         return angle::Result::Continue;
     }
 
-    mState.useProgramStages(context, shaderTypes, shaderProgram, &mProgramObserverBindings);
+    mState.useProgramStages(context, shaderTypes, shaderProgram, &mProgramObserverBindings,
+                            &mProgramExecutableObserverBindings);
 
     mState.mIsLinked = false;
     onStateChange(angle::SubjectMessage::ProgramUnlinked);
@@ -296,21 +302,18 @@ void ProgramPipeline::updateExecutableAttributes()
         return;
     }
 
-    mState.mExecutable->mPODStruct.activeAttribLocationsMask =
-        vertexExecutable->mPODStruct.activeAttribLocationsMask;
-    mState.mExecutable->mPODStruct.maxActiveAttribLocation =
-        vertexExecutable->mPODStruct.maxActiveAttribLocation;
-    mState.mExecutable->mPODStruct.attributesTypeMask =
-        vertexExecutable->mPODStruct.attributesTypeMask;
-    mState.mExecutable->mPODStruct.attributesMask = vertexExecutable->mPODStruct.attributesMask;
-    mState.mExecutable->mProgramInputs            = vertexExecutable->mProgramInputs;
+    mState.mExecutable->mPod.activeAttribLocationsMask =
+        vertexExecutable->mPod.activeAttribLocationsMask;
+    mState.mExecutable->mPod.maxActiveAttribLocation =
+        vertexExecutable->mPod.maxActiveAttribLocation;
+    mState.mExecutable->mPod.attributesTypeMask = vertexExecutable->mPod.attributesTypeMask;
+    mState.mExecutable->mPod.attributesMask     = vertexExecutable->mPod.attributesMask;
+    mState.mExecutable->mProgramInputs          = vertexExecutable->mProgramInputs;
 
-    mState.mExecutable->mPODStruct.numViews       = vertexExecutable->mPODStruct.numViews;
-    mState.mExecutable->mPODStruct.drawIDLocation = vertexExecutable->mPODStruct.drawIDLocation;
-    mState.mExecutable->mPODStruct.baseVertexLocation =
-        vertexExecutable->mPODStruct.baseVertexLocation;
-    mState.mExecutable->mPODStruct.baseInstanceLocation =
-        vertexExecutable->mPODStruct.baseInstanceLocation;
+    mState.mExecutable->mPod.numViews             = vertexExecutable->mPod.numViews;
+    mState.mExecutable->mPod.drawIDLocation       = vertexExecutable->mPod.drawIDLocation;
+    mState.mExecutable->mPod.baseVertexLocation   = vertexExecutable->mPod.baseVertexLocation;
+    mState.mExecutable->mPod.baseInstanceLocation = vertexExecutable->mPod.baseInstanceLocation;
 }
 
 void ProgramPipeline::updateTransformFeedbackMembers()
@@ -393,14 +396,14 @@ void ProgramPipeline::updateExecutableGeometryProperties()
         return;
     }
 
-    mState.mExecutable->mPODStruct.geometryShaderInputPrimitiveType =
-        geometryExecutable->mPODStruct.geometryShaderInputPrimitiveType;
-    mState.mExecutable->mPODStruct.geometryShaderOutputPrimitiveType =
-        geometryExecutable->mPODStruct.geometryShaderOutputPrimitiveType;
-    mState.mExecutable->mPODStruct.geometryShaderInvocations =
-        geometryExecutable->mPODStruct.geometryShaderInvocations;
-    mState.mExecutable->mPODStruct.geometryShaderMaxVertices =
-        geometryExecutable->mPODStruct.geometryShaderMaxVertices;
+    mState.mExecutable->mPod.geometryShaderInputPrimitiveType =
+        geometryExecutable->mPod.geometryShaderInputPrimitiveType;
+    mState.mExecutable->mPod.geometryShaderOutputPrimitiveType =
+        geometryExecutable->mPod.geometryShaderOutputPrimitiveType;
+    mState.mExecutable->mPod.geometryShaderInvocations =
+        geometryExecutable->mPod.geometryShaderInvocations;
+    mState.mExecutable->mPod.geometryShaderMaxVertices =
+        geometryExecutable->mPod.geometryShaderMaxVertices;
 }
 
 void ProgramPipeline::updateExecutableTessellationProperties()
@@ -412,19 +415,16 @@ void ProgramPipeline::updateExecutableTessellationProperties()
 
     if (tessControlExecutable)
     {
-        mState.mExecutable->mPODStruct.tessControlShaderVertices =
-            tessControlExecutable->mPODStruct.tessControlShaderVertices;
+        mState.mExecutable->mPod.tessControlShaderVertices =
+            tessControlExecutable->mPod.tessControlShaderVertices;
     }
 
     if (tessEvalExecutable)
     {
-        mState.mExecutable->mPODStruct.tessGenMode = tessEvalExecutable->mPODStruct.tessGenMode;
-        mState.mExecutable->mPODStruct.tessGenSpacing =
-            tessEvalExecutable->mPODStruct.tessGenSpacing;
-        mState.mExecutable->mPODStruct.tessGenVertexOrder =
-            tessEvalExecutable->mPODStruct.tessGenVertexOrder;
-        mState.mExecutable->mPODStruct.tessGenPointMode =
-            tessEvalExecutable->mPODStruct.tessGenPointMode;
+        mState.mExecutable->mPod.tessGenMode        = tessEvalExecutable->mPod.tessGenMode;
+        mState.mExecutable->mPod.tessGenSpacing     = tessEvalExecutable->mPod.tessGenSpacing;
+        mState.mExecutable->mPod.tessGenVertexOrder = tessEvalExecutable->mPod.tessGenVertexOrder;
+        mState.mExecutable->mPod.tessGenPointMode   = tessEvalExecutable->mPod.tessGenPointMode;
     }
 }
 
@@ -438,11 +438,10 @@ void ProgramPipeline::updateFragmentInoutRangeAndEnablesPerSampleShading()
         return;
     }
 
-    mState.mExecutable->mPODStruct.fragmentInoutRange =
-        fragmentExecutable->mPODStruct.fragmentInoutRange;
-    mState.mExecutable->mPODStruct.hasDiscard = fragmentExecutable->mPODStruct.hasDiscard;
-    mState.mExecutable->mPODStruct.enablesPerSampleShading =
-        fragmentExecutable->mPODStruct.enablesPerSampleShading;
+    mState.mExecutable->mPod.fragmentInoutRange = fragmentExecutable->mPod.fragmentInoutRange;
+    mState.mExecutable->mPod.hasDiscard         = fragmentExecutable->mPod.hasDiscard;
+    mState.mExecutable->mPod.enablesPerSampleShading =
+        fragmentExecutable->mPod.enablesPerSampleShading;
 }
 
 void ProgramPipeline::updateLinkedVaryings()
@@ -556,9 +555,10 @@ angle::Result ProgramPipeline::link(const Context *context)
             // We should also be validating SSBO and image uniform counts.
             const GLuint combinedImageUniforms       = 0;
             const GLuint combinedShaderStorageBlocks = 0;
+            ASSERT(mState.mExecutable->mOutputVariables.empty());
+            mState.mExecutable->mOutputVariables = fragmentExecutable->getOutputVariables();
             if (!mState.mExecutable->linkValidateOutputVariables(
                     caps, clientVersion, combinedImageUniforms, combinedShaderStorageBlocks,
-                    fragmentExecutable->getOutputVariables(),
                     fragmentExecutable->getLinkedShaderVersion(ShaderType::Fragment),
                     ProgramAliasedBindings(), ProgramAliasedBindings()))
             {
@@ -591,7 +591,7 @@ angle::Result ProgramPipeline::link(const Context *context)
             (*tfExecutable)->mTransformFeedbackVaryingNames;
 
         if (!mState.mExecutable->linkMergedVaryings(caps, limitations, clientVersion, isWebGL,
-                                                    mergedVaryings, linkingVariables, false,
+                                                    mergedVaryings, linkingVariables,
                                                     &varyingPacking))
         {
             return angle::Result::Stop;

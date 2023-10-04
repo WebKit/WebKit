@@ -411,6 +411,10 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
     {
         return isFeatureEnabled(Feature::SupportsImagelessFramebuffer);
     }
+    bool hasSupportsHostImageCopy() const
+    {
+        return isFeatureEnabled(Feature::SupportsHostImageCopy);
+    }
 
     CounterNameToIndexMap mIndexMap;
 };
@@ -637,6 +641,10 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotCollec
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 
+    // If VK_EXT_host_image_copy is used, uploads will all be done on the CPU and there would be no
+    // submissions.
+    ANGLE_SKIP_TEST_IF(hasSupportsHostImageCopy());
+
     uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
     uint64_t submitCommandsCount     = getPerfCounters().vkQueueSubmitCallsTotal;
 
@@ -727,6 +735,10 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotCollec
 // endRenderPass works correctly.
 TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferTriggersEndRenderPass)
 {
+    // If VK_EXT_host_image_copy is used, uploads will all be done on the CPU and there would be no
+    // submissions.
+    ANGLE_SKIP_TEST_IF(hasSupportsHostImageCopy());
+
     const int width                  = getWindowWidth();
     const int height                 = getWindowHeight();
     uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
@@ -7572,6 +7584,10 @@ class VulkanPerformanceCounterTest_AsyncCQ : public VulkanPerformanceCounterTest
 // "asyncCommandQueue" enabled, properly updates old command buffer with the new one.
 TEST_P(VulkanPerformanceCounterTest_AsyncCQ, SubmittingOutsideCommandBufferAssertIsOpen)
 {
+    // If VK_EXT_host_image_copy is used, uploads will all be done on the CPU and there would be no
+    // submissions.
+    ANGLE_SKIP_TEST_IF(hasSupportsHostImageCopy());
+
     uint64_t submitCommandsCount = getPerfCounters().vkQueueSubmitCallsTotal;
 
     ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),

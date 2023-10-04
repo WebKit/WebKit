@@ -706,7 +706,7 @@ GLint GetCommonVariableProperty(const T &var, GLenum prop)
     switch (prop)
     {
         case GL_TYPE:
-            return clampCast<GLint>(var.type);
+            return clampCast<GLint>(var.pod.type);
 
         case GL_ARRAY_SIZE:
             // Queryable variables are guaranteed not to be arrays of arrays or arrays of structs,
@@ -725,7 +725,8 @@ GLint GetCommonVariableProperty(const T &var, GLenum prop)
 
 GLint GetInputResourceProperty(const Program *program, GLuint index, GLenum prop)
 {
-    const ProgramInput &variable = program->getInputResource(index);
+    const ProgramExecutable &executable = program->getExecutable();
+    const ProgramInput &variable        = executable.getInputResource(index);
 
     switch (prop)
     {
@@ -735,7 +736,7 @@ GLint GetInputResourceProperty(const Program *program, GLuint index, GLenum prop
             return clampCast<GLint>(variable.getBasicTypeElementCount());
 
         case GL_NAME_LENGTH:
-            return clampCast<GLint>(program->getInputResourceName(index).size() + 1u);
+            return clampCast<GLint>(executable.getInputResourceName(index).size() + 1u);
 
         case GL_LOCATION:
             return variable.isBuiltIn() ? GL_INVALID_INDEX : variable.getLocation();
@@ -745,18 +746,17 @@ GLint GetInputResourceProperty(const Program *program, GLuint index, GLenum prop
         // stage other than the first will not be enumerated. Since we found the variable to get
         // this far, we know it exists in the first attached shader stage.
         case GL_REFERENCED_BY_VERTEX_SHADER:
-            return program->getState().getFirstAttachedShaderStageType() == ShaderType::Vertex;
+            return executable.getFirstLinkedShaderStageType() == ShaderType::Vertex;
         case GL_REFERENCED_BY_FRAGMENT_SHADER:
-            return program->getState().getFirstAttachedShaderStageType() == ShaderType::Fragment;
+            return executable.getFirstLinkedShaderStageType() == ShaderType::Fragment;
         case GL_REFERENCED_BY_COMPUTE_SHADER:
-            return program->getState().getFirstAttachedShaderStageType() == ShaderType::Compute;
+            return executable.getFirstLinkedShaderStageType() == ShaderType::Compute;
         case GL_REFERENCED_BY_GEOMETRY_SHADER_EXT:
-            return program->getState().getFirstAttachedShaderStageType() == ShaderType::Geometry;
+            return executable.getFirstLinkedShaderStageType() == ShaderType::Geometry;
         case GL_REFERENCED_BY_TESS_CONTROL_SHADER_EXT:
-            return program->getState().getFirstAttachedShaderStageType() == ShaderType::TessControl;
+            return executable.getFirstLinkedShaderStageType() == ShaderType::TessControl;
         case GL_REFERENCED_BY_TESS_EVALUATION_SHADER_EXT:
-            return program->getState().getFirstAttachedShaderStageType() ==
-                   ShaderType::TessEvaluation;
+            return executable.getFirstLinkedShaderStageType() == ShaderType::TessEvaluation;
         case GL_IS_PER_PATCH_EXT:
             return variable.isPatch();
 
@@ -768,25 +768,27 @@ GLint GetInputResourceProperty(const Program *program, GLuint index, GLenum prop
 
 GLint GetOutputResourceProperty(const Program *program, GLuint index, const GLenum prop)
 {
-    const sh::ShaderVariable &outputVariable = program->getOutputResource(index);
+    const ProgramExecutable &executable = program->getExecutable();
+    const ProgramOutput &outputVariable = executable.getOutputResource(index);
 
     switch (prop)
     {
         case GL_TYPE:
+            return clampCast<GLint>(outputVariable.pod.type);
         case GL_ARRAY_SIZE:
-            return GetCommonVariableProperty(outputVariable, prop);
+            return clampCast<GLint>(outputVariable.pod.basicTypeElementCount);
 
         case GL_NAME_LENGTH:
-            return clampCast<GLint>(program->getOutputResourceName(index).size() + 1u);
+            return clampCast<GLint>(executable.getOutputResourceName(index).size() + 1u);
 
         case GL_LOCATION:
-            return outputVariable.location;
+            return outputVariable.pod.location;
 
         case GL_LOCATION_INDEX_EXT:
             // EXT_blend_func_extended
-            if (program->getState().getLastAttachedShaderStageType() == gl::ShaderType::Fragment)
+            if (executable.getLastLinkedShaderStageType() == gl::ShaderType::Fragment)
             {
-                return program->getFragDataIndex(outputVariable.name);
+                return executable.getFragDataIndex(outputVariable.name);
             }
             return GL_INVALID_INDEX;
 
@@ -795,20 +797,19 @@ GLint GetOutputResourceProperty(const Program *program, GLuint index, const GLen
         // written to individual color buffers. If the program only contains a Compute Shader, then
         // there are no user-defined outputs.
         case GL_REFERENCED_BY_VERTEX_SHADER:
-            return program->getState().getLastAttachedShaderStageType() == ShaderType::Vertex;
+            return executable.getLastLinkedShaderStageType() == ShaderType::Vertex;
         case GL_REFERENCED_BY_FRAGMENT_SHADER:
-            return program->getState().getLastAttachedShaderStageType() == ShaderType::Fragment;
+            return executable.getLastLinkedShaderStageType() == ShaderType::Fragment;
         case GL_REFERENCED_BY_COMPUTE_SHADER:
-            return program->getState().getLastAttachedShaderStageType() == ShaderType::Compute;
+            return executable.getLastLinkedShaderStageType() == ShaderType::Compute;
         case GL_REFERENCED_BY_GEOMETRY_SHADER_EXT:
-            return program->getState().getLastAttachedShaderStageType() == ShaderType::Geometry;
+            return executable.getLastLinkedShaderStageType() == ShaderType::Geometry;
         case GL_REFERENCED_BY_TESS_CONTROL_SHADER_EXT:
-            return program->getState().getLastAttachedShaderStageType() == ShaderType::TessControl;
+            return executable.getLastLinkedShaderStageType() == ShaderType::TessControl;
         case GL_REFERENCED_BY_TESS_EVALUATION_SHADER_EXT:
-            return program->getState().getLastAttachedShaderStageType() ==
-                   ShaderType::TessEvaluation;
+            return executable.getLastLinkedShaderStageType() == ShaderType::TessEvaluation;
         case GL_IS_PER_PATCH_EXT:
-            return outputVariable.isPatch;
+            return outputVariable.pod.isPatch;
 
         default:
             UNREACHABLE();
@@ -820,7 +821,9 @@ GLint GetTransformFeedbackVaryingResourceProperty(const Program *program,
                                                   GLuint index,
                                                   const GLenum prop)
 {
-    const auto &tfVariable = program->getTransformFeedbackVaryingResource(index);
+    const ProgramExecutable &executable = program->getExecutable();
+    const TransformFeedbackVarying &tfVariable =
+        executable.getTransformFeedbackVaryingResource(index);
     switch (prop)
     {
         case GL_TYPE:
@@ -840,31 +843,32 @@ GLint GetTransformFeedbackVaryingResourceProperty(const Program *program,
 
 GLint QueryProgramInterfaceActiveResources(const Program *program, GLenum programInterface)
 {
+    const ProgramExecutable &executable = program->getExecutable();
     switch (programInterface)
     {
         case GL_PROGRAM_INPUT:
-            return clampCast<GLint>(program->getState().getProgramInputs().size());
+            return clampCast<GLint>(executable.getProgramInputs().size());
 
         case GL_PROGRAM_OUTPUT:
-            return clampCast<GLint>(program->getState().getOutputVariables().size());
+            return clampCast<GLint>(executable.getOutputVariables().size());
 
         case GL_UNIFORM:
-            return clampCast<GLint>(program->getState().getUniforms().size());
+            return clampCast<GLint>(executable.getUniforms().size());
 
         case GL_UNIFORM_BLOCK:
-            return clampCast<GLint>(program->getState().getUniformBlocks().size());
+            return clampCast<GLint>(executable.getUniformBlocks().size());
 
         case GL_ATOMIC_COUNTER_BUFFER:
-            return clampCast<GLint>(program->getState().getAtomicCounterBuffers().size());
+            return clampCast<GLint>(executable.getAtomicCounterBuffers().size());
 
         case GL_BUFFER_VARIABLE:
-            return clampCast<GLint>(program->getState().getBufferVariables().size());
+            return clampCast<GLint>(executable.getBufferVariables().size());
 
         case GL_SHADER_STORAGE_BLOCK:
-            return clampCast<GLint>(program->getState().getShaderStorageBlocks().size());
+            return clampCast<GLint>(executable.getShaderStorageBlocks().size());
 
         case GL_TRANSFORM_FEEDBACK_VARYING:
-            return clampCast<GLint>(program->getTransformFeedbackVaryingCount());
+            return clampCast<GLint>(executable.getLinkedTransformFeedbackVaryings().size());
 
         default:
             UNREACHABLE();
@@ -895,34 +899,35 @@ GLint FindMaxNameLength(const std::vector<std::string> &names)
 
 GLint QueryProgramInterfaceMaxNameLength(const Program *program, GLenum programInterface)
 {
+    const ProgramExecutable &executable = program->getExecutable();
+
     GLint maxNameLength = 0;
     switch (programInterface)
     {
         case GL_PROGRAM_INPUT:
-            maxNameLength = program->getInputResourceMaxNameSize();
+            maxNameLength = executable.getInputResourceMaxNameSize();
             break;
 
         case GL_PROGRAM_OUTPUT:
-            maxNameLength = program->getOutputResourceMaxNameSize();
+            maxNameLength = executable.getOutputResourceMaxNameSize();
             break;
 
         case GL_UNIFORM:
-            maxNameLength = FindMaxNameLength(program->getState().getUniformNames());
+            maxNameLength = FindMaxNameLength(executable.getUniformNames());
             break;
 
         case GL_UNIFORM_BLOCK:
-            return program->getActiveUniformBlockMaxNameLength();
+            return executable.getActiveUniformBlockMaxNameLength();
 
         case GL_BUFFER_VARIABLE:
-            maxNameLength =
-                FindMaxSize(program->getState().getBufferVariables(), &BufferVariable::name);
+            maxNameLength = FindMaxSize(executable.getBufferVariables(), &BufferVariable::name);
             break;
 
         case GL_SHADER_STORAGE_BLOCK:
-            return program->getActiveShaderStorageBlockMaxNameLength();
+            return executable.getActiveShaderStorageBlockMaxNameLength();
 
         case GL_TRANSFORM_FEEDBACK_VARYING:
-            return clampCast<GLint>(program->getTransformFeedbackVaryingMaxLength());
+            return clampCast<GLint>(executable.getTransformFeedbackVaryingMaxLength());
 
         default:
             UNREACHABLE();
@@ -934,18 +939,18 @@ GLint QueryProgramInterfaceMaxNameLength(const Program *program, GLenum programI
 
 GLint QueryProgramInterfaceMaxNumActiveVariables(const Program *program, GLenum programInterface)
 {
+    const ProgramExecutable &executable = program->getExecutable();
+
     switch (programInterface)
     {
         case GL_UNIFORM_BLOCK:
-            return FindMaxSize(program->getState().getUniformBlocks(),
-                               &InterfaceBlock::memberIndexes);
+            return FindMaxSize(executable.getUniformBlocks(), &InterfaceBlock::memberIndexes);
         case GL_ATOMIC_COUNTER_BUFFER:
-            return FindMaxSize(program->getState().getAtomicCounterBuffers(),
+            return FindMaxSize(executable.getAtomicCounterBuffers(),
                                &AtomicCounterBuffer::memberIndexes);
 
         case GL_SHADER_STORAGE_BLOCK:
-            return FindMaxSize(program->getState().getShaderStorageBlocks(),
-                               &InterfaceBlock::memberIndexes);
+            return FindMaxSize(executable.getShaderStorageBlocks(), &InterfaceBlock::memberIndexes);
 
         default:
             UNREACHABLE();
@@ -1009,7 +1014,8 @@ GLenum GetUniformBlockPropertyEnum(GLenum prop)
     }
 }
 
-void GetShaderVariableBufferResourceProperty(const ShaderVariableBuffer &buffer,
+template <typename ShaderVariableT>
+void GetShaderVariableBufferResourceProperty(const ShaderVariableT &buffer,
                                              GLenum pname,
                                              GLint *params,
                                              GLsizei bufSize,
@@ -1019,10 +1025,10 @@ void GetShaderVariableBufferResourceProperty(const ShaderVariableBuffer &buffer,
     switch (pname)
     {
         case GL_BUFFER_BINDING:
-            params[(*outputPosition)++] = buffer.binding;
+            params[(*outputPosition)++] = buffer.pod.binding;
             break;
         case GL_BUFFER_DATA_SIZE:
-            params[(*outputPosition)++] = clampCast<GLint>(buffer.dataSize);
+            params[(*outputPosition)++] = clampCast<GLint>(buffer.pod.dataSize);
             break;
         case GL_NUM_ACTIVE_VARIABLES:
             params[(*outputPosition)++] = buffer.numActiveVariables();
@@ -1084,7 +1090,7 @@ void GetUniformBlockResourceProperty(const Program *program,
 
 {
     ASSERT(*outputPosition < bufSize);
-    const auto &block = program->getUniformBlockByIndex(blockIndex);
+    const auto &block = program->getExecutable().getUniformBlockByIndex(blockIndex);
     GetInterfaceBlockResourceProperty(block, pname, params, bufSize, outputPosition);
 }
 
@@ -1097,7 +1103,7 @@ void GetShaderStorageBlockResourceProperty(const Program *program,
 
 {
     ASSERT(*outputPosition < bufSize);
-    const auto &block = program->getShaderStorageBlockByIndex(blockIndex);
+    const auto &block = program->getExecutable().getShaderStorageBlockByIndex(blockIndex);
     GetInterfaceBlockResourceProperty(block, pname, params, bufSize, outputPosition);
 }
 
@@ -1110,7 +1116,7 @@ void GetAtomicCounterBufferResourceProperty(const Program *program,
 
 {
     ASSERT(*outputPosition < bufSize);
-    const auto &buffer = program->getState().getAtomicCounterBuffers()[index];
+    const auto &buffer = program->getExecutable().getAtomicCounterBuffers()[index];
     GetShaderVariableBufferResourceProperty(buffer, pname, params, bufSize, outputPosition);
 }
 
@@ -1344,16 +1350,16 @@ void QueryProgramiv(Context *context, const Program *program, GLenum pname, GLin
             *params = program->getAttachedShadersCount();
             return;
         case GL_ACTIVE_ATTRIBUTES:
-            *params = program->getActiveAttributeCount();
+            *params = static_cast<GLint>(program->getExecutable().getProgramInputs().size());
             return;
         case GL_ACTIVE_ATTRIBUTE_MAX_LENGTH:
-            *params = program->getActiveAttributeMaxLength();
+            *params = program->getExecutable().getActiveAttributeMaxLength();
             return;
         case GL_ACTIVE_UNIFORMS:
-            *params = program->getActiveUniformCount();
+            *params = static_cast<GLint>(program->getExecutable().getUniforms().size());
             return;
         case GL_ACTIVE_UNIFORM_MAX_LENGTH:
-            *params = program->getActiveUniformMaxLength();
+            *params = program->getExecutable().getActiveUniformMaxLength();
             return;
         case GL_PROGRAM_BINARY_LENGTH_OES:
             *params = context->getCaps().programBinaryFormats.empty()
@@ -1361,19 +1367,20 @@ void QueryProgramiv(Context *context, const Program *program, GLenum pname, GLin
                           : program->getBinaryLength(context);
             return;
         case GL_ACTIVE_UNIFORM_BLOCKS:
-            *params = program->getActiveUniformBlockCount();
+            *params = static_cast<GLint>(program->getExecutable().getUniformBlocks().size());
             return;
         case GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH:
-            *params = program->getActiveUniformBlockMaxNameLength();
+            *params = program->getExecutable().getActiveUniformBlockMaxNameLength();
             break;
         case GL_TRANSFORM_FEEDBACK_BUFFER_MODE:
-            *params = program->getTransformFeedbackBufferMode();
+            *params = program->getExecutable().getTransformFeedbackBufferMode();
             break;
         case GL_TRANSFORM_FEEDBACK_VARYINGS:
-            *params = clampCast<GLint>(program->getTransformFeedbackVaryingCount());
+            *params = clampCast<GLint>(
+                program->getExecutable().getLinkedTransformFeedbackVaryings().size());
             break;
         case GL_TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH:
-            *params = program->getTransformFeedbackVaryingMaxLength();
+            *params = program->getExecutable().getTransformFeedbackVaryingMaxLength();
             break;
         case GL_PROGRAM_BINARY_RETRIEVABLE_HINT:
             *params = program->getBinaryRetrievableHint();
@@ -1390,41 +1397,46 @@ void QueryProgramiv(Context *context, const Program *program, GLenum pname, GLin
             break;
         case GL_COMPUTE_WORK_GROUP_SIZE:
         {
-            const sh::WorkGroupSize &localSize = program->getComputeShaderLocalSize();
-            params[0]                          = localSize[0];
-            params[1]                          = localSize[1];
-            params[2]                          = localSize[2];
+            const sh::WorkGroupSize &localSize =
+                program->getExecutable().getComputeShaderLocalSize();
+            params[0] = localSize[0];
+            params[1] = localSize[1];
+            params[2] = localSize[2];
         }
         break;
         case GL_ACTIVE_ATOMIC_COUNTER_BUFFERS:
-            *params = program->getActiveAtomicCounterBufferCount();
+            *params = static_cast<GLint>(program->getExecutable().getAtomicCounterBuffers().size());
             break;
         case GL_GEOMETRY_LINKED_INPUT_TYPE_EXT:
-            *params = ToGLenum(program->getGeometryShaderInputPrimitiveType());
+            *params = ToGLenum(program->getExecutable().getGeometryShaderInputPrimitiveType());
             break;
         case GL_GEOMETRY_LINKED_OUTPUT_TYPE_EXT:
-            *params = ToGLenum(program->getGeometryShaderOutputPrimitiveType());
+            *params = ToGLenum(program->getExecutable().getGeometryShaderOutputPrimitiveType());
             break;
         case GL_GEOMETRY_LINKED_VERTICES_OUT_EXT:
-            *params = program->getGeometryShaderMaxVertices();
+            *params = program->getExecutable().getGeometryShaderMaxVertices();
             break;
         case GL_GEOMETRY_SHADER_INVOCATIONS_EXT:
-            *params = program->getGeometryShaderInvocations();
+            *params = program->getExecutable().getGeometryShaderInvocations();
             break;
         case GL_TESS_CONTROL_OUTPUT_VERTICES_EXT:
-            *params = program->getTessControlShaderVertices();
+            *params = program->getExecutable().getTessControlShaderVertices();
             break;
         case GL_TESS_GEN_MODE_EXT:
-            *params = program->getTessGenMode();
+            *params = program->getExecutable().getTessGenMode();
             break;
         case GL_TESS_GEN_SPACING_EXT:
-            *params = program->getTessGenSpacing() ? program->getTessGenSpacing() : GL_EQUAL;
+            *params = program->getExecutable().getTessGenSpacing()
+                          ? program->getExecutable().getTessGenSpacing()
+                          : GL_EQUAL;
             break;
         case GL_TESS_GEN_VERTEX_ORDER:
-            *params = program->getTessGenVertexOrder() ? program->getTessGenVertexOrder() : GL_CCW;
+            *params = program->getExecutable().getTessGenVertexOrder()
+                          ? program->getExecutable().getTessGenVertexOrder()
+                          : GL_CCW;
             break;
         case GL_TESS_GEN_POINT_MODE_EXT:
-            *params = program->getTessGenPointMode() ? GL_TRUE : GL_FALSE;
+            *params = program->getExecutable().getTessGenPointMode() ? GL_TRUE : GL_FALSE;
             break;
         default:
             UNREACHABLE();
@@ -1912,7 +1924,9 @@ void SetProgramParameteri(Program *program, GLenum pname, GLint value)
 
 GLint GetUniformResourceProperty(const Program *program, GLuint index, const GLenum prop)
 {
-    const auto &uniform = program->getUniformByIndex(index);
+    const ProgramExecutable &executable = program->getExecutable();
+    const LinkedUniform &uniform        = executable.getUniformByIndex(index);
+
     GLenum resourceProp = GetUniformPropertyEnum(prop);
     switch (resourceProp)
     {
@@ -1923,25 +1937,25 @@ GLint GetUniformResourceProperty(const Program *program, GLuint index, const GLe
             return clampCast<GLint>(uniform.getBasicTypeElementCount());
 
         case GL_NAME_LENGTH:
-            return clampCast<GLint>(program->getUniformNameByIndex(index).size() + 1u);
+            return clampCast<GLint>(executable.getUniformNameByIndex(index).size() + 1u);
 
         case GL_LOCATION:
-            return program->getUniformLocation(program->getUniformNameByIndex(index)).value;
+            return executable.getUniformLocation(executable.getUniformNameByIndex(index)).value;
 
         case GL_BLOCK_INDEX:
             return (uniform.isAtomicCounter() ? -1 : uniform.getBufferIndex());
 
         case GL_OFFSET:
-            return uniform.flagBits.isBlock ? uniform.blockOffset : -1;
+            return uniform.pod.flagBits.isBlock ? uniform.pod.blockOffset : -1;
 
         case GL_ARRAY_STRIDE:
-            return uniform.flagBits.isBlock ? uniform.blockArrayStride : -1;
+            return uniform.pod.flagBits.isBlock ? uniform.pod.blockArrayStride : -1;
 
         case GL_MATRIX_STRIDE:
-            return uniform.flagBits.isBlock ? uniform.blockMatrixStride : -1;
+            return uniform.pod.flagBits.isBlock ? uniform.pod.blockMatrixStride : -1;
 
         case GL_IS_ROW_MAJOR:
-            return uniform.flagBits.blockIsRowMajorMatrix ? 1 : 0;
+            return uniform.pod.flagBits.blockIsRowMajorMatrix ? 1 : 0;
 
         case GL_REFERENCED_BY_VERTEX_SHADER:
             return uniform.isActive(ShaderType::Vertex);
@@ -1972,7 +1986,9 @@ GLint GetUniformResourceProperty(const Program *program, GLuint index, const GLe
 
 GLint GetBufferVariableResourceProperty(const Program *program, GLuint index, const GLenum prop)
 {
-    const BufferVariable &bufferVariable = program->getBufferVariableByIndex(index);
+    const ProgramExecutable &executable  = program->getExecutable();
+    const BufferVariable &bufferVariable = executable.getBufferVariableByIndex(index);
+
     switch (prop)
     {
         case GL_TYPE:
@@ -1981,19 +1997,19 @@ GLint GetBufferVariableResourceProperty(const Program *program, GLuint index, co
             return GetCommonVariableProperty(bufferVariable, prop);
 
         case GL_BLOCK_INDEX:
-            return bufferVariable.bufferIndex;
+            return bufferVariable.pod.bufferIndex;
 
         case GL_OFFSET:
-            return bufferVariable.blockInfo.offset;
+            return bufferVariable.pod.blockInfo.offset;
 
         case GL_ARRAY_STRIDE:
-            return bufferVariable.blockInfo.arrayStride;
+            return bufferVariable.pod.blockInfo.arrayStride;
 
         case GL_MATRIX_STRIDE:
-            return bufferVariable.blockInfo.matrixStride;
+            return bufferVariable.pod.blockInfo.matrixStride;
 
         case GL_IS_ROW_MAJOR:
-            return static_cast<GLint>(bufferVariable.blockInfo.isRowMajorMatrix);
+            return static_cast<GLint>(bufferVariable.pod.blockInfo.isRowMajorMatrix);
 
         case GL_REFERENCED_BY_VERTEX_SHADER:
             return bufferVariable.isActive(ShaderType::Vertex);
@@ -2014,10 +2030,10 @@ GLint GetBufferVariableResourceProperty(const Program *program, GLuint index, co
             return bufferVariable.isActive(ShaderType::TessEvaluation);
 
         case GL_TOP_LEVEL_ARRAY_SIZE:
-            return bufferVariable.topLevelArraySize;
+            return bufferVariable.pod.topLevelArraySize;
 
         case GL_TOP_LEVEL_ARRAY_STRIDE:
-            return bufferVariable.blockInfo.topLevelArrayStride;
+            return bufferVariable.pod.blockInfo.topLevelArrayStride;
 
         default:
             UNREACHABLE();
@@ -2029,28 +2045,30 @@ GLuint QueryProgramResourceIndex(const Program *program,
                                  GLenum programInterface,
                                  const GLchar *name)
 {
+    const ProgramExecutable &executable = program->getExecutable();
+
     switch (programInterface)
     {
         case GL_PROGRAM_INPUT:
-            return program->getInputResourceIndex(name);
+            return executable.getInputResourceIndex(name);
 
         case GL_PROGRAM_OUTPUT:
-            return program->getOutputResourceIndex(name);
+            return executable.getOutputResourceIndex(name);
 
         case GL_UNIFORM:
-            return program->getState().getUniformIndexFromName(name);
+            return executable.getUniformIndexFromName(name);
 
         case GL_BUFFER_VARIABLE:
-            return program->getState().getBufferVariableIndexFromName(name);
+            return executable.getBufferVariableIndexFromName(name);
 
         case GL_SHADER_STORAGE_BLOCK:
-            return program->getShaderStorageBlockIndex(name);
+            return executable.getShaderStorageBlockIndex(name);
 
         case GL_UNIFORM_BLOCK:
-            return program->getUniformBlockIndex(name);
+            return executable.getUniformBlockIndex(name);
 
         case GL_TRANSFORM_FEEDBACK_VARYING:
-            return program->getTransformFeedbackVaryingResourceIndex(name);
+            return executable.getTransformFeedbackVaryingResourceIndex(name);
 
         default:
             UNREACHABLE();
@@ -2066,34 +2084,36 @@ void QueryProgramResourceName(const Context *context,
                               GLsizei *length,
                               GLchar *name)
 {
+    const ProgramExecutable &executable = program->getExecutable();
+
     switch (programInterface)
     {
         case GL_PROGRAM_INPUT:
-            program->getInputResourceName(index, bufSize, length, name);
+            executable.getInputResourceName(index, bufSize, length, name);
             break;
 
         case GL_PROGRAM_OUTPUT:
-            program->getOutputResourceName(index, bufSize, length, name);
+            executable.getOutputResourceName(index, bufSize, length, name);
             break;
 
         case GL_UNIFORM:
-            program->getUniformResourceName(index, bufSize, length, name);
+            executable.getUniformResourceName(index, bufSize, length, name);
             break;
 
         case GL_BUFFER_VARIABLE:
-            program->getBufferVariableResourceName(index, bufSize, length, name);
+            executable.getBufferVariableResourceName(index, bufSize, length, name);
             break;
 
         case GL_SHADER_STORAGE_BLOCK:
-            program->getActiveShaderStorageBlockName(index, bufSize, length, name);
+            executable.getActiveShaderStorageBlockName(index, bufSize, length, name);
             break;
 
         case GL_UNIFORM_BLOCK:
-            program->getActiveUniformBlockName(context, {index}, bufSize, length, name);
+            executable.getActiveUniformBlockName(context, {index}, bufSize, length, name);
             break;
 
         case GL_TRANSFORM_FEEDBACK_VARYING:
-            program->getTransformFeedbackVarying(index, bufSize, length, nullptr, nullptr, name);
+            executable.getTransformFeedbackVarying(index, bufSize, length, nullptr, nullptr, name);
             break;
 
         default:
@@ -2105,16 +2125,18 @@ GLint QueryProgramResourceLocation(const Program *program,
                                    GLenum programInterface,
                                    const GLchar *name)
 {
+    const ProgramExecutable &executable = program->getExecutable();
+
     switch (programInterface)
     {
         case GL_PROGRAM_INPUT:
-            return program->getInputResourceLocation(name);
+            return executable.getInputResourceLocation(name);
 
         case GL_PROGRAM_OUTPUT:
-            return program->getOutputResourceLocation(name);
+            return executable.getOutputResourceLocation(name);
 
         case GL_UNIFORM:
-            return program->getUniformLocation(name).value;
+            return executable.getUniformLocation(name).value;
 
         default:
             UNREACHABLE();

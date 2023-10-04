@@ -353,25 +353,10 @@ size_t Debug::getGroupStackDepth() const
     return mGroups.size();
 }
 
-void Debug::insertPerfWarning(GLenum severity, const char *message, uint32_t *repeatCount) const
+void Debug::insertPerfWarning(GLenum severity, bool isLastRepeat, const char *message) const
 {
-    bool repeatLast;
-
-    {
-        constexpr uint32_t kMaxRepeat = 4;
-        std::lock_guard<std::mutex> lock(GetDebugMutex());
-
-        if (*repeatCount >= kMaxRepeat)
-        {
-            return;
-        }
-
-        ++*repeatCount;
-        repeatLast = (*repeatCount == kMaxRepeat);
-    }
-
     std::string msg = message;
-    if (repeatLast)
+    if (isLastRepeat)
     {
         msg += " (this message will no longer repeat)";
     }

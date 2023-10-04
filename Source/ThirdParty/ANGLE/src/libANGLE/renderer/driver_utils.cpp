@@ -10,12 +10,9 @@
 
 #include "libANGLE/renderer/driver_utils.h"
 
+#include "common/android_util.h"
 #include "common/platform.h"
 #include "common/system_utils.h"
-
-#if defined(ANGLE_PLATFORM_ANDROID)
-#    include <sys/system_properties.h>
-#endif
 
 #if defined(ANGLE_PLATFORM_LINUX)
 #    include <sys/utsname.h>
@@ -293,17 +290,14 @@ ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion)
 
 int GetAndroidSDKVersion()
 {
-#if defined(ANGLE_PLATFORM_ANDROID)
-    char apiVersion[PROP_VALUE_MAX];
-    int length = __system_property_get("ro.build.version.sdk", apiVersion);
-    if (length == 0)
+    std::string androidSdkLevel;
+    if (!angle::android::GetSystemProperty(angle::android::kSDKSystemPropertyName,
+                                           &androidSdkLevel))
     {
         return 0;
     }
-    return atoi(apiVersion);
-#else
-    return 0;
-#endif
+
+    return std::atoi(androidSdkLevel.c_str());
 }
 #if !defined(ANGLE_PLATFORM_MACOS)
 OSVersion GetMacOSVersion()

@@ -443,6 +443,194 @@ TEST_P(FramebufferTest_ES3, SubInvalidateIncomplete)
     EXPECT_GL_NO_ERROR();
 }
 
+enum class DisableDitherVsClear
+{
+    Before,
+    After
+};
+
+void testDitherDisabledProperlyOnRGB565(GLColor gradientColor,
+                                        DisableDitherVsClear disableDitherVsClear)
+{
+    GLFramebuffer framebuffer;
+
+    constexpr GLsizei kFramebufferWidth  = 4;
+    constexpr GLsizei kFramebufferHeight = 4;
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB565, kFramebufferWidth, kFramebufferHeight);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+    constexpr char kVS[] = {
+        R"(#version 300 es
+        in highp vec4 a_position;
+        in mediump vec4 a_color;
+        out mediump vec4 v_color;
+        void main()
+        {
+        gl_Position = a_position;
+        v_color = a_color;
+        })",
+    };
+
+    constexpr char kFS[] = {
+        R"(#version 300 es
+            in mediump vec4 v_color;
+            layout(location = 0) out mediump vec4 o_color;
+            void main()
+            {
+                o_color = v_color;
+            })",
+    };
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glUseProgram(program.get());
+
+    // setup quad data
+    // black ----> gradientColor
+    // **********
+    // *        *
+    // *        *
+    // **********
+    const std::vector<float> positions = {-1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f,
+                                          1.0f,  -1.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 1.0f};
+
+    const std::vector<float> color0 = {0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       gradientColor.R * 1.0f / 255.0f,
+                                       gradientColor.G * 1.0f / 255.0f,
+                                       gradientColor.B * 1.0f / 255.0f,
+                                       gradientColor.A * 1.0f / 255.0f,
+                                       gradientColor.R * 1.0f / 255.0f,
+                                       gradientColor.G * 1.0f / 255.0f,
+                                       gradientColor.B * 1.0f / 255.0f,
+                                       gradientColor.A * 1.0f / 255.0f};
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions[0]) * positions.size(), positions.data(),
+                 GL_STATIC_DRAW);
+
+    GLBuffer colorBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.get());
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color0[0]) * color0.size(), color0.data(), GL_STATIC_DRAW);
+
+    GLint vertexPosLocation = glGetAttribLocation(program, "a_position");
+    ASSERT_NE(vertexPosLocation, -1);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glEnableVertexAttribArray(vertexPosLocation);
+    glVertexAttribPointer(vertexPosLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+    GLint vertexColorLocation = glGetAttribLocation(program, "a_color");
+    ASSERT_NE(vertexColorLocation, -1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.get());
+    glEnableVertexAttribArray(vertexColorLocation);
+    glVertexAttribPointer(vertexColorLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+    const std::vector<uint8_t> indices = {0, 2, 1, 1, 2, 3};
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
+                 GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    switch (disableDitherVsClear)
+    {
+        case DisableDitherVsClear::Before:
+            glDisable(GL_DITHER);
+            glClearColor(0.125, 0.25, 0.5, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+            break;
+
+        case DisableDitherVsClear::After:
+            glClearColor(0.125, 0.25, 0.5, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+            glDisable(GL_DITHER);
+            break;
+    }
+
+    // draw quad
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    // validate that when disabling dithering, the color selection must be coordinate-independent
+    std::vector<GLColor> pixelData(kFramebufferWidth * kFramebufferHeight);
+    glReadPixels(0, 0, kFramebufferWidth, kFramebufferHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                 pixelData.data());
+
+    const int increasingDirectionSize = kFramebufferWidth;
+    const int constantDirectionSize   = kFramebufferHeight;
+
+    for (int incrPos = 0; incrPos < increasingDirectionSize; incrPos++)
+    {
+        bool colorHasChanged = false;
+
+        GLColor prevConstantDirectionPixel;
+
+        for (int constPos = 0; constPos < constantDirectionSize; constPos++)
+        {
+            const int x = incrPos;
+            const int y = constPos;
+
+            const int currentPixelLoc  = y * kFramebufferWidth + x;
+            const GLColor currentPixel = pixelData[currentPixelLoc];
+
+            if (constPos > 0 && currentPixel != prevConstantDirectionPixel)
+            {
+                if (colorHasChanged)
+                {
+                    ASSERT(false);
+                }
+                else
+                {
+                    colorHasChanged = true;
+                }
+            }
+
+            prevConstantDirectionPixel = currentPixel;
+        }
+    }
+}
+
+// repro dEQP-GLES3.functional.dither.disabled.gradient_red failure
+TEST_P(FramebufferTest_ES3, RGB565DisableDitheringGradientRedTest)
+{
+    testDitherDisabledProperlyOnRGB565(GLColor::red, DisableDitherVsClear::Before);
+    testDitherDisabledProperlyOnRGB565(GLColor::red, DisableDitherVsClear::After);
+}
+
+// repro dEQP-GLES3.functional.dither.disabled.gradient_green failure
+TEST_P(FramebufferTest_ES3, RGB565DisableDitheringGradientGreenTest)
+{
+    testDitherDisabledProperlyOnRGB565(GLColor::green, DisableDitherVsClear::Before);
+    testDitherDisabledProperlyOnRGB565(GLColor::green, DisableDitherVsClear::After);
+}
+
+// repro dEQP-GLES3.functional.dither.disabled.gradient_blue failure
+TEST_P(FramebufferTest_ES3, RGB565DisableDitheringGradientBlueTest)
+{
+    testDitherDisabledProperlyOnRGB565(GLColor::blue, DisableDitherVsClear::Before);
+    testDitherDisabledProperlyOnRGB565(GLColor::blue, DisableDitherVsClear::After);
+}
+
+// repro dEQP-GLES3.functional.dither.disabled.gradient_white failure
+TEST_P(FramebufferTest_ES3, RGB565DisableDitheringGradientWhiteTest)
+{
+    testDitherDisabledProperlyOnRGB565(GLColor::white, DisableDitherVsClear::Before);
+    testDitherDisabledProperlyOnRGB565(GLColor::white, DisableDitherVsClear::After);
+}
+
 // Test that subinvalidate with no prior command works.  Regression test for the Vulkan backend that
 // assumed a render pass is started when sub invalidate is called.
 TEST_P(FramebufferTest_ES3, SubInvalidateFirst)
@@ -4376,7 +4564,7 @@ void main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexStorage2D(GL_TEXTURE_2D, 3, GL_DEPTH_COMPONENT32F, kLevel0Size, kLevel0Size);
     // Initialize level 1 with known depth value
-    std::array<GLfloat, kLevel1Size *kLevel1Size> gData = {0.2, 0.4, 0.6, 0.8};
+    std::array<GLfloat, kLevel1Size * kLevel1Size> gData = {0.2, 0.4, 0.6, 0.8};
     glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, kLevel1Size, kLevel1Size, GL_DEPTH_COMPONENT, GL_FLOAT,
                     gData.data());
     // set base_level and max_level to 1, exclude level 0

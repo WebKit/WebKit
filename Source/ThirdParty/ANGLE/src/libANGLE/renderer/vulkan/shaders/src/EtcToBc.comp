@@ -281,15 +281,14 @@ void main()
 
     ivec4 result;
 #if DECODE_RGBA
-    uvec2 color_payload;
-    if( alphaBits == 8 )
-        color_payload = flip_endian(payload.zw);
-    else
-        color_payload = flip_endian(payload.xy);
-
+    uvec2 color_payload = flip_endian(alphaBits == 8 ? payload.zw : payload.xy);
     bool nonOpaque = alphaBits == 1 && (color_payload.y & 2u) == 0u;
     bool punchthrough = nonOpaque;
     result = DecodeRGB(pixel_coord, color_payload, linear_pixel, punchthrough);
+    if( alphaBits == 8 ) {
+        uvec2 alpha_payload = flip_endian(payload.xy);
+        result.a = decode_etc2_alpha(alpha_payload, linear_pixel);
+    }
 #endif
 
 #if DECODE_R11
@@ -305,6 +304,12 @@ void main()
     uint indices = 0;
     uint color565 = 0;
 
+    // Encode the alpha compoenent first. On some AMD GPUs, we see a very
+    // strange issue where doing this later produces incorrect results in the
+    // subgroup operations. See b/300672851 for details.
+    finalResult.ba = alphaBits == 8 ? EncodeBC4(result.a, pid) : uvec2(0,0);
+
+    // Encode the RGB component
     bool controlFlag = alphaBits != 1 || result.a > 0;
     if( controlFlag )
     {
@@ -327,8 +332,9 @@ void main()
                 indices = 2;
             }
         }
-        if( flip != nonOpaque )
+        if( flip != nonOpaque ) {
             swap(maxColor565, minColor565);
+        }
         color565 = maxColor565 | (minColor565<<16);
     }
     if( alphaBits == 1 ) {
@@ -341,16 +347,10 @@ void main()
         }
     }
     uint mask = subgroupClusteredOr(indices << (2*pid), 16);
+
+    finalResult.rg = uvec2(color565, mask);
     if( alphaBits == 8 ) {
-        finalResult.b = color565;
-        finalResult.a = mask;
-        uvec2 alpha_payload = flip_endian(payload.xy);
-        result.a = decode_etc2_alpha(alpha_payload, linear_pixel);
-        finalResult.rg = EncodeBC4(result.a, pid);
-    }
-    else {
-        finalResult.r = color565;
-        finalResult.g = mask;
+        finalResult = finalResult.barg;
     }
 #endif
 

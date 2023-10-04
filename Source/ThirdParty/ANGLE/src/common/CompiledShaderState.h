@@ -54,6 +54,8 @@ struct CompiledShaderState
 
     const gl::ShaderType shaderType;
 
+    bool successfullyCompiled;
+
     int shaderVersion;
     std::string translatedSource;
     sh::BinaryBlob compiledBinary;

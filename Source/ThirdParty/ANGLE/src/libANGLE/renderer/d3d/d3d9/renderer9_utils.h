@@ -14,6 +14,7 @@
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
 #include "platform/autogen/FeaturesD3D_autogen.h"
+#include "platform/autogen/FrontendFeatures_autogen.h"
 
 namespace gl
 {
@@ -98,6 +99,7 @@ inline bool isDeviceLostError(HRESULT errorCode)
 }
 
 void InitializeFeatures(angle::FeaturesD3D *features, DWORD VendorID);
+void InitializeFrontendFeatures(angle::FrontendFeatures *features, DWORD VendorID);
 }  // namespace d3d9
 
 }  // namespace rx

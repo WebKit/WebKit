@@ -646,17 +646,17 @@ bool TextureVk::isMutableTextureConsistentlySpecifiedForFlush()
         return false;
     }
 
-    // Before we initialize the full mip chain, we make sure that the base mip level and at least
-    // one other level after (1 for simplicity) are defined and have appropriate values.
-    if (mState.getImageDescs().size() < 2)
+    // Before we initialize the mips, we make sure that the base mip level is properly defined.
+    gl::TextureTarget textureTarget = (mState.getType() == gl::TextureType::CubeMap)
+                                          ? gl::kCubeMapTextureTargetMin
+                                          : gl::TextureTypeToTarget(mState.getType(), 0);
+    if (!isMipImageDescDefined(textureTarget, 0))
     {
         return false;
     }
 
-    gl::TextureTarget textureTarget = (mState.getType() == gl::TextureType::CubeMap)
-                                          ? gl::kCubeMapTextureTargetMin
-                                          : gl::TextureTypeToTarget(mState.getType(), 0);
-    if (!isMipImageDescDefined(textureTarget, 0) || !isMipImageDescDefined(textureTarget, 1))
+    // We do not flush if the texture has been bound as an attachment.
+    if (mState.hasBeenBoundAsAttachment())
     {
         return false;
     }
@@ -765,13 +765,14 @@ angle::Result TextureVk::setSubImageImpl(const gl::Context *context,
     ContextVk *contextVk = vk::GetImpl(context);
 
     // When possible flush out updates immediately.
-    bool shouldFlush = false;
+    vk::ApplyImageUpdate applyUpdate = vk::ApplyImageUpdate::Defer;
     if (!mOwnsImage || mState.getImmutableFormat() ||
         (!shouldUpdateBeStaged(gl::LevelIndex(index.getLevelIndex()),
                                vkFormat.getActualImageFormatID(getRequiredImageAccess()))))
     {
-        shouldFlush = true;
+        applyUpdate = vk::ApplyImageUpdate::ImmediatelyIfPossible;
     }
+    bool updateAppliedImmediately = false;
 
     if (unpackBuffer)
     {
@@ -833,7 +834,8 @@ angle::Result TextureVk::setSubImageImpl(const gl::Context *context,
                 contextVk, getNativeImageIndex(index),
                 gl::Extents(area.width, area.height, area.depth),
                 gl::Offset(area.x, area.y, area.z), formatInfo, unpack, type, source, vkFormat,
-                getRequiredImageAccess(), inputRowPitch, inputDepthPitch, inputSkipBytes));
+                getRequiredImageAccess(), inputRowPitch, inputDepthPitch, inputSkipBytes,
+                applyUpdate, &updateAppliedImmediately));
 
             ANGLE_TRY(unpackBufferVk->unmapImpl(contextVk));
         }
@@ -843,24 +845,27 @@ angle::Result TextureVk::setSubImageImpl(const gl::Context *context,
         ANGLE_TRY(mImage->stageSubresourceUpdate(
             contextVk, getNativeImageIndex(index), gl::Extents(area.width, area.height, area.depth),
             gl::Offset(area.x, area.y, area.z), formatInfo, unpack, type, pixels, vkFormat,
-            getRequiredImageAccess()));
+            getRequiredImageAccess(), applyUpdate, &updateAppliedImmediately));
     }
 
     // If we used context's staging buffer, flush out the updates
-    if (shouldFlush)
+    if (!updateAppliedImmediately)
     {
-        ANGLE_TRY(ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
-
-        // If forceSubmitImmutableTextureUpdates is enabled, submit the staged updates as well
-        if (contextVk->getFeatures().forceSubmitImmutableTextureUpdates.enabled)
+        if (applyUpdate == vk::ApplyImageUpdate::ImmediatelyIfPossible)
         {
-            ANGLE_TRY(contextVk->submitStagedTextureUpdates());
+            ANGLE_TRY(ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
+
+            // If forceSubmitImmutableTextureUpdates is enabled, submit the staged updates as well
+            if (contextVk->getFeatures().forceSubmitImmutableTextureUpdates.enabled)
+            {
+                ANGLE_TRY(contextVk->submitStagedTextureUpdates());
+            }
         }
-    }
-    else if (contextVk->isEligibleForMutableTextureFlush() && !mState.getImmutableFormat())
-    {
-        // Check if we should flush any mutable textures from before.
-        ANGLE_TRY(contextVk->getShareGroup()->onMutableTextureUpload(contextVk, this));
+        else if (contextVk->isEligibleForMutableTextureFlush() && !mState.getImmutableFormat())
+        {
+            // Check if we should flush any mutable textures from before.
+            ANGLE_TRY(contextVk->getShareGroup()->onMutableTextureUpload(contextVk, this));
+        }
     }
 
     return angle::Result::Continue;
@@ -1575,6 +1580,10 @@ angle::Result TextureVk::setStorageMultisample(const gl::Context *context,
     }
     else if (mImage)
     {
+        if (!contextVk->hasDisplayTextureShareGroup())
+        {
+            contextVk->getShareGroup()->onTextureRelease(this);
+        }
         mImage->releaseStagedUpdates(contextVk->getRenderer());
     }
 
@@ -3043,8 +3052,8 @@ angle::Result TextureVk::convertBufferToRGBA(ContextVk *contextVk, size_t &conve
     vk::BufferHelper *conversionBufferHelper = conversion->data.get();
     if (!conversionBufferHelper->valid())
     {
-        ANGLE_TRY(conversionBufferHelper->allocateForVertexConversion(
-            contextVk, conversionBufferSize, vk::MemoryHostVisibility::NonVisible));
+        ANGLE_TRY(contextVk->initBufferForVertexConversion(
+            conversionBufferHelper, conversionBufferSize, vk::MemoryHostVisibility::NonVisible));
     }
 
     if (conversion->dirty)
@@ -3463,6 +3472,10 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
         mImageUsageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
     }
 
+    const VkFormat actualImageFormat = rx::vk::GetVkFormatFromFormatID(actualImageFormatID);
+    const VkImageType imageType      = gl_vk::GetImageType(mState.getType());
+    const VkImageTiling imageTiling  = mImage->getTilingMode();
+
     if ((mImageUsageFlags & (VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
                              VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)) != 0 &&
         mOwnsImage && samples == 1 &&
@@ -3471,14 +3484,44 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
 
         // Note: If we ever fail the following check, we should use the emulation path for this
         // texture instead of ignoring MSRTT.
-        if (formatSupportsMultisampledRenderToSingleSampled(
-                renderer, rx::vk::GetVkFormatFromFormatID(actualImageFormatID),
-                gl_vk::GetImageType(mState.getType()), mImage->getTilingMode(), mImageUsageFlags,
-                mImageCreateFlags))
+        if (vk::ImageHelper::FormatSupportsUsage(
+                renderer, actualImageFormat, imageType, imageTiling, mImageUsageFlags,
+                mImageCreateFlags | VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT,
+                nullptr))
         {
             // If supported by format add the MSRTSS flag because any texture might end up as an
             // MSRTT attachment.
             mImageCreateFlags |= VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;
+        }
+    }
+
+    // Any format with VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT support is required to also support
+    // VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT.  So no format feature query is needed.
+    // However, it's still necessary to use vkGetPhysicalDeviceImageFormatProperties2 to ensure host
+    // image copy is supported for the specific usage and flags.
+    //
+    // All TextureVk images are expected to have VK_IMAGE_USAGE_SAMPLED_BIT, so that is not checked
+    // either.
+    ASSERT((mImageUsageFlags & VK_IMAGE_USAGE_SAMPLED_BIT) != 0);
+    if (mOwnsImage && samples == 1 && renderer->getFeatures().supportsHostImageCopy.enabled)
+    {
+        VkHostImageCopyDevicePerformanceQueryEXT perfQuery = {};
+        perfQuery.sType = VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY_EXT;
+
+        // If host image copy is supported at all ...
+        if (vk::ImageHelper::FormatSupportsUsage(
+                renderer, actualImageFormat, imageType, imageTiling,
+                mImageUsageFlags | VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT, mImageCreateFlags,
+                &perfQuery))
+        {
+            // Only enable it if it has no performance impact whatsoever (or impact is tiny, given
+            // feature).
+            if (perfQuery.identicalMemoryLayout ||
+                (perfQuery.optimalDeviceAccess &&
+                 renderer->getFeatures().allowHostImageCopyDespiteNonIdenticalLayout.enabled))
+            {
+                mImageUsageFlags |= VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT;
+            }
         }
     }
 
@@ -3498,9 +3541,9 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
         flags |= VK_MEMORY_PROPERTY_PROTECTED_BIT;
     }
 
-    ANGLE_TRY(mImage->initMemory(contextVk, mState.hasProtectedContent(),
-                                 renderer->getMemoryProperties(), flags,
-                                 vk::MemoryAllocationType::TextureImage));
+    ANGLE_TRY(contextVk->initImageAllocation(mImage, mState.hasProtectedContent(),
+                                             renderer->getMemoryProperties(), flags,
+                                             vk::MemoryAllocationType::TextureImage));
 
     const uint32_t viewLevelCount =
         mState.getImmutableFormat() ? getMipLevelCount(ImageMipLevels::EnabledLevels) : levelCount;
@@ -3635,7 +3678,6 @@ uint32_t TextureVk::getMipLevelCount(ImageMipLevels mipLevels) const
             return mState.getEnabledLevelCount();
         // Returns all mipmap levels from base to max regardless if an image has been specified or
         // not.
-        case ImageMipLevels::FullMipChain:
         case ImageMipLevels::FullMipChainForGenerateMipmap:
             return getMaxLevelCount() - mState.getEffectiveBaseLevel();
 
@@ -4049,38 +4091,4 @@ void TextureVk::updateCachedImageViewSerials()
     mCachedImageViewSubresourceSerialSkipDecode =
         getImageViewSubresourceSerialImpl(GL_SKIP_DECODE_EXT);
 }
-
-bool TextureVk::formatSupportsMultisampledRenderToSingleSampled(RendererVk *renderer,
-                                                                VkFormat format,
-                                                                VkImageType imageType,
-                                                                VkImageTiling tilingMode,
-                                                                VkImageUsageFlags usageFlags,
-                                                                VkImageCreateFlags createFlags)
-{
-    // Verify support for this image format after adding MSRTSS flag
-    VkPhysicalDeviceImageFormatInfo2 imageFormatInfo = {};
-    imageFormatInfo.sType  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
-    imageFormatInfo.format = format;
-    imageFormatInfo.type   = imageType;
-    imageFormatInfo.tiling = tilingMode;
-    imageFormatInfo.usage  = usageFlags;
-    imageFormatInfo.flags =
-        createFlags | VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;
-
-    VkImageFormatProperties imageFormatProperties                            = {};
-    VkSamplerYcbcrConversionImageFormatProperties ycbcrImageFormatProperties = {};
-    ycbcrImageFormatProperties.sType =
-        VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
-
-    VkImageFormatProperties2 imageFormatProperties2 = {};
-    imageFormatProperties2.sType                    = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
-    imageFormatProperties2.pNext                    = &ycbcrImageFormatProperties;
-    imageFormatProperties2.imageFormatProperties    = imageFormatProperties;
-
-    VkResult result = vkGetPhysicalDeviceImageFormatProperties2(
-        renderer->getPhysicalDevice(), &imageFormatInfo, &imageFormatProperties2);
-
-    return (result == VK_SUCCESS);
-}
-
 }  // namespace rx

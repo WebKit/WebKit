@@ -1,7 +1,7 @@
 {
     "TraceMetadata": {
         "AreClientArraysEnabled": true,
-        "CaptureRevision": 21691,
+        "CaptureRevision": 21860,
         "ConfigAlphaBits": 8,
         "ConfigBlueBits": 8,
         "ConfigDepthBits": 24,
@@ -19,7 +19,7 @@
         "FrameStart": 1,
         "IsBinaryDataCompressed": false,
         "IsBindGeneratesResourcesEnabled": true,
-        "IsRobustResourceInitEnabled": true,
+        "IsRobustResourceInitEnabled": false,
         "IsWebGLCompatibilityEnabled": false
     },
     "TraceFiles": [

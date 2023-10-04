@@ -819,8 +819,7 @@ void RendererVk::ensureCapsInitialized() const
          getFeatures().enablePreRotateSurfaces.enabled ||
          getFeatures().emulatedPrerotation90.enabled ||
          getFeatures().emulatedPrerotation180.enabled ||
-         getFeatures().emulatedPrerotation270.enabled ||
-         !getFeatures().supportsNegativeViewport.enabled))
+         getFeatures().emulatedPrerotation270.enabled))
     {
         reservedVaryingComponentCount += kReservedVaryingComponentsForTransformFeedbackExtension;
     }

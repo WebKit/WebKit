@@ -453,12 +453,12 @@ class MemoryProperties final : angle::NonCopyable
 
     void init(VkPhysicalDevice physicalDevice);
     bool hasLazilyAllocatedMemory() const;
-    angle::Result findCompatibleMemoryIndex(Context *context,
-                                            const VkMemoryRequirements &memoryRequirements,
-                                            VkMemoryPropertyFlags requestedMemoryPropertyFlags,
-                                            bool isExternalMemory,
-                                            VkMemoryPropertyFlags *memoryPropertyFlagsOut,
-                                            uint32_t *indexOut) const;
+    VkResult findCompatibleMemoryIndex(Context *context,
+                                       const VkMemoryRequirements &memoryRequirements,
+                                       VkMemoryPropertyFlags requestedMemoryPropertyFlags,
+                                       bool isExternalMemory,
+                                       VkMemoryPropertyFlags *memoryPropertyFlagsOut,
+                                       uint32_t *indexOut) const;
     void destroy();
 
     uint32_t getHeapIndexForMemoryType(uint32_t memoryType) const
@@ -515,46 +515,45 @@ angle::Result InitMappableAllocation(Context *context,
                                      int value,
                                      VkMemoryPropertyFlags memoryPropertyFlags);
 
-angle::Result AllocateBufferMemory(Context *context,
-                                   vk::MemoryAllocationType memoryAllocationType,
-                                   VkMemoryPropertyFlags requestedMemoryPropertyFlags,
-                                   VkMemoryPropertyFlags *memoryPropertyFlagsOut,
-                                   const void *extraAllocationInfo,
-                                   Buffer *buffer,
-                                   uint32_t *memoryTypeIndexOut,
-                                   DeviceMemory *deviceMemoryOut,
-                                   VkDeviceSize *sizeOut);
+VkResult AllocateBufferMemory(Context *context,
+                              vk::MemoryAllocationType memoryAllocationType,
+                              VkMemoryPropertyFlags requestedMemoryPropertyFlags,
+                              VkMemoryPropertyFlags *memoryPropertyFlagsOut,
+                              const void *extraAllocationInfo,
+                              Buffer *buffer,
+                              uint32_t *memoryTypeIndexOut,
+                              DeviceMemory *deviceMemoryOut,
+                              VkDeviceSize *sizeOut);
 
-angle::Result AllocateImageMemory(Context *context,
-                                  vk::MemoryAllocationType memoryAllocationType,
-                                  VkMemoryPropertyFlags memoryPropertyFlags,
-                                  VkMemoryPropertyFlags *memoryPropertyFlagsOut,
-                                  const void *extraAllocationInfo,
-                                  Image *image,
-                                  uint32_t *memoryTypeIndexOut,
-                                  DeviceMemory *deviceMemoryOut,
-                                  VkDeviceSize *sizeOut);
+VkResult AllocateImageMemory(Context *context,
+                             vk::MemoryAllocationType memoryAllocationType,
+                             VkMemoryPropertyFlags memoryPropertyFlags,
+                             VkMemoryPropertyFlags *memoryPropertyFlagsOut,
+                             const void *extraAllocationInfo,
+                             Image *image,
+                             uint32_t *memoryTypeIndexOut,
+                             DeviceMemory *deviceMemoryOut,
+                             VkDeviceSize *sizeOut);
 
-angle::Result AllocateImageMemoryWithRequirements(
-    Context *context,
-    vk::MemoryAllocationType memoryAllocationType,
-    VkMemoryPropertyFlags memoryPropertyFlags,
-    const VkMemoryRequirements &memoryRequirements,
-    const void *extraAllocationInfo,
-    const VkBindImagePlaneMemoryInfoKHR *extraBindInfo,
-    Image *image,
-    uint32_t *memoryTypeIndexOut,
-    DeviceMemory *deviceMemoryOut);
+VkResult AllocateImageMemoryWithRequirements(Context *context,
+                                             vk::MemoryAllocationType memoryAllocationType,
+                                             VkMemoryPropertyFlags memoryPropertyFlags,
+                                             const VkMemoryRequirements &memoryRequirements,
+                                             const void *extraAllocationInfo,
+                                             const VkBindImagePlaneMemoryInfoKHR *extraBindInfo,
+                                             Image *image,
+                                             uint32_t *memoryTypeIndexOut,
+                                             DeviceMemory *deviceMemoryOut);
 
-angle::Result AllocateBufferMemoryWithRequirements(Context *context,
-                                                   MemoryAllocationType memoryAllocationType,
-                                                   VkMemoryPropertyFlags memoryPropertyFlags,
-                                                   const VkMemoryRequirements &memoryRequirements,
-                                                   const void *extraAllocationInfo,
-                                                   Buffer *buffer,
-                                                   VkMemoryPropertyFlags *memoryPropertyFlagsOut,
-                                                   uint32_t *memoryTypeIndexOut,
-                                                   DeviceMemory *deviceMemoryOut);
+VkResult AllocateBufferMemoryWithRequirements(Context *context,
+                                              MemoryAllocationType memoryAllocationType,
+                                              VkMemoryPropertyFlags memoryPropertyFlags,
+                                              const VkMemoryRequirements &memoryRequirements,
+                                              const void *extraAllocationInfo,
+                                              Buffer *buffer,
+                                              VkMemoryPropertyFlags *memoryPropertyFlagsOut,
+                                              uint32_t *memoryTypeIndexOut,
+                                              DeviceMemory *deviceMemoryOut);
 
 angle::Result InitShaderModule(Context *context,
                                ShaderModule *shaderModule,
@@ -1096,9 +1095,7 @@ angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
 #if !defined(ANGLE_SHARED_LIBVULKAN)
 // Lazily load entry points for each extension as necessary.
 void InitDebugUtilsEXTFunctions(VkInstance instance);
-void InitGetPhysicalDeviceProperties2KHRFunctions(VkInstance instance);
 void InitTransformFeedbackEXTFunctions(VkDevice device);
-void InitSamplerYcbcrKHRFunctions(VkDevice device);
 void InitRenderPass2KHRFunctions(VkDevice device);
 
 #    if defined(ANGLE_PLATFORM_FUCHSIA)
@@ -1122,20 +1119,8 @@ void InitExternalSemaphoreFdFunctions(VkInstance instance);
 // VK_EXT_host_query_reset
 void InitHostQueryResetFunctions(VkDevice instance);
 
-// VK_KHR_external_fence_capabilities
-void InitExternalFenceCapabilitiesFunctions(VkInstance instance);
-
-// VK_KHR_get_memory_requirements2
-void InitGetMemoryRequirements2KHRFunctions(VkDevice device);
-
-// VK_KHR_bind_memory2
-void InitBindMemory2KHRFunctions(VkDevice device);
-
 // VK_KHR_external_fence_fd
 void InitExternalFenceFdFunctions(VkInstance instance);
-
-// VK_KHR_external_semaphore_capabilities
-void InitExternalSemaphoreCapabilitiesFunctions(VkInstance instance);
 
 // VK_KHR_shared_presentable_image
 void InitGetSwapchainStatusKHRFunctions(VkDevice device);
@@ -1152,6 +1137,9 @@ void InitFragmentShadingRateKHRDeviceFunction(VkDevice device);
 
 // VK_GOOGLE_display_timing
 void InitGetPastPresentationTimingGoogleFunction(VkDevice device);
+
+// VK_EXT_host_image_copy
+void InitHostImageCopyFunctions(VkDevice device);
 
 #endif  // !defined(ANGLE_SHARED_LIBVULKAN)
 
@@ -1322,6 +1310,10 @@ enum class RenderPassClosureReason
     // LegacyDithering requires updating the render pass
     LegacyDithering,
 
+    // In case of memory budget issues, pending garbage needs to be freed.
+    ExcessivePendingGarbage,
+    OutOfMemory,
+
     InvalidEnum,
     EnumCount = InvalidEnum,
 };
@@ -1350,6 +1342,19 @@ enum class RenderPassClosureReason
 #define ANGLE_VK_UNREACHABLE(context) \
     UNREACHABLE();                    \
     ANGLE_VK_CHECK(context, false, VK_ERROR_FEATURE_NOT_PRESENT)
+
+// Returns VkResult in the case of an error.
+#define VK_RESULT_TRY(command)                             \
+    do                                                     \
+    {                                                      \
+        auto ANGLE_LOCAL_VAR = command;                    \
+        if (ANGLE_UNLIKELY(ANGLE_LOCAL_VAR != VK_SUCCESS)) \
+        {                                                  \
+            return ANGLE_LOCAL_VAR;                        \
+        }                                                  \
+    } while (0)
+
+#define VK_RESULT_CHECK(test, error) VK_RESULT_TRY((test) ? VK_SUCCESS : (error))
 
 // NVIDIA uses special formatting for the driver version:
 // Major: 10

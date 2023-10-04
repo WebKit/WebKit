@@ -78,70 +78,16 @@ class ProgramD3D : public ProgramImpl
 
     void destroy(const gl::Context *context) override;
 
-    std::unique_ptr<LinkEvent> load(const gl::Context *context,
-                                    gl::BinaryInputStream *stream) override;
+    angle::Result load(const gl::Context *context,
+                       gl::BinaryInputStream *stream,
+                       std::shared_ptr<LinkTask> *loadTaskOut) override;
     void save(const gl::Context *context, gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;
 
     void prepareForLink(const gl::ShaderMap<ShaderImpl *> &shaders) override;
-    std::unique_ptr<LinkEvent> link(const gl::Context *context,
-                                    const gl::ProgramLinkedResources &resources,
-                                    gl::ProgramMergedVaryings &&mergedVaryings) override;
+    angle::Result link(const gl::Context *context, std::shared_ptr<LinkTask> *linkTaskOut) override;
     GLboolean validate(const gl::Caps &caps) override;
-
-    void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
-    void setUniform2fv(GLint location, GLsizei count, const GLfloat *v) override;
-    void setUniform3fv(GLint location, GLsizei count, const GLfloat *v) override;
-    void setUniform4fv(GLint location, GLsizei count, const GLfloat *v) override;
-    void setUniform1iv(GLint location, GLsizei count, const GLint *v) override;
-    void setUniform2iv(GLint location, GLsizei count, const GLint *v) override;
-    void setUniform3iv(GLint location, GLsizei count, const GLint *v) override;
-    void setUniform4iv(GLint location, GLsizei count, const GLint *v) override;
-    void setUniform1uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniform2uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniform3uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniform4uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniformMatrix2fv(GLint location,
-                             GLsizei count,
-                             GLboolean transpose,
-                             const GLfloat *value) override;
-    void setUniformMatrix3fv(GLint location,
-                             GLsizei count,
-                             GLboolean transpose,
-                             const GLfloat *value) override;
-    void setUniformMatrix4fv(GLint location,
-                             GLsizei count,
-                             GLboolean transpose,
-                             const GLfloat *value) override;
-    void setUniformMatrix2x3fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix3x2fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix2x4fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix4x2fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix3x4fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix4x3fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-
-    void getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const override;
-    void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
-    void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
 
     const gl::ProgramState &getState() const { return mState; }
 
@@ -155,42 +101,27 @@ class ProgramD3D : public ProgramImpl
     }
 
   private:
-    // These forward-declared tasks are used for multi-thread shader compiles.
-    class GetExecutableTask;
     class GetVertexExecutableTask;
     class GetPixelExecutableTask;
     class GetGeometryExecutableTask;
     class GetComputeExecutableTask;
-    class GraphicsProgramLinkEvent;
-    class ComputeProgramLinkEvent;
+    class LinkLoadTaskD3D;
+    class LinkTaskD3D;
+    class LoadTaskD3D;
 
-    class LoadBinaryTask;
-    class LoadBinaryLinkEvent;
+    friend class LinkTaskD3D;
+    friend class LoadTaskD3D;
 
-    template <typename DestT>
-    void getUniformInternal(GLint location, DestT *dataOut) const;
-
-    template <typename T>
-    void setUniformImpl(D3DUniform *targetUniform,
-                        const gl::VariableLocation &locationInfo,
-                        GLsizei count,
-                        const T *v,
-                        uint8_t *targetData,
-                        GLenum uniformType);
-
-    template <typename T>
-    void setUniformInternal(GLint location, GLsizei count, const T *v, GLenum uniformType);
-
-    template <int cols, int rows>
-    void setUniformMatrixfvInternal(GLint location,
-                                    GLsizei count,
-                                    GLboolean transpose,
-                                    const GLfloat *value);
-
-    std::unique_ptr<LinkEvent> compileProgramExecutables(const gl::Context *context);
-    std::unique_ptr<LinkEvent> compileComputeExecutable(const gl::Context *context);
-
-    void reset();
+    angle::Result linkJobImpl(d3d::Context *context,
+                              const gl::Caps &caps,
+                              const gl::Version &clientVersion,
+                              EGLenum clientType,
+                              const gl::ProgramLinkedResources &resources,
+                              const gl::ProgramMergedVaryings &mergedVaryings);
+    const SharedCompiledShaderStateD3D &getAttachedShader(gl::ShaderType shaderType)
+    {
+        return getExecutable()->mAttachedShaders[shaderType];
+    }
 
     void linkResources(const gl::ProgramLinkedResources &resources);
 

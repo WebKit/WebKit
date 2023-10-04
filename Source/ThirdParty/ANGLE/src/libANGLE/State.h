@@ -15,6 +15,7 @@
 #include "common/Color.h"
 #include "common/angleutils.h"
 #include "common/bitset_utils.h"
+#include "libANGLE/ContextMutex.h"
 #include "libANGLE/Debug.h"
 #include "libANGLE/GLES1State.h"
 #include "libANGLE/Overlay.h"
@@ -33,8 +34,6 @@
 namespace egl
 {
 class ShareGroup;
-class ContextMutex;
-class SingleContextMutex;
 }  // namespace egl
 
 namespace gl
@@ -740,8 +739,7 @@ class State : angle::NonCopyable
           egl::ShareGroup *shareGroup,
           TextureManager *shareTextures,
           SemaphoreManager *shareSemaphores,
-          egl::ContextMutex *sharedContextMutex,
-          egl::SingleContextMutex *singleContextMutex,
+          egl::ContextMutex *contextMutex,
           const OverlayType *overlay,
           const EGLenum clientType,
           const Version &clientVersion,
@@ -1505,10 +1503,7 @@ class State : angle::NonCopyable
     bool mIsDebugContext;
 
     egl::ShareGroup *mShareGroup;
-    egl::ContextMutex *const mSharedContextMutex;
-    egl::SingleContextMutex *const mSingleContextMutex;
-    std::atomic<egl::ContextMutex *> mContextMutex;  // Simple pointer without reference counting
-    bool mIsSharedContextMutexActive;
+    mutable egl::ContextMutex mContextMutex;
 
     // Resource managers.
     BufferManager *mBufferManager;

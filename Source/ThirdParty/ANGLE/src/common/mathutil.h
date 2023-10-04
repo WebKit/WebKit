@@ -543,7 +543,7 @@ inline float normalizedToFloat(T input)
 {
     static_assert(std::numeric_limits<T>::is_integer, "T must be an integer.");
 
-    if (sizeof(T) > 2)
+    if constexpr (sizeof(T) > 2)
     {
         // float has only a 23 bit mantissa, so we need to do the calculation in double precision
         constexpr double inverseMax = 1.0 / std::numeric_limits<T>::max();

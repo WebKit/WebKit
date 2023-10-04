@@ -225,10 +225,10 @@ std::string UpdateFragmentShaderOutputs(std::string shaderSourceIn,
                 continue;
             }
 
-            const sh::ShaderVariable &outputVar = outputVariables[outputLocation.index];
+            const gl::ProgramOutput &outputVar = outputVariables[outputLocation.index];
 
-            ASSERT(outputVar.location >= 0);
-            int elementLocation = outputVar.location;
+            ASSERT(outputVar.pod.location >= 0);
+            int elementLocation = outputVar.pod.location;
 
             stream.str("");
             stream << outputVar.mappedName;
@@ -253,7 +253,7 @@ std::string UpdateFragmentShaderOutputs(std::string shaderSourceIn,
             }
 
             if (defineAlpha0 && elementLocation == 0 && !secondary &&
-                outputVar.type == GL_FLOAT_VEC4)
+                outputVar.pod.type == GL_FLOAT_VEC4)
             {
                 ASSERT(alphaOutputName.empty());
                 std::ostringstream nameStream;
