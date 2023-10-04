@@ -1492,9 +1492,6 @@ http/tests/download/convert-cached-load-to-download.html [ Skip ]
 
 webkit.org/b/157007 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
 
-# This test relies on a settings option that we can only set with WKRT.
-js/dom/regress-157246.html
-
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
 
