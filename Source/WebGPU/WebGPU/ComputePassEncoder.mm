@@ -177,8 +177,10 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
     if (dynamicOffsetCount)
         m_bindGroupDynamicOffsets.add(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
 
-    for (const auto& resource : group.resources())
-        [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
+    for (const auto& resource : group.resources()) {
+        if (resource.renderStages == BindGroup::MTLRenderStageCompute)
+            [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
+    }
 
     [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];
 }
