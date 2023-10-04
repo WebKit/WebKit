@@ -1,7 +1,7 @@
 From d22c9daefbd330d00af0359004b16073ac0eab37 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Fri, 28 Apr 2023 13:18:24 +0100
-Subject: [PATCH] GStreamer: Bump to 1.22.4
+Subject: [PATCH] GStreamer: Bump to 1.22.6
 
 ---
  elements/components/gstreamer-plugins-good.bst       |  2 ++
@@ -49,7 +49,7 @@ index e73a056ab..ee16131c9 100644
    match:
    - 1.*[02468].*
 -  ref: 1.20.6-0-gb7d3037cca2fe72c5b7daab5e0617e61ae013dcc
-+  ref: 1.22.5-0-gbf6ce1d64a0697e7910826147b48f8f658366a5a
++  ref: 1.22.6-0-gddb4fbe43149b157efb52b6472313f48308c1dbc
  - kind: patch_queue
    path: patches/gstreamer
 diff --git a/patches/gstreamer/gst-libav-no-cache-generator.patch b/patches/gstreamer/gst-libav-no-cache-generator.patch
