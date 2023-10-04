@@ -90,9 +90,9 @@ RTCEncodedAudioFrameMetadata LibWebRTCRtpTransformableFrame::audioMetadata() con
         auto* audioFrame = static_cast<webrtc::TransformableAudioFrameInterface*>(m_rtcFrame.get());
         auto& header = audioFrame->GetHeader();
         if (header.numCSRCs) {
-            cssrcs.reserveInitialCapacity(header.numCSRCs);
-            for (size_t cptr = 0; cptr < header.numCSRCs; ++cptr)
-                cssrcs.uncheckedAppend(header.arrOfCSRCs[cptr]);
+            cssrcs = Vector<uint32_t>(header.numCSRCs, [&](size_t cptr) {
+                return header.arrOfCSRCs[cptr];
+            });
         }
     }
     return { m_rtcFrame->GetSsrc(), WTFMove(cssrcs) };

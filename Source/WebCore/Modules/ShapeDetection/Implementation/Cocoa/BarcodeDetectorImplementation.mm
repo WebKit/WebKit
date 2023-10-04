@@ -164,11 +164,7 @@ void BarcodeDetectorImpl::getSupportedFormats(CompletionHandler<void(Vector<Barc
     for (VNBarcodeSymbology symbology in supportedSymbologies)
         barcodeFormatsSet.add(convertSymbology(symbology));
 
-    Vector<BarcodeFormat> barcodeFormatsVector;
-    barcodeFormatsVector.reserveInitialCapacity(barcodeFormatsSet.size());
-    for (auto barcodeFormat : barcodeFormatsSet)
-        barcodeFormatsVector.uncheckedAppend(barcodeFormat);
-
+    auto barcodeFormatsVector = copyToVector(barcodeFormatsSet);
     std::sort(std::begin(barcodeFormatsVector), std::end(barcodeFormatsVector));
 
     completionHandler(WTFMove(barcodeFormatsVector));

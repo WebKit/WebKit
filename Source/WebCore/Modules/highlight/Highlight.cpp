@@ -54,11 +54,10 @@ Ref<Highlight> Highlight::create(FixedVector<std::reference_wrapper<WebCore::Abs
 
 Highlight::Highlight(FixedVector<std::reference_wrapper<WebCore::AbstractRange>>&& initialRanges)
 {
-    m_highlightRanges.reserveInitialCapacity(initialRanges.size());
-    for (auto& range : initialRanges) {
+    m_highlightRanges = WTF::map(initialRanges, [&](auto&& range) {
         repaintRange(range.get());
-        m_highlightRanges.uncheckedAppend(HighlightRange::create(Ref { range.get() }));
-    }
+        return HighlightRange::create(range.get());
+    });
 }
 
 void Highlight::initializeSetLike(DOMSetAdapter& set)
