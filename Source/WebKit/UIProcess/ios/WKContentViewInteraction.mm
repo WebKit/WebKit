@@ -1071,12 +1071,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [center addObserver:self selector:@selector(_willHideMenu:) name:UIMenuControllerWillHideMenuNotification object:nil];
-    [center addObserver:self selector:@selector(_didHideMenu:) name:UIMenuControllerDidHideMenuNotification object:nil];
 ALLOW_DEPRECATED_DECLARATIONS_END
     
     [center addObserver:self selector:@selector(_keyboardDidRequestDismissal:) name:UIKeyboardPrivateDidRequestDismissalNotification object:nil];
-
-    _showingTextStyleOptions = NO;
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
@@ -4016,10 +4013,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return self._hasFocusedElement && _focusedElementInformation.hasPreviousNode;
 
     auto editorState = _page->editorState();
-    if (action == @selector(_showTextStyleOptions:))
-        return editorState.isContentRichlyEditable && editorState.selectionIsRange && !_showingTextStyleOptions;
-    if (_showingTextStyleOptions)
-        return (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:));
     // FIXME: Some of the following checks should be removed once internal clients move to the underscore-prefixed versions.
     if (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:) || action == @selector(_toggleStrikeThrough:)
         || action == @selector(_alignLeft:) || action == @selector(_alignRight:) || action == @selector(_alignCenter:) || action == @selector(_alignJustified:)
@@ -4225,12 +4218,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 }
 
-- (void)_didHideMenu:(NSNotification *)notification
-{
-    _showingTextStyleOptions = NO;
-    [_textInteractionAssistant hideTextStyleOptions];
-}
-
 - (void)_keyboardDidRequestDismissal:(NSNotification *)notification
 {
     if (_isEditable && [self isFirstResponder])
@@ -4323,12 +4310,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (self.shouldSynthesizeKeyEvents)
         _page->generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType::ToggleUnderline);
-}
-
-- (void)_showTextStyleOptionsForWebView:(id)sender
-{
-    _showingTextStyleOptions = YES;
-    [_textInteractionAssistant showTextStyleOptions];
 }
 
 - (void)_showDictionary:(NSString *)text

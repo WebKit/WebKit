@@ -131,7 +131,6 @@ class VisibleContentRectUpdateInfo;
 - (void)_define:(id)sender;
 - (void)_lookup:(id)sender;
 - (void)_share:(id)sender;
-- (void)_showTextStyleOptions:(id)sender;
 - (void)_promptForReplace:(id)sender;
 - (void)_transliterateChinese:(id)sender;
 - (void)replace:(id)sender;
