@@ -25,13 +25,10 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
-
 namespace WGSL {
 
 class CallGraph;
-struct PipelineLayout;
 
-void rewriteGlobalVariables(CallGraph&, const HashMap<String, std::optional<PipelineLayout>>&);
+void rewritePointers(CallGraph&);
 
 } // namespace WGSL

@@ -56,6 +56,7 @@ public:
     VariableFlavor flavor() const { return m_flavor; };
     VariableFlavor& flavor() { return m_flavor; };
     Identifier& name() { return m_name; }
+    Identifier& originalName() { return m_originalName; }
     Attribute::List& attributes() { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier; }
     Expression* maybeTypeName() { return m_type; }
@@ -76,6 +77,7 @@ private:
     Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr qualifier, Expression::Ptr type, Expression::Ptr initializer, Attribute::List&& attributes)
         : Declaration(span)
         , m_name(WTFMove(name))
+        , m_originalName(m_name)
         , m_attributes(WTFMove(attributes))
         , m_qualifier(qualifier)
         , m_type(type)
@@ -86,6 +88,7 @@ private:
     }
 
     Identifier m_name;
+    Identifier m_originalName;
     Attribute::List m_attributes;
     // Each of the following may be null
     // But at least one of type and initializer must be non-null

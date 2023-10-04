@@ -30,6 +30,6 @@ namespace WGSL {
 class CallGraph;
 struct PrepareResult;
 
-void rewriteEntryPoints(CallGraph&, PrepareResult&);
+void rewriteEntryPoints(CallGraph&);
 
 } // namespace WGSL

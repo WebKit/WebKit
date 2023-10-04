@@ -35,6 +35,7 @@
 #include "Metal/MetalCodeGenerator.h"
 #include "Parser.h"
 #include "PhaseTimer.h"
+#include "PointerRewriter.h"
 #include "TypeCheck.h"
 #include "WGSLShaderModule.h"
 
@@ -97,10 +98,11 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::o
     {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
-        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast, pipelineLayouts);
-        RUN_PASS(rewriteEntryPoints, callGraph, result);
-        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts, result);
+        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast, pipelineLayouts, result);
         RUN_PASS(mangleNames, callGraph, result);
+        RUN_PASS(rewritePointers, callGraph);
+        RUN_PASS(rewriteEntryPoints, callGraph);
+        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
 
         dumpASTAtEndIfNeeded(ast);
 

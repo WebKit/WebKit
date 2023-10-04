@@ -129,6 +129,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         for (const auto& error : failedCheck.errors) {
             message.print("\n"_s, error);
         }
+        dataLogLn(message.toString());
         generateAValidationError(message.toString());
         return ShaderModule::createInvalid(*this);
     }

@@ -38,10 +38,9 @@ namespace WGSL {
 
 class EntryPointRewriter {
 public:
-    EntryPointRewriter(ShaderModule&, const AST::Function&, AST::StageAttribute::Stage);
+    EntryPointRewriter(ShaderModule&, const AST::Function&, AST::StageAttribute::Stage, Reflection::EntryPointInformation&);
 
     void rewrite();
-    Reflection::EntryPointInformation takeEntryPointInformation();
 
 private:
     struct MemberOrParameter {
@@ -72,13 +71,14 @@ private:
     const Type* m_structType;
     String m_structTypeName;
     String m_structParameterName;
-    Reflection::EntryPointInformation m_information;
+    Reflection::EntryPointInformation& m_information;
 };
 
-EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, AST::StageAttribute::Stage stage)
+EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, AST::StageAttribute::Stage stage, Reflection::EntryPointInformation& information)
     : m_stage(stage)
     , m_shaderModule(shaderModule)
     , m_function(function)
+    , m_information(information)
 {
     switch (m_stage) {
     case AST::StageAttribute::Stage::Compute: {
@@ -125,22 +125,16 @@ void EntryPointRewriter::rewrite()
         m_shaderModule.append(m_function.parameters(), parameter);
     }
 
-    while (m_materializations.size())
-        m_shaderModule.insert(m_function.body().statements(), 0, m_materializations.takeLast());
-}
-
-Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation()
-{
-    return WTFMove(m_information);
+    m_shaderModule.insertVector(m_function.body().statements(), 0, m_materializations);
 }
 
 void EntryPointRewriter::collectParameters()
 {
-    while (m_function.parameters().size()) {
-        AST::Parameter& parameter = m_shaderModule.takeLast(m_function.parameters());
+    for (auto& parameter : m_function.parameters()) {
         Vector<String> path;
-        visit(path, MemberOrParameter { parameter.name(), parameter.typeName(), parameter.attributes() });
+        visit(path, MemberOrParameter { parameter.name(), const_cast<AST::Expression&>(parameter.typeName()), parameter.attributes() });
     }
+    m_shaderModule.clear(m_function.parameters());
 }
 
 void EntryPointRewriter::checkReturnType()
@@ -326,13 +320,11 @@ void EntryPointRewriter::appendBuiltins()
     }
 }
 
-void rewriteEntryPoints(CallGraph& callGraph, PrepareResult& result)
+void rewriteEntryPoints(CallGraph& callGraph)
 {
     for (auto& entryPoint : callGraph.entrypoints()) {
-        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.function, entryPoint.stage);
+        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.function, entryPoint.stage, entryPoint.information);
         rewriter.rewrite();
-        auto addResult = result.entryPoints.add(entryPoint.function.name().id(), rewriter.takeEntryPointInformation());
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 }
 

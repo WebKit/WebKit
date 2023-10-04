@@ -43,10 +43,9 @@ constexpr bool shouldLogGlobalVariableRewriting = false;
 
 class RewriteGlobalVariables : public AST::Visitor {
 public:
-    RewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
+    RewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
         : AST::Visitor()
         , m_callGraph(callGraph)
-        , m_result(result)
     {
         UNUSED_PARAM(pipelineLayouts);
     }
@@ -129,7 +128,6 @@ private:
     Packing packingForType(const Type*);
 
     CallGraph& m_callGraph;
-    PrepareResult& m_result;
     HashMap<String, Global> m_globals;
     IndexMap<Vector<std::pair<unsigned, String>>> m_groupBindingMap;
     IndexMap<const Type*> m_structTypes;
@@ -150,9 +148,7 @@ void RewriteGlobalVariables::run()
     collectGlobals();
     for (auto& entryPoint : m_callGraph.entrypoints()) {
         PipelineLayout pipelineLayout;
-        auto it = m_result.entryPoints.find(entryPoint.function.name());
-        RELEASE_ASSERT(it != m_result.entryPoints.end());
-        m_entryPointInformation = &it->value;
+        m_entryPointInformation = &entryPoint.information;
 
         visitEntryPoint(entryPoint.function, entryPoint.stage, pipelineLayout);
 
@@ -838,7 +834,16 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
     case Types::Primitive::AddressSpace:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    m_entryPointInformation->specializationConstants.add(variable.name(), Reflection::SpecializationConstant { String(), constantType });
+
+    String originalName = variable.originalName();
+    for (auto& attribute : variable.attributes()) {
+        if (is<AST::IdAttribute>(attribute)) {
+            originalName = String::number(downcast<AST::IdAttribute>(attribute).value().constantValue()->toInt());
+            break;
+        }
+    }
+
+    m_entryPointInformation->specializationConstants.add(originalName, Reflection::SpecializationConstant { variable.name(), constantType });
 }
 
 void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
@@ -997,9 +1002,9 @@ AST::Identifier RewriteGlobalVariables::argumentBufferStructName(unsigned group)
     return AST::Identifier::make(makeString("__ArgumentBuferT_", String::number(group)));
 }
 
-void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
+void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
-    RewriteGlobalVariables(callGraph, pipelineLayouts, result).run();
+    RewriteGlobalVariables(callGraph, pipelineLayouts).run();
 }
 
 } // namespace WGSL
