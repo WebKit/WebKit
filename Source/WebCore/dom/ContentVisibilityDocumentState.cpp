@@ -115,7 +115,10 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
     };
     if (relevancyToCheck.contains(ContentRelevancy::OnScreen)) {
         auto viewportProximityIterator = m_elementViewportProximities.find(target);
-        setRelevancyValue(ContentRelevancy::OnScreen, viewportProximityIterator->value == ViewportProximity::Near);
+        auto viewportProximity = ViewportProximity::Far;
+        if (viewportProximityIterator != m_elementViewportProximities.end())
+            viewportProximity = viewportProximityIterator->value;
+        setRelevancyValue(ContentRelevancy::OnScreen, viewportProximity == ViewportProximity::Near);
     }
 
     if (relevancyToCheck.contains(ContentRelevancy::Focused))
