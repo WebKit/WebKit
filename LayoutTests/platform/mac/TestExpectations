@@ -1975,9 +1975,6 @@ webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
 [ BigSur ] fast/text/system-font-width-8.html [ ImageOnlyFailure ]
 [ BigSur ] fast/text/system-font-width-9.html [ ImageOnlyFailure ]
 
-# WebM support is on Monterey and later
-[ BigSur ] http/tests/media/video-webm-stall.html [ Skip ]
-
 webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Pass Failure ]
 
 webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass ImageOnlyFailure ]
