@@ -594,16 +594,6 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
         break;
     }
 
-    case MediaConstraintType::Zoom: {
-        ASSERT(constraint.isDouble());
-        if (!capabilities.supportsZoom())
-            return 0;
-
-        auto range = capabilities.zoom();
-        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.doubleRange());
-        break;
-    }
-
     case MediaConstraintType::Volume: {
         ASSERT(constraint.isDouble());
         if (!capabilities.supportsVolume())
@@ -652,18 +642,6 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
         break;
     }
 
-    case MediaConstraintType::WhiteBalanceMode: {
-        ASSERT(constraint.isString());
-        if (!capabilities.supportsWhiteBalanceMode())
-            return 0;
-
-        auto supportedModes = capabilities.whiteBalanceModes().map([](auto& mode) {
-            return convertEnumerationToString(mode);
-        });
-        return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
-        break;
-    }
-
     case MediaConstraintType::EchoCancellation: {
         ASSERT(constraint.isBoolean());
         if (!capabilities.supportsEchoCancellation())
@@ -686,6 +664,41 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
             return 0;
 
         return downcast<StringConstraint>(constraint).fitnessDistance(settings().groupId());
+        break;
+    }
+
+    case MediaConstraintType::WhiteBalanceMode: {
+        ASSERT(constraint.isString());
+        if (!capabilities.supportsWhiteBalanceMode())
+            return 0;
+
+        auto supportedModes = capabilities.whiteBalanceModes().map([](auto& mode) {
+            return convertEnumerationToString(mode);
+        });
+        return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
+        break;
+    }
+
+    case MediaConstraintType::Zoom: {
+        ASSERT(constraint.isDouble());
+        if (!capabilities.supportsZoom())
+            return 0;
+
+        auto range = capabilities.zoom();
+        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.doubleRange());
+        break;
+    }
+
+    case MediaConstraintType::Torch: {
+        ASSERT(constraint.isBoolean());
+        if (!capabilities.supportsTorch())
+            return 0;
+
+        auto& booleanConstraint = downcast<BooleanConstraint>(constraint);
+        if (booleanConstraint.isMandatory())
+            return 0;
+
+        return booleanConstraint.fitnessDistance(capabilities.torch());
         break;
     }
 
@@ -761,16 +774,6 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
 
         auto range = capabilities.zoom();
         applyNumericConstraint(downcast<DoubleConstraint>(constraint), zoom(), { }, range.doubleRange().min, range.doubleRange().max, *this, &RealtimeMediaSource::setZoom);
-        break;
-    }
-
-    case MediaConstraintType::Volume: {
-        ASSERT(constraint.isDouble());
-        if (!capabilities.supportsVolume())
-            return;
-
-        auto range = capabilities.volume();
-        applyNumericConstraint(downcast<DoubleConstraint>(constraint), volume(), { }, range.doubleRange().min, range.doubleRange().max, *this, &RealtimeMediaSource::setVolume);
         break;
     }
 
@@ -851,6 +854,28 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
 
         if (whiteBalanceMode)
             setWhiteBalanceMode(whiteBalanceMode.value());
+        break;
+    }
+
+    case MediaConstraintType::Volume: {
+        ASSERT(constraint.isDouble());
+        if (!capabilities.supportsVolume())
+            return;
+
+        auto range = capabilities.volume();
+        applyNumericConstraint(downcast<DoubleConstraint>(constraint), volume(), { }, range.doubleRange().min, range.doubleRange().max, *this, &RealtimeMediaSource::setVolume);
+        break;
+    }
+
+    case MediaConstraintType::Torch: {
+        ASSERT(constraint.isBoolean());
+        if (!capabilities.supportsTorch())
+            return;
+
+        bool setting;
+        const BooleanConstraint& boolConstraint = downcast<BooleanConstraint>(constraint);
+        if (boolConstraint.getExact(setting) || boolConstraint.getIdeal(setting))
+            setTorch(setting);
         break;
     }
 
@@ -1014,11 +1039,6 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
         return capabilities.supportsAspectRatio();
         break;
 
-    case MediaConstraintType::Zoom:
-        ASSERT(constraint.isDouble());
-        return capabilities.supportsZoom();
-        break;
-
     case MediaConstraintType::Volume:
         ASSERT(constraint.isDouble());
         return capabilities.supportsVolume();
@@ -1057,6 +1077,16 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
     case MediaConstraintType::WhiteBalanceMode:
         ASSERT(constraint.isString());
         return capabilities.supportsWhiteBalanceMode();
+        break;
+
+    case MediaConstraintType::Zoom:
+        ASSERT(constraint.isDouble());
+        return capabilities.supportsZoom();
+        break;
+
+    case MediaConstraintType::Torch:
+        ASSERT(constraint.isBoolean());
+        return capabilities.supportsTorch();
         break;
 
     case MediaConstraintType::DisplaySurface:
@@ -1110,8 +1140,9 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
         case MediaConstraintType::DisplaySurface:
         case MediaConstraintType::LogicalSurface:
         case MediaConstraintType::FocusDistance:
-        case MediaConstraintType::Zoom:
         case MediaConstraintType::WhiteBalanceMode:
+        case MediaConstraintType::Zoom:
+        case MediaConstraintType::Torch:
         case MediaConstraintType::Unknown:
             m_fitnessScore += distance ? 1 : 2;
             break;
@@ -1299,6 +1330,17 @@ void RealtimeMediaSource::setZoom(double zoom)
     m_zoom = zoom;
     notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::Zoom);
 }
+
+void RealtimeMediaSource::setTorch(bool torch)
+{
+    if (m_torch == torch)
+        return;
+
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, torch);
+    m_torch = torch;
+    notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::Torch);
+}
+
 
 void RealtimeMediaSource::setFacingMode(VideoFacingMode mode)
 {

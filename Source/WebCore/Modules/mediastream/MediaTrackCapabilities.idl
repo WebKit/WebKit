@@ -43,6 +43,23 @@
     DOMString groupId;
     DOMString displaySurface;
     DoubleRange focusDistance;
-    DoubleRange zoom;
+
     sequence<DOMString> whiteBalanceMode;
+    // FIXME: add exposureMode;
+    // FIXME: add focusMode;
+
+    // FIXME: add exposureCompensation;
+    // FIXME: add exposureTime;
+    // FIXME: add colorTemperature;
+    // FIXME: add iso;
+
+    // FIXME: add brightness;
+    // FIXME: add contrast;
+    // FIXME: add saturation;
+    // FIXME: add sharpness;
+
+    // FIXME: add focusDistance;
+    DoubleRange zoom;
+
+    boolean torch;
 };

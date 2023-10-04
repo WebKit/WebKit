@@ -130,6 +130,7 @@ struct MockCameraProperties {
     Vector<VideoPresetData> presets { { { 640, 480 }, { { 30, 30}, { 15, 15 } }, 1, 2 } };
     Color fillColor { Color::black };
     Vector<MeteringMode> whiteBalanceMode { MeteringMode::None };
+    bool hasTorch { false };
 };
 
 struct MockDisplayProperties {

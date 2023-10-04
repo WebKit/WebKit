@@ -276,8 +276,6 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.frameRate = settings.frameRate();
     if (settings.supportsFacingMode())
         result.facingMode = convertEnumerationToString(settings.facingMode());
-    if (settings.supportsWhiteBalanceMode())
-        result.whiteBalanceMode = convertEnumerationToString(settings.whiteBalanceMode());
     if (settings.supportsVolume())
         result.volume = settings.volume();
     if (settings.supportsSampleRate())
@@ -292,8 +290,13 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.groupId = m_groupId;
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
+
+    if (settings.supportsWhiteBalanceMode())
+        result.whiteBalanceMode = convertEnumerationToString(settings.whiteBalanceMode());
     if (settings.supportsZoom())
         result.zoom = settings.zoom();
+    if (settings.supportsTorch())
+        result.torch = settings.torch();
 
     return result;
 }

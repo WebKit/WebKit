@@ -2033,16 +2033,17 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::IntConstraint> m_sampleRate;
     std::optional<WebCore::IntConstraint> m_sampleSize;
     std::optional<WebCore::DoubleConstraint> m_aspectRatio;
-    std::optional<WebCore::DoubleConstraint> m_zoom;
     std::optional<WebCore::DoubleConstraint> m_frameRate;
     std::optional<WebCore::DoubleConstraint> m_volume;
     std::optional<WebCore::BooleanConstraint> m_echoCancellation;
     std::optional<WebCore::BooleanConstraint> m_displaySurface;
     std::optional<WebCore::BooleanConstraint> m_logicalSurface;
     std::optional<WebCore::StringConstraint> m_facingMode;
-    std::optional<WebCore::StringConstraint> m_whiteBalanceMode;
     std::optional<WebCore::StringConstraint> m_deviceId;
     std::optional<WebCore::StringConstraint> m_groupId;
+    std::optional<WebCore::StringConstraint> m_whiteBalanceMode;
+    std::optional<WebCore::DoubleConstraint> m_zoom;
+    std::optional<WebCore::BooleanConstraint> m_torch;
 }
 #endif
 
@@ -4738,8 +4739,9 @@ enum class WebCore::MediaConstraintType : uint8_t {
     GroupId,
     DisplaySurface,
     LogicalSurface,
-    Zoom,
     WhiteBalanceMode,
+    Zoom,
+    Torch,
 };
 
 header: <WebCore/MediaConstraints.h>
@@ -4792,7 +4794,6 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsAspectRatio();
     bool supportsFrameRate();
     bool supportsFacingMode();
-    bool supportsWhiteBalanceMode();
     bool supportsVolume();
     bool supportsSampleRate();
     bool supportsSampleSize();
@@ -4802,7 +4803,9 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsDisplaySurface();
     bool supportsLogicalSurface();
     bool supportsFocusDistance();
+    bool supportsWhiteBalanceMode();
     bool supportsZoom();
+    bool supportsTorch();
 };
 
 enum class WebCore::VideoFacingMode : uint8_t {
@@ -4834,7 +4837,6 @@ class WebCore::RealtimeMediaSourceSettings {
     uint32_t height();
     float frameRate();
     WebCore::VideoFacingMode facingMode();
-    WebCore::MeteringMode whiteBalanceMode();
     double volume();
     uint32_t sampleRate();
     uint32_t sampleSize();
@@ -4844,7 +4846,9 @@ class WebCore::RealtimeMediaSourceSettings {
     AtomString label();
     WebCore::DisplaySurfaceType displaySurface();
     bool logicalSurface();
+    WebCore::MeteringMode whiteBalanceMode();
     double zoom();
+    bool torch();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
@@ -4898,7 +4902,6 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::CapabilityRange aspectRatio();
     WebCore::CapabilityRange frameRate();
     Vector<WebCore::VideoFacingMode> facingMode();
-    Vector<WebCore::MeteringMode> whiteBalanceModes();
     WebCore::CapabilityRange volume();
     WebCore::CapabilityRange sampleRate();
     WebCore::CapabilityRange sampleSize();
@@ -4906,7 +4909,9 @@ class WebCore::RealtimeMediaSourceCapabilities {
     AtomString deviceId();
     AtomString groupId();
     WebCore::CapabilityRange focusDistance();
+    Vector<WebCore::MeteringMode> whiteBalanceModes();
     WebCore::CapabilityRange zoom();
+    bool torch();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 

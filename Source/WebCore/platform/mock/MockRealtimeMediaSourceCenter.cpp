@@ -76,7 +76,8 @@ static inline Vector<MockMediaDevice> defaultDevices()
                     { { 112, 112 },  { { 30, 30}, { 27.5, 27.5}, { 25, 25}, { 22.5, 22.5}, { 20, 20}, { 17.5, 17.5}, { 15, 15}, { 12.5, 12.5}, { 10, 10}, { 7.5, 7.5}, { 5, 5} }, 1, 1 },
                 },
                 Color::black,
-                { },
+                { }, // whiteBalanceModes
+                false, // supportsTorch
             } },
 
         MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, { },
@@ -94,6 +95,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 },
                 Color::darkGray,
                 { MeteringMode::Manual, MeteringMode::SingleShot, MeteringMode::Continuous },
+                true,
             } },
 
         MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },

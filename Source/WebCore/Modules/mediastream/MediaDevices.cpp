@@ -228,8 +228,9 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         case MediaConstraintType::Volume:
         case MediaConstraintType::EchoCancellation:
         case MediaConstraintType::FocusDistance:
-        case MediaConstraintType::Zoom:
         case MediaConstraintType::WhiteBalanceMode:
+        case MediaConstraintType::Zoom:
+        case MediaConstraintType::Torch:
             // Ignored.
             break;
 

@@ -384,4 +384,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVSpeechSynthesisAvailableVoice
 #define AVSpeechSynthesisAvailableVoicesDidChangeNotification PAL::get_AVFoundation_AVSpeechSynthesisAvailableVoicesDidChangeNotification()
 #endif // HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)
 
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureMaxAvailableTorchLevel, float)
+#define AVCaptureMaxAvailableTorchLevel PAL::get_AVFoundation_AVCaptureMaxAvailableTorchLevel()
+
 #endif // USE(AVFOUNDATION)

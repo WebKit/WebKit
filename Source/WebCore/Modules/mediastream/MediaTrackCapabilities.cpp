@@ -113,11 +113,12 @@ MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabil
         result.groupId = groupId;
     if (capabilities.supportsFocusDistance())
         result.focusDistance = capabilityDoubleRange(capabilities.focusDistance());
-    if (capabilities.supportsZoom())
-        result.zoom = capabilityDoubleRange(capabilities.zoom());
     if (capabilities.supportsWhiteBalanceMode())
         result.whiteBalanceMode = capabilityStringVector(capabilities.whiteBalanceModes());
-
+    if (capabilities.supportsZoom())
+        result.zoom = capabilityDoubleRange(capabilities.zoom());
+    if (capabilities.supportsTorch())
+        result.torch = capabilities.torch();
 
     return result;
 }

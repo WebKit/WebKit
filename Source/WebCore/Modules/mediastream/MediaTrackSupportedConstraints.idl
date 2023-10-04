@@ -46,6 +46,23 @@
     boolean deviceId = true;
     boolean groupId = true;
     boolean displaySurface = true;
-    boolean zoom = true;
+
     boolean whiteBalanceMode = true;
+    // FIXME: add exposureMode
+    // FIXME: add focusMode
+    // FIXME: add pointsOfInterest
+
+    // FIXME: add exposureCompensation
+    // FIXME: add exposureTime
+    // FIXME: add colorTemperature
+    // FIXME: add iso
+
+    // FIXME: add brightness
+    // FIXME: add contrast
+    // FIXME: add saturation
+    // FIXME: add sharpness
+    // FIXME: add focusDistance
+    boolean zoom = true;
+    boolean torch = true;
+
 };
