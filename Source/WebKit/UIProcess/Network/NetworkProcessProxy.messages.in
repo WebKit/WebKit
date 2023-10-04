@@ -69,9 +69,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
     GetAppBoundDomains(PAL::SessionID sessionID) -> (HashSet<WebCore::RegistrableDomain> appBoundDomains)
 #endif
 
-    RequestStorageSpace(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired) -> (std::optional<uint64_t> newQuota)
     IncreaseQuota(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, WebKit::QuotaIncreaseRequestIdentifier identifier, uint64_t quota, uint64_t currentSize, uint64_t spaceRequested)
-    
+
     ResourceLoadDidSendRequest(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceRequest request, std::optional<IPC::FormDataReference> httpBody)
     ResourceLoadDidPerformHTTPRedirection(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse resourceResponse, WebCore::ResourceRequest request)
     ResourceLoadDidReceiveChallenge(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::AuthenticationChallenge challenge)
