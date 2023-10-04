@@ -211,6 +211,9 @@ public:
     // an AXNodeObject. This occurs when an Element with no renderer is
     // re-parented into a subtree that does have a renderer.
     void onRendererCreated(Element&);
+#if PLATFORM(MAC)
+    void onSelectedTextChanged(const VisiblePositionRange&);
+#endif
 
     void updateLoadingProgress(double);
     void loadingFinished() { updateLoadingProgress(1); }

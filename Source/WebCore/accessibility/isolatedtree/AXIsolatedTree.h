@@ -28,6 +28,7 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #include "AXCoreObject.h"
+#include "AXTextMarker.h"
 #include "AXTreeStore.h"
 #include "PageIdentifier.h"
 #include "RenderStyleConstants.h"
@@ -327,6 +328,9 @@ public:
     // Use only if the s_storeLock is already held like in findAXTree.
     WEBCORE_EXPORT OptionSet<ActivityState> lockedPageActivityState() const;
 
+    AXTextMarkerRange selectedTextMarkerRange() { return m_selectedTextMarkerRange; };
+    void setSelectedTextMarkerRange(AXTextMarkerRange range) { m_selectedTextMarkerRange = range; }
+
 private:
     AXIsolatedTree(AXObjectCache&);
     static void storeTree(AXObjectCache&, const Ref<AXIsolatedTree>&);
@@ -409,6 +413,7 @@ private:
     std::atomic<bool> m_relationsNeedUpdate { true };
 
     Lock m_changeLogLock;
+    AXTextMarkerRange m_selectedTextMarkerRange;
 };
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const

@@ -1670,6 +1670,16 @@ VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosi
     return { startOfLine(visiblePosition), endOfLine(visiblePosition) };
 }
 
+#if PLATFORM(MAC)
+AXTextMarkerRange AccessibilityObject::selectedTextMarkerRange()
+{
+    auto visibleRange = selectedVisiblePositionRange();
+    if (visibleRange.isNull())
+        return { };
+    return { visibleRange };
+}
+#endif
+
 bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
 {
     // we should always be given a rendered node and a replaced node, but be safe

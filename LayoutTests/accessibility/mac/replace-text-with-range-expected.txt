@@ -1,16 +1,14 @@
 This tests that the replace with range API functions as expected.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: contenteditable.replaceTextInRange("Blurb", 5, 5) === true
+PASS: contenteditable.stringValue === 'AXValue: HelloBlurb'
+PASS: contenteditable.replaceTextInRange("Blorg", 5, 5) === true
+PASS: contenteditable.stringValue === 'AXValue: HelloBlorg'
+PASS: text.replaceTextInRange("blurb", 6, 5) === true
+PASS: text.stringValue === 'AXValue: Hello blurb'
+PASS: textarea.replaceTextInRange("blurb", 6, 5) === true
+PASS: textarea.stringValue === 'AXValue: Hello blurb'
 
-
-PASS contenteditable.replaceTextInRange("Blurb", 5, 5) is true
-PASS contenteditable.stringValue is 'AXValue: HelloBlurb'
-PASS contenteditable.replaceTextInRange("Blorg", 5, 5) is true
-PASS contenteditable.stringValue is 'AXValue: HelloBlorg'
-PASS text.replaceTextInRange("blurb", 6, 5) is true
-PASS text.stringValue is 'AXValue: Hello blurb'
-PASS textarea.replaceTextInRange("blurb", 6, 5) is true
-PASS textarea.stringValue is 'AXValue: Hello blurb'
 PASS successfullyParsed is true
 
 TEST COMPLETE

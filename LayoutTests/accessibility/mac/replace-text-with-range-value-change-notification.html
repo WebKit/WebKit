@@ -4,6 +4,7 @@
 <script src="../../resources/js-test.js"></script>
 <script src="../../editing/editing.js"></script>
 <script src="value-change/value-change-helpers.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -29,6 +30,8 @@
     var actualEditTypes = [];
 
     var expectedValues = [];
+
+    var finished = false;
 
     function notificationCallback(notification, userInfo) {
         if (notification == "AXValueChanged") {
@@ -57,7 +60,7 @@
                 shouldBeInsertReplace("Cat", "Dog");
 
                 webArea.removeNotificationListener();
-                finishJSTest();
+                finished = true;
             }
         }
     }
@@ -71,35 +74,47 @@
 
         var addedNotification = webArea.addNotificationListener(notificationCallback);
         shouldBe("addedNotification", "true");
-
         var axContentEditableDiv = accessibilityController.accessibleElementById("content-editable-div");
         var contentEditableDiv = document.getElementById("content-editable-div");
-        contentEditableDiv.focus();
-        shouldBeTrue("axContentEditableDiv.replaceTextInRange('Apple', 0, 0)");
-        shouldBe("axContentEditableDiv.stringValue", "'AXValue: Apple'");
-        shouldBeTrue("axContentEditableDiv.replaceTextInRange('Pie', 0, 5)");
-        shouldBe("axContentEditableDiv.stringValue", "'AXValue: Pie'");
-        contentEditableDiv.blur();
 
         var axText = accessibilityController.accessibleElementById("text");
         var text = document.getElementById("text");
-        text.focus();
-        shouldBeTrue("axText.replaceTextInRange('Banana', 0, 0)");
-        shouldBe("axText.stringValue", "'AXValue: Banana'");
-        shouldBeTrue("axText.replaceTextInRange('Ice-cream', 0, 6)");
-        shouldBe("axText.stringValue", "'AXValue: Ice-cream'");
-        text.blur();
 
         var axTextarea = accessibilityController.accessibleElementById("textarea");
         var textarea = document.getElementById("textarea");
-        textarea.focus();
-        shouldBeTrue("axTextarea.replaceTextInRange('Cat', 0, 0)");
-        shouldBe("axTextarea.stringValue", "'AXValue: Cat'");
-        shouldBeTrue("axTextarea.replaceTextInRange('Dog', 0, 3)");
-        shouldBe("axTextarea.stringValue", "'AXValue: Dog'");
-        textarea.blur();
 
-        document.getElementById("content").style.visibility = "hidden";
+        setTimeout(async function() {
+            contentEditableDiv.focus();
+            shouldBeTrue("axContentEditableDiv.replaceTextInRange('Apple', 0, 0)");
+            await waitFor(() => axContentEditableDiv.stringValue == "AXValue: Apple");
+            shouldBe("axContentEditableDiv.stringValue", "'AXValue: Apple'");
+            shouldBeTrue("axContentEditableDiv.replaceTextInRange('Pie', 0, 5)");
+            await waitFor(() => axContentEditableDiv.stringValue == "AXValue: Pie");
+            shouldBe("axContentEditableDiv.stringValue", "'AXValue: Pie'");
+            contentEditableDiv.blur();
+
+            text.focus();
+            shouldBeTrue("axText.replaceTextInRange('Banana', 0, 0)");
+            await waitFor(() => axText.stringValue == "AXValue: Banana");
+            shouldBe("axText.stringValue", "'AXValue: Banana'");
+            shouldBeTrue("axText.replaceTextInRange('Ice-cream', 0, 6)");
+            await waitFor(() => axText.stringValue == "AXValue: Ice-cream");
+            shouldBe("axText.stringValue", "'AXValue: Ice-cream'");
+            text.blur();
+
+            textarea.focus();
+            shouldBeTrue("axTextarea.replaceTextInRange('Cat', 0, 0)");
+            await waitFor(() => axTextarea.stringValue == "AXValue: Cat");
+            shouldBe("axTextarea.stringValue", "'AXValue: Cat'");
+            shouldBeTrue("axTextarea.replaceTextInRange('Dog', 0, 3)");
+            await waitFor(() => axTextarea.stringValue == "AXValue: Dog");
+            shouldBe("axTextarea.stringValue", "'AXValue: Dog'");
+            textarea.blur();
+
+            document.getElementById("content").style.visibility = "hidden";
+            await waitFor(() => finished);
+            finishJSTest();
+        }, 0);
     }
 </script>
 

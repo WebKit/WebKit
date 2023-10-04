@@ -30,6 +30,7 @@
 
 #include "AXIsolatedObject.h"
 #include "AXLogger.h"
+#include "FrameSelection.h"
 #include "LocalFrameView.h"
 #include "Page.h"
 #include <wtf/NeverDestroyed.h>

@@ -353,7 +353,6 @@ private:
     unsigned doAXLineForIndex(unsigned) override;
 
     VisibleSelection selection() const override;
-    VisiblePositionRange selectedVisiblePositionRange() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
 
     std::optional<SimpleRange> simpleRange() const override;
@@ -376,6 +375,9 @@ private:
     std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const override;
 #if PLATFORM(COCOA)
     AXTextMarkerRange textMarkerRangeForNSRange(const NSRange&) const override;
+#endif
+#if PLATFORM(MAC)
+    AXTextMarkerRange selectedTextMarkerRange() override;
 #endif
     String stringForRange(const SimpleRange&) const override;
     IntRect boundsForRange(const SimpleRange&) const override;
