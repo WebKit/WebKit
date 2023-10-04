@@ -54,7 +54,7 @@ public:
     LayoutUnit usedContentHeight() const override;
 
     const BlockFormattingState& formattingState() const { return m_blockFormattingState; }
-    const BlockFormattingGeometry& formattingGeometry() const final { return m_blockFormattingGeometry; }
+    const BlockFormattingGeometry& formattingGeometry() const { return m_blockFormattingGeometry; }
     const BlockFormattingQuirks& formattingQuirks() const { return m_blockFormattingQuirks; }
 
 protected:

@@ -63,7 +63,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)
     : FormattingContext(formattingContextRoot, layoutState)
     , m_inlineContentCache(layoutState.inlineContentCache(formattingContextRoot))
-    , m_inlineFormattingGeometry(*this)
+    , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
     , m_inlineLayoutState(parentBlockLayoutState)
 {
@@ -182,7 +182,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
     auto leadingInlineItemPosition = needsLayoutRange.start;
     while (true) {
 
-        auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
+        auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingUtils().initialLineHeight(!previousLine.has_value()) };
         auto lineInput = LineInput { { leadingInlineItemPosition, needsLayoutRange.end }, lineInitialRect };
         auto lineIndex = previousLine ? (previousLine->lineIndex + 1) : 0lu;
 
@@ -193,7 +193,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         updateInlineLayoutStateWithLineLayoutResult(lineLayoutResult, lineLogicalRect, floatingContext);
 
         auto lineContentEnd = lineLayoutResult.inlineItemRange.end;
-        leadingInlineItemPosition = InlineFormattingGeometry::leadingInlineItemPositionForNextLine(lineContentEnd, previousLineEnd, needsLayoutRange.end);
+        leadingInlineItemPosition = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineContentEnd, previousLineEnd, needsLayoutRange.end);
         auto isLastLine = leadingInlineItemPosition == needsLayoutRange.end && lineLayoutResult.floatContent.suspendedFloats.isEmpty();
         if (isLastLine) {
             layoutResult.range = !isPartialLayout ? InlineLayoutResult::Range::Full : InlineLayoutResult::Range::FullFromDamage;
@@ -206,7 +206,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
 
         previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, !lineLayoutResult.inlineContent.isEmpty() && lineLayoutResult.inlineContent.last().isLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
         previousLineEnd = lineContentEnd;
-        lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
+        lineLogicalTop = formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
     }
     InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(*this, inlineLayoutState(), layoutResult.displayContent);
     return layoutResult;
@@ -262,7 +262,7 @@ void InlineFormattingContext::updateInlineLayoutStateWithLineLayoutResult(const 
     }
 
     if (lineLayoutResult.isFirstLast.isLastLineWithInlineContent)
-        inlineLayoutState().setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
+        inlineLayoutState().setClearGapAfterLastLine(formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 
     lineLayoutResult.endsWithHyphen ? inlineLayoutState().incrementSuccessiveHyphenatedLineCount() : inlineLayoutState().resetSuccessiveHyphenatedLineCount();
 }
@@ -305,7 +305,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
 
     displayContent.boxes.appendVector(WTFMove(boxes));
     displayContent.lines.append(displayLine);
-    return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(displayContent.lines.last().lineBoxRect(), root().style().writingMode());
+    return InlineFormattingUtils::flipVisualRectToLogicalForWritingMode(displayContent.lines.last().lineBoxRect(), root().style().writingMode());
 }
 
 void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats, LayoutPoint topleft)
@@ -363,7 +363,7 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
 
     lineBreakingResult.lineGeometry.logicalTopLeft = { constraints.horizontal().logicalLeft, constraints.logicalTop() };
     lineBreakingResult.lineGeometry.logicalWidth = constraints.horizontal().logicalWidth;
-    lineBreakingResult.contentGeometry.logicalLeft = InlineFormattingGeometry::horizontalAlignmentOffset(root().style(), lineBreakingResult.contentGeometry.logicalWidth, lineBreakingResult.lineGeometry.logicalWidth, lineBreakingResult.hangingContent.logicalWidth, lineBreakingResult.inlineContent, true);
+    lineBreakingResult.contentGeometry.logicalLeft = InlineFormattingUtils::horizontalAlignmentOffset(root().style(), lineBreakingResult.contentGeometry.logicalWidth, lineBreakingResult.lineGeometry.logicalWidth, lineBreakingResult.hangingContent.logicalWidth, lineBreakingResult.inlineContent, true);
     auto lineBox = LineBoxBuilder { *this, lineBreakingResult }.build({ });
     createDisplayContentForInlineContent(lineBox, lineBreakingResult, constraints, layoutResult.displayContent);
     return true;

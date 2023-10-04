@@ -24,17 +24,15 @@
  */
 
 #include "config.h"
-#include "InlineFormattingGeometry.h"
+#include "InlineFormattingUtils.h"
 
 #include "FloatingContext.h"
 #include "FontCascade.h"
 #include "FormattingContext.h"
 #include "InlineDisplayContent.h"
-#include "InlineFormattingContext.h"
 #include "InlineLevelBoxInlines.h"
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineQuirks.h"
-#include "LayoutBox.h"
 #include "LayoutElementBox.h"
 #include "LengthFunctions.h"
 #include "RenderStyleInlines.h"
@@ -43,12 +41,12 @@
 namespace WebCore {
 namespace Layout {
 
-InlineFormattingGeometry::InlineFormattingGeometry(const InlineFormattingContext& inlineFormattingContext)
-    : FormattingGeometry(inlineFormattingContext)
+InlineFormattingUtils::InlineFormattingUtils(const InlineFormattingContext& inlineFormattingContext)
+    : m_inlineFormattingContext(inlineFormattingContext)
 {
 }
 
-InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineLayoutResult& lineLayoutResult, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
+InlineLayoutUnit InlineFormattingUtils::logicalTopForNextLine(const LineLayoutResult& lineLayoutResult, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
 {
     auto didManageToPlaceInlineContentOrFloat = !lineLayoutResult.inlineItemRange.isEmpty();
     if (didManageToPlaceInlineContentOrFloat) {
@@ -96,45 +94,23 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineLayou
     return ceil(nextafter(lineLogicalRect.bottom(), std::numeric_limits<float>::max()));
 }
 
-ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
+ContentWidthAndMargin InlineFormattingUtils::inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const
 {
-    ASSERT(formattingContextRoot.isInFlow());
-
-    // 10.3.10 'Inline-block', replaced elements in normal flow
-
-    // Exactly as inline replaced elements.
-    if (formattingContextRoot.isReplacedBox())
-        return inlineReplacedContentWidthAndMargin(downcast<ElementBox>(formattingContextRoot), horizontalConstraints, { }, overriddenHorizontalValues);
-
+    ASSERT_NOT_IMPLEMENTED_YET();
     // 10.3.9 'Inline-block', non-replaced elements in normal flow
-
-    // If 'width' is 'auto', the used value is the shrink-to-fit width as for floating elements.
-    // A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
-    // #1
-    auto width = computedValue(formattingContextRoot.style().logicalWidth(), horizontalConstraints.logicalWidth);
-    if (!width)
-        width = shrinkToFitWidth(formattingContextRoot, horizontalConstraints.logicalWidth);
-
-    // #2
-    auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(formattingContextRoot, horizontalConstraints);
-
-    return ContentWidthAndMargin { *width, { computedHorizontalMargin.start.value_or(0_lu), computedHorizontalMargin.end.value_or(0_lu) } };
+    // 10.3.10 'Inline-block', replaced elements in normal flow
+    return { };
 }
 
-ContentHeightAndMargin InlineFormattingGeometry::inlineBlockContentHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
+ContentHeightAndMargin InlineFormattingUtils::inlineBlockContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const
 {
-    ASSERT(layoutBox.isInFlow());
-
+    ASSERT_NOT_IMPLEMENTED_YET();
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
-    if (layoutBox.isReplacedBox())
-        return inlineReplacedContentHeightAndMargin(downcast<ElementBox>(layoutBox), horizontalConstraints, { }, overriddenVerticalValues);
-
     // 10.6.6 Complicated cases
-    // - 'Inline-block', non-replaced elements.
-    return complicatedCases(layoutBox, horizontalConstraints, overriddenVerticalValues);
+    return { };
 }
 
-bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
+bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
 {
     if (!inlineLevelBox.mayStretchLineBox())
         return false;
@@ -150,7 +126,7 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
     return false;
 }
 
-InlineRect InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode writingMode)
+InlineRect InlineFormattingUtils::flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode writingMode)
 {
     switch (writingModeToBlockFlowDirection(writingMode)) {
     case BlockFlowDirection::TopToBottom:
@@ -170,7 +146,7 @@ InlineRect InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(const
     return visualRect;
 }
 
-InlineLayoutUnit InlineFormattingGeometry::computedTextIndent(IsIntrinsicWidthMode isIntrinsicWidthMode, std::optional<bool> previousLineEndsWithLineBreak, InlineLayoutUnit availableWidth) const
+InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode isIntrinsicWidthMode, std::optional<bool> previousLineEndsWithLineBreak, InlineLayoutUnit availableWidth) const
 {
     auto& root = formattingContext().root();
 
@@ -210,14 +186,14 @@ InlineLayoutUnit InlineFormattingGeometry::computedTextIndent(IsIntrinsicWidthMo
     return { minimumValueForLength(textIndent, availableWidth) };
 }
 
-InlineLayoutUnit InlineFormattingGeometry::initialLineHeight(bool isFirstLine) const
+InlineLayoutUnit InlineFormattingUtils::initialLineHeight(bool isFirstLine) const
 {
     if (inlineLayoutState().inStandardsMode())
         return isFirstLine ? formattingContext().root().firstLineStyle().computedLineHeight() : formattingContext().root().style().computedLineHeight();
     return formattingContext().quirks().initialLineHeight();
 }
 
-FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext& floatingContext) const
+FloatingContext::Constraints InlineFormattingUtils::floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext& floatingContext) const
 {
     auto logicalTopCandidate = LayoutUnit { lineLogicalTop };
     auto logicalBottomCandidate = LayoutUnit { lineLogicalTop + contentLogicalHeight };
@@ -227,7 +203,7 @@ FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(I
     return floatingContext.constraints(logicalTopCandidate, logicalBottomCandidate, FloatingContext::MayBeAboveLastFloat::Yes);
 }
 
-InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit hangingTrailingWidth, const Line::RunList& runs, bool isLastLine, std::optional<TextDirection> inlineBaseDirectionOverride)
+InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit hangingTrailingWidth, const Line::RunList& runs, bool isLastLine, std::optional<TextDirection> inlineBaseDirectionOverride)
 {
     // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
     if (hangingTrailingWidth) {
@@ -308,7 +284,7 @@ InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(const Rende
     return { };
 }
 
-InlineItemPosition InlineFormattingGeometry::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd)
+InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd)
 {
     if (!previousLineTrailingInlineItemPosition)
         return lineContentEnd;
@@ -326,7 +302,7 @@ InlineItemPosition InlineFormattingGeometry::leadingInlineItemPositionForNextLin
     return { std::min(lineContentEnd.index + 1, layoutRangeEnd.index), { } };
 }
 
-InlineLayoutUnit InlineFormattingGeometry::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const
+InlineLayoutUnit InlineFormattingUtils::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const
 {
     ASSERT(inlineItem.layoutBox().isInlineLevelBox());
     if (is<InlineTextItem>(inlineItem)) {
@@ -441,7 +417,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
     return true;
 }
 
-size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList& inlineItemList)
+size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList& inlineItemList)
 {
     // 1. Find the start candidate by skipping leading non-content items e.g "<span><span>start". Opportunity is after "<span><span>".
     // 2. Find the end candidate by skipping non-content items inbetween e.g. "<span><span>start</span>end". Opportunity is after "</span>".
@@ -527,7 +503,7 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
     return layoutRange.endIndex();
 }
 
-const InlineLayoutState& InlineFormattingGeometry::inlineLayoutState() const
+const InlineLayoutState& InlineFormattingUtils::inlineLayoutState() const
 {
     return formattingContext().inlineLayoutState();
 }

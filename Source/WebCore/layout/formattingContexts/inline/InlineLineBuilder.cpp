@@ -28,7 +28,7 @@
 
 #include "CSSLineBoxContainValue.h"
 #include "InlineFormattingContext.h"
-#include "InlineFormattingGeometry.h"
+#include "InlineFormattingUtils.h"
 #include "InlineQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
@@ -251,7 +251,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
 
     auto isLastLine = isLastLineWithInlineContent(lineContent, lineInput.needsLayoutRange.endIndex(), !result.runs.isEmpty());
     auto inlineBaseDirection = !result.runs.isEmpty() ? inlineBaseDirectionForLineContent(result.runs, rootStyle(), m_previousLine) : TextDirection::LTR;
-    auto contentLogicalLeft = !result.runs.isEmpty() ? InlineFormattingGeometry::horizontalAlignmentOffset(rootStyle(), result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, isLastLine, inlineBaseDirection) : 0.f;
+    auto contentLogicalLeft = !result.runs.isEmpty() ? InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, isLastLine, inlineBaseDirection) : 0.f;
     Vector<int32_t> visualOrderList;
     if (result.contentNeedsBidiReordering)
         computedVisualOrder(result.runs, visualOrderList);
@@ -525,8 +525,8 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
 
 LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const
 {
-    auto isIntrinsicWidthMode = isInIntrinsicWidthMode() ? InlineFormattingGeometry::IsIntrinsicWidthMode::Yes : InlineFormattingGeometry::IsIntrinsicWidthMode::No;
-    auto textIndent = formattingContext().formattingGeometry().computedTextIndent(isIntrinsicWidthMode, previousLineEndsWithLineBreak, initialLineLogicalRect.width());
+    auto isIntrinsicWidthMode = isInIntrinsicWidthMode() ? InlineFormattingUtils::IsIntrinsicWidthMode::Yes : InlineFormattingUtils::IsIntrinsicWidthMode::No;
+    auto textIndent = formattingContext().formattingUtils().computedTextIndent(isIntrinsicWidthMode, previousLineEndsWithLineBreak, initialLineLogicalRect.width());
 
     return floatConstrainedRect(initialLineLogicalRect, textIndent);
 }
@@ -606,7 +606,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
-    auto softWrapOpportunityIndex = formattingContext().formattingGeometry().nextWrapOpportunity(currentInlineItemIndex, layoutRange, m_inlineItemList);
+    auto softWrapOpportunityIndex = formattingContext().formattingUtils().nextWrapOpportunity(currentInlineItemIndex, layoutRange, m_inlineItemList);
     // softWrapOpportunityIndex == layoutRange.end means we don't have any wrap opportunity in this content.
     ASSERT(softWrapOpportunityIndex <= layoutRange.endIndex());
 
@@ -614,7 +614,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     if (isLeadingPartiaContent) {
         ASSERT(!m_overflowingLogicalWidth);
         // Handle leading partial content first (overflowing text from the previous line).
-        auto itemWidth = formattingContext().formattingGeometry().inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight, isFirstFormattedLine());
+        auto itemWidth = formattingContext().formattingUtils().inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight, isFirstFormattedLine());
         lineCandidate.inlineContent.appendInlineItem(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), itemWidth);
         currentLogicalRight += itemWidth;
         ++currentInlineItemIndex;
@@ -652,7 +652,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         }
         if (inlineItem.isText()) {
             auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-            auto logicalWidth = m_overflowingLogicalWidth ? *std::exchange(m_overflowingLogicalWidth, std::nullopt) : formattingContext().formattingGeometry().inlineItemWidth(inlineTextItem, currentLogicalRight, isFirstFormattedLine());
+            auto logicalWidth = m_overflowingLogicalWidth ? *std::exchange(m_overflowingLogicalWidth, std::nullopt) : formattingContext().formattingUtils().inlineItemWidth(inlineTextItem, currentLogicalRight, isFirstFormattedLine());
             lineCandidate.inlineContent.appendInlineItem(inlineTextItem, style, logicalWidth);
             // Word spacing does not make the run longer, but it produces an offset instead. See Line::appendTextContent as well.
             currentLogicalRight += logicalWidth + (inlineTextItem.isWordSeparator() ? style.fontCascade().wordSpacing() : 0.f);
@@ -661,7 +661,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             continue;
         }
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
-            auto logicalWidth = formattingContext().formattingGeometry().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
+            auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (style.boxDecorationBreak() == BoxDecorationBreak::Clone) {
                 auto& layoutBox = inlineItem.layoutBox();
@@ -676,7 +676,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             continue;
         }
         if (inlineItem.isBox()) {
-            auto logicalWidth = formattingContext().formattingGeometry().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
+            auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
             // FIXME: While the line breaking related properties for atomic level boxes do not depend on the line index (first line style) it'd be great to figure out the correct style to pass in.
             lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItem.layoutBox().parent().style(), logicalWidth);
             currentLogicalRight += logicalWidth;
@@ -745,7 +745,7 @@ LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect&
         if (isInIntrinsicWidthMode() || placedFloats().isEmpty())
             return { logicalRect, marginStart, { } };
 
-        auto constraints = formattingContext().formattingGeometry().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), FloatingContext { formattingContext(), placedFloats() });
+        auto constraints = formattingContext().formattingUtils().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), FloatingContext { formattingContext(), placedFloats() });
         if (!constraints.left && !constraints.right)
             return { logicalRect, marginStart, { } };
 
@@ -778,7 +778,7 @@ LineBuilder::UsedConstraints LineBuilder::adjustedLineRectWithCandidateInlineCon
     auto& inlineContent = lineCandidate.inlineContent;
     if (isInIntrinsicWidthMode())
         return { m_lineLogicalRect };
-    // FIXME: Use InlineFormattingGeometry::inlineLevelBoxAffectsLineBox instead.
+    // FIXME: Use InlineFormattingUtils::inlineLevelBoxAffectsLineBox instead.
     auto candidateContentHeight = InlineLayoutUnit { };
     auto lineBoxContain = formattingContext().root().style().lineBoxContain();
     for (auto& run : inlineContent.continuousContent().runs()) {
@@ -1153,7 +1153,7 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
     // Let's just reuse what the line has at this point.
     m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLine());
     if (m_partialLeadingTextItem) {
-        m_line.append(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), formattingContext().formattingGeometry().inlineItemWidth(*m_partialLeadingTextItem, { }, isFirstFormattedLine()));
+        m_line.append(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), formattingContext().formattingUtils().inlineItemWidth(*m_partialLeadingTextItem, { }, isFirstFormattedLine()));
         ++numberOfInlineItemsOnLine;
         if (&m_partialLeadingTextItem.value() == &lastInlineItemToAdd)
             return 1;
@@ -1165,7 +1165,7 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
             continue;
         }
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
-        m_line.append(inlineItem, style, formattingContext().formattingGeometry().inlineItemWidth(inlineItem, m_line.contentLogicalRight(), isFirstFormattedLine()));
+        m_line.append(inlineItem, style, formattingContext().formattingUtils().inlineItemWidth(inlineItem, m_line.contentLogicalRight(), isFirstFormattedLine()));
         ++numberOfInlineItemsOnLine;
         if (&inlineItem == &lastInlineItemToAdd)
             break;

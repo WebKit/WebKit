@@ -85,14 +85,14 @@ void RubyFormattingContext::placeRubyContent(WTF::Range<size_t> candidateRange, 
 {
     ASSERT(candidateRange.end() <= inlineItemList.size());
     ASSERT(inlineItemList[candidateRange.begin()].layoutBox().isRuby() || inlineItemList[candidateRange.begin()].layoutBox().isRubyBase());
-    auto& formattingGeometry = parentFormattingContext().formattingGeometry();
+    auto& formattingUtils = parentFormattingContext().formattingUtils();
 
     auto index = candidateRange.begin();
     while (index < candidateRange.end()) {
         auto appendInlineLevelItem = [&](auto& inlineBoxItem) {
             ASSERT(inlineBoxItem.layoutBox().isRuby() || inlineBoxItem.layoutBox().isRubyBase() || inlineBoxItem.layoutBox().isRubyAnnotationBox());
 
-            auto logicalWidth = formattingGeometry.inlineItemWidth(inlineBoxItem, line.contentLogicalRight(), { });
+            auto logicalWidth = formattingUtils.inlineItemWidth(inlineBoxItem, line.contentLogicalRight(), { });
             line.append(inlineBoxItem, inlineBoxItem.style(), logicalWidth);
             ++index;
         };
@@ -127,7 +127,7 @@ void RubyFormattingContext::placeRubyContent(WTF::Range<size_t> candidateRange, 
 size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineItemList& inlineItemList)
 {
     // Append ruby base content (including start/end inline box) to the line and apply "ruby-align: space-around" on the ruby subrange.
-    auto& formattingGeometry = parentFormattingContext().formattingGeometry();
+    auto& formattingUtils = parentFormattingContext().formattingUtils();
     auto lineLogicalRight = line.contentLogicalRight();
     auto baseContentLogicalWidth = InlineLayoutUnit { };
     auto baseRunStart = line.runs().size();
@@ -140,7 +140,7 @@ size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& ru
                 applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
             return index - rubyBaseContentStartIndex;
         }
-        auto logicalWidth = formattingGeometry.inlineItemWidth(rubyBaseInlineItem, lineLogicalRight + baseContentLogicalWidth, { });
+        auto logicalWidth = formattingUtils.inlineItemWidth(rubyBaseInlineItem, lineLogicalRight + baseContentLogicalWidth, { });
         line.append(rubyBaseInlineItem, rubyBaseInlineItem.style(), logicalWidth);
         baseContentLogicalWidth += logicalWidth;
     }
@@ -355,7 +355,7 @@ InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_
     ASSERT(candidateRange.end() <= inlineItemList.size());
     ASSERT(inlineItemList[candidateRange.begin()].layoutBox().isRuby() || inlineItemList[candidateRange.begin()].layoutBox().isRubyBase());
 
-    auto& formattingGeometry = parentFormattingContext().formattingGeometry();
+    auto& formattingUtils = parentFormattingContext().formattingUtils();
     auto candidateContentLogicalWidth = InlineLayoutUnit { };
     auto index = candidateRange.begin();
 
@@ -365,7 +365,7 @@ InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_
 
         if (rubyLayoutBox.isRuby()) {
             ASSERT(rubyItem.isInlineBoxStart() || rubyItem.isInlineBoxEnd());
-            candidateContentLogicalWidth += formattingGeometry.inlineItemWidth(rubyItem, lineContentLogicalRight + candidateContentLogicalWidth, { });
+            candidateContentLogicalWidth += formattingUtils.inlineItemWidth(rubyItem, lineContentLogicalRight + candidateContentLogicalWidth, { });
             ++index;
             continue;
         }
@@ -384,7 +384,7 @@ InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_
                 auto logicalWidth = InlineLayoutUnit { };
                 for (; index < candidateRange.end(); ++index) {
                     auto& baseInlineItem = inlineItemList[index];
-                    logicalWidth += formattingGeometry.inlineItemWidth(baseInlineItem, lineContentLogicalRight + logicalWidth, { });
+                    logicalWidth += formattingUtils.inlineItemWidth(baseInlineItem, lineContentLogicalRight + logicalWidth, { });
                     if (&baseInlineItem.layoutBox() == &rubyLayoutBox && baseInlineItem.isInlineBoxEnd()) {
                         // End of base.
                         ++index;

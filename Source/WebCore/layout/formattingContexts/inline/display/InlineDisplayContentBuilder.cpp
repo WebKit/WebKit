@@ -27,7 +27,7 @@
 #include "InlineDisplayContentBuilder.h"
 
 #include "FontCascade.h"
-#include "InlineFormattingGeometry.h"
+#include "InlineFormattingUtils.h"
 #include "InlineTextBoxStyle.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
@@ -1139,7 +1139,7 @@ InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingModeWit
         return { logicalRect.left(), bottomOffset, logicalRect.height(), logicalRect.width() };
     }
     case BlockFlowDirection::RightToLeft:
-        // See InlineFormattingGeometry for more info.
+        // See InlineFormattingUtils for more info.
         return { logicalRect.left(), logicalRect.top(), logicalRect.height(), logicalRect.width() };
     default:
         ASSERT_NOT_REACHED();
@@ -1159,7 +1159,7 @@ InlineRect InlineDisplayContentBuilder::flipRootInlineBoxRectToVisualForWritingM
     }
     case BlockFlowDirection::LeftToRight:
     case BlockFlowDirection::RightToLeft: {
-        // See InlineFormattingGeometry for more info.
+        // See InlineFormattingUtils for more info.
         auto visualRect = InlineRect { rootInlineBoxLogicalRect.left(), rootInlineBoxLogicalRect.top(), rootInlineBoxLogicalRect.height(), rootInlineBoxLogicalRect.width() };
         visualRect.moveBy({ m_displayLine.left(), m_displayLine.top() });
         return visualRect;

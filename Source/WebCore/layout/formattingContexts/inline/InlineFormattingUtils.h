@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "FloatingContext.h"
-#include "FormattingGeometry.h"
 #include "InlineLineBuilder.h"
 
 namespace WebCore {
@@ -36,9 +34,9 @@ class FloatingContext;
 class InlineFormattingContext;
 class InlineLevelBox;
 
-class InlineFormattingGeometry : public FormattingGeometry {
+class InlineFormattingUtils {
 public:
-    InlineFormattingGeometry(const InlineFormattingContext&);
+    InlineFormattingUtils(const InlineFormattingContext&);
 
     InlineLayoutUnit logicalTopForNextLine(const LineLayoutResult&, const InlineRect& lineLogicalRect, const FloatingContext&) const;
 
@@ -69,12 +67,14 @@ public:
 private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
 
-    const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }
     const InlineLayoutState& inlineLayoutState() const;
+    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+
+private:
+    const InlineFormattingContext& m_inlineFormattingContext;
+
 };
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_GEOMETRY(InlineFormattingGeometry, isInlineFormattingGeometry())
 

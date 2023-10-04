@@ -42,7 +42,7 @@ static InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect& li
         return lineLogicalRect;
     case BlockFlowDirection::LeftToRight:
     case BlockFlowDirection::RightToLeft:
-        // See InlineFormattingGeometry for more info.
+        // See InlineFormattingUtils for more info.
         return { lineLogicalRect.left(), lineLogicalRect.top(), lineLogicalRect.height(), lineLogicalRect.width() };
     default:
         ASSERT_NOT_REACHED();

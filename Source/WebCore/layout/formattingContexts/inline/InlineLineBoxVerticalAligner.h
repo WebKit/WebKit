@@ -26,7 +26,7 @@
 #pragma once
 
 #include "InlineFormattingContext.h"
-#include "InlineFormattingGeometry.h"
+#include "InlineFormattingUtils.h"
 
 namespace WebCore {
 namespace Layout {
@@ -56,14 +56,14 @@ private:
     InlineLayoutUnit adjustForAnnotationIfNeeded(LineBox&, InlineLayoutUnit lineBoxHeight) const;
     InlineLevelBox::AscentAndDescent layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const;
 
-    const InlineFormattingGeometry& formattingGeometry() const { return m_inlineFormattingGeometry; }
+    const InlineFormattingUtils& formattingUtils() const { return m_inlineFormattingUtils; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const ElementBox& rootBox() const { return formattingContext().root(); }
     const InlineLayoutState& inlineLayoutState() const { return formattingContext().inlineLayoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
-    const InlineFormattingGeometry m_inlineFormattingGeometry;
+    const InlineFormattingUtils m_inlineFormattingUtils;
 };
 
 }

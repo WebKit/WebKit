@@ -1732,7 +1732,7 @@ layout/formattingContexts/inline/AbstractLineBuilder.cpp
 layout/formattingContexts/inline/InlineContentBalancer.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
 layout/formattingContexts/inline/InlineFormattingContext.cpp
-layout/formattingContexts/inline/InlineFormattingGeometry.cpp
+layout/formattingContexts/inline/InlineFormattingUtils.cpp
 layout/formattingContexts/inline/InlineItem.cpp
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.cpp

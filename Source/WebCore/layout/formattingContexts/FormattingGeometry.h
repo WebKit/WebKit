@@ -87,7 +87,6 @@ public:
     std::optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
     bool isBlockFormattingGeometry() const { return formattingContext().isBlockFormattingContext(); }
-    bool isInlineFormattingGeometry() const { return formattingContext().isInlineFormattingContext(); }
     bool isFlexFormattingGeometry() const { return formattingContext().isFlexFormattingContext(); }
     bool isTableFormattingGeometry() const { return formattingContext().isTableFormattingContext(); }
 
