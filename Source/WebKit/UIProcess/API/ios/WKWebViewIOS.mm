@@ -39,7 +39,7 @@
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "TapHandlingResult.h"
 #import "UIKitUtilities.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "ViewGestureController.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKBackForwardListItemInternal.h"
@@ -226,10 +226,10 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
 - (BOOL)_isShowingVideoPictureInPicture
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (!_page || !_page->videoFullscreenManager())
+    if (!_page || !_page->videoPresentationManager())
         return false;
 
-    return _page->videoFullscreenManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+    return _page->videoPresentationManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 #else
     return false;
 #endif
@@ -238,10 +238,10 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
 - (BOOL)_mayAutomaticallyShowVideoPictureInPicture
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (!_page || !_page->videoFullscreenManager())
+    if (!_page || !_page->videoPresentationManager())
         return false;
 
-    return _page->videoFullscreenManager()->mayAutomaticallyShowVideoPictureInPicture();
+    return _page->videoPresentationManager()->mayAutomaticallyShowVideoPictureInPicture();
 #else
     return false;
 #endif

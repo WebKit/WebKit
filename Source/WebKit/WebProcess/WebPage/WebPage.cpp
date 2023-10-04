@@ -330,7 +330,7 @@
 #include "RemoteLayerTreeTransaction.h"
 #include "RemoteObjectRegistryMessages.h"
 #include "TextCheckingControllerProxy.h"
-#include "VideoFullscreenManager.h"
+#include "VideoPresentationManager.h"
 #include "WKStringCF.h"
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
@@ -1278,8 +1278,8 @@ WebPage::~WebPage()
     if (m_playbackSessionManager)
         m_playbackSessionManager->invalidate();
 
-    if (m_videoFullscreenManager)
-        m_videoFullscreenManager->invalidate();
+    if (m_videoPresentationManager)
+        m_videoPresentationManager->invalidate();
 #endif
 
     for (auto& completionHandler : std::exchange(m_markLayersAsVolatileCompletionHandlers, { }))
@@ -3168,7 +3168,7 @@ void WebPage::updateDrawingAreaLayerTreeFreezeState()
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     // When the browser is in the background, we should not freeze the layer tree
     // if the page has a video playing in picture-in-picture.
-    if (m_videoFullscreenManager && m_videoFullscreenManager->hasVideoPlayingInPictureInPicture() && m_layerTreeFreezeReasons.hasExactlyOneBitSet() && m_layerTreeFreezeReasons.contains(LayerTreeFreezeReason::BackgroundApplication)) {
+    if (m_videoPresentationManager && m_videoPresentationManager->hasVideoPlayingInPictureInPicture() && m_layerTreeFreezeReasons.hasExactlyOneBitSet() && m_layerTreeFreezeReasons.contains(LayerTreeFreezeReason::BackgroundApplication)) {
         m_drawingArea->setLayerTreeStateIsFrozen(false);
         return;
     }
@@ -4892,11 +4892,11 @@ PlaybackSessionManager& WebPage::playbackSessionManager()
     return *m_playbackSessionManager;
 }
 
-VideoFullscreenManager& WebPage::videoFullscreenManager()
+VideoPresentationManager& WebPage::videoPresentationManager()
 {
-    if (!m_videoFullscreenManager)
-        m_videoFullscreenManager = VideoFullscreenManager::create(*this, playbackSessionManager());
-    return *m_videoFullscreenManager;
+    if (!m_videoPresentationManager)
+        m_videoPresentationManager = VideoPresentationManager::create(*this, playbackSessionManager());
+    return *m_videoPresentationManager;
 }
 
 void WebPage::videoControlsManagerDidChange()

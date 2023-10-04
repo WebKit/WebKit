@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #pragma once
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -34,7 +33,7 @@
 #include "MediaPlayerEnums.h"
 #include "MediaPlayerIdentifier.h"
 #include "PlatformLayer.h"
-#include "VideoFullscreenModel.h"
+#include "VideoPresentationModel.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -43,18 +42,19 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
 class AudioTrack;
 class HTMLVideoElement;
 class TextTrack;
 class PlaybackSessionModelMediaElement;
 
-class VideoFullscreenModelVideoElement final : public VideoFullscreenModel {
+class VideoPresentationModelVideoElement final : public VideoPresentationModel {
 public:
-    static RefPtr<VideoFullscreenModelVideoElement> create()
+    static RefPtr<VideoPresentationModelVideoElement> create()
     {
-        return adoptRef(*new VideoFullscreenModelVideoElement());
+        return adoptRef(*new VideoPresentationModelVideoElement());
     }
-    WEBCORE_EXPORT ~VideoFullscreenModelVideoElement();
+    WEBCORE_EXPORT ~VideoPresentationModelVideoElement();
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT RetainPtr<PlatformLayer> createVideoFullscreenLayer();
@@ -62,8 +62,8 @@ public:
     WEBCORE_EXPORT void willExitFullscreen() final;
     WEBCORE_EXPORT void waitForPreparedForInlineThen(Function<void()>&& completionHandler);
 
-    WEBCORE_EXPORT void addClient(VideoFullscreenModelClient&) final;
-    WEBCORE_EXPORT void removeClient(VideoFullscreenModelClient&) final;
+    WEBCORE_EXPORT void addClient(VideoPresentationModelClient&) final;
+    WEBCORE_EXPORT void removeClient(VideoPresentationModelClient&) final;
     WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) final;
     WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) final;
     WEBCORE_EXPORT void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) final;
@@ -79,25 +79,25 @@ public:
     const Logger* loggerPtr() const final;
     WEBCORE_EXPORT const void* logIdentifier() const final;
     WEBCORE_EXPORT const void* nextChildIdentifier() const final;
-    const char* logClassName() const { return "VideoFullscreenModelVideoElement"; }
+    const char* logClassName() const { return "VideoPresentationModelVideoElement"; }
     WTFLogChannel& logChannel() const;
 #endif
 
 protected:
-    WEBCORE_EXPORT VideoFullscreenModelVideoElement();
+    WEBCORE_EXPORT VideoPresentationModelVideoElement();
 
 private:
     class VideoListener final : public EventListener {
     public:
-        static Ref<VideoListener> create(VideoFullscreenModelVideoElement& parent)
+        static Ref<VideoListener> create(VideoPresentationModelVideoElement& parent)
         {
             return adoptRef(*new VideoListener(parent));
         }
         void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
     private:
-        explicit VideoListener(VideoFullscreenModelVideoElement&);
+        explicit VideoListener(VideoPresentationModelVideoElement&);
 
-        ThreadSafeWeakPtr<VideoFullscreenModelVideoElement> m_parent;
+        ThreadSafeWeakPtr<VideoPresentationModelVideoElement> m_parent;
     };
 
     void setHasVideo(bool);
@@ -120,7 +120,7 @@ private:
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening { false };
-    HashSet<CheckedPtr<VideoFullscreenModelClient>> m_clients;
+    HashSet<CheckedPtr<VideoPresentationModelClient>> m_clients;
     bool m_hasVideo { false };
     FloatSize m_videoDimensions;
     FloatRect m_videoFrame;
@@ -133,7 +133,6 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
 
-#endif
-
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)

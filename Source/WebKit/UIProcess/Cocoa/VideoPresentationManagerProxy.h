@@ -36,7 +36,7 @@
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformVideoFullscreenInterface.h>
 #include <WebCore/PlatformView.h>
-#include <WebCore/VideoFullscreenModel.h>
+#include <WebCore/VideoPresentationModel.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Observer.h>
@@ -57,16 +57,16 @@ constexpr size_t DefaultMockPictureInPictureWindowHeight = 100;
 class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class PlaybackSessionModelContext;
-class VideoFullscreenManagerProxy;
+class VideoPresentationManagerProxy;
 
-class VideoFullscreenModelContext final
-    : public WebCore::VideoFullscreenModel  {
+class VideoPresentationModelContext final
+    : public WebCore::VideoPresentationModel  {
 public:
-    static Ref<VideoFullscreenModelContext> create(VideoFullscreenManagerProxy& manager, PlaybackSessionModelContext& playbackSessionModel, PlaybackSessionContextIdentifier contextId)
+    static Ref<VideoPresentationModelContext> create(VideoPresentationManagerProxy& manager, PlaybackSessionModelContext& playbackSessionModel, PlaybackSessionContextIdentifier contextId)
     {
-        return adoptRef(*new VideoFullscreenModelContext(manager, playbackSessionModel, contextId));
+        return adoptRef(*new VideoPresentationModelContext(manager, playbackSessionModel, contextId));
     }
-    virtual ~VideoFullscreenModelContext();
+    virtual ~VideoPresentationModelContext();
 
     PlatformView *layerHostView() const { return m_layerHostView.get(); }
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
@@ -85,14 +85,14 @@ public:
     void requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&&);
 
 private:
-    friend class VideoFullscreenManagerProxy;
-    VideoFullscreenModelContext(VideoFullscreenManagerProxy&, PlaybackSessionModelContext&, PlaybackSessionContextIdentifier);
+    friend class VideoPresentationManagerProxy;
+    VideoPresentationModelContext(VideoPresentationManagerProxy&, PlaybackSessionModelContext&, PlaybackSessionContextIdentifier);
 
     void setVideoDimensions(const WebCore::FloatSize&);
 
-    // VideoFullscreenModel
-    void addClient(WebCore::VideoFullscreenModelClient&) override;
-    void removeClient(WebCore::VideoFullscreenModelClient&) override;
+    // VideoPresentationModel
+    void addClient(WebCore::VideoPresentationModelClient&) override;
+    void removeClient(WebCore::VideoPresentationModelClient&) override;
     void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     void setVideoLayerFrame(WebCore::FloatRect) override;
     void setVideoLayerGravity(WebCore::MediaPlayerEnums::VideoGravity) override;
@@ -127,11 +127,11 @@ private:
     const void* nextChildIdentifier() const final;
     const Logger* loggerPtr() const final;
 
-    const char* logClassName() const { return "VideoFullscreenModelContext"; };
+    const char* logClassName() const { return "VideoPresentationModelContext"; };
     WTFLogChannel& logChannel() const;
 #endif
 
-    WeakPtr<VideoFullscreenManagerProxy> m_manager;
+    WeakPtr<VideoPresentationManagerProxy> m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
     PlaybackSessionContextIdentifier m_contextId;
     RetainPtr<PlatformView> m_layerHostView;
@@ -142,7 +142,7 @@ private:
     RetainPtr<WKVideoView> m_videoView;
 #endif
 
-    WeakHashSet<WebCore::VideoFullscreenModelClient> m_clients;
+    WeakHashSet<WebCore::VideoPresentationModelClient> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
 
@@ -151,17 +151,17 @@ private:
 #endif
 };
 
-class VideoFullscreenManagerProxy
-    : public RefCounted<VideoFullscreenManagerProxy>
-    , public CanMakeWeakPtr<VideoFullscreenManagerProxy>
+class VideoPresentationManagerProxy
+    : public RefCounted<VideoPresentationManagerProxy>
+    , public CanMakeWeakPtr<VideoPresentationManagerProxy>
     , private IPC::MessageReceiver {
 public:
-    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::WeakPtrImplType;
-    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::WeakValueType;
-    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::weakPtrFactory;
+    using CanMakeWeakPtr<VideoPresentationManagerProxy>::WeakPtrImplType;
+    using CanMakeWeakPtr<VideoPresentationManagerProxy>::WeakValueType;
+    using CanMakeWeakPtr<VideoPresentationManagerProxy>::weakPtrFactory;
 
-    static Ref<VideoFullscreenManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
-    virtual ~VideoFullscreenManagerProxy();
+    static Ref<VideoPresentationManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
+    virtual ~VideoPresentationManagerProxy();
 
     void invalidate();
 
@@ -181,7 +181,7 @@ public:
     using VideoInPictureInPictureDidChangeObserver = WTF::Observer<void(bool)>;
     void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
-    void forEachSession(Function<void(VideoFullscreenModelContext&, WebCore::PlatformVideoFullscreenInterface&)>&&);
+    void forEachSession(Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoFullscreenInterface&)>&&);
 
     void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
 
@@ -195,15 +195,15 @@ public:
     void willRemoveLayerForID(PlaybackSessionContextIdentifier);
 
 private:
-    friend class VideoFullscreenModelContext;
+    friend class VideoPresentationModelContext;
 
-    explicit VideoFullscreenManagerProxy(WebPageProxy&, PlaybackSessionManagerProxy&);
+    explicit VideoPresentationManagerProxy(WebPageProxy&, PlaybackSessionManagerProxy&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    typedef std::tuple<RefPtr<VideoFullscreenModelContext>, RefPtr<WebCore::PlatformVideoFullscreenInterface>> ModelInterfaceTuple;
+    typedef std::tuple<RefPtr<VideoPresentationModelContext>, RefPtr<WebCore::PlatformVideoFullscreenInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
     ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
-    VideoFullscreenModelContext& ensureModel(PlaybackSessionContextIdentifier);
+    VideoPresentationModelContext& ensureModel(PlaybackSessionContextIdentifier);
     WebCore::PlatformVideoFullscreenInterface& ensureInterface(PlaybackSessionContextIdentifier);
     WebCore::PlatformVideoFullscreenInterface* findInterface(PlaybackSessionContextIdentifier) const;
     void ensureClientForContext(PlaybackSessionContextIdentifier);
@@ -214,7 +214,7 @@ private:
 
     RetainPtr<WKLayerHostView> createLayerHostViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, float hostingScaleFactor);
 
-    // Messages from VideoFullscreenManager
+    // Messages from VideoPresentationManager
     void setupFullscreenWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
     void setInlineRect(PlaybackSessionContextIdentifier, const WebCore::FloatRect& inlineRect, bool visible);
     void setHasVideoContentLayer(PlaybackSessionContextIdentifier, bool value);
@@ -231,7 +231,7 @@ private:
     void textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier, float scale);
     void textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier, bool hidden);
 
-    // Messages to VideoFullscreenManager
+    // Messages to VideoPresentationManager
     void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);
     void requestUpdateInlineRect(PlaybackSessionContextIdentifier);
     void requestVideoContentLayer(PlaybackSessionContextIdentifier);

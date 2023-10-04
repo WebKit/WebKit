@@ -251,8 +251,8 @@
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "UserMediaCaptureManagerProxy.h"
-#include "VideoFullscreenManagerProxy.h"
-#include "VideoFullscreenManagerProxyMessages.h"
+#include "VideoPresentationManagerProxy.h"
+#include "VideoPresentationManagerProxyMessages.h"
 #include "WebPrivacyHelpers.h"
 #include <WebCore/AttributedString.h>
 #include <WebCore/CoreAudioCaptureDeviceManager.h>
@@ -1238,10 +1238,10 @@ void WebPageProxy::didAttachToRunningProcess()
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     ASSERT(!m_playbackSessionManager);
     m_playbackSessionManager = PlaybackSessionManagerProxy::create(*this);
-    ASSERT(!m_videoFullscreenManager);
-    m_videoFullscreenManager = VideoFullscreenManagerProxy::create(*this, *m_playbackSessionManager);
-    if (m_videoFullscreenManager)
-        m_videoFullscreenManager->setMockVideoPresentationModeEnabled(m_mockVideoPresentationModeEnabled);
+    ASSERT(!m_videoPresentationManager);
+    m_videoPresentationManager = VideoPresentationManagerProxy::create(*this, *m_playbackSessionManager);
+    if (m_videoPresentationManager)
+        m_videoPresentationManager->setMockVideoPresentationModeEnabled(m_mockVideoPresentationModeEnabled);
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -2497,8 +2497,8 @@ void WebPageProxy::viewDidLeaveWindow()
     closeOverlayedViews();
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     // When leaving the current page, close the video fullscreen.
-    if (m_videoFullscreenManager && m_videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard))
-        m_videoFullscreenManager->requestHideAndExitFullscreen();
+    if (m_videoPresentationManager && m_videoPresentationManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard))
+        m_videoPresentationManager->requestHideAndExitFullscreen();
 #endif
 }
 
@@ -7058,8 +7058,8 @@ void WebPageProxy::exitFullscreenImmediately()
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (videoFullscreenManager())
-        videoFullscreenManager()->requestHideAndExitFullscreen();
+    if (videoPresentationManager())
+        videoPresentationManager()->requestHideAndExitFullscreen();
 #endif
 }
 
@@ -7784,16 +7784,16 @@ PlaybackSessionManagerProxy* WebPageProxy::playbackSessionManager()
     return m_playbackSessionManager.get();
 }
 
-VideoFullscreenManagerProxy* WebPageProxy::videoFullscreenManager()
+VideoPresentationManagerProxy* WebPageProxy::videoPresentationManager()
 {
-    return m_videoFullscreenManager.get();
+    return m_videoPresentationManager.get();
 }
 
 void WebPageProxy::setMockVideoPresentationModeEnabled(bool enabled)
 {
     m_mockVideoPresentationModeEnabled = enabled;
-    if (m_videoFullscreenManager)
-        m_videoFullscreenManager->setMockVideoPresentationModeEnabled(enabled);
+    if (m_videoPresentationManager)
+        m_videoPresentationManager->setMockVideoPresentationModeEnabled(enabled);
 }
 
 #endif
@@ -9208,9 +9208,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         m_playbackSessionManager->invalidate();
         m_playbackSessionManager = nullptr;
     }
-    if (m_videoFullscreenManager) {
-        m_videoFullscreenManager->invalidate();
-        m_videoFullscreenManager = nullptr;
+    if (m_videoPresentationManager) {
+        m_videoPresentationManager->invalidate();
+        m_videoPresentationManager = nullptr;
     }
 #endif
 
@@ -11132,7 +11132,7 @@ void WebPageProxy::handleControlledElementIDResponse(const String& identifier) c
 bool WebPageProxy::isPlayingVideoInEnhancedFullscreen() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    return m_videoFullscreenManager && m_videoFullscreenManager->isPlayingVideoInEnhancedFullscreen();
+    return m_videoPresentationManager && m_videoPresentationManager->isPlayingVideoInEnhancedFullscreen();
 #else
     return false;
 #endif

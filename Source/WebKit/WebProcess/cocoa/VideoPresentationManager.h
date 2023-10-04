@@ -33,7 +33,7 @@
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformCALayer.h>
-#include <WebCore/VideoFullscreenModelVideoElement.h>
+#include <WebCore/VideoPresentationModelVideoElement.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -64,17 +64,17 @@ class WebPage;
 class PlaybackSessionInterfaceContext;
 class PlaybackSessionManager;
 class ShareableBitmapHandle;
-class VideoFullscreenManager;
+class VideoPresentationManager;
 
-class VideoFullscreenInterfaceContext
-    : public RefCounted<VideoFullscreenInterfaceContext>
-    , public WebCore::VideoFullscreenModelClient {
+class VideoPresentationInterfaceContext
+    : public RefCounted<VideoPresentationInterfaceContext>
+    , public WebCore::VideoPresentationModelClient {
 public:
-    static Ref<VideoFullscreenInterfaceContext> create(VideoFullscreenManager& manager, PlaybackSessionContextIdentifier contextId)
+    static Ref<VideoPresentationInterfaceContext> create(VideoPresentationManager& manager, PlaybackSessionContextIdentifier contextId)
     {
-        return adoptRef(*new VideoFullscreenInterfaceContext(manager, contextId));
+        return adoptRef(*new VideoPresentationInterfaceContext(manager, contextId));
     }
-    virtual ~VideoFullscreenInterfaceContext();
+    virtual ~VideoPresentationInterfaceContext();
 
     LayerHostingContext* layerHostingContext() { return m_layerHostingContext.get(); }
     void setLayerHostingContext(std::unique_ptr<LayerHostingContext>&&);
@@ -99,14 +99,14 @@ public:
     void setRootLayer(RetainPtr<CALayer>);
 
 private:
-    // VideoFullscreenModelClient
+    // VideoPresentationModelClient
     void hasVideoChanged(bool) override;
     void videoDimensionsChanged(const WebCore::FloatSize&) override;
     void setPlayerIdentifier(std::optional<WebCore::MediaPlayerIdentifier>) final;
 
-    VideoFullscreenInterfaceContext(VideoFullscreenManager&, PlaybackSessionContextIdentifier);
+    VideoPresentationInterfaceContext(VideoPresentationManager&, PlaybackSessionContextIdentifier);
 
-    WeakPtr<VideoFullscreenManager> m_manager;
+    WeakPtr<VideoPresentationManager> m_manager;
     PlaybackSessionContextIdentifier m_contextId;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     AnimationType m_animationType { AnimationType::None };
@@ -117,17 +117,17 @@ private:
     RetainPtr<CALayer> m_rootLayer;
 };
 
-class VideoFullscreenManager
-    : public RefCounted<VideoFullscreenManager>
-    , public CanMakeWeakPtr<VideoFullscreenManager>
+class VideoPresentationManager
+    : public RefCounted<VideoPresentationManager>
+    , public CanMakeWeakPtr<VideoPresentationManager>
     , private IPC::MessageReceiver {
 public:
-    using CanMakeWeakPtr<VideoFullscreenManager>::WeakPtrImplType;
-    using CanMakeWeakPtr<VideoFullscreenManager>::WeakValueType;
-    using CanMakeWeakPtr<VideoFullscreenManager>::weakPtrFactory;
+    using CanMakeWeakPtr<VideoPresentationManager>::WeakPtrImplType;
+    using CanMakeWeakPtr<VideoPresentationManager>::WeakValueType;
+    using CanMakeWeakPtr<VideoPresentationManager>::weakPtrFactory;
 
-    static Ref<VideoFullscreenManager> create(WebPage&, PlaybackSessionManager&);
-    virtual ~VideoFullscreenManager();
+    static Ref<VideoPresentationManager> create(WebPage&, PlaybackSessionManager&);
+    virtual ~VideoPresentationManager();
 
     void invalidate();
 
@@ -153,25 +153,25 @@ public:
     bool videoElementInPictureInPicture() const { return !!m_videoElementInPictureInPicture; }
 
 protected:
-    friend class VideoFullscreenInterfaceContext;
+    friend class VideoPresentationInterfaceContext;
 
-    explicit VideoFullscreenManager(WebPage&, PlaybackSessionManager&);
+    explicit VideoPresentationManager(WebPage&, PlaybackSessionManager&);
 
-    typedef std::tuple<RefPtr<WebCore::VideoFullscreenModelVideoElement>, RefPtr<VideoFullscreenInterfaceContext>> ModelInterfaceTuple;
+    typedef std::tuple<RefPtr<WebCore::VideoPresentationModelVideoElement>, RefPtr<VideoPresentationInterfaceContext>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext);
     ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext = true);
-    WebCore::VideoFullscreenModelVideoElement& ensureModel(PlaybackSessionContextIdentifier);
-    VideoFullscreenInterfaceContext& ensureInterface(PlaybackSessionContextIdentifier);
+    WebCore::VideoPresentationModelVideoElement& ensureModel(PlaybackSessionContextIdentifier);
+    VideoPresentationInterfaceContext& ensureInterface(PlaybackSessionContextIdentifier);
     void removeContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
 
-    // Interface to VideoFullscreenInterfaceContext
+    // Interface to VideoPresentationInterfaceContext
     void hasVideoChanged(PlaybackSessionContextIdentifier, bool hasVideo);
     void videoDimensionsChanged(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
 
-    // Messages from VideoFullscreenManagerProxy
+    // Messages from VideoPresentationManagerProxy
     void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia);
     void requestUpdateInlineRect(PlaybackSessionContextIdentifier);
     void requestVideoContentLayer(PlaybackSessionContextIdentifier);
@@ -190,7 +190,7 @@ protected:
     void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible);
     void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
 
-    void setCurrentlyInFullscreen(VideoFullscreenInterfaceContext&, bool);
+    void setCurrentlyInFullscreen(VideoPresentationInterfaceContext&, bool);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;

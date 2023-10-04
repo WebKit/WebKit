@@ -31,7 +31,7 @@
 #import "GeometryUtilities.h"
 #import "LayoutRect.h"
 #import "Logging.h"
-#import "VideoFullscreenModel.h"
+#import "VideoPresentationModel.h"
 #import "WebAVPlayerController.h"
 #import <wtf/LoggerHelper.h>
 #import <wtf/RunLoop.h>
@@ -57,10 +57,10 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 #endif
 
 namespace WebCore {
-class WebAVPlayerLayerFullscreenModelClient : public VideoFullscreenModelClient {
-    WTF_MAKE_FAST_ALLOCATED(WebAVPlayerLayerFullscreenModelClient);
+class WebAVPlayerLayerPresentationModelClient : public VideoPresentationModelClient {
+    WTF_MAKE_FAST_ALLOCATED(WebAVPlayerLayerPresentationModelClient);
 public:
-    WebAVPlayerLayerFullscreenModelClient(WebAVPlayerLayer* playerLayer)
+    WebAVPlayerLayerPresentationModelClient(WebAVPlayerLayer* playerLayer)
         : m_playerLayer(playerLayer)
     {
     }
@@ -75,14 +75,14 @@ private:
 }
 
 @implementation WebAVPlayerLayer {
-    ThreadSafeWeakPtr<VideoFullscreenModel> _fullscreenModel;
+    ThreadSafeWeakPtr<VideoPresentationModel> _presentationModel;
     RetainPtr<WebAVPlayerController> _playerController;
     RetainPtr<CALayer> _videoSublayer;
     FloatRect _targetVideoFrame;
     CGSize _videoDimensions;
     RetainPtr<NSString> _videoGravity;
     RetainPtr<NSString> _previousVideoGravity;
-    std::unique_ptr<WebAVPlayerLayerFullscreenModelClient> _fullscreenModelClient;
+    std::unique_ptr<WebAVPlayerLayerPresentationModelClient> _presentationModelClient;
 #if !RELEASE_LOG_DISABLED
     const void* _logIdentifier;
 #endif
@@ -97,7 +97,7 @@ private:
         _videoGravity = AVLayerVideoGravityResizeAspect;
         _previousVideoGravity = AVLayerVideoGravityResizeAspect;
         self.name = @"WebAVPlayerLayer";
-        _fullscreenModelClient = WTF::makeUnique<WebAVPlayerLayerFullscreenModelClient>(self);
+        _presentationModelClient = WTF::makeUnique<WebAVPlayerLayerPresentationModelClient>(self);
     }
     return self;
 }
@@ -106,33 +106,33 @@ private:
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
     [_pixelBufferAttributes release];
-    if (auto model = _fullscreenModel.get())
-        model->removeClient(*_fullscreenModelClient);
+    if (auto model = _presentationModel.get())
+        model->removeClient(*_presentationModelClient);
     [super dealloc];
 }
 
-- (VideoFullscreenModel*)fullscreenModel
+- (VideoPresentationModel*)presentationModel
 {
-    return _fullscreenModel.get().get();
+    return _presentationModel.get().get();
 }
 
-- (void)setFullscreenModel:(VideoFullscreenModel*)fullscreenModel
+- (void)setPresentationModel:(VideoPresentationModel*)presentationModel
 {
-    auto model = _fullscreenModel.get();
-    if (model == fullscreenModel)
+    auto model = _presentationModel.get();
+    if (model == presentationModel)
         return;
 
     if (model)
-        model->removeClient(*_fullscreenModelClient);
+        model->removeClient(*_presentationModelClient);
 
-    _fullscreenModel = fullscreenModel;
+    _presentationModel = presentationModel;
 
-    if (fullscreenModel)
-        fullscreenModel->addClient(*_fullscreenModelClient);
+    if (presentationModel)
+        presentationModel->addClient(*_presentationModelClient);
 
-    self.videoDimensions = fullscreenModel ? fullscreenModel->videoDimensions() : CGSizeZero;
+    self.videoDimensions = presentationModel ? presentationModel->videoDimensions() : CGSizeZero;
 #if !RELEASE_LOG_DISABLED
-    _logIdentifier = fullscreenModel ? fullscreenModel->nextChildIdentifier() : nullptr;
+    _logIdentifier = presentationModel ? presentationModel->nextChildIdentifier() : nullptr;
 #endif
 }
 
@@ -288,7 +288,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
 
     OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, _targetVideoFrame);
 
-    if (auto model = _fullscreenModel.get()) {
+    if (auto model = _presentationModel.get()) {
         FloatRect targetVideoBounds { { }, _targetVideoFrame.size() };
         model->setVideoLayerFrame(targetVideoBounds);
     }
@@ -328,7 +328,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
 
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, videoGravity);
 
-    if (auto model = _fullscreenModel.get())
+    if (auto model = _presentationModel.get())
         model->setVideoLayerGravity(gravity);
 
     [self setNeedsLayout];
@@ -370,7 +370,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
 
 - (const Logger*)loggerPtr
 {
-    if (auto model = _fullscreenModel.get())
+    if (auto model = _presentationModel.get())
         return model->loggerPtr();
     return nullptr;
 }

@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-messages -> VideoFullscreenManager {
+messages -> VideoPresentationManager {
     RequestFullscreenMode(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool finishedWithMedia)
     RequestUpdateInlineRect(WebKit::PlaybackSessionContextIdentifier contextId)
     RequestVideoContentLayer(WebKit::PlaybackSessionContextIdentifier contextId)

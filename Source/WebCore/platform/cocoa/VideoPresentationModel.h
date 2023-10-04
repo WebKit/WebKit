@@ -49,14 +49,14 @@ class MachSendRight;
 
 namespace WebCore {
 
-class VideoFullscreenModelClient;
+class VideoPresentationModelClient;
 
-class VideoFullscreenModel
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoFullscreenModel> {
+class VideoPresentationModel
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationModel> {
 public:
-    virtual ~VideoFullscreenModel() = default;
-    virtual void addClient(VideoFullscreenModelClient&) = 0;
-    virtual void removeClient(VideoFullscreenModelClient&)= 0;
+    virtual ~VideoPresentationModel() = default;
+    virtual void addClient(VideoPresentationModelClient&) = 0;
+    virtual void removeClient(VideoPresentationModelClient&)= 0;
 
     virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) = 0;
     virtual void setVideoLayerFrame(FloatRect) = 0;
@@ -98,9 +98,9 @@ public:
 #endif
 };
 
-class VideoFullscreenModelClient : public CanMakeWeakPtr<VideoFullscreenModelClient>, public CanMakeCheckedPtr {
+class VideoPresentationModelClient : public CanMakeWeakPtr<VideoPresentationModelClient>, public CanMakeCheckedPtr {
 public:
-    virtual ~VideoFullscreenModelClient() = default;
+    virtual ~VideoPresentationModelClient() = default;
     virtual void hasVideoChanged(bool) { }
     virtual void videoDimensionsChanged(const FloatSize&) { }
     virtual void willEnterPictureInPicture() { }
@@ -111,7 +111,6 @@ public:
     virtual void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) { }
 };
     
-}
+} // namespace WebCore
 
-#endif
-
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)

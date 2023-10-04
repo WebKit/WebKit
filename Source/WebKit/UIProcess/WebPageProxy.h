@@ -367,7 +367,7 @@ class SystemPreviewController;
 class UserData;
 class UserMediaPermissionRequestManagerProxy;
 class UserMediaPermissionRequestProxy;
-class VideoFullscreenManagerProxy;
+class VideoPresentationManagerProxy;
 class ViewSnapshot;
 class VisibleContentRectUpdateInfo;
 class VisitedLinkStore;
@@ -622,7 +622,7 @@ public:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     PlaybackSessionManagerProxy* playbackSessionManager();
-    VideoFullscreenManagerProxy* videoFullscreenManager();
+    VideoPresentationManagerProxy* videoPresentationManager();
     void setMockVideoPresentationModeEnabled(bool);
 #endif
 
@@ -2931,7 +2931,7 @@ private:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr<PlaybackSessionManagerProxy> m_playbackSessionManager;
-    RefPtr<VideoFullscreenManagerProxy> m_videoFullscreenManager;
+    RefPtr<VideoPresentationManagerProxy> m_videoPresentationManager;
     bool m_mockVideoPresentationModeEnabled { false };
 #endif
 
