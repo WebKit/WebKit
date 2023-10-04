@@ -26,6 +26,8 @@ import sys
 
 import pytest
 
+from webkitcorepy import AutoInstall
+
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "serial: tests that must be run in serial")
@@ -104,3 +106,7 @@ def pytest_collection_modifyitems(config, items):
         for item in items:
             if "slow" in item.keywords:
                 item.add_marker(skip_slow)
+
+
+def pytest_collection_finish(session):
+    AutoInstall.install_everything()
