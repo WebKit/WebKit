@@ -133,7 +133,7 @@ constexpr NSTimeInterval popoverShowTimeout = 1;
 
     _webExtensionAction->popupSizeDidChange();
 
-    if (intrinsicContentSize.width >= popoverMinimumWidth && intrinsicContentSize.height >= popoverMinimumHeight)
+    if (intrinsicContentSize.width >= popoverMinimumWidth && intrinsicContentSize.height >= popoverMinimumHeight && !self.loading)
         _webExtensionAction->readyToPresentPopup();
 }
 
@@ -152,19 +152,20 @@ WebExtensionAction::WebExtensionAction(WebExtensionContext& extensionContext)
 }
 
 WebExtensionAction::WebExtensionAction(WebExtensionContext& extensionContext, WebExtensionTab& tab)
-    : m_extensionContext(extensionContext)
-    , m_tab(&tab)
+    : WebExtensionAction(extensionContext)
 {
-    auto delegate = extensionContext.extensionController()->delegate();
-    m_respondsToPresentPopup = [delegate respondsToSelector:@selector(webExtensionController:presentActionPopup:forExtensionContext:completionHandler:)];
+    m_tab = &tab;
+}
 
-    if (!m_respondsToPresentPopup)
-        RELEASE_LOG_ERROR(Extensions, "%{public}@ does not implement the webExtensionController:presentActionPopup:forExtensionContext:completionHandler: method", delegate.debugDescription);
+WebExtensionAction::WebExtensionAction(WebExtensionContext& extensionContext, WebExtensionWindow& window)
+    : WebExtensionAction(extensionContext)
+{
+    m_window = &window;
 }
 
 bool WebExtensionAction::operator==(const WebExtensionAction& other) const
 {
-    return this == &other || (m_extensionContext == other.m_extensionContext && m_tab == other.m_tab);
+    return this == &other || (m_extensionContext == other.m_extensionContext && m_tab == other.m_tab && m_window == other.m_window);
 }
 
 WebExtensionContext* WebExtensionAction::extensionContext() const
@@ -188,6 +189,9 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
         return extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize.width > idealSize.height ? idealSize.width : idealSize.height);
 
     if (m_tab)
+        return extensionContext()->getAction(m_tab->window().get())->icon(idealSize);
+
+    if (m_window)
         return extensionContext()->defaultAction().icon(idealSize);
 
     return extensionContext()->extension().actionIcon(idealSize);
@@ -195,7 +199,7 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
 
 void WebExtensionAction::setIconsDictionary(NSDictionary *icons)
 {
-    m_customIcons = icons;
+    m_customIcons = icons.count ? icons : nil;
 
     propertiesDidChange();
 }
@@ -209,6 +213,9 @@ String WebExtensionAction::popupPath() const
         return m_customPopupPath;
 
     if (m_tab)
+        return extensionContext()->getAction(m_tab->window().get())->popupPath();
+
+    if (m_window)
         return extensionContext()->defaultAction().popupPath();
 
     return extensionContext()->extension().actionPopupPath();
@@ -278,8 +285,8 @@ void WebExtensionAction::presentPopupWhenReady()
     }
 
     // Delay showing the popup until a minimum size or a timeout is reached.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(popoverShowTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([protectecThis = Ref { *this }] {
-        protectecThis->readyToPresentPopup();
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(popoverShowTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }] {
+        readyToPresentPopup();
     }).get());
 
     popupWebView(LoadOnFirstAccess::Yes);
@@ -296,9 +303,9 @@ void WebExtensionAction::readyToPresentPopup()
         auto* extensionController = extensionContext()->extensionController();
         auto delegate = extensionController->delegate();
 
-        [delegate webExtensionController:extensionController->wrapper() presentActionPopup:wrapper() forExtensionContext:extensionContext()->wrapper() completionHandler:makeBlockPtr([protectecThis = Ref { *this }](NSError *error) {
+        [delegate webExtensionController:extensionController->wrapper() presentActionPopup:wrapper() forExtensionContext:extensionContext()->wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](NSError *error) {
             if (error)
-                protectecThis->closePopupWebView();
+                closePopupWebView();
         }).get()];
     }).get());
 }
@@ -321,18 +328,25 @@ void WebExtensionAction::closePopupWebView()
     m_popupPresented = false;
 }
 
-String WebExtensionAction::displayLabel() const
+String WebExtensionAction::displayLabel(FallbackWhenEmpty fallback) const
 {
     if (!extensionContext())
         return emptyString();
 
-    if (!m_customLabel.isEmpty())
-        return m_customLabel;
+    if (!m_customLabel.isNull()) {
+        if (!m_customLabel.isEmpty() || fallback == FallbackWhenEmpty::No)
+            return m_customLabel;
+
+        return extensionContext()->extension().displayName();
+    }
 
     if (m_tab)
+        return extensionContext()->getAction(m_tab->window().get())->displayLabel();
+
+    if (m_window)
         return extensionContext()->defaultAction().displayLabel();
 
-    if (auto *defaultLabel = extensionContext()->extension().displayActionLabel())
+    if (auto *defaultLabel = extensionContext()->extension().displayActionLabel(); defaultLabel.length || fallback == FallbackWhenEmpty::No)
         return defaultLabel;
 
     return extensionContext()->extension().displayName();
@@ -354,6 +368,9 @@ String WebExtensionAction::badgeText() const
         return m_customBadgeText;
 
     if (m_tab)
+        return extensionContext()->getAction(m_tab->window().get())->badgeText();
+
+    if (m_window)
         return extensionContext()->defaultAction().badgeText();
 
     return emptyString();
@@ -375,6 +392,9 @@ bool WebExtensionAction::isEnabled() const
         return m_customEnabled.value();
 
     if (m_tab)
+        return extensionContext()->getAction(m_tab->window().get())->isEnabled();
+
+    if (m_window)
         return extensionContext()->defaultAction().isEnabled();
 
     return true;

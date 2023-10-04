@@ -686,13 +686,10 @@ angle::Result BlitGL::copySubTexture(const gl::Context *context,
     ANGLE_GL_TRY(context, mFunctions->uniform2f(blitProgram->scaleLocation, scale.x(), scale.y()));
     ANGLE_GL_TRY(context,
                  mFunctions->uniform2f(blitProgram->offsetLocation, offset.x(), offset.y()));
-    // Premultiply and unpremultiply will cancel each other out, but only if there is no linear to
-    // sRGB transform sandwiched between them.
-    if (unpackPremultiplyAlpha == unpackUnmultiplyAlpha && !transformLinearToSrgb)
+    if (unpackPremultiplyAlpha == unpackUnmultiplyAlpha)
     {
         ANGLE_GL_TRY(context, mFunctions->uniform1i(blitProgram->multiplyAlphaLocation, 0));
         ANGLE_GL_TRY(context, mFunctions->uniform1i(blitProgram->unMultiplyAlphaLocation, 0));
-        ANGLE_GL_TRY(context, mFunctions->uniform1i(blitProgram->transformLinearToSrgbLocation, 0));
     }
     else
     {
@@ -700,9 +697,9 @@ angle::Result BlitGL::copySubTexture(const gl::Context *context,
                                                     unpackPremultiplyAlpha));
         ANGLE_GL_TRY(context, mFunctions->uniform1i(blitProgram->unMultiplyAlphaLocation,
                                                     unpackUnmultiplyAlpha));
-        ANGLE_GL_TRY(context, mFunctions->uniform1i(blitProgram->transformLinearToSrgbLocation,
-                                                    transformLinearToSrgb));
     }
+    ANGLE_GL_TRY(context, mFunctions->uniform1i(blitProgram->transformLinearToSrgbLocation,
+                                                transformLinearToSrgb));
 
     ANGLE_TRY(setVAOState(context));
     ANGLE_GL_TRY(context, mFunctions->drawArrays(GL_TRIANGLES, 0, 3));
@@ -1574,19 +1571,18 @@ angle::Result BlitGL::getBlitProgram(const gl::Context *context,
             fsSourceStream << "    " << samplerResultType << " color = " << sampleFunction
                            << "(u_source_texture, v_texcoord);\n";
 
-            // Perform unmultiply-alpha if requested.
-            fsSourceStream << "    if (u_unmultiply_alpha && color.a != 0.0)\n";
-            fsSourceStream << "    {\n";
-            fsSourceStream << "         color.xyz = color.xyz / color.a;\n";
-            fsSourceStream << "    }\n";
-
-            // Perform transformation from linear to sRGB encoding (note that this must be done
-            // using unpremultiplied values).
+            // Perform transformation from linear to sRGB encoding.
             fsSourceStream << "    if (u_transform_linear_to_srgb)\n";
             fsSourceStream << "    {\n";
             fsSourceStream << "        color.x = transformLinearToSrgb(color.x);\n";
             fsSourceStream << "        color.y = transformLinearToSrgb(color.y);\n";
             fsSourceStream << "        color.z = transformLinearToSrgb(color.z);\n";
+            fsSourceStream << "    }\n";
+
+            // Perform unmultiply-alpha if requested.
+            fsSourceStream << "    if (u_unmultiply_alpha && color.a != 0.0)\n";
+            fsSourceStream << "    {\n";
+            fsSourceStream << "         color.xyz = color.xyz / color.a;\n";
             fsSourceStream << "    }\n";
 
             // Perform premultiply-alpha if requested.

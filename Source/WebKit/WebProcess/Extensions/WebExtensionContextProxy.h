@@ -103,6 +103,9 @@ public:
 private:
     explicit WebExtensionContextProxy(const WebExtensionContextParameters&);
 
+    // Action
+    void dispatchActionClickedEvent(const std::optional<WebExtensionTabParameters>&);
+
     // Alarms
     void dispatchAlarmsEvent(const WebExtensionAlarmParameters&);
 
@@ -134,7 +137,7 @@ private:
     void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
 
     // Windows
-    void dispatchWindowsEvent(WebExtensionEventListenerType, std::optional<WebExtensionWindowParameters>);
+    void dispatchWindowsEvent(WebExtensionEventListenerType, const std::optional<WebExtensionWindowParameters>&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

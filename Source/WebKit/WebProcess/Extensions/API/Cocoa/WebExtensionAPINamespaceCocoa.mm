@@ -38,13 +38,31 @@ namespace WebKit {
 
 bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
-    // This property is only allowed in testing contexts.
+    if (name == "action"_s)
+        return extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"action");
+
+    if (name == "browserAction"_s)
+        return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"browser_action");
+
+    if (name == "pageAction"_s)
+        return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"page_action");
+
     if (name == "test"_s)
         return extensionContext().inTestingMode();
 
     // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.
     auto *permissions = objectForKey<NSArray>(extensionContext().manifest(), @"permissions", true, NSString.class);
     return [permissions containsObject:name.createNSString().get()];
+}
+
+WebExtensionAPIAction& WebExtensionAPINamespace::action()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action
+
+    if (!m_action)
+        m_action = WebExtensionAPIAction::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_action;
 }
 
 WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
@@ -69,8 +87,11 @@ WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
 
 WebExtensionAPILocalization& WebExtensionAPINamespace::i18n()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/i18n
+
     if (!m_i18n)
         m_i18n = WebExtensionAPILocalization::create(forMainWorld(), runtime(), extensionContext());
+
     return *m_i18n;
 }
 

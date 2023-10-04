@@ -1012,9 +1012,9 @@ const char *BlockTypeToString(BlockType type)
 {
     switch (type)
     {
-        case BlockType::BLOCK_BUFFER:
+        case BlockType::kBlockBuffer:
             return "buffer";
-        case BlockType::BLOCK_UNIFORM:
+        case BlockType::kBlockUniform:
             return "uniform";
         default:
             return "invalid";

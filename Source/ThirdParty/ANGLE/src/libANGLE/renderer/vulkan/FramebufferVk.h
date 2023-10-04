@@ -228,9 +228,9 @@ class FramebufferVk : public FramebufferImpl
                                 uint8_t stencilMask,
                                 const VkClearColorValue &clearColorValue,
                                 const VkClearDepthStencilValue &clearDepthStencilValue);
-    void redeferClears(ContextVk *contextVk);
-    void redeferClearsForReadFramebuffer(ContextVk *contextVk);
-    void redeferClearsImpl(ContextVk *contextVk);
+    void restageDeferredClears(ContextVk *contextVk);
+    void restageDeferredClearsForReadFramebuffer(ContextVk *contextVk);
+    void restageDeferredClearsImpl(ContextVk *contextVk);
     void clearWithCommand(ContextVk *contextVk,
                           const gl::Rectangle &scissoredRenderArea,
                           ClearWithCommand behavior,

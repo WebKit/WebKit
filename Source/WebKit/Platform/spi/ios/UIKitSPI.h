@@ -694,8 +694,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags;
 - (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch withFlags:(UIWKSelectionFlags)flags;
-- (void)showTextStyleOptions;
-- (void)hideTextStyleOptions;
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
@@ -791,11 +789,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @end
 
 @class BKSAnimationFenceHandle;
-
-@interface UIGestureRecognizer (SPI)
-- (NSSet<UITouch *> *)_activeTouchesForEvent:(UIEvent *)event;
-- (__kindof UIEvent *)_activeEventOfType:(UIEventType)type;
-@end
 
 @interface UIWindow ()
 + (BKSAnimationFenceHandle *)_synchronizedDrawingFence;
@@ -1082,12 +1075,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @property (nonatomic, readonly) BOOL inGesture;
 @end
 
-#if ENABLE(DRAG_SUPPORT)
-@interface UIDragInteraction (IPI)
-@property (nonatomic, readonly, getter=_initiationDriver) id initiationDriver;
-@end
-#endif // ENABLE(DRAG_SUPPORT)
-
 #if USE(UICONTEXTMENU)
 
 @interface UIContextMenuConfiguration (IPI)
@@ -1142,8 +1129,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (BOOL)_canScrollWithoutBouncingY;
 - (void)_setContentOffsetWithDecelerationAnimation:(CGPoint)contentOffset;
 - (CGPoint)_adjustedContentOffsetForContentOffset:(CGPoint)contentOffset;
-- (void)handlePinch:(UIPinchGestureRecognizer *)gesture;
-- (void)handlePan:(UIPanGestureRecognizer *)gesture;
 
 @property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
 @property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;

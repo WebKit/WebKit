@@ -199,10 +199,6 @@ public:
 
     // Pixel Snapping
 
-    enum RoundingMode {
-        RoundAllSides,
-        RoundOriginAndDimensions
-    };
     WEBCORE_EXPORT static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     // Shapes

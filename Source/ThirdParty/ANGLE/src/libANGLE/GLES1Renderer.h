@@ -167,34 +167,36 @@ class GLES1Renderer final : angle::NonCopyable
                                             GLES1State *gles1State);
 
     void setUniform1i(Context *context,
-                      Program *programObject,
+                      ProgramExecutable *executable,
                       UniformLocation location,
                       GLint value);
-    void setUniform1ui(Program *programObject, UniformLocation location, GLuint value);
+    void setUniform1ui(ProgramExecutable *executable, UniformLocation location, GLuint value);
     void setUniform1iv(Context *context,
-                       Program *programObject,
+                       ProgramExecutable *executable,
                        UniformLocation location,
                        GLint count,
                        const GLint *value);
-    void setUniformMatrix4fv(Program *programObject,
+    void setUniformMatrix4fv(ProgramExecutable *executable,
                              UniformLocation location,
                              GLint count,
                              GLboolean transpose,
                              const GLfloat *value);
-    void setUniform4fv(Program *programObject,
+    void setUniform4fv(ProgramExecutable *executable,
+
                        UniformLocation location,
                        GLint count,
                        const GLfloat *value);
-    void setUniform3fv(Program *programObject,
+    void setUniform3fv(ProgramExecutable *executable,
+
                        UniformLocation location,
                        GLint count,
                        const GLfloat *value);
-    void setUniform2fv(Program *programObject,
+    void setUniform2fv(ProgramExecutable *executable,
                        UniformLocation location,
                        GLint count,
                        const GLfloat *value);
-    void setUniform1f(Program *programObject, UniformLocation location, GLfloat value);
-    void setUniform1fv(Program *programObject,
+    void setUniform1f(ProgramExecutable *executable, UniformLocation location, GLfloat value);
+    void setUniform1fv(ProgramExecutable *executable,
                        UniformLocation location,
                        GLint count,
                        const GLfloat *value);

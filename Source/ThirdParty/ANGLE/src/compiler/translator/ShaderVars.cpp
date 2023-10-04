@@ -488,7 +488,7 @@ InterfaceBlock::InterfaceBlock()
       staticUse(false),
       active(false),
       isReadOnly(false),
-      blockType(BlockType::BLOCK_UNIFORM),
+      blockType(BlockType::kBlockUniform),
       id(0)
 {}
 

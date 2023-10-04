@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
     WEBCORE_EXPORT bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild) override;
 
-    WEBCORE_EXPORT void removeFromParent() override;
+    WEBCORE_EXPORT void willModifyChildren() override;
 
     WEBCORE_EXPORT void setMaskLayer(RefPtr<GraphicsLayer>&&) override;
     WEBCORE_EXPORT void setReplicatedLayer(GraphicsLayer*) override;

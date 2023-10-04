@@ -1983,6 +1983,9 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
         const AXTextStateChangeIntent& newIntent = (intent.type == AXTextStateChangeTypeUnknown || (m_isSynchronizingSelection && m_textSelectionIntent.type != AXTextStateChangeTypeUnknown)) ? m_textSelectionIntent : intent;
         postTextStateChangePlatformNotification(object, newIntent, selection);
     }
+#if PLATFORM(MAC)
+    onSelectedTextChanged(selection);
+#endif
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(intent);

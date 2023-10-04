@@ -816,7 +816,7 @@ void CaptureEGLCallToFrameCapture(CaptureFuncT captureFunc,
     {
         return;
     }
-    std::lock_guard<egl::ContextMutex> lock(*context->getContextMutex());
+    std::lock_guard<egl::ContextMutex> lock(context->getContextMutex());
 
     angle::FrameCaptureShared *frameCaptureShared =
         context->getShareGroup()->getFrameCaptureShared();

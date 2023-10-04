@@ -6480,14 +6480,15 @@ void OutputSPIRVTraverser::visitPreprocessorDirective(TIntermPreprocessorDirecti
 
 void OutputSPIRVTraverser::markVertexOutputOnShaderEnd()
 {
-    // Vertex output happens in vertex stages at return from main, except for geometry shaders.  In
-    // that case, it's done at EmitVertex.
+    // Output happens in vertex and fragment stages at return from main.
+    // In geometry shaders, it's done at EmitVertex.
     switch (mCompiler->getShaderType())
     {
+        case GL_FRAGMENT_SHADER:
         case GL_VERTEX_SHADER:
         case GL_TESS_CONTROL_SHADER_EXT:
         case GL_TESS_EVALUATION_SHADER_EXT:
-            mBuilder.writeNonSemanticInstruction(vk::spirv::kNonSemanticVertexOutput);
+            mBuilder.writeNonSemanticInstruction(vk::spirv::kNonSemanticOutput);
             break;
         default:
             break;
@@ -6499,7 +6500,7 @@ void OutputSPIRVTraverser::markVertexOutputOnEmitVertex()
     // Vertex output happens in the geometry stage at EmitVertex.
     if (mCompiler->getShaderType() == GL_GEOMETRY_SHADER)
     {
-        mBuilder.writeNonSemanticInstruction(vk::spirv::kNonSemanticVertexOutput);
+        mBuilder.writeNonSemanticInstruction(vk::spirv::kNonSemanticOutput);
     }
 }
 

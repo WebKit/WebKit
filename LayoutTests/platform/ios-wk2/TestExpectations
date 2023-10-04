@@ -2489,3 +2489,6 @@ webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/260322 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-flat-tree.html [ Failure ]
 
 webkit.org/b/261957 media/audio-play-with-video-element-interrupted.html [ Pass Timeout ]
+
+# Requires the fix in rdar://108457321.
+css3/scroll-snap/ios/scroll-snap-mainframe-pinch-out.html [ Skip ]

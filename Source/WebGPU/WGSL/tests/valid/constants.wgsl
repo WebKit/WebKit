@@ -38,6 +38,16 @@ fn testArrayConstants() -> i32
     return 0;
 }
 
+fn testConstantMultiplication()
+{
+  const x1 = 2 * 2;
+  const x2 = 2 * 2.0;
+  const x3 = 2.0 * 2.0;
+  const x4 = 2.0 * vec2(2.0);
+  const x5 = vec2(2.0) * vec2(2.0);
+  const x6 = vec2(2.0) * 2.0;
+}
+
 @compute @workgroup_size(1)
 fn testVectorConstants() -> i32
 {
@@ -51,6 +61,12 @@ fn testVectorConstants() -> i32
 fn testAbstractIntPromotion()
 {
     const f = pow(vec2(0), vec2(0));
+}
+
+fn testMixedConstantValue()
+{
+    const x = 1 - 0.5;
+    _ = x;
 }
 
 // Attribute constants

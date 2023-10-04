@@ -15,6 +15,50 @@
 
 namespace angle
 {
+namespace
+{
+template <typename ParamValueType>
+struct ParamValueTrait
+{
+    static_assert(sizeof(ParamValueType) == 0, "invalid ParamValueType");
+};
+
+template <>
+struct ParamValueTrait<gl::FramebufferID>
+{
+    static constexpr const char *name = "framebufferPacked";
+    static const ParamType typeID     = ParamType::TFramebufferID;
+};
+
+template <>
+struct ParamValueTrait<gl::BufferID>
+{
+    static constexpr const char *name = "bufferPacked";
+    static const ParamType typeID     = ParamType::TBufferID;
+};
+
+template <>
+struct ParamValueTrait<gl::RenderbufferID>
+{
+    static constexpr const char *name = "renderbufferPacked";
+    static const ParamType typeID     = ParamType::TRenderbufferID;
+};
+
+template <>
+struct ParamValueTrait<gl::TextureID>
+{
+    static constexpr const char *name = "texturePacked";
+    static const ParamType typeID     = ParamType::TTextureID;
+};
+
+template <>
+struct ParamValueTrait<gl::ShaderProgramID>
+{
+    static constexpr const char *name = "programPacked";
+    static const ParamType typeID     = ParamType::TShaderProgramID;
+};
+}  // namespace
+
 using ParamData = std::vector<std::vector<uint8_t>>;
 struct ParamCapture : angle::NonCopyable
 {
@@ -394,7 +438,8 @@ inline std::ostream &operator<<(std::ostream &os, const FmtPointerIndex &fmt)
     return os;
 }
 
-bool FindShaderProgramIDsInCall(const CallCapture &call, std::vector<gl::ShaderProgramID> &idsOut);
+template <typename ParamValueType>
+bool FindResourceIDsInCall(const CallCapture &call, std::vector<ParamValueType> &idsOut);
 }  // namespace angle
 
 #endif  // COMMON_FRAME_CAPTURE_UTILS_H_

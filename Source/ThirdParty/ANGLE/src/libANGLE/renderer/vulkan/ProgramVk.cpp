@@ -48,34 +48,35 @@ class Std140BlockLayoutEncoderFactory : public gl::CustomBlockLayoutEncoderFacto
     sh::BlockLayoutEncoder *makeEncoder() override { return new sh::Std140BlockEncoder(); }
 };
 
-class LinkTaskVk final : public vk::Context, public angle::Closure
+class LinkTaskVk final : public vk::Context, public LinkTask
 {
   public:
     LinkTaskVk(RendererVk *renderer,
                PipelineLayoutCache &pipelineLayoutCache,
                DescriptorSetLayoutCache &descriptorSetLayoutCache,
                const gl::ProgramState &state,
-               gl::ProgramMergedVaryings &&mergedVaryings,
-               const gl::ProgramLinkedResources &resources,
                bool isGLES1,
                vk::PipelineRobustness pipelineRobustness,
                vk::PipelineProtectedAccess pipelineProtectedAccess)
         : vk::Context(renderer),
           mState(state),
           mExecutable(&mState.getExecutable()),
-          mMergedVaryings(std::move(mergedVaryings)),
-          mResources(resources),
           mIsGLES1(isGLES1),
           mPipelineRobustness(pipelineRobustness),
           mPipelineProtectedAccess(pipelineProtectedAccess),
           mPipelineLayoutCache(pipelineLayoutCache),
           mDescriptorSetLayoutCache(descriptorSetLayoutCache)
     {}
+    ~LinkTaskVk() override = default;
 
-    void operator()() override
+    std::vector<std::shared_ptr<LinkSubTask>> link(
+        const gl::ProgramLinkedResources &resources,
+        const gl::ProgramMergedVaryings &mergedVaryings) override
     {
-        angle::Result result = linkImpl();
+        angle::Result result = linkImpl(resources, mergedVaryings);
         ASSERT((result == angle::Result::Continue) == (mErrorCode == VK_SUCCESS));
+
+        return {};
     }
 
     void handleError(VkResult result,
@@ -89,11 +90,12 @@ class LinkTaskVk final : public vk::Context, public angle::Closure
         mErrorLine     = line;
     }
 
-    angle::Result getResult(ContextVk *contextVk)
+    angle::Result getResult(const gl::Context *context, gl::InfoLog &infoLog) override
     {
+        ContextVk *contextVk              = vk::GetImpl(context);
         ProgramExecutableVk *executableVk = vk::GetImpl(mExecutable);
 
-        // Clean up garbage first, it's not no matter what may fail below.
+        // Clean up garbage first, it's done no matter what may fail below.
         mCompatibleRenderPass.destroy(contextVk->getDevice());
 
         ANGLE_TRY(executableVk->initializeDescriptorPools(contextVk,
@@ -136,9 +138,10 @@ class LinkTaskVk final : public vk::Context, public angle::Closure
     }
 
   private:
-    angle::Result linkImpl();
+    angle::Result linkImpl(const gl::ProgramLinkedResources &resources,
+                           const gl::ProgramMergedVaryings &mergedVaryings);
 
-    void linkResources();
+    void linkResources(const gl::ProgramLinkedResources &resources);
     angle::Result initDefaultUniformBlocks();
     void generateUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap> *layoutMapOut,
                                       gl::ShaderMap<size_t> *requiredBufferSizeOut);
@@ -148,8 +151,6 @@ class LinkTaskVk final : public vk::Context, public angle::Closure
     // direclty access the state from a potentially parallel job.
     const gl::ProgramState &mState;
     const gl::ProgramExecutable *mExecutable;
-    const gl::ProgramMergedVaryings mMergedVaryings;
-    const gl::ProgramLinkedResources &mResources;
     const bool mIsGLES1;
     const vk::PipelineRobustness mPipelineRobustness;
     const vk::PipelineProtectedAccess mPipelineProtectedAccess;
@@ -168,19 +169,20 @@ class LinkTaskVk final : public vk::Context, public angle::Closure
     unsigned int mErrorLine    = 0;
 };
 
-angle::Result LinkTaskVk::linkImpl()
+angle::Result LinkTaskVk::linkImpl(const gl::ProgramLinkedResources &resources,
+                                   const gl::ProgramMergedVaryings &mergedVaryings)
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramVk::LinkTaskVk::run");
+    ANGLE_TRACE_EVENT0("gpu.angle", "LinkTaskVk::linkImpl");
     ProgramExecutableVk *executableVk = vk::GetImpl(mExecutable);
 
     // Link resources before calling GetShaderSource to make sure they are ready for the set/binding
     // assignment done in that function.
-    linkResources();
+    linkResources(resources);
 
     executableVk->clearVariableInfoMap();
 
     // Gather variable info and compiled SPIR-V binaries.
-    executableVk->assignAllSpvLocations(this, mState, mResources);
+    executableVk->assignAllSpvLocations(this, mState, resources);
 
     gl::ShaderMap<const angle::spirv::Blob *> spirvBlobs;
     SpvGetShaderSpirvCode(mState, &spirvBlobs);
@@ -188,7 +190,7 @@ angle::Result LinkTaskVk::linkImpl()
     if (getFeatures().varyingsRequireMatchingPrecisionInSpirv.enabled &&
         getFeatures().enablePrecisionQualifiers.enabled)
     {
-        executableVk->resolvePrecisionMismatch(mMergedVaryings);
+        executableVk->resolvePrecisionMismatch(mergedVaryings);
     }
 
     // Compile the shaders.
@@ -219,12 +221,12 @@ angle::Result LinkTaskVk::linkImpl()
     return angle::Result::Continue;
 }
 
-void LinkTaskVk::linkResources()
+void LinkTaskVk::linkResources(const gl::ProgramLinkedResources &resources)
 {
     Std140BlockLayoutEncoderFactory std140EncoderFactory;
     gl::ProgramLinkedResourcesLinker linker(&std140EncoderFactory);
 
-    linker.linkResources(mState, mResources);
+    linker.linkResources(mState, resources);
 }
 
 angle::Result LinkTaskVk::initDefaultUniformBlocks()
@@ -291,7 +293,7 @@ void LinkTaskVk::initDefaultUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMa
     ProgramExecutableVk *executableVk = vk::GetImpl(mExecutable);
     const auto &uniforms              = mExecutable->getUniforms();
 
-    for (const gl::VariableLocation &location : mState.getUniformLocations())
+    for (const gl::VariableLocation &location : mExecutable->getUniformLocations())
     {
         gl::ShaderMap<sh::BlockMemberInfo> layoutInfo;
 
@@ -333,93 +335,6 @@ void LinkTaskVk::initDefaultUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMa
         }
     }
 }
-
-// The event for parallelized/lockless link.
-class LinkEventVulkan final : public LinkEvent
-{
-  public:
-    LinkEventVulkan(std::shared_ptr<angle::WorkerThreadPool> workerPool,
-                    std::shared_ptr<LinkTaskVk> linkTask)
-        : mLinkTask(linkTask),
-          mWaitableEvent(
-              std::shared_ptr<angle::WaitableEvent>(workerPool->postWorkerTask(mLinkTask)))
-    {}
-
-    angle::Result wait(const gl::Context *context) override
-    {
-        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramVK::LinkEvent::wait");
-
-        mWaitableEvent->wait();
-
-        return mLinkTask->getResult(vk::GetImpl(context));
-    }
-
-    bool isLinking() override { return !mWaitableEvent->isReady(); }
-
-  private:
-    std::shared_ptr<LinkTaskVk> mLinkTask;
-    std::shared_ptr<angle::WaitableEvent> mWaitableEvent;
-};
-
-template <typename T>
-void UpdateDefaultUniformBlock(GLsizei count,
-                               uint32_t arrayIndex,
-                               int componentCount,
-                               const T *v,
-                               const sh::BlockMemberInfo &layoutInfo,
-                               angle::MemoryBuffer *uniformData)
-{
-    const int elementSize = sizeof(T) * componentCount;
-
-    uint8_t *dst = uniformData->data() + layoutInfo.offset;
-    if (layoutInfo.arrayStride == 0 || layoutInfo.arrayStride == elementSize)
-    {
-        uint32_t arrayOffset = arrayIndex * layoutInfo.arrayStride;
-        uint8_t *writePtr    = dst + arrayOffset;
-        ASSERT(writePtr + (elementSize * count) <= uniformData->data() + uniformData->size());
-        memcpy(writePtr, v, elementSize * count);
-    }
-    else
-    {
-        // Have to respect the arrayStride between each element of the array.
-        int maxIndex = arrayIndex + count;
-        for (int writeIndex = arrayIndex, readIndex = 0; writeIndex < maxIndex;
-             writeIndex++, readIndex++)
-        {
-            const int arrayOffset = writeIndex * layoutInfo.arrayStride;
-            uint8_t *writePtr     = dst + arrayOffset;
-            const T *readPtr      = v + (readIndex * componentCount);
-            ASSERT(writePtr + elementSize <= uniformData->data() + uniformData->size());
-            memcpy(writePtr, readPtr, elementSize);
-        }
-    }
-}
-
-template <typename T>
-void ReadFromDefaultUniformBlock(int componentCount,
-                                 uint32_t arrayIndex,
-                                 T *dst,
-                                 const sh::BlockMemberInfo &layoutInfo,
-                                 const angle::MemoryBuffer *uniformData)
-{
-    ASSERT(layoutInfo.offset != -1);
-
-    const int elementSize = sizeof(T) * componentCount;
-    const uint8_t *source = uniformData->data() + layoutInfo.offset;
-
-    if (layoutInfo.arrayStride == 0 || layoutInfo.arrayStride == elementSize)
-    {
-        const uint8_t *readPtr = source + arrayIndex * layoutInfo.arrayStride;
-        memcpy(dst, readPtr, elementSize);
-    }
-    else
-    {
-        // Have to respect the arrayStride between each element of the array.
-        const int arrayOffset  = arrayIndex * layoutInfo.arrayStride;
-        const uint8_t *readPtr = source + arrayOffset;
-        memcpy(dst, readPtr, elementSize);
-    }
-}
 }  // anonymous namespace
 
 // ProgramVk implementation.
@@ -430,20 +345,17 @@ ProgramVk::~ProgramVk() = default;
 void ProgramVk::destroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
-    reset(contextVk);
-}
-
-void ProgramVk::reset(ContextVk *contextVk)
-{
     getExecutable()->reset(contextVk);
 }
 
-std::unique_ptr<rx::LinkEvent> ProgramVk::load(const gl::Context *context,
-                                               gl::BinaryInputStream *stream)
+angle::Result ProgramVk::load(const gl::Context *context,
+                              gl::BinaryInputStream *stream,
+                              std::shared_ptr<LinkTask> *loadTaskOut)
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
-    reset(contextVk);
+    // TODO: parallelize program load.  http://anglebug.com/8297
+    *loadTaskOut = {};
 
     return getExecutable()->load(contextVk, mState.isSeparable(), stream);
 }
@@ -464,21 +376,16 @@ void ProgramVk::setSeparable(bool separable)
     // Nothing to do here yet.
 }
 
-std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
-                                           const gl::ProgramLinkedResources &resources,
-                                           gl::ProgramMergedVaryings &&mergedVaryings)
+angle::Result ProgramVk::link(const gl::Context *context, std::shared_ptr<LinkTask> *linkTaskOut)
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramVk::link");
-
     ContextVk *contextVk = vk::GetImpl(context);
-    reset(contextVk);
 
-    std::shared_ptr<LinkTaskVk> linkTask = std::make_shared<LinkTaskVk>(
+    *linkTaskOut = std::shared_ptr<LinkTask>(new LinkTaskVk(
         contextVk->getRenderer(), contextVk->getPipelineLayoutCache(),
-        contextVk->getDescriptorSetLayoutCache(), mState, std::move(mergedVaryings), resources,
-        context->getState().isGLES1(), contextVk->pipelineRobustness(),
-        contextVk->pipelineProtectedAccess());
-    return std::make_unique<LinkEventVulkan>(context->getShaderCompileThreadPool(), linkTask);
+        contextVk->getDescriptorSetLayoutCache(), mState, context->getState().isGLES1(),
+        contextVk->pipelineRobustness(), contextVk->pipelineProtectedAccess()));
+
+    return angle::Result::Continue;
 }
 
 GLboolean ProgramVk::validate(const gl::Caps &caps)
@@ -494,290 +401,5 @@ angle::Result ProgramVk::syncState(const gl::Context *context,
     // Push dirty bits to executable so that they can be used later.
     getExecutable()->mDirtyBits |= dirtyBits;
     return angle::Result::Continue;
-}
-
-template <typename T>
-void ProgramVk::setUniformImpl(GLint location, GLsizei count, const T *v, GLenum entryPointType)
-{
-    const gl::VariableLocation &locationInfo  = mState.getUniformLocations()[location];
-    const gl::LinkedUniform &linkedUniform    = mState.getUniforms()[locationInfo.index];
-    const gl::ProgramExecutable &glExecutable = mState.getExecutable();
-    ProgramExecutableVk *executableVk         = vk::GetImpl(&glExecutable);
-
-    ASSERT(!linkedUniform.isSampler());
-
-    if (linkedUniform.type == entryPointType)
-    {
-        for (const gl::ShaderType shaderType : glExecutable.getLinkedShaderStages())
-        {
-            DefaultUniformBlockVk &uniformBlock = *executableVk->mDefaultUniformBlocks[shaderType];
-            const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
-
-            // Assume an offset of -1 means the block is unused.
-            if (layoutInfo.offset == -1)
-            {
-                continue;
-            }
-
-            const GLint componentCount = linkedUniform.getElementComponents();
-            UpdateDefaultUniformBlock(count, locationInfo.arrayIndex, componentCount, v, layoutInfo,
-                                      &uniformBlock.uniformData);
-            executableVk->mDefaultUniformBlocksDirty.set(shaderType);
-        }
-    }
-    else
-    {
-        for (const gl::ShaderType shaderType : glExecutable.getLinkedShaderStages())
-        {
-            DefaultUniformBlockVk &uniformBlock = *executableVk->mDefaultUniformBlocks[shaderType];
-            const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
-
-            // Assume an offset of -1 means the block is unused.
-            if (layoutInfo.offset == -1)
-            {
-                continue;
-            }
-
-            const GLint componentCount = linkedUniform.getElementComponents();
-
-            ASSERT(linkedUniform.type == gl::VariableBoolVectorType(entryPointType));
-
-            GLint initialArrayOffset =
-                locationInfo.arrayIndex * layoutInfo.arrayStride + layoutInfo.offset;
-            for (GLint i = 0; i < count; i++)
-            {
-                GLint elementOffset = i * layoutInfo.arrayStride + initialArrayOffset;
-                GLint *dst =
-                    reinterpret_cast<GLint *>(uniformBlock.uniformData.data() + elementOffset);
-                const T *source = v + i * componentCount;
-
-                for (int c = 0; c < componentCount; c++)
-                {
-                    dst[c] = (source[c] == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
-                }
-            }
-
-            executableVk->mDefaultUniformBlocksDirty.set(shaderType);
-        }
-    }
-}
-
-template <typename T>
-void ProgramVk::getUniformImpl(GLint location, T *v, GLenum entryPointType) const
-{
-    const gl::VariableLocation &locationInfo = mState.getUniformLocations()[location];
-    const gl::LinkedUniform &linkedUniform   = mState.getUniforms()[locationInfo.index];
-    const ProgramExecutableVk *executableVk  = getExecutable();
-
-    ASSERT(!linkedUniform.isSampler() && !linkedUniform.isImage());
-
-    const gl::ShaderType shaderType = linkedUniform.getFirstActiveShaderType();
-    ASSERT(shaderType != gl::ShaderType::InvalidEnum);
-
-    const DefaultUniformBlockVk &uniformBlock = *executableVk->mDefaultUniformBlocks[shaderType];
-    const sh::BlockMemberInfo &layoutInfo     = uniformBlock.uniformLayout[location];
-
-    ASSERT(gl::GetUniformTypeInfo(linkedUniform.type).componentType == entryPointType ||
-           gl::GetUniformTypeInfo(linkedUniform.type).componentType ==
-               gl::VariableBoolVectorType(entryPointType));
-
-    if (gl::IsMatrixType(linkedUniform.getType()))
-    {
-        const uint8_t *ptrToElement = uniformBlock.uniformData.data() + layoutInfo.offset +
-                                      (locationInfo.arrayIndex * layoutInfo.arrayStride);
-        GetMatrixUniform(linkedUniform.getType(), v, reinterpret_cast<const T *>(ptrToElement),
-                         false);
-    }
-    else
-    {
-        ReadFromDefaultUniformBlock(linkedUniform.getElementComponents(), locationInfo.arrayIndex,
-                                    v, layoutInfo, &uniformBlock.uniformData);
-    }
-}
-
-void ProgramVk::setUniform1fv(GLint location, GLsizei count, const GLfloat *v)
-{
-    setUniformImpl(location, count, v, GL_FLOAT);
-}
-
-void ProgramVk::setUniform2fv(GLint location, GLsizei count, const GLfloat *v)
-{
-    setUniformImpl(location, count, v, GL_FLOAT_VEC2);
-}
-
-void ProgramVk::setUniform3fv(GLint location, GLsizei count, const GLfloat *v)
-{
-    setUniformImpl(location, count, v, GL_FLOAT_VEC3);
-}
-
-void ProgramVk::setUniform4fv(GLint location, GLsizei count, const GLfloat *v)
-{
-    setUniformImpl(location, count, v, GL_FLOAT_VEC4);
-}
-
-void ProgramVk::setUniform1iv(GLint location, GLsizei count, const GLint *v)
-{
-    const gl::VariableLocation &locationInfo = mState.getUniformLocations()[location];
-    const gl::LinkedUniform &linkedUniform   = mState.getUniforms()[locationInfo.index];
-    if (linkedUniform.isSampler())
-    {
-        // We could potentially cache some indexing here. For now this is a no-op since the mapping
-        // is handled entirely in ContextVk.
-        return;
-    }
-
-    setUniformImpl(location, count, v, GL_INT);
-}
-
-void ProgramVk::setUniform2iv(GLint location, GLsizei count, const GLint *v)
-{
-    setUniformImpl(location, count, v, GL_INT_VEC2);
-}
-
-void ProgramVk::setUniform3iv(GLint location, GLsizei count, const GLint *v)
-{
-    setUniformImpl(location, count, v, GL_INT_VEC3);
-}
-
-void ProgramVk::setUniform4iv(GLint location, GLsizei count, const GLint *v)
-{
-    setUniformImpl(location, count, v, GL_INT_VEC4);
-}
-
-void ProgramVk::setUniform1uiv(GLint location, GLsizei count, const GLuint *v)
-{
-    setUniformImpl(location, count, v, GL_UNSIGNED_INT);
-}
-
-void ProgramVk::setUniform2uiv(GLint location, GLsizei count, const GLuint *v)
-{
-    setUniformImpl(location, count, v, GL_UNSIGNED_INT_VEC2);
-}
-
-void ProgramVk::setUniform3uiv(GLint location, GLsizei count, const GLuint *v)
-{
-    setUniformImpl(location, count, v, GL_UNSIGNED_INT_VEC3);
-}
-
-void ProgramVk::setUniform4uiv(GLint location, GLsizei count, const GLuint *v)
-{
-    setUniformImpl(location, count, v, GL_UNSIGNED_INT_VEC4);
-}
-
-template <int cols, int rows>
-void ProgramVk::setUniformMatrixfv(GLint location,
-                                   GLsizei count,
-                                   GLboolean transpose,
-                                   const GLfloat *value)
-{
-    const gl::VariableLocation &locationInfo  = mState.getUniformLocations()[location];
-    const gl::LinkedUniform &linkedUniform    = mState.getUniforms()[locationInfo.index];
-    const gl::ProgramExecutable &glExecutable = mState.getExecutable();
-    ProgramExecutableVk *executableVk         = vk::GetImpl(&glExecutable);
-
-    for (const gl::ShaderType shaderType : glExecutable.getLinkedShaderStages())
-    {
-        DefaultUniformBlockVk &uniformBlock   = *executableVk->mDefaultUniformBlocks[shaderType];
-        const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
-
-        // Assume an offset of -1 means the block is unused.
-        if (layoutInfo.offset == -1)
-        {
-            continue;
-        }
-
-        SetFloatUniformMatrixGLSL<cols, rows>::Run(
-            locationInfo.arrayIndex, linkedUniform.getBasicTypeElementCount(), count, transpose,
-            value, uniformBlock.uniformData.data() + layoutInfo.offset);
-
-        executableVk->mDefaultUniformBlocksDirty.set(shaderType);
-    }
-}
-
-void ProgramVk::setUniformMatrix2fv(GLint location,
-                                    GLsizei count,
-                                    GLboolean transpose,
-                                    const GLfloat *value)
-{
-    setUniformMatrixfv<2, 2>(location, count, transpose, value);
-}
-
-void ProgramVk::setUniformMatrix3fv(GLint location,
-                                    GLsizei count,
-                                    GLboolean transpose,
-                                    const GLfloat *value)
-{
-    setUniformMatrixfv<3, 3>(location, count, transpose, value);
-}
-
-void ProgramVk::setUniformMatrix4fv(GLint location,
-                                    GLsizei count,
-                                    GLboolean transpose,
-                                    const GLfloat *value)
-{
-    setUniformMatrixfv<4, 4>(location, count, transpose, value);
-}
-
-void ProgramVk::setUniformMatrix2x3fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    setUniformMatrixfv<2, 3>(location, count, transpose, value);
-}
-
-void ProgramVk::setUniformMatrix3x2fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    setUniformMatrixfv<3, 2>(location, count, transpose, value);
-}
-
-void ProgramVk::setUniformMatrix2x4fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    setUniformMatrixfv<2, 4>(location, count, transpose, value);
-}
-
-void ProgramVk::setUniformMatrix4x2fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    setUniformMatrixfv<4, 2>(location, count, transpose, value);
-}
-
-void ProgramVk::setUniformMatrix3x4fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    setUniformMatrixfv<3, 4>(location, count, transpose, value);
-}
-
-void ProgramVk::setUniformMatrix4x3fv(GLint location,
-                                      GLsizei count,
-                                      GLboolean transpose,
-                                      const GLfloat *value)
-{
-    setUniformMatrixfv<4, 3>(location, count, transpose, value);
-}
-
-void ProgramVk::getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const
-{
-    getUniformImpl(location, params, GL_FLOAT);
-}
-
-void ProgramVk::getUniformiv(const gl::Context *context, GLint location, GLint *params) const
-{
-    getUniformImpl(location, params, GL_INT);
-}
-
-void ProgramVk::getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const
-{
-    getUniformImpl(location, params, GL_UNSIGNED_INT);
 }
 }  // namespace rx

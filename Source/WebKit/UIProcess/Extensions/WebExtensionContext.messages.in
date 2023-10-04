@@ -26,6 +26,18 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 messages -> WebExtensionContext {
+    // Action APIs
+    ActionGetTitle(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<String> title, std::optional<String> error);
+    ActionSetTitle(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, String title) -> (std::optional<String> error);
+    ActionSetIcon(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, String iconDictionaryJSON) -> (std::optional<String> error);
+    ActionGetPopup(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<String> popupPath, std::optional<String> error);
+    ActionSetPopup(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, String popupPath) -> (std::optional<String> error);
+    ActionOpenPopup(WebKit::WebPageProxyIdentifier identifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<String> error);
+    ActionGetBadgeText(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<String> text, std::optional<String> error);
+    ActionSetBadgeText(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, String text) -> (std::optional<String> error);
+    ActionGetEnabled(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<bool> enabled, std::optional<String> error);
+    ActionSetEnabled(std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, bool enabled) -> (std::optional<String> error);
+
     // Alarms APIs
     AlarmsCreate(String name, Seconds initialInterval, Seconds repeatInterval);
     AlarmsGet(String name) -> (std::optional<WebKit::WebExtensionAlarmParameters> alarmInfo);

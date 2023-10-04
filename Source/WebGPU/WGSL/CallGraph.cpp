@@ -40,9 +40,10 @@ CallGraph::CallGraph(ShaderModule& shaderModule)
 
 class CallGraphBuilder : public AST::Visitor {
 public:
-    CallGraphBuilder(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+    CallGraphBuilder(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
         : m_callGraph(shaderModule)
         , m_pipelineLayouts(pipelineLayouts)
+        , m_result(result)
     {
     }
 
@@ -56,6 +57,7 @@ private:
 
     CallGraph m_callGraph;
     const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
+    PrepareResult& m_result;
     HashMap<AST::Function*, unsigned> m_calleeBuildingMap;
     Vector<CallGraph::Callee>* m_callees { nullptr };
     Deque<AST::Function*> m_queue;
@@ -82,7 +84,9 @@ void CallGraphBuilder::initializeMappings()
         for (auto& attribute : function.attributes()) {
             if (is<AST::StageAttribute>(attribute)) {
                 auto stage = downcast<AST::StageAttribute>(attribute).stage();
-                m_callGraph.m_entrypoints.append({ function, stage });
+                auto addResult = m_result.entryPoints.add(function.name(), Reflection::EntryPointInformation { });
+                ASSERT(addResult.isNewEntry);
+                m_callGraph.m_entrypoints.append({ function, stage, addResult.iterator->value });
                 m_queue.append(&function);
                 break;
             }
@@ -127,9 +131,9 @@ void CallGraphBuilder::visit(AST::CallExpression& call)
         m_callees->at(result.iterator->value).callSites.append(&call);
 }
 
-CallGraph buildCallGraph(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+CallGraph buildCallGraph(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
 {
-    return CallGraphBuilder(shaderModule, pipelineLayouts).build();
+    return CallGraphBuilder(shaderModule, pipelineLayouts, result).build();
 }
 
 } // namespace WGSL

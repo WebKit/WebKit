@@ -45,7 +45,7 @@ class WebExtensionTab;
 struct WebExtensionTabQueryParameters;
 struct WebExtensionWindowParameters;
 
-class WebExtensionWindow : public RefCounted<WebExtensionWindow> {
+class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow> {
     WTF_MAKE_NONCOPYABLE(WebExtensionWindow);
     WTF_MAKE_FAST_ALLOCATED;
 

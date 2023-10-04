@@ -236,6 +236,57 @@ TEST_P(EGLSyncTest, BasicOperations)
     EXPECT_EGL_TRUE(eglDestroySyncKHR(display, sync));
 }
 
+// Test that eglClientWaitSync* APIs work.
+TEST_P(EGLSyncTest, EglClientWaitSync)
+{
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    // Test eglClientWaitSyncKHR
+    for (size_t i = 0; i < 5; i++)
+    {
+        glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        // Don't wait forever to make sure the test terminates
+        constexpr GLuint64 kTimeout = 1'000'000'000;  // 1 second
+        EGLSyncKHR clientWaitSync   = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, nullptr);
+        EXPECT_NE(clientWaitSync, EGL_NO_SYNC_KHR);
+
+        ASSERT_EQ(EGL_CONDITION_SATISFIED_KHR,
+                  eglClientWaitSyncKHR(display, clientWaitSync, EGL_SYNC_FLUSH_COMMANDS_BIT_KHR,
+                                       kTimeout));
+
+        EXPECT_EGL_TRUE(eglDestroySyncKHR(display, clientWaitSync));
+        ASSERT_EGL_SUCCESS();
+    }
+
+    // Test eglClientWaitSync
+    for (size_t i = 0; i < 5; i++)
+    {
+        glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        // Don't wait forever to make sure the test terminates
+        constexpr GLuint64 kTimeout = 1'000'000'000;  // 1 second
+        EGLSyncKHR clientWaitSync   = eglCreateSync(display, EGL_SYNC_FENCE, nullptr);
+        EXPECT_NE(clientWaitSync, EGL_NO_SYNC);
+
+        ASSERT_EQ(
+            EGL_CONDITION_SATISFIED,
+            eglClientWaitSync(display, clientWaitSync, EGL_SYNC_FLUSH_COMMANDS_BIT, kTimeout));
+
+        EXPECT_EGL_TRUE(eglDestroySync(display, clientWaitSync));
+        ASSERT_EGL_SUCCESS();
+    }
+}
+
 // Test eglWaitClient api
 TEST_P(EGLSyncTest, WaitClient)
 {

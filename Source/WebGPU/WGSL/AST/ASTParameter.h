@@ -45,10 +45,15 @@ public:
     using List = ReferenceWrapperVector<Parameter>;
 
     NodeKind kind() const override;
+    ParameterRole role() const { return m_role; }
+
     Identifier& name() { return m_name; }
     Expression& typeName() { return m_typeName.get(); }
     Attribute::List& attributes() { return m_attributes; }
-    ParameterRole role() { return m_role; }
+
+    const Identifier& name() const { return m_name; }
+    const Expression& typeName() const { return m_typeName.get(); }
+    const Attribute::List& attributes() const { return m_attributes; }
 
 private:
     Parameter(SourceSpan span, Identifier&& name, Expression::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)

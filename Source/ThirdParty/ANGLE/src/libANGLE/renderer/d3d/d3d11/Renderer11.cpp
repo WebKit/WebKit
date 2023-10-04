@@ -4269,8 +4269,8 @@ angle::Result Renderer11::dispatchCompute(const gl::Context *context,
 {
     const gl::State &glState                = context->getState();
     const gl::ProgramExecutable *executable = glState.getProgramExecutable();
-    if (executable->getActiveShaderStorageBlockCount() > 0 ||
-        executable->getActiveAtomicCounterBufferCount() > 0)
+    if (executable->getShaderStorageBlocks().size() > 0 ||
+        executable->getAtomicCounterBuffers().size() > 0)
     {
         ANGLE_TRY(markRawBufferUsage(context));
     }
@@ -4284,8 +4284,8 @@ angle::Result Renderer11::dispatchComputeIndirect(const gl::Context *context, GL
 {
     const auto &glState                     = context->getState();
     const gl::ProgramExecutable *executable = glState.getProgramExecutable();
-    if (executable->getActiveShaderStorageBlockCount() > 0 ||
-        executable->getActiveAtomicCounterBufferCount() > 0)
+    if (executable->getShaderStorageBlocks().size() > 0 ||
+        executable->getAtomicCounterBuffers().size() > 0)
     {
         ANGLE_TRY(markRawBufferUsage(context));
     }
@@ -4509,12 +4509,12 @@ angle::Result Renderer11::markTypedBufferUsage(const gl::Context *context)
 
 angle::Result Renderer11::markRawBufferUsage(const gl::Context *context)
 {
-    const gl::State &glState   = context->getState();
-    const gl::Program *program = glState.getProgram();
-    for (size_t blockIndex = 0; blockIndex < program->getActiveShaderStorageBlockCount();
+    const gl::State &glState                = context->getState();
+    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
+    for (size_t blockIndex = 0; blockIndex < executable->getShaderStorageBlocks().size();
          blockIndex++)
     {
-        GLuint binding = program->getShaderStorageBlockBinding(static_cast<GLuint>(blockIndex));
+        GLuint binding = executable->getShaderStorageBlockBinding(static_cast<GLuint>(blockIndex));
         const auto &shaderStorageBuffer = glState.getIndexedShaderStorageBuffer(binding);
         if (shaderStorageBuffer.get() != nullptr)
         {
@@ -4523,9 +4523,9 @@ angle::Result Renderer11::markRawBufferUsage(const gl::Context *context)
         }
     }
 
-    for (const auto &atomicCounterBuffer : program->getState().getAtomicCounterBuffers())
+    for (const auto &atomicCounterBuffer : executable->getAtomicCounterBuffers())
     {
-        GLuint binding     = atomicCounterBuffer.binding;
+        GLuint binding     = atomicCounterBuffer.pod.binding;
         const auto &buffer = glState.getIndexedAtomicCounterBuffer(binding);
 
         if (buffer.get() != nullptr)

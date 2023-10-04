@@ -392,6 +392,11 @@
       "factory": "UnsafeMergeQueueFactory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05"]
+    },
+    {
+      "name": "Safe-Merge-Queue", "shortname": "safe-merge", "icon": "buildAndTest",
+      "factory": "SafeMergeQueueFactory", "platform": "*",
+      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05"]
     }
   ],
   "schedulers": [
@@ -426,6 +431,10 @@
     {
       "type": "AnyBranchScheduler", "name": "unsafe_merge_queue",
       "builderNames": ["Unsafe-Merge-Queue"]
+    },
+    {
+      "type": "Periodic", "name": "safe-merge-queue", "periodicBuildTimer": 7200,
+      "builderNames": ["Safe-Merge-Queue"]
     },
     {
       "type": "Triggerable", "name": "macos-monterey-release-build-ews",

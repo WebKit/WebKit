@@ -917,6 +917,33 @@ std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache* cache, AXTextM
     return cache->rangeForUnorderedCharacterOffsets(startCharacterOffset, endCharacterOffset);
 }
 
+void AXObjectCache::onSelectedTextChanged(const VisiblePositionRange& selection)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+        if (selection.isNull())
+            tree->setSelectedTextMarkerRange({ });
+        else {
+            auto startPosition = selection.start.deepEquivalent();
+            auto endPosition = selection.end.deepEquivalent();
+
+            if (startPosition.isNull() || endPosition.isNull())
+                tree->setSelectedTextMarkerRange({ });
+            else {
+                if (auto* startObject = get(startPosition.anchorNode()))
+                    createIsolatedObjectIfNeeded(*startObject, m_pageID);
+                if (auto* endObject = get(endPosition.anchorNode()))
+                    createIsolatedObjectIfNeeded(*endObject, m_pageID);
+
+                tree->setSelectedTextMarkerRange({ selection });
+            }
+        }
+    }
+#else
+    UNUSED_PARAM(selection);
+#endif
+}
+
 }
 
 #endif // ENABLE(ACCESSIBILITY) && PLATFORM(MAC)

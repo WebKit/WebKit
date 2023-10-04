@@ -311,6 +311,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
     m_constantFunctions.add("pow"_s, constantPow);
     m_constantFunctions.add("-"_s, constantMinus);
+    m_constantFunctions.add("*"_s, constantMultiply);
     m_constantFunctions.add("vec2"_s, constantVector2);
     m_constantFunctions.add("vec2f"_s, constantVector2);
     m_constantFunctions.add("vec2i"_s, constantVector2);
@@ -620,8 +621,11 @@ void TypeChecker::visit(AST::PhonyAssignmentStatement& statement)
 
 void TypeChecker::visit(AST::ReturnStatement& statement)
 {
-    // FIXME: handle functions that return void
-    auto* type = infer(*statement.maybeExpression());
+    const Type* type;
+    if (auto* expression = statement.maybeExpression())
+        type = infer(*expression);
+    else
+        type = m_types.bottomType();
 
     // FIXME: unify type with the curent function's return type
     UNUSED_PARAM(type);

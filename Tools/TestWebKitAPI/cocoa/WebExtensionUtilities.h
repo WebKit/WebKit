@@ -61,6 +61,7 @@
 - (void)load;
 - (void)run;
 - (void)loadAndRun;
+- (void)done;
 
 @end
 

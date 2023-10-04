@@ -778,8 +778,8 @@ TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeing2DArrayGarbageWhenDeviceOOM
     glWaitSync(sync, 0, GL_TIMEOUT_IGNORED);
     EXPECT_GL_NO_ERROR();
 
-    // Delete the 2D array texture. Even though it is marked as deallocated, the device memory is
-    // not freed from the garbage yet.
+    // Delete the 2D array texture. This frees the memory due to context flushing from the memory
+    // allocation fallbacks.
     glDeleteTextures(1, &texture2DArray);
 
     // The next texture should be allocated on the device, which will only be possible after freeing
@@ -800,8 +800,8 @@ TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeing2DArrayGarbageWhenDeviceOOM
 }
 
 // Test that when VMA image suballocation is used, it is possible to free space for a new image on
-// the device by freeing garbage memory from a 2D texture.
-TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeing2DGarbageWhenDeviceOOM)
+// the device by freeing finished garbage memory from a 2D texture.
+TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeingFinished2DGarbageWhenDeviceOOM)
 {
     ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseVmaForImageSuballocation));
 
@@ -815,25 +815,21 @@ TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeing2DGarbageWhenDeviceOOM)
                                                               &totalDeviceLocalMemoryHeapSize));
 
     // Use a large 2D texture to allocate some of the available device memory and draw with it.
-    GLuint firstTexture;
-    constexpr VkDeviceSize kFirstTextureWidth  = 2048;
-    constexpr VkDeviceSize kFirstTextureHeight = 2048;
-    glGenTextures(1, &firstTexture);
-
-    glBindTexture(GL_TEXTURE_2D, firstTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kFirstTextureWidth, kFirstTextureHeight, 0, GL_RGBA,
+    GLuint largeTexture;
+    constexpr VkDeviceSize kLargeTextureWidth  = 2048;
+    constexpr VkDeviceSize kLargeTextureHeight = 2048;
+    std::vector<GLColor> firstTextureColor(kLargeTextureWidth * kLargeTextureHeight,
+                                           GLColor::green);
+    glGenTextures(1, &largeTexture);
+    glBindTexture(GL_TEXTURE_2D, largeTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kLargeTextureWidth, kLargeTextureHeight, 0, GL_RGBA,
                  GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    {
-        std::vector<GLColor> firstTextureColor(kFirstTextureWidth * kFirstTextureHeight,
-                                               GLColor::green);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kFirstTextureWidth, kFirstTextureHeight, GL_RGBA,
-                        GL_UNSIGNED_BYTE, firstTextureColor.data());
-    }
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kLargeTextureWidth, kLargeTextureHeight, GL_RGBA,
+                    GL_UNSIGNED_BYTE, firstTextureColor.data());
 
     ANGLE_GL_PROGRAM(drawTex2D, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
     drawQuad(drawTex2D, essl1_shaders::PositionAttrib(), 0.5f);
@@ -863,23 +859,46 @@ TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeing2DGarbageWhenDeviceOOM)
     EXPECT_EQ(getPerfCounters().deviceMemoryImageAllocationFallbacks, expectedAllocationFallbacks);
 
     // Wait until GPU finishes execution.
-    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-    glWaitSync(sync, 0, GL_TIMEOUT_IGNORED);
+    GLsync syncOne = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    glWaitSync(syncOne, 0, GL_TIMEOUT_IGNORED);
     EXPECT_GL_NO_ERROR();
 
-    // Delete the first 2D texture. Even though it is marked as deallocated, the device memory is
+    // Delete the large 2D texture. It should free the memory due to context flushing performed
+    // during memory allocation fallbacks. Then we allocate and draw with this texture again.
+    glDeleteTextures(1, &largeTexture);
+
+    glBindTexture(GL_TEXTURE_2D, largeTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kLargeTextureWidth, kLargeTextureHeight, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kLargeTextureWidth, kLargeTextureHeight, GL_RGBA,
+                    GL_UNSIGNED_BYTE, firstTextureColor.data());
+
+    drawQuad(drawTex2D, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Wait until GPU finishes execution one more time.
+    GLsync syncTwo = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    glWaitSync(syncTwo, 0, GL_TIMEOUT_IGNORED);
+    EXPECT_GL_NO_ERROR();
+
+    // Delete the large 2D texture. Even though it is marked as deallocated, the device memory is
     // not freed from the garbage yet.
-    glDeleteTextures(1, &firstTexture);
+    glDeleteTextures(1, &largeTexture);
 
     // The next texture should be allocated on the device, which will only be possible after freeing
-    // the garbage.
+    // the garbage from the finished commands. There should be no context flushing.
+    uint64_t expectedSubmitCalls = getPerfCounters().commandQueueSubmitCallsTotal;
     GLTexture lastTexture;
-    std::vector<GLColor> textureColor(kTextureWidth * kTextureHeight, GLColor::red);
+    std::vector<GLColor> textureColor(kLargeTextureWidth * kLargeTextureWidth, GLColor::red);
     glBindTexture(GL_TEXTURE_2D, lastTexture);
-    glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_RGBA8, kTextureWidth, kTextureHeight);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTextureWidth, kTextureHeight, GL_RGBA,
+    glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_RGBA8, kLargeTextureWidth, kLargeTextureWidth);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kLargeTextureWidth, kLargeTextureWidth, GL_RGBA,
                     GL_UNSIGNED_BYTE, textureColor.data());
     EXPECT_EQ(getPerfCounters().deviceMemoryImageAllocationFallbacks, expectedAllocationFallbacks);
+    EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedSubmitCalls);
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -956,8 +975,8 @@ TEST_P(VulkanMemoryTest, AllocateBufferAfterFreeing2DGarbageWhenDeviceOOM)
     glWaitSync(sync, 0, GL_TIMEOUT_IGNORED);
     EXPECT_GL_NO_ERROR();
 
-    // Delete the first 2D texture. Even though it is marked as deallocated, the device memory is
-    // not freed from the garbage yet.
+    // Delete the 2D array texture. This frees the memory due to context flushing from the memory
+    // allocation fallbacks.
     glDeleteTextures(1, &firstTexture);
 
     // The buffer should be allocated on the device, which will only be possible after freeing the
@@ -969,6 +988,7 @@ TEST_P(VulkanMemoryTest, AllocateBufferAfterFreeing2DGarbageWhenDeviceOOM)
     glBufferData(GL_ARRAY_BUFFER, kBufferSize, bufferData.data(), GL_STATIC_DRAW);
     EXPECT_GL_NO_ERROR();
 }
+
 // Test that texture storage created from VkImage memory is considered pre-initialized in GL.
 // Using Linear tiling mode to verify tiling mode
 TEST_P(VulkanImageTest, PreInitializedOnGLImportLinearTiling)

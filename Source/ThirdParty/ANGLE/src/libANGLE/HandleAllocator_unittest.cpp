@@ -150,6 +150,32 @@ TEST(HandleAllocatorTest, Reset)
     }
 }
 
+// Tests the reset method of custom allocator works as expected.
+TEST(HandleAllocatorTest, ResetAndReallocate)
+{
+    // Allocates handles - [1, 3]
+    gl::HandleAllocator allocator(3);
+    const std::unordered_set<GLuint> expectedHandles = {1, 2, 3};
+    std::unordered_set<GLuint> handles;
+
+    EXPECT_EQ(allocator.anyHandleAvailableForAllocation(), true);
+    handles.insert(allocator.allocate());
+    handles.insert(allocator.allocate());
+    handles.insert(allocator.allocate());
+    EXPECT_EQ(expectedHandles, handles);
+    EXPECT_EQ(allocator.anyHandleAvailableForAllocation(), false);
+
+    // Reset the allocator
+    allocator.reset();
+
+    EXPECT_EQ(allocator.anyHandleAvailableForAllocation(), true);
+    handles.insert(allocator.allocate());
+    handles.insert(allocator.allocate());
+    handles.insert(allocator.allocate());
+    EXPECT_EQ(expectedHandles, handles);
+    EXPECT_EQ(allocator.anyHandleAvailableForAllocation(), false);
+}
+
 // Covers a particular bug with reserving and allocating sub ranges.
 TEST(HandleAllocatorTest, ReserveAndAllocateIterated)
 {

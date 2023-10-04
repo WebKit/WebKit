@@ -443,8 +443,8 @@
 		7B359DE02A7CEE9D0016DC59 /* VersionGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DD02A7CEE9D0016DC59 /* VersionGLSL.cpp */; };
 		7B359DE32A7CEF750016DC59 /* context_private_call_gles_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DE12A7CEF750016DC59 /* context_private_call_gles_autogen.h */; };
 		7B359DE42A7CEF750016DC59 /* context_private_call_gles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DE22A7CEF750016DC59 /* context_private_call_gles.cpp */; };
-		7B359DE92A7CEF9F0016DC59 /* SharedContextMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DE52A7CEF9E0016DC59 /* SharedContextMutex.h */; };
-		7B359DEA2A7CEF9F0016DC59 /* SharedContextMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DE62A7CEF9E0016DC59 /* SharedContextMutex.cpp */; };
+		7B359DE92A7CEF9F0016DC59 /* ContextMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DE52A7CEF9E0016DC59 /* ContextMutex.h */; };
+		7B359DEA2A7CEF9F0016DC59 /* ContextMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DE62A7CEF9E0016DC59 /* ContextMutex.cpp */; };
 		7B359DEB2A7CEF9F0016DC59 /* ShareGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DE72A7CEF9E0016DC59 /* ShareGroup.h */; };
 		7B359DEC2A7CEF9F0016DC59 /* ShareGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DE82A7CEF9E0016DC59 /* ShareGroup.cpp */; };
 		7B359DEE2A7CEFE80016DC59 /* validationEGL_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DED2A7CEFE70016DC59 /* validationEGL_autogen.h */; };
@@ -1524,8 +1524,8 @@
 		7B359DD02A7CEE9D0016DC59 /* VersionGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VersionGLSL.cpp; sourceTree = "<group>"; };
 		7B359DE12A7CEF750016DC59 /* context_private_call_gles_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = context_private_call_gles_autogen.h; sourceTree = "<group>"; };
 		7B359DE22A7CEF750016DC59 /* context_private_call_gles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = context_private_call_gles.cpp; sourceTree = "<group>"; };
-		7B359DE52A7CEF9E0016DC59 /* SharedContextMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedContextMutex.h; sourceTree = "<group>"; };
-		7B359DE62A7CEF9E0016DC59 /* SharedContextMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedContextMutex.cpp; sourceTree = "<group>"; };
+		7B359DE52A7CEF9E0016DC59 /* ContextMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMutex.h; sourceTree = "<group>"; };
+		7B359DE62A7CEF9E0016DC59 /* ContextMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMutex.cpp; sourceTree = "<group>"; };
 		7B359DE72A7CEF9E0016DC59 /* ShareGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareGroup.h; sourceTree = "<group>"; };
 		7B359DE82A7CEF9E0016DC59 /* ShareGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareGroup.cpp; sourceTree = "<group>"; };
 		7B359DED2A7CEFE70016DC59 /* validationEGL_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = validationEGL_autogen.h; sourceTree = "<group>"; };
@@ -2168,6 +2168,8 @@
 				FF62F68C27448D6900AD6EDC /* Context_gles_ext_autogen.h */,
 				7B359DE22A7CEF750016DC59 /* context_private_call_gles.cpp */,
 				7B359DE12A7CEF750016DC59 /* context_private_call_gles_autogen.h */,
+				7B359DE62A7CEF9E0016DC59 /* ContextMutex.cpp */,
+				7B359DE52A7CEF9E0016DC59 /* ContextMutex.h */,
 				5CCD815A1DBFE999006066B8 /* Debug.cpp */,
 				5CCD815B1DBFE999006066B8 /* Debug.h */,
 				5C1DBC5B1B0438D200235552 /* Device.cpp */,
@@ -2260,8 +2262,6 @@
 				3A2C67022923766600FEDF46 /* serialize_mock.cpp */,
 				5C1DBDB91B0438D200235552 /* Shader.cpp */,
 				5C1DBDBA1B0438D200235552 /* Shader.h */,
-				7B359DE62A7CEF9E0016DC59 /* SharedContextMutex.cpp */,
-				7B359DE52A7CEF9E0016DC59 /* SharedContextMutex.h */,
 				7B359DE82A7CEF9E0016DC59 /* ShareGroup.cpp */,
 				7B359DE72A7CEF9E0016DC59 /* ShareGroup.h */,
 				315EBDD91FCE452A00AC7A89 /* SizedMRUCache.h */,
@@ -3328,6 +3328,7 @@
 				31CD0007249184BB00486F27 /* ContextEAGL.h in Headers */,
 				31CD001A249184E700486F27 /* ContextGL.h in Headers */,
 				31CD0036249184F400486F27 /* ContextImpl.h in Headers */,
+				7B359DE92A7CEF9F0016DC59 /* ContextMutex.h in Headers */,
 				7B359D9C2A7CEDAA0016DC59 /* ConvertUnsupportedConstructorsToFunctionCalls.h in Headers */,
 				31CDFFFE249184B000486F27 /* copyimage.h in Headers */,
 				31CD0096249184FD00486F27 /* Debug.h in Headers */,
@@ -3607,7 +3608,6 @@
 				31CD0042249184F400486F27 /* ShaderImpl.h in Headers */,
 				31CDFE0E249183D900486F27 /* ShaderLang.h in Headers */,
 				31CDFE0D249183D900486F27 /* ShaderVars.h in Headers */,
-				7B359DE92A7CEF9F0016DC59 /* SharedContextMutex.h in Headers */,
 				7B359DEB2A7CEF9F0016DC59 /* ShareGroup.h in Headers */,
 				7B359DF22A7CF6C10016DC59 /* ShareGroupImpl.h in Headers */,
 				31CDFFAC2491849800486F27 /* SimplifyLoopConditions.h in Headers */,
@@ -3856,6 +3856,7 @@
 				DF83E3582639FE92000825EF /* ContextGL.cpp in Sources */,
 				DF83E39A2639FED4000825EF /* ContextImpl.cpp in Sources */,
 				DF83E3772639FEB8000825EF /* ContextMtl.mm in Sources */,
+				7B359DEA2A7CEF9F0016DC59 /* ContextMutex.cpp in Sources */,
 				7B359DB62A7CEDAA0016DC59 /* ConvertUnsupportedConstructorsToFunctionCalls.cpp in Sources */,
 				DF83E2DD2639FE17000825EF /* copyimage.cpp in Sources */,
 				DF83E2F12639FE17000825EF /* Debug.cpp in Sources */,
@@ -4107,7 +4108,6 @@
 				DF83E28D2639FD83000825EF /* ShaderLang.cpp in Sources */,
 				DF83E3832639FEB8000825EF /* ShaderMtl.mm in Sources */,
 				DF83E2952639FD83000825EF /* ShaderVars.cpp in Sources */,
-				7B359DEA2A7CEF9F0016DC59 /* SharedContextMutex.cpp in Sources */,
 				7B359DEC2A7CEF9F0016DC59 /* ShareGroup.cpp in Sources */,
 				DF83E2532639FD33000825EF /* SimplifyLoopConditions.cpp in Sources */,
 				7BFF6EE129E9908A009E1A57 /* SourcesCGL-mm.mm in Sources */,

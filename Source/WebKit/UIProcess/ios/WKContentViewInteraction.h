@@ -181,7 +181,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(_translate) \
     M(_promptForReplace) \
     M(_share) \
-    M(_showTextStyleOptions) \
     M(_transliterateChinese) \
     M(_nextAccessoryTab) \
     M(_previousAccessoryTab) \
@@ -443,7 +442,6 @@ struct ImageAnalysisContextMenuActionData {
     RefPtr<WebKit::RevealFocusedElementDeferrer> _revealFocusedElementDeferrer;
 
     BOOL _isEditable;
-    BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
     BOOL _isTapHighlightIDValid;
     BOOL _isTapHighlightFading;

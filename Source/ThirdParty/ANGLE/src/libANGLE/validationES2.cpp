@@ -84,6 +84,7 @@ bool IsValidCopyTextureSourceInternalFormatEnum(GLenum internalFormat)
         case GL_RGBA8:
         case GL_BGRA_EXT:
         case GL_BGRA8_EXT:
+        case GL_SRGB_ALPHA_EXT:
             return true;
 
         default:
@@ -4370,7 +4371,7 @@ bool ValidateGetActiveAttrib(const Context *context,
         return false;
     }
 
-    if (index >= static_cast<GLuint>(programObject->getActiveAttributeCount()))
+    if (index >= static_cast<GLuint>(programObject->getExecutable().getProgramInputs().size()))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kIndexExceedsMaxActiveUniform);
         return false;
@@ -4402,7 +4403,7 @@ bool ValidateGetActiveUniform(const Context *context,
         return false;
     }
 
-    if (index >= static_cast<GLuint>(programObject->getActiveUniformCount()))
+    if (index >= programObject->getExecutable().getUniforms().size())
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kIndexExceedsMaxActiveUniform);
         return false;

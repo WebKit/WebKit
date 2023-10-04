@@ -26,6 +26,9 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 messages -> WebExtensionContextProxy {
+    // Action
+    DispatchActionClickedEvent(std::optional<WebKit::WebExtensionTabParameters> tabParameters)
+
     // Alarms
     DispatchAlarmsEvent(struct WebKit::WebExtensionAlarmParameters alarmInfo)
 

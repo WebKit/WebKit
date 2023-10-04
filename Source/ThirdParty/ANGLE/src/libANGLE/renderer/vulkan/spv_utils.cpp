@@ -75,7 +75,7 @@ uint32_t CountExplicitOutputs(OutputIter outputsBegin,
                               ImplicitIter implicitsBegin,
                               ImplicitIter implicitsEnd)
 {
-    auto reduce = [implicitsBegin, implicitsEnd](uint32_t count, const sh::ShaderVariable &var) {
+    auto reduce = [implicitsBegin, implicitsEnd](uint32_t count, const gl::ProgramOutput &var) {
         bool isExplicit = std::find(implicitsBegin, implicitsEnd, var.name) == implicitsEnd;
         return count + isExplicit;
     };
@@ -158,34 +158,36 @@ void AddVaryingLocationInfo(ShaderInterfaceVariableInfoMap *infoMap,
 }
 
 // Modify an existing out variable and add transform feedback information.
-ShaderInterfaceVariableInfo *SetXfbInfo(ShaderInterfaceVariableInfoMap *infoMap,
-                                        gl::ShaderType shaderType,
-                                        uint32_t varId,
-                                        int fieldIndex,
-                                        uint32_t xfbBuffer,
-                                        uint32_t xfbOffset,
-                                        uint32_t xfbStride,
-                                        uint32_t arraySize,
-                                        uint32_t columnCount,
-                                        uint32_t rowCount,
-                                        uint32_t arrayIndex,
-                                        GLenum componentType)
+void SetXfbInfo(ShaderInterfaceVariableInfoMap *infoMap,
+                gl::ShaderType shaderType,
+                uint32_t varId,
+                int fieldIndex,
+                uint32_t xfbBuffer,
+                uint32_t xfbOffset,
+                uint32_t xfbStride,
+                uint32_t arraySize,
+                uint32_t columnCount,
+                uint32_t rowCount,
+                uint32_t arrayIndex,
+                GLenum componentType)
 {
-    ShaderInterfaceVariableInfo &info   = infoMap->getMutable(shaderType, varId);
-    ShaderInterfaceVariableXfbInfo *xfb = &info.xfb;
+    XFBInterfaceVariableInfo *info = infoMap->getXFBMutable(shaderType, varId);
+    ASSERT(info != nullptr);
+
+    ShaderInterfaceVariableXfbInfo *xfb = &info->xfb;
 
     if (fieldIndex >= 0)
     {
-        if (info.fieldXfb.size() <= static_cast<size_t>(fieldIndex))
+        if (info->fieldXfb.size() <= static_cast<size_t>(fieldIndex))
         {
-            info.fieldXfb.resize(fieldIndex + 1);
+            info->fieldXfb.resize(fieldIndex + 1);
         }
-        xfb = &info.fieldXfb[fieldIndex];
+        xfb = &info->fieldXfb[fieldIndex];
     }
 
-    ASSERT(xfb->buffer == ShaderInterfaceVariableXfbInfo::kInvalid);
-    ASSERT(xfb->offset == ShaderInterfaceVariableXfbInfo::kInvalid);
-    ASSERT(xfb->stride == ShaderInterfaceVariableXfbInfo::kInvalid);
+    ASSERT(xfb->pod.buffer == ShaderInterfaceVariableXfbInfo::kInvalid);
+    ASSERT(xfb->pod.offset == ShaderInterfaceVariableXfbInfo::kInvalid);
+    ASSERT(xfb->pod.stride == ShaderInterfaceVariableXfbInfo::kInvalid);
 
     if (arrayIndex != ShaderInterfaceVariableXfbInfo::kInvalid)
     {
@@ -193,16 +195,14 @@ ShaderInterfaceVariableInfo *SetXfbInfo(ShaderInterfaceVariableInfoMap *infoMap,
         xfb = &xfb->arrayElements.back();
     }
 
-    xfb->buffer        = xfbBuffer;
-    xfb->offset        = xfbOffset;
-    xfb->stride        = xfbStride;
-    xfb->arraySize     = arraySize;
-    xfb->columnCount   = columnCount;
-    xfb->rowCount      = rowCount;
-    xfb->arrayIndex    = arrayIndex;
-    xfb->componentType = componentType;
-
-    return &info;
+    xfb->pod.buffer        = xfbBuffer;
+    xfb->pod.offset        = xfbOffset;
+    xfb->pod.stride        = xfbStride;
+    xfb->pod.arraySize     = arraySize;
+    xfb->pod.columnCount   = columnCount;
+    xfb->pod.rowCount      = rowCount;
+    xfb->pod.arrayIndex    = arrayIndex;
+    xfb->pod.componentType = componentType;
 }
 
 void AssignTransformFeedbackEmulationBindings(gl::ShaderType shaderType,
@@ -340,25 +340,24 @@ void AssignSecondaryOutputLocations(const gl::ProgramExecutable &programExecutab
     {
         if (outputLocation.arrayIndex == 0 && outputLocation.used() && !outputLocation.ignored)
         {
-            const sh::ShaderVariable &outputVar = outputVariables[outputLocation.index];
+            const gl::ProgramOutput &outputVar = outputVariables[outputLocation.index];
 
             uint32_t location = 0;
-            if (outputVar.location != -1)
+            if (outputVar.pod.location != -1)
             {
-                location = outputVar.location;
+                location = outputVar.pod.location;
             }
 
             ShaderInterfaceVariableInfo *info =
-                AddLocationInfo(variableInfoMapOut, gl::ShaderType::Fragment, outputVar.id,
+                AddLocationInfo(variableInfoMapOut, gl::ShaderType::Fragment, outputVar.pod.id,
                                 location, ShaderInterfaceVariableInfo::kInvalid, 0, 0);
 
-            // If the shader source has not specified the index, specify it here.
-            if (outputVar.index == -1)
-            {
-                // Index 1 is used to specify that the color be used as the second color input to
-                // the blend equation
-                info->index = 1;
-            }
+            // Index 1 is used to specify that the color be used as the second color input to
+            // the blend equation
+            info->index = 1;
+
+            ASSERT(!outputVar.isArray() || outputVar.getOutermostArraySize() == 1);
+            info->isArray = outputVar.isArray();
         }
     }
     // Handle secondary outputs for ESSL version less than 3.00
@@ -368,13 +367,22 @@ void AssignSecondaryOutputLocations(const gl::ProgramExecutable &programExecutab
         const std::array<std::string, 2> secondaryFrag = {"gl_SecondaryFragColorEXT",
                                                           "gl_SecondaryFragDataEXT"};
 
-        for (const sh::ShaderVariable &outputVar : outputVariables)
+        for (const gl::ProgramOutput &outputVar : outputVariables)
         {
             if (std::find(secondaryFrag.begin(), secondaryFrag.end(), outputVar.name) !=
                 secondaryFrag.end())
             {
-                AddLocationInfo(variableInfoMapOut, gl::ShaderType::Fragment, outputVar.id, 0,
-                                ShaderInterfaceVariableInfo::kInvalid, 0, 0);
+                ShaderInterfaceVariableInfo *info =
+                    AddLocationInfo(variableInfoMapOut, gl::ShaderType::Fragment, outputVar.pod.id,
+                                    0, ShaderInterfaceVariableInfo::kInvalid, 0, 0);
+
+                info->index = 1;
+
+                ASSERT(!outputVar.isArray() || outputVar.getOutermostArraySize() == 1);
+                info->isArray = outputVar.isArray();
+
+                // SecondaryFragColor and SecondaryFragData cannot be present simultaneously.
+                break;
             }
         }
     }
@@ -396,12 +404,12 @@ void AssignOutputLocations(const gl::ProgramExecutable &programExecutable,
     {
         if (outputLocation.arrayIndex == 0 && outputLocation.used() && !outputLocation.ignored)
         {
-            const sh::ShaderVariable &outputVar = outputVariables[outputLocation.index];
+            const gl::ProgramOutput &outputVar = outputVariables[outputLocation.index];
 
             uint32_t location = 0;
-            if (outputVar.location != -1)
+            if (outputVar.pod.location != -1)
             {
-                location = outputVar.location;
+                location = outputVar.pod.location;
             }
             else if (std::find(implicitOutputs.begin(), implicitOutputs.end(), outputVar.name) ==
                      implicitOutputs.end())
@@ -412,7 +420,7 @@ void AssignOutputLocations(const gl::ProgramExecutable &programExecutable,
                                             implicitOutputs.begin(), implicitOutputs.end()) == 1);
             }
 
-            AddLocationInfo(variableInfoMapOut, shaderType, outputVar.id, location,
+            AddLocationInfo(variableInfoMapOut, shaderType, outputVar.pod.id, location,
                             ShaderInterfaceVariableInfo::kInvalid, 0, 0);
         }
     }
@@ -420,11 +428,11 @@ void AssignOutputLocations(const gl::ProgramExecutable &programExecutable,
     if (programExecutable.hasLinkedShaderStage(gl::ShaderType::Fragment) &&
         programExecutable.getLinkedShaderVersion(gl::ShaderType::Fragment) == 100)
     {
-        for (const sh::ShaderVariable &outputVar : outputVariables)
+        for (const gl::ProgramOutput &outputVar : outputVariables)
         {
             if (outputVar.name == "gl_FragColor" || outputVar.name == "gl_FragData")
             {
-                AddLocationInfo(variableInfoMapOut, gl::ShaderType::Fragment, outputVar.id, 0,
+                AddLocationInfo(variableInfoMapOut, gl::ShaderType::Fragment, outputVar.pod.id, 0,
                                 ShaderInterfaceVariableInfo::kInvalid, 0, 0);
             }
         }
@@ -723,7 +731,7 @@ void AssignInterfaceBlockBindings(const SpvSourceOptions &options,
             continue;
         }
 
-        const bool isIndexZero = !block.isArray || block.arrayElement == 0;
+        const bool isIndexZero = !block.pod.isArray || block.pod.arrayElement == 0;
         if (!isIndexZero)
         {
             continue;
@@ -1282,6 +1290,12 @@ class SpirvInactiveVaryingRemover final : angle::NonCopyable
 
     bool isInactive(spirv::IdRef id) const { return mIsInactiveById[id]; }
 
+    spirv::IdRef getTransformedPrivateType(spirv::IdRef id) const
+    {
+        ASSERT(id < mTypePointerTransformedId.size());
+        return mTypePointerTransformedId[id];
+    }
+
   private:
     // Each OpTypePointer instruction that defines a type with the Output storage class is
     // duplicated with a similar instruction but which defines a type with the Private storage
@@ -1604,6 +1618,7 @@ class SpirvTransformFeedbackCodeGenerator final : angle::NonCopyable
     {}
 
     void visitVariable(const ShaderInterfaceVariableInfo &info,
+                       const XFBInterfaceVariableInfo &xfbInfo,
                        gl::ShaderType shaderType,
                        spirv::IdResultType typeId,
                        spirv::IdResult id,
@@ -1654,15 +1669,15 @@ class SpirvTransformFeedbackCodeGenerator final : angle::NonCopyable
         const bool usePrecisionFixer,
         spirv::Blob *blobOut);
     void addExecutionMode(spirv::IdRef entryPointId, spirv::Blob *blobOut);
-    void addMemberDecorate(const ShaderInterfaceVariableInfo &info,
+    void addMemberDecorate(const XFBInterfaceVariableInfo &info,
                            spirv::IdRef id,
                            spirv::Blob *blobOut);
-    void addDecorate(const ShaderInterfaceVariableInfo &info,
+    void addDecorate(const XFBInterfaceVariableInfo &xfbInfo,
                      spirv::IdRef id,
                      spirv::Blob *blobOut);
 
   private:
-    void gatherXfbVaryings(const ShaderInterfaceVariableInfo &info, spirv::IdRef id);
+    void gatherXfbVaryings(const XFBInterfaceVariableInfo &info, spirv::IdRef id);
     void visitXfbVarying(const ShaderInterfaceVariableXfbInfo &xfb,
                          spirv::IdRef baseId,
                          uint32_t fieldIndex);
@@ -1741,6 +1756,7 @@ constexpr size_t SpirvTransformFeedbackCodeGenerator::kXfbDecorationCount;
 constexpr spv::Decoration SpirvTransformFeedbackCodeGenerator::kXfbDecorations[kXfbDecorationCount];
 
 void SpirvTransformFeedbackCodeGenerator::visitVariable(const ShaderInterfaceVariableInfo &info,
+                                                        const XFBInterfaceVariableInfo &xfbInfo,
                                                         gl::ShaderType shaderType,
                                                         spirv::IdResultType typeId,
                                                         spirv::IdResult id,
@@ -1748,13 +1764,14 @@ void SpirvTransformFeedbackCodeGenerator::visitVariable(const ShaderInterfaceVar
 {
     if (mIsEmulated)
     {
-        gatherXfbVaryings(info, id);
+        gatherXfbVaryings(xfbInfo, id);
         return;
     }
 
     // Note if the variable is captured by transform feedback.  In that case, the TransformFeedback
     // capability needs to be added.
-    if ((info.xfb.buffer != ShaderInterfaceVariableInfo::kInvalid || !info.fieldXfb.empty()) &&
+    if ((xfbInfo.xfb.pod.buffer != ShaderInterfaceVariableInfo::kInvalid ||
+         !xfbInfo.fieldXfb.empty()) &&
         info.activeStages[shaderType])
     {
         mHasTransformFeedbackOutput = true;
@@ -1922,7 +1939,7 @@ TransformationState SpirvTransformFeedbackCodeGenerator::transformVariable(
     return TransformationState::Unchanged;
 }
 
-void SpirvTransformFeedbackCodeGenerator::gatherXfbVaryings(const ShaderInterfaceVariableInfo &info,
+void SpirvTransformFeedbackCodeGenerator::gatherXfbVaryings(const XFBInterfaceVariableInfo &info,
                                                             spirv::IdRef id)
 {
     visitXfbVarying(info.xfb, id, ShaderInterfaceVariableXfbInfo::kInvalid);
@@ -1942,16 +1959,16 @@ void SpirvTransformFeedbackCodeGenerator::visitXfbVarying(const ShaderInterfaceV
         visitXfbVarying(arrayElement, baseId, fieldIndex);
     }
 
-    if (xfb.buffer == ShaderInterfaceVariableXfbInfo::kInvalid)
+    if (xfb.pod.buffer == ShaderInterfaceVariableXfbInfo::kInvalid)
     {
         return;
     }
 
     // Varyings captured to the same buffer have the same stride.
-    ASSERT(mXfbVaryings[xfb.buffer].empty() ||
-           mXfbVaryings[xfb.buffer][0].info->stride == xfb.stride);
+    ASSERT(mXfbVaryings[xfb.pod.buffer].empty() ||
+           mXfbVaryings[xfb.pod.buffer][0].info->pod.stride == xfb.pod.stride);
 
-    mXfbVaryings[xfb.buffer].push_back({&xfb, baseId, fieldIndex});
+    mXfbVaryings[xfb.pod.buffer].push_back({&xfb, baseId, fieldIndex});
 }
 
 void SpirvTransformFeedbackCodeGenerator::writeIntConstant(uint32_t value,
@@ -2026,30 +2043,30 @@ void SpirvTransformFeedbackCodeGenerator::writePendingDeclarations(
         const ShaderInterfaceVariableXfbInfo *info0 = varyings[0].info;
 
         // Define the buffer stride constant
-        ASSERT(info0->stride % sizeof(float) == 0);
-        uint32_t stride = info0->stride / sizeof(float);
+        ASSERT(info0->pod.stride % sizeof(float) == 0);
+        uint32_t stride = info0->pod.stride / sizeof(float);
 
-        mBufferStrides[info0->buffer] = SpirvTransformerBase::GetNewId(blobOut);
-        spirv::WriteConstant(blobOut, ID::Int, mBufferStrides[info0->buffer],
+        mBufferStrides[info0->pod.buffer] = SpirvTransformerBase::GetNewId(blobOut);
+        spirv::WriteConstant(blobOut, ID::Int, mBufferStrides[info0->pod.buffer],
                              spirv::LiteralContextDependentNumber(stride));
 
-        compositeIds.push_back(mBufferStrides[info0->buffer]);
+        compositeIds.push_back(mBufferStrides[info0->pod.buffer]);
 
         // Define all the constants that would be necessary to load the components of the varying.
         for (const XfbVarying &varying : varyings)
         {
             writeIntConstant(varying.fieldIndex, ID::Int, blobOut);
             const ShaderInterfaceVariableXfbInfo *info = varying.info;
-            if (info->arraySize == ShaderInterfaceVariableXfbInfo::kInvalid)
+            if (info->pod.arraySize == ShaderInterfaceVariableXfbInfo::kInvalid)
             {
                 continue;
             }
 
             uint32_t arrayIndexStart =
-                varying.info->arrayIndex != ShaderInterfaceVariableXfbInfo::kInvalid
-                    ? varying.info->arrayIndex
+                varying.info->pod.arrayIndex != ShaderInterfaceVariableXfbInfo::kInvalid
+                    ? varying.info->pod.arrayIndex
                     : 0;
-            uint32_t arrayIndexEnd = arrayIndexStart + info->arraySize;
+            uint32_t arrayIndexEnd = arrayIndexStart + info->pod.arraySize;
 
             for (uint32_t arrayIndex = arrayIndexStart; arrayIndex < arrayIndexEnd; ++arrayIndex)
             {
@@ -2120,7 +2137,7 @@ void SpirvTransformFeedbackCodeGenerator::writeTransformFeedbackEmulationOutput(
     {
         std::sort(varyings.begin(), varyings.end(),
                   [](const XfbVarying &first, const XfbVarying &second) {
-                      return first.info->offset < second.info->offset;
+                      return first.info->pod.offset < second.info->pod.offset;
                   });
     }
 
@@ -2196,7 +2213,7 @@ void SpirvTransformFeedbackCodeGenerator::writeTransformFeedbackEmulationOutput(
         {
             const XfbVarying &varying                  = varyings[varyingIndex];
             const ShaderInterfaceVariableXfbInfo *info = varying.info;
-            ASSERT(info->buffer == bufferIndex);
+            ASSERT(info->pod.buffer == bufferIndex);
 
             // Each component of the varying being captured is loaded one by one.  This uses the
             // OpAccessChain instruction that takes a chain of "indices" to end up with the
@@ -2228,12 +2245,12 @@ void SpirvTransformFeedbackCodeGenerator::writeTransformFeedbackEmulationOutput(
             // - The whole array
             //
             uint32_t arrayIndexStart = 0;
-            uint32_t arrayIndexEnd   = info->arraySize;
-            const bool isArray       = info->arraySize != ShaderInterfaceVariableXfbInfo::kInvalid;
-            if (varying.info->arrayIndex != ShaderInterfaceVariableXfbInfo::kInvalid)
+            uint32_t arrayIndexEnd   = info->pod.arraySize;
+            const bool isArray = info->pod.arraySize != ShaderInterfaceVariableXfbInfo::kInvalid;
+            if (varying.info->pod.arrayIndex != ShaderInterfaceVariableXfbInfo::kInvalid)
             {
                 // Capturing a single element.
-                arrayIndexStart = varying.info->arrayIndex;
+                arrayIndexStart = varying.info->pod.arrayIndex;
                 arrayIndexEnd   = arrayIndexStart + 1;
             }
             else if (!isArray)
@@ -2244,9 +2261,9 @@ void SpirvTransformFeedbackCodeGenerator::writeTransformFeedbackEmulationOutput(
 
             // Sorting the varyings should have ensured that offsets are in order and that writing
             // to the output buffer sequentially ends up using the correct offsets.
-            ASSERT(info->offset == offsetForVerification);
-            offsetForVerification += (arrayIndexEnd - arrayIndexStart) * info->rowCount *
-                                     info->columnCount * sizeof(float);
+            ASSERT(info->pod.offset == offsetForVerification);
+            offsetForVerification += (arrayIndexEnd - arrayIndexStart) * info->pod.rowCount *
+                                     info->pod.columnCount * sizeof(float);
 
             // Determine the type of the component being captured.  OpBitcast is used (the
             // implementation of intBitsToFloat() and uintBitsToFloat() for non-float types).
@@ -2255,26 +2272,26 @@ void SpirvTransformFeedbackCodeGenerator::writeTransformFeedbackEmulationOutput(
             const bool isPrivate =
                 inactiveVaryingRemover.isInactive(varying.baseId) ||
                 (usePrecisionFixer && varyingPrecisionFixer.isReplaced(varying.baseId));
-            getVaryingTypeIds(info->componentType, isPrivate, &varyingTypeId, &varyingTypePtr);
+            getVaryingTypeIds(info->pod.componentType, isPrivate, &varyingTypeId, &varyingTypePtr);
 
             for (uint32_t arrayIndex = arrayIndexStart; arrayIndex < arrayIndexEnd; ++arrayIndex)
             {
                 AccessChainIndexListAppend appendArrayIndex(isArray, mIntNIds, arrayIndex,
                                                             &indexList);
-                for (uint32_t col = 0; col < info->columnCount; ++col)
+                for (uint32_t col = 0; col < info->pod.columnCount; ++col)
                 {
-                    AccessChainIndexListAppend appendColumn(info->columnCount > 1, mIntNIds, col,
-                                                            &indexList);
-                    for (uint32_t row = 0; row < info->rowCount; ++row)
+                    AccessChainIndexListAppend appendColumn(info->pod.columnCount > 1, mIntNIds,
+                                                            col, &indexList);
+                    for (uint32_t row = 0; row < info->pod.rowCount; ++row)
                     {
-                        AccessChainIndexListAppend appendRow(info->rowCount > 1, mIntNIds, row,
+                        AccessChainIndexListAppend appendRow(info->pod.rowCount > 1, mIntNIds, row,
                                                              &indexList);
 
                         // Generate the code to capture a single component of the varying:
                         //
                         //     ANGLEXfbN.xfbOut[xfbOffset] = tfVarying0.field[index][row][col]
                         writeComponentCapture(bufferIndex, xfbOffset, varyingTypeId, varyingTypePtr,
-                                              varying.baseId, indexList, info->componentType,
+                                              varying.baseId, indexList, info->pod.componentType,
                                               blobOut);
 
                         // Increment the offset:
@@ -2411,7 +2428,7 @@ void SpirvTransformFeedbackCodeGenerator::addExecutionMode(spirv::IdRef entryPoi
     }
 }
 
-void SpirvTransformFeedbackCodeGenerator::addMemberDecorate(const ShaderInterfaceVariableInfo &info,
+void SpirvTransformFeedbackCodeGenerator::addMemberDecorate(const XFBInterfaceVariableInfo &info,
                                                             spirv::IdRef id,
                                                             spirv::Blob *blobOut)
 {
@@ -2424,18 +2441,18 @@ void SpirvTransformFeedbackCodeGenerator::addMemberDecorate(const ShaderInterfac
     {
         const ShaderInterfaceVariableXfbInfo &xfb = info.fieldXfb[fieldIndex];
 
-        if (xfb.buffer == ShaderInterfaceVariableXfbInfo::kInvalid)
+        if (xfb.pod.buffer == ShaderInterfaceVariableXfbInfo::kInvalid)
         {
             continue;
         }
 
-        ASSERT(xfb.stride != ShaderInterfaceVariableXfbInfo::kInvalid);
-        ASSERT(xfb.offset != ShaderInterfaceVariableXfbInfo::kInvalid);
+        ASSERT(xfb.pod.stride != ShaderInterfaceVariableXfbInfo::kInvalid);
+        ASSERT(xfb.pod.offset != ShaderInterfaceVariableXfbInfo::kInvalid);
 
         const uint32_t xfbDecorationValues[kXfbDecorationCount] = {
-            xfb.buffer,
-            xfb.stride,
-            xfb.offset,
+            xfb.pod.buffer,
+            xfb.pod.stride,
+            xfb.pod.offset,
         };
 
         // Generate the following three instructions:
@@ -2452,22 +2469,22 @@ void SpirvTransformFeedbackCodeGenerator::addMemberDecorate(const ShaderInterfac
     }
 }
 
-void SpirvTransformFeedbackCodeGenerator::addDecorate(const ShaderInterfaceVariableInfo &info,
+void SpirvTransformFeedbackCodeGenerator::addDecorate(const XFBInterfaceVariableInfo &info,
                                                       spirv::IdRef id,
                                                       spirv::Blob *blobOut)
 {
-    if (mIsEmulated || info.xfb.buffer == ShaderInterfaceVariableXfbInfo::kInvalid)
+    if (mIsEmulated || info.xfb.pod.buffer == ShaderInterfaceVariableXfbInfo::kInvalid)
     {
         return;
     }
 
-    ASSERT(info.xfb.stride != ShaderInterfaceVariableXfbInfo::kInvalid);
-    ASSERT(info.xfb.offset != ShaderInterfaceVariableXfbInfo::kInvalid);
+    ASSERT(info.xfb.pod.stride != ShaderInterfaceVariableXfbInfo::kInvalid);
+    ASSERT(info.xfb.pod.offset != ShaderInterfaceVariableXfbInfo::kInvalid);
 
     const uint32_t xfbDecorationValues[kXfbDecorationCount] = {
-        info.xfb.buffer,
-        info.xfb.stride,
-        info.xfb.offset,
+        info.xfb.pod.buffer,
+        info.xfb.pod.stride,
+        info.xfb.pod.offset,
     };
 
     // Generate the following three instructions:
@@ -2939,6 +2956,196 @@ void SpirvMultisampleTransformer::visitVariable(gl::ShaderType shaderType,
     visitVarying(shaderType, id, storageClass);
 }
 
+// Helper class that flattens secondary fragment output arrays.
+class SpirvSecondaryOutputTransformer final : angle::NonCopyable
+{
+  public:
+    SpirvSecondaryOutputTransformer() {}
+
+    void init(size_t indexBound);
+
+    void visitTypeArray(spirv::IdResult id, spirv::IdRef typeId);
+
+    void visitTypePointer(spirv::IdResult id, spirv::IdRef typeId);
+
+    TransformationState transformAccessChain(spirv::IdResultType typeId,
+                                             spirv::IdResult id,
+                                             spirv::IdRef baseId,
+                                             const spirv::IdRefList &indexList,
+                                             spirv::Blob *blobOut);
+
+    TransformationState transformDecorate(spirv::IdRef id,
+                                          spv::Decoration decoration,
+                                          const spirv::LiteralIntegerList &decorationValues,
+                                          spirv::Blob *blobOut);
+
+    TransformationState transformVariable(spirv::IdResultType typeId,
+                                          spirv::IdResultType privateTypeId,
+                                          spirv::IdResult id,
+                                          spirv::Blob *blobOut);
+
+    void modifyEntryPointInterfaceList(
+        const std::vector<const ShaderInterfaceVariableInfo *> &variableInfoById,
+        spirv::IdRefList *interfaceList,
+        spirv::Blob *blobOut);
+
+    void writeOutputPrologue(
+        const std::vector<const ShaderInterfaceVariableInfo *> &variableInfoById,
+        spirv::Blob *blobOut);
+
+    static_assert(gl::IMPLEMENTATION_MAX_DUAL_SOURCE_DRAW_BUFFERS == 1,
+                  "This transformer is incompatible with two or more dual-source draw buffers");
+
+  private:
+    void visitTypeHelper(spirv::IdResult id, spirv::IdRef typeId) { mTypeCache[id] = typeId; }
+
+    // This list is filled during visitTypePointer and visitTypeArray steps,
+    // to resolve the element type ID of the original output array variable.
+    std::vector<spirv::IdRef> mTypeCache;
+    spirv::IdRef mElementTypeId;
+    spirv::IdRef mArrayVariableId;
+    spirv::IdRef mReplacementVariableId;
+    spirv::IdRef mElementPointerTypeId;
+};
+
+void SpirvSecondaryOutputTransformer::init(size_t indexBound)
+{
+    mTypeCache.resize(indexBound);
+}
+
+void SpirvSecondaryOutputTransformer::visitTypeArray(spirv::IdResult id, spirv::IdRef typeId)
+{
+    visitTypeHelper(id, typeId);
+}
+
+void SpirvSecondaryOutputTransformer::visitTypePointer(spirv::IdResult id, spirv::IdRef typeId)
+{
+    visitTypeHelper(id, typeId);
+}
+
+void SpirvSecondaryOutputTransformer::modifyEntryPointInterfaceList(
+    const std::vector<const ShaderInterfaceVariableInfo *> &variableInfoById,
+    spirv::IdRefList *interfaceList,
+    spirv::Blob *blobOut)
+{
+    // Flatten a secondary output array (if any).
+    for (size_t index = 0; index < interfaceList->size(); ++index)
+    {
+        const spirv::IdRef id((*interfaceList)[index]);
+        const ShaderInterfaceVariableInfo *info = variableInfoById[id];
+
+        ASSERT(info);
+        if (info->index != 1 || !info->isArray)
+        {
+            continue;
+        }
+
+        mArrayVariableId        = id;
+        mReplacementVariableId  = SpirvTransformerBase::GetNewId(blobOut);
+        (*interfaceList)[index] = mReplacementVariableId;
+        break;
+    }
+}
+
+TransformationState SpirvSecondaryOutputTransformer::transformAccessChain(
+    spirv::IdResultType typeId,
+    spirv::IdResult id,
+    spirv::IdRef baseId,
+    const spirv::IdRefList &indexList,
+    spirv::Blob *blobOut)
+{
+    if (baseId != mArrayVariableId)
+    {
+        return TransformationState::Unchanged;
+    }
+    ASSERT(typeId.valid());
+    spirv::WriteAccessChain(blobOut, typeId, id, baseId, indexList);
+    return TransformationState::Transformed;
+}
+
+TransformationState SpirvSecondaryOutputTransformer::transformDecorate(
+    spirv::IdRef id,
+    spv::Decoration decoration,
+    const spirv::LiteralIntegerList &decorationValues,
+    spirv::Blob *blobOut)
+{
+    if (id != mArrayVariableId)
+    {
+        return TransformationState::Unchanged;
+    }
+    ASSERT(mReplacementVariableId.valid());
+    if (decoration == spv::DecorationLocation)
+    {
+        // Drop the Location decoration from the original variable and add
+        // it together with an Index decoration to the replacement variable.
+        spirv::WriteDecorate(blobOut, mReplacementVariableId, spv::DecorationLocation,
+                             {spirv::LiteralInteger(0)});
+        spirv::WriteDecorate(blobOut, mReplacementVariableId, spv::DecorationIndex,
+                             {spirv::LiteralInteger(1)});
+    }
+    else
+    {
+        // Apply other decorations, such as RelaxedPrecision, to both variables.
+        spirv::WriteDecorate(blobOut, id, decoration, decorationValues);
+        spirv::WriteDecorate(blobOut, mReplacementVariableId, decoration, decorationValues);
+    }
+    return TransformationState::Transformed;
+}
+
+TransformationState SpirvSecondaryOutputTransformer::transformVariable(
+    spirv::IdResultType typeId,
+    spirv::IdResultType privateTypeId,
+    spirv::IdResult id,
+    spirv::Blob *blobOut)
+{
+    if (id != mArrayVariableId)
+    {
+        return TransformationState::Unchanged;
+    }
+
+    // Change the original variable to use private storage.
+    ASSERT(privateTypeId.valid());
+    spirv::WriteVariable(blobOut, privateTypeId, id, spv::StorageClassPrivate, nullptr);
+
+    ASSERT(!mElementTypeId.valid());
+    mElementTypeId = mTypeCache[mTypeCache[typeId]];
+    ASSERT(mElementTypeId.valid());
+
+    // Pointer type for accessing the array element value.
+    mElementPointerTypeId = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteTypePointer(blobOut, mElementPointerTypeId, spv::StorageClassPrivate,
+                            mElementTypeId);
+
+    // Pointer type for the replacement output variable.
+    const spirv::IdRef outputPointerTypeId(SpirvTransformerBase::GetNewId(blobOut));
+    spirv::WriteTypePointer(blobOut, outputPointerTypeId, spv::StorageClassOutput, mElementTypeId);
+
+    ASSERT(mReplacementVariableId.valid());
+    spirv::WriteVariable(blobOut, outputPointerTypeId, mReplacementVariableId,
+                         spv::StorageClassOutput, nullptr);
+
+    return TransformationState::Transformed;
+}
+
+void SpirvSecondaryOutputTransformer::writeOutputPrologue(
+    const std::vector<const ShaderInterfaceVariableInfo *> &variableInfoById,
+    spirv::Blob *blobOut)
+{
+    if (mArrayVariableId.valid())
+    {
+        const spirv::IdRef accessChainId(SpirvTransformerBase::GetNewId(blobOut));
+        spirv::WriteAccessChain(blobOut, mElementPointerTypeId, accessChainId, mArrayVariableId,
+                                {ID::IntZero});
+
+        ASSERT(mElementTypeId.valid());
+        const spirv::IdRef loadId(SpirvTransformerBase::GetNewId(blobOut));
+        spirv::WriteLoad(blobOut, mElementTypeId, loadId, accessChainId, nullptr);
+
+        ASSERT(mReplacementVariableId.valid());
+        spirv::WriteStore(blobOut, mReplacementVariableId, loadId, nullptr);
+    }
+}
+
 // A SPIR-V transformer.  It walks the instructions and modifies them as necessary, for example to
 // assign bindings or locations.
 class SpirvTransformer final : public SpirvTransformerBase
@@ -3018,6 +3225,7 @@ class SpirvTransformer final : public SpirvTransformerBase
     SpirvTransformFeedbackCodeGenerator mXfbCodeGenerator;
     SpirvPositionTransformer mPositionTransformer;
     SpirvMultisampleTransformer mMultisampleTransformer;
+    SpirvSecondaryOutputTransformer mSecondaryOutputTransformer;
 };
 
 void SpirvTransformer::transform()
@@ -3049,6 +3257,10 @@ void SpirvTransformer::resolveVariableIds()
     if (mOptions.isMultisampledFramebufferFetch || mOptions.enableSampleShading)
     {
         mMultisampleTransformer.init(indexBound);
+    }
+    if (mOptions.shaderType == gl::ShaderType::Fragment)
+    {
+        mSecondaryOutputTransformer.init(indexBound);
     }
 
     // Allocate storage for id-to-info map.  If %i is an id in mVariableInfoMap, index i in this
@@ -3266,6 +3478,10 @@ void SpirvTransformer::writeOutputPrologue()
         mVaryingPrecisionFixer.writeOutputPrologue(mVariableInfoById, mOptions.shaderType,
                                                    mSpirvBlobOut);
     }
+    if (mOptions.shaderType == gl::ShaderType::Fragment)
+    {
+        mSecondaryOutputTransformer.writeOutputPrologue(mVariableInfoById, mSpirvBlobOut);
+    }
     if (!mNonSemanticInstructions.hasOutputPerVertex())
     {
         return;
@@ -3346,6 +3562,10 @@ void SpirvTransformer::visitTypeArray(const uint32_t *instruction)
     spirv::ParseTypeArray(instruction, &id, &elementType, &length);
 
     visitTypeHelper(id, elementType);
+    if (mOptions.shaderType == gl::ShaderType::Fragment)
+    {
+        mSecondaryOutputTransformer.visitTypeArray(id, elementType);
+    }
 }
 
 void SpirvTransformer::visitTypePointer(const uint32_t *instruction)
@@ -3361,6 +3581,10 @@ void SpirvTransformer::visitTypePointer(const uint32_t *instruction)
         mVaryingPrecisionFixer.visitTypePointer(id, storageClass, typeId);
     }
     mMultisampleTransformer.visitTypePointer(mOptions.shaderType, id, storageClass, typeId);
+    if (mOptions.shaderType == gl::ShaderType::Fragment)
+    {
+        mSecondaryOutputTransformer.visitTypePointer(id, typeId);
+    }
 }
 
 void SpirvTransformer::visitTypeStruct(const uint32_t *instruction)
@@ -3416,9 +3640,12 @@ void SpirvTransformer::visitVariable(const uint32_t *instruction)
         mVaryingPrecisionFixer.visitVariable(*info, mOptions.shaderType, typeId, id, storageClass,
                                              mSpirvBlobOut);
     }
-    if (mOptions.isTransformFeedbackStage)
+    if (mOptions.isTransformFeedbackStage && mVariableInfoById[id]->hasTransformFeedback)
     {
-        mXfbCodeGenerator.visitVariable(*info, mOptions.shaderType, typeId, id, storageClass);
+        const XFBInterfaceVariableInfo &xfbInfo =
+            mVariableInfoMap.getXFBDataForVariableInfo(mVariableInfoById[id]);
+        mXfbCodeGenerator.visitVariable(*info, xfbInfo, mOptions.shaderType, typeId, id,
+                                        storageClass);
     }
 
     mMultisampleTransformer.visitVariable(mOptions.shaderType, typeId, id, storageClass);
@@ -3465,6 +3692,17 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
     if (info == nullptr)
     {
         return TransformationState::Unchanged;
+    }
+
+    if (mOptions.shaderType == gl::ShaderType::Fragment)
+    {
+        // Handle decorations for the secondary fragment output array.
+        if (mSecondaryOutputTransformer.transformDecorate(id, decoration, decorationValues,
+                                                          mSpirvBlobOut) ==
+            TransformationState::Transformed)
+        {
+            return TransformationState::Transformed;
+        }
     }
 
     mMultisampleTransformer.transformDecorate(mNonSemanticInstructions, *info, mOptions.shaderType,
@@ -3517,9 +3755,11 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
         case spv::DecorationBlock:
             // If this is the Block decoration of a shader I/O block, add the transform feedback
             // decorations to its members right away.
-            if (mOptions.isTransformFeedbackStage)
+            if (mOptions.isTransformFeedbackStage && mVariableInfoById[id]->hasTransformFeedback)
             {
-                mXfbCodeGenerator.addMemberDecorate(*info, id, mSpirvBlobOut);
+                const XFBInterfaceVariableInfo &xfbInfo =
+                    mVariableInfoMap.getXFBDataForVariableInfo(mVariableInfoById[id]);
+                mXfbCodeGenerator.addMemberDecorate(xfbInfo, id, mSpirvBlobOut);
             }
             break;
         case spv::DecorationInvariant:
@@ -3569,9 +3809,11 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
     }
 
     // Add Xfb decorations, if any.
-    if (mOptions.isTransformFeedbackStage)
+    if (mOptions.isTransformFeedbackStage && mVariableInfoById[id]->hasTransformFeedback)
     {
-        mXfbCodeGenerator.addDecorate(*info, id, mSpirvBlobOut);
+        const XFBInterfaceVariableInfo &xfbInfo =
+            mVariableInfoMap.getXFBDataForVariableInfo(mVariableInfoById[id]);
+        mXfbCodeGenerator.addDecorate(xfbInfo, id, mSpirvBlobOut);
     }
 
     return TransformationState::Transformed;
@@ -3655,6 +3897,12 @@ TransformationState SpirvTransformer::transformEntryPoint(const uint32_t *instru
         mVaryingPrecisionFixer.modifyEntryPointInterfaceList(&interfaceList);
     }
 
+    if (mOptions.shaderType == gl::ShaderType::Fragment)
+    {
+        mSecondaryOutputTransformer.modifyEntryPointInterfaceList(mVariableInfoById, &interfaceList,
+                                                                  mSpirvBlobOut);
+    }
+
     mMultisampleTransformer.modifyEntryPointInterfaceList(mNonSemanticInstructions, &interfaceList,
                                                           mSpirvBlobOut);
 
@@ -3730,11 +3978,11 @@ TransformationState SpirvTransformer::transformExtInst(const uint32_t *instructi
             // the varyings at the beginning of the shader.
             writeInputPreamble();
             break;
-        case sh::vk::spirv::kNonSemanticVertexOutput:
+        case sh::vk::spirv::kNonSemanticOutput:
             // Generate gl_Position transformations and transform feedback capture (through
             // extension) before return or EmitVertex().  Additionally, if there are any precision
             // mismatches that need to be ahendled, write the temporary variables that hold varyings
-            // data.
+            // data. Copy a secondary fragment output value if it was declared as an array.
             writeOutputPrologue();
             break;
         case sh::vk::spirv::kNonSemanticTransformFeedbackEmulation:
@@ -3791,6 +4039,18 @@ TransformationState SpirvTransformer::transformVariable(const uint32_t *instruct
         return TransformationState::Unchanged;
     }
 
+    if (mOptions.shaderType == gl::ShaderType::Fragment && storageClass == spv::StorageClassOutput)
+    {
+        // If present, make the secondary fragment output array
+        // private and declare a non-array output instead.
+        if (mSecondaryOutputTransformer.transformVariable(
+                typeId, mInactiveVaryingRemover.getTransformedPrivateType(typeId), id,
+                mSpirvBlobOut) == TransformationState::Transformed)
+        {
+            return TransformationState::Transformed;
+        }
+    }
+
     // Furthermore, if it's not an inactive varying output, there's nothing to do.  Note that
     // inactive varying inputs are already pruned by the translator.
     // However, input or output storage class for interface block will not be pruned when a shader
@@ -3842,6 +4102,17 @@ TransformationState SpirvTransformer::transformAccessChain(const uint32_t *instr
     if (info == nullptr)
     {
         return TransformationState::Unchanged;
+    }
+
+    if (mOptions.shaderType == gl::ShaderType::Fragment)
+    {
+        // Update the type used for accessing the secondary fragment output array.
+        if (mSecondaryOutputTransformer.transformAccessChain(
+                mInactiveVaryingRemover.getTransformedPrivateType(typeId), id, baseId, indexList,
+                mSpirvBlobOut) == TransformationState::Transformed)
+        {
+            return TransformationState::Transformed;
+        }
     }
 
     if (mOptions.useSpirvVaryingPrecisionFixer)
@@ -4340,7 +4611,7 @@ TransformationState SpirvVertexAttributeAliasingTransformer::transformExtInst(
             // This is done at the beginning of the entry point.
             writeExpandedMatrixInitialization();
             break;
-        case sh::vk::spirv::kNonSemanticVertexOutput:
+        case sh::vk::spirv::kNonSemanticOutput:
         case sh::vk::spirv::kNonSemanticTransformFeedbackEmulation:
             // Unused by this transformation
             break;

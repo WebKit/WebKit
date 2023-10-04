@@ -489,7 +489,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     if (tab)
         NSParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 
-    _webExtensionContext->performAction(toImplNullable(tab, *_webExtensionContext).get());
+    _webExtensionContext->performAction(toImplNullable(tab, *_webExtensionContext).get(), WebKit::WebExtensionContext::UserTriggered::Yes);
 }
 
 - (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab

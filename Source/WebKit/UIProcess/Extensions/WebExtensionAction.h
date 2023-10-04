@@ -44,6 +44,7 @@ namespace WebKit {
 
 class WebExtensionContext;
 class WebExtensionTab;
+class WebExtensionWindow;
 
 class WebExtensionAction : public API::ObjectImpl<API::Object::Type::WebExtensionAction>, public CanMakeWeakPtr<WebExtensionAction> {
     WTF_MAKE_NONCOPYABLE(WebExtensionAction);
@@ -57,20 +58,23 @@ public:
 
     explicit WebExtensionAction(WebExtensionContext&);
     explicit WebExtensionAction(WebExtensionContext&, WebExtensionTab&);
+    explicit WebExtensionAction(WebExtensionContext&, WebExtensionWindow&);
 
     enum class LoadOnFirstAccess { No, Yes };
+    enum class FallbackWhenEmpty { No, Yes };
 
     bool operator==(const WebExtensionAction&) const;
 
     WebExtensionContext* extensionContext() const;
     WebExtensionTab* tab() { return m_tab.get(); }
+    WebExtensionWindow* window() { return m_window.get(); }
 
     void propertiesDidChange();
 
     CocoaImage *icon(CGSize);
     void setIconsDictionary(NSDictionary *);
 
-    String displayLabel() const;
+    String displayLabel(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
     void setDisplayLabel(String);
 
     String badgeText() const;
@@ -80,6 +84,7 @@ public:
     void setEnabled(std::optional<bool>);
 
     bool hasPopup() const { return !popupPath().isEmpty(); }
+    bool canProgrammaticallyPresentPopup() const { return m_respondsToPresentPopup; }
 
     String popupPath() const;
     void setPopupPath(String);
@@ -98,6 +103,7 @@ public:
 private:
     WeakPtr<WebExtensionContext> m_extensionContext;
     RefPtr<WebExtensionTab> m_tab;
+    RefPtr<WebExtensionWindow> m_window;
 
     RetainPtr<_WKWebExtensionActionWebView> m_popupWebView;
     RetainPtr<_WKWebExtensionActionWebViewDelegate> m_popupWebViewDelegate;

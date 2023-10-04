@@ -1857,7 +1857,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
         // The MediaPlayerPrivateGStreamer superclass now processes what it needs by calling updateStates() in handleMessage() for
         // GST_MESSAGE_STATE_CHANGED. However, subclasses still need to override asyncStateChangeDone() to do their own stuff.
-        asyncStateChangeDone();
+        didPreroll();
         break;
     case GST_MESSAGE_STATE_CHANGED: {
         GstState newState;

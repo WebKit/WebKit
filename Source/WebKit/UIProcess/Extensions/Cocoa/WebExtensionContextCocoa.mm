@@ -341,7 +341,7 @@ void WebExtensionContext::setInspectable(bool inspectable)
 
     m_backgroundWebView.get().inspectable = inspectable;
 
-    for (auto entry : m_actionMap) {
+    for (auto entry : m_actionTabMap) {
         if (auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
             webView.inspectable = inspectable;
     }
@@ -1553,7 +1553,40 @@ WebExtensionAction& WebExtensionContext::defaultAction()
 {
     if (!m_defaultAction)
         m_defaultAction = WebExtensionAction::create(*this);
+
     return *m_defaultAction;
+}
+
+Ref<WebExtensionAction> WebExtensionContext::getAction(WebExtensionWindow* window)
+{
+    if (!window)
+        return defaultAction();
+
+    if (auto *windowAction = m_actionWindowMap.get(*window))
+        return *windowAction;
+
+    return defaultAction();
+}
+
+Ref<WebExtensionAction> WebExtensionContext::getAction(WebExtensionTab* tab)
+{
+    if (!tab)
+        return defaultAction();
+
+    if (auto *tabAction = m_actionTabMap.get(*tab))
+        return *tabAction;
+
+    return getAction(tab->window().get());
+}
+
+Ref<WebExtensionAction> WebExtensionContext::getOrCreateAction(WebExtensionWindow* window)
+{
+    if (!window)
+        return defaultAction();
+
+    return m_actionWindowMap.ensure(*window, [&] {
+        return WebExtensionAction::create(*this);
+    }).iterator->value;
 }
 
 Ref<WebExtensionAction> WebExtensionContext::getOrCreateAction(WebExtensionTab* tab)
@@ -1561,14 +1594,14 @@ Ref<WebExtensionAction> WebExtensionContext::getOrCreateAction(WebExtensionTab* 
     if (!tab)
         return defaultAction();
 
-    return m_actionMap.ensure(*tab, [&] {
+    return m_actionTabMap.ensure(*tab, [&] {
         return WebExtensionAction::create(*this, *tab);
     }).iterator->value;
 }
 
-void WebExtensionContext::performAction(WebExtensionTab* tab)
+void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered userTriggered)
 {
-    if (tab)
+    if (tab && userTriggered == UserTriggered::Yes)
         userGesturePerformed(*tab);
 
     auto action = getOrCreateAction(tab);
@@ -1577,7 +1610,7 @@ void WebExtensionContext::performAction(WebExtensionTab* tab)
         return;
     }
 
-    // FIXME: <https://webkit.org/b/260154> Implement. Dispatch action event in main world pages.
+    fireActionClickedEventIfNeeded(tab);
 }
 
 void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
@@ -1639,7 +1672,7 @@ WKWebView *WebExtensionContext::relatedWebView()
     if (m_backgroundWebView)
         return m_backgroundWebView.get();
 
-    for (auto entry : m_actionMap) {
+    for (auto entry : m_actionTabMap) {
         if (auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
             return webView;
     }

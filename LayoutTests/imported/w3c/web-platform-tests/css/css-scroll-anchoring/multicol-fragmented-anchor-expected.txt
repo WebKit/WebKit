@@ -1,4 +1,4 @@
 content
 
-FAIL An element in a fragmented div should be able to be selected as an anchor node. assert_equals: expected 20 but got 10
+PASS An element in a fragmented div should be able to be selected as an anchor node.
 

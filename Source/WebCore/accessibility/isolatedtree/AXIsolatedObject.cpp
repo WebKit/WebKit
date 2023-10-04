@@ -1003,6 +1003,13 @@ std::optional<SimpleRange> AXIsolatedObject::rangeForCharacterRange(const Charac
     return axObject ? axObject->rangeForCharacterRange(axRange) : std::nullopt;
 }
 
+#if PLATFORM(MAC)
+AXTextMarkerRange AXIsolatedObject::selectedTextMarkerRange()
+{
+    return tree()->selectedTextMarkerRange();
+}
+#endif
+
 String AXIsolatedObject::stringForRange(const SimpleRange& range) const
 {
     ASSERT(isMainThread());
@@ -1365,15 +1372,6 @@ VisibleSelection AXIsolatedObject::selection() const
 
     auto* object = associatedAXObject();
     return object ? object->selection() : VisibleSelection();
-}
-
-VisiblePositionRange AXIsolatedObject::selectedVisiblePositionRange() const
-{
-    ASSERT(isMainThread());
-
-    if (auto* axObject = associatedAXObject())
-        return axObject->selectedVisiblePositionRange();
-    return { };
 }
 
 void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const

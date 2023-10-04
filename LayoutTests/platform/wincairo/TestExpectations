@@ -1005,8 +1005,6 @@ webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/111612 animations/animation-delay-changed.html [ Pass Failure ]
-
 # Unexpected timeouts tracked in webkit.org/b/172437.
 animations/font-variations/font-stretch.html [ Skip ]
 animations/font-variations/font-style.html [ Skip ]

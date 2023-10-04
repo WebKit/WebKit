@@ -173,13 +173,31 @@ inline void LoadCompressedToNative(const ImageLoadContext &context, size_t width
     const size_t rows = (height + (blockHeight - 1)) / blockHeight;
     const size_t layers = (depth + (blockDepth - 1)) / blockDepth;
 
-    for (size_t z = 0; z < layers; ++z)
+    const size_t inputLayerSize = inputRowPitch * rows;
+    const size_t inputImageSize = inputDepthPitch * layers;
+
+    const size_t outputLayerSize = outputRowPitch * rows;
+    const size_t outputImageSize = outputDepthPitch * layers;
+
+    if (inputImageSize == outputImageSize)
     {
-        for (size_t y = 0; y < rows; ++y)
+        ASSERT(inputRowPitch == outputRowPitch);
+        ASSERT(inputLayerSize == outputLayerSize && inputLayerSize == inputDepthPitch && outputLayerSize == outputDepthPitch);
+        memcpy(output, input, inputImageSize);
+    }
+    else
+    {
+        // Note: this path should technically never be hit, but it is with the d3d backend.  Once
+        // the issue is fixed, this path should be removed.
+        // http://anglebug.com/8345
+        for (size_t z = 0; z < layers; ++z)
         {
-            const uint8_t *source = priv::OffsetDataPointer<uint8_t>(input, y, z, inputRowPitch, inputDepthPitch);
-            uint8_t *dest = priv::OffsetDataPointer<uint8_t>(output, y, z, outputRowPitch, outputDepthPitch);
-            memcpy(dest, source, columns * blockSize);
+            for (size_t y = 0; y < rows; ++y)
+            {
+                const uint8_t *source = priv::OffsetDataPointer<uint8_t>(input, y, z, inputRowPitch, inputDepthPitch);
+                uint8_t *dest = priv::OffsetDataPointer<uint8_t>(output, y, z, outputRowPitch, outputDepthPitch);
+                memcpy(dest, source, columns * blockSize);
+            }
         }
     }
 }

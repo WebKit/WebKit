@@ -294,6 +294,7 @@ public:
     bool createsNewFormattingContext() const;
 
     bool isSkippedContentRoot() const;
+    bool isSkippedContentRootForLayout() const;
 
     void clearNeedsLayoutForDescendants();
 

@@ -1277,11 +1277,13 @@ public:
     virtual VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const = 0;
     virtual VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange selectedVisiblePositionRange() const = 0;
 
     virtual std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const = 0;
 #if PLATFORM(COCOA)
     virtual AXTextMarkerRange textMarkerRangeForNSRange(const NSRange&) const = 0;
+#endif
+#if PLATFORM(MAC)
+    virtual AXTextMarkerRange selectedTextMarkerRange() = 0;
 #endif
 
     virtual String stringForRange(const SimpleRange&) const = 0;

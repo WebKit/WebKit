@@ -23,3 +23,5 @@ void InitReplay(void);
 extern const char *const glShaderSource_string_0[];
 extern const char *const glShaderSource_string_1[];
 extern const char *const glShaderSource_string_2[];
+extern const char *const glShaderSource_string_3[];
+extern const char *const glShaderSource_string_4[];

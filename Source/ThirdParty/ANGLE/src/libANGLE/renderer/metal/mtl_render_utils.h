@@ -96,6 +96,7 @@ struct ColorBlitParams : public BlitParams
     GLenum filter               = GL_NEAREST;
     bool unpackPremultiplyAlpha = false;
     bool unpackUnmultiplyAlpha  = false;
+    bool transformLinearToSrgb  = false;
     bool dstLuminance           = false;
 };
 
@@ -241,11 +242,13 @@ class ColorBlitUtils final : angle::NonCopyable
         int sourceTextureType        = 0;
         bool unmultiplyAlpha         = false;
         bool premultiplyAlpha        = false;
+        bool transformLinearToSrgb   = false;
         bool operator==(const ShaderKey &other) const
         {
             return numColorAttachments == other.numColorAttachments &&
                    unmultiplyAlpha == other.unmultiplyAlpha &&
                    premultiplyAlpha == other.premultiplyAlpha &&
+                   transformLinearToSrgb == other.transformLinearToSrgb &&
                    sourceTextureType == other.sourceTextureType;
         }
         struct Hash

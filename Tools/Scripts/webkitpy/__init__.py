@@ -87,7 +87,10 @@ AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
 AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
 AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
-AutoInstall.register(Package('selenium', Version(3, 141, 0)))
+if sys.version_info < (3, 8):
+    AutoInstall.register(Package('selenium', Version(3, 141, 0)))
+else:
+    AutoInstall.register(Package('selenium', Version(4, 12, 0)))
 AutoInstall.register(Package('toml', Version(0, 10, 1), implicit_deps=['pyparsing']))
 AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))
 AutoInstall.register(Package('webencodings', Version(0, 5, 1)))

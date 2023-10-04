@@ -43,15 +43,18 @@ struct IOSurfaceFormatInfo
 
 // clang-format off
 // NOTE(hqle): Support R16_UINT once GLES3 is complete.
-constexpr std::array<IOSurfaceFormatInfo, 8> kIOSurfaceFormats = {{
-    {GL_RED,      GL_UNSIGNED_BYTE,               1, angle::FormatID::R8_UNORM},
-    {GL_RED,      GL_UNSIGNED_SHORT,              2, angle::FormatID::R16_UNORM},
-    {GL_RG,       GL_UNSIGNED_BYTE,               2, angle::FormatID::R8G8_UNORM},
-    {GL_RG,       GL_UNSIGNED_SHORT,              4, angle::FormatID::R16G16_UNORM},
-    {GL_RGB,      GL_UNSIGNED_BYTE,               4, angle::FormatID::B8G8R8A8_UNORM},
-    {GL_BGRA_EXT, GL_UNSIGNED_BYTE,               4, angle::FormatID::B8G8R8A8_UNORM},
-    {GL_RGBA,     GL_HALF_FLOAT,                  8, angle::FormatID::R16G16B16A16_FLOAT},
-    {GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV, 4, angle::FormatID::B10G10R10A2_UNORM},
+// GL_RGB is a special case. The native angle::FormatID would be either R8G8B8A8_UNORM
+// or B8G8R8A8_UNORM based on the IOSurface's pixel format.
+constexpr std::array<IOSurfaceFormatInfo, 9> kIOSurfaceFormats = {{
+    {GL_RED,         GL_UNSIGNED_BYTE,                  1, angle::FormatID::R8_UNORM},
+    {GL_RED,         GL_UNSIGNED_SHORT,                 2, angle::FormatID::R16_UNORM},
+    {GL_RG,          GL_UNSIGNED_BYTE,                  2, angle::FormatID::R8G8_UNORM},
+    {GL_RG,          GL_UNSIGNED_SHORT,                 4, angle::FormatID::R16G16_UNORM},
+    {GL_RGB,         GL_UNSIGNED_BYTE,                  4, angle::FormatID::NONE},
+    {GL_RGBA,        GL_UNSIGNED_BYTE,                  4, angle::FormatID::R8G8B8A8_UNORM},
+    {GL_BGRA_EXT,    GL_UNSIGNED_BYTE,                  4, angle::FormatID::B8G8R8A8_UNORM},
+    {GL_RGBA,        GL_HALF_FLOAT,                     8, angle::FormatID::R16G16B16A16_FLOAT},
+    {GL_RGB10_A2,    GL_UNSIGNED_INT_2_10_10_10_REV,    4, angle::FormatID::B10G10R10A2_UNORM},
 }};
 // clang-format on
 
@@ -87,8 +90,26 @@ IOSurfaceSurfaceMtl::IOSurfaceSurfaceMtl(DisplayMtl *display,
         FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type));
     ASSERT(mIOSurfaceFormatIdx >= 0);
 
-    mColorFormat =
-        display->getPixelFormat(kIOSurfaceFormats[mIOSurfaceFormatIdx].nativeAngleFormatId);
+    angle::FormatID actualAngleFormatId =
+        kIOSurfaceFormats[mIOSurfaceFormatIdx].nativeAngleFormatId;
+    if (actualAngleFormatId == angle::FormatID::NONE)
+    {
+        // The actual angle::Format depends on the IOSurface's format.
+        ASSERT(internalFormat == GL_RGB);
+        switch (IOSurfaceGetPixelFormat(mIOSurface))
+        {
+            case 'BGRA':
+                actualAngleFormatId = angle::FormatID::B8G8R8A8_UNORM;
+                break;
+            case 'RGBA':
+                actualAngleFormatId = angle::FormatID::R8G8B8A8_UNORM;
+                break;
+            default:
+                UNREACHABLE();
+        }
+    }
+
+    mColorFormat = display->getPixelFormat(actualAngleFormatId);
 }
 IOSurfaceSurfaceMtl::~IOSurfaceSurfaceMtl()
 {

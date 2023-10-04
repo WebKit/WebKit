@@ -9798,4 +9798,4 @@ void GL_APIENTRY glSpecializeShader(GLuint shader,
 }
 
 #endif  // defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)
-}  // extern "C"
+}       // extern "C"

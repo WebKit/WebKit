@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CompilationMessage.h"
+#include "ConstantValue.h"
 #include <cinttypes>
 #include <cstdint>
 #include <memory>
@@ -43,6 +44,10 @@ namespace WGSL {
 //
 
 class ShaderModule;
+
+namespace AST {
+class Expression;
+}
 
 struct SuccessfulCheck {
     SuccessfulCheck() = delete;
@@ -172,9 +177,9 @@ struct Fragment {
 };
 
 struct WorkgroupSize {
-    unsigned width;
-    unsigned height;
-    unsigned depth;
+    const AST::Expression* width;
+    const AST::Expression* height;
+    const AST::Expression* depth;
 };
 
 struct Compute {
@@ -213,5 +218,7 @@ struct PrepareResult {
 // All failures must have already been caught in check().
 PrepareResult prepare(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&);
 PrepareResult prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
+
+ConstantValue evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
 
 } // namespace WGSL

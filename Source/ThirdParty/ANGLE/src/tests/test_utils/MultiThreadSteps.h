@@ -97,4 +97,9 @@ class ThreadSynchronization
 
 using LockStepThreadFunc = std::function<void(EGLDisplay, EGLSurface, EGLContext)>;
 void RunLockStepThreads(EGLWindow *window, size_t threadCount, LockStepThreadFunc threadFuncs[]);
+void RunLockStepThreadsWithSize(EGLWindow *window,
+                                EGLint width,
+                                EGLint height,
+                                size_t threadCount,
+                                LockStepThreadFunc threadFuncs[]);
 }  // namespace angle

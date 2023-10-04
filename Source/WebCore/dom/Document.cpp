@@ -4661,7 +4661,7 @@ void Document::runScrollSteps()
         if (scrollAnimationsInProgress)
             page()->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
 
-        frameView->updateScrollAnchoringElement();
+        frameView->updateScrollAnchoringElementsForScrollableAreas();
         frameView->updateScrollAnchoringPositionForScrollableAreas();
     }
 

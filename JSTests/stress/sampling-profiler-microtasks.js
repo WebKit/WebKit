@@ -1,3 +1,5 @@
+//@ skip if $architecture == "arm"
+
 var abort = $vm.abort;
 
 if (platformSupportsSamplingProfiler()) {

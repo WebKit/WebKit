@@ -28,11 +28,11 @@ struct BlockMemberInfo
     // This constructor is used by the HLSL backend
     constexpr BlockMemberInfo(int offset, int arrayStride, int matrixStride, bool isRowMajorMatrix)
         : type(GL_INVALID_ENUM),
+          isRowMajorMatrix(isRowMajorMatrix),
           offset(offset),
           arrayStride(arrayStride),
           matrixStride(matrixStride),
-          arraySize(-1),
-          isRowMajorMatrix(isRowMajorMatrix)
+          arraySize(-1)
     {}
 
     constexpr BlockMemberInfo(int offset,
@@ -41,11 +41,11 @@ struct BlockMemberInfo
                               bool isRowMajorMatrix,
                               int topLevelArrayStride)
         : type(GL_INVALID_ENUM),
+          isRowMajorMatrix(isRowMajorMatrix),
           offset(offset),
           arrayStride(arrayStride),
           matrixStride(matrixStride),
           arraySize(-1),
-          isRowMajorMatrix(isRowMajorMatrix),
           topLevelArrayStride(topLevelArrayStride)
     {}
 
@@ -55,12 +55,12 @@ struct BlockMemberInfo
                               int matrixStride,
                               int arraySize,
                               bool isRowMajorMatrix)
-        : type(type),
+        : type(static_cast<uint16_t>(type)),
+          isRowMajorMatrix(isRowMajorMatrix),
           offset(offset),
           arrayStride(arrayStride),
           matrixStride(matrixStride),
-          arraySize(arraySize),
-          isRowMajorMatrix(isRowMajorMatrix)
+          arraySize(arraySize)
     {}
 
     constexpr BlockMemberInfo(GLenum type,
@@ -70,36 +70,37 @@ struct BlockMemberInfo
                               int arraySize,
                               bool isRowMajorMatrix,
                               int topLevelArrayStride)
-        : type(type),
+        : type(static_cast<uint16_t>(type)),
+          isRowMajorMatrix(isRowMajorMatrix),
           offset(offset),
           arrayStride(arrayStride),
           matrixStride(matrixStride),
           arraySize(arraySize),
-          isRowMajorMatrix(isRowMajorMatrix),
           topLevelArrayStride(topLevelArrayStride)
     {}
 
-    GLenum type = GL_INVALID_ENUM;
+    uint16_t type = GL_INVALID_ENUM;
+
+    // A single integer identifying whether an active variable is a row-major matrix.
+    uint8_t isRowMajorMatrix = false;
+    uint8_t pad              = 0;
 
     // A single integer identifying the offset of an active variable.
-    int offset = -1;
+    int32_t offset = -1;
 
     // A single integer identifying the stride between array elements in an active variable.
-    int arrayStride = -1;
+    int32_t arrayStride = -1;
 
     // A single integer identifying the stride between columns of a column-major matrix or rows of a
     // row-major matrix.
-    int matrixStride = -1;
+    int32_t matrixStride = -1;
 
     // A single integer, identifying the length of an array variable.
-    int arraySize = -1;
-
-    // A single integer identifying whether an active variable is a row-major matrix.
-    bool isRowMajorMatrix = false;
+    int32_t arraySize = -1;
 
     // A single integer identifying the number of active array elements of the top-level shader
     // storage block member containing the active variable.
-    int topLevelArrayStride = -1;
+    int32_t topLevelArrayStride = -1;
 };
 
 bool operator==(const BlockMemberInfo &lhs, const BlockMemberInfo &rhs);

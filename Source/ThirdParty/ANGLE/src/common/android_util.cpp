@@ -9,6 +9,10 @@
 #include "common/android_util.h"
 #include "common/debug.h"
 
+#if defined(ANGLE_PLATFORM_ANDROID)
+#    include <sys/system_properties.h>
+#endif
+
 #if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 26
 #    define ANGLE_AHARDWARE_BUFFER_SUPPORT
 // NDK header file for access to Android Hardware Buffers
@@ -296,5 +300,23 @@ AHardwareBuffer *ClientBufferToAHardwareBuffer(EGLClientBuffer clientBuffer)
     return OffsetPointer<AHardwareBuffer>(clientBuffer,
                                           -kAHardwareBufferToANativeWindowBufferOffset);
 }
+
+bool GetSystemProperty(const char *propertyName, std::string *value)
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    // PROP_VALUE_MAX from <sys/system_properties.h>
+    std::vector<char> propertyBuf(PROP_VALUE_MAX);
+    int len = __system_property_get(propertyName, propertyBuf.data());
+    if (len <= 0)
+    {
+        return false;
+    }
+    *value = std::string(propertyBuf.data());
+    return true;
+#else
+    return false;
+#endif
+}
+
 }  // namespace android
 }  // namespace angle

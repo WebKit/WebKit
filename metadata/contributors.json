@@ -1366,10 +1366,12 @@
          "sun.shin@lge.com"
       ],
       "expertise" : "WebRTC, WTF, GPU Accelerated Rendering and Compositing",
+      "github" : "xingri",
       "name" : "Byungseon(Sun) Shin",
       "nicks" : [
          "xingri"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

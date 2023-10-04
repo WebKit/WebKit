@@ -81,10 +81,8 @@ static ConstantValue constantMinus(const Type*, const FixedVector<ConstantValue>
 
     const auto& binaryMinus = [&]() -> ConstantValue {
         return scalarOrVector([&](const auto& left, auto& right) -> ConstantValue {
-            if (left.isInt()) {
-                ASSERT(right.isInt());
+            if (left.isInt() && right.isInt())
                 return left.toInt() - right.toInt();
-            }
             return left.toDouble() - right.toDouble();
         }, arguments[0], arguments[1]);
     };
@@ -93,6 +91,22 @@ static ConstantValue constantMinus(const Type*, const FixedVector<ConstantValue>
         return unaryMinus();
     ASSERT(arguments.size() == 2);
     return binaryMinus();
+}
+
+static ConstantValue constantMultiply(const Type*, const FixedVector<ConstantValue>& arguments)
+{
+    ASSERT(arguments.size() == 2);
+
+    auto& lhs = arguments[0];
+    auto& rhs = arguments[1];
+
+    // FIXME: handle constant matrices
+
+    return scalarOrVector([&](const auto& left, auto& right) -> ConstantValue {
+        if (left.isInt() && right.isInt())
+            return left.toInt() * right.toInt();
+        return left.toDouble() * right.toDouble();
+    }, lhs, rhs);
 }
 
 static ConstantValue zeroValue(const Type* type)

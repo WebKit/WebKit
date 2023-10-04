@@ -473,7 +473,7 @@ bool WebExtensionAPITabs::parseConnectOptions(NSDictionary *options, std::option
     return true;
 }
 
-static bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSString **outExceptionString)
+bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSString **outExceptionString)
 {
     if (UNLIKELY(!isValid(identifier))) {
         if (isNone(identifier))

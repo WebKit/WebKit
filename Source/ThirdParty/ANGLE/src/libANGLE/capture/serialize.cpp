@@ -1002,29 +1002,31 @@ void SerializeBlockMemberInfo(JsonSerializer *json, const sh::BlockMemberInfo &b
     json->addScalar("TopLevelArrayStride", blockMemberInfo.topLevelArrayStride);
 }
 
-void SerializeActiveVariable(JsonSerializer *json, const gl::ActiveVariable &activeVariable)
-{
-    json->addScalar("ActiveShaders", activeVariable.activeShaders().to_ulong());
-    GroupScope group(json, "Ids");
-    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
-    {
-        json->addScalar(
-            gl::ShaderTypeToString(shaderType),
-            activeVariable.isActive(shaderType) ? activeVariable.getIds()[shaderType] : 0);
-    }
-}
-
 void SerializeBufferVariablesVector(JsonSerializer *json,
                                     const std::vector<gl::BufferVariable> &bufferVariables)
 {
     for (const gl::BufferVariable &bufferVariable : bufferVariables)
     {
         GroupScope group(json, "BufferVariable");
-        json->addScalar("BufferIndex", bufferVariable.bufferIndex);
-        SerializeBlockMemberInfo(json, bufferVariable.blockInfo);
-        json->addScalar("TopLevelArraySize", bufferVariable.topLevelArraySize);
-        SerializeActiveVariable(json, bufferVariable.activeVariable);
-        SerializeShaderVariable(json, bufferVariable);
+        json->addString("Name", bufferVariable.name);
+        json->addString("MappedName", bufferVariable.mappedName);
+
+        json->addScalar("Type", bufferVariable.pod.type);
+        json->addScalar("Precision", bufferVariable.pod.precision);
+        json->addScalar("activeUseBits", bufferVariable.activeShaders().to_ulong());
+        for (const gl::ShaderType shaderType : gl::AllShaderTypes())
+        {
+            json->addScalar(
+                gl::ShaderTypeToString(shaderType),
+                bufferVariable.isActive(shaderType) ? bufferVariable.getId(shaderType) : 0);
+        }
+
+        json->addScalar("BufferIndex", bufferVariable.pod.bufferIndex);
+        SerializeBlockMemberInfo(json, bufferVariable.pod.blockInfo);
+
+        json->addScalar("TopLevelArraySize", bufferVariable.pod.topLevelArraySize);
+        json->addScalar("basicTypeElementCount", bufferVariable.pod.basicTypeElementCount);
+        json->addScalar("isArray", bufferVariable.pod.isArray);
     }
 }
 
@@ -1042,24 +1044,26 @@ void SerializeProgramAliasedBindings(JsonSerializer *json,
 void SerializeProgramState(JsonSerializer *json, const gl::ProgramState &programState)
 {
     json->addString("Label", programState.getLabel());
-    SerializeWorkGroupSize(json, programState.getComputeShaderLocalSize());
-
     json->addVectorOfStrings("TransformFeedbackVaryingNames",
                              programState.getTransformFeedbackVaryingNames());
-    json->addScalar("ActiveUniformBlockBindingsMask",
-                    programState.getActiveUniformBlockBindingsMask().to_ulong());
-    SerializeVariableLocationsVector(json, "UniformLocations", programState.getUniformLocations());
-    SerializeBufferVariablesVector(json, programState.getBufferVariables());
-    SerializeRange(json, programState.getAtomicCounterUniformRange());
-    SerializeVariableLocationsVector(json, "SecondaryOutputLocations",
-                                     programState.getSecondaryOutputLocations());
     json->addScalar("BinaryRetrieveableHint", programState.hasBinaryRetrieveableHint());
     json->addScalar("Separable", programState.isSeparable());
-    json->addScalar("NumViews", programState.getNumViews());
-    json->addScalar("DrawIDLocation", programState.getDrawIDLocation());
-    json->addScalar("BaseVertexLocation", programState.getBaseVertexLocation());
-    json->addScalar("BaseInstanceLocation", programState.getBaseInstanceLocation());
     SerializeProgramAliasedBindings(json, programState.getUniformLocationBindings());
+
+    const gl::ProgramExecutable &executable = programState.getExecutable();
+
+    SerializeWorkGroupSize(json, executable.getComputeShaderLocalSize());
+    json->addScalar("ActiveUniformBlockBindingsMask",
+                    executable.getActiveUniformBlockBindings().to_ulong());
+    SerializeVariableLocationsVector(json, "UniformLocations", executable.getUniformLocations());
+    SerializeBufferVariablesVector(json, executable.getBufferVariables());
+    SerializeRange(json, executable.getAtomicCounterUniformRange());
+    SerializeVariableLocationsVector(json, "SecondaryOutputLocations",
+                                     executable.getSecondaryOutputLocations());
+    json->addScalar("NumViews", executable.getNumViews());
+    json->addScalar("DrawIDLocation", executable.getDrawIDLocation());
+    json->addScalar("BaseVertexLocation", executable.getBaseVertexLocation());
+    json->addScalar("BaseInstanceLocation", executable.getBaseInstanceLocation());
 }
 
 void SerializeProgramBindings(JsonSerializer *json, const gl::ProgramBindings &programBindings)
@@ -1073,16 +1077,16 @@ void SerializeProgramBindings(JsonSerializer *json, const gl::ProgramBindings &p
 template <typename T>
 void SerializeUniformData(JsonSerializer *json,
                           const gl::Context *context,
-                          gl::Program *program,
+                          const gl::ProgramExecutable &executable,
                           gl::UniformLocation loc,
                           GLenum type,
                           GLint size,
-                          void (gl::Program::*getFunc)(const gl::Context *,
-                                                       gl::UniformLocation,
-                                                       T *) const)
+                          void (gl::ProgramExecutable::*getFunc)(const gl::Context *,
+                                                                 gl::UniformLocation,
+                                                                 T *) const)
 {
     std::vector<T> uniformData(gl::VariableComponentCount(type) * size, 0);
-    (program->*getFunc)(context, loc, uniformData.data());
+    (executable.*getFunc)(context, loc, uniformData.data());
     json->addVector("Data", uniformData);
 }
 
@@ -1116,10 +1120,12 @@ void SerializeProgram(JsonSerializer *json,
     // json->addScalar("RefCount", program->getRefCount());
     json->addScalar("ID", program->id().value);
 
+    const gl::ProgramExecutable &executable = program->getExecutable();
+
     // Serialize uniforms.
     {
         GroupScope uniformsGroup(json, "Uniforms");
-        GLint uniformCount = program->getActiveUniformCount();
+        GLint uniformCount = static_cast<GLint>(executable.getUniforms().size());
         for (int uniformIndex = 0; uniformIndex < uniformCount; ++uniformIndex)
         {
             GroupScope uniformGroup(json, "Uniform", uniformIndex);
@@ -1128,14 +1134,14 @@ void SerializeProgram(JsonSerializer *json,
             char uniformName[kMaxUniformNameLen] = {};
             GLint size                           = 0;
             GLenum type                          = GL_NONE;
-            program->getActiveUniform(uniformIndex, kMaxUniformNameLen, nullptr, &size, &type,
-                                      uniformName);
+            executable.getActiveUniform(uniformIndex, kMaxUniformNameLen, nullptr, &size, &type,
+                                        uniformName);
 
             json->addCString("Name", uniformName);
             json->addScalar("Size", size);
             json->addCString("Type", gl::GLenumToString(gl::GLESEnum::AttributeType, type));
 
-            const gl::UniformLocation loc = program->getUniformLocation(uniformName);
+            const gl::UniformLocation loc = executable.getUniformLocation(uniformName);
 
             if (loc.value == -1)
             {
@@ -1146,21 +1152,21 @@ void SerializeProgram(JsonSerializer *json,
             {
                 case GL_FLOAT:
                 {
-                    SerializeUniformData<GLfloat>(json, context, program, loc, type, size,
-                                                  &gl::Program::getUniformfv);
+                    SerializeUniformData<GLfloat>(json, context, executable, loc, type, size,
+                                                  &gl::ProgramExecutable::getUniformfv);
                     break;
                 }
                 case GL_BOOL:
                 case GL_INT:
                 {
-                    SerializeUniformData<GLint>(json, context, program, loc, type, size,
-                                                &gl::Program::getUniformiv);
+                    SerializeUniformData<GLint>(json, context, executable, loc, type, size,
+                                                &gl::ProgramExecutable::getUniformiv);
                     break;
                 }
                 case GL_UNSIGNED_INT:
                 {
-                    SerializeUniformData<GLuint>(json, context, program, loc, type, size,
-                                                 &gl::Program::getUniformuiv);
+                    SerializeUniformData<GLuint>(json, context, executable, loc, type, size,
+                                                 &gl::ProgramExecutable::getUniformuiv);
                     break;
                 }
                 default:

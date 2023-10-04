@@ -159,7 +159,7 @@ class VertexArrayVk : public VertexArrayImpl
     vk::BufferHelper *mCurrentElementArrayBuffer;
 
     // Cached element array buffers for improving performance.
-    vk::BufferHelperPointerVector mCachedStreamIndexBuffers;
+    vk::BufferHelperQueue mCachedStreamIndexBuffers;
 
     vk::BufferHelper mStreamedIndexData;
     vk::BufferHelper mTranslatedByteIndexData;

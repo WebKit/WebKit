@@ -2358,8 +2358,6 @@ webkit.org/b/154055 perf/adding-radio-buttons.html [ Pass Timeout Failure ]
 
 webkit.org/b/76121 imported/blink/fast/events/event-trusted.html [ Skip ]
 
-webkit.org/b/154253 animations/animation-delay-changed.html [ Pass Failure ]
-
 webkit.org/b/184608 [ Debug ] animations/added-while-suspended.html [ Skip ]
 webkit.org/b/184608 [ Debug ] transitions/created-while-suspended.html [ Skip ]
 

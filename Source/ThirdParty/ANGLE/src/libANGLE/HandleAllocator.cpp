@@ -23,15 +23,19 @@ struct HandleAllocator::HandleRangeComparator
     bool operator()(const HandleRange &range, GLuint handle) const { return (range.end < handle); }
 };
 
-HandleAllocator::HandleAllocator() : mBaseValue(1), mNextValue(1), mLoggingEnabled(false)
+HandleAllocator::HandleAllocator()
+    : mBaseValue(1),
+      mNextValue(1),
+      mMaxValue(std::numeric_limits<GLuint>::max()),
+      mLoggingEnabled(false)
 {
-    mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
+    mUnallocatedList.push_back(HandleRange(1, mMaxValue));
 }
 
 HandleAllocator::HandleAllocator(GLuint maximumHandleValue)
-    : mBaseValue(1), mNextValue(1), mLoggingEnabled(false)
+    : mBaseValue(1), mNextValue(1), mMaxValue(maximumHandleValue), mLoggingEnabled(false)
 {
-    mUnallocatedList.push_back(HandleRange(1, maximumHandleValue));
+    mUnallocatedList.push_back(HandleRange(1, mMaxValue));
 }
 
 HandleAllocator::~HandleAllocator() {}
@@ -170,10 +174,15 @@ void HandleAllocator::reserve(GLuint handle)
 void HandleAllocator::reset()
 {
     mUnallocatedList.clear();
-    mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
+    mUnallocatedList.push_back(HandleRange(1, mMaxValue));
     mReleasedList.clear();
     mBaseValue = 1;
     mNextValue = 1;
+}
+
+bool HandleAllocator::anyHandleAvailableForAllocation() const
+{
+    return !mUnallocatedList.empty() || !mReleasedList.empty();
 }
 
 void HandleAllocator::enableLogging(bool enabled)

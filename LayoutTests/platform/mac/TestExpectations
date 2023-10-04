@@ -208,7 +208,6 @@ media/track/track-webvtt-snap-to-lines-inline-style.html [ Pass Crash ]
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
-webkit.org/b/113598 animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 
 webkit.org/b/184608 [ Debug ] animations/added-while-suspended.html [ Skip ]
@@ -1976,9 +1975,6 @@ webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
 [ BigSur ] fast/text/system-font-width-8.html [ ImageOnlyFailure ]
 [ BigSur ] fast/text/system-font-width-9.html [ ImageOnlyFailure ]
 
-# WebM support is on Monterey and later
-[ BigSur ] http/tests/media/video-webm-stall.html [ Skip ]
-
 webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Pass Failure ]
 
 webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass ImageOnlyFailure ]
@@ -2878,11 +2874,10 @@ webkit.org/b/261958 [ Release ] inspector/console/timestamp.html [ Pass Failure 
 
 webkit.org/b/261306 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Failure ]
 
-# webkit.org/b/262427 ([ Sonoma ] 4 tests under fast/forms are constantly failing.)
-[ Sonoma ] fast/forms/basic-inputs.html [ Failure ]
-[ Sonoma ] fast/forms/input-disabled-color.html [ Failure ]
-[ Sonoma ] fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
-[ Sonoma ] fast/forms/placeholder-pseudo-style.html [ Failure ]
+# webkit.org/b/262595 (REGRESSION(Sonoma): [ Sonoma ] 2 lookup menu-related tests are constant text failures.)
+[ Sonoma ] editing/mac/dictionary-lookup/dictionary-lookup.html [ Failure ]
+[ Sonoma ] editing/selection/context-menu-text-selection-lookup.html [ Failure ]
+
 # rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
 [ Sonoma+ ] fast/text/canvas-color-fonts/linedash-COLR.html [ ImageOnlyFailure ]
 [ Sonoma+ ] fast/text/canvas-color-fonts/stroke-color-COLR.html [ ImageOnlyFailure ]

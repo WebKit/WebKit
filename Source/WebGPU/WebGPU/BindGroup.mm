@@ -59,7 +59,7 @@ static MTLRenderStages metalRenderStage(ShaderStage shaderStage)
     case ShaderStage::Fragment:
         return MTLRenderStageFragment;
     case ShaderStage::Compute:
-        return (MTLRenderStages)0;
+        return BindGroup::MTLRenderStageCompute;
     }
 }
 

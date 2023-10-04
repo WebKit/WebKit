@@ -25,6 +25,14 @@
 namespace gl
 {
 
+namespace
+{
+// Limit decompressed programs to 5MB. If they're larger then this there is a good chance the data
+// is not what we expect. This limits the amount of memory we will allocate based on a binary blob
+// we believe is compressed data.
+static constexpr size_t kMaxUncompressedShaderSize = 5 * 1024 * 1024;
+}  // namespace
+
 MemoryShaderCache::MemoryShaderCache(egl::BlobCache &blobCache) : mBlobCache(blobCache) {}
 
 MemoryShaderCache::~MemoryShaderCache() {}
@@ -42,7 +50,8 @@ angle::Result MemoryShaderCache::getShader(const Context *context,
     }
 
     angle::MemoryBuffer uncompressedData;
-    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), shaderHash, &uncompressedData))
+    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), shaderHash,
+                                        kMaxUncompressedShaderSize, &uncompressedData))
     {
         case egl::BlobCache::GetAndDecompressResult::DecompressFailure:
             ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,

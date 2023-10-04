@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "CGUtilities.h"
 #import "GraphicsContext.h"
 #import "WAKClipView.h"
 #import "WAKScrollView.h"
@@ -465,25 +466,6 @@ static void _WAKCopyWrapper(const void *value, void *context)
     ASSERT(context);
     CGContextRestoreGState(context);
     setGlobalFocusView(nil);
-}
-
-static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQuality quality)
-{
-    switch (quality) {
-    case WebCore::InterpolationQuality::Default:
-        return kCGInterpolationDefault;
-    case WebCore::InterpolationQuality::DoNotInterpolate:
-        return kCGInterpolationNone;
-    case WebCore::InterpolationQuality::Low:
-        return kCGInterpolationLow;
-    case WebCore::InterpolationQuality::Medium:
-        return kCGInterpolationMedium;
-    case WebCore::InterpolationQuality::High:
-        return kCGInterpolationHigh;
-    default:
-        ASSERT_NOT_REACHED();
-        return kCGInterpolationLow;
-    }
 }
 
 + (void)_setInterpolationQuality:(int)quality

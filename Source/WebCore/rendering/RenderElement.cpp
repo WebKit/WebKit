@@ -2285,6 +2285,11 @@ bool RenderElement::isSkippedContentRoot() const
     return WebCore::isSkippedContentRoot(style(), element());
 }
 
+bool RenderElement::isSkippedContentRootForLayout() const
+{
+    return WebCore::isSkippedContentRoot(style(), element()) && !view().frameView().layoutContext().needsSkippedContentLayout();
+}
+
 bool RenderElement::hasEligibleContainmentForSizeQuery() const
 {
     if (!shouldApplyLayoutContainment())

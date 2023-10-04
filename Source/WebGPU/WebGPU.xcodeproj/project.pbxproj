@@ -127,6 +127,8 @@
 		97099AC32AA60D58003B41F8 /* ASTArrayTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */; };
 		97099AC62AC49AAB003B41F8 /* WGSLEnums.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97099AC42AC49AAB003B41F8 /* WGSLEnums.cpp */; };
 		97099AC72AC49AAB003B41F8 /* WGSLEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC52AC49AAB003B41F8 /* WGSLEnums.h */; };
+		97099ACA2ACB2213003B41F8 /* PointerRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC82ACB2213003B41F8 /* PointerRewriter.h */; };
+		97099ACB2ACB2213003B41F8 /* PointerRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97099AC92ACB2213003B41F8 /* PointerRewriter.cpp */; };
 		97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */ = {isa = PBXBuildFile; fileRef = 97296765299C09B0001C8BD4 /* TypeDeclarations.rb */; };
 		973F784729C8A78200166C66 /* Pipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 973F784529C8A78200166C66 /* Pipeline.h */; };
 		973F784829C8A78200166C66 /* Pipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 973F784629C8A78200166C66 /* Pipeline.mm */; };
@@ -402,6 +404,8 @@
 		97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTArrayTypeExpression.h; sourceTree = "<group>"; };
 		97099AC42AC49AAB003B41F8 /* WGSLEnums.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WGSLEnums.cpp; sourceTree = "<group>"; };
 		97099AC52AC49AAB003B41F8 /* WGSLEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLEnums.h; sourceTree = "<group>"; };
+		97099AC82ACB2213003B41F8 /* PointerRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerRewriter.h; sourceTree = "<group>"; };
+		97099AC92ACB2213003B41F8 /* PointerRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerRewriter.cpp; sourceTree = "<group>"; };
 		97296764299BFB72001C8BD4 /* main.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = main.rb; sourceTree = "<group>"; };
 		97296765299C09B0001C8BD4 /* TypeDeclarations.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = TypeDeclarations.rb; sourceTree = "<group>"; };
 		973F784529C8A78200166C66 /* Pipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pipeline.h; sourceTree = "<group>"; };
@@ -616,6 +620,8 @@
 				339B7B1727D7FFA40072BF9A /* Parser.h */,
 				66DC575428627E0B0014CABD /* ParserPrivate.h */,
 				979240BC29753B2A0050EA2C /* PhaseTimer.h */,
+				97099AC92ACB2213003B41F8 /* PointerRewriter.cpp */,
+				97099AC82ACB2213003B41F8 /* PointerRewriter.h */,
 				338BB2D127B6B63F00E066AB /* SourceSpan.h */,
 				338BB2CF27B6B61B00E066AB /* Token.cpp */,
 				338BB2CD27B6B60200E066AB /* Token.h */,
@@ -862,6 +868,7 @@
 				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
 				66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */,
 				979240C029753B2A0050EA2C /* PhaseTimer.h in Headers */,
+				97099ACA2ACB2213003B41F8 /* PointerRewriter.h in Headers */,
 				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
 				978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */,
@@ -1092,6 +1099,7 @@
 				979240B9297018290050EA2C /* MetalFunctionWriter.cpp in Sources */,
 				9776BE732992A236002D6D93 /* Overload.cpp in Sources */,
 				339B7B1B27D800090072BF9A /* Parser.cpp in Sources */,
+				97099ACB2ACB2213003B41F8 /* PointerRewriter.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
 				978A9130298AD3DA00B37E5E /* TypeCheck.cpp in Sources */,
 				97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */,

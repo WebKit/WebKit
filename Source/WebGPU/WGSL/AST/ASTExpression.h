@@ -63,8 +63,9 @@ protected:
         : Node(span)
     { }
 
-private:
     const Type* m_inferredType { nullptr };
+
+private:
     std::optional<ConstantValue> m_constantValue { std::nullopt };
 };
 

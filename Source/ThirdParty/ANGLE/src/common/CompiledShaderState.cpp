@@ -182,6 +182,7 @@ void LoadShInterfaceBlock(gl::BinaryInputStream *stream, sh::InterfaceBlock *blo
 
 CompiledShaderState::CompiledShaderState(gl::ShaderType type)
     : shaderType(type),
+      successfullyCompiled(false),
       shaderVersion(100),
       hasClipDistance(false),
       hasDiscard(false),

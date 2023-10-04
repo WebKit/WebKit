@@ -37,6 +37,9 @@ class ScrollingCoordinatorNicosia final : public ThreadedScrollingCoordinator {
 public:
     explicit ScrollingCoordinatorNicosia(Page*);
     virtual ~ScrollingCoordinatorNicosia();
+
+private:
+    void didCompletePlatformRenderingUpdate() final;
 };
 
 } // namespace WebCore

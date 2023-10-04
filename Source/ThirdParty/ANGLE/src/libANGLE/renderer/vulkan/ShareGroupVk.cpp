@@ -70,7 +70,7 @@ bool ValidateIdenticalPriority(const egl::ContextMap &contexts, egl::ContextPrio
 }  // namespace
 
 // Set to true will log bufferpool stats into INFO stream
-#define ANGLE_ENABLE_BUFFER_POOL_STATS_LOGGING 0
+#define ANGLE_ENABLE_BUFFER_POOL_STATS_LOGGING false
 
 ShareGroupVk::ShareGroupVk(const egl::ShareGroupState &state)
     : ShareGroupImpl(state),
@@ -263,11 +263,13 @@ angle::Result TextureUpload::onMutableTextureUpload(ContextVk *contextVk, Textur
 {
     // This feature is currently disabled in the case of display-level texture sharing.
     ASSERT(!contextVk->hasDisplayTextureShareGroup());
+    ASSERT(!newTexture->isImmutable());
+    ASSERT(mPrevUploadedMutableTexture == nullptr || !mPrevUploadedMutableTexture->isImmutable());
 
     // If the previous texture is null, it should be set to the current texture. We also have to
     // make sure that the previous texture pointer is still a mutable texture. Otherwise, we skip
     // the optimization.
-    if (mPrevUploadedMutableTexture == nullptr || mPrevUploadedMutableTexture->isImmutable())
+    if (mPrevUploadedMutableTexture == nullptr)
     {
         mPrevUploadedMutableTexture = newTexture;
         return angle::Result::Continue;
@@ -283,7 +285,7 @@ angle::Result TextureUpload::onMutableTextureUpload(ContextVk *contextVk, Textur
     if (mPrevUploadedMutableTexture->isMutableTextureConsistentlySpecifiedForFlush())
     {
         ANGLE_TRY(mPrevUploadedMutableTexture->ensureImageInitialized(
-            contextVk, ImageMipLevels::FullMipChain));
+            contextVk, ImageMipLevels::EnabledLevels));
         contextVk->getPerfCounters().mutableTexturesUploaded++;
     }
 
@@ -503,21 +505,17 @@ void ShareGroupVk::calculateTotalBufferCount(size_t *bufferCount, VkDeviceSize *
 
 void ShareGroupVk::logBufferPools() const
 {
-    size_t totalBufferCount;
-    VkDeviceSize totalMemorySize;
-    calculateTotalBufferCount(&totalBufferCount, &totalMemorySize);
-
-    INFO() << "BufferBlocks count:" << totalBufferCount << " memorySize:" << totalMemorySize / 1024
-           << " UnusedBytes/memorySize (KBs):";
-    for (const vk::BufferPoolPointerArray &array : mDefaultBufferPools)
+    for (size_t i = 0; i < mDefaultBufferPools.size(); i++)
     {
+        const vk::BufferPoolPointerArray &array =
+            mDefaultBufferPools[static_cast<SuballocationAlgorithm>(i)];
         for (const std::unique_ptr<vk::BufferPool> &pool : array)
         {
             if (pool && pool->getBufferCount() > 0)
             {
                 std::ostringstream log;
                 pool->addStats(&log);
-                INFO() << "\t" << log.str();
+                INFO() << "Pool[" << i << "]:" << log.str();
             }
         }
     }

@@ -143,8 +143,6 @@ void EGLFeatureControlTest::testOverrideFeatures(FeatureNameModifier modifyName)
         angle::GetFeatureName(angle::Feature::ClampFragDepth),
         // Safe to toggle on GL and Vulkan
         angle::GetFeatureName(angle::Feature::ClampPointSize),
-        // Safe to toggle on Vulkan
-        angle::GetFeatureName(angle::Feature::SupportsNegativeViewport),
         // Safe to toggle on D3D
         angle::GetFeatureName(angle::Feature::ZeroMaxLodWorkaround),
         angle::GetFeatureName(angle::Feature::ExpandIntegerPowExpressions),

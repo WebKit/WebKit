@@ -416,7 +416,9 @@ ProgramExecutableD3D::ProgramExecutableD3D(const gl::ProgramExecutable *executab
       mUsedReadonlyImageRange({}),
       mUsedAtomicCounterRange({}),
       mSerial(issueSerial())
-{}
+{
+    reset();
+}
 
 ProgramExecutableD3D::~ProgramExecutableD3D() {}
 
@@ -706,9 +708,9 @@ bool ProgramExecutableD3D::load(const gl::Context *context,
 
 angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *contextD3D,
                                                                 RendererD3D *renderer,
-                                                                gl::BinaryInputStream *stream,
-                                                                gl::InfoLog &infoLog)
+                                                                gl::BinaryInputStream *stream)
 {
+    gl::InfoLog &infoLog        = mExecutable->getInfoLog();
     const unsigned char *binary = reinterpret_cast<const unsigned char *>(stream->data());
 
     bool separateAttribs = mExecutable->getTransformFeedbackBufferMode() == GL_SEPARATE_ATTRIBS;
@@ -1470,7 +1472,6 @@ angle::Result ProgramExecutableD3D::getPixelExecutableForCachedOutputLayout(
 angle::Result ProgramExecutableD3D::getComputeExecutableForImage2DBindLayout(
     d3d::Context *context,
     RendererD3D *renderer,
-    const gl::SharedCompiledShaderState &computeShader,
     ShaderExecutableD3D **outExecutable,
     gl::InfoLog *infoLog)
 {
@@ -1483,12 +1484,10 @@ angle::Result ProgramExecutableD3D::getComputeExecutableForImage2DBindLayout(
         return angle::Result::Continue;
     }
 
-    std::string computeHLSL = computeShader->translatedSource;
-
     std::string finalComputeHLSL = DynamicHLSL::GenerateShaderForImage2DBindSignature(
-        *this, gl::ShaderType::Compute, mAttachedShaders[gl::ShaderType::Compute], computeHLSL,
-        mImage2DUniforms[gl::ShaderType::Compute], mImage2DBindLayoutCache[gl::ShaderType::Compute],
-        0u);
+        *this, gl::ShaderType::Compute, mAttachedShaders[gl::ShaderType::Compute],
+        mShaderHLSL[gl::ShaderType::Compute], mImage2DUniforms[gl::ShaderType::Compute],
+        mImage2DBindLayoutCache[gl::ShaderType::Compute], 0u);
 
     // Generate new compute executable
     ShaderExecutableD3D *computeExecutable = nullptr;
@@ -1565,7 +1564,8 @@ void ProgramExecutableD3D::initializeUniformBlocks()
     // Assign registers and update sizes.
     for (const gl::InterfaceBlock &uniformBlock : mExecutable->getUniformBlocks())
     {
-        unsigned int uniformBlockElement = uniformBlock.isArray ? uniformBlock.arrayElement : 0;
+        unsigned int uniformBlockElement =
+            uniformBlock.pod.isArray ? uniformBlock.pod.arrayElement : 0;
 
         D3DUniformBlock d3dUniformBlock;
 
@@ -1584,11 +1584,11 @@ void ProgramExecutableD3D::initializeUniformBlocks()
                 if (useStructuredBuffer)
                 {
                     d3dUniformBlock.mUseStructuredBuffers[shaderType] = true;
-                    d3dUniformBlock.mByteWidths[shaderType]           = uniformBlock.dataSize;
+                    d3dUniformBlock.mByteWidths[shaderType]           = uniformBlock.pod.dataSize;
                     d3dUniformBlock.mStructureByteStrides[shaderType] =
-                        uniformBlock.firstFieldArraySize == 0u
-                            ? uniformBlock.dataSize
-                            : uniformBlock.dataSize / uniformBlock.firstFieldArraySize;
+                        uniformBlock.pod.firstFieldArraySize == 0u
+                            ? uniformBlock.pod.dataSize
+                            : uniformBlock.pod.dataSize / uniformBlock.pod.firstFieldArraySize;
                 }
             }
         }
@@ -1611,7 +1611,7 @@ void ProgramExecutableD3D::initializeShaderStorageBlocks(
     for (const gl::InterfaceBlock &shaderStorageBlock : mExecutable->getShaderStorageBlocks())
     {
         unsigned int shaderStorageBlockElement =
-            shaderStorageBlock.isArray ? shaderStorageBlock.arrayElement : 0;
+            shaderStorageBlock.pod.isArray ? shaderStorageBlock.pod.arrayElement : 0;
         D3DInterfaceBlock d3dShaderStorageBlock;
 
         for (gl::ShaderType shaderType : gl::AllShaderTypes())
@@ -1677,7 +1677,8 @@ void ProgramExecutableD3D::initializeUniformStorage(RendererD3D *renderer,
     }
 
     // We only reset uniform storages for the shader stages available in the program (attached
-    // shaders in ProgramD3D::link() and linkedShaderStages in ProgramD3D::load()).
+    // shaders in ProgramExecutableD3D::link() and linkedShaderStages in
+    // ProgramExecutableD3D::load()).
     for (gl::ShaderType shaderType : availableShaderStages)
     {
         mShaderUniformStorages[shaderType].reset(
@@ -2074,7 +2075,7 @@ void ProgramExecutableD3D::assignSamplerRegisters(
     // outermost array.
     std::vector<unsigned int> subscripts;
     const std::string baseName  = gl::ParseResourceName(d3dUniform->name, &subscripts);
-    unsigned int registerOffset = mExecutable->getUniforms()[uniformIndex].parentArrayIndex *
+    unsigned int registerOffset = mExecutable->getUniforms()[uniformIndex].pod.parentArrayIndex *
                                   d3dUniform->getArraySizeProduct();
 
     bool hasUniform = false;
@@ -2173,7 +2174,7 @@ void ProgramExecutableD3D::assignImageRegisters(size_t uniformIndex)
     // outermost array.
     std::vector<unsigned int> subscripts;
     const std::string baseName  = gl::ParseResourceName(d3dUniform->name, &subscripts);
-    unsigned int registerOffset = mExecutable->getUniforms()[uniformIndex].parentArrayIndex *
+    unsigned int registerOffset = mExecutable->getUniforms()[uniformIndex].pod.parentArrayIndex *
                                   d3dUniform->getArraySizeProduct();
 
     const SharedCompiledShaderStateD3D &computeShader = mAttachedShaders[gl::ShaderType::Compute];
@@ -2339,6 +2340,285 @@ const D3DUniform *ProgramExecutableD3D::getD3DUniformFromLocation(
 unsigned int ProgramExecutableD3D::issueSerial()
 {
     return mCurrentSerial++;
+}
+
+void ProgramExecutableD3D::setUniform1fv(GLint location, GLsizei count, const GLfloat *v)
+{
+    setUniformInternal(location, count, v, GL_FLOAT);
+}
+
+void ProgramExecutableD3D::setUniform2fv(GLint location, GLsizei count, const GLfloat *v)
+{
+    setUniformInternal(location, count, v, GL_FLOAT_VEC2);
+}
+
+void ProgramExecutableD3D::setUniform3fv(GLint location, GLsizei count, const GLfloat *v)
+{
+    setUniformInternal(location, count, v, GL_FLOAT_VEC3);
+}
+
+void ProgramExecutableD3D::setUniform4fv(GLint location, GLsizei count, const GLfloat *v)
+{
+    setUniformInternal(location, count, v, GL_FLOAT_VEC4);
+}
+
+void ProgramExecutableD3D::setUniformMatrix2fv(GLint location,
+                                               GLsizei count,
+                                               GLboolean transpose,
+                                               const GLfloat *value)
+{
+    setUniformMatrixfvInternal<2, 2>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniformMatrix3fv(GLint location,
+                                               GLsizei count,
+                                               GLboolean transpose,
+                                               const GLfloat *value)
+{
+    setUniformMatrixfvInternal<3, 3>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniformMatrix4fv(GLint location,
+                                               GLsizei count,
+                                               GLboolean transpose,
+                                               const GLfloat *value)
+{
+    setUniformMatrixfvInternal<4, 4>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniformMatrix2x3fv(GLint location,
+                                                 GLsizei count,
+                                                 GLboolean transpose,
+                                                 const GLfloat *value)
+{
+    setUniformMatrixfvInternal<2, 3>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniformMatrix3x2fv(GLint location,
+                                                 GLsizei count,
+                                                 GLboolean transpose,
+                                                 const GLfloat *value)
+{
+    setUniformMatrixfvInternal<3, 2>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniformMatrix2x4fv(GLint location,
+                                                 GLsizei count,
+                                                 GLboolean transpose,
+                                                 const GLfloat *value)
+{
+    setUniformMatrixfvInternal<2, 4>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniformMatrix4x2fv(GLint location,
+                                                 GLsizei count,
+                                                 GLboolean transpose,
+                                                 const GLfloat *value)
+{
+    setUniformMatrixfvInternal<4, 2>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniformMatrix3x4fv(GLint location,
+                                                 GLsizei count,
+                                                 GLboolean transpose,
+                                                 const GLfloat *value)
+{
+    setUniformMatrixfvInternal<3, 4>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniformMatrix4x3fv(GLint location,
+                                                 GLsizei count,
+                                                 GLboolean transpose,
+                                                 const GLfloat *value)
+{
+    setUniformMatrixfvInternal<4, 3>(location, count, transpose, value);
+}
+
+void ProgramExecutableD3D::setUniform1iv(GLint location, GLsizei count, const GLint *v)
+{
+    setUniformInternal(location, count, v, GL_INT);
+}
+
+void ProgramExecutableD3D::setUniform2iv(GLint location, GLsizei count, const GLint *v)
+{
+    setUniformInternal(location, count, v, GL_INT_VEC2);
+}
+
+void ProgramExecutableD3D::setUniform3iv(GLint location, GLsizei count, const GLint *v)
+{
+    setUniformInternal(location, count, v, GL_INT_VEC3);
+}
+
+void ProgramExecutableD3D::setUniform4iv(GLint location, GLsizei count, const GLint *v)
+{
+    setUniformInternal(location, count, v, GL_INT_VEC4);
+}
+
+void ProgramExecutableD3D::setUniform1uiv(GLint location, GLsizei count, const GLuint *v)
+{
+    setUniformInternal(location, count, v, GL_UNSIGNED_INT);
+}
+
+void ProgramExecutableD3D::setUniform2uiv(GLint location, GLsizei count, const GLuint *v)
+{
+    setUniformInternal(location, count, v, GL_UNSIGNED_INT_VEC2);
+}
+
+void ProgramExecutableD3D::setUniform3uiv(GLint location, GLsizei count, const GLuint *v)
+{
+    setUniformInternal(location, count, v, GL_UNSIGNED_INT_VEC3);
+}
+
+void ProgramExecutableD3D::setUniform4uiv(GLint location, GLsizei count, const GLuint *v)
+{
+    setUniformInternal(location, count, v, GL_UNSIGNED_INT_VEC4);
+}
+
+// Assume count is already clamped.
+template <typename T>
+void ProgramExecutableD3D::setUniformImpl(D3DUniform *targetUniform,
+                                          const gl::VariableLocation &locationInfo,
+                                          GLsizei count,
+                                          const T *v,
+                                          uint8_t *targetState,
+                                          GLenum uniformType)
+{
+    const int components                  = targetUniform->typeInfo.componentCount;
+    const unsigned int arrayElementOffset = locationInfo.arrayIndex;
+    const int blockSize                   = 4;
+
+    if (targetUniform->typeInfo.type == uniformType)
+    {
+        T *dest         = reinterpret_cast<T *>(targetState) + arrayElementOffset * blockSize;
+        const T *source = v;
+
+        // If the component is equal to the block size, we can optimize to a single memcpy.
+        // Otherwise, we have to do partial block writes.
+        if (components == blockSize)
+        {
+            memcpy(dest, source, components * count * sizeof(T));
+        }
+        else
+        {
+            for (GLint i = 0; i < count; i++, dest += blockSize, source += components)
+            {
+                memcpy(dest, source, components * sizeof(T));
+            }
+        }
+    }
+    else
+    {
+        ASSERT(targetUniform->typeInfo.type == gl::VariableBoolVectorType(uniformType));
+        GLint *boolParams = reinterpret_cast<GLint *>(targetState) + arrayElementOffset * 4;
+
+        for (GLint i = 0; i < count; i++)
+        {
+            GLint *dest     = boolParams + (i * 4);
+            const T *source = v + (i * components);
+
+            for (int c = 0; c < components; c++)
+            {
+                dest[c] = (source[c] == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
+            }
+        }
+    }
+}
+
+template <typename T>
+void ProgramExecutableD3D::setUniformInternal(GLint location,
+                                              GLsizei count,
+                                              const T *v,
+                                              GLenum uniformType)
+{
+    const gl::VariableLocation &locationInfo = mExecutable->getUniformLocations()[location];
+    D3DUniform *targetUniform                = mD3DUniforms[locationInfo.index];
+
+    if (targetUniform->typeInfo.isSampler)
+    {
+        ASSERT(uniformType == GL_INT);
+        size_t size = count * sizeof(T);
+        GLint *dest = &targetUniform->mSamplerData[locationInfo.arrayIndex];
+        if (memcmp(dest, v, size) != 0)
+        {
+            memcpy(dest, v, size);
+            mDirtySamplerMapping = true;
+        }
+        return;
+    }
+
+    for (gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        uint8_t *targetState = targetUniform->mShaderData[shaderType];
+        if (targetState)
+        {
+            setUniformImpl(targetUniform, locationInfo, count, v, targetState, uniformType);
+            mShaderUniformsDirty.set(shaderType);
+        }
+    }
+}
+
+template <int cols, int rows>
+void ProgramExecutableD3D::setUniformMatrixfvInternal(GLint location,
+                                                      GLsizei countIn,
+                                                      GLboolean transpose,
+                                                      const GLfloat *value)
+{
+    const gl::VariableLocation &uniformLocation = mExecutable->getUniformLocations()[location];
+    D3DUniform *targetUniform                   = getD3DUniformFromLocation(uniformLocation);
+    unsigned int arrayElementOffset             = uniformLocation.arrayIndex;
+    unsigned int elementCount                   = targetUniform->getArraySizeProduct();
+
+    for (gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        if (targetUniform->mShaderData[shaderType])
+        {
+            SetFloatUniformMatrixHLSL<cols, rows>::Run(arrayElementOffset, elementCount, countIn,
+                                                       transpose, value,
+                                                       targetUniform->mShaderData[shaderType]);
+            mShaderUniformsDirty.set(shaderType);
+        }
+    }
+}
+
+template <typename DestT>
+void ProgramExecutableD3D::getUniformInternal(GLint location, DestT *dataOut) const
+{
+    const gl::VariableLocation &locationInfo = mExecutable->getUniformLocations()[location];
+    const gl::LinkedUniform &uniform         = mExecutable->getUniforms()[locationInfo.index];
+
+    const D3DUniform *targetUniform = getD3DUniformFromLocation(locationInfo);
+    const uint8_t *srcPointer       = targetUniform->getDataPtrToElement(locationInfo.arrayIndex);
+
+    if (gl::IsMatrixType(uniform.getType()))
+    {
+        GetMatrixUniform(uniform.getType(), dataOut, reinterpret_cast<const DestT *>(srcPointer),
+                         true);
+    }
+    else
+    {
+        memcpy(dataOut, srcPointer, uniform.getElementSize());
+    }
+}
+
+void ProgramExecutableD3D::getUniformfv(const gl::Context *context,
+                                        GLint location,
+                                        GLfloat *params) const
+{
+    getUniformInternal(location, params);
+}
+
+void ProgramExecutableD3D::getUniformiv(const gl::Context *context,
+                                        GLint location,
+                                        GLint *params) const
+{
+    getUniformInternal(location, params);
+}
+
+void ProgramExecutableD3D::getUniformuiv(const gl::Context *context,
+                                         GLint location,
+                                         GLuint *params) const
+{
+    getUniformInternal(location, params);
 }
 
 }  // namespace rx

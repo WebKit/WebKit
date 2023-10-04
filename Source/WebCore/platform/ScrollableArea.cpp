@@ -236,8 +236,11 @@ void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
             verticalScrollbar->invalidate();
     }
 
-    if (scrollPosition() != oldPosition)
+    if (scrollPosition() != oldPosition) {
         scrollbarsController().notifyContentAreaScrolled(scrollPosition() - oldPosition);
+        invalidateScrollAnchoringElement();
+        updateScrollAnchoringElement();
+    }
 }
 
 bool ScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState>)

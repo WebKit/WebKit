@@ -10,6 +10,16 @@ ANGLE_DIR="$PWD"
 ANGLE_TARGET_COMMIT="origin/main"
 q="-q"
 
+# Check for modified files in WebKit ignoring untracked file except in ANGLE dir
+check_uncommitted_changes() {
+    modified_files=$(git status --porcelain | grep -e "^[^?]" -e "^?? Source/ThirdParty/ANGLE")
+    if [ -n "$modified_files" ]; then
+        echo "WebKit has uncommitted or untracked changes. Commit, stash, or remove them:"
+        echo "$modified_files"
+        exit 1
+    fi
+}
+
 generate_changes_diff() {
     # Exclude WebKit-added build files from the diff.
     git diff "$1" --ignore-submodules=all --full-index --cached -b --ignore-cr-at-eol -- . \
@@ -90,10 +100,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [ -n "$(git status --porcelain)" ]; then
-    echo "WebKit has uncommitted changes. Commit or stash them."
-    exit 1
-fi
+check_uncommitted_changes
 
 if ! which git-filter-repo > /dev/null; then
     echo "Please install git-filter-repo from https://github.com/newren/git-filter-repo"

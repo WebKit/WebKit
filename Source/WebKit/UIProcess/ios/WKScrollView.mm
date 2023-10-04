@@ -474,47 +474,6 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     [super setZoomEnabled:(_zoomEnabledByClient && _zoomEnabledInternal)];
 }
 
-- (void)_sendPinchGestureActionEarlyIfNeeded
-{
-    static BOOL canHandlePinch = NO;
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        canHandlePinch = [UIScrollView instancesRespondToSelector:@selector(handlePinch:)];
-    });
-
-    if (UNLIKELY(!canHandlePinch)) {
-        static BOOL shouldLogFault = YES;
-        if (shouldLogFault) {
-            RELEASE_LOG_FAULT(Scrolling, "UIScrollView no longer responds to -handlePinch:.");
-            shouldLogFault = NO;
-        }
-        return;
-    }
-
-    if (!self.zooming)
-        return;
-
-    auto pinchGesture = self.pinchGestureRecognizer;
-    if (pinchGesture.state != UIGestureRecognizerStateEnded)
-        return;
-
-    auto activeTouchEvent = [pinchGesture _activeEventOfType:UIEventTypeTouches];
-    if (!activeTouchEvent)
-        return;
-
-    if ([pinchGesture _activeTouchesForEvent:activeTouchEvent].count)
-        return;
-
-    [self handlePinch:pinchGesture];
-}
-
-- (void)handlePan:(UIPanGestureRecognizer *)gesture
-{
-    [self _sendPinchGestureActionEarlyIfNeeded];
-
-    [super handlePan:gesture];
-}
-
 #if PLATFORM(WATCHOS)
 
 - (void)addGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer

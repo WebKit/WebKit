@@ -236,6 +236,20 @@ class GitHubMixin(object):
             data = json.loads(response.text)
             defer.returnValue(data)
 
+    @defer.inlineCallbacks
+    def get_number_of_prs_with_label(self, label):
+        project = self.getProperty('project') or GITHUB_PROJECTS[0]
+        owner, name = project.split('/', 1)
+        query_body = '{repository(owner:"%s", name:"%s") { pullRequests(labels: "%s") { totalCount } } }' % (owner, name, label)
+        query = {'query': query_body}
+        response = yield self.query_graph_ql(query)
+        if response:
+            num_prs = response['data']['repository']['pullRequests']['totalCount']
+            yield self._addToLog('stdio', 'There are {} PR(s) in safe-merge-queue.\n'.format(num_prs))
+            defer.returnValue(num_prs)
+        else:
+            yield self._addToLog('stdio', 'Failed to retrieve number of PRs.\n')
+            defer.returnValue(None)
 
     @defer.inlineCallbacks
     def get_pr_json(self, pr_number, repository_url=None, retry=0):
@@ -1914,7 +1928,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
 class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'validate-commiter-and-reviewer'
-    descriptionDone = ['Validated commiter and reviewer']
+    descriptionDone = ['Validated committer and reviewer']
     VALIDATORS_FOR = {
         # FIXME: Remove manual validators once bot is finished
         'apple': ['webkit-bug-bridge'],
@@ -1967,7 +1981,10 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
         yield self._addToLog('stdio', reason)
         self.setProperty('build_finish_summary', reason)
-        self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest(), SetCommitQueueMinusFlagOnPatch()])
+        if self.getProperty('buildername', '') == 'Safe-Merge-Queue':
+            self.build.addStepsAfterCurrentStep([LeaveComment(), CheckStatusOfPR(pr_number=self.getProperty('github.number'))])
+        else:
+            self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest(), SetCommitQueueMinusFlagOnPatch()])
         self.descriptionDone = reason
         defer.returnValue(FAILURE)
 
@@ -1998,6 +2015,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             return
 
         pr_number = self.getProperty('github.number', '')
+        builder_name = self.getProperty('buildername', '')
 
         if pr_number:
             committer = (self.getProperty('owners', []) or [''])[0]
@@ -2005,10 +2023,18 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             committer = self.getProperty('patch_committer', '').lower()
 
         if not self.is_committer(committer):
+            if builder_name == 'Safe-Merge-Queue':
+                failed_status_check = self.getProperty('failed_status_check', [])
+                failed_status_check.append(pr_number)
+                self.setProperty('failed_status_check', failed_status_check)
             rc = yield self.fail_build_due_to_invalid_status(committer, 'committer')
             defer.returnValue(rc)
             return
-        yield self._addToLog('stdio', f'{committer} is a valid commiter.\n')
+        yield self._addToLog('stdio', f'{committer} is a valid committer.\n')
+
+        if builder_name == 'Safe-Merge-Queue':
+            self.build.addStepsAfterCurrentStep([CheckStatusOfPR(pr_number=self.getProperty('github.number'))])
+            return defer.returnValue(SUCCESS)
 
         if pr_number:
             reviewers = yield self.get_reviewers(pr_number, self.getProperty('repository', ''))
@@ -2063,11 +2089,10 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     def run(self):
         builder_name = self.getProperty('buildername', '')
         pr_number = self.getProperty('github.number', '')
-        self.setProperty('pr_number', pr_number)
         if builder_name == 'Safe-Merge-Queue':
             list_of_prs = self.getProperty('list_of_prs', [])
             pr_number = list_of_prs.pop()
-            self.setProperty('pr_number', pr_number)
+            self.setProperty('github.number', pr_number)
             self.setProperty('list_of_prs', list_of_prs)
 
         if not pr_number:
@@ -2103,6 +2128,8 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
                     break
         if owner:
             self.setProperty('owners', [owner])
+            if builder_name == 'Safe-Merge-Queue':
+                self.build.addStepsAfterCurrentStep([ValidateCommitterAndReviewer()])
             defer.returnValue(SUCCESS)
         else:
             yield self._addToLog('stdio', f'Did not change owner because owner not found from labels.\n')
@@ -2110,9 +2137,9 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {'step': f"Owner of PR {self.getProperty('pr_number')} determined to be {self.getProperty('owners')[0]}\n"}
+            return {'step': f"Owner of PR {self.getProperty('github.number')} determined to be {self.getProperty('owners')[0]}\n"}
         elif self.results == FAILURE:
-            return {'step': f"Unable to determine owner of PR {self.getProperty('pr_number')}\n"}
+            return {'step': f"Unable to determine owner of PR {self.getProperty('github.number')}\n"}
 
 
 class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
@@ -2253,6 +2280,275 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+
+class RemoveAndAddLabels(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'remove-and-add-labels'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def __init__(self, label_to_add='', labels_to_remove=None, **kwargs):
+        self.label_to_add = label_to_add
+        self.labels_to_remove = [GitHubMixin.SAFE_MERGE_QUEUE_LABEL] if labels_to_remove is None else labels_to_remove
+        super().__init__(**kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        if self.label_to_add == GitHubMixin.MERGE_QUEUE_LABEL:
+            pr_status = 'passed_status_check'
+        elif self.label_to_add == GitHubMixin.BLOCKED_LABEL:
+            pr_status = 'failed_status_check'
+        else:
+            yield self._addToLog('stdio', f'{self.label_to_add} not supported.\n')
+            return defer.returnValue(FAILURE)
+        prs_to_label = self.getProperty(pr_status)
+        if not prs_to_label:
+            yield self._addToLog('stdio', f'There are no PRs to label with {self.label_to_add}.\n')
+            return defer.returnValue(FAILURE)
+        pr_number = prs_to_label.pop()
+        self.setProperty('github.number', pr_number)
+        yield self._addToLog('stdio', f'Updating labels for PR {pr_number}...\n')
+        self.setProperty(pr_status, prs_to_label)
+        if len(prs_to_label):
+            self.build.addStepsAfterCurrentStep([RemoveAndAddLabels(label_to_add=self.label_to_add)])
+        rc = yield self.update_labels(pr_number)
+        defer.returnValue(rc)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': f"Labelled PR {self.getProperty('github.number')} with {self.label_to_add}"}
+        elif self.results == FAILURE:
+            return {'step': f"Failed to label PR {self.getProperty('github.number', '')} with {self.label_to_add}"}
+        return buildstep.BuildStep.getResultSummary(self)
+
+    @defer.inlineCallbacks
+    def update_labels(self, pr_number):
+        repository_url = self.getProperty('repository', '')
+
+        did_remove_labels = yield self.remove_labels(pr_number, self.labels_to_remove, repository_url=repository_url)
+        if did_remove_labels:
+            yield self._addToLog('stdio', f'Successfully removed {self.labels_to_remove} label(s) from PR {pr_number}.\n')
+        else:
+            yield self._addToLog('stdio', f'Failed to remove {self.labels_to_remove} label(s) from PR {pr_number}.\n')
+
+        did_add_label = yield self.add_label(pr_number, self.label_to_add, repository_url=repository_url)
+        if did_add_label:
+            yield self._addToLog('stdio', f'Successfully added {self.label_to_add} label to PR {pr_number}.\n')
+        else:
+            yield self._addToLog('stdio', f'Failed to add {self.label_to_add} label to PR {pr_number}.\n')
+        defer.returnValue(SUCCESS if did_remove_labels and did_add_label else FAILURE)
+
+
+class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'retrieve-pr-data-from-label'
+
+    def __init__(self, project="WebKit/WebKit", label='', **kwargs):
+        self.project = project
+        owner, name = project.lower().split('/', 1)
+        self.name = f'{self.name}-{owner}-{name}'
+        self.label = label
+        super().__init__(**kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        yield self._addToLog('stdio', f'Starting process for {self.project}...\n')
+        self.setProperty('project', self.project)
+        project = self.getProperty('project')
+        self.setProperty('repository', f'{GITHUB_URL}{project}')
+
+        num_prs = yield self.get_number_of_prs_with_label(self.label)
+        if num_prs == 0:
+            yield self._addToLog('stdio', f'Ending process as there are no PRs in {self.label}.\n')
+            return defer.returnValue(SUCCESS)
+        if not num_prs:
+            return defer.returnValue(FAILURE)
+
+        self.setProperty('passed_status_check', [])
+        self.setProperty('failed_status_check', [])
+        self.setProperty('pending_prs', [])
+
+        retrieved_pr_data = yield self.getAllPRData(num_prs, self.label)
+        self.build.addStepsAfterCurrentStep([DetermineLabelOwner()])
+
+        defer.returnValue(SUCCESS if retrieved_pr_data else FAILURE)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': f"Successfully retrieved pull request data"}
+        elif self.results == FAILURE:
+            return {'step': f"Failed to retrieve pull request data"}
+        return buildstep.BuildStep.getResultSummary(self)
+
+    @defer.inlineCallbacks
+    def getAllPRData(self, limit, label):
+        project = self.getProperty('project') or GITHUB_PROJECTS[0]
+        owner, name = project.split('/', 1)
+        query_body = '{repository(owner:"%s", name:"%s") { pullRequests(labels: "%s", last: %s) { edges { node { title number commits(last: 3) { nodes { commit { commitUrl status { state contexts { context state } } } } } } } } } }' % (owner, name, label, limit)
+        query = {'query': query_body}
+
+        yield self._addToLog('stdio', "Fetching all PRs with label {}...\n".format(label))
+
+        response = yield self.query_graph_ql(query)
+        if not response:
+            yield self._addToLog('stderr', 'Failed to retrieve list of PRs.\n')
+            return defer.returnValue(None)
+
+        all_pr_data = response['data']['repository']['pullRequests']['edges']
+        list_of_prs = [pr_data['node']['number'] for pr_data in all_pr_data]
+
+        self.setProperty('list_of_prs', list_of_prs)
+        self.setProperty('all_pr_data', all_pr_data)
+        yield self._addToLog('stdio', 'All PRs in safe-merge-queue: {}\n'.format(list_of_prs))
+        yield self._addToLog('stdio', 'Done!\n')
+
+        defer.returnValue(True)
+
+
+class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'check-status-of-pr'
+    flunkOnFailure = False
+    haltOnFailure = False
+    EMBEDDED_CHECKS = ['ios', 'mac', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
+    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
+    QUEUES_FOR_SAFE_MERGE_QUEUE = EMBEDDED_CHECKS + MACOS_CHECKS
+
+    def __init__(self, pr_number='', **kwargs):
+        self.name = f'{self.name}-{pr_number}'
+        self.steps_to_add = []
+        super().__init__(**kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        pr_number = self.getProperty('github.number', '')
+        repository = self.getProperty('repository', '')
+        checked_status = False
+
+        yield self._addToLog('stdio', f'Performing status check on PR {pr_number}.\n')
+        yield self._addToLog('stdio', f'Link to PR: {repository}/pull/{pr_number}\n')
+
+        if pr_number not in self.getProperty('failed_status_check', []):
+            checked_status = yield self.checkPRStatus(pr_number)
+
+        if len(self.getProperty('list_of_prs')):
+            self.steps_to_add += [DetermineLabelOwner()]
+        else:
+            self.steps_to_add += [AddMergeLabelsToPRs()]
+        self.build.addStepsAfterCurrentStep(self.steps_to_add)
+
+        defer.returnValue(SUCCESS if checked_status else FAILURE)
+
+    def getResultSummary(self):
+        pr_number = self.getProperty('github.number', '')
+        if self.results == SUCCESS:
+            return {'step': f"PR {pr_number} marked safe for merge-queue"}
+        elif self.results == FAILURE:
+            return {'step': f"PR {pr_number} unsafe for merge-queue"}
+        return buildstep.BuildStep.getResultSummary(self)
+
+    @defer.inlineCallbacks
+    def checkPRStatus(self, pr_number):
+        passed_status_check = self.getProperty('passed_status_check')
+        failed_status_check = self.getProperty('failed_status_check')
+        pending_prs = self.getProperty('pending_prs')
+
+        all_pr_data = self.getProperty('all_pr_data')
+        pr_data = [i for i in all_pr_data if i['node']['number'] == pr_number][0]
+        pr_commit_status_data = pr_data['node']['commits']['nodes'][0]['commit']['status']
+
+        yield self._addToLog('stdio', f'Checking the status of PR {pr_number}...\n')
+        project = self.getProperty('project') or GITHUB_PROJECTS[0]
+        owner, name = project.split('/', 1)
+        query_body = '{repository(owner: "%s", name: "%s") {pullRequest(number: %s) {commits (last:1) {edges {node {commit {oid } } } } } } }' % (owner, name, pr_number)
+        query = {'query': query_body}
+
+        response = yield self.query_graph_ql(query)
+        if not response:
+            yield self._addToLog('stderr', 'Failed to retrieve commit hash.\n')
+            defer.returnValue(None)
+
+        head_sha = response['data']['repository']['pullRequest']['commits']['edges'][0]['node']['commit']['oid']
+        rc = yield self.getQueueStatusFromList(head_sha, pr_number)
+        defer.returnValue(rc)
+
+    @defer.inlineCallbacks
+    def getQueueStatusFromList(self, change_id, pr_number):
+        missing_checks = []
+        failed_checks = []
+        url = '{}status/{}/'.format(EWS_URL, change_id)
+
+        response = yield TwistedAdditions.request(url, logger=lambda content: self._addToLog('stdio', content))
+        if response and response.status_code // 100 != 2:
+            yield self._addToLog('stdio', f'Accessed {url} with unexpected status code {response.status_code}.\n')
+            return defer.returnValue(False if response.status_code // 100 == 4 else None)
+
+        for queue in self.QUEUES_FOR_SAFE_MERGE_QUEUE:
+            yield self._addToLog('stdio', f'Currently checking {queue}...\n')
+            queue_data = response.json().get(queue, None)
+            if queue_data:
+                status = queue_data.get('state', None)
+                if status == 0 or status == 3:  # success or N/A
+                    continue
+                elif status == 2:  # failure
+                    failed_checks.append(queue)
+                else:  # null
+                    missing_checks.append(queue)
+
+        passed_status_check = self.getProperty('passed_status_check')
+        failed_status_check = self.getProperty('failed_status_check')
+        pending_prs = self.getProperty('pending_prs')
+
+        if len(missing_checks):
+            pending_prs.append(pr_number)
+            self.setProperty('pending_prs', pending_prs)
+            yield self._addToLog('stdio', 'Required checks are not completed. Waiting until all checks are completed before relabelling PR.\n')
+            yield self._addToLog('stdio', f'Missing the following checks: {missing_checks}\n')
+            defer.returnValue(False)
+        elif len(failed_checks):
+            failed_status_check.append(pr_number)
+            self.setProperty('failed_status_check', failed_status_check)
+            yield self._addToLog('stdio', 'Failed status check.\n')
+            yield self._addToLog('stdio', f'Merged blocked due to failure: {failed_checks}\n')
+            format_checks = ', '.join(failed_checks)
+            comment = f'Failed {format_checks} checks. Please resolve failures and re-apply `safe-merge-queue` label.'
+            comment += f'\n\nRejecting #{pr_number} from merge queue.'
+            self.setProperty('comment_text', comment)
+            self.steps_to_add += [LeaveComment()]
+            defer.returnValue(False)
+        else:
+            passed_status_check.append(pr_number)
+            self.setProperty('passed_status_check', passed_status_check)
+            yield self._addToLog('stdio', 'Passed status check.\n')
+            defer.returnValue(True)
+
+
+class AddMergeLabelsToPRs(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'add-merge-labels-to-prs'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        steps_to_add = []
+        label_as_safe = self.getProperty('passed_status_check', '')
+        yield self._addToLog('stdio', f'PRs to merge: {label_as_safe}.\n')
+        label_as_blocked = self.getProperty('failed_status_check', '')
+        yield self._addToLog('stdio', f'PRs to block: {label_as_blocked}.\n')
+        pending_prs = self.getProperty('pending_prs', '')
+        yield self._addToLog('stdio', f'PRs with checks pending: {pending_prs}. No action taken.\n')
+
+        if len(label_as_safe):
+            steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHubMixin.MERGE_QUEUE_LABEL, labels_to_remove=[GitHubMixin.SAFE_MERGE_QUEUE_LABEL]))
+        if len(label_as_blocked):
+            steps_to_add.append(RemoveAndAddLabels(label_to_add=GitHubMixin.BLOCKED_LABEL, labels_to_remove=[GitHubMixin.SAFE_MERGE_QUEUE_LABEL]))
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+        defer.returnValue(SUCCESS)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': f"Started PR labelling process successfully"}
+        elif self.results == FAILURE:
+            return {'step': f"Failed to start PR labelling process"}
+        return buildstep.BuildStep.getResultSummary(self)
 
 
 class CloseBug(buildstep.BuildStep, BugzillaMixin):

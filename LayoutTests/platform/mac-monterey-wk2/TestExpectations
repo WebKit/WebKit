@@ -40,3 +40,6 @@ imported/w3c/web-platform-tests/url/historical.any.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/wasm/jsapi/table/length.any.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCIceCandidate-constructor.html [ Pass Timeout ]
 swipe/pushState-cached-back-swipe.html [ Pass Timeout ]
+
+# Asserts on pre-Sonoma macOS: rdar://116291539
+[ Debug ] http/tests/site-isolation/window-properties.html [ Skip ]

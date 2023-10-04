@@ -5432,6 +5432,8 @@ security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.h
 userscripts/user-script-plugin-document.html [ Skip ]
 
 webkit.org/b/242983 imported/w3c/web-platform-tests/css/css-scroll-anchoring/fullscreen-crash.html [ Skip ]
+webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/heuristic-with-offset-update-from-scroll-event-listener.html [ Skip ]
+webkit.org/b/261849  imported/w3c/web-platform-tests/css/css-scroll-anchoring/zero-scroll-offset.html [ Skip ]
 
 # These tests are image failures
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-000.html [ Skip ]
@@ -6744,6 +6746,3 @@ imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-l
 webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
 
 webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]
-
-# rdar://116291539
-[ Debug ] http/tests/site-isolation/window-properties.html [ Pass Crash ]

@@ -130,8 +130,7 @@ public:
 
     virtual bool canUseShadowBlur() const;
 
-    virtual std::optional<std::pair<float, float>> scaleForRoundingToDevicePixels() const;
-    FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) const;
+    FloatRect roundToDevicePixels(const FloatRect&) const;
 
     // Returns the platform context for draws.
     CGContextRef contextForDraw();

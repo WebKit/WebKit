@@ -184,8 +184,10 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<const Rende
         [m_renderCommandEncoder setFrontFacingWinding:renderBundle.frontFace()];
         [m_renderCommandEncoder setDepthClipMode:renderBundle.depthClipMode()];
 
-        for (const auto& resource : renderBundle.resources())
-            [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
+        for (const auto& resource : renderBundle.resources()) {
+            if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
+                [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
+        }
 
         id<MTLIndirectCommandBuffer> icb = renderBundle.indirectCommandBuffer();
         [m_renderCommandEncoder executeCommandsInBuffer:icb withRange:NSMakeRange(0, icb.size)];
@@ -251,8 +253,10 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
     if (dynamicOffsetCount)
         m_bindGroupDynamicOffsets.add(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
 
-    for (const auto& resource : group.resources())
-        [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
+    for (const auto& resource : group.resources()) {
+        if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
+            [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
+    }
 
     [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
     [m_renderCommandEncoder setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];

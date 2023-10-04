@@ -968,6 +968,40 @@ operator :textureStore, {
     [F, T < ConcreteInteger].(texture_storage_3d[F, write], vec3[T], vec4[ChannelFormat[F]]) => void,
 }
 
+# 16.8. Atomic Built-in Functions (https://www.w3.org/TR/WGSL/#atomic-builtin-functions)
+
+# 16.8.1
+operator :atomicLoad, {
+    # fn atomicLoad(atomic_ptr: ptr<AS, atomic<T>, read_write>) -> T
+    [AS, T].(ptr[AS, atomic[T], read_write]) => T,
+}
+
+
+# 16.8.2
+operator :atomicStore, {
+    # fn atomicStore(atomic_ptr: ptr<AS, atomic<T>, read_write>, v: T)
+    [AS, T].(ptr[AS, atomic[T], read_write], T) => void,
+}
+
+# 16.8.3. Atomic Read-modify-write (this spec entry contains several functions)
+[
+    :atomicAdd,
+    :atomicSub,
+    :atomicMax,
+    :atomicMin,
+    :atomicOr,
+    :atomicXor,
+    :atomicExchange,
+].each do |op|
+    operator op, {
+        # fn #{op}(atomic_ptr: ptr<AS, atomic<T>, read_write>, v: T) -> T
+        [AS, T].(ptr[AS, atomic[T], read_write], T) => T,
+    }
+end
+
+# FIXME: Implement atomicCompareExchangeWeak (which depends on the result struct that is not currently supported)
+# fn atomicCompareExchangeWeak(atomic_ptr: ptr<AS, atomic<T>, read_write>, cmp: T, v: T) -> __atomic_compare_exchange_result<T>
+
 # 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
 
 # 16.11.1.

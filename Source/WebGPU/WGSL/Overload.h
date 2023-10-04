@@ -48,6 +48,7 @@ struct AbstractChannelFormat;
 struct AbstractReference;
 struct AbstractPointer;
 struct AbstractArray;
+struct AbstractAtomic;
 
 using AbstractTypeImpl = std::variant<
     AbstractVector,
@@ -58,6 +59,7 @@ using AbstractTypeImpl = std::variant<
     AbstractReference,
     AbstractPointer,
     AbstractArray,
+    AbstractAtomic,
     TypeVariable,
     const Type*
 >;
@@ -105,6 +107,10 @@ struct AbstractPointer {
 };
 
 struct AbstractArray {
+    AbstractType element;
+};
+
+struct AbstractAtomic {
     AbstractType element;
 };
 
