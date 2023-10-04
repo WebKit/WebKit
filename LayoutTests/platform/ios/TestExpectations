@@ -4649,3 +4649,13 @@ imported/w3c/web-platform-tests/css/css-fonts/font-palette-modify.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-fonts/font-palette-remove.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
+
+# webkit.org/b/262663 (REGRESSION(iOS17/Sonoma): 8 WebCryptoAPI tests are constantly crashing.)
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_X25519.https.any.html [ Crash ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_X25519.https.any.worker.html [ Crash ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_X25519.https.any.html [ Crash ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_X25519.https.any.worker.html [ Crash ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.any.html [ Crash ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.any.worker.html [ Crash ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.html [ Crash ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.worker.html  [ Crash ]
