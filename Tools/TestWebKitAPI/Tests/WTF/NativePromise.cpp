@@ -100,9 +100,9 @@ struct RefCountedProducer final : public ThreadSafeRefCounted<RefCountedProducer
     typename TestPromise::Producer producer;
 };
 
-class DelayedResolveOrReject final : public ThreadSafeRefCounted<DelayedResolveOrReject> {
+class DelayedSettle final : public ThreadSafeRefCounted<DelayedSettle> {
 public:
-    DelayedResolveOrReject(WorkQueue& workQueue, RefPtr<RefCountedProducer> producer, TestPromise::Result&& result, int iterations)
+    DelayedSettle(WorkQueue& workQueue, RefPtr<RefCountedProducer> producer, TestPromise::Result&& result, int iterations)
         : m_producer(producer)
         , m_iterations(iterations)
         , m_workQueue(workQueue)
@@ -128,7 +128,7 @@ public:
         }
 
         if (!--m_iterations) {
-            m_producer->producer.resolveOrReject(m_result);
+            m_producer->producer.settle(m_result);
             return;
         }
 
@@ -206,7 +206,7 @@ TEST(NativePromise, BasicReject)
     });
 }
 
-TEST(NativePromise, BasicResolveOrRejectResolved)
+TEST(NativePromise, BasicSettleResolved)
 {
     AutoWorkQueue awq;
     auto queue = awq.queue();
@@ -220,7 +220,7 @@ TEST(NativePromise, BasicResolveOrRejectResolved)
     });
 }
 
-TEST(NativePromise, BasicResolveOrRejectRejected)
+TEST(NativePromise, BasicSettleRejected)
 {
     AutoWorkQueue awq;
     auto queue = awq.queue();
@@ -389,9 +389,9 @@ TEST(NativePromise, AsyncResolve)
 
         // Kick off three racing tasks, and make sure we get the one that finishes
         // earliest.
-        auto a = adoptRef(new DelayedResolveOrReject(queue, producer, TestPromise::Result(32), 10));
-        auto b = adoptRef(new DelayedResolveOrReject(queue, producer, TestPromise::Result(42), 5));
-        auto c = adoptRef(new DelayedResolveOrReject(queue, producer, TestPromise::Error(32.0), 7));
+        auto a = adoptRef(new DelayedSettle(queue, producer, TestPromise::Result(32), 10));
+        auto b = adoptRef(new DelayedSettle(queue, producer, TestPromise::Result(42), 5));
+        auto c = adoptRef(new DelayedSettle(queue, producer, TestPromise::Error(32.0), 7));
 
         a->dispatch();
         b->dispatch();
@@ -429,7 +429,7 @@ TEST(NativePromise, CompletionPromises)
                         auto producer = adoptRef(new RefCountedProducer());
                         auto p = producer->promise();
 
-                        auto resolver = adoptRef(new DelayedResolveOrReject(queue, producer, TestPromise::Result(val - 8), 10));
+                        auto resolver = adoptRef(new DelayedSettle(queue, producer, TestPromise::Result(val - 8), 10));
                         resolver->dispatch();
                         return p;
                     },
@@ -468,11 +468,11 @@ TEST(NativePromise, UsingMethods)
         {
             EXPECT_EQ(value, 2.0);
         }
-        void resolveOrRejectWithNothing()
+        void settleWithNothing()
         {
             EXPECT_TRUE(true);
         }
-        void resolveOrRejectWithResult(const TestPromise::Result& result)
+        void settleWithResult(const TestPromise::Result& result)
         {
             EXPECT_TRUE(result.has_value());
             EXPECT_EQ(result.value(), 1);
@@ -483,8 +483,8 @@ TEST(NativePromise, UsingMethods)
     queue->dispatch([queue, myClass = MyClass::create()] {
         TestPromise::createAndResolve(1)->then(queue, myClass.get(), &MyClass::resolveWithNothing, &MyClass::rejectWithNothing);
         TestPromise::createAndReject(2.0)->then(queue, myClass.get(), &MyClass::resolveWithValue, &MyClass::rejectWithValue);
-        TestPromise::createAndResolve(3)->whenSettled(queue, myClass.get(), &MyClass::resolveOrRejectWithNothing);
-        TestPromise::createAndResolve(1)->whenSettled(queue, myClass.get(), &MyClass::resolveOrRejectWithResult);
+        TestPromise::createAndResolve(3)->whenSettled(queue, myClass.get(), &MyClass::settleWithNothing);
+        TestPromise::createAndResolve(1)->whenSettled(queue, myClass.get(), &MyClass::settleWithResult);
         queue->dispatch([queue] {
             queue->beginShutdown();
         });
@@ -521,7 +521,7 @@ static Ref<GenericPromise> myMethodReturningThenCommand()
     // You would normally do some work here.
     return GenericPromise::createAndResolve()->whenSettled(RunLoop::main(),
         [](GenericPromise::Result result) {
-            return GenericPromise::createAndResolveOrReject(WTFMove(result));
+            return GenericPromise::createAndSettle(WTFMove(result));
         });
 }
 
@@ -550,7 +550,7 @@ static Ref<GenericPromise> myMethodReturningProducer()
     return GenericPromise::createAndResolve()->whenSettled(RunLoop::main(),
         [](GenericPromise::Result result) {
             GenericPromise::Producer producer;
-            producer.resolveOrReject(WTFMove(result));
+            producer.settle(WTFMove(result));
             return producer;
         });
 }
@@ -916,7 +916,7 @@ TEST(NativePromise, WTFString)
             EXPECT_TRUE(val.has_value());
             EXPECT_TRUE(val.value().isSafeToSendToAnotherThread());
             EXPECT_EQ(String("hello"_s), val.value());
-            return MyPromise::createAndResolveOrReject(WTFMove(val));
+            return MyPromise::createAndSettle(WTFMove(val));
         })->whenSettled(queue2,
             [](MyPromise::Result val) {
                 EXPECT_TRUE(val.has_value());
@@ -931,7 +931,7 @@ TEST(NativePromise, WTFString)
             EXPECT_EQ(String("hello"_s), val.value());
             queue->beginShutdown();
             // Don't move the result to make sure we get a new isolatedCopy.
-            return MyPromise::createAndResolveOrReject(val);
+            return MyPromise::createAndSettle(val);
         })->whenSettled(queue2,
             [queue2](MyPromise::Result val) {
                 EXPECT_TRUE(val.has_value());
@@ -1164,7 +1164,7 @@ TEST(NativePromise, ImplicitConversionWithForwardPreviousReturn)
         TestPromise::Producer p;
         Ref<TestPromise> promise = p->whenSettled(runLoop,
             [](const TestPromise::Result& result) {
-                return TestPromise::createAndResolveOrReject(result);
+                return TestPromise::createAndSettle(result);
             });
         promise->whenSettled(runLoop, [&](const TestPromise::Result& result) {
             EXPECT_TRUE(!result.has_value());
