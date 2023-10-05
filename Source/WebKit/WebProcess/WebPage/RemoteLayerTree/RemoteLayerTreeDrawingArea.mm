@@ -351,26 +351,24 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     backingStoreCollection.willFlushLayers();
 
     // FIXME: Minimize these transactions if nothing changed.
-    Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>> transactions;
-    transactions.reserveInitialCapacity(m_rootLayers.size());
     auto transactionID = takeNextTransactionID();
-    for (auto& rootLayer : m_rootLayers) {
+    auto transactions = WTF::map(m_rootLayers, [&](auto& rootLayer) -> std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction> {
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
-        
+
         RemoteLayerTreeTransaction layerTransaction;
         layerTransaction.setTransactionID(transactionID);
         layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
-        
+
         m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(rootLayer.layer.get()).platformCALayer(), rootLayer.frameID);
-        
+
         backingStoreCollection.willCommitLayerTree(layerTransaction);
 
         // FIXME: Investigate whether this needs to be done multiple times in a page with multiple root frames. <rdar://116202678>
         webPage->willCommitLayerTree(layerTransaction, rootLayer.frameID);
-        
+
         layerTransaction.setNewlyReachedPaintingMilestones(std::exchange(m_pendingNewlyReachedPaintingMilestones, { }));
         layerTransaction.setActivityStateChangeID(std::exchange(m_activityStateChangeID, ActivityStateChangeAsynchronous));
-        
+
         willCommitLayerTree(layerTransaction);
 
         m_waitingForBackingStoreSwap = true;
@@ -382,16 +380,16 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         if (webPage->scrollingCoordinator())
             scrollingTransaction = downcast<RemoteScrollingCoordinator>(*webPage->scrollingCoordinator()).buildTransaction();
 #endif
-        transactions.uncheckedAppend({ WTFMove(layerTransaction), WTFMove(scrollingTransaction) });
-    }
+        return { WTFMove(layerTransaction), WTFMove(scrollingTransaction) };
+    });
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(transactions);
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
     commitEncoder.get() << WTFMove(message).arguments();
 
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
-    for (auto& transactions : transactions)
-        flushers.appendVector(backingStoreCollection.didFlushLayers(transactions.first));
+    for (auto& transaction : transactions)
+        flushers.appendVector(backingStoreCollection.didFlushLayers(transaction.first));
     bool haveFlushers = flushers.size();
     RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(RefPtr { WebProcess::singleton().parentProcessConnection() }, WTFMove(commitEncoder), WTFMove(flushers));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
