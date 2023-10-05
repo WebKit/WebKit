@@ -285,7 +285,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
     m_candidateContentMaximumHeight = { };
-    inlineContentBreaker().setHyphenationDisabled(inlineLayoutState().isHyphenationDisabled());
+    inlineContentBreaker().setHyphenationDisabled(layoutState().isHyphenationDisabled());
 
     auto createLineSpanningInlineBoxes = [&] {
         auto isRootLayoutBox = [&](auto& elementBox) {
@@ -956,7 +956,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     auto placeFloatBox = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
         auto floatItem = floatingContext.makeFloatItem(floatBox, boxGeometry, lineIndex);
-        inlineLayoutState().placedFloats().append(floatItem);
+        layoutState().placedFloats().append(floatItem);
         m_placedFloats.append(floatItem);
     };
     placeFloatBox();
@@ -991,7 +991,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
     auto availableWidthForCandidateContent = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
         // If width constraint overrides exist (e.g. text-wrap: balance), modify the available width accordingly.
-        const auto& availableLineWidthOverride = inlineLayoutState().availableLineWidthOverride();
+        const auto& availableLineWidthOverride = layoutState().availableLineWidthOverride();
         auto widthOverride = availableLineWidthOverride.availableLineWidthOverrideForLine(lineIndex);
         auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : usedConstraints.logicalRect.width();
         return availableWidth(inlineContent, m_line, availableTotalWidthForContent);
@@ -1233,14 +1233,14 @@ const RenderStyle& LineBuilder::rootStyle() const
     return isFirstFormattedLine() ? root().firstLineStyle() : root().style();
 }
 
-const InlineLayoutState& LineBuilder::inlineLayoutState() const
+const InlineLayoutState& LineBuilder::layoutState() const
 {
-    return formattingContext().inlineLayoutState();
+    return formattingContext().layoutState();
 }
 
-InlineLayoutState& LineBuilder::inlineLayoutState()
+InlineLayoutState& LineBuilder::layoutState()
 {
-    return formattingContext().inlineLayoutState();
+    return formattingContext().layoutState();
 }
 
 }

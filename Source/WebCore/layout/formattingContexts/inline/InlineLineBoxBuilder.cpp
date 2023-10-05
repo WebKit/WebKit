@@ -317,7 +317,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
         auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
         auto ascent = [&]() -> InlineLayoutUnit {
-            if (inlineLayoutState().shouldNotSynthesizeInlineBlockBaseline())
+            if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
                 return downcast<ElementBox>(layoutBox).baselineForIntegration().value_or(marginBoxHeight);
 
             if (layoutBox.isInlineBlockBox()) {
@@ -430,7 +430,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             setVerticalPropertiesForInlineLevelBox(lineBox, lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
 
-            if (inlineLayoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
+            if (layoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
                 lineBox.parentInlineBox(run).setHasContent();
             continue;
         }
@@ -709,7 +709,7 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
         auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat;
         auto logicalLeft = listMarkerInitialOffsetFromRootInlineBox;
         auto nestedListMarkerMarginStart = [&] {
-            auto nestedOffset = inlineLayoutState().nestedListMarkerOffset(listMarkerBox);
+            auto nestedOffset = layoutState().nestedListMarkerOffset(listMarkerBox);
             if (nestedOffset == LayoutUnit::min())
                 return 0_lu;
             // Nested list markers (in standards mode) share the same line and have offsets as if they had dedicated lines.

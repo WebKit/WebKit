@@ -67,14 +67,12 @@ public:
         FindFixedHeightAncestorQuirk,
         DocumentBoxStretchesToViewportQuirk,
         BodyStretchesToViewportQuirk,
-        TableNeedsAccessToTableWrapper,
-        InkOverflowNeedsInitialContiningBlockForStrokeWidth
+        TableNeedsAccessToTableWrapper
     };
     const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
     BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt);
 
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
-    bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
     bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }
     bool isTableWrapperBlockFormattingContext() const { return isBlockFormattingContext() && root().isTableWrapperBox(); }
     bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }

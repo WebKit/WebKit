@@ -64,8 +64,8 @@ private:
     const Box& rootBox() const { return formattingContext().root(); }
     const RenderStyle& rootStyle() const { return isFirstLine() ? rootBox().firstLineStyle() : rootBox().style(); }
 
-    const InlineLayoutState& inlineLayoutState() const { return formattingContext().inlineLayoutState(); }
-    const BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
+    const InlineLayoutState& layoutState() const { return formattingContext().layoutState(); }
+    const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;

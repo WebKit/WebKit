@@ -59,7 +59,7 @@ private:
     const InlineFormattingUtils& formattingUtils() const { return m_inlineFormattingUtils; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const ElementBox& rootBox() const { return formattingContext().root(); }
-    const InlineLayoutState& inlineLayoutState() const { return formattingContext().inlineLayoutState(); }
+    const InlineLayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;

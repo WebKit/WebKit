@@ -49,7 +49,7 @@ bool InlineQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWid
 
 InlineLayoutUnit InlineQuirks::initialLineHeight() const
 {
-    ASSERT(!formattingContext().inlineLayoutState().inStandardsMode());
+    ASSERT(!formattingContext().layoutState().inStandardsMode());
     return 0.f;
 }
 
@@ -78,7 +78,7 @@ bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
 
 bool InlineQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
 {
-    ASSERT(!formattingContext().inlineLayoutState().inStandardsMode());
+    ASSERT(!formattingContext().layoutState().inStandardsMode());
     ASSERT(inlineLevelBox.isInlineBox());
     // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
     if (inlineLevelBox.hasContent())
@@ -119,7 +119,7 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
 std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
 {
     auto& rootBoxStyle = formattingContext().root().style();
-    auto& parentBlockLayoutState = formattingContext().inlineLayoutState().parentBlockLayoutState();
+    auto& parentBlockLayoutState = formattingContext().layoutState().parentBlockLayoutState();
 
     if (rootBoxStyle.lineAlign() == LineAlign::None)
         return { };
@@ -147,7 +147,7 @@ std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const I
 std::optional<InlineLayoutUnit> InlineQuirks::adjustmentForLineGridLineSnap(const LineBox& lineBox) const
 {
     auto& rootBoxStyle = formattingContext().root().style();
-    auto& inlineLayoutState = formattingContext().inlineLayoutState();
+    auto& inlineLayoutState = formattingContext().layoutState();
 
     if (rootBoxStyle.lineSnap() == LineSnap::None)
         return { };
