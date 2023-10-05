@@ -39,7 +39,6 @@ class LineLayout;
 enum class AvoidanceReason : uint8_t {
     ContentIsRuby,
     ContentIsSVG,
-    FlowIsInitialContainingBlock,
     FeatureIsDisabled
 };
 

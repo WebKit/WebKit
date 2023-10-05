@@ -100,6 +100,8 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
 RenderView::~RenderView()
 {
     ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have been destroyed");
+
+    deleteLines();
 }
 
 void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

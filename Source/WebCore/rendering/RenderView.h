@@ -238,6 +238,7 @@ private:
     // Include this RenderView.
     uint64_t m_rendererCount { 1 };
 
+    // Note that currently RenderView::layoutBox(), if it exists, is a child of m_initialContainingBlock.
     UniqueRef<Layout::InitialContainingBlock> m_initialContainingBlock;
     UniqueRef<Layout::LayoutState> m_layoutState;
 
