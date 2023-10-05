@@ -229,7 +229,7 @@ LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, Horiz
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
-    , m_floatingContext(inlineFormattingContext, inlineFormattingContext.inlineLayoutState().placedFloats())
+    , m_floatingContext(inlineFormattingContext.floatingContext())
     , m_inlineItemList(inlineItemList)
 {
 }

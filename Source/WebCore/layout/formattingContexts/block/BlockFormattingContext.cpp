@@ -67,7 +67,7 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
     auto& formattingRoot = root();
     ASSERT(formattingRoot.hasInFlowOrFloatingChild());
     auto& placedFloats = formattingState().placedFloats();
-    auto floatingContext = FloatingContext { *this, placedFloats };
+    auto floatingContext = FloatingContext { root(), layoutState(), placedFloats };
 
     Vector<const ElementBox*> layoutQueue;
     enum class LayoutDirection { Child, Sibling };
@@ -303,7 +303,7 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
         bottom = BoxGeometry::marginBoxRect(geometryForBox(*root().lastInFlowChild())).bottom();
     }
 
-    auto floatingContext = FloatingContext { *this, formattingState().placedFloats() };
+    auto floatingContext = FloatingContext { root(), layoutState(), formattingState().placedFloats() };
     if (auto floatTop = floatingContext.top()) {
         top = std::min(*floatTop, top.value_or(*floatTop));
         auto floatBottom = *floatingContext.bottom();

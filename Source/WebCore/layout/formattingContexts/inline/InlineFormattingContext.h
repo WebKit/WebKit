@@ -65,6 +65,7 @@ public:
 
     const InlineFormattingUtils& formattingUtils() const { return m_inlineFormattingUtils; }
     const InlineQuirks& quirks() const { return m_inlineQuirks; }
+    const FloatingContext& floatingContext() const { return m_floatingContext; }
 
     // FIXME: This should just be "layout state" (pending on renaming LayoutState).
     InlineLayoutState& inlineLayoutState() { return m_inlineLayoutState; }
@@ -85,6 +86,7 @@ private:
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 
 private:
+    FloatingContext m_floatingContext;
     InlineContentCache& m_inlineContentCache;
     const InlineFormattingUtils m_inlineFormattingUtils;
     const InlineQuirks m_inlineQuirks;

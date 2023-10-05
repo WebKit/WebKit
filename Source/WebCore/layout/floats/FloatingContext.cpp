@@ -203,8 +203,9 @@ struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
     HorizontalEdges containingBlockContentBox;
 };
 
-FloatingContext::FloatingContext(const FormattingContext& formattingContext, const PlacedFloats& placedFloats)
-    : m_formattingContext(formattingContext)
+FloatingContext::FloatingContext(const ElementBox& formattingContextRoot, const LayoutState& layoutState, const PlacedFloats& placedFloats)
+    : m_formattingContextRoot(formattingContextRoot)
+    , m_layoutState(layoutState)
     , m_placedFloats(placedFloats)
 {
 }
@@ -306,21 +307,8 @@ std::optional<FloatingContext::PositionWithClearance> FloatingContext::verticalP
 
         if (layoutBox.isBlockLevelBox()) {
             // Clearance inhibits margin collapsing in block formatting context.
-            if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-                // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after?
-                auto& formattingState = downcast<BlockFormattingContext>(formattingContext()).formattingState();
-                auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
-                if (verticalMargin.collapsedValues.before) {
-                    auto previousVerticalMarginAfter = formattingContext().geometryForBox(*previousInFlowSibling).marginAfter();
-                    auto collapsedMargin = *verticalMargin.collapsedValues.before;
-                    auto nonCollapsedMargin = previousVerticalMarginAfter + marginBefore(verticalMargin);
-                    auto marginDifference = nonCollapsedMargin - collapsedMargin;
-                    // Move the box to the position where it would be with non-collapsed margins.
-                    logicalTopRelativeToPlacedFloatsRoot += marginDifference;
-                    // Having negative clearance is also normal. It just means that the box with the non-collapsed margins is now lower than it needs to be.
-                    clearance -= marginDifference;
-                }
-            }
+            ASSERT_NOT_IMPLEMENTED_YET();
+            // FIXME: This needs to go to BFC.
         }
         // Now adjust the box's position with the clearance.
         logicalTopRelativeToPlacedFloatsRoot += clearance;
@@ -331,7 +319,7 @@ std::optional<FloatingContext::PositionWithClearance> FloatingContext::verticalP
         if (&containingBlock == &m_placedFloats.formattingContextRoot())
             return PositionWithClearance { logicalTopRelativeToPlacedFloatsRoot, clearance };
 
-        auto containingBlockTopLeft = BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot));
+        auto containingBlockTopLeft = BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(containingBlock));
         auto containingBlockRootRelativeTop = mapTopLeftToPlacedFloatsRoot(containingBlock, containingBlockTopLeft).y();
         return PositionWithClearance { logicalTopRelativeToPlacedFloatsRoot - containingBlockRootRelativeTop, clearance };
     };
@@ -487,7 +475,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
 
         // Flip to logical in inline direction.
         auto logicalConstraints = Constraints { };
-        auto borderBoxWidth = formattingContext().geometryForBox(root(), FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot).borderBoxWidth();
+        auto borderBoxWidth = containingBlockGeometries().geometryForBox(root()).borderBoxWidth();
         if (constraints.left)
             logicalConstraints.right = PointInContextRoot { borderBoxWidth - constraints.left->x, constraints.left->y };
         if (constraints.right)
@@ -555,7 +543,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
 FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteCoordinates(const Box& floatAvoider, LayoutPoint borderBoxTopLeft) const
 {
     auto& containingBlock = FormattingContext::containingBlock(floatAvoider);
-    auto& containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot);
+    auto& containingBlockGeometry = containingBlockGeometries().geometryForBox(containingBlock);
     auto absoluteTopLeft = mapTopLeftToPlacedFloatsRoot(floatAvoider, borderBoxTopLeft);
 
     if (&containingBlock == &placedFloats().formattingContextRoot())
@@ -570,7 +558,7 @@ LayoutPoint FloatingContext::mapTopLeftToPlacedFloatsRoot(const Box& layoutBox, 
     ASSERT(layoutBox.isFloatingPositioned() || layoutBox.isInFlow());
     auto& placedFloatsRoot = placedFloats().formattingContextRoot();
     for (auto& containingBlock : containingBlockChain(layoutBox, placedFloatsRoot))
-        borderBoxTopLeft.moveBy(BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot)));
+        borderBoxTopLeft.moveBy(BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(containingBlock)));
     return borderBoxTopLeft;
 }
 
@@ -582,7 +570,7 @@ Point FloatingContext::mapPointFromFormattingContextRootToPlacedFloatsRoot(Point
         return position;
     auto mappedPosition = position;
     for (auto* containingBlock = &from; containingBlock != &to; containingBlock = &FormattingContext::containingBlock(*containingBlock))
-        mappedPosition.moveBy(BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot)));
+        mappedPosition.moveBy(BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(*containingBlock)));
     return mappedPosition;
 }
 

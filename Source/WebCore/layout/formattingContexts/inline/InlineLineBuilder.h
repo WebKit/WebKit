@@ -107,7 +107,7 @@ private:
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
-    FloatingContext m_floatingContext;
+    const FloatingContext& m_floatingContext;
     InlineRect m_lineInitialLogicalRect;
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
