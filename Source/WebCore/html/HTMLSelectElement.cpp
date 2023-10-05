@@ -1436,6 +1436,15 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         if (!is<KeyboardEvent>(event))
             return;
 
+        CheckedPtr renderer = this->renderer();
+        bool isHorizontalWritingMode = renderer ? renderer->style().isHorizontalWritingMode() : true;
+        bool isFlippedBlocksWritingMode = renderer ? renderer->style().isFlippedBlocksWritingMode() : false;
+
+        auto nextKeyIdentifier = isHorizontalWritingMode ? "Down"_s : "Right"_s;
+        auto previousKeyIdentifier = isHorizontalWritingMode ? "Up"_s : "Left"_s;
+        if (isFlippedBlocksWritingMode)
+            std::swap(nextKeyIdentifier, previousKeyIdentifier);
+
         KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
         const String& keyIdentifier = keyboardEvent.keyIdentifier();
 
@@ -1443,27 +1452,27 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         int endIndex = 0;
         if (m_activeSelectionEndIndex < 0) {
             // Initialize the end index
-            if (keyIdentifier == "Down"_s || keyIdentifier == "PageDown"_s) {
+            if (keyIdentifier == nextKeyIdentifier || keyIdentifier == "PageDown"_s) {
                 int startIndex = lastSelectedListIndex();
                 handled = true;
-                if (keyIdentifier == "Down"_s)
+                if (keyIdentifier == nextKeyIdentifier)
                     endIndex = nextSelectableListIndex(startIndex);
                 else
                     endIndex = nextSelectableListIndexPageAway(startIndex, SkipForwards);
-            } else if (keyIdentifier == "Up"_s || keyIdentifier == "PageUp"_s) {
+            } else if (keyIdentifier == previousKeyIdentifier || keyIdentifier == "PageUp"_s) {
                 int startIndex = optionToListIndex(selectedIndex());
                 handled = true;
-                if (keyIdentifier == "Up"_s)
+                if (keyIdentifier == previousKeyIdentifier)
                     endIndex = previousSelectableListIndex(startIndex);
                 else
                     endIndex = nextSelectableListIndexPageAway(startIndex, SkipBackwards);
             }
         } else {
             // Set the end index based on the current end index.
-            if (keyIdentifier == "Down"_s) {
+            if (keyIdentifier == nextKeyIdentifier) {
                 endIndex = nextSelectableListIndex(m_activeSelectionEndIndex);
                 handled = true;
-            } else if (keyIdentifier == "Up"_s) {
+            } else if (keyIdentifier == previousKeyIdentifier) {
                 endIndex = previousSelectableListIndex(m_activeSelectionEndIndex);
                 handled = true;
             } else if (keyIdentifier == "PageDown"_s) {
@@ -1514,7 +1523,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
                 setActiveSelectionAnchorIndex(m_activeSelectionEndIndex);
             }
 
-            downcast<RenderListBox>(*renderer()).scrollToRevealElementAtListIndex(endIndex);
+            downcast<RenderListBox>(*renderer).scrollToRevealElementAtListIndex(endIndex);
             if (selectNewItem) {
                 updateListBoxSelection(deselectOthers);
                 listBoxOnChange();
