@@ -163,7 +163,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     if (m_callGraph.ast().usesPackArray()) {
         m_callGraph.ast().clearUsesPackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
-        m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> __pack_array(array<T, N> unpacked)\n");
+        m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n");
         m_stringBuilder.append(m_indent, "{\n");
         {
             IndentationScope scope(m_indent);
@@ -181,7 +181,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     if (m_callGraph.ast().usesUnpackArray()) {
         m_callGraph.ast().clearUsesUnpackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
-        m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> __unpack_array(array<T, N> packed)\n");
+        m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n");
         m_stringBuilder.append(m_indent, "{\n");
         {
             IndentationScope scope(m_indent);
@@ -207,6 +207,28 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_stringBuilder.append(m_indent, "auto result = *ptr;\n");
             m_stringBuilder.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n");
             m_stringBuilder.append(m_indent, "return result;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
+
+    if (m_callGraph.ast().usesPackedStructs()) {
+        m_callGraph.ast().clearUsesPackedStructs();
+
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "T __pack(T unpacked)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "return unpacked;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "T __unpack(T packed)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "return packed;\n");
         }
         m_stringBuilder.append(m_indent, "}\n\n");
     }
@@ -369,7 +391,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, packedName, " packed;\n");
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            m_stringBuilder.append(m_indent, "packed.", name, " = unpacked.", name, ";\n");
+            m_stringBuilder.append(m_indent, "packed.", name, " = __pack(unpacked.", name, ");\n");
         }
         m_stringBuilder.append(m_indent, "return packed;\n");
     }
@@ -382,7 +404,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n");
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            m_stringBuilder.append(m_indent, "unpacked.", name, " = packed.", name, ";\n");
+            m_stringBuilder.append(m_indent, "unpacked.", name, " = __unpack(packed.", name, ");\n");
         }
         m_stringBuilder.append(m_indent, "return unpacked;\n");
     }
@@ -691,6 +713,8 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
+            if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource)
+                m_stringBuilder.append("::PackedType");
         },
         [&](const Texture& texture) {
             const char* type;

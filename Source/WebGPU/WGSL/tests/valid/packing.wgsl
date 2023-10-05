@@ -12,6 +12,11 @@ struct T {
     u: u32,
 }
 
+struct U {
+    // CHECK: array<type\d::PackedType, 4> ts
+    ts: array<T, 4>,
+}
+
 var<private> t: T;
 var<private> m2: mat2x2<f32>;
 var<private> m3: mat3x3<f32>;
@@ -25,6 +30,8 @@ var<private> m3: mat3x3<f32>;
 @group(0) @binding(4) var<storage, read_write> at1: array<T, 1>;
 @group(0) @binding(5) var<storage, read_write> at2: array<T, 1>;
 
+@group(0) @binding(8) var<storage, read_write> u1: U;
+
 fn testUnpacked() -> i32
 {
     _ = t.v3f * m3;
@@ -32,6 +39,10 @@ fn testUnpacked() -> i32
 
     _ = t1.v2f * m2;
     _ = m2 * t1.v2f;
+
+    _ = u1.ts[0].v3f * m3;
+    _ = m3 * u1.ts[0].v3f;
+
     return 0;
 }
 
@@ -46,11 +57,11 @@ fn testAssignment() -> i32
     t2 = t;
 
     // array of packed structs
-    // CHECK-NEXT: local\d+ = __unpack_array\(global\d+\);
+    // CHECK-NEXT: local\d+ = __unpack\(global\d+\);
     var at = at1;
     // CHECK-NEXT: global\d+ = global\d+;
     at1 = at2;
-    // CHECK-NEXT: global\d+ = __pack_array\(local\d+\);
+    // CHECK-NEXT: global\d+ = __pack\(local\d+\);
     at2 = at;
 
     return 0;
@@ -150,7 +161,7 @@ fn testFieldAccess() -> i32
 
 fn testIndexAccess() -> i32
 {
-    // CHECK: local\d+ = __unpack_array\(global\d+\);
+    // CHECK: local\d+ = __unpack\(global\d+\);
     // CHECK-NEXT: local\d+\[0\] = __unpack\(global\d+\[0\]\);
     // CHECK-NEXT: global\d+\[0\] = global\d+\[0\];
     // CHECK-NEXT: global\d+\[0\] = __pack\(local\d+\[0\]\);
