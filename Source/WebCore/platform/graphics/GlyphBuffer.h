@@ -53,6 +53,7 @@ public:
         m_fonts.clear();
         m_glyphs.clear();
         m_advances.clear();
+        m_totalAdvanceWidth = 0;
         m_origins.clear();
         m_offsetsInString.clear();
     }
@@ -67,6 +68,8 @@ public:
     const GlyphBufferAdvance* advances(unsigned from) const { return m_advances.data() + from; }
     const GlyphBufferOrigin* origins(unsigned from) const { return m_origins.data() + from; }
     const GlyphBufferStringOffset* offsetsInString(unsigned from) const { return m_offsetsInString.data() + from; }
+
+    float totalAdvanceWidth() const { return m_totalAdvanceWidth; }
 
     const Font& fontAt(unsigned index) const
     {
@@ -106,6 +109,7 @@ public:
         m_fonts.append(&font);
         m_glyphs.append(glyph);
         m_advances.append(advance);
+        m_totalAdvanceWidth += WebCore::width(advance);
         m_origins.append(makeGlyphBufferOrigin());
         m_offsetsInString.append(offsetInString);
     }
@@ -114,6 +118,8 @@ public:
     {
         m_fonts.remove(location, length);
         m_glyphs.remove(location, length);
+        for (unsigned i = 0; i < length; ++i)
+            m_totalAdvanceWidth -= WebCore::width(m_advances[location + i]);
         m_advances.remove(location, length);
         m_origins.remove(location, length);
         m_offsetsInString.remove(location, length);
@@ -121,8 +127,10 @@ public:
 
     void deleteGlyphWithoutAffectingSize(unsigned index)
     {
+        m_totalAdvanceWidth -= WebCore::width(m_advances[index]);
         makeGlyphInvisible(index);
         m_advances[index] = makeGlyphBufferAdvance();
+        m_totalAdvanceWidth += WebCore::width(m_advances[index]);
     }
 
     void makeGlyphInvisible(unsigned index)
@@ -160,6 +168,7 @@ public:
         ASSERT(index < size());
         auto& lastAdvance = m_advances[index];
         setWidth(lastAdvance, WebCore::width(lastAdvance) + width);
+        m_totalAdvanceWidth += width;
     }
 
     void expandLastAdvance(GlyphBufferAdvance expansion)
@@ -168,12 +177,15 @@ public:
         GlyphBufferAdvance& lastAdvance = m_advances.last();
         setWidth(lastAdvance, width(lastAdvance) + width(expansion));
         setHeight(lastAdvance, height(lastAdvance) + height(expansion));
+        m_totalAdvanceWidth += width(expansion);
     }
 
     void shrink(unsigned truncationPoint)
     {
         m_fonts.shrink(truncationPoint);
         m_glyphs.shrink(truncationPoint);
+        for (unsigned i = truncationPoint; i < m_advances.size(); ++i)
+            m_totalAdvanceWidth -= WebCore::width(m_advances[i]);
         m_advances.shrink(truncationPoint);
         m_origins.shrink(truncationPoint);
         m_offsetsInString.shrink(truncationPoint);
@@ -216,10 +228,12 @@ public:
                 width(m_initialAdvance) + x(m_origins[0]),
                 height(m_initialAdvance) + y(m_origins[0]));
         }
+        m_totalAdvanceWidth = 0;
         for (unsigned i = 0; i < size(); ++i) {
             m_advances[i] = makeGlyphBufferAdvance(
                 -x(m_origins[i]) + width(m_advances[i]) + (i + 1 < size() ? x(m_origins[i + 1]) : 0),
                 -y(m_origins[i]) + height(m_advances[i]) + (i + 1 < size() ? y(m_origins[i + 1]) : 0));
+            m_totalAdvanceWidth += WebCore::width(m_advances[i]);
             m_origins[i] = makeGlyphBufferOrigin();
         }
     }
@@ -265,6 +279,7 @@ private:
     Vector<GlyphBufferOrigin, 1024> m_origins;
     Vector<GlyphBufferStringOffset, 1024> m_offsetsInString;
     GlyphBufferAdvance m_initialAdvance { makeGlyphBufferAdvance() };
+    float m_totalAdvanceWidth { 0 };
 };
 
 }

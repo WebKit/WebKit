@@ -313,10 +313,7 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
         addGlyphsFromText(glyphBuffer, font, text.characters16(), text.length());
 
     auto initialAdvance = font.applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
-    auto width = 0.f;
-    for (size_t i = 0; i < glyphBuffer.size(); ++i)
-        width += WebCore::width(glyphBuffer.advanceAt(i));
-    width += WebCore::width(initialAdvance);
+    auto width = glyphBuffer.totalAdvanceWidth() + WebCore::width(initialAdvance);
 
     if (cacheEntry)
         *cacheEntry = width;
