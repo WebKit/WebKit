@@ -38,8 +38,6 @@ class FloatQuad;
 float euclidianDistance(const FloatSize&);
 float euclidianDistance(const FloatPoint&, const FloatPoint&);
 
-float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
-
 // Find point where lines through the two pairs of points intersect. Returns false if the lines don't intersect.
 WEBCORE_EXPORT bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection);
 

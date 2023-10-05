@@ -43,17 +43,6 @@ float euclidianDistance(const FloatPoint& p1, const FloatPoint& p2)
     return euclidianDistance(p1 - p2);
 }
 
-float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c)
-{
-    if (p2.x() == p1.x())
-        return std::numeric_limits<float>::infinity();
-
-    // y = mx + c
-    float slope = (p2.y() - p1.y()) / (p2.x() - p1.x());
-    c = p1.y() - slope * p1.x();
-    return slope;
-}
-
 bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection) 
 {
     float pxLength = p2.x() - p1.x();
