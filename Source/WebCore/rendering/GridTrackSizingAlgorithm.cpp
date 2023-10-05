@@ -982,6 +982,7 @@ LayoutUnit GridTrackSizingAlgorithm::baselineOffsetForChild(const RenderBox& chi
     if (!participateInBaselineAlignment(child, baselineAxis))
         return LayoutUnit();
 
+    ASSERT_IMPLIES(baselineAxis == GridAxis::GridColumnAxis, !m_renderGrid->isSubgridRows());
     ItemPosition align = m_renderGrid->selfAlignmentForChild(baselineAxis, child).position();
     const auto& span = m_renderGrid->gridSpanForChild(child, gridDirectionForAxis(baselineAxis));
     auto alignmentContext = GridLayoutFunctions::alignmentContextForBaselineAlignment(span, align);
