@@ -934,7 +934,7 @@ http/wpt/service-workers/mac [ Skip ]
 webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure Pass ]
 webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure Pass ]
 
-#http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
+http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
 http/tests/cookies/document-cookie-after-showModalDialog.html [ Timeout ]
 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Timeout ]
@@ -2636,3 +2636,5 @@ http/tests/inspector/network/resource-timing.html [ Pass Failure ]
 fast/canvas/image-buffer-backend-variants.html [ Skip ]
 
 webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
+
+webkit.org/b/262687 [ Release ] fast/workers/pending-requestAnimationFrame-upon-destruction.html [ Pass Failure ]
