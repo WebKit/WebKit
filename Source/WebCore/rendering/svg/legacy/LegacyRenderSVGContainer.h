@@ -53,6 +53,7 @@ protected:
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
     FloatRect repaintRectInLocalCoordinates() const final { return m_repaintBoundingBox; }
+    FloatRect fastRepaintRectInLocalCoordinates() const final { return repaintRectInLocalCoordinates(); }
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 

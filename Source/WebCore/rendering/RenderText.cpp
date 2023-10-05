@@ -84,16 +84,14 @@ using namespace WTF::Unicode;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderText);
 
 struct SameSizeAsRenderText : public RenderObject {
-    void* pointers[2];
-    uint32_t bitfields : 16;
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateTextSize;
 #endif
-    float widths[2];
-    std::optional<float> minWidth;
-    std::optional<float> maxWidth;
-    std::optional<bool> canUseSimplifiedTextMeasuring;
+    float widths[4];
+    void* pointers[2];
     String text;
+    std::optional<bool> canUseSimplifiedTextMeasuring;
+    uint32_t bitfields : 16;
 };
 
 static_assert(sizeof(RenderText) == sizeof(SameSizeAsRenderText), "RenderText should stay small");
@@ -247,8 +245,8 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
 
 inline RenderText::RenderText(Type type, Node& node, const String& text)
     : RenderObject(type, node)
-    , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
     , m_text(text)
+    , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
 {
     ASSERT(!m_text.isNull());
     setIsText();

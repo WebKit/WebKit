@@ -699,7 +699,7 @@ void GL_APIENTRY GL_CompressedTexImage2D(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CompressedTexSubImage2D(GLenum target,
@@ -744,7 +744,7 @@ void GL_APIENTRY GL_CompressedTexSubImage2D(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CopyTexImage2D(GLenum target,
@@ -3217,7 +3217,7 @@ void GL_APIENTRY GL_TexImage2D(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_TexParameterf(GLenum target, GLenum pname, GLfloat param)
@@ -3371,7 +3371,7 @@ void GL_APIENTRY GL_TexSubImage2D(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_Uniform1f(GLint location, GLfloat v0)

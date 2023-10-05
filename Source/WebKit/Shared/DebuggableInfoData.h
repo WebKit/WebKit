@@ -27,12 +27,6 @@
 
 #include <wtf/text/WTFString.h>
 
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace Inspector {
 enum class DebuggableType : uint8_t;
 }
@@ -47,9 +41,6 @@ struct DebuggableInfoData {
     bool targetIsSimulator { false };
 
     static DebuggableInfoData empty();
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<DebuggableInfoData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

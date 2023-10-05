@@ -186,7 +186,9 @@ $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in
+$(PROJECT_DIR)/Shared/DebuggableInfoData.serialization.in
 $(PROJECT_DIR)/Shared/DisplayListArgumentCoders.serialization.in
+$(PROJECT_DIR)/Shared/EditingRange.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionAlarmParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContentWorldType.serialization.in
@@ -243,6 +245,7 @@ $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebEvent.serialization.in
 $(PROJECT_DIR)/Shared/WebExtensionContextParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebExtensionControllerParameters.serialization.in
+$(PROJECT_DIR)/Shared/WebFoundTextRange.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBindGroupDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.serialization.in

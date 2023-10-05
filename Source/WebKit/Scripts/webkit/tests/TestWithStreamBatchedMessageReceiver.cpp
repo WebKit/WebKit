@@ -40,11 +40,11 @@ namespace WebKit {
 void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::TestWithStreamBatched::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection.connection(), decoder, this, &TestWithStreamBatched::sendString);
+        return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection.protectedConnection(), decoder, this, &TestWithStreamBatched::sendString);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
 #if ENABLE(IPC_TESTING_API)
-    if (connection.connection().ignoreInvalidMessageForTesting())
+    if (connection.protectedConnection()->ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());

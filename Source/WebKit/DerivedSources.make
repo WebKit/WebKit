@@ -500,7 +500,9 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \
 	Shared/BackgroundFetchState.serialization.in \
+	Shared/DebuggableInfoData.serialization.in \
 	Shared/DisplayListArgumentCoders.serialization.in \
+	Shared/EditingRange.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
 	Shared/Extensions/WebExtensionContentWorldType.serialization.in \
@@ -544,6 +546,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WTFArgumentCoders.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebEvent.serialization.in \
+	Shared/WebFoundTextRange.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
 	Shared/WebPageCreationParameters.serialization.in \
 	Shared/WebPopupItem.serialization.in \

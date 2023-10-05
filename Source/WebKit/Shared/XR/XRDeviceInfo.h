@@ -41,7 +41,7 @@ struct XRDeviceInfo {
     XRDeviceIdentifier identifier;
     bool supportsOrientationTracking { false };
     bool supportsStereoRendering { false };
-    PlatformXR::Device::FeatureList features;
+    PlatformXR::Device::FeatureList vrFeatures;
     WebCore::IntSize recommendedResolution { 0, 0 };
 
     void encode(IPC::Encoder&) const;

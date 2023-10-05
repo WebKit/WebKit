@@ -77,25 +77,3 @@ EditingRange EditingRange::fromRange(WebCore::LocalFrame& frame, const std::opti
 }
 
 } // namespace WebKit
-
-namespace IPC {
-
-void ArgumentCoder<WebKit::EditingRange>::encode(Encoder& encoder, const WebKit::EditingRange& editingRange)
-{
-    encoder << editingRange.location;
-    encoder << editingRange.length;
-}
-
-std::optional<WebKit::EditingRange> ArgumentCoder<WebKit::EditingRange>::decode(Decoder& decoder)
-{
-    WebKit::EditingRange editingRange;
-
-    if (!decoder.decode(editingRange.location))
-        return std::nullopt;
-    if (!decoder.decode(editingRange.length))
-        return std::nullopt;
-
-    return editingRange;
-}
-
-} // namespace IPC

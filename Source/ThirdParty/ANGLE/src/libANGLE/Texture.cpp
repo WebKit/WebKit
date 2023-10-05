@@ -123,6 +123,7 @@ TextureState::TextureState(TextureType type)
       mBaseLevel(0),
       mMaxLevel(kInitialMaxLevel),
       mDepthStencilTextureMode(GL_DEPTH_COMPONENT),
+      mIsInternalIncompleteTexture(false),
       mHasBeenBoundAsImage(false),
       mHasBeenBoundAsAttachment(false),
       mImmutableFormat(false),

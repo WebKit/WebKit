@@ -154,6 +154,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::ForceContinuousRefreshOnSharedPresent, "forceContinuousRefreshOnSharedPresent"},
     {Feature::ForceD16TexFilter, "forceD16TexFilter"},
     {Feature::ForceD24S8AsUnsupported, "forceD24S8AsUnsupported"},
+    {Feature::ForceDelayedDeviceCreationForTesting, "forceDelayedDeviceCreationForTesting"},
     {Feature::ForceDepthAttachmentInitOnClear, "forceDepthAttachmentInitOnClear"},
     {Feature::ForceDisableFullScreenExclusive, "forceDisableFullScreenExclusive"},
     {Feature::ForceFallbackFormat, "forceFallbackFormat"},

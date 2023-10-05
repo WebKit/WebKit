@@ -446,6 +446,14 @@
             "issue": "https://anglebug.com/6574"
         },
         {
+            "name": "force_delayed_device_creation_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Artificially defer device creation to after surface is enabled for testing multi-queue scenarios"
+            ],
+            "issue": "https://anglebug.com/8300"
+        },
+        {
             "name": "supports_shader_float16",
             "category": "Features",
             "description": [

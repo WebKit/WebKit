@@ -369,7 +369,9 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/BackgroundFetchState.serialization.in
     Shared/CallbackID.serialization.in
+    Shared/DebuggableInfoData.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
+    Shared/EditingRange.serialization.in
     Shared/EditorState.serialization.in
     Shared/FileSystemSyncAccessHandleInfo.serialization.in
     Shared/FocusedElementInformation.serialization.in
@@ -398,6 +400,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in
+    Shared/WebFoundTextRange.serialization.in
     Shared/WebHitTestResultData.serialization.in
     Shared/WebPageCreationParameters.serialization.in
     Shared/WebPopupItem.serialization.in

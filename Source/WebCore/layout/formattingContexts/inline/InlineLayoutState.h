@@ -44,6 +44,9 @@ public:
     const BlockLayoutState& parentBlockLayoutState() const { return m_parentBlockLayoutState; }
     BlockLayoutState& parentBlockLayoutState() { return m_parentBlockLayoutState; }
 
+    const PlacedFloats& placedFloats() const { return m_parentBlockLayoutState.placedFloats(); }
+    PlacedFloats& placedFloats() { return m_parentBlockLayoutState.placedFloats(); }
+
     void setAvailableLineWidthOverride(AvailableLineWidthOverride availableLineWidthOverride) { m_availableLineWidthOverride = availableLineWidthOverride; }
     const AvailableLineWidthOverride& availableLineWidthOverride() const { return m_availableLineWidthOverride; }
 

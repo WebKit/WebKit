@@ -854,7 +854,8 @@ class BufferHelper : public ReadWriteResource
     // normal usage we just use the actual allocation size and it is good enough. But when
     // robustResourceInit is enabled, mBufferWithUserSize is created to match the exact user
     // size. Thus when user size changes, we must clear and recreate this mBufferWithUserSize.
-    void onBufferUserSizeChange(RendererVk *renderer);
+    // Returns true if mBufferWithUserSize is released.
+    bool onBufferUserSizeChange(RendererVk *renderer);
 
     void initializeBarrierTracker(Context *context);
 
@@ -1824,7 +1825,8 @@ enum class UpdateSource
 
 enum class ApplyImageUpdate
 {
-    ImmediatelyIfPossible,
+    ImmediatelyInUnlockedTailCall,
+    Immediately,
     Defer,
 };
 
@@ -2675,7 +2677,8 @@ class ImageHelper final : public Resource, public angle::Subject
                                         uint32_t baseArrayLayer,
                                         uint32_t layerCount);
 
-    angle::Result updateSubresourceOnHost(ContextVk *contextVk,
+    angle::Result updateSubresourceOnHost(Context *context,
+                                          ApplyImageUpdate applyUpdate,
                                           const gl::ImageIndex &index,
                                           const gl::Extents &glExtents,
                                           const gl::Offset &offset,

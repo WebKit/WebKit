@@ -253,6 +253,26 @@
       },
     },
 
+    'angle_deqp_gles31_multisample_vulkan_gtests': {
+      'angle_deqp_gles31_multisample_vulkan_tests': {
+        'args': [
+          '--use-angle=vulkan',
+        ],
+        'android_args': [
+          '-v',
+          '--shard-timeout=500',
+        ],
+        'linux_args': [
+          '--no-xvfb',
+        ],
+        'merge': {
+          'script': '//scripts/angle_deqp_test_merge.py',
+        },
+        'test': 'angle_deqp_gles31_multisample_tests',
+        'use_isolated_scripts_api': True,
+      },
+    },
+
     'angle_deqp_gles31_vulkan_gtests': {
       'angle_deqp_gles31_vulkan_tests': {
         'args': [
@@ -426,6 +446,26 @@
           'shards': 2,
         },
         'test': 'angle_deqp_gles3_tests',
+        'use_isolated_scripts_api': True,
+      },
+    },
+
+    'angle_deqp_gles3_multisample_vulkan_gtests': {
+      'angle_deqp_gles3_multisample_vulkan_tests': {
+        'args': [
+          '--use-angle=vulkan',
+        ],
+        'android_args': [
+          '-v',
+          '--shard-timeout=500',
+        ],
+        'linux_args': [
+          '--no-xvfb',
+        ],
+        'merge': {
+          'script': '//scripts/angle_deqp_test_merge.py',
+        },
+        'test': 'angle_deqp_gles3_multisample_tests',
         'use_isolated_scripts_api': True,
       },
     },
@@ -1014,6 +1054,15 @@
       },
     },
 
+     'swangle_deqp_gles31_multisample_tests': {
+      'angle_deqp_gles31_multisample_tests': {
+        'args': [
+          '--use-angle=swiftshader',
+        ],
+        'use_isolated_scripts_api': True
+      }
+    },
+
     'swangle_deqp_gles31_rotate180_tests': {
       'angle_deqp_gles31_rotate180_tests': {
         'args': [
@@ -1063,6 +1112,15 @@
         },
         'use_isolated_scripts_api': True,
       },
+    },
+
+    'swangle_deqp_gles3_multisample_tests': {
+      'angle_deqp_gles3_multisample_tests': {
+        'args': [
+          '--use-angle=swiftshader',
+        ],
+        'use_isolated_scripts_api': True
+      }
     },
 
     'swangle_deqp_gles3_rotate180_tests': {
@@ -1242,8 +1300,10 @@
       'angle_deqp_egl_vulkan_gtests',
       'angle_deqp_gles2_gles_gtests',
       'angle_deqp_gles2_vulkan_gtests',
+      'angle_deqp_gles31_multisample_vulkan_gtests',
       'angle_deqp_gles31_vulkan_gtests',
       'angle_deqp_gles3_gles_gtests',
+      'angle_deqp_gles3_multisample_vulkan_gtests',
       'angle_deqp_gles3_vulkan_gtests',
       'angle_deqp_khr_gles2_vulkan_gtests',
       'angle_deqp_khr_gles31_vulkan_gtests',
@@ -1260,7 +1320,9 @@
     'android_vulkan_gtests': [
       'angle_deqp_egl_vulkan_gtests',
       'angle_deqp_gles2_vulkan_gtests',
+      'angle_deqp_gles31_multisample_vulkan_gtests',
       'angle_deqp_gles31_vulkan_gtests',
+      'angle_deqp_gles3_multisample_vulkan_gtests',
       'angle_deqp_gles3_vulkan_gtests',
       'angle_deqp_khr_gles2_vulkan_gtests',
       'angle_deqp_khr_gles31_vulkan_gtests',
@@ -1307,11 +1369,13 @@
       'angle_deqp_gles2_gl_gtests',
       'angle_deqp_gles2_vulkan_gtests',
       'angle_deqp_gles31_gl_gtests',
+      'angle_deqp_gles31_multisample_vulkan_gtests',
       'angle_deqp_gles31_vulkan_gtests',
       'angle_deqp_gles31_vulkan_rotate180_gtests',
       'angle_deqp_gles31_vulkan_rotate270_gtests',
       'angle_deqp_gles31_vulkan_rotate90_gtests',
       'angle_deqp_gles3_gl_gtests',
+      'angle_deqp_gles3_multisample_vulkan_gtests',
       'angle_deqp_gles3_vulkan_gtests',
       'angle_deqp_gles3_vulkan_rotate180_gtests',
       'angle_deqp_gles3_vulkan_rotate270_gtests',
@@ -1346,10 +1410,12 @@
       'swangle_deqp_egl_tests',
       'swangle_deqp_gl46_tests',
       'swangle_deqp_gles2_tests',
+      'swangle_deqp_gles31_multisample_tests',
       'swangle_deqp_gles31_rotate180_tests',
       'swangle_deqp_gles31_rotate270_tests',
       'swangle_deqp_gles31_rotate90_tests',
       'swangle_deqp_gles31_tests',
+      'swangle_deqp_gles3_multisample_tests',
       'swangle_deqp_gles3_rotate180_tests',
       'swangle_deqp_gles3_rotate270_tests',
       'swangle_deqp_gles3_rotate90_tests',
@@ -1422,12 +1488,14 @@
       'angle_deqp_gles2_vulkan_gtests',
       'angle_deqp_gles31_d3d11_gtests',
       'angle_deqp_gles31_gl_gtests',
+      'angle_deqp_gles31_multisample_vulkan_gtests',
       'angle_deqp_gles31_vulkan_gtests',
       'angle_deqp_gles31_vulkan_rotate180_gtests',
       'angle_deqp_gles31_vulkan_rotate270_gtests',
       'angle_deqp_gles31_vulkan_rotate90_gtests',
       'angle_deqp_gles3_d3d11_gtests',
       'angle_deqp_gles3_gl_gtests',
+      'angle_deqp_gles3_multisample_vulkan_gtests',
       'angle_deqp_gles3_vulkan_gtests',
       'angle_deqp_gles3_vulkan_rotate180_gtests',
       'angle_deqp_gles3_vulkan_rotate270_gtests',

@@ -3,8 +3,9 @@
 
 var<private> x: i32;
 var<private> y: i32;
+override z = 42;
 
-// CHECK: int function\d\(int global\d\)
+// CHECK: int function\d\(thread int& global\d\)
 fn f() -> i32
 {
     //CHECK: global\d
@@ -16,17 +17,18 @@ fn f() -> i32
 fn g() -> i32
 {
     let y = 42;
-    return 0;
+    return y;
 }
 
-// CHECK: int function\d\(int global\d\)
+// CHECK: int function\d\(thread int& global\d, int global\d\)
 fn h() -> i32
 {
     _ = y;
+    _ = z;
     return 0;
 }
 
-// CHECK: int function\d\(int global\d\)
+// CHECK: int function\d\(thread int& global\d\)
 fn i() -> i32
 {
     // CHECK: function\d\(global\d\)
@@ -34,7 +36,7 @@ fn i() -> i32
     return 0;
 }
 
-// CHECK: float function\d\(float parameter\d, int global\d\)
+// CHECK: float function\d\(float parameter\d, thread int& global\d\)
 fn j(x: f32) -> f32
 {
     // CHECK: function\d\(global\d\)
@@ -55,7 +57,7 @@ fn main()
     // CHECK: function\d\(\)
     _ = g();
 
-    // CHECK: function\d\(global\d\)
+    // CHECK: function\d\(global\d, global\d\)
     _ = h();
 
     // CHECK: function\d\(global\d\)

@@ -393,8 +393,10 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         if (!result) {
             if (variable.flavor() == AST::VariableFlavor::Const)
                 result = initializerType;
-            else
+            else {
                 result = concretize(initializerType, m_types);
+                variable.maybeInitializer()->m_inferredType = result;
+            }
         } else if (unify(result, initializerType))
             variable.maybeInitializer()->m_inferredType = result;
         else

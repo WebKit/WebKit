@@ -363,7 +363,7 @@ void GL_APIENTRY GL_{name}({params})
     {{
         {constext_lost_error_generator}
     }}
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    {epilog}
 }}
 """
 
@@ -3071,12 +3071,22 @@ def get_unlocked_tail_call(api, cmd_name):
     # - eglClientWaitSyncKHR, eglClientWaitSync, glClientWaitSync -> May wait on
     #   fence in tail call
     #
-    if cmd_name in [
+    # - glTexImage2D, glTexImage3D, glTexSubImage2D, glTexSubImage3D,
+    #   glCompressedTexImage2D, glCompressedTexImage3D,
+    #   glCompressedTexSubImage2D, glCompressedTexSubImage3D -> May perform the
+    #   data upload on the host in  tail call
+    #
+    if (cmd_name in [
             'eglDestroySurface', 'eglMakeCurrent', 'eglReleaseThread', 'eglCreateWindowSurface',
             'eglCreatePlatformWindowSurface', 'eglCreatePlatformWindowSurfaceEXT',
             'eglPrepareSwapBuffersANGLE', 'eglSwapBuffers', 'eglSwapBuffersWithDamageKHR',
             'eglSwapBuffersWithFrameTokenANGLE'
-    ]:
+    ] or cmd_name.startswith('glTexImage2D') or cmd_name.startswith('glTexImage3D') or
+            cmd_name.startswith('glTexSubImage2D') or cmd_name.startswith('glTexSubImage3D') or
+            cmd_name.startswith('glCompressedTexImage2D') or
+            cmd_name.startswith('glCompressedTexImage3D') or
+            cmd_name.startswith('glCompressedTexSubImage2D') or
+            cmd_name.startswith('glCompressedTexSubImage3D')):
         return 'egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);'
 
     if cmd_name in ['eglClientWaitSyncKHR', 'eglClientWaitSync', 'glClientWaitSync']:

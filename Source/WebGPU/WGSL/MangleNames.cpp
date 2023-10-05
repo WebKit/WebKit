@@ -78,6 +78,7 @@ public:
     void run();
 
     void visit(AST::Function&) override;
+    void visit(AST::Parameter&) override;
     void visit(AST::VariableStatement&) override;
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
@@ -124,19 +125,13 @@ void NameManglerVisitor::run()
 void NameManglerVisitor::visit(AST::Function& function)
 {
     ContextScope functionScope(this);
+    AST::Visitor::visit(function);
+}
 
-    for (auto& parameter : function.parameters()) {
-        AST::Visitor::visit(parameter.typeName());
-        introduceVariable(parameter.name(), MangledName::Parameter);
-    }
-
-    // It's important that we call the base visitor here directly, otherwise
-    // our overwritten visitor will introduce a new ContextScope for the compound
-    // statement, which would allow shadowing the function's parameters
-    AST::Visitor::visit(function.body());
-
-    if (function.maybeReturnType())
-        AST::Visitor::visit(*function.maybeReturnType());
+void NameManglerVisitor::visit(AST::Parameter& parameter)
+{
+    AST::Visitor::visit(parameter.typeName());
+    introduceVariable(parameter.name(), MangledName::Parameter);
 }
 
 void NameManglerVisitor::visit(AST::Structure& structure)

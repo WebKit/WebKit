@@ -12,7 +12,7 @@ q="-q"
 
 # Check for modified files in WebKit ignoring untracked file except in ANGLE dir
 check_uncommitted_changes() {
-    modified_files=$(git status --porcelain | grep -e "^[^?]" -e "^?? Source/ThirdParty/ANGLE")
+    modified_files=$(git status --porcelain | grep -e "^[^?]" -e "^?? Source/ThirdParty/ANGLE") || true
     if [ -n "$modified_files" ]; then
         echo "WebKit has uncommitted or untracked changes. Commit, stash, or remove them:"
         echo "$modified_files"

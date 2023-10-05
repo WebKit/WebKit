@@ -1,0 +1,8 @@
+
+PASS setParameters with degradationPreference set should succeed on video transceiver
+PASS setParameters with degradationPreference unset should succeed on video transceiver
+PASS setParameters with invalid degradationPreference should throw TypeError on video transceiver
+PASS setParameters with degradationPreference set should succeed on audio transceiver
+PASS setParameters with degradationPreference unset should succeed on audio transceiver
+PASS setParameters with invalid degradationPreference should throw TypeError on audio transceiver
+

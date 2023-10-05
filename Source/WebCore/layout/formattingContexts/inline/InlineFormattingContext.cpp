@@ -62,6 +62,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
 InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)
     : FormattingContext(formattingContextRoot, layoutState)
+    , m_floatingContext(formattingContextRoot, layoutState, parentBlockLayoutState.placedFloats())
     , m_inlineContentCache(layoutState.inlineContentCache(formattingContextRoot))
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
@@ -72,7 +73,7 @@ InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingCon
 
 InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage)
 {
-    auto& placedFloats = this->placedFloats();
+    auto& placedFloats = inlineLayoutState().placedFloats();
     if (!root().hasInFlowChild() && !root().hasOutOfFlowChild()) {
         // Float only content does not support partial layout.
         ASSERT(!lineDamage);
@@ -176,7 +177,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         return layoutResult;
     }
 
-    auto floatingContext = FloatingContext { *this, placedFloats() };
+    auto floatingContext = this->floatingContext();
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto leadingInlineItemPosition = needsLayoutRange.start;
@@ -217,8 +218,8 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
     ASSERT(!root().hasInFlowChild());
 
     auto& inlineContentCache = this->inlineContentCache();
-    auto& placedFloats = this->placedFloats();
-    auto floatingContext = FloatingContext { *this, placedFloats };
+    auto floatingContext = this->floatingContext();
+    auto& placedFloats = inlineLayoutState().placedFloats();
 
     InlineItemsBuilder { inlineContentCache, root() }.build({ });
 
@@ -339,7 +340,7 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
         inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
         return false;
     }
-    if (!placedFloats().isEmpty()) {
+    if (!inlineLayoutState().placedFloats().isEmpty()) {
         inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
         return false;
     }

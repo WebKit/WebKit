@@ -134,6 +134,7 @@ public:
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) const override;
     
     FloatRect repaintRectInLocalCoordinates() const override { return borderBoxRect(); }
+    FloatRect fastRepaintRectInLocalCoordinates() const override { return borderBoxRect(); }
     FloatRect objectBoundingBox() const override { return borderBoxRect(); }
 
     // Note these functions are not equivalent of childrenOfType<RenderBox>
@@ -448,7 +449,7 @@ public:
     inline LayoutUnit availableHeight() const;
 
     WEBCORE_EXPORT virtual int verticalScrollbarWidth() const;
-    WEBCORE_EXPORT int horizontalScrollbarHeight() const;
+    WEBCORE_EXPORT virtual int horizontalScrollbarHeight() const;
     int intrinsicScrollbarLogicalWidth() const;
     inline int scrollbarLogicalWidth() const;
     inline int scrollbarLogicalHeight() const;

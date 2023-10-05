@@ -43,7 +43,7 @@ class Box;
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
-    FloatingContext(const FormattingContext&, const PlacedFloats&);
+    FloatingContext(const ElementBox& formattingContextRoot, const LayoutState&, const PlacedFloats&);
 
     const PlacedFloats& placedFloats() const { return m_placedFloats; }
 
@@ -80,8 +80,9 @@ private:
     bool isFloatingCandidateLeftPositionedInPlacedFloats(const Box&) const;
     Clear clearInPlacedFloats(const Box&) const;
 
-    const FormattingContext& formattingContext() const { return m_formattingContext; }
-    const ElementBox& root() const { return m_formattingContext.root(); }
+    const ElementBox& root() const { return m_formattingContextRoot; }
+    // FIXME: Turn this into an actual geometry cache.
+    const LayoutState& containingBlockGeometries() const { return m_layoutState; }
 
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
@@ -90,7 +91,8 @@ private:
     LayoutPoint mapTopLeftToPlacedFloatsRoot(const Box&, LayoutPoint borderBoxTopLeft) const;
     Point mapPointFromFormattingContextRootToPlacedFloatsRoot(Point) const;
 
-    const FormattingContext& m_formattingContext;
+    CheckedRef<const ElementBox> m_formattingContextRoot;
+    const LayoutState& m_layoutState;
     const PlacedFloats& m_placedFloats;
 };
 

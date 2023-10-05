@@ -50,7 +50,7 @@ promise_test((test) => {
         assert_true(!!senderParameters.transactionId, "sender transaction");
         assert_array_equals(senderParameters.codecs, [], "sender codecs");
         assert_array_equals(senderParameters.headerExtensions, [], "sender header extensions");
-        assert_equals(senderParameters.degradationPreference, "balanced", "sender degradation");
+        assert_equals(senderParameters.degradationPreference, undefined, "sender degradation");
     });
 }, "Sender and receiver parameters");
         </script>

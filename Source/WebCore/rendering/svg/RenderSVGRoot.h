@@ -68,6 +68,7 @@ public:
     FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
     FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
     FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    FloatRect fastRepaintRectInLocalCoordinates() const final { return repaintRectInLocalCoordinates(); }
 
     LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
 

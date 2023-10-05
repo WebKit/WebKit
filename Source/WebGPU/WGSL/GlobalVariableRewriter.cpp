@@ -54,6 +54,7 @@ public:
 
     void visit(AST::Function&) override;
     void visit(AST::Variable&) override;
+    void visit(AST::Parameter&) override;
 
     void visit(AST::CompoundStatement&) override;
     void visit(AST::AssignmentStatement&) override;
@@ -109,7 +110,9 @@ private:
     void packResource(AST::Variable&);
     void packArrayResource(AST::Variable&, const Types::Array*);
     void packStructResource(AST::Variable&, const Types::Struct*);
+    const Type* packType(const Type*);
     const Type* packStructType(const Types::Struct*);
+    const Type* packArrayType(const Types::Array*);
     void updateReference(AST::Variable&, AST::Expression&);
 
     enum Packing : uint8_t {
@@ -165,10 +168,25 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
             auto it = m_globals.find(read);
             RELEASE_ASSERT(it != m_globals.end());
             auto& global = it->value;
+            AST::Expression* type;
+            if (global.declaration->flavor() == AST::VariableFlavor::Var)
+                type = global.declaration->maybeReferenceType();
+            else {
+                ASSERT(global.declaration->flavor() == AST::VariableFlavor::Override);
+                type = global.declaration->maybeTypeName();
+                if (!type) {
+                    auto* storeType = global.declaration->storeType();
+                    auto& typeExpression = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(storeType->toString()));
+                    typeExpression.m_inferredType = storeType;
+                    type = &typeExpression;
+                }
+            }
+            ASSERT(type);
+
             m_callGraph.ast().append(callee.target->parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
                 SourceSpan::empty(),
                 AST::Identifier::make(read),
-                *global.declaration->maybeReferenceType(),
+                *type,
                 AST::Attribute::List { },
                 AST::ParameterRole::UserDefined
             ));
@@ -213,11 +231,14 @@ void RewriteGlobalVariables::visit(AST::Function& function)
     m_reads = WTFMove(reads);
     m_defs.clear();
 
-    for (auto& parameter : function.parameters())
-        def(parameter.name(), nullptr);
+    def(function.name(), nullptr);
+    AST::Visitor::visit(function);
+}
 
-    // FIXME: detect when we shadow a global that a callee needs
-    visit(function.body());
+void RewriteGlobalVariables::visit(AST::Parameter& parameter)
+{
+    def(parameter.name(), nullptr);
+    AST::Visitor::visit(parameter);
 }
 
 void RewriteGlobalVariables::visit(AST::Variable& variable)
@@ -271,10 +292,10 @@ auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expr
             operation = packing == Packing::Packed ? "__unpack"_s : "__pack"_s;
         else if (std::holds_alternative<Types::Array>(*type)) {
             if (packing == Packing::Packed) {
-                operation = "__unpack_array"_s;
+                operation = "__unpack"_s;
                 m_callGraph.ast().setUsesUnpackArray();
             } else {
-                operation = "__pack_array"_s;
+                operation = "__pack"_s;
                 m_callGraph.ast().setUsesPackArray();
             }
         } else {
@@ -494,11 +515,11 @@ void RewriteGlobalVariables::packStructResource(AST::Variable& global, const Typ
 
 void RewriteGlobalVariables::packArrayResource(AST::Variable& global, const Types::Array* arrayType)
 {
-    auto* structType = std::get_if<Types::Struct>(arrayType->element);
-    if (!structType)
+    const Type* packedArrayType = packArrayType(arrayType);
+    if (!packedArrayType)
         return;
 
-    const Type* packedStructType = packStructType(structType);
+    const Type* packedStructType = std::get<Types::Array>(*packedArrayType).element;
     auto& packedType = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
         AST::Identifier::make(std::get<Types::Struct>(*packedStructType).structure.name().id())
@@ -511,7 +532,7 @@ void RewriteGlobalVariables::packArrayResource(AST::Variable& global, const Type
         &packedType,
         arrayTypeName.maybeElementCount()
     );
-    packedArrayTypeName.m_inferredType = m_callGraph.ast().types().arrayType(packedStructType, arrayType->size);
+    packedArrayTypeName.m_inferredType = packedArrayType;
 
     m_callGraph.ast().replace(arrayTypeName, packedArrayTypeName);
     updateReference(global, packedArrayTypeName);
@@ -537,15 +558,31 @@ void RewriteGlobalVariables::updateReference(AST::Variable& global, AST::Express
     m_callGraph.ast().replace(reference, packedTypeReference);
 }
 
+const Type* RewriteGlobalVariables::packType(const Type* type)
+{
+    if (auto* structType = std::get_if<Types::Struct>(type))
+        return packStructType(structType);
+    if (auto* arrayType = std::get_if<Types::Array>(type))
+        return packArrayType(arrayType);
+    return nullptr;
+}
+
 const Type* RewriteGlobalVariables::packStructType(const Types::Struct* structType)
 {
     if (structType->structure.role() == AST::StructureRole::UserDefinedResource)
         return m_packedStructTypes.get(structType);
 
+    m_callGraph.ast().setUsesPackedStructs();
+
     ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
     m_callGraph.ast().replace(&structType->structure.role(), AST::StructureRole::UserDefinedResource);
 
     String packedStructName = makeString("__", structType->structure.name(), "_Packed");
+
+    // Ensure we pack nested structs
+    for (auto& member : structType->structure.members())
+        packType(member.type().inferredType());
+
     auto& packedStruct = m_callGraph.ast().astBuilder().construct<AST::Structure>(
         SourceSpan::empty(),
         AST::Identifier::make(packedStructName),
@@ -558,6 +595,18 @@ const Type* RewriteGlobalVariables::packStructType(const Types::Struct* structTy
     const Type* packedStructType = m_callGraph.ast().types().structType(packedStruct);
     m_packedStructTypes.add(structType, packedStructType);
     return packedStructType;
+}
+
+const Type* RewriteGlobalVariables::packArrayType(const Types::Array* arrayType)
+{
+    auto* structType = std::get_if<Types::Struct>(arrayType->element);
+    if (!structType)
+        return nullptr;
+
+    m_callGraph.ast().setUsesUnpackArray();
+    m_callGraph.ast().setUsesPackArray();
+    const Type* packedStructType = packStructType(structType);
+    return m_callGraph.ast().types().arrayType(packedStructType, arrayType->size);
 }
 
 void RewriteGlobalVariables::visitEntryPoint(AST::Function& function, AST::StageAttribute::Stage stage, PipelineLayout& pipelineLayout)
@@ -843,7 +892,7 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
         }
     }
 
-    m_entryPointInformation->specializationConstants.add(originalName, Reflection::SpecializationConstant { variable.name(), constantType });
+    m_entryPointInformation->specializationConstants.add(originalName, Reflection::SpecializationConstant { variable.name(), constantType, variable.maybeInitializer() });
 }
 
 void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)

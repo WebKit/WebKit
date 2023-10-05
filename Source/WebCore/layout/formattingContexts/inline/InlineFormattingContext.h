@@ -65,12 +65,11 @@ public:
 
     const InlineFormattingUtils& formattingUtils() const { return m_inlineFormattingUtils; }
     const InlineQuirks& quirks() const { return m_inlineQuirks; }
+    const FloatingContext& floatingContext() const { return m_floatingContext; }
+
     // FIXME: This should just be "layout state" (pending on renaming LayoutState).
     InlineLayoutState& inlineLayoutState() { return m_inlineLayoutState; }
     const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
-
-    PlacedFloats& placedFloats() { return inlineLayoutState().parentBlockLayoutState().placedFloats(); }
-    const PlacedFloats& placedFloats() const { return inlineLayoutState().parentBlockLayoutState().placedFloats(); }
 
 private:
     InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
@@ -87,6 +86,7 @@ private:
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 
 private:
+    FloatingContext m_floatingContext;
     InlineContentCache& m_inlineContentCache;
     const InlineFormattingUtils m_inlineFormattingUtils;
     const InlineQuirks m_inlineQuirks;

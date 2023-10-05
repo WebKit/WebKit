@@ -423,6 +423,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "https://anglebug.com/6574"
     };
 
+    FeatureInfo forceDelayedDeviceCreationForTesting = {
+        "forceDelayedDeviceCreationForTesting",
+        FeatureCategory::VulkanWorkarounds,
+        "Artificially defer device creation to after surface is enabled for testing multi-queue scenarios",
+        &members, "https://anglebug.com/8300"
+    };
+
     FeatureInfo supportsShaderFloat16 = {
         "supportsShaderFloat16",
         FeatureCategory::VulkanFeatures,

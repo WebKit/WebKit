@@ -5938,7 +5938,8 @@ TEST_P(FramebufferExtensionsTest, ColorBufferFloatRgba)
 
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,
                                ES2_D3D9().enable(Feature::AddMockTextureNoRenderTarget),
-                               ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget));
+                               ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget),
+                               ES2_VULKAN().enable(Feature::ForceDelayedDeviceCreationForTesting));
 
 ANGLE_INSTANTIATE_TEST_ES2(FramebufferTest);
 ANGLE_INSTANTIATE_TEST_ES2(FramebufferExtensionsTest);
@@ -5955,6 +5956,8 @@ ANGLE_INSTANTIATE_TEST(FramebufferTest_ES3Metal,
                        ES3_METAL().enable(Feature::LimitMaxColorTargetBitsForTesting));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferTest_ES31);
-ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferTest_ES31,
-                                ES31_VULKAN().disable(Feature::SupportsImagelessFramebuffer));
+ANGLE_INSTANTIATE_TEST_ES31_AND(
+    FramebufferTest_ES31,
+    ES31_VULKAN().disable(Feature::SupportsImagelessFramebuffer),
+    ES31_VULKAN().enable(Feature::ForceDelayedDeviceCreationForTesting));
 ANGLE_INSTANTIATE_TEST_ES3(FramebufferTestWithFormatFallback);

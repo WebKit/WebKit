@@ -38,9 +38,6 @@ struct WebFoundTextRange {
     uint64_t order { 0 };
 
     bool operator==(const WebFoundTextRange& other) const;
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebFoundTextRange> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

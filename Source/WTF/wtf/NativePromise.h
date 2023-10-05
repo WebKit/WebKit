@@ -30,6 +30,7 @@
 #if ASSERT_ENABLED
 #include <atomic>
 #endif
+#include <functional>
 #include <type_traits>
 #include <utility>
 #include <wtf/Assertions.h>
@@ -100,7 +101,7 @@ namespace WTF {
  *
  * By disconnecting the NativePromiseRequest (via NativePromiseRequest::disconnect(), the then()/whenSettled() callbacks will not be run.
  *
- * The object given to resolve, reject or resolveOrReject must have a CrossThreadCopier specialisation as needed.
+ * The object given to resolve, reject or settle must have a CrossThreadCopier specialisation as needed.
  * The type of this object may not be identical to ResolveValueType or RejectValueType as the methods allow for implicit conversion.
  *
  * Examples:
@@ -354,11 +355,11 @@ public:
         return p;
     }
 
-    template<typename ResultType_>
-    static Ref<NativePromise> createAndResolveOrReject(ResultType_&& result, const Logger::LogSiteIdentifier& site = DEFAULT_LOGSITEIDENTIFIER)
+    template<typename SettleValueType>
+    static Ref<NativePromise> createAndSettle(SettleValueType&& result, const Logger::LogSiteIdentifier& site = DEFAULT_LOGSITEIDENTIFIER)
     {
         auto p = adoptRef(*new NativePromise(site));
-        p->resolveOrReject(std::forward<ResultType_>(result), site);
+        p->settle(std::forward<SettleValueType>(result), site);
         return p;
     }
 
@@ -405,17 +406,17 @@ private:
         dispatchAll(lock);
     }
 
-    template<typename ResolveOrRejectValue_>
-    void resolveOrReject(ResolveOrRejectValue_&& result, const Logger::LogSiteIdentifier& site)
+    template<typename SettleValueType>
+    void settle(SettleValueType&& result, const Logger::LogSiteIdentifier& site)
     {
-        static_assert(std::is_convertible_v<ResolveOrRejectValue_, Result>, "resolveOrReject() argument must be implicitly convertible to NativePromise's Result");
+        static_assert(std::is_convertible_v<SettleValueType, Result>, "settle() argument must be implicitly convertible to NativePromise's Result");
         Locker lock { m_lock };
         ASSERT(isNothing());
-        PROMISE_LOG(site, " resolveOrRejecting ", *this);
+        PROMISE_LOG(site, " settling ", *this);
         if constexpr (WithCrossThreadCopy || WithAutomaticCrossThreadCopy)
-            m_result = crossThreadCopy(std::forward<ResolveOrRejectValue_>(result));
+            m_result = crossThreadCopy(std::forward<SettleValueType>(result));
         else
-            m_result = std::forward<ResolveOrRejectValue_>(result);
+            m_result = std::forward<SettleValueType>(result);
         dispatchAll(lock);
     }
 
@@ -649,7 +650,7 @@ private:
 
         ThenCallback(ManagedSerialFunctionDispatcher&& targetQueue, CallBackType&& function, const Logger::LogSiteIdentifier& callSite)
             : ThenCallbackBase(WTFMove(targetQueue), callSite)
-            , m_resolveOrRejectFunction(WTFMove(function))
+            , m_settleFunction(WTFMove(function))
         {
         }
 
@@ -657,15 +658,15 @@ private:
         {
             assertIsCurrent(*ThenCallbackBase::m_targetQueue);
             ThenCallbackBase::disconnect();
-            m_resolveOrRejectFunction = nullptr;
+            m_settleFunction = nullptr;
         }
 
         void processResult(Result& result) override
         {
             assertIsCurrent(*ThenCallbackBase::m_targetQueue);
-            ASSERT(m_resolveOrRejectFunction);
+            ASSERT(m_settleFunction);
             if constexpr (IsChaining) {
-                auto p = m_resolveOrRejectFunction(maybeMove(result));
+                auto p = m_settleFunction(maybeMove(result));
                 std::unique_ptr<typename ReturnPromiseType::Producer> completionProducer;
                 {
                     Locker lock { m_lock };
@@ -674,9 +675,9 @@ private:
                 if (completionProducer)
                     p->chainTo(WTFMove(*completionProducer), { "<chained completion promise>", nullptr });
             } else
-                m_resolveOrRejectFunction(maybeMove(result));
+                m_settleFunction(maybeMove(result));
 
-            m_resolveOrRejectFunction = nullptr;
+            m_settleFunction = nullptr;
         }
 
         void setCompletionPromise(std::unique_ptr<typename ReturnPromiseType::Producer>&& completionProducer)
@@ -701,7 +702,7 @@ private:
         NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, Lock, std::monostate> m_lock;
         NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, std::unique_ptr<typename ReturnPromiseType::Producer>, std::monostate> m_completionProducer WTF_GUARDED_BY_LOCK(m_lock);
     private:
-        CallBackType m_resolveOrRejectFunction WTF_GUARDED_BY_CAPABILITY(*ThenCallbackBase::m_targetQueue);
+        CallBackType m_settleFunction WTF_GUARDED_BY_CAPABILITY(*ThenCallbackBase::m_targetQueue);
     };
 
     void maybeSettle(Ref<ThenCallbackBase>&& thenCallback, const Logger::LogSiteIdentifier& callSite)
@@ -779,16 +780,16 @@ private:
         }
 
         // Allow calling whenSettled() again by converting the ThenCommand to Ref<NativePromise>
-        template<class DispatcherType, typename ResolveRejectFunction>
-        auto whenSettled(DispatcherType& targetQueue, ResolveRejectFunction&& resolveRejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+        template<class DispatcherType, typename SettleFunction>
+        auto whenSettled(DispatcherType& targetQueue, SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
         {
-            return static_cast<Ref<PromiseType>>(*this)->whenSettled(targetQueue, std::forward<ResolveRejectFunction>(resolveRejectFunction), callSite);
+            return static_cast<Ref<PromiseType>>(*this)->whenSettled(targetQueue, std::forward<SettleFunction>(settleFunction), callSite);
         }
 
-        template<class DispatcherType, typename ThisType, typename ResolveOrRejectMethod>
-        auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, ResolveOrRejectMethod resolveOrRejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+        template<class DispatcherType, typename ThisType, typename SettleMethod>
+        auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
         {
-            return static_cast<Ref<PromiseType>>(*this)->whenSettled(targetQueue, thisVal, std::forward<ResolveOrRejectMethod>(resolveOrRejectMethod), callSite);
+            return static_cast<Ref<PromiseType>>(*this)->whenSettled(targetQueue, thisVal, std::forward<SettleMethod>(settleMethod), callSite);
         }
 
         void track(NativePromiseRequest<NativePromise>& requestHolder)
@@ -804,24 +805,6 @@ private:
         const Logger::LogSiteIdentifier m_logSiteIdentifier;
     };
 
-    template<typename F>
-    struct MethodTraitsHelper : MethodTraitsHelper<decltype(&F::operator())> { };
-    template<typename ThisType, typename Ret, typename... ArgTypes>
-    struct MethodTraitsHelper<Ret (ThisType::*)(ArgTypes...)> {
-        using returnType = Ret;
-        static const size_t argSize = sizeof...(ArgTypes);
-    };
-    template<typename ThisType, typename Ret, typename... ArgTypes>
-    struct MethodTraitsHelper<Ret (ThisType::*)(ArgTypes...) const> {
-        using returnType = Ret;
-        static const size_t argSize = sizeof...(ArgTypes);
-    };
-    template<typename T>
-    struct MethodTrait : MethodTraitsHelper<std::remove_reference_t<T>> { };
-
-    template<typename MethodType>
-    using TakesArgument = std::bool_constant<MethodTrait<MethodType>::argSize>;
-
     struct LambdaReturnTrait {
         template <typename T, typename = std::enable_if_t<IsConvertibleToNativePromise<T>>>
         Ref<typename T::PromiseType> lambda();
@@ -836,23 +819,38 @@ private:
         void type();
     };
 
+    template <typename F, typename Arg>
+    static auto invokeWithVoidOrWithArg(F&& f, Arg&& arg)
+    {
+        if constexpr (std::is_invocable_v<F>)
+            return std::invoke(std::forward<F>(f));
+        else
+            return std::invoke(std::forward<F>(f), std::forward<Arg>(arg));
+    }
+
+    template <typename ThisType, typename M, typename Arg>
+    static auto invokeWithVoidOrWithArg(ThisType& thisVal, M m, Arg&& arg)
+    {
+        if constexpr (std::is_invocable_v<M, ThisType>)
+            return std::invoke(m, thisVal);
+        else
+            return std::invoke(m, thisVal, std::forward<Arg>(arg));
+    }
+
 public:
-    template<class DispatcherType, typename ResolveRejectFunction>
-    auto whenSettled(DispatcherType& targetQueue, ResolveRejectFunction&& resolveRejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<class DispatcherType, typename SettleFunction>
+    auto whenSettled(DispatcherType& targetQueue, SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         using DispatcherRealType = typename RemoveSmartPointer<DispatcherType>::type;
         static_assert(LooksLikeRCSerialDispatcher<DispatcherRealType>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
 
-        using R1 = typename RemoveSmartPointer<typename MethodTrait<ResolveRejectFunction>::returnType>::type;
+        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<SettleFunction>(settleFunction), std::declval<Result>()))>::type;
         using IsChaining = std::bool_constant<IsConvertibleToNativePromise<R1>>;
-        static_assert(IsConvertibleToNativePromise<R1> || std::is_void_v<R1>, "ResolveOrReject method must return a promise or nothing");
+        static_assert(IsConvertibleToNativePromise<R1> || std::is_void_v<R1>, "Settle method must return a promise or nothing");
         using LambdaReturnType = decltype(std::declval<LambdaReturnTrait>().template lambda<R1>());
 
-        auto lambda = [resolveRejectFunction = WTFMove(resolveRejectFunction)] (ResultParam result) mutable -> LambdaReturnType {
-            if constexpr (TakesArgument<ResolveRejectFunction>::value)
-                return resolveRejectFunction(maybeMove(result));
-            else
-                return resolveRejectFunction();
+        auto lambda = [settleFunction = std::forward<SettleFunction>(settleFunction)] (ResultParam result) mutable -> LambdaReturnType {
+            return invokeWithVoidOrWithArg(WTFMove(settleFunction), maybeMove(result));
         };
 
         ManagedSerialFunctionDispatcher dispatcher { &static_cast<DispatcherRealType&>(targetQueue) };
@@ -863,19 +861,16 @@ public:
         return ReturnType(*this, WTFMove(thenCallback), callSite);
     }
 
-    template<class DispatcherType, typename ThisType, typename ResolveOrRejectMethod>
-    auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, ResolveOrRejectMethod resolveOrRejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<class DispatcherType, typename ThisType, typename SettleMethod>
+    auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         static_assert(HasRefCountMethods<ThisType>::value, "ThisType must be refounted object");
-        using R1 = typename RemoveSmartPointer<typename MethodTrait<ResolveOrRejectMethod>::returnType>::type;
-        static_assert(IsConvertibleToNativePromise<R1> || std::is_void_v<R1>, "ResolveOrReject method must return a promise or nothing");
+        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, settleMethod, std::declval<Result>()))>::type;
+        static_assert(IsConvertibleToNativePromise<R1> || std::is_void_v<R1>, "Settle method must return a promise or nothing");
         using LambdaReturnType = decltype(std::declval<LambdaReturnTrait>().template lambda<R1>());
 
-        return whenSettled(targetQueue, [thisVal = Ref { thisVal }, resolveOrRejectMethod] (ResultParam result) mutable -> LambdaReturnType {
-            if constexpr (TakesArgument<ResolveOrRejectMethod>::value)
-                return (thisVal.ptr()->*resolveOrRejectMethod)(maybeMove(result));
-            else
-                return (thisVal.ptr()->*resolveOrRejectMethod)();
+        return whenSettled(targetQueue, [thisVal = Ref { thisVal }, settleMethod] (ResultParam result) mutable -> LambdaReturnType {
+            return invokeWithVoidOrWithArg(thisVal.get(), settleMethod, maybeMove(result));
         }, callSite);
     }
 
@@ -885,24 +880,20 @@ public:
         using DispatcherRealType = typename RemoveSmartPointer<DispatcherType>::type;
         static_assert(LooksLikeRCSerialDispatcher<DispatcherRealType>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
 
-        using R1 = typename RemoveSmartPointer<typename MethodTrait<ResolveFunction>::returnType>::type;
-        using R2 = typename RemoveSmartPointer<typename MethodTrait<RejectFunction>::returnType>::type;
+        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<ResolveFunction>(resolveFunction), std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, std::nullptr_t, ResolveValueT>>()))>::type;
+        using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<RejectFunction>(rejectFunction), std::declval<RejectValueT>()))>::type;
         using IsChaining = std::bool_constant<RelatedNativePromise<R1, R2>>;
         static_assert(IsChaining::value || (std::is_void_v<R1> && std::is_void_v<R2>), "resolve/reject methods must return a promise of the same type or nothing");
         using LambdaReturnType = decltype(std::declval<LambdaReturnTrait>().template lambda<R1>());
 
-        return whenSettled(targetQueue, [resolveFunction = WTFMove(resolveFunction), rejectFunction = WTFMove(rejectFunction)] (ResultParam result) -> LambdaReturnType {
+        return whenSettled(targetQueue, [resolveFunction = std::forward<ResolveFunction>(resolveFunction), rejectFunction = std::forward<RejectFunction>(rejectFunction)] (ResultParam result) mutable -> LambdaReturnType {
             if (result) {
-                if constexpr (TakesArgument<ResolveFunction>::value)
-                    return resolveFunction(maybeMove(result.value()));
+                if constexpr (std::is_void_v<ResolveValueT>)
+                    return invokeWithVoidOrWithArg(WTFMove(resolveFunction), nullptr_t());
                 else
-                    return resolveFunction();
-            } else {
-                if constexpr (TakesArgument<RejectFunction>::value)
-                    return rejectFunction(maybeMove(result.error()));
-                else
-                    return rejectFunction();
+                    return invokeWithVoidOrWithArg(WTFMove(resolveFunction), maybeMove(result.value()));
             }
+            return invokeWithVoidOrWithArg(WTFMove(rejectFunction), maybeMove(result.error()));
         }, callSite);
     }
 
@@ -910,24 +901,20 @@ public:
     auto then(DispatcherType& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         static_assert(HasRefCountMethods<ThisType>::value, "ThisType must be refounted object");
-        using R1 = typename RemoveSmartPointer<typename MethodTrait<ResolveMethod>::returnType>::type;
-        using R2 = typename RemoveSmartPointer<typename MethodTrait<RejectMethod>::returnType>::type;
+        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, resolveMethod, std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, std::nullptr_t, ResolveValueT>>()))>::type;
+        using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, rejectMethod, std::declval<RejectValueT>()))>::type;
         using IsChaining = std::bool_constant<RelatedNativePromise<R1, R2>>;
         static_assert(IsChaining::value || (std::is_void_v<R1> && std::is_void_v<R2>), "resolve/reject methods must return a promise of the same type or nothing");
         using LambdaReturnType = decltype(std::declval<LambdaReturnTrait>().template lambda<R1>());
 
-        return whenSettled(targetQueue, [thisVal = Ref { thisVal }, resolveMethod, rejectMethod] (ResultParam result) mutable -> LambdaReturnType {
-            if (result.has_value()) {
-                if constexpr (TakesArgument<ResolveMethod>::value)
-                    return (thisVal.ptr()->*resolveMethod)(maybeMove(result.value()));
+        return whenSettled(targetQueue, [thisVal = Ref { thisVal }, resolveMethod, rejectMethod] (ResultParam result) -> LambdaReturnType {
+            if (result) {
+                if constexpr (std::is_void_v<ResolveValueT>)
+                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, nullptr_t());
                 else
-                    return (thisVal.ptr()->*resolveMethod)();
-            } else {
-                if constexpr (TakesArgument<RejectMethod>::value)
-                    return (thisVal.ptr()->*rejectMethod)(maybeMove(result.error()));
-                else
-                    return (thisVal.ptr()->*rejectMethod)();
+                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, maybeMove(result.value()));
             }
+            return invokeWithVoidOrWithArg(thisVal.get(), rejectMethod, maybeMove(result.error()));
         }, callSite);
     }
 
@@ -944,7 +931,7 @@ public:
         if (isNothing())
             m_chainedPromises.append(WTFMove(chainedPromise));
         else
-            resolveOrReject(WTFMove(chainedPromise));
+            settle(WTFMove(chainedPromise));
     }
 
     void assertIsDead() final
@@ -977,7 +964,7 @@ private:
 
     Result& result()
     {
-        // Only called by ResolveOrRejectFunction on the target's queue once all operations are complete and settled.
+        // Only called by SettleFunction on the target's queue once all operations are complete and settled.
         // So we don't really need to hold the lock to access the value.
         Locker lock { m_lock };
         ASSERT(!isNothing());
@@ -995,10 +982,10 @@ private:
             thenCallback->dispatch(*this, lock);
 
         for (auto&& chainedPromise : chainedPromises)
-            resolveOrReject(WTFMove(chainedPromise));
+            settle(WTFMove(chainedPromise));
     }
 
-    void resolveOrReject(typename NativePromise::Producer&& other)
+    void settle(typename NativePromise::Producer&& other)
     {
         assertIsHeld(m_lock);
         ASSERT(!isNothing());
@@ -1086,15 +1073,15 @@ public:
         m_promise->reject(std::forward<RejectValueType_>(rejectValue), rejectSite);
     }
 
-    template<typename ResolveOrRejectValue_>
-    void resolveOrReject(ResolveOrRejectValue_&& result, const Logger::LogSiteIdentifier& site = DEFAULT_LOGSITEIDENTIFIER) const
+    template<typename SettleValue>
+    void settle(SettleValue&& result, const Logger::LogSiteIdentifier& site = DEFAULT_LOGSITEIDENTIFIER) const
     {
         ASSERT(isNothing());
         if (!isNothing()) {
             PROMISE_LOG(site, " ignored already resolved or rejected ", *m_promise);
             return;
         }
-        m_promise->resolveOrReject(std::forward<ResolveOrRejectValue_>(result), site);
+        m_promise->settle(std::forward<SettleValue>(result), site);
     }
 
     operator Ref<PromiseType>() const
@@ -1123,18 +1110,18 @@ public:
     }
 
     // Allow calling whenSettled() again by converting the ThenCommand to Ref<NativePromise>
-    template<class DispatcherType, typename ResolveRejectFunction>
-    auto whenSettled(DispatcherType& targetQueue, ResolveRejectFunction&& resolveRejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<class DispatcherType, typename SettleFunction>
+    auto whenSettled(DispatcherType& targetQueue, SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         ASSERT(m_promise, "used after move");
-        return m_promise->whenSettled(targetQueue, std::forward<ResolveRejectFunction>(resolveRejectFunction), callSite);
+        return m_promise->whenSettled(targetQueue, std::forward<SettleFunction>(settleFunction), callSite);
     }
 
-    template<class DispatcherType, typename ThisType, typename ResolveOrRejectMethod>
-    auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, ResolveOrRejectMethod resolveOrRejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<class DispatcherType, typename ThisType, typename SettleMethod>
+    auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         ASSERT(m_promise, "used after move");
-        return m_promise->whenSettled(targetQueue, thisVal, std::forward<ResolveOrRejectMethod>(resolveOrRejectMethod), callSite);
+        return m_promise->whenSettled(targetQueue, thisVal, std::forward<SettleMethod>(settleMethod), callSite);
     }
 
     void chainTo(Producer&& chainedPromise, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)

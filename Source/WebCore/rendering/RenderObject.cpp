@@ -2089,6 +2089,12 @@ FloatRect RenderObject::repaintRectInLocalCoordinates() const
     return FloatRect();
 }
 
+FloatRect RenderObject::fastRepaintRectInLocalCoordinates() const
+{
+    ASSERT_NOT_REACHED();
+    return FloatRect();
+}
+
 AffineTransform RenderObject::localTransform() const
 {
     return AffineTransform();

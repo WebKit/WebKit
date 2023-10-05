@@ -124,10 +124,10 @@ void RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uin
 
 void RenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
-    UNUSED_PARAM(firstIndex);
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         executePreDrawCommands();
-        [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
+        auto firstIndexOffsetInBytes = firstIndex * (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
+        [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:(m_indexBufferOffset + firstIndexOffsetInBytes) instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
     } else {
         m_icbDescriptor.commandTypes |= MTLIndirectCommandTypeDrawIndexed;
 

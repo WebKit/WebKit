@@ -441,7 +441,16 @@ angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
     }
     else if (size != static_cast<size_t>(mState.getSize()))
     {
-        mBuffer.onBufferUserSizeChange(renderer);
+        if (mBuffer.onBufferUserSizeChange(renderer))
+        {
+            // If we have a dedicated VkBuffer created with user size, even if the storage is
+            // reused, we have to recreate that VkBuffer with user size when user size changes.
+            // When this happens, we must notify other objects that observing this buffer, such as
+            // vertex array. The reason vertex array is observing the buffer's storage change is
+            // because they uses VkBuffer. Now VkBuffer have changed, vertex array needs to
+            // re-process it just like storage has been reallocated.
+            onStateChange(angle::SubjectMessage::InternalMemoryAllocationChanged);
+        }
     }
 
     if (data != nullptr)

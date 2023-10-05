@@ -15,6 +15,7 @@
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/Error.h"
 
+#include <atomic>
 #include <deque>
 #include <string>
 #include <vector>

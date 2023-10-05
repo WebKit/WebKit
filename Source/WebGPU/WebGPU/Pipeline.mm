@@ -68,6 +68,39 @@ std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> cr
         return { };
 
     auto constantValues = [MTLFunctionConstantValues new];
+    for (auto& kvp : entryPointInformation.specializationConstants) {
+        auto& specializationConstant = kvp.value;
+        if (!specializationConstant.defaultValue)
+            continue;
+
+        auto constantValue = WGSL::evaluate(*kvp.value.defaultValue, wgslConstantValues);
+        auto addResult = wgslConstantValues.add(specializationConstant.mangledName, constantValue);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
+        switch (specializationConstant.type) {
+        case WGSL::Reflection::SpecializationConstantType::Boolean: {
+            bool value = constantValue.toBool();
+            [constantValues setConstantValue:&value type:MTLDataTypeBool withName:specializationConstant.mangledName];
+            break;
+        }
+        case WGSL::Reflection::SpecializationConstantType::Float: {
+            float value = constantValue.toDouble();
+            [constantValues setConstantValue:&value type:MTLDataTypeFloat withName:specializationConstant.mangledName];
+            break;
+        }
+        case WGSL::Reflection::SpecializationConstantType::Int: {
+            int value = constantValue.toInt();
+            [constantValues setConstantValue:&value type:MTLDataTypeInt withName:specializationConstant.mangledName];
+            break;
+        }
+        case WGSL::Reflection::SpecializationConstantType::Unsigned: {
+            unsigned value = constantValue.toInt();
+            [constantValues setConstantValue:&value type:MTLDataTypeUInt withName:specializationConstant.mangledName];
+            break;
+        }
+        }
+    }
+
     for (uint32_t i = 0; i < constantCount; ++i) {
         const auto& entry = constants[i];
         auto indexIterator = entryPointInformation.specializationConstants.find(fromAPI(entry.key));
@@ -77,25 +110,25 @@ std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> cr
         switch (specializationConstant.type) {
         case WGSL::Reflection::SpecializationConstantType::Boolean: {
             bool value = entry.value;
-            wgslConstantValues.add(fromAPI(entry.key), value);
+            wgslConstantValues.set(fromAPI(entry.key), value);
             [constantValues setConstantValue:&value type:MTLDataTypeBool withName:specializationConstant.mangledName];
             break;
         }
         case WGSL::Reflection::SpecializationConstantType::Float: {
             float value = entry.value;
-            wgslConstantValues.add(fromAPI(entry.key), value);
+            wgslConstantValues.set(fromAPI(entry.key), value);
             [constantValues setConstantValue:&value type:MTLDataTypeFloat withName:specializationConstant.mangledName];
             break;
         }
         case WGSL::Reflection::SpecializationConstantType::Int: {
             int value = entry.value;
-            wgslConstantValues.add(fromAPI(entry.key), value);
+            wgslConstantValues.set(fromAPI(entry.key), value);
             [constantValues setConstantValue:&value type:MTLDataTypeInt withName:specializationConstant.mangledName];
             break;
         }
         case WGSL::Reflection::SpecializationConstantType::Unsigned: {
             unsigned value = entry.value;
-            wgslConstantValues.add(fromAPI(entry.key), value);
+            wgslConstantValues.set(fromAPI(entry.key), value);
             [constantValues setConstantValue:&value type:MTLDataTypeUInt withName:specializationConstant.mangledName];
             break;
         }
