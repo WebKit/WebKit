@@ -229,6 +229,7 @@ LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, Horiz
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
+    , m_floatingContext(inlineFormattingContext, inlineFormattingContext.inlineLayoutState().placedFloats())
     , m_inlineItemList(inlineItemList)
 {
 }
@@ -742,10 +743,10 @@ static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent
 LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect& logicalRect, InlineLayoutUnit marginStart) const
 {
     auto constraints = [&]() -> LineBuilder::UsedConstraints {
-        if (isInIntrinsicWidthMode() || placedFloats().isEmpty())
+        if (isInIntrinsicWidthMode() || floatingContext().isEmpty())
             return { logicalRect, marginStart, { } };
 
-        auto constraints = formattingContext().formattingUtils().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), FloatingContext { formattingContext(), placedFloats() });
+        auto constraints = formattingContext().formattingUtils().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), floatingContext());
         if (!constraints.left && !constraints.right)
             return { logicalRect, marginStart, { } };
 
@@ -888,7 +889,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     if (isFloatLayoutSuspended())
         return false;
 
-    auto floatingContext = FloatingContext { formattingContext(), placedFloats() };
+    auto& floatingContext = this->floatingContext();
     auto boxGeometry = [&]() -> BoxGeometry {
         auto marginTrim = rootStyle().marginTrim();
         if (!marginTrim.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }) || m_lineIsConstrainedByFloat.containsAll({ UsedFloat::Left, UsedFloat::Right }))
@@ -955,8 +956,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     auto placeFloatBox = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
         auto floatItem = floatingContext.makeFloatItem(floatBox, boxGeometry, lineIndex);
-        // FIXME: Maybe FloatingContext should be able to preserve FloatItems and the caller should mutate the PlacedFloats instead.
-        placedFloats().append(floatItem);
+        inlineLayoutState().placedFloats().append(floatItem);
         m_placedFloats.append(floatItem);
     };
     placeFloatBox();
@@ -1238,9 +1238,9 @@ const InlineLayoutState& LineBuilder::inlineLayoutState() const
     return formattingContext().inlineLayoutState();
 }
 
-PlacedFloats& LineBuilder::placedFloats()
+InlineLayoutState& LineBuilder::inlineLayoutState()
 {
-    return formattingContext().placedFloats();
+    return formattingContext().inlineLayoutState();
 }
 
 }

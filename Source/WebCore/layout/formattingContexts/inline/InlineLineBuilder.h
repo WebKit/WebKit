@@ -93,10 +93,11 @@ private:
 
     InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const FloatingContext& floatingContext() const { return m_floatingContext; }
+
     const InlineLayoutState& inlineLayoutState() const;
+    InlineLayoutState& inlineLayoutState();
     const BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
-    PlacedFloats& placedFloats();
-    const PlacedFloats& placedFloats() const { return const_cast<LineBuilder&>(*this).placedFloats(); }
     const ElementBox& root() const;
     const RenderStyle& rootStyle() const;
 
@@ -106,6 +107,7 @@ private:
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
+    FloatingContext m_floatingContext;
     InlineRect m_lineInitialLogicalRect;
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
