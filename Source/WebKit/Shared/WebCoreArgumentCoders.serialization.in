@@ -6374,3 +6374,56 @@ class WebCore::UserScript {
     WebCore::UserContentInjectedFrames injectedFrames();
     WebCore::WaitForNotificationBeforeInjecting waitForNotificationBeforeInjecting();
 }
+
+header: <WebCore/GraphicsContextState.h>
+[Nested, OptionSet] enum class WebCore::GraphicsContextState::Change : uint32_t {
+    FillBrush,
+    FillRule,
+    StrokeBrush,
+    StrokeThickness,
+    StrokeStyle,
+    CompositeMode,
+    Style,
+    Alpha,
+    TextDrawingMode,
+    ImageInterpolationQuality,
+    ShouldAntialias,
+    ShouldSmoothFonts,
+    ShouldSubpixelQuantizeFonts,
+    ShadowsIgnoreTransforms,
+    DrawLuminanceMask,
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    UseDarkAppearance,
+#endif
+};
+
+header: <WebCore/GraphicsContextState.h>
+[Nested] enum class WebCore::GraphicsContextState::Purpose : uint8_t {
+    Initial,
+    SaveRestore,
+    TransparencyLayer,
+};
+
+[LegacyPopulateFromEmptyConstructor, AdditionalEncoder=StreamConnectionEncoder] class WebCore::GraphicsContextState {
+    OptionSet<WebCore::GraphicsContextState::Change> m_changeFlags;
+    WebCore::SourceBrush m_fillBrush;
+    WebCore::WindRule m_fillRule;
+    WebCore::SourceBrush m_strokeBrush;
+    float m_strokeThickness;
+    WebCore::StrokeStyle m_strokeStyle;
+    WebCore::CompositeMode m_compositeMode;
+    std::optional<WebCore::GraphicsStyle> m_style;
+    float m_alpha;
+    WebCore::InterpolationQuality m_imageInterpolationQuality;
+    OptionSet<WebCore::TextDrawingMode> m_textDrawingMode;
+    bool m_shouldAntialias;
+    bool m_shouldSmoothFonts;
+    bool m_shouldSubpixelQuantizeFonts;
+    bool m_shadowsIgnoreTransforms;
+    bool m_drawLuminanceMask;
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    bool m_useDarkAppearance;
+#endif
+
+    WebCore::GraphicsContextState::Purpose m_purpose;
+};

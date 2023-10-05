@@ -50,8 +50,7 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, CodeBlock*
     case Kind::LazyOperandValueProfile: {
         LazyOperandValueProfileKey key(m_codeOrigin.bytecodeIndex(), Operand::fromBits(m_rawOperand));
         
-        ConcurrentJSLocker locker(profiledBlock->m_lock);
-        LazyOperandValueProfile* profile = profiledBlock->lazyOperandValueProfiles(locker).add(locker, key);
+        LazyOperandValueProfile* profile = profiledBlock->lazyOperandValueProfiles().add(key);
         jit.storeValue(regs, profile->specFailBucket(0));
         return;
     }

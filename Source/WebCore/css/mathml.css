@@ -22,6 +22,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ /* https://w3c.github.io/mathml-core/#user-agent-stylesheet */
+
 #if defined(ENABLE_MATHML) && ENABLE_MATHML
 
 @namespace "http://www.w3.org/1998/Math/MathML";
@@ -175,10 +177,9 @@ mphantom {
 }
 
 /* This is a special style for erroneous markup. */
+/* https://w3c.github.io/mathml-core/#error-message-merror */
 merror {
-    outline: solid thin red;
-    font-weight: bold;
-    font-family: sans-serif;
+    border: 1px solid red;
     background-color: lightYellow;
 }
 

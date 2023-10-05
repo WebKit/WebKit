@@ -38,6 +38,7 @@
 #include "ElementInlines.h"
 #include "FrameLoader.h"
 #include "HTMLElement.h"
+#include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLTemplateElement.h"
@@ -558,11 +559,11 @@ LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& eleme
         return nullptr;
 
     auto* currentElement = const_cast<Element*>(&element);
-    if (!is<HTMLIFrameElement>(currentElement))
+    if (!is<HTMLFrameElementBase>(currentElement))
         return nullptr;
 
-    auto& iframeElement = downcast<HTMLIFrameElement>(*currentElement);
-    return dynamicDowncast<LocalFrame>(iframeElement.contentFrame());
+    auto& frameElement = downcast<HTMLFrameElementBase>(*currentElement);
+    return dynamicDowncast<LocalFrame>(frameElement.contentFrame());
 }
 
 Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element, const Attribute& attribute)

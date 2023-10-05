@@ -433,7 +433,7 @@
       "builderNames": ["Unsafe-Merge-Queue"]
     },
     {
-      "type": "Periodic", "name": "safe-merge-queue", "periodicBuildTimer": 7200,
+      "type": "Periodic", "name": "safe-merge-queue", "periodicBuildTimer": 900,
       "builderNames": ["Safe-Merge-Queue"]
     },
     {

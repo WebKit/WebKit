@@ -48,8 +48,7 @@ private:
     LayoutRect clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const override { return LayoutRect(); }
     FloatRect objectBoundingBox() const override { return FloatRect(); }
     FloatRect strokeBoundingBox() const override { return FloatRect(); }
-    FloatRect repaintRectInLocalCoordinates() const override { return FloatRect(); }
-    FloatRect fastRepaintRectInLocalCoordinates() const override { return repaintRectInLocalCoordinates(); }
+    FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const override { return FloatRect(); }
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction) override { return false; }
 
     ASCIILiteral renderName() const override { return "RenderSVGGradientStop"_s; }

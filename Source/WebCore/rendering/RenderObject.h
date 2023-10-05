@@ -505,11 +505,9 @@ public:
 
     // Returns the smallest rectangle enclosing all of the painted content
     // respecting clipping, masking, filters, opacity, stroke-width and markers
-    virtual FloatRect repaintRectInLocalCoordinates() const;
-
-    // Returns approximate rectangle enclosing all of the painted content.
-    // This is always larger-or-equal to repaintRectInLocalCoordinates().
-    virtual FloatRect fastRepaintRectInLocalCoordinates() const;
+    // This returns approximate rectangle for SVG renderers when RepaintRectCalculation::Fast is specified.
+    enum class RepaintRectCalculation { Fast, Accurate };
+    virtual FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const;
 
     // This only returns the transform="" value from the element
     // most callsites want localToParentTransform() instead.
@@ -789,6 +787,7 @@ public:
         ApplyCompositedClips = 1 << 1,
         ApplyCompositedContainerScrolls  = 1 << 2,
         ApplyContainerClip = 1 << 3,
+        CalculateAccurateRepaintRect = 1 << 4,
     };
     struct VisibleRectContext {
         VisibleRectContext(bool hasPositionFixedDescendant = false, bool dirtyRectIsFlipped = false, OptionSet<VisibleRectContextOption> options = { })
@@ -797,6 +796,12 @@ public:
             , options(options)
             {
             }
+
+        RepaintRectCalculation repaintRectCalculation() const
+        {
+            return options.contains(VisibleRectContextOption::CalculateAccurateRepaintRect) ? RepaintRectCalculation::Accurate : RepaintRectCalculation::Fast;
+        }
+
         bool hasPositionFixedDescendant { false };
         bool dirtyRectIsFlipped { false };
         bool descendantNeedsEnclosingIntRect { false };
@@ -807,6 +812,7 @@ public:
     // coordinate space. This method deals with outlines and overflow.
     LayoutRect absoluteClippedOverflowRectForRepaint() const { return clippedOverflowRect(nullptr, visibleRectContextForRepaint()); }
     LayoutRect absoluteClippedOverflowRectForSpatialNavigation() const { return clippedOverflowRect(nullptr, visibleRectContextForSpatialNavigation()); }
+    LayoutRect absoluteClippedOverflowRectForRenderTreeAsText() const { return clippedOverflowRect(nullptr, visibleRectContextForRenderTreeAsText()); }
     WEBCORE_EXPORT IntRect pixelSnappedAbsoluteClippedOverflowRect() const;
     virtual LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const { return clippedOverflowRect(repaintContainer, visibleRectContextForRepaint()); }
@@ -945,6 +951,7 @@ protected:
 
     static VisibleRectContext visibleRectContextForRepaint();
     static VisibleRectContext visibleRectContextForSpatialNavigation();
+    static VisibleRectContext visibleRectContextForRenderTreeAsText();
 
     bool isSetNeedsLayoutForbidden() const;
 
@@ -1318,6 +1325,11 @@ inline auto RenderObject::visibleRectContextForRepaint() -> VisibleRectContext
 inline auto RenderObject::visibleRectContextForSpatialNavigation() -> VisibleRectContext
 {
     return { false, false, { VisibleRectContextOption::ApplyContainerClip, VisibleRectContextOption::ApplyCompositedContainerScrolls, VisibleRectContextOption::ApplyCompositedClips } };
+}
+
+inline auto RenderObject::visibleRectContextForRenderTreeAsText() -> VisibleRectContext
+{
+    return { false, false, { VisibleRectContextOption::ApplyContainerClip, VisibleRectContextOption::ApplyCompositedContainerScrolls, VisibleRectContextOption::ApplyCompositedClips, VisibleRectContextOption::CalculateAccurateRepaintRect  } };
 }
 
 inline bool RenderObject::isSetNeedsLayoutForbidden() const

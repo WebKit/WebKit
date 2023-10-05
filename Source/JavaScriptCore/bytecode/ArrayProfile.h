@@ -228,8 +228,8 @@ public:
     void observeStructureID(StructureID structureID) { m_lastSeenStructureID = structureID; }
     void observeStructure(Structure* structure) { m_lastSeenStructureID = structure->id(); }
 
-    void computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock*);
-    void computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock*, Structure* lastSeenStructure);
+    void computeUpdatedPrediction(CodeBlock*);
+    void computeUpdatedPrediction(CodeBlock*, Structure* lastSeenStructure);
     
     void observeArrayMode(ArrayModes mode) { m_observedArrayModes |= mode; }
     void observeIndexedRead(JSCell*, unsigned index);
@@ -242,8 +242,8 @@ public:
     
     bool usesOriginalArrayStructures(const ConcurrentJSLocker&) const { return !m_arrayProfileFlags.contains(ArrayProfileFlag::UsesNonOriginalArrayStructures); }
 
-    CString briefDescription(const ConcurrentJSLocker&, CodeBlock*);
-    CString briefDescriptionWithoutUpdating(const ConcurrentJSLocker&);
+    CString briefDescription(CodeBlock*);
+    CString briefDescriptionWithoutUpdating();
     
 private:
     friend class LLIntOffsetsExtractor;

@@ -698,10 +698,8 @@ JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (EncodedJSVal
         CodeBlock* codeBlock = callFrame->codeBlock();
         Structure* structure = baseValue.asCell()->structure();
         if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayInByVal(globalObject, codeBlock, baseValue, key, *stubInfo, InByKind::ByVal);
         }
 
@@ -1402,10 +1400,8 @@ static ALWAYS_INLINE void putByValOptimize(JSGlobalObject* globalObject, CodeBlo
         if (!isCopyOnWrite(baseObject->indexingMode()) && subscript.isInt32()) {
             Structure* structure = baseObject->structure();
             if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-                if (profile) {
-                    ConcurrentJSLocker locker(codeBlock->m_lock);
-                    profile->computeUpdatedPrediction(locker, codeBlock, structure);
-                }
+                if (profile)
+                    profile->computeUpdatedPrediction(codeBlock, structure);
                 repatchArrayPutByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, kind);
             }
         }
@@ -1473,10 +1469,8 @@ static ALWAYS_INLINE void directPutByValOptimize(JSGlobalObject* globalObject, C
     if (!isCopyOnWrite(baseObject->indexingMode()) && subscript.isInt32()) {
         Structure* structure = baseObject->structure();
         if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayPutByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, kind);
         }
     }
@@ -2809,10 +2803,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (EncodedJSVa
     if (baseValue.isCell() && subscript.isInt32()) {
         Structure* structure = baseValue.asCell()->structure();
         if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, GetByKind::ByVal);
         }
     }
@@ -3067,10 +3059,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (Enc
     if (baseValue.isCell() && subscript.isInt32()) {
         Structure* structure = baseValue.asCell()->structure();
         if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, GetByKind::ByValWithThis);
         }
     }

@@ -439,7 +439,7 @@ FocusController::FocusController(Page& page, OptionSet<ActivityState> activitySt
 {
 }
 
-void FocusController::setFocusedFrame(Frame* frame, bool broadcastFocusedFrame)
+void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadcast)
 {
     ASSERT(!frame || frame->page() == &m_page);
     if (m_focusedFrame == frame || m_isChangingFocusedFrame)
@@ -480,7 +480,7 @@ void FocusController::setFocusedFrame(Frame* frame, bool broadcastFocusedFrame)
 #endif
     }
 
-    if (broadcastFocusedFrame)
+    if (broadcast == BroadcastFocusedFrame::Yes)
         m_page.chrome().focusedFrameChanged(frame);
 
     m_isChangingFocusedFrame = false;

@@ -589,7 +589,7 @@ FloatRect RenderSVGText::strokeBoundingBox() const
     return strokeBoundaries;
 }
 
-FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
+FloatRect RenderSVGText::repaintRectInLocalCoordinates(RepaintRectCalculation) const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())

@@ -48,8 +48,7 @@ private:
     // this element, since we need it for filters.
     FloatRect objectBoundingBox() const final;
     FloatRect strokeBoundingBox() const final;
-    FloatRect repaintRectInLocalCoordinates() const final;
-    FloatRect fastRepaintRectInLocalCoordinates() const final { return repaintRectInLocalCoordinates(); }
+    FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     LayoutPoint currentSVGLayoutLocation() const final { return { }; }

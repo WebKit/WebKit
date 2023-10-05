@@ -2750,7 +2750,6 @@ webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure 
 [ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-003.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Pass Failure ]
-[ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/width-height-001.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Pass Failure ]
 [ Monterey ] scrollbars/overflow-scrollbar-combinations.html  [ Pass ImageOnlyFailure ]

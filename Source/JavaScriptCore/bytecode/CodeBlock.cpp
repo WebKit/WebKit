@@ -2877,17 +2877,19 @@ void CodeBlock::updateAllNonLazyValueProfilePredictions(const ConcurrentJSLocker
 
 void CodeBlock::updateAllLazyValueProfilePredictions(const ConcurrentJSLocker& locker)
 {
+#if USE(JSVALUE32_64)
+    // JSVALUE64 does not need a lock.
     ASSERT(m_lock.isLocked());
+#endif
 #if ENABLE(DFG_JIT)
-    lazyOperandValueProfiles(locker).computeUpdatedPredictions(locker);
+    lazyOperandValueProfiles().computeUpdatedPredictions(locker);
 #else
     UNUSED_PARAM(locker);
 #endif
 }
 
-void CodeBlock::updateAllArrayProfilePredictions(const ConcurrentJSLocker& locker)
+void CodeBlock::updateAllArrayProfilePredictions()
 {
-    ASSERT(m_lock.isLocked());
     if (!m_metadata)
         return;
 
@@ -2895,7 +2897,7 @@ void CodeBlock::updateAllArrayProfilePredictions(const ConcurrentJSLocker& locke
     UnlinkedCodeBlock* unlinkedCodeBlock = this->unlinkedCodeBlock();
     bool isBuiltinFunction = unlinkedCodeBlock->isBuiltinFunction();
     auto process = [&] (ArrayProfile& profile) {
-        profile.computeUpdatedPrediction(locker, this);
+        profile.computeUpdatedPrediction(this);
         if (!isBuiltinFunction)
             unlinkedCodeBlock->unlinkedArrayProfile(index).update(profile);
         ++index;
@@ -2931,13 +2933,13 @@ void CodeBlock::updateAllArrayAllocationProfilePredictions()
 
 void CodeBlock::updateAllPredictions()
 {
-    updateAllNonLazyValueProfilePredictions(ConcurrentJSLocker(valueProfileLock()));
-    updateAllArrayAllocationProfilePredictions();
     {
-        ConcurrentJSLocker locker(m_lock);
+        ConcurrentJSLocker locker(valueProfileLock());
+        updateAllNonLazyValueProfilePredictions(locker);
         updateAllLazyValueProfilePredictions(locker);
-        updateAllArrayProfilePredictions(locker);
     }
+    updateAllArrayAllocationProfilePredictions();
+    updateAllArrayProfilePredictions();
 }
 
 bool CodeBlock::shouldOptimizeNowFromBaseline()
@@ -2950,14 +2952,12 @@ bool CodeBlock::shouldOptimizeNowFromBaseline()
     unsigned numberOfLiveNonArgumentValueProfiles;
     unsigned numberOfSamplesInProfiles;
     {
-        updateAllNonLazyValueProfilePredictionsAndCountLiveness(ConcurrentJSLocker(valueProfileLock()), numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
-        updateAllArrayAllocationProfilePredictions();
-        {
-            ConcurrentJSLocker locker(m_lock);
-            updateAllArrayProfilePredictions(locker);
-            updateAllLazyValueProfilePredictions(locker);
-        }
+        ConcurrentJSLocker locker(valueProfileLock());
+        updateAllNonLazyValueProfilePredictionsAndCountLiveness(locker, numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
+        updateAllLazyValueProfilePredictions(locker);
     }
+    updateAllArrayAllocationProfilePredictions();
+    updateAllArrayProfilePredictions();
 
     double livenessRate = 1.0;
     if (numberOfNonArgumentValueProfiles())

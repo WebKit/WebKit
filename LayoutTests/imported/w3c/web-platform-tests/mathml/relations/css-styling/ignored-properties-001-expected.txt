@@ -9,8 +9,6 @@ PASS maction preferred width calculation is not affected by align-content: end; 
 FAIL maction layout is not affected by align-content: end; justify-content: end; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS maction preferred width calculation is not affected by align-self: end; justify-self: end;
 FAIL maction layout is not affected by align-self: end; justify-self: end; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
-PASS maction preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL maction layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: block size expected 7.21875 +/- 1 but got 200
 PASS menclose preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL menclose layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 0) expected 7.96875 +/- 1 but got 3.984375
 PASS menclose preferred width calculation is not affected by white-space: normal;
@@ -21,10 +19,8 @@ PASS menclose preferred width calculation is not affected by align-content: end;
 PASS menclose layout is not affected by align-content: end; justify-content: end;
 PASS menclose preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS menclose layout is not affected by align-self: end; justify-self: end;
-PASS menclose preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS menclose layout is not affected by width: 100px !important; height: 200px !important;
 PASS merror preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL merror layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 9.03125 +/- 1 but got 0
+FAIL merror layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 9.03125 +/- 1 but got 1
 PASS merror preferred width calculation is not affected by white-space: normal;
 PASS merror layout is not affected by white-space: normal;
 PASS merror preferred width calculation is not affected by float: right;
@@ -33,10 +29,8 @@ PASS merror preferred width calculation is not affected by align-content: end; j
 PASS merror layout is not affected by align-content: end; justify-content: end;
 PASS merror preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS merror layout is not affected by align-self: end; justify-self: end;
-PASS merror preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL merror layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: block size expected 7.21875 +/- 1 but got 200
 PASS mfrac preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL mfrac layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 0 +/- 1 but got 9.59375
+FAIL mfrac layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 0 +/- 1 but got 9.578125
 PASS mfrac preferred width calculation is not affected by white-space: normal;
 PASS mfrac layout is not affected by white-space: normal;
 PASS mfrac preferred width calculation is not affected by float: right;
@@ -45,8 +39,6 @@ PASS mfrac preferred width calculation is not affected by align-content: end; ju
 PASS mfrac layout is not affected by align-content: end; justify-content: end;
 PASS mfrac preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mfrac layout is not affected by align-self: end; justify-self: end;
-PASS mfrac preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS mfrac layout is not affected by width: 100px !important; height: 200px !important;
 PASS mi preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL mi layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline size expected 9 +/- 1 but got 71.046875
 PASS mi preferred width calculation is not affected by white-space: normal;
@@ -57,8 +49,6 @@ PASS mi preferred width calculation is not affected by align-content: end; justi
 PASS mi layout is not affected by align-content: end; justify-content: end;
 PASS mi preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mi layout is not affected by align-self: end; justify-self: end;
-PASS mi preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL mi layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: inline size expected 72.640625 +/- 1 but got 101.59375
 PASS mmultiscripts preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL mmultiscripts layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 5.1875
 PASS mmultiscripts preferred width calculation is not affected by white-space: normal;
@@ -69,8 +59,6 @@ PASS mmultiscripts preferred width calculation is not affected by align-content:
 PASS mmultiscripts layout is not affected by align-content: end; justify-content: end;
 PASS mmultiscripts preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mmultiscripts layout is not affected by align-self: end; justify-self: end;
-PASS mmultiscripts preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS mmultiscripts layout is not affected by width: 100px !important; height: 200px !important;
 PASS mn preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL mn layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline size expected 9 +/- 1 but got 71.046875
 PASS mn preferred width calculation is not affected by white-space: normal;
@@ -81,8 +69,6 @@ PASS mn preferred width calculation is not affected by align-content: end; justi
 PASS mn layout is not affected by align-content: end; justify-content: end;
 PASS mn preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mn layout is not affected by align-self: end; justify-self: end;
-PASS mn preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL mn layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: inline size expected 71.046875 +/- 1 but got 100
 PASS mo preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL mo layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline size expected 9 +/- 1 but got 71.046875
 PASS mo preferred width calculation is not affected by white-space: normal;
@@ -93,10 +79,8 @@ PASS mo preferred width calculation is not affected by align-content: end; justi
 PASS mo layout is not affected by align-content: end; justify-content: end;
 PASS mo preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mo layout is not affected by align-self: end; justify-self: end;
-PASS mo preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL mo layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: inline size expected 79.921875 +/- 1 but got 100
 PASS mover preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL mover layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 8.609375
+FAIL mover layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 8.59375
 PASS mover preferred width calculation is not affected by white-space: normal;
 PASS mover layout is not affected by white-space: normal;
 PASS mover preferred width calculation is not affected by float: right;
@@ -105,8 +89,6 @@ PASS mover preferred width calculation is not affected by align-content: end; ju
 PASS mover layout is not affected by align-content: end; justify-content: end;
 PASS mover preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mover layout is not affected by align-self: end; justify-self: end;
-PASS mover preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS mover layout is not affected by width: 100px !important; height: 200px !important;
 PASS mpadded preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL mpadded layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 8.03125 +/- 1 but got 0
 PASS mpadded preferred width calculation is not affected by white-space: normal;
@@ -117,8 +99,6 @@ PASS mpadded preferred width calculation is not affected by align-content: end; 
 PASS mpadded layout is not affected by align-content: end; justify-content: end;
 PASS mpadded preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mpadded layout is not affected by align-self: end; justify-self: end;
-PASS mpadded preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS mpadded layout is not affected by width: 100px !important; height: 200px !important;
 PASS mphantom preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL mphantom layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 8.03125 +/- 1 but got 0
 PASS mphantom preferred width calculation is not affected by white-space: normal;
@@ -129,10 +109,8 @@ PASS mphantom preferred width calculation is not affected by align-content: end;
 PASS mphantom layout is not affected by align-content: end; justify-content: end;
 PASS mphantom preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mphantom layout is not affected by align-self: end; justify-self: end;
-PASS mphantom preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL mphantom layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: block size expected 7.21875 +/- 1 but got 200
 PASS mroot preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL mroot layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline size expected 20.515625 +/- 1 but got 9.796875
+FAIL mroot layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline size expected 20.5 +/- 1 but got 9.78125
 PASS mroot preferred width calculation is not affected by white-space: normal;
 PASS mroot layout is not affected by white-space: normal;
 PASS mroot preferred width calculation is not affected by float: right;
@@ -141,8 +119,6 @@ PASS mroot preferred width calculation is not affected by align-content: end; ju
 PASS mroot layout is not affected by align-content: end; justify-content: end;
 PASS mroot preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mroot layout is not affected by align-self: end; justify-self: end;
-PASS mroot preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS mroot layout is not affected by width: 100px !important; height: 200px !important;
 PASS mrow preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL mrow layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 8.03125 +/- 1 but got 0
 PASS mrow preferred width calculation is not affected by white-space: normal;
@@ -153,8 +129,6 @@ PASS mrow preferred width calculation is not affected by align-content: end; jus
 PASS mrow layout is not affected by align-content: end; justify-content: end;
 PASS mrow preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mrow layout is not affected by align-self: end; justify-self: end;
-PASS mrow preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL mrow layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: block size expected 7.21875 +/- 1 but got 200
 PASS ms preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL ms layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline size expected 9 +/- 1 but got 71.046875
 PASS ms preferred width calculation is not affected by white-space: normal;
@@ -165,8 +139,6 @@ PASS ms preferred width calculation is not affected by align-content: end; justi
 PASS ms layout is not affected by align-content: end; justify-content: end;
 PASS ms preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS ms layout is not affected by align-self: end; justify-self: end;
-PASS ms preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL ms layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: inline size expected 71.046875 +/- 1 but got 100
 PASS mspace preferred width calculation is not affected by writing-mode: vertical-rl;
 PASS mspace layout is not affected by writing-mode: vertical-rl;
 PASS mspace preferred width calculation is not affected by white-space: normal;
@@ -177,10 +149,8 @@ PASS mspace preferred width calculation is not affected by align-content: end; j
 PASS mspace layout is not affected by align-content: end; justify-content: end;
 PASS mspace preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mspace layout is not affected by align-self: end; justify-self: end;
-PASS mspace preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS mspace layout is not affected by width: 100px !important; height: 200px !important;
 PASS msqrt preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL msqrt layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline size expected 19.71875 +/- 1 but got 9
+FAIL msqrt layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline size expected 19.703125 +/- 1 but got 8.984375
 PASS msqrt preferred width calculation is not affected by white-space: normal;
 PASS msqrt layout is not affected by white-space: normal;
 PASS msqrt preferred width calculation is not affected by float: right;
@@ -189,8 +159,6 @@ PASS msqrt preferred width calculation is not affected by align-content: end; ju
 PASS msqrt layout is not affected by align-content: end; justify-content: end;
 PASS msqrt preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS msqrt layout is not affected by align-self: end; justify-self: end;
-PASS msqrt preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS msqrt layout is not affected by width: 100px !important; height: 200px !important;
 PASS mstyle preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL mstyle layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 8.03125 +/- 1 but got 0
 PASS mstyle preferred width calculation is not affected by white-space: normal;
@@ -201,10 +169,8 @@ PASS mstyle preferred width calculation is not affected by align-content: end; j
 PASS mstyle layout is not affected by align-content: end; justify-content: end;
 PASS mstyle preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mstyle layout is not affected by align-self: end; justify-self: end;
-PASS mstyle preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL mstyle layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: block size expected 7.21875 +/- 1 but got 200
 PASS msub preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL msub layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 80.3125 +/- 1 but got 5.8125
+FAIL msub layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 80.3125 +/- 1 but got 5.796875
 PASS msub preferred width calculation is not affected by white-space: normal;
 PASS msub layout is not affected by white-space: normal;
 PASS msub preferred width calculation is not affected by float: right;
@@ -213,8 +179,6 @@ PASS msub preferred width calculation is not affected by align-content: end; jus
 PASS msub layout is not affected by align-content: end; justify-content: end;
 PASS msub preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS msub layout is not affected by align-self: end; justify-self: end;
-PASS msub preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS msub layout is not affected by width: 100px !important; height: 200px !important;
 PASS msubsup preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL msubsup layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 5.1875
 PASS msubsup preferred width calculation is not affected by white-space: normal;
@@ -225,8 +189,6 @@ PASS msubsup preferred width calculation is not affected by align-content: end; 
 PASS msubsup layout is not affected by align-content: end; justify-content: end;
 PASS msubsup preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS msubsup layout is not affected by align-self: end; justify-self: end;
-PASS msubsup preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS msubsup layout is not affected by width: 100px !important; height: 200px !important;
 PASS msup preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL msup layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 5.1875
 PASS msup preferred width calculation is not affected by white-space: normal;
@@ -237,8 +199,6 @@ PASS msup preferred width calculation is not affected by align-content: end; jus
 PASS msup layout is not affected by align-content: end; justify-content: end;
 PASS msup preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS msup layout is not affected by align-self: end; justify-self: end;
-PASS msup preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS msup layout is not affected by width: 100px !important; height: 200px !important;
 PASS mtable preferred width calculation is not affected by writing-mode: vertical-rl;
 PASS mtable layout is not affected by writing-mode: vertical-rl;
 PASS mtable preferred width calculation is not affected by white-space: normal;
@@ -259,8 +219,6 @@ PASS mtext preferred width calculation is not affected by align-content: end; ju
 PASS mtext layout is not affected by align-content: end; justify-content: end;
 PASS mtext preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS mtext layout is not affected by align-self: end; justify-self: end;
-PASS mtext preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL mtext layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: inline size expected 71.046875 +/- 1 but got 100
 PASS munder preferred width calculation is not affected by writing-mode: vertical-rl;
 PASS munder layout is not affected by writing-mode: vertical-rl;
 PASS munder preferred width calculation is not affected by white-space: normal;
@@ -271,10 +229,8 @@ PASS munder preferred width calculation is not affected by align-content: end; j
 PASS munder layout is not affected by align-content: end; justify-content: end;
 PASS munder preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS munder layout is not affected by align-self: end; justify-self: end;
-PASS munder preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS munder layout is not affected by width: 100px !important; height: 200px !important;
 PASS munderover preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL munderover layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 8.609375
+FAIL munderover layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 8.59375
 PASS munderover preferred width calculation is not affected by white-space: normal;
 PASS munderover layout is not affected by white-space: normal;
 PASS munderover preferred width calculation is not affected by float: right;
@@ -283,8 +239,6 @@ PASS munderover preferred width calculation is not affected by align-content: en
 PASS munderover layout is not affected by align-content: end; justify-content: end;
 PASS munderover preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS munderover layout is not affected by align-self: end; justify-self: end;
-PASS munderover preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-PASS munderover layout is not affected by width: 100px !important; height: 200px !important;
 PASS semantics preferred width calculation is not affected by writing-mode: vertical-rl;
 FAIL semantics layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -15
 PASS semantics preferred width calculation is not affected by white-space: normal;
@@ -295,6 +249,4 @@ PASS semantics preferred width calculation is not affected by align-content: end
 FAIL semantics layout is not affected by align-content: end; justify-content: end; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
 PASS semantics preferred width calculation is not affected by align-self: end; justify-self: end;
 FAIL semantics layout is not affected by align-self: end; justify-self: end; assert_approx_equals: inline position (child 1) expected -88.3125 +/- 1 but got -8
-PASS semantics preferred width calculation is not affected by width: 100px !important; height: 200px !important;
-FAIL semantics layout is not affected by width: 100px !important; height: 200px !important; assert_approx_equals: block size expected 7.21875 +/- 1 but got 200
 

@@ -20,7 +20,7 @@ PASS menclose layout is not affected by align-content: end; justify-content: end
 PASS menclose preferred width calculation is not affected by align-self: end; justify-self: end;
 PASS menclose layout is not affected by align-self: end; justify-self: end;
 PASS merror preferred width calculation is not affected by writing-mode: vertical-rl;
-FAIL merror layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 9.875 +/- 1 but got 0
+FAIL merror layout is not affected by writing-mode: vertical-rl; assert_approx_equals: inline position (child 1) expected 9.875 +/- 1 but got 1
 PASS merror preferred width calculation is not affected by white-space: normal;
 PASS merror layout is not affected by white-space: normal;
 PASS merror preferred width calculation is not affected by float: right;
