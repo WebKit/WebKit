@@ -1,4 +1,10 @@
-<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
 <div>
 <canvas id="canvas1" width=100 height=100></canvas>
 <canvas id="canvas2" width=100 height=100></canvas>
@@ -7,9 +13,6 @@
 <br>
 <image id='image'></image>
 <script>
-if (window.testRunner)
-    testRunner.waitUntilDone();
-
 function getPixel(x, y, canvas, data)
 {
     const position = 4 * (x * canvas.width + y);
@@ -22,6 +25,12 @@ function isPixelGreen(x, y, canvas, data)
    return pixel.r === 0 && pixel.g === 128 && pixel.b === 0;
 }
 
+function isPixelAlmostGreen(x, y, canvas, data)
+{
+   const pixel = getPixel(x, y, canvas, data);
+   return pixel.r <= 64 && pixel.g >= 100 && pixel.g <= 200 && pixel.b <= 64;
+}
+
 function isPixelWhite(x, y, canvas, data)
 {
    const pixel = getPixel(x, y, canvas, data);
@@ -30,7 +39,6 @@ function isPixelWhite(x, y, canvas, data)
 
 async function validateSnapshot()
 {
-console.log("validateSnapshot-1 ");
     if (!window.testRunner)
         return true;
     const dataURL = await new Promise(resolve => testRunner.takeViewPortSnapshot(resolve));
@@ -42,7 +50,6 @@ console.log("validateSnapshot-1 ");
     });
     image.src = dataURL;
     await loadPromise;
-console.log("validateSnapshot0 ");
 
     const canvas = document.createElement("canvas");
     canvas.width = image.width;
@@ -50,41 +57,33 @@ console.log("validateSnapshot0 ");
     canvas.getContext('2d').drawImage(image, 0, 0);
     const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
 
-console.log("validateSnapshot1 ");
-
-    // We inspect the vertial line at pixel 50. We should get white, then green, then white, then green, then white.
+    // We inspect the vertial line at pixel 50. We should get white, then green, then white, then almost green (encoder might change a bit the color), then white.
+    const verticalLine = 50;
     let i = 0;
 
-console.log("validateSnapshot2 " + i);
-    if (!isPixelWhite(i, 50, canvas, data))
+    if (!isPixelWhite(i, verticalLine, canvas, data))
         return false;
-    while (isPixelWhite(++i, 50, canvas, data)) { };
+    while (isPixelWhite(++i, verticalLine, canvas, data)) { };
 
-console.log("validateSnapshot3 " + i);
-    if (!isPixelGreen(i, 50, canvas, data))
+    if (!isPixelGreen(i, verticalLine, canvas, data))
         return false;
-    while (isPixelGreen(++i, 50, canvas, data)) { };
+    while (isPixelGreen(++i, verticalLine, canvas, data)) { };
 
-console.log("validateSnapshot4 " + i);
-    if (!isPixelWhite(i, 50, canvas, data))
+    if (!isPixelWhite(i, verticalLine, canvas, data))
         return false;
-    while (isPixelWhite(++i, 50, canvas, data)) { };
+    while (isPixelWhite(++i, verticalLine, canvas, data)) { };
 
-console.log("validateSnapshot5 " + i);
-    if (!isPixelGreen(i, 50, canvas, data))
+    if (!isPixelAlmostGreen(i, verticalLine, canvas, data))
         return false;
-    while (isPixelGreen(++i, 50, canvas, data)) { };
+    while (isPixelAlmostGreen(++i, verticalLine, canvas, data)) { };
 
-console.log("validateSnapshot6 " + i);
-    if (!isPixelWhite(i, 50, canvas, data))
+    if (!isPixelWhite(i, verticalLine, canvas, data))
         return false;
 
-console.log("validateSnapshot7 " + i);
     return true;
 }
 
-async function test()
-{
+promise_test(async () => {
      const context1 = canvas1.getContext('2d');
      setInterval(() => {
         context1.fillStyle = "green";
@@ -114,9 +113,9 @@ async function test()
         } catch (e) {
         }
     }
+    assert_true(result);
     image.parentNode.removeChild(image);
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-test();
+}, "Validate second srcObject is being rendered")
 </script>
+</body>
+</html>
