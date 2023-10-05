@@ -63,6 +63,19 @@ void ImageCapture::getPhotoCapabilities(PhotoCapabilitiesPromise&& promise)
     m_track->getPhotoCapabilities(WTFMove(promise));
 }
 
+void ImageCapture::getPhotoSettings(PhotoSettingsPromise&& promise)
+{
+    if (m_track->readyState() == MediaStreamTrack::State::Ended) {
+        // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
+        // If the readyState of track provided in the constructor is not live, return a promise
+        // rejected with a new DOMException whose name is InvalidStateError, and abort these steps.
+        promise.reject(Exception { InvalidStateError, "Track has ended"_s });
+        return;
+    }
+
+    m_track->getPhotoSettings(WTFMove(promise));
+}
+
 const char* ImageCapture::activeDOMObjectName() const
 {
     return "ImageCapture";

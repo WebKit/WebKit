@@ -44,6 +44,7 @@
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
+#include <wtf/NativePromise.h>
 #include <wtf/UniqueRef.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionProxy->connection())
@@ -192,6 +193,11 @@ public:
     void getPhotoCapabilities(GetPhotoCapabilitiesCallback&& handler)
     {
         m_source->getPhotoCapabilities(WTFMove(handler));
+    }
+
+    Ref<RealtimeMediaSource::PhotoSettingsNativePromise> getPhotoSettings()
+    {
+        return m_source->getPhotoSettings();
     }
 
 private:
@@ -534,6 +540,19 @@ void UserMediaCaptureManagerProxy::getPhotoCapabilities(RealtimeMediaSourceIdent
     }
 
     handler(PhotoCapabilitiesOrError("Device not available"_s));
+}
+
+void UserMediaCaptureManagerProxy::getPhotoSettings(RealtimeMediaSourceIdentifier sourceID, GetPhotoSettingsCallback&& handler)
+{
+    auto* proxy = m_proxies.get(sourceID);
+    if (!proxy) {
+        handler(Unexpected<String>("Device not available"_s));
+        return;
+    }
+
+    proxy->getPhotoSettings()->whenSettled(RunLoop::main(), [handler = WTFMove(handler)] (auto&& result) mutable {
+        handler(WTFMove(result));
+    });
 }
 
 void UserMediaCaptureManagerProxy::endProducingData(RealtimeMediaSourceIdentifier sourceID)

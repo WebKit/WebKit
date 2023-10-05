@@ -98,7 +98,10 @@ private:
     void setIsInBackground(WebCore::RealtimeMediaSourceIdentifier, bool);
 
     using GetPhotoCapabilitiesCallback = CompletionHandler<void(WebCore::PhotoCapabilitiesOrError&&)>;
-    void getPhotoCapabilities(WebCore::RealtimeMediaSourceIdentifier, GetPhotoCapabilitiesCallback&& handler);
+    void getPhotoCapabilities(WebCore::RealtimeMediaSourceIdentifier, GetPhotoCapabilitiesCallback&&);
+
+    using GetPhotoSettingsCallback = CompletionHandler<void(Expected<WebCore::PhotoSettings, String>&&)>;
+    void getPhotoSettings(WebCore::RealtimeMediaSourceIdentifier, GetPhotoSettingsCallback&&);
 
     WebCore::CaptureSourceOrError createMicrophoneSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, WebCore::PageIdentifier);
     WebCore::CaptureSourceOrError createCameraSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, WebCore::PageIdentifier);

@@ -75,6 +75,7 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
     void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
+    Ref<PhotoSettingsNativePromise> getPhotoSettings() final;
 
     void startProducingData() override;
     void stopProducingData() override;
@@ -124,6 +125,7 @@ private:
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     std::optional<PhotoCapabilities> m_photoCapabilities;
+    std::optional<PhotoSettings> m_photoSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     Color m_fillColor { Color::black };
     Color m_fillColorWithZoom { Color::red };

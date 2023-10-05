@@ -454,6 +454,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/OverconstrainedError.idl \
     $(WebCore)/Modules/mediastream/OverconstrainedErrorEvent.idl \
     $(WebCore)/Modules/mediastream/PhotoCapabilities.idl \
+    $(WebCore)/Modules/mediastream/PhotoSettings.idl \
     $(WebCore)/Modules/mediastream/RedEyeReduction.idl \
     $(WebCore)/Modules/mediastream/RTCAnswerOptions.idl \
     $(WebCore)/Modules/mediastream/RTCCertificate.idl \

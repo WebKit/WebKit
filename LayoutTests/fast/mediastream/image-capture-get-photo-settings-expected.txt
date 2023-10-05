@@ -1,0 +1,6 @@
+
+
+PASS getPhotoSettings() on an 'ended' track should throw "InvalidStateError"
+PASS "OperationError" should be thrown if the track ends before the promise resolves
+PASS Check getPhotoSettings()
+

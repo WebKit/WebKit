@@ -459,6 +459,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/OverconstrainedError.idl
     Modules/mediastream/OverconstrainedErrorEvent.idl
     Modules/mediastream/PhotoCapabilities.idl
+    Modules/mediastream/PhotoSettings.idl
     Modules/mediastream/RTCAnswerOptions.idl
     Modules/mediastream/RTCCertificate.idl
     Modules/mediastream/RTCConfiguration.idl

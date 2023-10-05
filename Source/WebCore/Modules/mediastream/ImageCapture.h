@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "MediaStreamTrack.h"
 #include "PhotoCapabilities.h"
+#include "PhotoSettings.h"
 
 namespace WebCore {
 
@@ -44,6 +45,9 @@ public:
 
     using PhotoCapabilitiesPromise = DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>;
     void getPhotoCapabilities(PhotoCapabilitiesPromise&&);
+
+    using PhotoSettingsPromise = DOMPromiseDeferred<IDLDictionary<PhotoSettings>>;
+    void getPhotoSettings(PhotoSettingsPromise&&);
 
     Ref<MediaStreamTrack> track() const { return m_track; }
 

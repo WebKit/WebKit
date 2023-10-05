@@ -3966,6 +3966,7 @@ JSPermissionState.cpp
 JSPermissionStatus.cpp
 JSPermissions.cpp
 JSPhotoCapabilities.cpp
+JSPhotoSettings.cpp
 JSPictureInPictureEvent.cpp
 JSPictureInPictureWindow.cpp
 JSPlaneLayout.cpp

@@ -2152,6 +2152,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/MediaStreamTrackPrivate.h
     platform/mediastream/MeteringMode.h
     platform/mediastream/PhotoCapabilities.h
+    platform/mediastream/PhotoSettings.h
     platform/mediastream/RedEyeReduction.h
     platform/mediastream/RTCDataChannelHandler.h
     platform/mediastream/RTCDataChannelHandlerClient.h

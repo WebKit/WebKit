@@ -41,6 +41,7 @@
 #include "MediaConstraints.h"
 #include "MediaDeviceHashSalts.h"
 #include "PhotoCapabilities.h"
+#include "PhotoSettings.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
@@ -48,6 +49,7 @@
 #include "VideoFrameTimeMetadata.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -211,6 +213,9 @@ public:
 
     using PhotoCapabilitiesHandler = CompletionHandler<void(PhotoCapabilitiesOrError&&)>;
     virtual void getPhotoCapabilities(PhotoCapabilitiesHandler&&);
+
+    using PhotoSettingsNativePromise = NativePromise<PhotoSettings, String>;
+    virtual Ref<PhotoSettingsNativePromise> getPhotoSettings();
 
     struct ApplyConstraintsError {
         String badConstraint;

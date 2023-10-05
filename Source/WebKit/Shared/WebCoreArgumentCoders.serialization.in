@@ -5936,6 +5936,14 @@ header: <WebCore/PhotoCapabilities.h>
     std::optional<Vector<WebCore::FillLightMode>> fillLightMode;
 };
 
+header: <WebCore/PhotoSettings.h>
+[CustomHeader] struct WebCore::PhotoSettings {
+    std::optional<WebCore::FillLightMode> fillLightMode;
+    std::optional<double> imageHeight;
+    std::optional<double> imageWidth;
+    std::optional<bool> redEyeReduction;
+};
+
 header: <WebCore/RealtimeMediaSource.h>
 [CustomHeader] struct WebCore::PhotoCapabilitiesOrError {
     std::optional<WebCore::PhotoCapabilities> capabilities;
