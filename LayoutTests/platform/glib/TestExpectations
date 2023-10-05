@@ -1872,6 +1872,7 @@ webrtc/sframe-transform-buffer-source.html [ Skip ]
 webrtc/video-sframe.html [ Skip ]
 webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
+http/wpt/webrtc/video-script-transform-simulcast.html [ Skip ]
 
 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpTransceiver-headerExtensionControl.html [ Pass Failure ]
 
