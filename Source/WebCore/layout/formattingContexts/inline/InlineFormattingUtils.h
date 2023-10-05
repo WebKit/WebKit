@@ -67,7 +67,7 @@ public:
 private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
 
-    const InlineLayoutState& inlineLayoutState() const;
+    const InlineLayoutState& layoutState() const;
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
 
 private:

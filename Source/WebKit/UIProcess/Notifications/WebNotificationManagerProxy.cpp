@@ -314,14 +314,9 @@ static Vector<WebCore::SecurityOriginData> apiArrayToSecurityOrigins(API::Array*
     if (!origins)
         return { };
 
-    Vector<WebCore::SecurityOriginData> securityOrigins;
-    size_t size = origins->size();
-    securityOrigins.reserveInitialCapacity(size);
-
-    for (size_t i = 0; i < size; ++i)
-        securityOrigins.uncheckedAppend(origins->at<API::SecurityOrigin>(i)->securityOrigin());
-
-    return securityOrigins;
+    return Vector<WebCore::SecurityOriginData>(origins->size(), [origins](size_t i) {
+        return origins->at<API::SecurityOrigin>(i)->securityOrigin();
+    });
 }
 
 static Vector<String> apiArrayToSecurityOriginStrings(API::Array* origins)
@@ -329,14 +324,9 @@ static Vector<String> apiArrayToSecurityOriginStrings(API::Array* origins)
     if (!origins)
         return { };
 
-    Vector<String> originStrings;
-    size_t size = origins->size();
-    originStrings.reserveInitialCapacity(size);
-
-    for (size_t i = 0; i < size; ++i)
-        originStrings.uncheckedAppend(origins->at<API::SecurityOrigin>(i)->securityOrigin().toString());
-
-    return originStrings;
+    return Vector<String>(origins->size(), [origins](size_t i) {
+        return origins->at<API::SecurityOrigin>(i)->securityOrigin().toString();
+    });
 }
 
 void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const API::SecurityOrigin* origin, bool enabled)

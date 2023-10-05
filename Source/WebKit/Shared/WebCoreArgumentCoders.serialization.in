@@ -3468,6 +3468,25 @@ struct WebCore::ListStyleType {
     AtomString identifier;
 };
 
+header: <pal/SessionID.h>
+[CustomHeader] class PAL::SessionID {
+    [Validator='PAL::SessionID::isValidSessionIDValue(*toUInt64)'] uint64_t toUInt64();
+}
+
+enum class WebCore::RunAsAsyncFunction : bool;
+enum class WebCore::ForceUserGesture : bool;
+enum class WebCore::RemoveTransientActivation : bool;
+
+struct WebCore::RunJavaScriptParameters {
+    String source;
+    JSC::SourceTaintedOrigin taintedness;
+    URL sourceURL;
+    WebCore::RunAsAsyncFunction runAsAsyncFunction;
+    std::optional<WebCore::ArgumentWireBytesMap> arguments;
+    WebCore::ForceUserGesture forceUserGesture;
+    WebCore::RemoveTransientActivation removeTransientActivation;
+}
+
 header: <WebCore/FontAttributes.h>
 [CustomHeader] struct WebCore::TextList {
     WebCore::ListStyleType styleType;
@@ -5519,6 +5538,46 @@ struct WebCore::MockWebAuthenticationConfiguration {
 };
 
 #endif // ENABLE(WEB_AUTHN)
+
+#if ENABLE(MEDIA_STREAM)
+
+header: <WebCore/MockMediaDevice.h>
+[CustomHeader] struct WebCore::MockMicrophoneProperties {
+    int defaultSampleRate;
+};
+
+header: <WebCore/MockMediaDevice.h>
+[CustomHeader] struct WebCore::MockSpeakerProperties {
+    String relatedMicrophoneId;
+    int defaultSampleRate;
+};
+
+header: <WebCore/MockMediaDevice.h>
+[CustomHeader] struct WebCore::MockCameraProperties {
+    double defaultFrameRate;
+    WebCore::VideoFacingMode facingMode;
+    Vector<WebCore::VideoPresetData> presets;
+    WebCore::Color fillColor;
+    Vector<WebCore::MeteringMode> whiteBalanceMode;
+    bool hasTorch;
+};
+
+header: <WebCore/MockMediaDevice.h>
+[CustomHeader] struct WebCore::MockDisplayProperties {
+    WebCore::CaptureDevice::DeviceType type;
+    WebCore::Color fillColor;
+    WebCore::IntSize defaultSize;
+};
+
+header: <WebCore/MockMediaDevice.h>
+[CustomHeader] struct WebCore::MockMediaDevice {
+    String persistentId;
+    String label;
+    WebCore::MockMediaDevice::Flags flags;
+    std::variant<WebCore::MockMicrophoneProperties, WebCore::MockSpeakerProperties, WebCore::MockCameraProperties, WebCore::MockDisplayProperties> properties;
+};
+
+#endif // ENABLE(MEDIA_STREAM)
 
 header: <WebCore/StorageType.h>
 enum class WebCore::StorageType : uint8_t {

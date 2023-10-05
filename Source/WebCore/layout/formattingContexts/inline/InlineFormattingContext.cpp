@@ -60,20 +60,21 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
-InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)
-    : FormattingContext(formattingContextRoot, layoutState)
-    , m_floatingContext(formattingContextRoot, layoutState, parentBlockLayoutState.placedFloats())
-    , m_inlineContentCache(layoutState.inlineContentCache(formattingContextRoot))
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)
+    : m_rootBlockContainer(rootBlockContainer)
+    , m_layoutState(layoutState)
+    , m_floatingContext(rootBlockContainer, layoutState, parentBlockLayoutState.placedFloats())
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
+    , m_inlineContentCache(layoutState.inlineContentCache(rootBlockContainer))
     , m_inlineLayoutState(parentBlockLayoutState)
 {
-    initializeLayoutState();
+    initializeInlineLayoutState(layoutState);
 }
 
 InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage)
 {
-    auto& placedFloats = inlineLayoutState().placedFloats();
+    auto& placedFloats = layoutState().placedFloats();
     if (!root().hasInFlowChild() && !root().hasOutOfFlowChild()) {
         // Float only content does not support partial layout.
         ASSERT(!lineDamage);
@@ -107,7 +108,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
         auto balancer = InlineContentBalancer { *this, inlineItemList, constraints.horizontal() };
         auto balancedLineWidths = balancer.computeBalanceConstraints();
         if (balancedLineWidths)
-            inlineLayoutState().setAvailableLineWidthOverride({ *balancedLineWidths });
+            layoutState().setAvailableLineWidthOverride({ *balancedLineWidths });
     }
 
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), this->inlineContentCache(), &placedFloats)) {
@@ -209,7 +210,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         previousLineEnd = lineContentEnd;
         lineLogicalTop = formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
     }
-    InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(*this, inlineLayoutState(), layoutResult.displayContent);
+    InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(*this, layoutState(), layoutResult.displayContent);
     return layoutResult;
 }
 
@@ -219,7 +220,7 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
 
     auto& inlineContentCache = this->inlineContentCache();
     auto floatingContext = this->floatingContext();
-    auto& placedFloats = inlineLayoutState().placedFloats();
+    auto& placedFloats = layoutState().placedFloats();
 
     InlineItemsBuilder { inlineContentCache, root() }.build({ });
 
@@ -258,14 +259,14 @@ static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& root
 void InlineFormattingContext::updateInlineLayoutStateWithLineLayoutResult(const LineLayoutResult& lineLayoutResult, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext)
 {
     if (auto firstLineGap = lineLayoutResult.lineGeometry.initialLetterClearGap) {
-        ASSERT(!inlineLayoutState().clearGapBeforeFirstLine());
-        inlineLayoutState().setClearGapBeforeFirstLine(*firstLineGap);
+        ASSERT(!layoutState().clearGapBeforeFirstLine());
+        layoutState().setClearGapBeforeFirstLine(*firstLineGap);
     }
 
     if (lineLayoutResult.isFirstLast.isLastLineWithInlineContent)
-        inlineLayoutState().setClearGapAfterLastLine(formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
+        layoutState().setClearGapAfterLastLine(formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 
-    lineLayoutResult.endsWithHyphen ? inlineLayoutState().incrementSuccessiveHyphenatedLineCount() : inlineLayoutState().resetSuccessiveHyphenatedLineCount();
+    lineLayoutResult.endsWithHyphen ? layoutState().incrementSuccessiveHyphenatedLineCount() : layoutState().resetSuccessiveHyphenatedLineCount();
 }
 
 void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList& placedFloats)
@@ -288,7 +289,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
 {
     auto lineIndex = lineBox.lineIndex();
     auto numberOfVisibleLinesAllowed = [&] () -> std::optional<size_t> {
-        if (auto lineClamp = inlineLayoutState().parentBlockLayoutState().lineClamp())
+        if (auto lineClamp = layoutState().parentBlockLayoutState().lineClamp())
             return lineClamp->maximumLineCount > lineClamp->currentLineCount ? lineClamp->maximumLineCount - lineClamp->currentLineCount : 0;
         return { };
     }();
@@ -301,7 +302,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(ellipsisPolicy, displayLine, boxes, lineLayoutResult.isFirstLast.isLastLineWithInlineContent)) {
         displayLine.setEllipsisVisualRect(*ellipsisRect);
         if (ellipsisPolicy == LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection)
-            inlineLayoutState().setClampedLineIndex(lineIndex);
+            layoutState().setClampedLineIndex(lineIndex);
     }
 
     displayContent.boxes.appendVector(WTFMove(boxes));
@@ -340,7 +341,7 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
         inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
         return false;
     }
-    if (!inlineLayoutState().placedFloats().isEmpty()) {
+    if (!layoutState().placedFloats().isEmpty()) {
         inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
         return false;
     }
@@ -370,16 +371,48 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
     return true;
 }
 
-void InlineFormattingContext::initializeLayoutState()
+void InlineFormattingContext::initializeInlineLayoutState(const LayoutState& layoutState)
 {
-    auto& inlineLayoutState = this->inlineLayoutState();
+    auto& inlineLayoutState = this->layoutState();
 
     if (auto limitLinesValue = root().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
         inlineLayoutState.setHyphenationLimitLines(limitLinesValue);
     // FIXME: Remove when IFC takes care of running layout on inline-blocks.
     inlineLayoutState.setShouldNotSynthesizeInlineBlockBaseline();
-    if (layoutState().inStandardsMode())
+    if (layoutState.inStandardsMode())
         inlineLayoutState.setInStandardsMode();
+}
+
+#if ASSERT_ENABLED
+static inline bool isOkToAccessBoxGeometry(const Box& layoutBox, const ElementBox& rootBlockContainer, std::optional<InlineFormattingContext::EscapeReason> escapeReason)
+{
+    if (escapeReason == InlineFormattingContext::EscapeReason::InkOverflowNeedsInitialContiningBlockForStrokeWidth && is<InitialContainingBlock>(layoutBox))
+        return true;
+    // This is the non-escape case of accessing a box's geometry information within the same formatting context when computing static position for out-of-flow boxes.
+    if (layoutBox.isOutOfFlowPositioned())
+        return true;
+    auto containingBlock = [&]() -> const Box* {
+        for (auto* ancestor = &layoutBox.parent(); !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
+            if (ancestor->isContainingBlockForInFlow())
+                return ancestor;
+        }
+        return nullptr;
+    };
+    // This is the non-escape case of accessing a box's geometry information within the same formatting context.
+    return containingBlock() == &rootBlockContainer;
+};
+#endif
+
+const BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason) const
+{
+    ASSERT_UNUSED(escapeReason, isOkToAccessBoxGeometry(layoutBox, root(), escapeReason));
+    return m_layoutState.geometryForBox(layoutBox);
+}
+
+BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason)
+{
+    ASSERT_UNUSED(escapeReason, isOkToAccessBoxGeometry(layoutBox, root(), escapeReason));
+    return m_layoutState.ensureGeometryForBox(layoutBox);
 }
 
 }

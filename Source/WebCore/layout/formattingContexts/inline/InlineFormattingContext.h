@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "FormattingContext.h"
-#include "FormattingState.h"
 #include "InlineDisplayContent.h"
 #include "InlineFormattingConstraints.h"
 #include "InlineFormattingUtils.h"
@@ -52,9 +50,9 @@ struct InlineLayoutResult {
     Range range { Range::Full };
 };
 
-// This class implements the layout logic for inline formatting contexts.
+// This class implements the layout logic for inline formatting context.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
-class InlineFormattingContext : public FormattingContext {
+class InlineFormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
@@ -63,13 +61,19 @@ public:
     IntrinsicWidthConstraints computedIntrinsicSizes(const InlineDamage*);
     LayoutUnit maximumContentSize();
 
+    const ElementBox& root() const { return m_rootBlockContainer; }
     const InlineFormattingUtils& formattingUtils() const { return m_inlineFormattingUtils; }
     const InlineQuirks& quirks() const { return m_inlineQuirks; }
     const FloatingContext& floatingContext() const { return m_floatingContext; }
 
-    // FIXME: This should just be "layout state" (pending on renaming LayoutState).
-    InlineLayoutState& inlineLayoutState() { return m_inlineLayoutState; }
-    const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
+    InlineLayoutState& layoutState() { return m_inlineLayoutState; }
+    const InlineLayoutState& layoutState() const { return m_inlineLayoutState; }
+
+    enum class EscapeReason {
+        InkOverflowNeedsInitialContiningBlockForStrokeWidth
+    };
+    const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
+    BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt);
 
 private:
     InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
@@ -81,20 +85,19 @@ private:
     void updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
     bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
-    void initializeLayoutState();
+    void initializeInlineLayoutState(const LayoutState&);
 
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 
 private:
-    FloatingContext m_floatingContext;
-    InlineContentCache& m_inlineContentCache;
+    const ElementBox& m_rootBlockContainer;
+    LayoutState& m_layoutState;
+    const FloatingContext m_floatingContext;
     const InlineFormattingUtils m_inlineFormattingUtils;
     const InlineQuirks m_inlineQuirks;
+    InlineContentCache& m_inlineContentCache;
     InlineLayoutState m_inlineLayoutState;
 };
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONTEXT(InlineFormattingContext, isInlineFormattingContext())
-

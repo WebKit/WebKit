@@ -60,6 +60,7 @@
 
 - (void)load;
 - (void)run;
+- (void)runForTimeInterval:(NSTimeInterval)interval;
 - (void)loadAndRun;
 - (void)done;
 

@@ -503,17 +503,13 @@ Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& 
 
 static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(const Vector<String>& input)
 {
-    Vector<UserContentURLPattern> parsedPatterns;
-    parsedPatterns.reserveInitialCapacity(input.size());
-    for (const auto& pattern : input) {
+    return WTF::compactMap(input, [](auto& pattern) -> std::optional<UserContentURLPattern> {
         UserContentURLPattern parsedPattern(pattern);
-        if (parsedPattern.isValid()) {
-            WebCore::OriginAccessPatternsForWebProcess::singleton().allowAccessTo(parsedPattern);
-            parsedPatterns.uncheckedAppend(WTFMove(parsedPattern));
-        }
-    }
-    parsedPatterns.shrinkToFit();
-    return parsedPatterns;
+        if (!parsedPattern.isValid())
+            return std::nullopt;
+        WebCore::OriginAccessPatternsForWebProcess::singleton().allowAccessTo(parsedPattern);
+        return parsedPattern;
+    });
 }
 
 static std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame(Ref<WebFrame>&& mainFrame, auto frameType)
@@ -8949,7 +8945,7 @@ void WebPage::frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID)
     auto* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
-    m_page->focusController().updateFocusedFrame(frame->coreFrame());
+    m_page->focusController().setFocusedFrame(frame->coreFrame(), false);
 }
 
 } // namespace WebKit

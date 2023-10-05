@@ -536,6 +536,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/PolicyDecision.serialization.in \
 	Shared/PushMessageForTesting.serialization.in \
 	Shared/RemoteWorkerType.serialization.in \
+	Shared/ResourceLoadInfo.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \
 	Shared/ShareableBitmap.serialization.in \
@@ -549,6 +550,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebFoundTextRange.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
 	Shared/WebPageCreationParameters.serialization.in \
+	Shared/WebPageNetworkParameters.serialization.in \
 	Shared/WebPopupItem.serialization.in \
 	Shared/WebProcessCreationParameters.serialization.in \
 	Shared/WebProcessDataStoreParameters.serialization.in \

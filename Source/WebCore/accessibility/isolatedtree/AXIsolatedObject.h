@@ -91,7 +91,7 @@ private:
     unsigned unsignedAttributeValue(AXPropertyName) const;
     double doubleAttributeValue(AXPropertyName) const;
     float floatAttributeValue(AXPropertyName) const;
-    AXCoreObject* objectAttributeValue(AXPropertyName) const;
+    AXIsolatedObject* objectAttributeValue(AXPropertyName) const;
     IntPoint intPointAttributeValue(AXPropertyName) const;
     Color colorAttributeValue(AXPropertyName) const;
     URL urlAttributeValue(AXPropertyName) const;
@@ -145,11 +145,11 @@ private:
     unsigned columnCount() final { return static_cast<unsigned>(columns().size()); }
     unsigned rowCount() final { return static_cast<unsigned>(rows().size()); }
     AccessibilityChildrenVector cells() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Cells)); }
-    AXCoreObject* cellForColumnAndRow(unsigned, unsigned) override;
+    AXIsolatedObject* cellForColumnAndRow(unsigned, unsigned) final;
     AccessibilityChildrenVector columnHeaders() override;
     AccessibilityChildrenVector rowHeaders() override;
     AccessibilityChildrenVector visibleRows() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleRows)); }
-    AXCoreObject* headerContainer() override { return objectAttributeValue(AXPropertyName::HeaderContainer); }
+    AXIsolatedObject* headerContainer() final { return objectAttributeValue(AXPropertyName::HeaderContainer); }
     int axColumnCount() const override { return intAttributeValue(AXPropertyName::AXColumnCount); }
     int axRowCount() const override { return intAttributeValue(AXPropertyName::AXRowCount); }
 
@@ -170,17 +170,17 @@ private:
     // Table column support.
     bool isTableColumn() const override { return boolAttributeValue(AXPropertyName::IsTableColumn); }
     unsigned columnIndex() const override { return unsignedAttributeValue(AXPropertyName::ColumnIndex); }
-    AXCoreObject* columnHeader() override { return objectAttributeValue(AXPropertyName::ColumnHeader); }
+    AXIsolatedObject* columnHeader() final { return objectAttributeValue(AXPropertyName::ColumnHeader); }
 
     // Table row support.
     bool isTableRow() const override { return boolAttributeValue(AXPropertyName::IsTableRow); }
     unsigned rowIndex() const override { return unsignedAttributeValue(AXPropertyName::RowIndex); }
-    AXCoreObject* rowHeader() final { return objectAttributeValue(AXPropertyName::RowHeader); };
+    AXIsolatedObject* rowHeader() final { return objectAttributeValue(AXPropertyName::RowHeader); };
 
     // ARIA tree/grid row support.
     bool isARIATreeGridRow() const override { return boolAttributeValue(AXPropertyName::IsARIATreeGridRow); }
     AccessibilityChildrenVector disclosedRows() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::DisclosedRows)); }
-    AXCoreObject* disclosedByRow() const override { return objectAttributeValue(AXPropertyName::DisclosedByRow); }
+    AXIsolatedObject* disclosedByRow() const final { return objectAttributeValue(AXPropertyName::DisclosedByRow); }
 
     bool isFieldset() const override { return boolAttributeValue(AXPropertyName::IsFieldset); }
     bool isChecked() const override { return boolAttributeValue(AXPropertyName::IsChecked); }
@@ -237,12 +237,12 @@ private:
     bool supportsDragging() const override { return boolAttributeValue(AXPropertyName::SupportsDragging); }
     bool isGrabbed() override { return boolAttributeValue(AXPropertyName::IsGrabbed); }
     Vector<String> determineDropEffects() const override;
-    AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
-    AXCoreObject* focusedUIElement() const override;
+    AXIsolatedObject* accessibilityHitTest(const IntPoint&) const final;
+    AXIsolatedObject* focusedUIElement() const final;
     AXIsolatedObject* parentObjectUnignored() const override;
     AccessibilityChildrenVector linkedObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::LinkedObjects)); }
-    AXCoreObject* titleUIElement() const override { return objectAttributeValue(AXPropertyName::TitleUIElement); }
-    AXCoreObject* scrollBar(AccessibilityOrientation) override;
+    AXIsolatedObject* titleUIElement() const final { return objectAttributeValue(AXPropertyName::TitleUIElement); }
+    AXIsolatedObject* scrollBar(AccessibilityOrientation) final;
     const String placeholderValue() const override { return stringAttributeValue(AXPropertyName::PlaceholderValue); }
     String expandedTextValue() const override { return stringAttributeValue(AXPropertyName::ExpandedTextValue); }
     bool supportsExpandedTextValue() const override { return boolAttributeValue(AXPropertyName::SupportsExpandedTextValue); }
@@ -282,14 +282,14 @@ private:
     bool isMathMultiscript() const override { return boolAttributeValue(AXPropertyName::IsMathMultiscript); }
     bool isMathToken() const override { return boolAttributeValue(AXPropertyName::IsMathToken); }
     std::optional<AccessibilityChildrenVector> mathRadicand() override;
-    AXCoreObject* mathRootIndexObject() override { return objectAttributeValue(AXPropertyName::MathRootIndexObject); }
-    AXCoreObject* mathUnderObject() override { return objectAttributeValue(AXPropertyName::MathUnderObject); }
-    AXCoreObject* mathOverObject() override { return objectAttributeValue(AXPropertyName::MathOverObject); }
-    AXCoreObject* mathNumeratorObject() override { return objectAttributeValue(AXPropertyName::MathNumeratorObject); }
-    AXCoreObject* mathDenominatorObject() override { return objectAttributeValue(AXPropertyName::MathDenominatorObject); }
-    AXCoreObject* mathBaseObject() override { return objectAttributeValue(AXPropertyName::MathBaseObject); }
-    AXCoreObject* mathSubscriptObject() override { return objectAttributeValue(AXPropertyName::MathSubscriptObject); }
-    AXCoreObject* mathSuperscriptObject() override { return objectAttributeValue(AXPropertyName::MathSuperscriptObject); }
+    AXIsolatedObject* mathRootIndexObject() final { return objectAttributeValue(AXPropertyName::MathRootIndexObject); }
+    AXIsolatedObject* mathUnderObject() final { return objectAttributeValue(AXPropertyName::MathUnderObject); }
+    AXIsolatedObject* mathOverObject() final { return objectAttributeValue(AXPropertyName::MathOverObject); }
+    AXIsolatedObject* mathNumeratorObject() final { return objectAttributeValue(AXPropertyName::MathNumeratorObject); }
+    AXIsolatedObject* mathDenominatorObject() final { return objectAttributeValue(AXPropertyName::MathDenominatorObject); }
+    AXIsolatedObject* mathBaseObject() final { return objectAttributeValue(AXPropertyName::MathBaseObject); }
+    AXIsolatedObject* mathSubscriptObject() final { return objectAttributeValue(AXPropertyName::MathSubscriptObject); }
+    AXIsolatedObject* mathSuperscriptObject() final { return objectAttributeValue(AXPropertyName::MathSuperscriptObject); }
     String mathFencedOpenString() const override { return stringAttributeValue(AXPropertyName::MathFencedOpenString); }
     String mathFencedCloseString() const override { return stringAttributeValue(AXPropertyName::MathFencedCloseString); }
     int mathLineThickness() const override { return intAttributeValue(AXPropertyName::MathLineThickness); }
@@ -323,8 +323,8 @@ private:
     bool isBusy() const override { return boolAttributeValue(AXPropertyName::IsBusy); }
     bool isInlineText() const override { return boolAttributeValue(AXPropertyName::IsInlineText); }
     // Spin button support.
-    AXCoreObject* incrementButton() override { return objectAttributeValue(AXPropertyName::IncrementButton); }
-    AXCoreObject* decrementButton() override { return objectAttributeValue(AXPropertyName::DecrementButton); }
+    AXIsolatedObject* incrementButton() final { return objectAttributeValue(AXPropertyName::IncrementButton); }
+    AXIsolatedObject* decrementButton() final { return objectAttributeValue(AXPropertyName::DecrementButton); }
     AccessibilityChildrenVector documentLinks() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::DocumentLinks)); }
     bool supportsCheckedState() const override { return boolAttributeValue(AXPropertyName::SupportsCheckedState); }
 

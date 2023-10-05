@@ -1,3 +1,5 @@
 ALERT: custom function called
 ALERT: postMessage received: top children: 1, parent children: 1, parent parent is top: true
+ALERT: postMessage received: expected error: SecurityError: The operation is insecure.
+ALERT: postMessage received: child successfully navigated by cross-origin grandchild
 

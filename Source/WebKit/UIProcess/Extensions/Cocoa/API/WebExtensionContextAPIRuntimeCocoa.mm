@@ -172,6 +172,28 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
     }).get()];
 }
 
+void WebExtensionContext::fireRuntimeStartupEventIfNeeded()
+{
+    // The background content is assumed to be loaded for this event.
+
+    RELEASE_LOG_DEBUG(Extensions, "Firing startup event");
+
+    constexpr auto type = WebExtensionEventListenerType::RuntimeOnStartup;
+    sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchRuntimeStartupEvent());
+}
+
+void WebExtensionContext::fireRuntimeInstalledEventIfNeeded()
+{
+    ASSERT(m_installReason != InstallReason::None);
+
+    // The background content is assumed to be loaded for this event.
+
+    RELEASE_LOG_DEBUG(Extensions, "Firing installed event");
+
+    constexpr auto type = WebExtensionEventListenerType::RuntimeOnInstalled;
+    sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchRuntimeInstalledEvent(m_installReason, m_previousVersion));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

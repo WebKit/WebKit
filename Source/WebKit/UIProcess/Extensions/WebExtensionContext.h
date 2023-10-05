@@ -161,6 +161,13 @@ public:
         SkipRequestedPermissions    = 1 << 1, // Don't check requested permissions.
     };
 
+    enum class InstallReason : uint8_t {
+        None,
+        ExtensionInstall,
+        ExtensionUpdate,
+        BrowserUpdate,
+    };
+
     WebExtensionContextIdentifier identifier() const { return m_identifier; }
     WebExtensionContextParameters parameters() const;
 
@@ -168,7 +175,7 @@ public:
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 
-    bool storageIsPersistent() const { return hasCustomUniqueIdentifier() && !m_storageDirectory.isEmpty(); }
+    bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
 
     bool load(WebExtensionController&, String storageDirectory, NSError ** = nullptr);
     bool unload(NSError ** = nullptr);
@@ -324,6 +331,8 @@ private:
     NSDictionary *readStateFromStorage();
     void writeStateToStorage() const;
 
+    void moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&&);
+
     void postAsyncNotification(NSString *notificationName, PermissionsSet&);
     void postAsyncNotification(NSString *notificationName, MatchPatternSet&);
 
@@ -410,6 +419,8 @@ private:
     void runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> error)>&&);
     void runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
     void runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier, CompletionHandler<void(std::optional<String> error)>&&);
+    void fireRuntimeStartupEventIfNeeded();
+    void fireRuntimeInstalledEventIfNeeded();
 
     // Tabs APIs
     void tabsCreate(WebPageProxyIdentifier, const WebExtensionTabParameters&, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
@@ -502,7 +513,10 @@ private:
     VoidCompletionHandlerVector m_actionsToPerformAfterBackgroundContentLoads;
     EventListenerTypeCountedSet m_backgroundContentEventListeners;
     EventListenerTypePageMap m_eventListenerPages;
+
     bool m_shouldFireStartupEvent { false };
+    InstallReason m_installReason { InstallReason::None };
+    String m_previousVersion;
 
     RetainPtr<NSDate> m_lastBackgroundContentLoadDate;
 
@@ -548,5 +562,19 @@ void WebExtensionContext::sendToContentScriptProcessesForEvent(WebExtensionEvent
 }
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebExtensionContext::InstallReason> {
+    using values = EnumValues<
+        WebKit::WebExtensionContext::InstallReason,
+        WebKit::WebExtensionContext::InstallReason::None,
+        WebKit::WebExtensionContext::InstallReason::ExtensionInstall,
+        WebKit::WebExtensionContext::InstallReason::ExtensionUpdate,
+        WebKit::WebExtensionContext::InstallReason::BrowserUpdate
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

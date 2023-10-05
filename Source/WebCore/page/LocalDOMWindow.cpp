@@ -779,13 +779,6 @@ ReducedResolutionSeconds LocalDOMWindow::frozenNowTimestamp() const
     return m_frozenNowTimestamp.value_or(nowTimestamp());
 }
 
-Location& LocalDOMWindow::location()
-{
-    if (!m_location)
-        m_location = Location::create(*this);
-    return *m_location;
-}
-
 VisualViewport& LocalDOMWindow::visualViewport()
 {
     if (!m_visualViewport)
@@ -2469,8 +2462,8 @@ void LocalDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& comple
         return;
 
     // We want a new history item if we are processing a user gesture.
-    LockHistory lockHistory = (locking != LockHistoryBasedOnGestureState || !UserGestureIndicator::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
-    LockBackForwardList lockBackForwardList = (locking != LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
+    LockHistory lockHistory = (locking != SetLocationLocking::LockHistoryBasedOnGestureState || !UserGestureIndicator::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
+    LockBackForwardList lockBackForwardList = (locking != SetLocationLocking::LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
     frame->navigationScheduler().scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(),
         // FIXME: What if activeDocument()->frame() is 0?
         completedURL, activeDocument->frame()->loader().outgoingReferrer(),
@@ -2771,11 +2764,6 @@ void LocalDOMWindow::eventListenersDidChange()
         else
             windowsInterestedInStorageEvents().remove(*this);
     }
-}
-
-WebCoreOpaqueRoot root(LocalDOMWindow* window)
-{
-    return WebCoreOpaqueRoot { window };
 }
 
 CookieStore& LocalDOMWindow::cookieStore()

@@ -97,8 +97,6 @@ static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const Render
 {
     if (!DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled())
         return AvoidanceReason::FeatureIsDisabled;
-    if (flow.isRenderView())
-        return AvoidanceReason::FlowIsInitialContainingBlock;
     if (!flow.firstChild()) {
         // Non-SVG code does not call into layoutInlineChildren with no children anymore.
         ASSERT(is<RenderSVGBlock>(flow));

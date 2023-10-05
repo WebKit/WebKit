@@ -51,6 +51,8 @@ static NSString * const tabKey = @"tab";
 static NSString * const urlKey = @"url";
 static NSString * const originKey = @"origin";
 static NSString * const nameKey = @"name";
+static NSString * const reasonKey = @"reason";
+static NSString * const previousVersionKey = @"previousVersion";
 
 namespace WebKit {
 
@@ -294,6 +296,26 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnect()
     return *m_onConnect;
 }
 
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onInstalled()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled
+
+    if (!m_onInstalled)
+        m_onInstalled = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::RuntimeOnInstalled);
+
+    return *m_onInstalled;
+}
+
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onStartup()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onStartup
+
+    if (!m_onStartup)
+        m_onStartup = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::RuntimeOnStartup);
+
+    return *m_onStartup;
+}
+
 NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
 {
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
@@ -443,6 +465,45 @@ void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWo
         ASSERT_NOT_REACHED();
         return;
     }
+}
+
+inline NSString *toWebAPI(WebExtensionContext::InstallReason installReason)
+{
+    switch (installReason) {
+    case WebExtensionContext::InstallReason::None:
+        ASSERT_NOT_REACHED();
+        return nil;
+
+    case WebExtensionContext::InstallReason::ExtensionInstall:
+        return @"install";
+
+    case WebExtensionContext::InstallReason::ExtensionUpdate:
+        return @"update";
+
+    case WebExtensionContext::InstallReason::BrowserUpdate:
+        return @"browser_update";
+    }
+}
+
+void WebExtensionContextProxy::dispatchRuntimeInstalledEvent(WebExtensionContext::InstallReason installReason, String previousVersion)
+{
+    NSDictionary *details;
+
+    if (installReason == WebExtensionContext::InstallReason::ExtensionUpdate)
+        details = @{ reasonKey: toWebAPI(installReason), previousVersionKey: (NSString *)previousVersion };
+    else
+        details = @{ reasonKey: toWebAPI(installReason) };
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        namespaceObject.runtime().onInstalled().invokeListenersWithArgument(details);
+    });
+}
+
+void WebExtensionContextProxy::dispatchRuntimeStartupEvent()
+{
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        namespaceObject.runtime().onStartup().invokeListeners();
+    });
 }
 
 } // namespace WebKit

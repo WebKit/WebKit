@@ -648,9 +648,9 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 {
     m_resolvedPaths.injectedBundlePath = resolvePathForSandboxExtension(injectedBundlePath());
 
-    m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.reserveCapacity(m_configuration->additionalReadAccessAllowedPaths().size());
-    for (const auto& path : m_configuration->additionalReadAccessAllowedPaths())
-        m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.uncheckedAppend(resolvePathForSandboxExtension(path));
+    m_resolvedPaths.additionalWebProcessSandboxExtensionPaths = WTF::map(m_configuration->additionalReadAccessAllowedPaths(), [](auto& path) {
+        return resolvePathForSandboxExtension(path);
+    });
 
     platformResolvePathsForSandboxExtensions();
 }

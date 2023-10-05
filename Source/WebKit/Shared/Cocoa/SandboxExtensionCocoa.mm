@@ -237,13 +237,11 @@ auto SandboxExtension::createHandle(StringView path, Type type) -> std::optional
 
 template<typename Collection, typename Function> static Vector<SandboxExtension::Handle> createHandlesForResources(const Collection& resources, const Function& createFunction)
 {
-    Vector<SandboxExtension::Handle> handleArray;
-    handleArray.reserveInitialCapacity(std::size(resources));
-    for (const auto& resource : resources) {
+    return WTF::compactMap(resources, [&](auto& resource) -> std::optional<SandboxExtension::Handle> {
         if (auto handle = createFunction(resource))
-            handleArray.uncheckedAppend(WTFMove(*handle));
-    }
-    return handleArray;
+            return WTFMove(*handle);
+        return std::nullopt;
+    });
 }
 
 auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<String>& paths) -> Vector<Handle>

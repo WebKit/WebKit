@@ -772,13 +772,10 @@ static WebCore::PublicKeyCredentialCreationOptions::UserEntity publicKeyCredenti
 
 static Vector<WebCore::PublicKeyCredentialCreationOptions::Parameters> publicKeyCredentialParameters(NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters)
 {
-    Vector<WebCore::PublicKeyCredentialCreationOptions::Parameters> result;
-    result.reserveInitialCapacity(publicKeyCredentialParamaters.count);
-
-    for (_WKPublicKeyCredentialParameters *param : publicKeyCredentialParamaters)
-        result.uncheckedAppend({ WebCore::PublicKeyCredentialType::PublicKey, param.algorithm.longLongValue });
-
-    return result;
+    return Vector<WebCore::PublicKeyCredentialCreationOptions::Parameters>(publicKeyCredentialParamaters.count, [publicKeyCredentialParamaters](size_t i) {
+        _WKPublicKeyCredentialParameters *param = publicKeyCredentialParamaters[i];
+        return WebCore::PublicKeyCredentialCreationOptions::Parameters { WebCore::PublicKeyCredentialType::PublicKey, param.algorithm.longLongValue };
+    });
 }
 
 static WebCore::AuthenticatorTransport authenticatorTransport(_WKWebAuthenticationTransport transport)
@@ -803,24 +800,18 @@ static WebCore::AuthenticatorTransport authenticatorTransport(_WKWebAuthenticati
 
 static Vector<WebCore::AuthenticatorTransport> authenticatorTransports(NSArray<NSNumber *> *transports)
 {
-    Vector<WebCore::AuthenticatorTransport> result;
-    result.reserveInitialCapacity(transports.count);
-
-    for (NSNumber *transport : transports)
-        result.uncheckedAppend(authenticatorTransport((_WKWebAuthenticationTransport)transport.intValue));
-
-    return result;
+    return Vector<WebCore::AuthenticatorTransport>(transports.count, [transports](size_t i) {
+        NSNumber *transport = transports[i];
+        return authenticatorTransport((_WKWebAuthenticationTransport)transport.intValue);
+    });
 }
 
 static Vector<WebCore::PublicKeyCredentialDescriptor> publicKeyCredentialDescriptors(NSArray<_WKPublicKeyCredentialDescriptor *> *credentials)
 {
-    Vector<WebCore::PublicKeyCredentialDescriptor> result;
-    result.reserveInitialCapacity(credentials.count);
-
-    for (_WKPublicKeyCredentialDescriptor *credential : credentials)
-        result.uncheckedAppend({ WebCore::PublicKeyCredentialType::PublicKey, WebCore::toBufferSource(credential.identifier), authenticatorTransports(credential.transports) });
-
-    return result;
+    return Vector<WebCore::PublicKeyCredentialDescriptor>(credentials.count, [credentials](size_t i) {
+        _WKPublicKeyCredentialDescriptor *credential = credentials[i];
+        return WebCore::PublicKeyCredentialDescriptor { WebCore::PublicKeyCredentialType::PublicKey, WebCore::toBufferSource(credential.identifier), authenticatorTransports(credential.transports) };
+    });
 }
 
 static std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment(_WKAuthenticatorAttachment attachment)

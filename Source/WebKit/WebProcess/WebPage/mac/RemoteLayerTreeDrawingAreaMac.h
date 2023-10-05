@@ -41,22 +41,22 @@ public:
     virtual ~RemoteLayerTreeDrawingAreaMac();
 
 private:
-    WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
+    WebCore::DelegatedScrollingMode delegatedScrollingMode() const final;
 
-    void setColorSpace(std::optional<WebCore::DestinationColorSpace>) override;
-    std::optional<WebCore::DestinationColorSpace> displayColorSpace() const override;
+    void setColorSpace(std::optional<WebCore::DestinationColorSpace>) final;
+    std::optional<WebCore::DestinationColorSpace> displayColorSpace() const final;
 
     std::optional<WebCore::DestinationColorSpace> m_displayColorSpace;
 
     bool usesDelegatedPageScaling() const override { return false; }
 
-    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
+    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) final;
 
-    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
-    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) final;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin) final;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint);
 
-    void willCommitLayerTree(RemoteLayerTreeTransaction&) override;
+    void willCommitLayerTree(RemoteLayerTreeTransaction&) final;
 };
 
 } // namespace WebKit

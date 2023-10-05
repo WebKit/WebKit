@@ -317,14 +317,13 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
             return;
         }
 
-        Vector<RTCNetwork::IPAddress> ipAddresses;
-        ipAddresses.reserveInitialCapacity(result.value().size());
-        for (auto& address : result.value()) {
+        auto ipAddresses = WTF::compactMap(result.value(), [](auto& address) -> std::optional<RTCNetwork::IPAddress> {
             if (address.isIPv4())
-                ipAddresses.uncheckedAppend(rtc::IPAddress { address.ipv4Address() });
-            else if (address.isIPv6())
-                ipAddresses.uncheckedAppend(rtc::IPAddress { address.ipv6Address() });
-        }
+                return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv4Address() } };
+            if (address.isIPv6())
+                return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv6Address() } };
+            return std::nullopt;
+        });
 
         connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
     };

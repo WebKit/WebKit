@@ -653,6 +653,67 @@ TEST(WKWebExtensionAPIRuntime, ConnectNative)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPIRuntime, StartupEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onStartup.addListener(() => {",
+        @"  browser.test.yield('Startup Event Fired')",
+        @"})",
+
+        @"setTimeout(() => {",
+        @"  browser.test.yield('Startup Event Did Not Fire')",
+        @"}, 1000)"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Startup Event Fired");
+
+    [manager.get().controller unloadExtensionContext:manager.get().context error:nullptr];
+
+    [manager runForTimeInterval:5];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Startup Event Did Not Fire");
+}
+
+TEST(WKWebExtensionAPIRuntime, InstalledEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onInstalled.addListener((details) => {",
+        @"  browser.test.assertEq(details.reason, 'install')",
+
+        @"  browser.test.yield('Installed Event Fired')",
+        @"})",
+
+        @"setTimeout(() => {",
+        @"  browser.test.yield('Installed Event Did Not Fire')",
+        @"}, 1000)"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Wait until after startup event time expires.
+    [manager runForTimeInterval:5];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Installed Event Fired");
+
+    [manager.get().controller unloadExtensionContext:manager.get().context error:nullptr];
+
+    [manager runForTimeInterval:1];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Installed Event Fired");
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

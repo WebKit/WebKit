@@ -394,10 +394,10 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (void)_setCustomHeaderFields:(NSArray<_WKCustomHeaderFields *> *)fields
 {
-    Vector<WebCore::CustomHeaderFields> vector;
-    vector.reserveInitialCapacity(fields.count);
-    for (_WKCustomHeaderFields *element in fields)
-        vector.uncheckedAppend(static_cast<API::CustomHeaderFields&>([element _apiObject]).coreFields());
+    Vector<WebCore::CustomHeaderFields> vector(fields.count, [fields](size_t i) {
+        _WKCustomHeaderFields *element = fields[i];
+        return static_cast<API::CustomHeaderFields&>([element _apiObject]).coreFields();
+    });
     _websitePolicies->setCustomHeaderFields(WTFMove(vector));
 }
 

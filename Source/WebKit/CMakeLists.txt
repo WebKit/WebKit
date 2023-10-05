@@ -390,6 +390,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/PlatformPopupMenuData.serialization.in
     Shared/PolicyDecision.serialization.in
     Shared/RemoteWorkerType.serialization.in
+    Shared/ResourceLoadInfo.serialization.in
     Shared/SameDocumentNavigationType.serialization.in
     Shared/SessionState.serialization.in
     Shared/ShareableBitmap.serialization.in
@@ -403,6 +404,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebFoundTextRange.serialization.in
     Shared/WebHitTestResultData.serialization.in
     Shared/WebPageCreationParameters.serialization.in
+    Shared/WebPageNetworkParameters.serialization.in
     Shared/WebPopupItem.serialization.in
     Shared/WebProcessCreationParameters.serialization.in
     Shared/WebProcessDataStoreParameters.serialization.in

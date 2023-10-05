@@ -95,7 +95,7 @@ BoxTree::BoxTree(RenderBlock& rootRenderer)
 
     if (is<RenderBlockFlow>(rootRenderer)) {
         rootBox->setIsInlineIntegrationRoot();
-        rootBox->setIsFirstChildForIntegration(rootRenderer.parent()->firstChild() == &rootRenderer);
+        rootBox->setIsFirstChildForIntegration(!rootRenderer.parent() || rootRenderer.parent()->firstChild() == &rootRenderer);
         buildTreeForInlineContent();
     } else if (is<RenderFlexibleBox>(rootRenderer))
         buildTreeForFlexContent();

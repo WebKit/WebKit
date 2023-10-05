@@ -54,8 +54,7 @@ class FocusController : public CanMakeCheckedPtr {
 public:
     explicit FocusController(Page&, OptionSet<ActivityState>);
 
-    WEBCORE_EXPORT void setFocusedFrame(Frame*);
-    void updateFocusedFrame(Frame* frame) { m_focusedFrame = frame; }
+    WEBCORE_EXPORT void setFocusedFrame(Frame*, bool broadcastFocusedFrame = true);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
     LocalFrame* focusedLocalFrame() const { return dynamicDowncast<LocalFrame>(m_focusedFrame.get()); }
     WEBCORE_EXPORT LocalFrame& focusedOrMainFrame() const;

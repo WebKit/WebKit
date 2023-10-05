@@ -600,9 +600,9 @@ std::optional<LayoutRect> LineLayout::layout()
     };
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
     // Temporary, integration only.
-    inlineFormattingContext.inlineLayoutState().setNestedListMarkerOffsets(WTFMove(m_nestedListMarkerOffsets));
+    inlineFormattingContext.layoutState().setNestedListMarkerOffsets(WTFMove(m_nestedListMarkerOffsets));
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
-    auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.inlineLayoutState(), WTFMove(layoutResult)) };
+    auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.layoutState(), WTFMove(layoutResult)) };
     auto adjustments = adjustContent(parentBlockLayoutState);
 
     updateRenderTreePositions(adjustments);

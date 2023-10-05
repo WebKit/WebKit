@@ -120,7 +120,7 @@ bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& i
     if (inlineLevelBox.isListMarker())
         return true;
     if (inlineLevelBox.isInlineBox())
-        return inlineLayoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
+        return layoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
     if (inlineLevelBox.isAtomicInlineLevelBox())
         return !inlineLevelBox.layoutBox().isRubyAnnotationBox();
     return false;
@@ -188,7 +188,7 @@ InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode 
 
 InlineLayoutUnit InlineFormattingUtils::initialLineHeight(bool isFirstLine) const
 {
-    if (inlineLayoutState().inStandardsMode())
+    if (layoutState().inStandardsMode())
         return isFirstLine ? formattingContext().root().firstLineStyle().computedLineHeight() : formattingContext().root().style().computedLineHeight();
     return formattingContext().quirks().initialLineHeight();
 }
@@ -503,9 +503,9 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
     return layoutRange.endIndex();
 }
 
-const InlineLayoutState& InlineFormattingUtils::inlineLayoutState() const
+const InlineLayoutState& InlineFormattingUtils::layoutState() const
 {
-    return formattingContext().inlineLayoutState();
+    return formattingContext().layoutState();
 }
 
 }
