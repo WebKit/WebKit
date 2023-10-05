@@ -204,6 +204,7 @@ enum class SpecializationConstantType : uint8_t {
 struct SpecializationConstant {
     String mangledName;
     SpecializationConstantType type;
+    AST::Expression* defaultValue;
 };
 
 struct EntryPointInformation {

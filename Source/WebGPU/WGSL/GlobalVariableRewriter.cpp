@@ -847,7 +847,7 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
         }
     }
 
-    m_entryPointInformation->specializationConstants.add(originalName, Reflection::SpecializationConstant { variable.name(), constantType });
+    m_entryPointInformation->specializationConstants.add(originalName, Reflection::SpecializationConstant { variable.name(), constantType, variable.maybeInitializer() });
 }
 
 void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
