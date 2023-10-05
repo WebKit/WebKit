@@ -31,18 +31,6 @@
 
 namespace WebCore {
 
-struct FloatMarkableTraits {
-    constexpr static bool isEmptyValue(float value)
-    {
-        return value != value;
-    }
-
-    constexpr static float emptyValue()
-    {
-        return std::numeric_limits<float>::quiet_NaN();
-    }
-};
-
 struct FontSizeAdjust {
     friend bool operator==(const FontSizeAdjust&, const FontSizeAdjust&) = default;
 
@@ -55,7 +43,7 @@ struct FontSizeAdjust {
     };
     Metric metric { Metric::ExHeight };
     bool isFromFont { false };
-    Markable<float, FloatMarkableTraits> value { };
+    Markable<float, WTF::FloatMarkableTraits> value { };
 };
 
 inline void add(Hasher& hasher, const FontSizeAdjust& fontSizeAdjust)
