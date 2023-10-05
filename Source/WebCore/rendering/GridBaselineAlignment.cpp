@@ -82,16 +82,19 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
         if (position == ItemPosition::LastBaseline || baselineAxis == GridAxis::GridRowAxis)
             return 0_lu;
 
-        if (const auto* subgrid = dynamicDowncast<RenderGrid>(child.parent()); subgrid && subgrid->isSubgridRows()) {
+        auto offset = 0_lu;
+        const auto* currentSubgrid = dynamicDowncast<RenderGrid>(child.parent());
+        while (currentSubgrid && currentSubgrid->isSubgridRows()) {
             auto isPlacedAtFirstTrackInSubgrid = [&] {
-                return !subgrid->gridSpanForChild(child, GridTrackSizingDirection::ForRows).startLine();
+                return !currentSubgrid->gridSpanForChild(child, GridTrackSizingDirection::ForRows).startLine();
             }();
 
-            if (!isPlacedAtFirstTrackInSubgrid || GridLayoutFunctions::isOrthogonalParent(*subgrid, *subgrid->parent()))
+            if (!isPlacedAtFirstTrackInSubgrid || GridLayoutFunctions::isOrthogonalParent(*currentSubgrid, *currentSubgrid->parent()))
                 return 0_lu;
-            return subgrid->marginAndBorderAndPaddingBefore();
+            offset += currentSubgrid->marginAndBorderAndPaddingBefore();
+            currentSubgrid = dynamicDowncast<RenderGrid>(currentSubgrid->parent());
         }
-        return 0_lu;
+        return offset;
     }();
 
     return subgridOffset + margin + baseline;
