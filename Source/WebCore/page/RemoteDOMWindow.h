@@ -60,7 +60,6 @@ public:
 
     // DOM API exposed cross-origin.
     WindowProxy* self() const;
-    Location* location() const;
     void close(Document&);
     bool closed() const;
     void focus(LocalDOMWindow& incumbentWindow);
@@ -80,6 +79,7 @@ private:
 
     bool isRemoteDOMWindow() const final { return true; }
     bool isLocalDOMWindow() const final { return false; }
+    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking) final;
 
     WeakPtr<RemoteFrame> m_frame;
 };

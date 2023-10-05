@@ -28,6 +28,7 @@
 
 #include "LocalDOMWindow.h"
 #include "MessagePort.h"
+#include "NavigationScheduler.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
 #include "SecurityOrigin.h"
@@ -53,12 +54,6 @@ WindowProxy* RemoteDOMWindow::self() const
     if (!m_frame)
         return nullptr;
     return &m_frame->windowProxy();
-}
-
-Location* RemoteDOMWindow::location() const
-{
-    // FIXME: Implemented this. <rdar://116203970>
-    return nullptr;
 }
 
 void RemoteDOMWindow::close(Document&)
@@ -149,6 +144,24 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
     if (auto* remoteFrame = frame())
         remoteFrame->client().postMessageToRemote(remoteFrame->frameID(), target, messageWithPorts);
     return { };
+}
+
+void RemoteDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking locking)
+{
+    // FIXME: Add some or all of the security checks in LocalDOMWindow::setLocation. <rdar://116500603>
+    // FIXME: Refactor this duplicate code to share with LocalDOMWindow::setLocation. <rdar://116500603>
+
+    RefPtr activeDocument = activeWindow.document();
+    if (!activeDocument)
+        return;
+
+    // We want a new history item if we are processing a user gesture.
+    LockHistory lockHistory = (locking != SetLocationLocking::LockHistoryBasedOnGestureState || !UserGestureIndicator::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
+    LockBackForwardList lockBackForwardList = (locking != SetLocationLocking::LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
+    frame()->navigationScheduler().scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(),
+        // FIXME: What if activeDocument()->frame() is 0?
+        completedURL, activeDocument->frame()->loader().outgoingReferrer(),
+        lockHistory, lockBackForwardList);
 }
 
 } // namespace WebCore

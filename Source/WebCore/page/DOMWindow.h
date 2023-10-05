@@ -34,7 +34,11 @@ namespace WebCore {
 
 class Document;
 class Frame;
+class LocalDOMWindow;
+class Location;
 class SecurityOrigin;
+class WebCoreOpaqueRoot;
+enum class SetLocationLocking : bool { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 
 class DOMWindow : public RefCounted<DOMWindow>, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(DOMWindow);
@@ -52,6 +56,9 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
+    WEBCORE_EXPORT Location& location();
+    virtual void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = SetLocationLocking::LockHistoryBasedOnGestureState) = 0;
+
 protected:
     explicit DOMWindow(GlobalWindowIdentifier&&);
 
@@ -63,6 +70,9 @@ protected:
 
 private:
     GlobalWindowIdentifier m_identifier;
+    RefPtr<Location> m_location;
 };
+
+WebCoreOpaqueRoot root(DOMWindow*);
 
 } // namespace WebCore

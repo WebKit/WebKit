@@ -26,4 +26,5 @@
 interface mixin DOMWindow {
     [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
     [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, optional WindowPostMessageOptions options);
+    [DoNotCheckSecurity, PutForwards=href, LegacyUnforgeable] readonly attribute Location location;
 };

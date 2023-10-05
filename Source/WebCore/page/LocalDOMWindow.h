@@ -100,7 +100,6 @@ struct ImageBitmapOptions;
 struct MessageWithMessagePorts;
 struct WindowFeatures;
 
-enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class IncludeTargetOrigin : bool { No, Yes };
 
 class LocalDOMWindow final
@@ -178,9 +177,6 @@ public:
     WEBCORE_EXPORT bool hasTransientActivation() const;
     bool hasStickyActivation() const;
     WEBCORE_EXPORT bool consumeTransientActivation();
-
-    WEBCORE_EXPORT Location& location();
-    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = LockHistoryBasedOnGestureState);
 
     DOMSelection* getSelection();
 
@@ -416,6 +412,7 @@ private:
     bool isLocalDOMWindow() const final { return true; }
     bool isRemoteDOMWindow() const final { return false; }
     void eventListenersDidChange() final;
+    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking) final;
 
     bool allowedToChangeWindowGeometry() const;
 
@@ -455,7 +452,6 @@ private:
     mutable RefPtr<DOMSelection> m_selection;
     mutable RefPtr<BarProp> m_statusbar;
     mutable RefPtr<BarProp> m_toolbar;
-    mutable RefPtr<Location> m_location;
     mutable RefPtr<VisualViewport> m_visualViewport;
 
     String m_status;
@@ -502,8 +498,6 @@ inline String LocalDOMWindow::status() const
 {
     return m_status;
 }
-
-WebCoreOpaqueRoot root(LocalDOMWindow*);
 
 } // namespace WebCore
 

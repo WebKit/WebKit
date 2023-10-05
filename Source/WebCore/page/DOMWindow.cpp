@@ -28,7 +28,9 @@
 
 #include "Document.h"
 #include "HTTPParsers.h"
+#include "Location.h"
 #include "SecurityOrigin.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -69,6 +71,18 @@ ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(
             return Exception { SyntaxError };
     }
     return targetSecurityOrigin;
+}
+
+Location& DOMWindow::location()
+{
+    if (!m_location)
+        m_location = Location::create(*this);
+    return *m_location;
+}
+
+WebCoreOpaqueRoot root(DOMWindow* window)
+{
+    return WebCoreOpaqueRoot { window };
 }
 
 } // namespace WebCore
