@@ -124,6 +124,7 @@ class TestLand(testing.PathTestCase):
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
+                ' Local branch is tracking the remote branch.',
             ],
         )
         self.assertEqual(
@@ -159,8 +160,10 @@ class TestLand(testing.PathTestCase):
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
+                ' Local branch is tracking the remote branch.',
                 '1 commit to be edited...',
                 'Base commit is 5@main (ref d8bce26fa65c6fc8f39c17927abb77f69fab82fc)',
+                ' Local branch is tracking the remote branch.',
             ],
         )
         self.assertEqual(
@@ -239,6 +242,7 @@ class TestLand(testing.PathTestCase):
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
+                ' Local branch is tracking the remote branch.',
             ],
         )
         self.assertEqual(
@@ -288,8 +292,10 @@ class TestLand(testing.PathTestCase):
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
+                ' Local branch is tracking the remote branch.',
                 '1 commit to be edited...',
                 'Base commit is 5@main (ref d8bce26fa65c6fc8f39c17927abb77f69fab82fc)',
+                ' Local branch is tracking the remote branch.',
             ],
         )
         self.assertEqual(
@@ -467,6 +473,7 @@ class TestLandGitHub(testing.PathTestCase):
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
                 "Updating 'PR 1 | Example Change' to match landing commits...",
+                ' Local branch is tracking the remote branch.',
             ],
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -695,6 +702,7 @@ class TestLandBitBucket(testing.PathTestCase):
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
                 "Updating 'PR 1 | Example Change' to match landing commits...",
+                ' Local branch is tracking the remote branch.',
             ],
         )
         self.assertEqual(captured.stderr.getvalue(), '')
