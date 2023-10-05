@@ -326,6 +326,7 @@ $(PROJECT_DIR)/Shared/WebsitePoliciesData.serialization.in
 $(PROJECT_DIR)/Shared/XR/XRSystem.serialization.in
 $(PROJECT_DIR)/Shared/ios/DynamicViewportSizeUpdate.serialization.in
 $(PROJECT_DIR)/Shared/ios/InteractionInformationAtPosition.serialization.in
+$(PROJECT_DIR)/Shared/ios/InteractionInformationRequest.serialization.in
 $(PROJECT_DIR)/Shared/ios/WebAutocorrectionContext.serialization.in
 $(PROJECT_DIR)/Shared/ios/WebAutocorrectionData.serialization.in
 $(PROJECT_DIR)/Shared/mac/PDFContextMenuItem.serialization.in
