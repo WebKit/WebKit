@@ -162,7 +162,7 @@ RenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(Tree
     return getRenderSVGResourceById<RenderSVGResourceClipper>(treeScope, clipPath.fragment());
 }
 
-RenderSVGResourceContainer* ReferencedSVGResources::referencedRenderResource(TreeScope& treeScope, const AtomString& fragment)
+LegacyRenderSVGResourceContainer* ReferencedSVGResources::referencedRenderResource(TreeScope& treeScope, const AtomString& fragment)
 {
     if (fragment.isEmpty())
         return nullptr;

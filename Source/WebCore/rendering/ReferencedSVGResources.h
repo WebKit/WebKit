@@ -36,7 +36,7 @@ namespace WebCore {
 class CSSSVGResourceElementClient;
 class Document;
 class LegacyRenderSVGResourceClipper;
-class RenderSVGResourceContainer;
+class LegacyRenderSVGResourceContainer;
 class ReferencePathOperation;
 class ReferenceFilterOperation;
 class RenderElement;
@@ -61,7 +61,7 @@ public:
     static LegacyRenderSVGResourceClipper* referencedClipperRenderer(TreeScope&, const ReferencePathOperation&);
     static SVGFilterElement* referencedFilterElement(TreeScope&, const ReferenceFilterOperation&);
 
-    static RenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
+    static LegacyRenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
 
 private:
     static SVGElement* elementForResourceID(TreeScope&, const AtomString& resourceID, const QualifiedName& tagName);
