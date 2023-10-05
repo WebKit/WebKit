@@ -412,6 +412,7 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
             [](URL& typedValue) { return typedValue == URL(); },
             [](LayoutRect& typedValue) { return typedValue == LayoutRect(); },
             [](IntPoint& typedValue) { return typedValue == IntPoint(); },
+            [](IntRect& typedValue) { return typedValue == IntRect(); },
             [](std::pair<unsigned, unsigned>& typedValue) {
                 // (0, 1) is the default for an index range.
                 return typedValue == std::pair<unsigned, unsigned>(0, 1);
