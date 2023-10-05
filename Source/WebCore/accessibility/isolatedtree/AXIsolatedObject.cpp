@@ -527,7 +527,7 @@ bool AXIsolatedObject::isDetachedFromParent()
     return false;
 }
 
-AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsigned rowIndex)
+AXIsolatedObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsigned rowIndex)
 {
     // AXPropertyName::CellSlots can be big, so make sure not to copy it.
     auto cellSlotsIterator = m_propertyMap.find(AXPropertyName::CellSlots);
@@ -554,10 +554,10 @@ void AXIsolatedObject::insertMathPairs(Vector<std::pair<AXID, AXID>>& isolatedPa
 {
     for (const auto& pair : isolatedPairs) {
         AccessibilityMathMultiscriptPair prescriptPair;
-        if (RefPtr coreObject = tree()->objectForID(pair.first))
-            prescriptPair.first = coreObject.get();
-        if (RefPtr coreObject = tree()->objectForID(pair.second))
-            prescriptPair.second = coreObject.get();
+        if (RefPtr object = tree()->objectForID(pair.first))
+            prescriptPair.first = object.get();
+        if (RefPtr object = tree()->objectForID(pair.second))
+            prescriptPair.second = object.get();
         pairs.append(prescriptPair);
     }
 }
@@ -584,7 +584,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AXIsolatedObject::mathR
     return std::nullopt;
 }
 
-AXCoreObject* AXIsolatedObject::focusedUIElement() const
+AXIsolatedObject* AXIsolatedObject::focusedUIElement() const
 {
     return tree()->focusedNode().get();
 }
@@ -594,7 +594,7 @@ AXIsolatedObject* AXIsolatedObject::parentObjectUnignored() const
     return tree()->objectForID(parent()).get();
 }
 
-AXCoreObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)
+AXIsolatedObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)
 {
     return objectAttributeValue(orientation == AccessibilityOrientation::Vertical ? AXPropertyName::VerticalScrollBar : AXPropertyName::HorizontalScrollBar);
 }
@@ -741,7 +741,7 @@ SRGBA<uint8_t> AXIsolatedObject::colorValue() const
     return colorAttributeValue(AXPropertyName::ColorValue).toColorTypeLossy<SRGBA<uint8_t>>();
 }
 
-AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const
+AXIsolatedObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const
 {
     AXID axID = Accessibility::retrieveValueFromMainThread<AXID>([&point, this] () -> AXID {
         if (auto* object = associatedAXObject()) {
@@ -765,7 +765,7 @@ IntPoint AXIsolatedObject::intPointAttributeValue(AXPropertyName propertyName) c
     );
 }
 
-AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName) const
+AXIsolatedObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     AXID nodeID = WTF::switchOn(value,
