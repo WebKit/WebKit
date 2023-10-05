@@ -3,8 +3,8 @@ PASS Border properties on maction
 PASS Border properties on maction (rtl)
 FAIL Border properties on menclose assert_approx_equals: bottom border expected 60 +/- 1 but got -3.96875
 FAIL Border properties on menclose (rtl) assert_approx_equals: bottom border expected 60 +/- 1 but got -3.96875
-FAIL Border properties on merror assert_approx_equals: element width expected 70 +/- 1 but got 72
-FAIL Border properties on merror (rtl) assert_approx_equals: element width expected 70 +/- 1 but got 72
+PASS Border properties on merror
+PASS Border properties on merror (rtl)
 FAIL Border properties on mfrac assert_approx_equals: left border expected 30 +/- 1 but got 0
 FAIL Border properties on mfrac (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
 PASS Border properties on mi

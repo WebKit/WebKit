@@ -17,8 +17,8 @@ FAIL mpadded (not embellished operator) assert_approx_equals: expected 50 +/- 1 
 FAIL mpadded (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL merror (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL merror (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL merror (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL merror (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL merror (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 1
+FAIL merror (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 1
 FAIL mprescripts (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL mprescripts (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL mprescripts (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
