@@ -37,7 +37,7 @@
 namespace WebCore {
 
 Path::Path(const Vector<FloatPoint>& points)
-    : m_data(PathStream::create(points))
+    : m_data(DataRef<PathImpl> { PathStream::create(points) })
 {
 }
 
@@ -49,10 +49,10 @@ Path::Path(Vector<PathSegment>&& segments)
     if (segments.size() == 1)
         m_data = WTFMove(segments[0]);
     else
-        m_data = PathStream::create(WTFMove(segments));
+        m_data = DataRef<PathImpl> { PathStream::create(WTFMove(segments)) };
 }
 
-Path::Path(UniqueRef<PathImpl>&& impl)
+Path::Path(Ref<PathImpl>&& impl)
     : m_data(WTFMove(impl))
 {
 }
@@ -67,17 +67,6 @@ Path::Path(PathSegment&& segment)
     m_data = WTFMove(segment);
 }
 
-Path& Path::operator=(const Path& other)
-{
-    if (auto segment = other.asSingle())
-        m_data = *segment;
-    else if (auto impl = other.asImpl())
-        m_data = impl->clone();
-    else
-        m_data = std::monostate { };
-    return *this;
-}
-
 bool Path::operator==(const Path& other) const
 {
     if (auto segment = asSingle()) {
@@ -88,14 +77,14 @@ bool Path::operator==(const Path& other) const
 
     if (auto impl = asImpl()) {
         if (auto otherImpl = other.asImpl())
-            return *impl == *otherImpl;
+            return impl == otherImpl;
         return false;
     }
 
     return true;
 }
 
-PathImpl& Path::setImpl(UniqueRef<PathImpl> impl)
+PathImpl& Path::setImpl(Ref<PathImpl>&& impl)
 {
     auto& platformPathImpl = impl.get();
     m_data = WTFMove(impl);
@@ -129,14 +118,14 @@ PathImpl& Path::ensureImpl()
 
 PathImpl* Path::asImpl()
 {
-    if (auto ref = std::get_if<UniqueRef<PathImpl>>(&m_data))
-        return ref->ptr();
+    if (auto ref = std::get_if<DataRef<PathImpl>>(&m_data))
+        return &ref->access();
     return nullptr;
 }
 
 const PathImpl* Path::asImpl() const
 {
-    if (auto ref = std::get_if<UniqueRef<PathImpl>>(&m_data))
+    if (auto ref = std::get_if<DataRef<PathImpl>>(&m_data))
         return ref->ptr();
     return nullptr;
 }
