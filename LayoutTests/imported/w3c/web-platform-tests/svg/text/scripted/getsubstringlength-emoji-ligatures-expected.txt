@@ -1,0 +1,10 @@
+ðŸ‘¦
+ðŸ‘¨â€ðŸ‘©â€ðŸ‘§â€ðŸ‘¦
+ðŸ‘¨â€
+ðŸ‘©ðŸ½â€ðŸŒ¾
+ðŸ‘¨â€ðŸ‘¦
+ðŸ‘±ðŸ½â€â™‚ï¸
+ðŸŽ…ðŸ½
+
+PASS SVGTextContentElement.getSubStringLength on Emoji with ligatures
+

@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,19) size 249x301
+    RenderSVGText {text} at (10,19) size 249x301 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 220x100
+        RenderSVGInlineText {#text} at (0,0) size 220x100
+          chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 5 width 219.95: "Quick"
+      RenderSVGInlineText {#text} at (219,66) size 4x18
+        chunk 1 text run 1 at (229.95,100.00) startOffset 0 endOffset 1 width 4.00: " "
+      RenderSVGTSpan {tspan} at (0,0) size 245x100
+        RenderSVGInlineText {#text} at (0,100) size 245x100
+          chunk 1 text run 1 at (10.00,200.00) startOffset 0 endOffset 5 width 245.00: "Brown"
+      RenderSVGInlineText {#text} at (244,166) size 4x18
+        chunk 1 text run 1 at (255.00,200.00) startOffset 0 endOffset 1 width 4.00: " "
+      RenderSVGTSpan {tspan} at (0,0) size 141x100
+        RenderSVGInlineText {#text} at (0,200) size 141x100
+          chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 3 width 140.05: "Fox"
+      RenderSVGInlineText {#text} at (0,0) size 0x0

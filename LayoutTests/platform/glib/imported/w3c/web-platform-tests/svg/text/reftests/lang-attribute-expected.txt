@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,19) size 274x301
+    RenderSVGText {text} at (10,19) size 274x301 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 270x100
+        RenderSVGInlineText {#text} at (0,0) size 270x100
+          chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 3 width 270.00: "\x{4ECA}\x{9AA8}\x{76F4}"
+      RenderSVGInlineText {#text} at (270,65) size 4x18
+        chunk 1 text run 1 at (280.00,100.00) startOffset 0 endOffset 1 width 4.00: " "
+      RenderSVGTSpan {tspan} at (0,0) size 270x100
+        RenderSVGInlineText {#text} at (0,100) size 270x100
+          chunk 1 text run 1 at (10.00,200.00) startOffset 0 endOffset 3 width 270.00: "\x{4ECA}\x{9AA8}\x{76F4}"
+      RenderSVGInlineText {#text} at (270,165) size 4x18
+        chunk 1 text run 1 at (280.00,200.00) startOffset 0 endOffset 1 width 4.00: " "
+      RenderSVGTSpan {tspan} at (0,0) size 270x100
+        RenderSVGInlineText {#text} at (0,200) size 270x100
+          chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 3 width 270.00: "\x{4ECA}\x{9AA8}\x{76F4}"
+      RenderSVGInlineText {#text} at (0,0) size 0x0
