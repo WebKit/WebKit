@@ -592,7 +592,7 @@ def async_message_statement(receiver, message):
 
     connection = 'connection, '
     if receiver.has_attribute(STREAM_ATTRIBUTE):
-        connection = 'connection.connection(), '
+        connection = 'connection.protectedConnection(), '
     if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
         connection = ''
 
@@ -1170,7 +1170,7 @@ def generate_message_handler(receiver):
             result.append('    UNUSED_PARAM(decoder);\n')
             result.append('    UNUSED_PARAM(connection);\n')
             result.append('#if ENABLE(IPC_TESTING_API)\n')
-            result.append('    if (connection.connection().ignoreInvalidMessageForTesting())\n')
+            result.append('    if (connection.protectedConnection()->ignoreInvalidMessageForTesting())\n')
             result.append('        return;\n')
             result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());\n')

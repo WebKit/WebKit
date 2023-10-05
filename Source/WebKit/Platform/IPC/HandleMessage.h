@@ -294,10 +294,10 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
-    logMessage(connection.connection(), MessageType::name(), object, *arguments);
+    logMessage(connection.protectedConnection(), MessageType::name(), object, *arguments);
     callMemberFunction(object, function, WTFMove(*arguments),
         CompletionHandlerType([syncRequestID, connection = Ref { connection }] (auto&&... args) mutable {
-            logReply(connection->connection(), MessageType::name(), args...);
+            logReply(connection->protectedConnection(), MessageType::name(), args...);
             connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
         }));
 }
