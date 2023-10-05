@@ -501,6 +501,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/CallbackID.serialization.in \
 	Shared/BackgroundFetchState.serialization.in \
 	Shared/DisplayListArgumentCoders.serialization.in \
+	Shared/EditingRange.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
 	Shared/Extensions/WebExtensionContentWorldType.serialization.in \
