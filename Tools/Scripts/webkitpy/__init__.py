@@ -99,7 +99,7 @@ else:
 if sys.version_info < (3, 8):
     AutoInstall.register(Package('selenium', Version(3, 141, 0)))
 else:
-    AutoInstall.register(Package('selenium', Version(4, 12, 0)))
+    AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
 
 AutoInstall.register(Package('toml', Version(0, 10, 1), implicit_deps=['pyparsing']))
 AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))
