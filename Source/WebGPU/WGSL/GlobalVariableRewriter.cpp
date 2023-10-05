@@ -166,10 +166,25 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
             auto it = m_globals.find(read);
             RELEASE_ASSERT(it != m_globals.end());
             auto& global = it->value;
+            AST::Expression* type;
+            if (global.declaration->flavor() == AST::VariableFlavor::Var)
+                type = global.declaration->maybeReferenceType();
+            else {
+                ASSERT(global.declaration->flavor() == AST::VariableFlavor::Override);
+                type = global.declaration->maybeTypeName();
+                if (!type) {
+                    auto* storeType = global.declaration->storeType();
+                    auto& typeExpression = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(storeType->toString()));
+                    typeExpression.m_inferredType = storeType;
+                    type = &typeExpression;
+                }
+            }
+            ASSERT(type);
+
             m_callGraph.ast().append(callee.target->parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
                 SourceSpan::empty(),
                 AST::Identifier::make(read),
-                *global.declaration->maybeReferenceType(),
+                *type,
                 AST::Attribute::List { },
                 AST::ParameterRole::UserDefined
             ));

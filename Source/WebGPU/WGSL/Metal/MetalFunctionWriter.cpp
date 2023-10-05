@@ -780,6 +780,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             const char* addressSpace = nullptr;
             switch (reference.addressSpace) {
             case AddressSpace::Function:
+            case AddressSpace::Private:
                 addressSpace = "thread";
                 break;
             case AddressSpace::Workgroup:
@@ -792,7 +793,6 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 addressSpace = "device";
                 break;
             case AddressSpace::Handle:
-            case AddressSpace::Private:
                 break;
             }
             if (!addressSpace) {
