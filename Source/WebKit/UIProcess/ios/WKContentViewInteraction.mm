@@ -9976,14 +9976,14 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #pragma mark - _UIAsyncDragInteractionDelegate
 
-- (void)asyncDragInteraction:(_UIAsyncDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
+- (void)_asyncDragInteraction:(_UIAsyncDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
 {
     [self _dragInteraction:interaction prepareForSession:session completion:[completion = makeBlockPtr(completion)] {
         completion();
     }];
 }
 
-- (void)asyncDragInteraction:(_UIAsyncDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
+- (void)_asyncDragInteraction:(_UIAsyncDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
 {
     [self _dragInteraction:interaction itemsForAddingToSession:session withTouchAtPoint:point completion:[completion = makeBlockPtr(completion)](NSArray<UIDragItem *> *items) {
         completion(items);
