@@ -54,6 +54,7 @@ public:
 
     void visit(AST::Function&) override;
     void visit(AST::Variable&) override;
+    void visit(AST::Parameter&) override;
 
     void visit(AST::CompoundStatement&) override;
     void visit(AST::AssignmentStatement&) override;
@@ -213,11 +214,14 @@ void RewriteGlobalVariables::visit(AST::Function& function)
     m_reads = WTFMove(reads);
     m_defs.clear();
 
-    for (auto& parameter : function.parameters())
-        def(parameter.name(), nullptr);
+    def(function.name(), nullptr);
+    AST::Visitor::visit(function);
+}
 
-    // FIXME: detect when we shadow a global that a callee needs
-    visit(function.body());
+void RewriteGlobalVariables::visit(AST::Parameter& parameter)
+{
+    def(parameter.name(), nullptr);
+    AST::Visitor::visit(parameter);
 }
 
 void RewriteGlobalVariables::visit(AST::Variable& variable)
