@@ -4596,6 +4596,7 @@ imported/w3c/web-platform-tests/css/css-lists/list-style-image-gradients.html [ 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-disc.html [ Skip ]
 
 webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
+webkit.org/b/257904 http/tests/site-isolation/selection-focus.html [ Skip ]
 
 # This test can't be enabled on iOS until EventSenderProxyIOS::keyDown() is implemented.
 http/tests/site-isolation/key-events.html [ Skip ]

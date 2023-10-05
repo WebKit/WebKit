@@ -8949,7 +8949,7 @@ void WebPage::frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID)
     auto* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
-    m_page->focusController().updateFocusedFrame(frame->coreFrame());
+    m_page->focusController().setFocusedFrame(frame->coreFrame(), false);
 }
 
 } // namespace WebKit
