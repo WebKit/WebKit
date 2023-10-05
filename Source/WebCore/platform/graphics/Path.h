@@ -30,6 +30,7 @@
 #include "PathElement.h"
 #include "PathImpl.h"
 #include "PathSegment.h"
+#include "PlatformGraphicsContext.h"
 #include "PlatformPath.h"
 #include "WindRule.h"
 #include <wtf/FastMalloc.h>
@@ -110,6 +111,8 @@ public:
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
     FloatRect boundingRect() const;
     FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
+
+    void addToContext(PlatformGraphicsContext*) const;
 
 private:
     PlatformPathImpl& ensurePlatformPathImpl();

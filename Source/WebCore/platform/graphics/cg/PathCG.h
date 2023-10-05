@@ -90,6 +90,8 @@ private:
     FloatRect fastBoundingRect() const final;
     FloatRect boundingRect() const final;
 
+    void addToContext(PlatformGraphicsContext*) const final;
+
     RetainPtr<CGMutablePathRef> m_platformPath;
 };
 

@@ -28,6 +28,7 @@
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include "PathElement.h"
+#include "PlatformGraphicsContext.h"
 #include "RotationDirection.h"
 
 namespace WTF {
@@ -53,8 +54,9 @@ struct PathMoveTo {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
+    void applyElements(const PathElementApplier&) const;
     void transform(const AffineTransform&);
 };
 
@@ -75,8 +77,9 @@ struct PathLineTo {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
+    void applyElements(const PathElementApplier&) const;
     void transform(const AffineTransform&);
 };
 
@@ -98,8 +101,9 @@ struct PathQuadCurveTo {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
+    void applyElements(const PathElementApplier&) const;
     void transform(const AffineTransform&);
 };
 
@@ -122,8 +126,9 @@ struct PathBezierCurveTo {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
+    void applyElements(const PathElementApplier&) const;
     void transform(const AffineTransform&);
 };
 
@@ -146,6 +151,7 @@ struct PathArcTo {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathArcTo&);
@@ -169,6 +175,7 @@ struct PathArc {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathArc&);
@@ -194,6 +201,7 @@ struct PathEllipse {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathEllipse&);
@@ -213,6 +221,7 @@ struct PathEllipseInRect {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathEllipseInRect&);
@@ -232,6 +241,7 @@ struct PathRect {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathRect&);
@@ -257,6 +267,7 @@ struct PathRoundedRect {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathRoundedRect&);
@@ -277,8 +288,9 @@ struct PathDataLine {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
+    void applyElements(const PathElementApplier&) const;
     void transform(const AffineTransform&);
 };
 
@@ -301,8 +313,9 @@ struct PathDataQuadCurve {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
+    void applyElements(const PathElementApplier&) const;
     void transform(const AffineTransform&);
 };
 
@@ -326,8 +339,9 @@ struct PathDataBezierCurve {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
+    void applyElements(const PathElementApplier&) const;
     void transform(const AffineTransform&);
 };
 
@@ -351,6 +365,7 @@ struct PathDataArc {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataArc&);
@@ -368,8 +383,9 @@ struct PathCloseSubpath {
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
+    void applyElements(const PathElementApplier&) const;
     void transform(const AffineTransform&);
 };
 

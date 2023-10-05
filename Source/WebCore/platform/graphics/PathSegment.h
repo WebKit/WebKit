@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PathSegmentData.h"
+#include "PlatformGraphicsContext.h"
 #include <wtf/Function.h>
 
 namespace WebCore {
@@ -67,6 +68,7 @@ public:
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
+    void addToContext(PlatformGraphicsContext*) const;
 
     bool canApplyElements() const;
     bool applyElements(const PathElementApplier&) const;
