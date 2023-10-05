@@ -1613,7 +1613,6 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/ma
 
 # Subgrid failures
 imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-002.html [ ImageOnlyFailure ]
 
 # Timeout
