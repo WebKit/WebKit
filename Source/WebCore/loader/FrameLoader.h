@@ -170,6 +170,7 @@ public:
     String referrer() const;
     WEBCORE_EXPORT String outgoingReferrer() const;
     String outgoingOrigin() const;
+    bool didFilterLinkDecorationOnNavigation() const { return m_didFilterLinkDecorationOnNavigation; }
 
     WEBCORE_EXPORT DocumentLoader* activeDocumentLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
@@ -524,6 +525,7 @@ private:
     bool m_inStopForBackForwardCache { false };
     bool m_isHTTPFallbackInProgress { false };
     bool m_shouldRestoreScrollPositionAndViewState { false };
+    bool m_didFilterLinkDecorationOnNavigation { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

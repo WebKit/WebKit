@@ -195,6 +195,7 @@ public:
     const WebResourceLoadStatisticsStore& store() const { return m_store; }
 
     bool domainIDExistsInDatabase(int);
+    bool observedDomainNavigationWithLinkDecoration(int);
     std::optional<Vector<String>> checkForMissingTablesInSchema();
 
     void includeTodayAsOperatingDateIfNecessary();
@@ -296,7 +297,7 @@ private:
     enum class AddedRecord : bool { No, Yes };
     std::pair<AddedRecord, std::optional<unsigned>> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&) WARN_UNUSED_RETURN;
     bool shouldRemoveAllWebsiteDataFor(const DomainData&, bool shouldCheckForGrandfathering);
-    bool shouldRemoveAllButCookiesFor(const DomainData&, bool shouldCheckForGrandfathering);
+    bool shouldRemoveAllButCookiesFor(const DomainData&, bool shouldCheckForGrandfathering, bool hadNavigationWithLinkDecoration);
     bool shouldEnforceSameSiteStrictFor(DomainData&, bool shouldCheckForGrandfathering);
     void setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain&, bool value);
     void clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const NavigatedToDomain&, CompletionHandler<void()>&&);

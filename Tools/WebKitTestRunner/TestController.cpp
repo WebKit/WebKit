@@ -3768,7 +3768,11 @@ void TestController::setStatisticsTopFrameUniqueRedirectFrom(WKStringRef host, W
 void TestController::setStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost)
 {
     ResourceStatisticsCallbackContext context(*this);
+#if PLATFORM(COCOA)
+    platformSetStatisticsCrossSiteLoadWithLinkDecoration(fromHost, toHost, &context, &resourceStatisticsVoidResultCallback);
+#else
     WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration(websiteDataStore(), fromHost, toHost, &context, resourceStatisticsVoidResultCallback);
+#endif
     runUntil(context.done, noTimeout);
 }
 

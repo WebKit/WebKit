@@ -1283,8 +1283,11 @@ void NetworkProcess::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessi
     }
 }
 
-void NetworkProcess::setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, std::optional<WebCore::PageIdentifier> webPageID, CompletionHandler<void()>&& completionHandler)
 {
+    if (auto* networkStorageSession = storageSession(sessionID); networkStorageSession && webPageID)
+        networkStorageSession->didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(toDomain, *webPageID);
+
     if (auto* session = networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
             resourceLoadStatistics->logCrossSiteLoadWithLinkDecoration(WTFMove(fromDomain), WTFMove(toDomain), WTFMove(completionHandler));

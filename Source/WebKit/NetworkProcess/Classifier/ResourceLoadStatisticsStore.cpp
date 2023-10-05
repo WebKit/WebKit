@@ -2754,7 +2754,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveAllWebsiteDataFor(const DomainData
     return isPrevalentResource(resourceStatistic.registrableDomain) && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
 }
 
-bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
+bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData& resourceStatistic, bool shouldCheckForGrandfathering, bool hadNavigationWithLinkDecoration)
 {
     bool isRemovalEnabled = firstPartyWebsiteDataRemovalMode() != FirstPartyWebsiteDataRemovalMode::None || resourceStatistic.isScheduledForAllButCookieDataRemoval;
     bool isResourceGrandfathered = shouldCheckForGrandfathering && resourceStatistic.grandfathered;
@@ -2764,7 +2764,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData&
     case FirstPartyWebsiteDataRemovalMode::AllButCookies:
         FALLTHROUGH;
     case FirstPartyWebsiteDataRemovalMode::None:
-        window = OperatingDatesWindow::Short;
+        window = hadNavigationWithLinkDecoration ? OperatingDatesWindow::Short : OperatingDatesWindow::Long;
         break;
     case FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout:
         window = OperatingDatesWindow::ForLiveOnTesting;
@@ -2828,11 +2828,12 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsStore::
         if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(statistic))
             oldestUserInteraction = std::min(oldestUserInteraction, *mostRecentUserInteractionTime);
 
+
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
             toDeleteOrRestrictFor.domainsToDeleteAllScriptWrittenStorageFor.append(statistic.registrableDomain);
         } else {
-            if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
+            if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering, observedDomainNavigationWithLinkDecoration(statistic.domainID))) {
                 toDeleteOrRestrictFor.domainsToDeleteAllScriptWrittenStorageFor.append(statistic.registrableDomain);
                 setIsScheduledForAllScriptWrittenStorageRemoval(statistic.registrableDomain, false);
             }
@@ -3185,6 +3186,27 @@ bool ResourceLoadStatisticsStore::domainIDExistsInDatabase(int domainID)
 
     return m_linkDecorationExistsStatement->columnInt(0) || m_scriptLoadExistsStatement->columnInt(0) || m_subFrameExistsStatement->columnInt(0) || m_subResourceExistsStatement->columnInt(0) || m_uniqueRedirectExistsStatement->columnInt(0) || m_observedDomainsExistsStatement->columnInt(0);
 }
+
+bool ResourceLoadStatisticsStore::observedDomainNavigationWithLinkDecoration(int domainID)
+{
+    auto query = getSubStatisticStatement("TopFrameLinkDecorationsFrom"_s);
+
+    if (!query.length())
+        return true;
+
+    auto data = m_database.prepareStatement(query);
+
+    if (!data || data->bindInt(1, domainID) != SQLITE_OK) {
+        ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::observedDomainNavigationWithLinkDecoration. Statement failed to prepare or bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        return true;
+    }
+
+    if (data->step() != SQLITE_ROW)
+        return false;
+
+    return true;
+}
+
 
 void ResourceLoadStatisticsStore::updateOperatingDatesParameters()
 {

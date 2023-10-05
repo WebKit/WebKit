@@ -4541,9 +4541,9 @@ ScreenOrientationManager* Page::screenOrientationManager() const
     return m_screenOrientationManager.get();
 }
 
-URL Page::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger) const
+URL Page::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger, bool* appliedFiltering) const
 {
-    return chrome().client().applyLinkDecorationFiltering(url, trigger);
+    return chrome().client().applyLinkDecorationFiltering(url, trigger, appliedFiltering);
 }
 
 String Page::applyLinkDecorationFiltering(const String& urlString, LinkDecorationFilteringTrigger trigger) const

@@ -2661,6 +2661,22 @@ FileSystemAccessEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+FilterLinkDecorationOnNavigationEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Filter Link Decoration on Navigation"
+  humanReadableDescription: "Enable Filtering Link Decoration on Navigation"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(LINK_DECORATION_FILTERING_ON_NAVIGATION)": true
+      default: false
+    WebCore:
+      "ENABLE(LINK_DECORATION_FILTERING_ON_NAVIGATION)": true
+      default: false
+
 FixedFontFamily:
   type: String
   status: embedder

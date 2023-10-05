@@ -371,6 +371,13 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
 }
 
+void TestController::platformSetStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost, void* context, SetStatisticsCrossSiteLoadWithLinkDecorationCallBack callback)
+{
+    [m_mainWebView->platformView() _setStatisticsCrossSiteLoadWithLinkDecorationForTesting:toWTFString(fromHost) withToHost:toWTFString(toHost) withCompletionHandler:^{
+        callback(context);
+    }];
+}
+
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
 {
     setCrashReportApplicationSpecificInformationToURL(testInvocation.url());

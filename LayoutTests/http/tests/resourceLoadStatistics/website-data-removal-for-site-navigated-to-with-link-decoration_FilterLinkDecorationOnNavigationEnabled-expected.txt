@@ -19,6 +19,24 @@ Before deletion: HttpOnly cookie exists.
 Before deletion: Regular server-side cookie exists.
 Before deletion: LocalStorage entry does exist.
 Before deletion: IDB entry does exist.
+Before deletion: Client-side cookie exists.
+Before deletion: Client-side persistent cookie exists.
+Before deletion: HttpOnly cookie exists.
+Before deletion: Regular server-side cookie exists.
+Before deletion: LocalStorage entry does exist.
+Before deletion: IDB entry does exist.
+Before deletion: Client-side cookie exists.
+Before deletion: Client-side persistent cookie exists.
+Before deletion: HttpOnly cookie exists.
+Before deletion: Regular server-side cookie exists.
+Before deletion: LocalStorage entry does exist.
+Before deletion: IDB entry does exist.
+Before deletion: Client-side cookie exists.
+Before deletion: Client-side persistent cookie exists.
+Before deletion: HttpOnly cookie exists.
+Before deletion: Regular server-side cookie exists.
+Before deletion: LocalStorage entry does exist.
+Before deletion: IDB entry does exist.
 After deletion: HttpOnly cookie exists.
 After deletion: Client-side cookie does not exist.
 After deletion: Regular server-side cookie exists.
