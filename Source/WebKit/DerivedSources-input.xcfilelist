@@ -230,6 +230,7 @@ $(PROJECT_DIR)/Shared/PushMessageForTesting.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteLayerTree.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in
 $(PROJECT_DIR)/Shared/RemoteWorkerType.serialization.in
+$(PROJECT_DIR)/Shared/ResourceLoadInfo.serialization.in
 $(PROJECT_DIR)/Shared/SameDocumentNavigationType.serialization.in
 $(PROJECT_DIR)/Shared/SessionState.serialization.in
 $(PROJECT_DIR)/Shared/ShareableBitmap.serialization.in
@@ -316,6 +317,7 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexState.serialization.in
 $(PROJECT_DIR)/Shared/WebHitTestResultData.serialization.in
 $(PROJECT_DIR)/Shared/WebPageCreationParameters.serialization.in
+$(PROJECT_DIR)/Shared/WebPageNetworkParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPopupItem.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessDataStoreParameters.serialization.in

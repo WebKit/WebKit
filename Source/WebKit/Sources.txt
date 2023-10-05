@@ -261,7 +261,6 @@ Shared/WebKit2Initialize.cpp
 Shared/WebMemorySampler.cpp
 Shared/WebMouseEvent.cpp
 Shared/WebPageGroupData.cpp
-Shared/WebPageNetworkParameters.cpp
 Shared/WebPlatformTouchPoint.cpp
 Shared/WebPopupItem.cpp
 Shared/WebPreferencesDefaultValues.cpp
