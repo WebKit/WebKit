@@ -5120,6 +5120,9 @@
     "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/unset/xhr.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationEffect.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html": [
         "slow"
     ],
