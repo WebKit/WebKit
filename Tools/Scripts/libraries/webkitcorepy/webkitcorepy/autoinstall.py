@@ -144,7 +144,7 @@ class Package(object):
                     for zip_info in file.infolist():
                         file_path = file.extract(zip_info, target)
                         mode = (zip_info.external_attr >> 16) & 0x1FF
-                        mode = 0o777 if zip_info.is_dir() else (0o644 | (mode & 0o111))
+                        mode = 0o777 if getattr(zip_info, 'is_dir', lambda: False)() else (0o644 | (mode & 0o111))
                         os.chmod(file_path, mode)
             else:
                 raise OSError('{} has an unrecognized package format'.format(self.path))
