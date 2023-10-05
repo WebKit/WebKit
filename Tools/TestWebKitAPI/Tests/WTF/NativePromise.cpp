@@ -309,6 +309,89 @@ TEST(NativePromise, GenericPromise)
     });
 }
 
+TEST(NativePromise, CallbacksWithAuto)
+{
+    using MyPromiseNonExclusive = NativePromise<bool, bool, PromiseOption::Default | PromiseOption::NonExclusive>;
+    runInCurrentRunLoop([&](auto& runLoop) {
+        MyPromiseNonExclusive::Producer p;
+        p.then(runLoop, [] (auto val) {
+            EXPECT_TRUE(val);
+        }, [] (auto val) {
+            EXPECT_TRUE(val);
+        });
+        p.then(runLoop, [] (bool val) {
+            EXPECT_TRUE(val);
+        }, [] (auto val) {
+            EXPECT_TRUE(val);
+        });
+        p.then(runLoop, [] (auto val) {
+            EXPECT_TRUE(val);
+        }, [] (bool val) {
+            EXPECT_TRUE(val);
+        });
+        p.then(runLoop, [] {
+            EXPECT_TRUE(true);
+        }, [] (auto val) {
+            EXPECT_TRUE(val);
+        });
+        p.then(runLoop, [] (auto val) {
+            EXPECT_TRUE(val);
+        }, [] {
+            EXPECT_TRUE(true);
+        });
+        p.whenSettled(runLoop, [] (auto val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        p.whenSettled(runLoop, [] (const auto val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        p.whenSettled(runLoop, [] (const auto& val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        p.whenSettled(runLoop, [] (const MyPromiseNonExclusive::Result& val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        p.whenSettled(runLoop, [] (MyPromiseNonExclusive::Result val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        p.whenSettled(runLoop, [] {
+        });
+        p.resolve(true);
+    });
+
+    using MyPromise = NativePromise<bool, bool>;
+    runInCurrentRunLoop([&](auto& runLoop) {
+        MyPromise::createAndResolve(true)->whenSettled(runLoop, [] (auto&& val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        MyPromise::createAndResolve(true)->whenSettled(runLoop, [] (auto val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        MyPromise::createAndResolve(true)->whenSettled(runLoop, [] (const auto val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        MyPromise::createAndResolve(true)->whenSettled(runLoop, [] (const auto& val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        MyPromise::createAndResolve(true)->whenSettled(runLoop, [] (MyPromise::Result&& val) {
+            EXPECT_TRUE(val);
+            EXPECT_TRUE(val.value());
+        });
+        MyPromise::createAndResolve(true)->whenSettled(runLoop, [] () {
+            EXPECT_TRUE(true);
+        });
+    });
+}
+
 TEST(NativePromise, PromiseRequest)
 {
     // We declare the Request holder before using the runLoop to ensure it stays in scope for the entire run.
