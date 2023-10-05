@@ -134,16 +134,20 @@ class Package(object):
                 file = tarfile.open(self.path)
                 # Prevent write-protected files which can't be overwritten by manually setting permissions
                 for tarred in file:
-                    tarred.mode = 0o777 if tarred.isdir() else 0o644
+                    tarred.mode = 0o777 if tarred.isdir() else (0o644 | (tarred.mode & 0o111))
                 try:
                     file.extractall(target)
                 finally:
                     file.close()
             elif self.extension in ['whl', 'zip']:
                 with zipfile.ZipFile(self.path, 'r') as file:
-                    file.extractall(target)
+                    for zip_info in file.infolist():
+                        file_path = file.extract(zip_info, target)
+                        mode = (zip_info.external_attr >> 16) & 0x1FF
+                        mode = 0o777 if zip_info.is_dir() else (0o644 | (mode & 0o111))
+                        os.chmod(file_path, mode)
             else:
-                raise OSError('{} has an  unrecognized package format'.format(self.path))
+                raise OSError('{} has an unrecognized package format'.format(self.path))
 
     def __init__(self, import_name, version=None, pypi_name=None, slow_install=False, wheel=False, aliases=None, implicit_deps=None):
         self.name = import_name
