@@ -3468,6 +3468,25 @@ struct WebCore::ListStyleType {
     AtomString identifier;
 };
 
+header: <pal/SessionID.h>
+[CustomHeader] class PAL::SessionID {
+    [Validator='PAL::SessionID::isValidSessionIDValue(*toUInt64)'] uint64_t toUInt64();
+}
+
+enum class WebCore::RunAsAsyncFunction : bool;
+enum class WebCore::ForceUserGesture : bool;
+enum class WebCore::RemoveTransientActivation : bool;
+
+struct WebCore::RunJavaScriptParameters {
+    String source;
+    JSC::SourceTaintedOrigin taintedness;
+    URL sourceURL;
+    WebCore::RunAsAsyncFunction runAsAsyncFunction;
+    std::optional<WebCore::ArgumentWireBytesMap> arguments;
+    WebCore::ForceUserGesture forceUserGesture;
+    WebCore::RemoveTransientActivation removeTransientActivation;
+}
+
 header: <WebCore/FontAttributes.h>
 [CustomHeader] struct WebCore::TextList {
     WebCore::ListStyleType styleType;
