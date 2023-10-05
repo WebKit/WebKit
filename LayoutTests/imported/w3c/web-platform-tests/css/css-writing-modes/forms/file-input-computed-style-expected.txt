@@ -1,0 +1,6 @@
+
+
+PASS horizontal-input block size should match height and inline size should match width
+PASS vertical-lr-input block size should match width and inline size should match height
+PASS vertical-rl-input block size should match width and inline size should match height
+
