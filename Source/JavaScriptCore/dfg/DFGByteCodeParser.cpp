@@ -1053,7 +1053,7 @@ private:
 
     ArrayMode getArrayMode(const ConcurrentJSLocker& locker, ArrayProfile& profile, Array::Action action)
     {
-        profile.computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
+        profile.computeUpdatedPrediction(m_inlineStackTop->m_profiledBlock);
         bool makeSafe = profile.outOfBounds(locker);
         return ArrayMode::fromObserved(locker, &profile, action, makeSafe);
     }
@@ -9420,15 +9420,15 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
 {
     {
         m_exitProfile.initialize(m_profiledBlock->unlinkedCodeBlock());
-
-        ConcurrentJSLocker locker(m_profiledBlock->m_lock);
-        m_lazyOperands.initialize(locker, m_profiledBlock->lazyOperandValueProfiles(locker));
+        m_lazyOperands.initialize(m_profiledBlock->lazyOperandValueProfiles());
         
         // We do this while holding the lock because we want to encourage StructureStubInfo's
         // to be potentially added to operations and because the profiled block could be in the
         // middle of LLInt->JIT tier-up in which case we would be adding the info's right now.
-        if (m_profiledBlock->hasBaselineJITProfiling())
+        if (m_profiledBlock->hasBaselineJITProfiling()) {
+            ConcurrentJSLocker locker(m_profiledBlock->m_lock);
             m_profiledBlock->getICStatusMap(locker, m_baselineMap);
+        }
     }
     
     CodeBlock* optimizedBlock = m_profiledBlock->replacement();
