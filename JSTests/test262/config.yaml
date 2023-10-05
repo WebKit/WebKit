@@ -10,6 +10,7 @@ flags:
   resizable-arraybuffer: useArrayBufferTransfer
   import-assertions: useImportAttributes
   json-modules: useImportAttributes
+  promise-with-resolvers: usePromiseWithResolversMethod
 skip:
   features:
     - callable-boundary-realms

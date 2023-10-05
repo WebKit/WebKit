@@ -187,18 +187,6 @@ test/built-ins/Object/groupBy/callback-arg.js:
 test/built-ins/Object/keys/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
-test/built-ins/Promise/withResolvers/ctx-ctor.js:
-  default: "TypeError: undefined is not an object (evaluating 'Promise.withResolvers.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Promise.withResolvers.call')"
-test/built-ins/Promise/withResolvers/promise.js:
-  default: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
-  strict mode: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
-test/built-ins/Promise/withResolvers/resolvers.js:
-  default: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
-  strict mode: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
-test/built-ins/Promise/withResolvers/result.js:
-  default: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
-  strict mode: "TypeError: Promise.withResolvers is not a function. (In 'Promise.withResolvers()', 'Promise.withResolvers' is undefined)"
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(«function Array() {'
