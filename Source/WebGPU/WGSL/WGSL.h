@@ -151,10 +151,15 @@ struct BindGroupLayoutEntry {
     using BindingMember = std::variant<BufferBindingLayout, SamplerBindingLayout, TextureBindingLayout, StorageTextureBindingLayout, ExternalTextureBindingLayout>;
     BindingMember bindingMember;
     std::optional<uint32_t> vertexArgumentBufferIndex;
+    std::optional<uint32_t> vertexArgumentBufferSizeIndex;
     std::optional<uint32_t> vertexBufferDynamicOffset;
+
     std::optional<uint32_t> fragmentArgumentBufferIndex;
+    std::optional<uint32_t> fragmentArgumentBufferSizeIndex;
     std::optional<uint32_t> fragmentBufferDynamicOffset;
+
     std::optional<uint32_t> computeArgumentBufferIndex;
+    std::optional<uint32_t> computeArgumentBufferSizeIndex;
     std::optional<uint32_t> computeBufferDynamicOffset;
 };
 

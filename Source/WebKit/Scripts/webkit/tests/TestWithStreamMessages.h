@@ -81,7 +81,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendStringAsyncReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<int64_t>;
-    using Promise = WTF::NativePromise<int64_t, IPC::Error, true>;
+    using Promise = WTF::NativePromise<int64_t, IPC::Error>;
     explicit SendStringAsync(const String& url)
         : m_arguments(url)
     {
@@ -139,7 +139,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_CallWithIdentifierReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
-    using Promise = WTF::NativePromise<void, IPC::Error, true>;
+    using Promise = WTF::NativePromise<void, IPC::Error>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);

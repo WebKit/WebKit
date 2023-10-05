@@ -486,10 +486,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
         if (hasOnlyBoundedSRGBColorStops(stops)) {
             for (const auto& stop : stops) {
                 auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
-                colorComponents.uncheckedAppend(r);
-                colorComponents.uncheckedAppend(g);
-                colorComponents.uncheckedAppend(b);
-                colorComponents.uncheckedAppend(a);
+                colorComponents.appendList({ r, g, b, a });
 
                 locations.uncheckedAppend(stop.offset);
             }
@@ -499,10 +496,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
         using OutputSpaceColorType = std::conditional_t<HasCGColorSpaceMapping<ColorSpace::ExtendedSRGB>, ExtendedSRGBA<float>, SRGBA<float>>;
         for (const auto& stop : stops) {
             auto [r, g, b, a] = stop.color.toColorTypeLossy<OutputSpaceColorType>().resolved();
-            colorComponents.uncheckedAppend(r);
-            colorComponents.uncheckedAppend(g);
-            colorComponents.uncheckedAppend(b);
-            colorComponents.uncheckedAppend(a);
+            colorComponents.appendList({ r, g, b, a });
 
             locations.uncheckedAppend(stop.offset);
         }

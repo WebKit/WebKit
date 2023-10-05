@@ -122,7 +122,7 @@ template<typename Key, typename Value, typename Extractor, typename HashFunction
 template<typename Value, typename = DefaultHash<Value>, typename = HashTraits<Value>> class HashCountedSet;
 template<typename KeyArg, typename MappedArg, typename = DefaultHash<KeyArg>, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>, typename = HashTableTraits> class HashMap;
 template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTraits<ValueArg>, typename = HashTableTraits> class HashSet;
-template<typename ResolveValueT, typename RejectValueT, bool IsExclusive> class NativePromise;
+template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> class NativePromise;
 
 }
 

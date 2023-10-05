@@ -147,13 +147,11 @@ void GPURenderPassEncoder::endOcclusionQuery()
 
 void GPURenderPassEncoder::executeBundles(Vector<RefPtr<GPURenderBundle>>&& bundles)
 {
-    Vector<std::reference_wrapper<WebGPU::RenderBundle>> result;
-    result.reserveInitialCapacity(bundles.size());
-    for (const auto& bundle : bundles) {
-        if (!bundle)
-            continue;
-        result.uncheckedAppend(bundle->backing());
-    }
+    auto result = WTF::compactMap(bundles, [](auto& bundle) -> std::optional<std::reference_wrapper<WebGPU::RenderBundle>> {
+        if (bundle)
+            return bundle->backing();
+        return std::nullopt;
+    });
     m_backing->executeBundles(WTFMove(result));
 }
 

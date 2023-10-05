@@ -195,8 +195,7 @@ Vector<uint8_t> NetworkRTCTCPSocketCocoa::createMessageBuffer(const uint8_t* dat
     // Prepend length.
     Vector<uint8_t> buffer;
     buffer.reserveInitialCapacity(size + 2);
-    buffer.uncheckedAppend((size >> 8) & 0xFF);
-    buffer.uncheckedAppend(size & 0xFF);
+    buffer.appendList({ (size >> 8) & 0xFF, size & 0xFF });
     buffer.append(data, size);
     return buffer;
 }

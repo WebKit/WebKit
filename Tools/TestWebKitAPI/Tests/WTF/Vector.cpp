@@ -339,6 +339,23 @@ TEST(WTF_Vector, ConstructorTakingLengthAndFunctor)
     EXPECT_EQ(vector[4], 4U);
 }
 
+TEST(WTF_Vector, AppendList)
+{
+    Vector<size_t> vector({ 1, 2, 3 });
+    EXPECT_EQ(vector.size(), 3U);
+    EXPECT_EQ(vector[0], 1U);
+    EXPECT_EQ(vector[1], 2U);
+    EXPECT_EQ(vector[2], 3U);
+    vector.appendList({ 4, 5, 6 });
+    EXPECT_EQ(vector.size(), 6U);
+    EXPECT_EQ(vector[0], 1U);
+    EXPECT_EQ(vector[1], 2U);
+    EXPECT_EQ(vector[2], 3U);
+    EXPECT_EQ(vector[3], 4U);
+    EXPECT_EQ(vector[4], 5U);
+    EXPECT_EQ(vector[5], 6U);
+}
+
 TEST(WTF_Vector, Reverse)
 {
     Vector<int> intVector;

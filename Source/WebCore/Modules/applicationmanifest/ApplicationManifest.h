@@ -57,12 +57,15 @@ struct ApplicationManifest {
         OptionSet<Purpose> purposes;
     };
 
+    String rawJSON;
     String name;
     String shortName;
     String description;
     URL scope;
+    bool isDefaultScope { false };
     Display display;
     std::optional<ScreenOrientationLockType> orientation;
+    URL manifestURL;
     URL startURL;
     URL id;
     Color backgroundColor;

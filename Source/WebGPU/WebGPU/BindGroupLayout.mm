@@ -160,6 +160,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     BindGroupLayout::EntriesContainer bindGroupLayoutEntries;
     size_t sizeOfDynamicOffsets[stageCount] = { 0, 0, 0 };
     uint32_t bindingOffset[stageCount] = { 0, 0, 0 };
+    uint32_t bufferCounts[stageCount] = { 0, 0, 0 };
     for (auto& entry : descriptorEntries) {
         if (entry.nextInChain) {
             if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture))
@@ -213,6 +214,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
 
         std::optional<uint32_t> dynamicOffsets[stageCount];
         BindGroupLayout::ArgumentBufferIndices argumentBufferIndices;
+        BindGroupLayout::ArgumentBufferIndices bufferSizeArgumentBufferIndices;
         for (uint32_t stage = 0; stage < stageCount; ++stage) {
             if (containsStage(entry.visibility, stage)) {
                 indicesForBinding.add(makeKey(entry.binding, stage), descriptors[0].access);
@@ -221,6 +223,10 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
                 if (entry.buffer.hasDynamicOffset) {
                     dynamicOffsets[stage] = sizeOfDynamicOffsets[stage];
                     sizeOfDynamicOffsets[stage] += sizeof(uint32_t);
+                }
+                if (BindGroupLayout::isPresent(entry.buffer)) {
+                    ++bufferCounts[stage];
+                    bufferSizeArgumentBufferIndices[renderStage] = bufferCounts[stage];
                 }
 
                 for (int descriptorIndex = 0; descriptorIndex < maxGeneratedDescriptors; ++descriptorIndex) {
@@ -240,6 +246,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             entry.visibility,
             WTFMove(bindingLayout),
             WTFMove(argumentBufferIndices),
+            WTFMove(bufferSizeArgumentBufferIndices),
             WTFMove(dynamicOffsets[0]),
             WTFMove(dynamicOffsets[1]),
             WTFMove(dynamicOffsets[2])
@@ -249,6 +256,20 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     auto label = fromAPI(descriptor.label);
     id<MTLArgumentEncoder> argumentEncoders[stageCount];
     for (size_t stage = 0; stage < stageCount; ++stage) {
+        auto renderStage = stages[stage];
+        if (auto bufferCountPerStage = bufferCounts[stage]) {
+            NSUInteger maxIndex = [arguments[stage] objectAtIndex:arguments[stage].count - 1].index;
+            for (auto& entry : bindGroupLayoutEntries) {
+                if (entry.value.bufferSizeArgumentBufferIndices[renderStage])
+                    *entry.value.bufferSizeArgumentBufferIndices[renderStage] += maxIndex;
+            }
+            for (size_t bufferLengthIndex = 0; bufferLengthIndex < bufferCountPerStage; ++bufferLengthIndex) {
+                auto descriptor = [MTLArgumentDescriptor new];
+                descriptor.dataType = MTLDataTypeInt;
+                descriptor.access = BindGroupLayout::BindingAccessReadOnly;
+                addDescriptor(arguments[stage], descriptor, maxIndex + bufferLengthIndex + 1);
+            }
+        }
         argumentEncoders[stage] = arguments[stage].count ? [m_device newArgumentEncoderWithArguments:arguments[stage]] : nil;
         argumentEncoders[stage].label = label;
         if (arguments[stage].count && !argumentEncoders[stage])
@@ -325,6 +346,16 @@ NSUInteger BindGroupLayout::argumentBufferIndexForEntryIndex(uint32_t bindingInd
 {
     if (auto it = m_bindGroupLayoutEntries.find(bindingIndex); it != m_bindGroupLayoutEntries.end()) {
         auto result = it->value.argumentBufferIndices[renderStage];
+        return result ? *result : NSNotFound;
+    }
+
+    return NSNotFound;
+}
+
+std::optional<uint32_t> BindGroupLayout::bufferSizeIndexForEntryIndex(uint32_t bindingIndex, ShaderStage renderStage) const
+{
+    if (auto it = m_bindGroupLayoutEntries.find(bindingIndex); it != m_bindGroupLayoutEntries.end()) {
+        auto result = it->value.bufferSizeArgumentBufferIndices[renderStage];
         return result ? *result : NSNotFound;
     }
 

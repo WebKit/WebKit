@@ -65,7 +65,7 @@ struct MockTestMessageWithAsyncReply1 {
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
     std::tuple<> arguments() { return { }; }
     using ReplyArguments = std::tuple<uint64_t>;
-    using Promise = WTF::NativePromise<uint64_t, IPC::Error, true>;
+    using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
 };
 
 class MockConnectionClient final : public IPC::Connection::Client {

@@ -212,16 +212,16 @@ static CString trimToValidUTF8Length1024(CString&& string)
     if (string.length() > 1024)
         string = CString(string.data(), 1024);
     else
-        return string;
+        return WTFMove(string);
 
     while (true) {
         if (!string.length())
-            return string;
+            return WTFMove(string);
         auto decoded = String::fromUTF8(string.data(), string.length());
         if (!decoded)
             string = CString(string.data(), string.length() - 1);
         else
-            return string;
+            return WTFMove(string);
     }
 }
 

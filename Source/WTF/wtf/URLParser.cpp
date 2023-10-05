@@ -47,9 +47,7 @@ ALWAYS_INLINE static void appendCodePoint(Vector<UChar>& destination, UChar32 co
         destination.append(static_cast<UChar>(codePoint));
         return;
     }
-    destination.reserveCapacity(destination.size() + 2);
-    destination.uncheckedAppend(U16_LEAD(codePoint));
-    destination.uncheckedAppend(U16_TRAIL(codePoint));
+    destination.appendList({ U16_LEAD(codePoint), U16_TRAIL(codePoint) });
 }
 
 enum URLCharacterClass {

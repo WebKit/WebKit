@@ -73,12 +73,19 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
 
     ApplicationManifest parsedManifest;
 
+    parsedManifest.rawJSON = text;
+    parsedManifest.manifestURL = manifestURL;
     parsedManifest.startURL = parseStartURL(*manifest, documentURL);
     parsedManifest.display = parseDisplay(*manifest);
     parsedManifest.name = parseName(*manifest);
     parsedManifest.description = parseDescription(*manifest);
     parsedManifest.shortName = parseShortName(*manifest);
-    parsedManifest.scope = parseScope(*manifest, documentURL, parsedManifest.startURL);
+    if (auto parsedScope = parseScope(*manifest, documentURL, parsedManifest.startURL))
+        parsedManifest.scope = WTFMove(*parsedScope);
+    else {
+        parsedManifest.scope = URL { parsedManifest.startURL, "./"_s };
+        parsedManifest.isDefaultScope = true;
+    }
     parsedManifest.backgroundColor = parseColor(*manifest, "background_color"_s);
     parsedManifest.themeColor = parseColor(*manifest, "theme_color"_s);
     parsedManifest.icons = parseIcons(*manifest);
@@ -345,39 +352,37 @@ URL ApplicationManifestParser::parseId(const JSON::Object& manifest, const URL& 
     return idURL;
 }
 
-URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const URL& documentURL, const URL& startURL)
+std::optional<URL> ApplicationManifestParser::parseScope(const JSON::Object& manifest, const URL& documentURL, const URL& startURL)
 {
-    URL defaultScope { startURL, "./"_s };
-
     auto value = manifest.getValue("scope"_s);
     if (!value)
-        return defaultScope;
+        return std::nullopt;
 
     auto stringValue = value->asString();
     if (!stringValue) {
         logManifestPropertyNotAString("scope"_s);
-        return defaultScope;
+        return std::nullopt;
     }
 
     if (stringValue.isEmpty())
-        return defaultScope;
+        return std::nullopt;
 
     URL scopeURL(m_manifestURL, stringValue);
     if (!scopeURL.isValid()) {
         logManifestPropertyInvalidURL("scope"_s);
-        return defaultScope;
+        return std::nullopt;
     }
 
     if (!protocolHostAndPortAreEqual(scopeURL, documentURL)) {
         auto scopeURLOrigin = SecurityOrigin::create(scopeURL);
         auto documentOrigin = SecurityOrigin::create(documentURL);
         logDeveloperWarning(makeString("The scope's origin of \""_s, scopeURLOrigin->toString(), "\" is different from the document's origin of \""_s, documentOrigin->toString(), "\"."_s));
-        return defaultScope;
+        return std::nullopt;
     }
 
     if (!isInScope(scopeURL, startURL)) {
         logDeveloperWarning("The start URL is not within scope of the provided scope URL."_s);
-        return defaultScope;
+        return std::nullopt;
     }
 
     return scopeURL;

@@ -478,6 +478,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 continue;
 
             auto index = bindGroupLayout.argumentBufferIndexForEntryIndex(entry.binding, stage);
+            auto bufferSizeArgumentBufferIndex = bindGroupLayout.bufferSizeIndexForEntryIndex(entry.binding, stage);
             MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(*optionalAccess);
 
             if (bufferIsPresent) {
@@ -487,6 +488,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
 
                 [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index];
                 stageResources[metalRenderStage(stage)][resourceUsage - 1].append(buffer);
+                RELEASE_ASSERT(bufferSizeArgumentBufferIndex);
+                *(uint32_t*)[argumentEncoder[stage] constantDataAtIndex:*bufferSizeArgumentBufferIndex] = static_cast<uint32_t>(entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size);
             } else if (samplerIsPresent) {
                 id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
                 [argumentEncoder[stage] setSamplerState:sampler atIndex:index];

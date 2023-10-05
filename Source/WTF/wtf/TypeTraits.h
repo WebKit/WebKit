@@ -107,6 +107,19 @@ static auto HasRefCountMethodsTest(long) -> std::false_type;
 template<class T>
 struct HasRefCountMethods : decltype(detail::HasRefCountMethodsTest<T>(0)) { };
 
+// HasIsolatedCopy()
+namespace detail {
+
+template<class T>
+static auto HasIsolatedCopyTest(int) -> SFINAE1True<decltype(std::declval<T>().isolatedCopy())>;
+template<class>
+static auto HasIsolatedCopyTest(long) -> std::false_type;
+
+} // namespace detail
+
+template<class T>
+struct HasIsolatedCopy : decltype(detail::HasIsolatedCopyTest<T>(0)) { };
+
 // LooksLikeRCSerialDispatcher implementation
 namespace detail {
 

@@ -59,6 +59,7 @@ public:
         using BindingLayout = std::variant<WGPUBufferBindingLayout, WGPUSamplerBindingLayout, WGPUTextureBindingLayout, WGPUStorageTextureBindingLayout, WGPUExternalTextureBindingLayout>;
         BindingLayout bindingLayout;
         ArgumentBufferIndices argumentBufferIndices;
+        ArgumentBufferIndices bufferSizeArgumentBufferIndices;
         std::optional<uint32_t> vertexDynamicOffset;
         std::optional<uint32_t> fragmentDynamicOffset;
         std::optional<uint32_t> computeDynamicOffset;
@@ -102,6 +103,7 @@ public:
 
     std::optional<StageMapValue> bindingAccessForBindingIndex(uint32_t bindingIndex, ShaderStage renderStage) const;
     NSUInteger argumentBufferIndexForEntryIndex(uint32_t bindingIndex, ShaderStage renderStage) const;
+    std::optional<uint32_t> bufferSizeIndexForEntryIndex(uint32_t bindingIndex, ShaderStage renderStage) const;
 
     static bool isPresent(const WGPUBufferBindingLayout&);
     static bool isPresent(const WGPUSamplerBindingLayout&);

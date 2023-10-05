@@ -110,6 +110,28 @@ public:
         return parseString(manifestContent);
     }
 
+    void testRawJSON(const String& rawJSON, bool isValidJSON)
+    {
+        auto manifest = parseString(rawJSON);
+        auto value = manifest.rawJSON;
+        if (isValidJSON)
+            EXPECT_STREQ(rawJSON.utf8().data(), value.utf8().data());
+        else
+            ASSERT_STREQ(rawJSON.utf8().data(), value.utf8().data());
+    }
+
+    void testManifestURL(const String& expectedValue)
+    {
+        testManifestURL(URL { expectedValue });
+    }
+
+    void testManifestURL(const URL& expectedValue)
+    {
+        auto manifest = ApplicationManifestParser::parse("{ \"name\": \"Example\" }"_s, expectedValue, m_documentURL);
+        auto value = manifest.manifestURL;
+        EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+    }
+
     void testStartURL(const String& rawJSON, const String& expectedValue)
     {
         testStartURL(rawJSON, { { }, expectedValue });
@@ -157,17 +179,18 @@ public:
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
 
-    void testScope(const String& rawJSON, const String& startURL, const String& expectedValue)
+    void testScope(const String& rawJSON, const String& startURL, const String& expectedValue, bool expectedIsDefaultScope)
     {
         String manifestContent = "{ \"scope\" : " + rawJSON + ", \"start_url\" : \"" + startURL + "\" }";
         auto manifest = parseString(manifestContent);
         auto value = manifest.scope;
         EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());
+        EXPECT_EQ(expectedIsDefaultScope, manifest.isDefaultScope);
     }
 
-    void testScope(const String& rawJSON, const String& expectedValue)
+    void testScope(const String& rawJSON, const String& expectedValue, bool expectedIsDefaultScope)
     {
-        testScope(rawJSON, String(), expectedValue);
+        testScope(rawJSON, m_startURL.string(), expectedValue, expectedIsDefaultScope);
     }
 
     void testBackgroundColor(const String& rawJSON, const Color& expectedValue)
@@ -249,6 +272,13 @@ TEST_F(ApplicationManifestParserTest, DefaultManifest)
     assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString("This is 100% not JSON."_s));
 }
 
+TEST_F(ApplicationManifestParserTest, RawJSON)
+{
+    testRawJSON("{ \"name\" : \"Example\", \"start_url\" : \"https://example.com\"}"_s, true);
+    testRawJSON("{ \"start_url\" : \"https://example.com\"}"_s, true);
+    testRawJSON("This is 100% not JSON."_s, false);
+}
+
 TEST_F(ApplicationManifestParserTest, Id)
 {
     m_documentURL = URL { "https://example.com/home"_s };
@@ -278,6 +308,14 @@ TEST_F(ApplicationManifestParserTest, Id)
     testId("https://example.com/foo"_s, m_startURL, "https://example.com/foo"_s);
     testId("https://anothersite.com/foo"_s, m_startURL, m_startURL.string());
     testId("https://invalid.com:a"_s, m_startURL, m_startURL.string());
+}
+
+TEST_F(ApplicationManifestParserTest, ManifestURL)
+{
+    m_documentURL = URL { "https://example.com/home"_s };
+
+    testManifestURL("https://example.com/manifest.json"_s);
+    testManifestURL("https://example.com/test/manifest.json"_s);
 }
 
 TEST_F(ApplicationManifestParserTest, StartURL)
@@ -403,45 +441,51 @@ TEST_F(ApplicationManifestParserTest, Scope)
 {
     // If the scope is not a string or not a valid URL, return the default scope (the parent path of the start URL).
     m_documentURL = URL { "https://example.com/a/page?queryParam=value#fragment"_s };
+    m_startURL = URL { "https://example.com/a/page?queryParam=value#fragment"_s };
     m_manifestURL = URL { "https://example.com/manifest.json"_s };
-    testScope("123"_s, "https://example.com/a/"_s);
-    testScope("null"_s, "https://example.com/a/"_s);
-    testScope("true"_s, "https://example.com/a/"_s);
-    testScope("{ }"_s, "https://example.com/a/"_s);
-    testScope("[ ]"_s, "https://example.com/a/"_s);
-    testScope("\"\""_s, "https://example.com/a/"_s);
-    testScope("\"http:?\""_s, "https://example.com/a/"_s);
+    testScope("123"_s, "https://example.com/a/"_s, true);
+    testScope("null"_s, "https://example.com/a/"_s, true);
+    testScope("true"_s, "https://example.com/a/"_s, true);
+    testScope("{ }"_s, "https://example.com/a/"_s, true);
+    testScope("[ ]"_s, "https://example.com/a/"_s, true);
+    testScope("\"\""_s, "https://example.com/a/"_s, true);
+    testScope("\"http:?\""_s, "https://example.com/a/"_s, true);
 
     m_documentURL = URL { "https://example.com/a/pageEndingWithSlash/"_s };
-    testScope("null"_s, "https://example.com/a/pageEndingWithSlash/"_s);
+    m_startURL = URL { "https://example.com/a/pageEndingWithSlash/"_s };
+    testScope("null"_s, "https://example.com/a/pageEndingWithSlash/"_s, true);
 
     // If scope URL is not same origin as document URL, return the default scope.
     m_documentURL = URL { "https://example.com/home"_s };
+    m_startURL = URL { "https://example.com/home"_s };
     m_manifestURL = URL { "https://other-site.com/manifest.json"_s };
-    testScope("\"https://other-site.com/some-scope\""_s, "https://example.com/"_s);
+    testScope("\"https://other-site.com/some-scope\""_s, "https://example.com/"_s, true);
 
     m_documentURL = URL { "https://example.com/app/home"_s };
+    m_startURL = URL { "https://example.com/app/home"_s };
     m_manifestURL = URL { "https://example.com/app/manifest.json"_s };
 
     // If start URL is not within scope of scope URL, return the default scope.
-    testScope("\"https://example.com/subdirectory\""_s, "https://example.com/app/"_s);
-    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s);
-    testScope("\"https://example.com/APP\""_s, "https://example.com/app/"_s);
-    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s);
+    testScope("\"https://example.com/subdirectory\""_s, "https://example.com/app/"_s, true);
+    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s, true);
+    testScope("\"https://example.com/APP\""_s, "https://example.com/app/"_s, true);
+    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s, true);
 
     m_documentURL = URL { "https://example.com/a/b/c/index"_s };
+    m_startURL = URL { "https://example.com/a/b/c/index"_s };
     m_manifestURL = URL { "https://example.com/a/manifest.json"_s };
 
-    testScope("\"./b/c/index\""_s, "https://example.com/a/b/c/index"_s);
-    testScope("\"b/somewhere-else/../c\""_s, "https://example.com/a/b/c"_s);
-    testScope("\"b\""_s, "https://example.com/a/b"_s);
-    testScope("\"b/\""_s, "https://example.com/a/b/"_s);
+    testScope("\"./b/c/index\""_s, "https://example.com/a/b/c/index"_s, false);
+    testScope("\"b/somewhere-else/../c\""_s, "https://example.com/a/b/c"_s, false);
+    testScope("\"b\""_s, "https://example.com/a/b"_s, false);
+    testScope("\"b/\""_s, "https://example.com/a/b/"_s, false);
 
     m_documentURL = URL { "https://example.com/documents/home"_s };
+    m_startURL = URL { "https://example.com/documents/home"_s };
     m_manifestURL = URL { "https://example.com/resources/manifest.json"_s };
 
     // It's fine if the document URL or manifest URL aren't within the application scope - only the start URL needs to be.
-    testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s);
+    testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s, false);
 }
 
 TEST_F(ApplicationManifestParserTest, BackgroundColor)

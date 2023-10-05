@@ -150,11 +150,7 @@ Vector<AtomString> CDMPrivateThunder::supportedInitDataTypes() const
     static std::once_flag onceFlag;
     static Vector<AtomString> supportedInitDataTypes;
     std::call_once(onceFlag, [] {
-        supportedInitDataTypes.reserveInitialCapacity(4);
-        supportedInitDataTypes.uncheckedAppend("keyids"_s);
-        supportedInitDataTypes.uncheckedAppend("cenc"_s);
-        supportedInitDataTypes.uncheckedAppend("webm"_s);
-        supportedInitDataTypes.uncheckedAppend("cbcs"_s);
+        supportedInitDataTypes.appendList({ "keyids"_s, "cenc"_s, "webm"_s, "cbcs"_s });
     });
     return supportedInitDataTypes;
 }

@@ -42,6 +42,7 @@
 #include "Logging.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseManager.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {

@@ -560,7 +560,7 @@ void WebLocalFrameLoaderClient::dispatchDidStartProvisionalLoad()
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     // Notify the extensions controller.
-    if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
+    if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
         extensionControllerProxy->didStartProvisionalLoadForFrame(*webPage, m_frame, url);
 #endif
 
@@ -617,7 +617,7 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     // Notify the extensions controller.
-    if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
+    if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
         extensionControllerProxy->didCommitLoadForFrame(*webPage, m_frame, m_frame->url());
 #endif
 
@@ -736,7 +736,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoad()
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     // Notify the extensions controller.
-    if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
+    if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
         extensionControllerProxy->didFinishLoadForFrame(*webPage, m_frame, m_frame->url());
 #endif
 
@@ -1698,12 +1698,12 @@ void WebLocalFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld& w
     if (!webPage)
         return;
 
-    webPage->injectedBundleLoaderClient().globalObjectIsAvailableForFrame(*webPage, m_frame, world);
-
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
+    if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
         extensionControllerProxy->globalObjectIsAvailableForFrame(*webPage, m_frame, world);
 #endif
+
+    webPage->injectedBundleLoaderClient().globalObjectIsAvailableForFrame(*webPage, m_frame, world);
 }
 
 void WebLocalFrameLoaderClient::dispatchServiceWorkerGlobalObjectAvailable(DOMWrapperWorld& world)
@@ -1712,12 +1712,12 @@ void WebLocalFrameLoaderClient::dispatchServiceWorkerGlobalObjectAvailable(DOMWr
     if (!webPage)
         return;
 
-    webPage->injectedBundleLoaderClient().serviceWorkerGlobalObjectIsAvailableForFrame(*webPage, m_frame, world);
-
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
+    if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
         extensionControllerProxy->serviceWorkerGlobalObjectIsAvailableForFrame(*webPage, m_frame, world);
 #endif
+
+    webPage->injectedBundleLoaderClient().serviceWorkerGlobalObjectIsAvailableForFrame(*webPage, m_frame, world);
 }
 
 void WebLocalFrameLoaderClient::willInjectUserScript(DOMWrapperWorld& world)

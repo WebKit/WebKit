@@ -691,10 +691,9 @@ static LibWebRTCMediaEndpointTransceiverState toLibWebRTCMediaEndpointTransceive
         firedDirection = toRTCRtpTransceiverDirection(*rtcFiredDirection);
 
     auto rtcStreamIds = transceiver.receiver()->stream_ids();
-    Vector<String> streamIds;
-    streamIds.reserveInitialCapacity(rtcStreamIds.size());
-    for (auto& streamId : rtcStreamIds)
-        streamIds.uncheckedAppend(fromStdString(streamId));
+    auto streamIds = WTF::map(rtcStreamIds, [](auto& streamId) {
+        return fromStdString(streamId);
+    });
 
     return { WTFMove(mid), WTFMove(streamIds), firedDirection };
 }
@@ -702,12 +701,9 @@ static LibWebRTCMediaEndpointTransceiverState toLibWebRTCMediaEndpointTransceive
 static Vector<LibWebRTCMediaEndpointTransceiverState> transceiverStatesFromPeerConnection(webrtc::PeerConnectionInterface& connection)
 {
     auto transceivers = connection.GetTransceivers();
-    Vector<LibWebRTCMediaEndpointTransceiverState> states;
-    states.reserveInitialCapacity(transceivers.size());
-    for (auto& transceiver : transceivers)
-        states.uncheckedAppend(toLibWebRTCMediaEndpointTransceiverState(*transceiver));
-
-    return states;
+    return WTF::map(transceivers, [](auto& transceiver) {
+        return toLibWebRTCMediaEndpointTransceiverState(*transceiver);
+    });
 }
 
 void LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded()

@@ -176,11 +176,8 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
 {
     auto label = descriptor.label.utf8();
 
-    Vector<WGPUBindGroupLayoutEntry> backingEntries;
-    backingEntries.reserveInitialCapacity(descriptor.entries.size());
-    for (size_t i = 0; i < descriptor.entries.size(); ++i) {
-        const auto& entry = descriptor.entries[i];
-        backingEntries.uncheckedAppend({
+    auto backingEntries = WTF::map(descriptor.entries, [&](auto& entry) {
+        return WGPUBindGroupLayoutEntry {
             nullptr,
             entry.binding,
             m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility), {
@@ -202,8 +199,8 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->format) : WGPUTextureFormat_Undefined,
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->viewDimension) : WGPUTextureViewDimension_Undefined,
             },
-        });
-    }
+        };
+    });
 
     WGPUBindGroupLayoutDescriptor backingDescriptor {
         nullptr,
@@ -468,24 +465,22 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
 
     Vector<WGPUColorTargetState> colorTargets;
     if (descriptor.fragment) {
-        colorTargets.reserveInitialCapacity(descriptor.fragment->targets.size());
-        for (size_t i = 0; i < descriptor.fragment->targets.size(); ++i) {
-            if (const auto& target = descriptor.fragment->targets[i]) {
-                colorTargets.uncheckedAppend(WGPUColorTargetState {
+        colorTargets = Vector<WGPUColorTargetState>(descriptor.fragment->targets.size(), [&](size_t i) {
+            if (auto& target = descriptor.fragment->targets[i]) {
+                return WGPUColorTargetState {
                     nullptr,
                     convertToBackingContext.convertToBacking(target->format),
                     blendStates[i] ? &*blendStates[i] : nullptr,
                     convertToBackingContext.convertColorWriteFlagsToBacking(target->writeMask),
-                });
-            } else {
-                colorTargets.uncheckedAppend(WGPUColorTargetState {
-                    nullptr,
+                };
+            }
+            return WGPUColorTargetState {
+                nullptr,
                     WGPUTextureFormat_Undefined,
                     nullptr,
                     WGPUMapMode_None,
-                });
-            }
-        }
+            };
+        });
     }
 
     WGPUFragmentState fragmentState {
