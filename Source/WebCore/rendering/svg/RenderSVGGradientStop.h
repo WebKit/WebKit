@@ -49,6 +49,7 @@ private:
     FloatRect objectBoundingBox() const override { return FloatRect(); }
     FloatRect strokeBoundingBox() const override { return FloatRect(); }
     FloatRect repaintRectInLocalCoordinates() const override { return FloatRect(); }
+    FloatRect fastRepaintRectInLocalCoordinates() const override { return repaintRectInLocalCoordinates(); }
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction) override { return false; }
 
     ASCIILiteral renderName() const override { return "RenderSVGGradientStop"_s; }

@@ -63,6 +63,7 @@ public:
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates() const final;
+    FloatRect fastRepaintRectInLocalCoordinates() const final { return repaintRectInLocalCoordinates(); }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }

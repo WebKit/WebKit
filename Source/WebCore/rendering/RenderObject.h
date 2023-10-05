@@ -507,6 +507,10 @@ public:
     // respecting clipping, masking, filters, opacity, stroke-width and markers
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
+    // Returns approximate rectangle enclosing all of the painted content.
+    // This is always larger-or-equal to repaintRectInLocalCoordinates().
+    virtual FloatRect fastRepaintRectInLocalCoordinates() const;
+
     // This only returns the transform="" value from the element
     // most callsites want localToParentTransform() instead.
     virtual AffineTransform localTransform() const;

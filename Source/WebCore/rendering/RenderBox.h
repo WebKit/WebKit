@@ -134,6 +134,7 @@ public:
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) const override;
     
     FloatRect repaintRectInLocalCoordinates() const override { return borderBoxRect(); }
+    FloatRect fastRepaintRectInLocalCoordinates() const override { return borderBoxRect(); }
     FloatRect objectBoundingBox() const override { return borderBoxRect(); }
 
     // Note these functions are not equivalent of childrenOfType<RenderBox>
