@@ -148,10 +148,9 @@ public:
 
     WTF::TextStream& dump(WTF::TextStream&) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<GraphicsContextState> decode(Decoder&);
-
 private:
+    friend struct IPC::ArgumentCoder<GraphicsContextState, void>;
+
     template<typename T>
     void setProperty(Change change, T GraphicsContextState::*property, const T& value)
     {
@@ -201,106 +200,6 @@ private:
 
     Purpose m_purpose { Purpose::Initial };
 };
-
-template<class Encoder>
-void GraphicsContextState::encode(Encoder& encoder) const
-{
-    auto encode = [&](Change change, auto GraphicsContextState::*property) {
-        if (m_changeFlags.contains(change))
-            encoder << this->*property;
-    };
-
-    encoder << m_changeFlags;
-
-    encode(Change::FillBrush,                       &GraphicsContextState::m_fillBrush);
-    encode(Change::FillRule,                        &GraphicsContextState::m_fillRule);
-
-    encode(Change::StrokeBrush,                     &GraphicsContextState::m_strokeBrush);
-    encode(Change::StrokeThickness,                 &GraphicsContextState::m_strokeThickness);
-    encode(Change::StrokeStyle,                     &GraphicsContextState::m_strokeStyle);
-
-    encode(Change::CompositeMode,                   &GraphicsContextState::m_compositeMode);
-    encode(Change::Style,                           &GraphicsContextState::m_style);
-
-    encode(Change::Alpha,                           &GraphicsContextState::m_alpha);
-    encode(Change::ImageInterpolationQuality,       &GraphicsContextState::m_imageInterpolationQuality);
-    encode(Change::TextDrawingMode,                 &GraphicsContextState::m_textDrawingMode);
-
-    encode(Change::ShouldAntialias,                 &GraphicsContextState::m_shouldAntialias);
-    encode(Change::ShouldSmoothFonts,               &GraphicsContextState::m_shouldSmoothFonts);
-    encode(Change::ShouldSubpixelQuantizeFonts,     &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
-    encode(Change::ShadowsIgnoreTransforms,         &GraphicsContextState::m_shadowsIgnoreTransforms);
-    encode(Change::DrawLuminanceMask,               &GraphicsContextState::m_drawLuminanceMask);
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    encode(Change::UseDarkAppearance,               &GraphicsContextState::m_useDarkAppearance);
-#endif
-}
-
-template<class Decoder>
-std::optional<GraphicsContextState> GraphicsContextState::decode(Decoder& decoder)
-{
-    auto decode = [&](GraphicsContextState& state, Change change, auto GraphicsContextState::*property) {
-        if (!state.changes().contains(change))
-            return true;
-
-        using PropertyType = typename std::remove_reference<decltype(std::declval<GraphicsContextState>().*property)>::type;
-        std::optional<PropertyType> value;
-        decoder >> value;
-        if (!value)
-            return false;
-
-        state.*property = *value;
-        return true;
-    };
-
-    std::optional<ChangeFlags> changeFlags;
-    decoder >> changeFlags;
-    if (!changeFlags)
-        return std::nullopt;
-
-    GraphicsContextState state(*changeFlags);
-
-    if (!decode(state, Change::FillBrush,                   &GraphicsContextState::m_fillBrush))
-        return std::nullopt;
-    if (!decode(state, Change::FillRule,                    &GraphicsContextState::m_fillRule))
-        return std::nullopt;
-
-    if (!decode(state, Change::StrokeBrush,                 &GraphicsContextState::m_strokeBrush))
-        return std::nullopt;
-    if (!decode(state, Change::StrokeThickness,             &GraphicsContextState::m_strokeThickness))
-        return std::nullopt;
-    if (!decode(state, Change::StrokeStyle,                 &GraphicsContextState::m_strokeStyle))
-        return std::nullopt;
-
-    if (!decode(state, Change::CompositeMode,               &GraphicsContextState::m_compositeMode))
-        return std::nullopt;
-    if (!decode(state, Change::Style,                       &GraphicsContextState::m_style))
-        return std::nullopt;
-
-    if (!decode(state, Change::Alpha,                       &GraphicsContextState::m_alpha))
-        return std::nullopt;
-    if (!decode(state, Change::ImageInterpolationQuality,   &GraphicsContextState::m_imageInterpolationQuality))
-        return std::nullopt;
-    if (!decode(state, Change::TextDrawingMode,             &GraphicsContextState::m_textDrawingMode))
-        return std::nullopt;
-
-    if (!decode(state, Change::ShouldAntialias,             &GraphicsContextState::m_shouldAntialias))
-        return std::nullopt;
-    if (!decode(state, Change::ShouldSmoothFonts,           &GraphicsContextState::m_shouldSmoothFonts))
-        return std::nullopt;
-    if (!decode(state, Change::ShouldSubpixelQuantizeFonts, &GraphicsContextState::m_shouldSubpixelQuantizeFonts))
-        return std::nullopt;
-    if (!decode(state, Change::ShadowsIgnoreTransforms,     &GraphicsContextState::m_shadowsIgnoreTransforms))
-        return std::nullopt;
-    if (!decode(state, Change::DrawLuminanceMask,           &GraphicsContextState::m_drawLuminanceMask))
-        return std::nullopt;
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    if (!decode(state, Change::UseDarkAppearance,           &GraphicsContextState::m_useDarkAppearance))
-        return std::nullopt;
-#endif
-
-    return state;
-}
 
 TextStream& operator<<(TextStream&, GraphicsContextState::Change);
 TextStream& operator<<(TextStream&, const GraphicsContextState&);
