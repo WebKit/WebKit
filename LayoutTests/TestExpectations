@@ -2316,6 +2316,8 @@ imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https.html
 imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-encodings.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationEffect.html [ Failure ]
+
 # Skip timing out test
 imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-fire.html [ Skip ]
 fast/mediastream/RTCPeerConnection-closed-state.html [ Skip ]

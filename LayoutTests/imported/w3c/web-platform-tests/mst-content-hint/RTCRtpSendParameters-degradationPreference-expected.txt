@@ -1,8 +1,8 @@
 
-FAIL setParameters with degradationPreference set should succeed on video transceiver assert_equals: Expect initial param.degradationPreference to be undefined expected (undefined) undefined but got (string) "balanced"
-FAIL setParameters with degradationPreference unset should succeed on video transceiver assert_equals: Expect initial param.degradationPreference to be undefined expected (undefined) undefined but got (string) "balanced"
+PASS setParameters with degradationPreference set should succeed on video transceiver
+PASS setParameters with degradationPreference unset should succeed on video transceiver
 PASS setParameters with invalid degradationPreference should throw TypeError on video transceiver
-FAIL setParameters with degradationPreference set should succeed on audio transceiver assert_equals: Expect initial param.degradationPreference to be undefined expected (undefined) undefined but got (string) "balanced"
-FAIL setParameters with degradationPreference unset should succeed on audio transceiver assert_equals: Expect initial param.degradationPreference to be undefined expected (undefined) undefined but got (string) "balanced"
+PASS setParameters with degradationPreference set should succeed on audio transceiver
+PASS setParameters with degradationPreference unset should succeed on audio transceiver
 PASS setParameters with invalid degradationPreference should throw TypeError on audio transceiver
 

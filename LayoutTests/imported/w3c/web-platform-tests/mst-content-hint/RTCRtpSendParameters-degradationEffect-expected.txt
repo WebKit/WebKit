@@ -1,3 +1,3 @@
 
-FAIL Maintain-framerate reduces resolution on bandwidth cut assert_equals: Expect initial param.degradationPreference to be undefined expected (undefined) undefined but got (string) "balanced"
+FAIL Maintain-framerate reduces resolution on bandwidth cut assert_true: failure in adaptation, measure is {"bandwidth":15191.278493557978,"fps":6.937561942517344,"width":640,"height":480} expected true got false
 
