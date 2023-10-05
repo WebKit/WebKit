@@ -6299,3 +6299,19 @@ header: <WebCore/FontTaggedSettings.h>
 [Alias=class FontTaggedSettings<int>, CustomHeader, LegacyPopulateFromEmptyConstructor] class WebCore::FontFeatureSettings {
     Vector<WebCore::IntFontTaggedSetting> m_list;
 };
+
+enum class WebCore::UserScriptInjectionTime : bool;
+
+enum class WebCore::WaitForNotificationBeforeInjecting : bool;
+
+enum class WebCore::UserContentInjectedFrames : bool;
+
+class WebCore::UserScript {
+    String source();
+    URL url();
+    Vector<String> allowlist();
+    Vector<String> blocklist();
+    WebCore::UserScriptInjectionTime injectionTime();
+    WebCore::UserContentInjectedFrames injectedFrames();
+    WebCore::WaitForNotificationBeforeInjecting waitForNotificationBeforeInjecting();
+}
