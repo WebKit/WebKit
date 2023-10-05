@@ -1467,6 +1467,10 @@ webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sec
 
 webkit.org/b/169075 editing/selection/extend-by-character-007.html [ Failure ]
 
+# <select> element vertical writing mode support is not yet enabled
+fast/forms/vertical-writing-mode/listbox-drag-horizontal-scrollbar.html [ Failure ]
+fast/forms/vertical-writing-mode/listbox-horizontal-scrollbar.html [ ImageOnlyFailure ]
+
 # CSS Font Loading is not yet enabled on all platforms
 webkit.org/b/135390 fast/css/fontloader-download-error.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-events.html [ Skip ]

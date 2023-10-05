@@ -449,7 +449,7 @@ public:
     inline LayoutUnit availableHeight() const;
 
     WEBCORE_EXPORT virtual int verticalScrollbarWidth() const;
-    WEBCORE_EXPORT int horizontalScrollbarHeight() const;
+    WEBCORE_EXPORT virtual int horizontalScrollbarHeight() const;
     int intrinsicScrollbarLogicalWidth() const;
     inline int scrollbarLogicalWidth() const;
     inline int scrollbarLogicalHeight() const;

@@ -2398,6 +2398,8 @@ fast/scrolling/rtl-scrollbars-sticky-iframe.html [ ImageOnlyFailure ]
 fast/forms/listbox-padding-clip-selected.html [ ImageOnlyFailure ]
 fast/forms/listbox-respects-padding-bottom.html [ Failure ]
 fast/forms/listbox-top-padding-do-not-clip-items.html [ Failure ]
+fast/forms/vertical-writing-mode/listbox-drag-horizontal-scrollbar.html [ Failure ]
+fast/forms/vertical-writing-mode/listbox-horizontal-scrollbar.html [ ImageOnlyFailure ]
 
 # No focusring on iOS.
 fast/images/image-map-outline-in-positioned-container.html [ Pass ImageOnlyFailure ]
