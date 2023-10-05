@@ -367,14 +367,12 @@ void CacheStorageDiskStore::readAllRecordInfosInternal(CompletionHandler<void(Fi
 void CacheStorageDiskStore::readAllRecordInfos(ReadAllRecordInfosCallback&& callback)
 {
     readAllRecordInfosInternal([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto fileDatas) mutable {
-        Vector<CacheStorageRecordInformation> result;
-        result.reserveInitialCapacity(fileDatas.size());
-        for (auto& fileData : fileDatas) {
+        auto result = WTF::compactMap(fileDatas, [&](auto& fileData) -> std::optional<CacheStorageRecordInformation> {
             if (auto storedInfo = readRecordInfoFromFileData(m_salt, fileData.toSpan()))
-                result.uncheckedAppend(WTFMove(storedInfo->info));
-            else
-                RELEASE_LOG(CacheStorage, "%p - CacheStorageDiskStore::readAllRecordInfos fails to decode record from file", this);
-        }
+                return WTFMove(storedInfo->info);
+            RELEASE_LOG(CacheStorage, "%p - CacheStorageDiskStore::readAllRecordInfos fails to decode record from file", this);
+            return std::nullopt;
+        });
         callback(WTFMove(result));
     });
 }

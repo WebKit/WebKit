@@ -1138,14 +1138,13 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
 #endif
 
     // There is a nested transaction in WebPageProxy::resetStateAfterProcessExited() that we don't want to commit before the client call below (dispatchProcessDidTerminate).
-    Vector<PageLoadState::Transaction> pageLoadStateTransactions;
-    pageLoadStateTransactions.reserveInitialCapacity(pages.size());
-    for (auto& page : pages) {
-        if (page) {
-            pageLoadStateTransactions.uncheckedAppend(page->pageLoadState().transaction());
-            page->resetStateAfterProcessTermination(reason);
-        }
-    }
+    auto pageLoadStateTransactions = WTF::compactMap(pages, [&](auto& page) -> std::optional<PageLoadState::Transaction> {
+        if (!page)
+            return std::nullopt;
+        auto transaction = page->pageLoadState().transaction();
+        page->resetStateAfterProcessTermination(reason);
+        return transaction;
+    });
 
     for (auto& provisionalPage : provisionalPages) {
         if (provisionalPage)

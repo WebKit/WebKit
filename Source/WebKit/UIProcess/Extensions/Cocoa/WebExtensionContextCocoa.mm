@@ -1314,15 +1314,11 @@ void WebExtensionContext::populateWindowsAndTabs()
 
 WebExtensionContext::WindowVector WebExtensionContext::openWindows() const
 {
-    WindowVector result;
-    result.reserveInitialCapacity(m_openWindowIdentifiers.size());
-
-    for (auto& identifier : m_openWindowIdentifiers) {
+    return WTF::compactMap(m_openWindowIdentifiers, [&](auto& identifier) -> RefPtr<WebExtensionWindow> {
         if (auto window = m_windowMap.get(identifier))
-            result.uncheckedAppend(*window);
-    }
-
-    return result;
+            return window;
+        return nullptr;
+    });
 }
 
 RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow()

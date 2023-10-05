@@ -446,15 +446,11 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
 
 Vector<BackForwardListItemState> WebBackForwardList::filteredItemStates(Function<bool(WebBackForwardListItem&)>&& functor) const
 {
-    Vector<BackForwardListItemState> itemStates;
-    itemStates.reserveInitialCapacity(m_entries.size());
-
-    for (const auto& entry : m_entries) {
+    return WTF::compactMap(m_entries, [&](auto& entry) -> std::optional<BackForwardListItemState> {
         if (functor(entry))
-            itemStates.uncheckedAppend(entry->itemState());
-    }
-
-    return itemStates;
+            return entry->itemState();
+        return std::nullopt;
+    });
 }
 
 Vector<BackForwardListItemState> WebBackForwardList::itemStates() const

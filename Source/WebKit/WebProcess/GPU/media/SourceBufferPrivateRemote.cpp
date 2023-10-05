@@ -427,32 +427,32 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
     segment.duration = segmentInfo.duration;
 
     m_prevTrackIdentifierMap.swap(m_trackIdentifierMap);
-    segment.audioTracks.reserveInitialCapacity(segmentInfo.audioTracks.size());
-    for (auto& audioTrack : segmentInfo.audioTracks) {
-        SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
-        info.track = m_mediaPlayerPrivate->audioTrackPrivateRemote(audioTrack.identifier);
-        info.description = RemoteMediaDescription::create(audioTrack.description);
-        segment.audioTracks.uncheckedAppend(info);
+    segment.audioTracks = WTF::map(segmentInfo.audioTracks, [&](auto& audioTrack) {
+        SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info {
+            RemoteMediaDescription::create(audioTrack.description),
+            m_mediaPlayerPrivate->audioTrackPrivateRemote(audioTrack.identifier)
+        };
         m_trackIdentifierMap.add(info.track->id(), audioTrack.identifier);
-    }
+        return info;
+    });
 
-    segment.videoTracks.reserveInitialCapacity(segmentInfo.videoTracks.size());
-    for (auto& videoTrack : segmentInfo.videoTracks) {
-        SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
-        info.track = m_mediaPlayerPrivate->videoTrackPrivateRemote(videoTrack.identifier);
-        info.description = RemoteMediaDescription::create(videoTrack.description);
-        segment.videoTracks.uncheckedAppend(info);
+    segment.videoTracks = WTF::map(segmentInfo.videoTracks, [&](auto& videoTrack) {
+        SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info {
+            RemoteMediaDescription::create(videoTrack.description),
+            m_mediaPlayerPrivate->videoTrackPrivateRemote(videoTrack.identifier)
+        };
         m_trackIdentifierMap.add(info.track->id(), videoTrack.identifier);
-    }
+        return info;
+    });
 
-    segment.textTracks.reserveInitialCapacity(segmentInfo.textTracks.size());
-    for (auto& textTrack : segmentInfo.textTracks) {
-        SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info;
-        info.track = m_mediaPlayerPrivate->textTrackPrivateRemote(textTrack.identifier);
-        info.description = RemoteMediaDescription::create(textTrack.description);
-        segment.textTracks.uncheckedAppend(info);
+    segment.textTracks = WTF::map(segmentInfo.textTracks, [&](auto& textTrack) {
+        SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info {
+            RemoteMediaDescription::create(textTrack.description),
+            m_mediaPlayerPrivate->textTrackPrivateRemote(textTrack.identifier)
+        };
         m_trackIdentifierMap.add(info.track->id(), textTrack.identifier);
-    }
+        return info;
+    });
 
     m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), WTFMove(completionHandler));
 }

@@ -75,11 +75,9 @@ static FloatQuad floatQuad(VKQuad *quad)
 
 static Vector<FloatQuad> floatQuads(NSArray<VKQuad *> *vkQuads)
 {
-    Vector<FloatQuad> quads;
-    quads.reserveInitialCapacity(vkQuads.count);
-    for (VKQuad *vkQuad in vkQuads)
-        quads.uncheckedAppend(floatQuad(vkQuad));
-    return quads;
+    return Vector<FloatQuad>(vkQuads.count, [vkQuads](size_t i) {
+        return floatQuad(vkQuads[i]);
+    });
 }
 
 TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)

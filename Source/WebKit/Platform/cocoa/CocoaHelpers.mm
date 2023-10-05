@@ -405,13 +405,9 @@ NSArray *toAPIArray(HashSet<String>& set)
 
 Vector<String> toImpl(NSArray *array)
 {
-    Vector<String> result;
-    result.reserveInitialCapacity(array.count);
-
-    for (NSString *element in array)
-        result.uncheckedAppend(element);
-
-    return result;
+    return Vector<String>(array.count, [array](size_t i) {
+        return (NSString *)array[i];
+    });
 }
 
 HashSet<String> toImplSet(NSArray *array)

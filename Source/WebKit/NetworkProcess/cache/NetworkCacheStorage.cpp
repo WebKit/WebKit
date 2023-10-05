@@ -684,15 +684,12 @@ void Storage::remove(const Vector<Key>& keys, CompletionHandler<void()>&& comple
 {
     ASSERT(RunLoop::isMain());
 
-    Vector<Key> keysToRemove;
-    keysToRemove.reserveInitialCapacity(keys.size());
-
-    for (auto& key : keys) {
+    auto keysToRemove = WTF::compactMap(keys, [&](auto& key) -> std::optional<Key> {
         if (!mayContain(key))
-            continue;
+            return std::nullopt;
         removeFromPendingWriteOperations(key);
-        keysToRemove.uncheckedAppend(key);
-    }
+        return key;
+    });
 
     serialBackgroundIOQueue().dispatch([this, protectedThis = Ref { *this }, keysToRemove = WTFMove(keysToRemove), completionHandler = WTFMove(completionHandler)] () mutable {
         for (auto& key : keysToRemove)

@@ -36,23 +36,17 @@ WKTypeID WKArrayGetTypeID()
 
 WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)
 {
-    Vector<RefPtr<API::Object>> elements;
-    elements.reserveInitialCapacity(numberOfValues);
-
-    for (size_t i = 0; i < numberOfValues; ++i)
-        elements.uncheckedAppend(WebKit::toImpl(values[i]));
-
+    Vector<RefPtr<API::Object>> elements(numberOfValues, [values](size_t i) -> RefPtr<API::Object> {
+        return WebKit::toImpl(values[i]);
+    });
     return WebKit::toAPI(&API::Array::create(WTFMove(elements)).leakRef());
 }
 
 WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues)
 {
-    Vector<RefPtr<API::Object>> elements;
-    elements.reserveInitialCapacity(numberOfValues);
-
-    for (size_t i = 0; i < numberOfValues; ++i)
-        elements.uncheckedAppend(adoptRef(WebKit::toImpl(values[i])));
-
+    Vector<RefPtr<API::Object>> elements(numberOfValues, [values](size_t i) {
+        return adoptRef(WebKit::toImpl(values[i]));
+    });
     return WebKit::toAPI(&API::Array::create(WTFMove(elements)).leakRef());
 }
 

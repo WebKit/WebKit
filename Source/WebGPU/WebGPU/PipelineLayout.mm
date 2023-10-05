@@ -39,14 +39,11 @@ Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescrip
 
     std::optional<Vector<Ref<BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
     if (descriptor.bindGroupLayouts) {
-        Vector<Ref<BindGroupLayout>> bindGroupLayouts;
-        bindGroupLayouts.reserveInitialCapacity(descriptor.bindGroupLayoutCount);
-        for (uint32_t i = 0; i < descriptor.bindGroupLayoutCount; ++i) {
+        Vector<Ref<BindGroupLayout>> bindGroupLayouts(descriptor.bindGroupLayoutCount, [&](size_t i) {
             auto* bindGroupLayout = descriptor.bindGroupLayouts[i];
-            bindGroupLayouts.uncheckedAppend(WebGPU::fromAPI(bindGroupLayout));
-        }
-
-        optionalBindGroupLayouts = bindGroupLayouts;
+            return Ref<BindGroupLayout> { WebGPU::fromAPI(bindGroupLayout) };
+        });
+        optionalBindGroupLayouts = WTFMove(bindGroupLayouts);
     }
 
     return PipelineLayout::create(WTFMove(optionalBindGroupLayouts), *this);

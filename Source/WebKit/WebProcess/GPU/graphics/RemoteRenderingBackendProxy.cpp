@@ -335,17 +335,14 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
         }
     };
 
-    Vector<PrepareBackingStoreBuffersInputData> inputData;
-    inputData.reserveInitialCapacity(prepareBuffersInput.size());
-
-    for (const auto& perLayerData : prepareBuffersInput) {
+    auto inputData = WTF::map(prepareBuffersInput, [&](auto& perLayerData) {
         // Clear all the buffer's MachSendRights to avoid all the surfaces appearing to be in-use.
         // We get back the new front buffer's MachSendRight in the reply.
         clearBackendHandle(perLayerData.buffers.front.get());
         clearBackendHandle(perLayerData.buffers.back.get());
         clearBackendHandle(perLayerData.buffers.secondaryBack.get());
 
-        inputData.uncheckedAppend({
+        return PrepareBackingStoreBuffersInputData {
             {
                 bufferIdentifier(perLayerData.buffers.front.get()),
                 bufferIdentifier(perLayerData.buffers.back.get()),
@@ -353,8 +350,8 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
             },
             perLayerData.supportsPartialRepaint,
             perLayerData.hasEmptyDirtyRegion
-        });
-    }
+        };
+    });
 
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareBuffersForDisplay - input buffers  " << inputData);
 
@@ -398,21 +395,16 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
         return buffer;
     };
 
-    Vector<SwapBuffersResult> result;
-    result.reserveInitialCapacity(outputData.size());
-
-    for (auto& perLayerOutputData : outputData) {
-        result.uncheckedAppend({
+    return WTF::map(outputData, [&](auto&& perLayerOutputData) {
+        return SwapBuffersResult {
             {
                 fetchBufferWithIdentifier(perLayerOutputData.bufferSet.front, WTFMove(perLayerOutputData.frontBufferHandle), true),
                 fetchBufferWithIdentifier(perLayerOutputData.bufferSet.back),
                 fetchBufferWithIdentifier(perLayerOutputData.bufferSet.secondaryBack)
             },
             perLayerOutputData.displayRequirement
-        });
-    }
-
-    return result;
+        };
+    });
 }
 #endif
 

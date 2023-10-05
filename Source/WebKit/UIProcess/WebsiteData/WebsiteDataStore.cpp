@@ -863,9 +863,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 for (auto& hostName : dataRecord.HSTSCacheHostNames)
                     HSTSCacheHostNames.append(hostName);
 #if ENABLE(TRACKING_PREVENTION)
-                registrableDomains.reserveCapacity(registrableDomains.size() + dataRecord.resourceLoadStatisticsRegistrableDomains.size());
-                for (auto& registrableDomain : dataRecord.resourceLoadStatisticsRegistrableDomains)
-                    registrableDomains.uncheckedAppend(registrableDomain);
+                registrableDomains.appendRange(dataRecord.resourceLoadStatisticsRegistrableDomains.begin(), dataRecord.resourceLoadStatisticsRegistrableDomains.end());
 #endif
             }
 

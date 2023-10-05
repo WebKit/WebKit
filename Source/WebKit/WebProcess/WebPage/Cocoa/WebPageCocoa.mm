@@ -319,27 +319,26 @@ void WebPage::addDictationAlternative(const String& text, DictationContext conte
 
 void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
 {
-    Vector<DictationContext> contexts;
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     RefPtr document = frame->document();
     if (!document) {
-        completion(WTFMove(contexts));
+        completion({ });
         return;
     }
 
     auto selection = frame->selection().selection();
     auto expandedSelectionRange = VisibleSelection { selection.visibleStart().previous(CannotCrossEditingBoundary), selection.visibleEnd().next(CannotCrossEditingBoundary) }.range();
     if (!expandedSelectionRange) {
-        completion(WTFMove(contexts));
+        completion({ });
         return;
     }
 
     auto markers = document->markers().markersInRange(*expandedSelectionRange, DocumentMarker::DictationAlternatives);
-    contexts.reserveInitialCapacity(markers.size());
-    for (auto& marker : markers) {
+    auto contexts = WTF::compactMap(markers, [](auto& marker) -> std::optional<DictationContext> {
         if (std::holds_alternative<DocumentMarker::DictationData>(marker->data()))
-            contexts.uncheckedAppend(std::get<DocumentMarker::DictationData>(marker->data()).context);
-    }
+            return std::get<DocumentMarker::DictationData>(marker->data()).context;
+        return std::nullopt;
+    });
     completion(WTFMove(contexts));
 }
 

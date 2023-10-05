@@ -80,14 +80,11 @@ static JSObjectRef toJSArray(JSContextRef context, const Vector<T>& data, JSValu
     if (data.isEmpty())
         return JSObjectMakeArray(context, 0, nullptr, exception);
 
-    Vector<JSValueRef, 8> convertedData;
-    convertedData.reserveCapacity(data.size());
-
-    for (auto& originalValue : data) {
+    auto convertedData = WTF::map<8>(data, [&](auto& originalValue) {
         JSValueRef convertedValue = converter(context, originalValue);
         JSValueProtect(context, convertedValue);
-        convertedData.uncheckedAppend(convertedValue);
-    }
+        return convertedValue;
+    });
 
     JSObjectRef array = JSObjectMakeArray(context, convertedData.size(), convertedData.data(), exception);
 

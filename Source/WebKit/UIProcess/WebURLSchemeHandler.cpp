@@ -74,12 +74,11 @@ void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProx
         return;
 
     auto& tasksByPage = iterator->value;
-    Vector<WebCore::ResourceLoaderIdentifier> taskIdentifiersToStop;
-    taskIdentifiersToStop.reserveInitialCapacity(tasksByPage.size());
-    for (auto taskIdentifier : tasksByPage) {
+    auto taskIdentifiersToStop = WTF::compactMap(tasksByPage, [&](auto& taskIdentifier) -> std::optional<WebCore::ResourceLoaderIdentifier> {
         if (!process || processForTaskIdentifier(page, taskIdentifier) == process)
-            taskIdentifiersToStop.uncheckedAppend(taskIdentifier);
-    }
+            return taskIdentifier;
+        return std::nullopt;
+    });
 
     for (auto& taskIdentifier : taskIdentifiersToStop)
         stopTask(page, taskIdentifier);

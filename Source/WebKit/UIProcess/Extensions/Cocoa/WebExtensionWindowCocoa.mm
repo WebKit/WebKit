@@ -77,10 +77,9 @@ WebExtensionWindowParameters WebExtensionWindow::parameters(PopulateTabs populat
 
     if (populate == PopulateTabs::Yes) {
         auto tabs = this->tabs();
-        tabParameters.reserveInitialCapacity(tabs.size());
-
-        for (auto& tab : tabs)
-            tabParameters.uncheckedAppend(tab->parameters());
+        tabParameters = WTF::map(tabs, [](auto& tab) {
+            return tab->parameters();
+        });
     }
 
     auto frame = this->normalizedFrame();

@@ -73,11 +73,9 @@ static const char* toString(const SOAuthorizationSession::InitiatingAction& acti
 
 static Vector<WebCore::Cookie> toCookieVector(NSArray<NSHTTPCookie *> *cookies)
 {
-    Vector<WebCore::Cookie> result;
-    result.reserveInitialCapacity(cookies.count);
-    for (id cookie in cookies)
-        result.uncheckedAppend(cookie);
-    return result;
+    return Vector<WebCore::Cookie>(cookies.count, [cookies](size_t i) {
+        return WebCore::Cookie { cookies[i] };
+    });
 }
 
 static bool isSameOrigin(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
