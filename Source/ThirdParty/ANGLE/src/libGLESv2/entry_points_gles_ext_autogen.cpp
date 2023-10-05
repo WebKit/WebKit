@@ -2198,7 +2198,7 @@ void GL_APIENTRY GL_TexImage2DRobustANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_TexParameterfvRobustANGLE(GLenum target,
@@ -2310,7 +2310,7 @@ void GL_APIENTRY GL_TexSubImage2DRobustANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_TexImage3DRobustANGLE(GLenum target,
@@ -2359,7 +2359,7 @@ void GL_APIENTRY GL_TexImage3DRobustANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_TexSubImage3DRobustANGLE(GLenum target,
@@ -2410,7 +2410,7 @@ void GL_APIENTRY GL_TexSubImage3DRobustANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CompressedTexImage2DRobustANGLE(GLenum target,
@@ -2455,7 +2455,7 @@ void GL_APIENTRY GL_CompressedTexImage2DRobustANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CompressedTexSubImage2DRobustANGLE(GLenum target,
@@ -2500,7 +2500,7 @@ void GL_APIENTRY GL_CompressedTexSubImage2DRobustANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CompressedTexImage3DRobustANGLE(GLenum target,
@@ -2546,7 +2546,7 @@ void GL_APIENTRY GL_CompressedTexImage3DRobustANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CompressedTexSubImage3DRobustANGLE(GLenum target,
@@ -2598,7 +2598,7 @@ void GL_APIENTRY GL_CompressedTexSubImage3DRobustANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_GetQueryivRobustANGLE(GLenum target,
@@ -4450,7 +4450,7 @@ void GL_APIENTRY GL_TexImage2DExternalANGLE(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_InvalidateTextureANGLE(GLenum target)
@@ -12406,7 +12406,7 @@ void GL_APIENTRY GL_CompressedTexImage3DOES(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CompressedTexSubImage3DOES(GLenum target,
@@ -12453,7 +12453,7 @@ void GL_APIENTRY GL_CompressedTexSubImage3DOES(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CopyTexSubImage3DOES(GLenum target,
@@ -12587,7 +12587,7 @@ void GL_APIENTRY GL_TexImage3DOES(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_TexSubImage3DOES(GLenum target,
@@ -12634,7 +12634,7 @@ void GL_APIENTRY GL_TexSubImage3DOES(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 // GL_OES_texture_border_clamp

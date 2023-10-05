@@ -782,7 +782,8 @@ class RendererVk : angle::NonCopyable
     static const char *GetVulkanObjectTypeName(VkObjectType type);
 
   private:
-    angle::Result initializeDevice(DisplayVk *displayVk, uint32_t queueFamilyIndex);
+    angle::Result setupDevice(DisplayVk *displayVk);
+    angle::Result createDeviceAndQueue(DisplayVk *displayVk, uint32_t queueFamilyIndex);
     void ensureCapsInitialized() const;
     void initializeValidationMessageSuppressions();
 
@@ -807,8 +808,7 @@ class RendererVk : angle::NonCopyable
                                            const VulkanLayerVector &enabledInstanceLayerNames,
                                            const char *wsiExtension,
                                            bool canLoadDebugUtils);
-    angle::Result enableDeviceExtensions(DisplayVk *displayVk,
-                                         const VulkanLayerVector &enabledDeviceLayerNames);
+    angle::Result enableDeviceExtensions(DisplayVk *displayVk);
 
     void enableDeviceExtensionsNotPromoted(const vk::ExtensionNameList &deviceExtensionNames);
     void enableDeviceExtensionsPromotedTo11(const vk::ExtensionNameList &deviceExtensionNames);
@@ -1092,6 +1092,7 @@ class RendererVk : angle::NonCopyable
     // Use thread pool to compress cache data.
     std::shared_ptr<rx::WaitableCompressEvent> mCompressEvent;
 
+    VulkanLayerVector mEnabledDeviceLayerNames;
     vk::ExtensionNameList mEnabledInstanceExtensions;
     vk::ExtensionNameList mEnabledDeviceExtensions;
 

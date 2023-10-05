@@ -441,6 +441,7 @@ class TestBatch():
         extra_env = {
             'ANGLE_CAPTURE_SERIALIZE_STATE': '1',
             'ANGLE_FEATURE_OVERRIDES_ENABLED': 'forceRobustResourceInit:forceInitShaderVariables',
+            'ANGLE_FEATURE_OVERRIDES_DISABLED': 'supportsHostImageCopy',
             'ANGLE_CAPTURE_ENABLED': '1',
             'ANGLE_CAPTURE_OUT_DIR': self.trace_folder_path,
         }

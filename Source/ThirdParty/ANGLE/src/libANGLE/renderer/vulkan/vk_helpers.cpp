@@ -12,6 +12,7 @@
 #include "common/vulkan/vk_headers.h"
 #include "image_util/loadimage.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
@@ -5015,7 +5016,7 @@ const Buffer &BufferHelper::getBufferForVertexArray(ContextVk *contextVk,
     return mBufferWithUserSize;
 }
 
-void BufferHelper::onBufferUserSizeChange(RendererVk *renderer)
+bool BufferHelper::onBufferUserSizeChange(RendererVk *renderer)
 {
     // Buffer's user size and allocation size may be different due to alignment requirement. In
     // normal usage we just use the actual allocation size and it is good enough. But when
@@ -5026,7 +5027,10 @@ void BufferHelper::onBufferUserSizeChange(RendererVk *renderer)
         BufferSuballocation unusedSuballocation;
         renderer->collectSuballocationGarbage(mUse, std::move(unusedSuballocation),
                                               std::move(mBufferWithUserSize));
+        mSerial = renderer->getResourceSerialFactory().generateBufferSerial();
+        return true;
     }
+    return false;
 }
 
 void BufferHelper::destroy(RendererVk *renderer)
@@ -7424,12 +7428,11 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
 
     // If possible, copy the buffer to the image directly on the host, to avoid having to use a temp
     // image (and do a double copy).
-    if (applyUpdate == ApplyImageUpdate::ImmediatelyIfPossible &&
-        !loadFunctionInfo.requiresConversion && inputRowPitch == outputRowPitch &&
-        inputDepthPitch == outputDepthPitch)
+    if (applyUpdate != ApplyImageUpdate::Defer && !loadFunctionInfo.requiresConversion &&
+        inputRowPitch == outputRowPitch && inputDepthPitch == outputDepthPitch)
     {
         bool copied = false;
-        ANGLE_TRY(updateSubresourceOnHost(contextVk, index, glExtents, offset, source,
+        ANGLE_TRY(updateSubresourceOnHost(contextVk, applyUpdate, index, glExtents, offset, source,
                                           bufferRowLength, bufferImageHeight, &copied));
         if (copied)
         {
@@ -7572,7 +7575,8 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
-angle::Result ImageHelper::updateSubresourceOnHost(ContextVk *contextVk,
+angle::Result ImageHelper::updateSubresourceOnHost(Context *context,
+                                                   ApplyImageUpdate applyUpdate,
                                                    const gl::ImageIndex &index,
                                                    const gl::Extents &glExtents,
                                                    const gl::Offset &offset,
@@ -7587,14 +7591,18 @@ angle::Result ImageHelper::updateSubresourceOnHost(ContextVk *contextVk,
         return angle::Result::Continue;
     }
 
-    RendererVk *renderer = contextVk->getRenderer();
+    RendererVk *renderer = context->getRenderer();
     const VkPhysicalDeviceHostImageCopyPropertiesEXT &hostImageCopyProperties =
         renderer->getPhysicalDeviceHostImageCopyProperties();
 
     // The image should be unused by the GPU.
     if (!renderer->hasResourceUseFinished(getResourceUse()))
     {
-        return angle::Result::Continue;
+        ANGLE_TRY(renderer->checkCompletedCommands(context));
+        if (!renderer->hasResourceUseFinished(getResourceUse()))
+        {
+            return angle::Result::Continue;
+        }
     }
 
     // The image should not have any pending updates to this subresource.
@@ -7628,51 +7636,88 @@ angle::Result ImageHelper::updateSubresourceOnHost(ContextVk *contextVk,
         transition.subresourceRange.baseArrayLayer = 0;
         transition.subresourceRange.layerCount     = mLayerCount;
 
-        ANGLE_VK_TRY(contextVk, vkTransitionImageLayoutEXT(renderer->getDevice(), 1, &transition));
+        ANGLE_VK_TRY(context, vkTransitionImageLayoutEXT(renderer->getDevice(), 1, &transition));
         mCurrentLayout = ImageLayout::HostCopy;
     }
     else if (mCurrentLayout != ImageLayout::HostCopy &&
-             !IsAnyLayout(getCurrentLayout(contextVk), hostImageCopyProperties.pCopyDstLayouts,
+             !IsAnyLayout(getCurrentLayout(context), hostImageCopyProperties.pCopyDstLayouts,
                           hostImageCopyProperties.copyDstLayoutCount))
     {
         return angle::Result::Continue;
     }
 
-    VkMemoryToImageCopyEXT copyRegion      = {};
-    copyRegion.sType                       = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT;
-    copyRegion.pHostPointer                = source;
-    copyRegion.memoryRowLength             = memoryRowLength;
-    copyRegion.memoryImageHeight           = memoryImageHeight;
-    copyRegion.imageSubresource.aspectMask = aspectMask;
-    copyRegion.imageSubresource.mipLevel   = toVkLevel(updateLevelGL).get();
-    copyRegion.imageSubresource.layerCount = layerCount;
-    gl_vk::GetOffset(offset, &copyRegion.imageOffset);
-    gl_vk::GetExtent(glExtents, &copyRegion.imageExtent);
+    const bool isArray            = gl::IsArrayTextureType(index.getType());
+    const uint32_t baseArrayLayer = isArray ? offset.z : layerIndex;
 
-    if (gl::IsArrayTextureType(index.getType()))
-    {
-        copyRegion.imageSubresource.baseArrayLayer = offset.z;
-        copyRegion.imageOffset.z                   = 0;
-        copyRegion.imageExtent.depth               = 1;
-    }
-    else
-    {
-        copyRegion.imageSubresource.baseArrayLayer = layerIndex;
-    }
-
-    VkCopyMemoryToImageInfoEXT copyInfo = {};
-    copyInfo.sType                      = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT;
-    copyInfo.dstImage                   = mImage.getHandle();
-    copyInfo.dstImageLayout             = getCurrentLayout(contextVk);
-    copyInfo.regionCount                = 1;
-    copyInfo.pRegions                   = &copyRegion;
-
-    ANGLE_VK_TRY(contextVk, vkCopyMemoryToImageEXT(renderer->getDevice(), &copyInfo));
-
-    onWrite(updateLevelGL, 1, copyRegion.imageSubresource.baseArrayLayer,
-            copyRegion.imageSubresource.layerCount, copyRegion.imageSubresource.aspectMask);
-
+    onWrite(updateLevelGL, 1, baseArrayLayer, layerCount, aspectMask);
     *copiedOut = true;
+
+    // Perform the copy without holding the lock.  This is important for applications that perform
+    // the copy on a separate thread, and doing all the work while holding the lock effectively
+    // destroys all parallelism.  Note that the texture may not be used by the other thread without
+    // appropriate synchronization (such as through glFenceSync), and because the copy is happening
+    // in this call (just without holding the lock), the sync function won't be called until the
+    // copy is done.
+    auto doCopy = [context, image = mImage.getHandle(), source, memoryRowLength, memoryImageHeight,
+                   aspectMask, levelVk = toVkLevel(updateLevelGL), isArray, baseArrayLayer,
+                   layerCount, offset, glExtents,
+                   layout = getCurrentLayout(context)](void *resultOut) {
+        ANGLE_TRACE_EVENT0("gpu.angle", "Upload image data on host");
+        ANGLE_UNUSED_VARIABLE(resultOut);
+
+        VkMemoryToImageCopyEXT copyRegion          = {};
+        copyRegion.sType                           = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT;
+        copyRegion.pHostPointer                    = source;
+        copyRegion.memoryRowLength                 = memoryRowLength;
+        copyRegion.memoryImageHeight               = memoryImageHeight;
+        copyRegion.imageSubresource.aspectMask     = aspectMask;
+        copyRegion.imageSubresource.mipLevel       = levelVk.get();
+        copyRegion.imageSubresource.baseArrayLayer = baseArrayLayer;
+        copyRegion.imageSubresource.layerCount     = layerCount;
+        gl_vk::GetOffset(offset, &copyRegion.imageOffset);
+        gl_vk::GetExtent(glExtents, &copyRegion.imageExtent);
+
+        if (isArray)
+        {
+            copyRegion.imageOffset.z     = 0;
+            copyRegion.imageExtent.depth = 1;
+        }
+
+        VkCopyMemoryToImageInfoEXT copyInfo = {};
+        copyInfo.sType                      = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT;
+        copyInfo.dstImage                   = image;
+        copyInfo.dstImageLayout             = layout;
+        copyInfo.regionCount                = 1;
+        copyInfo.pRegions                   = &copyRegion;
+
+        VkResult result = vkCopyMemoryToImageEXT(context->getDevice(), &copyInfo);
+        if (result != VK_SUCCESS)
+        {
+            context->handleError(result, __FILE__, ANGLE_FUNCTION, __LINE__);
+        }
+    };
+
+    switch (applyUpdate)
+    {
+        // If possible, perform the copy in an unlocked tail call.  Then the other threads of the
+        // application are free to draw.
+        case ApplyImageUpdate::ImmediatelyInUnlockedTailCall:
+            egl::Display::GetCurrentThreadUnlockedTailCall()->add(doCopy);
+            break;
+
+        // In some cases, the copy cannot be delayed.  For example because the contents are
+        // immediately needed (such as when the generate mipmap hint is set), or because unlocked
+        // tail calls are not allowed (this is the case with incomplete textures which are lazily
+        // created at draw, but unlocked tail calls are avoided on draw calls due to overhead).
+        case ApplyImageUpdate::Immediately:
+            doCopy(nullptr);
+            break;
+
+        default:
+            UNREACHABLE();
+            doCopy(nullptr);
+    }
+
     return angle::Result::Continue;
 }
 

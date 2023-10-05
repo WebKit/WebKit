@@ -758,6 +758,7 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
         ANGLE_TRY(t->setStorage(mutableContext, createType, 1,
                                 incompleteTextureParam.sizedInternalFormat, colorSize));
     }
+    t->markInternalIncompleteTexture();
 
     if (type == gl::TextureType::CubeMap)
     {

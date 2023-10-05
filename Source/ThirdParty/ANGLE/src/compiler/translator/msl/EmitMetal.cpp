@@ -488,7 +488,7 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpFma:
             return "metal::fma";
         case TOperator::EOpPow:
-            return "metal::pow";
+            return "metal::powr";  // GLSL's pow excludes negative x
         case TOperator::EOpExp:
             return "metal::exp";
         case TOperator::EOpExp2:
@@ -1669,7 +1669,7 @@ bool GenMetalTraverser::visitSwizzle(Visit, TIntermSwizzle *swizzleNode)
         DebugSink::EscapedSink escapedOut(mOut.escape());
         TInfoSinkBase &out = escapedOut.get();
 #else
-        TInfoSinkBase &out        = mOut;
+        TInfoSinkBase &out = mOut;
 #endif
         swizzleNode->writeOffsetsAsXYZW(&out);
     }

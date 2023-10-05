@@ -196,6 +196,29 @@ bool CanSupportYuvInternalFormat(const RendererVk *rendererVk)
 
     return twoPlane8bitYuvFormatSupported && threePlane8bitYuvFormatSupported;
 }
+
+uint32_t GetTimestampValidBits(const std::vector<VkQueueFamilyProperties> &queueFamilyProperties,
+                               uint32_t queueFamilyIndex)
+{
+    ASSERT(!queueFamilyProperties.empty());
+
+    if (queueFamilyIndex < queueFamilyProperties.size())
+    {
+        // If a queue family is already selected (which is only currently the case if there is only
+        // one family), get the timestamp valid bits from that queue.
+        return queueFamilyProperties[queueFamilyIndex].timestampValidBits;
+    }
+
+    // If a queue family is not already selected, we cannot know which queue family will end up
+    // being used until a surface is used.  Take the minimum valid bits from all queues as a safe
+    // measure.
+    uint32_t timestampValidBits = queueFamilyProperties[0].timestampValidBits;
+    for (const VkQueueFamilyProperties &properties : queueFamilyProperties)
+    {
+        timestampValidBits = std::min(timestampValidBits, properties.timestampValidBits);
+    }
+    return timestampValidBits;
+}
 }  // namespace
 }  // namespace vk
 
@@ -216,9 +239,6 @@ void RendererVk::ensureCapsInitialized() const
         return;
     mCapsInitialized = true;
 
-    ASSERT(mCurrentQueueFamilyIndex < mQueueFamilyProperties.size());
-    const VkQueueFamilyProperties &queueFamilyProperties =
-        mQueueFamilyProperties[mCurrentQueueFamilyIndex];
     const VkPhysicalDeviceLimits &limitsVk = mPhysicalDeviceProperties.limits;
 
     mNativeExtensions.setTextureExtensionSupport(mNativeTextureCaps);
@@ -367,9 +387,12 @@ void RendererVk::ensureCapsInitialized() const
     if (vk::OutsideRenderPassCommandBuffer::SupportsQueries(mPhysicalDeviceFeatures) &&
         vk::RenderPassCommandBuffer::SupportsQueries(mPhysicalDeviceFeatures))
     {
-        mNativeExtensions.disjointTimerQueryEXT = queueFamilyProperties.timestampValidBits > 0;
-        mNativeCaps.queryCounterBitsTimeElapsed = queueFamilyProperties.timestampValidBits;
-        mNativeCaps.queryCounterBitsTimestamp   = queueFamilyProperties.timestampValidBits;
+        const uint32_t timestampValidBits =
+            vk::GetTimestampValidBits(mQueueFamilyProperties, mCurrentQueueFamilyIndex);
+
+        mNativeExtensions.disjointTimerQueryEXT = timestampValidBits > 0;
+        mNativeCaps.queryCounterBitsTimeElapsed = timestampValidBits;
+        mNativeCaps.queryCounterBitsTimestamp   = timestampValidBits;
     }
 
     mNativeExtensions.textureFilterAnisotropicEXT =
@@ -1178,6 +1201,17 @@ void RendererVk::ensureCapsInitialized() const
 
 namespace vk
 {
+
+bool CanSupportTransformFeedbackExtension(
+    const VkPhysicalDeviceTransformFeedbackFeaturesEXT &xfbFeatures)
+{
+    return xfbFeatures.transformFeedback == VK_TRUE;
+}
+
+bool CanSupportTransformFeedbackEmulation(const VkPhysicalDeviceFeatures &features)
+{
+    return features.vertexPipelineStoresAndAtomics == VK_TRUE;
+}
 
 bool CanSupportGPUShader5EXT(const VkPhysicalDeviceFeatures &features)
 {

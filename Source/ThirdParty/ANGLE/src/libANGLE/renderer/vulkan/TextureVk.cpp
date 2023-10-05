@@ -770,7 +770,19 @@ angle::Result TextureVk::setSubImageImpl(const gl::Context *context,
         (!shouldUpdateBeStaged(gl::LevelIndex(index.getLevelIndex()),
                                vkFormat.getActualImageFormatID(getRequiredImageAccess()))))
     {
-        applyUpdate = vk::ApplyImageUpdate::ImmediatelyIfPossible;
+        // Cannot defer to unlocked tail call if:
+        //
+        // - The generate mipmap hint is set: This is because on return the Texture class would
+        //   attempt to generate mipmaps, which may reallocate the image, or fall back to software
+        //   mipmap generation.
+        // - The texture is incomplete: This is because unlocked tail call is disabled on draw
+        //   calls, but that is when incomplete textures are created and initialized.
+        const bool canDeferToUnlockedTailCall =
+            mState.getGenerateMipmapHint() != GL_TRUE && !mState.isInternalIncompleteTexture();
+
+        applyUpdate = canDeferToUnlockedTailCall
+                          ? vk::ApplyImageUpdate::ImmediatelyInUnlockedTailCall
+                          : vk::ApplyImageUpdate::Immediately;
     }
     bool updateAppliedImmediately = false;
 
@@ -851,7 +863,7 @@ angle::Result TextureVk::setSubImageImpl(const gl::Context *context,
     // If we used context's staging buffer, flush out the updates
     if (!updateAppliedImmediately)
     {
-        if (applyUpdate == vk::ApplyImageUpdate::ImmediatelyIfPossible)
+        if (applyUpdate != vk::ApplyImageUpdate::Defer)
         {
             ANGLE_TRY(ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
 

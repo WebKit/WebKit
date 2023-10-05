@@ -270,11 +270,23 @@ def _CompareHashes(local_path, device_path):
     return _LocalFileHash(local_path, gz_tail_size) == device_hash
 
 
-def _PrepareTestSuite(suite_name):
-    apk_path = _ApkPath(suite_name)
+def _CheckSameApkInstalled(apk_path):
     device_apk_path = _GetDeviceApkPath()
 
-    if device_apk_path and _CompareHashes(apk_path, device_apk_path):
+    try:
+        if device_apk_path and _CompareHashes(apk_path, device_apk_path):
+            return True
+    except subprocess.CalledProcessError as e:
+        # non-debuggable test apk installed on device breaks run-as
+        logging.warning('_CompareHashes of apk failed: %s' % e)
+
+    return False
+
+
+def _PrepareTestSuite(suite_name):
+    apk_path = _ApkPath(suite_name)
+
+    if _CheckSameApkInstalled(apk_path):
         logging.info('Skipping APK install because host and device hashes match')
     else:
         logging.info('Installing apk path=%s size=%s' % (apk_path, os.path.getsize(apk_path)))
