@@ -36,18 +36,3 @@ enum class DebuggableType : uint8_t {
 };
 
 } // namespace Inspector
-
-namespace WTF {
-
-template<> struct EnumTraits<Inspector::DebuggableType> {
-    using values = EnumValues<
-    Inspector::DebuggableType,
-    Inspector::DebuggableType::ITML,
-    Inspector::DebuggableType::JavaScript,
-    Inspector::DebuggableType::Page,
-    Inspector::DebuggableType::ServiceWorker,
-    Inspector::DebuggableType::WebPage
-    >;
-};
-
-} // namespace WTF

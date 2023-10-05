@@ -369,6 +369,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/BackgroundFetchState.serialization.in
     Shared/CallbackID.serialization.in
+    Shared/DebuggableInfoData.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
     Shared/EditingRange.serialization.in
     Shared/EditorState.serialization.in
