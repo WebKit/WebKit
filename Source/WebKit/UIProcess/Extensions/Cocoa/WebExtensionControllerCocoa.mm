@@ -54,7 +54,7 @@ namespace WebKit {
 
 String WebExtensionController::storageDirectory(WebExtensionContext& extensionContext) const
 {
-    if (m_configuration->storageIsPersistent() && extensionContext.storageIsPersistent())
+    if (m_configuration->storageIsPersistent() && extensionContext.hasCustomUniqueIdentifier())
         return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), extensionContext.uniqueIdentifier());
     return nullString();
 }

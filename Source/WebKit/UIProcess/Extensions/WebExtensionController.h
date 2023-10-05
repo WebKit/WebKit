@@ -85,6 +85,7 @@ public:
     String storageDirectory(WebExtensionContext&) const;
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
+    bool isFreshlyCreated() const { return m_freshlyCreated; }
 
     bool load(WebExtensionContext&, NSError ** = nullptr);
     bool unload(WebExtensionContext&, NSError ** = nullptr);
@@ -139,6 +140,7 @@ private:
     WebProcessPoolSet m_processPools;
     UserContentControllerProxySet m_userContentControllers;
     WebExtensionURLSchemeHandlerMap m_registeredSchemeHandlers;
+    bool m_freshlyCreated { true };
 };
 
 template<typename T>

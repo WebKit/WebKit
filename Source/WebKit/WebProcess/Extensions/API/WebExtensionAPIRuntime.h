@@ -79,13 +79,17 @@ public:
     RefPtr<WebExtensionAPIPort> connectNative(WebFrame*, JSContextRef, NSString *applicationID);
 
     WebExtensionAPIEvent& onConnect();
+    WebExtensionAPIEvent& onInstalled();
     WebExtensionAPIEvent& onMessage();
+    WebExtensionAPIEvent& onStartup();
 
 private:
     static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, NSString *sourceKey, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onConnect;
+    RefPtr<WebExtensionAPIEvent> m_onInstalled;
     RefPtr<WebExtensionAPIEvent> m_onMessage;
+    RefPtr<WebExtensionAPIEvent> m_onStartup;
 #endif
 };
 

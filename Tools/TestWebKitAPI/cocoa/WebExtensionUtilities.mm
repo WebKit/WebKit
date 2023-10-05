@@ -200,6 +200,17 @@
     TestWebKitAPI::Util::run(&_done);
 }
 
+- (void)runForTimeInterval:(NSTimeInterval)interval
+{
+    _done = false;
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self->_done = true;
+    });
+
+    TestWebKitAPI::Util::run(&_done);
+}
+
 - (void)loadAndRun
 {
     [self load];
