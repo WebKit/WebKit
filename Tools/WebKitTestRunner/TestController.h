@@ -247,6 +247,7 @@ public:
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookieBlocking();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
+    void setStatisticsTimeAdvanceForTesting(double);
     void setStatisticsIsRunningTest(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double);

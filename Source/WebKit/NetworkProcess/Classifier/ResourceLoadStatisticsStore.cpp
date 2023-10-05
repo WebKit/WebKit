@@ -264,6 +264,11 @@ static bool needsNewCreateTableSchema(const String& schema)
     return schema.contains("REFERENCES TopLevelDomains"_s);
 }
 
+static WallTime nowTime(Seconds timeAdvanceForTesting)
+{
+    return WallTime::now() + timeAdvanceForTesting;
+}
+
 OperatingDate OperatingDate::fromWallTime(WallTime time)
 {
     double ms = time.secondsSinceEpoch().milliseconds();
@@ -276,7 +281,7 @@ OperatingDate OperatingDate::fromWallTime(WallTime time)
 
 OperatingDate OperatingDate::today(Seconds timeAdvanceForTesting)
 {
-    return OperatingDate::fromWallTime(WallTime::now() + timeAdvanceForTesting);
+    return OperatingDate::fromWallTime(nowTime(timeAdvanceForTesting));
 }
 
 Seconds OperatingDate::secondsSinceEpoch() const
@@ -460,7 +465,7 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
                 }
 
                 weakThis->grandfatherDataForDomains(domainsWithWebsiteData);
-                weakThis->m_endOfGrandfatheringTimestamp = WallTime::now() + weakThis->m_parameters.grandfatheringTime;
+                weakThis->m_endOfGrandfatheringTimestamp = nowTime(weakThis->m_timeAdvanceForTesting) + weakThis->m_parameters.grandfatheringTime;
                 callback();
                 weakThis->logTestingEvent("Grandfathered"_s);
             });
@@ -660,6 +665,7 @@ void ResourceLoadStatisticsStore::resetParametersToDefaultValues()
 
     m_parameters = { };
     m_appBoundDomains.clear();
+    m_timeAdvanceForTesting = { };
 }
 
 void ResourceLoadStatisticsStore::logTestingEvent(String&& event)
@@ -1264,7 +1270,7 @@ void ResourceLoadStatisticsStore::insertDomainRelationshipList(const String& sta
     }
 
     if (statement.contains("REPLACE"_s)) {
-        if (insertRelationshipStatement->bindDouble(2, (WallTime::now() + m_timeAdvanceForTesting).secondsSinceEpoch().value()) != SQLITE_OK) {
+        if (insertRelationshipStatement->bindDouble(2, nowTime(m_timeAdvanceForTesting).secondsSinceEpoch().value()) != SQLITE_OK) {
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::insertDomainRelationshipList failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             return;
         }
@@ -1803,7 +1809,7 @@ void ResourceLoadStatisticsStore::grantStorageAccessInternal(SubFrameDomain&& su
 #endif
         ASSERT(hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
 #endif
-        setUserInteraction(subFrameDomain, true, WallTime::now() + m_timeAdvanceForTesting);
+        setUserInteraction(subFrameDomain, true, nowTime(m_timeAdvanceForTesting));
     }
 
     RunLoop::main().dispatch([subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), frameID, pageID, store = Ref { store() }, scope, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -1890,7 +1896,7 @@ void ResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& ta
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::logFrameNavigation was not completed due to failed insert attempt of target domain", this);
             return;
         }
-        updateLastSeen(targetDomain, ResourceLoadStatistics::reduceTimeResolution(WallTime::now() + m_timeAdvanceForTesting));
+        updateLastSeen(targetDomain, ResourceLoadStatistics::reduceTimeResolution(nowTime(m_timeAdvanceForTesting)));
         insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *targetResult.second);
         statisticsWereUpdated = true;
     }
@@ -2002,7 +2008,7 @@ void ResourceLoadStatisticsStore::logUserInteraction(const TopFrameDomain& domai
         return completionHandler();
     }
     bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
-    setUserInteraction(domain, true, WallTime::now() + m_timeAdvanceForTesting);
+    setUserInteraction(domain, true, nowTime(m_timeAdvanceForTesting));
 
     if (didHavePreviousUserInteraction) {
         completionHandler();
@@ -2288,7 +2294,7 @@ void ResourceLoadStatisticsStore::setMostRecentWebPushInteractionTime(const Regi
 {
     ASSERT(!RunLoop::isMain());
 
-    auto time = WallTime::now() + m_timeAdvanceForTesting;
+    auto time = nowTime(m_timeAdvanceForTesting);
 
     auto transactionScope = beginTransactionIfNecessary();
 
@@ -2795,13 +2801,13 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsStore::
 {
     ASSERT(!RunLoop::isMain());
 
-    bool shouldCheckForGrandfathering = endOfGrandfatheringTimestamp() > WallTime::now() + m_timeAdvanceForTesting;
+    auto now = nowTime(m_timeAdvanceForTesting);
+    bool shouldCheckForGrandfathering = endOfGrandfatheringTimestamp() > now;
     bool shouldClearGrandfathering = !shouldCheckForGrandfathering && endOfGrandfatheringTimestamp();
 
     if (shouldClearGrandfathering)
         clearEndOfGrandfatheringTimeStamp();
 
-    auto now = WallTime::now() + m_timeAdvanceForTesting;
     auto oldestUserInteraction = now;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor toDeleteOrRestrictFor;
 
@@ -3077,9 +3083,9 @@ void ResourceLoadStatisticsStore::appendSubStatisticList(StringBuilder& builder,
     }
 }
 
-static bool hasHadRecentUserInteraction(WTF::Seconds interactionTimeSeconds)
+static bool hasHadRecentUserInteraction(WTF::Seconds interactionTimeSeconds, WallTime now)
 {
-    return interactionTimeSeconds > Seconds(0) && WallTime::now().secondsSinceEpoch() - interactionTimeSeconds < 24_h;
+    return interactionTimeSeconds > Seconds(0) && now.secondsSinceEpoch() - interactionTimeSeconds < 24_h;
 }
 
 void ResourceLoadStatisticsStore::resourceToString(StringBuilder& builder, const String& domain) const
@@ -3098,7 +3104,7 @@ void ResourceLoadStatisticsStore::resourceToString(StringBuilder& builder, const
     appendBoolean(builder, "hadUserInteraction"_s, m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
     builder.append('\n');
     builder.append("    mostRecentUserInteraction: ");
-    if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->columnDouble(MostRecentUserInteractionTimeIndex))))
+    if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->columnDouble(MostRecentUserInteractionTimeIndex)), nowTime(m_timeAdvanceForTesting)))
         builder.append("within 24 hours");
     else
         builder.append("-1");
@@ -3271,14 +3277,14 @@ bool ResourceLoadStatisticsStore::hasStatisticsExpired(WallTime mostRecentUserIn
             return true;
         break;
     case OperatingDatesWindow::ForLiveOnTesting:
-        return WallTime::now() + m_timeAdvanceForTesting > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
+        return nowTime(m_timeAdvanceForTesting) > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
     case OperatingDatesWindow::ForReproTesting:
         return true;
     }
 
     // If we don't meet the real criteria for an expired statistic, check the user setting for a tighter restriction (mainly for testing).
     if (this->parameters().timeToLiveUserInteraction) {
-        if (WallTime::now() + m_timeAdvanceForTesting > mostRecentUserInteractionTime + this->parameters().timeToLiveUserInteraction.value())
+        if (nowTime(m_timeAdvanceForTesting) > mostRecentUserInteractionTime + this->parameters().timeToLiveUserInteraction.value())
             return true;
     }
     return false;
@@ -3293,7 +3299,7 @@ void ResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const Registr
 
     for (unsigned i = 1; i <= numberOfOperatingDaysPassed; i++) {
         double daysToSubtract = Seconds::fromHours(24 * i).value();
-        daysAgoInSeconds = WallTime::now().secondsSinceEpoch().value() - daysToSubtract;
+        daysAgoInSeconds = nowTime(m_timeAdvanceForTesting).secondsSinceEpoch().value() - daysToSubtract;
         auto dateToInsert = OperatingDate::fromWallTime(WallTime::fromRawSeconds(daysAgoInSeconds));
 
         auto insertOperatingDateStatement = m_database.prepareStatement("INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);

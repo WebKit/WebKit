@@ -347,6 +347,7 @@ interface TestRunner {
     boolean statisticsNotifyObserver();
     undefined statisticsProcessStatisticsAndDataRecords();
     undefined statisticsUpdateCookieBlocking(object completionHandler);
+    undefined setStatisticsTimeAdvanceForTesting(double value);
     undefined setStatisticsIsRunningTest(boolean value);
     undefined setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
     undefined setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds);

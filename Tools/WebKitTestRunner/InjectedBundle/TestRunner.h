@@ -459,6 +459,7 @@ public:
     void setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHost, JSStringRef toHost);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
+    void setStatisticsTimeAdvanceForTesting(double);
     void setStatisticsIsRunningTest(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double);

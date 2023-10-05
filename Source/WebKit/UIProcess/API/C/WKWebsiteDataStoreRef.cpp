@@ -473,6 +473,17 @@ void WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(WKWebs
 #endif
 }
 
+void WKWebsiteDataStoreSetResourceLoadStatisticsTimeAdvanceForTesting(WKWebsiteDataStoreRef dataStoreRef, double value, void* context, WKWebsiteDataStoreSetStatisticsIsRunningTestFunction callback)
+{
+#if ENABLE(TRACKING_PREVENTION)
+    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsTimeAdvanceForTesting(Seconds { value }, [context, callback] {
+        callback(context);
+    });
+#else
+    callback(context);
+#endif
+}
+
 void WKWebsiteDataStoreSetStatisticsIsRunningTest(WKWebsiteDataStoreRef dataStoreRef, bool value, void* context, WKWebsiteDataStoreSetStatisticsIsRunningTestFunction callback)
 {
 #if ENABLE(TRACKING_PREVENTION)
