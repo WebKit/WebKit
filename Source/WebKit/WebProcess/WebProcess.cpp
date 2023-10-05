@@ -1609,6 +1609,11 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
         platformMediaSessionManager->processWillSuspend();
 #endif
 
+#if !ENABLE(WEBPROCESS_CACHE)
+    if (!m_suppressMemoryPressureHandler)
+        releaseMemory([] { });
+#endif
+
     freezeAllLayerTrees();
 
 #if PLATFORM(COCOA)

@@ -50,3 +50,7 @@
 #if !defined(ENABLE_GEOLOCATION)
 #define ENABLE_GEOLOCATION 1
 #endif
+
+#if !defined(ENABLE_WEBPROCESS_CACHE)
+#define ENABLE_WEBPROCESS_CACHE 1
+#endif
