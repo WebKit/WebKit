@@ -65,10 +65,10 @@ FloatRect RenderSVGInline::strokeBoundingBox() const
     return FloatRect();
 }
 
-FloatRect RenderSVGInline::repaintRectInLocalCoordinates() const
+FloatRect RenderSVGInline::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
 {
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
-        return textAncestor->repaintRectInLocalCoordinates();
+        return textAncestor->repaintRectInLocalCoordinates(repaintRectCalculation);
 
     return FloatRect();
 }
@@ -81,7 +81,7 @@ LayoutRect RenderSVGInline::clippedOverflowRect(const RenderLayerModelObject* re
 #else
     UNUSED_PARAM(context);
 #endif
-    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
+    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);
 }
 
 std::optional<FloatRect> RenderSVGInline::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const

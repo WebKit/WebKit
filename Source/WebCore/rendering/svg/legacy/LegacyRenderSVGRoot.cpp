@@ -362,7 +362,7 @@ LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject
     if (isInsideEntirelyHiddenLayer())
         return { };
 
-    FloatRect contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates());
+    auto contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates(context.repaintRectCalculation()));
     contentRepaintRect.intersect(snappedIntRect(borderBoxRect()));
 
     LayoutRect repaintRect = enclosingLayoutRect(contentRepaintRect);
