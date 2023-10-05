@@ -48,8 +48,8 @@ XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& x
     m_supportsStereoRendering = deviceInfo.supportsStereoRendering;
     m_supportsOrientationTracking = deviceInfo.supportsOrientationTracking;
     m_recommendedResolution = deviceInfo.recommendedResolution;
-    if (!deviceInfo.features.isEmpty())
-        setSupportedFeatures(SessionMode::ImmersiveVr, deviceInfo.features);
+    if (!deviceInfo.vrFeatures.isEmpty())
+        setSupportedFeatures(SessionMode::ImmersiveVr, deviceInfo.vrFeatures);
 }
 
 void XRDeviceProxy::sessionDidEnd()
