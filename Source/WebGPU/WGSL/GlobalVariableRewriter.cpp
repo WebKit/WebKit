@@ -503,6 +503,9 @@ void RewriteGlobalVariables::packResource(AST::Variable& global)
 void RewriteGlobalVariables::packStructResource(AST::Variable& global, const Types::Struct* structType)
 {
     const Type* packedStructType = packStructType(structType);
+    if (!packedStructType)
+        return;
+
     auto& packedType = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
         AST::Identifier::make(std::get<Types::Struct>(*packedStructType).structure.name().id())
@@ -564,6 +567,10 @@ const Type* RewriteGlobalVariables::packType(const Type* type)
         return packStructType(structType);
     if (auto* arrayType = std::get_if<Types::Array>(type))
         return packArrayType(arrayType);
+    if (auto* vectorType = std::get_if<Types::Vector>(type)) {
+        if (vectorType->size == 3)
+            return type;
+    }
     return nullptr;
 }
 
@@ -574,14 +581,19 @@ const Type* RewriteGlobalVariables::packStructType(const Types::Struct* structTy
 
     m_callGraph.ast().setUsesPackedStructs();
 
+    // Ensure we pack nested structs
+    bool packedAnyMember = false;
+    for (auto& member : structType->structure.members()) {
+        if (packType(member.type().inferredType()))
+            packedAnyMember = true;
+    }
+    if (!packedAnyMember)
+        return nullptr;
+
     ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
     m_callGraph.ast().replace(&structType->structure.role(), AST::StructureRole::UserDefinedResource);
 
     String packedStructName = makeString("__", structType->structure.name(), "_Packed");
-
-    // Ensure we pack nested structs
-    for (auto& member : structType->structure.members())
-        packType(member.type().inferredType());
 
     auto& packedStruct = m_callGraph.ast().astBuilder().construct<AST::Structure>(
         SourceSpan::empty(),
