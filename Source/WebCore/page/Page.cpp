@@ -433,6 +433,7 @@ Page::~Page()
     m_validationMessageClient = nullptr;
     m_diagnosticLoggingClient = nullptr;
     m_performanceLoggingClient = nullptr;
+    m_rootFrames.clear();
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get()))
         localMainFrame->setView(nullptr);
     setGroupName(String());
@@ -4506,7 +4507,6 @@ void Page::addRootFrame(LocalFrame& frame)
 void Page::removeRootFrame(LocalFrame& frame)
 {
     ASSERT(frame.isRootFrame());
-    ASSERT(m_rootFrames.contains(frame));
     m_rootFrames.remove(frame);
 }
 
