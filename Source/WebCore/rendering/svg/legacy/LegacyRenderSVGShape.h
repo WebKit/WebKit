@@ -42,6 +42,16 @@ class SVGGraphicsElement;
 class LegacyRenderSVGShape : public LegacyRenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGShape);
 public:
+    enum class ShapeType : uint8_t {
+        Empty,
+        Path,
+        Line,
+        Rectangle,
+        RoundedRectangle,
+        Ellipse,
+        Circle,
+    };
+
     enum PointCoordinateSpace {
         GlobalCoordinateSpace,
         LocalCoordinateSpace
@@ -72,6 +82,8 @@ public:
         return *m_path;
     }
     void clearPath() { m_path = nullptr; }
+
+    ShapeType shapeType() const { return m_shapeType; }
 
 protected:
     void element() const = delete;
@@ -136,7 +148,9 @@ private:
     bool m_needsBoundariesUpdate : 1;
     bool m_needsShapeUpdate : 1;
     bool m_needsTransformUpdate : 1;
-
+protected:
+    ShapeType m_shapeType : 3 { ShapeType::Empty };
+private:
     AffineTransform m_localTransform;
     std::unique_ptr<Path> m_path;
     Vector<MarkerPosition> m_markerPositions;

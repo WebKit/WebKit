@@ -61,6 +61,11 @@ void LegacyRenderSVGEllipse::updateShapeFromElement()
     if (m_radii.isEmpty())
         return;
 
+    if (m_radii.width() == m_radii.height())
+        m_shapeType = ShapeType::Circle;
+    else
+        m_shapeType = ShapeType::Ellipse;
+
     if (hasNonScalingStroke()) {
         // Fallback to LegacyRenderSVGShape if shape has a non-scaling stroke.
         LegacyRenderSVGShape::updateShapeFromElement();

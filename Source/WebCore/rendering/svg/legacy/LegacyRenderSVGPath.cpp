@@ -53,6 +53,14 @@ void LegacyRenderSVGPath::updateShapeFromElement()
     updateZeroLengthSubpaths();
 
     m_strokeBoundingBox = calculateUpdatedStrokeBoundingBox();
+
+    ASSERT(hasPath());
+    if (path().isEmpty())
+        m_shapeType = ShapeType::Empty;
+    else if (path().definitelySingleLine())
+        m_shapeType = ShapeType::Line;
+    else
+        m_shapeType = ShapeType::Path;
 }
 
 FloatRect LegacyRenderSVGPath::calculateUpdatedStrokeBoundingBox() const
