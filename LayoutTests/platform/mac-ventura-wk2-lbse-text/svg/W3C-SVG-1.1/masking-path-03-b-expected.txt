@@ -46,10 +46,8 @@ layer at (15,1.55) size 216x53
       chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
 layer at (115,100) size 250x161
   RenderSVGRect {rect} at (115,102.97) size 250x160 [stroke={[type=SOLID] [color=#006600] [stroke width=5.00]}] [x=115.00] [y=100.00] [width=250.00] [height=160.00]
-layer at (0,0) size 250x161 backgroundClip at (0,2.97) size 250x160 clip at (0,0) size 250x160
+layer at (0,0) size 250x161 backgroundClip at (0,0) size 250x160 clip at (0,0) size 250x160
   RenderSVGViewportContainer {svg} at (0,2.97) size 250x160
-layer at (0,-2.97) size 150x38 backgroundClip at (115,100) size 250x160 clip at (115,100) size 250x160
-  RenderSVGTransformableContainer {g} at (0,-2.97) size 150x37.97
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

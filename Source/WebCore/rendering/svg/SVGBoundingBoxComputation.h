@@ -69,11 +69,11 @@ public:
 
     static LayoutRect computeVisualOverflowRect(const RenderLayerModelObject& renderer)
     {
-        auto repaintBoundingBox = computeDecoratedBoundingBox(renderer, repaintBoundingBoxDecoration | DecorationOption::IncludeOutline);
-        if (repaintBoundingBox.isEmpty())
-            return LayoutRect();
+        auto repaintBoundingBoxWithoutTransformations = computeDecoratedBoundingBox(renderer, repaintBoundingBoxDecoration | DecorationOption::IncludeOutline | DecorationOption::IgnoreTransformations);
+        if (repaintBoundingBoxWithoutTransformations.isEmpty())
+            return { };
 
-        auto visualOverflowRect = enclosingLayoutRect(repaintBoundingBox);
+        auto visualOverflowRect = enclosingLayoutRect(repaintBoundingBoxWithoutTransformations);
         visualOverflowRect.moveBy(-renderer.nominalSVGLayoutLocation());
         return visualOverflowRect;
     }

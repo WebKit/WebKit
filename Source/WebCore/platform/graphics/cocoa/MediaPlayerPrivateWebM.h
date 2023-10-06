@@ -310,7 +310,7 @@ private:
     bool m_hasVideo { false };
     bool m_hasAvailableVideoFrame { false };
     bool m_visible { false };
-    bool m_loadingProgressed { false };
+    mutable bool m_loadingProgressed { false };
     bool m_loadFinished { false };
     bool m_parsingSucceeded { true };
     bool m_processingInitializationSegment { false };

@@ -8,8 +8,8 @@ layer at (0,0) size 300x300
   RenderSVGTransformableContainer {g} at (0,0) size 300x300
 layer at (0,0) size 300x300
   RenderSVGPath {polygon} at (0,0) size 300x300 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#ADD8E6]}] [points="0 0 300 0 300 300 0 300"]
-layer at (0,0) size 280x280
-  RenderSVGForeignObject {foreignObject} at (0,0) size 280x280
+layer at (10,10) size 280x280
+  RenderSVGForeignObject {foreignObject} at (10,10) size 280x280
     RenderInline {html:b} at (0,0) size 109x18
       RenderText {#text} at (0,0) size 109x18
         text run at (0,0) width 109: "Absolute Lineto"

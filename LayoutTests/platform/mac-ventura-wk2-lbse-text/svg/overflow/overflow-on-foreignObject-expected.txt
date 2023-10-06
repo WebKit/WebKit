@@ -4,7 +4,7 @@ layer at (0,0) size 500x500
   RenderSVGRoot {svg} at (0,0) size 500x500
 layer at (0,0) size 500x500
   RenderSVGViewportContainer at (0,0) size 500x500
-layer at (0,0) size 300x300 scrollWidth 6006 scrollHeight 6006
-  RenderSVGForeignObject {foreignObject} at (0,0) size 300x300
-layer at (0,0) size 6006x6006 backgroundClip at (100,100) size 300x300 clip at (100,100) size 300x300
+layer at (100,100) size 300x300 scrollWidth 6006 scrollHeight 6006
+  RenderSVGForeignObject {foreignObject} at (100,100) size 300x300
+layer at (100,100) size 6006x6006 backgroundClip at (100,100) size 300x300 clip at (100,100) size 300x300
   RenderBlock (positioned) {html:div} at (0,0) size 6006x6006 [bgcolor=#008000] [border: (3px solid #000000)]

@@ -388,7 +388,7 @@ void MediaPlayerPrivateWebM::setLoadingProgresssed(bool loadingProgressed)
 
 bool MediaPlayerPrivateWebM::didLoadingProgress() const
 {
-    return m_loadingProgressed;
+    return std::exchange(m_loadingProgressed, false);
 }
 
 RefPtr<NativeImage> MediaPlayerPrivateWebM::nativeImageForCurrentTime()

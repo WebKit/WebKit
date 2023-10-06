@@ -29,39 +29,40 @@ using namespace WebCore;
 GST_DEBUG_CATEGORY(webkit_gst_video_sink_common_debug);
 #define GST_CAT_DEFAULT webkit_gst_video_sink_common_debug
 
-void webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, MediaPlayerPrivateGStreamer* player)
-{
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        GST_DEBUG_CATEGORY_INIT(webkit_gst_video_sink_common_debug, "webkitvideosinkcommon", 0, "WebKit Video Sink Common utilities");
-    });
+class WebKitVideoSinkProbe {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
 
-    g_signal_connect(appSink, "new-sample", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
-        GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
-        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
-        GST_TRACE_OBJECT(sink, "new-sample with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
-        player->triggerRepaint(WTFMove(sample));
-        return GST_FLOW_OK;
-    }), player);
-    g_signal_connect(appSink, "new-preroll", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
-        GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
-        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
-        GST_DEBUG_OBJECT(sink, "new-preroll with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
-        player->triggerRepaint(WTFMove(sample));
-        return GST_FLOW_OK;
-    }), player);
+    WebKitVideoSinkProbe(MediaPlayerPrivateGStreamer* player)
+        : m_player(player)
+    {
+    }
 
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(appSink, "sink"));
-    gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM), [](GstPad* pad, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
-        auto* player = static_cast<MediaPlayerPrivateGStreamer*>(userData);
+    static void deleteUserData(void* userData)
+    {
+        delete static_cast<WebKitVideoSinkProbe*>(userData);
+    }
+
+    static GstPadProbeReturn doProbe(GstPad* pad, GstPadProbeInfo* info, gpointer userData)
+    {
+        auto* self = static_cast<WebKitVideoSinkProbe*>(userData);
+        auto* player = self->m_player;
 
         if (info->type & GST_PAD_PROBE_TYPE_EVENT_FLUSH) {
             if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_FLUSH_START) {
-                GST_DEBUG_OBJECT(pad, "FLUSH_START received, aborting all pending tasks in the player sinkTaskQueue.");
-                player->sinkTaskQueue().startAborting();
+                if (!self->m_isFlushing) {
+                    GST_DEBUG_OBJECT(pad, "FLUSH_START received, aborting all pending tasks in the player sinkTaskQueue.");
+                    self->m_isFlushing = true;
+                    player->sinkTaskQueue().startAborting();
+                } else
+                    GST_DEBUG_OBJECT(pad, "Received FLUSH_START while already flushing, ignoring.");
             } else if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_FLUSH_STOP) {
-                GST_DEBUG_OBJECT(pad, "FLUSH_STOP received, allowing operation in the player sinkTaskQueue again.");
-                player->sinkTaskQueue().finishAborting();
+                if (self->m_isFlushing) {
+                    GST_DEBUG_OBJECT(pad, "FLUSH_STOP received, allowing operation in the player sinkTaskQueue again.");
+                    self->m_isFlushing = false;
+                    player->sinkTaskQueue().finishAborting();
+                } else
+                    GST_DEBUG_OBJECT(pad, "Received FLUSH_STOP without a FLUSH_START, ignoring.");
             }
         }
 
@@ -101,7 +102,40 @@ void webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, MediaPlayerPrivat
 #endif
 
         return GST_PAD_PROBE_OK;
-    }, player, nullptr);
+    }
+
+private:
+    MediaPlayerPrivateGStreamer* m_player;
+    bool m_isFlushing { false };
+};
+
+void webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, MediaPlayerPrivateGStreamer* player)
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_gst_video_sink_common_debug, "webkitvideosinkcommon", 0, "WebKit Video Sink Common utilities");
+    });
+
+    g_signal_connect(appSink, "new-sample", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
+        GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
+        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
+        GST_TRACE_OBJECT(sink, "new-sample with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+        player->triggerRepaint(WTFMove(sample));
+        return GST_FLOW_OK;
+    }), player);
+    g_signal_connect(appSink, "new-preroll", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
+        GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
+        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
+        GST_DEBUG_OBJECT(sink, "new-preroll with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+        player->triggerRepaint(WTFMove(sample));
+        return GST_FLOW_OK;
+    }), player);
+
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(appSink, "sink"));
+
+    gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM
+        | GST_PAD_PROBE_TYPE_EVENT_FLUSH | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM),
+        WebKitVideoSinkProbe::doProbe, new WebKitVideoSinkProbe(player), WebKitVideoSinkProbe::deleteUserData);
 }
 
 #undef GST_CAT_DEFAULT

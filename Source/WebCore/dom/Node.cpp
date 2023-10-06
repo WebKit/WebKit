@@ -398,6 +398,10 @@ Node::Node(Document& document, ConstructionType type)
 {
     ASSERT(isMainThread());
 
+    // Allow code to ref the Document while it is being constructed to make our life easier.
+    if (isDocumentNode())
+        relaxAdoptionRequirement();
+
     document.incrementReferencingNodeCount();
 
 #if !defined(NDEBUG) || DUMP_NODE_STATISTICS

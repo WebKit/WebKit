@@ -19,8 +19,12 @@ layer at (0,0) size 250x200
         text run at (0,0) width 56: "[HTML]"
 layer at (0,0) size 250x200
   RenderSVGRect {rect} at (0,0) size 250x200 [stroke={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=250.00] [height=200.00]
-layer at (0,0) size 250x200 scrollHeight 204
-  RenderSVGForeignObject {foreignObject} at (0,0) size 250x200
+layer at (260,0) size 250x200 scrollHeight 204
+  RenderSVGForeignObject {foreignObject} at (260,0) size 250x200
     RenderText {#text} at (0,0) size 0x0
+layer at (260,0) size 250x200 backgroundClip at (374.39,0) size 135.61x200 clip at (374.39,0) size 135.61x200
+  RenderSVGRoot {svg} at (0,0) size 250x200
+layer at (260,0) size 250x200 backgroundClip at (374.39,0) size 250x200 clip at (374.39,0) size 250x200
+  RenderSVGViewportContainer at (0,0) size 250x200
 layer at (260,0) size 250x200
   RenderSVGRect {rect} at (260,0) size 250x200 [stroke={[type=SOLID] [color=#008000]}] [x=260.00] [y=0.00] [width=250.00] [height=200.00]
