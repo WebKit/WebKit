@@ -35,29 +35,12 @@
 #include "ObjectConstructor.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/StringConcatenate.h>
 
 #include "KeywordLookup.h"
 
 namespace JSC {
-
-template<typename CharType>
-ALWAYS_INLINE bool compare3Chars(const CharType* source, CharType c0, CharType c1, CharType c2)
-{
-    if constexpr (sizeof(CharType) == 1)
-        return COMPARE_3CHARS(source, c0, c1, c2);
-    else
-        return COMPARE_3UCHARS(source, c0, c1, c2);
-}
-
-template<typename CharType>
-ALWAYS_INLINE bool compare4Chars(const CharType* source, CharType c0, CharType c1, CharType c2, CharType c3)
-{
-    if constexpr (sizeof(CharType) == 1)
-        return COMPARE_4CHARS(source, c0, c1, c2, c3);
-    else
-        return COMPARE_4UCHARS(source, c0, c1, c2, c3);
-}
 
 template <typename CharType>
 bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSourceInfo)
@@ -738,21 +721,21 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
         case TokIdentifier: {
             switch (character) {
             case 't':
-                if (m_end - m_ptr >= 4 && compare3Chars<CharType>(m_ptr + 1, 'r', 'u', 'e')) {
+                if (m_end - m_ptr >= 4 && compareCharacters(m_ptr + 1, 'r', 'u', 'e')) {
                     m_ptr += 4;
                     token.type = TokTrue;
                     return TokTrue;
                 }
                 break;
             case 'f':
-                if (m_end - m_ptr >= 5 && compare4Chars<CharType>(m_ptr + 1, 'a', 'l', 's', 'e')) {
+                if (m_end - m_ptr >= 5 && compareCharacters(m_ptr + 1, 'a', 'l', 's', 'e')) {
                     m_ptr += 5;
                     token.type = TokFalse;
                     return TokFalse;
                 }
                 break;
             case 'n':
-                if (m_end - m_ptr >= 4 && compare3Chars<CharType>(m_ptr + 1, 'u', 'l', 'l')) {
+                if (m_end - m_ptr >= 4 && compareCharacters(m_ptr + 1, 'u', 'l', 'l')) {
                     m_ptr += 4;
                     token.type = TokNull;
                     return TokNull;

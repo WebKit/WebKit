@@ -60,6 +60,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
@@ -577,13 +578,13 @@ private:
 
         if (attributeName.empty())
             return nullQName();
-        if (attributeName.size() > 2 && attributeName[0] == 'o' && attributeName[1] == 'n') {
+        if (attributeName.size() > 2 && compareCharacters(attributeName.data(), 'o', 'n')) {
             // These attributes likely contain script that may be executed at random
             // points, which could cause problems if parsing via the fast path
             // fails. For example, an image's onload event.
             return nullQName();
         }
-        if (attributeName.size() == 2 && attributeName[0] == 'i' && attributeName[1] == 's')
+        if (attributeName.size() == 2 && compareCharacters(attributeName.data(), 'i', 's'))
             return nullQName();
         return HTMLNameCache::makeAttributeQualifiedName(attributeName);
     }
