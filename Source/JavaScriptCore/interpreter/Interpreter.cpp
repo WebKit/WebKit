@@ -584,6 +584,7 @@ CatchInfo::CatchInfo(const Wasm::HandlerInfo* handler, const Wasm::Callee* calle
         else if (callee->compilationMode() == Wasm::CompilationMode::IPIntMode) {
             m_catchPCForInterpreter = handler->m_target;
             m_catchMetadataPCForInterpreter = handler->m_targetMetadata;
+            m_tryDepthForThrow = handler->m_tryDepth;
         } else {
 #if USE(JSVALUE64) && ENABLE(JIT)
             m_nativeCode = Wasm::Thunks::singleton().stub(Wasm::catchInWasmThunkGenerator).template retagged<ExceptionHandlerPtrTag>().code();

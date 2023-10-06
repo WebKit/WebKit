@@ -36,6 +36,7 @@
 #include "WasmFunctionIPIntMetadataGenerator.h"
 #include "WasmHandlerInfo.h"
 #include "WasmIPIntGenerator.h"
+#include "WasmIPIntTierUpCounter.h"
 #include "WasmIndexOrName.h"
 #include "WasmLLIntTierUpCounter.h"
 #include "WasmTierUpCount.h"
@@ -367,7 +368,7 @@ public:
         return *m_signatures[index];
     }
 
-    LLIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
+    IPIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
@@ -411,10 +412,11 @@ public:
     const uint32_t m_returnMetadata;
 
     unsigned m_localSizeToAlloc;
+    unsigned m_numRethrowSlotsToAlloc;
     unsigned m_numLocals;
     unsigned m_numArgumentsOnStack;
 
-    LLIntTierUpCounter m_tierUpCounter;
+    IPIntTierUpCounter m_tierUpCounter;
 };
 
 class LLIntCallee final : public Callee {

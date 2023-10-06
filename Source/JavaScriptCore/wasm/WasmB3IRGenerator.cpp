@@ -3912,18 +3912,39 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
     Vector<Value*> stackmap;
     for (auto& local : m_locals)
         stackmap.append(get(local));
-    for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
-        auto& data = m_parser->controlStack()[controlIndex].controlData;
-        auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-        for (TypedExpression value : expressionStack)
+
+    if (Options::useWasmIPInt()) {
+        // Do rethrow slots first because IPInt has them in a shadow stack.
+        for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+            auto& data = m_parser->controlStack()[controlIndex].controlData;
+            if (ControlType::isAnyCatch(data))
+                stackmap.append(get(data.exception()));
+        }
+
+        for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+            auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+            for (TypedExpression value : expressionStack)
+                stackmap.append(get(value));
+        }
+        for (TypedExpression value : enclosingStack)
             stackmap.append(get(value));
-        if (ControlType::isAnyCatch(data))
-            stackmap.append(get(data.exception()));
+        for (TypedExpression value : newStack)
+            stackmap.append(get(value));
+    } else {
+        for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+            auto& data = m_parser->controlStack()[controlIndex].controlData;
+            auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+            for (TypedExpression value : expressionStack)
+                stackmap.append(get(value));
+            if (ControlType::isAnyCatch(data))
+                stackmap.append(get(data.exception()));
+        }
+        for (TypedExpression value : enclosingStack)
+            stackmap.append(get(value));
+        for (TypedExpression value : newStack)
+            stackmap.append(get(value));
     }
-    for (TypedExpression value : enclosingStack)
-        stackmap.append(get(value));
-    for (TypedExpression value : newStack)
-        stackmap.append(get(value));
+
 
     PatchpointValue* patch = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Void, origin);
     Effects effects = Effects::none();

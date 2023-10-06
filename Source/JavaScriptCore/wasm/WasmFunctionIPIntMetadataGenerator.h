@@ -34,8 +34,9 @@
 #include "SIMDInfo.h"
 #include "WasmHandlerInfo.h"
 #include "WasmIPIntGenerator.h"
-#include "WasmLLIntTierUpCounter.h"
+#include "WasmIPIntTierUpCounter.h"
 #include "WasmOps.h"
+#include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -80,7 +81,7 @@ public:
     const uint8_t* getBytecode() const { return m_bytecode; }
     const uint8_t* getMetadata() const { return m_metadata.data(); }
 
-    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
+    HashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
 
     unsigned addSignature(const TypeDefinition&);
 
@@ -106,13 +107,14 @@ private:
 
     uint32_t m_bytecodeOffset { 0 };
     unsigned m_numLocals { 0 };
+    unsigned m_numAlignedRethrowSlots { 0 };
     unsigned m_numArguments { 0 };
     unsigned m_numArgumentsOnStack { 0 };
     unsigned m_nonArgLocalOffset { 0 };
     Vector<uint8_t, 16> m_argumINTBytecode { };
 
     Vector<const TypeDefinition*> m_signatures;
-    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
+    HashMap<IPIntPC, IPIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
     // Optimization to skip large numbers of blocks

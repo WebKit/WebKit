@@ -45,6 +45,7 @@ extern "C" void ipint_catch_all_entry();
     m(0x06, try) \
     m(0x07, catch) \
     m(0x08, throw) \
+    m(0x09, rethrow) \
     m(0x0b, end) \
     m(0x0c, br) \
     m(0x0d, br_if) \

@@ -60,9 +60,11 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     void* dispatchAndCatchRoutine = nullptr;
     JSOrWasmInstruction catchPCForInterpreter = { static_cast<JSInstruction*>(nullptr) };
     uintptr_t catchMetadataPCForInterpreter = 0;
+    uint32_t tryDepthForThrow = 0;
     if (handler.m_valid) {
         catchPCForInterpreter = handler.m_catchPCForInterpreter;
         catchMetadataPCForInterpreter = handler.m_catchMetadataPCForInterpreter;
+        tryDepthForThrow = handler.m_tryDepthForThrow;
 #if ENABLE(JIT)
         catchRoutine = handler.m_nativeCode.taggedPtr();
         if (handler.m_nativeCodeForDispatchAndCatch)
@@ -92,6 +94,7 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     vm.targetMachinePCAfterCatch = dispatchAndCatchRoutine;
     vm.targetInterpreterPCForThrow = catchPCForInterpreter;
     vm.targetInterpreterMetadataPCForThrow = catchMetadataPCForInterpreter;
+    vm.targetTryDepthForThrow = tryDepthForThrow;
     
     RELEASE_ASSERT(catchRoutine);
 }
