@@ -204,7 +204,6 @@ NetworkProcess/webtransport/NetworkTransportReceiveStream.cpp
 
 Platform/IPC/DaemonCoders.cpp
 
-Shared/AccessibilityPreferences.cpp
 Shared/ActivityAssertion.cpp
 Shared/AuxiliaryProcess.cpp
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp

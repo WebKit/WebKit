@@ -368,6 +368,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Platform/SharedMemory.serialization.in
 
+    Shared/AccessibilityPreferences.serialization.in
     Shared/AuxiliaryProcessCreationParameters.serialization.in
     Shared/BackgroundFetchState.serialization.in
     Shared/CallbackID.serialization.in

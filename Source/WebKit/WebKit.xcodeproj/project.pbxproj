@@ -6159,6 +6159,8 @@
 		86DD518B28EF028500DF2A58 /* TextFlags.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextFlags.serialization.in; sourceTree = "<group>"; };
 		86DD518C28EF204F00DF2A58 /* WebEvent.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebEvent.serialization.in; sourceTree = "<group>"; };
 		86DD518F28EF28E800DF2A58 /* WebEventModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventModifier.h; sourceTree = "<group>"; };
+		86E0787B2ACE0ACE00B8FADC /* AccessibilityPreferences.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = AccessibilityPreferences.serialization.in; sourceTree = "<group>"; };
+		86E0787C2ACE0AE400B8FADC /* InsertTextOptions.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = InsertTextOptions.serialization.in; sourceTree = "<group>"; };
 		86E67A21190F411800004AB7 /* ProcessThrottler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessThrottler.h; sourceTree = "<group>"; };
 		86E67A22190F411800004AB7 /* ProcessThrottler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessThrottler.cpp; sourceTree = "<group>"; };
 		86E6E357291959C3006C25CA /* SecItemRequestData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecItemRequestData.serialization.in; sourceTree = "<group>"; };
@@ -7226,7 +7228,6 @@
 		CE45945A240F85B90078019F /* WKTextSelectionRect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTextSelectionRect.h; path = ios/WKTextSelectionRect.h; sourceTree = "<group>"; };
 		CE45945B240F85B90078019F /* WKTextSelectionRect.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTextSelectionRect.mm; path = ios/WKTextSelectionRect.mm; sourceTree = "<group>"; };
 		CE550E12228373C800D28791 /* InsertTextOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InsertTextOptions.h; sourceTree = "<group>"; };
-		CE550E132283744400D28791 /* InsertTextOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InsertTextOptions.cpp; sourceTree = "<group>"; };
 		CE5B4C8621B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKSyntheticFlagsChangedWebEvent.h; path = ios/WKSyntheticFlagsChangedWebEvent.h; sourceTree = "<group>"; };
 		CE5B4C8721B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKSyntheticFlagsChangedWebEvent.mm; path = ios/WKSyntheticFlagsChangedWebEvent.mm; sourceTree = "<group>"; };
 		CE70EE5A22442BB300E0AF0F /* WKFormPeripheralBase.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormPeripheralBase.mm; path = ios/forms/WKFormPeripheralBase.mm; sourceTree = "<group>"; };
@@ -8238,8 +8239,8 @@
 				1CB74645274379F100F19874 /* WebGPU */,
 				1ABF43781A368035003FB0E6 /* WebsiteData */,
 				118502602673B0DA00A6425E /* XR */,
-				E3BCE877267252120011D8DB /* AccessibilityPreferences.cpp */,
 				E3BCE878267252120011D8DB /* AccessibilityPreferences.h */,
+				86E0787B2ACE0ACE00B8FADC /* AccessibilityPreferences.serialization.in */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
 				A7D792D41767CB0900881CBE /* ActivityAssertion.h */,
 				F4EFD8AF29C256BD00570001 /* AlternativeTextClient.serialization.in */,
@@ -10604,8 +10605,8 @@
 				86AA5252293674E30065399E /* DataDetectionResult.serialization.in */,
 				49DAA38D24CBA1BD00793D75 /* DefaultWebBrowserChecks.h */,
 				49DAA38B24CBA1A800793D75 /* DefaultWebBrowserChecks.mm */,
-				CE550E132283744400D28791 /* InsertTextOptions.cpp */,
 				CE550E12228373C800D28791 /* InsertTextOptions.h */,
+				86E0787C2ACE0AE400B8FADC /* InsertTextOptions.serialization.in */,
 				C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */,
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,

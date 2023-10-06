@@ -155,7 +155,6 @@ Shared/Cocoa/CodeSigning.mm
 Shared/Cocoa/CompletionHandlerCallChecker.mm
 Shared/Cocoa/CoreTextHelpers.mm
 Shared/Cocoa/DefaultWebBrowserChecks.mm
-Shared/Cocoa/InsertTextOptions.cpp
 Shared/Cocoa/LoadParametersCocoa.mm
 Shared/Cocoa/PDFKitSoftLink.mm
 Shared/Cocoa/RevealItem.mm

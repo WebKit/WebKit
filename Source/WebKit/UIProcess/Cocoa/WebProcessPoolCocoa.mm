@@ -260,11 +260,11 @@ static AccessibilityPreferences accessibilityPreferences()
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     auto appId = WebCore::applicationBundleIdentifier().createCFString();
 
-    preferences.reduceMotionEnabled = _AXSReduceMotionEnabledApp(appId.get());
-    preferences.increaseButtonLegibility = _AXSIncreaseButtonLegibilityApp(appId.get());
-    preferences.enhanceTextLegibility = _AXSEnhanceTextLegibilityEnabledApp(appId.get());
-    preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get());
-    preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
+    preferences.reduceMotionEnabled = toWebKitAXValueState(_AXSReduceMotionEnabledApp(appId.get()));
+    preferences.increaseButtonLegibility = toWebKitAXValueState(_AXSIncreaseButtonLegibilityApp(appId.get()));
+    preferences.enhanceTextLegibility = toWebKitAXValueState(_AXSEnhanceTextLegibilityEnabledApp(appId.get()));
+    preferences.darkenSystemColors = toWebKitAXValueState(_AXDarkenSystemColorsApp(appId.get()));
+    preferences.invertColorsEnabled = toWebKitAXValueState(_AXSInvertColorsEnabledApp(appId.get()));
 #endif
     preferences.enhanceTextLegibilityOverall = _AXSEnhanceTextLegibilityEnabled();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

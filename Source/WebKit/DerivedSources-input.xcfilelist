@@ -174,6 +174,7 @@ $(PROJECT_DIR)/Shared/API/APIURL.serialization.in
 $(PROJECT_DIR)/Shared/API/APIURLRequest.serialization.in
 $(PROJECT_DIR)/Shared/API/APIURLResponse.serialization.in
 $(PROJECT_DIR)/Shared/API/Cocoa/RemoteObjectRegistry.messages.in
+$(PROJECT_DIR)/Shared/AccessibilityPreferences.serialization.in
 $(PROJECT_DIR)/Shared/AlternativeTextClient.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/PaymentSetupConfiguration.serialization.in
@@ -185,6 +186,7 @@ $(PROJECT_DIR)/Shared/BackgroundFetchState.serialization.in
 $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/InsertTextOptions.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in

@@ -495,9 +495,11 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APIURL.serialization.in \
 	Shared/API/APIURLRequest.serialization.in \
 	Shared/API/APIURLResponse.serialization.in \
+	Shared/AccessibilityPreferences.serialization.in \
 	Shared/AlternativeTextClient.serialization.in \
 	Shared/Cocoa/CacheStoragePolicy.serialization.in \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
+	Shared/Cocoa/InsertTextOptions.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \
