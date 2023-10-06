@@ -30,11 +30,13 @@
 
 #import "KeyEventCocoa.h"
 #import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 
 #import "KeyEventCodesIOS.h"
 #import "WAKAppKitStubs.h"
+#import "WebEventPrivate.h"
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -43,7 +45,11 @@
 using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
 
-@implementation WebEvent
+@implementation WebEvent {
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+    RetainPtr<UIKeyEvent> _originalUIKeyEvent;
+#endif
+}
 
 @synthesize type = _type;
 @synthesize timestamp = _timestamp;
@@ -486,5 +492,67 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 }
 
 @end
+
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+
+@implementation WebEvent (UIAsyncTextInputSupport)
+
+static inline WebEventType webEventType(UIKeyEventType type)
+{
+    switch (type) {
+    case UIKeyEventKeyDown:
+        return WebEventKeyDown;
+    case UIKeyEventKeyUp:
+        return WebEventKeyUp;
+    }
+    ASSERT_NOT_REACHED();
+    return WebEventKeyDown;
+}
+
+static inline WebEventFlags webEventModifierFlags(UIKeyModifierFlags flags)
+{
+    WebEventFlags modifiers = 0;
+    if (flags & UIKeyModifierCommand)
+        modifiers |= WebEventFlagMaskCommandKey;
+    if (flags & UIKeyModifierAlternate)
+        modifiers |= WebEventFlagMaskOptionKey;
+    if (flags & UIKeyModifierControl)
+        modifiers |= WebEventFlagMaskControlKey;
+    if (flags & UIKeyModifierShift)
+        modifiers |= WebEventFlagMaskShiftKey;
+    return modifiers;
+}
+
+- (instancetype)initWithUIKeyEvent:(UIKeyEvent *)event
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _type = webEventType(event.type);
+    _timestamp = static_cast<CFTimeInterval>(event.timestamp);
+    _modifierFlags = webEventModifierFlags(event.modifierFlags);
+    _keyboardFlags = 0;
+    // FIXME: Set WebEventKeyboardInputModifierFlagsChanged as needed.
+    if (event.keyRepeating)
+        _keyboardFlags |= WebEventKeyboardInputRepeat;
+
+    _keyCode = static_cast<uint16_t>(event.keyCode);
+    _characters = [event.characters retain];
+    _charactersIgnoringModifiers = [event.charactersIgnoringModifiers retain];
+    _tabKey = NO; // FIXME: Populate this field appropriately.
+    _keyRepeating = event.keyRepeating;
+    _originalUIKeyEvent = event;
+
+    return self;
+}
+
+- (UIKeyEvent *)originalUIKeyEvent
+{
+    return _originalUIKeyEvent.get();
+}
+
+@end
+
+#endif // HAVE(UI_ASYNC_TEXT_INPUT)
 
 #endif // PLATFORM(IOS_FAMILY)

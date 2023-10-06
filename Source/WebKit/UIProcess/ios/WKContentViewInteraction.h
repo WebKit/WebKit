@@ -552,6 +552,9 @@ struct ImageAnalysisContextMenuActionData {
     WebCore::FloatRect _imageAnalysisInteractionBounds;
     std::optional<WebKit::RemoveBackgroundData> _removeBackgroundData;
 #endif
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+    __weak id<UIAsyncTextInputDelegate> _asyncSystemInputDelegate;
+#endif
 }
 
 @end
@@ -575,6 +578,9 @@ struct ImageAnalysisContextMenuActionData {
 #endif
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
     , _UIAsyncDragInteractionDelegate
+#endif
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+    , UIAsyncTextInput
 #endif
 >
 

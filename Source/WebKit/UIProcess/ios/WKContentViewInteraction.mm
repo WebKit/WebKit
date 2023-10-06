@@ -134,7 +134,7 @@
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebCoreCALayerExtras.h>
-#import <WebCore/WebEvent.h>
+#import <WebCore/WebEventPrivate.h>
 #import <WebCore/WebTextIndicatorLayer.h>
 #import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
@@ -6602,6 +6602,14 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent
 {
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+    if (auto systemDelegate = retainPtr(_asyncSystemInputDelegate)) {
+        auto originalKeyEvent = retainPtr(event.originalUIKeyEvent);
+        ASSERT(originalKeyEvent);
+        return [systemDelegate deferHandlingToSystemForKeyEvent:originalKeyEvent.get()];
+    }
+#endif
+
     if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
         return NO;
 
@@ -11799,6 +11807,36 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 }
 
 #endif // HAVE(UI_EDIT_MENU_INTERACTION)
+
+#if HAVE(UI_ASYNC_TEXT_INPUT)
+
+#pragma mark - UIAsyncTextInput (and related)
+
+- (id<UIAsyncTextInputDelegate>)asyncSystemInputDelegate
+{
+    return _asyncSystemInputDelegate;
+}
+
+- (void)setAsyncSystemInputDelegate:(id<UIAsyncTextInputDelegate>)delegate
+{
+    _asyncSystemInputDelegate = delegate;
+}
+
+- (void)handleAsyncKeyEvent:(UIKeyEvent *)event withCompletionHandler:(void(^)(UIKeyEvent *, BOOL))completionHandler
+{
+    auto webEvent = adoptNS([[::WebEvent alloc] initWithUIKeyEvent:event]);
+    [self handleKeyWebEvent:webEvent.get() withCompletionHandler:[originalEvent = retainPtr(event), completionHandler = makeBlockPtr(completionHandler)](::WebEvent *webEvent, BOOL handled) {
+        ASSERT(webEvent.originalUIKeyEvent == originalEvent);
+        completionHandler(originalEvent.get(), handled);
+    }];
+}
+
+- (UIView *)textInputView
+{
+    return self;
+}
+
+#endif // HAVE(UI_ASYNC_TEXT_INPUT)
 
 @end
 
