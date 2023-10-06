@@ -349,11 +349,7 @@ static ALWAYS_INLINE void initializeSeparatedWXHeaps(void* stubBase, size_t stub
 #endif
 }
 
-#else // OS(DARWIN) && HAVE(REMAP_JIT)
-static ALWAYS_INLINE void initializeSeparatedWXHeaps(void*, size_t, void*, size_t)
-{
-}
-#endif
+#endif // OS(DARWIN) && HAVE(REMAP_JIT)
 
 struct JITReservation {
     PageReservation pageReservation;

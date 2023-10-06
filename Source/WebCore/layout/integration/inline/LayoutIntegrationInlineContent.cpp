@@ -28,6 +28,7 @@
 
 #include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "RenderStyleInlines.h"
 #include "TextPainter.h"
 
 namespace WebCore {

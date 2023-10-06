@@ -67,8 +67,7 @@ struct StretchyCharacter {
     UChar bottomChar;
     UChar middleChar;
 };
-// The first leftRightPairsCount pairs correspond to left/right fences that can easily be mirrored in RTL.
-static const short leftRightPairsCount = 5;
+
 static const StretchyCharacter stretchyCharacters[14] = {
     { 0x28  , 0x239b, 0x239c, 0x239d, 0x0    }, // left parenthesis
     { 0x29  , 0x239e, 0x239f, 0x23a0, 0x0    }, // right parenthesis

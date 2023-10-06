@@ -26,7 +26,9 @@
 #include "config.h"
 #include "RubyFormattingContext.h"
 
+#include "InlineFormattingContext.h"
 #include "InlineLine.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {

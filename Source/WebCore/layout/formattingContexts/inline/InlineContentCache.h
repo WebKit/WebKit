@@ -30,6 +30,7 @@
 #include "InlineItem.h"
 #include "IntrinsicWidthHandler.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PendingScript.h"
 
+#include "Element.h"
 #include "PendingScriptClient.h"
 #include "ScriptElement.h"
 

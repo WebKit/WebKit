@@ -27,6 +27,10 @@
 
 #include <wtf/URL.h>
 
+namespace IPC {
+template<typename T, typename> struct ArgumentCoder;
+}
+
 namespace WebCore {
 
 class BlobPart {

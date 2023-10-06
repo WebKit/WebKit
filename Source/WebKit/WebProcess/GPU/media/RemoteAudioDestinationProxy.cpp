@@ -46,10 +46,9 @@
 
 namespace WebKit {
 
+#if PLATFORM(COCOA)
 // Allocate a ring buffer large enough to contain 2 seconds of audio.
 constexpr size_t ringBufferSizeInSecond = 2;
-
-#if PLATFORM(COCOA)
 constexpr unsigned maxAudioBufferListSampleCount = 4096;
 #endif
 

@@ -28,9 +28,13 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/TriState.h>
 
 namespace JSC {
+
+class CallFrame;
+class VM;
 
 enum class SourceTaintedOrigin : uint8_t {
     Untainted = 0,

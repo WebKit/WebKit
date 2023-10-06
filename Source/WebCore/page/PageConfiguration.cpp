@@ -40,6 +40,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DragClient.h"
 #include "EditorClient.h"
+#include "HistoryItem.h"
 #include "InspectorClient.h"
 #include "LocalFrameLoaderClient.h"
 #include "MediaRecorderProvider.h"

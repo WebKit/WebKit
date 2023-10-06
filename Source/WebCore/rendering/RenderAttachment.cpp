@@ -32,7 +32,7 @@
 #include "FloatRoundedRect.h"
 #include "FrameSelection.h"
 #include "HTMLAttachmentElement.h"
-#include "RenderBoxModelObjectInlines.h"
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"

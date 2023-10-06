@@ -41,6 +41,7 @@
 #include "PlatformXRSystem.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
+#include "RemotePageProxy.h"
 #include "RemoteWorkerType.h"
 #include "ServiceWorkerNotificationHandler.h"
 #include "SpeechRecognitionPermissionRequest.h"

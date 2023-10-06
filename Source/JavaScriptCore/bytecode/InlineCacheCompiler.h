@@ -32,6 +32,7 @@
 #include "JSFunctionInlines.h"
 #include "MacroAssembler.h"
 #include "ScratchRegisterAllocator.h"
+#include "StructureStubClearingWatchpoint.h"
 #include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
@@ -45,7 +46,6 @@ class CodeBlock;
 class PolymorphicAccess;
 class ProxyObjectAccessCase;
 class StructureStubInfo;
-class WatchpointsOnStructureStubInfo;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PolymorphicAccess);
 

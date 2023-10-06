@@ -29,6 +29,7 @@
 #include "FELightingSoftwareApplier.h"
 
 #include "FELighting.h"
+#include "Filter.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>

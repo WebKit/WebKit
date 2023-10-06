@@ -28,7 +28,7 @@
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutPoint.h"
 #include "LayoutRect.h"
-#include <wtf/ListHashSet.h>
+#include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
 

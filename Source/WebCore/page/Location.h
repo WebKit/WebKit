@@ -29,6 +29,7 @@
 #pragma once
 
 #include "DOMStringList.h"
+#include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/WeakPtr.h>

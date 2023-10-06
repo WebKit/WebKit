@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderStyleConstants.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

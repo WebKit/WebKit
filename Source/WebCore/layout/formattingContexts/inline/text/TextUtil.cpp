@@ -28,6 +28,7 @@
 
 #include "BreakLines.h"
 #include "FontCascade.h"
+#include "InlineLineTypes.h"
 #include "InlineTextItem.h"
 #include "Latin1TextIterator.h"
 #include "LayoutInlineTextBox.h"

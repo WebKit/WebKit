@@ -91,12 +91,6 @@ static constexpr auto sliderThumbBackgroundColorDark = SRGBA<uint8_t> { 210, 210
 static constexpr auto sliderThumbBackgroundHoveredColorDark = SRGBA<uint8_t> { 230, 230, 230 };
 static constexpr auto sliderThumbBackgroundDisabledColorDark = SRGBA<uint8_t> { 150, 150, 150 };
 
-#if ENABLE(VIDEO)
-static constexpr auto mediaSliderTrackBackgroundcolor = SRGBA<uint8_t> { 77, 77, 77 };
-static constexpr auto mediaSliderTrackBufferedColor = SRGBA<uint8_t> { 173, 173, 173 };
-static constexpr auto mediaSliderTrackActiveColor = SRGBA<uint8_t> { 252, 252, 252 };
-#endif
-
 static constexpr auto buttonTextColorLight = SRGBA<uint8_t> { 0, 0, 0, 204 };
 static constexpr auto buttonTextDisabledColorLight = SRGBA<uint8_t> { 0, 0, 0, 102 };
 static constexpr auto buttonTextColorDark = SRGBA<uint8_t> { 255, 255, 255 };

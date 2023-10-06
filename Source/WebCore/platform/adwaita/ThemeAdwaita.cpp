@@ -50,7 +50,6 @@ static const unsigned arrowSize = 16;
 static constexpr auto arrowColorLight = SRGBA<uint8_t> { 46, 52, 54 };
 static constexpr auto arrowColorDark = SRGBA<uint8_t> { 238, 238, 236 };
 static const int buttonFocusOffset = -2;
-static const unsigned buttonPadding = 5;
 static const int buttonBorderSize = 1; // Keep in sync with menuListButtonBorderSize in RenderThemeAdwaita.
 static const double disabledOpacity = 0.5;
 

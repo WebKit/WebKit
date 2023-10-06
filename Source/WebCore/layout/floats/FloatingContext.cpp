@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FloatingContext.h"
 
+#include "BlockFormattingContext.h"
 #include "BlockFormattingState.h"
 #include "FloatAvoider.h"
 #include "LayoutBox.h"
