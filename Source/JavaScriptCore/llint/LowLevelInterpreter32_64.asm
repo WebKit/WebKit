@@ -2297,7 +2297,7 @@ macro arrayProfileForCall(opcodeStruct, getu)
 end
 
 # t5 holds metadata.
-macro callHelper(opcodeName, slowPath, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCountIncludingThis)
+macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCountIncludingThis)
     getCallee(t3)
 
     loadConstantOrVariable(size, t3, t1, t0)
@@ -2348,7 +2348,7 @@ macro callHelper(opcodeName, slowPath, opcodeStruct, dispatchAfterCall, valuePro
     callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
 end
         
-macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, prologue, dispatchAfterCall)
+macro commonCallOp(opcodeName, opcodeStruct, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, prologue, dispatchAfterCall)
     llintOpWithMetadata(opcodeName, opcodeStruct, macro (size, get, dispatch, metadata, return)
         metadata(t5, t0)
 
@@ -2369,7 +2369,7 @@ macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, invokeCall, 
         end
         
         # t5 holds metadata
-        callHelper(opcodeName, slowPath, opcodeStruct, dispatchAfterCall, m_valueProfile, m_dst, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCount)
+        callHelper(opcodeName, opcodeStruct, dispatchAfterCall, m_valueProfile, m_dst, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCount)
     end)
 end
 
@@ -3094,7 +3094,7 @@ llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch
     end
 
     metadata(t5, t0)
-    callHelper(op_iterator_open, _llint_slow_path_iterator_open_call, OpIteratorOpen, dispatchAfterRegularCall, m_iteratorValueProfile, m_iterator, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetByIdCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
+    callHelper(op_iterator_open, OpIteratorOpen, dispatchAfterRegularCall, m_iteratorValueProfile, m_iterator, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetByIdCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
 
 .getByIdStart:
     macro storeNextAndDispatch(valueTag, valuePayload)
@@ -3156,7 +3156,7 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
 
     # Use m_value slot as a tmp since we are going to write to it later.
     metadata(t5, t0)
-    callHelper(op_iterator_next, _llint_slow_path_iterator_next_call, OpIteratorNext, dispatchAfterRegularCall, m_nextResultValueProfile, m_value, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetDoneCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
+    callHelper(op_iterator_next, OpIteratorNext, dispatchAfterRegularCall, m_nextResultValueProfile, m_value, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetDoneCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
 
 .getDoneStart:
     macro storeDoneAndJmpToGetValue(doneValueTag, doneValuePayload)

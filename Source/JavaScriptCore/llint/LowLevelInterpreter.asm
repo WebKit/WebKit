@@ -2381,21 +2381,21 @@ end)
 
 
 # we can't use callOp because we can't pass `call` as the opcode name, since it's an instruction name
-commonCallOp(op_call, _llint_slow_path_call, OpCall, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_call, OpCall, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
     arrayProfileForCall(OpCall, getu)
 end, dispatchAfterRegularCall)
 
-commonCallOp(op_construct, _llint_slow_path_construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
 end, dispatchAfterRegularCall)
 
-commonCallOp(op_tail_call, _llint_slow_path_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForPolymorphicTailCall, prepareForSlowTailCall, macro (getu, metadata)
+commonCallOp(op_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForPolymorphicTailCall, prepareForSlowTailCall, macro (getu, metadata)
     arrayProfileForCall(OpTailCall, getu)
     checkSwitchToJITForEpilogue()
     # reload metadata since checkSwitchToJITForEpilogue() might have trashed t5
     metadata(t5, t0)
 end, dispatchAfterTailCall)
 
-commonCallOp(op_call_ignore_result, _llint_slow_path_call, OpCallIgnoreResult, prepareForRegularCall, invokeForRegularCallIgnoreResult, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_call_ignore_result, OpCallIgnoreResult, prepareForRegularCall, invokeForRegularCallIgnoreResult, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
     arrayProfileForCall(OpCallIgnoreResult, getu)
 end, dispatchAfterRegularCallIgnoreResult)
 
