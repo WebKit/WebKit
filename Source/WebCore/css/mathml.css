@@ -147,6 +147,26 @@ math[display="inline" i] {
   math-style: compact;
 }
 
+/* <mrow>-like elements */
+semantics > :not(:first-child) {
+    display: none;
+}
+
+maction > :not(:first-child) {
+    display: none;
+}
+
+mphantom {
+    visibility: hidden;
+}
+
+/* This is a special style for erroneous markup. */
+/* https://w3c.github.io/mathml-core/#error-message-merror */
+merror {
+    border: 1px solid red;
+    background-color: lightYellow;
+}
+
 ms, mspace, mtext, mi, mn, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose, semantics, mpadded, maction {
     display: block;
 }
@@ -175,17 +195,6 @@ msub > mi:first-child, msubsup > mi:first-child {
 }
 msubsup > mi:first-child + * + * {
     margin-inline-start: 0.14em; /* This is larger than 0.1em because the child's font-size is smaller than the <msubsup>'s. */
-}
-
-mphantom {
-    visibility: hidden;
-}
-
-/* This is a special style for erroneous markup. */
-/* https://w3c.github.io/mathml-core/#error-message-merror */
-merror {
-    border: 1px solid red;
-    background-color: lightYellow;
 }
 
 mtable {
