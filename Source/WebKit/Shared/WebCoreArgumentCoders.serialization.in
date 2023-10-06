@@ -3722,6 +3722,7 @@ enum class WebCore::CDMSessionType : uint8_t {
     PersistentUsageRecord,
     PersistentLicense
 };
+using WebCore::CDMInstanceSession::LicenseType = WebCore::CDMSessionType;
 
 struct WebCore::CDMRestrictions {
     bool distinctiveIdentifierDenied;

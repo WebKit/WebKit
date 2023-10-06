@@ -7482,6 +7482,7 @@
 		F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		F4C627E52A7AC17300F546BF /* WKMouseInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseInteraction.mm; path = ios/WKMouseInteraction.mm; sourceTree = "<group>"; };
 		F4C627E62A7AC17400F546BF /* WKMouseInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseInteraction.h; path = ios/WKMouseInteraction.h; sourceTree = "<group>"; };
+		F4C8A13A2AC6289900B94BA6 /* DrawingAreaInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DrawingAreaInfo.serialization.in; sourceTree = "<group>"; };
 		F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMediaSourcePolicy.h; sourceTree = "<group>"; };
 		F4CBF79D2A6ADF5400C066BF /* WebEventType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebEventType.h; sourceTree = "<group>"; };
 		F4CF1E9B25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GestureRecognizerConsistencyEnforcer.h; path = ios/GestureRecognizerConsistencyEnforcer.h; sourceTree = "<group>"; };
@@ -8278,6 +8279,7 @@
 				2D7FD191223C7310007887F1 /* DocumentEditingContext.mm */,
 				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
 				0FB659221208B4DB0044816C /* DrawingAreaInfo.h */,
+				F4C8A13A2AC6289900B94BA6 /* DrawingAreaInfo.serialization.in */,
 				2D9CD5EE21FA75EE0029ACFA /* EditingRange.cpp */,
 				E105FE5318D7B9DE008F57A8 /* EditingRange.h */,
 				8CFECE931490F140002AAA32 /* EditorState.cpp */,

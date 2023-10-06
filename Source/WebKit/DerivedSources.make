@@ -506,6 +506,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/BackgroundFetchState.serialization.in \
 	Shared/DebuggableInfoData.serialization.in \
 	Shared/DisplayListArgumentCoders.serialization.in \
+	Shared/DrawingAreaInfo.serialization.in \
 	Shared/EditingRange.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
