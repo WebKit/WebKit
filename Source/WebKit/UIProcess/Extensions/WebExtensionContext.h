@@ -36,6 +36,7 @@
 #include "WebExtensionAlarm.h"
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionController.h"
+#include "WebExtensionDynamicScripts.h"
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionMatchPattern.h"
@@ -300,6 +301,8 @@ public:
     void addInjectedContent(WebUserContentControllerProxy&);
     void removeInjectedContent(WebUserContentControllerProxy&);
 
+    UserStyleSheetVector& dynamicallyInjectedUserStyleSheets() { return m_dynamicallyInjectedUserStyleSheets; };
+
     WKWebView *relatedWebView();
     WKWebViewConfiguration *webViewConfiguration();
 
@@ -422,6 +425,11 @@ private:
     void fireRuntimeStartupEventIfNeeded();
     void fireRuntimeInstalledEventIfNeeded();
 
+    // Scripting APIs
+    void scriptingExecuteScript(const WebExtensionScriptInjectionParameters&, CompletionHandler<void(std::optional<Vector<WebExtensionScriptInjectionResultParameters>>, WebExtensionDynamicScripts::Error)>&&);
+    void scriptingInsertCSS(const WebExtensionScriptInjectionParameters&, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&&);
+    void scriptingRemoveCSS(const WebExtensionScriptInjectionParameters&, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&&);
+
     // Tabs APIs
     void tabsCreate(WebPageProxyIdentifier, const WebExtensionTabParameters&, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
     void tabsUpdate(WebExtensionTabIdentifier, const WebExtensionTabParameters&, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
@@ -525,6 +533,8 @@ private:
 
     HashMap<Ref<WebExtensionMatchPattern>, UserScriptVector> m_injectedScriptsPerPatternMap;
     HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
+
+    UserStyleSheetVector m_dynamicallyInjectedUserStyleSheets;
 
     HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
     WeakHashMap<WebExtensionWindow, Ref<WebExtensionAction>> m_actionWindowMap;

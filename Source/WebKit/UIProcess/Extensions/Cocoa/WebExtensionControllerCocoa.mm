@@ -275,6 +275,14 @@ void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID
         if (!context->hasPermission(frameURL))
             continue;
 
+        for (auto& styleSheet : context->dynamicallyInjectedUserStyleSheets()) {
+            auto page = WebProcessProxy::webPage(pageID);
+            WebUserContentControllerProxy& controller = page.get()->userContentController();
+            controller.removeUserStyleSheet(styleSheet);
+        }
+
+        context->dynamicallyInjectedUserStyleSheets().clear();
+
         context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
             context->sendToProcessesForEvent(completedEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(completedEventType, pageID, frameID, frameURL));
             context->sendToProcessesForEvent(contentLoadedtype, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(contentLoadedtype, pageID, frameID, frameURL));

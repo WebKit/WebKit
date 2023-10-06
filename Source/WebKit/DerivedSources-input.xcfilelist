@@ -199,6 +199,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionAlarmParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContentWorldType.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContextParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionControllerParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionDynamicScripts.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionEventListenerType.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in

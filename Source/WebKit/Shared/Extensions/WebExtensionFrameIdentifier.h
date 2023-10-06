@@ -31,6 +31,11 @@
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/ObjectIdentifier.h>
 
+#ifdef __OBJC__
+#import "WKFrameInfoPrivate.h"
+#import "_WKFrameHandle.h"
+#endif
+
 namespace WebKit {
 
 struct WebExtensionFrameIdentifierType;
@@ -87,6 +92,18 @@ inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame&
     ASSERT(result.isValid());
     return result;
 }
+
+#ifdef __OBJC__
+inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *frameInfo)
+{
+    if (frameInfo.isMainFrame)
+        return WebExtensionFrameConstants::MainFrameIdentifier;
+
+    WebExtensionFrameIdentifier result { frameInfo._handle.frameID };
+    ASSERT(result.isValid());
+    return result;
+}
+#endif // __OBJC__
 
 inline std::optional<WebExtensionFrameIdentifier> toWebExtensionFrameIdentifier(double identifier)
 {

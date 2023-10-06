@@ -444,6 +444,8 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WCLayerTreeHostIdentifier',
         'WebKit::WebExtensionContentWorldType',
         'WebKit::WebExtensionEventListenerType',
+        'WebKit::WebExtensionScriptInjectionParameters',
+        'WebKit::WebExtensionScriptInjectionResultParameters',
         'WebKit::WebExtensionTab::ImageFormat',
         'WebKit::WebExtensionTabParameters',
         'WebKit::WebExtensionTabQueryParameters',

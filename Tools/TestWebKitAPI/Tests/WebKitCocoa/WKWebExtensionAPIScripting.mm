@@ -86,20 +86,10 @@ TEST(WKWebExtensionAPIScripting, Errors)
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 0 } }), /it must specify either 'css' or 'files'./i)",
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: '0' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
 
-
-        @"browser.test.assertSafeResolve(() => browser.scripting.executeScript({target: { tabId: 0, allFrames: false }, files: ['path/to/file'], world: 'ISOLATED' }))",
-        @"browser.test.assertSafeResolve(() => browser.scripting.executeScript({target: { tabId: 0 }, func: () => 'function' }))",
-
-        @"browser.test.assertSafeResolve(() => browser.scripting.insertCSS({target: { tabId: 0, allFrames: false }, files: ['path/to/file'] }))",
-        @"browser.test.assertSafeResolve(() => browser.scripting.insertCSS({target: { tabId: 0, frameIds: [0] }, files: ['path/to/file'] }))",
-        @"browser.test.assertSafeResolve(() => browser.scripting.insertCSS({target: { tabId: 0, allFrames: true }, css: 'body { background-color: pink }' }))",
-
-        @"browser.test.assertSafeResolve(() => browser.scripting.removeCSS({target: { tabId: 0, allFrames: false }, files: ['path/to/file'] }))",
-        @"browser.test.assertSafeResolve(() => browser.scripting.removeCSS({target: { tabId: 0, frameIds: [0] }, css: 'body { background-color: pink }' }))",
-        @"browser.test.assertSafeResolve(() => browser.scripting.removeCSS({target: { tabId: 0, allFrames: true }, css: 'body { background-color: pink }' }))",
-
         @"browser.test.notifyPass()"
     ]);
+
+    // FIXME: <https://webkit.org/b/262491> Add additional tests for insertCSS() and removeCSS().
 
     Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
 }

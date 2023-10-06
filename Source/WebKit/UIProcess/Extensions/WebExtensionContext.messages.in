@@ -65,6 +65,11 @@ messages -> WebExtensionContext {
     RuntimeSendNativeMessage(String applicationID, String messageJSON) -> (std::optional<String> replyJSON, std::optional<String> error);
     RuntimeConnectNative(String applicationID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier) -> (std::optional<String> error);
 
+    // Scripting APIs
+    ScriptingExecuteScript(WebKit::WebExtensionScriptInjectionParameters parameters) -> (std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebKit::WebExtensionDynamicScripts::Error error);
+    ScriptingInsertCSS(WebKit::WebExtensionScriptInjectionParameters parameters) -> (WebKit::WebExtensionDynamicScripts::Error error);
+    ScriptingRemoveCSS(WebKit::WebExtensionScriptInjectionParameters parameters) -> (WebKit::WebExtensionDynamicScripts::Error error);
+
     // Tabs APIs
     TabsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);
     TabsUpdate(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionTabParameters updateParameters) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);
