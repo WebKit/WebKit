@@ -334,6 +334,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
     UNUSED_PARAM(applyTrackingPrevention);
+    UNUSED_PARAM(relaxThirdPartyCookieBlocking);
 #endif
 
     auto origin = urlToSoupURI(url);
@@ -573,6 +574,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
     UNUSED_PARAM(applyTrackingPrevention);
+    UNUSED_PARAM(relaxThirdPartyCookieBlocking);
 #endif
 
     auto uri = urlToSoupURI(url);
@@ -613,6 +615,7 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
     UNUSED_PARAM(applyTrackingPrevention);
+    UNUSED_PARAM(relaxThirdPartyCookieBlocking);
 #endif
 
     auto uri = urlToSoupURI(url);

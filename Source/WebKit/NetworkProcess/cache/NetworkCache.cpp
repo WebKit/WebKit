@@ -33,6 +33,7 @@
 #include "NetworkCacheStorage.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include "WebsiteDataType.h"
 #include <WebCore/CacheValidation.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/LowPowerModeNotifier.h>
