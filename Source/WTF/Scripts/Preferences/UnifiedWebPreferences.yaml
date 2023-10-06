@@ -794,7 +794,7 @@ BeaconAPIEnabled:
 
 BlobRegistryTopOriginPartitioningEnabled:
   type: bool
-  status: preview
+  status: stable
   category: security
   humanReadableName: "Partition Blob URL Registry"
   humanReadableDescription: "Partition Blob URL Registry by Top-Level Origin"
