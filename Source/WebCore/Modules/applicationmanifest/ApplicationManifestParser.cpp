@@ -88,7 +88,9 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
     }
     parsedManifest.backgroundColor = parseColor(*manifest, "background_color"_s);
     parsedManifest.themeColor = parseColor(*manifest, "theme_color"_s);
+    parsedManifest.categories = parseCategories(*manifest);
     parsedManifest.icons = parseIcons(*manifest);
+    parsedManifest.shortcuts = parseShortcuts(*manifest);
     parsedManifest.id = parseId(*manifest, parsedManifest.startURL);
     parsedManifest.orientation = parseOrientation(*manifest);
 
@@ -219,6 +221,31 @@ String ApplicationManifestParser::parseShortName(const JSON::Object& manifest)
     return parseGenericString(manifest, "short_name"_s);
 }
 
+Vector<String> ApplicationManifestParser::parseCategories(const JSON::Object& manifest)
+{
+    auto manifestCategories = manifest.getValue("categories"_s);
+
+    Vector<String> categoryResources;
+    if (!manifestCategories)
+        return categoryResources;
+
+    auto manifestCategoriesArray = manifestCategories->asArray();
+    if (!manifestCategoriesArray) {
+        logDeveloperWarning("The value of categories is not a valid array."_s);
+        return categoryResources;
+    }
+
+    for (const auto& categoryValue : *manifestCategoriesArray) {
+        auto categoryObject = categoryValue->asString();
+        if (!categoryObject)
+            continue;
+
+        categoryResources.append(WTFMove(categoryObject));
+    }
+
+    return categoryResources;
+}
+
 Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JSON::Object& manifest)
 {
     auto manifestIcons = manifest.getValue("icons"_s);
@@ -296,6 +323,53 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
     }
 
     return imageResources;
+}
+
+Vector<ApplicationManifest::Shortcut> ApplicationManifestParser::parseShortcuts(const JSON::Object& manifest)
+{
+    auto manifestShortcuts = manifest.getValue("shortcuts"_s);
+
+    Vector<ApplicationManifest::Shortcut> shortcutResources;
+    if (!manifestShortcuts)
+        return shortcutResources;
+
+    auto manifestShortcutsArray = manifestShortcuts->asArray();
+    if (!manifestShortcutsArray) {
+        logDeveloperWarning("The value of shortcuts is not a valid array."_s);
+        return shortcutResources;
+    }
+
+    for (const auto& shortcutValue : *manifestShortcutsArray) {
+        ApplicationManifest::Shortcut currentShortcut;
+        auto shortcutObject = shortcutValue->asObject();
+        if (!shortcutObject)
+            continue;
+        const auto& shortcutJSON = *shortcutObject;
+
+        auto urlValue = shortcutJSON.getValue("url"_s);
+        if (!urlValue)
+            continue;
+        auto urlStringValue = urlValue->asString();
+        if (!urlStringValue) {
+            logManifestPropertyNotAString("url"_s);
+            continue;
+        }
+
+        URL shortcutURL(m_manifestURL, urlStringValue);
+        if (shortcutURL.isEmpty())
+            continue;
+        if (!shortcutURL.isValid()) {
+            logManifestPropertyInvalidURL("url"_s);
+            continue;
+        }
+        currentShortcut.url = WTFMove(shortcutURL);
+        currentShortcut.name = parseGenericString(shortcutJSON, "name"_s);
+        currentShortcut.icons = parseIcons(shortcutJSON);
+
+        shortcutResources.append(WTFMove(currentShortcut));
+    }
+
+    return shortcutResources;
 }
 
 static bool isInScope(const URL& scopeURL, const URL& targetURL)

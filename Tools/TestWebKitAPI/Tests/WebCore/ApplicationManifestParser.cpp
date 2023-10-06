@@ -30,6 +30,7 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ApplicationManifestParser.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
@@ -107,6 +108,30 @@ public:
     ApplicationManifest parseIconFirstTopLevelPropertyForSrc(const String& key, const String& value)
     {
         String manifestContent = "{ \"icons\": [{\"" + key + "\": " + value + " }]}";
+        return parseString(manifestContent);
+    }
+
+    ApplicationManifest parseShortcutFirstTopLevelProperty(const String& key, const String& value)
+    {
+        auto manifestContent = makeString("{ \"shortcuts\": [{\""_s, key, "\": "_s, value, ", \"url\": \"example\" }]}"_s);
+        return parseString(manifestContent);
+    }
+
+    ApplicationManifest parseShortcutFirstTopLevelPropertyForURL(const String& key, const String& value)
+    {
+        auto manifestContent = makeString("{ \"shortcuts\": [{\""_s, key, "\": "_s, value, " }]}"_s);
+        return parseString(manifestContent);
+    }
+
+    ApplicationManifest parseShortcutIconFirstTopLevelProperty(const String& key, const String& value)
+    {
+        auto manifestContent = makeString("{ \"shortcuts\": [{\"url\": \"example\", \"icons\": [{\""_s, key, "\": "_s, value, ", \"src\": \"icon/example.png\" }]}]}"_s);
+        return parseString(manifestContent);
+    }
+
+    ApplicationManifest parseShortcutIconFirstTopLevelPropertyForSrc(const String& key, const String& value)
+    {
+        auto manifestContent = makeString("{ \"shortcuts\": [{\"url\": \"example\", \"icons\": [{\""_s, key, "\": "_s, value, " }]}]}"_s);
         return parseString(manifestContent);
     }
 
@@ -207,11 +232,35 @@ public:
         EXPECT_EQ(expectedValue, value);
     }
 
+    void testCategories(const Vector<String>& expectedValue)
+    {
+        StringBuilder builder;
+        builder.append('[');
+        for (auto& value : expectedValue) {
+            if (builder.length() > 1)
+                builder.append(", "_s);
+
+            builder.append('\"');
+            builder.append(value);
+            builder.append('\"');
+        }
+        builder.append(']');
+        auto categoriesValue = builder.toString();
+        String manifestContent = makeString("{ \"categories\" : "_s, categoriesValue, " }"_s);
+        auto manifest = parseString(manifestContent);
+        auto value = manifest.categories;
+        EXPECT_EQ(expectedValue, value);
+    }
+
     void testIconsSrc(const String& rawJSON, const URL& expectedValue)
     {
         auto manifest = parseIconFirstTopLevelPropertyForSrc("src"_s, rawJSON);
         auto value = manifest.icons[0].src;
         EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+
+        auto shortcutManifest = parseShortcutIconFirstTopLevelPropertyForSrc("src"_s, rawJSON);
+        auto shortcutValue = shortcutManifest.shortcuts[0].icons[0].src;
+        EXPECT_STREQ(expectedValue.string().utf8().data(), shortcutValue.string().utf8().data());
     }
 
     void testIconsType(const String &rawJSON, const String& expectedValue)
@@ -219,6 +268,10 @@ public:
         auto manifest = parseIconFirstTopLevelProperty("type"_s, rawJSON);
         auto value = manifest.icons[0].type;
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
+
+        auto shortcutManifest = parseShortcutIconFirstTopLevelProperty("type"_s, rawJSON);
+        auto shortcutValue = shortcutManifest.shortcuts[0].icons[0].type;
+        EXPECT_STREQ(expectedValue.utf8().data(), shortcutValue.utf8().data());
     }
 
     void testIconsSizes(const String &rawJSON, size_t expectedCount, size_t testIndex, const String& expectedValue)
@@ -228,6 +281,12 @@ public:
         EXPECT_EQ(expectedCount, value.size());
         EXPECT_TRUE(testIndex < value.size());
         EXPECT_STREQ(expectedValue.utf8().data(), value[testIndex].utf8().data());
+
+        auto shortcutManifest = parseShortcutIconFirstTopLevelProperty("sizes"_s, rawJSON);
+        auto shortcutValue = shortcutManifest.shortcuts[0].icons[0].sizes;
+        EXPECT_EQ(expectedCount, shortcutValue.size());
+        EXPECT_TRUE(testIndex < shortcutValue.size());
+        EXPECT_STREQ(expectedValue.utf8().data(), shortcutValue[testIndex].utf8().data());
     }
 
     void testIconsPurposes(const String &rawJSON, OptionSet<ApplicationManifest::Icon::Purpose> expectedValues)
@@ -235,6 +294,24 @@ public:
         auto manifest = parseIconFirstTopLevelProperty("purpose"_s, rawJSON);
         auto value = manifest.icons[0].purposes;
         EXPECT_EQ(expectedValues, value);
+
+        auto shortcutManifest = parseShortcutIconFirstTopLevelProperty("purpose"_s, rawJSON);
+        auto shortcutValue = shortcutManifest.shortcuts[0].icons[0].purposes;
+        EXPECT_EQ(expectedValues, shortcutValue);
+    }
+
+    void testShortcutsURL(const String& rawJSON, const URL& expectedValue)
+    {
+        auto manifest = parseShortcutFirstTopLevelPropertyForURL("url"_s, rawJSON);
+        auto value = manifest.shortcuts[0].url;
+        EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+    }
+
+    void testShortcutsName(const String &rawJSON, const String& expectedValue)
+    {
+        auto manifest = parseShortcutFirstTopLevelProperty("name"_s, rawJSON);
+        auto value = manifest.shortcuts[0].name;
+        EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
 
     void testId(const String& rawJSON, const URL& expectedValue)
@@ -467,9 +544,9 @@ TEST_F(ApplicationManifestParserTest, Scope)
 
     // If start URL is not within scope of scope URL, return the default scope.
     testScope("\"https://example.com/subdirectory\""_s, "https://example.com/app/"_s, true);
-    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s, true);
+    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s, false);
     testScope("\"https://example.com/APP\""_s, "https://example.com/app/"_s, true);
-    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s, true);
+    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s, false);
 
     m_documentURL = URL { "https://example.com/a/b/c/index"_s };
     m_startURL = URL { "https://example.com/a/b/c/index"_s };
@@ -528,6 +605,16 @@ TEST_F(ApplicationManifestParserTest, ThemeColor)
     testThemeColor("\"hsla(0, 100%, 50%, 1)\""_s, Color::red);
 }
 
+TEST_F(ApplicationManifestParserTest, Categories)
+{
+    testCategories({ });
+    testCategories({ "health"_s });
+    testCategories({ "music"_s });
+    testCategories({ "video"_s });
+    testCategories({ "lifestyle"_s, "magazine"_s });
+    testCategories({ "books & reference"_s, "social network"_s, "education"_s });
+}
+
 TEST_F(ApplicationManifestParserTest, Whitespace)
 {
     auto manifest = parseString("  { \"name\": \"PASS\" }\n"_s);
@@ -562,6 +649,18 @@ TEST_F(ApplicationManifestParserTest, Icons)
     OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochromeAny { ApplicationManifest::Icon::Purpose::Monochrome, ApplicationManifest::Icon::Purpose::Any };
 
     testIconsPurposes("\"monochrome any\""_s, purposeMonochromeAny);
+}
+
+TEST_F(ApplicationManifestParserTest, Shortcuts)
+{
+    testShortcutsURL("\"example1\""_s, URL { "https://example.com/example1"_s });
+    testShortcutsURL("\"/example2\""_s, URL { "https://example.com/example2"_s });
+    testShortcutsURL("\"/example3/\""_s, URL { "https://example.com/example3/"_s });
+    testShortcutsURL("\"https://example.com/example4\""_s, URL { "https://example.com/example4"_s });
+
+    testShortcutsName("\"Example\""_s, "Example"_s);
+    testShortcutsName("\" \""_s, ""_s);
+    testShortcutsName("\"\""_s, ""_s);
 }
 
 #endif

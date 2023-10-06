@@ -52,7 +52,9 @@ private:
     String parseDescription(const JSON::Object&);
     String parseShortName(const JSON::Object&);
     std::optional<URL> parseScope(const JSON::Object&, const URL&, const URL&);
+    Vector<String> parseCategories(const JSON::Object&);
     Vector<ApplicationManifest::Icon> parseIcons(const JSON::Object&);
+    Vector<ApplicationManifest::Shortcut> parseShortcuts(const JSON::Object&);
     URL parseId(const JSON::Object&, const URL&);
 
     Color parseColor(const JSON::Object&, const String& propertyName);

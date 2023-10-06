@@ -31,6 +31,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -62,9 +63,6 @@ static RetainPtr<NSArray<NSNumber *>> fromPurposes(OptionSet<WebCore::Applicatio
 
 static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const WebCore::ApplicationManifest::Icon*, id arrayElement)
 {
-    if (![arrayElement isKindOfClass: _WKApplicationManifestIcon.class])
-        return std::nullopt;
-
     auto icon = dynamic_objc_cast<_WKApplicationManifestIcon>(arrayElement);
     if (!icon)
         return std::nullopt;
@@ -77,7 +75,25 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     };
 }
 
-@implementation _WKApplicationManifestIcon
+static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(const WebCore::ApplicationManifest::Shortcut*, id arrayElement)
+{
+    auto shortcut = dynamic_objc_cast<_WKApplicationManifestShortcut>(arrayElement);
+    if (!shortcut)
+        return std::nullopt;
+
+    return WebCore::ApplicationManifest::Shortcut {
+        shortcut.name,
+        shortcut.url,
+        makeVector<WebCore::ApplicationManifest::Icon>(shortcut.icons)
+    };
+}
+
+@implementation _WKApplicationManifestIcon {
+    RetainPtr<NSURL> _src;
+    RetainPtr<NSArray<NSString *>> _sizes;
+    RetainPtr<NSString> _type;
+    RetainPtr<NSArray<NSNumber *>> _purposes;
+}
 
 + (BOOL)supportsSecureCoding
 {
@@ -89,10 +105,10 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     if (!(self = [self init]))
         return nil;
 
-    _src = [[coder decodeObjectOfClass:[NSURL class] forKey:@"src"] copy];
-    _sizes = [[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"sizes"] copy];
-    _type = [[coder decodeObjectOfClass:[NSString class] forKey:@"type"] copy];
-    _purposes = [[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSNumber class]]] forKey:@"purposes"] copy];
+    _src = adoptNS([[coder decodeObjectOfClass:[NSURL class] forKey:@"src"] copy]);
+    _sizes = adoptNS([[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"sizes"] copy]);
+    _type = adoptNS([[coder decodeObjectOfClass:[NSString class] forKey:@"type"] copy]);
+    _purposes = adoptNS([[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSNumber class]]] forKey:@"purposes"] copy]);
 
     return self;
 }
@@ -103,12 +119,12 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
         return nil;
 
     if (icon) {
-        _src = [icon->src copy];
+        _src = adoptNS([icon->src copy]);
         _sizes = createNSArray(icon->sizes, [] (auto& size) -> NSString * {
             return size;
-        }).leakRef();
-        _type = [icon->type copy];
-        _purposes = fromPurposes(icon->purposes).leakRef();
+        });
+        _type = adoptNS([icon->type copy]);
+        _purposes = fromPurposes(icon->purposes);
     }
 
     return self;
@@ -116,10 +132,30 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    [coder encodeObject:_src forKey:@"src"];
-    [coder encodeObject:_sizes forKey:@"sizes"];
-    [coder encodeObject:_type forKey:@"type"];
-    [coder encodeObject:_purposes forKey:@"purposes"];
+    [coder encodeObject:_src.get() forKey:@"src"];
+    [coder encodeObject:_sizes.get() forKey:@"sizes"];
+    [coder encodeObject:_type.get() forKey:@"type"];
+    [coder encodeObject:_purposes.get() forKey:@"purposes"];
+}
+
+- (NSURL *)src
+{
+    return _src.get();
+}
+
+- (NSArray<NSString *> *)sizes
+{
+    return _sizes.get();
+}
+
+- (NSString *)type
+{
+    return _type.get();
+}
+
+- (NSArray<NSNumber *> *)purposes
+{
+    return _purposes.get();
 }
 
 - (void)dealloc
@@ -127,10 +163,76 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifestIcon.class, self))
         return;
 
-    [_src release];
-    [_sizes release];
-    [_type release];
-    [_purposes release];
+    [super dealloc];
+}
+
+@end
+
+@implementation _WKApplicationManifestShortcut {
+    RetainPtr<NSString> _name;
+    RetainPtr<NSURL> _url;
+    RetainPtr<NSArray<_WKApplicationManifestIcon *>> _icons;
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [self init]))
+        return nil;
+
+    _name = adoptNS([[coder decodeObjectOfClass:[NSString class] forKey:@"name"] copy]);
+    _url = adoptNS([[coder decodeObjectOfClass:[NSURL class] forKey:@"url"] copy]);
+    _icons = adoptNS([[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class], [NSString class]]] forKey:@"icons"] copy]);
+
+    return self;
+}
+
+- (NSString *)name
+{
+    return _name.get();
+}
+
+- (NSURL *)url
+{
+    return _url.get();
+}
+
+- (NSArray<_WKApplicationManifestIcon *> *)icons
+{
+    return _icons.get();
+}
+
+- (instancetype)initWithCoreShortcut:(const WebCore::ApplicationManifest::Shortcut *)shortcut
+{
+    if (!(self = [[_WKApplicationManifestShortcut alloc] init]))
+        return nil;
+
+    if (shortcut) {
+        _name = adoptNS([shortcut->name copy]);
+        _url = adoptNS([shortcut->url copy]);
+        _icons = createNSArray(shortcut->icons, [] (auto& icon) -> _WKApplicationManifestIcon * {
+            return [[_WKApplicationManifestIcon alloc] initWithCoreIcon:&icon];
+        });
+    }
+
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:_name.get() forKey:@"name"];
+    [coder encodeObject:_url.get() forKey:@"url"];
+    [coder encodeObject:_icons.get() forKey:@"icons"];
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifestShortcut.class, self))
+        return;
 
     [super dealloc];
 }
@@ -164,7 +266,9 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     URL manifestId = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"];
     WebCore::CocoaColor *backgroundColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color"];
     WebCore::CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
+    NSArray<NSString *> *categories = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"categories"];
     NSArray<_WKApplicationManifestIcon *> *icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
+    NSArray<_WKApplicationManifestIcon *> *shortcuts = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTFMove(rawJSON),
@@ -180,7 +284,9 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
         WTFMove(manifestId),
         WebCore::roundAndClampToSRGBALossy(backgroundColor.CGColor),
         WebCore::roundAndClampToSRGBALossy(themeColor.CGColor),
+        makeVector<String>(categories),
         makeVector<WebCore::ApplicationManifest::Icon>(icons),
+        makeVector<WebCore::ApplicationManifest::Shortcut>(shortcuts),
     };
 
     API::Object::constructInWrapper<API::ApplicationManifest>(self, WTFMove(coreApplicationManifest));
@@ -216,7 +322,9 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     [aCoder encodeObject:self.manifestId forKey:@"manifestId"];
     [aCoder encodeObject:self.backgroundColor forKey:@"background_color"];
     [aCoder encodeObject:self.themeColor forKey:@"theme_color"];
+    [aCoder encodeObject:self.categories forKey:@"categories"];
     [aCoder encodeObject:self.icons forKey:@"icons"];
+    [aCoder encodeObject:self.shortcuts forKey:@"shortcuts"];
 }
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
@@ -329,11 +437,24 @@ static NSString *nullableNSString(const WTF::String& string)
     return std::nullopt;
 }
 
+- (NSArray<NSString *> *)categories
+{
+    return createNSArray(_applicationManifest->applicationManifest().categories, [] (auto& category) -> NSString * {
+        return category;
+    }).autorelease();
+}
 
 - (NSArray<_WKApplicationManifestIcon *> *)icons
 {
     return createNSArray(_applicationManifest->applicationManifest().icons, [] (auto& coreIcon) {
         return adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&coreIcon]);
+    }).autorelease();
+}
+
+- (NSArray<_WKApplicationManifestShortcut *> *)shortcuts
+{
+    return createNSArray(_applicationManifest->applicationManifest().shortcuts, [] (auto& coreShortcut) {
+        return adoptNS([[_WKApplicationManifestShortcut alloc] initWithCoreShortcut:&coreShortcut]);
     }).autorelease();
 }
 
