@@ -682,7 +682,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @class UIContextMenuInteraction;
 @protocol UIContextMenuInteractionDelegate;
 @interface UITextInteractionAssistant (SPI)
-@property (nonatomic, readonly) UITextSelectionView *selectionView;
 @property (nonatomic, strong, readonly) UIContextMenuInteraction *contextMenuInteraction;
 @property (nonatomic, weak, readwrite) id<UIContextMenuInteractionDelegate> externalContextMenuInteractionDelegate;
 @end
@@ -699,10 +698,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)scheduleReplacementsForText:(NSString *)text;
 - (void)scheduleChineseTransliterationForText:(NSString *)text;
-
-@property (nonatomic, readonly, assign) UILongPressGestureRecognizer *forcePressGesture;
-@property (nonatomic, readonly, assign) UILongPressGestureRecognizer *loupeGesture;
-@property (nonatomic, readonly, assign) UITapGestureRecognizer *singleTapGesture;
 @end
 
 @class UIWKDocumentRequest;

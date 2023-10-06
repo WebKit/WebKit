@@ -811,12 +811,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 - (BOOL)_wk_isTapAndAHalf
 {
-    static dispatch_once_t onceToken;
-    static Class tapAndAHalfGestureRecognizerClass;
-    dispatch_once(&onceToken, ^{
-        tapAndAHalfGestureRecognizerClass = NSClassFromString(@"UITapAndAHalfRecognizer");
-    });
-    return [self isKindOfClass:tapAndAHalfGestureRecognizerClass];
+    return [NSStringFromClass(self.class) containsString:@"TapAndAHalfRecognizer"];
 }
 
 @end
@@ -2555,20 +2550,15 @@ static BOOL isBuiltInScrollViewGestureRecognizer(UIGestureRecognizer *recognizer
     return !(shouldNotPreventScrollViewGestures && isBuiltInScrollViewGestureRecognizer(preventedGestureRecognizer));
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer canBePreventedByGestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer {
-    // Don't allow the highlight to be prevented by a selection gesture. Press-and-hold on a link should highlight the link, not select it.
-    bool isForcePressGesture = NO;
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    isForcePressGesture = (preventingGestureRecognizer == _textInteractionAssistant.get().forcePressGesture);
-#endif
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer canBePreventedByGestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer
+{
+    if (preventingGestureRecognizer == _textInteractionLoupeGestureRecognizer && (preventedGestureRecognizer == _highlightLongPressGestureRecognizer || preventedGestureRecognizer == _longPressGestureRecognizer)) {
 #if PLATFORM(MACCATALYST)
-    if ((preventingGestureRecognizer == _textInteractionAssistant.get().loupeGesture) && (preventedGestureRecognizer == _highlightLongPressGestureRecognizer || preventedGestureRecognizer == _longPressGestureRecognizer || preventedGestureRecognizer == _textInteractionAssistant.get().forcePressGesture))
         return YES;
-#endif
-    
-    if ((preventingGestureRecognizer == _textInteractionAssistant.get().loupeGesture || isForcePressGesture) && (preventedGestureRecognizer == _highlightLongPressGestureRecognizer || preventedGestureRecognizer == _longPressGestureRecognizer))
+#else
         return NO;
+#endif
+    }
 
     return YES;
 }
@@ -2611,10 +2601,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 #endif
 
 #if PLATFORM(MACCATALYST)
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, [_textInteractionAssistant loupeGesture], [_textInteractionAssistant forcePressGesture]))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), [_textInteractionAssistant loupeGesture]))
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _textInteractionLoupeGestureRecognizer.get()))
         return YES;
 
     if (([gestureRecognizer isKindOfClass:[_UILookupGestureRecognizer class]] && [otherGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) || ([otherGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] && [gestureRecognizer isKindOfClass:[_UILookupGestureRecognizer class]]))
@@ -2622,11 +2609,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 #endif // PLATFORM(MACCATALYST)
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer.get() || otherGestureRecognizer == _highlightLongPressGestureRecognizer.get()) {
-        auto forcePressGesture = [_textInteractionAssistant forcePressGesture];
-        if (gestureRecognizer == forcePressGesture || otherGestureRecognizer == forcePressGesture)
-            return YES;
-
-        auto loupeGesture = [_textInteractionAssistant loupeGesture];
+        auto loupeGesture = _textInteractionLoupeGestureRecognizer.get();
         if (gestureRecognizer == loupeGesture || otherGestureRecognizer == loupeGesture)
             return YES;
 
@@ -2634,7 +2617,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             return YES;
     }
 
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), [_textInteractionAssistant singleTapGesture]))
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _textInteractionTapGestureRecognizer.get()))
         return YES;
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _nonBlockingDoubleTapGestureRecognizer.get()))
@@ -3149,7 +3132,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if (_suppressNonEditableSingleTapTextInteractionCount > 0)
                 return NO;
 
-            switch ([_textInteractionAssistant loupeGesture].state) {
+            switch ([_textInteractionLoupeGestureRecognizer state]) {
             case UIGestureRecognizerStateBegan:
             case UIGestureRecognizerStateChanged:
             case UIGestureRecognizerStateEnded: {
@@ -3485,6 +3468,28 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         // Reset the gesture recognizers in case editability has changed.
         [_textInteractionAssistant setGestureRecognizers];
     }
+
+    for (UIGestureRecognizer *gestureRecognizer in self.gestureRecognizers) {
+        auto gestureName = gestureRecognizer.name;
+        if ([gestureName isEqualToString:@"UITextInteractionNameInteractiveRefinement"])
+            _textInteractionLoupeGestureRecognizer = gestureRecognizer;
+        else if ([gestureName isEqualToString:@"UITextInteractionNameSingleTap"])
+            _textInteractionTapGestureRecognizer = gestureRecognizer;
+    }
+
+    if (!_textInteractionLoupeGestureRecognizer) {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            RELEASE_LOG_ERROR(TextInteraction, "Failed to find text interaction loupe gesture.");
+        });
+    }
+
+    if (!_textInteractionTapGestureRecognizer) {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            RELEASE_LOG_ERROR(TextInteraction, "Failed to find text interaction tap gesture.");
+        });
+    }
 }
 
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler
@@ -3721,8 +3726,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         if (strongSelf->_page->editorState().visualData->selectionGeometries.isEmpty())
             return;
 
-        if ([strongSelf->_textInteractionAssistant respondsToSelector:@selector(translate:fromRect:)])
-            [strongSelf->_textInteractionAssistant translate:string fromRect:strongSelf->_page->selectionBoundingRectInRootViewCoordinates()];
+        [strongSelf->_textInteractionAssistant translate:string fromRect:strongSelf->_page->selectionBoundingRectInRootViewCoordinates()];
     });
 }
 
@@ -4690,7 +4694,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), point, state, gestureType, std::nullopt, flags);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point, state, gestureType, std::nullopt, flags);
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
@@ -4703,7 +4707,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart withFlags:(UIWKSelectionFlags)flags
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), point, std::nullopt, std::nullopt, touch, flags);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point, std::nullopt, std::nullopt, touch, flags);
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
@@ -4716,7 +4720,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), from, gestureState, gestureType);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), from, gestureState, gestureType);
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
@@ -4946,13 +4950,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     return YES;
 }
 
-static void logTextInteractionAssistantSelectionChange(const char* methodName, UIWKTextInteractionAssistant *textInteractionAssistant, std::optional<CGPoint> location = std::nullopt, std::optional<UIGestureRecognizerState> gestureState = std::nullopt, std::optional<UIWKGestureType> gestureType = std::nullopt, std::optional<UIWKSelectionTouch> selectionTouch = std::nullopt, std::optional<UIWKSelectionFlags> selectionFlags = std::nullopt)
+static void logTextInteractionAssistantSelectionChange(const char* methodName, UIGestureRecognizer *loupeGestureRecognizer, std::optional<CGPoint> location = std::nullopt, std::optional<UIGestureRecognizerState> gestureState = std::nullopt, std::optional<UIWKGestureType> gestureType = std::nullopt, std::optional<UIWKSelectionTouch> selectionTouch = std::nullopt, std::optional<UIWKSelectionFlags> selectionFlags = std::nullopt)
 {
     TextStream selectionChangeStream(TextStream::LineMode::SingleLine);
-    selectionChangeStream << "loupeGestureState=" << toGestureRecognizerState(textInteractionAssistant.loupeGesture.state);
+    selectionChangeStream << "loupeGestureState=" << toGestureRecognizerState(loupeGestureRecognizer.state);
     if (location)
         selectionChangeStream << ", location={" << location->x << ", " << location->y << "}";
-    selectionChangeStream << ", " << "forcePressGestureState=" << toGestureRecognizerState(textInteractionAssistant.forcePressGesture.state);
 
     if (gestureState)
         selectionChangeStream << ", " << "gestureState=" << toGestureRecognizerState(*gestureState);
@@ -4977,7 +4980,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)_selectPositionAtPoint:(CGPoint)point stayingWithinFocusedElement:(BOOL)stayingWithinFocusedElement completionHandler:(void (^)(void))completionHandler
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), point);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point);
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
@@ -4990,7 +4993,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)selectPositionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction fromPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), point);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point);
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
@@ -5002,7 +5005,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)moveSelectionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction completionHandler:(void (^)(void))completionHandler
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get());
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
@@ -5014,7 +5017,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), point);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point);
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
@@ -5028,7 +5031,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)beginSelectionInDirection:(UITextDirection)direction completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get());
 
     _autocorrectionContextNeedsUpdate = YES;
     _page->beginSelectionInDirection(toWKSelectionDirection(direction), [selectionHandler = makeBlockPtr(completionHandler)] (bool endIsMoving) {
@@ -5038,7 +5041,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), point);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point);
 
     _autocorrectionContextNeedsUpdate = YES;
     auto respectSelectionAnchor = self.interactionAssistant._wk_hasFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
@@ -5049,7 +5052,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), point);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point);
 
     _autocorrectionContextNeedsUpdate = YES;
     ++_suppressNonEditableSingleTapTextInteractionCount;
@@ -8029,11 +8032,6 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     if (force || selectionDrawingInfo != _lastSelectionDrawingInfo) {
         LOG_WITH_STREAM(Selection, stream << "_updateChangedSelection " << selectionDrawingInfo);
 
-        if (_lastSelectionDrawingInfo.caretColor != selectionDrawingInfo.caretColor) {
-            // Force UIKit to update the background color of the selection caret to reflect the new -insertionPointColor.
-            [[_textInteractionAssistant selectionView] tintColorDidChange];
-        }
-
         _cachedSelectedTextRange = nil;
         _lastSelectionDrawingInfo = selectionDrawingInfo;
 
@@ -8664,7 +8662,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)shouldDeferGestureDueToImageAnalysis:(UIGestureRecognizer *)gesture
 {
-    return gesture == [_textInteractionAssistant loupeGesture] || gesture._wk_isTapAndAHalf || gesture == [_textInteractionAssistant forcePressGesture];
+    return gesture == _textInteractionLoupeGestureRecognizer || gesture._wk_isTapAndAHalf;
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
@@ -8908,7 +8906,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         if (gestureRecognizer._wk_isTapAndAHalf)
             return YES;
 
-        if (gestureRecognizer == [_textInteractionAssistant loupeGesture])
+        if (gestureRecognizer == _textInteractionLoupeGestureRecognizer)
             return YES;
         
         if (gestureRecognizer == _highlightLongPressGestureRecognizer)
@@ -9404,8 +9402,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)cancelActiveTextInteractionGestures
 {
-    [[_textInteractionAssistant loupeGesture] _wk_cancel];
-    [[_textInteractionAssistant forcePressGesture] _wk_cancel];
+    [_textInteractionLoupeGestureRecognizer _wk_cancel];
 }
 
 - (UIView *)textEffectsWindow
@@ -9675,7 +9672,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
 
 - (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
 {
-    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), point);
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point);
 
     // FIXME: Reduce to 1 message.
     [self selectPositionAtPoint:point completionHandler:^{
@@ -12113,21 +12110,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @implementation WKContentView (WKInteractionPreview)
 
-#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
-- (UIContextMenuInteraction *)textInteractionAssistantContextMenuInteraction
-{
-    return [_textInteractionAssistant respondsToSelector:@selector(contextMenuInteraction)] ? _textInteractionAssistant.get().contextMenuInteraction : nil;
-}
-#endif // HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
-
 #if USE(UICONTEXTMENU)
 - (UIContextMenuInteraction *)contextMenuInteraction
 {
-#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
-    return _contextMenuInteraction.get() ?: self.textInteractionAssistantContextMenuInteraction;
-#else
-    return _contextMenuInteraction.get();
-#endif
+    return [_textInteractionAssistant contextMenuInteraction];
 }
 #endif // USE(UICONTEXTMENU)
 
@@ -12139,15 +12125,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     if (self._shouldUseContextMenus) {
         _contextMenuHasRequestedLegacyData = NO;
-#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
-        if (self.textInteractionAssistantContextMenuInteraction)
-            _textInteractionAssistant.get().externalContextMenuInteractionDelegate = self;
-        else
-#endif
-        {
-            _contextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
-            [self addInteraction:_contextMenuInteraction.get()];
-        }
+        [_textInteractionAssistant setExternalContextMenuInteractionDelegate:self];
 
         if (id<_UIClickInteractionDriving> driver = self.webView.configuration._clickInteractionDriverForTesting)
             [self.contextMenuInteraction presentationInteraction].overrideDrivers = @[driver];
@@ -12165,14 +12143,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_unregisterPreview
 {
 #if USE(UICONTEXTMENU)
-    if (self._shouldUseContextMenus) {
-        if (!_contextMenuInteraction)
-            return;
-
-        [self removeInteraction:_contextMenuInteraction.get()];
-        _contextMenuInteraction = nil;
+    if (self._shouldUseContextMenus)
         return;
-    }
 #endif
 
     [_previewItemController setDelegate:nil];
