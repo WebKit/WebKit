@@ -508,6 +508,8 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/XR/XRSystem.serialization.in
 
+    WebProcess/GPU/GPUProcessConnectionInfo.serialization.in
+
     WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in
     WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
 

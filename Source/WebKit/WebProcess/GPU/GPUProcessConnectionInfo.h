@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ArgumentCoders.h"
 #include <optional>
 
 namespace WebKit {
@@ -40,39 +39,6 @@ struct GPUProcessConnectionInfo {
     bool hasVP9HardwareDecoder { false };
     bool hasVP9ExtensionSupport { false };
 #endif
-
-    void encode(IPC::Encoder& encoder) const
-    {
-#if HAVE(AUDIT_TOKEN)
-        encoder << auditToken;
-#endif
-#if ENABLE(VP9)
-        encoder << hasVP9HardwareDecoder;
-        encoder << hasVP9ExtensionSupport;
-#endif
-    }
-
-    static WARN_UNUSED_RETURN std::optional<GPUProcessConnectionInfo> decode(IPC::Decoder& decoder)
-    {
-#if HAVE(AUDIT_TOKEN)
-        auto auditToken = decoder.decode<std::optional<audit_token_t>>();
-#endif
-#if ENABLE(VP9)
-        auto hasVP9HardwareDecoder = decoder.decode<bool>();
-        auto hasVP9ExtensionSupport = decoder.decode<bool>();
-#endif
-        if (!decoder.isValid())
-            return std::nullopt;
-        return GPUProcessConnectionInfo {
-#if HAVE(AUDIT_TOKEN)
-            *auditToken,
-#endif
-#if ENABLE(VP9)
-            *hasVP9HardwareDecoder,
-            *hasVP9ExtensionSupport
-#endif
-        };
-    }
 };
 
 } // namespace WebKit

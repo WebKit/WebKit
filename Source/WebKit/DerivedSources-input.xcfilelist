@@ -417,6 +417,7 @@ $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionContextProxy.messages.in
 $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/FullScreen/WebFullScreenManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/GPUProcessConnection.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/GPUProcessConnectionInfo.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.messages.in
