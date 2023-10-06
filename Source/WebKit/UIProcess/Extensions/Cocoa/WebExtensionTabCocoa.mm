@@ -92,6 +92,9 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:completionHandler:)])
 {
     ASSERT([delegate conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    // Access to cache the result early, when the window is associated.
+    isPrivate();
 }
 
 WebExtensionContext* WebExtensionTab::extensionContext() const
@@ -106,7 +109,7 @@ bool WebExtensionTab::operator==(const WebExtensionTab& other) const
 
 WebExtensionTabParameters WebExtensionTab::parameters() const
 {
-    bool hasAccess = extensionHasAccess();
+    bool hasPermission = extensionHasPermission();
     auto window = this->window();
     auto index = this->index();
     auto parentTab = this->parentTab();
@@ -114,8 +117,8 @@ WebExtensionTabParameters WebExtensionTab::parameters() const
     return {
         identifier(),
 
-        hasAccess ? url() : URL { },
-        hasAccess ? title() : nullString(),
+        hasPermission ? url() : URL { },
+        hasPermission ? title() : nullString(),
 
         window ? std::optional(window->identifier()) : std::nullopt,
 
@@ -141,13 +144,13 @@ WebExtensionTabParameters WebExtensionTab::parameters() const
 
 WebExtensionTabParameters WebExtensionTab::changedParameters(OptionSet<ChangedProperties> changedProperties) const
 {
-    bool hasAccess = extensionHasAccess();
+    bool hasPermission = extensionHasPermission();
 
     return {
         std::nullopt, // identifier
 
-        changedProperties.contains(ChangedProperties::URL) ? std::optional(hasAccess ? url() : URL { }) : std::nullopt,
-        changedProperties.contains(ChangedProperties::Title) ? std::optional(hasAccess ? title() : nullString()) : std::nullopt,
+        changedProperties.contains(ChangedProperties::URL) ? std::optional(hasPermission ? url() : URL { }) : std::nullopt,
+        changedProperties.contains(ChangedProperties::Title) ? std::optional(hasPermission ? title() : nullString()) : std::nullopt,
 
         std::nullopt, // windowIdentifier
         std::nullopt, // index
@@ -173,6 +176,9 @@ WebExtensionTabParameters WebExtensionTab::changedParameters(OptionSet<ChangedPr
 
 bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, AssumeWindowMatches assumeWindowMatches, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier) const
 {
+    if (!extensionHasAccess())
+        return false;
+
     if (assumeWindowMatches == AssumeWindowMatches::No && (parameters.windowIdentifier || parameters.windowType || parameters.frontmostWindow || parameters.currentWindow)) {
         auto window = this->window();
         if (!window)
@@ -208,7 +214,7 @@ bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, 
         return false;
 
     auto url = this->url();
-    if ((parameters.urlPatterns || parameters.titlePattern) && !extensionHasAccess())
+    if ((parameters.urlPatterns || parameters.titlePattern) && !extensionHasPermission())
         return false;
 
     if (parameters.urlPatterns) {
@@ -239,6 +245,13 @@ bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, 
 
 bool WebExtensionTab::extensionHasAccess() const
 {
+    bool isPrivate = this->isPrivate();
+    return !isPrivate || (isPrivate && extensionContext()->hasAccessInPrivateBrowsing());
+}
+
+bool WebExtensionTab::extensionHasPermission() const
+{
+    ASSERT(extensionHasAccess());
     return extensionContext()->hasPermission(url(), const_cast<WebExtensionTab*>(this));
 }
 
@@ -296,15 +309,15 @@ void WebExtensionTab::setParentTab(RefPtr<WebExtensionTab> parentTab, Completion
         return;
     }
 
-    [m_delegate setParentTab:(parentTab ? parentTab->delegate() : nil) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate setParentTab:(parentTab ? parentTab->delegate() : nil) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error for setPartentTab: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error for setParentTab: %{private}@", error);
             completionHandler(error.localizedDescription);
             return;
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 WKWebView *WebExtensionTab::mainWebView() const
@@ -384,7 +397,7 @@ void WebExtensionTab::pin(CompletionHandler<void(Error)>&& completionHandler)
         return;
     }
 
-    [m_delegate pinForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate pinForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for pin: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -392,7 +405,7 @@ void WebExtensionTab::pin(CompletionHandler<void(Error)>&& completionHandler)
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::unpin(CompletionHandler<void(Error)>&& completionHandler)
@@ -402,7 +415,7 @@ void WebExtensionTab::unpin(CompletionHandler<void(Error)>&& completionHandler)
         return;
     }
 
-    [m_delegate unpinForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate unpinForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for unpin: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -410,7 +423,7 @@ void WebExtensionTab::unpin(CompletionHandler<void(Error)>&& completionHandler)
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 bool WebExtensionTab::isPinned() const
@@ -423,11 +436,21 @@ bool WebExtensionTab::isPinned() const
 
 bool WebExtensionTab::isPrivate() const
 {
+    if (m_cachedPrivate)
+        return m_private;
+
     if (!isValid())
         return false;
 
-    auto window = this->window();
-    return window ? window->isPrivate() : false;
+    auto window = this->window(SkipContainsCheck::Yes);
+    if (!window)
+        return false;
+
+    // Private can't change after the fact, so cache it for quick access and to ensure it does not change.
+    m_private = window->isPrivate();
+    m_cachedPrivate = true;
+
+    return m_private;
 }
 
 void WebExtensionTab::toggleReaderMode(CompletionHandler<void(Error)>&& completionHandler)
@@ -437,7 +460,7 @@ void WebExtensionTab::toggleReaderMode(CompletionHandler<void(Error)>&& completi
         return;
     }
 
-    [m_delegate toggleReaderModeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate toggleReaderModeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for toggleReaderMode: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -445,7 +468,7 @@ void WebExtensionTab::toggleReaderMode(CompletionHandler<void(Error)>&& completi
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 bool WebExtensionTab::isReaderModeAvailable() const
@@ -471,7 +494,7 @@ void WebExtensionTab::mute(CompletionHandler<void(Error)>&& completionHandler)
         return;
     }
 
-    [m_delegate muteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate muteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for mute: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -479,7 +502,7 @@ void WebExtensionTab::mute(CompletionHandler<void(Error)>&& completionHandler)
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::unmute(CompletionHandler<void(Error)>&& completionHandler)
@@ -489,7 +512,7 @@ void WebExtensionTab::unmute(CompletionHandler<void(Error)>&& completionHandler)
         return;
     }
 
-    [m_delegate unmuteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate unmuteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for unmute: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -497,7 +520,7 @@ void WebExtensionTab::unmute(CompletionHandler<void(Error)>&& completionHandler)
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 bool WebExtensionTab::isAudible() const
@@ -540,7 +563,7 @@ void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Er
         return;
     }
 
-    [m_delegate setZoomFactor:zoomFactor forWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate setZoomFactor:zoomFactor forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setZoomFactor: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -548,7 +571,7 @@ void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Er
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 URL WebExtensionTab::url() const
@@ -588,7 +611,7 @@ void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(NSLocale *, Err
         return;
     }
 
-    [m_delegate detectWebpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSLocale *locale, NSError *error) {
+    [m_delegate detectWebpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSLocale *locale, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for detectWebpageLocale: %{private}@", error);
             completionHandler(nil, error.localizedDescription);
@@ -597,7 +620,7 @@ void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(NSLocale *, Err
 
         THROW_UNLESS(!locale || [locale isKindOfClass:NSLocale.class], @"Object passed to completionHandler of detectWebpageLocaleForWebExtensionContext:completionHandler: is not an NSLocale");
         completionHandler(locale, std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(CocoaImage *, Error)>&& completionHandler)
@@ -643,7 +666,7 @@ void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Error)>&& completi
         return;
     }
 
-    [m_delegate loadURL:url forWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate loadURL:url forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for loadURL: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -651,7 +674,7 @@ void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Error)>&& completi
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::reload(CompletionHandler<void(Error)>&& completionHandler)
@@ -662,7 +685,7 @@ void WebExtensionTab::reload(CompletionHandler<void(Error)>&& completionHandler)
         return;
     }
 
-    [m_delegate reloadForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate reloadForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for reload: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -670,7 +693,7 @@ void WebExtensionTab::reload(CompletionHandler<void(Error)>&& completionHandler)
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::reloadFromOrigin(CompletionHandler<void(Error)>&& completionHandler)
@@ -681,7 +704,7 @@ void WebExtensionTab::reloadFromOrigin(CompletionHandler<void(Error)>&& completi
         return;
     }
 
-    [m_delegate reloadFromOriginForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate reloadFromOriginForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for reloadFromOrigin: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -689,7 +712,7 @@ void WebExtensionTab::reloadFromOrigin(CompletionHandler<void(Error)>&& completi
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::goBack(CompletionHandler<void(Error)>&& completionHandler)
@@ -700,7 +723,7 @@ void WebExtensionTab::goBack(CompletionHandler<void(Error)>&& completionHandler)
         return;
     }
 
-    [m_delegate goBackForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate goBackForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for goBack: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -708,7 +731,7 @@ void WebExtensionTab::goBack(CompletionHandler<void(Error)>&& completionHandler)
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::goForward(CompletionHandler<void(Error)>&& completionHandler)
@@ -719,7 +742,7 @@ void WebExtensionTab::goForward(CompletionHandler<void(Error)>&& completionHandl
         return;
     }
 
-    [m_delegate goForwardForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate goForwardForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for goForward: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -727,7 +750,7 @@ void WebExtensionTab::goForward(CompletionHandler<void(Error)>&& completionHandl
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandler)
@@ -737,7 +760,7 @@ void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandle
         return;
     }
 
-    [m_delegate activateForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate activateForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for activate: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -745,7 +768,7 @@ void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandle
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::select(CompletionHandler<void(Error)>&& completionHandler)
@@ -755,7 +778,7 @@ void WebExtensionTab::select(CompletionHandler<void(Error)>&& completionHandler)
         return;
     }
 
-    [m_delegate selectForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate selectForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for select: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -763,7 +786,7 @@ void WebExtensionTab::select(CompletionHandler<void(Error)>&& completionHandler)
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::deselect(CompletionHandler<void(Error)>&& completionHandler)
@@ -773,7 +796,7 @@ void WebExtensionTab::deselect(CompletionHandler<void(Error)>&& completionHandle
         return;
     }
 
-    [m_delegate deselectForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate deselectForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for deselect: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -781,7 +804,7 @@ void WebExtensionTab::deselect(CompletionHandler<void(Error)>&& completionHandle
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&& completionHandler)
@@ -817,7 +840,7 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
     duplicateOptions.desiredWindow = window ? window->delegate() : nil;
     duplicateOptions.desiredIndex = index;
 
-    [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:duplicateOptions completionHandler:^(id<_WKWebExtensionTab> duplicatedTab, NSError *error) {
+    [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:duplicateOptions completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for duplicate: %{private}@", error);
             completionHandler(nullptr, error.localizedDescription);
@@ -831,7 +854,7 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
 
         THROW_UNLESS([duplicatedTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object passed to completionHandler of duplicateForWebExtensionContext:withOptions:completionHandler: does not conform to the _WKWebExtensionTab protocol");
         completionHandler(m_extensionContext->getOrCreateTab(duplicatedTab), std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
@@ -841,7 +864,7 @@ void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
         return;
     }
 
-    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for tab close: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -849,7 +872,7 @@ void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType, MainWebViewOnly mainWebViewOnly) const

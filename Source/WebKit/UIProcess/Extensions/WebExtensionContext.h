@@ -139,6 +139,7 @@ public:
     enum class WindowIsClosing : bool { No, Yes };
     enum class ReloadFromOrigin : bool { No, Yes };
     enum class UserTriggered : bool { No, Yes };
+    enum class IgnoreExtensionAccess : bool { No, Yes };
 
     enum class Error : uint8_t {
         Unknown = 1,
@@ -217,6 +218,9 @@ public:
     bool requestedOptionalAccessToAllHosts() const { return m_requestedOptionalAccessToAllHosts; }
     void setRequestedOptionalAccessToAllHosts(bool requested) { m_requestedOptionalAccessToAllHosts = requested; }
 
+    bool hasAccessInPrivateBrowsing() const { return m_hasAccessInPrivateBrowsing; }
+    void setHasAccessInPrivateBrowsing(bool hasAccess) { m_hasAccessInPrivateBrowsing = hasAccess; }
+
     void grantPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
     void denyPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
 
@@ -251,17 +255,17 @@ public:
     void clearCachedPermissionStates();
 
     Ref<WebExtensionWindow> getOrCreateWindow(_WKWebExtensionWindow *);
-    RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier, std::optional<WebPageProxyIdentifier> = std::nullopt);
+    RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier, std::optional<WebPageProxyIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
 
     Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *);
-    RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier);
-    RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt);
+    RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
+    RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
 
     WindowVector openWindows() const;
     TabMapValueIterator openTabs() const { return m_tabMap.values(); }
 
-    RefPtr<WebExtensionWindow> focusedWindow();
-    RefPtr<WebExtensionWindow> frontmostWindow();
+    RefPtr<WebExtensionWindow> focusedWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No);
+    RefPtr<WebExtensionWindow> frontmostWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No);
 
     void didOpenWindow(const WebExtensionWindow&);
     void didCloseWindow(const WebExtensionWindow&);
@@ -512,6 +516,7 @@ private:
     RetainPtr<NSMapTable> m_temporaryTabPermissionMatchPatterns;
 
     bool m_requestedOptionalAccessToAllHosts { false };
+    bool m_hasAccessInPrivateBrowsing { false };
 #ifdef NDEBUG
     bool m_testingMode { false };
 #else

@@ -39,6 +39,7 @@
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionWindow.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -112,6 +113,9 @@ WebExtensionWindowParameters WebExtensionWindow::minimalParameters() const
 
 bool WebExtensionWindow::matches(OptionSet<TypeFilter> filter) const
 {
+    if (!extensionHasAccess())
+        return false;
+
     switch (type()) {
     case Type::Normal:
         return filter.contains(TypeFilter::Normal);
@@ -123,6 +127,9 @@ bool WebExtensionWindow::matches(OptionSet<TypeFilter> filter) const
 
 bool WebExtensionWindow::matches(const WebExtensionTabQueryParameters& parameters, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier) const
 {
+    if (!extensionHasAccess())
+        return false;
+
     if (parameters.windowIdentifier && identifier() != parameters.windowIdentifier.value())
         return false;
 
@@ -142,6 +149,12 @@ bool WebExtensionWindow::matches(const WebExtensionTabQueryParameters& parameter
     }
 
     return true;
+}
+
+bool WebExtensionWindow::extensionHasAccess() const
+{
+    bool isPrivate = this->isPrivate();
+    return !isPrivate || (isPrivate && extensionContext()->hasAccessInPrivateBrowsing());
 }
 
 WebExtensionWindow::TabVector WebExtensionWindow::tabs() const
@@ -274,7 +287,7 @@ void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHan
         return;
     }
 
-    [m_delegate setWindowState:toAPI(state) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate setWindowState:toAPI(state) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setWindowState: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -282,7 +295,7 @@ void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHan
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 bool WebExtensionWindow::isFocused() const
@@ -308,7 +321,7 @@ void WebExtensionWindow::focus(CompletionHandler<void(Error)>&& completionHandle
         return;
     }
 
-    [m_delegate focusForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate focusForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window focus: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -316,15 +329,22 @@ void WebExtensionWindow::focus(CompletionHandler<void(Error)>&& completionHandle
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 bool WebExtensionWindow::isPrivate() const
 {
+    if (m_cachedPrivate)
+        return m_private;
+
     if (!isValid() || !m_respondsToIsUsingPrivateBrowsing)
         return false;
 
-    return [m_delegate isUsingPrivateBrowsingForWebExtensionContext:m_extensionContext->wrapper()];
+    // Private can't change after the fact, so cache it for quick access and to ensure it does not change.
+    m_private = [m_delegate isUsingPrivateBrowsingForWebExtensionContext:m_extensionContext->wrapper()];
+    m_cachedPrivate = true;
+
+    return m_private;
 }
 
 CGRect WebExtensionWindow::normalizedFrame() const
@@ -366,7 +386,7 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Error)>&&
 
     frame = CGRectStandardize(frame);
 
-    [m_delegate setFrame:frame forWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate setFrame:frame forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setFrame: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -374,7 +394,7 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Error)>&&
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 CGRect WebExtensionWindow::screenFrame() const
@@ -392,7 +412,7 @@ void WebExtensionWindow::close(CompletionHandler<void(Error)>&& completionHandle
         return;
     }
 
-    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window close: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -400,7 +420,7 @@ void WebExtensionWindow::close(CompletionHandler<void(Error)>&& completionHandle
         }
 
         completionHandler(std::nullopt);
-    }];
+    }).get()];
 }
 
 } // namespace WebKit

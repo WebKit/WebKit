@@ -93,6 +93,8 @@ public:
     bool matches(OptionSet<TypeFilter>) const;
     bool matches(const WebExtensionTabQueryParameters&, std::optional<WebPageProxyIdentifier> = std::nullopt) const;
 
+    bool extensionHasAccess() const;
+
     TabVector tabs() const;
     RefPtr<WebExtensionTab> activeTab() const;
 
@@ -128,6 +130,8 @@ private:
     WebExtensionWindowIdentifier m_identifier;
     WeakPtr<WebExtensionContext> m_extensionContext;
     WeakObjCPtr<_WKWebExtensionWindow> m_delegate;
+    mutable bool m_private : 1 { false };
+    mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToTabs : 1 { false };
     bool m_respondsToActiveTab : 1 { false };
     bool m_respondsToWindowType : 1 { false };

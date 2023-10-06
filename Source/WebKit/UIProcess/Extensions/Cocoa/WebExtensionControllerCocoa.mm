@@ -157,8 +157,9 @@ void WebExtensionController::addPage(WebPageProxy& page)
 
     Ref pool = page.process().processPool();
     addProcessPool(pool);
+
     Ref controller = page.userContentController();
-    addUserContentController(controller);
+    addUserContentController(controller, page.websiteDataStore().isPersistent() ? ForPrivateBrowsing::No : ForPrivateBrowsing::Yes);
 }
 
 void WebExtensionController::removePage(WebPageProxy& page)
@@ -168,6 +169,7 @@ void WebExtensionController::removePage(WebPageProxy& page)
 
     Ref pool = page.process().processPool();
     removeProcessPool(pool);
+
     Ref controller = page.userContentController();
     removeUserContentController(controller);
 }
@@ -199,9 +201,12 @@ void WebExtensionController::removeProcessPool(WebProcessPool& processPool)
     m_processPools.remove(processPool);
 }
 
-void WebExtensionController::addUserContentController(WebUserContentControllerProxy& userContentController)
+void WebExtensionController::addUserContentController(WebUserContentControllerProxy& userContentController, ForPrivateBrowsing forPrivateBrowsing)
 {
-    if (!m_userContentControllers.add(userContentController))
+    if (forPrivateBrowsing == ForPrivateBrowsing::No)
+        m_allNonPrivateUserContentControllers.add(userContentController);
+
+    if (!m_allUserContentControllers.add(userContentController))
         return;
 
     for (auto& context : m_extensionContexts)
@@ -219,7 +224,8 @@ void WebExtensionController::removeUserContentController(WebUserContentControlle
     for (auto& context : m_extensionContexts)
         context->removeInjectedContent(userContentController);
 
-    m_userContentControllers.remove(userContentController);
+    m_allNonPrivateUserContentControllers.remove(userContentController);
+    m_allUserContentControllers.remove(userContentController);
 }
 
 RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const WebExtension& extension) const

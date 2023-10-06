@@ -1184,7 +1184,7 @@ Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWi
     return window.releaseNonNull();
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier)
+RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (!isValid(identifier))
         return nullptr;
@@ -1193,12 +1193,12 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
 
     if (isCurrent(identifier)) {
         if (webPageProxyIdentifier) {
-            if (auto tab = getTab(webPageProxyIdentifier.value()))
+            if (auto tab = getTab(webPageProxyIdentifier.value(), std::nullopt, ignoreExtensionAccess))
                 result = tab->window();
         }
 
         if (!result)
-            result = frontmostWindow();
+            result = frontmostWindow(ignoreExtensionAccess);
     } else
         result = m_windowMap.get(identifier);
 
@@ -1220,6 +1220,9 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
         return nullptr;
     }
 
+    if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !result->extensionHasAccess())
+        return nullptr;
+
     return result;
 }
 
@@ -1240,27 +1243,30 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
     return tab.releaseNonNull();
 }
 
-RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier)
+RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier, IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (!isValid(identifier))
         return nullptr;
 
-    auto* tab = m_tabMap.get(identifier);
-    if (!tab) {
+    auto* result = m_tabMap.get(identifier);
+    if (!result) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu was not found", identifier.toUInt64());
         return nullptr;
     }
 
-    if (!tab->isValid()) {
+    if (!result->isValid()) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", identifier.toUInt64());
         m_tabMap.remove(identifier);
         return nullptr;
     }
 
-    return tab;
+    if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !result->extensionHasAccess())
+        return nullptr;
+
+    return result;
 }
 
-RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> identifier)
+RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> identifier, IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (identifier)
         return getTab(identifier.value());
@@ -1291,6 +1297,9 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
         m_tabMap.remove(result->identifier());
         return nullptr;
     }
+
+    if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !result->extensionHasAccess())
+        return nullptr;
 
     return result;
 }
@@ -1328,23 +1337,21 @@ void WebExtensionContext::populateWindowsAndTabs()
 WebExtensionContext::WindowVector WebExtensionContext::openWindows() const
 {
     return WTF::compactMap(m_openWindowIdentifiers, [&](auto& identifier) -> RefPtr<WebExtensionWindow> {
-        if (auto window = m_windowMap.get(identifier))
-            return window;
-        return nullptr;
+        return m_windowMap.get(identifier);
     });
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow()
+RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (m_focusedWindowIdentifier)
-        return getWindow(m_focusedWindowIdentifier.value());
+        return getWindow(m_focusedWindowIdentifier.value(), std::nullopt, ignoreExtensionAccess);
     return nullptr;
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow()
+RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow(IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (!m_openWindowIdentifiers.isEmpty())
-        return getWindow(m_openWindowIdentifiers.first());
+        return getWindow(m_openWindowIdentifiers.first(), std::nullopt, ignoreExtensionAccess);
     return nullptr;
 }
 
@@ -1364,7 +1371,7 @@ void WebExtensionContext::didOpenWindow(const WebExtensionWindow& window)
     // Request the tabs here so they will be registered and populate openTabs().
     window.tabs();
 
-    if (!isLoaded())
+    if (!isLoaded() || !window.extensionHasAccess())
         return;
 
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnCreated, window.parameters());
@@ -1389,7 +1396,7 @@ void WebExtensionContext::didCloseWindow(const WebExtensionWindow& window)
     for (auto& tab : window.tabs())
         didCloseTab(tab, WindowIsClosing::Yes);
 
-    if (!isLoaded())
+    if (!isLoaded() || !window.extensionHasAccess())
         return;
 
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnRemoved, window.minimalParameters());
@@ -1412,7 +1419,7 @@ void WebExtensionContext::didFocusWindow(WebExtensionWindow* window)
         m_openWindowIdentifiers.insert(0, window->identifier());
     }
 
-    if (!isLoaded())
+    if (!isLoaded() || (window && !window->extensionHasAccess()))
         return;
 
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnFocusChanged, window ? std::optional(window->minimalParameters()) : std::nullopt);
@@ -1426,7 +1433,7 @@ void WebExtensionContext::didOpenTab(const WebExtensionTab& tab)
 
     RELEASE_LOG_DEBUG(Extensions, "Opened tab %{public}llu", tab.identifier().toUInt64());
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     fireTabsCreatedEventIfNeeded(tab.parameters());
@@ -1444,7 +1451,7 @@ void WebExtensionContext::didCloseTab(const WebExtensionTab& tab, WindowIsClosin
 
     m_tabMap.remove(tab.identifier());
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     auto window = tab.window(WebExtensionTab::SkipContainsCheck::Yes);
@@ -1464,7 +1471,7 @@ void WebExtensionContext::didActivateTab(const WebExtensionTab& tab, const WebEx
 
     RELEASE_LOG_DEBUG(Extensions, "Activated tab %{public}llu", tab.identifier().toUInt64());
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     auto window = tab.window();
@@ -1482,7 +1489,7 @@ void WebExtensionContext::didSelectOrDeselectTabs(const TabSet& tabs)
         ASSERT(tab->extensionContext() == this);
 
         auto window = tab->window();
-        if (!window)
+        if (!window || !window->extensionHasAccess())
             continue;
 
         windowToTabs.ensure(window->identifier(), [&] {
@@ -1520,7 +1527,7 @@ void WebExtensionContext::didMoveTab(const WebExtensionTab& tab, size_t oldIndex
     else
         RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu to index %{public}zu (in same window)", tab.identifier().toUInt64(), oldIndex);
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     auto window = tab.window();
@@ -1540,7 +1547,7 @@ void WebExtensionContext::didReplaceTab(const WebExtensionTab& oldTab, const Web
 
     RELEASE_LOG_DEBUG(Extensions, "Replaced tab %{public}llu with tab %{public}llu", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
 
-    if (!isLoaded())
+    if (!isLoaded() || !newTab.extensionHasAccess())
         return;
 
     fireTabsReplacedEventIfNeeded(oldTab.identifier(), newTab.identifier());
@@ -1552,7 +1559,7 @@ void WebExtensionContext::didChangeTabProperties(const WebExtensionTab& tab, Opt
 
     RELEASE_LOG_DEBUG(Extensions, "Changed tab properties (%{public}X) for tab %{public}llu", properties.toRaw(), tab.identifier().toUInt64());
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     fireTabsUpdatedEventIfNeeded(tab.parameters(), tab.changedParameters(properties));
@@ -2121,7 +2128,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         [baseExcludeMatchPatternsSet addObjectsFromArray:deniedEntry.key->expandedStrings()];
     }
 
-    auto allUserContentControllers = extensionController()->allUserContentControllers();
+    auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
 
     for (auto& injectedContentData : injectedContents) {
         NSMutableSet<NSString *> *includeMatchPatternsSet = [NSMutableSet set];
@@ -2183,7 +2190,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             auto userScript = API::UserScript::create(WebCore::UserScript { scriptString, URL { m_baseURL, scriptPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectionTime, injectedFrames, waitForNotification }, executionWorld);
             originInjectedScripts.append(userScript);
 
-            for (auto& userContentController : allUserContentControllers)
+            for (auto& userContentController : userContentControllers)
                 userContentController.addUserScript(userScript, InjectUserScriptImmediately::Yes);
         }
 
@@ -2195,7 +2202,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, WebCore::UserStyleUserLevel, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
 
-            for (auto& userContentController : allUserContentControllers)
+            for (auto& userContentController : userContentControllers)
                 userContentController.addUserStyleSheet(userStyleSheet);
         }
     }
@@ -2219,7 +2226,10 @@ void WebExtensionContext::removeInjectedContent()
     if (!isLoaded())
         return;
 
+    // Use all user content controllers in case the extension was briefly allowed in private browsing
+    // and content was injected into any of those content controllers.
     auto allUserContentControllers = extensionController()->allUserContentControllers();
+
     for (auto& userContentController : allUserContentControllers) {
         for (auto& entry : m_injectedScriptsPerPatternMap) {
             for (auto& userScript : entry.value)
@@ -2261,6 +2271,8 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
     if (originInjectedScripts.isEmpty() && originInjectedStyleSheets.isEmpty())
         return;
 
+    // Use all user content controllers in case the extension was briefly allowed in private browsing
+    // and content was injected into any of those content controllers.
     auto allUserContentControllers = extensionController()->allUserContentControllers();
 
     for (auto& userContentController : allUserContentControllers) {

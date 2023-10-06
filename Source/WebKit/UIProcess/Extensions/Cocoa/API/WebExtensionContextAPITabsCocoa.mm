@@ -92,7 +92,7 @@ void WebExtensionContext::tabsCreate(WebPageProxyIdentifier webPageProxyIdentifi
     if (parameters.url)
         creationOptions.desiredURL = parameters.url.value();
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:^(id<_WKWebExtensionTab> newTab, NSError *error) {
+    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new tab: %{private}@", error);
             completionHandler(std::nullopt, error.localizedDescription);
@@ -107,7 +107,7 @@ void WebExtensionContext::tabsCreate(WebPageProxyIdentifier webPageProxyIdentifi
         THROW_UNLESS([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionTab protocol");
 
         completionHandler(getOrCreateTab(newTab)->parameters(), std::nullopt);
-    }];
+    }).get()];
 }
 
 void WebExtensionContext::tabsUpdate(WebExtensionTabIdentifier tabIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
@@ -381,7 +381,7 @@ void WebExtensionContext::tabsCaptureVisibleTab(WebPageProxyIdentifier webPagePr
         return;
     }
 
-    if (!activeTab->extensionHasAccess()) {
+    if (!activeTab->extensionHasPermission()) {
         completionHandler({ }, toErrorString(@"tabs.captureVisibleTab()", nil, @"either the 'activeTab' permission or granted host permissions for the current website are required"));
         return;
     }

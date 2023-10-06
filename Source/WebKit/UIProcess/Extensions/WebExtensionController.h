@@ -75,6 +75,8 @@ public:
     using WebPageProxySet = WeakHashSet<WebPageProxy>;
     using UserContentControllerProxySet = WeakHashSet<WebUserContentControllerProxy>;
 
+    enum class ForPrivateBrowsing { No, Yes };
+
     WebExtensionControllerConfiguration& configuration() const { return m_configuration.get(); }
     WebExtensionControllerIdentifier identifier() const { return m_identifier; }
     WebExtensionControllerParameters parameters() const;
@@ -96,7 +98,12 @@ public:
     void removePage(WebPageProxy&);
 
     WebPageProxySet allPages() const { return m_pages; }
-    UserContentControllerProxySet allUserContentControllers() const { return m_userContentControllers; }
+
+    // Includes both regular and private browsing content controllers.
+    UserContentControllerProxySet allUserContentControllers() const { return m_allUserContentControllers; }
+
+    // Excludes private browsing content controllers.
+    UserContentControllerProxySet allNonPrivateUserContentControllers() const { return m_allNonPrivateUserContentControllers; }
 
     WebProcessPoolSet allProcessPools() const { return m_processPools; }
     WebProcessProxySet allProcesses() const;
@@ -122,7 +129,7 @@ private:
     void addProcessPool(WebProcessPool&);
     void removeProcessPool(WebProcessPool&);
 
-    void addUserContentController(WebUserContentControllerProxy&);
+    void addUserContentController(WebUserContentControllerProxy&, ForPrivateBrowsing);
     void removeUserContentController(WebUserContentControllerProxy&);
 
     // Web Navigation
@@ -138,7 +145,8 @@ private:
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;
     WebPageProxySet m_pages;
     WebProcessPoolSet m_processPools;
-    UserContentControllerProxySet m_userContentControllers;
+    UserContentControllerProxySet m_allUserContentControllers;
+    UserContentControllerProxySet m_allNonPrivateUserContentControllers;
     WebExtensionURLSchemeHandlerMap m_registeredSchemeHandlers;
     bool m_freshlyCreated { true };
 };

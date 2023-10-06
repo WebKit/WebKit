@@ -74,7 +74,12 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*! @abstract Indicates whether the new window should be focused. */
 @property (nonatomic, readonly) BOOL shouldFocus;
 
-/*! @abstract Indicates whether the new window should be using private browsing. */
+/*!
+ @abstract Indicates whether the new window should be using private browsing.
+ @note To ensure proper isolation between private and non-private browsing, web views associated with private browsing windows must
+ use a different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
+ website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
+ */
 @property (nonatomic, readonly) BOOL shouldUsePrivateBrowsing;
 
 @end
