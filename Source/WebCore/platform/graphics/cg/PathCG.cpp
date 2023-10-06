@@ -126,7 +126,7 @@ void PathCG::addArc(const FloatPoint& center, float radius, float startAngle, fl
 void PathCG::addEllipse(const FloatPoint& center, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection direction)
 {
     AffineTransform transform;
-    transform.translate(center.x(), center.y()).rotate(rad2deg(rotation)).scale(radiusX, radiusY);
+    transform.translate(center.x(), center.y()).rotateRadians(rotation).scale(radiusX, radiusY);
 
     CGAffineTransform cgTransform = transform;
     // CG coordinates system increases the angle in the anticlockwise direction.

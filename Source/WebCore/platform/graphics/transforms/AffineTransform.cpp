@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Google Inc.  All rights reserved.
  *               2010 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -128,7 +129,11 @@ AffineTransform& AffineTransform::multiply(const AffineTransform& other)
 AffineTransform& AffineTransform::rotate(double a)
 {
     // angle is in degree. Switch to radian
-    a = deg2rad(a);
+    return rotateRadians(deg2rad(a));
+}
+
+AffineTransform& AffineTransform::rotateRadians(double a)
+{
     double cosAngle = cos(a);
     double sinAngle = sin(a);
     AffineTransform rot(cosAngle, sinAngle, -sinAngle, cosAngle, 0, 0);
@@ -187,7 +192,7 @@ AffineTransform& AffineTransform::translate(const FloatSize& t)
 
 AffineTransform& AffineTransform::rotateFromVector(double x, double y)
 {
-    return rotate(rad2deg(atan2(y, x)));
+    return rotateRadians(atan2(y, x));
 }
 
 AffineTransform& AffineTransform::flipX()
@@ -408,7 +413,7 @@ bool AffineTransform::decompose(DecomposedType& decomp) const
     double angle = atan2(m.b(), m.a());
     
     // Remove rotation from matrix
-    m.rotate(rad2deg(-angle));
+    m.rotateRadians(-angle);
     
     // Return results    
     decomp.scaleX = sx;
@@ -432,7 +437,7 @@ void AffineTransform::recompose(const DecomposedType& decomp)
     this->setD(decomp.remainderD);
     this->setE(decomp.translateX);
     this->setF(decomp.translateY);
-    this->rotate(rad2deg(decomp.angle));
+    this->rotateRadians(decomp.angle);
     this->scale(decomp.scaleX, decomp.scaleY);
 }
 

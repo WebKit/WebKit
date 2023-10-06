@@ -195,7 +195,7 @@ ExceptionOr<void> CanvasPath::ellipse(float x, float y, float radiusX, float rad
 
     if ((!radiusX && !radiusY) || startAngle == endAngle) {
         AffineTransform transform;
-        transform.translate(x, y).rotate(rad2deg(rotation));
+        transform.translate(x, y).rotateRadians(rotation);
 
         lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(startAngle), radiusY * sinf(startAngle))));
         return { };
@@ -203,7 +203,7 @@ ExceptionOr<void> CanvasPath::ellipse(float x, float y, float radiusX, float rad
 
     if (!radiusX || !radiusY) {
         AffineTransform transform;
-        transform.translate(x, y).rotate(rad2deg(rotation));
+        transform.translate(x, y).rotateRadians(rotation);
 
         lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(startAngle), radiusY * sinf(startAngle))));
 
