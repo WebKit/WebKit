@@ -299,7 +299,6 @@
     "web-platform-tests/html/semantics/forms": "import",
     "web-platform-tests/html/semantics/forms/textfieldselection/select-event.html": "skip",
     "web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText.html": "skip",
-    "web-platform-tests/html/semantics/forms/the-textarea-element": "import",
     "web-platform-tests/html/semantics/interactive-elements/the-details-element": "import",
     "web-platform-tests/html/semantics/interactive-elements/the-dialog-element": "import",
     "web-platform-tests/html/semantics/interactive-elements/the-summary-element": "skip",
