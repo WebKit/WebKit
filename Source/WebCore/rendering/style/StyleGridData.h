@@ -99,7 +99,7 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return m_columns == o.m_columns && m_rows == o.m_rows && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow && alignTracks == o.alignTracks && justifyTracks == o.justifyTracks;
+        return m_columns == o.m_columns && m_rows == o.m_rows && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow;
     }
 
     void setRows(const GridTrackList&);
@@ -142,9 +142,6 @@ public:
 
     unsigned gridAutoFlow : GridAutoFlowBits;
     MasonryAutoFlow masonryAutoFlow;
-
-    Vector<StyleContentAlignmentData> alignTracks;
-    Vector<StyleContentAlignmentData> justifyTracks;
 
     Vector<GridTrackSize> gridAutoRows;
     Vector<GridTrackSize> gridAutoColumns;

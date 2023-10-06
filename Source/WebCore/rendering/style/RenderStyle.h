@@ -770,8 +770,6 @@ public:
     inline size_t namedGridAreaRowCount() const;
     inline size_t namedGridAreaColumnCount() const;
     inline GridAutoFlow gridAutoFlow() const;
-    inline const Vector<StyleContentAlignmentData>& alignTracks() const;
-    inline const Vector<StyleContentAlignmentData>& justifyTracks() const;
     inline MasonryAutoFlow masonryAutoFlow() const;
     inline bool gridSubgridRows() const;
     inline bool gridSubgridColumns() const;
@@ -1398,8 +1396,6 @@ public:
     inline void setGridItemRowStart(const GridPosition&);
     inline void setGridItemRowEnd(const GridPosition&);
 
-    inline void setAlignTracks(Vector<StyleContentAlignmentData>);
-    inline void setJustifyTracks(Vector<StyleContentAlignmentData>);
     inline void setMasonryAutoFlow(MasonryAutoFlow);
 
     inline void setMarqueeIncrement(Length&&);
@@ -1984,8 +1980,6 @@ public:
     static constexpr AutoRepeatType initialGridAutoRepeatType();
 
     static constexpr GridAutoFlow initialGridAutoFlow();
-    static inline Vector<StyleContentAlignmentData> initialAlignTracks();
-    static inline Vector<StyleContentAlignmentData> initialJustifyTracks();
     static constexpr MasonryAutoFlow initialMasonryAutoFlow();
 
     static inline Vector<GridTrackSize> initialGridAutoColumns();

@@ -700,7 +700,7 @@ block-axis
 single
 multiple
 
-// align-content / align-tracks
+// align-content
 flex-start
 flex-end
 // center
@@ -718,7 +718,7 @@ first-baseline
 last-baseline
 // stretch
 
-// justify-content / justify-tracks
+// justify-content
 // start
 // end
 // flex-start
