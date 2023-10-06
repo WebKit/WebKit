@@ -316,7 +316,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         return;
 
     Ref webPage = m_webPage.get();
-    if (auto* page = webPage->corePage(); page && !page->rootFrames().computeSize())
+    if (!webPage->hasRootFrames())
         return;
 
     scaleViewToFitDocumentIfNeeded();
