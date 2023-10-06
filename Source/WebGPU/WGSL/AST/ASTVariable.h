@@ -33,6 +33,7 @@
 #include "ASTVariableQualifier.h"
 
 namespace WGSL {
+class RewriteGlobalVariables;
 class TypeChecker;
 struct Type;
 
@@ -47,7 +48,9 @@ enum class VariableFlavor : uint8_t {
 
 class Variable final : public Declaration {
     WGSL_AST_BUILDER_NODE(Variable);
+    friend RewriteGlobalVariables;
     friend TypeChecker;
+
 public:
     using Ref = std::reference_wrapper<Variable>;
     using List = ReferenceWrapperVector<Variable>;

@@ -1267,6 +1267,11 @@ static void emitAtomicExchange(FunctionDefinitionWriter* writer, AST::CallExpres
     atomicFunction("atomic_exchange_explicit", writer, call);
 }
 
+static void emitArrayLength(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(".size()");
+}
 
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
@@ -1299,6 +1304,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
+            { "arrayLength", emitArrayLength },
             { "atomicAdd", emitAtomicAdd },
             { "atomicExchange", emitAtomicExchange },
             { "atomicLoad", emitAtomicLoad },

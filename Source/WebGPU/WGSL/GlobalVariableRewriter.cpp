@@ -110,6 +110,7 @@ private:
     void packResource(AST::Variable&);
     void packArrayResource(AST::Variable&, const Types::Array*);
     void packStructResource(AST::Variable&, const Types::Struct*);
+    bool containsRuntimeArray(const Type*);
     const Type* packType(const Type*);
     const Type* packStructType(const Types::Struct*);
     const Type* packArrayType(const Types::Array*);
@@ -422,6 +423,37 @@ auto RewriteGlobalVariables::getPacking(AST::UnaryExpression& expression) -> Pac
 
 auto RewriteGlobalVariables::getPacking(AST::CallExpression& call) -> Packing
 {
+    if (is<AST::IdentifierExpression>(call.target())) {
+        auto& target = downcast<AST::IdentifierExpression>(call.target());
+        if (target.identifier() == "arrayLength"_s) {
+            ASSERT(call.arguments().size() == 1);
+            const auto& getBase = [&](auto&& getBase, AST::Expression& expression) -> AST::Expression& {
+                if (is<AST::IdentityExpression>(expression))
+                    return getBase(getBase, downcast<AST::IdentityExpression>(expression).expression());
+                if (is<AST::UnaryExpression>(expression))
+                    return getBase(getBase, downcast<AST::UnaryExpression>(expression).expression());
+                if (is<AST::FieldAccessExpression>(expression))
+                    return getBase(getBase, downcast<AST::FieldAccessExpression>(expression).base());
+                if (is<AST::IdentifierExpression>(expression))
+                    return expression;
+                RELEASE_ASSERT_NOT_REACHED();
+            };
+            auto& base = getBase(getBase, call.arguments()[0]);
+            ASSERT(is<AST::IdentifierExpression>(base));
+            auto& identifier = downcast<AST::IdentifierExpression>(base).identifier();
+            ASSERT(m_globals.contains(identifier));
+            auto lengthName = makeString("__", identifier, "_ArrayLength");
+            auto& length = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+                SourceSpan::empty(),
+                AST::Identifier::make(lengthName)
+            );
+            length.m_inferredType = m_callGraph.ast().types().u32Type();
+            m_callGraph.ast().replace(call, length);
+            visit(base); // we also need to mark the array as read
+            return getPacking(length);
+        }
+    }
+
     for (auto& argument : call.arguments())
         pack(Packing::Unpacked, argument);
     return Packing::Unpacked;
@@ -447,6 +479,7 @@ auto RewriteGlobalVariables::packingForType(const Type* type) -> Packing
 void RewriteGlobalVariables::collectGlobals()
 {
     auto& globalVars = m_callGraph.ast().variables();
+    Vector<std::tuple<AST::Variable*, unsigned>> bufferLengths;
     for (auto& globalVar : globalVars) {
         std::optional<unsigned> group;
         std::optional<unsigned> binding;
@@ -479,6 +512,45 @@ void RewriteGlobalVariables::collectGlobals()
             auto result = m_groupBindingMap.add(resource->group, Vector<std::pair<unsigned, String>>());
             result.iterator->value.append({ resource->binding, globalVar.name() });
             packResource(globalVar);
+
+            if (containsRuntimeArray(globalVar.maybeReferenceType()->inferredType()))
+                bufferLengths.append({ &globalVar, *group });
+        }
+    }
+
+    if (!bufferLengths.isEmpty()) {
+        auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
+        type.m_inferredType = m_callGraph.ast().types().u32Type();
+        auto& referenceType = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeExpression>(
+            SourceSpan::empty(),
+            type
+        );
+        referenceType.m_inferredType = m_callGraph.ast().types().referenceType(AddressSpace::Handle, m_callGraph.ast().types().u32Type(), AccessMode::Read);
+
+        for (const auto& [variable, group] : bufferLengths) {
+            auto name = AST::Identifier::make(makeString("__", variable->name(), "_ArrayLength"));
+            auto& lengthVariable = m_callGraph.ast().astBuilder().construct<AST::Variable>(
+                SourceSpan::empty(),
+                AST::VariableFlavor::Var,
+                AST::Identifier::make(name),
+                &type,
+                nullptr
+            );
+            lengthVariable.m_referenceType = &referenceType;
+
+            auto it = m_groupBindingMap.find(group);
+            ASSERT(it != m_groupBindingMap.end());
+
+            auto binding = it->value.last().first + 1;
+            auto result = m_globals.add(name, Global {
+                { {
+                    group,
+                    binding,
+                } },
+                &lengthVariable
+            });
+            ASSERT_UNUSED(result, result.isNewEntry);
+            it->value.append({ binding, name });
         }
     }
 }
@@ -561,6 +633,17 @@ void RewriteGlobalVariables::updateReference(AST::Variable& global, AST::Express
     m_callGraph.ast().replace(reference, packedTypeReference);
 }
 
+bool RewriteGlobalVariables::containsRuntimeArray(const Type* type)
+{
+    if (auto* referenceType = std::get_if<Types::Reference>(type))
+        return containsRuntimeArray(referenceType->element);
+    if (auto* structType = std::get_if<Types::Struct>(type))
+        return containsRuntimeArray(structType->structure.members().last().type().inferredType());
+    if (auto* arrayType = std::get_if<Types::Array>(type))
+        return !arrayType->size.has_value();
+    return false;
+}
+
 const Type* RewriteGlobalVariables::packType(const Type* type)
 {
     if (auto* structType = std::get_if<Types::Struct>(type))
@@ -615,9 +698,12 @@ const Type* RewriteGlobalVariables::packArrayType(const Types::Array* arrayType)
     if (!structType)
         return nullptr;
 
+    const Type* packedStructType = packStructType(structType);
+    if (!packedStructType)
+        return nullptr;
+
     m_callGraph.ast().setUsesUnpackArray();
     m_callGraph.ast().setUsesPackArray();
-    const Type* packedStructType = packStructType(structType);
     return m_callGraph.ast().types().arrayType(packedStructType, arrayType->size);
 }
 
