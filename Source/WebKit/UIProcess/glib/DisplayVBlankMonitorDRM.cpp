@@ -30,7 +30,10 @@
 
 #include "Logging.h"
 #include <WebCore/PlatformDisplay.h>
+#include <chrono>
+#include <errno.h>
 #include <fcntl.h>
+#include <thread>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <xf86drm.h>
@@ -212,7 +215,19 @@ bool DisplayVBlankMonitorDRM::waitForVBlank() const
     vblank.request.type = static_cast<drmVBlankSeqType>(DRM_VBLANK_RELATIVE | m_crtcBitmask);
     vblank.request.sequence = 1;
     vblank.request.signal = 0;
-    return !drmWaitVBlank(m_fd.value(), &vblank);
+    auto ret = drmWaitVBlank(m_fd.value(), &vblank);
+    if (ret == -EPERM) {
+        // This can happen when the monitor is suspended and the web view hasn't noticed it.
+        // The display link should be stopped in those cases, but since it isn't, we can at
+        // least sleep for a while pretending the monitor is on.
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        return true;
+    }
+    if (ret) {
+        drmError(ret, "DisplayVBlankMonitorDRM");
+        return false;
+    }
+    return true;
 }
 
 } // namespace WebKit
