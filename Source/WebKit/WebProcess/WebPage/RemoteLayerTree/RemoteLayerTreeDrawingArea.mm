@@ -55,6 +55,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/WorkQueue.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -65,13 +66,12 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     : DrawingArea(DrawingAreaType::RemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(makeUnique<RemoteLayerTreeContext>(webPage))
     , m_updateRenderingTimer(*this, &RemoteLayerTreeDrawingArea::updateRendering)
+    , m_commitQueue(WorkQueue::create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", WorkQueue::QOS::UserInteractive))
     , m_backingStoreFlusher(BackingStoreFlusher::create(*WebProcess::singleton().parentProcessConnection()))
     , m_scheduleRenderingTimer(*this, &RemoteLayerTreeDrawingArea::scheduleRenderingUpdateTimerFired)
     , m_preferredFramesPerSecond(DefaultPreferredFramesPerSecond)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
-
-    m_commitQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr));
 
     if (auto viewExposedRect = parameters.viewExposedRect)
         setViewExposedRect(viewExposedRect);
@@ -397,7 +397,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     m_backingStoreFlusher->markHasPendingFlush();
 
     auto pageID = webPage->identifier();
-    dispatch_async(m_commitQueue.get(), makeBlockPtr([backingStoreFlusher = m_backingStoreFlusher, commitEncoder = WTFMove(commitEncoder), flushers = WTFMove(flushers), pageID] () mutable {
+    m_commitQueue->dispatch([backingStoreFlusher = m_backingStoreFlusher, commitEncoder = WTFMove(commitEncoder), flushers = WTFMove(flushers), pageID] () mutable {
         backingStoreFlusher->flush(WTFMove(commitEncoder), WTFMove(flushers));
 
         RunLoop::main().dispatch([pageID] () mutable {
@@ -408,7 +408,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
                 }
             }
         });
-    }).get());
+    });
 }
 
 void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
