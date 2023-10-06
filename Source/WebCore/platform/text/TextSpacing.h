@@ -76,4 +76,24 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& val
     }
     return ts;
 }
+
+enum class TextSpacingSupportedLanguage : uint8_t {
+    NotSupported,
+    Japanese,
+    SimplifiedChinese,
+    TraditionalChinese
+};
+
+TextSpacingSupportedLanguage inline localeToTextSpacingSupportedLanguage(const AtomString& locale)
+{
+    if (!(locale.startsWith("zh"_s) || locale.startsWith("wuu"_s) || locale.startsWith("yue"_s) || locale.startsWith("ja"_s)))
+        return TextSpacingSupportedLanguage::NotSupported;
+    if (locale == "zh-Hans"_s || locale == "wuu-Hans"_s || locale == "yue-Hans"_s)
+        return TextSpacingSupportedLanguage::SimplifiedChinese;
+    if (locale == "zh-Hant"_s || locale == "yue-Hant"_s || locale == "wuu-Hant"_s)
+        return TextSpacingSupportedLanguage::TraditionalChinese;
+    if (locale == "ja"_s)
+        return TextSpacingSupportedLanguage::Japanese;
+    return  TextSpacingSupportedLanguage::NotSupported;
+}
 } // namespace WebCore
