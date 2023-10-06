@@ -31,4 +31,12 @@ enum class PlatformXR::SessionFeature : uint8_t {
     HandTracking,
 #endif
 };
+
+struct WebKit::XRDeviceInfo {
+    WebKit::XRDeviceIdentifier identifier;
+    bool supportsOrientationTracking;
+    bool supportsStereoRendering;
+    PlatformXR::Device::FeatureList vrFeatures;
+    WebCore::IntSize recommendedResolution;
+};
 #endif
