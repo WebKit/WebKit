@@ -35,8 +35,19 @@ namespace WebCore {
 
 struct KeypressCommand {
     KeypressCommand() { }
-    explicit KeypressCommand(const String& commandName) : commandName(commandName) { ASSERT(isASCIILower(commandName[0U])); }
-    KeypressCommand(const String& commandName, const String& text) : commandName(commandName), text(text) { ASSERT(commandName == "insertText:"_s); }
+
+    explicit KeypressCommand(const String& commandName)
+        : commandName(commandName)
+    {
+        ASSERT(isASCIILower(commandName[0U]));
+    }
+
+    KeypressCommand(const String& commandName, const String& text)
+        : commandName(commandName)
+        , text(text)
+    {
+        ASSERT(commandName == "insertText:"_s || text.isEmpty());
+    }
 
     String commandName; // Actually, a selector name - it may have a trailing colon, and a name that can be different from an editor command name.
     String text;

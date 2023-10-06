@@ -6457,3 +6457,10 @@ header: <WebCore/GraphicsContextState.h>
 
     WebCore::GraphicsContextState::Purpose m_purpose;
 };
+
+#if PLATFORM(COCOA)
+struct WebCore::KeypressCommand {
+    String commandName;
+    String text;
+}
+#endif
