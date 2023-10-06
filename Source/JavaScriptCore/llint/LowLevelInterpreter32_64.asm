@@ -1451,6 +1451,9 @@ llintOpWithReturn(op_typeof_is_undefined, OpTypeofIsUndefined, macro (size, get,
 end)
 
 
+slowPathOp(typeof_is_function)
+
+
 llintOpWithReturn(op_is_boolean, OpIsBoolean, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariableTag(size, t1, t0)
