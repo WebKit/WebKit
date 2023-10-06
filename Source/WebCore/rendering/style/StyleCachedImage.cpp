@@ -88,14 +88,14 @@ URL StyleCachedImage::reresolvedURL(const Document& document) const
     return m_cssValue->reresolvedURL(document);
 }
 
-LegacyRenderSVGResourceContainer* StyleCachedImage::uncheckedRenderSVGResource(TreeScope& treeScope, const AtomString& fragment) const
+RenderSVGResourceContainer* StyleCachedImage::uncheckedRenderSVGResource(TreeScope& treeScope, const AtomString& fragment) const
 {
     auto renderSVGResource = ReferencedSVGResources::referencedRenderResource(treeScope, fragment);
     m_isRenderSVGResource = renderSVGResource != nullptr;
     return renderSVGResource;
 }
 
-LegacyRenderSVGResourceContainer* StyleCachedImage::uncheckedRenderSVGResource(const RenderElement* renderer) const
+RenderSVGResourceContainer* StyleCachedImage::uncheckedRenderSVGResource(const RenderElement* renderer) const
 {
     if (!renderer)
         return nullptr;
@@ -125,7 +125,7 @@ LegacyRenderSVGResourceContainer* StyleCachedImage::uncheckedRenderSVGResource(c
     return uncheckedRenderSVGResource(rootElement->treeScopeForSVGReferences(), fragmentIdentifier.toAtomString());
 }
 
-LegacyRenderSVGResourceContainer* StyleCachedImage::renderSVGResource(const RenderElement* renderer) const
+RenderSVGResourceContainer* StyleCachedImage::renderSVGResource(const RenderElement* renderer) const
 {
     if (m_isRenderSVGResource && !*m_isRenderSVGResource)
         return nullptr;

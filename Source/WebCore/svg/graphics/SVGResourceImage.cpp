@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-Ref<SVGResourceImage> SVGResourceImage::create(LegacyRenderSVGResourceContainer& renderResource, const URL& reresolvedURL)
+Ref<SVGResourceImage> SVGResourceImage::create(RenderSVGResourceContainer& renderResource, const URL& reresolvedURL)
 {
     return adoptRef(*new SVGResourceImage(renderResource, reresolvedURL));
 }
 
-SVGResourceImage::SVGResourceImage(LegacyRenderSVGResourceContainer& renderResource, const URL& reresolvedURL)
+SVGResourceImage::SVGResourceImage(RenderSVGResourceContainer& renderResource, const URL& reresolvedURL)
     : m_renderResource(renderResource)
     , m_reresolvedURL(reresolvedURL)
 {

@@ -28,6 +28,8 @@
 
 #include "FilterOperations.h"
 #include "PathOperation.h"
+#include "RenderSVGResourceClipper.h"
+#include "RenderSVGResourceContainer.h"
 #include "RenderStyle.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -162,7 +164,7 @@ RenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(Tree
     return getRenderSVGResourceById<RenderSVGResourceClipper>(treeScope, clipPath.fragment());
 }
 
-LegacyRenderSVGResourceContainer* ReferencedSVGResources::referencedRenderResource(TreeScope& treeScope, const AtomString& fragment)
+RenderSVGResourceContainer* ReferencedSVGResources::referencedRenderResource(TreeScope& treeScope, const AtomString& fragment)
 {
     if (fragment.isEmpty())
         return nullptr;
