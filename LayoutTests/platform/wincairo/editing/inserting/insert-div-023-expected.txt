@@ -24,41 +24,41 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > P > BODY > HTML > #document to 1 of #text > B > P > BODY > HTML > #document toDOMRange:range from 1 of #text > B > P > BODY > HTML > #document to 1 of #text > B > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 785x685
+layer at (0,0) size 785x678
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x685
-  RenderBlock {HTML} at (0,0) size 785x685
-    RenderBody {BODY} at (8,8) size 769x653
-      RenderBlock (anonymous) at (0,0) size 769x84
-        RenderText {#text} at (0,0) size 764x55
+layer at (0,0) size 785x678
+  RenderBlock {HTML} at (0,0) size 785x678
+    RenderBody {BODY} at (8,8) size 769x646
+      RenderBlock (anonymous) at (0,0) size 769x81
+        RenderText {#text} at (0,0) size 764x53
           text run at (0,0) width 764: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line "
-          text run at (0,28) width 344: "2\" should be bold. Fix for this bug: "
-        RenderInline {A} at (0,0) size 260x27 [color=#0000EE]
-          RenderText {#text} at (344,28) size 260x27
-            text run at (344,28) width 260: "<rdar://problem/3939523>"
-        RenderText {#text} at (604,28) size 755x55
-          text run at (604,28) width 151: " in some cases, "
-          text run at (0,56) width 543: "text does not retain style info after pressing return twice"
-      RenderBlock {DIV} at (0,84) size 769x12
-      RenderBlock {P} at (0,120) size 769x56 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 55x27
+          text run at (0,27) width 344: "2\" should be bold. Fix for this bug: "
+        RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
+          RenderText {#text} at (344,27) size 260x26
+            text run at (344,27) width 260: "<rdar://problem/3939523>"
+        RenderText {#text} at (604,27) size 755x53
+          text run at (604,27) width 151: " in some cases, "
+          text run at (0,54) width 543: "text does not retain style info after pressing return twice"
+      RenderBlock {DIV} at (0,81) size 769x12
+      RenderBlock {P} at (0,117) size 769x55 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 55x26
           text run at (14,14) width 55: "line 1"
-      RenderBlock {P} at (0,200) size 769x56 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x27 [bgcolor=#008000]
-      RenderBlock {P} at (0,280) size 769x55 [border: (2px solid #0000FF)]
+      RenderBlock {P} at (0,196) size 769x55 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
+      RenderBlock {P} at (0,275) size 769x55 [border: (2px solid #0000FF)]
         RenderInline {B} at (0,0) size 56x26
           RenderText {#text} at (14,14) size 56x26
             text run at (14,14) width 56: "line 2"
-      RenderBlock {P} at (0,359) size 769x55 [border: (2px solid #0000FF)]
+      RenderBlock {P} at (0,354) size 769x55 [border: (2px solid #0000FF)]
         RenderInline {B} at (0,0) size 0x26
           RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
-      RenderBlock {P} at (0,438) size 769x55 [border: (2px solid #0000FF)]
+      RenderBlock {P} at (0,433) size 769x55 [border: (2px solid #0000FF)]
         RenderInline {B} at (0,0) size 12x26
           RenderText {#text} at (14,14) size 12x26
             text run at (14,14) width 12: "x"
-      RenderBlock {P} at (0,517) size 769x56 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x27 [bgcolor=#008000]
-      RenderBlock {P} at (0,597) size 769x56 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 55x27
+      RenderBlock {P} at (0,512) size 769x55 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
+      RenderBlock {P} at (0,591) size 769x55 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 55x26
           text run at (14,14) width 55: "line 3"
 caret: position 1 of child 0 {#text} of child 0 {B} of child 11 {P} of body

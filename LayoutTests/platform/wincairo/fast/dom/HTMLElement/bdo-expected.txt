@@ -3,45 +3,45 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 110x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 110x17
           text run at (0,0) width 110: "Tests: the bdo tag"
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 328x19
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 328x17
           text run at (0,0) width 328: "The bdo element overrides the default text direction."
-      RenderBlock {P} at (0,72) size 784x40
-        RenderText {#text} at (0,0) size 761x39
+      RenderBlock {P} at (0,68) size 784x36
+        RenderText {#text} at (0,0) size 761x35
           text run at (0,0) width 726: "If successful, the first sentence would be backward, and the second sentence regular. There should then be an extra "
           text run at (726,0) width 35: "blank"
-          text run at (0,20) width 697: "line, followed by a line reading only \"A,\" and finally, a sentence where only the word \"umbrella\" is backward."
-      RenderBlock (anonymous) at (0,138) size 784x120
-        RenderBR {BR} at (0,0) size 0x19
-        RenderInline {BDO} at (0,0) size 221x19
-          RenderText {#text} at (0,20) size 221x19
-            text run at (0,20) width 221 RTL: "This sentence should be backward."
+          text run at (0,18) width 697: "line, followed by a line reading only \"A,\" and finally, a sentence where only the word \"umbrella\" is backward."
+      RenderBlock (anonymous) at (0,130) size 784x108
+        RenderBR {BR} at (0,0) size 0x17
+        RenderInline {BDO} at (0,0) size 221x17
+          RenderText {#text} at (0,18) size 221x17
+            text run at (0,18) width 221 RTL: "This sentence should be backward."
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (221,20) size 0x19
-        RenderInline {BDO} at (0,0) size 209x19
-          RenderText {#text} at (0,40) size 209x19
-            text run at (0,40) width 209: "This sentence should be forward."
+        RenderBR {BR} at (221,18) size 0x17
+        RenderInline {BDO} at (0,0) size 209x17
+          RenderText {#text} at (0,36) size 209x17
+            text run at (0,36) width 209: "This sentence should be forward."
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (209,40) size 0x19
-        RenderInline {BDO} at (0,0) size 0x19
+        RenderBR {BR} at (209,36) size 0x17
+        RenderInline {BDO} at (0,0) size 0x17
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (0,60) size 0x19
-        RenderInline {BDO} at (0,0) size 11x19
-          RenderText {#text} at (0,80) size 11x19
-            text run at (0,80) width 11 RTL: "A"
+        RenderBR {BR} at (0,54) size 0x17
+        RenderInline {BDO} at (0,0) size 11x17
+          RenderText {#text} at (0,72) size 11x17
+            text run at (0,72) width 11 RTL: "A"
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (11,80) size 0x19
-        RenderInline {BDO} at (0,0) size 290x19
-          RenderText {#text} at (0,100) size 26x19
-            text run at (0,100) width 26: "My "
-          RenderInline {BDO} at (0,0) size 55x19
-            RenderText {#text} at (26,100) size 55x19
-              text run at (26,100) width 55 RTL: "umbrella"
-          RenderText {#text} at (81,100) size 209x19
-            text run at (81,100) width 209: " sure would be useful in this rain."
+        RenderBR {BR} at (11,72) size 0x17
+        RenderInline {BDO} at (0,0) size 290x17
+          RenderText {#text} at (0,90) size 26x17
+            text run at (0,90) width 26: "My "
+          RenderInline {BDO} at (0,0) size 55x17
+            RenderText {#text} at (26,90) size 55x17
+              text run at (26,90) width 55 RTL: "umbrella"
+          RenderText {#text} at (81,90) size 209x17
+            text run at (81,90) width 209: " sure would be useful in this rain."
         RenderText {#text} at (0,0) size 0x0
-layer at (8,136) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,128) size 784x2 [color=#808080] [border: (1px inset #808080)]
+layer at (8,128) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,120) size 784x2 [color=#808080] [border: (1px inset #808080)]

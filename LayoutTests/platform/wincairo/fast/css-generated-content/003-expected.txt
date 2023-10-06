@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x20
-        RenderBlock (floating) at (0,0) size 14x54
-          RenderText at (0,1) size 14x52
+      RenderBlock {DIV} at (0,0) size 784x18
+        RenderBlock (floating) at (0,0) size 14x52
+          RenderText at (0,1) size 14x50
             text run at (0,1) width 14: "I"
-        RenderText {#text} at (14,0) size 451x19
+        RenderText {#text} at (14,0) size 451x17
           text run at (14,0) width 451: "n an attempt to lose some weight, I have switched computing platforms."

@@ -51,11 +51,11 @@ layer at (0,0) size 800x600
             text run at (99,69) width 304: "Only selected content should get deleted. "
             text run at (403,69) width 341: "Surrounding content that is not selected should"
             text run at (0,90) width 201: "(obviously) not be affected."
-      RenderBlock {DIV} at (0,251) size 784x32 [border: (2px solid #008000)]
-        RenderText {#text} at (2,2) size 45x27
+      RenderBlock {DIV} at (0,251) size 784x31 [border: (2px solid #008000)]
+        RenderText {#text} at (2,2) size 45x26
           text run at (2,2) width 45: "after"
-      RenderBlock {DIV} at (0,293) size 784x32
-        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 45x27
+      RenderBlock {DIV} at (0,292) size 784x31
+        RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 45x26
             text run at (2,2) width 45: "after"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body

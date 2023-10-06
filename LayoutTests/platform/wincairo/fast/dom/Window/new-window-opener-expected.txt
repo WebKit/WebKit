@@ -7,33 +7,33 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Scrollbar
 PASS newWin.scrollbars.visible is true
-PASS newWin.scrollbars.visible is false
+FAIL newWin.scrollbars.visible should be false. Was true.
 PASS newWin.scrollbars.visible is true
-PASS newWin.scrollbars.visible is false
+FAIL newWin.scrollbars.visible should be false. Was true.
 
 Toolbar
-FAIL newWin.toolbar.visible should be true. Was false.
-PASS newWin.toolbar.visible is false
-FAIL newWin.toolbar.visible should be true. Was false.
-PASS newWin.toolbar.visible is false
+PASS newWin.toolbar.visible is true
+FAIL newWin.toolbar.visible should be false. Was true.
+PASS newWin.toolbar.visible is true
+FAIL newWin.toolbar.visible should be false. Was true.
 
 Statusbar
-FAIL newWin.statusbar.visible should be true. Was false.
-PASS newWin.statusbar.visible is false
-FAIL newWin.statusbar.visible should be true. Was false.
-PASS newWin.statusbar.visible is false
+PASS newWin.statusbar.visible is true
+FAIL newWin.statusbar.visible should be false. Was true.
+PASS newWin.statusbar.visible is true
+FAIL newWin.statusbar.visible should be false. Was true.
 
 Menubar
-FAIL newWin.menubar.visible should be true. Was false.
-PASS newWin.menubar.visible is isMenubarAlwaysExpected
-FAIL newWin.menubar.visible should be true. Was false.
-PASS newWin.menubar.visible is isMenubarAlwaysExpected
+PASS newWin.menubar.visible is true
+FAIL newWin.menubar.visible should be false. Was true.
+PASS newWin.menubar.visible is true
+FAIL newWin.menubar.visible should be false. Was true.
 
 Locationbar
-FAIL newWin.locationbar.visible should be true. Was false.
-PASS newWin.locationbar.visible is false
-FAIL newWin.locationbar.visible should be true. Was false.
-PASS newWin.locationbar.visible is false
+PASS newWin.locationbar.visible is true
+FAIL newWin.locationbar.visible should be false. Was true.
+PASS newWin.locationbar.visible is true
+FAIL newWin.locationbar.visible should be false. Was true.
 PASS successfullyParsed is true
 
 TEST COMPLETE

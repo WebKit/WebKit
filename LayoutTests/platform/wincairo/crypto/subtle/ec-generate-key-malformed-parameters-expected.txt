@@ -23,7 +23,7 @@ PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable
 PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["deriveBits"]) rejected promise  with SyntaxError: A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["wrapKey"]) rejected promise  with SyntaxError: A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["unwrapKey"]) rejected promise  with SyntaxError: A required parameter was missing or out-of-range.
-FAIL crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-521"}, extractable, ["deriveKey"]) should reject promise. Resolved with [object Object].
+PASS crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-523"}, extractable, ["deriveKey"]) rejected promise  with NotSupportedError: The algorithm is not supported.
 PASS successfullyParsed is true
 
 TEST COMPLETE

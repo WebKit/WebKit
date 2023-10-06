@@ -1,45 +1,45 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600 layerType: background only
-layer at (10,10) size 620x318
-  RenderBlock (positioned) zI: -1 {DIV} at (10,10) size 620x318
-    RenderBlock {DIV} at (10,10) size 600x298 [color=#00FF00]
+layer at (10,10) size 620x312
+  RenderBlock (positioned) zI: -1 {DIV} at (10,10) size 620x312
+    RenderBlock {DIV} at (10,10) size 600x292 [color=#00FF00]
       RenderText {#text} at (0,4) size 612x36
         text run at (0,4) width 612: "xxxxxxxxxxxxxxxxx"
       RenderBR {BR} at (612,4) size 0x36
-      RenderText {#text} at (0,47) size 612x36
-        text run at (0,47) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (612,47) size 0x36
-      RenderText {#text} at (0,90) size 612x36
-        text run at (0,90) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (612,90) size 0x36
-      RenderText {#text} at (0,133) size 612x36
-        text run at (0,133) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (612,133) size 0x36
-      RenderText {#text} at (0,176) size 612x36
-        text run at (0,176) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (612,176) size 0x36
-      RenderText {#text} at (0,219) size 612x36
-        text run at (0,219) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (612,219) size 0x36
-      RenderText {#text} at (0,262) size 612x36
-        text run at (0,262) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (612,262) size 0x36
+      RenderText {#text} at (0,46) size 612x36
+        text run at (0,46) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (612,46) size 0x36
+      RenderText {#text} at (0,88) size 612x36
+        text run at (0,88) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (612,88) size 0x36
+      RenderText {#text} at (0,130) size 612x36
+        text run at (0,130) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (612,130) size 0x36
+      RenderText {#text} at (0,172) size 612x36
+        text run at (0,172) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (612,172) size 0x36
+      RenderText {#text} at (0,214) size 612x36
+        text run at (0,214) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (612,214) size 0x36
+      RenderText {#text} at (0,256) size 612x36
+        text run at (0,256) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (612,256) size 0x36
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (10,10) size 620x315
-  RenderBlock (positioned) {DIV} at (10,10) size 620x315
-    RenderBlock {DIV} at (10,10) size 600x158
-      RenderText {#text} at (0,16) size 594x141
+layer at (10,10) size 620x309
+  RenderBlock (positioned) {DIV} at (10,10) size 620x309
+    RenderBlock {DIV} at (10,10) size 600x154
+      RenderText {#text} at (0,16) size 594x137
         text run at (0,16) width 594: "This header should be centered"
-        text run at (0,101) width 310: "in the grid lines."
-    RenderBlock {DIV} at (10,167) size 600x138
-      RenderText {#text} at (0,35) size 101x15
-        text run at (0,35) width 101: "This text should snap"
-      RenderBR {BR} at (101,35) size 0x15
-      RenderText {#text} at (0,78) size 113x15
+        text run at (0,99) width 310: "in the grid lines."
+    RenderBlock {DIV} at (10,163) size 600x136
+      RenderText {#text} at (0,36) size 101x14
+        text run at (0,36) width 101: "This text should snap"
+      RenderBR {BR} at (101,36) size 0x14
+      RenderText {#text} at (0,78) size 113x14
         text run at (0,78) width 113: "to a 36px font-size grid."
-      RenderBR {BR} at (113,78) size 0x15
-      RenderText {#text} at (0,121) size 245x15
-        text run at (0,121) width 245: "There should be lots of spacing between these lines."
+      RenderBR {BR} at (113,78) size 0x14
+      RenderText {#text} at (0,120) size 245x14
+        text run at (0,120) width 245: "There should be lots of spacing between these lines."
