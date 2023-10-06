@@ -58,9 +58,3 @@ int WKWebPushToolMain(int argc, char** argv)
     return -1;
 #endif
 }
-
-int WKExtensionMain(int, char**)
-{
-    // FIXME: Implement.
-    return 0;
-}
