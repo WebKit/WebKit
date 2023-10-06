@@ -59,7 +59,8 @@ int WKWebPushToolMain(int argc, char** argv)
 #endif
 }
 
-void WKExtensionEventHandler(xpc_connection_t connection)
+int WKExtensionMain(int, char**)
 {
-    return WebKit::XPCServiceEventHandler(connection);
+    // FIXME: Implement.
+    return 0;
 }
