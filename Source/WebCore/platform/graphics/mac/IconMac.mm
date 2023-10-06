@@ -25,7 +25,6 @@
 
 #import "GraphicsContext.h"
 #import "IntRect.h"
-#import "LocalCurrentGraphicsContext.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVFoundation.h>
 #import <wtf/RefPtr.h>

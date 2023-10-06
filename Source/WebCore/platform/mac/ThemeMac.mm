@@ -35,7 +35,6 @@
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
 #import "LengthSize.h"
-#import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "ScrollView.h"
 #import <pal/spi/cocoa/NSButtonCellSPI.h>

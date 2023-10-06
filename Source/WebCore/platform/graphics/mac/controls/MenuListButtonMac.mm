@@ -31,7 +31,6 @@
 #import "ColorSpaceCG.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
-#import "LocalCurrentGraphicsContext.h"
 #import "MenuListButtonPart.h"
 
 namespace WebCore {
@@ -73,8 +72,7 @@ static void mainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outDa
 
 static void drawMenuListBackground(GraphicsContext& context, const FloatRect& rect, const FloatRoundedRect& borderRect, const ControlStyle&)
 {
-    ContextContainer cgContextContainer(context);
-    CGContextRef cgContext = cgContextContainer.context();
+    CGContextRef cgContext = context.platformContext();
 
     const auto& radii = borderRect.radii();
     int radius = radii.topLeft().width();
@@ -103,7 +101,6 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
         GraphicsContextStateSaver stateSaver(context);
         CGContextClipToRect(cgContext, rect);
         context.clipRoundedRect(borderRect);
-        cgContext = cgContextContainer.context();
         CGContextDrawShading(cgContext, mainShading.get());
     }
 
@@ -111,7 +108,6 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
         GraphicsContextStateSaver stateSaver(context);
         CGContextClipToRect(cgContext, topGradient);
         context.clipRoundedRect(FloatRoundedRect(enclosingIntRect(topGradient), radii.topLeft(), radii.topRight(), { }, { }));
-        cgContext = cgContextContainer.context();
         CGContextDrawShading(cgContext, topShading.get());
     }
 
@@ -119,7 +115,6 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
         GraphicsContextStateSaver stateSaver(context);
         CGContextClipToRect(cgContext, bottomGradient);
         context.clipRoundedRect(FloatRoundedRect(enclosingIntRect(bottomGradient), { }, { }, radii.bottomLeft(), radii.bottomRight()));
-        cgContext = cgContextContainer.context();
         CGContextDrawShading(cgContext, bottomShading.get());
     }
 
@@ -127,7 +122,6 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
         GraphicsContextStateSaver stateSaver(context);
         CGContextClipToRect(cgContext, rect);
         context.clipRoundedRect(borderRect);
-        cgContext = cgContextContainer.context();
         CGContextDrawShading(cgContext, leftShading.get());
         CGContextDrawShading(cgContext, rightShading.get());
     }

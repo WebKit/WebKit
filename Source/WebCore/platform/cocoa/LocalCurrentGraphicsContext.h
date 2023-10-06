@@ -46,19 +46,6 @@ private:
     bool m_didSetGraphicsContext { false };
 };
 
-class ContextContainer {
-    WTF_MAKE_NONCOPYABLE(ContextContainer);
-public:
-    ContextContainer(GraphicsContext& graphicsContext)
-        : m_graphicsContext(graphicsContext.platformContext())
-    {
-    }
-
-    CGContextRef context() { return m_graphicsContext; }
-private:
-    CGContextRef m_graphicsContext;
-};
-
 }
 
 #endif // PLATFORM(COCOA)

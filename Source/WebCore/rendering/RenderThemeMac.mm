@@ -43,7 +43,6 @@
 #import "Icon.h"
 #import "Image.h"
 #import "ImageControlsButtonMac.h"
-#import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
@@ -1614,7 +1613,6 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
         progress = progressString.toFloat(&validProgress);
 
     GraphicsContext& context = paintInfo.context();
-    LocalCurrentGraphicsContext localContext(context);
     GraphicsContextStateSaver saver(context);
 
     context.translate(toFloatSize(paintRect.location()));
