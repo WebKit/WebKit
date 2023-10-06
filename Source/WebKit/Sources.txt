@@ -23,7 +23,6 @@
 
 GPUProcess/GPUProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp
-GPUProcess/GPUProcessCreationParameters.cpp
 GPUProcess/GPUProcessPreferences.cpp
 GPUProcess/ShapeDetection/RemoteBarcodeDetector.cpp
 GPUProcess/ShapeDetection/RemoteFaceDetector.cpp

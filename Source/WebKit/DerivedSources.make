@@ -469,6 +469,7 @@ $(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(
 	$(RUBY) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WEB_PREFERENCES)
 
 SERIALIZATION_DESCRIPTION_FILES = \
+	GPUProcess/GPUProcessCreationParameters.serialization.in \
 	GPUProcess/GPUProcessSessionParameters.serialization.in \
 	GPUProcess/graphics/PathSegment.serialization.in \
 	GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in \

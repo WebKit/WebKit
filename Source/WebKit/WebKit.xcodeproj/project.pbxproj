@@ -4412,7 +4412,6 @@
 		2D9FB2102375209D0049F936 /* GPUServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUServiceEntryPoint.mm; sourceTree = "<group>"; };
 		2D9FB2122375209D0049F936 /* Info-OSX.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
 		2D9FB2132375209D0049F936 /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
-		2D9FB2142375209D0049F936 /* GPUProcessCreationParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		2D9FB2152375209D0049F936 /* GPUProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcess.h; sourceTree = "<group>"; };
 		2D9FB228237523830049F936 /* com.apple.WebKit.GPU.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.GPU.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D9FB22A237523FB0049F936 /* GPUService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GPUService.xcconfig; sourceTree = "<group>"; };
@@ -9867,7 +9866,6 @@
 				2D9FB2012375209D0049F936 /* GPUProcess.cpp */,
 				2D9FB2152375209D0049F936 /* GPUProcess.h */,
 				2D9FB2022375209D0049F936 /* GPUProcess.messages.in */,
-				2D9FB2142375209D0049F936 /* GPUProcessCreationParameters.cpp */,
 				2D9FB2032375209D0049F936 /* GPUProcessCreationParameters.h */,
 				5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */,
 				5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */,
