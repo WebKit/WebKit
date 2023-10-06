@@ -242,6 +242,7 @@ $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
 $(PROJECT_DIR)/Shared/UpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/UserInterfaceIdiom.serialization.in
+$(PROJECT_DIR)/Shared/VisibleContentRectUpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/WTFArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in

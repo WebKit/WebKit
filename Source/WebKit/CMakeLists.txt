@@ -400,6 +400,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
     Shared/UpdateInfo.serialization.in
+    Shared/VisibleContentRectUpdateInfo.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in

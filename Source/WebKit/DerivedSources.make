@@ -546,6 +546,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/TextFlags.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
+	Shared/VisibleContentRectUpdateInfo.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebEvent.serialization.in \
