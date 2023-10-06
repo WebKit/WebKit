@@ -1,70 +1,70 @@
 
 PASS writing-mode is forced to horizontal-tb on <math> element
 PASS logical properties interpreted in horizontal-tb on <math> element
-FAIL writing-mode is forced to horizontal-tb on <annotation> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <annotation> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <annotation-xml> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <annotation-xml> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <maction> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <maction> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <menclose> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <menclose> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <merror> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <merror> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mfrac> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mfrac> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mi> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mi> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mmultiscripts> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mmultiscripts> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mn> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mn> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mo> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mo> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mover> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mover> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mpadded> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mpadded> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mphantom> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mphantom> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mprescripts> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mprescripts> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mroot> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mroot> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mrow> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mrow> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <ms> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <ms> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mspace> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mspace> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <msqrt> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <msqrt> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mstyle> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mstyle> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <msub> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <msub> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <msubsup> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <msubsup> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <msup> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <msup> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <mtable> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mtable> element assert_equals: expected "20px" but got "10px"
+PASS writing-mode is forced to horizontal-tb on <annotation> element
+PASS logical properties interpreted in horizontal-tb on <annotation> element
+PASS writing-mode is forced to horizontal-tb on <annotation-xml> element
+PASS logical properties interpreted in horizontal-tb on <annotation-xml> element
+PASS writing-mode is forced to horizontal-tb on <maction> element
+PASS logical properties interpreted in horizontal-tb on <maction> element
+PASS writing-mode is forced to horizontal-tb on <menclose> element
+PASS logical properties interpreted in horizontal-tb on <menclose> element
+PASS writing-mode is forced to horizontal-tb on <merror> element
+PASS logical properties interpreted in horizontal-tb on <merror> element
+PASS writing-mode is forced to horizontal-tb on <mfrac> element
+PASS logical properties interpreted in horizontal-tb on <mfrac> element
+PASS writing-mode is forced to horizontal-tb on <mi> element
+PASS logical properties interpreted in horizontal-tb on <mi> element
+PASS writing-mode is forced to horizontal-tb on <mmultiscripts> element
+PASS logical properties interpreted in horizontal-tb on <mmultiscripts> element
+PASS writing-mode is forced to horizontal-tb on <mn> element
+PASS logical properties interpreted in horizontal-tb on <mn> element
+PASS writing-mode is forced to horizontal-tb on <mo> element
+PASS logical properties interpreted in horizontal-tb on <mo> element
+PASS writing-mode is forced to horizontal-tb on <mover> element
+PASS logical properties interpreted in horizontal-tb on <mover> element
+PASS writing-mode is forced to horizontal-tb on <mpadded> element
+PASS logical properties interpreted in horizontal-tb on <mpadded> element
+PASS writing-mode is forced to horizontal-tb on <mphantom> element
+PASS logical properties interpreted in horizontal-tb on <mphantom> element
+PASS writing-mode is forced to horizontal-tb on <mprescripts> element
+PASS logical properties interpreted in horizontal-tb on <mprescripts> element
+PASS writing-mode is forced to horizontal-tb on <mroot> element
+PASS logical properties interpreted in horizontal-tb on <mroot> element
+PASS writing-mode is forced to horizontal-tb on <mrow> element
+PASS logical properties interpreted in horizontal-tb on <mrow> element
+PASS writing-mode is forced to horizontal-tb on <ms> element
+PASS logical properties interpreted in horizontal-tb on <ms> element
+PASS writing-mode is forced to horizontal-tb on <mspace> element
+PASS logical properties interpreted in horizontal-tb on <mspace> element
+PASS writing-mode is forced to horizontal-tb on <msqrt> element
+PASS logical properties interpreted in horizontal-tb on <msqrt> element
+PASS writing-mode is forced to horizontal-tb on <mstyle> element
+PASS logical properties interpreted in horizontal-tb on <mstyle> element
+PASS writing-mode is forced to horizontal-tb on <msub> element
+PASS logical properties interpreted in horizontal-tb on <msub> element
+PASS writing-mode is forced to horizontal-tb on <msubsup> element
+PASS logical properties interpreted in horizontal-tb on <msubsup> element
+PASS writing-mode is forced to horizontal-tb on <msup> element
+PASS logical properties interpreted in horizontal-tb on <msup> element
+PASS writing-mode is forced to horizontal-tb on <mtable> element
+PASS logical properties interpreted in horizontal-tb on <mtable> element
 PASS writing-mode is forced to horizontal-tb on <mtd> element
 PASS logical properties interpreted in horizontal-tb on <mtd> element
-FAIL writing-mode is forced to horizontal-tb on <mtext> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <mtext> element assert_equals: expected "20px" but got "10px"
+PASS writing-mode is forced to horizontal-tb on <mtext> element
+PASS logical properties interpreted in horizontal-tb on <mtext> element
 PASS writing-mode is forced to horizontal-tb on <mtr> element
 PASS logical properties interpreted in horizontal-tb on <mtr> element
-FAIL writing-mode is forced to horizontal-tb on <munder> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <munder> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <munderover> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <munderover> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <none> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <none> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <semantics> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <semantics> element assert_equals: expected "20px" but got "10px"
-FAIL writing-mode is forced to horizontal-tb on <unknown> element assert_equals: expected "horizontal-tb" but got "vertical-lr"
-FAIL logical properties interpreted in horizontal-tb on <unknown> element assert_equals: expected "20px" but got "10px"
+PASS writing-mode is forced to horizontal-tb on <munder> element
+PASS logical properties interpreted in horizontal-tb on <munder> element
+PASS writing-mode is forced to horizontal-tb on <munderover> element
+PASS logical properties interpreted in horizontal-tb on <munderover> element
+PASS writing-mode is forced to horizontal-tb on <none> element
+PASS logical properties interpreted in horizontal-tb on <none> element
+PASS writing-mode is forced to horizontal-tb on <semantics> element
+PASS logical properties interpreted in horizontal-tb on <semantics> element
+PASS writing-mode is forced to horizontal-tb on <unknown> element
+PASS logical properties interpreted in horizontal-tb on <unknown> element
 
 
 

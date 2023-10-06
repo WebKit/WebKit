@@ -33,6 +33,7 @@ $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/xxd.pl
 $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/GPUProcess/GPUConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcess.messages.in
+$(PROJECT_DIR)/GPUProcess/GPUProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/GPUProcess/GPUProcessSessionParameters.serialization.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteBarcodeDetector.messages.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteFaceDetector.messages.in
@@ -179,6 +180,7 @@ $(PROJECT_DIR)/Shared/ApplePay/PaymentSetupConfiguration.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in
 $(PROJECT_DIR)/Shared/Authentication/AuthenticationManager.messages.in
 $(PROJECT_DIR)/Shared/AuxiliaryProcess.messages.in
+$(PROJECT_DIR)/Shared/AuxiliaryProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/BackgroundFetchState.serialization.in
 $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
@@ -201,6 +203,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionTabParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionWindow.serialization.in
 $(PROJECT_DIR)/Shared/FileSystemSyncAccessHandleInfo.serialization.in
 $(PROJECT_DIR)/Shared/FocusedElementInformation.serialization.in
+$(PROJECT_DIR)/Shared/FontInfo.serialization.in
 $(PROJECT_DIR)/Shared/FrameInfoData.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
@@ -240,6 +243,7 @@ $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
 $(PROJECT_DIR)/Shared/UpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/UserInterfaceIdiom.serialization.in
+$(PROJECT_DIR)/Shared/VisibleContentRectUpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/WTFArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in
@@ -316,6 +320,7 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexAttribute.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexState.serialization.in
 $(PROJECT_DIR)/Shared/WebHitTestResultData.serialization.in
+$(PROJECT_DIR)/Shared/WebNavigationDataStore.serialization.in
 $(PROJECT_DIR)/Shared/WebPageCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPageNetworkParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPopupItem.serialization.in

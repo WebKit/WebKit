@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #include <WebCore/FindOptions.h>
 #include <WebCore/PluginViewBase.h>

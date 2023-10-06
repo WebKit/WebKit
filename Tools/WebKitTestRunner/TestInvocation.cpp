@@ -1296,6 +1296,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetTimeAdvanceForTesting")) {
+        TestController::singleton().setStatisticsTimeAdvanceForTesting(doubleValue(messageBody));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetIsRunningTest")) {
         TestController::singleton().setStatisticsIsRunningTest(booleanValue(messageBody));
         return nullptr;

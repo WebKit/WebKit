@@ -83,7 +83,7 @@
 - (void)stopSpeaking:(id)sender;
 @end
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 @interface WKPDFMenuTarget : NSObject {
     NSMenuItem *_selectedMenuItem;
 }
@@ -506,7 +506,7 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
 }
 
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, CompletionHandler<void(std::optional<int32_t>&&)>&& completionHandler)
 {
     if (!contextMenu.items.size())

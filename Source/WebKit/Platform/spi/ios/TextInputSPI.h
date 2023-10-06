@@ -27,18 +27,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <TextInput/TIKeyboardCandidate.h>
-#import <TextInput/TIKeyboardInput.h>
 #import <TextInput/TIPreferencesController.h>
 #import <TextInput/TI_NSStringExtras.h>
 
 #else
-
-@interface TIKeyboardCandidate : NSObject <NSCopying, NSSecureCoding>
-@end
-
-@interface TIKeyboardInput : NSObject <NSSecureCoding>
-@end
 
 @protocol TIPreferencesControllerActions <NSObject>
 @property (nonatomic) BOOL automaticMinimizationEnabled;

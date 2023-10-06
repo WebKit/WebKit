@@ -52,8 +52,8 @@ private:
     void paintObject(PaintInfo&, const LayoutPoint&) override;
     void paintControl(PaintInfo&, const LayoutPoint&);
 
-    int maxFilenameWidth() const;
-    
+    int maxFilenameLogicalWidth() const;
+
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
     HTMLInputElement* uploadButton() const;

@@ -26,7 +26,7 @@
 #ifndef PDFPluginPasswordField_h
 #define PDFPluginPasswordField_h
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #include "PDFPluginTextAnnotation.h"
 
@@ -52,6 +52,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #endif // PDFPluginTextAnnotation_h

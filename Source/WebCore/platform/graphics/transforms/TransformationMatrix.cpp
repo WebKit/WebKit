@@ -614,7 +614,7 @@ TransformationMatrix& TransformationMatrix::scale(double s)
 
 TransformationMatrix& TransformationMatrix::rotateFromVector(double x, double y)
 {
-    return rotate(rad2deg(atan2(y, x)));
+    return rotateRadians(atan2(y, x));
 }
 
 TransformationMatrix& TransformationMatrix::flipX()
@@ -986,7 +986,11 @@ TransformationMatrix& TransformationMatrix::rotate(double angle)
     if (!std::fmod(angle, 360))
         return *this;
 
-    angle = deg2rad(angle);
+    return rotateRadians(deg2rad(angle));
+}
+
+TransformationMatrix& TransformationMatrix::rotateRadians(double angle)
+{
     double sinZ = roundEpsilonToZero(sin(angle));
     double cosZ = roundEpsilonToZero(cos(angle));
     multiply({ cosZ, sinZ, -sinZ, cosZ, 0, 0 });

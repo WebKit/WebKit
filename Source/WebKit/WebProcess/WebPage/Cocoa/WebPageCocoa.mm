@@ -142,7 +142,7 @@ void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bo
     
 void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
         if (pluginView->performDictionaryLookupAtLocation(floatPoint))
             return;
@@ -554,7 +554,7 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
 
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
 {
-#if !ENABLE(PDFKIT_PLUGIN)
+#if !ENABLE(LEGACY_PDFKIT_PLUGIN)
     return completionHandler({ });
 #else
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);

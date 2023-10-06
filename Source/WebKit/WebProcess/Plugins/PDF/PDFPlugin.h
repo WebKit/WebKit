@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #include "DataReference.h"
 #include "PDFPluginBase.h"
@@ -399,4 +399,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::PDFPlugin)
     static bool isType(const WebKit::PDFPluginBase& plugin) { return plugin.isLegacyPDFPlugin(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)

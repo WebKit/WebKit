@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
 
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>
@@ -168,4 +168,4 @@ protected:
 
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)

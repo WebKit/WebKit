@@ -23,7 +23,6 @@
 
 GPUProcess/GPUProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp
-GPUProcess/GPUProcessCreationParameters.cpp
 GPUProcess/GPUProcessPreferences.cpp
 GPUProcess/ShapeDetection/RemoteBarcodeDetector.cpp
 GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
@@ -208,14 +207,12 @@ Platform/IPC/DaemonCoders.cpp
 Shared/AccessibilityPreferences.cpp
 Shared/ActivityAssertion.cpp
 Shared/AuxiliaryProcess.cpp
-Shared/AuxiliaryProcessCreationParameters.cpp
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp
 Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp
 Shared/DebuggableInfoData.cpp
 Shared/EditingRange.cpp
 Shared/EditorState.cpp
-Shared/FontInfo.cpp
 Shared/InspectorExtensionTypes.cpp
 Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp

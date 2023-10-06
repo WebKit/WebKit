@@ -71,7 +71,7 @@ FindController::~FindController()
 {
 }
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 PluginView* FindController::mainFramePlugIn()
 {
@@ -86,7 +86,7 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
         --maxMatchCount;
 
     unsigned matchCount;
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (auto* pluginView = mainFramePlugIn())
         matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
     else
@@ -139,14 +139,14 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 {
     RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     auto* pluginView = mainFramePlugIn();
 #endif
 
     bool shouldShowOverlay = false;
 
     if (!found) {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
         if (!pluginView)
 #endif
             m_webPage->corePage()->unmarkAllTextMatches();
@@ -166,7 +166,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         unsigned matchCount = 1;
 
         if (shouldDetermineMatchIndex) {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
             if (pluginView)
                 matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
             else
@@ -178,7 +178,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             if (maxMatchCount == std::numeric_limits<unsigned>::max())
                 --maxMatchCount;
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
             if (pluginView) {
                 if (!shouldDetermineMatchIndex)
                     matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
@@ -239,7 +239,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
 void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, TriggerImageAnalysis canTriggerImageAnalysis, CompletionHandler<void(bool)>&& completionHandler)
 {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     auto* pluginView = mainFramePlugIn();
 #endif
 
@@ -256,7 +256,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     willFindString();
 
     bool foundStringStartsAfterSelection = false;
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (!pluginView)
 #endif
     {
@@ -274,7 +274,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 
     bool found;
     DidWrap didWrap = DidWrap::No;
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (pluginView)
         found = pluginView->findString(string, coreOptions, maxMatchCount);
     else
@@ -405,7 +405,7 @@ void FindController::hideFindUI()
     if (m_findPageOverlay)
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (auto* pluginView = mainFramePlugIn())
         pluginView->findString(emptyString(), { }, 0);
     else

@@ -4412,7 +4412,6 @@
 		2D9FB2102375209D0049F936 /* GPUServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUServiceEntryPoint.mm; sourceTree = "<group>"; };
 		2D9FB2122375209D0049F936 /* Info-OSX.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
 		2D9FB2132375209D0049F936 /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
-		2D9FB2142375209D0049F936 /* GPUProcessCreationParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		2D9FB2152375209D0049F936 /* GPUProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcess.h; sourceTree = "<group>"; };
 		2D9FB228237523830049F936 /* com.apple.WebKit.GPU.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.GPU.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D9FB22A237523FB0049F936 /* GPUService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GPUService.xcconfig; sourceTree = "<group>"; };
@@ -5948,7 +5947,6 @@
 		7BDD9DDA28D205C6004CDF48 /* MessageObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageObserver.h; sourceTree = "<group>"; };
 		7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueMessageReceiver.h; sourceTree = "<group>"; };
 		7BDDA33F275652EA0038659E /* AuxiliaryProcessCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuxiliaryProcessCreationParameters.h; sourceTree = "<group>"; };
-		7BDDA340275652EA0038659E /* AuxiliaryProcessCreationParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuxiliaryProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		7BE37F6F27B1475F007A6CD3 /* ThreadSafeObjectHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSafeObjectHeap.h; sourceTree = "<group>"; };
 		7BE37F9227C7C518007A6CD3 /* IPCStreamTesterIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTesterIdentifier.h; sourceTree = "<group>"; };
 		7BE37F9427C7CD51007A6CD3 /* IPCStreamTester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTester.h; sourceTree = "<group>"; };
@@ -6929,7 +6927,6 @@
 		BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFormSubmissionListener.h; sourceTree = "<group>"; };
 		BCE579A42634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamicContentScalingImageBufferBackend.h; sourceTree = "<group>"; };
 		BCE579A52634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicContentScalingImageBufferBackend.mm; sourceTree = "<group>"; };
-		BCE81D8A1319F7EF00241910 /* FontInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontInfo.cpp; sourceTree = "<group>"; };
 		BCE81D8B1319F7EF00241910 /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontInfo.h; sourceTree = "<group>"; };
 		BCE9C0CF1485965D00E33D61 /* WebConnectionToUIProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConnectionToUIProcess.cpp; sourceTree = "<group>"; };
 		BCE9C0D01485965D00E33D61 /* WebConnectionToUIProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebConnectionToUIProcess.h; sourceTree = "<group>"; };
@@ -8255,7 +8252,6 @@
 				1A2D956E12848564001EB962 /* AuxiliaryProcess.cpp */,
 				1A2D956D12848564001EB962 /* AuxiliaryProcess.h */,
 				5164C0941B05B757004F102A /* AuxiliaryProcess.messages.in */,
-				7BDDA340275652EA0038659E /* AuxiliaryProcessCreationParameters.cpp */,
 				7BDDA33F275652EA0038659E /* AuxiliaryProcessCreationParameters.h */,
 				290F4271172A0C7400939FF0 /* AuxiliaryProcessSupplement.h */,
 				413E5C9329B0EDF3002F4987 /* BackgroundFetchChange.h */,
@@ -8291,7 +8287,6 @@
 				86BAAFD829A3D4040013F9A9 /* FileSystemSyncAccessHandleInfo.serialization.in */,
 				C59C4A5718B81174007BDCB6 /* FocusedElementInformation.h */,
 				86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */,
-				BCE81D8A1319F7EF00241910 /* FontInfo.cpp */,
 				BCE81D8B1319F7EF00241910 /* FontInfo.h */,
 				1A14F8E01D74C834006CBEC6 /* FrameInfoData.h */,
 				5C4AB4AF28BD65A50059E6CD /* FrameInfoData.serialization.in */,
@@ -9871,7 +9866,6 @@
 				2D9FB2012375209D0049F936 /* GPUProcess.cpp */,
 				2D9FB2152375209D0049F936 /* GPUProcess.h */,
 				2D9FB2022375209D0049F936 /* GPUProcess.messages.in */,
-				2D9FB2142375209D0049F936 /* GPUProcessCreationParameters.cpp */,
 				2D9FB2032375209D0049F936 /* GPUProcessCreationParameters.h */,
 				5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */,
 				5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */,

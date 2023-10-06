@@ -92,6 +92,7 @@ public:
     std::optional<PathDataBezierCurve> singleBezierCurve() const;
 
     WEBCORE_EXPORT bool isEmpty() const;
+    bool definitelySingleLine() const;
     WEBCORE_EXPORT PlatformPathPtr platformPath() const;
 
     const PathSegment* singleSegmentIfExists() const { return asSingle(); }

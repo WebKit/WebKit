@@ -150,6 +150,7 @@ struct BindGroupLayoutEntry {
     OptionSet<ShaderStage> visibility;
     using BindingMember = std::variant<BufferBindingLayout, SamplerBindingLayout, TextureBindingLayout, StorageTextureBindingLayout, ExternalTextureBindingLayout>;
     BindingMember bindingMember;
+    String name;
     std::optional<uint32_t> vertexArgumentBufferIndex;
     std::optional<uint32_t> vertexArgumentBufferSizeIndex;
     std::optional<uint32_t> vertexBufferDynamicOffset;

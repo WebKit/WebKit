@@ -384,8 +384,7 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     if (!comboBoxImageBuffer)
         return;
 
-    ContextContainer cgContextContainer(comboBoxImageBuffer->context());
-    CGContextRef cgContext = cgContextContainer.context();
+    CGContextRef cgContext = comboBoxImageBuffer->context().platformContext();
 
     NSString *coreUIState;
     if (style.states.containsAny({ ControlStyle::State::Presenting, ControlStyle::State::ListButtonPressed }))

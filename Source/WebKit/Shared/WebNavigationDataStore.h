@@ -26,9 +26,6 @@
 #ifndef WebNavigationDataStore_h
 #define WebNavigationDataStore_h
 
-#include "Decoder.h"
-#include "Encoder.h"
-#include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/text/WTFString.h>
@@ -36,27 +33,6 @@
 namespace WebKit {
 
 struct WebNavigationDataStore {
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << url;
-        encoder << title;
-        encoder << originalRequest;
-        encoder << response;
-    }
-
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, WebNavigationDataStore& store)
-    {
-        if (!decoder.decode(store.url))
-            return false;
-        if (!decoder.decode(store.title))
-            return false;
-        if (!decoder.decode(store.originalRequest))
-            return false;
-        if (!decoder.decode(store.response))
-            return false;
-        return true;
-    }
-
     // FIXME: Add the remaining items we want to track for history.
     String url;
     String title;

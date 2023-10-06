@@ -148,12 +148,6 @@ class WebPageProxy;
 #endif
 #endif
 
-typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
-typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
-typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *beforeText, NSString *afterText);
-typedef void (^UIWKSelectionCompletionHandler)(void);
-typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsMoving);
-
 typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
 typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback> InteractionInformationRequestAndCallback;
 
@@ -371,7 +365,6 @@ struct ImageAnalysisContextMenuActionData {
     Vector<bool> _focusStateStack;
 #if HAVE(LINK_PREVIEW)
 #if USE(UICONTEXTMENU)
-    RetainPtr<UIContextMenuInteraction> _contextMenuInteraction;
     RetainPtr<WKContextMenuElementInfo> _contextMenuElementInfo;
     BOOL _showLinkPreviews;
     RetainPtr<UIViewController> _contextMenuLegacyPreviewController;
@@ -384,6 +377,9 @@ struct ImageAnalysisContextMenuActionData {
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif
+
+    RetainPtr<UIGestureRecognizer> _textInteractionLoupeGestureRecognizer;
+    RetainPtr<UIGestureRecognizer> _textInteractionTapGestureRecognizer;
 
     RefPtr<WebCore::TextIndicator> _textIndicator;
     RetainPtr<WebTextIndicatorLayer> _textIndicatorLayer;

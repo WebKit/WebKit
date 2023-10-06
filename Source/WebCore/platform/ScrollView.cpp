@@ -1114,6 +1114,30 @@ Scrollbar* ScrollView::scrollbarAtPoint(const IntPoint& windowPoint)
     return 0;
 }
 
+IntPoint ScrollView::convertChildToSelf(const Widget* child, IntPoint point) const
+{
+    if (!isScrollViewScrollbar(child))
+        point -= toIntSize(documentScrollPositionRelativeToViewOrigin());
+    point.moveBy(child->location());
+    return point;
+}
+
+FloatPoint ScrollView::convertChildToSelf(const Widget* child, FloatPoint point) const
+{
+    if (!isScrollViewScrollbar(child))
+        point -= toFloatSize(documentScrollPositionRelativeToViewOrigin());
+    point.moveBy(child->location());
+    return point;
+}
+
+IntPoint ScrollView::convertSelfToChild(const Widget* child, IntPoint point) const
+{
+    if (!isScrollViewScrollbar(child))
+        point += toIntSize(documentScrollPositionRelativeToViewOrigin());
+    point.moveBy(-child->location());
+    return point;
+}
+
 void ScrollView::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
 {
     ScrollableArea::setScrollbarOverlayStyle(overlayStyle);

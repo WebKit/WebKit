@@ -2648,7 +2648,7 @@ compositing/backing/solid-color-with-paints-into-ancestor.html [ Pass ImageOnlyF
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Timeout ]
 
 # rdar://111398769 (REGRESSION (265250@main): [ macOS ] fast/mediastream/device-change-event-2.html is a consistent failure)
-fast/mediastream/device-change-event-2.html [ Failure ]
+fast/mediastream/device-change-event-2.html [ Skip ]
 
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ Pass ]

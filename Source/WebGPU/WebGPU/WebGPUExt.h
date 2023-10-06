@@ -41,6 +41,7 @@ typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
 typedef enum WGPUBufferBindingTypeExtended {
     WGPUBufferBindingType_Float3x2 = WGPUBufferBindingType_Force32 - 1,
     WGPUBufferBindingType_Float4x3 = WGPUBufferBindingType_Force32 - 2,
+    WGPUBufferBindingType_ArrayLength = WGPUBufferBindingType_Force32 - 3,
 } WGPUBufferBindingTypeExtended;
 
 typedef enum WGPUColorSpace {

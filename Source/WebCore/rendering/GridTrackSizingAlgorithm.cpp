@@ -1328,29 +1328,26 @@ static LayoutUnit marginAndBorderAndPaddingForEdge(const RenderGrid& grid, GridT
 // FIXME: This is a simplification of the specified behaviour, where we add the hypothetical
 // items directly to the edge tracks as if they had a span of 1. This matches the current Gecko
 // behavior.
-static void addSubgridMarginBorderPadding(const RenderGrid* outermost, GridTrackSizingDirection outermostDirection, Vector<GridTrack>& allTracks, GridSpan& span, RenderGrid* subgrid)
+static LayoutUnit computeSubgridMarginBorderPadding(const RenderGrid* outermost, GridTrackSizingDirection outermostDirection, GridTrack& track, unsigned trackIndex, GridSpan& span, RenderGrid* subgrid)
 {
     // Convert the direction into the coordinate space of subgrid (which may not be a direct child
     // of the outermost grid for which we're running the track sizing algorithm).
     GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(*outermost, *subgrid, outermostDirection);
     bool reversed = GridLayoutFunctions::isSubgridReversedDirection(*outermost, outermostDirection, *subgrid);
 
-    if (allTracks[span.startLine()].cachedTrackSize().hasIntrinsicMinTrackBreadth()) {
+    LayoutUnit subgridMbp;
+    if (trackIndex == span.startLine() && track.cachedTrackSize().hasIntrinsicMinTrackBreadth()) {
         // If the subgrid has a reversed flow direction relative to the outermost grid, then
         // we want the MBP from the end edge in its local coordinate space.
-        LayoutUnit mbpStart = marginAndBorderAndPaddingForEdge(*subgrid, direction, !reversed);
-        allTracks[span.startLine()].setBaseSize(std::max(allTracks[span.startLine()].baseSize(), mbpStart));
+        subgridMbp = marginAndBorderAndPaddingForEdge(*subgrid, direction, !reversed);
     }
-    if (allTracks[span.endLine() - 1].cachedTrackSize().hasIntrinsicMinTrackBreadth()) {
-        LayoutUnit mbpEnd = marginAndBorderAndPaddingForEdge(*subgrid, direction, reversed);
-        allTracks[span.endLine() - 1].setBaseSize(std::max(allTracks[span.endLine() - 1].baseSize(), mbpEnd));
-    }
+    if (trackIndex == span.endLine() - 1 && track.cachedTrackSize().hasIntrinsicMinTrackBreadth())
+        subgridMbp += marginAndBorderAndPaddingForEdge(*subgrid, direction, reversed);
+    return subgridMbp;
 }
 
-void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track, GridIterator& iterator, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, WeakHashSet<RenderBox>& itemsSet)
+void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track, unsigned trackIndex, GridIterator& iterator, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, WeakHashSet<RenderBox>& itemsSet, LayoutUnit currentAccumulatedMbp)
 {
-    Vector<GridTrack>& allTracks = tracks(m_direction);
-
     while (auto* gridItem = iterator.nextGridItem()) {
 
         bool isNewEntry = itemsSet.add(*gridItem).isNewEntry;
@@ -1390,13 +1387,13 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
         if (is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem)->isSubgridInParentDirection(iterator.direction())) {
             // Contribute the mbp of wrapper to the first and last tracks that we span.
             RenderGrid* inner = downcast<RenderGrid>(gridItem);
-            if (isNewEntry) {
-                GridSpan span = m_renderGrid->gridSpanForChild(*gridItem, m_direction);
-                addSubgridMarginBorderPadding(m_renderGrid, m_direction, allTracks, span, inner);
-            }
+            GridSpan span = m_renderGrid->gridSpanForChild(*gridItem, m_direction);
+
+            auto accumulatedMbpWithSubgrid = currentAccumulatedMbp + computeSubgridMarginBorderPadding(m_renderGrid, m_direction, track, trackIndex, span, inner);
+            track.setBaseSize(std::max(track.baseSize(), accumulatedMbpWithSubgrid));
 
             GridIterator childIterator = GridIterator::createForSubgrid(*inner, iterator);
-            accumulateIntrinsicSizesForTrack(track, childIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet);
+            accumulateIntrinsicSizesForTrack(track, trackIndex, childIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, accumulatedMbpWithSubgrid);
             continue;
         }
         if (!isNewEntry)
@@ -1437,7 +1434,7 @@ void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizes()
             GridIterator iterator(m_grid, m_direction, trackIndex);
             GridTrack& track = allTracks[trackIndex];
 
-            accumulateIntrinsicSizesForTrack(track, iterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet);
+            accumulateIntrinsicSizesForTrack(track, trackIndex, iterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, 0_lu);
         }
         std::sort(itemsSortedByIncreasingSpan.begin(), itemsSortedByIncreasingSpan.end());
     }

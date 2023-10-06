@@ -155,12 +155,16 @@ void WebSWServerToContextConnection::fireNotificationEvent(ServiceWorkerIdentifi
         if (!--weakThis->m_processingFunctionalEventCount)
             weakThis->m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { weakThis->webProcessIdentifier() }, 0);
 
+#if ENABLE(TRACKING_PREVENTION)
         auto* session = weakThis->m_connection.networkSession();
         if (auto* resourceLoadStatistics = session ? session->resourceLoadStatistics() : nullptr; resourceLoadStatistics && wasProcessed && eventType == NotificationEventType::Click) {
             return resourceLoadStatistics->setMostRecentWebPushInteractionTime(RegistrableDomain(weakThis->registrableDomain()), [callback = WTFMove(callback), wasProcessed] () mutable {
                 callback(wasProcessed);
             });
         }
+#else
+        UNUSED_PARAM(eventType);
+#endif
 
         callback(wasProcessed);
     });

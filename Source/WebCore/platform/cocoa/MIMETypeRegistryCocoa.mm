@@ -193,7 +193,7 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
 
 bool MIMETypeRegistry::isApplicationPluginMIMEType(const String& MIMEType)
 {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     // FIXME: This should test if we're actually going to use PDFPlugin,
     // but we only know that in WebKit2 at the moment. This is not a problem
     // in practice because if we don't have PDFPlugin and we go to instantiate the

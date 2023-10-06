@@ -39,6 +39,7 @@
 #include "MediaTrackCapabilities.h"
 #include "MediaTrackConstraints.h"
 #include "PhotoCapabilities.h"
+#include "PhotoSettings.h"
 #include "PlatformMediaSession.h"
 #include <wtf/LoggerHelper.h>
 
@@ -130,6 +131,7 @@ public:
     TrackCapabilities getCapabilities() const;
 
     void getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&&) const;
+    void getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettings>>&&) const;
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
     void setConstraints(MediaTrackConstraints&& constraints) { m_constraints = WTFMove(constraints); }

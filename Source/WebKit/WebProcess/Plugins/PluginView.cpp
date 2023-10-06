@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginView.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #include "PDFPlugin.h"
 #include "ShareableBitmap.h"

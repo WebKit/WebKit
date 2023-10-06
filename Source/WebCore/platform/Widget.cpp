@@ -226,8 +226,8 @@ IntRect Widget::convertToContainingView(const IntRect& localRect) const
 
 IntRect Widget::convertFromContainingView(const IntRect& parentRect) const
 {
-    if (const ScrollView* parentScrollView = parent()) {
-        IntRect localRect = parentRect;
+    if (const auto* parentScrollView = parent()) {
+        auto localRect = parentRect;
         localRect.setLocation(parentScrollView->convertSelfToChild(this, localRect.location()));
         return localRect;
     }
@@ -247,7 +247,7 @@ FloatRect Widget::convertFromContainingView(const FloatRect& parentRect) const
 
 IntPoint Widget::convertToContainingView(const IntPoint& localPoint) const
 {
-    if (const ScrollView* parentScrollView = parent())
+    if (const auto* parentScrollView = parent())
         return parentScrollView->convertChildToSelf(this, localPoint);
 
     return localPoint;
@@ -255,7 +255,7 @@ IntPoint Widget::convertToContainingView(const IntPoint& localPoint) const
 
 IntPoint Widget::convertFromContainingView(const IntPoint& parentPoint) const
 {
-    if (const ScrollView* parentScrollView = parent())
+    if (const auto* parentScrollView = parent())
         return parentScrollView->convertSelfToChild(this, parentPoint);
 
     return parentPoint;

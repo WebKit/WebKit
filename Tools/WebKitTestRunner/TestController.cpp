@@ -3785,6 +3785,13 @@ void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool val
     WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(websiteDataStore(), value);
 }
 
+void TestController::setStatisticsTimeAdvanceForTesting(double value)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsTimeAdvanceForTesting(websiteDataStore(), value, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+}
+
 void TestController::setStatisticsIsRunningTest(bool value)
 {
     ResourceStatisticsCallbackContext context(*this);

@@ -4664,6 +4664,8 @@ struct WebCore::MessageWithMessagePorts {
     Vector<WebCore::TransferredMessagePort> transferredPorts;
 };
 
+#if ENABLE(TRACKING_PREVENTION)
+
 enum class WebCore::StorageAccessWasGranted : bool
 
 enum class WebCore::StorageAccessPromptWasShown : bool
@@ -4680,6 +4682,8 @@ header: <WebCore/DocumentStorageAccess.h>
     WebCore::RegistrableDomain topFrameDomain;
     WebCore::RegistrableDomain subFrameDomain;
 };
+
+#endif // ENABLE(TRACKING_PREVENTION)
 
 class WebCore::Exception {
     WebCore::ExceptionCode code();
@@ -5934,6 +5938,14 @@ header: <WebCore/PhotoCapabilities.h>
     std::optional<WebCore::MediaSettingsRange> imageHeight;
     std::optional<WebCore::MediaSettingsRange> imageWidth;
     std::optional<Vector<WebCore::FillLightMode>> fillLightMode;
+};
+
+header: <WebCore/PhotoSettings.h>
+[CustomHeader] struct WebCore::PhotoSettings {
+    std::optional<WebCore::FillLightMode> fillLightMode;
+    std::optional<double> imageHeight;
+    std::optional<double> imageWidth;
+    std::optional<bool> redEyeReduction;
 };
 
 header: <WebCore/RealtimeMediaSource.h>

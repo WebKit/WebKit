@@ -5201,6 +5201,13 @@
    },
    {
       "emails" : [
+         "darbinyan@apple.com"
+      ],
+      "github" : "martadarbinyan",
+      "name" : "Marta Darbinyan"
+   },
+   {
+      "emails" : [
          "mhock@apple.com"
       ],
       "name" : "Martin Hock",

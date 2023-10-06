@@ -151,6 +151,7 @@ void LegacyRenderSVGShape::layout()
     bool updateCachedBoundariesInParents = false;
 
     if (m_needsShapeUpdate || m_needsBoundariesUpdate) {
+        m_shapeType = ShapeType::Empty;
         updateShapeFromElement();
         m_needsShapeUpdate = false;
         updateRepaintBoundingBox();

@@ -269,6 +269,7 @@ public:
 
     // Angle is in degrees.
     WEBCORE_EXPORT TransformationMatrix& rotate(double);
+    WEBCORE_EXPORT TransformationMatrix& rotateRadians(double);
     TransformationMatrix& rotateFromVector(double x, double y);
     WEBCORE_EXPORT TransformationMatrix& rotate3d(double rx, double ry, double rz);
     

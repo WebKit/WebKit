@@ -436,11 +436,12 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
     auto &pipelineLayout = *optionalPipelineLayout;
     size_t pipelineLayoutCount = pipelineLayout.bindGroupLayouts.size();
     if (pipelineEntries.size() < pipelineLayoutCount)
-        pipelineEntries.resize(pipelineLayoutCount);
+        pipelineEntries.grow(pipelineLayoutCount);
 
     for (size_t pipelineLayoutIndex = 0; pipelineLayoutIndex < pipelineLayoutCount; ++pipelineLayoutIndex) {
         auto& bindGroupLayout = pipelineLayout.bindGroupLayouts[pipelineLayoutIndex];
         auto& entries = pipelineEntries[pipelineLayoutIndex];
+        HashMap<String, uint64_t> entryMap;
         for (auto& entry : bindGroupLayout.entries) {
             if (auto existingIndex = entries.findIf([&](auto& existingEntry) {
                 return existingEntry.binding == entry.binding;
@@ -450,14 +451,24 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
             }
 
             WGPUBindGroupLayoutEntry newEntry = { };
+            uint64_t minBindingSize = 0;
+            WGPUBufferBindingType bufferTypeOverride = WGPUBufferBindingType_Undefined;
+            auto& entryName = entry.name;
+            if (entryName.endsWith("_ArrayLength"_s)) {
+                bufferTypeOverride = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength);
+                auto shortName = entryName.substring(2, entryName.length() - (sizeof("_ArrayLength") + 1));
+                minBindingSize = entryMap.find(shortName)->value;
+            } else
+                entryMap.set(entryName, entry.binding);
+
             newEntry.binding = entry.binding;
             newEntry.visibility = convertVisibility(entry.visibility);
             WTF::switchOn(entry.bindingMember, [&](const WGSL::BufferBindingLayout& bufferBinding) {
                 newEntry.buffer = WGPUBufferBindingLayout {
                     .nextInChain = nullptr,
-                    .type = convertBindingType(bufferBinding.type),
+                    .type = (bufferTypeOverride != WGPUBufferBindingType_Undefined) ? bufferTypeOverride : convertBindingType(bufferBinding.type),
                     .hasDynamicOffset = bufferBinding.hasDynamicOffset,
-                    .minBindingSize = bufferBinding.minBindingSize,
+                    .minBindingSize = minBindingSize ?: bufferBinding.minBindingSize,
                 };
             }, [&](const WGSL::SamplerBindingLayout& sampler) {
                 newEntry.sampler = WGPUSamplerBindingLayout {
@@ -487,7 +498,7 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
                 };
             });
 
-            entries.append(newEntry);
+            entries.append(WTFMove(newEntry));
         }
     }
 }

@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#import "FillLightMode.h"
 #import "ImageBuffer.h"
 #import "ImageTransferSessionVT.h"
 #import "IntRect.h"
@@ -46,6 +47,7 @@
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/NativePromise.h>
 #import <wtf/Scope.h>
 
 #import "CoreVideoSoftLink.h"
@@ -465,6 +467,38 @@ void AVVideoCaptureSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& compl
     m_photoCapabilities = WTFMove(photoCapabilities);
 
     completion({ *m_photoCapabilities });
+}
+
+static FillLightMode toFillLightMode(AVCaptureTorchMode mode)
+{
+    switch (mode) {
+    case AVCaptureTorchModeOff:
+        return FillLightMode::Off;
+        break;
+    case AVCaptureTorchModeOn:
+        return FillLightMode::Flash;
+        break;
+    case AVCaptureTorchModeAuto:
+        return FillLightMode::Auto;
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return FillLightMode::Auto;
+}
+
+auto AVVideoCaptureSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromise>
+{
+    if (!m_photoSettings) {
+        std::optional<FillLightMode> fillLightMode;
+        if ([device() hasTorch])
+            fillLightMode = { toFillLightMode([device() torchMode]) };
+
+        auto settings = this->settings();
+        m_photoSettings = PhotoSettings { fillLightMode, settings.height(), settings.width(), { } };
+    }
+
+    return PhotoSettingsNativePromise::createAndResolve(*m_photoSettings);
 }
 
 NSMutableArray* AVVideoCaptureSource::cameraCaptureDeviceTypes()

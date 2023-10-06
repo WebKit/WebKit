@@ -421,6 +421,11 @@ bool Path::isEmpty() const
     return false;
 }
 
+bool Path::definitelySingleLine() const
+{
+    return !!singleDataLine();
+}
+
 PlatformPathPtr Path::platformPath() const
 {
     return const_cast<Path&>(*this).ensurePlatformPathImpl().platformPath();

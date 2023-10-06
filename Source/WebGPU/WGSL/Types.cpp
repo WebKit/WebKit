@@ -311,8 +311,9 @@ unsigned Type::size() const
         [&](const Pointer&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Atomic&) -> unsigned {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Atomic& a) -> unsigned {
+            RELEASE_ASSERT(a.element);
+            return a.element->size();
         },
         [&](const TypeConstructor&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
@@ -383,8 +384,9 @@ unsigned Type::alignment() const
         [&](const Pointer&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Atomic&) -> unsigned {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Atomic& a) -> unsigned {
+            RELEASE_ASSERT(a.element);
+            return a.element->alignment();
         },
         [&](const TypeConstructor&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();

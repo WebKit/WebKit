@@ -64,7 +64,11 @@ void LegacyRenderSVGRect::updateShapeFromElement()
     if (boundingBoxSize.isEmpty())
         return;
 
-    if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0 || hasNonScalingStroke()) {
+    m_shapeType = ShapeType::Rectangle;
+    if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0)
+        m_shapeType = ShapeType::RoundedRectangle;
+
+    if (m_shapeType != ShapeType::Rectangle || hasNonScalingStroke()) {
         // Fall back to LegacyRenderSVGShape
         LegacyRenderSVGShape::updateShapeFromElement();
         return;

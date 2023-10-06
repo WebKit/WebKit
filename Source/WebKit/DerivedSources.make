@@ -469,6 +469,7 @@ $(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(
 	$(RUBY) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WEB_PREFERENCES)
 
 SERIALIZATION_DESCRIPTION_FILES = \
+	GPUProcess/GPUProcessCreationParameters.serialization.in \
 	GPUProcess/GPUProcessSessionParameters.serialization.in \
 	GPUProcess/graphics/PathSegment.serialization.in \
 	GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in \
@@ -481,13 +482,14 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
+	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
+	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
 	Platform/IPC/StreamServerConnection.serialization.in \
 	Platform/SharedMemory.serialization.in \
-	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
+	Shared/AuxiliaryProcessCreationParameters.serialization.in \
 	Shared/API/APIData.serialization.in \
 	Shared/API/APIError.serialization.in \
 	Shared/API/APIFrameHandle.serialization.in \
-	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
 	Shared/API/APIPageHandle.serialization.in \
 	Shared/API/APIURL.serialization.in \
@@ -514,6 +516,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Extensions/WebExtensionWindow.serialization.in \
 	Shared/FileSystemSyncAccessHandleInfo.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
+	Shared/FontInfo.serialization.in \
 	Shared/FrameInfoData.serialization.in \
 	Shared/FrameTreeCreationParameters.serialization.in \
 	Shared/FrameTreeNodeData.serialization.in \
@@ -544,11 +547,13 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/TextFlags.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
+	Shared/VisibleContentRectUpdateInfo.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebEvent.serialization.in \
 	Shared/WebFoundTextRange.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
+	Shared/WebNavigationDataStore.serialization.in \
 	Shared/WebPageCreationParameters.serialization.in \
 	Shared/WebPageNetworkParameters.serialization.in \
 	Shared/WebPopupItem.serialization.in \

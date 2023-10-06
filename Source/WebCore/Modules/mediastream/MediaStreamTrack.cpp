@@ -39,6 +39,7 @@
 #include "JSMeteringMode.h"
 #include "JSOverconstrainedError.h"
 #include "JSPhotoCapabilities.h"
+#include "JSPhotoSettings.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
@@ -58,6 +59,7 @@
 #include "WebAudioSourceProvider.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -323,8 +325,33 @@ void MediaStreamTrack::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<Pho
             promise.reject(Exception { OperationError, WTFMove(result.errorMessage) });
             return;
         }
+        if (protectedThis->m_readyState != State::Live) {
+            promise.reject(Exception { OperationError, "Track has ended"_s });
+            return;
+        }
 
         promise.resolve(WTFMove(*result.capabilities));
+    });
+}
+
+void MediaStreamTrack::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettings>>&& promise) const
+{
+    m_private->getPhotoSettings()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }, promise = WTFMove(promise)] (auto&& result) mutable {
+
+        // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
+        // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
+        // asynchronously), then reject p with a new DOMException whose name is OperationError, and
+        // abort these steps.
+        if (!result) {
+            promise.reject(Exception { OperationError, WTFMove(result.error()) });
+            return;
+        }
+        if (protectedThis->m_readyState != State::Live) {
+            promise.reject(Exception { OperationError, "Track has ended"_s });
+            return;
+        }
+
+        promise.resolve(WTFMove(result.value()));
     });
 }
 

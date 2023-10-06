@@ -41,9 +41,14 @@
     outline: auto 5px -webkit-focus-ring-color
 }
 
+/* Universal rules */
+* {
+    writing-mode: horizontal-tb !important;
+}
+
+/* The <math> element */
 math {
     direction: ltr;
-    writing-mode: horizontal-tb !important;
     text-indent: 0;
     letter-spacing: normal;
     line-height: normal;

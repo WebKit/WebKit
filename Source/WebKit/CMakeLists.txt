@@ -344,6 +344,7 @@ set(WebKit_MESSAGES_IN_FILES
 )
 
 set(WebKit_SERIALIZATION_IN_FILES
+    GPUProcess/GPUProcessCreationParameters.serialization.in
     GPUProcess/GPUProcessSessionParameters.serialization.in
 
     GPUProcess/graphics/PathSegment.serialization.in
@@ -367,6 +368,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Platform/SharedMemory.serialization.in
 
+    Shared/AuxiliaryProcessCreationParameters.serialization.in
     Shared/BackgroundFetchState.serialization.in
     Shared/CallbackID.serialization.in
     Shared/DebuggableInfoData.serialization.in
@@ -375,6 +377,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/EditorState.serialization.in
     Shared/FileSystemSyncAccessHandleInfo.serialization.in
     Shared/FocusedElementInformation.serialization.in
+    Shared/FontInfo.serialization.in
     Shared/FrameInfoData.serialization.in
     Shared/FrameTreeCreationParameters.serialization.in
     Shared/FrameTreeNodeData.serialization.in
@@ -398,11 +401,13 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
     Shared/UpdateInfo.serialization.in
+    Shared/VisibleContentRectUpdateInfo.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in
     Shared/WebFoundTextRange.serialization.in
     Shared/WebHitTestResultData.serialization.in
+    Shared/WebNavigationDataStore.serialization.in
     Shared/WebPageCreationParameters.serialization.in
     Shared/WebPageNetworkParameters.serialization.in
     Shared/WebPopupItem.serialization.in

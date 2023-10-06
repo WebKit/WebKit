@@ -1627,6 +1627,11 @@ void TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
     postSynchronousMessage("StatisticsNotifyPagesWhenDataRecordsWereScanned", value);
 }
 
+void TestRunner::setStatisticsTimeAdvanceForTesting(double value)
+{
+    postSynchronousMessage("StatisticsSetTimeAdvanceForTesting", value);
+}
+
 void TestRunner::setStatisticsIsRunningTest(bool value)
 {
     postSynchronousMessage("StatisticsSetIsRunningTest", value);

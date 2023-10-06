@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPDFHUDView.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -357,4 +357,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
