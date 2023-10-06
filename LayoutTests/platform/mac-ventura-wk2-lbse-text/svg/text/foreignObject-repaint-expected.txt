@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (0,0) size 500x300
-  RenderSVGForeignObject {foreignObject} at (0,0) size 500x300
+layer at (100,100) size 500x300
+  RenderSVGForeignObject {foreignObject} at (100,100) size 500x300
     RenderBlock {div} at (0,0) size 500x183
       RenderText {#text} at (0,0) size 490x183
         text run at (0,0) width 490: "Select this text using"

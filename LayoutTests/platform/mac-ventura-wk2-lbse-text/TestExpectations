@@ -572,9 +572,6 @@ svg/custom/linking-uri-01-b.svg                 [ Failure ]
 svg/custom/multiple-view-elements.html          [ ImageOnlyFailure ]
 svg/dom/complex-svgView-specification.html      [ ImageOnlyFailure ]
 
-# SVG <foreignObject> issues
-svg/overflow/overflow-on-foreignObject.svg   [ ImageOnlyFailure ]
-
 # SVG <image> (buffered-rendering) issues
 svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 

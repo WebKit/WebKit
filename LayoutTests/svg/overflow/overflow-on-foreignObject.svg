@@ -6,7 +6,8 @@
  NOTE: This is currently BROKEN in WebKit. We're clipping the viewport of <foreignObject> correctly,
        though for each positioned object a RenderLayer is created, that has no knownledge of the
        size of the <foreignObject> viewport - as <foreignObject> doesn't create a RenderLayer.
-       So for now, you'll see an unclipped content area, just as if overflow was visible.
+       So for now, you'll see an unclipped content area, just as if overflow was visible, unless
+       LBSE is enabled, which no longer suffers from these design issues.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/1999/xhtml" width="500" height="500">
     <foreignObject x="100" y="100" width="300" height="300">
