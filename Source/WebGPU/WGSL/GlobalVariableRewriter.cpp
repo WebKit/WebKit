@@ -847,7 +847,8 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
         pipelineLayout.bindGroupLayouts[group].entries.append({
             .binding = global.resource->binding,
             .visibility = shaderStage,
-            .bindingMember = bindingMemberForGlobal(global)
+            .bindingMember = bindingMemberForGlobal(global),
+            .name = global.declaration->name()
         });
     }
     return usedGlobals;

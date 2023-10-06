@@ -122,7 +122,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUStorageTextureB
 
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
-    // FIXME: Implement this.
+    descriptor.access = BindGroupLayout::BindingAccessReadWrite;
     return descriptor;
 }
 
@@ -161,6 +161,8 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     size_t sizeOfDynamicOffsets[stageCount] = { 0, 0, 0 };
     uint32_t bindingOffset[stageCount] = { 0, 0, 0 };
     uint32_t bufferCounts[stageCount] = { 0, 0, 0 };
+    HashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> slotForEntry;
+    bool hasCompilerGeneratedArrayLengths = false;
     for (auto& entry : descriptorEntries) {
         if (entry.nextInChain) {
             if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture))
@@ -198,6 +200,10 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             bufferLayout.type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float4x3);
             descriptors[3] = createArgumentDescriptor(bufferLayout);
             bindingLayout = WGPUExternalTextureBindingLayout();
+        } else if (entry.buffer.type == static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength)) {
+            slotForEntry.set(entry.buffer.minBindingSize, entry.binding);
+            hasCompilerGeneratedArrayLengths = true;
+            continue;
         } else {
             if (!processBindingLayout(entry.buffer))
                 return BindGroupLayout::createInvalid(*this);
@@ -260,8 +266,14 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         if (auto bufferCountPerStage = bufferCounts[stage]) {
             NSUInteger maxIndex = [arguments[stage] objectAtIndex:arguments[stage].count - 1].index;
             for (auto& entry : bindGroupLayoutEntries) {
-                if (entry.value.bufferSizeArgumentBufferIndices[renderStage])
-                    *entry.value.bufferSizeArgumentBufferIndices[renderStage] += maxIndex;
+                if (entry.value.bufferSizeArgumentBufferIndices[renderStage]) {
+                    if (!hasCompilerGeneratedArrayLengths)
+                        *entry.value.bufferSizeArgumentBufferIndices[renderStage] += maxIndex;
+                    else if (auto it = slotForEntry.find(entry.value.binding); it != slotForEntry.end())
+                        entry.value.bufferSizeArgumentBufferIndices[renderStage] = it->value;
+                    else
+                        entry.value.bufferSizeArgumentBufferIndices[renderStage] = std::nullopt;
+                }
             }
             for (size_t bufferLengthIndex = 0; bufferLengthIndex < bufferCountPerStage; ++bufferLengthIndex) {
                 auto descriptor = [MTLArgumentDescriptor new];
@@ -354,12 +366,10 @@ NSUInteger BindGroupLayout::argumentBufferIndexForEntryIndex(uint32_t bindingInd
 
 std::optional<uint32_t> BindGroupLayout::bufferSizeIndexForEntryIndex(uint32_t bindingIndex, ShaderStage renderStage) const
 {
-    if (auto it = m_bindGroupLayoutEntries.find(bindingIndex); it != m_bindGroupLayoutEntries.end()) {
-        auto result = it->value.bufferSizeArgumentBufferIndices[renderStage];
-        return result ? *result : NSNotFound;
-    }
+    if (auto it = m_bindGroupLayoutEntries.find(bindingIndex); it != m_bindGroupLayoutEntries.end())
+        return it->value.bufferSizeArgumentBufferIndices[renderStage];
 
-    return NSNotFound;
+    return std::nullopt;
 }
 
 } // namespace WebGPU
