@@ -4843,7 +4843,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     } else {
         InsertTextOptions options;
         options.registerUndoGroup = registerUndoGroup;
-        options.editingRangeIsRelativeTo = m_isTextInsertionReplacingSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::EditableRoot;
+        options.editingRangeRelativeTo = m_isTextInsertionReplacingSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::EditableRoot;
         options.suppressSelectionUpdate = m_isTextInsertionReplacingSoftSpace;
 
         m_page->insertTextAsync(eventText, replacementRange, WTFMove(options));

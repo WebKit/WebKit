@@ -1820,6 +1820,7 @@
 		A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D792D41767CB0900881CBE /* ActivityAssertion.h */; };
 		AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB145E4223F931200E489D8 /* PrefetchCache.h */; };
 		AAFA634F234F7C6400FFA864 /* AsyncRevalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFA634E234F7C6300FFA864 /* AsyncRevalidation.h */; };
+		AEDA5F622ACF716C005931D5 /* InsertTextOptions.serialization.in in Resources */ = {isa = PBXBuildFile; fileRef = AEDA5F612ACF716C005931D5 /* InsertTextOptions.serialization.in */; };
 		B6114A7F29394A1600380B1B /* JSWebExtensionAPIEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6114A7D29394A1500380B1B /* JSWebExtensionAPIEvent.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B6114A8C293AE06800380B1B /* WebExtensionEventListenerType.h in Headers */ = {isa = PBXBuildFile; fileRef = B6114A8B293AE05200380B1B /* WebExtensionEventListenerType.h */; };
 		B61AFA392950DFB3008220B1 /* WebExtensionAPIPermissions.h in Headers */ = {isa = PBXBuildFile; fileRef = B65DA1D1294BC25300DB503A /* WebExtensionAPIPermissions.h */; };
@@ -6569,6 +6570,7 @@
 		AAFA6350234F7C7300FFA864 /* AsyncRevalidation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncRevalidation.cpp; sourceTree = "<group>"; };
 		AB2750C024859B1A00F1C9D8 /* PepperUICoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PepperUICoreSPI.h; sourceTree = "<group>"; };
 		ABB6C809249180DB00C50D9A /* ClockKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockKitSPI.h; sourceTree = "<group>"; };
+		AEDA5F612ACF716C005931D5 /* InsertTextOptions.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = InsertTextOptions.serialization.in; sourceTree = "<group>"; };
 		B396EA5512E0ED2D00F4FEB7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		B6114A7C2939498000380B1B /* JSWebExtensionAPIEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIEvent.h; sourceTree = "<group>"; };
 		B6114A7D29394A1500380B1B /* JSWebExtensionAPIEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIEvent.mm; sourceTree = "<group>"; };
@@ -10614,6 +10616,7 @@
 				49DAA38B24CBA1A800793D75 /* DefaultWebBrowserChecks.mm */,
 				CE550E132283744400D28791 /* InsertTextOptions.cpp */,
 				CE550E12228373C800D28791 /* InsertTextOptions.h */,
+				AEDA5F612ACF716C005931D5 /* InsertTextOptions.serialization.in */,
 				C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */,
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,
@@ -16591,6 +16594,7 @@
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
 				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				AEDA5F622ACF716C005931D5 /* InsertTextOptions.serialization.in in Resources */,
 				3FB08E431F60B240005E5312 /* iOS.xcassets in Resources */,
 				5C8BC797218CBB4800813886 /* SafeBrowsing.xcassets in Resources */,
 			);

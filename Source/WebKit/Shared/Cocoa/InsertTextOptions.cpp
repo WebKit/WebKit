@@ -26,31 +26,3 @@
 #include "config.h"
 #include "InsertTextOptions.h"
 
-namespace IPC {
-
-void ArgumentCoder<WebKit::InsertTextOptions>::encode(Encoder& encoder, const WebKit::InsertTextOptions& options)
-{
-    encoder << options.registerUndoGroup;
-    encoder << options.suppressSelectionUpdate;
-    encoder << options.processingUserGesture;
-    encoder << options.shouldSimulateKeyboardInput;
-    encoder << options.editingRangeIsRelativeTo;
-}
-
-std::optional<WebKit::InsertTextOptions> ArgumentCoder<WebKit::InsertTextOptions>::decode(Decoder& decoder)
-{
-    WebKit::InsertTextOptions options;
-    if (!decoder.decode(options.registerUndoGroup))
-        return std::nullopt;
-    if (!decoder.decode(options.suppressSelectionUpdate))
-        return std::nullopt;
-    if (!decoder.decode(options.processingUserGesture))
-        return std::nullopt;
-    if (!decoder.decode(options.shouldSimulateKeyboardInput))
-        return std::nullopt;
-    if (!decoder.decode(options.editingRangeIsRelativeTo))
-        return std::nullopt;
-    return options;
-}
-
-} // namespace IPC

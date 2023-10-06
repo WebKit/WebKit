@@ -61,9 +61,9 @@ std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::LocalFrame& f
     return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);
 }
 
-EditingRange EditingRange::fromRange(WebCore::LocalFrame& frame, const std::optional<WebCore::SimpleRange>& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
+EditingRange EditingRange::fromRange(WebCore::LocalFrame& frame, const std::optional<WebCore::SimpleRange>& range, EditingRangeIsRelativeTo editingRangeRelativeTo)
 {
-    ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot);
+    ASSERT(editingRangeRelativeTo == EditingRangeIsRelativeTo::EditableRoot);
 
     if (!range)
         return { };

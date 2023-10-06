@@ -6508,7 +6508,7 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
 
     bool replacesText = false;
     if (replacementEditingRange.location != notFound) {
-        if (auto replacementRange = EditingRange::toRange(frame, replacementEditingRange, options.editingRangeIsRelativeTo)) {
+        if (auto replacementRange = EditingRange::toRange(frame, replacementEditingRange, options.editingRangeRelativeTo)) {
             SetForScope isSelectingTextWhileInsertingAsynchronously(m_isSelectingTextWhileInsertingAsynchronously, options.suppressSelectionUpdate);
             frame->selection().setSelection(VisibleSelection(*replacementRange));
             replacesText = replacementEditingRange.length;
