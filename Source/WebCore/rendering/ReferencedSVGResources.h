@@ -35,12 +35,13 @@ namespace WebCore {
 
 class CSSSVGResourceElementClient;
 class Document;
-class LegacyRenderSVGResourceClipper;
-class LegacyRenderSVGResourceContainer;
+class RenderSVGResourceClipper;
+class RenderSVGResourceContainer;
 class ReferencePathOperation;
 class ReferenceFilterOperation;
 class RenderElement;
 class RenderSVGResourceClipper;
+class RenderSVGResourceContainer;
 class RenderSVGResourceFilter;
 class RenderStyle;
 class QualifiedName;
@@ -58,10 +59,10 @@ public:
     void updateReferencedResources(TreeScope&, const Vector<std::pair<AtomString, QualifiedName>>&);
 
     // Clipping needs a renderer, filters use an element.
-    static LegacyRenderSVGResourceClipper* referencedClipperRenderer(TreeScope&, const ReferencePathOperation&);
+    static RenderSVGResourceClipper* referencedClipperRenderer(TreeScope&, const ReferencePathOperation&);
     static SVGFilterElement* referencedFilterElement(TreeScope&, const ReferenceFilterOperation&);
 
-    static LegacyRenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
+    static RenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
 
 private:
     static SVGElement* elementForResourceID(TreeScope&, const AtomString& resourceID, const QualifiedName& tagName);
