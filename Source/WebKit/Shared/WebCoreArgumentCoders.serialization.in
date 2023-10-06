@@ -4664,6 +4664,8 @@ struct WebCore::MessageWithMessagePorts {
     Vector<WebCore::TransferredMessagePort> transferredPorts;
 };
 
+#if ENABLE(TRACKING_PREVENTION)
+
 enum class WebCore::StorageAccessWasGranted : bool
 
 enum class WebCore::StorageAccessPromptWasShown : bool
@@ -4680,6 +4682,8 @@ header: <WebCore/DocumentStorageAccess.h>
     WebCore::RegistrableDomain topFrameDomain;
     WebCore::RegistrableDomain subFrameDomain;
 };
+
+#endif // ENABLE(TRACKING_PREVENTION)
 
 class WebCore::Exception {
     WebCore::ExceptionCode code();
