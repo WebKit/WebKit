@@ -889,7 +889,7 @@ public:
         return whenSettled(targetQueue, [resolveFunction = std::forward<ResolveFunction>(resolveFunction), rejectFunction = std::forward<RejectFunction>(rejectFunction)] (ResultParam result) mutable -> LambdaReturnType {
             if (result) {
                 if constexpr (std::is_void_v<ResolveValueT>)
-                    return invokeWithVoidOrWithArg(WTFMove(resolveFunction), nullptr_t());
+                    return invokeWithVoidOrWithArg(WTFMove(resolveFunction), std::nullptr_t());
                 else
                     return invokeWithVoidOrWithArg(WTFMove(resolveFunction), maybeMove(result.value()));
             }
@@ -910,7 +910,7 @@ public:
         return whenSettled(targetQueue, [thisVal = Ref { thisVal }, resolveMethod, rejectMethod] (ResultParam result) -> LambdaReturnType {
             if (result) {
                 if constexpr (std::is_void_v<ResolveValueT>)
-                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, nullptr_t());
+                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, std::nullptr_t());
                 else
                     return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, maybeMove(result.value()));
             }
