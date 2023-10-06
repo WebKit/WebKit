@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PDFPluginBase.h"
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
+#if ENABLE(PDF_PLUGIN)
 
 #include "PluginView.h"
 #include "WebFrame.h"
@@ -36,12 +36,42 @@
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/LoaderNSURLExtras.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+PluginInfo PDFPluginBase::pluginInfo()
+{
+    PluginInfo info;
+
+    // Note: HTML specification requires that the WebKit built-in PDF name
+    // is presented in plain English text.
+    // https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
+    info.name = "WebKit built-in PDF"_s;
+    info.desc = pdfDocumentTypeDescription();
+    info.file = "internal-pdf-viewer"_s;
+    info.isApplicationPlugin = true;
+    info.clientLoadPolicy = PluginLoadClientPolicy::Undefined;
+    info.bundleIdentifier = "com.apple.webkit.builtinpdfplugin"_s;
+
+    MimeClassInfo pdfMimeClassInfo;
+    pdfMimeClassInfo.type = "application/pdf"_s;
+    pdfMimeClassInfo.desc = pdfDocumentTypeDescription();
+    pdfMimeClassInfo.extensions.append("pdf"_s);
+    info.mimes.append(pdfMimeClassInfo);
+
+    MimeClassInfo textPDFMimeClassInfo;
+    textPDFMimeClassInfo.type = "text/pdf"_s;
+    textPDFMimeClassInfo.desc = pdfDocumentTypeDescription();
+    textPDFMimeClassInfo.extensions.append("pdf"_s);
+    info.mimes.append(textPDFMimeClassInfo);
+
+    return info;
+}
 
 PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
     : m_frame(*WebFrame::fromCoreFrame(*element.document().frame()))
@@ -169,4 +199,4 @@ IntPoint PDFPluginBase::convertFromRootViewToPlugin(const IntPoint& point) const
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
+#endif // ENABLE(PDF_PLUGIN)

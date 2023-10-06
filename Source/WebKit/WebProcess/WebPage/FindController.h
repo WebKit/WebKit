@@ -105,7 +105,7 @@ private:
     bool shouldHideFindIndicatorOnScroll() const;
     void didScrollAffectingFindIndicatorPosition();
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     PluginView* mainFramePlugIn();
 #endif
 

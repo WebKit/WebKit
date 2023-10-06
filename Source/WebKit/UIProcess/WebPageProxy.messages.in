@@ -419,10 +419,6 @@ messages -> WebPageProxy {
     SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
     LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result) Synchronous
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem) Synchronous
-#endif
-
     DidUpdateActivityState() CanDispatchOutOfOrder
 
 #if ENABLE(WEB_CRYPTO)
@@ -543,7 +539,11 @@ messages -> WebPageProxy {
     SpeechSynthesisResetState()
 #endif
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem) Synchronous
+#endif
+
+#if ENABLE(PDF_HUD)
     CreatePDFHUD(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
     UpdatePDFHUDLocation(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
     RemovePDFHUD(WebKit::PDFPluginIdentifier identifier)

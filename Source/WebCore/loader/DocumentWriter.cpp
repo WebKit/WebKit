@@ -119,12 +119,28 @@ Ref<Document> DocumentWriter::createDocument(const URL& url, ScriptExecutionCont
 {
     if (!m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->loader().client().shouldAlwaysUsePluginDocument(m_mimeType))
         return PluginDocument::create(*m_frame, url);
-#if PLATFORM(IOS_FAMILY)
-    if (MIMETypeRegistry::isPDFMIMEType(m_mimeType) && (m_frame->isMainFrame() || !m_frame->settings().useImageDocumentForSubframePDF()))
-        return SinkDocument::create(*m_frame, url);
+
+    auto useSinkDocument = [&]() {
+#if ENABLE(PDF_PLUGIN)
+        if (m_frame->loader().client().shouldUsePDFPlugin(m_mimeType, url.path()))
+            return false;
 #endif
+#if PLATFORM(IOS_FAMILY)
+        if (m_frame->isMainFrame())
+            return true;
+
+        return !m_frame->settings().useImageDocumentForSubframePDF();
+#else
+        return false;
+#endif
+    };
+
+    if (MIMETypeRegistry::isPDFMIMEType(m_mimeType) && useSinkDocument())
+        return SinkDocument::create(*m_frame, url);
+
     if (!m_frame->loader().client().hasHTMLView())
         return Document::createNonRenderedPlaceholder(*m_frame, url);
+
     return DOMImplementation::createDocument(m_mimeType, m_frame.get(), m_frame->settings(), url, documentIdentifier);
 }
 

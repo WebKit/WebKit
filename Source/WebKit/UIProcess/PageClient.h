@@ -269,7 +269,7 @@ public:
     virtual void didFailProvisionalLoadForMainFrame() { };
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) = 0;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_HUD)
     virtual void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&) = 0;
     virtual void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&) = 0;
     virtual void removePDFHUD(PDFPluginIdentifier) = 0;

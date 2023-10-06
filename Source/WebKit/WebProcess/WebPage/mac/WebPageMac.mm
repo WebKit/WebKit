@@ -222,18 +222,6 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
     return nil;
 }
 
-bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) const
-{
-    return pdfPluginEnabled()
-#if ENABLE(PDFJS)
-        && !corePage()->settings().pdfJSViewerEnabled()
-#endif
-        && getPDFLayerControllerClass()
-        && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType)
-            || (contentType.isEmpty()
-                && (path.endsWithIgnoringASCIICase(".pdf"_s) || path.endsWithIgnoringASCIICase(".ps"_s))));
-}
-
 static String commandNameForSelectorName(const String& selectorName)
 {
     // Map selectors into Editor command names.
@@ -931,7 +919,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         }
     }
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (is<HTMLPlugInImageElement>(element)) {
         if (RefPtr pluginView = static_cast<PluginView*>(downcast<HTMLPlugInImageElement>(*element).pluginWidget())) {
             // FIXME: We don't have API to identify images inside PDFs based on position.
@@ -1105,6 +1093,8 @@ void WebPage::setAccentColor(WebCore::Color color)
 
 #endif // HAVE(APP_ACCENT_COLORS)
 
+#if ENABLE(PDF_PLUGIN)
+
 void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)
 {
     auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
@@ -1155,6 +1145,8 @@ void WebPage::removePDFHUD(PDFPlugin& plugin)
     if (m_pdfPlugInsWithHUD.remove(plugin.identifier()))
         send(Messages::WebPageProxy::RemovePDFHUD(plugin.identifier()));
 }
+
+#endif // ENABLE(PDF_PLUGIN)
 
 } // namespace WebKit
 

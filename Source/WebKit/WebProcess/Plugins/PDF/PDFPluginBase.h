@@ -25,11 +25,12 @@
 
 #pragma once
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
+#if ENABLE(PDF_PLUGIN)
 
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/PluginData.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
@@ -63,6 +64,8 @@ class PDFPluginBase : public ThreadSafeRefCounted<PDFPluginBase> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
 public:
+    static WebCore::PluginInfo pluginInfo();
+
     virtual ~PDFPluginBase() = default;
 
     void destroy();
@@ -168,4 +171,4 @@ protected:
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
+#endif // ENABLE(PDF_PLUGIN)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PDFPluginAnnotation_h
-#define PDFPluginAnnotation_h
+#pragma once
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
@@ -114,5 +113,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
-
-#endif // PDFPluginAnnotation_h

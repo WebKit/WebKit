@@ -25,7 +25,8 @@
 
 #pragma once
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+
 namespace WebKit {
     
 struct PDFContextMenuItem {

@@ -30,6 +30,7 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
+#import "PDFPlugin.h"
 #import "PluginView.h"
 #import "UserMediaCaptureManager.h"
 #import "WKAccessibilityWebPageObjectBase.h"
@@ -59,6 +60,7 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/LocalFrameView.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NodeRenderStyle.h>
@@ -139,10 +141,26 @@ void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bo
 
     completionHandler(hasActiveSession, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
 }
-    
+
+#if ENABLE(PDF_PLUGIN)
+bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) const
+{
+    return pdfPluginEnabled()
+#if ENABLE(PDFJS)
+        && !corePage()->settings().pdfJSViewerEnabled()
+#endif
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+        && PDFPlugin::pdfKitLayerControllerIsAvailable()
+#endif
+        && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType)
+            || (contentType.isEmpty()
+                && (path.endsWithIgnoringASCIICase(".pdf"_s) || path.endsWithIgnoringASCIICase(".ps"_s))));
+}
+#endif
+
 void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
         if (pluginView->performDictionaryLookupAtLocation(floatPoint))
             return;

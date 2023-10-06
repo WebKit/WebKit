@@ -1045,16 +1045,16 @@ void WebLocalFrameLoaderClient::revertToProvisionalState(DocumentLoader*)
 
 inline bool WebLocalFrameLoaderClient::hasPlugInView() const
 {
-#if !ENABLE(LEGACY_PDFKIT_PLUGIN)
-    return false;
-#else
+#if ENABLE(PDF_PLUGIN)
     return m_pluginView;
+#else
+    return false;
 #endif
 }
 
 void WebLocalFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError&)
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (!m_pluginView)
         return;
     
@@ -1112,7 +1112,7 @@ void WebLocalFrameLoaderClient::committedLoad(DocumentLoader* loader, const Shar
         loader->cancelMainResourceLoad(pluginWillHandleLoadError(loader->response()));
 #endif
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     // Calling commitData did not create the plug-in view.
     if (!m_pluginView)
         return;
@@ -1145,7 +1145,7 @@ void WebLocalFrameLoaderClient::finishedLoading(DocumentLoader* loader)
         webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomContentProvider(loader->response().suggestedFilename(), dataReference));
     }
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (!m_pluginView)
         return;
 
@@ -1585,23 +1585,23 @@ RefPtr<LocalFrame> WebLocalFrameLoaderClient::createFrame(const AtomString& name
 
 RefPtr<Widget> WebLocalFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement& pluginElement, const URL& url, const Vector<AtomString>&, const Vector<AtomString>&, const String& mimeType, bool loadManually)
 {
-#if !ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
+    return PluginView::create(pluginElement, url, mimeType, loadManually && !m_frameCameFromBackForwardCache);
+#else
     UNUSED_PARAM(pluginElement);
     UNUSED_PARAM(url);
     UNUSED_PARAM(mimeType);
     UNUSED_PARAM(loadManually);
     return nullptr;
-#else
-    return PluginView::create(pluginElement, url, mimeType, loadManually && !m_frameCameFromBackForwardCache);
 #endif
 }
 
 void WebLocalFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 {
-#if !ENABLE(LEGACY_PDFKIT_PLUGIN)
-    UNUSED_PARAM(pluginWidget);
-#else
+#if ENABLE(PDF_PLUGIN)
     m_pluginView = static_cast<PluginView*>(&pluginWidget);
+#else
+    UNUSED_PARAM(pluginWidget);
 #endif
 }
 
@@ -1923,7 +1923,7 @@ void WebLocalFrameLoaderClient::notifyPageOfAppBoundBehavior()
 }
 #endif
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 
 bool WebLocalFrameLoaderClient::shouldUsePDFPlugin(const String& contentType, StringView path) const
 {

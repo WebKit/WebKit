@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginView.h"
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 
 #include "PDFPlugin.h"
 #include "ShareableBitmap.h"
@@ -221,7 +221,13 @@ static Ref<PDFPluginBase> createPlugin(HTMLPlugInElement& element)
     if (element.document().settings().unifiedPDFEnabled())
         return UnifiedPDFPlugin::create(element);
 #endif
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     return PDFPlugin::create(element);
+#endif
+    RELEASE_ASSERT_NOT_REACHED();
+
+    RefPtr<PDFPluginBase> nullPluginBase;
+    return nullPluginBase.releaseNonNull();
 }
 
 PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, const String&, bool shouldUseManualLoader, WebPage& page)
@@ -398,8 +404,10 @@ PlatformLayer* PluginView::platformLayer() const
     if (!m_isInitialized)
         return nil;
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->pluginLayer();
+#endif
 
     return nullptr;
 }
@@ -411,8 +419,10 @@ bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity
     if (!m_isInitialized)
         return false;
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->scroll(direction, granularity);
+#endif
 
     return false;
 }
@@ -422,8 +432,10 @@ ScrollPosition PluginView::scrollPositionForTesting() const
     if (!m_isInitialized)
         return { };
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->scrollPositionForTesting();
+#endif
 
     return { };
 }
@@ -433,8 +445,10 @@ Scrollbar* PluginView::horizontalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->horizontalScrollbar();
+#endif
 
     return nullptr;
 }
@@ -444,8 +458,10 @@ Scrollbar* PluginView::verticalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->verticalScrollbar();
+#endif
 
     return nullptr;
 }

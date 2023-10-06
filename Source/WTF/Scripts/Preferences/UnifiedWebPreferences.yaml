@@ -4967,6 +4967,7 @@ PDFPluginEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
+      "PLATFORM(IOS_FAMILY)": false
       default: true
 
 PageAtRuleSupportEnabled:

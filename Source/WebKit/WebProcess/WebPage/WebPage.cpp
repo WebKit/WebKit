@@ -1247,7 +1247,7 @@ WebPage::~WebPage()
     
     m_sandboxExtensionTracker.invalidate();
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     for (auto& pluginView : m_pluginViews)
         pluginView.webPageDestroyed();
 #endif
@@ -1377,8 +1377,8 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
 
     EditorState result;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = focusedPluginViewForFrame(frame)) {
         if (!pluginView->getSelectionString().isNull()) {
             result.selectionIsNone = false;
             result.selectionIsRange = true;
@@ -1576,7 +1576,7 @@ Ref<API::Array> WebPage::trackedRepaintRects()
     return API::Array::create(WTFMove(repaintRects));
 }
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 
 PluginView* WebPage::focusedPluginViewForFrame(LocalFrame& frame)
 {
@@ -1614,8 +1614,8 @@ void WebPage::executeEditingCommand(const String& commandName, const String& arg
 
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = focusedPluginViewForFrame(frame)) {
         pluginView->handleEditingCommand(commandName, argument);
         return;
     }
@@ -1665,8 +1665,8 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (PluginView* pluginView = focusedPluginViewForFrame(frame))
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = focusedPluginViewForFrame(frame))
         return pluginView->isEditingCommandEnabled(commandName);
 #endif
 
@@ -2280,7 +2280,7 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 
 double WebPage::textZoomFactor() const
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn())
         return pluginView->pageScaleFactor();
 #endif
@@ -2293,7 +2293,7 @@ double WebPage::textZoomFactor() const
 
 void WebPage::setTextZoomFactor(double zoomFactor)
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
         pluginView->setPageScaleFactor(zoomFactor);
         return;
@@ -2308,7 +2308,7 @@ void WebPage::setTextZoomFactor(double zoomFactor)
 
 double WebPage::pageZoomFactor() const
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn())
         return pluginView->pageScaleFactor();
 #endif
@@ -2321,7 +2321,7 @@ double WebPage::pageZoomFactor() const
 
 void WebPage::setPageZoomFactor(double zoomFactor)
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
         pluginView->setPageScaleFactor(zoomFactor);
         return;
@@ -2397,7 +2397,7 @@ void WebPage::clearHistory()
 
 void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
         pluginView->setPageScaleFactor(pageZoomFactor);
         return;
@@ -2432,7 +2432,7 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
     }
 #endif
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
         // Since the main-frame PDF plug-in handles the page scale factor, make sure to reset WebCore's page scale.
         // Otherwise, we can end up with an immutable but non-1 page scale applied by WebCore on top of whatever the plugin does.
@@ -2452,7 +2452,7 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
     if (!willChangeScaleFactor)
         return;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     for (auto& pluginView : m_pluginViews)
         pluginView.pageScaleFactorDidChange();
 #endif
@@ -2491,7 +2491,7 @@ void WebPage::scalePageInViewCoordinates(double scale, IntPoint centerInViewCoor
 
 double WebPage::totalScaleFactor() const
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn())
         return pluginView->pageScaleFactor();
 #endif
@@ -2989,7 +2989,7 @@ static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage
 
 static ImageOptions snapshotImageOptions(LocalFrame& frame)
 {
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     return WebPage::pluginViewForFrame(&frame) ? ImageOptionsLocal : ImageOptionsShareable;
 #else
     return ImageOptionsShareable;
@@ -3533,8 +3533,8 @@ void WebPage::validateCommand(const String& commandName, CompletionHandler<void(
     int32_t state = 0;
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (PluginView* pluginView = focusedPluginViewForFrame(frame))
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = focusedPluginViewForFrame(frame))
         isEnabled = pluginView->isEditingCommandEnabled(commandName);
     else
 #endif
@@ -3798,7 +3798,7 @@ void WebPage::setTopContentInset(float contentInset)
 
     m_page->setTopContentInset(contentInset);
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     for (auto& pluginView : m_pluginViews)
         pluginView.topContentInsetDidChange();
 #endif
@@ -4249,8 +4249,8 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHand
     RefPtr<FragmentedSharedBuffer> buffer;
     if (RefPtr frame = WebProcess::singleton().webFrame(frameID)) {
         RefPtr coreFrame = frame->coreLocalFrame();
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-        if (PluginView* pluginView = pluginViewForFrame(coreFrame.get()))
+#if ENABLE(PDF_PLUGIN)
+        if (auto* pluginView = pluginViewForFrame(coreFrame.get()))
             buffer = pluginView->liveResourceData();
         if (!buffer)
 #endif
@@ -5678,7 +5678,7 @@ void WebPage::mainFrameDidLayout()
 #endif
 }
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 
 void WebPage::addPluginView(PluginView& pluginView)
 {
@@ -5692,7 +5692,7 @@ void WebPage::removePluginView(PluginView& pluginView)
     m_pluginViews.remove(pluginView);
 }
 
-#endif
+#endif // ENABLE(PDF_PLUGIN)
 
 void WebPage::sendSetWindowFrame(const FloatRect& windowFrame)
 {
