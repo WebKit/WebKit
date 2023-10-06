@@ -427,6 +427,7 @@ $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSessionConfiguration.serializatio
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSourceProviderManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstance.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteImageDecoderAVF.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteImageDecoderAVFManager.messages.in

@@ -510,6 +510,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
+    WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 

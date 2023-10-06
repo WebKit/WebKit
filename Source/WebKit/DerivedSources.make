@@ -644,6 +644,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in \
 	WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in \
 	WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in \
+	WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in \
