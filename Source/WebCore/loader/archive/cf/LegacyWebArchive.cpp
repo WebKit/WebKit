@@ -62,6 +62,8 @@
 
 namespace WebCore {
 
+static constexpr unsigned maxFileNameSizeInBytes = 255;
+static constexpr char defaultFileName[] = "file";
 static const CFStringRef LegacyWebArchiveMainResourceKey = CFSTR("WebMainResource");
 static const CFStringRef LegacyWebArchiveSubresourcesKey = CFSTR("WebSubresources");
 static const CFStringRef LegacyWebArchiveSubframeArchivesKey = CFSTR("WebSubframeArchives");
@@ -73,6 +75,24 @@ static const CFStringRef LegacyWebArchiveResourceFileNameKey = CFSTR("WebResourc
 static const CFStringRef LegacyWebArchiveResourceTextEncodingNameKey = CFSTR("WebResourceTextEncodingName");
 static const CFStringRef LegacyWebArchiveResourceResponseKey = CFSTR("WebResourceResponse");
 static const CFStringRef LegacyWebArchiveResourceResponseVersionKey = CFSTR("WebResourceResponseVersion");
+
+static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames)
+{
+    auto extractedFileName = url.lastPathComponent().toString();
+    auto fileName = extractedFileName.isEmpty() ? String::fromLatin1(defaultFileName) : extractedFileName;
+    fileName = FileSystem::encodeForFileName(fileName);
+
+    unsigned count = 0;
+    do {
+        if (count)
+            fileName = makeString(fileName, '(', count, ')');
+        if (fileName.sizeInBytes() > maxFileNameSizeInBytes)
+            fileName = fileName.substring(fileName.sizeInBytes() - maxFileNameSizeInBytes, maxFileNameSizeInBytes);
+        ++count;
+    } while (existingFileNames.contains(fileName));
+
+    return fileName;
+}
 
 RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(ArchiveResource* resource, MainResourceStatus isMainResource)
 {
@@ -535,6 +555,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
     Vector<Ref<LegacyWebArchive>> subframeArchives;
     Vector<Ref<ArchiveResource>> subresources;
     HashMap<String, String> uniqueSubresources;
+    HashSet<String> uniqueFileNames;
     String subresourcesDirectoryName = mainFrameFileName.isNull() ? String { } : makeString(mainFrameFileName, "_files");
 
     for (auto& node : nodes) {
@@ -583,7 +604,8 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
                 }
 
                 if (!subresourcesDirectoryName.isNull()) {
-                    String subresourceFileName = subresourceURL.lastPathComponent().toString();
+                    String subresourceFileName = generateValidFileName(subresourceURL, uniqueFileNames);
+                    uniqueFileNames.add(subresourceFileName);
                     String subresourceFilePath = makeString(subresourcesDirectoryName, "/", subresourceFileName);
                     resource->setFileName(subresourceFilePath);
                     addResult.iterator->value = frame.isMainFrame() ? subresourceFilePath : subresourceFileName;
