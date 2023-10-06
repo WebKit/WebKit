@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebPluginInfoProvider.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 #include "PDFPlugin.h"
 #endif
 
@@ -44,7 +44,7 @@ void WebPluginInfoProvider::refreshPlugins()
 
 static Vector<WebCore::PluginInfo> pluginInfoVector()
 {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     return { PDFPlugin::pluginInfo() };
 #else
     return { };

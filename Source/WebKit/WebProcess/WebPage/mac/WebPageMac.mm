@@ -385,7 +385,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     completionHandler(WebCore::AttributedString::fromNSAttributedString(WTFMove(attributedString)), rangeToSend);
 }
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PluginView& pdfPlugin, NSDictionary *options, WebCore::TextIndicatorPresentationTransition presentationTransition)
 {
@@ -931,7 +931,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         }
     }
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<HTMLPlugInImageElement>(element)) {
         if (RefPtr pluginView = static_cast<PluginView*>(downcast<HTMLPlugInImageElement>(*element).pluginWidget())) {
             // FIXME: We don't have API to identify images inside PDFs based on position.

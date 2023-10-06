@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
    
 [CustomHeader] struct WebKit::PDFContextMenuItem {
     String title;

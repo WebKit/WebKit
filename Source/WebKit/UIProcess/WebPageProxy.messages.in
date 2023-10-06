@@ -419,7 +419,7 @@ messages -> WebPageProxy {
     SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
     LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result) Synchronous
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem) Synchronous
 #endif
 
@@ -543,7 +543,7 @@ messages -> WebPageProxy {
     SpeechSynthesisResetState()
 #endif
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     CreatePDFHUD(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
     UpdatePDFHUDLocation(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
     RemovePDFHUD(WebKit::PDFPluginIdentifier identifier)

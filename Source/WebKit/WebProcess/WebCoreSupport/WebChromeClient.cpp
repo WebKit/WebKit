@@ -772,7 +772,7 @@ void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
     ASSERT(webFrame);
 
     WebCore::FloatSize pdfFirstPageSize;
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (auto* pluginView = WebPage::pluginViewForFrame(&frame))
         pdfFirstPageSize = pluginView->pdfDocumentSizeForPrinting();
 #endif

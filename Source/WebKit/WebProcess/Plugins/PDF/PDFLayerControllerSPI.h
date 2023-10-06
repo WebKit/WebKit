@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import <Quartz/Quartz.h>
 
@@ -174,4 +174,4 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 - (id)accessibilityNode;
 @end
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)

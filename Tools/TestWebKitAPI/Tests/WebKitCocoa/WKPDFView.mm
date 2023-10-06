@@ -191,7 +191,7 @@ TEST(WKPDFView, BackgroundColor)
 
 #endif
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 static void checkFrame(NSRect frame, CGFloat x, CGFloat y, CGFloat width, CGFloat height)
 {
@@ -414,7 +414,7 @@ TEST(PDFHUD, LoadPDFTypeWithPluginsBlocked)
     checkFrame([webView _pdfHUDs].anyObject.frame, 0, 0, 800, 600);
 }
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #if PLATFORM(MAC)
 

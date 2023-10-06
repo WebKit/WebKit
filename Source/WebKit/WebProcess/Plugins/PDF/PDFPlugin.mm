@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPlugin.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import "ArgumentCoders.h"
 #import "DataReference.h"
@@ -2876,4 +2876,4 @@ id PDFPlugin::accessibilityObject() const
 
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)

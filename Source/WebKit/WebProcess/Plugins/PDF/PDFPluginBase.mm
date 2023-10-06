@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PDFPluginBase.h"
 
-#if ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
 
 #include "PluginView.h"
 #include "WebFrame.h"
@@ -169,4 +169,4 @@ IntPoint PDFPluginBase::convertFromRootViewToPlugin(const IntPoint& point) const
 
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN) || ENABLE(UNIFIED_PDF)

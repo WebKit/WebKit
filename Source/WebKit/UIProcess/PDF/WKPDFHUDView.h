@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import "PDFPluginIdentifier.h"
 
@@ -42,4 +42,4 @@ class WebPageProxy;
 
 @end
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)

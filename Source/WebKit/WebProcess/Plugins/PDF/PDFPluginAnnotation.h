@@ -26,7 +26,7 @@
 #ifndef PDFPluginAnnotation_h
 #define PDFPluginAnnotation_h
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #include <WebCore/EventListener.h>
 #include <wtf/RefCounted.h>
@@ -113,6 +113,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #endif // PDFPluginAnnotation_h
