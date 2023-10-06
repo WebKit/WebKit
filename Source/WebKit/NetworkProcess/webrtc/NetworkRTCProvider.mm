@@ -84,7 +84,7 @@ rtc::ProxyInfo NetworkRTCProvider::proxyInfoFromSession(const RTCNetwork::Socket
     if (isEnabled(proxyDictionary.get(), kCFNetworkProxiesSOCKSEnable))
         return createRTCProxy(proxyDictionary.get(), rtc::PROXY_SOCKS5, kCFNetworkProxiesSOCKSProxy, kCFNetworkProxiesSOCKSPort);
 #endif
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(APPLETV)
     if (isEnabled(proxyDictionary.get(), kCFNetworkProxiesHTTPEnable))
         return createRTCProxy(proxyDictionary.get(), rtc::PROXY_HTTPS, kCFNetworkProxiesHTTPProxy, kCFNetworkProxiesHTTPPort);
 #endif

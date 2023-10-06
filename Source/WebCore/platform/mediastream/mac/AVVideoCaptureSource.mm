@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AVVideoCaptureSource.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#if ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICE)
 
 #import "FillLightMode.h"
 #import "ImageBuffer.h"
@@ -1122,4 +1122,4 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
 
 @end
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICE)

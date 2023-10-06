@@ -138,7 +138,7 @@ OSStatus CoreAudioSharedInternalUnit::initialize()
 
 OSStatus CoreAudioSharedInternalUnit::uninitialize()
 {
-    return AudioUnitUninitialize(m_ioUnit);
+    return PAL::AudioUnitUninitialize(m_ioUnit);
 }
 
 OSStatus CoreAudioSharedInternalUnit::start()
@@ -163,7 +163,7 @@ OSStatus CoreAudioSharedInternalUnit::get(AudioUnitPropertyID propertyID, AudioU
 
 OSStatus CoreAudioSharedInternalUnit::render(AudioUnitRenderActionFlags* ioActionFlags, const AudioTimeStamp* inTimeStamp, UInt32 inOutputBusNumber, UInt32 inNumberFrames, AudioBufferList* list)
 {
-    return AudioUnitRender(m_ioUnit, ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, list);
+    return PAL::AudioUnitRender(m_ioUnit, ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, list);
 }
 
 OSStatus CoreAudioSharedInternalUnit::defaultInputDevice(uint32_t* deviceID)

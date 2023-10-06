@@ -68,5 +68,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioComponentInstanceNew, OSSt
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioUnitGetProperty, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement, void* outData, UInt32* ioDataSize), (inUnit, inID, inScope, inElement, outData, ioDataSize))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioUnitInitialize, OSStatus, (AudioUnit inUnit), (inUnit))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioUnitSetProperty, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement, const void* inData, UInt32 inDataSize), (inUnit, inID, inScope, inElement, inData, inDataSize))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioUnitRender, OSStatus, (AudioUnit inUnit, AudioUnitRenderActionFlags* ioActionFlags, const AudioTimeStamp* inTimeStamp, UInt32 inOutputBusNumber, UInt32 inNumberFrames, AudioBufferList* ioData), (inUnit, ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, ioData))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioUnitUninitialize, OSStatus, (AudioUnit inUnit), (inUnit))
 
 #endif // USE(AVFOUNDATION)

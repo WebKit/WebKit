@@ -80,6 +80,7 @@ const Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevices()
 
 inline static bool deviceIsAvailable(AVCaptureDevice *device)
 {
+#if HAVE(AVCAPTUREDEVICE)
     if (![device isConnected])
         return false;
 
@@ -89,10 +90,15 @@ inline static bool deviceIsAvailable(AVCaptureDevice *device)
 #endif
 
     return true;
+#else
+    UNUSED_PARAM(device);
+    return false;
+#endif
 }
 
 RetainPtr<NSArray> AVCaptureDeviceManager::currentCameras()
 {
+#if HAVE(AVCAPTUREDEVICE)
     AVCaptureDeviceDiscoverySession *discoverySession = [PAL::getAVCaptureDeviceDiscoverySessionClass()
         discoverySessionWithDeviceTypes:m_avCaptureDeviceTypes.get()
         mediaType:AVMediaTypeVideo
@@ -100,10 +106,14 @@ RetainPtr<NSArray> AVCaptureDeviceManager::currentCameras()
     ];
 
     return discoverySession.devices;
+#else
+    return nil;
+#endif
 }
 
 void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 {
+#if HAVE(AVCAPTUREDEVICE)
     ASSERT(!isMainThread());
     auto currentDevices = currentCameras();
     auto removedDevices = adoptNS([[NSMutableArray alloc] init]);
@@ -129,7 +139,7 @@ void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
         [device addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
         [m_avCaptureDevices addObject:device];
     }
-
+#endif
 }
 
 static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device, bool isDefault = false)
@@ -138,7 +148,7 @@ static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device, bool isDefa
     captureDevice.setEnabled(deviceIsAvailable(device));
     captureDevice.setIsDefault(isDefault);
 
-#if HAVE(CONTINUITY_CAMERA)
+#if HAVE(AVCAPTUREDEVICE) && HAVE(CONTINUITY_CAMERA)
     if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(systemPreferredCamera)] && [device respondsToSelector:@selector(isContinuityCamera)])
         captureDevice.setIsEphemeral(device.isContinuityCamera && [PAL::getAVCaptureDeviceClass() systemPreferredCamera] != device);
 #endif
@@ -148,7 +158,12 @@ static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device, bool isDefa
 
 static inline bool isVideoDevice(AVCaptureDevice *device)
 {
+#if HAVE(AVCAPTUREDEVICE)
     return [device hasMediaType:AVMediaTypeVideo] || [device hasMediaType:AVMediaTypeMuxed];
+#else
+    UNUSED_PARAM(device);
+    return false;
+#endif
 }
 
 Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
@@ -164,10 +179,11 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
 
     updateCachedAVCaptureDevices();
 
-    auto currentDevices = currentCameras();
     Vector<CaptureDevice> deviceList;
 
-    AVCaptureDevice* defaultVideoDevice = nil;
+#if HAVE(AVCAPTUREDEVICE)
+    auto currentDevices = currentCameras();
+    AVCaptureDevice *defaultVideoDevice = nil;
 #if HAVE(CONTINUITY_CAMERA)
     auto haveSystemPreferredCamera = !![PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(systemPreferredCamera)];
     if (haveSystemPreferredCamera)
@@ -196,7 +212,7 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
             }
         }
     })();
-#endif
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
     if (defaultVideoDevice)
         deviceList.append(toCaptureDevice(defaultVideoDevice, true));
@@ -205,6 +221,8 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
         if (isVideoDevice(platformDevice) && platformDevice.uniqueID != defaultVideoDevice.uniqueID)
             deviceList.append(toCaptureDevice(platformDevice));
     }
+#endif // HAVE(AVCAPTUREDEVICE)
+
     return deviceList;
 }
 
@@ -247,7 +265,9 @@ AVCaptureDeviceManager& AVCaptureDeviceManager::singleton()
 
 AVCaptureDeviceManager::AVCaptureDeviceManager()
     : m_objcObserver(adoptNS([[WebCoreAVCaptureDeviceManagerObserver alloc] initWithCallback:this]))
+#if HAVE(AVCAPTUREDEVICE)
     , m_avCaptureDeviceTypes(adoptNS(AVVideoCaptureSource::cameraCaptureDeviceTypes()))
+#endif
     , m_dispatchQueue(WorkQueue::create("com.apple.WebKit.AVCaptureDeviceManager"))
 {
 }
@@ -258,13 +278,15 @@ AVCaptureDeviceManager::~AVCaptureDeviceManager()
     [m_objcObserver disconnect];
     for (AVCaptureDevice *device in m_avCaptureDevices.get())
         [device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
+#if HAVE(AVCAPTUREDEVICE)
     [PAL::getAVCaptureDeviceClass() removeObserver:m_objcObserver.get() forKeyPath:@"systemPreferredCamera"];
     [PAL::getAVCaptureDeviceDiscoverySessionClass() removeObserver:m_objcObserver.get() forKeyPath:@"devices"];
+#endif
 }
 
 void AVCaptureDeviceManager::setUserPreferredCamera()
 {
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(AVCAPTUREDEVICE) && PLATFORM(IOS_FAMILY)
     if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(setUserPreferredCamera:)]) {
         auto currentDevices = currentCameras();
         for (AVCaptureDevice *platformDevice in currentDevices.get()) {
@@ -279,10 +301,12 @@ void AVCaptureDeviceManager::setUserPreferredCamera()
 
 void AVCaptureDeviceManager::registerForDeviceNotifications()
 {
+#if HAVE(AVCAPTUREDEVICE)
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasConnectedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasDisconnectedNotification object:nil];
     [PAL::getAVCaptureDeviceClass() addObserver:m_objcObserver.get() forKeyPath:@"systemPreferredCamera" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:nil];
     [PAL::getAVCaptureDeviceDiscoverySessionClass() addObserver:m_objcObserver.get() forKeyPath:@"devices" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:nil];
+#endif
 }
 
 } // namespace WebCore
@@ -336,4 +360,4 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
 
 @end
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)

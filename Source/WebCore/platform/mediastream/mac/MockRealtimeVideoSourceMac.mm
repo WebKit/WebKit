@@ -32,6 +32,7 @@
 #import "MockRealtimeVideoSourceMac.h"
 
 #if ENABLE(MEDIA_STREAM)
+
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
 #import "ImageTransferSessionVT.h"
@@ -41,6 +42,7 @@
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceSettings.h"
 #import "RealtimeVideoUtilities.h"
+#import "VideoFrame.h"
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <objc/runtime.h>

@@ -60,6 +60,7 @@ struct WebKitEncodedFrameInfo;
 
 namespace WebCore {
 enum class VideoFrameRotation : uint16_t;
+struct VideoEncoderActiveConfiguration;
 }
 
 namespace WebKit {

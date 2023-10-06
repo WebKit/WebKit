@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ReplayKitCaptureSource.h"
 
-#if ENABLE(MEDIA_STREAM) && (PLATFORM(IOS) || PLATFORM(VISION))
+#if ENABLE(MEDIA_STREAM) && HAVE(REPLAYKIT)
 
 #import "Logging.h"
 #import "RealtimeVideoUtilities.h"
@@ -132,8 +132,10 @@ bool ReplayKitCaptureSource::start()
     if (screenRecorder.recording)
         return true;
 
+#if !PLATFORM(APPLETV)
     // FIXME: Add support for concurrent audio capture.
     [screenRecorder setMicrophoneEnabled:NO];
+#endif
 
     if (!m_recorderHelper)
         m_recorderHelper = ([[WebCoreReplayKitScreenRecorderHelper alloc] initWithCallback:this]);
@@ -278,4 +280,4 @@ void ReplayKitCaptureSource::screenCaptureDevices(Vector<CaptureDevice>& display
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && (PLATFORM(IOS) || PLATFORM(VISION))
+#endif // ENABLE(MEDIA_STREAM) && HAVE(REPLAYKIT)

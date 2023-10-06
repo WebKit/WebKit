@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#if ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICE)
 
 #include "IntSizeHash.h"
 #include "OrientationNotifier.h"
@@ -177,4 +177,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICE)
