@@ -2968,13 +2968,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueAuto);
         return currentColorOrValidColor(style, style.accentColor());
     }
-    case CSSPropertyAlignTracks:
-    case CSSPropertyJustifyTracks: {
-        CSSValueListBuilder list;
-        for (auto alignment : (propertyID == CSSPropertyAlignTracks) ? style.alignTracks() : style.justifyTracks())
-            list.append(valueForContentPositionAndDistributionWithOverflowAlignment(alignment));
-        return CSSValueList::createCommaSeparated(WTFMove(list));
-    }
     case CSSPropertyBackgroundColor:
         return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBackgroundColor)) : currentColorOrValidColor(style, style.backgroundColor());
     case CSSPropertyBackgroundImage:

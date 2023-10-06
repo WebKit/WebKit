@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "RemoteRenderingBackend.h"
 #include "RemoteResourceCache.h"
 #include <WebCore/BarcodeDetectorInterface.h>
 #include <WebCore/DetectedBarcodeInterface.h>

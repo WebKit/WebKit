@@ -495,15 +495,18 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APIURL.serialization.in \
 	Shared/API/APIURLRequest.serialization.in \
 	Shared/API/APIURLResponse.serialization.in \
+	Shared/AccessibilityPreferences.serialization.in \
 	Shared/AlternativeTextClient.serialization.in \
 	Shared/Cocoa/CacheStoragePolicy.serialization.in \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
+	Shared/Cocoa/InsertTextOptions.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \
 	Shared/BackgroundFetchState.serialization.in \
 	Shared/DebuggableInfoData.serialization.in \
 	Shared/DisplayListArgumentCoders.serialization.in \
+	Shared/DrawingAreaInfo.serialization.in \
 	Shared/EditingRange.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
@@ -538,6 +541,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \
 	Shared/PushMessageForTesting.serialization.in \
+	Shared/RemoteWorkerInitializationData.serialization.in \
 	Shared/RemoteWorkerType.serialization.in \
 	Shared/ResourceLoadInfo.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
@@ -556,6 +560,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebNavigationDataStore.serialization.in \
 	Shared/WebPageCreationParameters.serialization.in \
 	Shared/WebPageNetworkParameters.serialization.in \
+	Shared/WebPageGroupData.serialization.in \
 	Shared/WebPopupItem.serialization.in \
 	Shared/WebProcessCreationParameters.serialization.in \
 	Shared/WebProcessDataStoreParameters.serialization.in \
@@ -641,9 +646,11 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUBlendComponent.serialization.in \
 	Shared/WebGPU/WebGPUBindGroupEntry.serialization.in \
 	Shared/XR/XRSystem.serialization.in \
+	WebProcess/GPU/GPUProcessConnectionInfo.serialization.in \
 	WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in \
 	WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in \
 	WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in \
+	WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in \

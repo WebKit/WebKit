@@ -271,7 +271,7 @@ private:
 #endif
 
 #if PLATFORM(WIN)
-    void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
+    void platformDataInit(HFONT, float size, WCHAR* faceName);
 #endif
 
 #if USE(FREETYPE)

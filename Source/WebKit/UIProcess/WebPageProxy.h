@@ -1540,13 +1540,12 @@ public:
 
     void saveDataToFileInDownloadsFolder(String&& suggestedFilename, String&& mimeType, URL&& originatingURL, API::Data&);
     void savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, const IPC::DataReference&);
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&&, const IPC::DataReference&, const String& pdfUUID);
-#endif
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+    void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&&, const IPC::DataReference&, const String& pdfUUID);
     void showPDFContextMenu(const PDFContextMenu&, PDFPluginIdentifier, CompletionHandler<void(std::optional<int32_t>&&)>&&);
 #endif
+
     WebCore::IntRect visibleScrollerThumbRect() const;
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
@@ -2065,10 +2064,13 @@ public:
     bool canUseCredentialStorage() { return m_canUseCredentialStorage; }
     void setCanUseCredentialStorage(bool);
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_HUD)
     void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&);
     void removePDFHUD(PDFPluginIdentifier);
+#endif
+
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     void pdfZoomIn(PDFPluginIdentifier);
     void pdfZoomOut(PDFPluginIdentifier);
     void pdfSaveToPDF(PDFPluginIdentifier);

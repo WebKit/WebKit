@@ -794,7 +794,7 @@ BeaconAPIEnabled:
 
 BlobRegistryTopOriginPartitioningEnabled:
   type: bool
-  status: preview
+  status: stable
   category: security
   humanReadableName: "Partition Blob URL Registry"
   humanReadableDescription: "Partition Blob URL Registry by Top-Level Origin"
@@ -4242,20 +4242,6 @@ MasonryEnabled:
     WebCore:
       default: false
 
-MasonryTrackAlignmentEnabled:
-  type: bool
-  status: testable
-  category: css
-  humanReadableName: "CSS align-tracks & justify-tracks properties for masonry layout"
-  humanReadableDescription: "Enable CSS align-tracks & justify-tracks properties for masonry layout"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 MathMLEnabled:
   type: bool
   status: embedder
@@ -4981,6 +4967,7 @@ PDFPluginEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
+      "PLATFORM(IOS_FAMILY)": false
       default: true
 
 PageAtRuleSupportEnabled:

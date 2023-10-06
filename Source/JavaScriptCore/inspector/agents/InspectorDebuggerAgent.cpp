@@ -35,6 +35,7 @@
 #include "Debugger.h"
 #include "DebuggerScope.h"
 #include "DeferGC.h"
+#include "ExecutableBaseInlines.h"
 #include "HeapIterationScope.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"

@@ -131,7 +131,6 @@ class SystemImage;
 
 struct CompositionUnderline;
 struct DataDetectorElementInfo;
-struct KeypressCommand;
 struct Length;
 struct SoupNetworkProxySettings;
 struct TextRecognitionDataDetector;
@@ -210,15 +209,6 @@ template<> struct ArgumentCoder<WebCore::ResourceError> {
     static void encodePlatformData(Encoder&, const WebCore::ResourceError&);
     static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::ResourceError&);
 };
-
-#if PLATFORM(COCOA)
-
-template<> struct ArgumentCoder<WebCore::KeypressCommand> {
-    static void encode(Encoder&, const WebCore::KeypressCommand&);
-    static std::optional<WebCore::KeypressCommand> decode(Decoder&);
-};
-
-#endif // PLATFORM(COCOA)
 
 #if USE(APPKIT)
 

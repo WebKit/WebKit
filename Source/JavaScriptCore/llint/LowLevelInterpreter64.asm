@@ -1575,6 +1575,18 @@ llintOpWithReturn(op_typeof_is_undefined, OpTypeofIsUndefined, macro (size, get,
     return(t0)
 end)
 
+llintOpWithReturn(op_typeof_is_function, OpTypeofIsFunction, macro (size, get, dispatch, return)
+    get(m_operand, t1)
+    loadConstantOrVariable(size, t1, t0)
+    btqnz t0, notCellMask, .opTypeOfIsFunctionIsImm
+    bbaeq JSCell::m_type[t0], ObjectType, .opTypeOfIsFunctionSlowCase
+.opTypeOfIsFunctionIsImm:
+    move ValueFalse, t0
+    return(t0)
+.opTypeOfIsFunctionSlowCase:
+    callSlowPath(_slow_path_typeof_is_function)
+    dispatch()
+end)
 
 llintOpWithReturn(op_is_boolean, OpIsBoolean, macro (size, get, dispatch, return)
     get(m_operand, t1)

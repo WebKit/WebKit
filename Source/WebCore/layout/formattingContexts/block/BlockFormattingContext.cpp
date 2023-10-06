@@ -34,6 +34,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
+#include "LayoutDescendantIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"

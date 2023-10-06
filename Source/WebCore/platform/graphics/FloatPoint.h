@@ -184,10 +184,25 @@ public:
     WEBCORE_EXPORT FloatPoint matrixTransform(const TransformationMatrix&) const;
     WEBCORE_EXPORT FloatPoint matrixTransform(const AffineTransform&) const;
 
+    static constexpr FloatPoint nanPoint();
+    constexpr bool isNaN() const;
+
     WEBCORE_EXPORT String toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
     friend bool operator==(const FloatPoint&, const FloatPoint&) = default;
+
+    struct MarkableTraits {
+        constexpr static bool isEmptyValue(const FloatPoint& point)
+        {
+            return point.isNaN();
+        }
+
+        constexpr static FloatPoint emptyValue()
+        {
+            return FloatPoint::nanPoint();
+        }
+    };
 
 private:
     float m_x { 0 };
@@ -303,6 +318,19 @@ inline bool areEssentiallyEqual(const FloatPoint& a, const FloatPoint& b)
 inline void add(Hasher& hasher, const FloatPoint& point)
 {
     add(hasher, point.x(), point.y());
+}
+
+constexpr FloatPoint FloatPoint::nanPoint()
+{
+    return {
+        std::numeric_limits<float>::quiet_NaN(),
+        std::numeric_limits<float>::quiet_NaN()
+    };
+}
+
+constexpr bool FloatPoint::isNaN() const
+{
+    return isNaNConstExpr(x());
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatPoint&);

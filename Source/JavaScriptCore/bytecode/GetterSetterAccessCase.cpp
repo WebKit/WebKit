@@ -32,10 +32,6 @@
 
 namespace JSC {
 
-namespace GetterSetterAccessCaseInternal {
-static constexpr bool verbose = false;
-}
-
 GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType accessType, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaGlobalProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
     : Base(vm, owner, accessType, identifier, offset, structure, conditionSet, viaGlobalProxy, additionalSet, WTFMove(prototypeAccessChain))
 {

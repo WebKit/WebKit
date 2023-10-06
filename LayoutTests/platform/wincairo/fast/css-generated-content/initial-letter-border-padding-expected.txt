@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
-      RenderBlock {DIV} at (16,0) size 400x120
-        RenderBlock (floating) at (2,0) size 56x58 [color=#FF0000] [border: (2px solid #FF0000)]
-          RenderText at (3,-6) size 50x78
-            text run at (3,-6) width 50: "A"
-        RenderText {#text} at (60,20) size 400x99
-          text run at (60,20) width 340: "n example of first-letter. This letter should span 3 lines"
-          text run at (60,40) width 320: "of text, and so it should align itself cleanly with the"
-          text run at (0,60) width 374: "cap-height of the A lining up with the cap-height of the first"
-          text run at (0,80) width 397: "line, and the baseline of the A lining up with the baseline of the"
-          text run at (0,100) width 60: "third line."
-      RenderBlock {SPAN} at (0,136) size 784x120
-        RenderBlock {DIV} at (368,0) size 400x120
-          RenderBlock (floating) at (342,0) size 56x58 [color=#FF0000] [border: (2px solid #FF0000)]
-            RenderText at (3,-6) size 50x78
-              text run at (3,-6) width 50: "A"
-          RenderText {#text} at (0,20) size 400x99
-            text run at (0,20) width 340: "n RTL example of first-letter. This letter should span 3"
-            text run at (10,40) width 330: "lines of text, and so it should align itself cleanly with"
-            text run at (3,60) width 397: "the cap-height of the A lining up with the cap-height of the first"
-            text run at (3,80) width 397: "line, and the baseline of the A lining up with the baseline of the"
-            text run at (340,100) width 4 RTL: "."
-            text run at (344,100) width 56: "third line"
+      RenderBlock {DIV} at (16,0) size 400x108
+        RenderBlock (floating) at (2,-2) size 51x55 [color=#FF0000] [border: (2px solid #FF0000)]
+          RenderText at (3,-4) size 45x70
+            text run at (3,-4) width 45: "A"
+        RenderText {#text} at (55,18) size 397x89
+          text run at (55,18) width 340: "n example of first-letter. This letter should span 3 lines"
+          text run at (55,36) width 320: "of text, and so it should align itself cleanly with the"
+          text run at (0,54) width 374: "cap-height of the A lining up with the cap-height of the first"
+          text run at (0,72) width 397: "line, and the baseline of the A lining up with the baseline of the"
+          text run at (0,90) width 60: "third line."
+      RenderBlock {SPAN} at (0,124) size 784x108
+        RenderBlock {DIV} at (368,0) size 400x108
+          RenderBlock (floating) at (347,-2) size 51x55 [color=#FF0000] [border: (2px solid #FF0000)]
+            RenderText at (3,-4) size 45x70
+              text run at (3,-4) width 45: "A"
+          RenderText {#text} at (5,18) size 397x89
+            text run at (5,18) width 340: "n RTL example of first-letter. This letter should span 3"
+            text run at (15,36) width 330: "lines of text, and so it should align itself cleanly with"
+            text run at (3,54) width 397: "the cap-height of the A lining up with the cap-height of the first"
+            text run at (3,72) width 397: "line, and the baseline of the A lining up with the baseline of the"
+            text run at (340,90) width 4 RTL: "."
+            text run at (344,90) width 56: "third line"

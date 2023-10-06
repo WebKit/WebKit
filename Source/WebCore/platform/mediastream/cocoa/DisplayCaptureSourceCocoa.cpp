@@ -48,7 +48,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if HAVE(REPLAYKIT)
 #include "ReplayKitCaptureSource.h"
 #endif
 
@@ -65,7 +65,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
 {
     switch (device.type()) {
     case CaptureDevice::DeviceType::Screen:
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if HAVE(REPLAYKIT)
         return create(ReplayKitCaptureSource::create(device.persistentId()), device, WTFMove(hashSalts), constraints, pageIdentifier);
 #else
 #if HAVE(SCREEN_CAPTURE_KIT)

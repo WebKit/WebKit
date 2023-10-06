@@ -40,6 +40,7 @@
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "NotificationData.h"
+#include "NotificationPayload.h"
 #include "PlatformStrategies.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientData.h"

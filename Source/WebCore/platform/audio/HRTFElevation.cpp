@@ -44,6 +44,7 @@
 
 namespace WebCore {
 
+#if USE(CONCATENATED_IMPULSE_RESPONSES)
 // Total number of components of an HRTF database.
 constexpr size_t TotalNumberOfResponses = 240;
 
@@ -54,7 +55,6 @@ constexpr size_t ResponseFrameSize = 256;
 // The impulse responses may be resampled to a different sample-rate (depending on the audio hardware) when they are loaded.
 constexpr float ResponseSampleRate = 44100;
 
-#if USE(CONCATENATED_IMPULSE_RESPONSES)
 static Lock audioBusMapLock;
 static HashMap<String, RefPtr<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
 {

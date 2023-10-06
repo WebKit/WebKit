@@ -27,6 +27,7 @@
 #include "WebPushMessage.h"
 
 #include <WebCore/NotificationData.h>
+#include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
 

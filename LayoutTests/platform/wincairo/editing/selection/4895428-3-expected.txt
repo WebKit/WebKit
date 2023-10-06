@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 782x39
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 782x35
           text run at (0,0) width 781: "We delay focus until mouse up if the mouse down occurs inside a focusable node that is inside an already focused node. But"
-          text run at (0,20) width 533: "we shouldn't delay focus unless the mouse down occurs in an already focused node. "
-          text run at (533,20) width 249: "The text field below should be focused."
-        RenderInline {B} at (0,0) size 651x19
-          RenderText {#text} at (0,40) size 651x19
-            text run at (0,40) width 651: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
-      RenderBlock {DIV} at (0,76) size 784x62
-        RenderBlock {DIV} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 21x19
+          text run at (0,18) width 533: "we shouldn't delay focus unless the mouse down occurs in an already focused node. "
+          text run at (533,18) width 249: "The text field below should be focused."
+        RenderInline {B} at (0,0) size 651x17
+          RenderText {#text} at (0,36) size 651x17
+            text run at (0,36) width 651: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
+      RenderBlock {DIV} at (0,70) size 784x57
+        RenderBlock {DIV} at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
-        RenderBlock (anonymous) at (0,20) size 784x22
-          RenderTextControl {INPUT} at (0,0) size 153x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-        RenderBlock {DIV} at (0,42) size 784x20
-          RenderText {#text} at (0,0) size 22x19
+        RenderBlock (anonymous) at (0,18) size 784x21
+          RenderTextControl {INPUT} at (0,0) size 152x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderBlock {DIV} at (0,39) size 784x18
+          RenderText {#text} at (0,0) size 22x17
             text run at (0,0) width 22: "baz"
-layer at (11,107) size 147x16
-  RenderBlock {DIV} at (3,3) size 147x16
+layer at (11,99) size 146x15
+  RenderBlock {DIV} at (3,3) size 146x15
 caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 2 {DIV} of body

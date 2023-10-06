@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/UniqueRef.h>
 
@@ -111,7 +112,7 @@ enum OverflowScrollAction { DoNotPerformOverflowScroll, PerformOverflowScroll };
 using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNode, IntRect* nodeBounds)>;
 #endif
 
-class LocalFrame final : public Frame {
+class LocalFrame final : public Frame, public CanMakeCheckedPtr {
 public:
     WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);
@@ -151,6 +152,8 @@ public:
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
     void resetScript();
+
+    WEBCORE_EXPORT bool isRootFrame() const;
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.

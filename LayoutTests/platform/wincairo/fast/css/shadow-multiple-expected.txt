@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,20) size 784x530
-      RenderBlock {DIV} at (20,0) size 744x57
-        RenderInline {SPAN} at (0,0) size 91x55 [textStrokeWidth=1.00]
-          RenderText {#text} at (0,1) size 91x55
+      RenderBlock {DIV} at (20,0) size 744x55
+        RenderInline {SPAN} at (0,0) size 91x53 [textStrokeWidth=1.00]
+          RenderText {#text} at (0,1) size 91x53
             text run at (0,1) width 91: "This"
-        RenderText {#text} at (91,1) size 12x55
+        RenderText {#text} at (91,1) size 12x53
           text run at (91,1) width 12: " "
-        RenderInline {SPAN} at (0,0) size 77x55 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
-          RenderText {#text} at (103,1) size 77x55
+        RenderInline {SPAN} at (0,0) size 77x53 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+          RenderText {#text} at (103,1) size 77x53
             text run at (103,1) width 77: "text"
-        RenderText {#text} at (180,1) size 12x55
+        RenderText {#text} at (180,1) size 12x53
           text run at (180,1) width 12: " "
-        RenderInline {SPAN} at (0,0) size 99x55 [color=#0000004D]
-          RenderText {#text} at (192,1) size 99x55
+        RenderInline {SPAN} at (0,0) size 99x53 [color=#0000004D]
+          RenderText {#text} at (192,1) size 99x53
             text run at (192,1) width 99: "casts"
-        RenderText {#text} at (291,1) size 12x55
+        RenderText {#text} at (291,1) size 12x53
           text run at (291,1) width 12: " "
-        RenderInline {SPAN} at (0,0) size 170x55
-          RenderText {#text} at (303,1) size 170x55
+        RenderInline {SPAN} at (0,0) size 170x53
+          RenderText {#text} at (303,1) size 170x53
             text run at (303,1) width 170: "multiple"
-        RenderText {#text} at (473,1) size 187x55
+        RenderText {#text} at (473,1) size 187x53
           text run at (473,1) width 12: " "
           text run at (485,1) width 175: "shadows"
-      RenderBlock {DIV} at (50,107) size 100x100
-      RenderBlock {DIV} at (50,257) size 100x100 [bgcolor=#FFFFFF]
-      RenderBlock {DIV} at (50,407) size 100x100 [bgcolor=#00000033]
+      RenderBlock {DIV} at (50,105) size 100x100
+      RenderBlock {DIV} at (50,255) size 100x100 [bgcolor=#FFFFFF]
+      RenderBlock {DIV} at (50,405) size 100x100 [bgcolor=#00000033]
 selection start: position 0 of child 0 {#text} of child 7 {SPAN} of child 0 {DIV} of body
 selection end:   position 6 of child 0 {#text} of child 7 {SPAN} of child 0 {DIV} of body

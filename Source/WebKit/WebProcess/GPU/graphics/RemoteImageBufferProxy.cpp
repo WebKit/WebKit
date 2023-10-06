@@ -35,6 +35,7 @@
 #include "RemoteImageBufferMessages.h"
 #include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebWorkerClient.h"
 #include <WebCore/Document.h>

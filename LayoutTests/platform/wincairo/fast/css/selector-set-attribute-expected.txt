@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 251x36
           text run at (0,0) width 251: "setAttribute() Test"
-      RenderBlock {P} at (0,58) size 784x21 [color=#008000]
-        RenderText {#text} at (0,0) size 468x19
+      RenderBlock {P} at (0,58) size 784x19 [color=#008000]
+        RenderText {#text} at (0,0) size 468x17
           text run at (0,0) width 468: "This element's Class attribute is set using setAttribute(). It should be green."
-      RenderBlock {P} at (0,94) size 784x21 [color=#008000]
-        RenderText {#text} at (0,0) size 451x19
+      RenderBlock {P} at (0,92) size 784x19 [color=#008000]
+        RenderText {#text} at (0,0) size 451x17
           text run at (0,0) width 451: "This element's ID attribute is set using setAttribute(). It should be green."
-      RenderBlock {P} at (0,130) size 784x21 [color=#008000]
-        RenderText {#text} at (0,0) size 462x19
+      RenderBlock {P} at (0,126) size 784x19 [color=#008000]
+        RenderText {#text} at (0,0) size 462x17
           text run at (0,0) width 462: "This element's Title attribute is set using setAttribute(). It should be green."
-      RenderBlock {P} at (0,166) size 784x21 [color=#008000]
-        RenderText {#text} at (0,0) size 391x19
+      RenderBlock {P} at (0,160) size 784x19 [color=#008000]
+        RenderText {#text} at (0,0) size 391x17
           text run at (0,0) width 391: "This element's Title attribute is hard-coded. It should be green."
-      RenderBlock {P} at (0,202) size 784x21 [color=#008000]
-        RenderText {#text} at (0,0) size 467x19
+      RenderBlock {P} at (0,194) size 784x19 [color=#008000]
+        RenderText {#text} at (0,0) size 467x17
           text run at (0,0) width 467: "This element's Lang attribute is set using setAttribute(). It should be green."

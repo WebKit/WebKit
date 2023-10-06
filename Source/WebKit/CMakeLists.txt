@@ -368,11 +368,13 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Platform/SharedMemory.serialization.in
 
+    Shared/AccessibilityPreferences.serialization.in
     Shared/AuxiliaryProcessCreationParameters.serialization.in
     Shared/BackgroundFetchState.serialization.in
     Shared/CallbackID.serialization.in
     Shared/DebuggableInfoData.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
+    Shared/DrawingAreaInfo.serialization.in
     Shared/EditingRange.serialization.in
     Shared/EditorState.serialization.in
     Shared/FileSystemSyncAccessHandleInfo.serialization.in
@@ -392,6 +394,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/Pasteboard.serialization.in
     Shared/PlatformPopupMenuData.serialization.in
     Shared/PolicyDecision.serialization.in
+    Shared/RemoteWorkerInitializationData.serialization.in
     Shared/RemoteWorkerType.serialization.in
     Shared/ResourceLoadInfo.serialization.in
     Shared/SameDocumentNavigationType.serialization.in
@@ -409,6 +412,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebHitTestResultData.serialization.in
     Shared/WebNavigationDataStore.serialization.in
     Shared/WebPageCreationParameters.serialization.in
+    Shared/WebPageGroupData.serialization.in
     Shared/WebPageNetworkParameters.serialization.in
     Shared/WebPopupItem.serialization.in
     Shared/WebProcessCreationParameters.serialization.in
@@ -505,11 +509,14 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/XR/XRSystem.serialization.in
 
+    WebProcess/GPU/GPUProcessConnectionInfo.serialization.in
+
     WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in
     WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
 
     WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
+    WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 

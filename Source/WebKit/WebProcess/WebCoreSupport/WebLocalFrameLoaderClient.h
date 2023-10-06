@@ -280,7 +280,7 @@ private:
 
     ScopeExit<Function<void()>> m_frameInvalidator;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView { false };
 #endif
@@ -298,7 +298,7 @@ private:
     void notifyPageOfAppBoundBehavior() final;
 #endif
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const final;
 #endif
 

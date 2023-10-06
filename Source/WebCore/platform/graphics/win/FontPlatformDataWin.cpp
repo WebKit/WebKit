@@ -34,8 +34,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-using std::min;
-
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold, bool oblique, const FontCustomPlatformData* customPlatformData)
@@ -50,7 +48,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
 
     wchar_t faceName[LF_FACESIZE];
     GetTextFace(hdc, LF_FACESIZE, faceName);
-    platformDataInit(m_font->get(), size, hdc, faceName);
+    platformDataInit(m_font->get(), size, faceName);
 
     RestoreDC(hdc, -1);
 }

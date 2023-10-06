@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PDFPluginChoiceAnnotation_h
-#define PDFPluginChoiceAnnotation_h
+#pragma once
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
@@ -61,5 +60,3 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 } // namespace WebKit
 
 #endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
-
-#endif // PDFPluginChoiceAnnotation_h

@@ -1,47 +1,47 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600 layerType: background only
-layer at (0,0) size 800x540 scrollWidth 1216 scrollHeight 555
+layer at (0,0) size 800x540 scrollWidth 1216 scrollHeight 543
   RenderBlock (positioned) zI: -1 {DIV} at (0,0) size 800x540 [color=#00FF00]
     RenderText zI: -1 {#text} at (0,7) size 1216x32
       text run at (0,7) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     RenderBR {BR} at (1216,7) size 0x32
-    RenderText zI: -1 {#text} at (0,50) size 1216x32
-      text run at (0,50) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,50) size 0x32
-    RenderText zI: -1 {#text} at (0,93) size 1216x32
-      text run at (0,93) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,93) size 0x32
-    RenderText zI: -1 {#text} at (0,136) size 1216x32
-      text run at (0,136) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,136) size 0x32
-    RenderText zI: -1 {#text} at (0,179) size 1216x32
-      text run at (0,179) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,179) size 0x32
-    RenderText zI: -1 {#text} at (0,222) size 1216x32
-      text run at (0,222) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,222) size 0x32
-    RenderText zI: -1 {#text} at (0,265) size 1216x32
-      text run at (0,265) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,265) size 0x32
-    RenderText zI: -1 {#text} at (0,308) size 1216x32
-      text run at (0,308) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,308) size 0x32
-    RenderText zI: -1 {#text} at (0,351) size 1216x32
-      text run at (0,351) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,351) size 0x32
-    RenderText zI: -1 {#text} at (0,394) size 1216x32
-      text run at (0,394) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,394) size 0x32
-    RenderText zI: -1 {#text} at (0,437) size 1216x32
-      text run at (0,437) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,437) size 0x32
-    RenderText zI: -1 {#text} at (0,480) size 1216x32
-      text run at (0,480) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,480) size 0x32
-    RenderText zI: -1 {#text} at (0,523) size 1216x32
-      text run at (0,523) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,523) size 0x32
+    RenderText zI: -1 {#text} at (0,49) size 1216x32
+      text run at (0,49) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,49) size 0x32
+    RenderText zI: -1 {#text} at (0,91) size 1216x32
+      text run at (0,91) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,91) size 0x32
+    RenderText zI: -1 {#text} at (0,133) size 1216x32
+      text run at (0,133) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,133) size 0x32
+    RenderText zI: -1 {#text} at (0,175) size 1216x32
+      text run at (0,175) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,175) size 0x32
+    RenderText zI: -1 {#text} at (0,217) size 1216x32
+      text run at (0,217) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,217) size 0x32
+    RenderText zI: -1 {#text} at (0,259) size 1216x32
+      text run at (0,259) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,259) size 0x32
+    RenderText zI: -1 {#text} at (0,301) size 1216x32
+      text run at (0,301) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,301) size 0x32
+    RenderText zI: -1 {#text} at (0,343) size 1216x32
+      text run at (0,343) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,343) size 0x32
+    RenderText zI: -1 {#text} at (0,385) size 1216x32
+      text run at (0,385) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,385) size 0x32
+    RenderText zI: -1 {#text} at (0,427) size 1216x32
+      text run at (0,427) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,427) size 0x32
+    RenderText zI: -1 {#text} at (0,469) size 1216x32
+      text run at (0,469) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,469) size 0x32
+    RenderText zI: -1 {#text} at (0,511) size 1216x32
+      text run at (0,511) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    RenderBR {BR} at (1216,511) size 0x32
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
@@ -50,43 +50,43 @@ layer at (0,0) size 800x540
 layer at (0,0) size 800x540
   RenderBlock {DIV} at (0,0) size 800x540
     RenderMultiColumnSet at (20,20) size 760x500
-layer at (20,20) size 362x988 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderMultiColumnFlowThread at (20,20) size 362x988
-    RenderBlock {DIV} at (0,0) size 362x405
-      RenderText {#text} at (0,41) size 352x105
+layer at (20,20) size 362x977 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderMultiColumnFlowThread at (20,20) size 362x977
+    RenderBlock {DIV} at (0,0) size 362x395
+      RenderText {#text} at (0,41) size 352x101
         text run at (0,41) width 350: "All of this text even though it's smaller should be on the"
-        text run at (0,84) width 352: "36px grid. The grid should reset at the top of the second"
-        text run at (0,127) width 51: "column."
-      RenderBR {BR} at (51,127) size 0x19
-      RenderText {#text} at (0,170) size 352x105
-        text run at (0,170) width 350: "All of this text even though it's smaller should be on the"
-        text run at (0,213) width 352: "36px grid. The grid should reset at the top of the second"
-        text run at (0,256) width 51: "column."
-      RenderBR {BR} at (51,256) size 0x19
-      RenderText {#text} at (0,299) size 352x105
-        text run at (0,299) width 350: "All of this text even though it's smaller should be on the"
-        text run at (0,342) width 352: "36px grid. The grid should reset at the top of the second"
-        text run at (0,385) width 51: "column."
-      RenderBR {BR} at (51,385) size 0x19
-    RenderBlock {DIV} at (0,405) size 362x545
-      RenderText {#text} at (0,17) size 342x183
+        text run at (0,83) width 352: "36px grid. The grid should reset at the top of the second"
+        text run at (0,125) width 51: "column."
+      RenderBR {BR} at (51,125) size 0x17
+      RenderText {#text} at (0,167) size 352x101
+        text run at (0,167) width 350: "All of this text even though it's smaller should be on the"
+        text run at (0,209) width 352: "36px grid. The grid should reset at the top of the second"
+        text run at (0,251) width 51: "column."
+      RenderBR {BR} at (51,251) size 0x17
+      RenderText {#text} at (0,293) size 352x101
+        text run at (0,293) width 350: "All of this text even though it's smaller should be on the"
+        text run at (0,335) width 352: "36px grid. The grid should reset at the top of the second"
+        text run at (0,377) width 51: "column."
+      RenderBR {BR} at (51,377) size 0x17
+    RenderBlock {DIV} at (0,395) size 362x544
+      RenderText {#text} at (0,17) size 342x190
         text run at (0,17) width 299: "All of this text even though it's"
-        text run at (0,60) width 342: "smaller should be on the 36px grid."
-        text run at (0,130) width 328: "The grid should reset at the top of"
-        text run at (0,173) width 188: "the second column."
-      RenderBR {BR} at (188,173) size 0x27
-      RenderText {#text} at (0,216) size 342x156
-        text run at (0,216) width 299: "All of this text even though it's"
-        text run at (0,259) width 342: "smaller should be on the 36px grid."
-        text run at (0,302) width 328: "The grid should reset at the top of"
-        text run at (0,345) width 188: "the second column."
-      RenderBR {BR} at (188,345) size 0x27
-      RenderText {#text} at (0,388) size 342x156
-        text run at (0,388) width 299: "All of this text even though it's"
-        text run at (0,431) width 342: "smaller should be on the 36px grid."
-        text run at (0,474) width 328: "The grid should reset at the top of"
+        text run at (0,59) width 342: "smaller should be on the 36px grid."
+        text run at (0,139) width 328: "The grid should reset at the top of"
+        text run at (0,181) width 188: "the second column."
+      RenderBR {BR} at (188,181) size 0x26
+      RenderText {#text} at (0,223) size 342x152
+        text run at (0,223) width 299: "All of this text even though it's"
+        text run at (0,265) width 342: "smaller should be on the 36px grid."
+        text run at (0,307) width 328: "The grid should reset at the top of"
+        text run at (0,349) width 188: "the second column."
+      RenderBR {BR} at (188,349) size 0x26
+      RenderText {#text} at (0,391) size 342x152
+        text run at (0,391) width 299: "All of this text even though it's"
+        text run at (0,433) width 342: "smaller should be on the 36px grid."
+        text run at (0,475) width 328: "The grid should reset at the top of"
         text run at (0,517) width 188: "the second column."
-      RenderBR {BR} at (188,517) size 0x27
-    RenderBlock {DIV} at (0,950) size 362x38
-      RenderText {#text} at (0,26) size 274x12
-        text run at (0,26) width 274: "All of this text even though it's smaller should be on the 36px grid."
+      RenderBR {BR} at (188,517) size 0x26
+    RenderBlock {DIV} at (0,939) size 362x38
+      RenderText {#text} at (0,27) size 274x11
+        text run at (0,27) width 274: "All of this text even though it's smaller should be on the 36px grid."

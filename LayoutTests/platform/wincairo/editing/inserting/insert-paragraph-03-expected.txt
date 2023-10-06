@@ -10,20 +10,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 758x39
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 758x35
           text run at (0,0) width 414: "This tests inserting a paragraph separator before a horizontal rule. "
           text run at (414,0) width 344: "You should see 'foo', empty paragraph, horizontal rule,"
-          text run at (0,20) width 371: "'bar', and the caret should be just before the horizontal rule."
-      RenderBlock {DIV} at (0,56) size 784x78
-        RenderBlock (anonymous) at (0,0) size 784x40
-          RenderText {#text} at (0,0) size 21x19
+          text run at (0,18) width 371: "'bar', and the caret should be just before the horizontal rule."
+      RenderBlock {DIV} at (0,52) size 784x72
+        RenderBlock (anonymous) at (0,0) size 784x36
+          RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
-          RenderBR {BR} at (21,0) size 0x19
-          RenderBR {BR} at (0,20) size 0x19
-        RenderBlock (anonymous) at (0,58) size 784x20
-          RenderText {#text} at (0,0) size 20x19
+          RenderBR {BR} at (21,0) size 0x17
+          RenderBR {BR} at (0,18) size 0x17
+        RenderBlock (anonymous) at (0,54) size 784x18
+          RenderText {#text} at (0,0) size 20x17
             text run at (0,0) width 20: "bar"
-layer at (8,112) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,48) size 784x2 [color=#808080] [border: (1px inset #808080)]
+layer at (8,104) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,44) size 784x2 [color=#808080] [border: (1px inset #808080)]
 caret: position 0 of child 3 {HR} of child 2 {DIV} of body

@@ -443,10 +443,13 @@ public:
 
     void centerSelectionInVisibleArea();
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_HUD)
     void createPDFHUD(PDFPlugin&, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPlugin&, const WebCore::IntRect&);
     void removePDFHUD(PDFPlugin&);
+#endif
+
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     void zoomPDFIn(PDFPluginIdentifier);
     void zoomPDFOut(PDFPluginIdentifier);
     void savePDF(PDFPluginIdentifier, CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&);
@@ -699,7 +702,7 @@ public:
     void enterAcceleratedCompositingMode(WebCore::Frame&, WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingMode(WebCore::Frame&);
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     void addPluginView(PluginView&);
     void removePluginView(PluginView&);
 #endif
@@ -1365,7 +1368,7 @@ public:
 
     std::optional<double> cpuLimit() const { return m_cpuLimit; }
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     static PluginView* pluginViewForFrame(WebCore::LocalFrame*);
     PluginView* mainFramePlugIn() const;
 #endif
@@ -1575,7 +1578,7 @@ public:
     void dispatchWheelEventWithoutScrolling(WebCore::FrameIdentifier, const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 #endif
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
 #endif
 
@@ -2005,7 +2008,7 @@ private:
 
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     static PluginView* focusedPluginViewForFrame(WebCore::LocalFrame&);
 #endif
 
@@ -2137,13 +2140,7 @@ private:
     std::unique_ptr<DrawingArea> m_drawingArea;
     DrawingAreaType m_drawingAreaType;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    WeakHashSet<PluginView> m_pluginViews;
-#endif
-
     HashMap<TextCheckerRequestID, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
-
-    bool m_useFixedLayout { false };
 
     WebCore::FloatSize m_defaultUnobscuredSize;
     WebCore::FloatSize m_minimumUnobscuredSize;
@@ -2151,11 +2148,17 @@ private:
 
     WebCore::Color m_underlayColor;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
+    WeakHashSet<PluginView> m_pluginViews;
+#endif
+#if ENABLE(PDF_HUD)
+    // FIXME: Needs to be PDFPluginBase.
     HashMap<PDFPluginIdentifier, WeakPtr<PDFPlugin>> m_pdfPlugInsWithHUD;
 #endif
 
     WTF::Function<void()> m_selectionChangedHandler;
+
+    bool m_useFixedLayout { false };
     bool m_isInRedo { false };
     bool m_isClosed { false };
     bool m_tabToLinks { false };

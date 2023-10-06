@@ -6975,22 +6975,45 @@ public:
         unsigned stackMapIndex = 0;
         for (unsigned i = 0; i < m_locals.size(); i ++)
             stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(m_locals[i]), toB3Type(m_localTypes[i]));
-        for (const ControlEntry& entry : m_parser->controlStack()) {
-            for (const TypedExpression& expr : entry.enclosedExpressionStack)
-                stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
-            if (ControlData::isAnyCatch(entry.controlData)) {
+
+        if (Options::useWasmIPInt()) {
+            // Do rethrow slots first because IPInt has them in a shadow stack.
+            for (const ControlEntry& entry : m_parser->controlStack()) {
                 for (unsigned i = 0; i < entry.controlData.implicitSlots(); i ++) {
                     Value exception = this->exception(entry.controlData);
                     stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(exception)), B3::Int64); // Exceptions are EncodedJSValues, so they are always Int64
                 }
             }
-        }
-        for (const TypedExpression& expr : enclosingStack)
-            stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
-        for (unsigned i = 0; i < data.argumentLocations().size(); i ++)
-            stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(data.argumentLocations()[i]), toB3Type(data.argumentType(i).kind));
-        RELEASE_ASSERT(stackMapIndex == numElements);
 
+            for (const ControlEntry& entry : m_parser->controlStack()) {
+                for (const TypedExpression& expr : entry.enclosedExpressionStack)
+                    stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
+            }
+
+            for (const TypedExpression& expr : enclosingStack)
+                stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
+            for (unsigned i = 0; i < data.argumentLocations().size(); i ++)
+                stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(data.argumentLocations()[i]), toB3Type(data.argumentType(i).kind));
+
+
+        } else {
+            for (const ControlEntry& entry : m_parser->controlStack()) {
+                for (const TypedExpression& expr : entry.enclosedExpressionStack)
+                    stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
+                if (ControlData::isAnyCatch(entry.controlData)) {
+                    for (unsigned i = 0; i < entry.controlData.implicitSlots(); i ++) {
+                        Value exception = this->exception(entry.controlData);
+                        stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(exception)), B3::Int64); // Exceptions are EncodedJSValues, so they are always Int64
+                    }
+                }
+            }
+            for (const TypedExpression& expr : enclosingStack)
+                stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind));
+            for (unsigned i = 0; i < data.argumentLocations().size(); i ++)
+                stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(data.argumentLocations()[i]), toB3Type(data.argumentType(i).kind));
+        }
+
+        RELEASE_ASSERT(stackMapIndex == numElements);
         m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, numElements + BBQCallee::extraOSRValuesForLoopIndex);
         return stackMap;
     }

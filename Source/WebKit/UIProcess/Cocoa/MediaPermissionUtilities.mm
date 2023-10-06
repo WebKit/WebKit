@@ -247,12 +247,13 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
 #endif
 }
 
-#if HAVE(AVCAPTUREDEVICE)
+
 
 void requestAVCaptureAccessForType(MediaPermissionType type, CompletionHandler<void(bool authorized)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
+#if HAVE(AVCAPTUREDEVICE)
     AVMediaType mediaType = type == MediaPermissionType::Audio ? AVMediaTypeAudio : AVMediaTypeVideo;
     auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL authorized) mutable {
         callOnMainRunLoop([completionHandler = WTFMove(completionHandler), authorized]() mutable {
@@ -260,10 +261,15 @@ void requestAVCaptureAccessForType(MediaPermissionType type, CompletionHandler<v
         });
     });
     [PAL::getAVCaptureDeviceClass() requestAccessForMediaType:mediaType completionHandler:decisionHandler.get()];
+#else
+    UNUSED_PARAM(type);
+    completionHandler(false);
+#endif
 }
 
 MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType type)
 {
+#if HAVE(AVCAPTUREDEVICE)
     AVMediaType mediaType = type == MediaPermissionType::Audio ? AVMediaTypeAudio : AVMediaTypeVideo;
     auto authorizationStatus = [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:mediaType];
     if (authorizationStatus == AVAuthorizationStatusDenied || authorizationStatus == AVAuthorizationStatusRestricted)
@@ -271,9 +277,11 @@ MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType type)
     if (authorizationStatus == AVAuthorizationStatusNotDetermined)
         return MediaPermissionResult::Unknown;
     return MediaPermissionResult::Granted;
+#else
+    UNUSED_PARAM(type);
+    return MediaPermissionResult::Denied;
+#endif
 }
-
-#endif // HAVE(AVCAPTUREDEVICE)
 
 #if HAVE(SPEECHRECOGNIZER)
 

@@ -28,6 +28,7 @@
 
 #include "WebTransport.h"
 #include "WebTransportSession.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 

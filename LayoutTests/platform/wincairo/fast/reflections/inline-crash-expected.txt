@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 52x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 52x17
           text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (0,0) size 654x19
-          RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
-            RenderText {#text} at (52,0) size 307x19
+        RenderInline {I} at (0,0) size 654x17
+          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
+            RenderText {#text} at (52,0) size 307x17
               text run at (52,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=19525"
-          RenderText {#text} at (359,0) size 347x19
+          RenderText {#text} at (359,0) size 347x17
             text run at (359,0) width 4: " "
             text run at (363,0) width 343: "-webkit-box-reflect in hyperlink causes webkit to crash"
-        RenderText {#text} at (706,0) size 4x19
+        RenderText {#text} at (706,0) size 4x17
           text run at (706,0) width 4: "."
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 177x19
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 177x17
           text run at (0,0) width 177: "Because it is an inline flow, "
-        RenderInline {SPAN} at (0,0) size 55x19
-          RenderText {#text} at (177,0) size 55x19
+        RenderInline {SPAN} at (0,0) size 55x17
+          RenderText {#text} at (177,0) size 55x17
             text run at (177,0) width 55: "this span"
-        RenderText {#text} at (232,0) size 441x19
+        RenderText {#text} at (232,0) size 441x17
           text run at (232,0) width 441: " should not have a reflection, and selecting it should not cause a crash."
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of body
 selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of body

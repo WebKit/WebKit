@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 58x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 58x17
           text run at (0,0) width 58: "Tests for "
-        RenderInline {I} at (0,0) size 705x19
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (58,0) size 301x19
+        RenderInline {I} at (0,0) size 705x17
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (58,0) size 301x17
               text run at (58,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=13438"
-          RenderText {#text} at (359,0) size 404x19
+          RenderText {#text} at (359,0) size 404x17
             text run at (359,0) width 4: " "
             text run at (363,0) width 400: "Run rounding makes word-break:break-all/word not functional"
-        RenderText {#text} at (763,0) size 4x19
+        RenderText {#text} at (763,0) size 4x17
           text run at (763,0) width 4: "."
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 305x19
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 305x17
           text run at (0,0) width 305: "Test that the preferred (maximum) width is right:"
-      RenderBlock (floating) {DIV} at (0,72) size 587x26 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 581x19
+      RenderBlock (floating) {DIV} at (0,68) size 587x24 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 581x17
           text run at (3,3) width 581: "The black border should fit tightly around this one line of text with no space after the period."
-      RenderBlock (anonymous) at (0,72) size 784x26
-        RenderBR {BR} at (587,0) size 0x19
-      RenderBlock {P} at (0,114) size 784x20
-        RenderText {#text} at (0,0) size 380x19
+      RenderBlock (anonymous) at (0,68) size 784x24
+        RenderBR {BR} at (587,0) size 0x17
+      RenderBlock {P} at (0,108) size 784x18
+        RenderText {#text} at (0,0) size 380x17
           text run at (0,0) width 380: "Test that text does not wrap too early due to rounding errors:"
-      RenderBlock {DIV} at (0,150) size 431x26 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 342x19
+      RenderBlock {DIV} at (0,142) size 431x24 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 342x17
           text run at (3,3) width 342: "This text fits nicely on a single line of the given width."
-      RenderBlock {P} at (0,192) size 784x20
-        RenderText {#text} at (0,0) size 227x19
+      RenderBlock {P} at (0,182) size 784x18
+        RenderText {#text} at (0,0) size 227x17
           text run at (0,0) width 227: "Test that text does not wrap too late:"
-      RenderBlock {DIV} at (0,228) size 597x46 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 586x39
+      RenderBlock {DIV} at (0,216) size 597x42 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 586x35
           text run at (3,3) width 383: "J u s t a b u n c h o f l e t t e r s h e r e , n o t h i n g t o s e e . "
           text run at (386,3) width 203: "Thisisonebigwordwhichisverylo"
-          text run at (3,23) width 20: "ng."
+          text run at (3,21) width 20: "ng."

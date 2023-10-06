@@ -37,6 +37,10 @@
 #include "PlatformDisplay.h"
 #include "PlatformLayerDisplayDelegate.h"
 
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+#include "VideoFrame.h"
+#endif
+
 #if USE(NICOSIA)
 #include "NicosiaGCGLANGLELayer.h"
 #else

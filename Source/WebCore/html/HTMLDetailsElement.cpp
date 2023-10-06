@@ -37,6 +37,7 @@
 #include "SlotAssignment.h"
 #include "Text.h"
 #include "ToggleEvent.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

@@ -174,6 +174,7 @@ $(PROJECT_DIR)/Shared/API/APIURL.serialization.in
 $(PROJECT_DIR)/Shared/API/APIURLRequest.serialization.in
 $(PROJECT_DIR)/Shared/API/APIURLResponse.serialization.in
 $(PROJECT_DIR)/Shared/API/Cocoa/RemoteObjectRegistry.messages.in
+$(PROJECT_DIR)/Shared/AccessibilityPreferences.serialization.in
 $(PROJECT_DIR)/Shared/AlternativeTextClient.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/PaymentSetupConfiguration.serialization.in
@@ -185,11 +186,13 @@ $(PROJECT_DIR)/Shared/BackgroundFetchState.serialization.in
 $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/InsertTextOptions.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 $(PROJECT_DIR)/Shared/DebuggableInfoData.serialization.in
 $(PROJECT_DIR)/Shared/DisplayListArgumentCoders.serialization.in
+$(PROJECT_DIR)/Shared/DrawingAreaInfo.serialization.in
 $(PROJECT_DIR)/Shared/EditingRange.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionAlarmParameters.serialization.in
@@ -232,6 +235,7 @@ $(PROJECT_DIR)/Shared/PolicyDecision.serialization.in
 $(PROJECT_DIR)/Shared/PushMessageForTesting.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteLayerTree.serialization.in
 $(PROJECT_DIR)/Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.serialization.in
+$(PROJECT_DIR)/Shared/RemoteWorkerInitializationData.serialization.in
 $(PROJECT_DIR)/Shared/RemoteWorkerType.serialization.in
 $(PROJECT_DIR)/Shared/ResourceLoadInfo.serialization.in
 $(PROJECT_DIR)/Shared/SameDocumentNavigationType.serialization.in
@@ -323,6 +327,7 @@ $(PROJECT_DIR)/Shared/WebHitTestResultData.serialization.in
 $(PROJECT_DIR)/Shared/WebNavigationDataStore.serialization.in
 $(PROJECT_DIR)/Shared/WebPageCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPageNetworkParameters.serialization.in
+$(PROJECT_DIR)/Shared/WebPageGroupData.serialization.in
 $(PROJECT_DIR)/Shared/WebPopupItem.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessDataStoreParameters.serialization.in
@@ -413,6 +418,7 @@ $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionContextProxy.messages.in
 $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/FullScreen/WebFullScreenManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/GPUProcessConnection.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/GPUProcessConnectionInfo.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.messages.in
@@ -427,6 +433,7 @@ $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSessionConfiguration.serializatio
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSourceProviderManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstance.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteImageDecoderAVF.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteImageDecoderAVFManager.messages.in

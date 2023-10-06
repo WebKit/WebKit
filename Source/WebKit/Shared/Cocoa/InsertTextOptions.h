@@ -39,10 +39,3 @@ struct InsertTextOptions {
 };
 
 } // namespace WebKit
-
-namespace IPC {
-template<> struct ArgumentCoder<WebKit::InsertTextOptions> {
-    static void encode(Encoder&, const WebKit::InsertTextOptions&);
-    static std::optional<WebKit::InsertTextOptions> decode(Decoder&);
-};
-}

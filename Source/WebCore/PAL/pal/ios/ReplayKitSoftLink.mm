@@ -24,7 +24,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if HAVE(REPLAYKIT)
 
 #import <ReplayKit/ReplayKit.h>
 #import <wtf/SoftLinking.h>
@@ -33,4 +33,4 @@ SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, ReplayKit)
 
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, ReplayKit, RPScreenRecorder, PAL_EXPORT)
 
-#endif
+#endif // HAVE(REPLAYKIT)

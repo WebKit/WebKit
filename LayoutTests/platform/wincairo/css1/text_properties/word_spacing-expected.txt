@@ -1,36 +1,36 @@
-layer at (0,0) size 785x969
+layer at (0,0) size 785x914
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x969
-  RenderBlock {HTML} at (0,0) size 785x969
-    RenderBody {BODY} at (8,8) size 769x953 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 769x20
-        RenderText {#text} at (0,0) size 355x19
+layer at (0,0) size 785x914
+  RenderBlock {HTML} at (0,0) size 785x914
+    RenderBody {BODY} at (8,8) size 769x898 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 769x176
-        RenderText {#text} at (0,0) size 232x176
+      RenderBlock {PRE} at (0,34) size 769x165
+        RenderText {#text} at (0,0) size 232x165
           text run at (0,0) width 216: ".one {word-spacing: 0.3in;}"
           text run at (216,0) width 0: " "
-          text run at (0,16) width 216: ".two {word-spacing: 0.5cm;}"
-          text run at (216,16) width 0: " "
-          text run at (0,32) width 216: ".three {word-spacing: 5mm;}"
-          text run at (216,32) width 0: " "
-          text run at (0,48) width 208: ".four {word-spacing: 3pt;}"
-          text run at (208,48) width 0: " "
-          text run at (0,64) width 232: ".five {word-spacing: 0.25pc;}"
-          text run at (232,64) width 0: " "
-          text run at (0,80) width 200: ".six {word-spacing: 1em;}"
-          text run at (200,80) width 0: " "
-          text run at (0,96) width 216: ".seven {word-spacing: 1ex;}"
-          text run at (216,96) width 0: " "
-          text run at (0,112) width 216: ".eight {word-spacing: 5px;}"
-          text run at (216,112) width 0: " "
-          text run at (0,128) width 232: ".nine {word-spacing: normal;}"
-          text run at (232,128) width 0: " "
-          text run at (0,144) width 224: ".ten {word-spacing: -0.2em;}"
-          text run at (224,144) width 0: " "
-          text run at (0,160) width 0: " "
-      RenderBlock {P} at (0,243) size 769x20
-        RenderText {#text} at (0,0) size 709x19
+          text run at (0,15) width 216: ".two {word-spacing: 0.5cm;}"
+          text run at (216,15) width 0: " "
+          text run at (0,30) width 216: ".three {word-spacing: 5mm;}"
+          text run at (216,30) width 0: " "
+          text run at (0,45) width 208: ".four {word-spacing: 3pt;}"
+          text run at (208,45) width 0: " "
+          text run at (0,60) width 232: ".five {word-spacing: 0.25pc;}"
+          text run at (232,60) width 0: " "
+          text run at (0,75) width 200: ".six {word-spacing: 1em;}"
+          text run at (200,75) width 0: " "
+          text run at (0,90) width 216: ".seven {word-spacing: 1ex;}"
+          text run at (216,90) width 0: " "
+          text run at (0,105) width 216: ".eight {word-spacing: 5px;}"
+          text run at (216,105) width 0: " "
+          text run at (0,120) width 232: ".nine {word-spacing: normal;}"
+          text run at (232,120) width 0: " "
+          text run at (0,135) width 224: ".ten {word-spacing: -0.2em;}"
+          text run at (224,135) width 0: " "
+          text run at (0,150) width 0: " "
+      RenderBlock {P} at (0,230) size 769x18
+        RenderText {#text} at (0,0) size 709x17
           text run at (0,0) width 28: "This"
           text run at (56,0) width 44: " words"
           text run at (128,0) width 17: " in"
@@ -42,8 +42,8 @@ layer at (0,0) size 785x969
           text run at (516,0) width 40: " space"
           text run at (584,0) width 58: " between"
           text run at (669,0) width 40: " them."
-      RenderBlock {P} at (0,279) size 769x20
-        RenderText {#text} at (0,0) size 610x19
+      RenderBlock {P} at (0,264) size 769x18
+        RenderText {#text} at (0,0) size 610x17
           text run at (0,0) width 28: "This"
           text run at (46,0) width 44: " words"
           text run at (108,0) width 17: " in"
@@ -55,8 +55,8 @@ layer at (0,0) size 785x969
           text run at (437,0) width 40: " space"
           text run at (495,0) width 58: " between"
           text run at (570,0) width 40: " them."
-      RenderBlock {P} at (0,315) size 769x20
-        RenderText {#text} at (0,0) size 610x19
+      RenderBlock {P} at (0,298) size 769x18
+        RenderText {#text} at (0,0) size 610x17
           text run at (0,0) width 28: "This"
           text run at (46,0) width 44: " words"
           text run at (108,0) width 17: " in"
@@ -68,8 +68,8 @@ layer at (0,0) size 785x969
           text run at (437,0) width 40: " space"
           text run at (495,0) width 58: " between"
           text run at (570,0) width 40: " them."
-      RenderBlock {P} at (0,351) size 769x20
-        RenderText {#text} at (0,0) size 461x19
+      RenderBlock {P} at (0,332) size 769x18
+        RenderText {#text} at (0,0) size 461x17
           text run at (0,0) width 28: "This"
           text run at (32,0) width 43: " words"
           text run at (79,0) width 16: " in"
@@ -81,8 +81,8 @@ layer at (0,0) size 785x969
           text run at (318,0) width 39: " space"
           text run at (361,0) width 57: " between"
           text run at (422,0) width 39: " them."
-      RenderBlock {P} at (0,387) size 769x20
-        RenderText {#text} at (0,0) size 461x19
+      RenderBlock {P} at (0,366) size 769x18
+        RenderText {#text} at (0,0) size 461x17
           text run at (0,0) width 28: "This"
           text run at (32,0) width 43: " words"
           text run at (79,0) width 16: " in"
@@ -94,8 +94,8 @@ layer at (0,0) size 785x969
           text run at (318,0) width 39: " space"
           text run at (361,0) width 57: " between"
           text run at (422,0) width 39: " them."
-      RenderBlock {P} at (0,423) size 769x20
-        RenderText {#text} at (0,0) size 581x19
+      RenderBlock {P} at (0,400) size 769x18
+        RenderText {#text} at (0,0) size 581x17
           text run at (0,0) width 28: "This"
           text run at (44,0) width 43: " words"
           text run at (103,0) width 16: " in"
@@ -107,21 +107,21 @@ layer at (0,0) size 785x969
           text run at (414,0) width 39: " space"
           text run at (469,0) width 57: " between"
           text run at (542,0) width 39: " them."
-      RenderBlock {P} at (0,459) size 769x20
-        RenderText {#text} at (0,0) size 491x19
+      RenderBlock {P} at (0,434) size 769x18
+        RenderText {#text} at (0,0) size 493x17
           text run at (0,0) width 28: "This"
-          text run at (35,0) width 43: " words"
-          text run at (85,0) width 16: " in"
-          text run at (108,0) width 26: " this"
-          text run at (141,0) width 58: " sentence"
-          text run at (206,0) width 46: " should"
-          text run at (259,0) width 34: " have"
-          text run at (300,0) width 35: " extra"
-          text run at (342,0) width 39: " space"
-          text run at (388,0) width 57: " between"
-          text run at (452,0) width 39: " them."
-      RenderBlock {P} at (0,495) size 769x40
-        RenderText {#text} at (0,0) size 751x19
+          text run at (35,0) width 44: " words"
+          text run at (85,0) width 17: " in"
+          text run at (108,0) width 27: " this"
+          text run at (141,0) width 59: " sentence"
+          text run at (206,0) width 47: " should"
+          text run at (260,0) width 35: " have"
+          text run at (301,0) width 36: " extra"
+          text run at (343,0) width 40: " space"
+          text run at (389,0) width 58: " between"
+          text run at (453,0) width 40: " them."
+      RenderBlock {P} at (0,468) size 769x36
+        RenderText {#text} at (0,0) size 751x17
           text run at (0,0) width 28: "This"
           text run at (33,0) width 43: " words"
           text run at (81,0) width 16: " in"
@@ -141,13 +141,13 @@ layer at (0,0) size 785x969
           text run at (644,0) width 16: " in"
           text run at (665,0) width 23: " the"
           text run at (693,0) width 58: " sentence"
-        RenderInline {SPAN} at (0,0) size 176x19
-          RenderText {#text} at (0,20) size 176x19
-            text run at (0,20) width 176: "should have normal spacing"
-        RenderText {#text} at (176,20) size 4x19
-          text run at (176,20) width 4: "."
-      RenderBlock {P} at (0,551) size 769x20
-        RenderText {#text} at (0,0) size 703x19
+        RenderInline {SPAN} at (0,0) size 176x17
+          RenderText {#text} at (0,18) size 176x17
+            text run at (0,18) width 176: "should have normal spacing"
+        RenderText {#text} at (176,18) size 4x17
+          text run at (176,18) width 4: "."
+      RenderBlock {P} at (0,520) size 769x18
+        RenderText {#text} at (0,0) size 703x17
           text run at (0,0) width 28: "This"
           text run at (24,0) width 44: " words"
           text run at (64,0) width 17: " in"
@@ -167,20 +167,20 @@ layer at (0,0) size 785x969
           text run at (602,0) width 21: " on"
           text run at (619,0) width 27: " this"
           text run at (642,0) width 61: " property."
-      RenderTable {TABLE} at (0,587) size 769x366 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x364
-          RenderTableRow {TR} at (0,0) size 767x28
-            RenderTableCell {TD} at (0,0) size 767x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 160x19
-                RenderText {#text} at (4,4) size 160x19
+      RenderTable {TABLE} at (0,554) size 769x344 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x342
+          RenderTableRow {TR} at (0,0) size 767x26
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 160x17
+                RenderText {#text} at (4,4) size 160x17
                   text run at (4,4) width 160: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,28) size 767x336
-            RenderTableCell {TD} at (0,182) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+          RenderTableRow {TR} at (0,26) size 767x316
+            RenderTableCell {TD} at (0,171) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 755x336 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 747x20
-                RenderText {#text} at (0,0) size 709x19
+            RenderTableCell {TD} at (12,26) size 755x316 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 747x18
+                RenderText {#text} at (0,0) size 709x17
                   text run at (0,0) width 28: "This"
                   text run at (56,0) width 44: " words"
                   text run at (128,0) width 17: " in"
@@ -192,8 +192,8 @@ layer at (0,0) size 785x969
                   text run at (516,0) width 40: " space"
                   text run at (584,0) width 58: " between"
                   text run at (669,0) width 40: " them."
-              RenderBlock {P} at (4,40) size 747x20
-                RenderText {#text} at (0,0) size 610x19
+              RenderBlock {P} at (4,38) size 747x18
+                RenderText {#text} at (0,0) size 610x17
                   text run at (0,0) width 28: "This"
                   text run at (46,0) width 44: " words"
                   text run at (108,0) width 17: " in"
@@ -205,8 +205,8 @@ layer at (0,0) size 785x969
                   text run at (437,0) width 40: " space"
                   text run at (495,0) width 58: " between"
                   text run at (570,0) width 40: " them."
-              RenderBlock {P} at (4,76) size 747x20
-                RenderText {#text} at (0,0) size 610x19
+              RenderBlock {P} at (4,72) size 747x18
+                RenderText {#text} at (0,0) size 610x17
                   text run at (0,0) width 28: "This"
                   text run at (46,0) width 44: " words"
                   text run at (108,0) width 17: " in"
@@ -218,8 +218,8 @@ layer at (0,0) size 785x969
                   text run at (437,0) width 40: " space"
                   text run at (495,0) width 58: " between"
                   text run at (570,0) width 40: " them."
-              RenderBlock {P} at (4,112) size 747x20
-                RenderText {#text} at (0,0) size 461x19
+              RenderBlock {P} at (4,106) size 747x18
+                RenderText {#text} at (0,0) size 461x17
                   text run at (0,0) width 28: "This"
                   text run at (32,0) width 43: " words"
                   text run at (79,0) width 16: " in"
@@ -231,8 +231,8 @@ layer at (0,0) size 785x969
                   text run at (318,0) width 39: " space"
                   text run at (361,0) width 57: " between"
                   text run at (422,0) width 39: " them."
-              RenderBlock {P} at (4,148) size 747x20
-                RenderText {#text} at (0,0) size 461x19
+              RenderBlock {P} at (4,140) size 747x18
+                RenderText {#text} at (0,0) size 461x17
                   text run at (0,0) width 28: "This"
                   text run at (32,0) width 43: " words"
                   text run at (79,0) width 16: " in"
@@ -244,8 +244,8 @@ layer at (0,0) size 785x969
                   text run at (318,0) width 39: " space"
                   text run at (361,0) width 57: " between"
                   text run at (422,0) width 39: " them."
-              RenderBlock {P} at (4,184) size 747x20
-                RenderText {#text} at (0,0) size 581x19
+              RenderBlock {P} at (4,174) size 747x18
+                RenderText {#text} at (0,0) size 581x17
                   text run at (0,0) width 28: "This"
                   text run at (44,0) width 43: " words"
                   text run at (103,0) width 16: " in"
@@ -257,21 +257,21 @@ layer at (0,0) size 785x969
                   text run at (414,0) width 39: " space"
                   text run at (469,0) width 57: " between"
                   text run at (542,0) width 39: " them."
-              RenderBlock {P} at (4,220) size 747x20
-                RenderText {#text} at (0,0) size 491x19
+              RenderBlock {P} at (4,208) size 747x18
+                RenderText {#text} at (0,0) size 493x17
                   text run at (0,0) width 28: "This"
-                  text run at (35,0) width 43: " words"
-                  text run at (85,0) width 16: " in"
-                  text run at (108,0) width 26: " this"
-                  text run at (141,0) width 58: " sentence"
-                  text run at (206,0) width 46: " should"
-                  text run at (259,0) width 34: " have"
-                  text run at (300,0) width 35: " extra"
-                  text run at (342,0) width 39: " space"
-                  text run at (388,0) width 57: " between"
-                  text run at (452,0) width 39: " them."
-              RenderBlock {P} at (4,256) size 747x40
-                RenderText {#text} at (0,0) size 688x39
+                  text run at (35,0) width 44: " words"
+                  text run at (85,0) width 17: " in"
+                  text run at (108,0) width 27: " this"
+                  text run at (141,0) width 59: " sentence"
+                  text run at (206,0) width 47: " should"
+                  text run at (260,0) width 35: " have"
+                  text run at (301,0) width 36: " extra"
+                  text run at (343,0) width 40: " space"
+                  text run at (389,0) width 58: " between"
+                  text run at (453,0) width 40: " them."
+              RenderBlock {P} at (4,242) size 747x36
+                RenderText {#text} at (0,0) size 688x35
                   text run at (0,0) width 28: "This"
                   text run at (33,0) width 43: " words"
                   text run at (81,0) width 16: " in"
@@ -290,15 +290,15 @@ layer at (0,0) size 785x969
                   text run at (596,0) width 43: " words"
                   text run at (644,0) width 16: " in"
                   text run at (665,0) width 23: " the"
-                  text run at (0,20) width 54: "sentence"
-                  text run at (59,20) width 4: " "
-                RenderInline {SPAN} at (0,0) size 176x19
-                  RenderText {#text} at (63,20) size 176x19
-                    text run at (63,20) width 176: "should have normal spacing"
-                RenderText {#text} at (239,20) size 4x19
-                  text run at (239,20) width 4: "."
-              RenderBlock {P} at (4,312) size 747x20
-                RenderText {#text} at (0,0) size 703x19
+                  text run at (0,18) width 54: "sentence"
+                  text run at (59,18) width 4: " "
+                RenderInline {SPAN} at (0,0) size 176x17
+                  RenderText {#text} at (63,18) size 176x17
+                    text run at (63,18) width 176: "should have normal spacing"
+                RenderText {#text} at (239,18) size 4x17
+                  text run at (239,18) width 4: "."
+              RenderBlock {P} at (4,294) size 747x18
+                RenderText {#text} at (0,0) size 703x17
                   text run at (0,0) width 28: "This"
                   text run at (24,0) width 44: " words"
                   text run at (64,0) width 17: " in"
@@ -318,5 +318,5 @@ layer at (0,0) size 785x969
                   text run at (602,0) width 21: " on"
                   text run at (619,0) width 27: " this"
                   text run at (642,0) width 61: " property."
-layer at (8,233) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,225) size 769x2 [color=#808080] [border: (1px inset #808080)]
+layer at (8,220) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,212) size 769x2 [color=#808080] [border: (1px inset #808080)]

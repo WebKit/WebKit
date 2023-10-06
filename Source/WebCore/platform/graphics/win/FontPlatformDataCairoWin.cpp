@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-void FontPlatformData::platformDataInit(HFONT font, float size, HDC, WCHAR* faceName)
+void FontPlatformData::platformDataInit(HFONT font, float size, WCHAR* faceName)
 {
     cairo_font_face_t* fontFace = cairo_win32_font_face_create_for_hfont(font);
 
@@ -112,12 +112,10 @@ String FontPlatformData::description() const
 String FontPlatformData::familyName() const
 {
     HWndDC hdc(0);
-    SaveDC(hdc);
-    cairo_win32_scaled_font_select_font(scaledFont(), hdc);
+    HGDIOBJ oldFont = SelectObject(hdc, m_font.get());
     wchar_t faceName[LF_FACESIZE];
     GetTextFace(hdc, LF_FACESIZE, faceName);
-    cairo_win32_scaled_font_done_font(scaledFont());
-    RestoreDC(hdc, -1);
+    SelectObject(hdc, oldFont);
     return faceName;
 }
 

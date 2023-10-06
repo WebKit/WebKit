@@ -805,6 +805,7 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture() const
     return true;
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 RetainPtr<PlatformLayer> MediaPlayerPrivateMediaStreamAVFObjC::createVideoFullscreenLayer()
 {
     return adoptNS([[CALayer alloc] init]);
@@ -820,6 +821,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame(FloatRect fra
 {
     m_videoLayerManager->setVideoFullscreenFrame(frame);
 }
+#endif
 
 enum class TrackState {
     Add,

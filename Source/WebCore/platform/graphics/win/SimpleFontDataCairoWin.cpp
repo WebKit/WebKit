@@ -55,10 +55,8 @@ void Font::platformInit()
     HWndDC dc(0);
     SaveDC(dc);
 
-    cairo_scaled_font_t* scaledFont = m_platformData.scaledFont();
-    const double metricsMultiplier = cairo_win32_scaled_font_get_metrics_factor(scaledFont) * m_platformData.size();
-
-    cairo_win32_scaled_font_select_font(scaledFont, dc);
+    const double metricsMultiplier = 1. / cWindowsFontScaleFactor;
+    HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
     wchar_t faceName[LF_FACESIZE];
     GetTextFace(dc, LF_FACESIZE, faceName);
@@ -66,7 +64,14 @@ void Font::platformInit()
     OUTLINETEXTMETRIC metrics;
     GetOutlineTextMetrics(dc, sizeof(metrics), &metrics);
 
-    cairo_win32_scaled_font_done_font(scaledFont);
+    float xHeight = metrics.otmTextMetrics.tmAscent * 0.56f; // Best guess for xHeight if no x glyph is present.
+    GLYPHMETRICS gm;
+    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
+    DWORD len = GetGlyphOutline(dc, 'x', GGO_METRICS, &gm, 0, 0, &identity);
+    if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
+        xHeight = gm.gmptGlyphOrigin.y;
+
+    SelectObject(dc, oldFont);
     RestoreDC(dc, -1);
 
     // Disable antialiasing when rendering with Ahem because many tests require this.
@@ -86,14 +91,9 @@ void Font::platformInit()
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
     m_fontMetrics.setUnitsPerEm(metrics.otmEMSquare);
+    m_fontMetrics.setXHeight(xHeight * metricsMultiplier);
     m_avgCharWidth = metrics.otmTextMetrics.tmAveCharWidth * metricsMultiplier;
     m_maxCharWidth = metrics.otmTextMetrics.tmMaxCharWidth * metricsMultiplier;
-
-    cairo_text_extents_t extents;
-    cairo_scaled_font_text_extents(scaledFont, "x", &extents);
-    float xHeight = -extents.y_bearing;
-
-    m_fontMetrics.setXHeight(xHeight);
 }
 
 void Font::determinePitch()

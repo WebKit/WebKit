@@ -245,6 +245,18 @@ public:
 
     friend bool operator==(const FloatRect&, const FloatRect&) = default;
 
+    struct MarkableTraits {
+        constexpr static bool isEmptyValue(const FloatRect& rect)
+        {
+            return rect.isNaN();
+        }
+
+        constexpr static FloatRect emptyValue()
+        {
+            return FloatRect::nanRect();
+        }
+    };
+
 private:
     FloatPoint m_location;
     FloatSize m_size;
@@ -336,7 +348,7 @@ constexpr FloatRect FloatRect::nanRect()
 
 constexpr bool FloatRect::isNaN() const
 {
-    return isnan(x());
+    return isNaNConstExpr(x());
 }
 
 inline void FloatRect::inflate(float deltaX, float deltaY, float deltaMaxX, float deltaMaxY)

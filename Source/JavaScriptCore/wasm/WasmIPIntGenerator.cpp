@@ -493,10 +493,15 @@ public:
     static constexpr bool tierSupportsSIMD = true;
 private:
     Checked<uint32_t> m_tryDepth { 0 };
+    uint32_t m_maxTryDepth { 0 };
     FunctionParser<IPIntGenerator>* m_parser { nullptr };
     ModuleInformation& m_info;
     std::unique_ptr<FunctionIPIntMetadataGenerator> m_metadata;
 
+    // FIXME: If rethrow is not used in practice we should consider just reparsing the function to update the SP offsets.
+    Vector<uint32_t> m_catchSPMetadataOffsets;
+
+    bool m_usesRethrow { false };
     bool m_usesSIMD { false };
 };
 
@@ -1066,18 +1071,11 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signatur
 
     // Loop OSR
 
-    // We don't care what we're putting in as long as we put in something to represent a value
-    // Will get everything off the stack
-    int numOSREntryDataValues = m_metadata->m_numLocals;
-    for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
-        Stack& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-        numOSREntryDataValues += expressionStack.size();
-    }
-    numOSREntryDataValues += oldStack.size();
+    unsigned numOSREntryDataValues = m_parser->getStackHeightInValues();
     numOSREntryDataValues += newStack.size();
-    Vector<VirtualRegister> osrEntryData(numOSREntryDataValues);
+
     // Note the +1: we do this to avoid having 0 as a key in the map, since the current map can't handle 0 as a key
-    m_metadata->tierUpCounter().add(m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset + 1, LLIntTierUpCounter::OSREntryData { loopIndex, osrEntryData });
+    m_metadata->tierUpCounter().add(m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset + 1, IPIntTierUpCounter::OSREntryData { loopIndex, numOSREntryDataValues, m_tryDepth });
 
     return { };
 }
@@ -1133,6 +1131,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElseToUnreachable(ControlTyp
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTry(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack)
 {
     m_tryDepth++;
+    m_maxTryDepth = std::max(m_maxTryDepth, m_tryDepth.value());
 
     splitStack(signature, oldStack, newStack);
     block = ControlType(signature, BlockType::Try);
@@ -1175,8 +1174,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchToUnreachable(unsigned 
         results.append(Value { });
 
     // FIXME: If this is actually unreachable we shouldn't need metadata.
-    auto size = m_metadata->m_metadata.size();
-    block.m_awaitingUpdate.append(size);
+    block.m_awaitingUpdate.append(m_metadata->m_metadata.size());
     m_metadata->addBlankSpace(8);
 
     m_metadata->m_exceptionHandlers.append({
@@ -1189,10 +1187,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchToUnreachable(unsigned 
         exceptionIndex
     });
 
+    auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(4);
     // IPInt stack entries are 16 bytes to keep the stack aligned. With the exception of locals, which are only 8 bytes.
     uint32_t stackSizeInV128 = results.size() + m_parser->getStackHeightInValues() + roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
-    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 8, stackSizeInV128, uint32_t);
+    m_catchSPMetadataOffsets.append(size);
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, stackSizeInV128, uint32_t);
 
     return { };
 }
@@ -1210,8 +1210,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchAllToUnreachable(Contro
         block.m_catchKind = CatchKind::CatchAll;
 
     // FIXME: If this is actually unreachable we shouldn't need metadata.
-    auto size = m_metadata->m_metadata.size();
-    block.m_awaitingUpdate.append(size);
+    block.m_awaitingUpdate.append(m_metadata->m_metadata.size());
     m_metadata->addBlankSpace(8);
 
     m_metadata->m_exceptionHandlers.append({
@@ -1224,10 +1223,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchAllToUnreachable(Contro
         0
     });
 
+    auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(4);
     // IPInt stack entries are 16 bytes to keep the stack aligned. With the exception of locals, which are only 8 bytes.
     uint32_t stackSizeInV128 = m_parser->getStackHeightInValues() + roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
-    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 8, stackSizeInV128, uint32_t);
+    m_catchSPMetadataOffsets.append(size);
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, stackSizeInV128, uint32_t);
 
     return { };
 }
@@ -1268,7 +1269,16 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addThrow(unsigned exceptionInde
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRethrow(unsigned, ControlType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRethrow(unsigned, ControlType& catchBlock)
+{
+    m_usesRethrow = true;
+
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(4);
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, catchBlock.m_tryDepth, uint32_t);
+
+    return { };
+}
 
 // Control Flow Branches
 
@@ -1550,6 +1560,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCrash() { return { }; }
 
 std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
 {
+    if (m_usesRethrow) {
+        m_metadata->m_numAlignedRethrowSlots = roundUpToMultipleOf<2>(m_maxTryDepth);
+        for (uint32_t catchSPOffset : m_catchSPMetadataOffsets)
+            *reinterpret_cast_ptr<uint32_t*>(m_metadata->m_metadata.data() + catchSPOffset) += m_metadata->m_numAlignedRethrowSlots;
+    }
+
     return WTFMove(m_metadata);
 }
 

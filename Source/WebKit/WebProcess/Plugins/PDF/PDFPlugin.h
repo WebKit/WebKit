@@ -90,10 +90,10 @@ struct WebHitTestResultData;
 
 class PDFPlugin final : public PDFPluginBase, public WebCore::ScrollableArea {
 public:
+    static bool pdfKitLayerControllerIsAvailable();
+
     static Ref<PDFPlugin> create(WebCore::HTMLPlugInElement&);
     ~PDFPlugin();
-
-    static WebCore::PluginInfo pluginInfo();
 
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
 

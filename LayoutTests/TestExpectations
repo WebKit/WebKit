@@ -6193,6 +6193,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/delay-load-event-until-move-to-empty-source.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-file.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-cross-origin-iframe.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker-cross-origin-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/proxy-modifier-click-to-associated-element.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/028.html [ Skip ]
@@ -6739,6 +6740,11 @@ imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-f
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-first-003.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-002.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-003.html [ Pass Failure ]
+
+webkit.org/b/261814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-disabled.tentative.html [ Skip ]
+webkit.org/b/261814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.tentative.html [ Skip ]
+webkit.org/b/261814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.tentative.html [ Skip ]
+webkit.org/b/261814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.tentative.html [ Skip ]
 
 webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
 

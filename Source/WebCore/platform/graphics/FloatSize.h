@@ -153,10 +153,25 @@ public:
     operator NSSize() const;
 #endif
 
+    static constexpr FloatSize nanSize();
+    constexpr bool isNaN() const;
+
     WEBCORE_EXPORT String toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
     friend bool operator==(const FloatSize&, const FloatSize&) = default;
+
+    struct MarkableTraits {
+        constexpr static bool isEmptyValue(const FloatSize& size)
+        {
+            return size.isNaN();
+        }
+
+        constexpr static FloatSize emptyValue()
+        {
+            return FloatSize::nanSize();
+        }
+    };
 
 private:
     float m_width { 0 };
@@ -165,7 +180,7 @@ private:
 
 constexpr bool FloatSize::isZero() const
 {
-    return std::abs(m_width) < std::numeric_limits<float>::epsilon() && std::abs(m_height) < std::numeric_limits<float>::epsilon();
+    return fabsConstExpr(m_width) < std::numeric_limits<float>::epsilon() && fabsConstExpr(m_height) < std::numeric_limits<float>::epsilon();
 }
 
 inline FloatSize& operator+=(FloatSize& a, const FloatSize& b)
@@ -250,6 +265,19 @@ inline IntSize expandedIntSize(const FloatSize& p)
 inline IntPoint flooredIntPoint(const FloatSize& p)
 {
     return IntPoint(clampToInteger(floorf(p.width())), clampToInteger(floorf(p.height())));
+}
+
+constexpr FloatSize FloatSize::nanSize()
+{
+    return {
+        std::numeric_limits<float>::quiet_NaN(),
+        std::numeric_limits<float>::quiet_NaN()
+    };
+}
+
+constexpr bool FloatSize::isNaN() const
+{
+    return isNaNConstExpr(width());
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatSize&);

@@ -169,6 +169,9 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
     if (LocalFrame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
+
+    if (auto page = this->page(); page && isRootFrame())
+        page->removeRootFrame(*this);
 }
 
 void LocalFrame::init()
@@ -215,6 +218,14 @@ LocalFrame::~LocalFrame()
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!isMainFrame() && localMainFrame)
         localMainFrame->selfOnlyDeref();
+}
+
+bool LocalFrame::isRootFrame() const
+{
+    if (auto* parent = tree().parent())
+        return is<RemoteFrame>(parent);
+    ASSERT(&mainFrame() == this);
+    return true;
 }
 
 void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)

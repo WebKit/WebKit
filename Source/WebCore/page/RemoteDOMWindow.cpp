@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteDOMWindow.h"
 
+#include "FrameDestructionObserverInlines.h"
+#include "FrameLoader.h"
 #include "LocalDOMWindow.h"
 #include "MessagePort.h"
 #include "NavigationScheduler.h"

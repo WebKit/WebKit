@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 100x160
-        RenderText {#text} at (0,0) size 100x159
+      RenderBlock {P} at (0,0) size 100x144
+        RenderText {#text} at (0,0) size 100x143
           text run at (0,0) width 100: "This paragraph"
-          text run at (0,20) width 52: "contains"
-          text run at (0,40) width 100: "justified text."
-          text run at (0,60) width 100: "Within the"
-          text run at (0,80) width 72: "constrained"
-          text run at (0,100) width 100: "width, this text"
-          text run at (0,120) width 100: "should be"
-          text run at (0,140) width 54: "justified."
-      RenderBlock {P} at (0,176) size 100x160
-        RenderText {#text} at (0,0) size 100x159
+          text run at (0,18) width 52: "contains"
+          text run at (0,36) width 100: "justified text."
+          text run at (0,54) width 100: "Within the"
+          text run at (0,72) width 72: "constrained"
+          text run at (0,90) width 100: "width, this text"
+          text run at (0,108) width 100: "should be"
+          text run at (0,126) width 54: "justified."
+      RenderBlock {P} at (0,160) size 100x144
+        RenderText {#text} at (0,0) size 100x143
           text run at (0,0) width 100: "This paragraph"
-          text run at (0,20) width 100: "also contains"
-          text run at (0,40) width 100: "justified text."
-          text run at (0,60) width 100: "Within the"
-          text run at (0,80) width 72: "constrained"
-          text run at (0,100) width 100: "width, this text"
-          text run at (0,120) width 100: "should be"
-          text run at (0,140) width 54: "justified."
+          text run at (0,18) width 100: "also contains"
+          text run at (0,36) width 100: "justified text."
+          text run at (0,54) width 100: "Within the"
+          text run at (0,72) width 72: "constrained"
+          text run at (0,90) width 100: "width, this text"
+          text run at (0,108) width 100: "should be"
+          text run at (0,126) width 54: "justified."

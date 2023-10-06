@@ -52,10 +52,6 @@
 
 namespace JSC {
 
-namespace AccessCaseInternal {
-static constexpr bool verbose = false;
-}
-
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 
 AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)

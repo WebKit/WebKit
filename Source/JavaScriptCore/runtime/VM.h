@@ -777,6 +777,7 @@ public:
     void* targetMachinePCAfterCatch;
     JSOrWasmInstruction targetInterpreterPCForThrow;
     uintptr_t targetInterpreterMetadataPCForThrow;
+    uint32_t targetTryDepthForThrow;
 
     unsigned varargsLength;
     uint32_t osrExitIndex;

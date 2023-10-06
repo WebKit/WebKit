@@ -43,27 +43,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
-      RenderBlock (anonymous) at (0,0) size 784x112
-        RenderText {#text} at (0,0) size 747x55
+      RenderBlock (anonymous) at (0,0) size 784x108
+        RenderText {#text} at (0,0) size 747x53
           text run at (0,0) width 747: "Test inserting paragraphs and managing typing style correctly: Only \"line 1\" "
-          text run at (0,28) width 627: "should be bold. Other lines should be non-bold. Fix for this bug: "
-        RenderInline {A} at (0,0) size 260x27 [color=#0000EE]
-          RenderText {#text} at (0,56) size 260x27
-            text run at (0,56) width 260: "<rdar://problem/3944492>"
-        RenderText {#text} at (260,56) size 724x55
-          text run at (260,56) width 464: " after pressing return twice, text is bold when it "
-          text run at (0,84) width 116: "shouldn't be"
-      RenderBlock {DIV} at (0,112) size 784x12
-      RenderBlock {P} at (0,148) size 784x55 [border: (2px solid #0000FF)]
+          text run at (0,27) width 627: "should be bold. Other lines should be non-bold. Fix for this bug: "
+        RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
+          RenderText {#text} at (0,54) size 260x26
+            text run at (0,54) width 260: "<rdar://problem/3944492>"
+        RenderText {#text} at (260,54) size 724x53
+          text run at (260,54) width 464: " after pressing return twice, text is bold when it "
+          text run at (0,81) width 116: "shouldn't be"
+      RenderBlock {DIV} at (0,108) size 784x12
+      RenderBlock {P} at (0,144) size 784x55 [border: (2px solid #0000FF)]
         RenderInline {B} at (0,0) size 56x26
           RenderText {#text} at (14,14) size 56x26
             text run at (14,14) width 56: "line 1"
-      RenderBlock {P} at (0,227) size 784x56 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 36x27
+      RenderBlock {P} at (0,223) size 784x55 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 36x26
           text run at (14,14) width 36: "xxx"
-      RenderBlock {P} at (0,307) size 784x56 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x27 [bgcolor=#008000]
-      RenderBlock {P} at (0,387) size 784x56 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 36x27
+      RenderBlock {P} at (0,302) size 784x55 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
+      RenderBlock {P} at (0,381) size 784x55 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 36x26
           text run at (14,14) width 36: "xxx"
 caret: position 3 of child 0 {#text} of child 8 {P} of body

@@ -165,7 +165,7 @@ void OSREntryPlan::work(CompilationEffort)
                 IPIntCallee* ipintCallee = static_cast<IPIntCallee*>(m_callee.ptr());
                 Locker locker { ipintCallee->tierUpCounter().m_lock };
                 ipintCallee->setOSREntryCallee(callee.copyRef(), mode());
-                ipintCallee->tierUpCounter().m_loopCompilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
+                ipintCallee->tierUpCounter().m_loopCompilationStatus = IPIntTierUpCounter::CompilationStatus::Compiled;
                 break;
             }
             case CompilationMode::BBQMode: {

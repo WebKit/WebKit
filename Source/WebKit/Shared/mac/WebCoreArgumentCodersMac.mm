@@ -204,29 +204,6 @@ bool ArgumentCoder<WebCore::Credential>::decodePlatformData(Decoder& decoder, We
     return true;
 }
 
-void ArgumentCoder<WebCore::KeypressCommand>::encode(Encoder& encoder, const WebCore::KeypressCommand& keypressCommand)
-{
-    encoder << keypressCommand.commandName << keypressCommand.text;
-}
-    
-std::optional<WebCore::KeypressCommand> ArgumentCoder<WebCore::KeypressCommand>::decode(Decoder& decoder)
-{
-    std::optional<String> commandName;
-    decoder >> commandName;
-    if (!commandName)
-        return std::nullopt;
-    
-    std::optional<String> text;
-    decoder >> text;
-    if (!text)
-        return std::nullopt;
-    
-    WebCore::KeypressCommand command;
-    command.commandName = WTFMove(*commandName);
-    command.text = WTFMove(*text);
-    return WTFMove(command);
-}
-
 #if ENABLE(VIDEO)
 void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const WebCore::SerializedPlatformDataCueValue& value)
 {

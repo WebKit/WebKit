@@ -57,8 +57,9 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, u
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(epilogue_osr, CallFrame* callFrame);
 #endif
 
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(retrieve_and_clear_exception, v128_t* stack);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(retrieve_and_clear_exception, CallFrame*, v128_t* stack, uint64_t* pl);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw_exception, CallFrame*, v128_t* stack, unsigned exceptionIndex);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(rethrow_exception, CallFrame*, uint64_t* pl, unsigned tryDepth);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_func, unsigned index);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_get, unsigned, unsigned);
@@ -87,7 +88,6 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait32, uint64_t, uint32_t, uint
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, uint64_t, uint64_t, uint64_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, unsigned, unsigned, int32_t);
 
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw, CallFrame*, uint32_t);
 
 } } // namespace JSC::LLInt
 

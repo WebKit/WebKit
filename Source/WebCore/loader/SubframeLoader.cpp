@@ -378,11 +378,8 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
     IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
     bool loadManually = is<PluginDocument>(document) && !m_containsPlugins && downcast<PluginDocument>(document).shouldLoadPluginManually();
 
-#if PLATFORM(IOS_FAMILY)
-    // On iOS, we only tell the plugin to be in full page mode if the containing plugin document is the top level document.
-    if (document.ownerElement())
+    if (document.ownerElement() && document.settings().useImageDocumentForSubframePDF())
         loadManually = false;
-#endif
 
     WeakPtr weakRenderer { *renderer };
 

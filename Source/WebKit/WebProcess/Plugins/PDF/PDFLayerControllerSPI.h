@@ -27,7 +27,7 @@
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
-#import <Quartz/Quartz.h>
+#import <PDFKit/PDFKit.h>
 
 @class PDFViewLayout;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InsertTextOptions.h"
+#pragma once
 
-namespace IPC {
+#import <WebCore/WebEvent.h>
 
-void ArgumentCoder<WebKit::InsertTextOptions>::encode(Encoder& encoder, const WebKit::InsertTextOptions& options)
-{
-    encoder << options.registerUndoGroup;
-    encoder << options.suppressSelectionUpdate;
-    encoder << options.processingUserGesture;
-    encoder << options.shouldSimulateKeyboardInput;
-    encoder << options.editingRangeIsRelativeTo;
-}
+#if HAVE(UI_ASYNC_TEXT_INPUT)
 
-std::optional<WebKit::InsertTextOptions> ArgumentCoder<WebKit::InsertTextOptions>::decode(Decoder& decoder)
-{
-    WebKit::InsertTextOptions options;
-    if (!decoder.decode(options.registerUndoGroup))
-        return std::nullopt;
-    if (!decoder.decode(options.suppressSelectionUpdate))
-        return std::nullopt;
-    if (!decoder.decode(options.processingUserGesture))
-        return std::nullopt;
-    if (!decoder.decode(options.shouldSimulateKeyboardInput))
-        return std::nullopt;
-    if (!decoder.decode(options.editingRangeIsRelativeTo))
-        return std::nullopt;
-    return options;
-}
+@class UIKeyEvent;
 
-} // namespace IPC
+@interface WebEvent (UIAsyncTextInputSupport)
+
+- (instancetype)initWithUIKeyEvent:(UIKeyEvent *)event;
+@property (nonatomic, readonly) UIKeyEvent *originalUIKeyEvent;
+
+@end
+
+#endif // HAVE(UI_ASYNC_TEXT_INPUT)

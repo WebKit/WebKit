@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x323
-  RenderBlock {HTML} at (0,0) size 800x323
-    RenderBody {BODY} at (8,16) size 784x292
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 750x39
+layer at (0,0) size 800x319
+  RenderBlock {HTML} at (0,0) size 800x319
+    RenderBody {BODY} at (8,16) size 784x288
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 750x35
           text run at (0,0) width 387: "Change your window size. However the lines wrap, the blue "
           text run at (387,0) width 363: "rectanglues should always have their middles on the same"
-          text run at (0,20) width 83: "alignment as "
-          text run at (83,20) width 204: "other blue rectangles on the line."
-      RenderBlock {P} at (15,56) size 754x236 [color=#0000FF] [bgcolor=#FFFFFF] [border: (1px solid #C0C0C0)]
+          text run at (0,18) width 83: "alignment as "
+          text run at (83,18) width 204: "other blue rectangles on the line."
+      RenderBlock {P} at (15,52) size 754x236 [color=#0000FF] [bgcolor=#FFFFFF] [border: (1px solid #C0C0C0)]
         RenderText {#text} at (8,35) size 61x16
           text run at (8,35) width 61: "\x{C9}\x{C9}\x{C9} "
         RenderImage {IMG} at (68,26) size 31x31

@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-add-optgroup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-add-option-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-add.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html
@@ -31,4 +32,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-setcustomvalidity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-value.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-willvalidate-readonly-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/selected-index.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-cross-origin-iframe.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-disabled.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.tentative.html

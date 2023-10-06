@@ -288,39 +288,6 @@
                 "url": "https://www.w3.org/TR/css-ui-4/#widget-accent"
             }
         },
-        "align-tracks": {
-            "values": [
-                "normal",
-                "first",
-                "last",
-                "baseline",
-                "space-between",
-                "space-around",
-                "space-evenly",
-                "stretch",
-                "unsafe",
-                "safe",
-                "center",
-                "start",
-                "end",
-                "flex-start",
-                "flex-end"
-            ],
-            "codegen-properties": {
-                "initial": "initialAlignTracks",
-                "converter": "ContentAlignmentDataList",
-                "settings-flag": "masonryTrackAlignmentEnabled",
-                "parser-function": "consumeAlignTracks",
-                "parser-grammar-unused": "normal | <baseline-position> | <content-distribution> | [ <overflow-position>? <content-position> ]",
-                "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals",
-                "comment": "Alternate defintion in css-flexbox - flex-start | flex-end | center | space-between | space-around | stretch"
-            },
-            "specification": {
-                "category": "css-grid",
-                "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
-            },
-            "status": "in development"
-        },
         "block-step-size": {
             "codegen-properties": {
                 "settings-flag": "cssRhythmicSizingEnabled",
@@ -1121,38 +1088,6 @@
                 "category": "css-fonts",
                 "url": "https://www.w3.org/TR/css-fonts-3/#propdef-font-variant"
             }
-        },
-        "justify-tracks": {
-            "values": [
-                "normal",
-                "space-between",
-                "space-around",
-                "space-evenly",
-                "stretch",
-                "unsafe",
-                "safe",
-                "center",
-                "start",
-                "end",
-                "flex-start",
-                "flex-end",
-                "left",
-                "right"
-            ],
-            "codegen-properties": {
-                "initial": "initialJustifyTracks",
-                "converter": "ContentAlignmentDataList",
-                "settings-flag": "masonryTrackAlignmentEnabled",
-                "parser-function": "consumeJustifyTracks",
-                "parser-grammar-unused": "normal | <content-distribution> | [ <overflow-position>? [ <content-position> | left | right ] ]",
-                "parser-grammar-unused-reason": "Needs support for ordered groups and optionals.",
-                "comment": "Alternate defintion in css-flexbox - flex-start | flex-end | center | space-between | space-around"
-            },
-            "specification": {
-                "category": "css-grid",
-                "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
-            },
-            "status": "in development"
         },
         "-webkit-locale": {
             "inherited": true,

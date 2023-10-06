@@ -42,6 +42,7 @@
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
 #include "SVGImageElement.h"
+#include "SecurityOrigin.h"
 #include "VideoColorSpace.h"
 #include "WebCodecsVideoFrameAlgorithms.h"
 

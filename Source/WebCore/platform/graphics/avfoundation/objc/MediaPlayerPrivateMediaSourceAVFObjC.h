@@ -113,9 +113,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     AVSampleBufferDisplayLayer* sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession* decompressionSession() const { return m_decompressionSession.get(); }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
+#endif
 
     bool requiresTextTrackRepresentation() const override;
     void setTextTrackRepresentation(TextTrackRepresentation*) override;

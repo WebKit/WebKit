@@ -164,6 +164,7 @@ static inline HTMLVideoElement* descendantVideoElement(ContainerNode& node)
     return descendantsOfType<HTMLVideoElement>(node).first();
 }
 
+#if !ENABLE(MODERN_MEDIA_CONTROLS)
 static inline HTMLVideoElement* ancestorVideoElement(Node* node)
 {
     while (node && !is<HTMLVideoElement>(*node))
@@ -171,6 +172,7 @@ static inline HTMLVideoElement* ancestorVideoElement(Node* node)
 
     return downcast<HTMLVideoElement>(node);
 }
+#endif
 
 void MediaDocument::defaultEventHandler(Event& event)
 {

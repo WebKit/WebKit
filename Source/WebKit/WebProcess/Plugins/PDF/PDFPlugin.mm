@@ -633,6 +633,11 @@ static void getAllScriptsInPDFDocument(CGPDFDocumentRef pdfDocument, Vector<Reta
     }
 }
 
+bool PDFPlugin::pdfKitLayerControllerIsAvailable()
+{
+    return getPDFLayerControllerClass();
+}
+
 Ref<PDFPlugin> PDFPlugin::create(HTMLPlugInElement& pluginElement)
 {
     return adoptRef(*new PDFPlugin(pluginElement));
@@ -1276,35 +1281,6 @@ void PDFPlugin::cancelAndForgetLoader(NetscapePlugInStreamLoader& loader)
     loader.cancel(loader.cancelledError());
 }
 #endif // HAVE(INCREMENTAL_PDF_APIS)
-
-PluginInfo PDFPlugin::pluginInfo()
-{
-    PluginInfo info;
-
-    // Note: HTML specification requires that the WebKit built-in PDF name
-    // is presented in plain English text.
-    // https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
-    info.name = "WebKit built-in PDF"_s;
-    info.desc = pdfDocumentTypeDescription();
-    info.file = "internal-pdf-viewer"_s;
-    info.isApplicationPlugin = true;
-    info.clientLoadPolicy = PluginLoadClientPolicy::Undefined;
-    info.bundleIdentifier = "com.apple.webkit.builtinpdfplugin"_s;
-
-    MimeClassInfo pdfMimeClassInfo;
-    pdfMimeClassInfo.type = "application/pdf"_s;
-    pdfMimeClassInfo.desc = pdfDocumentTypeDescription();
-    pdfMimeClassInfo.extensions.append("pdf"_s);
-    info.mimes.append(pdfMimeClassInfo);
-
-    MimeClassInfo textPDFMimeClassInfo;
-    textPDFMimeClassInfo.type = "text/pdf"_s;
-    textPDFMimeClassInfo.desc = pdfDocumentTypeDescription();
-    textPDFMimeClassInfo.extensions.append("pdf"_s);
-    info.mimes.append(textPDFMimeClassInfo);
-
-    return info;
-}
 
 void PDFPlugin::updateScrollbars()
 {

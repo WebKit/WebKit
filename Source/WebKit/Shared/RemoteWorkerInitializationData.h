@@ -28,19 +28,11 @@
 #include "UserContentControllerIdentifier.h"
 #include <wtf/Forward.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 class WebCompiledContentRuleListData;
 
 struct RemoteWorkerInitializationData {
-    void encode(IPC::Encoder&) const;
-    static std::optional<RemoteWorkerInitializationData> decode(IPC::Decoder&);
-
     UserContentControllerIdentifier userContentControllerIdentifier;
 #if ENABLE(CONTENT_EXTENSIONS)
     Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleLists;

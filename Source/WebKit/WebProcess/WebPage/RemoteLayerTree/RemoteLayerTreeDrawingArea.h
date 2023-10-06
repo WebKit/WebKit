@@ -35,7 +35,6 @@
 #include <atomic>
 #include <dispatch/dispatch.h>
 #include <wtf/HashMap.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -173,7 +172,7 @@ private:
     bool m_waitingForBackingStoreSwap { false };
     bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };
 
-    OSObjectPtr<dispatch_queue_t> m_commitQueue;
+    Ref<WorkQueue> m_commitQueue;
     RefPtr<BackingStoreFlusher> m_backingStoreFlusher;
 
     TransactionID m_currentTransactionID;

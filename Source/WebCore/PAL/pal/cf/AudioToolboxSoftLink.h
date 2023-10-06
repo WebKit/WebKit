@@ -26,6 +26,7 @@
 
 #if USE(AVFOUNDATION)
 
+#include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/SoftLinking.h>
 
@@ -137,5 +138,9 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioUnitInitialize, OSStatus, 
 #define AudioUnitInitialize softLink_AudioToolbox_AudioUnitInitialize
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioUnitSetProperty, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement, const void* inData, UInt32 inDataSize), (inUnit, inID, inScope, inElement, inData, inDataSize))
 #define AudioUnitSetProperty softLink_AudioToolbox_AudioUnitSetProperty
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioUnitRender, OSStatus, (AudioUnit inUnit, AudioUnitRenderActionFlags* ioActionFlags, const AudioTimeStamp* inTimeStamp, UInt32 inOutputBusNumber, UInt32 inNumberFrames, AudioBufferList* ioData), (inUnit, ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, ioData))
+#define AudioUnitRender softLink_AudioToolbox_AudioUnitRender
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioUnitUninitialize, OSStatus, (AudioUnit inUnit), (inUnit))
+#define AudioUnitUninitialize softLink_AudioToolbox_AudioUnitUninitialize
 
 #endif // USE(AVFOUNDATION)

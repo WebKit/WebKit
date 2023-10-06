@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AVCaptureDeviceManager_h
-#define AVCaptureDeviceManager_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
@@ -81,6 +80,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
-
-#endif // AVCaptureDeviceManager_h
+#endif // ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)

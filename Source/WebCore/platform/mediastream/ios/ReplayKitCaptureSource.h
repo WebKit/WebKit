@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && (PLATFORM(IOS) || PLATFORM(VISION))
+#if ENABLE(MEDIA_STREAM) && HAVE(REPLAYKIT)
 
 #include "DisplayCaptureSourceCocoa.h"
 #include "Timer.h"
@@ -82,4 +82,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && (PLATFORM(IOS) || PLATFORM(VISION))
+#endif // ENABLE(MEDIA_STREAM) && HAVE(REPLAYKIT)

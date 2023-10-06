@@ -3968,6 +3968,15 @@
     "imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html": [
         "slow"
     ],

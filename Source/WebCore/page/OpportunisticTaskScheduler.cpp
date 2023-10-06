@@ -27,6 +27,7 @@
 #include "OpportunisticTaskScheduler.h"
 
 #include "Page.h"
+#include <wtf/SystemTracing.h>
 
 namespace WebCore {
 

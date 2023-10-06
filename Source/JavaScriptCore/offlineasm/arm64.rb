@@ -586,6 +586,9 @@ class Sequence
                 "divd", "subd", "muld", "sqrtd", /^bp/, /^bq/, /^btp/, /^btq/, /^cp/, /^cq/, /^tp/, /^tq/, /^bd/,
                 "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq", /^atomic[a-z]+q$/, "loadv", "storev"
                 size = $currentSettings["ADDRESS64"] ? 8 : 4
+            when "loadpairi", "storepairi"
+                size = 8
+                isLoadStorePairOp = true
             when "loadpairq", "storepairq", "loadpaird", "storepaird"
                 size = 16
                 isLoadStorePairOp = true
@@ -1638,8 +1641,12 @@ class Instruction
             $asm.puts "ldar #{operands[1].arm64Operand(:quad)}, #{operands[0].arm64SimpleAddressOperand(:quad)}"
         when "loadpairq"
             $asm.puts "ldp #{operands[1].arm64Operand(:quad)}, #{operands[2].arm64Operand(:quad)}, #{operands[0].arm64PairAddressOperand(:quad)}"
+        when "loadpairi"
+            $asm.puts "ldp #{operands[1].arm64Operand(:word)}, #{operands[2].arm64Operand(:word)}, #{operands[0].arm64PairAddressOperand(:quad)}"
         when "storepairq"
             $asm.puts "stp #{operands[0].arm64Operand(:quad)}, #{operands[1].arm64Operand(:quad)}, #{operands[2].arm64PairAddressOperand(:quad)}"
+        when "storepairi"
+            $asm.puts "stp #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:word)}, #{operands[2].arm64PairAddressOperand(:quad)}"
         when "loadpaird"
             $asm.puts "ldp #{operands[1].arm64Operand(:double)}, #{operands[2].arm64Operand(:double)}, #{operands[0].arm64PairAddressOperand(:double)}"
         when "storepaird"

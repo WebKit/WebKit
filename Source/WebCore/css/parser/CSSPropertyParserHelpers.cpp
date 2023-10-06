@@ -7541,37 +7541,6 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
     return CSSValuePair::createNoncoalescing(horizontal.releaseNonNull(), vertical.releaseNonNull());
 }
 
-RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange& range)
-{
-    CSSValueListBuilder parsedValues;
-    do {
-        if (range.atEnd())
-            break;
-        auto value = consumeContentDistributionOverflowPosition(range, isContentPositionKeyword);
-        if (!value)
-            return nullptr;
-        parsedValues.append(value.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    return CSSValueList::createCommaSeparated(WTFMove(parsedValues));
-}
-
-RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange& range)
-{
-    CSSValueListBuilder parsedValues;
-    do {
-        if (range.atEnd())
-            break;
-        // justify-tracks property does not allow the <baseline-position> values.
-        if (isBaselineKeyword(range.peek().id()))
-            return nullptr;
-        auto value = consumeContentDistributionOverflowPosition(range, isContentPositionOrLeftOrRightKeyword);
-        if (!value)
-            return nullptr;
-        parsedValues.append(value.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    return CSSValueList::createCommaSeparated(WTFMove(parsedValues));
-}
-
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range)
 {
     auto rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);

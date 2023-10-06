@@ -1,0 +1,4 @@
+
+
+FAIL select.add() with an index should work when the target is inside an optgroup. The object can not be found here.
+

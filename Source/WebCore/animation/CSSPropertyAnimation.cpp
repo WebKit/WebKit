@@ -3747,12 +3747,12 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new ContainIntrinsiclLengthPropertyWrapper(CSSPropertyContainIntrinsicHeight, &RenderStyle::containIntrinsicHeight, &RenderStyle::setContainIntrinsicHeight, &RenderStyle::containIntrinsicHeightType, &RenderStyle::setContainIntrinsicHeightType),
 
         // FIXME: The following properties are currently not animatable but should be:
-        // align-tracks, background-blend-mode, clip-rule, color-interpolation,
+        // background-blend-mode, clip-rule, color-interpolation,
         // color-interpolation-filters, counter-increment, counter-reset, dominant-baseline,
         // fill-rule, font-family, font-feature-settings, font-kerning, font-language-override,
         // font-synthesis, font-variant-alternates, font-variant-caps, font-variant-east-asian,
         // font-variant-ligatures, font-variant-numeric, font-variant-position, grid-template-areas,
-        // ime-mode, justify-tracks, marker-end, marker-mid, marker-start, mask, mask-clip, mask-composite, mask-image,
+        // ime-mode, marker-end, marker-mid, marker-start, mask, mask-clip, mask-composite, mask-image,
         // mask-mode, mask-origin, mask-repeat, mask-type, offset-distance, perspective-origin, quotes,
         // ruby-align, scroll-behavior, shape-rendering, stroke-linecap, stroke-linejoin,
         // text-anchor, text-emphasis-style, text-rendering, vector-effect
@@ -3996,7 +3996,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         case CSSPropertyWebkitTextZoom:
         case CSSPropertyAlignmentBaseline:
-        case CSSPropertyAlignTracks:
         case CSSPropertyAlt:
         case CSSPropertyAnimation:
         case CSSPropertyAnimationComposition:
@@ -4049,7 +4048,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyInsetInline:
         case CSSPropertyInsetInlineEnd:
         case CSSPropertyInsetInlineStart:
-        case CSSPropertyJustifyTracks:
         case CSSPropertyListStyle:
         case CSSPropertyMarginBlock: // logical shorthand
         case CSSPropertyMarginInline: // logical shorthand

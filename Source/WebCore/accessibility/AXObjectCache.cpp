@@ -138,8 +138,10 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXObjectCache);
 
 using namespace HTMLNames;
 
+#if PLATFORM(COCOA)
 // Post value change notifications for password fields or elements contained in password fields at a 40hz interval to thwart analysis of typing cadence
 static const Seconds accessibilityPasswordValueChangeNotificationInterval { 25_ms };
+#endif
 
 static bool rendererNeedsDeferredUpdate(const RenderObject& renderer)
 {

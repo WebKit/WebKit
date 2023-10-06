@@ -2,4 +2,41 @@
 
 
 
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (usingTiledLayer 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 4
+        (GraphicsLayer
+          (position 18.00 18.00)
+          (bounds 160.00 90.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 132.00)
+          (bounds 160.00 90.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 246.00)
+          (bounds 160.00 90.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 360.00)
+          (bounds 160.00 90.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
 

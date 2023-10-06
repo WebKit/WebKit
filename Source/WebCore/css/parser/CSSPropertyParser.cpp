@@ -942,7 +942,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueAuto;
     case CSSPropertyAlignContent:
     case CSSPropertyAlignItems:
-    case CSSPropertyAlignTracks:
     case CSSPropertyAnimationDirection:
     case CSSPropertyBackgroundBlendMode:
     case CSSPropertyColumnGap:

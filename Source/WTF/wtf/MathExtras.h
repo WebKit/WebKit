@@ -771,7 +771,7 @@ inline uint32_t reverseBits32(uint32_t value)
 #endif
 }
 
-// FIXME: Replace with std::isnan() once std::isnan() is constexpr.
+// FIXME: Replace with std::isnan() once std::isnan() is constexpr. requires C++23
 template<typename T> constexpr typename std::enable_if_t<std::is_floating_point_v<T>, bool> isNaNConstExpr(T value)
 {
 #if COMPILER_HAS_CLANG_BUILTIN(__builtin_isnan)
@@ -786,6 +786,19 @@ template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T>, 
     return false;
 }
 
+// FIXME: Replace with std::fabs() once std::fabs() is constexpr. requires C++23
+template<typename T> constexpr bool fabsConstExpr(T value)
+{
+    static_assert(std::is_floating_point_v<T>);
+    if (value != value)
+        return value;
+    if (!value)
+        return 0.0; // -0.0 should be converted to +0.0
+    if (value < 0.0)
+        return -value;
+    return value;
+}
+
 } // namespace WTF
 
 using WTF::shuffleVector;
@@ -794,4 +807,5 @@ using WTF::ctz;
 using WTF::getLSBSet;
 using WTF::getMSBSet;
 using WTF::isNaNConstExpr;
+using WTF::fabsConstExpr;
 using WTF::reverseBits32;

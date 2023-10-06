@@ -116,6 +116,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
 #endif
         JSOrWasmInstruction m_catchPCForInterpreter;
         uintptr_t m_catchMetadataPCForInterpreter { 0 };
+        uint32_t m_tryDepthForThrow { 0 };
     };
 
     class Interpreter {

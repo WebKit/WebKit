@@ -25,10 +25,15 @@
 
 #pragma once
 
+#include "InlineContentBreaker.h"
+#include "InlineDisplayContent.h"
+#include <wtf/Range.h>
+
 namespace WebCore {
 namespace Layout {
 
 class Line;
+class InlineFormattingContext;
 struct InlineItemRange;
 
 class RubyFormattingContext {
@@ -67,5 +72,5 @@ private:
     const InlineFormattingContext& m_parentFormattingContext;
 };
 
-}
-}
+} // namespace Layout
+} // namespace WebCore

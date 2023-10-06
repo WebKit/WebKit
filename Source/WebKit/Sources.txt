@@ -204,7 +204,6 @@ NetworkProcess/webtransport/NetworkTransportReceiveStream.cpp
 
 Platform/IPC/DaemonCoders.cpp
 
-Shared/AccessibilityPreferences.cpp
 Shared/ActivityAssertion.cpp
 Shared/AuxiliaryProcess.cpp
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp
@@ -224,7 +223,6 @@ Shared/PrintInfo.cpp
 Shared/ProcessTerminationReason.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
-Shared/RemoteWorkerInitializationData.cpp
 Shared/ScrollingAccelerationCurve.cpp
 Shared/SessionState.cpp
 Shared/ShareableBitmapHandle.cpp

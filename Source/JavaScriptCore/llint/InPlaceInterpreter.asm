@@ -632,8 +632,14 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     storep wasmInstance, CodeBlock[cfr]
     getIPIntCallee()
 
-    # Allocate space for locals
-    loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+    # Allocate space for locals and rethrow values
+    if ARM64 or ARM64E
+        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0, csr3
+    else
+        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], csr3
+    end
+    addq csr3, csr0
     mulq LocalSize, csr0
     move sp, csr3
     subq csr0, sp
@@ -709,8 +715,14 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     storep wasmInstance, CodeBlock[cfr]
     getIPIntCallee()
 
-    # Allocate space for locals
-    loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+    # Allocate space for locals and rethrow values
+    if ARM64 or ARM64E
+        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0, csr3
+    else
+        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], csr3
+    end
+    addq csr3, csr0
     mulq LocalSize, csr0
     move sp, csr3
     subq csr0, sp
@@ -783,6 +795,19 @@ macro ipintCatchCommon()
     loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
     loadp Wasm::IPIntCallee::m_metadata[ws0], PM
 
+    # Recompute PL
+    if ARM64 or ARM64E
+        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], t0, t1
+    else
+        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], t0
+        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], t1
+    end
+    addq t1, t0
+    # FIXME: Can this be an leaq?
+    mulq LocalSize, t0
+    addq IPIntCalleeSaveSpaceStackAligned, t0
+    subq cfr, t0, PL
+
     loadi [PM, MC], t0
     # 1 << 4 == StackValueSize
     lshiftq 4, t0
@@ -795,8 +820,10 @@ _ipint_catch_entry:
 if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     ipintCatchCommon()
 
-    move sp, a1
-    operationCall(macro() cCall2(_ipint_extern_retrieve_and_clear_exception) end)
+    move cfr, a1
+    move sp, a2
+    move PL, a3
+    operationCall(macro() cCall4(_ipint_extern_retrieve_and_clear_exception) end)
 
     ipintReloadMemory()
     advanceMC(4)
@@ -808,8 +835,10 @@ _ipint_catch_all_entry:
 if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     ipintCatchCommon()
 
-    move 0, a1
-    operationCall(macro() cCall2(_ipint_extern_retrieve_and_clear_exception) end)
+    move cfr, a1
+    move 0, a2
+    move PL, a3
+    operationCall(macro() cCall4(_ipint_extern_retrieve_and_clear_exception) end)
 
     ipintReloadMemory()
     advanceMC(4)
@@ -895,7 +924,19 @@ instructionLabel(_throw)
     operationCall(macro() cCall4(_ipint_extern_throw_exception) end)
     jumpToException()
 
-reservedOpcode(0x09)
+instructionLabel(_rethrow)
+    storei PC, CallSiteIndex[cfr]
+
+    loadp Wasm::Instance::m_vm[wasmInstance], t0
+    loadp VM::topEntryFrame[t0], t0
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t0)
+
+    move cfr, a1
+    move PL, a2
+    loadi [PM, MC], a3
+    operationCall(macro() cCall4(_ipint_extern_rethrow_exception) end)
+    jumpToException()
+
 reservedOpcode(0x0a)
 
 # FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
@@ -6083,7 +6124,7 @@ unimplementedInstruction(_else)
 unimplementedInstruction(_try)
 unimplementedInstruction(_catch)
 unimplementedInstruction(_throw)
-reservedOpcode(0x09)
+unimplementedInstruction(_rethrow)
 reservedOpcode(0x0a)
 unimplementedInstruction(_end)
 unimplementedInstruction(_br)

@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x174
-  RenderBlock {HTML} at (0,0) size 800x174
-    RenderBody {BODY} at (100,0) size 600x158
-      RenderBlock {P} at (0,118) size 600x40
-        RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 149x19
+layer at (0,0) size 800x170
+  RenderBlock {HTML} at (0,0) size 800x170
+    RenderBody {BODY} at (100,0) size 600x154
+      RenderBlock {P} at (0,118) size 600x36
+        RenderInline {A} at (0,0) size 149x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 149x17
             text run at (0,0) width 149: "rdar://problem/7026010"
-        RenderBR {BR} at (149,0) size 0x19
-        RenderText {#text} at (0,20) size 462x19
-          text run at (0,20) width 462: "Test for the root layer getting correctly positioned. You should see no red."
+        RenderBR {BR} at (149,0) size 0x17
+        RenderText {#text} at (0,18) size 462x17
+          text run at (0,18) width 462: "Test for the root layer getting correctly positioned. You should see no red."
 layer at (350,1) size 100x100
   RenderBlock (positioned) {DIV} at (350,1) size 100x100 [bgcolor=#FF0000]
 layer at (-100,0) size 300x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600

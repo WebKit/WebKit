@@ -26,13 +26,12 @@
 #pragma once
 
 #include "CacheableIdentifier.h"
+#include "CallLinkStatus.h"
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
 #include "StructureSet.h"
 
 namespace JSC {
-
-class CallLinkStatus;
 
 class PutByVariant {
     WTF_MAKE_FAST_ALLOCATED;

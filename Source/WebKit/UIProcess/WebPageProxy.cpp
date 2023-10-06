@@ -5965,7 +5965,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         requestPointerUnlock();
 #endif
         pageClient().setMouseEventPolicy(mouseEventPolicy);
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_HUD)
         pageClient().removeAllPDFHUDs();
 #endif
     }
@@ -9036,7 +9036,7 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
 
     resetStateAfterProcessExited(reason);
     stopAllURLSchemeTasks(m_process.ptr());
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_HUD)
     pageClient().removeAllPDFHUDs();
 #endif
 

@@ -83,7 +83,7 @@
 - (void)stopSpeaking:(id)sender;
 @end
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 @interface WKPDFMenuTarget : NSObject {
     NSMenuItem *_selectedMenuItem;
 }
@@ -505,8 +505,7 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
     });
 }
 
-
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, CompletionHandler<void(std::optional<int32_t>&&)>&& completionHandler)
 {
     if (!contextMenu.items.size())
@@ -658,6 +657,8 @@ RetainPtr<NSView> WebPageProxy::Internals::platformView() const
     return [page.pageClient().platformWindow() contentView];
 }
 
+#if ENABLE(PDF_PLUGIN)
+
 void WebPageProxy::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
 {
     pageClient().createPDFHUD(identifier, rect);
@@ -696,6 +697,8 @@ void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier)
         savePDFToTemporaryFolderAndOpenWithNativeApplication(WTFMove(suggestedFilename), WTFMove(frameInfo), data, pdfUUID);
     });
 }
+
+#endif // #if ENABLE(PDF_PLUGIN)
 
 void WebPageProxy::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRect, const WebCore::IntRect& selectionRect)
 {

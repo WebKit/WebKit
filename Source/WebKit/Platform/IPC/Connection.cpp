@@ -27,6 +27,7 @@
 #include "Connection.h"
 
 #include "Encoder.h"
+#include "GeneratedSerializers.h"
 #include "Logging.h"
 #include "MessageFlags.h"
 #include "MessageReceiveQueues.h"

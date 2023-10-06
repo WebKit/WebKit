@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Quartz/Quartz.h>
+#import <PDFKit/PDFKit.h>
 
 @interface PDFAnnotationTextWidget (Details)
 - (BOOL)isMultiline;

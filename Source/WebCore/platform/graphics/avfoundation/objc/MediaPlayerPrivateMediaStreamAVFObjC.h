@@ -221,9 +221,11 @@ private:
     // RealtimeMediaSouce::VideoFrameObserver
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
+#endif
 
     AudioSourceProvider* audioSourceProvider() final;
 

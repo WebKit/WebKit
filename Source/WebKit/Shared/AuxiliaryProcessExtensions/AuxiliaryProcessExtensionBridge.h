@@ -25,11 +25,13 @@
 
 #pragma once
 
+#import <xpc/xpc.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void extensionMain(int argc, char** argv);
+void handleNewConnection(xpc_connection_t);
 
 #ifdef __cplusplus
 }

@@ -79,7 +79,6 @@ inline void RenderStyle::setAlignItems(const StyleSelfAlignmentData& data) { SET
 inline void RenderStyle::setAlignItemsPosition(ItemPosition position) { m_nonInheritedData.access().miscData.access().alignItems.setPosition(position); }
 inline void RenderStyle::setAlignSelf(const StyleSelfAlignmentData& data) { SET_NESTED(m_nonInheritedData, miscData, alignSelf, data); }
 inline void RenderStyle::setAlignSelfPosition(ItemPosition position) { m_nonInheritedData.access().miscData.access().alignSelf.setPosition(position); }
-inline void RenderStyle::setAlignTracks(Vector<StyleContentAlignmentData> tracks) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, alignTracks, WTFMove(tracks)); }
 inline void RenderStyle::setAppearance(StyleAppearance appearance) { SET_NESTED_PAIR(m_nonInheritedData, miscData, appearance, static_cast<unsigned>(appearance), effectiveAppearance, static_cast<unsigned>(appearance)); }
 inline void RenderStyle::setAppleColorFilter(const FilterOperations& ops) { SET_NESTED(m_rareInheritedData, appleColorFilter, operations, ops); }
 inline void RenderStyle::setAspectRatio(double width, double height) { SET_NESTED_PAIR(m_nonInheritedData, miscData, aspectRatioWidth, width, aspectRatioHeight, height); }
@@ -204,7 +203,6 @@ inline void RenderStyle::setJustifyContentPosition(ContentPosition position) { m
 inline void RenderStyle::setJustifyItems(const StyleSelfAlignmentData& data) { SET_NESTED(m_nonInheritedData, miscData, justifyItems, data); }
 inline void RenderStyle::setJustifySelf(const StyleSelfAlignmentData& data) { SET_NESTED(m_nonInheritedData, miscData, justifySelf, data); }
 inline void RenderStyle::setJustifySelfPosition(ItemPosition position) { m_nonInheritedData.access().miscData.access().justifySelf.setPosition(position); }
-inline void RenderStyle::setJustifyTracks(Vector<StyleContentAlignmentData> tracks) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, justifyTracks, WTFMove(tracks)); }
 inline void RenderStyle::setLeft(Length&& length) { SET_NESTED(m_nonInheritedData, surroundData, offset.left(), WTFMove(length)); }
 inline void RenderStyle::setLineAlign(LineAlign alignment) { SET(m_rareInheritedData, lineAlign, static_cast<unsigned>(alignment)); }
 inline void RenderStyle::setLineBoxContain(OptionSet<LineBoxContain> c) { SET(m_rareInheritedData, lineBoxContain, c.toRaw()); }

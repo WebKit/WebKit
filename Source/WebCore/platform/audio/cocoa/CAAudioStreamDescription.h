@@ -65,29 +65,11 @@ public:
     const AudioStreamBasicDescription& streamDescription() const;
     AudioStreamBasicDescription& streamDescription();
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<CAAudioStreamDescription> decode(Decoder&);
-
 private:
     AudioStreamBasicDescription m_streamDescription;
     mutable PlatformDescription m_platformDescription;
     mutable PCMFormat m_format { None };
 };
-
-template<class Encoder>
-void CAAudioStreamDescription::encode(Encoder& encoder) const
-{
-    encoder.encodeObject(m_streamDescription);
-}
-
-template<class Decoder>
-std::optional<CAAudioStreamDescription> CAAudioStreamDescription::decode(Decoder& decoder)
-{
-    auto asbd = decoder.template decodeObject<AudioStreamBasicDescription>();
-    if (!asbd)
-        return std::nullopt;
-    return CAAudioStreamDescription { *asbd };
-}
 
 inline CAAudioStreamDescription toCAAudioStreamDescription(const AudioStreamDescription& description)
 {
