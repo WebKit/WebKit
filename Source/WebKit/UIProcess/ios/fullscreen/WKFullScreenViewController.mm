@@ -518,10 +518,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UIImage *doneImage;
     UIImage *startPiPImage;
     UIImage *stopPiPImage;
+
+    // FIXME: Rename `alternateFullScreenControlDesignEnabled` to something that explains it is for visionOS.
     auto alternateFullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
     
     if (alternateFullScreenControlDesignEnabled) {
-        buttonSize = CGSizeMake(38.0, 38.0);
+        buttonSize = CGSizeMake(48.0, 48.0);
         doneImage = [UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"];
         startPiPImage = nil;
         stopPiPImage = nil;
@@ -553,6 +555,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_cancelButton setConfiguration:cancelButtonConfiguration];
 
 #if PLATFORM(VISION)
+        // FIXME: I think PLATFORM(VISION) is always true when `alternateFullScreenControlDesignEnabled` is true.
         _moreActionsButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
         [_moreActionsButton setConfiguration:cancelButtonConfiguration];
         [_moreActionsButton setMenu:self._webView.fullScreenWindowSceneDimmingAction];
@@ -608,7 +611,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSLayoutYAxisAnchor *topAnchor = [_topGuide topAnchor];
     NSLayoutConstraint *stackViewToTopGuideConstraint;
     if (alternateFullScreenControlDesignEnabled)
-        stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:2];
+        stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:3];
     else
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToAnchor:topAnchor];
     _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
