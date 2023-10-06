@@ -224,7 +224,6 @@ Shared/PrintInfo.cpp
 Shared/ProcessTerminationReason.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
-Shared/RemoteWorkerInitializationData.cpp
 Shared/ScrollingAccelerationCurve.cpp
 Shared/SessionState.cpp
 Shared/ShareableBitmapHandle.cpp

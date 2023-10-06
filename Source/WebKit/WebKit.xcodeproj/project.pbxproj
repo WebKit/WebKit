@@ -5609,7 +5609,6 @@
 		5C7FB46E21E97C0B009E3241 /* WebCookieJar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieJar.cpp; sourceTree = "<group>"; };
 		5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieJar.h; sourceTree = "<group>"; };
 		5C80B3DB23690D8D0086E6DE /* RemoteWorkerInitializationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerInitializationData.h; sourceTree = "<group>"; };
-		5C80B3DD23690F100086E6DE /* RemoteWorkerInitializationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWorkerInitializationData.cpp; sourceTree = "<group>"; };
 		5C826D6826D46B44008AEC91 /* PrivateClickMeasurementStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementStore.h; sourceTree = "<group>"; };
 		5C826D6926D482EA008AEC91 /* PrivateClickMeasurementDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDatabase.h; sourceTree = "<group>"; };
 		5C826D6A26D482EA008AEC91 /* PrivateClickMeasurementDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementDatabase.cpp; sourceTree = "<group>"; };
@@ -7457,6 +7456,7 @@
 		F4660BC125DEF08100E86598 /* PasteboardAccessIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardAccessIntent.h; sourceTree = "<group>"; };
 		F476894628D2B5CD00073641 /* LayerTreeContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LayerTreeContext.serialization.in; sourceTree = "<group>"; };
 		F48570A22644BEC400C05F71 /* Timeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timeout.h; sourceTree = "<group>"; };
+		F488B90F2ACFC67A00792C16 /* RemoteWorkerInitializationData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteWorkerInitializationData.serialization.in; sourceTree = "<group>"; };
 		F48BB8DD26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorderProxy.h; sourceTree = "<group>"; };
 		F48BB8DE26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorderProxy.cpp; sourceTree = "<group>"; };
 		F48BB8DF26F96392001C1C40 /* RemoteDisplayListRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorder.h; sourceTree = "<group>"; };
@@ -8354,8 +8354,8 @@
 				517B5F94275EBA62002DC22D /* PushMessageForTesting.h */,
 				514899722AB4BCFC00943741 /* PushMessageForTesting.serialization.in */,
 				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,
-				5C80B3DD23690F100086E6DE /* RemoteWorkerInitializationData.cpp */,
 				5C80B3DB23690D8D0086E6DE /* RemoteWorkerInitializationData.h */,
+				F488B90F2ACFC67A00792C16 /* RemoteWorkerInitializationData.serialization.in */,
 				4691CB9A27B2DD1800B29AAF /* RemoteWorkerType.h */,
 				46FA2E752A04240300912BFE /* RemoteWorkerType.serialization.in */,
 				7203449B26A6C476000A5F54 /* RenderingUpdateID.h */,
