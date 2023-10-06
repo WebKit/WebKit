@@ -5948,7 +5948,6 @@
 		7BDD9DDA28D205C6004CDF48 /* MessageObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageObserver.h; sourceTree = "<group>"; };
 		7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueMessageReceiver.h; sourceTree = "<group>"; };
 		7BDDA33F275652EA0038659E /* AuxiliaryProcessCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuxiliaryProcessCreationParameters.h; sourceTree = "<group>"; };
-		7BDDA340275652EA0038659E /* AuxiliaryProcessCreationParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuxiliaryProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		7BE37F6F27B1475F007A6CD3 /* ThreadSafeObjectHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSafeObjectHeap.h; sourceTree = "<group>"; };
 		7BE37F9227C7C518007A6CD3 /* IPCStreamTesterIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTesterIdentifier.h; sourceTree = "<group>"; };
 		7BE37F9427C7CD51007A6CD3 /* IPCStreamTester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTester.h; sourceTree = "<group>"; };
@@ -8254,7 +8253,6 @@
 				1A2D956E12848564001EB962 /* AuxiliaryProcess.cpp */,
 				1A2D956D12848564001EB962 /* AuxiliaryProcess.h */,
 				5164C0941B05B757004F102A /* AuxiliaryProcess.messages.in */,
-				7BDDA340275652EA0038659E /* AuxiliaryProcessCreationParameters.cpp */,
 				7BDDA33F275652EA0038659E /* AuxiliaryProcessCreationParameters.h */,
 				290F4271172A0C7400939FF0 /* AuxiliaryProcessSupplement.h */,
 				413E5C9329B0EDF3002F4987 /* BackgroundFetchChange.h */,

@@ -27,23 +27,13 @@
 
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 // Parameters that are sent to the process object as the first message after process has started.
 struct AuxiliaryProcessCreationParameters {
-    AuxiliaryProcessCreationParameters();
-
     String wtfLoggingChannels;
     String webCoreLoggingChannels;
     String webKitLoggingChannels;
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, AuxiliaryProcessCreationParameters&);
 };
 
 } // namespace WebKit

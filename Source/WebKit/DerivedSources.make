@@ -481,13 +481,14 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
+	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
+	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
 	Platform/IPC/StreamServerConnection.serialization.in \
 	Platform/SharedMemory.serialization.in \
-	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
+	Shared/AuxiliaryProcessCreationParameters.serialization.in \
 	Shared/API/APIData.serialization.in \
 	Shared/API/APIError.serialization.in \
 	Shared/API/APIFrameHandle.serialization.in \
-	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
 	Shared/API/APIPageHandle.serialization.in \
 	Shared/API/APIURL.serialization.in \

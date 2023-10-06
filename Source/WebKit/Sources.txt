@@ -208,7 +208,6 @@ Platform/IPC/DaemonCoders.cpp
 Shared/AccessibilityPreferences.cpp
 Shared/ActivityAssertion.cpp
 Shared/AuxiliaryProcess.cpp
-Shared/AuxiliaryProcessCreationParameters.cpp
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp
 Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp

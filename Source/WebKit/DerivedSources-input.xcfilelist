@@ -179,6 +179,7 @@ $(PROJECT_DIR)/Shared/ApplePay/PaymentSetupConfiguration.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in
 $(PROJECT_DIR)/Shared/Authentication/AuthenticationManager.messages.in
 $(PROJECT_DIR)/Shared/AuxiliaryProcess.messages.in
+$(PROJECT_DIR)/Shared/AuxiliaryProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/BackgroundFetchState.serialization.in
 $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
