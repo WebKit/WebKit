@@ -560,9 +560,6 @@ svg/animations/animated-string-href.svg                   [ ImageOnlyFailure ]
 svg/animations/smil-multiple-animate-list.svg             [ ImageOnlyFailure ]
 svg/stroke/animated-non-scaling-stroke.html               [ ImageOnlyFailure ]
 
-# SMIL <animateTransform> reset to baseVal partly broken
-svg/animations/list-wrapper-assertion.svg [ ImageOnlyFailure ]
-
 # SVGViewSpec / svgView() support broken
 svg/custom/linking-a-03-b-all.svg               [ ImageOnlyFailure ]
 svg/custom/linking-a-03-b-transform.svg         [ Failure ]

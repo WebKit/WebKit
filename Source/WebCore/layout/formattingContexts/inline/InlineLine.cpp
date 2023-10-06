@@ -127,7 +127,7 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
         }
         auto centerOffset = spaceToDistribute / 2;
         moveRunsBy(0, centerOffset);
-        expandBy(0, centerOffset);
+        expandBy(m_runs.size() - 1, centerOffset);
         return;
     }
     // Anything to distribute?

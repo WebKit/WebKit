@@ -324,8 +324,9 @@ void RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<size_t> baseRu
         line.expandBy(baseRunRange.end() - 1, baseContentOffset);
     } else {
         auto centerOffset = (annotationBoxLogicalWidth - baseContentLogicalWidth) / 2;
+        // Move the first and exand the last run (most cases there's only one run here though.)
         line.moveRunsBy(baseRunRange.begin(), centerOffset);
-        line.expandBy(baseRunRange.begin(), centerOffset);
+        line.expandBy(baseRunRange.end() - 1, centerOffset);
     }
 }
 
