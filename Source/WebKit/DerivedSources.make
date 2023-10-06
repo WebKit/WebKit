@@ -556,6 +556,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebNavigationDataStore.serialization.in \
 	Shared/WebPageCreationParameters.serialization.in \
 	Shared/WebPageNetworkParameters.serialization.in \
+	Shared/WebPageGroupData.serialization.in \
 	Shared/WebPopupItem.serialization.in \
 	Shared/WebProcessCreationParameters.serialization.in \
 	Shared/WebProcessDataStoreParameters.serialization.in \

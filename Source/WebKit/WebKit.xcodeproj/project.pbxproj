@@ -6809,7 +6809,6 @@
 		BC7B621312A4219A00D174A4 /* WebPageGroupProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageGroupProxy.h; sourceTree = "<group>"; };
 		BC7B621412A4219A00D174A4 /* WebPageGroupProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageGroupProxy.cpp; sourceTree = "<group>"; };
 		BC7B625012A43C9600D174A4 /* WebPageGroupData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageGroupData.h; sourceTree = "<group>"; };
-		BC7B625112A43C9600D174A4 /* WebPageGroupData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageGroupData.cpp; sourceTree = "<group>"; };
 		BC7B633512A45ABA00D174A4 /* WKPageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageGroup.h; sourceTree = "<group>"; };
 		BC7B633612A45ABA00D174A4 /* WKPageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageGroup.cpp; sourceTree = "<group>"; };
 		BC82839616B47EC400A278FE /* XPCServiceMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceMain.mm; sourceTree = "<group>"; };
@@ -8464,7 +8463,6 @@
 				BCF69F981176CED600471A52 /* WebNavigationDataStore.h */,
 				C06C6094124C14430001682F /* WebPageCreationParameters.h */,
 				466A4B192A3D293E007E286E /* WebPageCreationParameters.serialization.in */,
-				BC7B625112A43C9600D174A4 /* WebPageGroupData.cpp */,
 				BC7B625012A43C9600D174A4 /* WebPageGroupData.h */,
 				5C1B38DF2667140700B1545B /* WebPageNetworkParameters.h */,
 				8623B1272ACE1B66002BA9EA /* WebPageNetworkParameters.serialization.in */,

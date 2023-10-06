@@ -323,6 +323,7 @@ $(PROJECT_DIR)/Shared/WebHitTestResultData.serialization.in
 $(PROJECT_DIR)/Shared/WebNavigationDataStore.serialization.in
 $(PROJECT_DIR)/Shared/WebPageCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPageNetworkParameters.serialization.in
+$(PROJECT_DIR)/Shared/WebPageGroupData.serialization.in
 $(PROJECT_DIR)/Shared/WebPopupItem.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessDataStoreParameters.serialization.in

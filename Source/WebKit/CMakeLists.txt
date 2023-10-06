@@ -409,6 +409,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebHitTestResultData.serialization.in
     Shared/WebNavigationDataStore.serialization.in
     Shared/WebPageCreationParameters.serialization.in
+    Shared/WebPageGroupData.serialization.in
     Shared/WebPageNetworkParameters.serialization.in
     Shared/WebPopupItem.serialization.in
     Shared/WebProcessCreationParameters.serialization.in
