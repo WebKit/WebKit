@@ -880,11 +880,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIs)
 }
 
 // FIXME when rdar://115137641 is resolved.
-#if PLATFORM(MAC)
-TEST(AdvancedPrivacyProtections, DISABLED_VerifyHashFromNoisyCanvas2DAPI)
-#else
 TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
-#endif
 {
     auto testURL = [NSBundle.mainBundle URLForResource:@"canvas-fingerprinting" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     auto resourcesURL = [NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
@@ -916,7 +912,6 @@ TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
                 continue;
             EXPECT_EQ([values.first characterAtIndex:i], [values.second characterAtIndex:i]);
             EXPECT_EQ(i, 0u);
-            break;
         }
     }
 
