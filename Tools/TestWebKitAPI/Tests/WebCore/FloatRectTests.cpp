@@ -29,6 +29,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntRect.h>
+#include <wtf/Markable.h>
 
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -733,6 +734,17 @@ TEST(FloatRect, RoundedIntRect)
     EXPECT_EQ(20, enclosed.y());
     EXPECT_EQ(1034, enclosed.maxX());
     EXPECT_EQ(789, enclosed.maxY());
+}
+
+TEST(FloatRect, Markable)
+{
+    WebCore::FloatRect rect(10.0f, 20.0f, 1024.3f, 768.6f);
+    Markable<WebCore::FloatRect, WebCore::FloatRect::MarkableTraits> optional;
+    EXPECT_FALSE(optional) << "nullopt";
+    optional = rect;
+    EXPECT_EQ((optional.value_or(WebCore::FloatRect { })), rect) << "retained";
+    optional = WebCore::FloatRect::nanRect();
+    EXPECT_FALSE(optional) << "nullopt";
 }
 
 }
