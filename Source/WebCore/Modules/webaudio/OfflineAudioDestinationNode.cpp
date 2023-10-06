@@ -121,7 +121,7 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
 
     auto offThreadRendering = [this, protectedThis = WTFMove(protectedThis)]() mutable {
         auto result = renderOnAudioThread();
-        callOnMainThread([this, result, currentSampleFrame = this->currentSampleFrame(), protectedThis = WTFMove(protectedThis)]() mutable {
+        callOnMainThread([this, result, currentSampleFrame = protectedThis->currentSampleFrame(), protectedThis = WTFMove(protectedThis)]() mutable {
             context().postTask([this, protectedThis = WTFMove(protectedThis), result, currentSampleFrame]() mutable {
                 m_startedRendering = false;
                 switch (result) {
