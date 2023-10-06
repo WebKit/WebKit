@@ -65,6 +65,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     : DrawingArea(DrawingAreaType::RemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(makeUnique<RemoteLayerTreeContext>(webPage))
     , m_updateRenderingTimer(*this, &RemoteLayerTreeDrawingArea::updateRendering)
+    , m_backingStoreFlusher(BackingStoreFlusher::create(*WebProcess::singleton().parentProcessConnection()))
     , m_scheduleRenderingTimer(*this, &RemoteLayerTreeDrawingArea::scheduleRenderingUpdateTimerFired)
     , m_preferredFramesPerSecond(DefaultPreferredFramesPerSecond)
 {
@@ -345,8 +346,6 @@ void RemoteLayerTreeDrawingArea::updateRendering()
             rootLayer.viewOverlayRootLayer->flushCompositingState(visibleRect);
     }
 
-    RELEASE_ASSERT(!m_pendingBackingStoreFlusher || m_pendingBackingStoreFlusher->hasFlushed());
-
     RemoteLayerBackingStoreCollection& backingStoreCollection = m_remoteLayerTreeContext->backingStoreCollection();
     backingStoreCollection.willFlushLayers();
 
@@ -391,15 +390,15 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     for (auto& transaction : transactions)
         flushers.appendVector(backingStoreCollection.didFlushLayers(transaction.first));
     bool haveFlushers = flushers.size();
-    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(RefPtr { WebProcess::singleton().parentProcessConnection() }, WTFMove(commitEncoder), WTFMove(flushers));
-    m_pendingBackingStoreFlusher = backingStoreFlusher;
 
     if (haveFlushers)
         webPage->didPaintLayers();
 
+    m_backingStoreFlusher->markHasPendingFlush();
+
     auto pageID = webPage->identifier();
-    dispatch_async(m_commitQueue.get(), makeBlockPtr([backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] () mutable {
-        backingStoreFlusher->flush();
+    dispatch_async(m_commitQueue.get(), makeBlockPtr([backingStoreFlusher = m_backingStoreFlusher, commitEncoder = WTFMove(commitEncoder), flushers = WTFMove(flushers), pageID] () mutable {
+        backingStoreFlusher->flush(WTFMove(commitEncoder), WTFMove(flushers));
 
         RunLoop::main().dispatch([pageID] () mutable {
             if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
@@ -464,31 +463,28 @@ void RemoteLayerTreeDrawingArea::tryMarkLayersVolatile(CompletionHandler<void(bo
     m_remoteLayerTreeContext->backingStoreCollection().tryMarkAllBackingStoreVolatile(WTFMove(completionFunction));
 }
 
-Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(RefPtr<IPC::Connection>&& connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
+Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(Ref<IPC::Connection>&& connection)
 {
-    return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(WTFMove(connection), WTFMove(encoder), WTFMove(flushers)));
+    return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(WTFMove(connection)));
 }
 
-RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(RefPtr<IPC::Connection>&& connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
+RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(Ref<IPC::Connection>&& connection)
     : m_connection(WTFMove(connection))
-    , m_commitEncoder(encoder.moveToUniquePtr())
-    , m_flushers(WTFMove(flushers))
-    , m_hasFlushed(false)
 {
 }
 
-void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
+void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush(UniqueRef<IPC::Encoder>&& commitEncoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>&& flushers)
 {
-    ASSERT(!m_hasFlushed);
+    ASSERT(m_hasPendingFlush);
 
     TraceScope tracingScope(BackingStoreFlushStart, BackingStoreFlushEnd);
     
-    for (auto& flusher : m_flushers)
+    for (auto& flusher : flushers)
         flusher->flush();
-    m_hasFlushed = true;
 
-    ASSERT(m_commitEncoder);
-    m_connection->sendMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_commitEncoder)), { });
+    m_hasPendingFlush = false;
+
+    m_connection->sendMessage(WTFMove(commitEncoder), { });
 }
 
 void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::ActivityState>, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)

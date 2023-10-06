@@ -133,19 +133,22 @@ private:
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
-        static Ref<BackingStoreFlusher> create(RefPtr<IPC::Connection>&&, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
+        static Ref<BackingStoreFlusher> create(Ref<IPC::Connection>&&);
 
-        void flush();
-        bool hasFlushed() const { return m_hasFlushed; }
+        void flush(UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>&&);
+
+        bool hasPendingFlush() const { return m_hasPendingFlush; }
+        void markHasPendingFlush()
+        {
+            bool hadPendingFlush = m_hasPendingFlush.exchange(true);
+            RELEASE_ASSERT(!hadPendingFlush);
+        }
 
     private:
-        BackingStoreFlusher(RefPtr<IPC::Connection>&&, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
+        explicit BackingStoreFlusher(Ref<IPC::Connection>&&);
 
-        RefPtr<IPC::Connection> m_connection;
-        std::unique_ptr<IPC::Encoder> m_commitEncoder;
-        Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> m_flushers;
-
-        std::atomic<bool> m_hasFlushed;
+        Ref<IPC::Connection> m_connection;
+        std::atomic<bool> m_hasPendingFlush { false };
     };
 
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
@@ -171,7 +174,7 @@ private:
     bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };
 
     OSObjectPtr<dispatch_queue_t> m_commitQueue;
-    RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;
+    RefPtr<BackingStoreFlusher> m_backingStoreFlusher;
 
     TransactionID m_currentTransactionID;
     Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;
