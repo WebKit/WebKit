@@ -89,6 +89,7 @@ enum class SameSiteStrictEnforcementEnabled : bool { No, Yes };
 enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
 enum class ApplyTrackingPrevention : bool { No, Yes };
 enum class ScriptWrittenCookiesOnly : bool { No, Yes };
+enum class SSOQuirkOrganization : uint8_t { None };
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
 class CookieChangeObserver : public CanMakeCheckedPtr {
@@ -226,6 +227,9 @@ public:
     WEBCORE_EXPORT static std::optional<HashSet<RegistrableDomain>> subResourceDomainsInNeedOfStorageAccessForFirstParty(const RegistrableDomain&);
     WEBCORE_EXPORT static bool loginDomainMatchesRequestingDomain(const TopFrameDomain&, const SubResourceDomain&);
     WEBCORE_EXPORT static std::optional<RegistrableDomain> findAdditionalLoginDomain(const TopFrameDomain&, const SubResourceDomain&);
+    WEBCORE_EXPORT static SSOQuirkOrganization knownSSODomainsRequiringQuirk(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain);
+    WEBCORE_EXPORT static String knownSSODomainsRequiringQuirkString(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain);
+
 
 #endif
     

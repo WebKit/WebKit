@@ -1678,6 +1678,11 @@ void ResourceLoadStatisticsStore::hasStorageAccess(SubFrameDomain&& subFrameDoma
     });
 }
 
+static Vector<std::pair<WebResourceLoadStatisticsStore::TopFrameDomain, WebResourceLoadStatisticsStore::SubFrameDomain>> autoAllowStorageAccessForAdditionalDomains(WebResourceLoadStatisticsStore::SubFrameDomain& subFrameDomain, WebResourceLoadStatisticsStore::TopFrameDomain& topFrameDomain)
+{
+    return { };
+}
+
 void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, StorageAccessScope scope, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
@@ -1762,21 +1767,31 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
 
     auto transactionScope = beginTransactionIfNecessary();
 
-    if (promptWasShown == StorageAccessPromptWasShown::Yes) {
-        auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-        if (!subFrameStatus.second) {
-            ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::grantStorageAccess was not completed due to failed insert attempt", this);
-            return completionHandler(StorageAccessWasGranted::No);
-        }
-        ASSERT(subFrameStatus.first == AddedRecord::No);
+    auto addGrant = [&] (SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler) mutable {
+        if (promptWasShown == StorageAccessPromptWasShown::Yes) {
+            auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
+            if (!subFrameStatus.second) {
+                ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::grantStorageAccess was not completed due to failed insert attempt", this);
+                return completionHandler(StorageAccessWasGranted::No);
+            }
+            ASSERT(subFrameStatus.first == AddedRecord::No);
 #if ASSERT_ENABLED
-        if (!NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
-            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+            if (!NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
+                ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
 #endif
-        insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
-    }
+            insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
+        }
 
-    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, WTFMove(completionHandler));
+        grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, WTFMove(completionHandler));
+    };
+
+    auto additionalDomainGrants = autoAllowStorageAccessForAdditionalDomains(subFrameDomain, topFrameDomain);
+    for (auto&& [topDomain, subDomain] : additionalDomainGrants) {
+        if (topDomain == topFrameDomain && subDomain == subFrameDomain)
+            continue;
+        addGrant(WTFMove(subDomain), WTFMove(topDomain), [] (StorageAccessWasGranted wasGranted) { });
+    }
+    addGrant(WTFMove(subFrameDomain), WTFMove(topFrameDomain), WTFMove(completionHandler));
 }
 
 void ResourceLoadStatisticsStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)

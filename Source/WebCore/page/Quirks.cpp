@@ -1131,6 +1131,11 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
 }
 #endif
 
+void Quirks::triggerOptionalStorageAccessIframeQuirk(const SecurityOrigin&, const URL&, CompletionHandler<void()>&& completionHandler) const
+{
+    completionHandler();
+}
+
 // rdar://64549429
 Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, bool isParentProcessAFullWebBrowser, IsSyntheticClick isSyntheticClick) const
 {

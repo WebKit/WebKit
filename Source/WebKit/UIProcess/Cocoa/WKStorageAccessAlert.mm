@@ -74,6 +74,12 @@ void presentStorageAccessAlertQuirk(WKWebView *webView, const WebCore::Registrab
     displayStorageAccessAlert(webView, alertTitle, informativeText, WTFMove(completionHandler));
 }
 
+void presentStorageAccessAlertSSOQuirk(WKWebView *webView, const String& organizationName, CompletionHandler<void(bool)>&& completionHandler)
+{
+    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Are you logging in to a “%@” site and do you want to allow them access to your website data across their sites?", @"Message for requesting cross-site cookie and website data access."), organizationName.createCFString().get()];
+    displayStorageAccessAlert(webView, alertTitle, nil, WTFMove(completionHandler));
+}
+
 void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSString *informativeText, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](bool shouldAllow) mutable {
@@ -86,7 +92,8 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
 #if PLATFORM(MAC)
     auto alert = adoptNS([NSAlert new]);
     [alert setMessageText:alertTitle];
-    [alert setInformativeText:informativeText];
+    if (informativeText)
+        [alert setInformativeText:informativeText];
     [alert addButtonWithTitle:allowButtonString];
     [alert addButtonWithTitle:doNotAllowButtonString];
     [alert beginSheetModalForWindow:webView.window completionHandler:[completionBlock](NSModalResponse returnCode) {

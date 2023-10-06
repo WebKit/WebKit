@@ -43,6 +43,7 @@ namespace WebKit {
 
 void presentStorageAccessAlert(WKWebView *, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&&);
 void presentStorageAccessAlertQuirk(WKWebView *, const WebCore::RegistrableDomain& firstRequestingDomain, const WebCore::RegistrableDomain& secondRequestingDomain, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&&);
+void presentStorageAccessAlertSSOQuirk(WKWebView *, const String& organizationName, CompletionHandler<void(bool)>&&);
 void displayStorageAccessAlert(WKWebView *, NSString *, NSString *, CompletionHandler<void(bool)>&&);
 
 }

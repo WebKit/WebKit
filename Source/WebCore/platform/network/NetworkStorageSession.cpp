@@ -462,6 +462,16 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
     return std::nullopt;
 }
 
+SSOQuirkOrganization NetworkStorageSession::knownSSODomainsRequiringQuirk(const TopFrameDomain&, const SubResourceDomain&)
+{
+    return SSOQuirkOrganization::None;
+}
+
+String NetworkStorageSession::knownSSODomainsRequiringQuirkString(const TopFrameDomain&, const SubResourceDomain&)
+{
+    return { };
+}
+
 #endif // ENABLE(TRACKING_PREVENTION)
 
 void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, CompletionHandler<void()>&& completionHandler)

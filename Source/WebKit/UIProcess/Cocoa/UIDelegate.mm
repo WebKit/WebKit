@@ -440,6 +440,13 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
         return;
     }
 
+    if (auto organization = WebCore::NetworkStorageSession::knownSSODomainsRequiringQuirkString(currentDomain, requestingDomain); !organization.isNull()) {
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+        presentStorageAccessAlertSSOQuirk(m_uiDelegate->m_webView.get().get(), organization, WTFMove(completionHandler));
+#endif
+        return;
+    }
+
     // Some sites have quirks where multiple login domains require storage access.
     if (auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(currentDomain, requestingDomain)) {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
