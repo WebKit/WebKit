@@ -25,9 +25,9 @@
 
 #import "AuxiliaryProcessExtensionBridge.h"
 
-#import "XPCServiceEntryPoint.h"
+#import <WebKit/WKMain.h>
 
-void handleNewConnection(xpc_connection_t connection)
+void extensionMain(int argc, char** argv)
 {
-    WebKit::XPCServiceEventHandler(connection);    
+    WKExtensionMain(argc, argv);
 }

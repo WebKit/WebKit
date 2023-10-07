@@ -23,16 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ServiceExtensions
-@_spi(Private) import ServiceExtensions
+import Foundation
 
 @main
-class GPUProcessExtension {
-    required init() {}
-}
-
-extension GPUProcessExtension: GPUServiceExtension {
-    func handle(xpcConnection: xpc_connection_t) {
-        handleNewConnection(xpcConnection)
+class AuxiliaryProcessExtension {
+    static func main() throws -> Void {
+        extensionMain(CommandLine.argc, CommandLine.unsafeArgv)
     }
 }
