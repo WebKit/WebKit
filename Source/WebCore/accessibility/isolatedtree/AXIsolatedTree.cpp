@@ -785,6 +785,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 
 void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<RefPtr<AccessibilityObject>>& axObjects)
 {
+    AXAttributeCacheEnabler enableCache(axObjectCache());
     for (auto& axObject : axObjects)
         updateChildren(*axObject, ResolveNodeChanges::No);
 
