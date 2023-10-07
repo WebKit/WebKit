@@ -59,13 +59,24 @@ NS_ASSUME_NONNULL_END
 #if USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(IOS_FAMILY)
+
+#import <AVKit/AVPlayerViewController_Private.h>
+
+#if HAVE(AVPLAYERCONTROLLER)
 #import <AVKit/AVPlayerController.h>
+#endif
+
+#if HAVE(AVPLAYERLAYERVIEW)
 IGNORE_WARNINGS_BEGIN("objc-property-no-attribute")
 #import <AVKit/AVPlayerLayerView.h>
 IGNORE_WARNINGS_END
-#import <AVKit/AVPlayerViewController_Private.h>
+#endif
+
+#if !PLATFORM(APPLETV)
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
 #endif
+
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 #import <AVKit/AVBackgroundView.h>
@@ -236,11 +247,11 @@ NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && HAVE(AVPLAYERCONTROLLER)
 @interface AVPlayerController ()
 @property (NS_NONATOMIC_IOSONLY) double defaultPlaybackRate;
 @end
-#endif // PLATFORM(IOS_FAMILY)
+#endif
 
 #if HAVE(AVOBSERVATIONCONTROLLER)
 #if USE(APPLE_INTERNAL_SDK)
@@ -419,3 +430,44 @@ typedef NS_OPTIONS(NSUInteger, AVPlayerViewControllerFullScreenBehaviors) {
 @end
 
 #endif // PLATFORM(VISION)
+
+#if PLATFORM(APPLETV)
+
+// FIXME (116592344): Remove these temporary declarations once AVPlayerController API is available on tvOS.
+
+NS_ASSUME_NONNULL_BEGIN
+
+#if USE(APPLE_INTERNAL_SDK)
+
+typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
+    AVPlayerControllerStatusUnknown = 0,
+    AVPlayerControllerStatusReadyToPlay = 2,
+};
+
+typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
+    AVPlayerControllerExternalPlaybackTypeNone = 0,
+    AVPlayerControllerExternalPlaybackTypeAirPlay = 1,
+    AVPlayerControllerExternalPlaybackTypeTVOut = 2,
+};
+
+@interface AVPlayerController : NSObject
+@end
+
+@interface __AVPlayerLayerView : UIView
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+@interface __AVPlayerLayerView (IPI)
+@property (nonatomic, strong, nullable) AVPlayerController *playerController;
+@property (nonatomic, readonly) AVPlayerLayer *playerLayer;
+@property (nonatomic, copy, nullable) NSDictionary<NSString *, id> *pixelBufferAttributes;
+@end
+
+@interface AVPlayerViewController (IPI)
+@property (nonatomic, strong) __AVPlayerLayerView *playerLayerView;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // PLATFORM(APPLETV)
