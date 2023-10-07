@@ -349,6 +349,10 @@ std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDi
     if (adjacentDisplayBox.inkOverflow().intersects(overhangingRect))
         return true;
     auto& adjacentLayoutBox = adjacentDisplayBox.layoutBox();
+    if (adjacentLayoutBox.isRuby()) {
+        // Need to look inside the ruby container to find overlapping content.
+        return { };
+    }
     // Check if there might be some inline box (end decoration) overlapping as previous content.
     if (&adjacentLayoutBox.parent() == &parentFormattingContext().root())
         return false;
