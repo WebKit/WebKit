@@ -1107,8 +1107,10 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 
     // FIXME: Overlow controls need to be above the flattening layer?
     if (auto* flatteningLayer = tileCacheFlatteningLayer()) {
-        if (layerConfigChanged || flatteningLayer->parent() != m_graphicsLayer.get())
+        if (layerConfigChanged || flatteningLayer->parent() != m_graphicsLayer.get()) {
+            // FIXME: m_graphicsLayer children are clobbered in RenderLayerCompositor::updateBackingAndHierarchy(); this probably doesn't work.
             m_graphicsLayer->addChild(*flatteningLayer);
+        }
     }
 
     if (updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath()))
@@ -1148,17 +1150,37 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
     }
 
-    if (is<RenderEmbeddedObject>(renderer()) && downcast<RenderEmbeddedObject>(renderer()).allowsAcceleratedCompositing()) {
-        auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer()).widget());
+    auto attachPluginLayer = [&](RenderEmbeddedObject& rendererEmbeddedObject) {
+        if (!rendererEmbeddedObject.allowsAcceleratedCompositing())
+            return;
+
+        auto* pluginViewBase = dynamicDowncast<PluginViewBase>(rendererEmbeddedObject.widget());
+        if (!pluginViewBase)
+            return;
+
 #if PLATFORM(IOS_FAMILY)
+        // FIXME: This code can probably be removed: webkit.org/b/262808
         if (pluginViewBase && !m_graphicsLayer->contentsLayerForMedia()) {
             pluginViewBase->detachPluginLayer();
             pluginViewBase->attachPluginLayer();
         }
 #else
-        m_graphicsLayer->setContentsToPlatformLayer(pluginViewBase->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Plugin);
+        switch (pluginViewBase->layerHostingStrategy()) {
+        case PluginLayerHostingStrategy::None:
+            break;
+        case PluginLayerHostingStrategy::PlatformLayer:
+            m_graphicsLayer->setContentsToPlatformLayer(pluginViewBase->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Plugin);
+            break;
+        case PluginLayerHostingStrategy::GraphicsLayer:
+            // layer is parented in RenderLayerCompositor::updateBackingAndHierarchy().
+            break;
+        }
 #endif
-    }
+    };
+
+    if (auto* embeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer()))
+        attachPluginLayer(*embeddedObject);
+
 #if ENABLE(VIDEO)
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
         auto& videoElement = downcast<HTMLVideoElement>(*renderer().element());
@@ -1729,6 +1751,25 @@ void RenderLayerBacking::updateDirectlyCompositedBoxDecorations(PaintedContentsI
     // to also update the contentsRect.
     updateDirectlyCompositedBackgroundColor(contentsInfo, didUpdateContentsRect);
     updateDirectlyCompositedBackgroundImage(contentsInfo, didUpdateContentsRect);
+}
+
+GraphicsLayer* RenderLayerBacking::layerForContents() const
+{
+    auto* rendererEmbeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer());
+    if (!rendererEmbeddedObject)
+        return nullptr;
+
+    if (!rendererEmbeddedObject->allowsAcceleratedCompositing())
+        return nullptr;
+
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(rendererEmbeddedObject->widget());
+    if (!pluginViewBase)
+        return nullptr;
+
+    if (pluginViewBase->layerHostingStrategy() != PluginLayerHostingStrategy::GraphicsLayer)
+        return nullptr;
+
+    return pluginViewBase->graphicsLayer();
 }
 
 void RenderLayerBacking::updateInternalHierarchy()

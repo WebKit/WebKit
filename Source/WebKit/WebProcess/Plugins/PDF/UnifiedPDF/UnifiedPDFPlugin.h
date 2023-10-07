@@ -29,12 +29,13 @@
 
 #include "PDFDocumentLayout.h"
 #include "PDFPluginBase.h"
+#include <WebCore/GraphicsLayer.h>
 
 namespace WebKit {
 
 class WebFrame;
 
-class UnifiedPDFPlugin final : public PDFPluginBase {
+class UnifiedPDFPlugin final : public PDFPluginBase, public WebCore::GraphicsLayerClient {
 public:
     static Ref<UnifiedPDFPlugin> create(WebCore::HTMLPlugInElement&);
 
@@ -42,14 +43,15 @@ private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }
 
+    WebCore::PluginLayerHostingStrategy layerHostingStrategy() const override { return WebCore::PluginLayerHostingStrategy::GraphicsLayer; }
+    WebCore::GraphicsLayer* graphicsLayer() const override;
+
     bool pluginFillsViewport() const override { return false; }
 
     void teardown() override;
 
     void createPDFDocument() override;
     void installPDFDocument() override;
-
-    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
 
     CGFloat scaleFactor() const override;
 
@@ -83,9 +85,17 @@ private:
     id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
+    // GraphicsLayerClient
+    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
+
     void sizeToFitContents();
+    void udpateLayerHierarchy();
+
+    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, GraphicsLayer::Type);
 
     PDFDocumentLayout m_documentLayout;
+    RefPtr<WebCore::GraphicsLayer> m_rootLayer;
+    RefPtr<WebCore::GraphicsLayer> m_contentsLayer; // FIXME: Temporary, this will be replaced with a TiledBacking.
 };
 
 } // namespace WebKit
