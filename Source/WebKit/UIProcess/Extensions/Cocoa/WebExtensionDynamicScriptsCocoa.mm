@@ -136,6 +136,22 @@ void removeStyleSheets(SourcePairs styleSheetPairs, WebCore::UserContentInjected
     }
 }
 
+WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resultOfExecution, WKFrameInfo *info, NSString *errorMessage)
+{
+    WebExtensionScriptInjectionResultParameters parameters;
+
+    if (resultOfExecution)
+        parameters.result = resultOfExecution;
+
+    if (info)
+        parameters.frameID = toWebExtensionFrameIdentifier(info);
+
+    if (errorMessage)
+        parameters.error = errorMessage;
+
+    return parameters;
+}
+
 } // namespace WebExtensionDynamicScripts
 
 } // namespace WebKit

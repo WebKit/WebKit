@@ -88,6 +88,9 @@ messages -> WebExtensionContext {
     TabsGetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<double> zoomFactor, WebKit::WebExtensionTab::Error error);
     TabsSetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, double zoomFactor) -> (WebKit::WebExtensionTab::Error error);
     TabsRemove(Vector<WebKit::WebExtensionTabIdentifier> tabIdentifiers) -> (WebKit::WebExtensionWindow::Error error);
+    TabsExecuteScript(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebKit::WebExtensionTab::Error error);
+    TabsInsertCSS(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (WebKit::WebExtensionTab::Error error);
+    TabsRemoveCSS(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (WebKit::WebExtensionTab::Error error);
 
     // Test APIs
     TestResult(bool result, String message, String sourceURL, unsigned lineNumber);

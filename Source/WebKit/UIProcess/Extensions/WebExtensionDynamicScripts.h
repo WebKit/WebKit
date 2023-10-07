@@ -29,6 +29,7 @@
 
 #include "APIContentWorld.h"
 #include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionScriptInjectionResultParameters.h"
 #include <wtf/Forward.h>
 
 OBJC_CLASS WKWebView;
@@ -39,7 +40,6 @@ namespace WebKit {
 
 class WebExtension;
 class WebExtensionContext;
-struct WebExtensionScriptInjectionResultParameters;
 
 namespace WebExtensionDynamicScripts {
 
@@ -49,13 +49,30 @@ using Error = std::optional<String>;
 using SourcePair = std::pair<String, std::optional<URL>>;
 using SourcePairs = Vector<std::optional<SourcePair>>;
 
+class InjectionResultHolder : public RefCounted<InjectionResultHolder> {
+    WTF_MAKE_NONCOPYABLE(InjectionResultHolder);
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    template<typename... Args>
+    static Ref<InjectionResultHolder> create(Args&&... args)
+    {
+        return adoptRef(*new InjectionResultHolder(std::forward<Args>(args)...));
+    }
+
+    InjectionResultHolder() { };
+
+    InjectionResults results;
+};
+
+std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension>);
 SourcePairs getSourcePairsForResource(std::optional<Vector<String>> files, std::optional<String> code, RefPtr<WebExtension>);
 Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *, std::optional<Vector<WebExtensionFrameIdentifier>>);
 
-std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension>);
-
 void injectStyleSheets(SourcePairs, WKWebView *, API::ContentWorld&, WebCore::UserContentInjectedFrames, WebExtensionContext&);
 void removeStyleSheets(SourcePairs, WebCore::UserContentInjectedFrames, WebExtensionContext&);
+
+WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resultOfExecution, WKFrameInfo *, NSString *errorMessage);
 
 } // namespace WebExtensionDynamicScripts
 

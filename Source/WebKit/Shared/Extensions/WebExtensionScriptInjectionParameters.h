@@ -38,6 +38,7 @@ struct WebExtensionScriptInjectionParameters {
     std::optional<Vector<String>> files;
     std::optional<Vector<WebExtensionFrameIdentifier>> frameIDs;
 
+    std::optional<String> code;
     std::optional<String> css;
     std::optional<String> function;
 

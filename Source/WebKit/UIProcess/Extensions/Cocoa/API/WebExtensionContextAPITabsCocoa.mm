@@ -33,18 +33,27 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKContentWorld.h"
 #import "WKWebViewInternal.h"
+#import "WKWebViewPrivate.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionScriptInjectionParameters.h"
+#import "WebExtensionScriptInjectionResultParameters.h"
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
+#import "_WKFrameHandle.h"
+#import "_WKFrameTreeNode.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <WebCore/ImageBufferUtilitiesCG.h>
+#import <wtf/CallbackAggregator.h>
 
 namespace WebKit {
+
+using namespace WebExtensionDynamicScripts;
 
 void WebExtensionContext::tabsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
 {
@@ -540,6 +549,119 @@ void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdenti
             internalCompletionHandler(std::nullopt);
         });
     }
+}
+
+void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(std::optional<InjectionResults>, WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(std::nullopt, toErrorString(@"tabs.executeScript()", nil, @"tab not found"));
+        return;
+    }
+
+    auto *webView = tab->mainWebView();
+    if (!webView) {
+        completionHandler(std::nullopt, toErrorString(@"tabs.executeScript()", nil, @"could not execute script in tab"));
+        return;
+    }
+
+    if (!hasPermission(webView.URL, tab.get())) {
+        completionHandler(std::nullopt, toErrorString(@"tabs.executeScript()", nil, @"this extension does not have access to this tab"));
+        return;
+    }
+
+    std::optional<SourcePair> scriptData;
+    if (parameters.code)
+        scriptData = SourcePair { parameters.code.value(), std::nullopt };
+    else {
+        NSString *filePath = parameters.files.value().first();
+        scriptData = sourcePairForResource(filePath, m_extension);
+        if (!scriptData) {
+            completionHandler(std::nullopt, toErrorString(@"tabs.executeScript()", nil, @"Invalid resource: %@", filePath));
+            return;
+        }
+    }
+
+    auto injectionResults = InjectionResultHolder::create();
+    auto aggregator = MainRunLoopCallbackAggregator::create([injectionResults, completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler(injectionResults->results, std::nullopt);
+    });
+
+    [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, webView = RetainPtr { webView }, tab, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {
+        SourcePairs scriptPairs = getSourcePairsForResource(parameters.files, parameters.code, m_extension);
+        Vector<RetainPtr<_WKFrameTreeNode>> frames = getFrames(mainFrame, parameters.frameIDs);
+
+        for (auto& frame : frames) {
+            WKFrameInfo *info = frame.get().info;
+            NSURL *frameURL = info.request.URL;
+            if (!hasPermission(frameURL, tab.get())) {
+                injectionResults->results.append(toInjectionResultParameters(nil, nil, nil));
+                continue;
+            }
+
+            for (auto& script : scriptPairs) {
+                [webView _evaluateJavaScript:script.value().first withSourceURL:script.value().second.value_or(URL { }) inFrame:info inContentWorld:m_contentScriptWorld.get()->wrapper() completionHandler:makeBlockPtr([injectionResults, aggregator](id resultOfExecution, NSError *error) mutable {
+                    injectionResults->results.append(toInjectionResultParameters(resultOfExecution, nil, error.localizedDescription));
+                }).get()];
+            }
+        }
+    }).get()];
+}
+
+void WebExtensionContext::tabsInsertCSS(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"tabs.insertCSS()", nil, @"tab not found"));
+        return;
+    }
+
+    auto *webView = tab->mainWebView();
+    if (!webView) {
+        completionHandler(toErrorString(@"tabs.insertCSS()", nil, @"could not inject stylesheet on this tab"));
+        return;
+    }
+
+    if (!hasPermission(webView.URL, tab.get())) {
+        completionHandler(toErrorString(@"tabs.insertCSS()", nil, @"this extension does not have access to this tab"));
+        return;
+    }
+
+    // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
+    auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
+
+    SourcePairs styleSheetPairs = getSourcePairsForResource(parameters.files, parameters.code, m_extension);
+    injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, injectedFrames, *this);
+
+    completionHandler(std::nullopt);
+}
+
+void WebExtensionContext::tabsRemoveCSS(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"tabs.removeCSS()", nil, @"tab not found"));
+        return;
+    }
+
+    auto *webView = tab->mainWebView();
+    if (!webView) {
+        completionHandler(toErrorString(@"tabs.removeCSS()", nil, @"could not remove stylesheet on this tab"));
+        return;
+    }
+
+    if (!hasPermission(webView.URL, tab.get())) {
+        completionHandler(toErrorString(@"tabs.removeCSS()", nil, @"this extension does not have access to this tab"));
+        return;
+    }
+
+    // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
+    auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
+
+    SourcePairs styleSheetPairs = getSourcePairsForResource(parameters.files, parameters.code, m_extension);
+    removeStyleSheets(styleSheetPairs, injectedFrames, *this);
+
+    completionHandler(std::nullopt);
 }
 
 void WebExtensionContext::fireTabsCreatedEventIfNeeded(const WebExtensionTabParameters& parameters)
