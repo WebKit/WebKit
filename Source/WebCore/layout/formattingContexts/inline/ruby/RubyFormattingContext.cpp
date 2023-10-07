@@ -90,12 +90,13 @@ void RubyFormattingContext::placeRubyContent(WTF::Range<size_t> candidateRange, 
     auto& formattingUtils = parentFormattingContext().formattingUtils();
 
     auto index = candidateRange.begin();
+    auto logicalRightSpacingForBase = InlineLayoutUnit { };
     while (index < candidateRange.end()) {
-        auto appendInlineLevelItem = [&](auto& inlineBoxItem) {
+        auto appendInlineLevelItem = [&](auto& inlineBoxItem, InlineLayoutUnit extraSpacingEnd = { }) {
             ASSERT(inlineBoxItem.layoutBox().isRuby() || inlineBoxItem.layoutBox().isRubyBase() || inlineBoxItem.layoutBox().isRubyAnnotationBox());
 
             auto logicalWidth = formattingUtils.inlineItemWidth(inlineBoxItem, line.contentLogicalRight(), { });
-            line.append(inlineBoxItem, inlineBoxItem.style(), logicalWidth);
+            line.append(inlineBoxItem, inlineBoxItem.style(), logicalWidth + extraSpacingEnd);
             ++index;
         };
 
@@ -111,9 +112,15 @@ void RubyFormattingContext::placeRubyContent(WTF::Range<size_t> candidateRange, 
         if (rubyLayoutBox.isRubyBase()) {
             // ruby column: represented by a single ruby base and one ruby annotation
             // from each interlinear annotation level in its ruby segment.
-            appendInlineLevelItem(rubyItem);
-            if (rubyItem.isInlineBoxStart())
-                index += layoutRubyBaseInlineAxis(line, rubyLayoutBox, index, inlineItemList);
+            if (rubyItem.isInlineBoxStart()) {
+                appendInlineLevelItem(rubyItem);
+                auto baseLayoutResult = layoutRubyBaseInlineAxis(line, rubyLayoutBox, index, inlineItemList);
+                index += baseLayoutResult.committedCount;
+                logicalRightSpacingForBase = baseLayoutResult.logicalRightSpacing;
+                continue;
+            }
+            ASSERT(rubyItem.isInlineBoxEnd());
+            appendInlineLevelItem(rubyItem, logicalRightSpacingForBase);
             continue;
         }
         if (rubyLayoutBox.isRubyAnnotationBox()) {
@@ -126,7 +133,7 @@ void RubyFormattingContext::placeRubyContent(WTF::Range<size_t> candidateRange, 
     }
 }
 
-size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineItemList& inlineItemList)
+RubyFormattingContext::BaseLayoutResult RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStartIndex, const InlineItemList& inlineItemList)
 {
     // Append ruby base content (including start/end inline box) to the line and apply "ruby-align: space-around" on the ruby subrange.
     auto& formattingUtils = parentFormattingContext().formattingUtils();
@@ -138,16 +145,17 @@ size_t RubyFormattingContext::layoutRubyBaseInlineAxis(Line& line, const Box& ru
         auto& rubyBaseInlineItem = inlineItemList[index];
         if (&rubyBaseInlineItem.layoutBox() == &rubyBaseLayoutBox) {
             auto baseRunCount = line.runs().size() - baseRunStart;
+            auto logicalRightSpacing = InlineLayoutUnit { };
             if (baseRunCount)
-                applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
-            return index - rubyBaseContentStartIndex;
+                logicalRightSpacing = applyRubyAlign(line, { baseRunStart, baseRunStart + baseRunCount }, rubyBaseLayoutBox, baseContentLogicalWidth);
+            return { index - rubyBaseContentStartIndex, logicalRightSpacing };
         }
         auto logicalWidth = formattingUtils.inlineItemWidth(rubyBaseInlineItem, lineLogicalRight + baseContentLogicalWidth, { });
         line.append(rubyBaseInlineItem, rubyBaseInlineItem.style(), logicalWidth);
         baseContentLogicalWidth += logicalWidth;
     }
     ASSERT_NOT_REACHED();
-    return inlineItemList.size() - rubyBaseContentStartIndex;
+    return { inlineItemList.size() - rubyBaseContentStartIndex, { } };
 }
 
 InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseLayoutBox)
@@ -302,17 +310,17 @@ std::optional<size_t> RubyFormattingContext::nextWrapOpportunity(size_t inlineIt
     return inlineItemIndex + 1;
 }
 
-void RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth)
+InlineLayoutUnit RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth)
 {
     // https://drafts.csswg.org/css-ruby/#interlinear-inline
     // Within each base and annotation box, how the extra space is distributed when its content is narrower than
     // the measure of the box is specified by its ruby-align property.
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!annotationBox)
-        return;
+        return { };
     auto annotationBoxLogicalWidth = InlineLayoutUnit { parentFormattingContext().geometryForBox(*annotationBox).marginBoxWidth() };
     if (annotationBoxLogicalWidth <= baseContentLogicalWidth)
-        return;
+        return { };
     auto expansion = ExpansionInfo { };
     // ruby-align: space-around
     // As for space-between except that there exists an extra justification opportunities whose space is distributed half before and half after the ruby content.
@@ -323,13 +331,12 @@ void RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<size_t> baseRu
         line.expandBy(baseRunRange.begin() - 1, baseContentOffset);
         extraSpace -= (2 * baseContentOffset);
         line.applyExpansionOnRange(baseRunRange, expansion, extraSpace);
-        line.expandBy(baseRunRange.end() - 1, baseContentOffset);
-    } else {
-        auto centerOffset = (annotationBoxLogicalWidth - baseContentLogicalWidth) / 2;
-        // Move the first and exand the last run (most cases there's only one run here though.)
-        line.moveRunsBy(baseRunRange.begin(), centerOffset);
-        line.expandBy(baseRunRange.end() - 1, centerOffset);
+        return baseContentOffset;
     }
+    auto centerOffset = (annotationBoxLogicalWidth - baseContentLogicalWidth) / 2;
+    // Move the first and exand the last run (most cases there's only one run here though.)
+    line.moveRunsBy(baseRunRange.begin(), centerOffset);
+    return centerOffset;
 }
 
 std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox, const InlineLayoutRect& overhangingRect) const
