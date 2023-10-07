@@ -419,6 +419,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebProcessDataStoreParameters.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in
     Shared/WebPushMessage.serialization.in
+    Shared/WebUserContentControllerDataTypes.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in
     Shared/WebsitePoliciesData.serialization.in
 

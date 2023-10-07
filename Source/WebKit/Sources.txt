@@ -262,7 +262,6 @@ Shared/WebPreferencesDefaultValues.cpp
 Shared/WebPreferencesStore.cpp
 Shared/WebPushMessage.cpp
 Shared/WebTouchEvent.cpp
-Shared/WebUserContentControllerDataTypes.cpp
 Shared/WebWheelEventCoalescer.cpp
 Shared/WebWheelEvent.cpp
 Shared/WebsitePoliciesData.cpp
