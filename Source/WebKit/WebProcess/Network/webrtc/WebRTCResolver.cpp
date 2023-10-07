@@ -47,7 +47,7 @@ void WebRTCResolver::setResolvedAddress(const Vector<RTCNetwork::IPAddress>& add
     auto& factory = m_socketFactory;
 
     auto rtcAddresses = addresses.map([](auto& address) {
-        return address.value;
+        return address.rtcAddress();
     });
     WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([&factory, identifier, rtcAddresses = WTFMove(rtcAddresses)]() {
         auto* resolver = factory.resolver(identifier);
