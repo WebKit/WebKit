@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontMetrics.h"
 #include <variant>
 #include <wtf/Markable.h>
 #include <wtf/text/TextStream.h>
@@ -33,6 +34,7 @@ namespace WebCore {
 
 struct FontSizeAdjust {
     friend bool operator==(const FontSizeAdjust&, const FontSizeAdjust&) = default;
+    explicit operator bool() const { return value || isFromFont; }
 
     enum class Metric : uint8_t {
         ExHeight,
@@ -41,6 +43,36 @@ struct FontSizeAdjust {
         IcWidth,
         IcHeight
     };
+
+    std::optional<float> resolve(float computedSize, const FontMetrics& fontMetrics) const
+    {
+        std::optional<float> metricValue;
+        switch (metric) {
+        case FontSizeAdjust::Metric::CapHeight:
+            if (fontMetrics.hasCapHeight())
+                metricValue = fontMetrics.floatCapHeight();
+            break;
+        case FontSizeAdjust::Metric::ChWidth:
+            if (fontMetrics.zeroWidth())
+                metricValue = fontMetrics.zeroWidth();
+            break;
+        // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
+        case FontSizeAdjust::Metric::IcWidth:
+        case FontSizeAdjust::Metric::IcHeight:
+            if (fontMetrics.ideogramWidth() > 0)
+                metricValue = fontMetrics.ideogramWidth();
+            break;
+        case FontSizeAdjust::Metric::ExHeight:
+        default:
+            if (fontMetrics.hasXHeight())
+                metricValue = fontMetrics.xHeight();
+        }
+
+        return metricValue.has_value() && computedSize
+            ? std::make_optional(*metricValue / computedSize)
+            : std::nullopt;
+    }
+
     Metric metric { Metric::ExHeight };
     bool isFromFont { false };
     Markable<float, WTF::FloatMarkableTraits> value { };
@@ -48,7 +80,7 @@ struct FontSizeAdjust {
 
 inline void add(Hasher& hasher, const FontSizeAdjust& fontSizeAdjust)
 {
-    add(hasher, fontSizeAdjust.metric, *fontSizeAdjust.value);
+    add(hasher, fontSizeAdjust.metric, fontSizeAdjust.isFromFont, *fontSizeAdjust.value);
 }
 
 inline TextStream& operator<<(TextStream& ts, const FontSizeAdjust& fontSizeAdjust)
@@ -75,7 +107,7 @@ inline TextStream& operator<<(TextStream& ts, const FontSizeAdjust& fontSizeAdju
 
     if (fontSizeAdjust.isFromFont)
         return ts << " " << "from-font";
-    return ts << " " << fontSizeAdjust.value;
+    return ts << " " << *fontSizeAdjust.value;
 }
 
 }
