@@ -4663,6 +4663,9 @@
 		3AC6E5242A1C59AE0059F092 /* RemoteGraphicsContextGLInitializationState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLInitializationState.h; sourceTree = "<group>"; };
 		3AE104BD29CBC8BA00661165 /* OriginQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginQuotaManager.cpp; sourceTree = "<group>"; };
 		3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginQuotaManager.h; sourceTree = "<group>"; };
+		3AEE89912AA595AC00D4DF44 /* PlatformXRARKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformXRARKit.mm; sourceTree = "<group>"; };
+		3AEE89922AA595AC00D4DF44 /* PlatformXRARKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformXRARKit.h; sourceTree = "<group>"; };
+		3AEE89932AA5966A00D4DF44 /* PlatformXRSystemIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformXRSystemIOS.mm; sourceTree = "<group>"; };
 		3AF5B4712A244FDC004C3D4D /* RemoteGraphicsContextGLMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLMessages.h; sourceTree = "<group>"; };
 		3AF5B4722A244FDC004C3D4D /* RemoteGraphicsContextGLMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLMessageReceiver.cpp; sourceTree = "<group>"; };
 		3AF5B4732A244FDC004C3D4D /* RemoteGraphicsContextGLProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLProxyMessages.h; sourceTree = "<group>"; };
@@ -8068,6 +8071,7 @@
 		118502592673B07100A6425E /* XR */ = {
 			isa = PBXGroup;
 			children = (
+				3AEE89902AA5954000D4DF44 /* ios */,
 				1185025B2673B07100A6425E /* PlatformXRCoordinator.h */,
 				1185025A2673B07100A6425E /* PlatformXRSystem.cpp */,
 				1185025C2673B07100A6425E /* PlatformXRSystem.h */,
@@ -10726,6 +10730,16 @@
 				1A9E329C1822FEDD00F5D04C /* WKRemoteObjectCoder.mm */,
 			);
 			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		3AEE89902AA5954000D4DF44 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				3AEE89922AA595AC00D4DF44 /* PlatformXRARKit.h */,
+				3AEE89912AA595AC00D4DF44 /* PlatformXRARKit.mm */,
+				3AEE89932AA5966A00D4DF44 /* PlatformXRSystemIOS.mm */,
+			);
+			path = ios;
 			sourceTree = "<group>";
 		};
 		413075971DE84ED70039EC69 /* webrtc */ = {
