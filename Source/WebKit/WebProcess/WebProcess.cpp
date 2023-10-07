@@ -29,11 +29,8 @@
 #include "APIFrameHandle.h"
 #include "APIPageHandle.h"
 #include "AudioMediaStreamTrackRendererInternalUnitManager.h"
-#include "AuthenticationManager.h"
 #include "AuxiliaryProcessMessages.h"
-#include "DrawingArea.h"
 #include "EventDispatcher.h"
-#include "GPUProcessConnectionParameters.h"
 #include "InjectedBundle.h"
 #include "LibWebRTCNetwork.h"
 #include "Logging.h"
@@ -41,8 +38,6 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkProcessConnectionInfo.h"
 #include "NetworkSession.h"
-#include "NetworkSessionCreationParameters.h"
-#include "ProcessAssertion.h"
 #include "RemoteAudioHardwareListener.h"
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
@@ -62,7 +57,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFileSystemStorageConnection.h"
 #include "WebFrame.h"
-#include "WebFrameNetworkingContext.h"
 #include "WebGamepadProvider.h"
 #include "WebGeolocationManager.h"
 #include "WebIDBConnectionToServer.h"
@@ -77,11 +71,9 @@
 #include "WebPaymentCoordinator.h"
 #include "WebPermissionController.h"
 #include "WebPlatformStrategies.h"
-#include "WebPluginInfoProvider.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessDataStoreParameters.h"
 #include "WebProcessMessages.h"
-#include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceLoadObserver.h"
 #include "WebSWClientConnection.h"
@@ -183,16 +175,11 @@
 #include "WebSQLiteDatabaseTracker.h"
 #endif
 
-#if ENABLE(SEC_ITEM_SHIM)
-#include "SecItemShim.h"
-#endif
-
 #if ENABLE(NOTIFICATIONS)
 #include "WebNotificationManager.h"
 #endif
 
 #if ENABLE(GPU_PROCESS)
-#include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnection.h"
 #endif
 
