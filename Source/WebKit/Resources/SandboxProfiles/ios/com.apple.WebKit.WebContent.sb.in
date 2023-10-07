@@ -1251,7 +1251,7 @@
 )
 
 (define-once (mach-bootstrap-message-numbers)
-    (message-number 206 207 711 712 716 718 800 802 803 804 805 904))
+    (message-number 206 207 711 712 718 800 802 803 804 805 904))
 
 (define-once (mach-bootstrap-message-numbers-post-launch)
     (message-number 206 207 711 712 800 804 904))

@@ -22,6 +22,7 @@
 #define FontCascadeFonts_h
 
 #include "Font.h"
+#include "FontCascadeDescription.h"
 #include "FontRanges.h"
 #include "FontSelector.h"
 #include "GlyphPage.h"
@@ -38,7 +39,6 @@
 
 namespace WebCore {
 
-class FontCascadeDescription;
 class FontPlatformData;
 class FontSelector;
 class GraphicsContext;
@@ -72,7 +72,7 @@ public:
     WidthCache& widthCache() { return m_widthCache; }
     const WidthCache& widthCache() const { return m_widthCache; }
 
-    const Font& primaryFont(const FontCascadeDescription&);
+    const Font& primaryFont(FontCascadeDescription&);
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, unsigned fallbackIndex);
 
     void pruneSystemFallbacks();
@@ -131,7 +131,7 @@ inline bool FontCascadeFonts::isFixedPitch(const FontCascadeDescription& descrip
     return m_pitch == FixedPitch;
 };
 
-inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& description)
+inline const Font& FontCascadeFonts::primaryFont(FontCascadeDescription& description)
 {
     ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
     if (!m_cachedPrimaryFont) {
@@ -150,6 +150,13 @@ inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& d
                     break;
                 }
             }
+        }
+
+        ASSERT(m_cachedPrimaryFont);
+        auto fontSizeAdjust = description.fontSizeAdjust();
+        if (fontSizeAdjust.isFromFont) {
+            auto aspectValue = fontSizeAdjust.resolve(description.computedSize(), m_cachedPrimaryFont->fontMetrics());
+            description.setFontSizeAdjust({ fontSizeAdjust.metric, fontSizeAdjust.isFromFont, aspectValue });
         }
     }
     return *m_cachedPrimaryFont;

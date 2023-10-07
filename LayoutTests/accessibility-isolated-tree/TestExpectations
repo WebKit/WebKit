@@ -7,7 +7,9 @@ accessibility/mac/resolved-text-editing.html [ Crash Pass ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 
 # Text failures
-accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure ]
+#
+# Potentially caused by: https://github.com/WebKit/WebKit/commit/2517a540e6f5a2037c6843102f3a9cb753f2f9f0
+accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/element-reflection-ariacontrols.html [ Failure ]
 accessibility/element-reflection-ariadetails.html [ Failure ]
@@ -24,14 +26,12 @@ accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Failu
 accessibility/mac/frame-with-title.html [ Failure ]
 accessibility/mac/press-action-not-exposed-for-event-delegation.html [ Failure ]
 accessibility/mac/pseudo-element-text-markers.html [ Failure ]
-accessibility/mac/ruby-hierarchy-roles.html [ Failure ]
+accessibility/mac/ruby-hierarchy-roles.html [ Failure Pass ]
 accessibility/mac/search-predicate-from-ignored-element.html [ Failure ]
 accessibility/mac/search-predicate-immediate-descendants-only.html [ Failure ]
 accessibility/mac/set-value-editable-types.html [ Failure ]
 accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
-accessibility/mac/text-input-marked-range.html [ Failure ]
-accessibility/mac/text-input-marked-text-marker-range.html [ Failure ]
 
 # Frames are off by 1px vs. non-ITM mode.
 accessibility/table-cells.html [ Failure ]

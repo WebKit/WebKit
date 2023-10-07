@@ -1,9 +1,3 @@
-# rdar://90386407 (REGRESSION(Ventura): [ Ventura Guard Malloc  ] 4X accessibility/mac/text-marker (layout-tests) are constant crashes)
-accessibility/mac/text-marker-for-index.html [ Pass Crash ]
-accessibility/mac/text-marker-paragraph-nav.html [ Pass Crash ]
-accessibility/mac/text-marker-sentence-nav.html [ Pass Crash ]
-accessibility/mac/text-marker-word-nav.html [ Pass Crash ]
-
 # webkit.org/b/261306 Batch mark expectations for constant failures following Sonoma OpenSource expectations migration.
 editing/caret/insert-paragraph-does-not-paint-stale-carets.html [ Failure ]
 editing/input/editable-container-with-word-wrap-normal.html [ Failure ]

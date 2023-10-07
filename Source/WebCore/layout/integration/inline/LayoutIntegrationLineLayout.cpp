@@ -175,12 +175,6 @@ bool LineLayout::canUseForPreferredWidthComputation(const RenderBlockFlow& flow)
     return LayoutIntegration::canUseForPreferredWidthComputation(flow);
 }
 
-bool LineLayout::canUseForAfterBlockStyleChange(const RenderBlockFlow& flow, StyleDifference diff)
-{
-    ASSERT(isEnabled());
-    return canUseForLineLayoutAfterBlockStyleChange(flow, diff);
-}
-
 bool LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout& lineLayout)
 {
     ASSERT(isEnabled());
