@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,22 +20,38 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAS_ALL_HEAP_CONFIGS_H
-#define PAS_ALL_HEAP_CONFIGS_H
+#ifndef IR_HEAP_H
+#define IR_HEAP_H
 
-#include "bmalloc_heap_config.h"
-#include "hotbit_heap_config.h"
-#include "ir_heap_config.h"
-#include "iso_heap_config.h"
-#include "iso_test_heap_config.h"
-#include "jit_heap_config.h"
-#include "minalign32_heap_config.h"
-#include "pagesize64k_heap_config.h"
-#include "pas_utility_heap_config.h"
-#include "thingy_heap_config.h"
+#include "pas_config.h"
 
-#endif /* PAS_ALL_HEAP_CONFIG_H */
+#if PAS_ENABLE_JIT
+
+#include "pas_allocator_counts.h"
+#include "pas_heap_ref.h"
+#include "pas_intrinsic_heap_support.h"
+#include "pas_range.h"
+
+PAS_BEGIN_EXTERN_C;
+
+PAS_API extern pas_heap ir_common_primitive_heap;
+PAS_API extern pas_intrinsic_heap_support ir_common_primitive_heap_support;
+PAS_API extern pas_allocator_counts ir_allocator_counts;
+
+/* We expect the given memory to be committed and clean, but it may have weird permissions. */
+PAS_API void ir_heap_add_fresh_memory(pas_range range);
+
+PAS_API void* ir_heap_try_allocate(size_t size);
+PAS_API void ir_heap_shrink(void* object, size_t new_size);
+PAS_API size_t ir_heap_get_size(void* object);
+PAS_API void ir_heap_deallocate(void* object);
+
+PAS_END_EXTERN_C;
+
+#endif /* PAS_ENABLE_JIT */
+
+#endif /* IR_HEAP_H */
 

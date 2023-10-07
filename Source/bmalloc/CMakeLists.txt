@@ -43,6 +43,8 @@ set(bmalloc_SOURCES
     libpas/src/libpas/bmalloc_type.c
     libpas/src/libpas/hotbit_heap.c
     libpas/src/libpas/hotbit_heap_config.c
+    libpas/src/libpas/ir_heap.c
+    libpas/src/libpas/ir_heap_config.c
     libpas/src/libpas/iso_heap.c
     libpas/src/libpas/iso_heap_config.c
     libpas/src/libpas/iso_test_heap.c
@@ -298,7 +300,10 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/hotbit_heap_config.h
     libpas/src/libpas/hotbit_heap.h
     libpas/src/libpas/hotbit_heap_inlines.h
-    libpas/src/libpas/hotbit_heap_innards.h
+    libpas/src/libpas/ir_heap_config.h
+    libpas/src/libpas/ir_heap_config_root_data.h
+    libpas/src/libpas/ir_heap_inlines.h
+    libpas/src/libpas/ir_heap.h
     libpas/src/libpas/iso_heap_config.h
     libpas/src/libpas/iso_heap.h
     libpas/src/libpas/iso_heap_inlines.h

@@ -107,4 +107,6 @@ PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(hotbit_medium_segregated,
 #if PAS_ENABLE_JIT
 PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(jit_small_segregated,
                                        JIT_HEAP_CONFIG.small_segregated_config)
+PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(ir_small_segregated,
+                                       IR_HEAP_CONFIG.small_segregated_config)
 #endif

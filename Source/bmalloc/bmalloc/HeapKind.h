@@ -33,6 +33,9 @@ namespace bmalloc {
 
 enum class HeapKind {
     Primary,
+#if BUSE(LIBPAS)
+    IR,
+#endif
     PrimitiveGigacage,
     JSValueGigacage
 };
@@ -43,6 +46,9 @@ BINLINE bool isGigacage(HeapKind heapKind)
 {
     switch (heapKind) {
     case HeapKind::Primary:
+#if BUSE(LIBPAS)
+    case HeapKind::IR:
+#endif
         return false;
     case HeapKind::PrimitiveGigacage:
     case HeapKind::JSValueGigacage:
@@ -56,6 +62,9 @@ BINLINE Gigacage::Kind gigacageKind(HeapKind kind)
 {
     switch (kind) {
     case HeapKind::Primary:
+#if BUSE(LIBPAS)
+    case HeapKind::IR:
+#endif
         BCRASH();
         return Gigacage::Primitive;
     case HeapKind::PrimitiveGigacage:

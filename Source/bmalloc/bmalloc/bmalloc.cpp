@@ -32,6 +32,7 @@
 
 #if BENABLE(LIBPAS)
 #include "bmalloc_heap_config.h"
+#include "ir_heap_config.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_scavenger.h"
 #include "pas_thread_local_cache.h"
@@ -107,7 +108,10 @@ void freeLargeVirtual(void* object, size_t size, HeapKind kind)
         debugHeap->freeLarge(object);
         return;
     }
-    bmalloc_deallocate_inline(object);
+    if (kind == HeapKind::IR)
+        ir_deallocate_inline(object);
+    else
+        bmalloc_deallocate_inline(object);
 #else
     if (auto* debugHeap = DebugHeap::tryGet()) {
         debugHeap->freeLarge(object);

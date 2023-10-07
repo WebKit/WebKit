@@ -39,6 +39,9 @@
 #if BENABLE(LIBPAS) && (OS(DARWIN) || OS(LINUX))
 #define ENABLE_LIBPAS_JIT_HEAP 1
 #endif
+#if BENABLE(LIBPAS) && OS(DARWIN)
+#define ENABLE_LIBPAS_IR_HEAP 1
+#endif
 #endif
 
 namespace JSC {
