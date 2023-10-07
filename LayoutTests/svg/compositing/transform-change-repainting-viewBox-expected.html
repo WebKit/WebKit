@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+    <title>Tests that SVG documents with viewBox don't trigger unnecessary repaints during animations.</title>
+    <style>
+        svg { border: 1px solid black; }
+
+        .animating1 {
+            transform-origin: 50% 50%;
+            transform-box: border-box;
+            transform: translateZ(0);
+	}
+
+        .animating2 {
+            transform-origin: 50% 50%;
+            transform-box: border-box;
+            transform: rotate(25deg) translateZ(0);
+	}
+
+        .animating3 {
+            transform-origin: 50% 50%;
+            transform-box: border-box;
+	    transform: rotate(45deg) translateZ(0);
+            fill: green;
+        }
+    </style>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        if (window.internals) {
+            internals.settings.setShowRepaintCounter(true);
+            internals.settings.setShowDebugBorders(true);
+        }
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                document.getElementById('rect').setAttribute("class", "animating2");
+		requestAnimationFrame(() => {
+                    document.getElementById('rect').setAttribute("class", "animating3");
+                    if (window.testRunner)
+			testRunner.notifyDone();
+		    });
+		});
+	    }, false);
+    </script>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="500" height="300">
+        <rect id="rect" class="animating1" x="10" y="10" width="180" height="180" fill="red"/>
+    </svg>
+</body>
+</html>
