@@ -81,6 +81,7 @@ namespace Gigacage {
 void* tryAlignedMalloc(Kind kind, size_t alignment, size_t size)
 {
     void* result = bmalloc::api::tryMemalign(alignment, size, bmalloc::heapKind(kind));
+    BPROFILE_TRY_ALLOCATION(GIGACAGE, kind, result, size);
     WTF::compilerFence();
     return result;
 }
@@ -97,6 +98,7 @@ void alignedFree(Kind kind, void* p)
 void* tryMalloc(Kind kind, size_t size)
 {
     void* result = bmalloc::api::tryMalloc(size, bmalloc::heapKind(kind));
+    BPROFILE_TRY_ALLOCATION(GIGACAGE, kind, result, size);
     WTF::compilerFence();
     return result;
 }
@@ -104,6 +106,7 @@ void* tryMalloc(Kind kind, size_t size)
 void* tryZeroedMalloc(Kind kind, size_t size)
 {
     void* result = bmalloc::api::tryZeroedMalloc(size, bmalloc::heapKind(kind));
+    BPROFILE_TRY_ALLOCATION(GIGACAGE, kind, result, size);
     WTF::compilerFence();
     return result;
 }
@@ -111,6 +114,7 @@ void* tryZeroedMalloc(Kind kind, size_t size)
 void* tryRealloc(Kind kind, void* pointer, size_t size)
 {
     void* result = bmalloc::api::tryRealloc(pointer, size, bmalloc::heapKind(kind));
+    BPROFILE_TRY_ALLOCATION(GIGACAGE, kind, result, size);
     WTF::compilerFence();
     return result;
 }
@@ -127,6 +131,7 @@ void free(Kind kind, void* p)
 void* tryAllocateZeroedVirtualPages(Kind kind, size_t size)
 {
     void* result = bmalloc::api::tryLargeZeroedMemalignVirtual(WTF::pageSize(), size, bmalloc::heapKind(kind));
+    BPROFILE_TRY_ALLOCATION(GIGACAGE, kind, result, size);
     WTF::compilerFence();
     return result;
 }

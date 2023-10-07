@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AllocationCounts.h"
 #include "AvailableMemory.h"
 #include "Cache.h"
 #include "DebugHeap.h"
