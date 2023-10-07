@@ -117,11 +117,6 @@ bool canUseForLineLayout(const RenderBlockFlow& flow)
     return !canUseForLineLayoutWithReason(flow);
 }
 
-bool canUseForLineLayoutAfterBlockStyleChange(const RenderBlockFlow& blockContainer, StyleDifference diff)
-{
-    return diff == StyleDifference::Layout ? canUseForLineLayout(blockContainer) : true;
-}
-
 bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
 {
     for (auto walker = InlineWalker(blockContainer); !walker.atEnd(); walker.advance()) {
