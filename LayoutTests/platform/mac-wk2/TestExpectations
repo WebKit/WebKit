@@ -2050,10 +2050,6 @@ svg/filters/hidpi/fePointLight-coordinates.svg [ Pass ImageOnlyFailure ]
 tiled-drawing/fixed-layout-size-fixed-attachment-cover.html [ Pass ImageOnlyFailure ]
 
 # rdar://103251644 (REGRESSION : [ GuardMalloc ] com.apple.MediaToolbox: PerformTransferBytePumpAsync)
-accessibility/mac/text-marker-for-index.html [ Crash ]
-accessibility/mac/text-marker-paragraph-nav.html [ Crash ]
-accessibility/mac/text-marker-sentence-nav.html [ Crash ]
-accessibility/mac/text-marker-word-nav.html [ Crash ]
 editing/text-iterator/backwards-text-iterator-basic.html [ Crash ]
 
 # rdar://107460005 ([UI Side Compositing] fast/text/web-font-load-invisible-during-loading.html fails)
