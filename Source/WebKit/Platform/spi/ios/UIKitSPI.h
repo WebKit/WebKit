@@ -1060,14 +1060,8 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 #endif
 
 @interface UITextInteractionAssistant (IPI)
-@property (nonatomic, readonly) BOOL inGesture;
-@property (nonatomic, readonly) UITextInteraction *interactions;
 - (void)willStartScrollingOrZooming;
 - (void)didEndScrollingOrZooming;
-@end
-
-@interface UITextInteraction (IPI)
-@property (nonatomic, readonly) BOOL inGesture;
 @end
 
 #if USE(UICONTEXTMENU)

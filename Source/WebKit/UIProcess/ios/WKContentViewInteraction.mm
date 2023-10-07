@@ -463,25 +463,12 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 - (void)selectWord;
 @end
 
-@interface UITextInteractionAssistant (WebKit)
-@property (nonatomic, readonly) BOOL _wk_hasFloatingCursor;
-@end
-
 @interface UIView (UIViewInternalHack)
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
 
 @interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
 - (instancetype)initWithFocusedElementInformation:(const WebKit::FocusedElementInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject;
-@end
-
-@implementation UITextInteractionAssistant (WebKit)
-
-- (BOOL)_wk_hasFloatingCursor
-{
-    return self.inGesture && !self.interactions.inGesture;
-}
-
 @end
 
 @implementation WKFormInputSession {
@@ -5044,7 +5031,29 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
     logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionLoupeGestureRecognizer.get(), point);
 
     _autocorrectionContextNeedsUpdate = YES;
-    auto respectSelectionAnchor = self.interactionAssistant._wk_hasFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
+
+    auto hasRecognizedOrEnded = [](UIGestureRecognizer *gestureRecognizer) {
+        switch (gestureRecognizer.state) {
+        case UIGestureRecognizerStateBegan:
+        case UIGestureRecognizerStateChanged:
+        case UIGestureRecognizerStateEnded:
+            return true;
+        case UIGestureRecognizerStatePossible:
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateFailed:
+            return false;
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    };
+
+    auto triggeredByFloatingCursor = !hasRecognizedOrEnded(_textInteractionLoupeGestureRecognizer.get())
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+        && !hasRecognizedOrEnded([_mouseInteraction mouseTouchGestureRecognizer])
+#endif
+        && !hasRecognizedOrEnded(_textInteractionTapGestureRecognizer.get());
+
+    auto respectSelectionAnchor = triggeredByFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
     _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
         selectionHandler(endIsMoving);
     });

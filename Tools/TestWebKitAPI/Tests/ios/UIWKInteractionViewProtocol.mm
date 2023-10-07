@@ -126,12 +126,27 @@ TEST(UIWKInteractionViewProtocol, UpdateSelectionWithExtentPoint)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView synchronouslyLoadHTMLString:@"<body contenteditable style='font-size: 20px;'>Hello world</body>"];
 
+    auto setMouseTouchGestureState = ^(UIGestureRecognizerState state) {
+        for (UIGestureRecognizer *gestureRecognizer in [webView textInputContentView].gestureRecognizers) {
+            if ([gestureRecognizer.name isEqualToString:@"WKMouseTouch"]) {
+                gestureRecognizer.state = state;
+                break;
+            }
+        }
+    };
+
     [webView evaluateJavaScript:@"getSelection().setPosition(document.body, 1)" completionHandler:nil];
+    setMouseTouchGestureState(UIGestureRecognizerStateBegan);
+    setMouseTouchGestureState(UIGestureRecognizerStateEnded);
     [webView updateSelectionWithExtentPoint:CGPointMake(5, 20)];
+    setMouseTouchGestureState(UIGestureRecognizerStatePossible);
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
 
     [webView evaluateJavaScript:@"getSelection().setPosition(document.body, 0)" completionHandler:nil];
+    setMouseTouchGestureState(UIGestureRecognizerStateBegan);
+    setMouseTouchGestureState(UIGestureRecognizerStateEnded);
     [webView updateSelectionWithExtentPoint:CGPointMake(300, 20)];
+    setMouseTouchGestureState(UIGestureRecognizerStatePossible);
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
 }
 
