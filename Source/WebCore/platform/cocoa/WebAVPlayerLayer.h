@@ -30,6 +30,7 @@
 #include "FloatRect.h"
 #include <CoreGraphics/CGGeometry.h>
 #include <QuartzCore/CALayer.h>
+#include <pal/spi/cocoa/FoundationSPI.h>
 
 OBJC_CLASS AVPlayerController;
 OBJC_CLASS NSDictionary;
@@ -47,6 +48,7 @@ WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @property (nonatomic, retain, nonnull) CALayer *videoSublayer;
 @property (nonatomic, copy, nullable) NSDictionary *pixelBufferAttributes;
 @property CGSize videoDimensions;
+@property (nonatomic) NSEdgeInsets legibleContentInsets;
 - (WebCore::FloatRect)calculateTargetVideoFrame;
 @end
 

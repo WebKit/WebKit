@@ -41,6 +41,7 @@
 #import <UIKit/UIWindow.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -264,7 +265,7 @@ IGNORE_WARNINGS_END
         fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
 }
 
-#endif
+#endif // HAVE(PIP_CONTROLLER)
 
 @end
 
@@ -361,7 +362,7 @@ static WebAVPictureInPictureContentViewController *allocWebAVPictureInPictureCon
     return (WebAVPictureInPictureContentViewController *)[theClass alloc];
 }
 
-#endif
+#endif // HAVE(PIP_CONTROLLER)
 
 NS_ASSUME_NONNULL_BEGIN
 @interface WebAVPlayerViewController : NSObject<AVPlayerViewControllerDelegate>
@@ -406,7 +407,10 @@ NS_ASSUME_NONNULL_END
 
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 
-#if !PLATFORM(APPLETV)
+#if PLATFORM(APPLETV)
+    _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() init]);
+    [self configurePlayerViewControllerWithFullscreenInterface:interface];
+#else
     _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:interface->playerLayerView()]);
 #endif
     [_avPlayerViewController setModalPresentationStyle:UIModalPresentationOverFullScreen];
@@ -430,6 +434,36 @@ NS_ASSUME_NONNULL_END
 
     return self;
 }
+
+#if PLATFORM(APPLETV)
+- (void)configurePlayerViewControllerWithFullscreenInterface:(VideoFullscreenInterfaceAVKit *)interface
+{
+    // FIXME (116592344): This is a proof-of-concept hack to work around lack support for a custom
+    // AVPlayerLayerView in tvOS's version of AVPlayerViewController. This will be replaced once
+    // proper API is available.
+
+    RELEASE_ASSERT([_avPlayerViewController view]);
+
+    [[_avPlayerViewController playerLayerView] removeFromSuperview];
+
+    WebAVPlayerLayerView *playerLayerView = interface->playerLayerView();
+    [_avPlayerViewController setPlayerLayerView:playerLayerView];
+
+    playerLayerView.pixelBufferAttributes = [_avPlayerViewController pixelBufferAttributes];
+    playerLayerView.playerController = (AVPlayerController *)interface->playerController();
+    playerLayerView.translatesAutoresizingMaskIntoConstraints = NO;
+    playerLayerView.playerLayer.videoGravity = [_avPlayerViewController videoGravity];
+
+    UIView *contentContainerView = [_avPlayerViewController view].subviews.firstObject;
+    [contentContainerView addSubview:playerLayerView];
+    [NSLayoutConstraint activateConstraints:@[
+        [playerLayerView.widthAnchor constraintEqualToAnchor:contentContainerView.widthAnchor],
+        [playerLayerView.heightAnchor constraintEqualToAnchor:contentContainerView.heightAnchor],
+        [playerLayerView.centerXAnchor constraintEqualToAnchor:contentContainerView.centerXAnchor],
+        [playerLayerView.centerYAnchor constraintEqualToAnchor:contentContainerView.centerYAnchor],
+    ]];
+}
+#endif // PLATFORM(APPLETV)
 
 - (void)dealloc
 {

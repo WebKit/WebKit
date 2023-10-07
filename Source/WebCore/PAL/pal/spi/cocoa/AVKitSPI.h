@@ -439,15 +439,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if USE(APPLE_INTERNAL_SDK)
 
-typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
-    AVPlayerControllerStatusUnknown = 0,
-    AVPlayerControllerStatusReadyToPlay = 2,
-};
-
 typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
     AVPlayerControllerExternalPlaybackTypeNone = 0,
     AVPlayerControllerExternalPlaybackTypeAirPlay = 1,
     AVPlayerControllerExternalPlaybackTypeTVOut = 2,
+};
+
+typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
+    AVPlayerControllerStatusUnknown = 0,
+    AVPlayerControllerStatusReadyToPlay = 2,
 };
 
 @interface AVPlayerController : NSObject
@@ -458,6 +458,15 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+typedef NS_ENUM(NSInteger, AVPlayerControllerTimeControlStatus) {
+    AVPlayerControllerTimeControlStatusPaused,
+    AVPlayerControllerTimeControlStatusWaitingToPlayAtSpecifiedRate,
+    AVPlayerControllerTimeControlStatusPlaying
+};
+
+@interface AVTimeRange : NSObject
+@end
+
 @interface __AVPlayerLayerView (IPI)
 @property (nonatomic, strong, nullable) AVPlayerController *playerController;
 @property (nonatomic, readonly) AVPlayerLayer *playerLayer;
@@ -466,6 +475,11 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
 
 @interface AVPlayerViewController (IPI)
 @property (nonatomic, strong) __AVPlayerLayerView *playerLayerView;
+@end
+
+@interface AVTimeRange (IPI)
+- (instancetype)initWithCMTimeRange:(CMTimeRange)timeRange;
+- (instancetype)initWithStartTime:(NSTimeInterval)startTime endTime:(NSTimeInterval)duration;
 @end
 
 NS_ASSUME_NONNULL_END
