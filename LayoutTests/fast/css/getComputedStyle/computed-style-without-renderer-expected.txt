@@ -109,7 +109,6 @@ image-rendering: auto
 justify-content: normal
 justify-items: normal
 justify-self: auto
-kerning: 0
 left: auto
 letter-spacing: normal
 lighting-color: rgb(255, 255, 255)

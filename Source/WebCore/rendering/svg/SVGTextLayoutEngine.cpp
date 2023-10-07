@@ -516,8 +516,8 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
         // Apply dx/dy value adjustments to current text position, if needed.
         updateRelativePositionAdjustmentsIfNeeded(data.dx, data.dy);
 
-        // Calculate CSS 'kerning', 'letter-spacing' and 'word-spacing' for next character, if needed.
-        float spacing = spacingLayout.calculateCSSKerningAndSpacing(&svgStyle, lengthContext, currentCharacter);
+        // Calculate CSS 'letter-spacing' and 'word-spacing' for next character, if needed.
+        float spacing = spacingLayout.calculateCSSSpacing(currentCharacter);
 
         float textPathOffset = 0;
         if (m_inPathLayout) {
@@ -637,7 +637,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
         if (m_inPathLayout)
             updateCurrentTextPosition(x, y, glyphAdvance);
         else {
-            // Apply CSS 'kerning', 'letter-spacing' and 'word-spacing' to next character, if needed.
+            // Apply CSS 'letter-spacing' and 'word-spacing' to next character, if needed.
             if (spacing)
                 applySpacingToNextCharacter = true;
 

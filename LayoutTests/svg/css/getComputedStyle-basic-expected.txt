@@ -218,8 +218,6 @@ rect: style.getPropertyValue(justify-items) : normal
 rect: style.getPropertyCSSValue(justify-items) : [object CSSValueList]
 rect: style.getPropertyValue(justify-self) : auto
 rect: style.getPropertyCSSValue(justify-self) : [object CSSValueList]
-rect: style.getPropertyValue(kerning) : 0
-rect: style.getPropertyCSSValue(kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(left) : auto
 rect: style.getPropertyCSSValue(left) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(letter-spacing) : normal
@@ -712,8 +710,6 @@ g: style.getPropertyValue(justify-items) : normal
 g: style.getPropertyCSSValue(justify-items) : [object CSSValueList]
 g: style.getPropertyValue(justify-self) : auto
 g: style.getPropertyCSSValue(justify-self) : [object CSSValueList]
-g: style.getPropertyValue(kerning) : 0
-g: style.getPropertyCSSValue(kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(left) : auto
 g: style.getPropertyCSSValue(left) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(letter-spacing) : normal

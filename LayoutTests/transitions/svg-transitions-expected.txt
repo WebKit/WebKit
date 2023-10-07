@@ -14,7 +14,6 @@ PASS - "stroke-dasharray" property for "rect7" element at 1s saw something close
 PASS - "stop-color" property for "stop1" element at 1s saw something close to: 127,127,0
 PASS - "stop-opacity" property for "stop1" element at 1s saw something close to: 0.75
 PASS - "stroke-miterlimit" property for "polyline1" element at 1s saw something close to: 11
-PASS - "kerning" property for "text1" element at 1s saw something close to: 5
 PASS - "baseline-shift" property for "text1" element at 1s saw something close to: 5
 PASS - "flood-opacity" property for "flood1" element at 1s saw something close to: 0.5
 PASS - "flood-color" property for "flood1" element at 1s saw something close to: 127,127,0
