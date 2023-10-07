@@ -352,10 +352,9 @@ void RuleSetBuilder::updateCascadeLayerPriorities()
 
     auto layerCount = m_ruleSet->m_cascadeLayers.size();
 
-    Vector<RuleSet::CascadeLayerIdentifier> layersInPriorityOrder;
-    layersInPriorityOrder.reserveInitialCapacity(layerCount);
-    for (RuleSet::CascadeLayerIdentifier identifier = 1; identifier <= layerCount; ++identifier)
-        layersInPriorityOrder.uncheckedAppend(identifier);
+    Vector<RuleSet::CascadeLayerIdentifier> layersInPriorityOrder(layerCount, [](size_t i) {
+        return i + 1;
+    });
 
     std::sort(layersInPriorityOrder.begin(), layersInPriorityOrder.end(), compare);
 
@@ -473,9 +472,9 @@ void RuleSetBuilder::MediaQueryCollector::pop(const MQ::MediaQueryList& mediaQue
 
     if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {
         RuleSet::DynamicMediaQueryRules rules;
-        rules.mediaQueries.reserveCapacity(rules.mediaQueries.size() + dynamicContextStack.size());
-        for (auto& context : dynamicContextStack)
-            rules.mediaQueries.uncheckedAppend(context.queries);
+        rules.mediaQueries = WTF::map(dynamicContextStack, [](auto& context) {
+            return context.queries;
+        });
 
         if (collectDynamic) {
             rules.affectedRulePositions.appendVector(dynamicContextStack.last().affectedRulePositions);

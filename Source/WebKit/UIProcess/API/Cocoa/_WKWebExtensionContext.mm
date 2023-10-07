@@ -252,6 +252,16 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
     return _webExtensionContext->setRequestedOptionalAccessToAllHosts(requested);
 }
 
+- (BOOL)hasAccessInPrivateBrowsing
+{
+    return _webExtensionContext->hasAccessInPrivateBrowsing();
+}
+
+- (void)setHasAccessInPrivateBrowsing:(BOOL)hasAccess
+{
+    return _webExtensionContext->setHasAccessInPrivateBrowsing(hasAccess);
+}
+
 static inline NSSet<_WKWebExtensionPermission> *toAPI(const WebKit::WebExtensionContext::PermissionsMap::KeysConstIteratorRange& permissions)
 {
     if (!permissions.size())
@@ -540,7 +550,7 @@ static inline NSArray *toAPI(const WebKit::WebExtensionContext::WindowVector& wi
 
 - (id<_WKWebExtensionWindow>)focusedWindow
 {
-    return toAPI(_webExtensionContext->focusedWindow());
+    return toAPI(_webExtensionContext->focusedWindow(WebKit::WebExtensionContext::IgnoreExtensionAccess::Yes));
 }
 
 static inline NSSet *toAPI(const WebKit::WebExtensionContext::TabMapValueIterator& tabs)
@@ -844,6 +854,15 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (void)setRequestedOptionalAccessToAllHosts:(BOOL)requested
+{
+}
+
+- (BOOL)hasAccessInPrivateBrowsing
+{
+    return NO;
+}
+
+- (void)setHasAccessInPrivateBrowsing:(BOOL)hasAccess
 {
 }
 

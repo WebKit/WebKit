@@ -158,6 +158,39 @@ TEST(WKWebExtensionAPIWindows, GetAll)
     auto *backgroundScript = Util::constructScript(@[
         @"const windows = await browser.windows.getAll();",
         @"const windowOne = windows[0];",
+
+        @"browser.test.assertEq(windows.length, 1, 'One window should be returned');",
+
+        @"browser.test.assertEq(typeof windowOne, 'object', 'windowOne should be an object');",
+        @"browser.test.assertEq(typeof windowOne.id, 'number', 'windowOne id should be a number');",
+        @"browser.test.assertEq(windowOne.type, 'normal', 'windowOne type should be normal');",
+        @"browser.test.assertEq(windowOne.state, 'normal', 'windowOne state should be normal');",
+        @"browser.test.assertTrue(windowOne.focused, 'windowOne should be focused');",
+        @"browser.test.assertFalse(windowOne.incognito, 'windowOne should not be in incognito mode');",
+        @"browser.test.assertFalse(windowOne.alwaysOnTop, 'windowOne should not be always on top');",
+        @"browser.test.assertEq(windowOne.top, 50, 'windowOne top position should be 50');",
+        @"browser.test.assertEq(windowOne.left, 100, 'windowOne left position should be 100');",
+        @"browser.test.assertEq(windowOne.width, 800, 'windowOne width should be 800');",
+        @"browser.test.assertEq(windowOne.height, 600, 'windowOne height should be 600');",
+
+        @"browser.test.notifyPass();"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+
+    [manager openNewWindowUsingPrivateBrowsing:YES];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIWindows, GetAllWithPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const windows = await browser.windows.getAll();",
+        @"const windowOne = windows[0];",
         @"const windowTwo = windows[1];",
 
         @"browser.test.assertEq(windows.length, 2, 'Two windows should be returned');",
@@ -196,7 +229,9 @@ TEST(WKWebExtensionAPIWindows, GetAll)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *windowTwo = [manager openNewWindow];
+    manager.get().context.hasAccessInPrivateBrowsing = YES;
+
+    auto *windowTwo = [manager openNewWindowUsingPrivateBrowsing:YES];
 
 #if PLATFORM(MAC)
     // This is 75pt from top on a screen of 1920 x 1080 in Mac screen coordinates.
@@ -206,7 +241,6 @@ TEST(WKWebExtensionAPIWindows, GetAll)
 #endif
     windowTwo.windowState = _WKWebExtensionWindowStateMinimized;
     windowTwo.windowType = _WKWebExtensionWindowTypePopup;
-    windowTwo.usingPrivateBrowsing = YES;
 
     [manager loadAndRun];
 }
@@ -334,6 +368,72 @@ TEST(WKWebExtensionAPIWindows, Create)
         @"  focused: true,",
         @"  left: 300,",
         @"  height: 400,",
+        @"  incognito: false,",
+        @"  state: 'normal',",
+        @"  type: 'popup',",
+        @"};",
+
+        @"const window = await browser.windows.create(windowOptions);",
+        @"browser.test.assertEq(typeof window, 'object', 'The window should be an object');",
+        @"browser.test.assertEq(window.top, 50, 'The window should have the specified top');",
+        @"browser.test.assertEq(window.left, 300, 'The window should have the specified left');",
+        @"browser.test.assertEq(window.width, 800, 'The window should have the specified width');",
+        @"browser.test.assertEq(window.height, 400, 'The window should have the specified height');",
+        @"browser.test.assertFalse(window.incognito, 'The window should not be in incognito mode');",
+        @"browser.test.assertEq(window.type, 'popup', 'The window should be of type popup');",
+        @"browser.test.assertEq(window.state, 'normal', 'The window state should be normal');",
+        @"browser.test.assertTrue(window.focused, 'The window should be focused');",
+
+        @"browser.test.notifyPass();"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_EQ(manager.get().windows.count, 1lu);
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(manager.get().windows.count, 2lu);
+}
+
+TEST(WKWebExtensionAPIWindows, CreateIncognitoWithoutPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const windowOptions = {",
+        @"  focused: true,",
+        @"  left: 300,",
+        @"  height: 400,",
+        @"  incognito: true,",
+        @"  state: 'normal',",
+        @"  type: 'popup',",
+        @"};",
+
+        @"const window = await browser.windows.create(windowOptions);",
+        @"browser.test.assertEq(window, undefined, 'The window should be created but undefined without access');",
+
+        @"browser.test.notifyPass();"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_EQ(manager.get().windows.count, 1lu);
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(manager.get().windows.count, 2lu);
+}
+
+TEST(WKWebExtensionAPIWindows, CreateIncognitoWithPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const windowOptions = {",
+        @"  focused: true,",
+        @"  left: 300,",
+        @"  height: 400,",
         @"  incognito: true,",
         @"  state: 'normal',",
         @"  type: 'popup',",
@@ -353,7 +453,16 @@ TEST(WKWebExtensionAPIWindows, Create)
         @"browser.test.notifyPass();"
     ]);
 
-    Util::loadAndRunExtension(windowsManifest, @{ @"background.js": backgroundScript });
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.hasAccessInPrivateBrowsing = YES;
+
+    EXPECT_EQ(manager.get().windows.count, 1lu);
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(manager.get().windows.count, 2lu);
 }
 
 TEST(WKWebExtensionAPIWindows, Update)

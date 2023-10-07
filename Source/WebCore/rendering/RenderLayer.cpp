@@ -119,6 +119,7 @@
 #include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
+#include "RenderSVGViewportContainer.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderStyleSetters.h"
@@ -1667,6 +1668,8 @@ bool RenderLayer::computeHasVisibleContent() const
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // FIXME: [LBSE] Eventually cache if we're part of a RenderSVGHiddenContainer subtree to avoid tree walks.
     if (renderer().document().settings().layerBasedSVGEngineEnabled() && lineageOfType<RenderSVGHiddenContainer>(renderer()).first())
+        return false;
+    if (renderer().isAnonymous() && is<RenderSVGViewportContainer>(renderer()))
         return false;
 #endif
     if (m_isHiddenByOverflowTruncation)

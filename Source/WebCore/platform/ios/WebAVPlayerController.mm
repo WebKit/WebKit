@@ -39,9 +39,11 @@
 #import <wtf/text/WTFString.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerController)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVTimeRange)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 OBJC_CLASS AVAssetTrack;
@@ -204,6 +206,7 @@ Class webAVPlayerControllerClass()
     NSTimeInterval _seekToTime;
     WebAVMediaSelectionOption *_currentAudioMediaSelectionOption;
     WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
+    RetainPtr<AVPlayer> _player;
 }
 
 - (instancetype)init
@@ -215,6 +218,14 @@ Class webAVPlayerControllerClass()
 
     if (!(self = [super init]))
         return self;
+
+#if PLATFORM(APPLETV)
+    // FIXME (116592344): Create a phony AVPlayer to satisfy AVPlayerViewController's requirements on tvOS.
+    // This can be removed once AVPlayerController API is available on tvOS.
+    AVAsset *asset = [PAL::getAVAssetClass() assetWithURL:[NSURL URLWithString:@"about:blank"]];
+    RetainPtr playerItem = adoptNS([PAL::allocAVPlayerItemInstance() initWithAsset:asset]);
+    _player = adoptNS([PAL::allocAVPlayerInstance() initWithPlayerItem:playerItem.get()]);
+#endif
 
     initAVPlayerController();
     self.playerControllerProxy = adoptNS([allocAVPlayerControllerInstance() init]).get();
@@ -249,7 +260,12 @@ Class webAVPlayerControllerClass()
 
 - (AVPlayer *)player
 {
-    return nil;
+    return _player.get();
+}
+
+- (AVPlayerItem *)currentItem
+{
+    return [_player currentItem];
 }
 
 - (id)forwardingTargetForSelector:(SEL)selector
@@ -911,6 +927,223 @@ Class webAVPlayerControllerClass()
 {
     return [NSSet setWithObjects:@"hasLiveStreamingContent", @"minTiming", @"maxTiming", @"seekableTimeRangesLastModifiedTime", nil];
 }
+
+#if PLATFORM(APPLETV)
+
+// FIXME (116592344): Remove these methods once AVPlayerController API is available on tvOS.
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingEffectiveRateNonZero
+{
+    return [NSSet setWithObject:@"self.rate"];
+}
+
+- (BOOL)effectiveRateNonZero
+{
+    return self.playing;
+}
+
+- (CMTime)forwardPlaybackEndTime
+{
+    return PAL::CMTimeMakeWithSeconds(self.maxTime, 10000000);
+}
+
+- (CMTime)backwardPlaybackEndTime
+{
+    return PAL::CMTimeMakeWithSeconds(self.minTime, 10000000);
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsSeekingTV
+{
+    return [NSSet setWithObject:@"self.seeking"];
+}
+
+- (BOOL)isSeekingTV
+{
+    return self.isSeeking;
+}
+
+- (BOOL)hasStartAndEndDates
+{
+    return NO;
+}
+
+- (AVTimeRange *)timeRangeSeekable
+{
+    auto seekableTimeRanges = self.seekableTimeRanges;
+    if (!seekableTimeRanges)
+        return nil;
+
+    CMTime minSeekable = [seekableTimeRanges.firstObject CMTimeRangeValue].start;
+    CMTime maxSeekable = PAL::CMTimeRangeGetEnd([seekableTimeRanges.lastObject CMTimeRangeValue]);
+    CMTime duration = PAL::CMTimeSubtract(maxSeekable, minSeekable);
+    return [allocAVTimeRangeInstance() initWithCMTimeRange:PAL::CMTimeRangeMake(minSeekable, duration)];
+}
+
+- (BOOL)hasItem
+{
+    return YES;
+}
+
+- (BOOL)isPlaybackLikelyToKeepUp
+{
+    // FIXME: We don't currently pipe this information up through the PlaybackSessionModel
+    return YES;
+}
+
+- (NSValue *)overrideForForwardPlaybackEndTime
+{
+    return nil;
+}
+
+- (NSValue *)overrideForReversePlaybackEndTime
+{
+    return nil;
+}
+
+- (double)timebaseRate
+{
+    return self.rate;
+}
+
+- (NSArray *)externalMetadata
+{
+    return nil;
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingTimeControlStatus
+{
+    return [NSSet setWithObject:@"self.rate"];
+}
+
+- (AVPlayerControllerTimeControlStatus)timeControlStatus
+{
+    return !!self.rate ? AVPlayerControllerTimeControlStatusPlaying : AVPlayerControllerTimeControlStatusPaused;
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingDisplayedDuration
+{
+    return [NSSet setWithObject:@"self.contentDuration"];
+}
+
+- (NSTimeInterval)displayedDuration
+{
+    return self.contentDuration;
+}
+
+- (NSTimeInterval)contentDurationCached
+{
+    return self.contentDuration;
+}
+
+- (NSTimeInterval)currentDisplayTime
+{
+    return self.timing.currentValue;
+}
+
+- (NSDate*)currentOrEstimatedDate
+{
+    return nil;
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingCurrentTime
+{
+    return [NSSet setWithObject:@"self.timing"];
+}
+
+- (NSTimeInterval)currentTime
+{
+    return self.timing.currentValue;
+}
+
+- (AVTimeRange*)displayTimeRangeForNavigation
+{
+    return self.timeRangeForNavigation;
+}
+
+- (BOOL)isAtMaxTime
+{
+    return self.currentTime >= self.maxTime;
+}
+
+- (BOOL)isContentDurationIndefinite
+{
+    return NO;
+}
+
+- (AVTimeRange *)timeRangeForNavigation
+{
+    return [[allocAVTimeRangeInstance() initWithStartTime:self.minTime endTime:self.maxTime] autorelease];
+}
+
+- (NSTimeInterval)timeFromDisplayTime:(NSTimeInterval)displayTime
+{
+    return displayTime;
+}
+
+- (NSTimeInterval)displayTimeFromTime:(NSTimeInterval)assetTime
+{
+    return assetTime;
+}
+
+- (float)activeRate
+{
+    return self.rate;
+}
+
+- (void)setActiveRate:(float)rate
+{
+    self.rate = rate;
+}
+
+- (void)requestNavigateToTime:(NSTimeInterval)targetAssetTime fromTime:(NSTimeInterval)previousTime reason:(NSInteger)reason playWhenReady:(BOOL)playWhenReady permissionHandler:(void (^)(BOOL allowed))permissionHandler seekCompletion:(void (^)(BOOL allowed, BOOL successful))seekCompletion
+{
+    [self seekToTime:targetAssetTime toleranceBefore:0 toleranceAfter:0];
+    if (playWhenReady)
+        [self play:nil];
+    if (permissionHandler)
+        permissionHandler(YES);
+    if (seekCompletion)
+        seekCompletion(YES, YES);
+}
+
+- (void)seekToTime:(NSTimeInterval)time seekReason:(NSInteger)seekReason completionHandler:(void (^)(BOOL))completionHandler
+{
+    [self seekToTime:time toleranceBefore:0 toleranceAfter:0];
+    if (completionHandler)
+        completionHandler(YES);
+}
+
+- (void)requestSeekToTime:(NSTimeInterval)time seekReason:(NSInteger)seekReason permissionHandler:(void(^)(BOOL allowed))permissionHandler completionHandler:(void (^)(BOOL allowed, BOOL successful))completionHandler
+{
+    [self seekToTime:time toleranceBefore:0 toleranceAfter:0];
+    if (permissionHandler)
+        permissionHandler(YES);
+    if (completionHandler)
+        completionHandler(YES, YES);
+}
+
+- (void)requestPauseWithCompletion:(void (^)(BOOL allowed))completion
+{
+    [self pause:nil];
+    if (completion)
+        completion(YES);
+}
+
+- (void)requestPlayWithCompletion:(void (^)(BOOL allowed))completion
+{
+    [self play:nil];
+    if (completion)
+        completion(YES);
+}
+
+- (void)requestSeekToTime:(NSTimeInterval)targetAssetTime reason:(NSInteger)reason playWhenReady:(BOOL)playWhenReady
+{
+    [self seekToTime:targetAssetTime toleranceBefore:0 toleranceAfter:0];
+    if (playWhenReady)
+        [self play:nil];
+}
+
+#endif // PLATFORM(APPLETV)
 
 @end
 

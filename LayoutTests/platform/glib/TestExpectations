@@ -1288,6 +1288,7 @@ webkit.org/b/216871 imported/w3c/web-platform-tests/mathml/relations/css-styling
 # OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/261024 fast/canvas/offscreen-toggle-display.html [ ImageOnlyFailure Pass Timeout ]
 webkit.org/b/203146 fast/canvas/offscreen-enabled.html [ Pass ]
 webkit.org/b/203146 http/wpt/offscreen-canvas [ Pass ]
 webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Pass ]

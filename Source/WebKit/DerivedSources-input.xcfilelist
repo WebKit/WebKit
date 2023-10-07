@@ -199,6 +199,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionAlarmParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContentWorldType.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContextParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionControllerParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionDynamicScripts.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionEventListenerType.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
@@ -326,8 +327,8 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexState.serialization.in
 $(PROJECT_DIR)/Shared/WebHitTestResultData.serialization.in
 $(PROJECT_DIR)/Shared/WebNavigationDataStore.serialization.in
 $(PROJECT_DIR)/Shared/WebPageCreationParameters.serialization.in
-$(PROJECT_DIR)/Shared/WebPageNetworkParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPageGroupData.serialization.in
+$(PROJECT_DIR)/Shared/WebPageNetworkParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPopupItem.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessDataStoreParameters.serialization.in
@@ -338,6 +339,7 @@ $(PROJECT_DIR)/Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteData/WebsiteDataType.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebsitePoliciesData.serialization.in
+$(PROJECT_DIR)/Shared/WebUserContentControllerDataTypes.serialization.in
 $(PROJECT_DIR)/Shared/XR/XRSystem.serialization.in
 $(PROJECT_DIR)/Shared/ios/DynamicViewportSizeUpdate.serialization.in
 $(PROJECT_DIR)/Shared/ios/InteractionInformationAtPosition.serialization.in
@@ -425,6 +427,7 @@ $(PROJECT_DIR)/WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/RemoteImageBufferProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/MediaOverridesForTesting.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaSourcePrivateRemote.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioHardwareListener.messages.in
@@ -457,6 +460,7 @@ $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUIExtensionController.messages.in
 $(PROJECT_DIR)/WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
+$(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebSocketChannel.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebTransportChannel.messages.in

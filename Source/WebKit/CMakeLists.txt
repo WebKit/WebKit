@@ -419,6 +419,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebProcessDataStoreParameters.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in
     Shared/WebPushMessage.serialization.in
+    Shared/WebUserContentControllerDataTypes.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in
     Shared/WebsitePoliciesData.serialization.in
 
@@ -514,6 +515,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in
     WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
 
+    WebProcess/GPU/media/MediaOverridesForTesting.serialization.in
     WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
@@ -521,6 +523,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 
     WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
+
+    WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 
     WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
 )

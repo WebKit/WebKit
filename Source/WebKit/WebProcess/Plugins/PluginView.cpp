@@ -397,22 +397,41 @@ void PluginView::initializePlugin()
     }
 }
 
+PluginLayerHostingStrategy PluginView::layerHostingStrategy() const
+{
+    if (!m_isInitialized)
+        return PluginLayerHostingStrategy::None;
+
+    return m_plugin->layerHostingStrategy();
+}
+
 #if PLATFORM(COCOA)
 
 PlatformLayer* PluginView::platformLayer() const
 {
     if (!m_isInitialized)
-        return nil;
+        return nullptr;
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (is<PDFPlugin>(m_plugin))
-        return downcast<PDFPlugin>(m_plugin)->pluginLayer();
+    if (m_plugin->layerHostingStrategy() == PluginLayerHostingStrategy::PlatformLayer)
+        return m_plugin->platformLayer();
 #endif
 
     return nullptr;
 }
 
 #endif
+
+GraphicsLayer* PluginView::graphicsLayer() const
+{
+    if (!m_isInitialized)
+        return nullptr;
+
+    if (m_plugin->layerHostingStrategy() == PluginLayerHostingStrategy::GraphicsLayer)
+        return m_plugin->graphicsLayer();
+
+    return nullptr;
+}
 
 bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {

@@ -1901,7 +1901,7 @@ RefPtr<ShareableBitmap> PDFPlugin::snapshot()
     return bitmap;
 }
 
-CALayer *PDFPlugin::pluginLayer()
+PlatformLayer* PDFPlugin::platformLayer() const
 {
     return m_containerLayer.get();
 }

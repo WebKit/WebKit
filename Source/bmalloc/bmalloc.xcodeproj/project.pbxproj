@@ -131,6 +131,8 @@
 		2B6EB7A029EE102E00F10400 /* pas_report_crash_pgm_report.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B6EB79F29EE102E00F10400 /* pas_report_crash_pgm_report.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2BDF4F4C29E8B8BA0056BF50 /* pas_report_crash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDF4F4A29E8B8BA0056BF50 /* pas_report_crash.c */; };
 		2BDF4F4D29E8B8BA0056BF50 /* pas_report_crash.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDF4F4B29E8B8BA0056BF50 /* pas_report_crash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		306D490A2ACCA05900CCFEE5 /* AllocationCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 306D49052ACCA01400CCFEE5 /* AllocationCounts.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		306D490B2ACCA05A00CCFEE5 /* AllocationCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 306D49052ACCA01400CCFEE5 /* AllocationCounts.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4426E2801C838EE0008EB042 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4426E27E1C838EE0008EB042 /* Logging.cpp */; };
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F47248210BA2F500B730BB /* MemoryStatusSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1329,6 +1331,7 @@
 		2CE2AE512769928200D02BBC /* pas_compact_tagged_void_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_tagged_void_ptr.h; path = libpas/src/libpas/pas_compact_tagged_void_ptr.h; sourceTree = "<group>"; };
 		2CE2AE572769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_probabilistic_guard_malloc_allocator.c; path = libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.c; sourceTree = "<group>"; };
 		2CE2AE582769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_probabilistic_guard_malloc_allocator.h; path = libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.h; sourceTree = "<group>"; };
+		306D49052ACCA01400CCFEE5 /* AllocationCounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AllocationCounts.h; path = bmalloc/AllocationCounts.h; sourceTree = "<group>"; };
 		4426E27E1C838EE0008EB042 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logging.cpp; path = bmalloc/Logging.cpp; sourceTree = "<group>"; };
 		4426E27F1C838EE0008EB042 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = bmalloc/Logging.h; sourceTree = "<group>"; };
 		52F47248210BA2F500B730BB /* MemoryStatusSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemoryStatusSPI.h; path = bmalloc/darwin/MemoryStatusSPI.h; sourceTree = "<group>"; };
@@ -2071,6 +2074,7 @@
 		14D9DB4E17F2866E00EAAB79 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				306D49052ACCA01400CCFEE5 /* AllocationCounts.h */,
 				7939885A2076EEB50074A2E7 /* BulkDecommit.h */,
 				140FA00219CE429C00FFD3C8 /* BumpRange.h */,
 				147DC6E21CA5B70B00724E8D /* Chunk.h */,
@@ -2163,6 +2167,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				306D490A2ACCA05900CCFEE5 /* AllocationCounts.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2174,6 +2179,7 @@
 				14DD78C518F48D7500950702 /* Algorithm.h in Headers */,
 				0F7EB8341F9541B000F1ABCB /* AllIsoHeaps.h in Headers */,
 				0F7EB84F1F954D4E00F1ABCB /* AllIsoHeapsInlines.h in Headers */,
+				306D490B2ACCA05A00CCFEE5 /* AllocationCounts.h in Headers */,
 				14DD789818F48D4A00950702 /* Allocator.h in Headers */,
 				6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */,
 				14DD78C718F48D7500950702 /* BAssert.h in Headers */,

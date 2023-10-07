@@ -2413,7 +2413,6 @@ editing/style/preserve-selection-direction.html [ Failure ]
 fast/canvas/canvas-blending-text.html [ Failure ]
 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
 fast/canvas/canvas-pattern-from-modified-canvas.html [ Failure ]
-fast/canvas/canvas-pattern-modify.html [ Failure ]
 fast/constructors/event-source-caching.html [ Failure ]
 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
@@ -2503,6 +2502,10 @@ fast/text/whitespace/inline-whitespace-wrapping-8.html [ ImageOnlyFailure ]
 
 # Depends on the system fonts
 fast/css/css2-system-fonts.html [ Failure Pass ]
+fast/css/font-face-multiple-faces.html [ Failure Pass ]
+fast/text/backslash-to-yen-sign-euc.html [ Failure Pass ]
+fast/text/international/plane2.html [ Failure Pass ]
+fonts/fantasy.html [ Failure Pass ]
 
 # Failing on WinCairo Debug tester
 fast/text/atsui-multiple-renderers.html [ Failure Pass ]
@@ -2579,3 +2582,7 @@ fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
 fast/text/simple-line-hyphens-with-word-letter-spacing.html [ ImageOnlyFailure ]
 fast/text/softHyphen.html [ ImageOnlyFailure ]
 fast/text/synthetic-oblique.html [ ImageOnlyFailure ]
+
+webkit.org/b/245080 fast/text/whitespace/nowrap-clear-float.html [ Skip ] # Skip a failing dump render tree test
+
+webkit.org/b/262817 fast/canvas/canvas-pattern-modify.html [ Pass Failure ]

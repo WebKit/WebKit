@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "XRDeviceInfo.h"
+#pragma once
 
-#if ENABLE(WEBXR)
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "WebCoreArgumentCoders.h"
+#include <wtf/Forward.h>
 
 namespace WebKit {
 
-void XRDeviceInfo::encode(IPC::Encoder& encoder) const
-{
-    encoder << identifier << supportsOrientationTracking << supportsStereoRendering << vrFeatures << recommendedResolution;
-}
+struct WebExtensionScriptInjectionParameters {
+    std::optional<WebExtensionTabIdentifier> tabIdentifier;
 
-std::optional<XRDeviceInfo> XRDeviceInfo::decode(IPC::Decoder& decoder)
-{
-    XRDeviceInfo deviceFeatures;
-    if (!decoder.decode(deviceFeatures.identifier))
-        return std::nullopt;
+    std::optional<Vector<String>> arguments;
+    std::optional<Vector<String>> files;
+    std::optional<Vector<WebExtensionFrameIdentifier>> frameIDs;
 
-    if (!decoder.decode(deviceFeatures.supportsOrientationTracking))
-        return std::nullopt;
+    std::optional<String> code;
+    std::optional<String> css;
+    std::optional<String> function;
 
-    if (!decoder.decode(deviceFeatures.supportsStereoRendering))
-        return std::nullopt;
+    WebExtensionContentWorldType world { WebExtensionContentWorldType::ContentScript };
+};
 
-    if (!decoder.decode(deviceFeatures.vrFeatures))
-        return std::nullopt;
+} // namespace WebKit
 
-    if (!decoder.decode(deviceFeatures.recommendedResolution))
-        return std::nullopt;
-
-    return deviceFeatures;
-}
-
-}
-
-#endif // ENABLE(WEBXR)
+#endif // ENABLE(WK_WEB_EXTENSIONS)

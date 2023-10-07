@@ -142,11 +142,9 @@ Ref<FetchResponse> ServiceWorkerInternals::createOpaqueWithBlobBodyResponse(Scri
 
 Vector<String> ServiceWorkerInternals::fetchResponseHeaderList(FetchResponse& response)
 {
-    Vector<String> headerNames;
-    headerNames.reserveInitialCapacity(response.internalResponseHeaders().size());
-    for (auto keyValue : response.internalResponseHeaders())
-        headerNames.uncheckedAppend(keyValue.key);
-    return headerNames;
+    return WTF::map(response.internalResponseHeaders(), [](auto& keyValue) {
+        return keyValue.key;
+    });
 }
 
 #if !PLATFORM(MAC)

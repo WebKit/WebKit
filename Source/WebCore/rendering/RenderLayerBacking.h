@@ -273,6 +273,8 @@ public:
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
     GraphicsLayer* overflowControlsContainer() const { return m_overflowControlsContainer.get(); }
 
+    GraphicsLayer* layerForContents() const;
+
     void adjustOverflowControlsPositionRelativeToAncestor(const RenderLayer&);
 
     bool canCompositeFilters() const { return m_canCompositeFilters; }

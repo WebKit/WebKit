@@ -139,6 +139,15 @@ private:
     friend Ref adoptRef<T>(T&);
     template<typename X, typename Y> friend class Ref;
 
+    template<typename X, typename Y, typename W, typename Z>
+    friend bool operator==(const Ref<X, Y>&, const Ref<W, Z>&);
+
+    template<typename X, typename Y, typename W>
+    friend bool operator==(const Ref<X, Y>&, W*);
+
+    template<typename X, typename Y, typename W>
+    friend bool operator==(W*, const Ref<X, Y>&);
+
     enum AdoptTag { Adopt };
     Ref(T& object, AdoptTag)
         : m_ptr(&object)
@@ -206,6 +215,24 @@ inline Ref<T, U>& Ref<T, U>::operator=(const Ref<X, Y>& reference)
     Ref copiedReference = reference;
     swap(copiedReference);
     return *this;
+}
+
+template<typename X, typename Y, typename W, typename Z>
+inline bool operator==(const Ref<X, Y>& a, const Ref<W, Z>& b)
+{
+    return a.m_ptr == b.m_ptr;
+}
+
+template<typename X, typename Y, typename W, typename Z>
+inline bool operator==(const RefPtr<X, Y>& a, W* b)
+{
+    return a.m_ptr == b;
+}
+
+template<typename X, typename Y, typename W, typename Z>
+inline bool operator==(W* a, const RefPtr<X, Y>& b)
+{
+    return a == b.m_ptr;
 }
 
 template<typename T, typename U>

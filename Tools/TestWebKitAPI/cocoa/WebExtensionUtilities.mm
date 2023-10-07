@@ -62,7 +62,7 @@
 
     _internalDelegate = [[TestWebExtensionsDelegate alloc] init];
 
-    auto *window = [[TestWebExtensionWindow alloc] initWithExtensionController:_controller];
+    auto *window = [[TestWebExtensionWindow alloc] initWithExtensionController:_controller usesPrivateBrowsing:NO];
     auto *windows = [NSMutableArray arrayWithObject:window];
 
     __weak TestWebExtensionManager *weakSelf = self;
@@ -76,11 +76,10 @@
     };
 
     _internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
-        auto *newWindow = [weakSelf openNewWindow];
+        auto *newWindow = [weakSelf openNewWindowUsingPrivateBrowsing:options.shouldUsePrivateBrowsing];
 
         newWindow.windowType = options.desiredWindowType;
         newWindow.windowState = options.desiredWindowState;
-        newWindow.usingPrivateBrowsing = options.shouldUsePrivateBrowsing;
 
         CGRect currentFrame = newWindow.frame;
         CGRect desiredFrame = options.desiredFrame;
@@ -151,7 +150,12 @@
 
 - (TestWebExtensionWindow *)openNewWindow
 {
-    auto *newWindow = [[TestWebExtensionWindow alloc] initWithExtensionController:_controller];
+    return [self openNewWindowUsingPrivateBrowsing:NO];
+}
+
+- (TestWebExtensionWindow *)openNewWindowUsingPrivateBrowsing:(BOOL)usesPrivateBrowsing
+{
+    auto *newWindow = [[TestWebExtensionWindow alloc] initWithExtensionController:_controller usesPrivateBrowsing:usesPrivateBrowsing];
 
     __weak TestWebExtensionManager *weakSelf = self;
     __weak TestWebExtensionWindow *weakWindow = newWindow;
@@ -273,6 +277,13 @@
 
 @end
 
+static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
+{
+    static WKUserContentController *privateController = [[WKUserContentController alloc] init];
+    static WKUserContentController *normalController = [[WKUserContentController alloc] init];
+    return usingPrivateBrowsing ? privateController : normalController;
+}
+
 @implementation TestWebExtensionTab {
     __weak _WKWebExtensionController *_extensionController;
 }
@@ -290,8 +301,12 @@
     _window = window;
 
     if (extensionController) {
+        BOOL usingPrivateBrowsing = dynamic_objc_cast<TestWebExtensionWindow>(window).usingPrivateBrowsing;
+
         WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
         configuration._webExtensionController = extensionController;
+        configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
+        configuration.userContentController = userContentController(usingPrivateBrowsing);
 
         _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
         _extensionController = extensionController;
@@ -499,21 +514,19 @@
 
 - (instancetype)init
 {
-    return [self initWithExtensionController:nil];
+    return [self initWithExtensionController:nil usesPrivateBrowsing:NO];
 }
 
-- (instancetype)initWithExtensionController:(_WKWebExtensionController *)extensionController
+- (instancetype)initWithExtensionController:(_WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing
 {
     if (!(self = [super init]))
         return nil;
 
     _extensionController = extensionController;
 
-    _tabs = [NSMutableArray array];
-    _activeTab = [self openNewTab];
     _windowState = _WKWebExtensionWindowStateNormal;
     _windowType = _WKWebExtensionWindowTypeNormal;
-
+    _usingPrivateBrowsing = usesPrivateBrowsing;
     _screenFrame = CGRectMake(0, 0, 1920, 1080);
 
 #if PLATFORM(MAC)
@@ -524,6 +537,9 @@
 #endif
 
     _previousFrame = CGRectNull;
+
+    _tabs = [NSMutableArray array];
+    _activeTab = [self openNewTab];
 
     return self;
 }

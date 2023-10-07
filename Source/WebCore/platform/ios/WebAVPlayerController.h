@@ -27,10 +27,14 @@
 
 #import <pal/spi/cocoa/AVKitSPI.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 namespace WebCore {
 class PlaybackSessionModel;
 class PlaybackSessionInterfaceAVKit;
 }
+
+@class AVTimeRange;
 
 @interface WebAVMediaSelectionOption : NSObject
 - (instancetype)initWithMediaType:(AVMediaType)type displayName:(NSString *)displayName;
@@ -46,8 +50,8 @@ class PlaybackSessionInterfaceAVKit;
 - (void)setAllowsPictureInPicture:(BOOL)allowsPictureInPicture;
 
 @property (retain) AVPlayerController *playerControllerProxy;
-@property (assign /*weak*/) WebCore::PlaybackSessionModel* delegate;
-@property (assign /*weak*/) WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
+@property (assign, nullable /*weak*/) WebCore::PlaybackSessionModel* delegate;
+@property (assign, nullable /*weak*/) WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
 
 @property (readonly) BOOL canScanForward;
 @property BOOL canScanBackward;
@@ -109,9 +113,35 @@ class PlaybackSessionInterfaceAVKit;
 - (void)setDefaultPlaybackRate:(double)defaultPlaybackRate fromJavaScript:(BOOL)fromJavaScript;
 - (void)setRate:(double)rate fromJavaScript:(BOOL)fromJavaScript;
 
+#if PLATFORM(APPLETV)
+// FIXME (116592344): Remove these declarations once AVPlayerController API is available on tvOS.
+@property (nonatomic, readonly, getter=isEffectiveRateNonZero) BOOL effectiveRateNonZero;
+@property (nonatomic, readonly) CMTime forwardPlaybackEndTime;
+@property (nonatomic, readonly) CMTime backwardPlaybackEndTime;
+@property (nonatomic, readonly) BOOL isSeekingTV;
+@property (nonatomic, readonly) BOOL hasStartAndEndDates;
+@property (nonatomic, readonly, nullable) AVTimeRange *timeRangeSeekable;
+@property (readonly, nullable) NSValue *overrideForForwardPlaybackEndTime;
+@property (readonly, nullable) NSValue *overrideForReversePlaybackEndTime;
+@property (readonly) double timebaseRate;
+@property (readonly, nullable) NSArray *externalMetadata;
+@property (readonly) BOOL isPlaybackLikelyToKeepUp;
+@property (readonly) AVPlayerControllerTimeControlStatus timeControlStatus;
+@property (readonly) NSTimeInterval displayedDuration;
+@property (nonatomic, readonly) NSTimeInterval contentDurationCached;
+@property (nonatomic, readonly) NSTimeInterval currentDisplayTime;
+@property (nonatomic, readonly) NSDate *currentOrEstimatedDate;
+@property (nonatomic, readonly) AVTimeRange *displayTimeRangeForNavigation;
+@property (nonatomic, readonly) BOOL isContentDurationIndefinite;
+@property (nonatomic, readonly) AVTimeRange *timeRangeForNavigation;
+@property (nonatomic) float activeRate;
+#endif // PLATFORM(APPLETV)
+
 @end
 
 Class webAVPlayerControllerClass();
 RetainPtr<WebAVPlayerController> createWebAVPlayerController();
 
-#endif
+NS_ASSUME_NONNULL_END
+
+#endif // PLATFORM(COCOA) && HAVE(AVKIT)

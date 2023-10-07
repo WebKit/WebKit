@@ -124,7 +124,10 @@ private:
     void updateDocumentForPluginSizingBehavior();
 
     // WebCore::PluginViewBase
+    WebCore::PluginLayerHostingStrategy layerHostingStrategy() const final;
     PlatformLayer* platformLayer() const final;
+    WebCore::GraphicsLayer* graphicsLayer() const final;
+
     bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
     WebCore::ScrollPosition scrollPositionForTesting() const final;
     WebCore::Scrollbar* horizontalScrollbar() final;

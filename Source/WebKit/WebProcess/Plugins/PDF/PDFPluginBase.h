@@ -31,6 +31,7 @@
 #include <WebCore/FindOptions.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/PluginViewBase.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
@@ -72,6 +73,10 @@ public:
 
     virtual bool isUnifiedPDFPlugin() const { return false; }
     virtual bool isLegacyPDFPlugin() const { return false; }
+
+    virtual WebCore::PluginLayerHostingStrategy layerHostingStrategy() const = 0;
+    virtual PlatformLayer* platformLayer() const { return nullptr; }
+    virtual WebCore::GraphicsLayer* graphicsLayer() const { return nullptr; }
 
     virtual bool pluginFillsViewport() const { return true; }
 

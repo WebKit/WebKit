@@ -1243,6 +1243,12 @@ enum class WebCore::ScreenOrientationLockType : uint8_t {
     OptionSet<WebCore::ApplicationManifest::Icon::Purpose> purposes
 }
 
+[Nested] struct WebCore::ApplicationManifest::Shortcut {
+    String name
+    URL url
+    Vector<WebCore::ApplicationManifest::Icon> icons
+}
+
 struct WebCore::ApplicationManifest {
     String rawJSON
     String name
@@ -1257,7 +1263,9 @@ struct WebCore::ApplicationManifest {
     URL id
     WebCore::Color backgroundColor
     WebCore::Color themeColor
+    Vector<String> categories
     Vector<WebCore::ApplicationManifest::Icon> icons
+    Vector<WebCore::ApplicationManifest::Shortcut> shortcuts
 }
 #endif // ENABLE(APPLICATION_MANIFEST)
 

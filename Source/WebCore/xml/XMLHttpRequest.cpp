@@ -819,11 +819,9 @@ String XMLHttpRequest::getAllResponseHeaders() const
         return emptyString();
 
     if (!m_allResponseHeaders) {
-        Vector<std::pair<String, String>> headers;
-        headers.reserveInitialCapacity(m_response.httpHeaderFields().size());
-
-        for (auto& header : m_response.httpHeaderFields())
-            headers.uncheckedAppend(std::make_pair(header.key, header.value));
+        auto headers = WTF::map(m_response.httpHeaderFields(), [](auto& header) {
+            return std::make_pair(header.key, header.value);
+        });
 
         std::sort(headers.begin(), headers.end(), [] (const std::pair<String, String>& x, const std::pair<String, String>& y) {
             unsigned xLength = x.first.length();

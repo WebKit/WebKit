@@ -452,9 +452,6 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
     if (dashes.isEmpty())
         context.setStrokeStyle(StrokeStyle::SolidStroke);
     else {
-        DashArray dashArray;
-        dashArray.reserveInitialCapacity(dashes.size());
-        bool canSetLineDash = false;
         float scaleFactor = 1;
 
         if (is<SVGGeometryElement>(element)) {
@@ -470,11 +467,13 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
             }
         }
         
-        for (auto& dash : dashes) {
-            dashArray.uncheckedAppend(dash.value(lengthContext) * scaleFactor);
-            if (dashArray.last() > 0)
+        bool canSetLineDash = false;
+        auto dashArray = WTF::map(dashes, [&](auto& dash) -> DashArrayElement {
+            auto value = dash.value(lengthContext) * scaleFactor;
+            if (value > 0)
                 canSetLineDash = true;
-        }
+            return value;
+        });
 
         if (canSetLineDash)
             context.setLineDash(dashArray, lengthContext.valueForLength(svgStyle.strokeDashOffset()) * scaleFactor);

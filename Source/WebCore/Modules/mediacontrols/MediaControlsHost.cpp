@@ -116,7 +116,7 @@ String MediaControlsHost::layoutTraitsClassName() const
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     return "MacOSLayoutTraits"_s;
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(APPLETV)
     return "IOSLayoutTraits"_s;
 #elif PLATFORM(VISION)
     return "VisionLayoutTraits"_s;

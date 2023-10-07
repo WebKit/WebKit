@@ -41,6 +41,7 @@
 #import <UIKit/UIWindow.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -58,7 +59,7 @@ using namespace WebCore;
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
 
-#if !PLATFORM(WATCHOS)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 static const NSTimeInterval playbackControlsVisibleDurationAfterResettingVideoSource = 1.0;
 #endif
 
@@ -101,7 +102,8 @@ static bool ignoreWatchdogForDebugging = false;
 
 @class WebAVMediaSelectionOption;
 
-@interface WebAVPlayerViewControllerDelegate : NSObject <AVPlayerViewControllerDelegate_WebKitOnly
+@interface WebAVPlayerViewControllerDelegate : NSObject <
+    AVPlayerViewControllerDelegate
 #if HAVE(PIP_CONTROLLER)
     , AVPictureInPictureControllerDelegate
 #endif
@@ -109,7 +111,9 @@ static bool ignoreWatchdogForDebugging = false;
     ThreadSafeWeakPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
 }
 @property (nonatomic, assign /* weak */) RefPtr<VideoFullscreenInterfaceAVKit> fullscreenInterface;
+#if !PLATFORM(APPLETV)
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
+#endif
 @end
 
 @implementation WebAVPlayerViewControllerDelegate
@@ -175,6 +179,8 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
     return NO;
 }
 
+#if !PLATFORM(APPLETV)
+
 static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScreenReason(AVPlayerViewControllerExitFullScreenReason reason)
 {
     switch (reason) {
@@ -199,6 +205,8 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
 
     return YES;
 }
+
+#endif // !PLATFORM(APPLETV)
 
 - (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler
 {
@@ -257,7 +265,7 @@ IGNORE_WARNINGS_END
         fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
 }
 
-#endif
+#endif // HAVE(PIP_CONTROLLER)
 
 @end
 
@@ -354,7 +362,7 @@ static WebAVPictureInPictureContentViewController *allocWebAVPictureInPictureCon
     return (WebAVPictureInPictureContentViewController *)[theClass alloc];
 }
 
-#endif
+#endif // HAVE(PIP_CONTROLLER)
 
 NS_ASSUME_NONNULL_BEGIN
 @interface WebAVPlayerViewController : NSObject<AVPlayerViewControllerDelegate>
@@ -363,8 +371,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
 - (void)startPictureInPicture;
 - (void)stopPictureInPicture;
-
+#if !PLATFORM(APPLETV)
 - (BOOL)playerViewControllerShouldHandleDoneButtonTap:(AVPlayerViewController *)playerViewController;
+#endif
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
 #if !RELEASE_LOG_DISABLED
 @property (readonly, nonatomic) const void* logIdentifier;
@@ -376,7 +385,7 @@ NS_ASSUME_NONNULL_END
 
 @implementation WebAVPlayerViewController {
     ThreadSafeWeakPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     RetainPtr<UIViewController> _presentingViewController;
 #endif
     RetainPtr<AVPlayerViewController> _avPlayerViewController;
@@ -398,10 +407,15 @@ NS_ASSUME_NONNULL_END
 
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 
+#if PLATFORM(APPLETV)
+    _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() init]);
+    [self configurePlayerViewControllerWithFullscreenInterface:interface];
+#else
     _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:interface->playerLayerView()]);
-    _avPlayerViewController.get().modalPresentationStyle = UIModalPresentationOverFullScreen;
+#endif
+    [_avPlayerViewController setModalPresentationStyle:UIModalPresentationOverFullScreen];
 #if PLATFORM(WATCHOS)
-    _avPlayerViewController.get().delegate = self;
+    [_avPlayerViewController setDelegate:self];
 #endif
 
 #if PLATFORM(VISION)
@@ -421,6 +435,36 @@ NS_ASSUME_NONNULL_END
     return self;
 }
 
+#if PLATFORM(APPLETV)
+- (void)configurePlayerViewControllerWithFullscreenInterface:(VideoFullscreenInterfaceAVKit *)interface
+{
+    // FIXME (116592344): This is a proof-of-concept hack to work around lack support for a custom
+    // AVPlayerLayerView in tvOS's version of AVPlayerViewController. This will be replaced once
+    // proper API is available.
+
+    RELEASE_ASSERT([_avPlayerViewController view]);
+
+    [[_avPlayerViewController playerLayerView] removeFromSuperview];
+
+    WebAVPlayerLayerView *playerLayerView = interface->playerLayerView();
+    [_avPlayerViewController setPlayerLayerView:playerLayerView];
+
+    playerLayerView.pixelBufferAttributes = [_avPlayerViewController pixelBufferAttributes];
+    playerLayerView.playerController = (AVPlayerController *)interface->playerController();
+    playerLayerView.translatesAutoresizingMaskIntoConstraints = NO;
+    playerLayerView.playerLayer.videoGravity = [_avPlayerViewController videoGravity];
+
+    UIView *contentContainerView = [_avPlayerViewController view].subviews.firstObject;
+    [contentContainerView addSubview:playerLayerView];
+    [NSLayoutConstraint activateConstraints:@[
+        [playerLayerView.widthAnchor constraintEqualToAnchor:contentContainerView.widthAnchor],
+        [playerLayerView.heightAnchor constraintEqualToAnchor:contentContainerView.heightAnchor],
+        [playerLayerView.centerXAnchor constraintEqualToAnchor:contentContainerView.centerXAnchor],
+        [playerLayerView.centerYAnchor constraintEqualToAnchor:contentContainerView.centerYAnchor],
+    ]];
+}
+#endif // PLATFORM(APPLETV)
+
 - (void)dealloc
 {
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
@@ -437,6 +481,7 @@ NS_ASSUME_NONNULL_END
     [super dealloc];
 }
 
+#if !PLATFORM(APPLETV)
 - (BOOL)playerViewControllerShouldHandleDoneButtonTap:(AVPlayerViewController *)playerViewController
 {
     ASSERT(playerViewController == _avPlayerViewController.get());
@@ -445,6 +490,7 @@ NS_ASSUME_NONNULL_END
 
     return [_delegate playerViewController:playerViewController shouldExitFullScreenWithReason:AVPlayerViewControllerExitFullScreenReasonDoneButtonTapped];
 }
+#endif
 
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID
 {
@@ -457,7 +503,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, !!animated);
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     auto fullscreenInterface = _fullscreenInterface.get();
     if (!fullscreenInterface) {
         if (completionHandler)
@@ -480,7 +526,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, !!animated);
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     if (!_presentingViewController)
         return;
 
@@ -494,7 +540,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 #endif
 }
 
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
 #define MY_NO_RETURN NO_RETURN_DUE_TO_ASSERT
 #else
 #define MY_NO_RETURN
@@ -542,7 +588,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 - (void)tryToStartPictureInPicture MY_NO_RETURN
 {
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     UNUSED_VARIABLE(startPictureInPictureTimeInterval);
     ASSERT_NOT_REACHED();
 #else
@@ -570,7 +616,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 - (void)startPictureInPicture MY_NO_RETURN
 {
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     ASSERT_NOT_REACHED();
 #elif HAVE(PIP_CONTROLLER)
     [_pipController startPictureInPicture];
@@ -582,7 +628,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 - (void)stopPictureInPicture MY_NO_RETURN
 {
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     ASSERT_NOT_REACHED();
 #elif HAVE(PIP_CONTROLLER)
     [_pipController stopPictureInPicture];
@@ -593,7 +639,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (BOOL)isPictureInPicturePossible
 {
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     return NO;
 #elif HAVE(PIP_CONTROLLER)
     return [_pipController isPictureInPicturePossible];
@@ -604,7 +650,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (BOOL)isPictureInPictureActive
 {
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     return NO;
 #elif HAVE(PIP_CONTROLLER)
     return [_pipController isPictureInPictureActive];
@@ -615,7 +661,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (BOOL)pictureInPictureActive
 {
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     return NO;
 #elif HAVE(PIP_CONTROLLER)
     return [_pipController isPictureInPictureActive];
@@ -626,7 +672,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (BOOL)pictureInPictureWasStartedWhenEnteringBackground
 {
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     return NO;
 #elif HAVE(PIP_CONTROLLER)
     return [_pipController pictureInPictureWasStartedWhenEnteringBackground];
@@ -640,7 +686,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
     return [_avPlayerViewController view];
 }
 
-#if !PLATFORM(WATCHOS)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 - (void)flashPlaybackControlsWithDuration:(NSTimeInterval)duration
 {
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
@@ -819,7 +865,7 @@ bool VideoFullscreenInterfaceAVKit::pictureInPictureWasStartedWhenEnteringBackgr
     return [m_playerViewController pictureInPictureWasStartedWhenEnteringBackground];
 }
 
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
 static UIViewController *fallbackViewController(UIView *view)
 {
     // FIXME: This logic to find a fallback view controller should move out of WebCore,
@@ -981,7 +1027,7 @@ void VideoFullscreenInterfaceAVKit::invalidate()
 
 void VideoFullscreenInterfaceAVKit::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
 {
-#if !PLATFORM(WATCHOS)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if (!identifier)
         [m_playerViewController flashPlaybackControlsWithDuration:playbackControlsVisibleDurationAfterResettingVideoSource];
 #endif

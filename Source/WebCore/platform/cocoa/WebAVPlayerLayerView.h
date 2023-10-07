@@ -49,5 +49,3 @@ WEBCORE_EXPORT WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPictureP
 }
 
 #endif // PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
-
-

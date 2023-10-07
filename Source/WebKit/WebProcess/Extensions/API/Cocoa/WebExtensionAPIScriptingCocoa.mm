@@ -27,19 +27,25 @@
 #error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
 #endif
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 #import "config.h"
 #import "WebExtensionAPIScripting.h"
+
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "WebExtension.h"
 #import "WebExtensionAPINamespace.h"
+#import "WebExtensionContentWorldType.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionDynamicScripts.h"
+#import "WebExtensionScriptInjectionParameters.h"
+#import "WebExtensionScriptInjectionResultParameters.h"
+#import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 static NSString * const allFramesKey = @"allFrames";
 static NSString * const argsKey = @"args";
@@ -53,16 +59,75 @@ static NSString * const targetKey = @"target";
 static NSString * const worldKey = @"world";
 
 static NSString * const  cssKey = @"css";
-// FIXME: <https://webkit.org/b/261765> Consider adding support for cssOrigin.
 
 static NSString * const mainWorld = @"MAIN";
 static NSString * const isolatedWorld = @"ISOLATED";
 
-static int64_t const mainFrameID = 0;
-
+// FIXME: <https://webkit.org/b/261765> Consider adding support for cssOrigin.
 // FIXME: <https://webkit.org/b/261765> Consider adding support for injectImmediately.
 
 namespace WebKit {
+
+static inline void parseTargetInjectionOptions(NSDictionary *targetInfo, WebExtensionScriptInjectionParameters& parameters, NSString **outExceptionString)
+{
+    NSNumber *tabID = targetInfo[tabIDKey];
+    std::optional<WebExtensionTabIdentifier> identifier = toWebExtensionTabIdentifier(tabID.doubleValue);
+    if (!identifier) {
+        *outExceptionString = toErrorString(nil, tabIDKey, @"'%@' is not a tab identifier", tabID);
+        return;
+    }
+
+    parameters.tabIdentifier = identifier;
+
+    if (NSArray *frameIDs = targetInfo[frameIDsKey]) {
+        Vector<WebExtensionFrameIdentifier> frames;
+        for (NSNumber *frameID in frameIDs) {
+            auto identifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
+            if (!identifier) {
+                *outExceptionString = toErrorString(nil, frameIDsKey, @"'%@' is not a frame identifier", frameID);
+                return;
+            }
+
+            frames.append(identifier.value());
+        }
+
+        parameters.frameIDs = frames;
+    }
+
+    if (!boolForKey(targetInfo, allFramesKey, false))
+        parameters.frameIDs = Vector { WebExtensionFrameConstants::MainFrameIdentifier };
+}
+
+static inline void parseScriptInjectionOptions(NSDictionary *script, WebExtensionScriptInjectionParameters& parameters)
+{
+    if (script[funcKey] || script[functionKey]) {
+        NSString *key = script[funcKey] ? funcKey : functionKey;
+        parameters.function = script[key];
+    }
+
+    if (script[argsKey] || script[argumentsKey]) {
+        NSString *key = script[argsKey] ? argsKey : argumentsKey;
+        parameters.arguments = makeVector<String>(script[key]);
+    }
+
+    if (NSArray *files = script[filesKey])
+        parameters.files = makeVector<String>(files);
+
+    parameters.world = WebExtensionContentWorldType::ContentScript;
+    if ([(NSString *)script[worldKey] isEqualToString:mainWorld])
+        parameters.world = WebExtensionContentWorldType::Main;
+}
+
+static inline void parseCSSInjectionOptions(NSDictionary *cssInfo, WebExtensionScriptInjectionParameters& parameters)
+{
+    if (NSString *css = cssInfo[cssKey])
+        parameters.css = css;
+
+    if (NSArray *files = cssInfo[filesKey])
+        parameters.files = makeVector<String>(files);
+
+    parameters.world = WebExtensionContentWorldType::ContentScript;
+}
 
 void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
@@ -78,8 +143,11 @@ void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtens
         script = mergeDictionariesAndSetValues(script, @{ key: func.toString });
     }
 
-    // FIXME: <https://webkit.org/b/259954> May need to remove unsupported keys.
-    // FIXME: Handle script injection in the UI Process.
+    WebExtensionScriptInjectionParameters parameters;
+    parseTargetInjectionOptions(script[targetKey], parameters, outExceptionString);
+    parseScriptInjectionOptions(script, parameters);
+
+    // FIXME: <https://webkit.org/b/259954> Handle script injections in the UIProcess.
 }
 
 void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -89,9 +157,16 @@ void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtension
     if (!validateCSS(cssInfo, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/259954> May need to remove unsupported keys.
-    // FIXME: Handle css injection in the UI Process.
+    WebExtensionScriptInjectionParameters parameters;
+    parseTargetInjectionOptions(cssInfo[targetKey], parameters, outExceptionString);
+    parseCSSInjectionOptions(cssInfo, parameters);
 
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingInsertCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionDynamicScripts::Error error) {
+        if (error)
+            callback->reportError(error.value());
+        else
+            callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -101,8 +176,16 @@ void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtension
     if (!validateCSS(cssInfo, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/259954> May need to remove unsupported keys.
-    // FIXME: Handle css removal in the UI Process.
+    WebExtensionScriptInjectionParameters parameters;
+    parseTargetInjectionOptions(cssInfo[targetKey], parameters, outExceptionString);
+    parseCSSInjectionOptions(cssInfo, parameters);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRemoveCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionDynamicScripts::Error error) {
+        if (error)
+            callback->reportError(error.value());
+        else
+            callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPIScripting::registerContentScripts(NSObject *scripts, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -217,10 +300,9 @@ bool WebExtensionAPIScripting::validateTarget(NSDictionary *targetInfo, NSString
         return false;
     }
 
-    NSArray *frameIDs = targetInfo[frameIDsKey];
-    for (NSNumber *frameID in frameIDs) {
-        if (frameID.longLongValue < mainFrameID) {
-            // FIXME: <https://webkit.org/b/259954> Update with more than just a negative frame ID check.
+    for (NSNumber *frameID in targetInfo[frameIDsKey]) {
+        auto identifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
+        if (!identifier) {
             *outExceptionString = toErrorString(nil, frameIDsKey, @"'%@' is not a frame identifier", frameID);
             return false;
         }

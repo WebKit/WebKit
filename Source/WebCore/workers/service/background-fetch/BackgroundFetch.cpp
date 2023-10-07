@@ -54,9 +54,9 @@ BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const Strin
     , m_origin { m_registrationKey.topOrigin(), SecurityOriginData::fromURL(m_registrationKey.scope()) }
 {
     size_t index = 0;
-    m_records.reserveInitialCapacity(requests.size());
-    for (auto& request : requests)
-        m_records.uncheckedAppend(Record::create(*this, WTFMove(request), index++));
+    m_records = WTF::map(WTFMove(requests), [&](auto&& request) {
+        return Record::create(*this, WTFMove(request), index++);
+    });
 }
 
 BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)

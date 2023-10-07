@@ -165,12 +165,11 @@ void BackgroundFetchEngine::backgroundFetchIdentifiers(SWServerRegistration& reg
         return;
     }
 
-    Vector<String> identifiers;
-    identifiers.reserveInitialCapacity(iterator->value.size());
-    for (auto& keyValue : iterator->value) {
+    Vector<String> identifiers = WTF::compactMap(iterator->value, [](auto& keyValue) -> std::optional<String> {
         if (keyValue.value->isActive())
-            identifiers.uncheckedAppend(keyValue.key);
-    }
+            return keyValue.key;
+        return std::nullopt;
+    });
     callback(WTFMove(identifiers));
 }
 
@@ -230,14 +229,12 @@ void BackgroundFetchEngine::matchBackgroundFetch(SWServerRegistration& registrat
             callback({ });
             return;
         }
-        Vector<BackgroundFetchRecordInformation> recordsInformation;
-        recordsInformation.reserveInitialCapacity(records.size());
-        for (auto& record : records) {
+        auto recordsInformation = WTF::map(WTFMove(records), [&](auto&& record) {
             // FIXME: We need a way to remove the record from m_records.
             auto information = record->information();
             weakThis->m_records.add(information.identifier, WTFMove(record));
-            recordsInformation.uncheckedAppend(WTFMove(information));
-        }
+            return information;
+        });
         callback(WTFMove(recordsInformation));
     });
 }

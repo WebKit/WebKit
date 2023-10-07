@@ -31,10 +31,14 @@
 #include "PluginView.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/AffineTransform.h>
+#include <WebCore/Chrome.h>
+#include <WebCore/ChromeClient.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/Page.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -51,7 +55,13 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
 
 void UnifiedPDFPlugin::teardown()
 {
+    if (m_rootLayer)
+        m_rootLayer->removeFromParent();
+}
 
+GraphicsLayer* UnifiedPDFPlugin::graphicsLayer() const
+{
+    return m_rootLayer.get();
 }
 
 void UnifiedPDFPlugin::createPDFDocument()
@@ -76,8 +86,10 @@ void UnifiedPDFPlugin::installPDFDocument()
         return;
 
     m_documentLayout.updateLayout(size());
+    udpateLayerHierarchy();
     sizeToFitContents();
-    invalidateRect({ IntPoint(), size() });
+
+    m_contentsLayer->setNeedsDisplay();
 }
 
 void UnifiedPDFPlugin::sizeToFitContents()
@@ -88,15 +100,42 @@ void UnifiedPDFPlugin::sizeToFitContents()
     pluginElement.setInlineStyleProperty(CSSPropertyHeight, contentsSize.height(), CSSUnitType::CSS_PX);
 }
 
-void UnifiedPDFPlugin::paint(GraphicsContext& context, const IntRect& rect)
+RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
-    ASSERT(!context.paintingDisabled());
+    RefPtr frame = m_view->frame();
+    auto* page = frame->page();
+    if (!page)
+        return nullptr;
+
+    auto* graphicsLayerFactory = page->chrome().client().graphicsLayerFactory();
+    auto graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
+    graphicsLayer->setName(name);
+    return graphicsLayer;
+}
+
+void UnifiedPDFPlugin::udpateLayerHierarchy()
+{
+    m_rootLayer = createGraphicsLayer("UnifiedPDFPlugin root"_s, GraphicsLayer::Type::Normal);
+    m_rootLayer->setAnchorPoint({ });
+
+    m_contentsLayer = createGraphicsLayer("UnifiedPDFPlugin contents"_s, GraphicsLayer::Type::Normal);
+    m_contentsLayer->setAnchorPoint({ });
+    m_contentsLayer->setSize(size());
+    m_contentsLayer->setDrawsContent(true);
+
+    m_rootLayer->addChild(*m_contentsLayer);
+}
+
+void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>)
+{
+    if (layer != m_contentsLayer.get())
+        return;
 
     if (m_size.isEmpty())
         return;
 
     auto drawingRect = IntRect { { }, m_size };
-    drawingRect.intersect(rect);
+    drawingRect.intersect(enclosingIntRect(clipRect));
 
     auto imageBuffer = ImageBuffer::create(drawingRect.size(), RenderingPurpose::Unspecified, context.scaleFactor().width(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)

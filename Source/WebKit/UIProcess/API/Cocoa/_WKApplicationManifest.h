@@ -32,6 +32,7 @@
 @class NSColor;
 #endif
 @class _WKApplicationManifestIcon;
+@class _WKApplicationManifestShortcut;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -72,7 +73,9 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @property (nonatomic, readonly, copy) NSURL *startURL;
 @property (nonatomic, readonly, copy) NSURL *manifestId WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, readonly) _WKApplicationManifestDisplayMode displayMode;
+@property (nonatomic, readonly, copy) NSArray<NSString *> *categories WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestIcon *> *icons WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestShortcut *> *shortcuts WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly, nullable, copy) UIColor *backgroundColor WK_API_AVAILABLE(ios(17.0));
@@ -97,6 +100,15 @@ WK_CLASS_AVAILABLE(macos(13.0), ios(16.0))
 @property (nonatomic, readonly, copy) NSArray<NSString *> *sizes;
 @property (nonatomic, readonly, copy) NSString *type;
 @property (nonatomic, readonly) NSArray<NSNumber *> *purposes;
+
+@end
+
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKApplicationManifestShortcut : NSObject <NSSecureCoding>
+
+@property (nonatomic, readonly, copy) NSString *name;
+@property (nonatomic, readonly, copy) NSURL *url;
+@property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestIcon *> *icons;
 
 @end
 

@@ -83,6 +83,7 @@ private:
     RetainPtr<NSString> _videoGravity;
     RetainPtr<NSString> _previousVideoGravity;
     std::unique_ptr<WebAVPlayerLayerPresentationModelClient> _presentationModelClient;
+    NSEdgeInsets _legibleContentInsets;
 #if !RELEASE_LOG_DISABLED
     const void* _logIdentifier;
 #endif
@@ -357,6 +358,16 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
 + (NSSet *)keyPathsForValuesAffectingVideoRect
 {
     return [NSSet setWithObjects:@"videoDimensions", @"videoGravity", nil];
+}
+
+- (NSEdgeInsets)legibleContentInsets
+{
+    return _legibleContentInsets;
+}
+
+- (void)setLegibleContentInsets:(NSEdgeInsets)legibleContentInsets
+{
+    _legibleContentInsets = legibleContentInsets;
 }
 
 @end

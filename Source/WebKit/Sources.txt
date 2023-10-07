@@ -262,7 +262,6 @@ Shared/WebPreferencesDefaultValues.cpp
 Shared/WebPreferencesStore.cpp
 Shared/WebPushMessage.cpp
 Shared/WebTouchEvent.cpp
-Shared/WebUserContentControllerDataTypes.cpp
 Shared/WebWheelEventCoalescer.cpp
 Shared/WebWheelEvent.cpp
 Shared/WebsitePoliciesData.cpp
@@ -374,7 +373,6 @@ Shared/WebGPU/WebGPUVertexState.cpp
 
 Shared/WebsiteData/WebsiteData.cpp
 
-Shared/XR/XRDeviceInfo.cpp
 Shared/XR/XRDeviceProxy.cpp
 
 UIProcess/AuxiliaryProcessProxy.cpp

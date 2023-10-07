@@ -513,6 +513,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Extensions/WebExtensionContentWorldType.serialization.in \
 	Shared/Extensions/WebExtensionContextParameters.serialization.in \
 	Shared/Extensions/WebExtensionControllerParameters.serialization.in \
+	Shared/Extensions/WebExtensionDynamicScripts.serialization.in \
 	Shared/Extensions/WebExtensionEventListenerType.serialization.in \
 	Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in \
 	Shared/Extensions/WebExtensionTab.serialization.in \
@@ -646,15 +647,18 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUBlendComponent.serialization.in \
 	Shared/WebGPU/WebGPUBindGroupEntry.serialization.in \
 	Shared/XR/XRSystem.serialization.in \
+	Shared/WebUserContentControllerDataTypes.serialization.in \
 	WebProcess/GPU/GPUProcessConnectionInfo.serialization.in \
 	WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in \
 	WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in \
+	WebProcess/GPU/media/MediaOverridesForTesting.serialization.in \
 	WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in \
 	WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in \
+	WebProcess/Network/NetworkProcessConnectionInfo.serialization.in \
 	WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in \
 #
 

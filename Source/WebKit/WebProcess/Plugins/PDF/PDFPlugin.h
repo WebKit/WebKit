@@ -146,8 +146,6 @@ public:
     size_t decrementThreadsWaitingOnCallback() { return --m_threadsWaitingOnCallback; }
 #endif
 
-    CALayer *pluginLayer();
-
     WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
     WebCore::Scrollbar* horizontalScrollbar() { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() { return m_verticalScrollbar.get(); }
@@ -189,6 +187,9 @@ private:
     String debugDescription() const override;
 
     // PDFPluginBase
+    WebCore::PluginLayerHostingStrategy layerHostingStrategy() const override { return WebCore::PluginLayerHostingStrategy::PlatformLayer; }
+    PlatformLayer* platformLayer() const override;
+
     void setView(PluginView&) override;
     void teardown() override;
     void willDetachRenderer() override;

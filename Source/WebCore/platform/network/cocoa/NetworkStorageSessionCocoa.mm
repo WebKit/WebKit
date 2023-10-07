@@ -561,16 +561,13 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 
 bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, Vector<Cookie>& rawCookies) const
 {
-    rawCookies.clear();
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     RetainPtr<NSArray> cookies = cookiesForURL(firstParty, sameSiteInfo, url, frameID, pageID, applyTrackingPrevention, shouldRelaxThirdPartyCookieBlocking);
     NSUInteger count = [cookies count];
-    rawCookies.reserveCapacity(count);
-    for (NSUInteger i = 0; i < count; ++i) {
-        NSHTTPCookie *cookie = (NSHTTPCookie *)[cookies objectAtIndex:i];
-        rawCookies.uncheckedAppend({ cookie });
-    }
+    rawCookies = Vector<Cookie>(count, [cookies](size_t i) {
+        return Cookie { (NSHTTPCookie *)[cookies objectAtIndex:i] };
+    });
 
     END_BLOCK_OBJC_EXCEPTIONS
     return true;

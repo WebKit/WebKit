@@ -36,6 +36,7 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AVFoundation)
 //    #define AVAssetCache PAL::getAVAssetCacheClass()
 // because they make it difficult to use the class name in source code.
 
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAsset)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetCache)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetCollection)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetExportSession)

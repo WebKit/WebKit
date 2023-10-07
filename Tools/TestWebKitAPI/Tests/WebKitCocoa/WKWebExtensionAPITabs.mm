@@ -449,16 +449,85 @@ TEST(WKWebExtensionAPITabs, Query)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager openNewWindow];
+    auto *windowOne = manager.get().defaultWindow;
+    [windowOne openNewTab];
 
-    EXPECT_EQ(manager.get().windows.count, 2lu);
+    auto *windowTwo = [manager openNewWindow];
+    [windowTwo openNewTab];
+    [windowTwo openNewTab];
 
-    [manager.get().defaultWindow openNewTab];
-    [manager.get().windows.lastObject openNewTab];
-    [manager.get().windows.lastObject openNewTab];
+    auto *windowThree = [manager openNewWindowUsingPrivateBrowsing:YES];
+    [windowThree openNewTab];
 
-    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
-    EXPECT_EQ(manager.get().windows.lastObject.tabs.count, 3lu);
+    EXPECT_EQ(manager.get().windows.count, 3lu);
+    EXPECT_EQ(windowOne.tabs.count, 2lu);
+    EXPECT_EQ(windowTwo.tabs.count, 3lu);
+    EXPECT_EQ(windowThree.tabs.count, 2lu);
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, QueryWithPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const windowIdOne = allWindows[0].id",
+        @"const windowIdTwo = allWindows[1].id",
+
+        @"const tabIdOne = allWindows[0].tabs[0].id",
+        @"const tabIdTwo = allWindows[0].tabs[1].id",
+        @"const tabIdThree = allWindows[1].tabs[0].id",
+        @"const tabIdFour = allWindows[1].tabs[1].id",
+        @"const tabIdFive = allWindows[1].tabs[2].id",
+
+        @"const tabsInWindowOne = await browser.tabs.query({ windowId: windowIdOne })",
+        @"const tabsInWindowTwo = await browser.tabs.query({ windowId: windowIdTwo })",
+        @"browser.test.assertEq(tabsInWindowOne.length, 2, 'There should be 2 tabs in the first window')",
+        @"browser.test.assertEq(tabsInWindowTwo.length, 3, 'There should be 3 tabs in the second window')",
+
+        @"const thirdTab = await browser.tabs.query({ index: 0, windowId: windowIdTwo })",
+        @"browser.test.assertEq(thirdTab[0].id, tabIdThree, 'Third tab ID should match the first tab of the second window')",
+
+        @"const activeTabs = await browser.tabs.query({ active: true })",
+        @"browser.test.assertEq(activeTabs.length, 3, 'There should be 3 active tabs across all windows')",
+
+        @"const hiddenTabs = await browser.tabs.query({ hidden: true })",
+        @"browser.test.assertEq(hiddenTabs.length, 4, 'There should be 4 hidden tabs across all windows')",
+
+        @"const lastFocusedTabs = await browser.tabs.query({ lastFocusedWindow: true })",
+        @"browser.test.assertEq(lastFocusedTabs.length, 2, 'There should be 2 tabs in the last focused window')",
+
+        @"const pinnedTabs = await browser.tabs.query({ pinned: true })",
+        @"browser.test.assertEq(pinnedTabs.length, 0, 'There should be no pinned tabs')",
+
+        @"const loadingTabs = await browser.tabs.query({ status: 'loading' })",
+        @"browser.test.assertEq(loadingTabs.length, 0, 'There should be no tabs loading')",
+
+        @"const completeTabs = await browser.tabs.query({ status: 'complete' })",
+        @"browser.test.assertEq(completeTabs.length, 7, 'There should be 7 tabs with loading complete')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.hasAccessInPrivateBrowsing = YES;
+
+    auto *windowOne = manager.get().defaultWindow;
+    [windowOne openNewTab];
+
+    auto *windowTwo = [manager openNewWindow];
+    [windowTwo openNewTab];
+    [windowTwo openNewTab];
+
+    auto *windowThree = [manager openNewWindowUsingPrivateBrowsing:YES];
+    [windowThree openNewTab];
+
+    EXPECT_EQ(manager.get().windows.count, 3lu);
+    EXPECT_EQ(windowOne.tabs.count, 2lu);
+    EXPECT_EQ(windowTwo.tabs.count, 3lu);
+    EXPECT_EQ(windowThree.tabs.count, 2lu);
 
     [manager loadAndRun];
 }

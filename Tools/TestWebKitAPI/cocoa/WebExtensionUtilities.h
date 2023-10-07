@@ -53,6 +53,7 @@
 @property (nonatomic, readonly, copy) NSArray<TestWebExtensionWindow *> *windows;
 
 - (TestWebExtensionWindow *)openNewWindow;
+- (TestWebExtensionWindow *)openNewWindowUsingPrivateBrowsing:(BOOL)usesPrivateBrowsing;
 - (void)focusWindow:(TestWebExtensionWindow *)window;
 - (void)closeWindow:(TestWebExtensionWindow *)window;
 
@@ -93,7 +94,7 @@
 
 @interface TestWebExtensionWindow : NSObject <_WKWebExtensionWindow>
 
-- (instancetype)initWithExtensionController:(_WKWebExtensionController *)extensionController NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithExtensionController:(_WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, copy) NSArray<id<_WKWebExtensionTab>> *tabs;
 @property (nonatomic, strong) id<_WKWebExtensionTab> activeTab;
@@ -111,7 +112,7 @@
 @property (nonatomic) CGRect frame;
 @property (nonatomic) CGRect screenFrame;
 
-@property (nonatomic, getter=isUsingPrivateBrowsing) BOOL usingPrivateBrowsing;
+@property (nonatomic, readonly, getter=isUsingPrivateBrowsing) BOOL usingPrivateBrowsing;
 
 @property (nonatomic, copy) void (^didFocus)(void);
 @property (nonatomic, copy) void (^didClose)(void);

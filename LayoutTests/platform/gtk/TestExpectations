@@ -2536,7 +2536,6 @@ webkit.org/b/261024 compositing/transforms/3d-transformed-fixed.html [ ImageOnly
 webkit.org/b/261024 fast/animation/animation-mixed-transform-crash.html [ ImageOnlyFailure Pass Timeout ]
 webkit.org/b/261024 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 webkit.org/b/261024 fast/animation/request-animation-frame-throttling-outside-viewport.html [ Pass Timeout ]
-webkit.org/b/261024 fast/canvas/offscreen-toggle-display.html [ ImageOnlyFailure Pass Timeout ]
 webkit.org/b/261024 fast/images/animated-gif-iframe-webkit-transform.html [ Pass Timeout ]
 webkit.org/b/261024 http/wpt/mediarecorder/MediaRecorder-video-bitrate.html [ Crash Failure Pass ]
 webkit.org/b/261024 imported/blink/compositing/layer-creation/incremental-destruction.html [ Pass Timeout ]

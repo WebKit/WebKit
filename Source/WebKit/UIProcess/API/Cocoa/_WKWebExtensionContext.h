@@ -234,6 +234,16 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic) BOOL requestedOptionalAccessToAllHosts;
 
 /*!
+ @abstract A Boolean value indicating if the extension has access to private browsing windows and tabs.
+ @discussion When this value is `YES`, the extension is granted permission to interact with private browsing windows and tabs.
+ This value should be saved and restored as needed. Access to private browsing should be explicitly allowed by the user before setting this property.
+ @note To ensure proper isolation between private and non-private browsing, web views associated with private browsing windows must
+ use a different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
+ website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
+ */
+@property (nonatomic) BOOL hasAccessInPrivateBrowsing;
+
+/*!
  @abstract The currently granted permissions that have not expired.
  @seealso grantedPermissions
  */
