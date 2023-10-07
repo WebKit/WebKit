@@ -120,14 +120,9 @@ bool Storage::isSupportedPropertyName(const String& propertyName) const
 Vector<AtomString> Storage::supportedPropertyNames() const
 {
     unsigned length = m_storageArea->length();
-
-    Vector<AtomString> result;
-    result.reserveInitialCapacity(length);
-
-    for (unsigned i = 0; i < length; ++i)
-        result.uncheckedAppend(m_storageArea->key(i));
-
-    return result;
+    return Vector<AtomString>(length, [this](size_t i) {
+        return m_storageArea->key(i);
+    });
 }
 
 } // namespace WebCore

@@ -112,9 +112,7 @@ const Vector<String>& LocaleCocoa::monthLabels()
         m_monthLabels = makeVector<String>(array);
         return m_monthLabels;
     }
-    m_monthLabels.reserveCapacity(12);
-    for (auto& name : WTF::monthFullName)
-        m_monthLabels.uncheckedAppend(String::fromLatin1(name));
+    m_monthLabels = { WTF::monthFullName, std::size(WTF::monthFullName) };
     return m_monthLabels;
 }
 
@@ -205,9 +203,7 @@ const Vector<String>& LocaleCocoa::shortMonthLabels()
         m_shortMonthLabels = makeVector<String>(array);
         return m_shortMonthLabels;
     }
-    m_shortMonthLabels.reserveCapacity(12);
-    for (auto& name : WTF::monthName)
-        m_shortMonthLabels.uncheckedAppend(name);
+    m_shortMonthLabels = { WTF::monthName, std::size(WTF::monthName) };
     return m_shortMonthLabels;
 }
 
@@ -242,10 +238,8 @@ const Vector<String>& LocaleCocoa::timeAMPMLabels()
 {
     if (!m_timeAMPMLabels.isEmpty())
         return m_timeAMPMLabels;
-    m_timeAMPMLabels.reserveCapacity(2);
     RetainPtr<NSDateFormatter> formatter = shortTimeFormatter();
-    m_timeAMPMLabels.uncheckedAppend([formatter AMSymbol]);
-    m_timeAMPMLabels.uncheckedAppend([formatter PMSymbol]);
+    m_timeAMPMLabels = { String([formatter AMSymbol]), String([formatter PMSymbol]) };
     return m_timeAMPMLabels;
 }
 

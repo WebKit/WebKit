@@ -66,10 +66,8 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
     // Before mapping in a new font-family property, we should reset the generic family.
     bool oldFamilyUsedFixedDefaultSize = useFixedDefaultSize(fontDescription);
 
-    Vector<AtomString> families;
-    families.reserveInitialCapacity(fontRaw.family.size());
-
-    for (auto& item : fontRaw.family) {
+    bool isFirstFont = true;
+    auto families = WTF::compactMap(fontRaw.family, [&](auto& item) -> std::optional<AtomString> {
         AtomString family;
         bool isGenericFamily = false;
         switchOn(item, [&] (CSSValueID ident) {
@@ -83,11 +81,13 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
         });
 
         if (family.isEmpty())
-            continue;
-        if (families.isEmpty())
+            return std::nullopt;
+        if (isFirstFont) {
             fontDescription.setIsSpecifiedFont(!isGenericFamily);
-        families.uncheckedAppend(family);
-    }
+            isFirstFont = false;
+        }
+        return family;
+    });
 
     if (families.isEmpty())
         return std::nullopt;

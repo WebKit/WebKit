@@ -75,6 +75,11 @@ public:
             std::optional<HTTPHeaderName> keyAsHTTPHeaderName;
             String value;
         };
+        using difference_type = ptrdiff_t;
+        using value_type = KeyValue;
+        using pointer = const KeyValue*;
+        using reference = const KeyValue&;
+        using iterator_category = std::forward_iterator_tag;
 
         const KeyValue* get() const
         {

@@ -188,11 +188,7 @@ std::unique_ptr<Vector<String>> LocaleICU::createLabelVector(const UDateFormat* 
 
 static std::unique_ptr<Vector<String>> createFallbackMonthLabels()
 {
-    auto labels = makeUnique<Vector<String>>();
-    labels->reserveInitialCapacity(std::size(WTF::monthFullName));
-    for (auto monthName : WTF::monthFullName)
-        labels->uncheckedAppend(monthName);
-    return labels;
+    return makeUnique<Vector<String>>(WTF::monthFullName, 12);
 }
 
 const Vector<String>& LocaleICU::monthLabels()

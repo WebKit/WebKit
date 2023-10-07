@@ -62,12 +62,9 @@ bool StyleImageSet::equals(const StyleImageSet& other) const
 
 Ref<CSSValue> StyleImageSet::computedStyleValue(const RenderStyle& style) const
 {
-    CSSValueListBuilder builder;
-    builder.reserveInitialCapacity(m_images.size());
-
-    for (auto& image : m_images)
-        builder.uncheckedAppend(CSSImageSetOptionValue::create(image.image->computedStyleValue(style), CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX), image.mimeType));
-
+    auto builder = WTF::map<4>(m_images, [&](auto& image) -> Ref<CSSValue> {
+        return CSSImageSetOptionValue::create(image.image->computedStyleValue(style), CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX), image.mimeType);
+    });
     return CSSImageSetValue::create(WTFMove(builder));
 }
 

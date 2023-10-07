@@ -1307,11 +1307,10 @@ inline void BuilderConverter::createImplicitNamedGridLinesFromGridArea(const Nam
 
 inline Vector<GridTrackSize> BuilderConverter::convertGridTrackSizeList(BuilderState& builderState, const CSSValue& value)
 {
-    auto validateValueAndAppend = [&builderState](Vector<GridTrackSize>& trackSizes, const CSSValue& value) {
-        ASSERT(!value.isGridLineNamesValue());
-        ASSERT(!value.isGridAutoRepeatValue());
-        ASSERT(!value.isGridIntegerRepeatValue());
-        trackSizes.uncheckedAppend(convertGridTrackSize(builderState, value));
+    auto validateValue = [](const CSSValue& value) {
+        ASSERT_UNUSED(value, !value.isGridLineNamesValue());
+        ASSERT_UNUSED(value, !value.isGridAutoRepeatValue());
+        ASSERT_UNUSED(value, !value.isGridIntegerRepeatValue());
     };
 
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
@@ -1320,23 +1319,19 @@ inline Vector<GridTrackSize> BuilderConverter::convertGridTrackSizeList(BuilderS
             return RenderStyle::initialGridAutoRows();
         }
         // Values coming from CSS Typed OM may not have been converted to a CSSValueList yet.
-        Vector<GridTrackSize> trackSizes;
-        trackSizes.reserveInitialCapacity(1);
-        validateValueAndAppend(trackSizes, *primitiveValue);
-        return trackSizes;
+        validateValue(*primitiveValue);
+        return Vector<GridTrackSize>({ convertGridTrackSize(builderState, *primitiveValue) });
     }
 
-    Vector<GridTrackSize> trackSizes;
     if (is<CSSValueList>(value))  {
         auto& valueList = downcast<CSSValueList>(value);
-        trackSizes.reserveInitialCapacity(valueList.length());
-        for (auto& currentValue : valueList)
-            validateValueAndAppend(trackSizes, currentValue);
-    } else {
-        trackSizes.reserveInitialCapacity(1);
-        validateValueAndAppend(trackSizes, value);
+        return WTF::map(valueList, [&](auto& currentValue) {
+            validateValue(currentValue);
+            return convertGridTrackSize(builderState, currentValue);
+        });
     }
-    return trackSizes;
+    validateValue(value);
+    return Vector<GridTrackSize>({ convertGridTrackSize(builderState, value) });
 }
 
 inline GridTrackSize BuilderConverter::convertGridTrackSize(BuilderState& builderState, const CSSValue& value)
@@ -1692,13 +1687,9 @@ inline SVGLengthValue BuilderConverter::convertSVGLengthValue(BuilderState& buil
 inline Vector<SVGLengthValue> BuilderConverter::convertSVGLengthVector(BuilderState& builderState, const CSSValue& value, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
 {
     auto& valueList = downcast<CSSValueList>(value);
-
-    Vector<SVGLengthValue> svgLengths;
-    svgLengths.reserveInitialCapacity(valueList.length());
-    for (auto& item : valueList)
-        svgLengths.uncheckedAppend(convertSVGLengthValue(builderState, item, shouldConvertNumberToPxLength));
-
-    return svgLengths;
+    return WTF::map(valueList, [&](auto& item) {
+        return convertSVGLengthValue(builderState, item, shouldConvertNumberToPxLength);
+    });
 }
 
 inline Vector<SVGLengthValue> BuilderConverter::convertStrokeDashArray(BuilderState& builderState, const CSSValue& value)

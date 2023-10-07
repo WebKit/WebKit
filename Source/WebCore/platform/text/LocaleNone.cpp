@@ -71,9 +71,7 @@ const Vector<String>& LocaleNone::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
         return m_monthLabels;
-    m_monthLabels.reserveCapacity(std::size(WTF::monthFullName));
-    for (unsigned i = 0; i < std::size(WTF::monthFullName); ++i)
-        m_monthLabels.uncheckedAppend(WTF::monthFullName[i]);
+    m_monthLabels = { WTF::monthFullName, std::size(WTF::monthFullName) };
     return m_monthLabels;
 }
 
@@ -116,9 +114,7 @@ const Vector<String>& LocaleNone::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
-    m_shortMonthLabels.reserveCapacity(std::size(WTF::monthName));
-    for (auto* monthName : WTF::monthName)
-        m_shortMonthLabels.uncheckedAppend(monthName);
+    m_shortMonthLabels = { WTF::monthName, std::size(WTF::monthName) };
     return m_shortMonthLabels;
 }
 
