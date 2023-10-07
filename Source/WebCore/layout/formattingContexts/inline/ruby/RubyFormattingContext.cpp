@@ -171,17 +171,36 @@ InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseL
     auto& annotationBoxGeometry = inlineFormattingContext.geometryForBox(*annotationBox);
 
     if (isInterlinearAnnotation(annotationBox)) {
-        auto topLeft = BoxGeometry::marginBoxRect(rubyBaseGeometry).topLeft();
         // Move it over/under the base and make it border box position.
-        auto borderBoxTop = annotationBox->style().rubyPosition() == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseGeometry.marginBoxHeight();
-        borderBoxTop += annotationBoxGeometry.marginBefore();
-        topLeft.move(LayoutSize { annotationBoxGeometry.marginStart(), borderBoxTop });
+        auto leftOffset = annotationBoxGeometry.marginStart();
+        auto topOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseGeometry.marginBoxHeight();
+        switch (writingModeToBlockFlowDirection(rubyBaseLayoutBox.style().writingMode())) {
+        case BlockFlowDirection::TopToBottom:
+        case BlockFlowDirection::BottomToTop:
+            break;
+        case BlockFlowDirection::RightToLeft:
+            topOffset = leftOffset;
+            leftOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseGeometry.marginBoxWidth();
+            break;
+        case BlockFlowDirection::LeftToRight:
+            topOffset = leftOffset;
+            leftOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ? rubyBaseGeometry.marginBoxWidth() : -annotationBoxGeometry.marginBoxHeight();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        auto topLeft = BoxGeometry::marginBoxRect(rubyBaseGeometry).topLeft();
+        topLeft.move(LayoutSize { leftOffset, topOffset });
         return topLeft;
     }
     // Inter-character annotation box is stretched to the size of the base content box and vertically centered.
-    auto rubyBaseRight = BoxGeometry::marginBoxRect(rubyBaseGeometry).right();
-    auto borderBoxRight = rubyBaseRight + annotationBoxGeometry.marginStart();
-    return { borderBoxRight, ((rubyBaseGeometry.contentBoxHeight() - annotationBoxGeometry.contentBoxHeight()) / 2) - annotationBoxGeometry.borderBefore() };
+    auto isHorizontalWritingMode = rubyBaseLayoutBox.style().isHorizontalWritingMode();
+    auto annotationVisualContentBoxHeight = isHorizontalWritingMode ? annotationBoxGeometry.contentBoxHeight() : annotationBoxGeometry.contentBoxWidth();
+    auto annotationBorderTop = isHorizontalWritingMode ? annotationBoxGeometry.borderBefore() : annotationBoxGeometry.borderStart();
+    auto rubyBaseLogicalRight = BoxGeometry::marginBoxRect(rubyBaseGeometry).right();
+    auto borderBoxRight = rubyBaseLogicalRight + annotationBoxGeometry.marginStart();
+    return { borderBoxRight, ((rubyBaseGeometry.marginBoxHeight() - annotationVisualContentBoxHeight) / 2) - annotationBorderTop };
 }
 
 InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLayoutBox)
@@ -196,9 +215,12 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
     auto& inlineFormattingContext = parentFormattingContext();
     auto& rubyBaseGeometry = inlineFormattingContext.geometryForBox(rubyBaseLayoutBox);
     auto& annotationBoxGeometry = inlineFormattingContext.geometryForBox(*annotationBox);
+    auto isHorizontalWritingMode = rubyBaseLayoutBox.style().isHorizontalWritingMode();
+    auto rubyBaseLogicalWidth = isHorizontalWritingMode ? rubyBaseGeometry.marginBoxWidth() : rubyBaseGeometry.marginBoxHeight();
     if (isInterlinearAnnotation(annotationBox))
-        return { std::max(rubyBaseGeometry.marginBoxWidth(), annotationBoxGeometry.marginBoxWidth()) - annotationBoxGeometry.horizontalMarginBorderAndPadding(), annotationBoxGeometry.contentBoxHeight() };
-    return { annotationBoxGeometry.contentBoxWidth(), std::max(rubyBaseGeometry.marginBoxHeight(), annotationBoxGeometry.marginBoxHeight()) - annotationBoxGeometry.verticalMarginBorderAndPadding() };
+        return { std::max(rubyBaseLogicalWidth, annotationBoxGeometry.marginBoxWidth()) - annotationBoxGeometry.horizontalMarginBorderAndPadding(), annotationBoxGeometry.contentBoxHeight() };
+    auto rubyBaseLogicalHeight = isHorizontalWritingMode ? rubyBaseGeometry.marginBoxHeight() : rubyBaseGeometry.marginBoxWidth();
+    return { annotationBoxGeometry.contentBoxWidth(), std::max(rubyBaseLogicalHeight, annotationBoxGeometry.marginBoxHeight()) - annotationBoxGeometry.verticalMarginBorderAndPadding() };
 }
 
 RubyFormattingContext::OverUnder RubyFormattingContext::annotationContributionToLayoutBounds(const Box& rubyBaseLayoutBox)
