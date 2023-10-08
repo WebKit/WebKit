@@ -27,6 +27,7 @@
 #include "WebProcess.h"
 
 #include "LogInitialization.h"
+#include "WebProcessCreationParameters.h"
 #include <WebCore/LogInitialization.h>
 #include <wtf/LogInitialization.h>
 
