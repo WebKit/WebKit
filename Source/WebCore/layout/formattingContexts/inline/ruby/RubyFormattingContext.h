@@ -69,6 +69,7 @@ private:
     std::optional<bool> annotationOverlapCheck(const InlineDisplay::Box&, const InlineLayoutRect& overhangingRect) const;
     void placeRubyContent(WTF::Range<size_t> candidateRange, const InlineItemList&, Line&);
     InlineLayoutUnit logicaWidthForRubyRange(WTF::Range<size_t> candidateRange, const InlineItemList&, InlineLayoutUnit lineContentLogicalRight) const;
+    InlineLayoutRect visualRectIncludingBlockDirection(const InlineLayoutRect& visualRectIgnoringBlockDirection) const;
 
     const InlineFormattingContext& parentFormattingContext() const { return m_parentFormattingContext; }
 

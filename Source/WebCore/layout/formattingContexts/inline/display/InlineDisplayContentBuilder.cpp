@@ -483,21 +483,21 @@ void InlineDisplayContentBuilder::appendInterlinearRubyAnnotationBox(const Box& 
 
     auto& annotationBox = *rubyBaseLayoutBox.associatedRubyAnnotationBox();
     auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
-    auto borderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(rubyBaseLayoutBox);
-    auto contentBoxSize = rubyFormattingContext.sizeAnnotationBox(rubyBaseLayoutBox);
+    auto visualBorderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(rubyBaseLayoutBox);
+    auto visualContentBoxSize = rubyFormattingContext.sizeAnnotationBox(rubyBaseLayoutBox);
 
     auto& annotationBoxGeometry = formattingContext().geometryForBox(annotationBox);
-    annotationBoxGeometry.setTopLeft(toLayoutPoint(borderBoxTopLeft));
-    annotationBoxGeometry.setContentBoxSize(toLayoutSize(contentBoxSize));
+    annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
+    annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
 
-    auto borderBoxRect = BoxGeometry::borderBoxRect(annotationBoxGeometry);
+    auto visualBorderBoxRect = BoxGeometry::borderBoxRect(annotationBoxGeometry);
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
         , annotationBox
         , UBIDI_DEFAULT_LTR
-        , borderBoxRect
-        , borderBoxRect
+        , visualBorderBoxRect
+        , visualBorderBoxRect
         , { }
         , { }
         , true
@@ -510,21 +510,21 @@ void InlineDisplayContentBuilder::appendIntercharacterRubyAnnotationBox(const Li
     auto& annotationBox = lineRun.layoutBox();
     ASSERT(!annotationBox.isInterlinearRubyAnnotationBox());
     auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
-    auto borderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(*m_interCharacterRubyBase);
-    auto contentBoxSize = rubyFormattingContext.sizeAnnotationBox(*m_interCharacterRubyBase);
+    auto visualBorderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(*m_interCharacterRubyBase);
+    auto visualContentBoxSize = rubyFormattingContext.sizeAnnotationBox(*m_interCharacterRubyBase);
 
     auto& annotationBoxGeometry = formattingContext().geometryForBox(annotationBox);
-    annotationBoxGeometry.setTopLeft(toLayoutPoint(borderBoxTopLeft));
-    annotationBoxGeometry.setContentBoxSize(toLayoutSize(contentBoxSize));
+    annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
+    annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
 
-    auto borderBoxRect = BoxGeometry::borderBoxRect(annotationBoxGeometry);
+    auto visualBorderBoxRect = BoxGeometry::borderBoxRect(annotationBoxGeometry);
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
         , annotationBox
         , lineRun.bidiLevel()
-        , borderBoxRect
-        , borderBoxRect
+        , visualBorderBoxRect
+        , visualBorderBoxRect
         , { }
         , { }
         , true
