@@ -785,7 +785,7 @@ unsigned AccessibilityTable::rowCount()
     return m_rows.size();
 }
 
-AXCoreObject* AccessibilityTable::cellForColumnAndRow(unsigned column, unsigned row)
+AccessibilityObject* AccessibilityTable::cellForColumnAndRow(unsigned column, unsigned row)
 {
     updateChildrenIfNecessary();
     if (row >= m_cellSlots.size() || column >= m_cellSlots[row].size())

@@ -45,7 +45,7 @@ protected:
 
 private:
     HTMLInputElement* inputElement() const;
-    AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const final;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Slider; }
 
