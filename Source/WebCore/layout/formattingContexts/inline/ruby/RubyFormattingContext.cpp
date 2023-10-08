@@ -381,6 +381,17 @@ InlineLayoutUnit RubyFormattingContext::applyRubyAlign(Line& line, WTF::Range<si
     return centerOffset;
 }
 
+InlineLayoutRect RubyFormattingContext::visualRectIncludingBlockDirection(const InlineLayoutRect& visualRectIgnoringBlockDirection) const
+{
+    if (!parentFormattingContext().root().style().isFlippedLinesWritingMode())
+        return visualRectIgnoringBlockDirection;
+
+    ASSERT(parentFormattingContext().root().style().isVerticalWritingMode());
+    auto flippedRect = visualRectIgnoringBlockDirection;
+    flippedRect.setX(flippedRect.x() - flippedRect.width());
+    return flippedRect;
+}
+
 std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox, const InlineLayoutRect& overhangingRect) const
 {
     // We are in the middle of a line, should not see any line breaks or ellipsis boxes here.
@@ -388,7 +399,7 @@ std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDi
     // Skip empty content like <span></span>
     if (adjacentDisplayBox.visualRectIgnoringBlockDirection().isEmpty())
         return { };
-    if (adjacentDisplayBox.inkOverflow().intersects(overhangingRect))
+    if (visualRectIncludingBlockDirection(adjacentDisplayBox.inkOverflow()).intersects(visualRectIncludingBlockDirection(overhangingRect)))
         return true;
     auto& adjacentLayoutBox = adjacentDisplayBox.layoutBox();
     if (adjacentLayoutBox.isRuby()) {
@@ -400,7 +411,7 @@ std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDi
         return false;
     if (adjacentLayoutBox.isRubyBase() && adjacentLayoutBox.associatedRubyAnnotationBox()) {
         auto annotationMarginBoxRect = InlineLayoutRect { BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*adjacentLayoutBox.associatedRubyAnnotationBox())) };
-        if (annotationMarginBoxRect.intersects(overhangingRect))
+        if (visualRectIncludingBlockDirection(annotationMarginBoxRect).intersects(visualRectIncludingBlockDirection(overhangingRect)))
             return true;
     }
     return { };
