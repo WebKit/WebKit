@@ -56,7 +56,6 @@ void ARKitCoordinator::getPrimaryDeviceInfo(DeviceInfoCallback&& callback)
 
     CGSize recommendedResolution = supportedVideoFormats[0].imageResolution;
 
-    ASSERT(m_deviceIdentifier);
     XRDeviceInfo deviceInfo;
     deviceInfo.identifier = m_deviceIdentifier;
     deviceInfo.supportsOrientationTracking = true;
@@ -83,25 +82,101 @@ void ARKitCoordinator::requestPermissionOnSessionFeatures(WebPageProxy& page, co
     });
 }
 
-void ARKitCoordinator::startSession(WebPageProxy&, WeakPtr<SessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&)
+void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClient>&& sessionEventClient, const WebCore::SecurityOriginData&, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList&)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::startSession");
+    ASSERT(RunLoop::isMain());
+    ASSERT(mode == PlatformXR::SessionMode::ImmersiveAr);
+
+    WTF::switchOn(m_state,
+        [&](Idle&) {
+            m_state = Active { page.webPageID(), WTFMove(sessionEventClient), nullptr };
+        },
+        [&](Active&) {
+            RELEASE_LOG_ERROR(XR, "ARKitCoordinator: an existing immersive session is active");
+            if (sessionEventClient)
+                sessionEventClient->sessionDidEnd(m_deviceIdentifier);
+        },
+        [&](Terminating&) { });
 }
 
-void ARKitCoordinator::endSessionIfExists(WebPageProxy&)
+void ARKitCoordinator::endSessionIfExists(WebPageProxy& page)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::endSessionIfExists");
+    ASSERT(RunLoop::isMain());
+
+    WTF::switchOn(m_state,
+        [&](Idle&) { },
+        [&](Active& active) {
+            if (active.pageIdentifier != page.webPageID()) {
+                RELEASE_LOG(XR, "ARKitCoordinator: trying to end an immersive session owned by another page");
+                return;
+            }
+
+            if (active.onFrameUpdate)
+                active.onFrameUpdate({ });
+
+            m_state = Terminating { WTFMove(active.sessionEventClient) };
+        },
+        [&](Terminating&) { });
+
+    currentSessionHasEnded();
 }
 
-void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
+void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::scheduleAnimationFrame");
-    onFrameUpdateCallback({ });
+    WTF::switchOn(m_state,
+        [&](Idle&) {
+            RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame update for an inactive session");
+            onFrameUpdateCallback({ });
+        },
+        [&](Active& active) {
+            if (active.pageIdentifier != page.webPageID()) {
+                RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame update for session owned by another page");
+                return;
+            }
+
+            active.onFrameUpdate = WTFMove(onFrameUpdateCallback);
+        },
+        [&](Terminating&) {
+            RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame for terminating session");
+            onFrameUpdateCallback({ });
+        });
 }
 
-void ARKitCoordinator::submitFrame(WebPageProxy&)
+void ARKitCoordinator::submitFrame(WebPageProxy& page)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::submitFrame");
+    ASSERT(RunLoop::isMain());
+    WTF::switchOn(m_state,
+        [&](Idle&) {
+            RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for an inactive session");
+        },
+        [&](Active& active) {
+            if (active.pageIdentifier != page.webPageID()) {
+                RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for session owned by another page");
+                return;
+            }
+        },
+        [&](Terminating&) {
+            RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for a terminating session");
+        });
+}
+
+void ARKitCoordinator::currentSessionHasEnded()
+{
+    ASSERT(RunLoop::isMain());
+    RELEASE_LOG(XR, "ARKitCoordinator::currentSessionHasEnded");
+
+    if (auto* terminating = std::get_if<Terminating>(&m_state)) {
+        auto& sessionEventClient = terminating->sessionEventClient;
+        if (sessionEventClient)
+            sessionEventClient->sessionDidEnd(m_deviceIdentifier);
+    }
+
+    RELEASE_LOG(XR, "... immersive session ended");
+    m_state = Idle { };
 }
 
 } // namespace WebKit
