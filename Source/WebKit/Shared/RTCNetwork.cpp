@@ -28,11 +28,14 @@
 
 #if USE(LIBWEBRTC)
 
+#include "DataReference.h"
+#include "WebCoreArgumentCoders.h"
+
 namespace WebKit {
 
 RTCNetwork::RTCNetwork(const rtc::Network& network)
-    : name(network.name().data(), network.name().length())
-    , description(network.description().data(), network.description().length())
+    : name(network.name())
+    , description(network.description())
     , prefix { network.prefix() }
     , prefixLength(network.prefix_length())
     , type(network.type())
@@ -41,38 +44,68 @@ RTCNetwork::RTCNetwork(const rtc::Network& network)
     , active(network.active())
     , ignored(network.ignored())
     , scopeID(network.scope_id())
-    , ips(WTF::map(network.GetIPs(), [] (const rtc::InterfaceAddress& address) {
-        return RTCNetwork::InterfaceAddress(address);
-    })) { }
-
-RTCNetwork::RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<char>&& key, size_t length, Vector<InterfaceAddress>&& ips)
-    : name(WTFMove(name))
-    , description(WTFMove(description))
-    , prefix(prefix)
-    , prefixLength(prefixLength)
-    , type(type)
-    , id(id)
-    , preference(preference)
-    , active(active)
-    , ignored(ignored)
-    , scopeID(scopeID)
-    , key(WTFMove(key))
-    , length(length)
-    , ips(WTFMove(ips)) { }
+    , ips(network.GetIPs())
+{
+}
 
 rtc::Network RTCNetwork::value() const
 {
-    rtc::Network network(name.data(), description.data(), prefix.rtcAddress(), prefixLength, rtc::AdapterType(type));
+    rtc::Network network(name.data(), description.data(), prefix.value, prefixLength, rtc::AdapterType(type));
     network.set_id(id);
     network.set_preference(preference);
     network.set_active(active);
     network.set_ignored(ignored);
     network.set_scope_id(scopeID);
-    auto rtcInterfaceAddresses = WTF::map(ips, [] (const RTCNetwork::InterfaceAddress& address) {
-        return address.rtcAddress();
-    });
-    network.SetIPs(std::vector<rtc::InterfaceAddress>(rtcInterfaceAddresses.begin(), rtcInterfaceAddresses.end()), true);
+    network.SetIPs(ips, true);
     return network;
+}
+
+auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> std::optional<IPAddress>
+{
+    IPAddress result;
+    int family;
+    if (!decoder.decode(family))
+        return std::nullopt;
+
+    ASSERT(family == AF_INET || family == AF_INET6 || family == AF_UNSPEC);
+
+    if (family == AF_UNSPEC)
+        return result;
+
+    IPC::DataReference data;
+    if (!decoder.decode(data))
+        return std::nullopt;
+
+    if (family == AF_INET) {
+        if (data.size() != sizeof(in_addr))
+            return std::nullopt;
+        result.value = rtc::IPAddress(*reinterpret_cast<const in_addr*>(data.data()));
+        return result;
+    }
+
+    if (data.size() != sizeof(in6_addr))
+        return std::nullopt;
+    result.value = rtc::IPAddress(*reinterpret_cast<const in6_addr*>(data.data()));
+    return result;
+}
+
+void RTCNetwork::IPAddress::encode(IPC::Encoder& encoder) const
+{
+    auto family = value.family();
+    ASSERT(family == AF_INET || family == AF_INET6 || family == AF_UNSPEC);
+    encoder << family;
+
+    if (family == AF_UNSPEC)
+        return;
+
+    if (family == AF_INET) {
+        auto address = value.ipv4_address();
+        encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(&address), sizeof(address));
+        return;
+    }
+
+    auto address = value.ipv6_address();
+    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(&address), sizeof(address));
 }
 
 rtc::SocketAddress RTCNetwork::isolatedCopy(const rtc::SocketAddress& value)
@@ -86,78 +119,119 @@ rtc::SocketAddress RTCNetwork::isolatedCopy(const rtc::SocketAddress& value)
     return rtc::SocketAddress(copy);
 }
 
-namespace RTC::Network {
-
-IPAddress::IPAddress(const rtc::IPAddress& input)
+auto RTCNetwork::SocketAddress::decode(IPC::Decoder& decoder) -> std::optional<SocketAddress>
 {
-    switch (input.family()) {
-    case AF_INET6: {
-        in6_addr addr = input.ipv6_address();
-        std::array<uint32_t, 4> array;
-        static_assert(sizeof(array) == sizeof(addr));
-        memcpy(array.data(), &addr, sizeof(array));
-        value = array;
-        return;
-    }
-    case AF_INET:
-        value = input.ipv4_address().s_addr;
-        return;
-    case AF_UNSPEC:
-        value = UnspecifiedFamily { };
-        return;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-}
+    SocketAddress result;
+    uint16_t port;
+    if (!decoder.decode(port))
+        return std::nullopt;
+    int scopeId;
+    if (!decoder.decode(scopeId))
+        return std::nullopt;
+    result.value.SetPort(port);
+    result.value.SetScopeID(scopeId);
 
-rtc::IPAddress IPAddress::rtcAddress() const
-{
-    return WTF::switchOn(value, [](UnspecifiedFamily) {
-        return rtc::IPAddress();
-    }, [] (uint32_t ipv4) {
-        in_addr addressv4;
-        addressv4.s_addr = ipv4;
-        return rtc::IPAddress(addressv4);
-    }, [] (std::array<uint32_t, 4> ipv6) {
-        in6_addr result;
-        static_assert(sizeof(ipv6) == sizeof(result));
-        memcpy(&result, ipv6.data(), sizeof(ipv6));
-        return rtc::IPAddress(result);
-    });
-}
+    IPC::DataReference hostname;
+    if (!decoder.decode(hostname))
+        return std::nullopt;
+    result.value.SetIP(std::string(reinterpret_cast<const char*>(hostname.data()), hostname.size()));
 
-SocketAddress::SocketAddress(const rtc::SocketAddress& address)
-    : hostname(address.hostname().data(), address.hostname().length())
-    , ip(address.IsUnresolvedIP() ? std::nullopt : std::optional(address.ipaddr()))
-    , port(address.port())
-    , scopeID(address.scope_id()) { }
+    bool isUnresolved;
+    if (!decoder.decode(isUnresolved))
+        return std::nullopt;
+    if (isUnresolved)
+        return result;
 
-SocketAddress::SocketAddress(Vector<char>&& hostname, std::optional<IPAddress> ip, uint16_t port, int scopeID)
-    : hostname(WTFMove(hostname))
-    , ip(ip)
-    , port(port)
-    , scopeID(scopeID) { }
-
-rtc::SocketAddress SocketAddress::rtcAddress() const
-{
-    rtc::SocketAddress result;
-    result.SetPort(port);
-    result.SetScopeID(scopeID);
-    result.SetIP(std::string(hostname.data(), hostname.size()));
-    if (ip)
-        result.SetResolvedIP(ip->rtcAddress());
+    std::optional<IPAddress> ipAddress;
+    decoder >> ipAddress;
+    if (!ipAddress)
+        return std::nullopt;
+    result.value.SetResolvedIP(ipAddress->value);
     return result;
 }
 
-InterfaceAddress::InterfaceAddress(const rtc::InterfaceAddress& address)
-    : address(address)
-    , ipv6Flags(address.ipv6_flags()) { }
-
-rtc::InterfaceAddress InterfaceAddress::rtcAddress() const
+void RTCNetwork::SocketAddress::encode(IPC::Encoder& encoder) const
 {
-    return rtc::InterfaceAddress(address.rtcAddress(), ipv6Flags);
+    encoder << value.port();
+    encoder << value.scope_id();
+
+    auto hostname = value.hostname();
+    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(hostname.data()), hostname.length());
+
+    if (value.IsUnresolvedIP()) {
+        encoder << true;
+        return;
+    }
+    encoder << false;
+    encoder << RTCNetwork::IPAddress(value.ipaddr());
 }
 
+std::optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
+{
+    RTCNetwork result;
+    IPC::DataReference name, description;
+    if (!decoder.decode(name))
+        return std::nullopt;
+    result.name = std::string(reinterpret_cast<const char*>(name.data()), name.size());
+    if (!decoder.decode(description))
+        return std::nullopt;
+    result.description = std::string(reinterpret_cast<const char*>(description.data()), description.size());
+    std::optional<IPAddress> prefix;
+    decoder >> prefix;
+    if (!prefix)
+        return std::nullopt;
+    result.prefix = WTFMove(*prefix);
+    if (!decoder.decode(result.prefixLength))
+        return std::nullopt;
+    if (!decoder.decode(result.type))
+        return std::nullopt;
+    if (!decoder.decode(result.id))
+        return std::nullopt;
+    if (!decoder.decode(result.preference))
+        return std::nullopt;
+    if (!decoder.decode(result.active))
+        return std::nullopt;
+    if (!decoder.decode(result.ignored))
+        return std::nullopt;
+    if (!decoder.decode(result.scopeID))
+        return std::nullopt;
+
+    uint64_t length;
+    if (!decoder.decode(length))
+        return std::nullopt;
+    result.ips.reserve(length);
+    for (size_t index = 0; index < length; ++index) {
+        std::optional<IPAddress> address;
+        decoder >> address;
+        if (!address)
+            return std::nullopt;
+        int flags;
+        if (!decoder.decode(flags))
+            return std::nullopt;
+        result.ips.push_back({ address->value, flags });
+    }
+    return result;
+}
+
+void RTCNetwork::encode(IPC::Encoder& encoder) const
+{
+    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(name.data()), name.length());
+    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(description.data()), description.length());
+    encoder << prefix;
+    encoder << prefixLength;
+    encoder << type;
+
+    encoder << id;
+    encoder << preference;
+    encoder << active;
+    encoder << ignored;
+    encoder << scopeID;
+
+    encoder << (uint64_t)ips.size();
+    for (auto& ip : ips) {
+        encoder << IPAddress { ip };
+        encoder << ip.ipv6_flags();
+    }
 }
 
 }

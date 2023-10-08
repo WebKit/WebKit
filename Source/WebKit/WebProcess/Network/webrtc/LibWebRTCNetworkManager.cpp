@@ -142,7 +142,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
         filteredNetworks = networks;
     else {
         for (auto& network : networks) {
-            if (WTF::anyOf(network.ips, [&](const auto& ip) { return ipv4 == ip.address || ipv6 == ip.address; }) || (!m_useMDNSCandidates && m_enableEnumeratingVisibleNetworkInterfaces && m_allowedInterfaces.contains(String::fromUTF8(network.name.data()))))
+            if (WTF::anyOf(network.ips, [&](const auto& ip) { return ipv4.value == ip || ipv6.value == ip; }) || (!m_useMDNSCandidates && m_enableEnumeratingVisibleNetworkInterfaces && m_allowedInterfaces.contains(String::fromUTF8(network.name.c_str()))))
                 filteredNetworks.append(network);
         }
     }
@@ -153,7 +153,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
             networkList[index] = std::make_unique<rtc::Network>(networks[index].value());
 
         bool hasChanged;
-        set_default_local_addresses(ipv4.rtcAddress(), ipv6.rtcAddress());
+        set_default_local_addresses(ipv4.value, ipv6.value);
         MergeNetworkList(WTFMove(networkList), &hasChanged);
         if (hasChanged || forceSignaling)
             SignalNetworksChanged();

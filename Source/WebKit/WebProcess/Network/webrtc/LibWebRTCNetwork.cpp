@@ -113,14 +113,14 @@ void LibWebRTCNetwork::signalAddressReady(WebCore::LibWebRTCSocketIdentifier ide
 {
     ASSERT(!WTF::isMainRunLoop());
     if (auto* socket = m_socketFactory.socket(identifier))
-        socket->signalAddressReady(address.rtcAddress());
+        socket->signalAddressReady(address.value);
 }
 
 void LibWebRTCNetwork::signalReadPacket(WebCore::LibWebRTCSocketIdentifier identifier, const IPC::DataReference& data, const RTCNetwork::IPAddress& address, uint16_t port, int64_t timestamp)
 {
     ASSERT(!WTF::isMainRunLoop());
     if (auto* socket = m_socketFactory.socket(identifier))
-        socket->signalReadPacket(data.data(), data.size(), rtc::SocketAddress(address.rtcAddress(), port), timestamp);
+        socket->signalReadPacket(data.data(), data.size(), rtc::SocketAddress(address.value, port), timestamp);
 }
 
 void LibWebRTCNetwork::signalSentPacket(WebCore::LibWebRTCSocketIdentifier identifier, int rtcPacketID, int64_t sendTimeMs)

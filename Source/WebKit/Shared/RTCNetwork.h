@@ -30,7 +30,6 @@
 #include <WebCore/LibWebRTCMacros.h>
 #include <optional>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 ALLOW_COMMA_BEGIN
 
@@ -39,65 +38,48 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_COMMA_END
 
-namespace WebKit {
-
-namespace RTC::Network {
-
-struct IPAddress {
-    struct UnspecifiedFamily {
-        constexpr bool operator==(const UnspecifiedFamily&) const { return true; }
-    };
-
-    IPAddress() = default;
-    explicit IPAddress(const rtc::IPAddress&);
-    explicit IPAddress(std::variant<UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value)
-        : value(value) { }
-
-    bool operator==(const IPAddress&) const = default;
-
-    rtc::IPAddress rtcAddress() const;
-
-    std::variant<UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value;
-};
-
-struct InterfaceAddress {
-    explicit InterfaceAddress(const rtc::InterfaceAddress&);
-    explicit InterfaceAddress(IPAddress address, int ipv6Flags)
-        : address(address), ipv6Flags(ipv6Flags) { }
-
-    rtc::InterfaceAddress rtcAddress() const;
-
-    IPAddress address;
-    int ipv6Flags;
-};
-
-struct SocketAddress {
-    explicit SocketAddress(const rtc::SocketAddress&);
-    explicit SocketAddress(Vector<char>&&, std::optional<IPAddress>, uint16_t, int);
-
-    rtc::SocketAddress rtcAddress() const;
-
-    Vector<char> hostname;
-    std::optional<IPAddress> ip;
-    uint16_t port;
-    int scopeID;
-};
-
+namespace IPC {
+class Decoder;
+class Encoder;
 }
 
-struct RTCNetwork {
-    using SocketAddress = RTC::Network::SocketAddress;
-    using IPAddress = RTC::Network::IPAddress;
-    using InterfaceAddress = RTC::Network::InterfaceAddress;
+namespace WebKit {
 
+struct RTCNetwork {
+    RTCNetwork() = default;
     explicit RTCNetwork(const rtc::Network&);
-    RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<char>&& key, size_t length, Vector<InterfaceAddress>&& ips);
 
     rtc::Network value() const;
+
+    void encode(IPC::Encoder&) const;
+    static std::optional<RTCNetwork> decode(IPC::Decoder&);
+
+    struct IPAddress {
+        IPAddress() = default;
+        explicit IPAddress(const rtc::IPAddress& address)
+            : value(address) { }
+
+        void encode(IPC::Encoder&) const;
+        static std::optional<IPAddress> decode(IPC::Decoder&);
+
+        rtc::IPAddress value;
+    };
+
     static rtc::SocketAddress isolatedCopy(const rtc::SocketAddress&);
 
-    Vector<char> name;
-    Vector<char> description;
+    struct SocketAddress {
+        SocketAddress() = default;
+        explicit SocketAddress(const rtc::SocketAddress& address)
+            : value(address) { }
+
+        void encode(IPC::Encoder&) const;
+        static std::optional<SocketAddress> decode(IPC::Decoder&);
+
+        rtc::SocketAddress value;
+    };
+
+    std::string name;
+    std::string description;
     IPAddress prefix;
     int prefixLength;
     int type;
@@ -106,9 +88,9 @@ struct RTCNetwork {
     bool active;
     bool ignored;
     int scopeID;
-    Vector<char> key;
+    std::string key;
     size_t length;
-    Vector<InterfaceAddress> ips;
+    std::vector<rtc::InterfaceAddress> ips;
 };
 
 }
