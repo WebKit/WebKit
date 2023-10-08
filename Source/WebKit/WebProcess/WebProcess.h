@@ -25,29 +25,21 @@
 
 #pragma once
 
-#include "AccessibilityPreferences.h"
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
 #include "EventDispatcher.h"
 #include "IdentifierTypes.h"
-#include "RemoteVideoCodecFactory.h"
 #include "StorageAreaMapIdentifier.h"
 #include "TextCheckerState.h"
-#include "UserContentControllerIdentifier.h"
-#include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebPageProxyIdentifier.h"
-#include "WebProcessCreationParameters.h"
-#include "WebSQLiteDatabaseTracker.h"
 #include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
-#include <WebCore/PluginData.h>
 #include <WebCore/RegistrableDomain.h>
-#include <WebCore/RenderingMode.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
 #include <pal/HysteresisActivity.h>
@@ -64,6 +56,10 @@
 #include "MediaDeviceSandboxExtensions.h"
 #endif
 
+#if ENABLE(WEB_CODECS)
+#include "RemoteVideoCodecFactory.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include <WebCore/ScreenProperties.h>
 #include <dispatch/dispatch.h>
@@ -71,6 +67,7 @@
 #endif
 
 #if PLATFORM(GTK)
+#include "DMABufRendererBufferMode.h"
 #include <WebCore/PlatformDisplay.h>
 #endif
 
@@ -78,8 +75,16 @@
 #include <WebCore/PlatformDisplayLibWPE.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "ViewUpdateDispatcher.h"
+#endif
+
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include <WebCore/CaptionUserPreferences.h>
+#endif
+
+#if USE(RUNNINGBOARD)
+#include "WebSQLiteDatabaseTracker.h"
 #endif
 
 namespace API {
@@ -94,10 +99,7 @@ enum class UserInterfaceIdiom : uint8_t;
 namespace WebCore {
 class ApplicationCacheStorage;
 class CPUMonitor;
-class CertificateInfo;
 class PageGroup;
-class RegistrableDomain;
-class ResourceRequest;
 class UserGestureToken;
 
 enum class EventMakesGamepadsVisible : bool;
@@ -108,7 +110,6 @@ struct DisplayUpdate;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 struct MockMediaDevice;
-struct PluginInfo;
 struct PrewarmInformation;
 class SecurityOriginData;
 
@@ -127,7 +128,6 @@ class LibWebRTCCodecs;
 class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
-class ProcessAssertion;
 class RemoteCDMFactory;
 class RemoteLegacyCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
@@ -138,7 +138,6 @@ class WebBadgeClient;
 class WebBroadcastChannelRegistry;
 class WebCacheStorageProvider;
 class WebCookieJar;
-class WebCompiledContentRuleListData;
 class WebConnectionToUIProcess;
 class WebFileSystemStorageConnection;
 class WebFrame;
@@ -148,6 +147,7 @@ class WebPageGroupProxy;
 class WebProcessSupplement;
 class WebTransportSession;
 
+struct AccessibilityPreferences;
 struct RemoteWorkerInitializationData;
 struct UserMessage;
 struct WebProcessCreationParameters;

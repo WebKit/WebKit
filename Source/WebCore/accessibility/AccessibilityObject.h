@@ -148,7 +148,7 @@ public:
     unsigned columnCount() override { return 0; }
     unsigned rowCount() override { return 0; }
     AccessibilityChildrenVector cells() override { return AccessibilityChildrenVector(); }
-    AXCoreObject* cellForColumnAndRow(unsigned, unsigned) override { return nullptr; }
+    AccessibilityObject* cellForColumnAndRow(unsigned, unsigned) override { return nullptr; }
     AccessibilityChildrenVector columnHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector rowHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector visibleRows() override { return AccessibilityChildrenVector(); }
@@ -325,11 +325,11 @@ public:
     Vector<String> determineDropEffects() const override { return { }; }
 
     // Called on the root AX object to return the deepest available element.
-    AXCoreObject* accessibilityHitTest(const IntPoint&) const override { return nullptr; }
+    AccessibilityObject* accessibilityHitTest(const IntPoint&) const override { return nullptr; }
     // Called on the AX object after the render tree determines which is the right AccessibilityRenderObject.
-    AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
 
-    AXCoreObject* focusedUIElement() const override;
+    AccessibilityObject* focusedUIElement() const final;
 
     virtual AccessibilityObject* firstChild() const { return nullptr; }
     virtual AccessibilityObject* lastChild() const { return nullptr; }
@@ -506,7 +506,7 @@ public:
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     virtual void addChildren() { }
     enum class DescendIfIgnored : bool { No, Yes };
-    virtual void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes);
+    void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes);
     virtual void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes);
     virtual bool canHaveChildren() const { return true; }
     void updateChildrenIfNecessary() override;
@@ -700,9 +700,9 @@ public:
     bool isOnScreen() const override;
 
 #if PLATFORM(COCOA)
-    void overrideAttachmentParent(AXCoreObject* parent);
+    void overrideAttachmentParent(AccessibilityObject* parent);
 #else
-    void overrideAttachmentParent(AXCoreObject*) { }
+    void overrideAttachmentParent(AccessibilityObject*) { }
 #endif
 
 #if ENABLE(ACCESSIBILITY)

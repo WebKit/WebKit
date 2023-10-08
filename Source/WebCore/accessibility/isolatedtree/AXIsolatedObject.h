@@ -80,7 +80,7 @@ private:
     void initializeProperties(const Ref<AccessibilityObject>&);
     void initializePlatformProperties(const Ref<const AccessibilityObject>&);
 
-    void setProperty(AXPropertyName, AXPropertyValueVariant&&, bool shouldRemove = false);
+    void setProperty(AXPropertyName, AXPropertyValueVariant&&);
     void setObjectProperty(AXPropertyName, AXCoreObject*);
     void setObjectVectorProperty(AXPropertyName, const AccessibilityChildrenVector&);
 
@@ -468,7 +468,6 @@ private:
     bool supportsPressAction() const final { return boolAttributeValue(AXPropertyName::SupportsPressAction); }
     bool supportsChecked() const override;
     bool isModalNode() const override;
-    AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
     bool isDescendantOfRole(AccessibilityRole) const override;
     AXCoreObject* correspondingLabelForControlElement() const override;
     AXCoreObject* correspondingControlForLabelElement() const override;

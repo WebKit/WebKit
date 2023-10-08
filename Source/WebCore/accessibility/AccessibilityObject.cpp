@@ -3045,7 +3045,7 @@ bool AccessibilityObject::isTabItemSelected() const
     // The ARIA spec says a tab item can also be selected if it is aria-labeled by a tabpanel
     // that has keyboard focus inside of it, or if a tabpanel in its aria-controls list has KB
     // focus inside of it.
-    auto* focusedElement = static_cast<AccessibilityObject*>(focusedUIElement());
+    auto* focusedElement = focusedUIElement();
     if (!focusedElement)
         return false;
 
@@ -3129,7 +3129,7 @@ bool AccessibilityObject::supportsARIAAttributes() const
         || hasAttribute(aria_relevantAttr);
 }
     
-AXCoreObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
 { 
     // Send the hit test back into the sub-frame if necessary.
     if (isAttachment()) {
@@ -3143,8 +3143,8 @@ AXCoreObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& p
     
     // Check if there are any mock elements that need to be handled.
     for (const auto& child : m_children) {
-        if (child->isMockObject() && child->elementRect().contains(point))
-            return child->elementAccessibilityHitTest(point);
+        if (auto* mockChild = dynamicDowncast<AccessibilityMockObject>(child.get()); mockChild && mockChild->elementRect().contains(point))
+            return mockChild->elementAccessibilityHitTest(point);
     }
 
     return const_cast<AccessibilityObject*>(this);
@@ -3156,7 +3156,7 @@ AXObjectCache* AccessibilityObject::axObjectCache() const
     return document ? document->axObjectCache() : nullptr;
 }
 
-AXCoreObject* AccessibilityObject::focusedUIElement() const
+AccessibilityObject* AccessibilityObject::focusedUIElement() const
 {
     auto* page = this->page();
     auto* axObjectCache = this->axObjectCache();
@@ -4231,7 +4231,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedChildren(
     case AccessibilityRole::MenuBar:
         if (auto* descendant = activeDescendant())
             result = { descendant };
-        else if (auto* focusedElement = dynamicDowncast<AccessibilityObject>(focusedUIElement()))
+        else if (auto* focusedElement = focusedUIElement())
             result = { focusedElement };
         break;
     default:

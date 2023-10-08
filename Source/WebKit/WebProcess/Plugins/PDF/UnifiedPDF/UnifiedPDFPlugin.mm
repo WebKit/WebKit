@@ -86,18 +86,7 @@ void UnifiedPDFPlugin::installPDFDocument()
         return;
 
     m_documentLayout.updateLayout(size());
-    udpateLayerHierarchy();
-    sizeToFitContents();
-
-    m_contentsLayer->setNeedsDisplay();
-}
-
-void UnifiedPDFPlugin::sizeToFitContents()
-{
-    auto contentsSize = expandedIntSize(m_documentLayout.scaledContentsSize());
-
-    auto& pluginElement = m_view->pluginElement();
-    pluginElement.setInlineStyleProperty(CSSPropertyHeight, contentsSize.height(), CSSUnitType::CSS_PX);
+    updateLayerHierarchy();
 }
 
 RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
@@ -113,17 +102,24 @@ RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, 
     return graphicsLayer;
 }
 
-void UnifiedPDFPlugin::udpateLayerHierarchy()
+void UnifiedPDFPlugin::updateLayerHierarchy()
 {
-    m_rootLayer = createGraphicsLayer("UnifiedPDFPlugin root"_s, GraphicsLayer::Type::Normal);
-    m_rootLayer->setAnchorPoint({ });
+    if (!m_rootLayer) {
+        auto rootLayer = createGraphicsLayer("UnifiedPDFPlugin root"_s, GraphicsLayer::Type::Normal);
+        m_rootLayer = rootLayer.copyRef();
+        rootLayer->setAnchorPoint({ });
+    }
 
-    m_contentsLayer = createGraphicsLayer("UnifiedPDFPlugin contents"_s, GraphicsLayer::Type::Normal);
-    m_contentsLayer->setAnchorPoint({ });
+    if (!m_contentsLayer) {
+        auto contentsLayer = createGraphicsLayer("UnifiedPDFPlugin contents"_s, GraphicsLayer::Type::Normal);
+        m_contentsLayer = contentsLayer.copyRef();
+        contentsLayer->setAnchorPoint({ });
+        contentsLayer->setDrawsContent(true);
+        m_rootLayer->addChild(*contentsLayer);
+    }
+
     m_contentsLayer->setSize(size());
-    m_contentsLayer->setDrawsContent(true);
-
-    m_rootLayer->addChild(*m_contentsLayer);
+    m_contentsLayer->setNeedsDisplay();
 }
 
 void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>)
@@ -188,6 +184,16 @@ CGFloat UnifiedPDFPlugin::scaleFactor() const
     return 1;
 }
 
+float UnifiedPDFPlugin::deviceScaleFactor() const
+{
+    RefPtr frame = m_view->frame();
+    auto* page = frame->page();
+    if (!page)
+        return 1;
+
+    return page->deviceScaleFactor();
+}
+
 void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
     if (size() == pluginSize)
@@ -196,7 +202,7 @@ void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const Affine
     PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
 
     m_documentLayout.updateLayout(size());
-    sizeToFitContents();
+    updateLayerHierarchy();
 }
 
 RetainPtr<PDFDocument> UnifiedPDFPlugin::pdfDocumentForPrinting() const

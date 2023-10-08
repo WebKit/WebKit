@@ -118,7 +118,6 @@ svg/filters/feTurbulence-stitchTiles.html                                       
 svg/filters/feTurbulence_bad_seeds.html                                                [ ImageOnlyFailure ]
 svg/filters/filter-clip.svg                                                            [ ImageOnlyFailure ]
 svg/filters/filter-geometry-override.svg                                               [ ImageOnlyFailure ]
-svg/filters/filter-image-ref-root.html                                                 [ ImageOnlyFailure ]
 svg/filters/filter-on-filter-for-text.svg                                              [ ImageOnlyFailure ]
 svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
 svg/filters/filter-placement-issue.svg                                                 [ ImageOnlyFailure ]

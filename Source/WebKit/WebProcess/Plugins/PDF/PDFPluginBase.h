@@ -78,8 +78,6 @@ public:
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual WebCore::GraphicsLayer* graphicsLayer() const { return nullptr; }
 
-    virtual bool pluginFillsViewport() const { return true; }
-
     virtual void setView(PluginView&);
 
     virtual void willDetachRenderer() { }

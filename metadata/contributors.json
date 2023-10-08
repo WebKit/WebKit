@@ -4504,6 +4504,16 @@
    },
    {
       "emails" : [
+         "webkit@keithcirkel.co.uk"
+      ],
+      "github" : "keithamus",
+      "name" : "Keith Cirkel",
+      "nicks" : [
+         "keithamus"
+      ]
+   },
+   {
+      "emails" : [
          "keith_miller@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript",
@@ -4966,6 +4976,16 @@
          "liachen@rim.com"
       ],
       "name" : "Lia Chen"
+   },
+   {
+      "emails" : [
+         "lindseywild@github.com"
+      ],
+      "github" : "lindseywild",
+      "name" : "Lindsey Wild",
+      "nicks" : [
+         "lindseywild"
+      ]
    },
    {
       "emails" : [

@@ -271,7 +271,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
         ASSERT(is<AccessibilityObject>(tableCell));
         if (tableCell->cellScope() == "colgroup"_s && isTableCellInSameColGroup(tableCell))
             headers.append(tableCell);
-        else if (downcast<AccessibilityObject>(tableCell)->isColumnHeader())
+        else if (tableCell->isColumnHeader())
             headers.append(tableCell);
     }
 
@@ -295,7 +295,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 
         if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(tableCell))
             headers.append(tableCell);
-        else if (downcast<AccessibilityObject>(tableCell)->isRowHeader())
+        else if (tableCell->isRowHeader())
             headers.append(tableCell);
     }
 

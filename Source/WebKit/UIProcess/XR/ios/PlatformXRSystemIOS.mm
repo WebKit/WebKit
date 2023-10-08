@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(WEBXR) && PLATFORM(IOS)
+
 #import "config.h"
-#import "PlatformXRCocoa.h"
+#import "PlatformXRSystem.h"
 
-#if ENABLE(WEBXR) && !USE(OPENXR)
-
-#import "PlatformXR.h"
+#import "PlatformXRARKit.h"
 #import <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
+namespace WebKit {
 
-namespace PlatformXR {
-
-struct Instance::Impl {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    Impl() = default;
-    ~Impl() = default;
-};
-
-Instance& Instance::singleton()
+PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()
 {
-    static LazyNeverDestroyed<Instance> s_instance;
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag,
-        [&] {
-            s_instance.construct();
-        });
-    return s_instance.get();
+#if USE(ARKITXR_IOS)
+    static LazyNeverDestroyed<ARKitCoordinator> xrCoordinator;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        xrCoordinator.construct();
+    });
+    return &xrCoordinator.get();
+#else
+    return nullptr;
+#endif // USE(ARKITXR_IOS)
 }
 
-Instance::Instance()
-    : m_impl(makeUniqueRef<Impl>())
-{
-}
+} // namespace WebKit
 
-void Instance::enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList& devices)>&& callback)
-{
-    callback({ });
-}
-
-}
-
-#endif
+#endif // ENABLE(WEBXR) && PLATFORM(IOS)

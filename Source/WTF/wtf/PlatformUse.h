@@ -311,7 +311,11 @@
 #define USE_FONT_VARIANT_VIA_FEATURES 1
 #define USE_OPENXR 0
 #if !defined(HAVE_WEBXR_INTERNALS) && !HAVE(WEBXR_INTERNALS)
+#if PLATFORM(IOS) && HAVE(ARKIT)
+#define USE_ARKITXR_IOS 1
+#else
 #define USE_EMPTYXR 1
+#endif
 #endif
 #endif
 

@@ -239,7 +239,6 @@ PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, c
     , m_pendingResourceRequestTimer(RunLoop::main(), this, &PluginView::pendingResourceRequestTimerFired)
 {
     m_webPage->addPluginView(*this);
-    updateDocumentForPluginSizingBehavior();
 }
 
 PluginView::~PluginView()
@@ -254,16 +253,6 @@ PluginView::~PluginView()
 LocalFrame* PluginView::frame() const
 {
     return m_pluginElement->document().frame();
-}
-
-void PluginView::updateDocumentForPluginSizingBehavior()
-{
-    if (!m_plugin->pluginFillsViewport())
-        return;
-
-    RefPtr documentElement = m_pluginElement->document().documentElement();
-    // The styles in PluginDocumentParser are constructed to respond to this class.
-    documentElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "plugin-fills-viewport"_s);
 }
 
 void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
@@ -298,6 +287,11 @@ void PluginView::manualLoadDidFinishLoading()
     }
 
     m_plugin->streamDidFinishLoading();
+
+    if (layerHostingStrategy() != PluginLayerHostingStrategy::None) {
+        // This ensures that we update RenderLayers and compositing when the result of RenderEmbeddedObject::requiresLayer() changes.
+        Ref { m_pluginElement }->invalidateStyleAndLayerComposition();
+    }
 }
 
 void PluginView::manualLoadDidFail()
@@ -384,7 +378,7 @@ void PluginView::initializePlugin()
 #if PLATFORM(COCOA)
     if (m_plugin->isComposited() && frame()) {
         frame()->view()->enterCompositingMode();
-        m_pluginElement->invalidateStyleAndLayerComposition();
+        Ref { m_pluginElement }->invalidateStyleAndLayerComposition();
     }
     m_plugin->visibilityDidChange(isVisible());
 #endif

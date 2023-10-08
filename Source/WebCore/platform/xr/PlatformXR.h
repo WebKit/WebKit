@@ -51,6 +51,12 @@ enum class SessionMode : uint8_t {
     ImmersiveAr,
 };
 
+inline bool isImmersive(SessionMode mode)
+{
+    using enum PlatformXR::SessionMode;
+    return mode == ImmersiveAr || mode == ImmersiveVr;
+}
+
 enum class ReferenceSpaceType {
     Viewer,
     Local,

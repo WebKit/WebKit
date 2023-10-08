@@ -77,7 +77,7 @@ bool AccessibilityObject::fileUploadButtonReturnsValueInTitle() const
     return false;
 }
 
-void AccessibilityObject::overrideAttachmentParent(AXCoreObject*)
+void AccessibilityObject::overrideAttachmentParent(AccessibilityObject*)
 {
 }
     

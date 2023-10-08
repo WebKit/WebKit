@@ -65,7 +65,7 @@ public:
 
     // all the cells in the table
     AccessibilityChildrenVector cells() override;
-    AXCoreObject* cellForColumnAndRow(unsigned column, unsigned row) override;
+    AccessibilityObject* cellForColumnAndRow(unsigned column, unsigned row) override;
 
     AccessibilityChildrenVector columnHeaders() override;
     AccessibilityChildrenVector rowHeaders() override;

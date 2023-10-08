@@ -56,7 +56,8 @@ struct RTCNetwork {
 
     struct IPAddress {
         IPAddress() = default;
-        explicit IPAddress(const rtc::IPAddress& address): value(address) { }
+        explicit IPAddress(const rtc::IPAddress& address)
+            : value(address) { }
 
         void encode(IPC::Encoder&) const;
         static std::optional<IPAddress> decode(IPC::Decoder&);
@@ -68,7 +69,8 @@ struct RTCNetwork {
 
     struct SocketAddress {
         SocketAddress() = default;
-        explicit SocketAddress(const rtc::SocketAddress& address): value(address) { }
+        explicit SocketAddress(const rtc::SocketAddress& address)
+            : value(address) { }
 
         void encode(IPC::Encoder&) const;
         static std::optional<SocketAddress> decode(IPC::Decoder&);

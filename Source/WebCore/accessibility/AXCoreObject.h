@@ -1090,8 +1090,6 @@ public:
 
     // Called on the root AX object to return the deepest available element.
     virtual AXCoreObject* accessibilityHitTest(const IntPoint&) const = 0;
-    // Called on the AX object after the render tree determines which is the right AccessibilityRenderObject.
-    virtual AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const = 0;
 
     virtual AXCoreObject* focusedUIElement() const = 0;
 

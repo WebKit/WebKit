@@ -46,8 +46,6 @@ private:
     WebCore::PluginLayerHostingStrategy layerHostingStrategy() const override { return WebCore::PluginLayerHostingStrategy::GraphicsLayer; }
     WebCore::GraphicsLayer* graphicsLayer() const override;
 
-    bool pluginFillsViewport() const override { return false; }
-
     void teardown() override;
 
     void createPDFDocument() override;
@@ -87,9 +85,9 @@ private:
 
     // GraphicsLayerClient
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
+    float deviceScaleFactor() const override;
 
-    void sizeToFitContents();
-    void udpateLayerHierarchy();
+    void updateLayerHierarchy();
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, GraphicsLayer::Type);
 
