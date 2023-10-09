@@ -153,7 +153,6 @@ private:
             m_workset->remove(liveIndexAtHead);
         ASSERT(!m_workset->isEmpty());
 
-        liveAtHead.reserveCapacity(liveAtHead.size() + m_workset->size());
         liveAtHead.appendRange(m_workset->begin(), m_workset->end());
 
         bool changedPredecessor = false;
