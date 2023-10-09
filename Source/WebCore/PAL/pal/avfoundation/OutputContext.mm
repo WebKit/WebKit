@@ -97,11 +97,9 @@ Vector<OutputDevice> OutputContext::outputDevices() const
     }
 
     auto *avOutputDevices = [m_context outputDevices];
-    Vector<OutputDevice> outputDevices;
-    outputDevices.reserveInitialCapacity(avOutputDevices.count);
-    for (AVOutputDevice *device in avOutputDevices)
-        outputDevices.uncheckedAppend({ retainPtr(device) });
-    return outputDevices;
+    return Vector<OutputDevice>(avOutputDevices.count, [&](size_t i) {
+        return OutputDevice { retainPtr((AVOutputDevice *)avOutputDevices[i]) };
+    });
 }
 
 

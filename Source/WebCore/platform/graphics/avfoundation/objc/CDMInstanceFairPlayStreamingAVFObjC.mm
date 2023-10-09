@@ -1480,12 +1480,9 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateKeyStatuses(std::optional
 
 auto CDMInstanceSessionFairPlayStreamingAVFObjC::copyKeyStatuses() const -> KeyStatusVector
 {
-    KeyStatusVector copiedKeyStatuses;
-    copiedKeyStatuses.reserveInitialCapacity(m_keyStatuses.size());
-    for (auto& status : m_keyStatuses)
-        copiedKeyStatuses.uncheckedAppend({ status.first.copyRef(), status.second });
-    return copiedKeyStatuses;
-
+    return WTF::map(m_keyStatuses, [](auto& status) {
+        return std::pair<Ref<SharedBuffer>, KeyStatus> { status.first.copyRef(), status.second };
+    });
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)

@@ -448,11 +448,9 @@ void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String
 
     size_t size = element()->hasAttributeWithoutSynchronization(multipleAttr) ? paths.size() : 1;
 
-    Vector<FileChooserFileInfo> files;
-    files.reserveInitialCapacity(size);
-
-    for (size_t i = 0; i < size; ++i)
-        files.uncheckedAppend({ paths[i], i < replacementPaths.size() ? replacementPaths[i] : nullString(), { } });
+    Vector<FileChooserFileInfo> files(size, [&](size_t i) {
+        return FileChooserFileInfo { paths[i], i < replacementPaths.size() ? replacementPaths[i] : nullString(), { } };
+    });
 
     filesChosen(WTFMove(files));
 }

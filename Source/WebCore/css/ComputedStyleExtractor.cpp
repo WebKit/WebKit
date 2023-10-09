@@ -4532,13 +4532,11 @@ Ref<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForGridShorthand(c
 
 Ref<MutableStyleProperties> ComputedStyleExtractor::copyProperties(std::span<const CSSPropertyID> properties) const
 {
-    Vector<CSSProperty> vector;
-    vector.reserveInitialCapacity(properties.size());
-    for (auto property : properties) {
+    auto vector = WTF::compactMap(properties, [&](auto& property) -> std::optional<CSSProperty> {
         if (auto value = propertyValue(property))
-            vector.uncheckedAppend(CSSProperty(property, WTFMove(value), false));
-    }
-    vector.shrinkToFit();
+            return CSSProperty(property, WTFMove(value), false);
+        return std::nullopt;
+    });
     return MutableStyleProperties::create(WTFMove(vector));
 }
 

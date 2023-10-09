@@ -253,9 +253,9 @@ Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::copy() const
         return m_segments.size() ? SharedBuffer::create(m_segments[0].segment.copyRef()) : SharedBuffer::create();
     Ref<FragmentedSharedBuffer> clone = adoptRef(*new FragmentedSharedBuffer);
     clone->m_size = m_size;
-    clone->m_segments.reserveInitialCapacity(m_segments.size());
-    for (const auto& element : m_segments)
-        clone->m_segments.uncheckedAppend({ element.beginPosition, element.segment.copyRef() });
+    clone->m_segments = WTF::map<1>(m_segments, [](auto& element) {
+        return DataSegmentVectorEntry { element.beginPosition, element.segment.copyRef() };
+    });
     ASSERT(clone->internallyConsistent());
     ASSERT(internallyConsistent());
     return clone;

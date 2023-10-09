@@ -84,11 +84,10 @@ ExceptionOr<Vector<Ref<ReadableStream>>> ReadableStream::tee(bool shouldClone)
 
     auto pair = result.releaseReturnValue();
 
-    Vector<Ref<ReadableStream>> sequence;
-    sequence.reserveInitialCapacity(2);
-    sequence.uncheckedAppend(ReadableStream::create(WTFMove(pair.first)));
-    sequence.uncheckedAppend(ReadableStream::create(WTFMove(pair.second)));
-    return sequence;
+    return Vector {
+        ReadableStream::create(WTFMove(pair.first)),
+        ReadableStream::create(WTFMove(pair.second))
+    };
 }
 
 JSC::JSValue JSReadableStream::cancel(JSC::JSGlobalObject& globalObject, JSC::CallFrame& callFrame)

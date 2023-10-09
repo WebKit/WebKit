@@ -210,7 +210,7 @@ AccessibilityObject* AccessibilityNodeObject::parentObject() const
     return nullptr;
 }
 
-static Vector<HTMLLabelElement*> labelsForNode(Node* node)
+static Vector<Ref<HTMLLabelElement>> labelsForNode(Node* node)
 {
     auto* element = dynamicDowncast<HTMLElement>(node);
     if (!element || !element->isLabelable())
@@ -219,32 +219,30 @@ static Vector<HTMLLabelElement*> labelsForNode(Node* node)
     const auto& id = element->getIdAttribute();
     if (!id.isEmpty()) {
         if (auto* treeScopeLabels = element->treeScope().labelElementsForId(id); treeScopeLabels && !treeScopeLabels->isEmpty()) {
-            Vector<HTMLLabelElement*> labels;
-            labels.reserveInitialCapacity(treeScopeLabels->size());
-            for (auto* label : *treeScopeLabels)
-                labels.uncheckedAppend(&*dynamicDowncast<HTMLLabelElement>(label));
-            return labels;
+            return WTF::compactMap(*treeScopeLabels, [](auto* label) {
+                return RefPtr { dynamicDowncast<HTMLLabelElement>(label) };
+            });
         }
     }
 
-    if (auto* nearestLabel = ancestorsOfType<HTMLLabelElement>(*element).first()) {
+    if (RefPtr nearestLabel = ancestorsOfType<HTMLLabelElement>(*element).first()) {
         // Only use the nearest label if it isn't pointing at something else.
         const auto& forAttribute = nearestLabel->attributeWithoutSynchronization(forAttr);
         if (forAttribute.isEmpty() || forAttribute == id)
-            return { nearestLabel };
+            return { nearestLabel.releaseNonNull() };
     }
     return { };
 }
 
-static HTMLLabelElement* labelForNode(Node* node)
+static RefPtr<HTMLLabelElement> labelForNode(Node* node)
 {
     auto labels = labelsForNode(node);
 #if PLATFORM(COCOA)
     // We impose the restriction that if there is more than one label element for the given Node, then we should return none.
     // FIXME: the behavior should be the same in all platforms.
-    return labels.size() == 1 ? labels.first() : nullptr;
+    return labels.size() == 1 ? RefPtr { WTFMove(labels.first()) } : nullptr;
 #else
-    return labels.size() >= 1 ? labels.first() : nullptr;
+    return labels.size() >= 1 ? RefPtr { WTFMove(labels.first()) } : nullptr;
 #endif
 }
 
@@ -260,9 +258,9 @@ LayoutRect AccessibilityNodeObject::checkboxOrRadioRect() const
 
     // A checkbox or radio button should encompass its label.
     auto selfRect = boundingBoxRect();
-    for (auto* label : labels) {
+    for (auto& label : labels) {
         if (label->renderer()) {
-            if (auto* axLabel = cache->getOrCreate(label))
+            if (auto* axLabel = cache->getOrCreate(label.ptr()))
                 selfRect.unite(axLabel->elementRect());
         }
     }
@@ -1646,7 +1644,7 @@ AccessibilityObject* AccessibilityNodeObject::correspondingLabelForControlElemen
     if (hasTextAlternative())
         return nullptr;
 
-    return axObjectCache()->getOrCreate(labelForNode(node()));
+    return axObjectCache()->getOrCreate(labelForNode(node()).get());
 }
 
 String AccessibilityNodeObject::ariaAccessibilityDescription() const
@@ -1753,16 +1751,13 @@ bool AccessibilityNodeObject::isLabelable() const
     return is<HTMLInputElement>(*node) || isControl() || isProgressIndicator() || isMeter();
 }
 
-String AccessibilityNodeObject::textForLabelElements(Vector<HTMLLabelElement*>&& labelElements) const
+String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLLabelElement>>&& labelElements) const
 {
     auto* cache = axObjectCache();
     // https://www.w3.org/TR/html-aam-1.0/#input-type-text-input-type-password-input-type-number-input-type-search-input-type-tel-input-type-email-input-type-url-and-textarea-element-accessible-name-computation
     // "...if more than one label is associated; concatenate by DOM order, delimited by spaces."
     StringBuilder result;
-    for (auto* labelElement : labelElements) {
-        if (!labelElement)
-            continue;
-
+    for (auto& labelElement : labelElements) {
         auto appendLabel = [&] (String&& string) {
             if (string.isEmpty())
                 return;
@@ -1773,12 +1768,12 @@ String AccessibilityNodeObject::textForLabelElements(Vector<HTMLLabelElement*>&&
         };
 
         // Check to see if there's aria-labelledby attribute on the label element.
-        auto* axLabel = cache ? cache->getOrCreate(labelElement) : nullptr;
+        auto* axLabel = cache ? cache->getOrCreate(labelElement.ptr()) : nullptr;
         auto ariaLabeledByText = axLabel ? axLabel->ariaLabeledByAttribute() : String();
         if (!ariaLabeledByText.isEmpty())
             appendLabel(WTFMove(ariaLabeledByText));
         else
-            appendLabel(accessibleNameForNode(labelElement));
+            appendLabel(accessibleNameForNode(labelElement.ptr()));
     }
     return result.toString();
 }
@@ -1824,7 +1819,7 @@ AccessibilityObject* AccessibilityNodeObject::titleUIElement() const
 
     if (isFigureElement())
         return captionForFigure();
-    return axObjectCache()->getOrCreate(labelForNode(node()));
+    return axObjectCache()->getOrCreate(labelForNode(node()).get());
 }
 
 bool AccessibilityNodeObject::hasTextAlternative() const

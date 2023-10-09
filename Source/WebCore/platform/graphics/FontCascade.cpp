@@ -419,14 +419,12 @@ Vector<LayoutRect> FontCascade::characterSelectionRectsForText(const TextRun& ru
 
     bool rtl = run.rtl();
 
-    Vector<LayoutRect> characterRects;
-    characterRects.reserveInitialCapacity(to - from);
-
     // FIXME: We could further optimize this by using the simple text codepath when applicable.
     ComplexTextController controller(*this, run);
     controller.advance(from);
 
-    for (auto current = from + 1; current <= to; ++current) {
+    return Vector<LayoutRect>(to - from, [&](size_t i) {
+        auto current = from + i + 1;
         auto characterRect = selectionRect;
         auto beforeWidth = controller.runWidthSoFar();
 
@@ -435,10 +433,8 @@ Vector<LayoutRect> FontCascade::characterSelectionRectsForText(const TextRun& ru
 
         characterRect.move(rtl ? controller.totalAdvance().width() - afterWidth : beforeWidth, 0);
         characterRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
-        characterRects.uncheckedAppend(WTFMove(characterRect));
-    }
-
-    return characterRects;
+        return characterRect;
+    });
 }
 
 void FontCascade::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const

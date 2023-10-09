@@ -194,7 +194,7 @@ protected:
     bool isLabelable() const;
     AccessibilityObject* correspondingControlForLabelElement() const override;
     AccessibilityObject* correspondingLabelForControlElement() const override;
-    String textForLabelElements(Vector<HTMLLabelElement*>&&) const;
+    String textForLabelElements(Vector<Ref<HTMLLabelElement>>&&) const;
     HTMLLabelElement* labelElementContainer() const;
 
     String ariaAccessibilityDescription() const;

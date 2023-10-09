@@ -471,12 +471,11 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
         protectedThis = this;
         updateBackingStore();
 
-        m_children.clear();
-        m_children.reserveInitialCapacity(m_childrenIDs.size());
-        for (const auto& childID : m_childrenIDs) {
+        m_children = WTF::compactMap(m_childrenIDs, [&](auto& childID) -> std::optional<RefPtr<AXCoreObject>> {
             if (RefPtr child = tree()->objectForID(childID))
-                m_children.uncheckedAppend(child);
-        }
+                return child;
+            return std::nullopt;
+        });
         ASSERT(m_children.size() == m_childrenIDs.size());
     }
     return m_children;

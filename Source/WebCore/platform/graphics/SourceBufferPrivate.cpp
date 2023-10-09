@@ -110,11 +110,9 @@ void SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges, Com
 
 Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
 {
-    Vector<PlatformTimeRanges> trackBuffers;
-    trackBuffers.reserveInitialCapacity(m_trackBufferMap.size());
-    for (auto&& trackBuffer : m_trackBufferMap.values())
-        trackBuffers.uncheckedAppend(trackBuffer->buffered());
-    return trackBuffers;
+    return WTF::map(m_trackBufferMap.values(), [](auto& trackBuffer) {
+        return trackBuffer->buffered();
+    });
 }
 
 void SourceBufferPrivate::clientReadyStateChanged(bool sourceIsEnded)

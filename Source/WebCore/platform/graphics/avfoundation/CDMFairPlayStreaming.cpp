@@ -106,22 +106,17 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
     if (!sinfArray)
         return { };
 
-    Vector<Ref<SharedBuffer>> sinfs;
-    sinfs.reserveInitialCapacity(sinfArray->length());
-
-    for (auto& value : *sinfArray) {
+    return WTF::compactMap(*sinfArray, [](auto& value) -> RefPtr<SharedBuffer> {
         auto keyID = value->asString();
         if (!keyID)
-            continue;
+            return nullptr;
 
         auto sinfData = base64Decode(keyID, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
         if (!sinfData)
-            continue;
+            return nullptr;
 
-        sinfs.uncheckedAppend(SharedBuffer::create(WTFMove(*sinfData)));
-    }
-
-    return sinfs;
+        return SharedBuffer::create(WTFMove(*sinfData));
+    });
 }
 
 using SchemeAndKeyResult = Vector<std::pair<FourCC, Vector<uint8_t>>>;

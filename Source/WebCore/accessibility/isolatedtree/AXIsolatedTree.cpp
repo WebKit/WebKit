@@ -350,14 +350,13 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
     if (!cache)
         return { };
 
-    Vector<NodeChange> resolvedAppends;
-    resolvedAppends.reserveInitialCapacity(m_unresolvedPendingAppends.size());
-    for (const auto& unresolvedAppend : m_unresolvedPendingAppends) {
+    auto resolvedAppends = WTF::compactMap(m_unresolvedPendingAppends, [&](auto& unresolvedAppend) -> std::optional<NodeChange> {
         if (auto* axObject = cache->objectForID(unresolvedAppend.key)) {
             if (auto nodeChange = nodeChangeForObject(*axObject, unresolvedAppend.value))
-                resolvedAppends.uncheckedAppend(WTFMove(*nodeChange));
+                return *nodeChange;
         }
-    }
+        return std::nullopt;
+    });
     m_unresolvedPendingAppends.clear();
 
     return resolvedAppends;

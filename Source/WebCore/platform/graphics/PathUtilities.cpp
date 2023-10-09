@@ -309,9 +309,7 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
         return { WTFMove(path) };
     }
 
-    Vector<Path> paths;
-    paths.reserveInitialCapacity(polys.size());
-    for (auto& poly : polys) {
+    return WTF::map(polys, [&](auto& poly) {
         Path path;
         for (unsigned i = 0; i < poly.size(); ++i) {
             FloatPointGraph::Edge& toEdge = poly[i];
@@ -342,9 +340,8 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
             path.addArcTo(*fromEdge.second, *toEdge.first + toOffset, clampedRadius);
         }
         path.closeSubpath();
-        paths.uncheckedAppend(WTFMove(path));
-    }
-    return paths;
+        return path;
+    });
 }
 
 Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius)

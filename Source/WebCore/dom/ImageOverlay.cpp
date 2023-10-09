@@ -630,9 +630,6 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         bool mayRequireAdjustment { true };
     };
 
-    Vector<FontSizeAdjustmentState> elementsToAdjust;
-    elementsToAdjust.reserveInitialCapacity(result.blocks.size());
-
     auto setInlineStylesForBlock = [&](HTMLElement& block, float scale, float targetHeight) {
         float fontSize = scale * targetHeight;
         float borderRadius = fontSize / 5 + (targetHeight - fontSize) / 50;
@@ -645,16 +642,18 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
     };
 
     ASSERT(result.blocks.size() == elements.blocks.size());
-    for (size_t index = 0; index < result.blocks.size(); ++index) {
-        auto& block = result.blocks[index];
+
+    size_t index = 0;
+    auto elementsToAdjust = WTF::compactMap(result.blocks, [&](auto& block) -> std::optional<FontSizeAdjustmentState> {
+        auto incrementIndex = makeScopeExit([&index] { ++index; });
         if (block.normalizedQuad.isEmpty())
-            continue;
+            return std::nullopt;
 
         auto blockContainer = elements.blocks[index];
         auto bounds = fitElementToQuad(blockContainer.get(), convertToContainerCoordinates(block.normalizedQuad), ConstrainHeight::No);
         setInlineStylesForBlock(blockContainer.get(), initialScaleForFontSize, bounds.size.height());
-        elementsToAdjust.uncheckedAppend({ WTFMove(blockContainer), bounds.size });
-    }
+        return FontSizeAdjustmentState { WTFMove(blockContainer), bounds.size };
+    });
 
     unsigned currentIteration = 0;
     while (!elementsToAdjust.isEmpty()) {
