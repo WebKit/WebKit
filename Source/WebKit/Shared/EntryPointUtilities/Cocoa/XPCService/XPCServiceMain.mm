@@ -99,7 +99,7 @@ static void initializeLogd(bool disableLogging)
     RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
 }
 
-static void XPCServiceEventHandler(xpc_connection_t peer)
+void XPCServiceEventHandler(xpc_connection_t peer)
 {
     OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
 
@@ -128,6 +128,14 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
         if (!strcmp(messageName, "bootstrap")) {
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
+
+#if PLATFORM(IOS_FAMILY)
+            auto containerEnvironmentVariables = xpc_dictionary_get_value(event, "ContainerEnvironmentVariables");
+            xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
+                setenv(key, xpc_string_get_string_ptr(value), 1);
+                return true;
+            });
+#endif
 
             const char* serviceName = xpc_dictionary_get_string(event, "service-name");
             if (!serviceName) {
@@ -202,13 +210,6 @@ int XPCServiceMain(int, const char**)
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 
     if (bootstrap) {
-#if PLATFORM(IOS_FAMILY)
-        auto containerEnvironmentVariables = xpc_dictionary_get_value(bootstrap.get(), "ContainerEnvironmentVariables");
-        xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
-            setenv(key, xpc_string_get_string_ptr(value), 1);
-            return true;
-        });
-#endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ASAN_ENABLED
         // EXC_RESOURCE on ASAN builds freezes the process for several minutes: rdar://65027596
