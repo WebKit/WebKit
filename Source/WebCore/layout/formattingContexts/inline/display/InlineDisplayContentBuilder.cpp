@@ -1085,6 +1085,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes)
     if (m_interlinearRubyColumnRangeList.isEmpty())
         return;
 
+    auto isHorizontalWritingMode = root().style().isHorizontalWritingMode();
     auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
     auto accumulatedShift = InlineLayoutUnit { };
     size_t currentRubyBaseIndex = 0;
@@ -1092,7 +1093,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes)
     for (auto index = m_interlinearRubyColumnRangeList[0].begin(); index < boxes.size(); ++index) {
 
         if (currentRubyBaseIndex == m_interlinearRubyColumnRangeList.size()) {
-            boxes[index].moveHorizontally(-accumulatedShift);
+            isHorizontalWritingMode ? boxes[index].moveHorizontally(-accumulatedShift) : boxes[index].moveVertically(-accumulatedShift);
             continue;
         }
 
@@ -1104,11 +1105,11 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& boxes)
             ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
             accumulatedShift += rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, index, boxes);
             auto& annotationBoxGeometry = formattingContext().geometryForBox(*rubyBaseLayoutBox.associatedRubyAnnotationBox());
-            annotationBoxGeometry.moveHorizontally(LayoutUnit { -accumulatedShift });
+            isHorizontalWritingMode ? annotationBoxGeometry.moveHorizontally(LayoutUnit { -accumulatedShift }) : annotationBoxGeometry.moveVertically(LayoutUnit { -accumulatedShift });
         };
         handleOverhangBefore();
 
-        boxes[index].moveHorizontally(-accumulatedShift);
+        isHorizontalWritingMode ? boxes[index].moveHorizontally(LayoutUnit { -accumulatedShift }) : boxes[index].moveVertically(LayoutUnit { -accumulatedShift });
 
         auto handleOverhangAfter = [&] {
             if (index != m_interlinearRubyColumnRangeList[currentRubyBaseIndex].end())

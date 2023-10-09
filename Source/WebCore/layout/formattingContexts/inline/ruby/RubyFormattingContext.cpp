@@ -259,6 +259,14 @@ static inline InlineLayoutUnit halfOfAFullWidthCharacter(const Box& annotationBo
     return annotationBox.style().computedFontSize() / 2.f;
 }
 
+static inline size_t baseContentIndex(size_t rubyBaseStartIndex, const InlineDisplay::Boxes& boxes)
+{
+    auto baseContentIndex = rubyBaseStartIndex + 1;
+    if (boxes[baseContentIndex].layoutBox().isRubyAnnotationBox())
+        ++baseContentIndex;
+    return baseContentIndex;
+}
+
 InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStartIndex, const InlineDisplay::Boxes& boxes)
 {
     // [root inline box][ruby container][ruby base][ruby annotation]
@@ -271,16 +279,30 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
         ASSERT_NOT_REACHED();
         return { };
     }
+
+    auto isHorizontalWritingMode = rubyBaseLayoutBox.style().isHorizontalWritingMode();
+    auto baseContentStartIndex = baseContentIndex(rubyBaseStartIndex, boxes);
+    if (baseContentStartIndex >= boxes.size()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
     // FIXME: Usually the first content box is visually the leftmost, but we should really look for content shifted to the left through negative margins on inline boxes.
-    auto gapBetweenBaseAndContent = std::max(0.f, boxes[rubyBaseStartIndex + 2].visualRectIgnoringBlockDirection().x() - boxes[rubyBaseStartIndex].visualRectIgnoringBlockDirection().x());
-    auto overhangValue = std::min(halfOfAFullWidthCharacter(*annotationBox), gapBetweenBaseAndContent);
+    auto gapBetweenBaseAndContent = [&] {
+        auto contentVisualRect = boxes[baseContentStartIndex].visualRectIgnoringBlockDirection();
+        auto baseVisualRect = boxes[rubyBaseStartIndex].visualRectIgnoringBlockDirection();
+        if (isHorizontalWritingMode)
+            return std::max(0.f, contentVisualRect.x() - baseVisualRect.x());
+        return std::max(0.f, contentVisualRect.y() - baseVisualRect.y());
+    };
+    auto overhangValue = std::min(halfOfAFullWidthCharacter(*annotationBox), gapBetweenBaseAndContent());
     auto wouldAnnotationOrBaseOverlapLineContent = [&] {
         // Check of adjacent (previous) content for overlapping.
-        auto annotationMarginBoxRect = BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*annotationBox));
-        auto overhangingAnnotationRect = InlineLayoutRect { annotationMarginBoxRect.left() - overhangValue, annotationMarginBoxRect.top(), annotationMarginBoxRect.width(), annotationMarginBoxRect.height() };
-        auto baseContentBoxRect = boxes[rubyBaseStartIndex + 1].inkOverflow();
-        // This is how much the base content would be closer to content outside of base.
-        baseContentBoxRect.move(LayoutSize { -overhangValue, 0.f });
+        auto overhangingAnnotationRect = InlineLayoutRect { BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*annotationBox)) };
+        auto baseContentBoxRect = boxes[baseContentStartIndex].inkOverflow();
+        // This is how much the annotation box/ base content would be closer to content outside of base.
+        auto offset = isHorizontalWritingMode ? LayoutSize(-overhangValue, 0.f) : LayoutSize(0.f, -overhangValue);
+        overhangingAnnotationRect.move(offset);
+        baseContentBoxRect.move(offset);
 
         for (size_t index = rubyBaseStartIndex - 1; index > 0; --index) {
             if (boxes[index].layoutBox().isRuby()) {
@@ -305,17 +327,26 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& ru
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!isInterlinearAnnotation(annotationBox) || rubyBaseContentEndIndex == boxes.size() -1)
         return { };
+
+    auto isHorizontalWritingMode = rubyBaseLayoutBox.style().isHorizontalWritingMode();
     // FIXME: Usually the last content box is visually the rightmost, but negative margin may override it.
     // FIXME: Currently justified content always expands producing 0 value for gapBetweenBaseEndAndContent.
-    auto gapBetweenBaseEndAndContent = std::max(0.f, boxes[rubyBaseStartIndex].visualRectIgnoringBlockDirection().maxX() - boxes[rubyBaseContentEndIndex].visualRectIgnoringBlockDirection().maxX());
-    auto overhangValue = std::min(halfOfAFullWidthCharacter(*annotationBox), gapBetweenBaseEndAndContent);
+    auto gapBetweenBaseEndAndContent = [&] {
+        auto baseStartVisualRect = boxes[rubyBaseStartIndex].visualRectIgnoringBlockDirection();
+        auto baseContentEndVisualRect = boxes[rubyBaseContentEndIndex].visualRectIgnoringBlockDirection();
+        if (isHorizontalWritingMode)
+            return std::max(0.f, baseStartVisualRect.maxX() - baseContentEndVisualRect.maxX());
+        return std::max(0.f, baseStartVisualRect.maxY() - baseContentEndVisualRect.maxY());
+    };
+    auto overhangValue = std::min(halfOfAFullWidthCharacter(*annotationBox), gapBetweenBaseEndAndContent());
     auto wouldAnnotationOrBaseOverlapLineContent = [&] {
         // Check of adjacent (next) content for overlapping.
-        auto annotationMarginBoxRect = BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*annotationBox));
-        auto overhangingAnnotationRect = InlineLayoutRect { annotationMarginBoxRect.left(), annotationMarginBoxRect.top(), annotationMarginBoxRect.width() + overhangValue, annotationMarginBoxRect.height() };
+        auto overhangingAnnotationRect = InlineLayoutRect { BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*annotationBox)) };
         auto baseContentBoxRect = boxes[rubyBaseContentEndIndex].inkOverflow();
         // This is how much the base content would be closer to content outside of base.
-        baseContentBoxRect.move(LayoutSize { overhangValue, 0.f });
+        auto offset = isHorizontalWritingMode ? LayoutSize(overhangValue, 0.f) : LayoutSize(0.f, overhangValue);
+        overhangingAnnotationRect.move(offset);
+        baseContentBoxRect.move(offset);
 
         for (size_t index = rubyBaseContentEndIndex + 1; index < boxes.size(); ++index) {
             auto wouldAnnotationOverlap = annotationOverlapCheck(boxes[index], overhangingAnnotationRect);
