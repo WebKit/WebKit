@@ -589,9 +589,14 @@ void TextUtil::computedExpansions(const Line::RunList& runs, WTF::Range<size_t> 
 {
     // Collect and distribute the expansion opportunities.
     expansionInfo.opportunityCount = 0;
-    expansionInfo.opportunityList.resizeToFit(runs.size());
-    expansionInfo.behaviorList.resizeToFit(runs.size());
-    auto lastRunIndexWithContent = std::optional<size_t> { };
+    auto rangeSize = runRange.end() - runRange.begin();
+    if (rangeSize > runs.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    expansionInfo.opportunityList.resizeToFit(rangeSize);
+    expansionInfo.behaviorList.resizeToFit(rangeSize);
+    auto lastExpansionIndexWithContent = std::optional<size_t> { };
 
     // Line start behaves as if we had an expansion here (i.e. fist runs should not start with allowing left expansion).
     auto runIsAfterExpansion = true;
@@ -604,7 +609,8 @@ void TextUtil::computedExpansions(const Line::RunList& runs, WTF::Range<size_t> 
         }
         return { };
     }();
-    for (size_t runIndex = runRange.begin(); runIndex < runRange.end(); ++runIndex) {
+    for (size_t index = 0; index < rangeSize; ++index) {
+        auto runIndex = runRange.begin() + index;
         auto& run = runs[runIndex];
         auto expansionBehavior = ExpansionBehavior::defaultBehavior();
         size_t expansionOpportunitiesInRun = 0;
@@ -629,22 +635,22 @@ void TextUtil::computedExpansions(const Line::RunList& runs, WTF::Range<size_t> 
         } else if (run.isBox())
             runIsAfterExpansion = false;
 
-        expansionInfo.behaviorList[runIndex] = expansionBehavior;
-        expansionInfo.opportunityList[runIndex] = expansionOpportunitiesInRun;
+        expansionInfo.behaviorList[index] = expansionBehavior;
+        expansionInfo.opportunityList[index] = expansionOpportunitiesInRun;
         expansionInfo.opportunityCount += expansionOpportunitiesInRun;
 
         if (run.isText() || run.isBox())
-            lastRunIndexWithContent = runIndex;
+            lastExpansionIndexWithContent = index;
     }
     // Forbid right expansion in the last run to prevent trailing expansion at the end of the line.
-    if (lastRunIndexWithContent && expansionInfo.opportunityList[*lastRunIndexWithContent]) {
-        expansionInfo.behaviorList[*lastRunIndexWithContent].right = ExpansionBehavior::Behavior::Forbid;
+    if (lastExpansionIndexWithContent && expansionInfo.opportunityList[*lastExpansionIndexWithContent]) {
+        expansionInfo.behaviorList[*lastExpansionIndexWithContent].right = ExpansionBehavior::Behavior::Forbid;
         if (runIsAfterExpansion) {
             // When the last run has an after expansion (e.g. CJK ideograph) we need to remove this trailing expansion opportunity.
             // Note that this is not about trailing collapsible whitespace as at this point we trimmed them all.
-            ASSERT(expansionInfo.opportunityCount && expansionInfo.opportunityList[*lastRunIndexWithContent]);
+            ASSERT(expansionInfo.opportunityCount && expansionInfo.opportunityList[*lastExpansionIndexWithContent]);
             --expansionInfo.opportunityCount;
-            --expansionInfo.opportunityList[*lastRunIndexWithContent];
+            --expansionInfo.opportunityList[*lastExpansionIndexWithContent];
         }
     }
 }
