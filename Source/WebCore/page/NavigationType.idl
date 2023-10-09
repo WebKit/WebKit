@@ -1,0 +1,9 @@
+[
+  EnabledBySetting=NavigationAPIEnabled,
+  ImplementedAs=NavigationNavigationType
+] enum NavigationType {
+ "push",
+ "replace",
+ "reload",
+ "traverse"
+};

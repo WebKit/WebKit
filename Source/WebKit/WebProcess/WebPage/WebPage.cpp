@@ -4491,6 +4491,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         updateThrottleState();
     }
 
+    settings.setNavigationAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::navigationAPIEnabledKey()));
+
 #if PLATFORM(COCOA)
     m_pdfPluginEnabled = store.getBoolValueForKey(WebPreferencesKey::pdfPluginEnabledKey());
     
