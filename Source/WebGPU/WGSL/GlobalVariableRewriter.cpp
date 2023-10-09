@@ -438,7 +438,8 @@ auto RewriteGlobalVariables::getPacking(AST::CallExpression& call) -> Packing
                     return expression;
                 RELEASE_ASSERT_NOT_REACHED();
             };
-            auto& base = getBase(getBase, call.arguments()[0]);
+            auto& arrayPointer = call.arguments()[0];
+            auto& base = getBase(getBase, arrayPointer);
             ASSERT(is<AST::IdentifierExpression>(base));
             auto& identifier = downcast<AST::IdentifierExpression>(base).identifier();
             ASSERT(m_globals.contains(identifier));
@@ -448,9 +449,30 @@ auto RewriteGlobalVariables::getPacking(AST::CallExpression& call) -> Packing
                 AST::Identifier::make(lengthName)
             );
             length.m_inferredType = m_callGraph.ast().types().u32Type();
-            m_callGraph.ast().replace(call, length);
+
+            auto* arrayPointerType = arrayPointer.inferredType();
+            ASSERT(std::holds_alternative<Types::Pointer>(*arrayPointerType));
+            auto& arrayType = std::get<Types::Pointer>(*arrayPointerType).element;
+            ASSERT(std::holds_alternative<Types::Array>(*arrayType));
+            auto arrayStride = std::get<Types::Array>(*arrayType).element->size();
+
+            auto& strideExpression = m_callGraph.ast().astBuilder().construct<AST::Unsigned32Literal>(
+                SourceSpan::empty(),
+                arrayStride
+            );
+            strideExpression.m_inferredType = m_callGraph.ast().types().u32Type();
+
+            auto& elementCount = m_callGraph.ast().astBuilder().construct<AST::BinaryExpression>(
+                SourceSpan::empty(),
+                length,
+                strideExpression,
+                AST::BinaryOperation::Divide
+            );
+            elementCount.m_inferredType = m_callGraph.ast().types().u32Type();
+
+            m_callGraph.ast().replace(call, elementCount);
             visit(base); // we also need to mark the array as read
-            return getPacking(length);
+            return getPacking(elementCount);
         }
     }
 
