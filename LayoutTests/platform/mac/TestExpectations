@@ -2898,3 +2898,5 @@ webkit.org/b/261306 imported/w3c/web-platform-tests/content-security-policy/repo
 webkit.org/b/262732 [ Sonoma+ ] fast/css/text-overflow-input.html [ Failure ]
 
 webkit.org/b/262750 [ Sonoma+ arm64 ] css3/filters/effect-blur-hw.html [ ImageOnlyFailure ]
+
+webkit.org/b/262915 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-rounded-border.html [ ImageOnlyFailure ]
