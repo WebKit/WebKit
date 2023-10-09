@@ -1511,20 +1511,17 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 
     if (layerBacking) {
         if (requireDescendantTraversal || requiresChildRebuild) {
-            bool parentedViaFrame = false;
-            if (is<RenderWidget>(layer.renderer()))
-                parentedViaFrame = parentFrameContentLayers(downcast<RenderWidget>(layer.renderer()));
+            bool attachedWidgetContents = false;
+            if (auto* renderWidget = dynamicDowncast<RenderWidget>(layer.renderer()))
+                attachedWidgetContents = attachWidgetContentLayers(*renderWidget);
 
-            if (!parentedViaFrame) {
+            if (!attachedWidgetContents) {
                 // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
                 // Otherwise, the overflow control layers are normal children.
                 if (!layerBacking->hasClippingLayer() && !layerBacking->hasScrollingLayer()) {
                     if (auto* overflowControlLayer = layerBacking->overflowControlsContainer())
                         layerChildren.append(*overflowControlLayer);
                 }
-
-                if (auto* contentsLayer = layerBacking->layerForContents())
-                    layerChildren.append(*contentsLayer);
 
                 adjustOverflowScrollbarContainerLayers(layer, compositedOverflowScrollLayers, layersClippedByScrollers, layerChildren);
                 layerBacking->parentForSublayers()->setChildren(WTFMove(layerChildren));
@@ -2591,23 +2588,36 @@ RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderWidg
     return nullptr;
 }
 
-bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget& renderer)
+bool RenderLayerCompositor::attachWidgetContentLayers(RenderWidget& renderer)
 {
-    auto* innerCompositor = frameContentsCompositor(renderer);
-    if (!innerCompositor || !innerCompositor->usesCompositing() || innerCompositor->rootLayerAttachment() != RootLayerAttachedViaEnclosingFrame)
-        return false;
-    
     auto* layer = renderer.layer();
     if (!layer->isComposited())
         return false;
 
     auto* backing = layer->backing();
-    auto* hostingLayer = backing->parentForSublayers();
-    auto* rootLayer = innerCompositor->rootGraphicsLayer();
-    if (hostingLayer->children().size() != 1 || hostingLayer->children()[0].ptr() != rootLayer) {
+    RefPtr hostingLayer = backing->parentForSublayers();
+
+    auto addContentsLayerChildIfNecessary = [&](GraphicsLayer& contentsLayer) {
+        if (hostingLayer->children().size() == 1 && hostingLayer->children()[0].ptr() == &contentsLayer)
+            return;
+
         hostingLayer->removeAllChildren();
-        hostingLayer->addChild(*rootLayer);
+        hostingLayer->addChild(contentsLayer);
+    };
+
+    if (isCompositedPlugin(renderer)) {
+        if (auto* contentsLayer = backing->layerForContents()) {
+            addContentsLayerChildIfNecessary(*contentsLayer);
+            return true;
+        }
     }
+
+    auto* innerCompositor = frameContentsCompositor(renderer);
+    if (!innerCompositor || !innerCompositor->usesCompositing() || innerCompositor->rootLayerAttachment() != RootLayerAttachedViaEnclosingFrame)
+        return false;
+
+    if (auto* iframeRootLayer = innerCompositor->rootGraphicsLayer())
+        addContentsLayerChildIfNecessary(*iframeRootLayer);
 
     if (auto frameHostingNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting)) {
         auto* contentsRenderView = frameContentsRenderView(renderer);
@@ -2617,7 +2627,6 @@ bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget& renderer)
         }
     }
 
-    // FIXME: Why always return true and not just when the layers changed?
     return true;
 }
 
@@ -3263,12 +3272,22 @@ ScrollingNodeID RenderLayerCompositor::asyncScrollableContainerNodeID(const Rend
     return containerScrollingNodeID;
 }
 
-bool RenderLayerCompositor::isCompositedSubframeRenderer(const RenderObject& renderer)
+bool RenderLayerCompositor::hasCompositedWidgetContents(const RenderObject& renderer)
 {
-    if (!is<RenderWidget>(renderer))
+    auto* renderWidget = dynamicDowncast<RenderWidget>(renderer);
+    if (!renderWidget)
         return false;
 
-    return downcast<RenderWidget>(renderer).requiresAcceleratedCompositing();
+    return renderWidget->requiresAcceleratedCompositing();
+}
+
+bool RenderLayerCompositor::isCompositedPlugin(const RenderObject& renderer)
+{
+    auto* renderEmbeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer);
+    if (!renderEmbeddedObject)
+        return false;
+
+    return renderEmbeddedObject->requiresAcceleratedCompositing();
 }
 
 // Return true if the given layer is a stacking context and has compositing child
@@ -3477,8 +3496,7 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
     if (!(m_compositingTriggers & ChromeClient::PluginTrigger))
         return false;
 
-    bool isCompositedPlugin = is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).allowsAcceleratedCompositing();
-    if (!isCompositedPlugin)
+    if (!isCompositedPlugin(renderer))
         return false;
 
     auto& pluginRenderer = downcast<RenderWidget>(renderer);

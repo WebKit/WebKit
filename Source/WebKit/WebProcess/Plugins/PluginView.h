@@ -72,6 +72,8 @@ public:
     id accessibilityObject() const final;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const final;
 
+    void layerHostingStrategyDidChange() final;
+
     WebCore::HTMLPlugInElement& pluginElement() const { return m_pluginElement; }
     const URL& mainResourceURL() const { return m_mainResourceURL; }
 
@@ -111,6 +113,7 @@ private:
 
     void viewGeometryDidChange();
     void viewVisibilityDidChange();
+
     WebCore::IntRect clipRectInWindowCoordinates() const;
     void focusPluginElement();
     
@@ -125,6 +128,7 @@ private:
 
     // WebCore::PluginViewBase
     WebCore::PluginLayerHostingStrategy layerHostingStrategy() const final;
+
     PlatformLayer* platformLayer() const final;
     WebCore::GraphicsLayer* graphicsLayer() const final;
 

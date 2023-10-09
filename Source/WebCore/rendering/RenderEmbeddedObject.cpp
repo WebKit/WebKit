@@ -99,16 +99,11 @@ void RenderEmbeddedObject::willBeDestroyed()
     RenderWidget::willBeDestroyed();
 }
 
-bool RenderEmbeddedObject::requiresLayer() const
+bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
 {
-    if (RenderWidget::requiresLayer())
+    if (RenderWidget::requiresAcceleratedCompositing())
         return true;
-    
-    return allowsAcceleratedCompositing();
-}
 
-bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
-{
     auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
         return false;

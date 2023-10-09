@@ -87,6 +87,9 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     m_documentLayout.updateLayout(size());
     updateLayerHierarchy();
+
+    if (m_view)
+        m_view->layerHostingStrategyDidChange();
 }
 
 RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
