@@ -3368,7 +3368,18 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
             DMABufObject(reinterpret_cast<uintptr_t>(gst_buffer_peek_memory(buffer, 0))),
             [&](auto&& object) {
-                object.format = DMABufFormat::create(fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo)));
+                bool infoHasDrmFormat = false;
+                uint32_t fourcc = 0;
+#if GST_CHECK_VERSION(1, 23, 0)
+                GstVideoInfoDmaDrm drmInfo;
+                infoHasDrmFormat = gst_video_info_dma_drm_from_caps(&drmInfo, caps);
+                if (infoHasDrmFormat)
+                    fourcc = drmInfo.drm_fourcc;
+#endif
+                if (!fourcc)
+                    fourcc = fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo));
+
+                object.format = DMABufFormat::create(fourcc);
                 object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
                 object.width = GST_VIDEO_INFO_WIDTH(&videoInfo);
                 object.height = GST_VIDEO_INFO_HEIGHT(&videoInfo);
@@ -3381,12 +3392,8 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                 // but left for later.
                 object.releaseFlag = DMABufReleaseFlag { };
 
-                // No way (yet) to retrieve the modifier information. Until then, no modifiers are specified
-                // for this DMABufObject (via the modifierPresent and modifierValue member variables).
-
                 // For each plane, the relevant data (stride, offset, skip, dmabuf fd) is retrieved and assigned
-                // as appropriate. Modifier values are zeroed out for now, since GStreamer doesn't yet provide
-                // the information.
+                // as appropriate.
                 for (unsigned i = 0; i < object.format.numPlanes; ++i) {
                     gsize offset = GST_VIDEO_INFO_PLANE_OFFSET(&videoInfo, i);
                     guint memid = 0;
@@ -3403,6 +3410,11 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                     gst_video_format_info_component(videoInfo.finfo, i, comp);
                     object.offset[i] = offset;
                     object.stride[i] = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
+                    object.modifierPresent[i] = infoHasDrmFormat;
+#if GST_CHECK_VERSION(1, 23, 0)
+                    if (infoHasDrmFormat)
+                        object.modifierValue[i] = drmInfo.drm_modifier;
+#endif
                 }
                 return WTFMove(object);
             }, m_textureMapperFlags);
