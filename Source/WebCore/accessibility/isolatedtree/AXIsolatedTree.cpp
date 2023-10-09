@@ -668,7 +668,7 @@ void AXIsolatedTree::updateNodeAndDependentProperties(AccessibilityObject& axObj
             if (ancestor->accessibilityIsIgnored())
                 break;
             // Use `updateChildren` rather than `updateNodeProperty` because `updateChildren` will ensure the columns (which are children) will have associated isolated objects created.
-            updateChildren(*ancestor);
+            updateChildren(*ancestor, ResolveNodeChanges::No);
             break;
         }
     }
@@ -747,6 +747,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     const auto& newChildren = axAncestor->children();
     auto newChildrenIDs = axAncestor->childrenIDs(false);
 
+    bool childrenChanged = oldChildrenIDs.size() != newChildrenIDs.size();
     for (size_t i = 0; i < newChildren.size(); ++i) {
         ASSERT(newChildren[i]->objectID() == newChildrenIDs[i]);
         ASSERT(newChildrenIDs[i].isValid());
@@ -757,29 +758,57 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 
             // Propagate any subtree updates downwards for this already-existing child.
             if (auto* liveChild = dynamicDowncast<AccessibilityObject>(newChildren[i].get()); liveChild && liveChild->hasDirtySubtree())
-                collectNodeChangesForSubtree(*liveChild);
+                updateChildren(*liveChild, ResolveNodeChanges::No);
         }
         else {
             // This is a new child, add it to the tree.
+            childrenChanged = true;
             AXLOG(makeString("AXID ", axAncestor->objectID().loggingString(), " gaining new subtree, starting at ID ", newChildren[i]->objectID().loggingString(), ":"));
             AXLOG(newChildren[i]);
             collectNodeChangesForSubtree(*newChildren[i]);
         }
     }
     m_nodeMap.set(axAncestor->objectID(), ParentChildrenIDs { oldIDs.parentID, WTFMove(newChildrenIDs) });
+    // Since axAncestor is definitively part of the AX tree by way of getting here, protect it from being
+    // deleted in case it has been re-parented.
+    m_protectedFromDeletionIDs.add(axAncestor->objectID());
 
     // What is left in oldChildrenIDs are the IDs that are no longer children of axAncestor.
     // Thus, remove them from m_nodeMap and queue them to be removed from the tree.
     for (const AXID& axID : oldChildrenIDs)
         removeSubtreeFromNodeMap(axID, axAncestor);
 
+    auto unconditionallyUpdate = [] (AccessibilityRole role) {
+        // These are the roles that should be updated even if AX children don't change. This is necessary because
+        // these roles are not allowed to have children according to accessibility semantics, but can have render
+        // tree or DOM children, changes of which affect many properties (e.g. anything downstream of textUnderElement).
+        // Note this is a subset of the roles in AccessibilityObject::canHaveChildren, deliberately only those that
+        // could reasonably have meaningful-to-accessibility DOM / render tree children.
+        switch (role) {
+        case AccessibilityRole::Button:
+        case AccessibilityRole::PopUpButton:
+        case AccessibilityRole::Tab:
+        case AccessibilityRole::ToggleButton:
+        case AccessibilityRole::ListBoxOption:
+        case AccessibilityRole::ProgressIndicator:
+        case AccessibilityRole::Switch:
+        case AccessibilityRole::MenuItemCheckbox:
+        case AccessibilityRole::MenuItemRadio:
+        case AccessibilityRole::Meter:
+            return true;
+        default:
+            return false;
+        }
+    };
+
+    // Also queue updates to the target node itself and any properties that depend on children().
+    if (childrenChanged || unconditionallyUpdate(axAncestor->roleValue()))
+        updateNodeAndDependentProperties(*axAncestor);
+
     if (resolveNodeChanges == ResolveNodeChanges::Yes)
         queueRemovalsAndUnresolvedChanges(WTFMove(oldChildrenIDs));
     else
         queueRemovals(WTFMove(oldChildrenIDs));
-
-    // Also queue updates to the target node itself and any properties that depend on children().
-    updateNodeAndDependentProperties(*axAncestor);
 }
 
 void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<RefPtr<AccessibilityObject>>& axObjects)
@@ -858,6 +887,13 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
     m_pendingFocusedNodeID = axID;
 }
 
+void AXIsolatedTree::labelCreated(AccessibilityObject& axObject)
+{
+    ASSERT(axObject.isLabel());
+    if (RefPtr correspondingControl = axObject.isLabel() ? axObject.correspondingControlForLabelElement() : nullptr)
+        updateNode(*correspondingControl);
+}
+
 void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
 {
     AXTRACE("AXIsolatedTree::updateLoadingProgress"_s);
@@ -889,7 +925,7 @@ void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
         // as we need to wait for the backing DOM element to actually be destroyed to compute the
         // correct title UI element.
         callOnMainThread([correspondingControl, protectedThis = Ref { *this }] {
-            protectedThis->updateNodeProperty(*correspondingControl, AXPropertyName::TitleUIElement);
+            protectedThis->updateNode(*correspondingControl);
         });
     }
 
