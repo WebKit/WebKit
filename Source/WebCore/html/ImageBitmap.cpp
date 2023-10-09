@@ -685,7 +685,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     completionHandler(WTFMove(imageBitmap));
 }
 
-class ImageBitmapImageObserver final : public RefCounted<ImageBitmapImageObserver>, public ImageObserver {
+class ImageBitmapImageObserver final : public ImageObserver {
 public:
     static Ref<ImageBitmapImageObserver> create(String mimeType, long long expectedContentLength, const URL& sourceUrl)
     {

@@ -485,7 +485,7 @@ bool GraphicsContextGL::packImageData(Image* image, const void* pixels, GCGLenum
 
     if (!packPixels(static_cast<const uint8_t*>(pixels), sourceFormat, sourceImageWidth, sourceImageHeight, sourceImageSubRectangle, depth, sourceUnpackAlignment, unpackImageHeight, format, type, alphaOp, data.data(), flipY))
         return false;
-    if (ImageObserver* observer = image->imageObserver())
+    if (auto observer = image->imageObserver())
         observer->didDraw(*image);
     return true;
 }
