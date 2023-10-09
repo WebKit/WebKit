@@ -370,6 +370,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
 
     if (parent.style().display() != DisplayType::Ruby) {
         auto rubyContainer = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Ruby));
+        rubyContainer->initializeStyle();
         WeakPtr newParent = rubyContainer.get();
         m_builder.attach(parent, WTFMove(rubyContainer), beforeChild);
         beforeChild = nullptr;
@@ -389,6 +390,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
     }
 
     auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase));
+    rubyBase->initializeStyle();
     WeakPtr newParent = rubyBase.get();
     m_builder.inlineBuilder().attach(downcast<RenderInline>(parent), WTFMove(rubyBase), beforeChild);
     beforeChild = nullptr;
