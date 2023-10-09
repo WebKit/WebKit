@@ -25,7 +25,11 @@
 
 #pragma once
 
-#import <xpc/xpc.h>
+#if __has_include(<xpc/xpc.h>)
+#include <xpc/xpc.h>
+#else
+#include <wtf/spi/darwin/XPCSPI.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

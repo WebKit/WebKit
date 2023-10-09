@@ -1,3 +1,0 @@
-
-PASS Conic gradient with negative rotation
-

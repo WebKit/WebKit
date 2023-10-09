@@ -145,11 +145,10 @@ WTF_EXTERN_C_END
 #endif
 
 #if HAVE(PASSKIT_MODULARIZATION)
-// FIXME: remove this after <rdar://88985220>
-#if __has_include(<PassKitUI/PKPaymentSetupController.h>)
-#import <PassKitUI/PKPaymentSetupController.h>
+#if PLATFORM(MAC)
+#import <PassKitMacHelper/PKPaymentSetupController.h>
 #else
-#import <PassKit/PKPaymentSetupController.h>
+#import <PassKitUI/PKPaymentSetupController.h>
 #endif
 #if PLATFORM(MAC)
 #if HAVE(PASSKIT_MAC_HELPER_TEMP)

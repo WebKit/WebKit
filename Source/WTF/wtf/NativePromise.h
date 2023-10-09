@@ -420,6 +420,16 @@ private:
         dispatchAll(lock);
     }
 
+    template<typename SettleValueType>
+    void settleAsChainedPromise(SettleValueType&& result, const Logger::LogSiteIdentifier& site)
+    {
+        Locker lock { m_lock };
+        ASSERT(isNothing());
+        PROMISE_LOG(site, " settling chained promise ", *this);
+        m_result = std::forward<SettleValueType>(result);
+        dispatchAll(lock);
+    }
+
     void setDispatchMode(PromiseDispatchMode dispatchMode, const Logger::LogSiteIdentifier& site)
     {
         static_assert(IsExclusive, "setDispatchMode can only be used with exclusive promises");
@@ -931,7 +941,7 @@ public:
         if (isNothing())
             m_chainedPromises.append(WTFMove(chainedPromise));
         else
-            settle(WTFMove(chainedPromise));
+            settleChainedPromise(WTFMove(chainedPromise));
     }
 
     void assertIsDead() final
@@ -949,7 +959,7 @@ public:
         return m_result && m_result->has_value();
     }
 
-    bool isResolvedOrRejected() const
+    bool isSettled() const
     {
         Locker lock { m_lock };
         return !isNothing();
@@ -982,21 +992,15 @@ private:
             thenCallback->dispatch(*this, lock);
 
         for (auto&& chainedPromise : chainedPromises)
-            settle(WTFMove(chainedPromise));
+            settleChainedPromise(WTFMove(chainedPromise));
     }
 
-    void settle(typename NativePromise::Producer&& other)
+    void settleChainedPromise(typename NativePromise::Producer&& other)
     {
         assertIsHeld(m_lock);
         ASSERT(!isNothing());
-        if (m_result->has_value()) {
-            if constexpr(std::is_void_v<ResolveValueT>)
-                other.resolve({ "<chained promise>", nullptr });
-            else
-                other.resolve(maybeMove(m_result->value()), { "<chained promise>", nullptr });
-        } else
-            other.reject(maybeMove(m_result->error()), { "<chained promise>", nullptr });
-        auto toBeDestroyed = WTFMove(other);
+        auto producer = WTFMove(other);
+        producer.promise().settleAsChainedPromise(maybeMove(*m_result), { "<chained promise>", nullptr });
     }
 
     const Logger::LogSiteIdentifier m_logSiteIdentifier; // For logging
@@ -1033,11 +1037,11 @@ public:
         assertIsDead();
     }
 
-    explicit operator bool() const { return m_promise && m_promise->isResolvedOrRejected(); }
+    explicit operator bool() const { return m_promise && m_promise->isSettled(); }
     bool isNothing() const
     {
         ASSERT(m_promise, "used after moved");
-        return m_promise && !m_promise->isResolvedOrRejected();
+        return m_promise && !m_promise->isSettled();
     }
 
     template<typename ResolveValueType_, typename = std::enable_if<!std::is_void_v<ResolveValueT>>>
@@ -1131,6 +1135,12 @@ public:
     }
 
 private:
+    PromiseType& promise() const
+    {
+        ASSERT(m_promise, "used after move");
+        return *m_promise;
+    }
+
     void setDispatchMode(PromiseDispatchMode dispatchMode, const Logger::LogSiteIdentifier& callSite) const
     {
         ASSERT(m_promise, "used after move");

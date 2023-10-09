@@ -1,6 +1,0 @@
-
-PASS Default CSS properties on merror
-PASS Bounding box is the same as mrow + 1px border
-AN ERROR
-AN ERROR
-

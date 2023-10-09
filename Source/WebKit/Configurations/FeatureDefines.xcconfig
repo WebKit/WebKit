@@ -41,8 +41,6 @@
 // This ENABLE_WEB_RTC configuration variable determines whether to *link* the libwebrtc library.
 // The ENABLE_WEB_RTC macro in PlatformEnableCocoa.h determines whether WebKit's WebRTC code is compiled.
 ENABLE_WEB_RTC = $(ENABLE_WEB_RTC_$(WK_PLATFORM_NAME));
-ENABLE_WEB_RTC_appletvos = ENABLE_WEB_RTC;
-ENABLE_WEB_RTC_appletvsimulator = ENABLE_WEB_RTC;
 ENABLE_WEB_RTC_iphoneos = ENABLE_WEB_RTC;
 ENABLE_WEB_RTC_iphonesimulator = ENABLE_WEB_RTC;
 ENABLE_WEB_RTC_macosx = ENABLE_WEB_RTC;

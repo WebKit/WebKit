@@ -362,11 +362,11 @@ static Ref<CSSValue> fontSizeAdjustFromStyle(const RenderStyle& style)
         return CSSPrimitiveValue::create(CSSValueNone);
 
     auto metric = fontSizeAdjust.metric;
-    float value = *fontSizeAdjust.value;
+    auto value = fontSizeAdjust.isFromFont ? fontSizeAdjust.resolve(style.computedFontSize(), style.metricsOfPrimaryFont()) : fontSizeAdjust.value.asOptional();
     if (metric == FontSizeAdjust::Metric::ExHeight)
-        return fontSizeAdjust.isFromFont ? CSSPrimitiveValue::create(CSSValueFromFont) : CSSPrimitiveValue::create(value);
+        return CSSPrimitiveValue::create(*value);
 
-    return CSSValuePair::create(createConvertingToCSSValueID(metric), fontSizeAdjust.isFromFont ? CSSPrimitiveValue::create(CSSValueFromFont) : CSSPrimitiveValue::create(value));
+    return CSSValuePair::create(createConvertingToCSSValueID(metric), CSSPrimitiveValue::create(*value));
 }
 
 static Ref<CSSPrimitiveValue> textSpacingTrimFromStyle(const RenderStyle& style)

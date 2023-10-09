@@ -1,7 +1,0 @@
-Some text to look up.
-I love New York.
-Some text to look up.
-
-Lookup string for normal text: 'look'.
-Lookup string for title-case phrase: 'New York'.
-Lookup string for unselectable text: 'null'.

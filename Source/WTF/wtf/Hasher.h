@@ -22,7 +22,9 @@
 
 #include <optional>
 #include <variant>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Int128.h>
+#include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
@@ -200,6 +202,16 @@ template<typename T> void add(Hasher& hasher, std::initializer_list<T> values)
 {
     for (auto& value : values)
         add(hasher, value);
+}
+
+template<typename T, typename U, typename V> void add(Hasher& hasher, const RefPtr<T, U, V>& refPtr)
+{
+    add(hasher, refPtr.get());
+}
+
+template<typename T, typename U> void add(Hasher& hasher, const CheckedPtr<T, U>& checkedPtr)
+{
+    add(hasher, checkedPtr.get());
 }
 
 } // namespace WTF

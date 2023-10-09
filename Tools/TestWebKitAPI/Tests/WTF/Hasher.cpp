@@ -27,7 +27,9 @@
 
 #include <array>
 #include <limits>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Hasher.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace TestWebKitAPI {
@@ -198,6 +200,63 @@ TEST(WTF, Hasher_pointer)
     EXPECT_EQ(computeHash(static_cast<uintptr_t>(0)), computeHash(nullPtr));
     EXPECT_EQ(computeHash(static_cast<uintptr_t>(0x1)), computeHash(onePtr));
     EXPECT_EQ(computeHash(static_cast<uintptr_t>(0xffffff)), computeHash(ffffffPtr));
+}
+
+TEST(WTF, Hasher_RefPtr)
+{
+    struct Test : public RefCounted<Test> {
+        Test() = default;
+    };
+
+    RefPtr<Test> nullRefPtr;
+    RefPtr<Test> nonNullRefPtr = adoptRef(*new Test);
+
+    EXPECT_EQ(computeHash(nullRefPtr), computeHash(nullRefPtr.get()));
+    EXPECT_EQ(computeHash(nonNullRefPtr), computeHash(nonNullRefPtr.get()));
+
+    Vector<RefPtr<Test>> refPtrVector;
+    Vector<Test*> ptrVector;
+    EXPECT_EQ(computeHash(refPtrVector), computeHash(ptrVector));
+
+    refPtrVector.append(nonNullRefPtr);
+    ptrVector.append(nonNullRefPtr.get());
+    EXPECT_EQ(computeHash(refPtrVector), computeHash(ptrVector));
+
+    RefPtr<Test> nonNullRefPtr2 = adoptRef(*new Test);
+
+    refPtrVector.append(nonNullRefPtr2);
+    ptrVector.append(nonNullRefPtr2.get());
+    EXPECT_EQ(computeHash(refPtrVector), computeHash(ptrVector));
+}
+
+TEST(WTF, Hasher_CheckedPtr)
+{
+    struct Test : public CanMakeCheckedPtr {
+        Test() = default;
+    };
+
+    Test test;
+    Test test2;
+
+    CheckedPtr<Test> nullCheckedPtr;
+    CheckedPtr<Test> nonNullCheckedPtr = &test;
+
+    EXPECT_EQ(computeHash(nullCheckedPtr), computeHash(nullCheckedPtr.get()));
+    EXPECT_EQ(computeHash(nonNullCheckedPtr), computeHash(nonNullCheckedPtr.get()));
+
+    Vector<CheckedPtr<Test>> checkedPtrVector;
+    Vector<Test*> ptrVector;
+    EXPECT_EQ(computeHash(checkedPtrVector), computeHash(ptrVector));
+
+    checkedPtrVector.append(nonNullCheckedPtr);
+    ptrVector.append(nonNullCheckedPtr.get());
+    EXPECT_EQ(computeHash(checkedPtrVector), computeHash(ptrVector));
+
+    CheckedPtr<Test> nonNullCheckedPtr2 = &test2;
+
+    checkedPtrVector.append(nonNullCheckedPtr2);
+    ptrVector.append(nonNullCheckedPtr2.get());
+    EXPECT_EQ(computeHash(checkedPtrVector), computeHash(ptrVector));
 }
 
 struct HasherAddCustom1 { };
