@@ -134,7 +134,7 @@ private:
     std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);
     void notifyFinished();
 
-    WorkerScriptLoaderClient* m_client { nullptr };
+    WeakPtr<WorkerScriptLoaderClient> m_client;
     RefPtr<ThreadableLoader> m_threadableLoader;
     RefPtr<TextResourceDecoder> m_decoder;
     ScriptBuffer m_script;

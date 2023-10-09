@@ -32,7 +32,7 @@ namespace WebCore {
 
 class ResourceResponse;
 
-class WorkerScriptLoaderClient {
+class WorkerScriptLoaderClient : public CanMakeWeakPtr<WorkerScriptLoaderClient> {
 public:
     virtual void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) = 0;
     virtual void notifyFinished() = 0;
