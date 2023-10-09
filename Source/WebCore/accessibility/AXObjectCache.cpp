@@ -1337,6 +1337,15 @@ void AXObjectCache::handleLiveRegionCreated(Node* node)
         postNotification(getOrCreate(node), &document(), AXLiveRegionCreated);
 }
 
+void AXObjectCache::handleLabelCreated(HTMLLabelElement* element)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    postNotification(getOrCreate(element), nullptr, AXLabelCreated);
+#else
+    UNUSED_PARAM(element);
+#endif
+}
+
 void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
 {
     if (!node)
@@ -1721,7 +1730,7 @@ void AXObjectCache::onSelectedChanged(Node* node)
 void AXObjectCache::onTextSecurityChanged(HTMLInputElement& inputElement)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(get(&inputElement), AXTextSecurityChanged);
+    postNotification(get(&inputElement), nullptr, AXTextSecurityChanged);
 #else
     UNUSED_PARAM(inputElement);
 #endif
@@ -2468,7 +2477,10 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXControlledObjectsChanged);
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
         postNotification(element, AXObjectCache::AXValueChanged);
-    else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr) {
+    else if (attrName == aria_labelAttr && element->hasTagName(htmlTag)) {
+        // When aria-label changes on an <html> element, it's the web area who needs to re-compute its accessibility text.
+        handleTextChanged(get(&element->document()));
+    } else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr) {
         RefPtr axObject = get(element);
         if (!axObject)
             return;
@@ -3911,6 +3923,7 @@ void AXObjectCache::performDeferredCacheUpdate()
         if (RefPtr node = weakNode.get()) {
             handleMenuOpened(node.get());
             handleLiveRegionCreated(node.get());
+            handleLabelCreated(dynamicDowncast<HTMLLabelElement>(node.get()));
         }
     }
     m_deferredNodeAddedOrRemovedList.clear();
@@ -4129,6 +4142,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             break;
         case AXFocusableStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetFocusAttribute);
+            break;
+        case AXLabelCreated:
+            tree->labelCreated(*notification.first);
             break;
         case AXMaximumValueChanged:
             tree->updateNodeProperties(*notification.first, { AXPropertyName::MaxValueForRange, AXPropertyName::ValueForRange });

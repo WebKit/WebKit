@@ -379,6 +379,7 @@ public:
         AXURLChanged,
         AXValueChanged,
         AXScrolledToAnchor,
+        AXLabelCreated,
         AXLiveRegionCreated,
         AXLiveRegionChanged,
         AXLiveRegionRelevantChanged,
@@ -571,6 +572,7 @@ private:
     void handleRoleDescriptionChanged(Element*);
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
+    void handleLabelCreated(HTMLLabelElement*);
     void handleMenuItemSelected(Node*);
     void handleTabPanelSelected(Node*, Node*);
     void handleRowCountChanged(AccessibilityObject*, Document*);

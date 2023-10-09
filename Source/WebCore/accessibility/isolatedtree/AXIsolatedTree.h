@@ -288,6 +288,7 @@ public:
     };
 
     void generateSubtree(AccessibilityObject&);
+    void labelCreated(AccessibilityObject&);
     void updateNode(AccessibilityObject&);
     enum class ResolveNodeChanges : bool { No, Yes };
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
