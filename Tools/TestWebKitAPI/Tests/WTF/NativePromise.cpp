@@ -39,6 +39,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/Ref.h>
+#include <wtf/RefCountedFixedVector.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -1264,24 +1265,40 @@ TEST(NativePromise, ImplicitConversionWithForwardPreviousReturn)
 
 TEST(NativePromise, ChainTo)
 {
-    runInCurrentRunLoop([&, producer2 = TestPromise::Producer()](auto& runLoop) mutable {
-        auto promise1 = TestPromise::createAndResolve(42);
+    using VectorPromise = NativePromise<Ref<RefCountedFixedVector<int>>, bool, PromiseOption::Default | PromiseOption::NonExclusive>;
+    auto resultVector = RefCountedFixedVector<int>::createFromVector(Vector<int>(5, 42));
+    runInCurrentRunLoop([&, producer1 = VectorPromise::Producer(), producer2 = VectorPromise::Producer()](auto& runLoop) mutable {
+        auto promise = VectorPromise::createAndResolve(resultVector);
+        producer1->then(runLoop,
+            [&](const auto& resolveValue) { EXPECT_EQ(resolveValue.get(), RefCountedFixedVector<int>::createFromVector(Vector<int>(5, 42)).get()); },
+            doFail());
         producer2->then(runLoop,
-            [&](int resolveValue) { EXPECT_EQ(resolveValue, 42); },
+            [&](const auto& resolveValue) { EXPECT_EQ(resolveValue.get(), RefCountedFixedVector<int>::createFromVector(Vector<int>(5, 42)).get()); },
             doFail());
 
-        // As promise1 is already resolved, it will automatically resolve/reject producer2 with its resolved/reject value.
-        promise1->chainTo(WTFMove(producer2));
+        // As promise1 is already resolved, it will automatically resolve/reject producer1 and producer2 with its resolved/reject value.
+        promise->chainTo(WTFMove(producer1));
+        promise->chainTo(WTFMove(producer2));
     });
 
-    runInCurrentRunLoop([&, producer2 = TestPromise::Producer(), producer1 = TestPromise::Producer()](auto& runLoop) mutable {
+    runInCurrentRunLoop([&, producer1 = VectorPromise::Producer(), producer2 = VectorPromise::Producer()](auto& runLoop) mutable {
         producer2->then(runLoop,
-            [&](int resolveValue) { EXPECT_EQ(resolveValue, 42); },
+            [&](const auto& resolveValue) { EXPECT_EQ(resolveValue.get(), RefCountedFixedVector<int>::createFromVector(Vector<int>(5, 42)).get()); },
             doFail());
 
-        // When producer1 is resolved, it will automatically resolve/reject producer2 with the resolved/reject value.
+        // When producer1 is resolved, it will automatically settle producer2 with the resolved/reject value.
         producer1->chainTo(WTFMove(producer2));
-        producer1.resolve(42);
+        VectorPromise::createAndResolve(resultVector)->chainTo(WTFMove(producer1));
+    });
+
+    runInCurrentRunLoop([&, producer1 = VectorPromise::Producer()](auto& runLoop) mutable {
+        auto promise = VectorPromise::createAndResolve(resultVector);
+        producer1->then(runLoop,
+            [&](auto&& resolveValue) { EXPECT_EQ(resolveValue.get(), RefCountedFixedVector<int>::createFromVector(Vector<int>(5, 42)).get()); },
+            doFail());
+
+        // As promise1 is already resolved, it will automatically resolve/reject producer1 with its resolved/reject value.
+        promise->chainTo(WTFMove(producer1));
     });
 }
 
