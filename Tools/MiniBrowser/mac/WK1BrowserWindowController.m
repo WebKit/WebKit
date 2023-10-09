@@ -63,6 +63,7 @@
     SettingsController *settingsController = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
     if (settingsController.customUserAgent)
         _webView.customUserAgent = settingsController.customUserAgent;
+    [[WebPreferences standardPreferences] setAttachmentElementEnabled: settingsController.attachmentElementEnabled != AttachmentElementEnabledStateDisabled ? YES : NO];
 
     [self didChangeSettings];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userAgentDidChange:) name:kUserAgentChangedNotificationName object:nil];

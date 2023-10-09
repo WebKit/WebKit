@@ -27,6 +27,12 @@
 
 extern NSString * const kUserAgentChangedNotificationName;
 
+typedef NS_ENUM(NSInteger, AttachmentElementEnabledState) {
+    AttachmentElementEnabledStateDisabled = 0,
+    AttachmentElementEnabledStateEnabled,
+    AttachmentElementEnabledStateWideLayoutEnabled,
+};
+
 @interface SettingsController : NSObject
 
 - (instancetype)initWithMenu:(NSMenu *)menu;
@@ -55,6 +61,7 @@ extern NSString * const kUserAgentChangedNotificationName;
 @property (nonatomic, readonly) BOOL useSystemAppearance;
 @property (nonatomic, readonly) BOOL dataDetectorsEnabled;
 @property (nonatomic, readonly) BOOL useMockCaptureDevices;
+@property (nonatomic, readonly) AttachmentElementEnabledState attachmentElementEnabled;
 @property (nonatomic, readonly) BOOL loadsAllSiteIcons;
 @property (nonatomic, readonly) BOOL usesGameControllerFramework;
 @property (nonatomic, readonly) BOOL networkCacheSpeculativeRevalidationDisabled;

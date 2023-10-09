@@ -263,6 +263,9 @@ static NSNumber *_currentBadge;
 
     configuration.suppressesIncrementalRendering = _settingsController.incrementalRenderingSuppressed;
     configuration.websiteDataStore._resourceLoadStatisticsEnabled = _settingsController.resourceLoadStatisticsEnabled;
+    configuration._attachmentElementEnabled = _settingsController.attachmentElementEnabled != AttachmentElementEnabledStateDisabled ? YES : NO;
+    configuration._attachmentWideLayoutEnabled = _settingsController.attachmentElementEnabled == AttachmentElementEnabledStateWideLayoutEnabled ? YES : NO;
+
     return configuration;
 }
 
