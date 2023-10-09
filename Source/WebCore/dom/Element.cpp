@@ -763,15 +763,13 @@ AtomString Element::getAttributeForBindings(const QualifiedName& name, ResolveUR
 
 Vector<String> Element::getAttributeNames() const
 {
-    Vector<String> attributesVector;
     if (!hasAttributes())
-        return attributesVector;
+        return { };
 
     auto attributes = attributesIterator();
-    attributesVector.reserveInitialCapacity(attributes.attributeCount());
-    for (auto& attribute : attributes)
-        attributesVector.uncheckedAppend(attribute.name().toString());
-    return attributesVector;
+    return WTF::map(attributes, [](auto& attribute) {
+        return attribute.name().toString();
+    });
 }
 
 bool Element::hasFocusableStyle() const

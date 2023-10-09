@@ -33,27 +33,28 @@ namespace WebCore {
 
 void WebContentReader::addFragment(Ref<DocumentFragment>&& newFragment)
 {
-    if (!fragment)
-        fragment = WTFMove(newFragment);
+    if (!m_fragment)
+        m_fragment = WTFMove(newFragment);
     else
-        fragment->appendChild(newFragment.get());
+        protectedFragment()->appendChild(newFragment);
 }
 
 bool FrameWebContentReader::shouldSanitize() const
 {
-    ASSERT(frame.document());
-    return frame.document()->originIdentifierForPasteboard() != contentOrigin;
+    RefPtr document = m_frame->document();
+    ASSERT(document);
+    return document->originIdentifierForPasteboard() != contentOrigin();
 }
 
 MSOListQuirks FrameWebContentReader::msoListQuirksForMarkup() const
 {
-    return contentOrigin.isNull() ? MSOListQuirks::CheckIfNeeded : MSOListQuirks::Disabled;
+    return contentOrigin().isNull() ? MSOListQuirks::CheckIfNeeded : MSOListQuirks::Disabled;
 }
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
 bool WebContentReader::readFilePaths(const Vector<String>& paths)
 {
-    if (paths.isEmpty() || !frame.document())
+    if (paths.isEmpty() || !frame().document())
         return false;
 
     for (auto& path : paths)

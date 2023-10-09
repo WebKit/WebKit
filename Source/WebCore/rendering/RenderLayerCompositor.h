@@ -294,10 +294,12 @@ public:
     // to know if there is non-affine content, e.g. for drawing into an image.
     bool has3DContent() const;
     
-    static bool isCompositedSubframeRenderer(const RenderObject&);
+    static bool hasCompositedWidgetContents(const RenderObject&);
+    static bool isCompositedPlugin(const RenderObject&);
+
     static RenderLayerCompositor* frameContentsCompositor(RenderWidget&);
-    // Return true if the layers changed.
-    bool parentFrameContentLayers(RenderWidget&);
+    // Returns true the widget contents layer was parented.
+    bool attachWidgetContentLayers(RenderWidget&);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.
     void frameViewDidChangeLocation(const IntPoint& contentsOffset);

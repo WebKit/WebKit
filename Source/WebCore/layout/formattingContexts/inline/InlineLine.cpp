@@ -143,12 +143,17 @@ void Line::applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInf
     // Distribute the extra space.
     auto expansionToDistribute = spaceToDistribute / expansion.opportunityCount;
     auto accumulatedExpansion = InlineLayoutUnit { };
-    for (auto runIndex = runRange.begin(); runIndex < runRange.end(); ++runIndex) {
-        auto& run = m_runs[runIndex];
+    auto rangeSize = runRange.end() - runRange.begin();
+    if (runRange.end() > m_runs.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    for (size_t index = 0; index < rangeSize; ++index) {
+        auto& run = m_runs[runRange.begin() + index];
         // Expand and move runs by the accumulated expansion.
         run.moveHorizontally(accumulatedExpansion);
-        auto computedExpansion = expansionToDistribute * expansion.opportunityList[runIndex];
-        run.setExpansion({ expansion.behaviorList[runIndex], computedExpansion });
+        auto computedExpansion = expansionToDistribute * expansion.opportunityList[index];
+        run.setExpansion({ expansion.behaviorList[index], computedExpansion });
         run.shrinkHorizontally(-computedExpansion);
         accumulatedExpansion += computedExpansion;
     }

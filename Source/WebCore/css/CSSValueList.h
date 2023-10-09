@@ -26,7 +26,8 @@
 
 namespace WebCore {
 
-using CSSValueListBuilder = Vector<Ref<CSSValue>, 4>;
+static constexpr size_t CSSValueListBuilderInlineCapacity = 4;
+using CSSValueListBuilder = Vector<Ref<CSSValue>, CSSValueListBuilderInlineCapacity>;
 
 class CSSValueContainingVector : public CSSValue {
 public:

@@ -56,9 +56,9 @@ void AudioDSPKernelProcessor::initialize()
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
         // Create processing kernels, one per channel.
-        m_kernels.reserveInitialCapacity(numberOfChannels());
-        for (unsigned i = 0; i < numberOfChannels(); ++i)
-            m_kernels.uncheckedAppend(createKernel());
+        m_kernels = Vector<std::unique_ptr<AudioDSPKernel>>(numberOfChannels(), [this](size_t) {
+            return createKernel();
+        });
     }
     m_initialized = true;
     m_hasJustReset = true;

@@ -1781,7 +1781,7 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
             flags->add(ContainingClippingLayerChangedSize);
 
         // Trigger RenderLayerCompositor::requiresCompositingForFrame() which depends on the contentBoxRect size.
-        if (compositor().isCompositedSubframeRenderer(renderer()))
+        if (compositor().hasCompositedWidgetContents(renderer()))
             setNeedsPostLayoutCompositingUpdate();
     }
 

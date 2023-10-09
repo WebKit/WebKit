@@ -324,7 +324,6 @@ fast/replaced/applet-disabled-positioned.html
 fast/replaced/applet-rendering-java-disabled.html
 
 # WebKitTestRunner needs testRunner.displayInvalidatedRegion
-compositing/plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
 # eventSender.clearKillRing() is unimplemented

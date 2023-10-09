@@ -504,57 +504,57 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
 
 bool WebContentReader::readWebArchive(SharedBuffer& buffer)
 {
-    if (frame.settings().preferMIMETypeForImages() || !frame.document())
+    Ref frame = this->frame();
+    if (frame->settings().preferMIMETypeForImages() || !frame->document())
         return false;
 
     DeferredLoadingScope scope(frame);
     auto result = extractMarkupAndArchive(buffer, [&] (const String& type) {
-        return frame.loader().client().canShowMIMETypeAsHTML(type);
+        return frame->loader().client().canShowMIMETypeAsHTML(type);
     });
     if (!result)
         return false;
     
+    Ref frameDocument = *frame->document();
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
-        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), { });
-        if (DocumentLoader* loader = frame.loader().documentLoader())
+        m_fragment = createFragmentFromMarkup(frameDocument, result->markup, result->mainResource->url().string(), { });
+        if (DocumentLoader* loader = frame->loader().documentLoader())
             loader->addAllArchiveResources(result->archive.get());
         return true;
     }
 
     if (!shouldSanitize()) {
-        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), { });
+        m_fragment = createFragmentFromMarkup(frameDocument, result->markup, result->mainResource->url().string(), { });
         return true;
     }
 
-    String sanitizedMarkup = sanitizeMarkupWithArchive(frame, *frame.document(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
-        return frame.loader().client().canShowMIMETypeAsHTML(type);
+    String sanitizedMarkup = sanitizeMarkupWithArchive(frame, frameDocument, *result, msoListQuirksForMarkup(), [&] (const String& type) {
+        return frame->loader().client().canShowMIMETypeAsHTML(type);
     });
-    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, aboutBlankURL().string(), { });
+    m_fragment = createFragmentFromMarkup(frameDocument, sanitizedMarkup, aboutBlankURL().string(), { });
 
-    if (!fragment)
-        return false;
-
-    return true;
+    return m_fragment;
 }
 
 bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
 {
-    if (!frame.document())
+    Ref frame = this->frame();
+    if (!frame->document())
         return false;
 
     auto result = extractMarkupAndArchive(buffer, [&] (const String& type) {
-        return frame.loader().client().canShowMIMETypeAsHTML(type);
+        return frame->loader().client().canShowMIMETypeAsHTML(type);
     });
     if (!result)
         return false;
 
     if (!shouldSanitize()) {
-        markup = result->markup;
+        m_markup = result->markup;
         return true;
     }
 
-    markup = sanitizeMarkupWithArchive(frame, *frame.document(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
-        return frame.loader().client().canShowMIMETypeAsHTML(type);
+    m_markup = sanitizeMarkupWithArchive(frame, *frame->protectedDocument(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
+        return frame->loader().client().canShowMIMETypeAsHTML(type);
     });
 
     return true;
@@ -577,9 +577,9 @@ static String stripMicrosoftPrefix(const String& string)
 
 bool WebContentReader::readHTML(const String& string)
 {
-    if (frame.settings().preferMIMETypeForImages() || !frame.document())
+    if (frame().settings().preferMIMETypeForImages() || !frame().document())
         return false;
-    Document& document = *frame.document();
+    Ref document = *frame().document();
 
     String stringOmittingMicrosoftPrefix = stripMicrosoftPrefix(string);
     if (stringOmittingMicrosoftPrefix.isEmpty())
@@ -601,25 +601,26 @@ bool WebContentReader::readHTML(const String& string)
 
 bool WebContentMarkupReader::readHTML(const String& string)
 {
-    if (!frame.document())
+    if (!frame().document())
         return false;
 
     String rawHTML = stripMicrosoftPrefix(string);
     if (shouldSanitize()) {
-        markup = sanitizeMarkup(rawHTML, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+        m_markup = sanitizeMarkup(rawHTML, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [](auto& url) {
                 return url.protocolIsFile();
             });
         } });
     } else
-        markup = rawHTML;
+        m_markup = rawHTML;
 
-    return !markup.isEmpty();
+    return !m_markup.isEmpty();
 }
 
 bool WebContentReader::readRTFD(SharedBuffer& buffer)
 {
-    if (frame.settings().preferMIMETypeForImages() || !frame.document())
+    Ref frame = this->frame();
+    if (frame->settings().preferMIMETypeForImages() || !frame->document())
         return false;
 
     auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
@@ -633,20 +634,22 @@ bool WebContentReader::readRTFD(SharedBuffer& buffer)
 
 bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
 {
-    if (!frame.document())
+    Ref frame = this->frame();
+    if (!frame->document())
         return false;
     auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
     auto fragment = createFragmentAndAddResources(frame, string.get());
     if (!fragment)
         return false;
 
-    markup = serializeFragment(*fragment, SerializedNodes::SubtreeIncludingNode);
+    m_markup = serializeFragment(*fragment, SerializedNodes::SubtreeIncludingNode);
     return true;
 }
 
 bool WebContentReader::readRTF(SharedBuffer& buffer)
 {
-    if (frame.settings().preferMIMETypeForImages())
+    Ref frame = this->frame();
+    if (frame->settings().preferMIMETypeForImages())
         return false;
 
     auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
@@ -660,44 +663,46 @@ bool WebContentReader::readRTF(SharedBuffer& buffer)
 
 bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
 {
-    if (!frame.document())
+    Ref frame = this->frame();
+    if (!frame->document())
         return false;
     auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
     auto fragment = createFragmentAndAddResources(frame, string.get());
     if (!fragment)
         return false;
-    markup = serializeFragment(*fragment, SerializedNodes::SubtreeIncludingNode);
+    m_markup = serializeFragment(*fragment, SerializedNodes::SubtreeIncludingNode);
     return true;
 }
 
 bool WebContentReader::readPlainText(const String& text)
 {
-    if (!allowPlainText)
+    if (!m_allowPlainText)
         return false;
 
     String precomposedString = [text precomposedStringWithCanonicalMapping];
-    if (auto* page = frame.page())
+    if (CheckedPtr page = frame().page())
         precomposedString = page->applyLinkDecorationFiltering(precomposedString, LinkDecorationFilteringTrigger::Paste);
 
-    addFragment(createFragmentFromText(context, precomposedString));
+    addFragment(createFragmentFromText(m_context, precomposedString));
 
-    madeFragmentFromPlainText = true;
+    m_madeFragmentFromPlainText = true;
     return true;
 }
 
 bool WebContentReader::readImage(Ref<FragmentedSharedBuffer>&& buffer, const String& type, PresentationSize preferredPresentationSize)
 {
-    ASSERT(frame.document());
-    auto& document = *frame.document();
-    if (document.quirks().shouldAvoidPastingImagesAsWebContent())
+    ASSERT(frame().document());
+    Ref frame = this->frame();
+    Ref document = *frame->document();
+    if (document->quirks().shouldAvoidPastingImagesAsWebContent())
         return false;
 
     if (shouldReplaceRichContentWithAttachments())
         addFragment(createFragmentForImageAttachment(frame, document, WTFMove(buffer), type, preferredPresentationSize));
     else
-        addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(&document, buffer->extractData(), type)), preferredPresentationSize));
+        addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(document.ptr(), buffer->extractData(), type)), preferredPresentationSize));
 
-    return fragment;
+    return m_fragment;
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -799,16 +804,17 @@ static Ref<HTMLElement> attachmentForData(LocalFrame& frame, FragmentedSharedBuf
 
 bool WebContentReader::readFilePath(const String& path, PresentationSize preferredPresentationSize, const String& contentType)
 {
-    if (path.isEmpty() || !frame.document())
+    Ref frame = this->frame();
+    if (path.isEmpty() || !frame->document())
         return false;
 
-    auto& document = *frame.document();
-    if (!fragment)
-        fragment = document.createDocumentFragment();
+    Ref document = *frame->document();
+    if (!m_fragment)
+        m_fragment = document->createDocumentFragment();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (DeprecatedGlobalSettings::attachmentElementEnabled())
-        fragment->appendChild(attachmentForFilePath(frame, path, preferredPresentationSize, contentType));
+        m_fragment->appendChild(attachmentForFilePath(frame, path, preferredPresentationSize, contentType));
 #endif
 
     return true;
@@ -819,9 +825,10 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     if (url.isEmpty())
         return false;
 
+    Ref frame = this->frame();
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This code shouldn't be accessing selection and changing the behavior.
-    if (!frame.editor().client()->hasRichlyEditableSelection()) {
+    if (!frame->editor().client()->hasRichlyEditableSelection()) {
         if (readPlainText([(NSURL *)url absoluteString]))
             return true;
     }
@@ -831,12 +838,12 @@ bool WebContentReader::readURL(const URL& url, const String& title)
 #endif // PLATFORM(IOS_FAMILY)
 
     auto sanitizedURLString = [&] {
-        if (auto* page = frame.page())
+        if (auto* page = frame->page())
             return page->applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Paste);
         return url;
     }().string();
 
-    Ref document = *frame.document();
+    Ref document = *frame->document();
     auto anchor = HTMLAnchorElement::create(document.get());
     anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, AtomString { sanitizedURLString });
 
@@ -844,7 +851,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     anchor->appendChild(document->createTextNode([linkText precomposedStringWithCanonicalMapping]));
 
     auto newFragment = document->createDocumentFragment();
-    if (fragment)
+    if (m_fragment)
         newFragment->appendChild(HTMLBRElement::create(document.get()));
     newFragment->appendChild(anchor);
     addFragment(WTFMove(newFragment));
@@ -859,15 +866,16 @@ bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, 
     if (!shouldReplaceRichContentWithAttachments())
         return false;
 
-    RefPtr document { frame.document() };
+    Ref frame = this->frame();
+    RefPtr document { frame->document() };
     if (!document)
         return false;
 
-    if (!fragment)
-        fragment = document->createDocumentFragment();
+    if (!m_fragment)
+        m_fragment = document->createDocumentFragment();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    fragment->appendChild(attachmentForData(frame, buffer, type, name, preferredPresentationSize));
+    protectedFragment()->appendChild(attachmentForData(frame, buffer, type, name, preferredPresentationSize));
 #else
     UNUSED_PARAM(type);
     UNUSED_PARAM(name);

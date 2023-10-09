@@ -585,7 +585,7 @@ bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
 void RenderLayerBacking::layerWillBeDestroyed()
 {
     auto& renderer = this->renderer();
-    if (is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).allowsAcceleratedCompositing()) {
+    if (RenderLayerCompositor::isCompositedPlugin(renderer)) {
         auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer).widget());
         if (pluginViewBase && m_graphicsLayer->contentsLayerForMedia())
             pluginViewBase->detachPluginLayer();
@@ -1151,9 +1151,6 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     }
 
     auto attachPluginLayer = [&](RenderEmbeddedObject& rendererEmbeddedObject) {
-        if (!rendererEmbeddedObject.allowsAcceleratedCompositing())
-            return;
-
         auto* pluginViewBase = dynamicDowncast<PluginViewBase>(rendererEmbeddedObject.widget());
         if (!pluginViewBase)
             return;
@@ -1178,8 +1175,8 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 #endif
     };
 
-    if (auto* embeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer()))
-        attachPluginLayer(*embeddedObject);
+    if (RenderLayerCompositor::isCompositedPlugin(renderer()))
+        attachPluginLayer(downcast<RenderEmbeddedObject>(renderer()));
 
 #if ENABLE(VIDEO)
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
@@ -1222,12 +1219,13 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
     }
 #endif
-    if (is<RenderWidget>(renderer()) && compositor.parentFrameContentLayers(downcast<RenderWidget>(renderer()))) {
+    // FIXME: Why do we do this twice?
+    if (is<RenderWidget>(renderer()) && compositor.attachWidgetContentLayers(downcast<RenderWidget>(renderer()))) {
         m_owningLayer.setNeedsCompositingGeometryUpdate();
         layerConfigChanged = true;
     }
 
-    if (RenderLayerCompositor::isCompositedSubframeRenderer(renderer())) {
+    if (RenderLayerCompositor::hasCompositedWidgetContents(renderer())) {
         m_graphicsLayer->setContentsRectClipsDescendants(true);
         updateContentsRects();
     }
@@ -1755,14 +1753,10 @@ void RenderLayerBacking::updateDirectlyCompositedBoxDecorations(PaintedContentsI
 
 GraphicsLayer* RenderLayerBacking::layerForContents() const
 {
-    auto* rendererEmbeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer());
-    if (!rendererEmbeddedObject)
+    if (!RenderLayerCompositor::isCompositedPlugin(renderer()))
         return nullptr;
 
-    if (!rendererEmbeddedObject->allowsAcceleratedCompositing())
-        return nullptr;
-
-    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(rendererEmbeddedObject->widget());
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(downcast<RenderEmbeddedObject>(renderer()).widget());
     if (!pluginViewBase)
         return nullptr;
 
@@ -2951,7 +2945,7 @@ bool RenderLayerBacking::paintsContent(RenderLayer::PaintedContentRequest& reque
 
 static bool isCompositedPlugin(RenderObject& renderer)
 {
-    return is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).allowsAcceleratedCompositing();
+    return is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).requiresAcceleratedCompositing();
 }
 
 // A "simple container layer" is a RenderLayer which has no visible content to render.

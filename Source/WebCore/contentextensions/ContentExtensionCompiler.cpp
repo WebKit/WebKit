@@ -182,8 +182,7 @@ static void addUniversalActionsToDFA(DFA& dfa, UniversalActionSet&& universalAct
     ASSERT(!root.actionsLength());
     unsigned actionsStart = dfa.actions.size();
     dfa.actions.reserveCapacity(dfa.actions.size() + universalActions.size());
-    for (uint64_t action : universalActions)
-        dfa.actions.uncheckedAppend(action);
+    dfa.actions.appendRange(universalActions.begin(), universalActions.end());
     unsigned actionsEnd = dfa.actions.size();
 
     unsigned actionsLength = actionsEnd - actionsStart;

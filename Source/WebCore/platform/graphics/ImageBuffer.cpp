@@ -200,9 +200,9 @@ static RefPtr<ImageBuffer> copyImageBuffer(Ref<ImageBuffer> source, PreserveReso
     if (!copyBuffer)
         return nullptr;
     if (source->hasOneRef())
-        copyBuffer->context().drawConsumingImageBuffer(WTFMove(source), FloatRect { { }, copySize }, FloatRect { 0, 0, -1, -1 }, CompositeOperator::Copy);
+        copyBuffer->context().drawConsumingImageBuffer(WTFMove(source), FloatRect { { }, copySize }, FloatRect { 0, 0, -1, -1 }, { CompositeOperator::Copy });
     else
-        copyBuffer->context().drawImageBuffer(source, FloatPoint { }, CompositeOperator::Copy);
+        copyBuffer->context().drawImageBuffer(source, FloatPoint { }, { CompositeOperator::Copy });
     return copyBuffer;
 }
 

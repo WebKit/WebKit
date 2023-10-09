@@ -48,6 +48,13 @@ public:
     const Attribute& operator*() const { return m_array[m_offset]; }
     const Attribute* operator->() const { return &m_array[m_offset]; }
     AttributeConstIterator& operator++() { ++m_offset; return *this; }
+    AttributeConstIterator& operator--() { ++m_offset; return *this; }
+
+    using difference_type = ptrdiff_t;
+    using value_type = Attribute;
+    using pointer = const Attribute*;
+    using reference = const Attribute&;
+    using iterator_category = std::random_access_iterator_tag;
 
     bool operator==(const AttributeConstIterator& other) const { return m_offset == other.m_offset; }
 
@@ -67,6 +74,7 @@ public:
     AttributeConstIterator begin() const { return AttributeConstIterator(m_array, 0); }
     AttributeConstIterator end() const { return AttributeConstIterator(m_array, m_size); }
 
+    unsigned size() const { return m_size; }
     unsigned attributeCount() const { return m_size; }
 
 private:

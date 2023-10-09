@@ -56,6 +56,8 @@ public:
     bool atEnd() const { return m_first == m_last; }
     const CSSParserToken* end() const { return m_last; }
 
+    size_t size() const { return end() - begin(); }
+
     const CSSParserToken& peek(unsigned offset = 0) const
     {
         if (m_first + offset >= m_last)

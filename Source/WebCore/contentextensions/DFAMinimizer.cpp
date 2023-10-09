@@ -475,10 +475,7 @@ void DFAMinimizer::minimize(DFA& dfa)
     // Use every splitter to refine the node partitions.
     fullGraphPartition.splitByUniqueTransitions();
 
-    Vector<unsigned> relocationVector;
-    relocationVector.reserveInitialCapacity(dfa.nodes.size());
-    for (unsigned i = 0; i < dfa.nodes.size(); ++i)
-        relocationVector.uncheckedAppend(i);
+    Vector<unsigned> relocationVector(dfa.nodes.size(), [](size_t i) { return i; });
 
     // Update all the transitions.
     for (unsigned i = 0; i < dfa.nodes.size(); ++i) {

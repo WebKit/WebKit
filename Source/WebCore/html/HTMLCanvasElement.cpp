@@ -657,7 +657,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
         if (shouldPaint) {
             if (hasCreatedImageBuffer()) {
                 if (ImageBuffer* imageBuffer = buffer())
-                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), context.compositeOperation());
+                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), { context.compositeOperation() });
             }
         }
     }

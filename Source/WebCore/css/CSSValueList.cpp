@@ -211,11 +211,9 @@ bool CSSValueContainingVector::hasValue(CSSValueID otherValue) const
 
 CSSValueListBuilder CSSValueContainingVector::copyValues() const
 {
-    CSSValueListBuilder builder;
-    builder.reserveInitialCapacity(size());
-    for (auto& value : *this)
-        builder.uncheckedAppend(const_cast<CSSValue&>(value));
-    return builder;
+    return WTF::map<CSSValueListBuilderInlineCapacity>(*this, [](auto& value) -> Ref<CSSValue> {
+        return const_cast<CSSValue&>(value);
+    });
 }
 
 void CSSValueContainingVector::serializeItems(StringBuilder& builder) const

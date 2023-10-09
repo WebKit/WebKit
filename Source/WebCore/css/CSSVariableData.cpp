@@ -63,12 +63,11 @@ CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSPars
     : m_context(context)
 {
     StringBuilder stringBuilder;
-    m_tokens.reserveInitialCapacity(range.end() - range.begin());
-    for (auto& token : range) {
-        m_tokens.uncheckedAppend(token);
+    m_tokens = WTF::map(range, [&](auto& token) {
         if (token.hasStringBacking())
             stringBuilder.append(token.value());
-    }
+        return token;
+    });
     if (!stringBuilder.isEmpty()) {
         m_backingString = stringBuilder.toString();
         if (m_backingString.is8Bit())

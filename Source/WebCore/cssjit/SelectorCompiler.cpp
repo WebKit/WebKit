@@ -4168,13 +4168,11 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
 {
     generateNthChildRelationUpdate(fragment);
 
-    Vector<std::pair<int, int>, 32> validSubsetFilters;
-    validSubsetFilters.reserveInitialCapacity(fragment.nthChildFilters.size());
-    for (const auto& slot : fragment.nthChildFilters) {
+    auto validSubsetFilters = WTF::compactMap<32>(fragment.nthChildFilters, [&](auto& slot) -> std::optional<std::pair<int, int>> {
         if (nthFilterIsAlwaysSatisified(slot.first, slot.second))
-            continue;
-        validSubsetFilters.uncheckedAppend(slot);
-    }
+            return std::nullopt;
+        return slot;
+    });
     if (validSubsetFilters.isEmpty())
         return;
 
@@ -4296,13 +4294,11 @@ void SelectorCodeGenerator::generateElementIsNthLastChild(Assembler::JumpList& f
 {
     generateNthLastChildParentCheckAndRelationUpdate(failureCases, fragment);
 
-    Vector<std::pair<int, int>, 32> validSubsetFilters;
-    validSubsetFilters.reserveInitialCapacity(fragment.nthLastChildFilters.size());
-    for (const auto& slot : fragment.nthLastChildFilters) {
+    auto validSubsetFilters = WTF::compactMap<32>(fragment.nthLastChildFilters, [&](auto& slot) -> std::optional<std::pair<int, int>> {
         if (nthFilterIsAlwaysSatisified(slot.first, slot.second))
-            continue;
-        validSubsetFilters.uncheckedAppend(slot);
-    }
+            return std::nullopt;
+        return slot;
+    });
     if (validSubsetFilters.isEmpty())
         return;
 

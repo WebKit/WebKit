@@ -49,11 +49,9 @@ WebXRHand::WebXRHand(const WebXRInputSource& inputSource)
         return;
 
     size_t jointCount = static_cast<size_t>(XRHandJoint::Count);
-    Vector<Ref<WebXRJointSpace>> joints;
-    joints.reserveInitialCapacity(jointCount);
-    for (size_t i = 0; i < jointCount; ++i)
-        joints.uncheckedAppend(WebXRJointSpace::create(*document, *this, static_cast<XRHandJoint>(i)));
-    m_joints = WTFMove(joints);
+    m_joints = Vector<Ref<WebXRJointSpace>>(jointCount, [&](size_t i) {
+        return WebXRJointSpace::create(*document, *this, static_cast<XRHandJoint>(i));
+    });
 }
 
 WebXRHand::~WebXRHand() = default;

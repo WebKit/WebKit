@@ -43,7 +43,7 @@ SVGResourceImage::SVGResourceImage(LegacyRenderSVGResourceContainer& renderResou
 {
 }
 
-ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     if (auto* masker = dynamicDowncast<RenderSVGResourceMasker>(m_renderResource.get())) {
         if (masker->drawContentIntoContext(context, destinationRect, sourceRect, options))
@@ -53,7 +53,7 @@ ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, const FloatRect
     return ImageDrawResult::DidNothing;
 }
 
-void SVGResourceImage::drawPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void SVGResourceImage::drawPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     auto imageBuffer = context.createImageBuffer(size());
     if (!imageBuffer)

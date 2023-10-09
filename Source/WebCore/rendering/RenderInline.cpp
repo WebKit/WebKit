@@ -202,6 +202,8 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
                 lineLayout->updateStyle(*this, *oldStyle);
         }
     }
+
+    propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
 bool RenderInline::mayAffectLayout() const

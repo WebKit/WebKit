@@ -42,9 +42,7 @@ AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& 
 
     auto& transformOperations = transform.operations();
     auto& srcTransformOperations = src.transform.operations();
-    transformOperations.reserveCapacity(srcTransformOperations.size());
-    for (auto& srcTransformOperation : srcTransformOperations)
-        transformOperations.uncheckedAppend(srcTransformOperation.copyRef());
+    transformOperations.appendVector(srcTransformOperations);
 
     translate = src.translate.copyRef();
     scale = src.scale.copyRef();

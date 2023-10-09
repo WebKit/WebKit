@@ -20,7 +20,6 @@ fast/images/mac [ Pass ]
 [ Debug ] displaylists [ Pass ]
 
 # Disable plug-in tests on Apple Silicon
-[ arm64 ] compositing/plugins [ Skip ]
 [ arm64 ] http/tests/plugins [ Skip ]
 [ arm64 ] imported/blink/plugins [ Skip ]
 [ arm64 ] platform/mac-wk2/plugins [ Skip ]

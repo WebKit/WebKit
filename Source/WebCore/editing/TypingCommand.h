@@ -26,10 +26,11 @@
 #pragma once
 
 #include "TextInsertionBaseCommand.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
-class TypingCommand final : public TextInsertionBaseCommand {
+class TypingCommand final : public TextInsertionBaseCommand, public CanMakeCheckedPtr {
 public:
     enum class Type : uint8_t {
         DeleteSelection,

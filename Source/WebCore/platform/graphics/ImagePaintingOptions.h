@@ -28,7 +28,8 @@
 #include "DecodingOptions.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
-#include <wtf/ArgumentCoder.h>
+#include <initializer_list>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -41,22 +42,41 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, ImageOrientation::Orientation>
         || std::is_same_v<Type, InterpolationQuality>;
 
-    template<typename First, typename... Rest, typename = std::enable_if_t<isOptionType<std::decay_t<First>>>>
-    ImagePaintingOptions(First first, Rest... rest)
+    // This is a single-argument initializer to support pattern of
+    // ImageDrawResult drawImage(..., ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
+    // Should be removed once the pattern is not so prevalent.
+    template<typename T, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
+    ImagePaintingOptions(std::initializer_list<T> options)
     {
-        setOption(first, rest...);
+        for (auto& option : options)
+            setOption(option);
+    }
+    template<typename T, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
+    explicit ImagePaintingOptions(T option)
+    {
+        setOption(option);
+    }
+
+    template<typename T, typename U, typename... Rest, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
+    ImagePaintingOptions(T first, U second, Rest... rest)
+    {
+        setOption(first);
+        setOption(second);
+        (setOption(rest), ...);
     }
 
     template<typename... Overrides>
     ImagePaintingOptions(const ImagePaintingOptions& other, Overrides... overrides)
         : ImagePaintingOptions(other)
     {
-        setOption(overrides...);
+        (setOption(overrides), ...);
     }
 
     ImagePaintingOptions() = default;
     ImagePaintingOptions(const ImagePaintingOptions&) = default;
+    ImagePaintingOptions(ImagePaintingOptions&&) = default;
     ImagePaintingOptions& operator=(const ImagePaintingOptions&) = default;
+    ImagePaintingOptions& operator=(ImagePaintingOptions&&) = default;
 
     CompositeOperator compositeOperator() const { return m_compositeOperator; }
     BlendMode blendMode() const { return m_blendMode; }
@@ -65,26 +85,21 @@ struct ImagePaintingOptions {
     InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
 
 private:
-    friend struct IPC::ArgumentCoder<ImagePaintingOptions, void>;
-    template <typename First, typename... Rest>
-    void setOption(First first, Rest... rest)
-    {
-        setOption(first);
-        setOption(rest...);
-    }
-
     void setOption(CompositeOperator compositeOperator) { m_compositeOperator = compositeOperator; }
     void setOption(BlendMode blendMode) { m_blendMode = blendMode; }
     void setOption(DecodingMode decodingMode) { m_decodingMode = decodingMode; }
-    void setOption(ImageOrientation orientation) { m_orientation = orientation; }
+    void setOption(ImageOrientation orientation) { m_orientation = orientation.orientation(); }
     void setOption(ImageOrientation::Orientation orientation) { m_orientation = orientation; }
     void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
 
-    CompositeOperator m_compositeOperator { CompositeOperator::SourceOver };
-    BlendMode m_blendMode { BlendMode::Normal };
-    DecodingMode m_decodingMode { DecodingMode::Synchronous };
-    ImageOrientation m_orientation { ImageOrientation::Orientation::None };
-    InterpolationQuality m_interpolationQuality { InterpolationQuality::Default };
+    BlendMode m_blendMode : 5 { BlendMode::Normal };
+    DecodingMode m_decodingMode : 3 { DecodingMode::Synchronous };
+    CompositeOperator m_compositeOperator : 4 { CompositeOperator::SourceOver };
+    ImageOrientation::Orientation m_orientation : 4 { ImageOrientation::Orientation::None };
+    InterpolationQuality m_interpolationQuality : 4 { InterpolationQuality::Default };
 };
+static_assert(sizeof(ImagePaintingOptions) <= sizeof(uint64_t), "Pass by value");
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, ImagePaintingOptions);
 
 }

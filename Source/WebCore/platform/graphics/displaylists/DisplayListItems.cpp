@@ -368,7 +368,7 @@ void DrawSystemImage::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("destination", destinationRect());
 }
 
-DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
     : m_imageIdentifier(imageIdentifier)
     , m_destination(destRect)
     , m_tileRect(tileRect)

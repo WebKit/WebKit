@@ -109,6 +109,17 @@ static ConstantValue constantMultiply(const Type*, const FixedVector<ConstantVal
     }, lhs, rhs);
 }
 
+static ConstantValue constantDivide(const Type*, const FixedVector<ConstantValue>& arguments)
+{
+    ASSERT(arguments.size() == 2);
+
+    return scalarOrVector([&](const auto& left, auto& right) -> ConstantValue {
+        if (left.isInt() && right.isInt())
+            return left.toInt() / right.toInt();
+        return left.toDouble() / right.toDouble();
+    }, arguments[0], arguments[1]);
+}
+
 static ConstantValue zeroValue(const Type* type)
 {
     return WTF::switchOn(*type,

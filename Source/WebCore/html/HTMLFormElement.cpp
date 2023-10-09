@@ -336,18 +336,15 @@ ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
 
 StringPairVector HTMLFormElement::textFieldValues() const
 {
-    StringPairVector result;
-    result.reserveInitialCapacity(m_listedElements.size());
-    for (auto& weakElement : m_listedElements) {
+    return WTF::compactMap(m_listedElements, [](auto& weakElement) -> std::optional<std::pair<String, String>> {
         RefPtr element { weakElement.get() };
         if (!is<HTMLInputElement>(element))
-            continue;
+            return std::nullopt;
         auto& input = downcast<HTMLInputElement>(*element);
         if (!input.isTextField())
-            continue;
-        result.uncheckedAppend({ input.name().string(), input.value() });
-    }
-    return result;
+            return std::nullopt;
+        return std::pair { input.name().string(), input.value() };
+    });
 }
 
 RefPtr<HTMLFormControlElement> HTMLFormElement::findSubmitButton(HTMLFormControlElement* submitter, bool needButtonActivation)

@@ -275,8 +275,8 @@ RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard
 {
     WebContentReader reader(*document().frame(), context, allowPlainText);
     pasteboard.read(reader);
-    chosePlainText = reader.madeFragmentFromPlainText;
-    return WTFMove(reader.fragment);
+    chosePlainText = reader.madeFragmentFromPlainText();
+    return reader.takeFragment();
 }
 
 void Editor::takeFindStringFromSelection()

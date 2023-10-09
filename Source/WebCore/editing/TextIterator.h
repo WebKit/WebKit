@@ -126,6 +126,8 @@ private:
 
     Node* baseNodeForEmittingNewLine() const;
 
+    RefPtr<Node> protectedStartContainer() const { return m_startContainer; }
+
     const TextIteratorBehaviors m_behaviors;
 
     // Current position, not necessarily of the text being returned, but position as we walk through the DOM tree.

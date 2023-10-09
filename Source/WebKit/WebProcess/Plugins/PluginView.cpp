@@ -287,11 +287,15 @@ void PluginView::manualLoadDidFinishLoading()
     }
 
     m_plugin->streamDidFinishLoading();
+}
 
-    if (layerHostingStrategy() != PluginLayerHostingStrategy::None) {
-        // This ensures that we update RenderLayers and compositing when the result of RenderEmbeddedObject::requiresLayer() changes.
-        Ref { m_pluginElement }->invalidateStyleAndLayerComposition();
-    }
+void PluginView::layerHostingStrategyDidChange()
+{
+    if (!m_isInitialized)
+        return;
+
+    // This ensures that we update RenderLayers and compositing when the result of RenderEmbeddedObject::requiresLayer() changes.
+    Ref { m_pluginElement }->invalidateStyleAndLayerComposition();
 }
 
 void PluginView::manualLoadDidFail()

@@ -401,14 +401,11 @@ void ServicesOverlayController::buildSelectionHighlight()
         if (!viewForRange)
             return;
 
-        Vector<CGRect> cgRects;
-        cgRects.reserveInitialCapacity(m_currentSelectionRects.size());
-
-        for (auto& rect : m_currentSelectionRects) {
+        auto cgRects = WTF::map(m_currentSelectionRects, [&](auto& rect) -> CGRect {
             IntRect currentRect = snappedIntRect(rect);
             currentRect.setLocation(mainFrameView->windowToContents(viewForRange->contentsToWindow(currentRect.location())));
-            cgRects.uncheckedAppend(currentRect);
-        }
+            return currentRect;
+        });
 
         if (!cgRects.isEmpty()) {
             CGRect visibleRect = mainFrameView->visibleContentRect();

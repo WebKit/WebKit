@@ -55,12 +55,9 @@ RefPtr<AudioBus> AudioBus::create(unsigned numberOfChannels, size_t length, bool
 AudioBus::AudioBus(unsigned numberOfChannels, size_t length, bool allocate)
     : m_length(length)
 {
-    m_channels.reserveInitialCapacity(numberOfChannels);
-
-    for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channel = allocate ? makeUnique<AudioChannel>(length) : makeUnique<AudioChannel>(nullptr, length);
-        m_channels.uncheckedAppend(WTFMove(channel));
-    }
+    m_channels = Vector<std::unique_ptr<AudioChannel>>(numberOfChannels, [&](size_t) {
+        return allocate ? makeUnique<AudioChannel>(length) : makeUnique<AudioChannel>(nullptr, length);
+    });
 
     m_layout = LayoutCanonical; // for now this is the only layout we define
 }

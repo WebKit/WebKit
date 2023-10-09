@@ -43,6 +43,8 @@ struct WebCorePasteboardFileReader final : PasteboardFileReader {
     void readFilename(const String&) final;
     void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) final;
 
+    RefPtr<ScriptExecutionContext> protectedContext() const { return context; }
+
     RefPtr<ScriptExecutionContext> context;
     Vector<Ref<File>> files;
 };

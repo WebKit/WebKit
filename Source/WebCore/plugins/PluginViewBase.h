@@ -51,6 +51,8 @@ public:
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual GraphicsLayer* graphicsLayer() const { return nullptr; }
 
+    virtual void layerHostingStrategyDidChange() { }
+
 #if PLATFORM(IOS_FAMILY)
     virtual bool willProvidePluginLayer() const { return false; }
     virtual void attachPluginLayer() { }
