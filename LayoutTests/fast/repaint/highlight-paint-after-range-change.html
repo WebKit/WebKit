@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Test that highlights gets repainted properly when the underlying range is changed.</title>
-    <style>
-        html { 
-            font-size: 24pt;
-        }
-        ::highlight(yellowHighlight)  {
-            background-color: yellow;
-        }
-    </style>
+<style>
+html {
+    font-size: 24pt;
+}
+
+::highlight(yellowHighlight) {
+    background-color: yellow;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
 </head>
 <body>
-    <title>When run, the first "this" should be highlighted, followed by the second "this", and the first highlight should be removed.</title>
     <div id="highlight_area">Highlight this first and then this.</div>
     <pre id="result"></pre>
+    <p>When run, the first "this" should be highlighted, followed by the second "this", and the first highlight should be removed.</p>
 </body>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 }
- 
-async function test() {   
 
+(async () => {
     if (window.internals)
         internals.startTrackingRepaints();
 
@@ -35,20 +35,18 @@ async function test() {
     highlightRange.setStart(highlightNode.firstChild, 11);
     highlightRange.setEnd(highlightNode.firstChild, 14);
 
-    setTimeout(() => {
+    await UIHelper.renderingUpdate();
 
-        highlightRange.setStart(highlightNode.firstChild, 25);
-        highlightRange.setEnd(highlightNode.firstChild, 29);
-        if (window.internals) {
-            let repaintRects = internals.repaintRectsAsText();
-            internals.stopTrackingRepaints();
-            result.textContent = repaintRects;
-        }
-        if (window.testRunner)
-            testRunner.notifyDone();
-     }, 100);
-    
-};
-test();
+    highlightRange.setStart(highlightNode.firstChild, 25);
+    highlightRange.setEnd(highlightNode.firstChild, 29);
+    if (window.internals) {
+        let repaintRects = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+        result.textContent = repaintRects;
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
 </script>
 </html>
