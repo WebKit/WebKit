@@ -59,7 +59,7 @@ ScopeAndCrossOriginParent CredentialsContainer::scopeAndCrossOriginParent() cons
         if (!origin.isSameOriginDomain(document->securityOrigin()) && !areRegistrableDomainsEqual(url, document->url()))
             isSameSite = false;
         if (!crossOriginParent && !origin.isSameOriginAs(document->securityOrigin()))
-            crossOriginParent = origin.data();
+            crossOriginParent = document->securityOrigin().data();
     }
 
     if (!crossOriginParent)
