@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that repainting a JPEG XL image doesn't lead to image corruption. The test passes if you see a green square below when running in ASAN.
+<div style="position: relative;"><img id="img" style="position: absolute; top: 0px; left: 0px;" src="resources/green-313x313.jxl"></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var index = 0;
+const image = document.getElementById("img");
+
+function tick() {
+    if (index == 21) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    var position = [0, 0];
+    if (index % 2 == 1)
+        position = [200, 200];
+    image.style.left = `${position[0]}px`;
+    image.style.top = `${position[1]}px`;
+    ++index;
+    requestAnimationFrame(tick);
+}
+image.addEventListener("load", tick);
+image.addEventListener("error", function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>
