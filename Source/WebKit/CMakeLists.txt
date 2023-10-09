@@ -374,6 +374,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/CallbackID.serialization.in
     Shared/DebuggableInfoData.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
+    Shared/DocumentEditingContext.serialization.in
     Shared/DrawingAreaInfo.serialization.in
     Shared/EditingRange.serialization.in
     Shared/EditorState.serialization.in
