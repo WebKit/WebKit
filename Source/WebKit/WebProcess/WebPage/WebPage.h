@@ -612,7 +612,7 @@ public:
 
     void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID);
 
-    void getFrameInfo(WebCore::FrameIdentifier, CompletionHandler<void(FrameInfoData&&)>&&);
+    void getFrameInfo(WebCore::FrameIdentifier, CompletionHandler<void(std::optional<FrameInfoData>&&)>&&);
     void getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);

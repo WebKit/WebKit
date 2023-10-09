@@ -1064,14 +1064,14 @@ void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::F
     WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID);
 }
 
-void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<void(FrameInfoData&&)>&& completionHandler)
+void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<FrameInfoData>&&)>&& completionHandler)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        return completionHandler({ });
-    }
-    frame->getFrameInfo(WTFMove(completionHandler));
+    if (!frame)
+        return completionHandler(std::nullopt);
+    frame->getFrameInfo([completionHandler = WTFMove(completionHandler)](auto&& frameInfo) mutable {
+        completionHandler(WTFMove(frameInfo));
+    });
 }
 
 void WebPage::getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
