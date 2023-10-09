@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitUtilities.h"
-#import "WKTouchEventsGestureRecognizer.h"
 #import <UIKit/UIGestureRecognizerSubclass.h>
 #import <wtf/RetainPtr.h>
 

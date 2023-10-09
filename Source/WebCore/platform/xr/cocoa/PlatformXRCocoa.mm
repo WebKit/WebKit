@@ -26,9 +26,8 @@
 #import "config.h"
 #import "PlatformXRCocoa.h"
 
-#if ENABLE(WEBXR) && !USE(OPENXR)
+#if ENABLE(WEBXR) && USE(EMPTYXR)
 
-#import "PlatformXR.h"
 #import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;

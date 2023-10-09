@@ -594,10 +594,6 @@ UIProcess/WebAuthentication/Mock/MockCcidService.mm
 
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 
-UIProcess/XR/ios/PlatformXRARKit.mm
-UIProcess/XR/ios/PlatformXRSystemIOS.mm
-UIProcess/XR/ios/WKARPresentationSession.mm
-
 WebProcess/API/Cocoa/WKWebProcess.cpp
 
 WebProcess/ApplePay/WebPaymentCoordinator.cpp
