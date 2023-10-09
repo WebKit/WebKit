@@ -976,7 +976,7 @@ Class webAVPlayerControllerClass()
     CMTime minSeekable = [seekableTimeRanges.firstObject CMTimeRangeValue].start;
     CMTime maxSeekable = PAL::CMTimeRangeGetEnd([seekableTimeRanges.lastObject CMTimeRangeValue]);
     CMTime duration = PAL::CMTimeSubtract(maxSeekable, minSeekable);
-    return [allocAVTimeRangeInstance() initWithCMTimeRange:PAL::CMTimeRangeMake(minSeekable, duration)];
+    return [[allocAVTimeRangeInstance() initWithCMTimeRange:PAL::CMTimeRangeMake(minSeekable, duration)] autorelease];
 }
 
 - (BOOL)hasItem
