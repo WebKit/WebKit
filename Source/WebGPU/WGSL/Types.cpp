@@ -285,11 +285,12 @@ unsigned Type::size() const
         [&](const Struct& structure) -> unsigned {
             unsigned alignment = 0;
             unsigned size = 0;
-            for (auto& [_, field] : structure.fields) {
-                auto fieldAlignment = field->alignment();
+            for (auto& member : structure.structure.members()) {
+                auto* type = member.type().inferredType();
+                auto fieldAlignment = type->alignment();
                 alignment = std::max(alignment, fieldAlignment);
                 size = WTF::roundUpToMultipleOf(fieldAlignment, size);
-                size += field->size();
+                size += type->size();
             }
             return WTF::roundUpToMultipleOf(alignment, size);
         },
