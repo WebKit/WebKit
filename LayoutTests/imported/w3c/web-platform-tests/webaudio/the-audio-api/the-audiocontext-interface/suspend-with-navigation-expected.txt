@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: Invalid URL
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT suspend() with navigation Test timed out
+NOTRUN suspend() with navigation Should be BFCached but actually wasn't
 

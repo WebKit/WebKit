@@ -1,12 +1,12 @@
 
-PASS frame: origin = https://localhost:9443, value = undefined
-PASS frame: origin = https://localhost:9443, value = *
-PASS frame: origin = https://localhost:9443, value = self
-FAIL frame: origin = https://localhost:9443, value = (\) assert_equals: expected false but got true
-FAIL frame: origin = https://127.0.0.1:9443, value = undefined assert_equals: expected false but got true
-FAIL frame: origin = https://127.0.0.1:9443, value = * assert_equals: expected false but got true
-FAIL frame: origin = https://127.0.0.1:9443, value = self assert_equals: expected false but got true
-FAIL frame: origin = https://127.0.0.1:9443, value = (\) assert_equals: expected false but got true
+PASS frame: origin = https://web-platform.test:9443, value = undefined
+PASS frame: origin = https://web-platform.test:9443, value = *
+PASS frame: origin = https://web-platform.test:9443, value = self
+FAIL frame: origin = https://web-platform.test:9443, value = (\) assert_equals: expected false but got true
+FAIL frame: origin = https://www1.web-platform.test:9443, value = undefined assert_equals: expected false but got true
+FAIL frame: origin = https://www1.web-platform.test:9443, value = * assert_equals: expected false but got true
+FAIL frame: origin = https://www1.web-platform.test:9443, value = self assert_equals: expected false but got true
+FAIL frame: origin = https://www1.web-platform.test:9443, value = (\) assert_equals: expected false but got true
 PASS dedicated worker: scheme = https, value = undefined
 PASS dedicated worker: scheme = https, value = *
 PASS dedicated worker: scheme = https, value = self

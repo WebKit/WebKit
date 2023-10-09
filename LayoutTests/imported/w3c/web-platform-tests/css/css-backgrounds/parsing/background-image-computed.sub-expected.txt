@@ -1,7 +1,7 @@
 
 PASS Property background-image value 'none'
-PASS Property background-image value 'url("http://localhost/")'
-PASS Property background-image value 'none, url("http://localhost/")'
+PASS Property background-image value 'url("http://web-platform.test/")'
+PASS Property background-image value 'none, url("http://web-platform.test/")'
 PASS Property background-image value 'linear-gradient(to left bottom, red, blue)'
 PASS Property background-image value 'radial-gradient(rgb(255, 0, 0), rgb(0, 0, 255))'
 PASS Property background-image value 'radial-gradient(at center, red, blue)'

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unable to post message to http://example.org. Recipient has origin http://localhost:8800.
+CONSOLE MESSAGE: Unable to post message to http://example.org. Recipient has origin http://web-platform.test:8800.
 
 
 PASS different origin
