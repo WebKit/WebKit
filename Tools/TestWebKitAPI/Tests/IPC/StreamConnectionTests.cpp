@@ -40,7 +40,7 @@
 namespace TestWebKitAPI {
 
 namespace {
-static constexpr Seconds defaultSendTimeout = 1_s;
+constexpr Seconds defaultTimeout = 1_s;
 
 enum TestObjectIdentifierTag { };
 using TestObjectIdentifier = ObjectIdentifier<TestObjectIdentifierTag>;
@@ -212,7 +212,7 @@ public:
 
 TEST_F(StreamConnectionTest, OpenConnections)
 {
-    auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    auto connectionPair = IPC::StreamClientConnection::create(defaultTimeout, defaultBufferSizeLog2);
     ASSERT_TRUE(!!connectionPair);
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
     auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
@@ -230,7 +230,7 @@ TEST_F(StreamConnectionTest, OpenConnections)
 
 TEST_F(StreamConnectionTest, InvalidateUnopened)
 {
-    auto connectionPair = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    auto connectionPair = IPC::StreamClientConnection::create(defaultTimeout, defaultBufferSizeLog2);
     ASSERT_TRUE(!!connectionPair);
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
     auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
@@ -252,7 +252,7 @@ public:
     void SetUp() override
     {
         setupBase();
-        auto connectionPair = IPC::StreamClientConnection::create(bufferSizeLog2());
+        auto connectionPair = IPC::StreamClientConnection::create(defaultTimeout, bufferSizeLog2());
         ASSERT(!!connectionPair);
         auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
         auto serverConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnectionHandle)).releaseNonNull();
@@ -308,7 +308,7 @@ TEST_P(StreamMessageTest, Send)
 {
     auto cleanup = localReferenceBarrier();
     for (uint64_t i = 0u; i < 55u; ++i) {
-        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID());
         EXPECT_EQ(result, IPC::Error::NoError);
     }
     serverQueue().dispatch([&] {
@@ -349,10 +349,10 @@ TEST_P(StreamMessageTest, SendWithSwitchingDestinationIDs)
     });
 
     for (uint64_t i = 0u; i < 777u; ++i) {
-        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID());
         EXPECT_EQ(result, IPC::Error::NoError);
         if (i % 77) {
-            result = m_clientConnection->send(MockStreamTestMessage1 { }, other, defaultSendTimeout);
+            result = m_clientConnection->send(MockStreamTestMessage1 { }, other);
             EXPECT_EQ(result, IPC::Error::NoError);
         }
     }
@@ -376,7 +376,7 @@ TEST_P(StreamMessageTest, SendAsyncReply)
         auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { i }, [&, j = i] (uint64_t value) {
             EXPECT_GE(value, 100u) << j;
             replies.add(value);
-        }, defaultDestinationID(), defaultSendTimeout);
+        }, defaultDestinationID());
         EXPECT_TRUE(result.isValid());
     }
     while (replies.size() < 55u)
@@ -408,7 +408,7 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
         auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { i }, [&, j = i] (uint64_t value) {
             EXPECT_EQ(value, 0u) << j; // Cancel handler returns 0 for uint64_t.
             replies.add(j);
-        }, defaultDestinationID(), defaultSendTimeout);
+        }, defaultDestinationID());
         EXPECT_TRUE(result.isValid());
     }
     m_clientConnection->invalidate();

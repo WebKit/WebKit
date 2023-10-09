@@ -94,16 +94,16 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
     
-    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    static inline constexpr Seconds defaultTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(std::forward<T>(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().send(std::forward<T>(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(std::forward<T>(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().sendSync(std::forward<T>(message), backing());
     }
     IPC::Connection& connection() const { return m_gpuProcessConnection.get()->connection(); }
 

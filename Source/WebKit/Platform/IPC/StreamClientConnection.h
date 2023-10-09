@@ -63,7 +63,7 @@ public:
     };
 
     // The messages from the server are delivered to the caller through the passed IPC::MessageReceiver.
-    static std::optional<StreamConnectionPair> create(unsigned bufferSizeLog2);
+    static std::optional<StreamConnectionPair> create(Seconds defaultTimeout, unsigned bufferSizeLog2);
 
     ~StreamClientConnection();
 
@@ -74,24 +74,28 @@ public:
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
     void invalidate();
 
-    template<typename T, typename U, typename V> Error send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
+    using SendOptions = StreamSendOptions;
+    template<typename T, typename U, typename V> Error send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, SendOptions = { });
 
     using AsyncReplyID = Connection::AsyncReplyID;
     template<typename T, typename C, typename U, typename V>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, SendOptions = { });
 
+    using SendSyncOptions = StreamSendSyncOptions;
     template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
     template<typename T, typename U, typename V>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
+    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, SendSyncOptions = { });
 
+    using WaitForOptions = StreamWaitForOptions;
     template<typename T, typename U, typename V>
-    Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
+    Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, WaitForOptions = { });
 
+    Seconds defaultTimeout() const { return m_defaultTimeout; }
     StreamClientConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
 
 private:
-    StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&);
+    StreamClientConnection(Seconds defaultTimeout, Ref<Connection>, StreamClientConnectionBuffer&&);
 
     template<typename T, typename... AdditionalData>
     bool trySendStream(std::span<uint8_t>&, T& message, AdditionalData&&...);
@@ -103,6 +107,10 @@ private:
     void wakeUpServerBatched(WakeUpServer);
     void wakeUpServer(WakeUpServer);
 
+    template<typename T>
+    Timeout resolveTimeout(const T& options);
+
+    Seconds m_defaultTimeout { 0_s };
     Ref<Connection> m_connection;
     class DedicatedConnectionClient final : public Connection::Client {
         WTF_MAKE_NONCOPYABLE(DedicatedConnectionClient);
@@ -126,9 +134,10 @@ private:
 };
 
 template<typename T, typename U, typename V>
-Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
+Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, SendOptions options)
 {
     static_assert(!T::isSync, "Message is sync!");
+    Timeout timeout = this->resolveTimeout(options);
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
         return error;
@@ -145,9 +154,10 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> de
 }
 
 template<typename T, typename C, typename U, typename V>
-StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
+StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, SendOptions options)
 {
     static_assert(!T::isSync, "Message is sync!");
+    Timeout timeout = this->resolveTimeout(options);
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
         return { }; // FIXME: Propagate errors.
@@ -198,9 +208,10 @@ bool StreamClientConnection::trySendStream(std::span<uint8_t>& span, T& message,
 }
 
 template<typename T, typename U, typename V>
-StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
+StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, SendSyncOptions options)
 {
     static_assert(T::isSync, "Message is not sync!");
+    Timeout timeout = this->resolveTimeout(options);
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
         return { error };
@@ -219,9 +230,9 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
 }
 
 template<typename T, typename U, typename V>
-Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
+Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, WaitForOptions options)
 {
-    return m_connection->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
+    return m_connection->waitForAndDispatchImmediately<T>(destinationID, resolveTimeout(options), options.flags());
 }
 
 template<typename T>
@@ -298,6 +309,12 @@ inline void StreamClientConnection::sendProcessOutOfStreamMessage(std::span<uint
     auto result = m_buffer.release(encoder.size());
     UNUSED_VARIABLE(result);
     m_batchSize = 0;
+}
+
+template<typename T>
+Timeout StreamClientConnection::resolveTimeout(const T& options)
+{
+    return options.timeout().value_or(m_defaultTimeout);
 }
 
 }
