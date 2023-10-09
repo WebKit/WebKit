@@ -1474,12 +1474,13 @@ bool DragController::tryToUpdateDroppedImagePlaceholders(const DragData& dragDat
     auto pasteboard = Pasteboard::create(dragData);
     pasteboard->read(reader);
 
-    if (!reader.fragment)
+    auto fragment = reader.protectedFragment();
+    if (!fragment)
         return false;
 
     Vector<Ref<HTMLImageElement>> imageElements;
-    for (auto& imageElement : descendantsOfType<HTMLImageElement>(*reader.fragment))
-        imageElements.append(imageElement);
+    for (Ref imageElement : descendantsOfType<HTMLImageElement>(*fragment))
+        imageElements.append(WTFMove(imageElement));
 
     if (imageElements.size() != m_droppedImagePlaceholders.size()) {
         ASSERT_NOT_REACHED();

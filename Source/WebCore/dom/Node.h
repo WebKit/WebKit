@@ -272,7 +272,8 @@ public:
     Node* nonBoundaryShadowTreeRootNode();
 
     // Node's parent or shadow tree host.
-    ContainerNode* parentOrShadowHostNode() const; // Defined in ShadowRoot.h
+    inline ContainerNode* parentOrShadowHostNode() const; // Defined in ShadowRoot.h
+    inline RefPtr<ContainerNode> protectedParentOrShadowHostNode() const; // Defined in ShadowRoot.h
     ContainerNode* parentInComposedTree() const;
     Element* parentElementInComposedTree() const;
     Element* parentOrShadowHostElement() const;

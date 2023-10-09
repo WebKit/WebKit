@@ -177,6 +177,11 @@ inline ContainerNode* Node::parentOrShadowHostNode() const
     return parentNode();
 }
 
+inline RefPtr<ContainerNode> Node::protectedParentOrShadowHostNode() const
+{
+    return parentOrShadowHostNode();
+}
+
 inline bool hasShadowRootParent(const Node& node)
 {
     return node.parentNode() && node.parentNode()->isShadowRoot();

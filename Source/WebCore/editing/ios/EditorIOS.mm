@@ -215,7 +215,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         reader.addFragment(fragment.releaseNonNull());
     }
 
-    auto fragment = WTFMove(reader.fragment);
+    auto fragment = reader.takeFragment();
     if (!fragment) {
         bool chosePlainTextIgnored;
         fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainTextIgnored);

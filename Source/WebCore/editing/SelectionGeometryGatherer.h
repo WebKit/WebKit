@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_CONTROLS)
 
+#include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -66,7 +67,7 @@ public:
 private:
     Vector<LayoutRect> boundingRects() const;
 
-    RenderView& m_renderView;
+    CheckedRef<RenderView> m_renderView;
 
     // All rects are in RenderView coordinates.
     Vector<FloatQuad> m_quads;

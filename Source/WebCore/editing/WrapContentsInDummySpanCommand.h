@@ -46,6 +46,9 @@ private:
     void doReapply() override;
     void executeApply();
 
+    RefPtr<HTMLElement> protectedDummySpan() const { return m_dummySpan; }
+    Ref<Element> protectedElement() const { return m_element; }
+
 #ifndef NDEBUG
     void getNodesInCommand(HashSet<Ref<Node>>&) override;
 #endif

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BoundaryPoint.h"
 #include "ContainerNode.h"
+#include "Document.h"
 
 namespace WebCore {
 
@@ -107,6 +108,11 @@ TextStream& operator<<(TextStream& stream, const BoundaryPoint& boundaryPoint)
     stream.dumpProperty("node", boundaryPoint.container->debugDescription());
     stream.dumpProperty("offset", boundaryPoint.offset);
     return stream;
+}
+
+Ref<Document> BoundaryPoint::protectedDocument() const
+{
+    return document();
 }
 
 }

@@ -139,6 +139,7 @@ public:
     WEBCORE_EXPORT void willDetachPage();
 
     Document* document() const;
+    RefPtr<Document> protectedDocument() const;
     LocalFrameView* view() const;
 
     Editor& editor() { return document()->editor(); }
@@ -356,6 +357,11 @@ inline LocalFrameView* LocalFrame::view() const
 inline Document* LocalFrame::document() const
 {
     return m_doc.get();
+}
+
+inline RefPtr<Document> LocalFrame::protectedDocument() const
+{
+    return document();
 }
 
 inline LocalFrameView* Document::view() const

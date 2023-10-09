@@ -3524,7 +3524,7 @@ CharacterOffset AXObjectCache::startCharacterOffsetOfParagraph(const CharacterOf
     auto highestRoot = highestEditableRoot(firstPositionInOrBeforeNode(&startNode));
     Position::AnchorType type = Position::PositionIsOffsetInAnchor;
     
-    auto& node = *findStartOfParagraph(&startNode, highestRoot.get(), startBlock.get(), offset, type, boundaryCrossingRule);
+    Ref node = *findStartOfParagraph(&startNode, highestRoot.get(), startBlock.get(), offset, type, boundaryCrossingRule);
     
     if (type == Position::PositionIsOffsetInAnchor)
         return characterOffsetForNodeAndOffset(node, offset, TraverseOptionIncludeStart);
@@ -3546,9 +3546,9 @@ CharacterOffset AXObjectCache::endCharacterOffsetOfParagraph(const CharacterOffs
     auto highestRoot = highestEditableRoot(firstPositionInOrBeforeNode(startNode.get()));
     Position::AnchorType type = Position::PositionIsOffsetInAnchor;
     
-    auto& node = *findEndOfParagraph(startNode.get(), highestRoot.get(), stayInsideBlock.get(), offset, type, boundaryCrossingRule);
+    Ref node = *findEndOfParagraph(startNode.get(), highestRoot.get(), stayInsideBlock.get(), offset, type, boundaryCrossingRule);
     if (type == Position::PositionIsOffsetInAnchor) {
-        if (node.isTextNode()) {
+        if (node->isTextNode()) {
             CharacterOffset startOffset = startOrEndCharacterOffsetForRange(rangeForNodeContents(node), true);
             offset -= startOffset.startIndex;
         }

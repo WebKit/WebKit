@@ -116,7 +116,7 @@ SpellChecker::~SpellChecker()
 
 TextCheckerClient* SpellChecker::client() const
 {
-    Page* page = m_document.page();
+    CheckedPtr page = m_document->page();
     if (!page)
         return nullptr;
     return page->editorClient().textChecker();
@@ -133,7 +133,7 @@ void SpellChecker::timerFiredToProcessQueuedRequest()
 
 bool SpellChecker::isAsynchronousEnabled() const
 {
-    return m_document.settings().asynchronousSpellCheckingEnabled();
+    return m_document->settings().asynchronousSpellCheckingEnabled();
 }
 
 bool SpellChecker::canCheckAsynchronously(const SimpleRange& range) const
@@ -144,16 +144,16 @@ bool SpellChecker::canCheckAsynchronously(const SimpleRange& range) const
 bool SpellChecker::isCheckable(const SimpleRange& range) const
 {
     bool foundRenderer = false;
-    for (auto& node : intersectingNodes(range)) {
-        if (node.renderer()) {
+    for (Ref node : intersectingNodes(range)) {
+        if (node->renderer()) {
             foundRenderer = true;
             break;
         }
     }
     if (!foundRenderer)
         return false;
-    auto& node = range.start.container.get();
-    return !is<Element>(node) || downcast<Element>(node).isSpellCheckingEnabled();
+    Ref node = range.start.container.get();
+    return !is<Element>(node) || downcast<Element>(node.get()).isSpellCheckingEnabled();
 }
 
 void SpellChecker::requestCheckingFor(Ref<SpellCheckRequest>&& request)
@@ -181,7 +181,7 @@ void SpellChecker::invokeRequest(Ref<SpellCheckRequest>&& request)
     if (!client())
         return;
     m_processingRequest = WTFMove(request);
-    client()->requestCheckingOfString(*m_processingRequest, m_document.selection().selection());
+    client()->requestCheckingOfString(*m_processingRequest, protectedDocument()->selection().selection());
 }
 
 void SpellChecker::enqueueRequest(Ref<SpellCheckRequest>&& request)
@@ -206,7 +206,7 @@ void SpellChecker::didCheck(TextCheckingRequestIdentifier identifier, const Vect
         return;
     }
 
-    m_document.editor().markAndReplaceFor(*m_processingRequest, results);
+    protectedDocument()->editor().markAndReplaceFor(*m_processingRequest, results);
 
     if (m_lastProcessedIdentifier.toUInt64() < identifier.toUInt64())
         m_lastProcessedIdentifier = identifier;

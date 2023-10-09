@@ -131,7 +131,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
         if (!box)
             return primaryDirection == TextDirection::LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
-        auto* renderer = &box->renderer();
+        CheckedPtr renderer = &box->renderer();
 
         while (true) {
             if ((renderer->isReplacedOrInlineBlock() || renderer->isBR()) && offset == box->rightmostCaretOffset())
@@ -250,7 +250,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             break;
         }
 
-        p = makeDeprecatedLegacyPosition(renderer->node(), offset);
+        p = makeDeprecatedLegacyPosition(renderer->protectedNode().get(), offset);
 
         if ((p.isCandidate() && p.downstream() != downstreamStart) || p.atStartOfTree() || p.atEndOfTree())
             return p;
@@ -296,7 +296,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
         if (!box)
             return primaryDirection == TextDirection::LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
-        auto* renderer = &box->renderer();
+        CheckedPtr renderer = &box->renderer();
 
         while (true) {
             if ((renderer->isReplacedOrInlineBlock() || renderer->isBR()) && offset == box->leftmostCaretOffset())
@@ -419,7 +419,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             break;
         }
 
-        p = makeDeprecatedLegacyPosition(renderer->node(), offset);
+        p = makeDeprecatedLegacyPosition(renderer->protectedNode().get(), offset);
 
         if ((p.isCandidate() && p.downstream() != downstreamStart) || p.atStartOfTree() || p.atEndOfTree())
             return p;
@@ -456,10 +456,10 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePos
     if (position.isNull())
         return position;
     
-    auto highestRoot = highestEditableRoot(deepEquivalent());
+    RefPtr highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if pos is not somewhere inside the editable region containing this position
-    if (highestRoot && !position.deepEquivalent().deprecatedNode()->isDescendantOf(*highestRoot)) {
+    if (highestRoot && !position.deepEquivalent().protectedDeprecatedNode()->isDescendantOf(*highestRoot)) {
         if (reachedBoundary)
             *reachedBoundary = true;
         return VisiblePosition();
@@ -493,10 +493,10 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosi
     if (otherPosition.isNull())
         return otherPosition;
     
-    auto highestRoot = highestEditableRoot(deepEquivalent());
+    RefPtr highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if otherPosition is not somewhere inside the editable region containing this position
-    if (highestRoot && !otherPosition.deepEquivalent().deprecatedNode()->isDescendantOf(*highestRoot)) {
+    if (highestRoot && !otherPosition.deepEquivalent().protectedDeprecatedNode()->isDescendantOf(*highestRoot)) {
         if (reachedBoundary)
             *reachedBoundary = true;
         return VisiblePosition();
@@ -552,7 +552,7 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     ASSERT(position.document());
     position.document()->updateLayoutIgnorePendingStylesheets();
 
-    Node* node = position.containerNode();
+    RefPtr node = position.containerNode();
 
     Position candidate = position.upstream();
     if (candidate.isCandidate())
@@ -571,12 +571,12 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     // The new position must be in the same editable element. Enforce that first.
     // Unless the descent is from a non-editable html element to an editable body.
     if (is<HTMLHtmlElement>(node) && !node->hasEditableStyle()) {
-        auto* body = node->document().bodyOrFrameset();
+        RefPtr body = node->document().bodyOrFrameset();
         if (body && body->hasEditableStyle())
             return next.isNotNull() ? next : prev;
     }
 
-    Node* editingRoot = editableRootForPosition(position);
+    RefPtr editingRoot = editableRootForPosition(position);
         
     // If the html element is editable, descending into its body will look like a descent 
     // from non-editable to editable content since rootEditableElement() always stops at the body.
@@ -595,9 +595,9 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
         return Position();
 
     // The new position should be in the same block flow element. Favor that.
-    Element* originalBlock = deprecatedEnclosingBlockFlowElement(node);
-    bool nextIsOutsideOriginalBlock = !nextNode->isDescendantOf(originalBlock) && nextNode != originalBlock;
-    bool prevIsOutsideOriginalBlock = !prevNode->isDescendantOf(originalBlock) && prevNode != originalBlock;
+    RefPtr originalBlock = deprecatedEnclosingBlockFlowElement(node.get());
+    bool nextIsOutsideOriginalBlock = !nextNode->isDescendantOf(originalBlock.get()) && nextNode != originalBlock;
+    bool prevIsOutsideOriginalBlock = !prevNode->isDescendantOf(originalBlock.get()) && prevNode != originalBlock;
     if (nextIsOutsideOriginalBlock && !prevIsOutsideOriginalBlock)
         return prev;
         
@@ -609,7 +609,7 @@ UChar32 VisiblePosition::characterAfter() const
     // We canonicalize to the first of two equivalent candidates, but the second of the two candidates
     // is the one that will be inside the text node containing the character after this visible position.
     Position pos = m_deepPosition.downstream();
-    if (!pos.containerNode() || !pos.containerNode()->isTextNode())
+    if (!is<Text>(pos.containerNode()))
         return 0;
     switch (pos.anchorType()) {
     case Position::PositionIsAfterChildren:
@@ -621,7 +621,7 @@ UChar32 VisiblePosition::characterAfter() const
         break;
     }
     unsigned offset = static_cast<unsigned>(pos.offsetInContainerNode());
-    Text* textNode = pos.containerText();
+    RefPtr textNode = pos.containerText();
     unsigned length = textNode->length();
     if (offset >= length)
         return 0;
@@ -643,16 +643,16 @@ InlineBoxAndOffset VisiblePosition::inlineBoxAndOffset(TextDirection primaryDire
 
 auto VisiblePosition::localCaretRect() const -> LocalCaretRect
 {
-    auto node = m_deepPosition.anchorNode();
+    RefPtr node = m_deepPosition.anchorNode();
     if (!node)
         return { };
 
     auto boxAndOffset = inlineBoxAndOffset();
-    auto renderer = boxAndOffset.box ? &boxAndOffset.box->renderer() : node->renderer();
+    CheckedPtr renderer = boxAndOffset.box ? &boxAndOffset.box->renderer() : node->renderer();
     if (!renderer)
         return { };
 
-    return { computeLocalCaretRect(*renderer, boxAndOffset), const_cast<RenderObject*>(renderer) };
+    return { computeLocalCaretRect(*renderer, boxAndOffset), const_cast<RenderObject*>(renderer.get()) };
 }
 
 IntRect VisiblePosition::absoluteCaretBounds(bool* insideFixed) const
@@ -681,10 +681,11 @@ int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const
     // This ignores transforms on purpose, for now. Vertical navigation is done
     // without consulting transforms, so that 'up' in transformed text is 'up'
     // relative to the text, not absolute 'up'.
-    auto caretPoint = localRect.renderer->localToAbsolute(localRect.rect.location());
-    RenderObject* containingBlock = localRect.renderer->containingBlock();
+    CheckedPtr renderer = localRect.renderer;
+    auto caretPoint = renderer->localToAbsolute(localRect.rect.location());
+    CheckedPtr<RenderObject> containingBlock = renderer->containingBlock();
     if (!containingBlock)
-        containingBlock = localRect.renderer; // Just use ourselves to determine the writing mode if we have no containing block.
+        containingBlock = WTFMove(renderer); // Just use ourselves to determine the writing mode if we have no containing block.
     return containingBlock->isHorizontalWritingMode() ? caretPoint.x() : caretPoint.y();
 }
 
@@ -722,7 +723,7 @@ Element* enclosingBlockFlowElement(const VisiblePosition& visiblePosition)
     if (visiblePosition.isNull())
         return nullptr;
 
-    return deprecatedEnclosingBlockFlowElement(visiblePosition.deepEquivalent().deprecatedNode());
+    return deprecatedEnclosingBlockFlowElement(visiblePosition.deepEquivalent().protectedDeprecatedNode().get());
 }
 
 bool isFirstVisiblePositionInNode(const VisiblePosition& visiblePosition, const Node* node)
@@ -730,11 +731,11 @@ bool isFirstVisiblePositionInNode(const VisiblePosition& visiblePosition, const 
     if (visiblePosition.isNull())
         return false;
 
-    if (!visiblePosition.deepEquivalent().containerNode()->isDescendantOf(node))
+    if (!visiblePosition.deepEquivalent().protectedContainerNode()->isDescendantOf(node))
         return false;
 
     VisiblePosition previous = visiblePosition.previous();
-    return previous.isNull() || !previous.deepEquivalent().deprecatedNode()->isDescendantOf(node);
+    return previous.isNull() || !previous.deepEquivalent().protectedDeprecatedNode()->isDescendantOf(node);
 }
 
 bool isLastVisiblePositionInNode(const VisiblePosition& visiblePosition, const Node* node)
@@ -742,16 +743,16 @@ bool isLastVisiblePositionInNode(const VisiblePosition& visiblePosition, const N
     if (visiblePosition.isNull())
         return false;
 
-    if (!visiblePosition.deepEquivalent().containerNode()->isDescendantOf(node))
+    if (!visiblePosition.deepEquivalent().protectedContainerNode()->isDescendantOf(node))
         return false;
 
     VisiblePosition next = visiblePosition.next();
-    return next.isNull() || !next.deepEquivalent().deprecatedNode()->isDescendantOf(node);
+    return next.isNull() || !next.deepEquivalent().protectedDeprecatedNode()->isDescendantOf(node);
 }
 
 bool areVisiblePositionsInSameTreeScope(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return connectedInSameTreeScope(a.deepEquivalent().anchorNode(), b.deepEquivalent().anchorNode());
+    return connectedInSameTreeScope(a.deepEquivalent().protectedAnchorNode().get(), b.deepEquivalent().protectedAnchorNode().get());
 }
 
 bool VisiblePosition::equals(const VisiblePosition& other) const
@@ -833,10 +834,10 @@ Node* commonInclusiveAncestor(const VisiblePositionRange& range)
 
 VisiblePosition midpoint(const VisiblePositionRange& range)
 {
-    auto rootNode = commonInclusiveAncestor(range);
+    RefPtr rootNode = commonInclusiveAncestor(range);
     if (!rootNode)
         return { };
-    auto rootContainerNode = rootNode->isContainerNode() ? downcast<ContainerNode>(rootNode) : rootNode->parentNode();
+    RefPtr rootContainerNode = rootNode->isContainerNode() ? downcast<ContainerNode>(WTFMove(rootNode)) : RefPtr { rootNode->parentNode() };
     if (!rootContainerNode)
         return { };
     auto scope = makeRangeSelectingNodeContents(*rootContainerNode);

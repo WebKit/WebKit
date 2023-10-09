@@ -267,7 +267,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std:
 
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, std::optional<size_t>)
 {
-    reader.contentOrigin = readOrigin();
+    reader.setContentOrigin(readOrigin());
 
     if (m_selectionData) {
         if (m_selectionData->hasMarkup() && reader.readHTML(m_selectionData->markup()))

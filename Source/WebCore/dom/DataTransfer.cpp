@@ -216,7 +216,7 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
             return { };
         WebContentMarkupReader reader { *document.frame() };
         m_pasteboard->read(reader, policy);
-        return reader.markup;
+        return reader.takeMarkup();
     }
 
     if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list"_s) {
