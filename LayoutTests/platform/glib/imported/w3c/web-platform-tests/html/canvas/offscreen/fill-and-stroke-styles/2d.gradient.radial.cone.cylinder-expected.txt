@@ -1,5 +1,0 @@
-2d.gradient.radial.cone.cylinder
-
-
-PASS OffscreenCanvas test: 2d.gradient.radial.cone.cylinder
-
