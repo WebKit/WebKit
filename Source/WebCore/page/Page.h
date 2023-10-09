@@ -612,7 +612,7 @@ public:
 
 #if ENABLE(APPLE_PAY_AMS_UI)
     bool hasActiveApplePayAMSUISession() const { return m_activeApplePayAMSUIPaymentHandler; }
-    bool startApplePayAMSUISession(Document&, ApplePayAMSUIPaymentHandler&, const ApplePayAMSUIRequest&);
+    bool startApplePayAMSUISession(const URL&, ApplePayAMSUIPaymentHandler&, const ApplePayAMSUIRequest&);
     void abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler&);
 #endif
 
