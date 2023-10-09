@@ -265,7 +265,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _webViewPlaceholder = adoptNS([[WebCoreFullScreenPlaceholderView alloc] initWithFrame:[_webView frame]]);
     [_webViewPlaceholder setTarget:nil];
     [_webViewPlaceholder setContents:(__bridge id)webViewContents.get()];
-    self.savedConstraints = _webView.superview.constraints;
+    [self _saveConstraintsOf:_webView.superview];
     [self _replaceView:_webView with:_webViewPlaceholder.get()];
     
     // Then insert the WebView into the full screen window
@@ -721,6 +721,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [[view superview] addSubview:otherView positioned:NSWindowAbove relativeTo:view];
     [view removeFromSuperview];
     [CATransaction commit];
+}
+
+- (void)_saveConstraintsOf:(NSView *)view
+{
+    NSArray<NSLayoutConstraint *> *constraints = view.constraints;
+    NSIndexSet *validConstraints = [constraints indexesOfObjectsPassingTest:^BOOL(NSLayoutConstraint *constraint, NSUInteger, BOOL *) {
+        return ![constraint isKindOfClass:objc_getClass("NSAutoresizingMaskLayoutConstraint")];
+    }];
+    self.savedConstraints = [constraints objectsAtIndexes:validConstraints];
 }
 
 static CAMediaTimingFunction *timingFunctionForDuration(CFTimeInterval duration)
