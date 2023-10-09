@@ -61,7 +61,6 @@ static std::optional<cbor::CBORValue> coseKeyForAttestationObject(Ref<ArrayBuffe
 
     const size_t cosePublicKeyLength = authData.size() - cosePublicKeyOffset;
     Vector<uint8_t> cosePublicKey;
-    cosePublicKey.reserveInitialCapacity(cosePublicKeyLength);
     auto beginIt = authData.begin() + cosePublicKeyOffset;
     cosePublicKey.appendRange(beginIt, beginIt + cosePublicKeyLength);
 
