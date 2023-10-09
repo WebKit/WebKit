@@ -259,7 +259,7 @@ void GraphicsContextCG::restore(GraphicsContextState::Purpose purpose)
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     auto image = nativeImage.platformImage();
     auto imageRect = FloatRect { { }, imageSize };
@@ -283,7 +283,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         return !WTF::areEssentiallyEqual(xScale, yScale) || xScale > 1;
     };
 
-    auto getSubimage = [](CGImageRef image, const FloatSize& imageSize, const FloatRect& subimageRect, const ImagePaintingOptions& options) -> RetainPtr<CGImageRef> {
+    auto getSubimage = [](CGImageRef image, const FloatSize& imageSize, const FloatRect& subimageRect, ImagePaintingOptions options) -> RetainPtr<CGImageRef> {
         auto physicalSubimageRect = subimageRect;
 
         if (options.orientation() != ImageOrientation::Orientation::None) {
@@ -300,7 +300,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         return adoptCF(CGImageCreateWithImageInRect(image, physicalSubimageRect));
     };
 
-    auto imageLogicalSize = [](CGImageRef image, const ImagePaintingOptions& options) -> FloatSize {
+    auto imageLogicalSize = [](CGImageRef image, ImagePaintingOptions options) -> FloatSize {
         FloatSize size = FloatSize(CGImageGetWidth(image), CGImageGetHeight(image));
         return options.orientation().usesWidthAsHeight() ? size.transposedSize() : size;
     };
@@ -422,7 +422,7 @@ static void patternReleaseCallback(void* info)
     callOnMainThread([image = adoptCF(static_cast<CGImageRef>(info))] { });
 }
 
-void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     if (!patternTransform.isInvertible())
         return;

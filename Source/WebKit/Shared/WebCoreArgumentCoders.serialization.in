@@ -4433,7 +4433,7 @@ header: <WebCore/DisplayListItems.h>
     WebCore::DocumentMarkerLineStyle style();
 };
 
-[Nested] enum class WebCore::ImageOrientation::Orientation : int {
+[Nested] enum class WebCore::ImageOrientation::Orientation : uint8_t {
     FromImage,
     OriginTopLeft,
     OriginTopRight,
@@ -4450,11 +4450,11 @@ header: <WebCore/DisplayListItems.h>
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImagePaintingOptions {
-     WebCore::CompositeOperator m_compositeOperator;
-     WebCore::BlendMode m_blendMode;
-     WebCore::DecodingMode m_decodingMode;
-     WebCore::ImageOrientation m_orientation;
-     WebCore::InterpolationQuality m_interpolationQuality;
+     WebCore::CompositeOperator compositeOperator();
+     WebCore::BlendMode blendMode();
+     WebCore::DecodingMode decodingMode();
+     WebCore::ImageOrientation::Orientation orientation().orientation();
+     WebCore::InterpolationQuality interpolationQuality();
 };
 
 struct WebCore::CanvasActivityRecord {

@@ -29,6 +29,7 @@
 #include "GraphicsTypes.h"
 #include "SourceBrush.h"
 #include "WindRule.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {

@@ -824,7 +824,7 @@ void drawGlyphs(GraphicsContextCairo& platformContext, const FillSource& fillSou
     cairo_restore(cr);
 }
 
-void drawPlatformImage(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options, float globalAlpha, const ShadowState& shadowState)
+void drawPlatformImage(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options, float globalAlpha, const ShadowState& shadowState)
 {
     platformContext.save();
 
@@ -852,7 +852,7 @@ void drawPlatformImage(GraphicsContextCairo& platformContext, cairo_surface_t* s
     platformContext.restore();
 }
 
-void drawPattern(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const IntSize& size, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void drawPattern(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const IntSize& size, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     // FIXME: Investigate why the size has to be passed in as an IntRect.
     drawPatternToCairoContext(platformContext.cr(), surface, size, tileRect, patternTransform, phase, spacing, toCairoOperator(options.compositeOperator(), options.blendMode()), options.interpolationQuality(), destRect);

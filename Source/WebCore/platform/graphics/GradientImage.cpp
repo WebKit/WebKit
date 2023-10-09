@@ -40,7 +40,7 @@ GradientImage::GradientImage(Gradient& generator, const FloatSize& size)
 
 GradientImage::~GradientImage() = default;
 
-ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     GraphicsContextStateSaver stateSaver(destContext);
     destContext.setCompositeOperation(options.compositeOperator(), options.blendMode());
@@ -54,7 +54,7 @@ ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRec
 }
 
 void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
     FloatSize adjustedSize = size();

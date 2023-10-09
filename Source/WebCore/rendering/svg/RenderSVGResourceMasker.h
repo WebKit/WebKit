@@ -48,7 +48,7 @@ public:
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     bool drawContentIntoContext(GraphicsContext&, const FloatRect& objectBoundingBox);
-    bool drawContentIntoContext(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions&);
+    bool drawContentIntoContext(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions);
     FloatRect resourceBoundingBox(const RenderObject&) override;
 
     inline SVGUnitTypes::SVGUnitType maskUnits() const;

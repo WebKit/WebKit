@@ -153,7 +153,7 @@ bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, c
     return true;
 }
 
-bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     GraphicsContextStateSaver stateSaver(context);
 

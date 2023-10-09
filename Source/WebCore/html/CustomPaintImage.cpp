@@ -129,7 +129,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult CustomPaintImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+ImageDrawResult CustomPaintImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     GraphicsContextStateSaver stateSaver(destContext);
     destContext.setCompositeOperation(options.compositeOperator(), options.blendMode());
@@ -142,7 +142,7 @@ ImageDrawResult CustomPaintImage::draw(GraphicsContext& destContext, const Float
 }
 
 void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
     FloatSize adjustedSize = size();
