@@ -58,7 +58,7 @@ WebExtensionContext::WebExtensionContext()
 
 WebExtensionContextParameters WebExtensionContext::parameters() const
 {
-    return WebExtensionContextParameters {
+    return {
         identifier(),
         baseURL(),
         uniqueIdentifier(),
@@ -71,6 +71,9 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
 
 bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
 {
+    if (!hasAccessInPrivateBrowsing() && page.sessionID().isEphemeral())
+        return false;
+
     auto pagesEntry = m_eventListenerPages.find({ type, contentWorldType });
     if (pagesEntry == m_eventListenerPages.end())
         return false;
@@ -89,6 +92,9 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(WebExtens
 
     WebProcessProxySet result;
     for (auto entry : pagesEntry->value) {
+        if (!hasAccessInPrivateBrowsing() && entry.key.sessionID().isEphemeral())
+            continue;
+
         Ref process = entry.key.process();
         if (process->canSendMessage())
             result.add(WTFMove(process));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
+#import "config.h"
+#import "WebExtensionContext.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPIExtension.h"
-#include "WebExtensionAPIObject.h"
-
-OBJC_CLASS NSString;
-OBJC_CLASS NSURL;
-
 namespace WebKit {
 
-class WebPage;
-
-class WebExtensionAPIExtension : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIExtension, extension);
-
-public:
-#if PLATFORM(COCOA)
-    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
-
-    bool isInIncognitoContext(WebPage*);
-    void isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&&);
-    void isAllowedIncognitoAccess(Ref<WebExtensionCallbackHandler>&&);
-
-    NSURL *getURL(NSString *resourcePath, NSString **errorString);
-#endif
-};
+void WebExtensionContext::extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(hasAccessInPrivateBrowsing());
+}
 
 } // namespace WebKit
 

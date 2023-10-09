@@ -69,12 +69,12 @@
 
 @interface TestWebExtensionTab : NSObject <_WKWebExtensionTab>
 
-- (instancetype)initWithWindow:(id<_WKWebExtensionWindow>)window extensionController:(_WKWebExtensionController *)extensionController NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithWindow:(TestWebExtensionWindow *)window extensionController:(_WKWebExtensionController *)extensionController NS_DESIGNATED_INITIALIZER;
 
-@property (nonatomic, weak) id<_WKWebExtensionWindow> window;
+@property (nonatomic, weak) TestWebExtensionWindow * window;
 @property (nonatomic, strong) WKWebView *mainWebView;
 
-@property (nonatomic, weak) id<_WKWebExtensionTab> parentTab;
+@property (nonatomic, weak) TestWebExtensionTab *parentTab;
 
 @property (nonatomic, getter=isPinned) bool pinned;
 @property (nonatomic, getter=isMuted) bool muted;
@@ -88,7 +88,7 @@
 @property (nonatomic, copy) void (^reloadFromOrigin)(void);
 @property (nonatomic, copy) void (^goBack)(void);
 @property (nonatomic, copy) void (^goForward)(void);
-@property (nonatomic, copy) void (^duplicate)(_WKWebExtensionTabCreationOptions *, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *));
+@property (nonatomic, copy) void (^duplicate)(_WKWebExtensionTabCreationOptions *, void (^completionHandler)(TestWebExtensionTab *, NSError *));
 
 @end
 
@@ -96,15 +96,16 @@
 
 - (instancetype)initWithExtensionController:(_WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing NS_DESIGNATED_INITIALIZER;
 
-@property (nonatomic, copy) NSArray<id<_WKWebExtensionTab>> *tabs;
-@property (nonatomic, strong) id<_WKWebExtensionTab> activeTab;
+@property (nonatomic, copy) NSArray<TestWebExtensionTab *> *tabs;
+@property (nonatomic, strong) TestWebExtensionTab * activeTab;
 
 - (TestWebExtensionTab *)openNewTab;
 - (TestWebExtensionTab *)openNewTabAtIndex:(NSUInteger)index;
 
-- (void)closeTab:(id<_WKWebExtensionTab>)tab;
-- (void)replaceTab:(id<_WKWebExtensionTab>)oldTab withTab:(id<_WKWebExtensionTab>)newTab;
-- (void)moveTab:(id<_WKWebExtensionTab>)oldTab toIndex:(NSUInteger)newIndex;
+- (void)closeTab:(TestWebExtensionTab *)tab;
+- (void)closeTab:(TestWebExtensionTab *)tab windowIsClosing:(BOOL)windowIsClosing;
+- (void)replaceTab:(TestWebExtensionTab *)oldTab withTab:(TestWebExtensionTab *)newTab;
+- (void)moveTab:(TestWebExtensionTab *)oldTab toIndex:(NSUInteger)newIndex;
 
 @property (nonatomic) _WKWebExtensionWindowState windowState;
 @property (nonatomic) _WKWebExtensionWindowType windowType;

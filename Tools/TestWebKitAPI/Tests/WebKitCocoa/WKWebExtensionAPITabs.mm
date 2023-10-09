@@ -244,7 +244,7 @@ TEST(WKWebExtensionAPITabs, Duplicate)
     auto *tab = manager.get().defaultTab;
     auto originalDuplicate = tab.duplicate;
 
-    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
         EXPECT_NS_EQUAL(options.desiredWindow, window);
         EXPECT_EQ(options.desiredIndex, window.tabs.count);
 
@@ -290,7 +290,7 @@ TEST(WKWebExtensionAPITabs, DuplicateWithOptions)
     auto *tab = manager.get().defaultTab;
     auto originalDuplicate = tab.duplicate;
 
-    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
         EXPECT_NS_EQUAL(options.desiredWindow, window);
         EXPECT_EQ(options.desiredIndex, 1lu);
 

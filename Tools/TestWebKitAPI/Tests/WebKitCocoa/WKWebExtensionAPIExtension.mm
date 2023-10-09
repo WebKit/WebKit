@@ -27,9 +27,29 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
 #import "WebExtensionUtilities.h"
 
 namespace TestWebKitAPI {
+
+static auto *extensionManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Extension Test",
+    @"description": @"Extension Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"content_scripts": @[ @{
+        @"js": @[ @"content.js" ],
+        @"matches": @[ @"*://localhost/*" ],
+    } ],
+};
 
 TEST(WKWebExtensionAPIExtension, GetURL)
 {
@@ -91,6 +111,137 @@ TEST(WKWebExtensionAPIExtension, GetURL)
     manifest = @{ @"manifest_version": @3, @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
 
     Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIExtension, InIncognitoContext)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertFalse(browser.extension.inIncognitoContext, 'Should not be in incognito in background script')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"if (browser.extension.inIncognitoContext)",
+        @"  browser.test.yield('Content Script is Incognito')",
+        @"else",
+        @"  browser.test.yield('Content Script is Not Incognito')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    manager.get().context.hasAccessInPrivateBrowsing = YES;
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Content Script is Not Incognito");
+
+    [manager closeWindow:manager.get().defaultWindow];
+
+    auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
+    auto *privateTab = privateWindow.tabs.firstObject;
+
+    [privateTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Content Script is Incognito");
+}
+
+TEST(WKWebExtensionAPIExtension, InIncognitoContextWithoutPrivateAccess)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertFalse(browser.extension.inIncognitoContext, 'Should not be in incognito in background script')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"if (browser.extension.inIncognitoContext)",
+        @"  browser.test.yield('Content Script is Incognito')",
+        @"else",
+        @"  browser.test.yield('Content Script is Not Incognito')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Content Script is Not Incognito");
+
+    [manager closeWindow:manager.get().defaultWindow];
+
+    auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
+    auto *privateTab = privateWindow.tabs.firstObject;
+
+    [privateTab.mainWebView loadRequest:urlRequest];
+
+    // The content script should not run in the private tab, so timeout after waiting for 3 seconds.
+    [manager runForTimeInterval:3];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"");
+}
+
+TEST(WKWebExtensionAPIExtension, IsAllowedIncognitoAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allowed = await browser.extension.isAllowedIncognitoAccess()",
+        @"browser.test.yield(allowed ? 'Allowed Incognito Access' : 'Not Allowed Incognito Access')",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.hasAccessInPrivateBrowsing = YES;
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Allowed Incognito Access");
+}
+
+TEST(WKWebExtensionAPIExtension, IsAllowedIncognitoAccessWithoutPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allowed = await browser.extension.isAllowedIncognitoAccess()",
+        @"browser.test.yield(allowed ? 'Allowed Incognito Access' : 'Not Allowed Incognito Access')",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Not Allowed Incognito Access");
+}
+
+TEST(WKWebExtensionAPIExtension, IsAllowedFileSchemeAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allowed = await browser.extension.isAllowedFileSchemeAccess()",
+        @"browser.test.yield(allowed ? 'Allowed File Access' : 'Not Allowed File Access')",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Not Allowed File Access");
 }
 
 } // namespace TestWebKitAPI
