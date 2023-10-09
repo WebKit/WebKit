@@ -2692,6 +2692,3 @@ webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/compositing-iframe-wi
 
 # rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
 [ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ ImageOnlyFailure ]
-
-# rdar://114345450 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] fast/images/animated-webp-as-image.html is a consistent failure)
-[ Sonoma+ ] fast/images/animated-webp-as-image.html [ ImageOnlyFailure ]
