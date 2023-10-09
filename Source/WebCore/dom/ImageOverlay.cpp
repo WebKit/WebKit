@@ -60,6 +60,7 @@
 #include "UserAgentStyleSheets.h"
 #include "VisibleSelection.h"
 #include <wtf/Range.h>
+#include <wtf/Scope.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
