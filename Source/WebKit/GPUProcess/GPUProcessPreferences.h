@@ -41,8 +41,11 @@ class WebPreferences;
 struct GPUProcessPreferences {
     GPUProcessPreferences();
     GPUProcessPreferences(const WebPreferences&);
+    GPUProcessPreferences(std::optional<bool> opusDecoderEnabled, std::optional<bool> vorbisDecoderEnabled, std::optional<bool> webMFormatReaderEnabled,
+        std::optional<bool> webMParserEnabled, std::optional<bool> mediaSourceInlinePaintingEnabled, std::optional<bool> sampleBufferContentKeySessionSupportEnabled,
+        std::optional<bool> alternateWebMPlayerEnabled, std::optional<bool> useSCContentSharingPicker);
     void copyEnabledWebPreferences(const WebPreferences&);
-    
+
 #if ENABLE(OPUS)
     std::optional<bool> opusDecoderEnabled;
 #endif
@@ -74,9 +77,6 @@ struct GPUProcessPreferences {
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     std::optional<bool> useSCContentSharingPicker;
 #endif
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, GPUProcessPreferences&);
 };
 
 } // namespace WebKit

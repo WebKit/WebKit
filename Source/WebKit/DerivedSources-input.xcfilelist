@@ -34,6 +34,7 @@ $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/GPUProcess/GPUConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcessCreationParameters.serialization.in
+$(PROJECT_DIR)/GPUProcess/GPUProcessPreferences.serialization.in
 $(PROJECT_DIR)/GPUProcess/GPUProcessSessionParameters.serialization.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteBarcodeDetector.messages.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteFaceDetector.messages.in
