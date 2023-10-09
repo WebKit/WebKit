@@ -557,7 +557,7 @@ void GraphicsLayerCA::setReplicatedLayer(GraphicsLayer* layer)
         return;
 
     GraphicsLayer::setReplicatedLayer(layer);
-    noteLayerPropertyChanged(ReplicatedLayerChanged);
+    noteLayerPropertyChanged(ReplicatedLayerChanged | ChildrenChanged);
 }
 
 void GraphicsLayerCA::setReplicatedByLayer(RefPtr<GraphicsLayer>&& layer)
