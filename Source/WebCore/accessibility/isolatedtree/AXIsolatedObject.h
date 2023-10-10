@@ -312,6 +312,7 @@ private:
     void setSelectedChildren(const AccessibilityChildrenVector&) override;
     AccessibilityChildrenVector visibleChildren() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleChildren)); }
     AtomString tagName() const override;
+    void setChildrenIDs(Vector<AXID>&&);
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void updateChildrenIfNecessary() override;
     bool isDetachedFromParent() override;
@@ -528,6 +529,7 @@ private:
     // FIXME: Make this a ThreadSafeWeakPtr<AXIsolatedTree>.
     RefPtr<AXIsolatedTree> m_cachedTree;
     AXID m_parentID;
+    bool m_childrenDirty { true };
     Vector<AXID> m_childrenIDs;
     Vector<RefPtr<AXCoreObject>> m_children;
     AXPropertyMap m_propertyMap;
