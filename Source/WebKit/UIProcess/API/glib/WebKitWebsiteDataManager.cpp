@@ -1376,12 +1376,14 @@ gboolean webkit_website_data_manager_clear_finish(WebKitWebsiteDataManager* mana
  * Since: 2.30
  */
 struct _WebKitITPFirstParty {
+#if ENABLE(TRACKING_PREVENTION)
     explicit _WebKitITPFirstParty(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty&& data)
         : domain(data.firstPartyDomain.string().utf8())
         , storageAccessGranted(data.storageAccessGranted)
         , lastUpdated(adoptGRef(g_date_time_new_from_unix_utc(data.timeLastUpdated.secondsAs<gint64>())))
     {
     }
+#endif
 
     CString domain;
     bool storageAccessGranted { false };
@@ -1419,12 +1421,14 @@ void webkit_website_data_manager_set_memory_pressure_settings(WebKitMemoryPressu
 
 G_DEFINE_BOXED_TYPE(WebKitITPFirstParty, webkit_itp_first_party, webkit_itp_first_party_ref, webkit_itp_first_party_unref)
 
+#if ENABLE(TRACKING_PREVENTION)
 static WebKitITPFirstParty* webkitITPFirstPartyCreate(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty&& data)
 {
     auto* firstParty = static_cast<WebKitITPFirstParty*>(fastMalloc(sizeof(WebKitITPFirstParty)));
     new (firstParty) WebKitITPFirstParty(WTFMove(data));
     return firstParty;
 }
+#endif
 
 
 /**
@@ -1535,12 +1539,14 @@ GDateTime* webkit_itp_first_party_get_last_update_time(WebKitITPFirstParty* firs
  */
 
 struct _WebKitITPThirdParty {
+#if ENABLE(TRACKING_PREVENTION)
     explicit _WebKitITPThirdParty(WebResourceLoadStatisticsStore::ThirdPartyData&& data)
         : domain(data.thirdPartyDomain.string().utf8())
     {
         while (!data.underFirstParties.isEmpty())
             firstParties = g_list_prepend(firstParties, webkitITPFirstPartyCreate(data.underFirstParties.takeLast()));
     }
+#endif
 
     ~_WebKitITPThirdParty()
     {
@@ -1554,12 +1560,14 @@ struct _WebKitITPThirdParty {
 
 G_DEFINE_BOXED_TYPE(WebKitITPThirdParty, webkit_itp_third_party, webkit_itp_third_party_ref, webkit_itp_third_party_unref)
 
+#if ENABLE(TRACKING_PREVENTION)
 WebKitITPThirdParty* webkitITPThirdPartyCreate(WebResourceLoadStatisticsStore::ThirdPartyData&& data)
 {
     auto* thirdParty = static_cast<WebKitITPThirdParty*>(fastMalloc(sizeof(WebKitITPThirdParty)));
     new (thirdParty) WebKitITPThirdParty(WTFMove(data));
     return thirdParty;
 }
+#endif
 
 /**
  * webkit_itp_third_party_ref:
@@ -1656,6 +1664,7 @@ GList* webkit_itp_third_party_get_first_parties(WebKitITPThirdParty* thirdParty)
  */
 void webkit_website_data_manager_get_itp_summary(WebKitWebsiteDataManager* manager, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
+#if ENABLE(TRACKING_PREVENTION)
     g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
@@ -1667,6 +1676,9 @@ void webkit_website_data_manager_get_itp_summary(WebKitWebsiteDataManager* manag
             g_list_free_full(static_cast<GList*>(data), reinterpret_cast<GDestroyNotify>(webkit_itp_third_party_unref));
         });
     });
+#else
+    return;
+#endif
 }
 
 /**
@@ -1685,8 +1697,12 @@ void webkit_website_data_manager_get_itp_summary(WebKitWebsiteDataManager* manag
  */
 GList* webkit_website_data_manager_get_itp_summary_finish(WebKitWebsiteDataManager* manager, GAsyncResult* result, GError** error)
 {
+#if ENABLE(TRACKING_PREVENTION)
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
     g_return_val_if_fail(g_task_is_valid(result, manager), nullptr);
 
     return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
+#else
+    return nullptr;
+#endif
 }
