@@ -257,7 +257,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // Painting is normally suspended when the WKView is removed from the window, but this is
     // unnecessary in the full-screen animation case, and can cause bugs; see
     // https://bugs.webkit.org/show_bug.cgi?id=88940 and https://bugs.webkit.org/show_bug.cgi?id=88374
-    // We will resume the normal behavior in _startEnterFullScreenAnimationWithDuration:
+    // We will resume the normal behavior in -finishedEnterFullScreenAnimation:
     _page->setSuppressVisibilityUpdates(true);
 
     // Swap the webView placeholder into place.
@@ -310,7 +310,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [window makeKeyAndOrderFront:self];
     [window setCollectionBehavior:behavior];
 
-    _page->setSuppressVisibilityUpdates(false);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -333,6 +332,7 @@ static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-wid
 
         [self _manager]->didEnterFullScreen();
         [self _manager]->setAnimatingFullScreen(false);
+        _page->setSuppressVisibilityUpdates(false);
 
         [_backgroundView.get().layer removeAllAnimations];
         [[_clipView layer] removeAllAnimations];
