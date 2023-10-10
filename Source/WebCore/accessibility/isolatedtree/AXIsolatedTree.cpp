@@ -78,8 +78,10 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
     RefPtr axRoot = axObjectCache.getOrCreate(axObjectCache.document().view());
-    if (axRoot)
+    if (axRoot) {
+        tree->updatingSubtree(axRoot.get());
         tree->createEmptyContent(*axRoot);
+    }
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
@@ -136,6 +138,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
         tree->setFocusedNodeID(axFocus->objectID());
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
+    tree->updatingSubtree(nullptr);
 
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
@@ -454,6 +457,9 @@ void AXIsolatedTree::updateNode(AccessibilityObject& axObject)
     AXLOG(&axObject);
     ASSERT(isMainThread());
 
+    if (isUpdatingSubtree())
+        return;
+
     // If we update a node as the result of some side effect while collecting node changes (e.g. a role change from
     // AccessibilityRenderObject::updateRoleAfterChildrenCreation), queue the append up to be resolved with the rest
     // of the collected changes. This prevents us from creating two node changes for the same object.
@@ -489,7 +495,11 @@ void AXIsolatedTree::updateNode(AccessibilityObject& axObject)
 
 void AXIsolatedTree::updatePropertiesForSelfAndDescendants(AccessibilityObject& axObject, const Vector<AXPropertyName>& properties)
 {
+    AXTRACE("AXIsolatedTree::updatePropertiesForSelfAndDescendants"_s);
     ASSERT(isMainThread());
+
+    if (isUpdatingSubtree())
+        return;
 
     Accessibility::enumerateDescendants<AXCoreObject>(axObject, true, [&properties, this] (auto& descendant) {
         updateNodeProperties(descendant, properties);
@@ -501,6 +511,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
     AXTRACE("AXIsolatedTree::updateNodeProperties"_s);
     AXLOG(makeString("Updating properties ", properties, " for objectID ", axObject.objectID().loggingString()));
     ASSERT(isMainThread());
+
+    if (isUpdatingSubtree())
+        return;
 
     AXPropertyMap propertyMap;
     for (const auto& property : properties) {
@@ -681,6 +694,9 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     AXLOG(&axObject);
     ASSERT(isMainThread());
 
+    if (isUpdatingSubtree())
+        return;
+
     if (m_nodeMap.isEmpty()) {
         ASSERT_NOT_REACHED();
         return;
@@ -813,6 +829,11 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 
 void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<RefPtr<AccessibilityObject>>& axObjects)
 {
+    AXTRACE("AXIsolatedTree::updateChildrenForObjects"_s);
+
+    if (isUpdatingSubtree())
+        return;
+
     AXAttributeCacheEnabler enableCache(axObjectCache());
     for (auto& axObject : axObjects)
         updateChildren(*axObject, ResolveNodeChanges::No);
@@ -905,7 +926,11 @@ void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
 
 void AXIsolatedTree::updateFrame(AXID axID, IntRect&& newFrame)
 {
+    AXTRACE("AXIsolatedTree::updateFrame"_s);
     ASSERT(isMainThread());
+
+    if (isUpdatingSubtree())
+        return;
 
     AXPropertyMap propertyMap;
     propertyMap.set(AXPropertyName::RelativeFrame, WTFMove(newFrame));

@@ -4271,11 +4271,8 @@ void AXObjectCache::updateIsolatedTree(AccessibilityObject* axObject, AXProperty
 
 void AXObjectCache::updateIsolatedTree(AccessibilityObject& axObject, AXPropertyName property) const
 {
-    RefPtr tree = AXIsolatedTree::treeForPageID(*m_pageID);
-    if (!tree)
-        return;
-
-    tree->updateNodeProperty(axObject, property);
+    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+        tree->updateNodeProperty(axObject, property);
 }
 
 void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) const
