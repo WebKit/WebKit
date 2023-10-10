@@ -2344,6 +2344,8 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
         return TextureView::createInvalid(m_device);
 
     texture.label = fromAPI(descriptor->label);
+    if (!texture.label.length)
+        texture.label = m_texture.label;
 
     std::optional<WGPUExtent3D> renderExtent;
     if (m_usage & WGPUTextureUsage_RenderAttachment)
