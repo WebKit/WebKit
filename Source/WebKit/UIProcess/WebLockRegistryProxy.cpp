@@ -31,6 +31,7 @@
 #include "WebLockRegistryProxyMessages.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/WebLock.h>
 #include <WebCore/WebLockIdentifier.h>
 #include <WebCore/WebLockManagerSnapshot.h>
 #include <WebCore/WebLockRegistry.h>
@@ -54,6 +55,7 @@ void WebLockRegistryProxy::requestLock(WebCore::ClientOrigin&& clientOrigin, Web
 {
     MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process.coreProcessIdentifier());
     MESSAGE_CHECK(clientID.processIdentifier() == m_process.coreProcessIdentifier());
+    MESSAGE_CHECK(name.length() <= WebCore::WebLock::maxNameLength);
     m_hasEverRequestedLocks = true;
 
     auto* dataStore = m_process.websiteDataStore();

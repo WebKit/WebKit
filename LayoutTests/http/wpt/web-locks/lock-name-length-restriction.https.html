@@ -1,0 +1,11 @@
+<!DOCTYPE HTML>
+<meta charset=utf-8>
+<title>Requested lock name cannot be too long</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+promise_test(async t => {
+  const name = 'x'.repeat(1025);
+  await promise_rejects_dom(t, 'NotSupportedError', navigator.locks.request(name, lock => {}));
+}, "Requested lock name cannot be too long");
+</script>
