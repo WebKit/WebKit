@@ -41,8 +41,10 @@ std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMedi
 {
 #if ENABLE(GPU_PROCESS)
     auto* page = m_webPage.corePage();
-    if (page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled())
-        return makeUnique<MediaRecorderPrivate>(stream, options);
+    if (page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled()) {
+        // FIXME: It seems wrong to return a refcounted object in a unique_ptr.
+        return makeUniqueWithoutRefCountedCheck<MediaRecorderPrivate>(stream, options);
+    }
 #endif
     return WebCore::MediaRecorderProvider::createMediaRecorderPrivate(stream, options);
 }

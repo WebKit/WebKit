@@ -297,6 +297,12 @@ WebProcess::WebProcess()
 #endif
     , m_cacheStorageProvider(WebCacheStorageProvider::create())
     , m_badgeClient(WebBadgeClient::create())
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+    , m_remoteMediaPlayerManager(RemoteMediaPlayerManager::create())
+#endif
+#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+    , m_remoteImageDecoderAVFManager(RemoteImageDecoderAVFManager::create())
+#endif
     , m_broadcastChannelRegistry(WebBroadcastChannelRegistry::create())
     , m_cookieJar(WebCookieJar::create())
     , m_dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
@@ -325,14 +331,6 @@ WebProcess::WebProcess()
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     addSupplement<UserMediaCaptureManager>();
-#endif
-
-#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
-    addSupplement<RemoteMediaPlayerManager>();
-#endif
-
-#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
-    addSupplement<RemoteImageDecoderAVFManager>();
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
@@ -519,6 +517,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+    m_remoteMediaPlayerManager->initialize(parameters);
+#endif
 
     setCacheModel(parameters.cacheModel);
 
