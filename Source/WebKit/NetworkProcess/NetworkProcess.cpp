@@ -1327,13 +1327,19 @@ void NetworkProcess::setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID 
 #endif
 
 #if ENABLE(MANAGED_DOMAINS)
-void NetworkProcess::setManagedDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain>&& appBoundDomains, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setManagedDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain>&& managedDomains, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
-            resourceLoadStatistics->setManagedDomains(WTFMove(appBoundDomains), WTFMove(completionHandler));
-            return;
-        }
+        supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(sessionID, WebCore::HTTPCookieAcceptPolicy::AlwaysAccept, [session = WeakPtr { *session }, managedDomains = WTFMove(managedDomains), completionHandler = WTFMove(completionHandler)]() mutable {
+            if (session) {
+                if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
+                    resourceLoadStatistics->setManagedDomains(WTFMove(managedDomains), WTFMove(completionHandler));
+                    return;
+                }
+            }
+            completionHandler();
+        });
+        return;
     }
     ASSERT_NOT_REACHED();
     completionHandler();
