@@ -191,10 +191,12 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         ChildListMutationScope(*this).willRemoveChild(childToRemove);
     }
 
-    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(childToRemove));
     if (source == ChildChange::Source::API) {
         childToRemove.notifyMutationObserversNodeWillDetach();
-        dispatchChildRemovalEvents(protectedChildToRemove);
+        if (!document().shouldNotFireMutationEvents()) {
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(childToRemove));
+            dispatchChildRemovalEvents(protectedChildToRemove);
+        }
         if (childToRemove.parentNode() != this)
             return false;
     }
