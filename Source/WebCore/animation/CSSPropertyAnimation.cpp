@@ -2720,7 +2720,7 @@ private:
             auto blendedAdjust = blendFunc(*from.fontSizeAdjust().value, *to.fontSizeAdjust().value, context);
 
             ASSERT(from.fontSizeAdjust().metric == to.fontSizeAdjust().metric);
-            return { to.fontSizeAdjust().metric, false, std::max(blendedAdjust, 0.0f) };
+            return { to.fontSizeAdjust().metric, FontSizeAdjust::ValueType::Number, std::max(blendedAdjust, 0.0f) };
         };
 
         destination.setFontSizeAdjust(blendedFontSizeAdjust());

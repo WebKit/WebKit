@@ -358,11 +358,11 @@ static RefPtr<CSSValue> valueForNinePieceImage(CSSPropertyID propertyID, const N
 static Ref<CSSValue> fontSizeAdjustFromStyle(const RenderStyle& style)
 {
     auto fontSizeAdjust = style.fontSizeAdjust();
-    if (!fontSizeAdjust)
+    if (fontSizeAdjust.isNone())
         return CSSPrimitiveValue::create(CSSValueNone);
 
     auto metric = fontSizeAdjust.metric;
-    auto value = fontSizeAdjust.isFromFont ? fontSizeAdjust.resolve(style.computedFontSize(), style.metricsOfPrimaryFont()) : fontSizeAdjust.value.asOptional();
+    auto value = fontSizeAdjust.isFromFont() ? fontSizeAdjust.resolve(style.computedFontSize(), style.metricsOfPrimaryFont()) : fontSizeAdjust.value.asOptional();
     if (metric == FontSizeAdjust::Metric::ExHeight)
         return CSSPrimitiveValue::create(*value);
 
@@ -2852,7 +2852,7 @@ static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedSt
         return variantSettingsOmittingExpressible.isAllNormal()
             && fontStretch
             && fontStyle
-            && !description.fontSizeAdjust().value
+            && description.fontSizeAdjust().isNone()
             && description.kerning() == Kerning::Auto
             && description.featureSettings().isEmpty()
             && description.opticalSizing() == FontOpticalSizing::Enabled

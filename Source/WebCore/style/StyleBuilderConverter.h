@@ -1613,13 +1613,13 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, con
 
         auto defaultMetric = FontSizeAdjust::Metric::ExHeight;
         if (primitiveValue.isNumber())
-            return { defaultMetric, false, primitiveValue.floatValue() };
+            return { defaultMetric, FontSizeAdjust::ValueType::Number, primitiveValue.floatValue() };
 
         ASSERT(primitiveValue.valueID() == CSSValueFromFont);
         // We cannot determine the primary font here, so we defer resolving the
         // aspect value for from-font to when the primary font is created.
         // See FontCascadeFonts::primaryFont().
-        return { defaultMetric, true, std::nullopt };
+        return { defaultMetric, FontSizeAdjust::ValueType::FromFont, std::nullopt };
     }
 
     ASSERT(value.isPair());
@@ -1628,10 +1628,10 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, con
     auto metric = fromCSSValueID<FontSizeAdjust::Metric>(downcast<CSSPrimitiveValue>(pair.first()).valueID());
     auto& primitiveValue = downcast<CSSPrimitiveValue>(pair.second());
     if (primitiveValue.isNumber())
-        return { metric, false, primitiveValue.floatValue() };
+        return { metric, FontSizeAdjust::ValueType::Number, primitiveValue.floatValue() };
 
     ASSERT(primitiveValue.valueID() == CSSValueFromFont);
-    return { metric, true, std::nullopt };
+    return { metric, FontSizeAdjust::ValueType::FromFont, std::nullopt };
 }
 
 #if PLATFORM(IOS_FAMILY)
