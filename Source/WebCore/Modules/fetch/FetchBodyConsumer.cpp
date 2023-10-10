@@ -151,8 +151,8 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
 
         String header = String::fromUTF8(headerBegin, headerLength);
 
-        constexpr auto contentDispositionCharacters = "Content-Disposition:"_s;
-        size_t contentDispositionBegin = header.find(contentDispositionCharacters);
+        constexpr auto contentDispositionCharacters = "content-disposition:"_s;
+        size_t contentDispositionBegin = header.findIgnoringASCIICase(contentDispositionCharacters);
         if (contentDispositionBegin == notFound)
             return false;
         size_t contentDispositionEnd = header.find("\r\n"_s, contentDispositionBegin);
@@ -170,9 +170,9 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         else {
             String contentType = "text/plain"_s;
 
-            constexpr auto contentTypeCharacters = "Content-Type:"_s;
+            constexpr auto contentTypeCharacters = "content-type:"_s;
             size_t contentTypePrefixLength = contentTypeCharacters.length();
-            size_t contentTypeBegin = header.find(contentTypeCharacters);
+            size_t contentTypeBegin = header.findIgnoringASCIICase(contentTypeCharacters);
             if (contentTypeBegin != notFound) {
                 size_t contentTypeEnd = header.find("\r\n"_s, contentTypeBegin);
                 contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).trim(isASCIIWhitespaceWithoutFF<UChar>).toString();
