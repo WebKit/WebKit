@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+// Copyright 2014-2017 The Chromium Authors. All rights reserved.
 // Copyright (C) 2016-2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -1180,9 +1180,11 @@ void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomString& namespaceP
     // ::cue), we need a universal selector to set the combinator
     // (relation) on in the cases where there are no simple selectors preceding
     // the pseudo element.
-    bool explicitForHost = compoundSelector.isHostPseudoSelector() && !elementName.isNull();
-    if (tag != anyQName() || explicitForHost || isShadowDOM)
-        compoundSelector.prependTagSelector(tag, determinedPrefix == nullAtom() && determinedElementName == starAtom() && !explicitForHost);
+    bool isHostPseudo = compoundSelector.isHostPseudoSelector();
+    if (isHostPseudo && elementName.isNull() && namespacePrefix.isNull())
+        return;
+    if (tag != anyQName() || isHostPseudo || isShadowDOM)
+        compoundSelector.prependTagSelector(tag, determinedPrefix == nullAtom() && determinedElementName == starAtom() && !isHostPseudo);
 }
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSSelectorParserContext& context)
