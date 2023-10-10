@@ -438,13 +438,16 @@ JSC_DEFINE_JIT_OPERATION(operationMathPow, double, (double x, double y))
         // If the exponent is a small positive int32 integer, we do a fast exponentiation
         double result = 1;
         double xd = x;
-        while (yAsInt) {
+        for (;;) {
             if (yAsInt & 1)
                 result *= xd;
-            xd *= xd;
+
             yAsInt >>= 1;
+            if (!yAsInt)
+                return result;
+
+            xd *= xd;
         }
-        return result;
     }
     return mathPowInternal(x, y);
 }

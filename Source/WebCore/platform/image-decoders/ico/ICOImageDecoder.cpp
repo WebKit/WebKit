@@ -296,11 +296,11 @@ ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry()
     // this isn't quite what the bitmap info header says later, as we only use
     // this value to determine which icon entry is best.
     if (!entry.m_bitCount) {
-        int colorCount = static_cast<uint8_t>(m_data->data()[m_decodedOffset + 2]);
+        uint8_t colorCount = static_cast<uint8_t>(m_data->data()[m_decodedOffset + 2]);
         if (!colorCount)
-            colorCount = 256;  // Vague in the spec, needed by real-world icons.
-        for (--colorCount; colorCount; colorCount >>= 1)
-            ++entry.m_bitCount;
+            entry.m_bitCount = 8; // Vague in the spec, needed by real-world icons.
+        else
+            entry.m_bitCount = 8 - clz(colorCount - 1);
     }
 
     m_decodedOffset += sizeOfDirEntry;
