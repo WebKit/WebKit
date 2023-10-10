@@ -27,7 +27,7 @@
 
 #import <WebKit/WKMain.h>
 
-void handleNewConnection(xpc_connection_t connection)
+void extensionMain(int argc, char** argv)
 {
-    WKExtensionEventHandler(connection);
+    WKExtensionMain(argc, argv);
 }
