@@ -39,80 +39,23 @@ class ProgramGL : public ProgramImpl
 
     void destroy(const gl::Context *context) override;
 
-    std::unique_ptr<LinkEvent> load(const gl::Context *context,
-                                    gl::BinaryInputStream *stream) override;
+    angle::Result load(const gl::Context *context,
+                       gl::BinaryInputStream *stream,
+                       std::shared_ptr<LinkTask> *loadTaskOut) override;
     void save(const gl::Context *context, gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;
 
     void prepareForLink(const gl::ShaderMap<ShaderImpl *> &shaders) override;
-    std::unique_ptr<LinkEvent> link(const gl::Context *contextImpl,
-                                    const gl::ProgramLinkedResources &resources,
-                                    gl::ProgramMergedVaryings &&mergedVaryings) override;
+    angle::Result link(const gl::Context *contextImpl,
+                       std::shared_ptr<LinkTask> *linkTaskOut) override;
     GLboolean validate(const gl::Caps &caps) override;
-
-    void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
-    void setUniform2fv(GLint location, GLsizei count, const GLfloat *v) override;
-    void setUniform3fv(GLint location, GLsizei count, const GLfloat *v) override;
-    void setUniform4fv(GLint location, GLsizei count, const GLfloat *v) override;
-    void setUniform1iv(GLint location, GLsizei count, const GLint *v) override;
-    void setUniform2iv(GLint location, GLsizei count, const GLint *v) override;
-    void setUniform3iv(GLint location, GLsizei count, const GLint *v) override;
-    void setUniform4iv(GLint location, GLsizei count, const GLint *v) override;
-    void setUniform1uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniform2uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniform3uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniform4uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniformMatrix2fv(GLint location,
-                             GLsizei count,
-                             GLboolean transpose,
-                             const GLfloat *value) override;
-    void setUniformMatrix3fv(GLint location,
-                             GLsizei count,
-                             GLboolean transpose,
-                             const GLfloat *value) override;
-    void setUniformMatrix4fv(GLint location,
-                             GLsizei count,
-                             GLboolean transpose,
-                             const GLfloat *value) override;
-    void setUniformMatrix2x3fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix3x2fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix2x4fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix4x2fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix3x4fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-    void setUniformMatrix4x3fv(GLint location,
-                               GLsizei count,
-                               GLboolean transpose,
-                               const GLfloat *value) override;
-
-    void getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const override;
-    void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
-    void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
 
     void markUnusedUniformLocations(std::vector<gl::VariableLocation> *uniformLocations,
                                     std::vector<gl::SamplerBinding> *samplerBindings,
                                     std::vector<gl::ImageBinding> *imageBindings) override;
 
     ANGLE_INLINE GLuint getProgramID() const { return mProgramID; }
-
-    void updateEnabledClipDistances(uint8_t enabledClipDistancesPacked) const;
-
-    void enableLayeredRenderingPath(int baseViewIndex) const;
 
     angle::Result syncState(const gl::Context *context,
                             const gl::Program::DirtyBits &dirtyBits) override;
@@ -127,9 +70,14 @@ class ProgramGL : public ProgramImpl
     }
 
   private:
-    class LinkTask;
-    class LinkEventNativeParallel;
-    class LinkEventGL;
+    class LinkTaskGL;
+    class PostLinkGL;
+
+    friend class LinkTaskGL;
+    friend class PostLinkGL;
+
+    void linkJobImpl(const gl::Extensions &extensions);
+    angle::Result postLinkJobImpl(const gl::ProgramLinkedResources &resources);
 
     bool checkLinkStatus();
 
@@ -151,12 +99,6 @@ class ProgramGL : public ProgramImpl
 
     void linkResources(const gl::ProgramLinkedResources &resources);
     void setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding);
-
-    // Helper function, makes it simpler to type.
-    GLint uniLoc(GLint glLocation) const
-    {
-        return getExecutable()->mUniformRealLocationMap[glLocation];
-    }
 
     const FunctionsGL *mFunctions;
     const angle::FeaturesGL &mFeatures;

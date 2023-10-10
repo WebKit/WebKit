@@ -763,6 +763,7 @@ angle::Result TextureMtl::createNativeTexture(const gl::Context *context,
             // format.
             gl::Extents actualMipSize = mNativeTexture->size(actualMip);
             if (imageToTransfer && imageToTransfer->sizeAt0() == actualMipSize &&
+                imageToTransfer->arrayLength() == mNativeTexture->arrayLength() &&
                 imageToTransfer->pixelFormat() == mNativeTexture->pixelFormat())
             {
                 if (!encoder)
@@ -2394,6 +2395,7 @@ angle::Result TextureMtl::copySubTextureWithDraw(const gl::Context *context,
     blitParams.unpackFlipY            = unpackFlipY;
     blitParams.unpackPremultiplyAlpha = unpackPremultiplyAlpha;
     blitParams.unpackUnmultiplyAlpha  = unpackUnmultiplyAlpha;
+    blitParams.transformLinearToSrgb  = sourceAngleFormat.isSRGB;
 
     return displayMtl->getUtils().copyTextureWithDraw(context, cmdEncoder, sourceAngleFormat,
                                                       mFormat.actualAngleFormat(), blitParams);

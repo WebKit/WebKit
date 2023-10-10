@@ -470,14 +470,33 @@ TEST_P(EXTBlendFuncExtendedDrawTest, FragColor)
     drawTest();
 }
 
+// Test a shader with EXT_blend_func_extended and EXT_draw_buffers enabled at the same time.
+TEST_P(EXTBlendFuncExtendedDrawTest, FragColorBroadcast)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
+
+    const char *kFragColorShader =
+        "#extension GL_EXT_blend_func_extended : require\n"
+        "#extension GL_EXT_draw_buffers : require\n"
+        "precision mediump float;\n"
+        "uniform vec4 src0;\n"
+        "uniform vec4 src1;\n"
+        "void main() {\n"
+        "  gl_FragColor = src0;\n"
+        "  gl_SecondaryFragColorEXT = src1;\n"
+        "}\n";
+
+    makeProgram(essl1_shaders::vs::Simple(), kFragColorShader);
+
+    drawTest();
+}
+
 // Test a shader with EXT_blend_func_extended and gl_FragData.
 // Outputs to a color buffer using primary and secondary frag data.
 TEST_P(EXTBlendFuncExtendedDrawTest, FragData)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
-
-    // Suspected VK driver bug http://anglebug.com/5523
-    ANGLE_SKIP_TEST_IF(IsVulkan() && (IsNVIDIA() || IsPixel2()));
 
     const char *kFragColorShader =
         "#extension GL_EXT_blend_func_extended : require\n"
@@ -551,7 +570,7 @@ void main() {
 }
 
 // Test an ESSL 3.00 shader that uses two fragment outputs with locations specified through the API.
-TEST_P(EXTBlendFuncExtendedDrawTestES3, FragmentOutputLocationAPI)
+TEST_P(EXTBlendFuncExtendedDrawTestES3, FragmentOutputLocationsAPI)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
 
@@ -610,14 +629,43 @@ void main() {
     drawTest();
 }
 
+// Test an ESSL 3.00 shader that uses two array fragment outputs with locations
+// specified in the shader.
+TEST_P(EXTBlendFuncExtendedDrawTestES3, FragmentArrayOutputLocationsInShader)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    const char *kFragColorShader = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src0;
+uniform vec4 src1;
+layout(location = 0, index = 1) out vec4 outSrc1[1];
+layout(location = 0, index = 0) out vec4 outSrc0[1];
+void main() {
+    outSrc0[0] = src0;
+    outSrc1[0] = src1;
+})";
+
+    makeProgram(essl3_shaders::vs::Simple(), kFragColorShader);
+
+    checkOutputIndexQuery("outSrc0[0]", 0);
+    checkOutputIndexQuery("outSrc1[0]", 1);
+    checkOutputIndexQuery("outSrc0", 0);
+    checkOutputIndexQuery("outSrc1", 1);
+
+    // These queries use an out of range array index so they should return -1.
+    checkOutputIndexQuery("outSrc0[1]", -1);
+    checkOutputIndexQuery("outSrc1[1]", -1);
+
+    drawTest();
+}
+
 // Test an ESSL 3.00 shader that uses two array fragment outputs with locations specified through
 // the API.
 TEST_P(EXTBlendFuncExtendedDrawTestES3, FragmentArrayOutputLocationsAPI)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
-
-    // Suspected VK driver bug http://anglebug.com/5523
-    ANGLE_SKIP_TEST_IF(IsVulkan() && (IsNVIDIA() || IsPixel2()));
 
     constexpr char kFS[] = R"(#version 300 es
 #extension GL_EXT_blend_func_extended : require
@@ -667,12 +715,6 @@ void main() {
 TEST_P(EXTBlendFuncExtendedDrawTestES3, ES3GettersArray)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
-
-    // TODO(zmo): Figure out why this fails on AMD. crbug.com/585132.
-    // Also fails on the Intel Mesa driver, see
-    // https://bugs.freedesktop.org/show_bug.cgi?id=96765
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD());
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel());
 
     const GLint kTestArraySize     = 2;
     const GLint kFragData0Location = 2;

@@ -315,7 +315,9 @@ void main()
         std::vector<GLint> firsts(kTriCount);
         std::vector<GLsizei> counts(kTriCount, 3);
         for (uint32_t i = 0; i < kTriCount; ++i)
+        {
             firsts[i] = i * 3;
+        }
 
         if (IsInstancedTest())
         {
@@ -344,7 +346,9 @@ void main()
         std::vector<GLsizei> counts(kTriCount, 3);
         std::vector<const GLvoid *> indices(kTriCount);
         for (uint32_t i = 0; i < kTriCount; ++i)
+        {
             indices[i] = reinterpret_cast<GLvoid *>(static_cast<uintptr_t>(i * 3 * 2));
+        }
 
         if (IsInstancedTest())
         {
@@ -466,6 +470,9 @@ void main()
     GLint mPositionLoc;
     GLint mInstanceLoc;
 };
+
+class MultiDrawTestES3 : public MultiDrawTest
+{};
 
 class MultiDrawNoInstancingSupportTest : public MultiDrawTest
 {
@@ -602,6 +609,31 @@ TEST_P(MultiDrawTest, MultiDrawArrays)
 
     SetupBuffers();
     SetupProgram();
+    DoDrawArrays();
+    EXPECT_GL_NO_ERROR();
+    CheckDrawResult(DrawIDOptionOverride::Default);
+}
+
+// Tests basic functionality of glMultiDrawArraysANGLE after a failed program relink
+TEST_P(MultiDrawTestES3, MultiDrawArraysAfterFailedRelink)
+{
+    ANGLE_SKIP_TEST_IF(!requestExtensions());
+
+    // http://anglebug.com/5265
+    ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+
+    SetupBuffers();
+    SetupProgram();
+
+    // mProgram is already installed.  Destroy its state by a failed relink.
+    const char *tfVaryings = "invalidvaryingname";
+    glTransformFeedbackVaryings(mProgram, 1, &tfVaryings, GL_SEPARATE_ATTRIBS);
+    glLinkProgram(mProgram);
+    GLint linkStatus = 0;
+    glGetProgramiv(mProgram, GL_LINK_STATUS, &linkStatus);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_EQ(linkStatus, GL_FALSE);
+
     DoDrawArrays();
     EXPECT_GL_NO_ERROR();
     CheckDrawResult(DrawIDOptionOverride::Default);
@@ -1216,15 +1248,16 @@ TEST_P(MultiDrawNoInstancingSupportTest, InvalidOperation)
 }
 
 const angle::PlatformParameters platforms[] = {
-    ES2_D3D9(),  ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(),
-    ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(),
+    ES2_D3D9(),     ES2_OPENGL(), ES2_OPENGLES(),           ES2_VULKAN(), ES3_D3D11(), ES3_OPENGL(),
+    ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER(),
 };
 
 const angle::PlatformParameters es2_platforms[] = {
-    ES2_D3D9(),
-    ES2_OPENGL(),
-    ES2_OPENGLES(),
-    ES2_VULKAN(),
+    ES2_D3D9(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER(),
+};
+
+const angle::PlatformParameters es3_platforms[] = {
+    ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER(),
 };
 
 INSTANTIATE_TEST_SUITE_P(
@@ -1247,8 +1280,17 @@ INSTANTIATE_TEST_SUITE_P(
         testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw)),
     PrintToStringParamName());
 
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiDrawIndirectTest);
+INSTANTIATE_TEST_SUITE_P(
+    ,
+    MultiDrawTestES3,
+    testing::Combine(
+        testing::ValuesIn(::angle::FilterTestParams(es3_platforms, ArraySize(es3_platforms))),
+        testing::Values(DrawIDOption::NoDrawID, DrawIDOption::UseDrawID),
+        testing::Values(InstancingOption::NoInstancing, InstancingOption::UseInstancing),
+        testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw)),
+    PrintToStringParamName());
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiDrawIndirectTest);
 ANGLE_INSTANTIATE_TEST_ES31_AND(MultiDrawIndirectTest,
                                 ES31_VULKAN().disable(Feature::SupportsMultiDrawIndirect));
 }  // namespace

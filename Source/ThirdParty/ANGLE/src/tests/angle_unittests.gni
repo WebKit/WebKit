@@ -33,6 +33,7 @@ angle_unittests_sources = [
   "../libANGLE/BlendStateExt_unittest.cpp",
   "../libANGLE/BlobCache_unittest.cpp",
   "../libANGLE/Config_unittest.cpp",
+  "../libANGLE/ContextMutex_unittest.cpp",
   "../libANGLE/Fence_unittest.cpp",
   "../libANGLE/GlobalMutex_unittest.cpp",
   "../libANGLE/HandleAllocator_unittest.cpp",

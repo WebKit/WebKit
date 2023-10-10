@@ -235,6 +235,11 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // Device loss
     gl::GraphicsResetStatus getResetStatus() override;
 
+    bool isDebugEnabled()
+    {
+        return mRenderer->enableDebugUtils() || mRenderer->angleDebuggerMode();
+    }
+
     // EXT_debug_marker
     angle::Result insertEventMarker(GLsizei length, const char *marker) override;
     angle::Result pushGroupMarker(GLsizei length, const char *marker) override;
@@ -675,6 +680,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     bool shouldConvertUint8VkIndexType(gl::DrawElementsType glIndexType) const;
 
     bool isRobustResourceInitEnabled() const;
+    bool hasRobustAccess() const { return mState.hasRobustAccess(); }
 
     // Queries that begin and end automatically with render pass start and end
     angle::Result beginRenderPassQuery(QueryVk *queryVk);
@@ -807,6 +813,43 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     }
 
     bool isDitherEnabled() { return mState.isDitherEnabled(); }
+
+    // The following functions try to allocate memory for buffers and images. If they fail due to
+    // OOM errors, they will try other options for memory allocation.
+    angle::Result initBufferAllocation(vk::BufferHelper *bufferHelper,
+                                       uint32_t memoryTypeIndex,
+                                       size_t allocationSize,
+                                       size_t alignment,
+                                       BufferUsageType bufferUsageType);
+    angle::Result initImageAllocation(vk::ImageHelper *imageHelper,
+                                      bool hasProtectedContent,
+                                      const vk::MemoryProperties &memoryProperties,
+                                      VkMemoryPropertyFlags flags,
+                                      vk::MemoryAllocationType allocationType);
+
+    angle::Result releaseBufferAllocation(vk::BufferHelper *bufferHelper);
+
+    // Helper functions to initialize a buffer for a specific usage
+    // Suballocate a host visible buffer with alignment good for copyBuffer.
+    angle::Result initBufferForBufferCopy(vk::BufferHelper *bufferHelper,
+                                          size_t size,
+                                          vk::MemoryCoherency coherency);
+    // Suballocate a host visible buffer with alignment good for copyImage.
+    angle::Result initBufferForImageCopy(vk::BufferHelper *bufferHelper,
+                                         size_t size,
+                                         vk::MemoryCoherency coherency,
+                                         angle::FormatID formatId,
+                                         VkDeviceSize *offset,
+                                         uint8_t **dataPtr);
+    // Suballocate a buffer with alignment good for shader storage or copyBuffer.
+    angle::Result initBufferForVertexConversion(vk::BufferHelper *bufferHelper,
+                                                size_t size,
+                                                vk::MemoryHostVisibility hostVisibility);
+
+    // In the event of collecting too much garbage, we should flush the garbage so it can be freed.
+    void addToPendingImageGarbage(vk::ResourceUse use, VkDeviceSize size);
+
+    bool hasExcessPendingGarbage() const;
 
   private:
     // Dirty bits.
@@ -1272,8 +1315,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     VertexArrayVk *getVertexArray() const;
     FramebufferVk *getDrawFramebuffer() const;
-    ProgramVk *getProgram() const;
-    ProgramPipelineVk *getProgramPipeline() const;
 
     // Read-after-write hazards are generally handled with |glMemoryBarrier| when the source of
     // write is storage output.  When the write is outside render pass, the natural placement of the
@@ -1578,6 +1619,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // The size of copy commands issued between buffers and images. Used to submit the command
     // buffer for the outside render pass.
     VkDeviceSize mTotalBufferToImageCopySize;
+    VkDeviceSize mEstimatedPendingImageGarbageSize;
 
     // Semaphores that must be flushed before the current commands. Flushed semaphores will be
     // waited on in the next submission.
@@ -1693,14 +1735,16 @@ uint32_t GetDriverUniformSize(vk::Context *context, PipelineType pipelineType);
 }  // namespace rx
 
 // Generate a perf warning, and insert an event marker in the command buffer.
-#define ANGLE_VK_PERF_WARNING(contextVk, severity, ...)                         \
-    do                                                                          \
-    {                                                                           \
-        char ANGLE_MESSAGE[200];                                                \
-        snprintf(ANGLE_MESSAGE, sizeof(ANGLE_MESSAGE), __VA_ARGS__);            \
-        ANGLE_PERF_WARNING(contextVk->getDebug(), severity, ANGLE_MESSAGE);     \
-                                                                                \
-        contextVk->insertEventMarkerImpl(GL_DEBUG_SOURCE_OTHER, ANGLE_MESSAGE); \
+#define ANGLE_VK_PERF_WARNING(contextVk, severity, ...)                             \
+    do                                                                              \
+    {                                                                               \
+        ANGLE_PERF_WARNING(contextVk->getDebug(), severity, __VA_ARGS__);           \
+        if (contextVk->isDebugEnabled())                                            \
+        {                                                                           \
+            char ANGLE_MESSAGE[200];                                                \
+            snprintf(ANGLE_MESSAGE, sizeof(ANGLE_MESSAGE), __VA_ARGS__);            \
+            contextVk->insertEventMarkerImpl(GL_DEBUG_SOURCE_OTHER, ANGLE_MESSAGE); \
+        }                                                                           \
     } while (0)
 
 // Generate a trace event for graphics profiler, and insert an event marker in the command buffer.

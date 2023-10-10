@@ -285,32 +285,32 @@ bool ValidateProgramResourceIndex(const Program *programObject,
                                   GLenum programInterface,
                                   GLuint index)
 {
+    const ProgramExecutable &executable = programObject->getExecutable();
     switch (programInterface)
     {
         case GL_PROGRAM_INPUT:
-            return (index <
-                    static_cast<GLuint>(programObject->getState().getProgramInputs().size()));
+            return index < executable.getProgramInputs().size();
 
         case GL_PROGRAM_OUTPUT:
-            return (index < static_cast<GLuint>(programObject->getOutputResourceCount()));
+            return index < executable.getOutputVariables().size();
 
         case GL_UNIFORM:
-            return (index < static_cast<GLuint>(programObject->getActiveUniformCount()));
+            return index < executable.getUniforms().size();
 
         case GL_BUFFER_VARIABLE:
-            return (index < static_cast<GLuint>(programObject->getActiveBufferVariableCount()));
+            return index < executable.getBufferVariables().size();
 
         case GL_SHADER_STORAGE_BLOCK:
-            return (index < static_cast<GLuint>(programObject->getActiveShaderStorageBlockCount()));
+            return index < executable.getShaderStorageBlocks().size();
 
         case GL_UNIFORM_BLOCK:
-            return (index < programObject->getActiveUniformBlockCount());
+            return index < executable.getUniformBlocks().size();
 
         case GL_ATOMIC_COUNTER_BUFFER:
-            return (index < programObject->getActiveAtomicCounterBufferCount());
+            return index < executable.getAtomicCounterBuffers().size();
 
         case GL_TRANSFORM_FEEDBACK_VARYING:
-            return (index < static_cast<GLuint>(programObject->getTransformFeedbackVaryingCount()));
+            return index < executable.getLinkedTransformFeedbackVaryings().size();
 
         default:
             UNREACHABLE();

@@ -82,6 +82,8 @@ class ImageMemorySuballocator : angle::NonCopyable
                                    const VkImageCreateInfo *imageCreateInfo,
                                    VkMemoryPropertyFlags requiredFlags,
                                    VkMemoryPropertyFlags preferredFlags,
+                                   const VkMemoryRequirements *memoryRequirements,
+                                   const bool allocateDedicatedMemory,
                                    MemoryAllocationType memoryAllocationType,
                                    Allocation *allocationOut,
                                    VkMemoryPropertyFlags *memoryFlagsOut,
@@ -94,6 +96,9 @@ class ImageMemorySuballocator : angle::NonCopyable
                                               VkDeviceSize size,
                                               int value,
                                               VkMemoryPropertyFlags flags);
+
+    // Determines if dedicated memory is required for the allocation.
+    bool needsDedicatedMemory(VkDeviceSize size) const;
 };
 }  // namespace vk
 
@@ -206,15 +211,17 @@ class RendererVk : angle::NonCopyable
     {
         return mPrimitivesGeneratedQueryFeatures;
     }
+    const VkPhysicalDeviceHostImageCopyPropertiesEXT &getPhysicalDeviceHostImageCopyProperties()
+        const
+    {
+        return mHostImageCopyProperties;
+    }
     const VkPhysicalDeviceFeatures &getPhysicalDeviceFeatures() const
     {
         return mPhysicalDeviceFeatures;
     }
     const VkPhysicalDeviceFeatures2KHR &getEnabledFeatures() const { return mEnabledFeatures; }
     VkDevice getDevice() const { return mDevice; }
-
-    bool isVulkan11Instance() const;
-    bool isVulkan11Device() const;
 
     const vk::Allocator &getAllocator() const { return mAllocator; }
     vk::ImageMemorySuballocator &getImageMemorySuballocator() { return mImageMemorySuballocator; }
@@ -389,6 +396,7 @@ class RendererVk : angle::NonCopyable
             }
             else
             {
+                mPendingSuballocationGarbageSizeInBytes += suballocation.getSize();
                 mPendingSubmissionSuballocationGarbage.emplace(use, std::move(suballocation),
                                                                std::move(buffer));
             }
@@ -645,6 +653,11 @@ class RendererVk : angle::NonCopyable
         return mPendingSubmissionGarbage.size();
     }
 
+    VkDeviceSize getPendingSuballocationGarbageSize()
+    {
+        return mPendingSuballocationGarbageSizeInBytes;
+    }
+
     ANGLE_INLINE VkFilter getPreferredFilterForYUV(VkFilter defaultFilter)
     {
         return getFeatures().preferLinearFilterForYUV.enabled ? VK_FILTER_LINEAR : defaultFilter;
@@ -757,6 +770,8 @@ class RendererVk : angle::NonCopyable
 
     MemoryAllocationTracker *getMemoryAllocationTracker() { return &mMemoryAllocationTracker; }
 
+    VkDeviceSize getPendingGarbageSizeLimit() const { return mPendingGarbageSizeLimit; }
+
     void requestAsyncCommandsAndGarbageCleanup(vk::Context *context);
 
     // Try to finish a command batch from the queue and free garbage memory in the event of an OOM
@@ -827,6 +842,10 @@ class RendererVk : angle::NonCopyable
     bool canSupportFragmentShadingRate(const vk::ExtensionNameList &deviceExtensionNames);
     // Prefer host visible device local via device local based on device type and heap size.
     bool canPreferDeviceLocalMemoryHostVisible(VkPhysicalDeviceType deviceType);
+
+    // Find the threshold for pending suballocation and image garbage sizes before the context
+    // should be flushed.
+    void calculatePendingGarbageSizeLimit();
 
     template <typename CommandBufferHelperT, typename RecyclerT>
     angle::Result getCommandBufferImpl(vk::Context *context,
@@ -924,6 +943,10 @@ class RendererVk : angle::NonCopyable
     VkPhysicalDeviceLegacyDitheringFeaturesEXT mDitheringFeatures;
     VkPhysicalDeviceDrmPropertiesEXT mDrmProperties;
     VkPhysicalDeviceTimelineSemaphoreFeaturesKHR mTimelineSemaphoreFeatures;
+    VkPhysicalDeviceHostImageCopyFeaturesEXT mHostImageCopyFeatures;
+    VkPhysicalDeviceHostImageCopyPropertiesEXT mHostImageCopyProperties;
+    std::vector<VkImageLayout> mHostImageCopySrcLayoutsStorage;
+    std::vector<VkImageLayout> mHostImageCopyDstLayoutsStorage;
 
     angle::PackedEnumBitSet<gl::ShadingRate, uint8_t> mSupportedFragmentShadingRates;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
@@ -948,6 +971,9 @@ class RendererVk : angle::NonCopyable
     vk::SharedBufferSuballocationGarbageList mPendingSubmissionSuballocationGarbage;
     // Total suballocation garbage size in bytes.
     VkDeviceSize mSuballocationGarbageSizeInBytes;
+    // Total pending garbage size in bytes.
+    std::atomic<VkDeviceSize> mPendingSuballocationGarbageSizeInBytes;
+    VkDeviceSize mPendingGarbageSizeLimit;
 
     // Total bytes of suballocation that been destroyed since last prune call. This can be
     // accessed without mGarbageMutex, thus needs to be atomic to avoid tsan complain.

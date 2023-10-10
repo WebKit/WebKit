@@ -3466,6 +3466,70 @@ TEST_P(UniformBufferTest, BufferDataInLoop)
     EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
 }
 
+class UniformBufferMemoryTest : public UniformBufferTest
+{
+  protected:
+    angle::VulkanPerfCounters getPerfCounters()
+    {
+        if (mIndexMap.empty())
+        {
+            mIndexMap = BuildCounterNameToIndexMap();
+        }
+
+        return GetPerfCounters(mIndexMap);
+    }
+
+    CounterNameToIndexMap mIndexMap;
+};
+
+// Calling BufferData and drawing with it in a loop without glFlush() should still work. Driver is
+// supposedly to issue flush if needed.
+TEST_P(UniformBufferMemoryTest, BufferDataInLoopManyTimes)
+{
+    // Run this test for Vulkan only.
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    uint64_t expectedSubmitCalls = getPerfCounters().commandQueueSubmitCallsTotal + 1;
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    constexpr size_t kBufferSize = 64 * 1024 * 1024;
+    std::vector<float> floatData;
+    floatData.resize(kBufferSize / (sizeof(float)), 0.0f);
+    floatData[0] = 0.5f;
+    floatData[1] = 0.75f;
+    floatData[2] = 0.25f;
+    floatData[3] = 1.0f;
+
+    GLTexture texture;
+    GLFramebuffer fbo;
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 256, 256);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr uint32_t kIterationCount = 4096;
+    for (uint32_t loop = 0; loop < kIterationCount; loop++)
+    {
+        glBindBuffer(GL_UNIFORM_BUFFER, mUniformBuffer);
+        glBufferData(GL_UNIFORM_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, kBufferSize, floatData.data());
+
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
+        glUniformBlockBinding(mProgram, mUniformBufferIndex, 0);
+        drawQuad(mProgram, essl3_shaders::PositionAttrib(), 0.5f);
+
+        if (getPerfCounters().commandQueueSubmitCallsTotal == expectedSubmitCalls)
+        {
+            break;
+        }
+    }
+    EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedSubmitCalls);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
+}
+
 class WebGL2UniformBufferTest : public UniformBufferTest
 {
   protected:
@@ -3531,6 +3595,9 @@ ANGLE_INSTANTIATE_TEST_ES3(UniformBlockWithOneLargeArrayMemberTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformBufferTest31);
 ANGLE_INSTANTIATE_TEST_ES31(UniformBufferTest31);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformBufferMemoryTest);
+ANGLE_INSTANTIATE_TEST_ES3(UniformBufferMemoryTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2UniformBufferTest);
 ANGLE_INSTANTIATE_TEST_ES3(WebGL2UniformBufferTest);

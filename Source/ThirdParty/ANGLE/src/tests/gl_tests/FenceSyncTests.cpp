@@ -265,11 +265,26 @@ TEST_P(FenceSyncTest, BasicOperations)
 
     ASSERT_GLENUM_EQ(GL_SIGNALED, value);
 
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
     for (size_t i = 0; i < 20; i++)
     {
         glClear(GL_COLOR_BUFFER_BIT);
-        glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
+        drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        GLsync clientWaitSync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        ASSERT_GL_NO_ERROR();
+
+        // Don't wait forever to make sure the test terminates
+        constexpr GLuint64 kTimeout = 1'000'000'000;  // 1 second
+        GLenum clientWaitResult =
+            glClientWaitSync(clientWaitSync, GL_SYNC_FLUSH_COMMANDS_BIT, kTimeout);
         EXPECT_GL_NO_ERROR();
+        EXPECT_TRUE(clientWaitResult == GL_CONDITION_SATISFIED ||
+                    clientWaitResult == GL_ALREADY_SIGNALED);
+
+        glDeleteSync(clientWaitSync);
+        ASSERT_GL_NO_ERROR();
     }
 }
 

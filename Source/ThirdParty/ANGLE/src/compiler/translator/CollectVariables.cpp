@@ -43,14 +43,14 @@ BlockType GetBlockType(TQualifier qualifier)
     switch (qualifier)
     {
         case EvqUniform:
-            return BlockType::BLOCK_UNIFORM;
+            return BlockType::kBlockUniform;
         case EvqBuffer:
-            return BlockType::BLOCK_BUFFER;
+            return BlockType::kBlockBuffer;
         case EvqPixelLocalEXT:
-            return BlockType::PIXEL_LOCAL_EXT;
+            return BlockType::kPixelLocalExt;
         default:
             UNREACHABLE();
-            return BlockType::BLOCK_UNIFORM;
+            return BlockType::kBlockUniform;
     }
 }
 
@@ -1019,8 +1019,8 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
         interfaceBlockType.isArray() ? interfaceBlockType.getOutermostArraySize() : 0;
 
     interfaceBlock->blockType = GetBlockType(interfaceBlockType.getQualifier());
-    if (interfaceBlock->blockType == BlockType::BLOCK_UNIFORM ||
-        interfaceBlock->blockType == BlockType::BLOCK_BUFFER)
+    if (interfaceBlock->blockType == BlockType::kBlockUniform ||
+        interfaceBlock->blockType == BlockType::kBlockBuffer)
     {
         // TODO(oetuaho): Remove setting isRowMajorLayout.
         interfaceBlock->isRowMajorLayout = false;
@@ -1073,7 +1073,7 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
     {
         interfaceBlock->staticUse = true;
     }
-    if (interfaceBlock->blockType == BlockType::BLOCK_BUFFER)
+    if (interfaceBlock->blockType == BlockType::kBlockBuffer)
     {
         interfaceBlock->isReadOnly = isReadOnly;
     }

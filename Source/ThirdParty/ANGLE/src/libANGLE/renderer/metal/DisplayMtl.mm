@@ -520,6 +520,15 @@ void DisplayMtl::generateCaps(egl::Caps *outCaps) const
     outCaps->textureNPOT = true;
 }
 
+void DisplayMtl::initializeFrontendFeatures(angle::FrontendFeatures *features) const
+{
+    // The link job in this backend references gl::Context and ContextMtl, and thread-safety is not
+    // guaranteed.  The link subtasks are safe however, they are still parallelized.
+    //
+    // Once the link jobs are made thread-safe and using mtl::Context, this feature can be removed.
+    ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, false);
+}
+
 void DisplayMtl::populateFeatureList(angle::FeatureList *features)
 {
     mFeatures.populateFeatureList(features);
@@ -1350,6 +1359,10 @@ void DisplayMtl::initializeFeatures()
 
     // anglebug.com/8258 Builtin shaders currently require MSL 2.1
     ANGLE_FEATURE_CONDITION((&mFeatures), requireMsl21, true);
+
+    // http://anglebug.com/8311: Rescope global variables which are only used in one function to be
+    // function local. Disabled on AMD FirePro devices: http://anglebug.com/8317
+    ANGLE_FEATURE_CONDITION((&mFeatures), rescopeGlobalVariables, !isAMDFireProDevice());
 }
 
 angle::Result DisplayMtl::initializeShaderLibrary()
@@ -1478,6 +1491,16 @@ bool DisplayMtl::isAMDBronzeDriver() const
 
     mComputedAMDBronze = true;
     return mIsAMDBronze;
+}
+
+bool DisplayMtl::isAMDFireProDevice() const
+{
+    if (!isAMD())
+    {
+        return false;
+    }
+
+    return [[mMetalDevice name] containsString:@"FirePro"];
 }
 
 bool DisplayMtl::isIntel() const

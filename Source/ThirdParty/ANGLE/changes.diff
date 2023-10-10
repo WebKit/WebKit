@@ -1,3 +1,141 @@
+diff --git a/.gitmodules b/.gitmodules
+index 6a5d4a9f2b638ddb9f3d59d01b37ccb4c76adcab..dc46d33d4b2f870675a483e95d9a0bb0bb824f6f 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -1,47 +1,11 @@
+-[submodule "build"]
+-	path = build
+-	url = https://chromium.googlesource.com/chromium/src/build.git
+-	gclient-condition = not build_with_chromium
+-[submodule "buildtools"]
+-	path = buildtools
+-	url = https://chromium.googlesource.com/chromium/src/buildtools.git
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/clang-format/script"]
+ 	path = third_party/clang-format/script
+ 	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format.git
+ 	gclient-condition = not build_with_chromium
+-[submodule "testing"]
+-	path = testing
+-	url = https://chromium.googlesource.com/chromium/src/testing
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/abseil-cpp"]
+-	path = third_party/abseil-cpp
+-	url = https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/android_build_tools"]
+-	path = third_party/android_build_tools
+-	url = https://chromium.googlesource.com/chromium/src/third_party/android_build_tools
+-	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "third_party/android_deps"]
+-	path = third_party/android_deps
+-	url = https://chromium.googlesource.com/chromium/src/third_party/android_deps
+-	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "third_party/android_platform"]
+-	path = third_party/android_platform
+-	url = https://chromium.googlesource.com/chromium/src/third_party/android_platform
+-	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "third_party/android_sdk"]
+-	path = third_party/android_sdk
+-	url = https://chromium.googlesource.com/chromium/src/third_party/android_sdk
+-	gclient-condition = checkout_android and not build_with_chromium
+ [submodule "third_party/astc-encoder/src"]
+ 	path = third_party/astc-encoder/src
+ 	url = https://chromium.googlesource.com/external/github.com/ARM-software/astc-encoder
+ 	gclient-condition = not build_with_chromium
+-[submodule "third_party/catapult"]
+-	path = third_party/catapult
+-	url = https://chromium.googlesource.com/catapult.git
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/cherry"]
+ 	path = third_party/cherry
+ 	url = https://android.googlesource.com/platform/external/cherry
+@@ -54,18 +18,10 @@
+ 	path = third_party/cpu_features/src
+ 	url = https://chromium.googlesource.com/external/github.com/google/cpu_features.git
+ 	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "third_party/depot_tools"]
+-	path = third_party/depot_tools
+-	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/EGL-Registry/src"]
+ 	path = third_party/EGL-Registry/src
+ 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry
+ 	gclient-condition = not build_with_chromium
+-[submodule "third_party/flatbuffers/src"]
+-	path = third_party/flatbuffers/src
+-	url = https://chromium.googlesource.com/external/github.com/google/flatbuffers.git
+-	gclient-condition = checkout_android and not build_with_chromium
+ [submodule "third_party/gles1_conform"]
+ 	path = third_party/gles1_conform
+ 	url = https://chrome-internal.googlesource.com/angle/es-cts.git
+@@ -101,18 +57,6 @@
+ 	path = third_party/jsoncpp
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/jsoncpp
+ 	gclient-condition = not build_with_chromium
+-[submodule "third_party/libc++/src"]
+-	path = third_party/libc++/src
+-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx.git
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/libc++abi/src"]
+-	path = third_party/libc++abi/src
+-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi.git
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/libunwind/src"]
+-	path = third_party/libunwind/src
+-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind.git
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/markupsafe"]
+ 	path = third_party/markupsafe
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/markupsafe
+@@ -160,17 +104,6 @@
+ 	path = third_party/six
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/six
+ 	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "third_party/SwiftShader"]
+-	path = third_party/SwiftShader
+-	url = https://swiftshader.googlesource.com/SwiftShader
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/VK-GL-CTS/src"]
+-	path = third_party/VK-GL-CTS/src
+-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/VK-GL-CTS
+-[submodule "third_party/vulkan-deps"]
+-	path = third_party/vulkan-deps
+-	url = https://chromium.googlesource.com/vulkan-deps
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/vulkan_memory_allocator"]
+ 	path = third_party/vulkan_memory_allocator
+ 	url = https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+@@ -183,18 +116,6 @@
+ 	path = third_party/zlib
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
+ 	gclient-condition = not build_with_chromium
+-[submodule "tools/android"]
+-	path = tools/android
+-	url = https://chromium.googlesource.com/chromium/src/tools/android
+-	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "tools/clang"]
+-	path = tools/clang
+-	url = https://chromium.googlesource.com/chromium/src/tools/clang.git
+-	gclient-condition = not build_with_chromium
+-[submodule "tools/mb"]
+-	path = tools/mb
+-	url = https://chromium.googlesource.com/chromium/src/tools/mb
+-	gclient-condition = not build_with_chromium
+ [submodule "tools/md_browser"]
+ 	path = tools/md_browser
+ 	url = https://chromium.googlesource.com/chromium/src/tools/md_browser
+@@ -203,10 +124,6 @@
+ 	path = tools/memory
+ 	url = https://chromium.googlesource.com/chromium/src/tools/memory
+ 	gclient-condition = not build_with_chromium
+-[submodule "tools/perf"]
+-	path = tools/perf
+-	url = https://chromium.googlesource.com/chromium/src/tools/perf
+-	gclient-condition = not build_with_chromium
+ [submodule "tools/protoc_wrapper"]
+ 	path = tools/protoc_wrapper
+ 	url = https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 34826b47554d0d89e8b9619d46828177b2c1b873..2e03a110de26a7cb888d8e9a5997deaf3745c12c 100644
 --- a/src/common/utilities.cpp
@@ -29,10 +167,10 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/Compiler.cpp b/src/compiler/translator/Compiler.cpp
-index 1f3a4d52f2f45e7ed10b9b5512f2f92a06877256..f0ca1477d203e1758d88eda1d81e66ccd8fd3a76 100644
+index ea593eca55dc121e04fe2fd4531597c375645d2f..9139f9a21cc43f50fc8620a908548fa5cb03a4f3 100644
 --- a/src/compiler/translator/Compiler.cpp
 +++ b/src/compiler/translator/Compiler.cpp
-@@ -1218,7 +1218,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
+@@ -1219,7 +1219,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
  
  bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
  {
@@ -68,7 +206,7 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 319f8901e490ccafd770bad3aaeb113451d8cea9..172754b930089ed72a8593752ea012171576cb9d 100644
+index 68e94d1594a4c2b0d11b9ae2a87a38db88c8fde8..dcfdbf60ae37d2b3f461df8e65e8965909c1c679 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -125,7 +263,7 @@ index 746823ce009702c2e49d1397a4159570838ebc9e..7976bcadedd832cabfda3f37b69ca457
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 1d728d0ea8a331e8faaa981622747a73d2dc69f1..b3f5ac0dcc1f26c122fa13ba0d59e74b9282fb4c 100644
+index 406e0fd426e02ccb06c8572a2dce3c3224ecfabf..4830efdf6cad751046e209159871492178243e40 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
 @@ -1068,6 +1068,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
@@ -168,7 +306,7 @@ index 1d728d0ea8a331e8faaa981622747a73d2dc69f1..b3f5ac0dcc1f26c122fa13ba0d59e74b
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index d9b34c991685ce23aed00279ee2136adfe9a0493..6639a54bc3ed4c579fa6980597df6586baca08c9 100644
+index 834694ede402e06f69ebdf271c3898f00a82b875..800e5ce771988c2eb198e191b098854f117aef75 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -182,12 +182,22 @@ void DisplayMtl::terminate()
@@ -194,7 +332,7 @@ index d9b34c991685ce23aed00279ee2136adfe9a0493..6639a54bc3ed4c579fa6980597df6586
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1408,8 +1418,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1421,8 +1431,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -205,10 +343,10 @@ index d9b34c991685ce23aed00279ee2136adfe9a0493..6639a54bc3ed4c579fa6980597df6586
      {
          return [mMetalDevice supports32BitFloatFiltering];
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index f7eaf3362c8fd382ea047a68372c9b6d9213a2f8..af009029c5d980b9e8e084554ba77c0821aa2482 100644
+index 5f3f10a86f707290bcad9f823dec0a9126425fde..860f798cf68bb4fad87bee1ea9cd507d95767fd1 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-@@ -1660,8 +1660,13 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
+@@ -1574,8 +1574,13 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -224,10 +362,10 @@ index f7eaf3362c8fd382ea047a68372c9b6d9213a2f8..af009029c5d980b9e8e084554ba77c08
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index 571f343e14dd6d488f8e19e48f3c006dbad7e0ba..a7fd60b9fcb174eb7f52a7433331c36269eccde5 100644
+index 0637c62bb7f2c5e0476a7d288b0304c5abdfcea3..3e7cf6fa397a31cb238312bc3bb6d558048fa85d 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-@@ -847,7 +847,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
+@@ -897,7 +897,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
  {
      ContextMtl *context = mtl::GetImpl(glContext);
  
@@ -298,7 +436,7 @@ index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be
      uint64_t getSerial() const { return mSerial; }
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 145400aec715ddfadcf33dc941201e1064d33ca0..8fa9415a6194f3152a681162473dc3e5faae4a4d 100644
+index 145400aec715ddfadcf33dc941201e1064d33ca0..106cdcbb6fcc2ec5fd24e86026a419cb7a84d8c2 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -373,12 +373,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
@@ -340,8 +478,8 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..8fa9415a6194f3152a681162473dc3e5
 +        NSError *error = buf.error;
 +        // MTLCommandBufferErrorNotPermitted is non-fatal, all other errors
 +        // result in device lost.
-+        mIsDeviceLost  = !error || error.domain != MTLCommandBufferErrorDomain ||
-+                        error.code != MTLCommandBufferErrorNotPermitted;
++        // TODO(djg): Should this also check error.domain for MTLCommandBufferErrorDomain?
++        mIsDeviceLost  = !error || error.code != MTLCommandBufferErrorNotPermitted;
 +        if (mIsDeviceLost)
 +        {
 +            return;
@@ -352,10 +490,10 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..8fa9415a6194f3152a681162473dc3e5
      {
          // Record this command buffer's elapsed time.
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 29af9becf5069d86d4ec12a10108533ce2dda847..0140885cae242fbab3ab4d03ecc594cd36f96d8a 100644
+index e434d1d49ae661acc0ed491cfe4b843dbcc6a40d..53f20497fc6901dd4d3353329324cb9eeb64e07f 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -602,7 +602,8 @@ void DispatchCompute(ContextMtl *contextMtl,
+@@ -603,7 +603,8 @@ void DispatchCompute(ContextMtl *contextMtl,
                       id<MTLComputePipelineState> pipelineState,
                       size_t numThreads)
  {
@@ -478,10 +616,10 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..7b2e9926b29407d7870b0da20a6591d0
  {
  namespace mtl
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index d14c2cab752bcc11420eb2b47f57ad77a4a4fec1..efea43fa521f0d9c7da9e132f4a8ab40df32e38f 100644
+index 3147bf515a36a7157d2cb2e7e826ce54d4b19f29..8f78ce3a0e089543b6d8fac281dc56444abc1b02 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1536,6 +1536,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1556,6 +1556,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -506,7 +644,7 @@ index d14c2cab752bcc11420eb2b47f57ad77a4a4fec1..efea43fa521f0d9c7da9e132f4a8ab40
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1550,10 +1568,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1570,10 +1588,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -519,7 +657,7 @@ index d14c2cab752bcc11420eb2b47f57ad77a4a4fec1..efea43fa521f0d9c7da9e132f4a8ab40
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1576,7 +1594,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1596,7 +1614,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].

@@ -2603,6 +2603,9 @@ void InitializeFrontendFeatures(const DXGI_ADAPTER_DESC &adapterDesc,
     bool isAMD = IsAMD(adapterDesc.VendorId);
 
     ANGLE_FEATURE_CONDITION(features, forceDepthAttachmentInitOnClear, isAMD);
+
+    // The D3D backend's handling of link is thread-safe
+    ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, true);
 }
 
 void InitConstantBufferDesc(D3D11_BUFFER_DESC *constantBufferDescription, size_t byteWidth)

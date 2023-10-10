@@ -30,7 +30,7 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateContext(Thread *thread,
                                                                  egl::Display *dpyPacked,
                                                                  gl::ContextID share_contextPacked)
 {
-    return TryLockAndActivateSharedContextMutex(dpyPacked, share_contextPacked);
+    return TryLockContext(dpyPacked, share_contextPacked);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreatePbufferSurface(Thread *thread,
@@ -122,16 +122,7 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_QueryContext(Thread *thread,
                                                                 gl::ContextID ctxPacked,
                                                                 EGLint attribute)
 {
-    // Don't lock mutex for all atributes to avoid activating SharedContextMutex when not required.
-    switch (attribute)
-    {
-        // Dynamic state.
-        case EGL_RENDER_BUFFER:
-            return TryLockContextForThread(thread, dpyPacked, ctxPacked);
-        // Rest states are static.
-        default:
-            return {};
-    }
+    return TryLockContext(dpyPacked, ctxPacked);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_QueryString(Thread *thread,
@@ -164,7 +155,7 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_SwapBuffers(Thread *thread,
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_Terminate(Thread *thread,
                                                              egl::Display *dpyPacked)
 {
-    // Accesses only not curent Contexts or when TerminateReason::NoActiveThreads
+    // Accesses only not curent Contexts
     return {};
 }
 
@@ -250,7 +241,7 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateImage(Thread *thread,
                                                                egl::Display *dpyPacked,
                                                                gl::ContextID ctxPacked)
 {
-    return TryLockAndActivateSharedContextMutex(dpyPacked, ctxPacked);
+    return TryLockContext(dpyPacked, ctxPacked);
 }
 
 ANGLE_INLINE ScopedContextMutexLock
@@ -415,7 +406,7 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_ReleaseHighPowerGPUANGLE(Thre
                                                                             egl::Display *dpyPacked,
                                                                             gl::ContextID ctxPacked)
 {
-    return TryLockContextForThread(thread, dpyPacked, ctxPacked);
+    return TryLockContext(dpyPacked, ctxPacked);
 }
 
 ANGLE_INLINE ScopedContextMutexLock
@@ -423,7 +414,7 @@ GetContextLock_ReacquireHighPowerGPUANGLE(Thread *thread,
                                           egl::Display *dpyPacked,
                                           gl::ContextID ctxPacked)
 {
-    return TryLockContextForThread(thread, dpyPacked, ctxPacked);
+    return TryLockContext(dpyPacked, ctxPacked);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_HandleGPUSwitchANGLE(Thread *thread,
@@ -624,7 +615,7 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateImageKHR(Thread *thread
                                                                   egl::Display *dpyPacked,
                                                                   gl::ContextID ctxPacked)
 {
-    return TryLockAndActivateSharedContextMutex(dpyPacked, ctxPacked);
+    return TryLockContext(dpyPacked, ctxPacked);
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_DestroyImageKHR(Thread *thread,

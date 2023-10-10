@@ -1942,8 +1942,7 @@ void SPIRVBuilder::writeInterfaceVariableDecorations(const TType &type, spirv::I
                                type.getQualifier() == EvqVertexIn ||
                                type.getQualifier() == EvqFragmentOut || isVarying;
     const bool needsInputAttachmentIndex = IsSubpassInputType(type.getBasicType());
-    const bool needsBlendIndex =
-        type.getQualifier() == EvqFragmentOut && layoutQualifier.index >= 0;
+
     const bool needsYuvDecorate = mCompileOptions.addVulkanYUVLayoutQualifier &&
                                   type.getQualifier() == EvqFragmentOut && layoutQualifier.yuv;
 
@@ -1974,12 +1973,6 @@ void SPIRVBuilder::writeInterfaceVariableDecorations(const TType &type, spirv::I
     {
         spirv::WriteDecorate(&mSpirvDecorations, variableId, spv::DecorationInputAttachmentIndex,
                              {spirv::LiteralInteger(layoutQualifier.inputAttachmentIndex)});
-    }
-
-    if (needsBlendIndex)
-    {
-        spirv::WriteDecorate(&mSpirvDecorations, variableId, spv::DecorationIndex,
-                             {spirv::LiteralInteger(layoutQualifier.index)});
     }
 
     if (needsYuvDecorate)

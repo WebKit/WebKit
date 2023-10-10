@@ -54,62 +54,42 @@ class [[nodiscard]] ScopedSyncCurrentContextFromThread
 // Tries to lock "ContextMutex" of the Context current to the "thread".
 ANGLE_INLINE ScopedContextMutexLock TryLockCurrentContext(Thread *thread)
 {
-    ASSERT(kIsSharedContextMutexEnabled);
+    ASSERT(kIsContextMutexEnabled);
     gl::Context *context = thread->getContext();
-    return context != nullptr ? ScopedContextMutexLock(context->getContextMutex(), context)
+    return context != nullptr ? ScopedContextMutexLock(context->getContextMutex())
                               : ScopedContextMutexLock();
 }
 
-// Tries to lock "ContextMutex" or "SharedContextMutex" of the Context with "contextID" if it is
-// valid, in order to safely use the Context from the "thread".
-// Note: this function may change mutex type to SharedContextMutex.
-ANGLE_INLINE ScopedContextMutexLock TryLockContextForThread(Thread *thread,
-                                                            Display *display,
-                                                            gl::ContextID contextID)
+// Tries to lock "ContextMutex" of the Context with "contextID" if it is valid.
+ANGLE_INLINE ScopedContextMutexLock TryLockContext(Display *display, gl::ContextID contextID)
 {
-    ASSERT(kIsSharedContextMutexEnabled);
+    ASSERT(kIsContextMutexEnabled);
     gl::Context *context = GetContextIfValid(display, contextID);
-    return context != nullptr ? (context == thread->getContext()
-                                     ? ScopedContextMutexLock(context->getContextMutex(), context)
-                                     : context->lockAndActivateSharedContextMutex())
+    return context != nullptr ? ScopedContextMutexLock(context->getContextMutex())
                               : ScopedContextMutexLock();
 }
 
-// Tries to lock "SharedContextMutex" of the Context with "contextID" if it is valid.
-// Note: this function will change mutex type to SharedContextMutex.
-ANGLE_INLINE ScopedContextMutexLock TryLockAndActivateSharedContextMutex(Display *display,
-                                                                         gl::ContextID contextID)
+// Locks "ContextMutex" of the "context" and then tries to merge it with the "ContextMutex" of the
+// Image with "imageID" if it is valid.
+ANGLE_INLINE ScopedContextMutexLock LockAndTryMergeContextMutexes(gl::Context *context,
+                                                                  ImageID imageID)
 {
-    ASSERT(kIsSharedContextMutexEnabled);
-    gl::Context *context = GetContextIfValid(display, contextID);
-    return context != nullptr ? context->lockAndActivateSharedContextMutex()
-                              : ScopedContextMutexLock();
-}
-
-// Locks "SharedContextMutex" of the "context" and then tries to merge it with the
-// "SharedContextMutex" of the Image with "imageID" if it is valid.
-// Note: this function may change mutex type to SharedContextMutex.
-ANGLE_INLINE ScopedContextMutexLock LockAndTryMergeSharedContextMutexes(gl::Context *context,
-                                                                        ImageID imageID)
-{
-    ASSERT(kIsSharedContextMutexEnabled);
+    ASSERT(kIsContextMutexEnabled);
     ASSERT(context->getDisplay() != nullptr);
+    ScopedContextMutexLock lock(context->getContextMutex());
     const Image *image = context->getDisplay()->getImage(imageID);
     if (image != nullptr)
     {
-        ContextMutex *imageMutex = image->getSharedContextMutex();
+        ContextMutex *imageMutex = image->getContextMutex();
         if (imageMutex != nullptr)
         {
-            ScopedContextMutexLock lock = context->lockAndActivateSharedContextMutex();
-            context->mergeSharedContextMutexes(imageMutex);
-            return lock;
+            ContextMutex::Merge(&context->getContextMutex(), imageMutex);
         }
     }
-    // Do not activate "SharedContextMutex" if Image is not valid or does not have the mutex.
-    return ScopedContextMutexLock(context->getContextMutex(), context);
+    return lock;
 }
 
-#if !defined(ANGLE_ENABLE_SHARED_CONTEXT_MUTEX)
+#if !defined(ANGLE_ENABLE_CONTEXT_MUTEX)
 #    define ANGLE_EGL_SCOPED_CONTEXT_LOCK(EP, THREAD, ...)
 #else
 #    define ANGLE_EGL_SCOPED_CONTEXT_LOCK(EP, THREAD, ...) \
@@ -178,17 +158,17 @@ static ANGLE_INLINE void DirtyContextIfNeeded(Context *context)
             DirtyContextIfNeeded(context)
 #        define SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imageID) \
             SCOPED_SHARE_CONTEXT_LOCK(context)
-#    elif !defined(ANGLE_ENABLE_SHARED_CONTEXT_MUTEX)
+#    elif !defined(ANGLE_ENABLE_CONTEXT_MUTEX)
 #        define SCOPED_SHARE_CONTEXT_LOCK(context) \
             egl::ScopedOptionalGlobalMutexLock shareContextLock(context->isShared())
 #        define SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imageID) ANGLE_SCOPED_GLOBAL_LOCK()
 #    else
 #        define SCOPED_SHARE_CONTEXT_LOCK(context) \
-            egl::ScopedContextMutexLock shareContextLock(context->getContextMutex(), context)
+            egl::ScopedContextMutexLock shareContextLock(context->getContextMutex())
 #        define SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imageID) \
             ANGLE_SCOPED_GLOBAL_LOCK();                               \
             egl::ScopedContextMutexLock shareContextLock =            \
-                egl::LockAndTryMergeSharedContextMutexes(context, imageID)
+                egl::LockAndTryMergeContextMutexes(context, imageID)
 #    endif
 #endif
 

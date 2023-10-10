@@ -329,7 +329,6 @@ def angle_builder(name, cpu):
 
     active_experimental_builders = [
         "android-arm64-exp-test",
-        "mac-exp-test",
     ]
 
     if (not is_exp) or (name in active_experimental_builders):

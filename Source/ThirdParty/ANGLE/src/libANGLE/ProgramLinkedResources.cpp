@@ -336,11 +336,10 @@ class ShaderStorageBlockVisitor : public sh::BlockEncoderVisitor
         }
 
         BufferVariable newBufferVariable(variable.type, variable.precision, nameWithArrayIndex,
-                                         variable.arraySizes, mBlockIndex, variableInfo);
+                                         variable.arraySizes, mBlockIndex, mTopLevelArraySize,
+                                         variableInfo);
         newBufferVariable.mappedName = mappedNameWithArrayIndex;
         newBufferVariable.setActive(mShaderType, variable.active, variable.id);
-
-        newBufferVariable.topLevelArraySize = mTopLevelArraySize;
 
         mBufferVariablesOut->push_back(newBufferVariable);
     }
@@ -818,9 +817,9 @@ const char *GetInterfaceBlockTypeString(sh::BlockType blockType)
 {
     switch (blockType)
     {
-        case sh::BlockType::BLOCK_UNIFORM:
+        case sh::BlockType::kBlockUniform:
             return "uniform block";
-        case sh::BlockType::BLOCK_BUFFER:
+        case sh::BlockType::kBlockBuffer:
             return "shader storage block";
         default:
             UNREACHABLE();
@@ -835,10 +834,10 @@ std::string GetInterfaceBlockLimitName(ShaderType shaderType, sh::BlockType bloc
 
     switch (blockType)
     {
-        case sh::BlockType::BLOCK_UNIFORM:
+        case sh::BlockType::kBlockUniform:
             stream << "UNIFORM_BUFFERS";
             break;
-        case sh::BlockType::BLOCK_BUFFER:
+        case sh::BlockType::kBlockBuffer:
             stream << "SHADER_STORAGE_BLOCKS";
             break;
         default:
@@ -1519,7 +1518,7 @@ void InterfaceBlockLinker::defineInterfaceBlock(const GetBlockSizeFunc &getBlock
         // Since all block elements in an array share the same active interface blocks, they
         // will all be active once any block member is used. So, since interfaceBlock.name[0]
         // was active, here we will add every block element in the array.
-        block.dataSize = static_cast<unsigned int>(blockSize);
+        block.pod.dataSize = static_cast<unsigned int>(blockSize);
         mBlocksOut->push_back(block);
     }
 }
@@ -1601,9 +1600,9 @@ void AtomicCounterBufferLinker::link(const std::map<int, unsigned int> &sizeMap)
 {
     for (auto &atomicCounterBuffer : *mAtomicCounterBuffersOut)
     {
-        auto bufferSize = sizeMap.find(atomicCounterBuffer.binding);
+        auto bufferSize = sizeMap.find(atomicCounterBuffer.pod.binding);
         ASSERT(bufferSize != sizeMap.end());
-        atomicCounterBuffer.dataSize = bufferSize->second;
+        atomicCounterBuffer.pod.dataSize = bufferSize->second;
     }
 }
 
@@ -1714,17 +1713,17 @@ void ProgramLinkedResourcesLinker::linkResources(const ProgramState &programStat
 
     // Gather and link atomic counter buffer interface blocks.
     std::map<int, unsigned int> sizeMap;
-    getAtomicCounterBufferSizeMap(programState, sizeMap);
+    getAtomicCounterBufferSizeMap(programState.getExecutable(), sizeMap);
     resources.atomicCounterBufferLinker.link(sizeMap);
 }
 
 void ProgramLinkedResourcesLinker::getAtomicCounterBufferSizeMap(
-    const ProgramState &programState,
+    const ProgramExecutable &executable,
     std::map<int, unsigned int> &sizeMapOut) const
 {
-    for (unsigned int index : programState.getAtomicCounterUniformRange())
+    for (unsigned int index : executable.getAtomicCounterUniformRange())
     {
-        const LinkedUniform &glUniform = programState.getUniforms()[index];
+        const LinkedUniform &glUniform = executable.getUniforms()[index];
 
         auto &bufferDataSize = sizeMapOut[glUniform.getBinding()];
 
@@ -2409,7 +2408,7 @@ bool LinkValidateProgramInterfaceBlocks(const Caps &caps,
         {
             if (!ValidateInterfaceBlocksCount(
                     static_cast<GLuint>(caps.maxShaderUniformBlocks[shaderType]), uniformBlocks,
-                    shaderType, sh::BlockType::BLOCK_UNIFORM, &combinedUniformBlocksCount, infoLog))
+                    shaderType, sh::BlockType::kBlockUniform, &combinedUniformBlocksCount, infoLog))
             {
                 return false;
             }
@@ -2446,7 +2445,7 @@ bool LinkValidateProgramInterfaceBlocks(const Caps &caps,
             {
                 if (!ValidateInterfaceBlocksCount(
                         static_cast<GLuint>(caps.maxShaderStorageBlocks[shaderType]),
-                        shaderStorageBlocks, shaderType, sh::BlockType::BLOCK_BUFFER,
+                        shaderStorageBlocks, shaderType, sh::BlockType::kBlockBuffer,
                         combinedShaderStorageBlocksCountOut, infoLog))
                 {
                     return false;

@@ -412,6 +412,14 @@
                 "MSL 2.1 is required to support all the features of OpenGL ES 2.0"
             ],
             "issue": "http://anglebug.com/8258"
+        },
+        {
+            "name": "rescope_global_variables",
+            "category": "Features",
+            "description": [
+                "Rescope global variables that are only used in one function to be function-local."
+            ],
+            "issue": "http://anglebug.com/8311"
         }
     ]
 }

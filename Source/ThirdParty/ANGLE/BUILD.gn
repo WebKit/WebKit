@@ -81,7 +81,7 @@ declare_args() {
   angle_enable_global_mutex_load_time_allocate =
       is_android && !build_with_chromium
 
-  angle_enable_shared_context_mutex = true
+  angle_enable_context_mutex = true
 }
 
 declare_args() {
@@ -187,9 +187,9 @@ config("internal_config") {
     defines += [ "ANGLE_ENABLE_GLOBAL_MUTEX_LOAD_TIME_ALLOCATE=1" ]
   }
 
-  if (angle_enable_shared_context_mutex && angle_enable_share_context_lock &&
+  if (angle_enable_context_mutex && angle_enable_share_context_lock &&
       !angle_force_context_check_every_call) {
-    defines += [ "ANGLE_ENABLE_SHARED_CONTEXT_MUTEX=1" ]
+    defines += [ "ANGLE_ENABLE_CONTEXT_MUTEX=1" ]
   }
 
   if (angle_enable_context_mutex_recursion) {

@@ -78,6 +78,9 @@ constexpr uint16_t kPipelineCacheVersion = 1;
 
 // Update the pipeline cache every this many swaps.
 constexpr uint32_t kPipelineCacheVkUpdatePeriod = 60;
+// The minimum version of Vulkan that ANGLE requires.  If an instance or device below this version
+// is encountered, initialization will fail.
+constexpr uint32_t kMinimumVulkanAPIVersion = VK_API_VERSION_1_1;
 // Per the Vulkan specification, ANGLE must indicate the highest version of Vulkan functionality
 // that it uses.  The Vulkan validation layers will issue messages for any core functionality that
 // requires a higher version.
@@ -253,7 +256,7 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDraw-None-07845",
     "VUID-vkCmdDraw-None-07848",
     // https://anglebug.com/8128#c3
-    "VUID-VkBufferViewCreateInfo-buffer-00934",
+    "VUID-VkBufferViewCreateInfo-buffer-08779",
     // https://anglebug.com/8203
     "VUID-VkVertexInputBindingDivisorDescriptionEXT-divisor-01870",
     // https://anglebug.com/8237
@@ -267,13 +270,15 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDrawIndexed-None-09003",
     // https://anglebug.com/8334
     "VUID-VkDescriptorImageInfo-imageView-07796",
+    // https://anglebug.com/8349
+    "VUID-VkSamplerCreateInfo-pNext-pNext",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
 // not present.
 constexpr const char *kNoListRestartSkippedMessages[] = {
     // http://anglebug.com/3832
-    "VUID-VkPipelineInputAssemblyStateCreateInfo-topology-00428",
+    "VUID-VkPipelineInputAssemblyStateCreateInfo-topology-06252",
 };
 
 // Some syncval errors are resolved in the presence of the NONE load or store render pass ops.  For
@@ -1281,10 +1286,10 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
         }
     }
 
-    ANGLE_VK_CHECK(
-        displayVk,
-        egl::DecompressBlobCacheData(compressedData.data(), compressedSize, uncompressedData),
-        VK_ERROR_INITIALIZATION_FAILED);
+    ANGLE_VK_CHECK(displayVk,
+                   egl::DecompressBlobCacheData(compressedData.data(), compressedSize,
+                                                uncompressedCacheDataSize, uncompressedData),
+                   VK_ERROR_INITIALIZATION_FAILED);
 
     if (uncompressedData->size() != uncompressedCacheDataSize)
     {
@@ -1423,6 +1428,7 @@ RendererVk::RendererVk()
       mDevice(VK_NULL_HANDLE),
       mDeviceLost(false),
       mSuballocationGarbageSizeInBytes(0),
+      mPendingSuballocationGarbageSizeInBytes(0),
       mSuballocationGarbageDestroyed(0),
       mSuballocationGarbageSizeInBytesCachedAtomic(0),
       mCoherentStagingBufferMemoryTypeIndex(kInvalidMemoryTypeIndex),
@@ -1544,16 +1550,6 @@ bool RendererVk::isDeviceLost() const
     return mDeviceLost;
 }
 
-bool RendererVk::isVulkan11Instance() const
-{
-    return IsVulkan11(mInstanceVersion);
-}
-
-bool RendererVk::isVulkan11Device() const
-{
-    return IsVulkan11(mDeviceVersion);
-}
-
 angle::Result RendererVk::enableInstanceExtensions(
     DisplayVk *displayVk,
     const VulkanLayerVector &enabledInstanceLayerNames,
@@ -1636,16 +1632,8 @@ angle::Result RendererVk::enableInstanceExtensions(
 
     // VK_KHR_external_fence_capabilities and VK_KHR_extenral_semaphore_capabilities are promoted to
     // core in Vulkan 1.1
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsExternalFenceCapabilities,
-        isVulkan11Instance() || ExtensionFound(VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME,
-                                               instanceExtensionNames));
-
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsExternalSemaphoreCapabilities,
-        isVulkan11Instance() ||
-            ExtensionFound(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME,
-                           instanceExtensionNames));
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsExternalFenceCapabilities, true);
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsExternalSemaphoreCapabilities, true);
 
     // On macOS, there is no native Vulkan driver, so we need to enable the
     // portability enumeration extension to allow use of MoltenVK.
@@ -1697,27 +1685,6 @@ angle::Result RendererVk::enableInstanceExtensions(
     if (ExtensionFound(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME, instanceExtensionNames))
     {
         mEnabledInstanceExtensions.push_back(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME);
-    }
-
-    if (!isVulkan11Instance())
-    {
-        if (ExtensionFound(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
-                           instanceExtensionNames))
-        {
-            mEnabledInstanceExtensions.push_back(
-                VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-        }
-
-        if (mFeatures.supportsExternalFenceCapabilities.enabled)
-        {
-            mEnabledInstanceExtensions.push_back(VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME);
-        }
-
-        if (mFeatures.supportsExternalSemaphoreCapabilities.enabled)
-        {
-            mEnabledInstanceExtensions.push_back(
-                VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME);
-        }
     }
 
     if (mFeatures.enablePortabilityEnumeration.enabled)
@@ -1812,13 +1779,19 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
             ANGLE_VK_TRY(displayVk, enumerateInstanceVersion(&mInstanceVersion));
         }
 
-        if (isVulkan11Instance())
+        if (IsVulkan11(mInstanceVersion))
         {
             // This is the highest version of core Vulkan functionality that ANGLE uses.  Per the
             // Vulkan spec, the application is allowed to specify a higher version than supported by
             // the instance.  ANGLE still respects the *device's* version.
             highestApiVersion = kPreferredVulkanAPIVersion;
         }
+    }
+
+    if (mInstanceVersion < kMinimumVulkanAPIVersion)
+    {
+        WARN() << "ANGLE Requires a minimum Vulkan instance version of 1.1";
+        ANGLE_VK_TRY(displayVk, VK_ERROR_INCOMPATIBLE_DRIVER);
     }
 
     ANGLE_TRY(enableInstanceExtensions(displayVk, enabledInstanceLayerNames, wsiExtension,
@@ -1907,21 +1880,6 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
                                                                &mDebugUtilsMessenger));
     }
 
-    if (isVulkan11Instance() ||
-        std::find(mEnabledInstanceExtensions.begin(), mEnabledInstanceExtensions.end(),
-                  VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) !=
-            mEnabledInstanceExtensions.end())
-    {
-#if !defined(ANGLE_SHARED_LIBVULKAN)
-        if (!isVulkan11Instance())
-        {
-            InitGetPhysicalDeviceProperties2KHRFunctions(mInstance);
-        }
-#endif  // !defined(ANGLE_SHARED_LIBVULKAN)
-
-        ASSERT(vkGetPhysicalDeviceProperties2KHR);
-    }
-
     uint32_t physicalDeviceCount = 0;
     ANGLE_VK_TRY(displayVk, vkEnumeratePhysicalDevices(mInstance, &physicalDeviceCount, nullptr));
     ANGLE_VK_CHECK(displayVk, physicalDeviceCount > 0, VK_ERROR_INITIALIZATION_FAILED);
@@ -1941,6 +1899,12 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     // The device version that is assumed by ANGLE is the minimum of the actual device version and
     // the highest it's allowed to use.
     mDeviceVersion = std::min(mPhysicalDeviceProperties.apiVersion, highestApiVersion);
+
+    if (mDeviceVersion < kMinimumVulkanAPIVersion)
+    {
+        WARN() << "ANGLE Requires a minimum Vulkan device version of 1.1";
+        ANGLE_VK_TRY(displayVk, VK_ERROR_INCOMPATIBLE_DRIVER);
+    }
 
     mGarbageCollectionFlushThreshold =
         static_cast<uint32_t>(mPhysicalDeviceProperties.limits.maxMemoryAllocationCount *
@@ -1983,12 +1947,17 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     // mMemoryProperties has been set up.
     mMemoryAllocationTracker.initMemoryTrackers();
 
+    // Determine the threshold for pending garbage sizes.
+    calculatePendingGarbageSizeLimit();
+
     // If only one queue family, go ahead and initialize the device. If there is more than one
     // queue, we'll have to wait until we see a WindowSurface to know which supports present.
     if (queueFamilyMatchCount == 1)
     {
         ANGLE_TRY(initializeDevice(displayVk, firstGraphicsQueueFamily));
     }
+
+    WARN() << "ANGLE VMA version: " << ANGLE_VMA_VERSION;
 
     ANGLE_TRY(initializeMemoryAllocator(displayVk));
 
@@ -2147,6 +2116,10 @@ angle::Result RendererVk::initializeMemoryAllocator(DisplayVk *displayVk)
 // - VK_EXT_legacy_dithering:                          supportsLegacyDithering (feature)
 // - VK_EXT_physical_device_drm:                       hasPrimary (property),
 //                                                     hasRender (property)
+// - VK_EXT_host_image_copy:                           hostImageCopy (feature),
+//                                                     pCopySrcLayouts (property),
+//                                                     pCopyDstLayouts (property),
+//                                                     identicalMemoryTypeRequirements (property)
 //
 void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
     const vk::ExtensionNameList &deviceExtensionNames,
@@ -2282,6 +2255,25 @@ void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
     {
         vk::AddToPNextChain(deviceProperties, &mDrmProperties);
     }
+
+    if (ExtensionFound(VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME, deviceExtensionNames))
+    {
+        // VkPhysicalDeviceHostImageCopyPropertiesEXT has a count + array query.  Typically, that
+        // requires getting the properties once with a nullptr array, to get the count, and then
+        // again with an array of that size.  For simplicity, ANGLE just uses an array that's big
+        // enough.  If that array goes terribly large in the future, ANGLE may lose knowledge of
+        // some likely esoteric layouts, which doesn't really matter.
+        constexpr uint32_t kMaxLayoutCount = 50;
+        mHostImageCopySrcLayoutsStorage.resize(kMaxLayoutCount, VK_IMAGE_LAYOUT_UNDEFINED);
+        mHostImageCopyDstLayoutsStorage.resize(kMaxLayoutCount, VK_IMAGE_LAYOUT_UNDEFINED);
+        mHostImageCopyProperties.copySrcLayoutCount = kMaxLayoutCount;
+        mHostImageCopyProperties.copyDstLayoutCount = kMaxLayoutCount;
+        mHostImageCopyProperties.pCopySrcLayouts    = mHostImageCopySrcLayoutsStorage.data();
+        mHostImageCopyProperties.pCopyDstLayouts    = mHostImageCopyDstLayoutsStorage.data();
+
+        vk::AddToPNextChain(deviceFeatures, &mHostImageCopyFeatures);
+        vk::AddToPNextChain(deviceProperties, &mHostImageCopyProperties);
+    }
 }
 
 // The following features and properties used by ANGLE have been promoted to Vulkan 1.1:
@@ -2302,11 +2294,8 @@ void RendererVk::appendDeviceExtensionFeaturesPromotedTo11(
     VkPhysicalDeviceFeatures2KHR *deviceFeatures,
     VkPhysicalDeviceProperties2 *deviceProperties)
 {
-    if (isVulkan11Device())
-    {
-        vk::AddToPNextChain(deviceProperties, &mSubgroupProperties);
-        vk::AddToPNextChain(deviceFeatures, &mProtectedMemoryFeatures);
-    }
+    vk::AddToPNextChain(deviceProperties, &mSubgroupProperties);
+    vk::AddToPNextChain(deviceFeatures, &mProtectedMemoryFeatures);
 
     if (ExtensionFound(VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME, deviceExtensionNames))
     {
@@ -2573,10 +2562,12 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mTimelineSemaphoreFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
 
-    if (!vkGetPhysicalDeviceProperties2KHR || !vkGetPhysicalDeviceFeatures2KHR)
-    {
-        return;
-    }
+    mHostImageCopyFeatures       = {};
+    mHostImageCopyFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT;
+
+    mHostImageCopyProperties = {};
+    mHostImageCopyProperties.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT;
 
     // Query features and properties.
     VkPhysicalDeviceFeatures2KHR deviceFeatures = {};
@@ -2594,8 +2585,8 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     appendDeviceExtensionFeaturesPromotedTo13(deviceExtensionNames, &deviceFeatures,
                                               &deviceProperties);
 
-    vkGetPhysicalDeviceFeatures2KHR(mPhysicalDevice, &deviceFeatures);
-    vkGetPhysicalDeviceProperties2KHR(mPhysicalDevice, &deviceProperties);
+    vkGetPhysicalDeviceFeatures2(mPhysicalDevice, &deviceFeatures);
+    vkGetPhysicalDeviceProperties2(mPhysicalDevice, &deviceProperties);
 
     // Clean up pNext chains
     mPhysicalDevice11Properties.pNext                       = nullptr;
@@ -2641,6 +2632,8 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mDitheringFeatures.pNext                                = nullptr;
     mDrmProperties.pNext                                    = nullptr;
     mTimelineSemaphoreFeatures.pNext                        = nullptr;
+    mHostImageCopyFeatures.pNext                            = nullptr;
+    mHostImageCopyProperties.pNext                          = nullptr;
 }
 
 // See comment above appendDeviceExtensionFeaturesNotPromoted.  Additional extensions are enabled
@@ -2916,6 +2909,23 @@ void RendererVk::enableDeviceExtensionsNotPromoted(
         vk::AddToPNextChain(&mEnabledFeatures, &mDitheringFeatures);
     }
 
+    if (mFeatures.supportsFormatFeatureFlags2.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME);
+    }
+
+    if (mFeatures.supportsHostImageCopy.enabled)
+    {
+        // VK_EXT_host_image_copy requires VK_KHR_copy_commands2 and VK_KHR_format_feature_flags2.
+        // VK_KHR_format_feature_flags2 is enabled separately.
+        ASSERT(ExtensionFound(VK_KHR_COPY_COMMANDS_2_EXTENSION_NAME, deviceExtensionNames));
+        ASSERT(ExtensionFound(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME, deviceExtensionNames));
+        mEnabledDeviceExtensions.push_back(VK_KHR_COPY_COMMANDS_2_EXTENSION_NAME);
+
+        mEnabledDeviceExtensions.push_back(VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mHostImageCopyFeatures);
+    }
+
 #if defined(ANGLE_PLATFORM_WINDOWS)
     // We only need the VK_EXT_full_screen_exclusive extension if we are opting
     // out of it via VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT (i.e. working
@@ -2954,73 +2964,13 @@ void RendererVk::enableDeviceExtensionsPromotedTo11(
         mPhysicalDevice11Features.protectedMemory = VK_FALSE;
     }
 
-    if (isVulkan11Device())
-    {
-        if (mFeatures.supportsMultiview.enabled)
-        {
-            vk::AddToPNextChain(&mEnabledFeatures, &mMultiviewFeatures);
-        }
-
-        if (mFeatures.supportsYUVSamplerConversion.enabled)
-        {
-            vk::AddToPNextChain(&mEnabledFeatures, &mSamplerYcbcrConversionFeatures);
-        }
-
-        if (mFeatures.supportsProtectedMemory.enabled)
-        {
-            vk::AddToPNextChain(&mEnabledFeatures, &mProtectedMemoryFeatures);
-        }
-
-        return;
-    }
-
-    if (mFeatures.supportsGetMemoryRequirements2.enabled)
-    {
-        mEnabledDeviceExtensions.push_back(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME);
-    }
-
-    if (ExtensionFound(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME, deviceExtensionNames))
-    {
-        mEnabledDeviceExtensions.push_back(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME);
-    }
-
-    if (mFeatures.supportsBindMemory2.enabled)
-    {
-        mEnabledDeviceExtensions.push_back(VK_KHR_BIND_MEMORY_2_EXTENSION_NAME);
-    }
-
-    if (mFeatures.supportsNegativeViewport.enabled)
-    {
-        mEnabledDeviceExtensions.push_back(VK_KHR_MAINTENANCE1_EXTENSION_NAME);
-    }
-
-    if (mFeatures.supportsAndroidHardwareBuffer.enabled ||
-        mFeatures.supportsExternalMemoryFd.enabled ||
-        mFeatures.supportsExternalMemoryFuchsia.enabled)
-    {
-        mEnabledDeviceExtensions.push_back(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME);
-    }
-
-    if (mFeatures.supportsExternalSemaphoreFd.enabled ||
-        mFeatures.supportsExternalSemaphoreFuchsia.enabled)
-    {
-        mEnabledDeviceExtensions.push_back(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME);
-    }
-
-    if (mFeatures.supportsExternalFenceFd.enabled)
-    {
-        mEnabledDeviceExtensions.push_back(VK_KHR_EXTERNAL_FENCE_EXTENSION_NAME);
-    }
-
     if (mFeatures.supportsMultiview.enabled)
     {
-        mEnabledDeviceExtensions.push_back(VK_KHR_MULTIVIEW_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mMultiviewFeatures);
     }
 
     if (mFeatures.supportsYUVSamplerConversion.enabled)
     {
-        mEnabledDeviceExtensions.push_back(VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mSamplerYcbcrConversionFeatures);
     }
 
@@ -3219,18 +3169,6 @@ void RendererVk::initInstanceExtensionEntryPoints()
         InitExternalMemoryHardwareBufferANDROIDFunctions(mInstance);
     }
 #    endif
-
-    if (!isVulkan11Instance())
-    {
-        if (mFeatures.supportsExternalFenceCapabilities.enabled)
-        {
-            InitExternalFenceCapabilitiesFunctions(mInstance);
-        }
-        if (mFeatures.supportsExternalSemaphoreCapabilities.enabled)
-        {
-            InitExternalSemaphoreCapabilitiesFunctions(mInstance);
-        }
-    }
 #endif
 
     // For promoted extensions, initialize their entry points from the core version.
@@ -3260,20 +3198,9 @@ void RendererVk::initDeviceExtensionEntryPoints()
     {
         InitGetPastPresentationTimingGoogleFunction(mDevice);
     }
-    if (!isVulkan11Device())
+    if (mFeatures.supportsHostImageCopy.enabled)
     {
-        if (mFeatures.supportsGetMemoryRequirements2.enabled)
-        {
-            InitGetMemoryRequirements2KHRFunctions(mDevice);
-        }
-        if (mFeatures.supportsBindMemory2.enabled)
-        {
-            InitBindMemory2KHRFunctions(mDevice);
-        }
-        if (mFeatures.supportsYUVSamplerConversion.enabled)
-        {
-            InitSamplerYcbcrKHRFunctions(mDevice);
-        }
+        InitHostImageCopyFunctions(mDevice);
     }
     // Extensions promoted to Vulkan 1.2
     {
@@ -3522,6 +3449,29 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     mMemoryAllocationTracker.onDeviceInit();
 
     return angle::Result::Continue;
+}
+
+void RendererVk::calculatePendingGarbageSizeLimit()
+{
+    // To find the threshold, we want the memory heap that has the largest size among other heaps.
+    VkPhysicalDeviceMemoryProperties memoryProperties;
+    vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &memoryProperties);
+    ASSERT(memoryProperties.memoryHeapCount > 0);
+
+    VkDeviceSize maxHeapSize = memoryProperties.memoryHeaps[0].size;
+    for (size_t i = 0; i < memoryProperties.memoryHeapCount; i++)
+    {
+        VkDeviceSize heapSize = memoryProperties.memoryHeaps[i].size;
+        if (maxHeapSize < heapSize)
+        {
+            maxHeapSize = heapSize;
+        }
+    }
+
+    // We set the limit to a portion of the heap size we found.
+    constexpr float kGarbageSizeLimitCoefficient = 0.2f;
+    mPendingGarbageSizeLimit =
+        static_cast<VkDeviceSize>(maxHeapSize * kGarbageSizeLimitCoefficient);
 }
 
 void RendererVk::initializeValidationMessageSuppressions()
@@ -3980,25 +3930,15 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         WARN() << "Unknown GPU architecture";
     }
 
-    bool supportsNegativeViewport =
-        isVulkan11Device() ||
-        ExtensionFound(VK_KHR_MAINTENANCE1_EXTENSION_NAME, deviceExtensionNames);
-
     ANGLE_FEATURE_CONDITION(&mFeatures, appendAliasedMemoryDecorations, true);
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsSharedPresentableImageExtension,
         ExtensionFound(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME, deviceExtensionNames));
 
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsGetMemoryRequirements2,
-        isVulkan11Device() ||
-            ExtensionFound(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME, deviceExtensionNames));
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsGetMemoryRequirements2, true);
 
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsBindMemory2,
-        isVulkan11Device() ||
-            ExtensionFound(VK_KHR_BIND_MEMORY_2_EXTENSION_NAME, deviceExtensionNames));
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsBindMemory2, true);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, bresenhamLineRasterization,
                             mLineRasterizationFeatures.bresenhamLines == VK_TRUE);
@@ -4018,13 +3958,16 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsHostQueryReset,
                             mHostQueryResetFeatures.hostQueryReset == VK_TRUE);
+    // Avoid any inefficiency that may be caused by host image copy by default.  To be experimented
+    // with to see on which hardware VkHostImageCopyDevicePerformanceQueryEXT::optimalDeviceAccess
+    // is really performing as well as
+    // VkHostImageCopyDevicePerformanceQueryEXT::identicalMemoryLayout.
+    ANGLE_FEATURE_CONDITION(&mFeatures, allowHostImageCopyDespiteNonIdenticalLayout, false);
 
     // VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL and
     // VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL are introduced by
-    // VK_KHR_maintenance2 and promoted to Vulkan 1.1.  For simplicity, this feature is only enabled
-    // on Vulkan 1.1.
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsMixedReadWriteDepthStencilLayouts,
-                            isVulkan11Device());
+    // VK_KHR_maintenance2 and promoted to Vulkan 1.1.
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsMixedReadWriteDepthStencilLayouts, true);
 
     // VK_EXT_pipeline_creation_feedback is promoted to core in Vulkan 1.3.
     ANGLE_FEATURE_CONDITION(
@@ -4133,8 +4076,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         externalFenceInfo.sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
         externalFenceInfo.handleType = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR;
 
-        vkGetPhysicalDeviceExternalFencePropertiesKHR(mPhysicalDevice, &externalFenceInfo,
-                                                      &externalFenceProperties);
+        vkGetPhysicalDeviceExternalFenceProperties(mPhysicalDevice, &externalFenceInfo,
+                                                   &externalFenceProperties);
 
         VkExternalSemaphoreProperties externalSemaphoreProperties = {};
         externalSemaphoreProperties.sType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
@@ -4143,8 +4086,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         externalSemaphoreInfo.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
         externalSemaphoreInfo.handleType = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR;
 
-        vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(mPhysicalDevice, &externalSemaphoreInfo,
-                                                          &externalSemaphoreProperties);
+        vkGetPhysicalDeviceExternalSemaphoreProperties(mPhysicalDevice, &externalSemaphoreInfo,
+                                                       &externalSemaphoreProperties);
 
         ANGLE_FEATURE_CONDITION(
             &mFeatures, supportsAndroidNativeFenceSync,
@@ -4187,6 +4130,10 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsBlendOperationAdvanced,
         ExtensionFound(VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME, deviceExtensionNames));
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsFormatFeatureFlags2,
+        ExtensionFound(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME, deviceExtensionNames));
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsTransformFeedbackExtension,
                             mTransformFeedbackFeatures.transformFeedback == VK_TRUE);
@@ -4286,8 +4233,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
             ExtensionFound(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME, deviceExtensionNames));
 
     // Android pre-rotation support can be disabled.
-    ANGLE_FEATURE_CONDITION(&mFeatures, enablePreRotateSurfaces,
-                            IsAndroid() && supportsNegativeViewport);
+    ANGLE_FEATURE_CONDITION(&mFeatures, enablePreRotateSurfaces, IsAndroid());
 
     // http://anglebug.com/3078
     ANGLE_FEATURE_CONDITION(
@@ -4423,9 +4369,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // required.
     ANGLE_FEATURE_CONDITION(&mFeatures, emulateR32fImageAtomicExchange, true);
 
-    // Negative viewports are exposed in the Maintenance1 extension and in core Vulkan 1.1+.
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsNegativeViewport, supportsNegativeViewport);
-
     // Whether non-conformant configurations and extensions should be exposed. Always disable for
     // MESA Virtio-GPU Venus driver for production purpose.
     ANGLE_FEATURE_CONDITION(&mFeatures, exposeNonConformantExtensionsAndVersions,
@@ -4489,7 +4432,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // Disable the usage of VK_EXT_legacy_dithering on ARM until the driver bug
     // http://issuetracker.google.com/293136916, http://issuetracker.google.com/292282210 are fixed.
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsLegacyDithering,
-                            mDitheringFeatures.legacyDithering == VK_TRUE && !isARM);
+                            mDitheringFeatures.legacyDithering == VK_TRUE);
 
     // Applications on Android have come to rely on hardware dithering, and visually regress without
     // it.  On desktop GPUs, OpenGL's dithering is a no-op.  The following setting mimics that
@@ -4757,6 +4700,16 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                             IsAndroid() && ExtensionFound(VK_GOOGLE_DISPLAY_TIMING_EXTENSION_NAME,
                                                           deviceExtensionNames));
 
+    // Only enable VK_EXT_host_image_copy on hardware where identicalMemoryTypeRequirements is set.
+    // That lets ANGLE avoid having to fallback to non-host-copyable image allocations if the
+    // host-copyable one fails due to out-of-that-specific-kind-of-memory.
+    //
+    // Disabled on Fuchsia until they upgrade their version of VVL.
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsHostImageCopy,
+                            mHostImageCopyFeatures.hostImageCopy == VK_TRUE &&
+                                mHostImageCopyProperties.identicalMemoryTypeRequirements &&
+                                !IsFuchsia());
+
     // 1) host vk driver does not natively support ETC format.
     // 2) host vk driver supports BC format.
     // 3) host vk driver supports subgroup instructions: clustered, shuffle.
@@ -4962,6 +4915,12 @@ void RendererVk::initializeFrontendFeatures(angle::FrontendFeatures *features) c
     ANGLE_FEATURE_CONDITION(features, forceGlErrorChecking, (IsAndroid() && isSwiftShader));
 
     ANGLE_FEATURE_CONDITION(features, cacheCompiledShader, true);
+
+    // https://issuetracker.google.com/292285899
+    ANGLE_FEATURE_CONDITION(features, uncurrentEglSurfaceUponSurfaceDestroy, true);
+
+    // The Vulkan backend's handling of link is thread-safe
+    ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, true);
 }
 
 angle::Result RendererVk::getPipelineCacheSize(DisplayVk *displayVk, size_t *pipelineCacheSizeOut)
@@ -5344,6 +5303,7 @@ void RendererVk::cleanupPendingSubmissionGarbage()
             mPendingSubmissionSuballocationGarbage.front();
         if (suballocationGarbage.hasResourceUseSubmitted(this))
         {
+            mPendingSuballocationGarbageSizeInBytes -= suballocationGarbage.getSize();
             mSuballocationGarbageSizeInBytes += suballocationGarbage.getSize();
             mSuballocationGarbage.push(std::move(suballocationGarbage));
         }
@@ -5453,36 +5413,32 @@ void RendererVk::reloadVolkIfNeeded() const
 
 void RendererVk::initializeInstanceExtensionEntryPointsFromCore() const
 {
-    if (isVulkan11Instance())
+    // Initialize extension entry points from core ones.  In some cases, such as VMA, the extension
+    // entry point is unconditionally used.
+    InitGetPhysicalDeviceProperties2KHRFunctionsFromCore();
+    if (mFeatures.supportsExternalFenceCapabilities.enabled)
     {
-        InitGetPhysicalDeviceProperties2KHRFunctionsFromCore();
-        if (mFeatures.supportsExternalFenceCapabilities.enabled)
-        {
-            InitExternalFenceCapabilitiesFunctionsFromCore();
-        }
-        if (mFeatures.supportsExternalSemaphoreCapabilities.enabled)
-        {
-            InitExternalSemaphoreCapabilitiesFunctionsFromCore();
-        }
+        InitExternalFenceCapabilitiesFunctionsFromCore();
+    }
+    if (mFeatures.supportsExternalSemaphoreCapabilities.enabled)
+    {
+        InitExternalSemaphoreCapabilitiesFunctionsFromCore();
     }
 }
 
 void RendererVk::initializeDeviceExtensionEntryPointsFromCore() const
 {
-    if (isVulkan11Device())
+    if (mFeatures.supportsGetMemoryRequirements2.enabled)
     {
-        if (mFeatures.supportsGetMemoryRequirements2.enabled)
-        {
-            InitGetMemoryRequirements2KHRFunctionsFromCore();
-        }
-        if (mFeatures.supportsBindMemory2.enabled)
-        {
-            InitBindMemory2KHRFunctionsFromCore();
-        }
-        if (mFeatures.supportsYUVSamplerConversion.enabled)
-        {
-            InitSamplerYcbcrKHRFunctionsFromCore();
-        }
+        InitGetMemoryRequirements2KHRFunctionsFromCore();
+    }
+    if (mFeatures.supportsBindMemory2.enabled)
+    {
+        InitBindMemory2KHRFunctionsFromCore();
+    }
+    if (mFeatures.supportsYUVSamplerConversion.enabled)
+    {
+        InitSamplerYcbcrKHRFunctionsFromCore();
     }
 }
 
@@ -5876,121 +5832,52 @@ ImageMemorySuballocator::~ImageMemorySuballocator() {}
 
 void ImageMemorySuballocator::destroy(RendererVk *renderer) {}
 
-VkResult ImageMemorySuballocator::allocateAndBindMemory(Context *context,
-                                                        Image *image,
-                                                        const VkImageCreateInfo *imageCreateInfo,
-                                                        VkMemoryPropertyFlags requiredFlags,
-                                                        VkMemoryPropertyFlags preferredFlags,
-                                                        MemoryAllocationType memoryAllocationType,
-                                                        Allocation *allocationOut,
-                                                        VkMemoryPropertyFlags *memoryFlagsOut,
-                                                        uint32_t *memoryTypeIndexOut,
-                                                        VkDeviceSize *sizeOut)
+VkResult ImageMemorySuballocator::allocateAndBindMemory(
+    Context *context,
+    Image *image,
+    const VkImageCreateInfo *imageCreateInfo,
+    VkMemoryPropertyFlags requiredFlags,
+    VkMemoryPropertyFlags preferredFlags,
+    const VkMemoryRequirements *memoryRequirements,
+    const bool allocateDedicatedMemory,
+    MemoryAllocationType memoryAllocationType,
+    Allocation *allocationOut,
+    VkMemoryPropertyFlags *memoryFlagsOut,
+    uint32_t *memoryTypeIndexOut,
+    VkDeviceSize *sizeOut)
 {
     ASSERT(image && image->valid());
     ASSERT(allocationOut && !allocationOut->valid());
     RendererVk *renderer       = context->getRenderer();
     const Allocator &allocator = renderer->getAllocator();
 
-    VkMemoryRequirements memoryRequirements;
-    image->getMemoryRequirements(renderer->getDevice(), &memoryRequirements);
-    bool allocateDedicatedMemory =
-        memoryRequirements.size >= kImageSizeThresholdForDedicatedMemoryAllocation;
+    // Avoid device-local and host-visible combinations if possible. Here, "preferredFlags" is
+    // expected to be the same as "requiredFlags" except in the device-local bit.
+    ASSERT((preferredFlags & ~VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) ==
+           (requiredFlags & ~VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
 
-    // Avoid device-local and host-visible combinations if possible. Here, the device-local bit is
-    // included in "preferredFlags", which is also expected to contain the required flags.
-    ASSERT((preferredFlags & ~VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) == requiredFlags);
-
-    uint32_t memoryTypeBits = memoryRequirements.memoryTypeBits;
-    if ((preferredFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0)
+    uint32_t memoryTypeBits = memoryRequirements->memoryTypeBits;
+    if ((requiredFlags & preferredFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0)
     {
         memoryTypeBits = GetMemoryTypeBitsExcludingHostVisible(renderer, preferredFlags,
-                                                               memoryRequirements.memoryTypeBits);
+                                                               memoryRequirements->memoryTypeBits);
     }
 
-    // Allocate and bind memory for the image. Try allocating on the device first. If unsuccessful,
-    // it is possible to retry allocation after cleaning the garbage.
-    VkResult result;
-    bool anyBatchCleaned             = false;
-    uint32_t batchesWaitedAndCleaned = 0;
+    // Allocate and bind memory for the image. Try allocating on the device first.
+    VkResult result = vma::AllocateAndBindMemoryForImage(
+        allocator.getHandle(), &image->mHandle, requiredFlags, preferredFlags, memoryTypeBits,
+        allocateDedicatedMemory, &allocationOut->mHandle, memoryTypeIndexOut, sizeOut);
 
-    do
+    // We need to get the property flags of the allocated memory if successful.
+    if (result == VK_SUCCESS)
     {
-        result = vma::AllocateAndBindMemoryForImage(
-            allocator.getHandle(), &image->mHandle, preferredFlags, preferredFlags, memoryTypeBits,
-            allocateDedicatedMemory, &allocationOut->mHandle, memoryTypeIndexOut, sizeOut);
+        *memoryFlagsOut =
+            renderer->getMemoryProperties().getMemoryType(*memoryTypeIndexOut).propertyFlags;
 
-        if (result != VK_SUCCESS)
-        {
-            // If there is an error in command batch finish, a device OOM error will be returned.
-            if (renderer->finishOneCommandBatchAndCleanup(context, &anyBatchCleaned) ==
-                angle::Result::Stop)
-            {
-                return VK_ERROR_OUT_OF_DEVICE_MEMORY;
-            }
-
-            if (anyBatchCleaned)
-            {
-                batchesWaitedAndCleaned++;
-            }
-        }
-    } while (result != VK_SUCCESS && anyBatchCleaned);
-
-    if (batchesWaitedAndCleaned > 0)
-    {
-        INFO() << "Initial allocation failed. Waited for " << batchesWaitedAndCleaned
-               << " commands to finish and free garbage | Allocation result: "
-               << ((result == VK_SUCCESS) ? "SUCCESS" : "FAIL");
+        renderer->onMemoryAlloc(memoryAllocationType, *sizeOut, *memoryTypeIndexOut,
+                                allocationOut->getHandle());
     }
-
-    // If there is still no space for the new allocation, the allocation may still be made outside
-    // the device from all other memory types, although it will result in performance penalty.
-    if (result != VK_SUCCESS)
-    {
-        memoryTypeBits = memoryRequirements.memoryTypeBits;
-        result         = vma::AllocateAndBindMemoryForImage(
-            allocator.getHandle(), &image->mHandle, requiredFlags, preferredFlags, memoryTypeBits,
-            allocateDedicatedMemory, &allocationOut->mHandle, memoryTypeIndexOut, sizeOut);
-
-        INFO()
-            << "Allocation failed. Removed the DEVICE_LOCAL bit requirement | Allocation result: "
-            << ((result == VK_SUCCESS) ? "SUCCESS" : "FAIL");
-    }
-
-    // At the end, if all available options fail, we should return the appropriate out-of-memory
-    // error.
-    if (result != VK_SUCCESS)
-    {
-        // Record the failed memory allocation.
-        uint32_t pendingMemoryTypeIndex;
-        if (vma::FindMemoryTypeIndexForImageInfo(
-                allocator.getHandle(), imageCreateInfo, requiredFlags, preferredFlags,
-                allocateDedicatedMemory, &pendingMemoryTypeIndex) == VK_SUCCESS)
-        {
-            renderer->getMemoryAllocationTracker()->setPendingMemoryAlloc(
-                memoryAllocationType, memoryRequirements.size, pendingMemoryTypeIndex);
-        }
-
-        return result;
-    }
-
-    // We need to get the property flags of the allocated memory.
-    *memoryFlagsOut =
-        renderer->getMemoryProperties().getMemoryType(*memoryTypeIndexOut).propertyFlags;
-    if ((~(*memoryFlagsOut) & preferredFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0)
-    {
-        // For images allocated here, although allocation is preferred on the device, it is not
-        // required.
-        ASSERT((requiredFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) == 0);
-        renderer->getMemoryAllocationTracker()->compareExpectedFlagsWithAllocatedFlags(
-            requiredFlags, preferredFlags, *memoryFlagsOut,
-            reinterpret_cast<void *>(allocationOut->getHandle()));
-        context->getPerfCounters().deviceMemoryImageAllocationFallbacks++;
-    }
-
-    renderer->onMemoryAlloc(memoryAllocationType, *sizeOut, *memoryTypeIndexOut,
-                            allocationOut->getHandle());
-    return VK_SUCCESS;
+    return result;
 }
 
 VkResult ImageMemorySuballocator::mapMemoryAndInitWithNonZeroValue(RendererVk *renderer,
@@ -6019,6 +5906,11 @@ VkResult ImageMemorySuballocator::mapMemoryAndInitWithNonZeroValue(RendererVk *r
     }
 
     return VK_SUCCESS;
+}
+
+bool ImageMemorySuballocator::needsDedicatedMemory(VkDeviceSize size) const
+{
+    return size >= kImageSizeThresholdForDedicatedMemoryAllocation;
 }
 
 }  // namespace vk

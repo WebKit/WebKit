@@ -17,11 +17,13 @@
 #include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "gpu_info_util/SystemInfo_internal.h"
+#include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/RenderTargetMtl.h"
 #include "libANGLE/renderer/metal/mtl_render_utils.h"
 #include "libANGLE/renderer/metal/process.h"
+#include "platform/PlatformMethods.h"
 
 // Compiler can turn on programmatical frame capture in release build by defining
 // ANGLE_METAL_FRAME_CAPTURE flag.
@@ -917,6 +919,9 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
             options.preprocessorMacros = macroDict;
         }
 
+        auto *platform   = ANGLEPlatformCurrent();
+        double startTime = platform->currentTime(platform);
+
         auto library = metalDevice.newLibraryWithSource(nsSource, options, &nsError);
         if (angle::GetEnvironmentVar(kANGLEPrintMSLEnv)[0] == '1')
         {
@@ -924,6 +929,10 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
         }
         [nsSource ANGLE_MTL_AUTORELEASE];
         *errorOut = std::move(nsError);
+
+        double endTime = platform->currentTime(platform);
+        int us         = static_cast<int>((endTime - startTime) * 1000'000.0);
+        ANGLE_HISTOGRAM_COUNTS("GPU.ANGLE.MetalShaderCompilationTimeUs", us);
 
         return library;
     }
@@ -1018,8 +1027,15 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
                                                  freeWhenDone:NO];
         auto options  = [[[MTLCompileOptions alloc] init] ANGLE_MTL_AUTORELEASE];
 
+        auto *platform   = ANGLEPlatformCurrent();
+        double startTime = platform->currentTime(platform);
+
         NSError *nsError = nil;
         auto library = [metalDevice newLibraryWithSource:nsSource options:options error:&nsError];
+
+        double endTime = platform->currentTime(platform);
+        ERR() << "CreateShaderLibrary newLibraryWithSource duration: "
+              << (endTime - startTime) * 1000.0 << "ms";
 
         [nsSource ANGLE_MTL_AUTORELEASE];
 
@@ -1058,6 +1074,10 @@ MTLTextureType GetTextureType(gl::TextureType glType)
     {
         case gl::TextureType::_2D:
             return MTLTextureType2D;
+        case gl::TextureType::_2DArray:
+            return MTLTextureType2DArray;
+        case gl::TextureType::_3D:
+            return MTLTextureType3D;
         case gl::TextureType::CubeMap:
             return MTLTextureTypeCube;
         default:
@@ -1456,7 +1476,7 @@ NSUInteger GetMaxNumberOfRenderTargetsForDevice(const mtl::ContextDevice &device
 
 bool DeviceHasMaximumRenderTargetSize(id<MTLDevice> device)
 {
-    return SupportsAppleGPUFamily(device, 1);
+    return !SupportsMacGPUFamily(device, 1);
 }
 
 bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)

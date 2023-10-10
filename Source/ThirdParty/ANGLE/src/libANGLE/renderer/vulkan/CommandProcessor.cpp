@@ -1249,6 +1249,7 @@ angle::Result CommandQueue::waitForResourceUseToFinishWithUserTimeout(Context *c
     size_t finishedCount = 0;
     {
         std::unique_lock<std::mutex> lock(mMutex);
+        *result = hasResourceUseFinished(use) ? VK_SUCCESS : VK_NOT_READY;
         while (!mInFlightCommands.empty() && !hasResourceUseFinished(use))
         {
             bool finished;
@@ -1265,6 +1266,10 @@ angle::Result CommandQueue::waitForResourceUseToFinishWithUserTimeout(Context *c
                 {
                     ANGLE_VK_TRY(context, *result);
                 }
+            }
+            else
+            {
+                *result = hasResourceUseFinished(use) ? VK_SUCCESS : VK_NOT_READY;
             }
         }
         // Do one more check in case more commands also finished.

@@ -331,7 +331,7 @@ class ProgramLinkedResourcesLinker final : angle::NonCopyable
                        const ProgramLinkedResources &resources) const;
 
   private:
-    void getAtomicCounterBufferSizeMap(const ProgramState &programState,
+    void getAtomicCounterBufferSizeMap(const ProgramExecutable &executable,
                                        std::map<int, unsigned int> &sizeMapOut) const;
 
     CustomBlockLayoutEncoderFactory *mCustomEncoderFactory;

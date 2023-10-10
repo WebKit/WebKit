@@ -51,7 +51,8 @@ angle::Result WindowSurfaceVkWayland::createSurfaceVk(vk::Context *context, gl::
 {
     ANGLE_VK_CHECK(context,
                    vkGetPhysicalDeviceWaylandPresentationSupportKHR(
-                       context->getRenderer()->getPhysicalDevice(), 0, mWaylandDisplay),
+                       context->getRenderer()->getPhysicalDevice(),
+                       context->getRenderer()->getQueueFamilyIndex(), mWaylandDisplay),
                    VK_ERROR_INITIALIZATION_FAILED);
 
     wl_egl_window *eglWindow = reinterpret_cast<wl_egl_window *>(mNativeWindowType);

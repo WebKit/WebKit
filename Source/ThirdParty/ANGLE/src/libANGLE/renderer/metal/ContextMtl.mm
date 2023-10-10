@@ -2720,8 +2720,8 @@ angle::Result ContextMtl::handleDirtyRenderPass(const gl::Context *context)
 
 angle::Result ContextMtl::handleDirtyActiveTextures(const gl::Context *context)
 {
-    const gl::State &glState   = mState;
-    const gl::Program *program = glState.getProgram();
+    const gl::State &glState                = mState;
+    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
 
     constexpr auto ensureTextureCreated = [](const gl::Context *context,
                                              gl::Texture *texture) -> angle::Result {
@@ -2740,14 +2740,14 @@ angle::Result ContextMtl::handleDirtyActiveTextures(const gl::Context *context)
     };
 
     const gl::ActiveTexturesCache &textures     = glState.getActiveTexturesCache();
-    const gl::ActiveTextureMask &activeTextures = program->getExecutable().getActiveSamplersMask();
+    const gl::ActiveTextureMask &activeTextures = executable->getActiveSamplersMask();
 
     for (size_t textureUnit : activeTextures)
     {
         ANGLE_TRY(ensureTextureCreated(context, textures[textureUnit]));
     }
 
-    for (size_t imageUnit : program->getExecutable().getActiveImagesMask())
+    for (size_t imageUnit : executable->getActiveImagesMask())
     {
         ANGLE_TRY(ensureTextureCreated(context, glState.getImageUnit(imageUnit).texture.get()));
     }

@@ -400,6 +400,13 @@ struct FeaturesMtl : FeatureSetBase
         &members, "http://anglebug.com/8258"
     };
 
+    FeatureInfo rescopeGlobalVariables = {
+        "rescopeGlobalVariables",
+        FeatureCategory::MetalFeatures,
+        "Rescope global variables that are only used in one function to be function-local.",
+        &members, "http://anglebug.com/8311"
+    };
+
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

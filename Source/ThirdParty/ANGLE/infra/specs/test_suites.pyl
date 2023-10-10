@@ -1273,7 +1273,7 @@
       'angle_unit_gtests',
     ],
 
-    'common_isolated_scripts': [
+    'isolated_scripts_group_common': [
       'angle_capture_isolated_scripts',
       'angle_perf_smoke_isolated_scripts',
       'angle_restricted_trace_gold_isolated_scripts',
@@ -1282,10 +1282,15 @@
       'angle_trace_perf_vulkan_smoke_isolated_scripts',
     ],
 
-    'common_perf_isolated_scripts': [
+    'isolated_scripts_group_perf': [
       'angle_perf_isolated_scripts',
       'angle_trace_perf_native_isolated_scripts',
       'angle_trace_perf_vulkan_isolated_scripts',
+    ],
+
+    'isolated_scripts_group_pixel6': [
+      'angle_capture_isolated_scripts',
+      'angle_restricted_trace_gold_isolated_scripts',
     ],
 
     'linux_intel_gtests': [

@@ -615,6 +615,8 @@ void Shader::resolveCompile(const Context *context)
     bool success          = mCompilingState->compileEvent->postTranslate(&mInfoLog);
     mState.mCompileStatus = success ? CompileStatus::COMPILED : CompileStatus::NOT_COMPILED;
 
+    mState.mCompiledState->successfullyCompiled = success;
+
     MemoryShaderCache *shaderCache = context->getMemoryShaderCache();
     if (success && shaderCache)
     {
@@ -678,11 +680,9 @@ angle::Result Shader::serialize(const Context *context, angle::MemoryBuffer *bin
     ASSERT(binaryOut);
     if (!binaryOut->resize(stream.length()))
     {
-        std::stringstream sstream;
-        sstream << "Failed to allocate enough memory to serialize a shader. (" << stream.length()
-                << " bytes )";
         ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
-                           sstream.str().c_str());
+                           "Failed to allocate enough memory to serialize a shader. (%zu bytes)",
+                           stream.length());
         return angle::Result::Incomplete;
     }
 
@@ -772,7 +772,8 @@ angle::Result Shader::loadBinaryImpl(const Context *context,
 
     // Only successfully-compiled shaders are serialized. If deserialization is successful, we can
     // assume the CompileStatus.
-    mState.mCompileStatus = CompileStatus::COMPILED;
+    mState.mCompileStatus                       = CompileStatus::COMPILED;
+    mState.mCompiledState->successfullyCompiled = true;
 
     return angle::Result::Continue;
 }

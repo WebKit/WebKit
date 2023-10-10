@@ -12,6 +12,7 @@
 #include <array>
 #include <limits>
 
+#include "common/android_util.h"
 #include "common/mathutil.h"
 #include "common/platform.h"
 #include "common/string_utils.h"
@@ -21,6 +22,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/queryconversions.h"
+#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/FenceNVGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
@@ -154,21 +156,6 @@ bool IsMaliValhall(const FunctionsGL *functions)
     int number = getMaliGNumber(functions);
     return number == 57 || number == 77 || number == 68 || number == 78 || number == 310 ||
            number == 510 || number == 610 || number == 710 || number == 615 || number == 715;
-}
-
-int GetAndroidSdkLevel()
-{
-    if (!IsAndroid())
-    {
-        return 0;
-    }
-
-    angle::SystemInfo info;
-    if (!angle::GetSystemInfo(&info))
-    {
-        return 0;
-    }
-    return info.androidSdkLevel;
 }
 
 [[maybe_unused]] bool IsAndroidEmulator(const FunctionsGL *functions)
@@ -2407,7 +2394,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(
         features, disableTimestampQueries,
         (IsLinux() && isVMWare) || (IsAndroid() && isNvidia) ||
-            (IsAndroid() && GetAndroidSdkLevel() < 27 && IsAdreno5xxOrOlder(functions)) ||
+            (IsAndroid() && GetAndroidSDKVersion() < 27 && IsAdreno5xxOrOlder(functions)) ||
             (!isMesa && IsMaliT8xxOrOlder(functions)) || (!isMesa && IsMaliG31OrOlder(functions)));
 
     ANGLE_FEATURE_CONDITION(features, decodeEncodeSRGBForGenerateMipmap, IsApple());
@@ -2508,17 +2495,17 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // http://crbug.com/490379
     // http://crbug.com/767913
     bool isAdreno4xxOnAndroidLessThan51 =
-        IsAndroid() && IsAdreno4xx(functions) && GetAndroidSdkLevel() < 22;
+        IsAndroid() && IsAdreno4xx(functions) && GetAndroidSDKVersion() < 22;
 
     // http://crbug.com/612474
     bool isAdreno4xxOnAndroid70 =
-        IsAndroid() && IsAdreno4xx(functions) && GetAndroidSdkLevel() == 24;
+        IsAndroid() && IsAdreno4xx(functions) && GetAndroidSDKVersion() == 24;
     bool isAdreno5xxOnAndroidLessThan70 =
-        IsAndroid() && IsAdreno5xx(functions) && GetAndroidSdkLevel() < 24;
+        IsAndroid() && IsAdreno5xx(functions) && GetAndroidSDKVersion() < 24;
 
     // http://crbug.com/663811
     bool isAdreno5xxOnAndroid71 =
-        IsAndroid() && IsAdreno5xx(functions) && GetAndroidSdkLevel() == 25;
+        IsAndroid() && IsAdreno5xx(functions) && GetAndroidSDKVersion() == 25;
 
     // http://crbug.com/594016
     bool isLinuxVivante = IsLinux() && IsVivante(device);
@@ -2596,7 +2583,8 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     // https://anglebug.com/8319
     ANGLE_FEATURE_CONDITION(features, disableTextureMirrorClampToEdge,
-                            functions->standard == STANDARD_GL_ES && isMesa);
+                            functions->standard == STANDARD_GL_ES && isMesa &&
+                                mesaVersion < (std::array<int, 3>{23, 1, 7}));
 
     // http://anglebug.com/8172
     ANGLE_FEATURE_CONDITION(features, disableBaseInstanceVertex, IsMaliValhall(functions));
@@ -2621,6 +2609,15 @@ void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFea
     // https://crbug.com/480992
     // Disable shader program cache to workaround PowerVR Rogue issues.
     ANGLE_FEATURE_CONDITION(features, disableProgramBinary, IsPowerVrRogue(functions));
+
+    // The link job needs a context, and previous experiments showed setting up temp contexts in
+    // threads for the sake of program link triggers too many driver bugs.  See
+    // https://chromium-review.googlesource.com/c/angle/angle/+/4774785 for context.
+    //
+    // As a result, the link job is done in the same thread as the link call.  If the native driver
+    // supports parallel link, it's still done internally by the driver, and ANGLE supports delaying
+    // post-link operations until that is done.
+    ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, false);
 }
 
 void ReInitializeFeaturesAtGPUSwitch(const FunctionsGL *functions, angle::FeaturesGL *features)

@@ -494,6 +494,23 @@ constexpr angle::PackedEnumMap<ImageLayout, ImageMemoryBarrierData> kImageMemory
         },
     },
     {
+        ImageLayout::HostCopy,
+        ImageMemoryBarrierData{
+            "HostCopy",
+            VK_IMAGE_LAYOUT_GENERAL,
+            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+            // Transition to: we don't expect to transition into HostCopy on the GPU.
+            0,
+            // Transition from: the data was initialized in the image by the host.  Note that we
+            // only transition to this layout if the image was previously in UNDEFINED, in which
+            // case it didn't contain any data prior to the host copy either.
+            0,
+            ResourceAccess::ReadOnly,
+            PipelineStage::InvalidEnum,
+        },
+    },
+    {
         ImageLayout::VertexShaderReadOnly,
         ImageMemoryBarrierData{
             "VertexShaderReadOnly",
@@ -878,7 +895,7 @@ bool CanCopyWithTransferForCopyImage(RendererVk *renderer,
                                dstImage->getActualFormatID(), dstTilingMode);
 }
 
-void ReleaseBufferListToRenderer(RendererVk *renderer, BufferHelperPointerVector *buffers)
+void ReleaseBufferListToRenderer(RendererVk *renderer, BufferHelperQueue *buffers)
 {
     for (std::unique_ptr<BufferHelper> &toFree : *buffers)
     {
@@ -887,7 +904,7 @@ void ReleaseBufferListToRenderer(RendererVk *renderer, BufferHelperPointerVector
     buffers->clear();
 }
 
-void DestroyBufferList(RendererVk *renderer, BufferHelperPointerVector *buffers)
+void DestroyBufferList(RendererVk *renderer, BufferHelperQueue *buffers)
 {
     for (std::unique_ptr<BufferHelper> &toDestroy : *buffers)
     {
@@ -977,6 +994,12 @@ bool CheckSubpassCommandBufferCount(uint32_t count)
     // Custom command buffer (priv::SecondaryCommandBuffer) may contain commands for multiple
     // subpasses, therefore we do not need multiple buffers.
     return (count == 1 || !RenderPassCommandBuffer::ExecutesInline());
+}
+
+bool IsAnyLayout(VkImageLayout needle, const VkImageLayout *haystack, uint32_t haystackCount)
+{
+    const VkImageLayout *haystackEnd = haystack + haystackCount;
+    return std::find(haystack, haystackEnd, needle) != haystackEnd;
 }
 }  // anonymous namespace
 
@@ -3098,7 +3121,7 @@ angle::Result DynamicBuffer::allocate(Context *context,
     else
     {
         mBuffer = std::move(mBufferFreeList.front());
-        mBufferFreeList.erase(mBufferFreeList.begin());
+        mBufferFreeList.pop_front();
     }
 
     ASSERT(mBuffer->getBlockMemorySize() == mSize);
@@ -3334,7 +3357,7 @@ void BufferPool::pruneEmptyBuffers(RendererVk *renderer)
     mNumberOfNewBuffersNeededSinceLastPrune = 0;
 }
 
-angle::Result BufferPool::allocateNewBuffer(Context *context, VkDeviceSize sizeInBytes)
+VkResult BufferPool::allocateNewBuffer(Context *context, VkDeviceSize sizeInBytes)
 {
     RendererVk *renderer       = context->getRenderer();
     const Allocator &allocator = renderer->getAllocator();
@@ -3343,7 +3366,7 @@ angle::Result BufferPool::allocateNewBuffer(Context *context, VkDeviceSize sizeI
         renderer->getMemoryProperties().getHeapSizeForMemoryType(mMemoryTypeIndex);
 
     // First ensure we are not exceeding the heapSize to avoid the validation error.
-    ANGLE_VK_CHECK(context, sizeInBytes <= heapSize, VK_ERROR_OUT_OF_DEVICE_MEMORY);
+    VK_RESULT_CHECK(sizeInBytes <= heapSize, VK_ERROR_OUT_OF_DEVICE_MEMORY);
 
     // Double the size until meet the requirement. This also helps reducing the fragmentation. Since
     // this is global pool, we have less worry about memory waste.
@@ -3368,25 +3391,25 @@ angle::Result BufferPool::allocateNewBuffer(Context *context, VkDeviceSize sizeI
     allocator.getMemoryTypeProperties(mMemoryTypeIndex, &memoryPropertyFlags);
 
     DeviceScoped<Buffer> buffer(renderer->getDevice());
-    ANGLE_VK_TRY(context, buffer.get().init(context->getDevice(), createInfo));
+    VK_RESULT_TRY(buffer.get().init(context->getDevice(), createInfo));
 
     DeviceScoped<DeviceMemory> deviceMemory(renderer->getDevice());
     VkMemoryPropertyFlags memoryPropertyFlagsOut;
     VkDeviceSize sizeOut;
     uint32_t memoryTypeIndex;
-    ANGLE_TRY(AllocateBufferMemory(context, MemoryAllocationType::Buffer, memoryPropertyFlags,
-                                   &memoryPropertyFlagsOut, nullptr, &buffer.get(),
-                                   &memoryTypeIndex, &deviceMemory.get(), &sizeOut));
+    VK_RESULT_TRY(AllocateBufferMemory(context, MemoryAllocationType::Buffer, memoryPropertyFlags,
+                                       &memoryPropertyFlagsOut, nullptr, &buffer.get(),
+                                       &memoryTypeIndex, &deviceMemory.get(), &sizeOut));
     ASSERT(sizeOut >= mSize);
 
     // Allocate bufferBlock
     std::unique_ptr<BufferBlock> block = std::make_unique<BufferBlock>();
-    ANGLE_TRY(block->init(context, buffer.get(), memoryTypeIndex, mVirtualBlockCreateFlags,
-                          deviceMemory.get(), memoryPropertyFlagsOut, mSize));
+    VK_RESULT_TRY(block->init(context, buffer.get(), memoryTypeIndex, mVirtualBlockCreateFlags,
+                              deviceMemory.get(), memoryPropertyFlagsOut, mSize));
 
     if (mHostVisible)
     {
-        ANGLE_VK_TRY(context, block->map(context->getDevice()));
+        VK_RESULT_TRY(block->map(context->getDevice()));
     }
 
     mTotalMemorySize += block->getMemorySize();
@@ -3394,13 +3417,13 @@ angle::Result BufferPool::allocateNewBuffer(Context *context, VkDeviceSize sizeI
     mBufferBlocks.push_back(std::move(block));
     context->getPerfCounters().allocateNewBufferBlockCalls++;
 
-    return angle::Result::Continue;
+    return VK_SUCCESS;
 }
 
-angle::Result BufferPool::allocateBuffer(Context *context,
-                                         VkDeviceSize sizeInBytes,
-                                         VkDeviceSize alignment,
-                                         BufferSuballocation *suballocation)
+VkResult BufferPool::allocateBuffer(Context *context,
+                                    VkDeviceSize sizeInBytes,
+                                    VkDeviceSize alignment,
+                                    BufferSuballocation *suballocation)
 {
     ASSERT(alignment);
     VmaVirtualAllocation allocation;
@@ -3413,7 +3436,7 @@ angle::Result BufferPool::allocateBuffer(Context *context,
             context->getRenderer()->getMemoryProperties().getHeapSizeForMemoryType(
                 mMemoryTypeIndex);
         // First ensure we are not exceeding the heapSize to avoid the validation error.
-        ANGLE_VK_CHECK(context, sizeInBytes <= heapSize, VK_ERROR_OUT_OF_DEVICE_MEMORY);
+        VK_RESULT_CHECK(sizeInBytes <= heapSize, VK_ERROR_OUT_OF_DEVICE_MEMORY);
 
         // Allocate buffer
         VkBufferCreateInfo createInfo    = {};
@@ -3430,15 +3453,15 @@ angle::Result BufferPool::allocateBuffer(Context *context,
         allocator.getMemoryTypeProperties(mMemoryTypeIndex, &memoryPropertyFlags);
 
         DeviceScoped<Buffer> buffer(context->getDevice());
-        ANGLE_VK_TRY(context, buffer.get().init(context->getDevice(), createInfo));
+        VK_RESULT_TRY(buffer.get().init(context->getDevice(), createInfo));
 
         DeviceScoped<DeviceMemory> deviceMemory(context->getDevice());
         VkMemoryPropertyFlags memoryPropertyFlagsOut;
         VkDeviceSize sizeOut;
         uint32_t memoryTypeIndex;
-        ANGLE_TRY(AllocateBufferMemory(context, MemoryAllocationType::Buffer, memoryPropertyFlags,
-                                       &memoryPropertyFlagsOut, nullptr, &buffer.get(),
-                                       &memoryTypeIndex, &deviceMemory.get(), &sizeOut));
+        VK_RESULT_TRY(AllocateBufferMemory(
+            context, MemoryAllocationType::Buffer, memoryPropertyFlags, &memoryPropertyFlagsOut,
+            nullptr, &buffer.get(), &memoryTypeIndex, &deviceMemory.get(), &sizeOut));
         ASSERT(sizeOut >= alignedSize);
 
         suballocation->initWithEntireBuffer(context, buffer.get(), MemoryAllocationType::Buffer,
@@ -3446,9 +3469,9 @@ angle::Result BufferPool::allocateBuffer(Context *context,
                                             memoryPropertyFlagsOut, alignedSize, sizeOut);
         if (mHostVisible)
         {
-            ANGLE_VK_TRY(context, suballocation->map(context));
+            VK_RESULT_TRY(suballocation->map(context));
         }
-        return angle::Result::Continue;
+        return VK_SUCCESS;
     }
 
     // We always allocate from reverse order so that older buffers have a chance to be empty. The
@@ -3468,7 +3491,7 @@ angle::Result BufferPool::allocateBuffer(Context *context,
         if (block->allocate(alignedSize, alignment, &allocation, &offset) == VK_SUCCESS)
         {
             suballocation->init(block.get(), allocation, offset, alignedSize);
-            return angle::Result::Continue;
+            return VK_SUCCESS;
         }
         ++iter;
     }
@@ -3485,27 +3508,26 @@ angle::Result BufferPool::allocateBuffer(Context *context,
         }
         else
         {
-            ANGLE_VK_TRY(context, block->allocate(alignedSize, alignment, &allocation, &offset));
+            VK_RESULT_TRY(block->allocate(alignedSize, alignment, &allocation, &offset));
             suballocation->init(block.get(), allocation, offset, alignedSize);
             mBufferBlocks.push_back(std::move(block));
             mEmptyBufferBlocks.pop_back();
             mNumberOfNewBuffersNeededSinceLastPrune++;
-            return angle::Result::Continue;
+            return VK_SUCCESS;
         }
     }
 
     // Failed to allocate from empty buffer. Now try to allocate a new buffer.
-    ANGLE_TRY(allocateNewBuffer(context, alignedSize));
+    VK_RESULT_TRY(allocateNewBuffer(context, alignedSize));
 
     // Sub-allocate from the bufferBlock.
     std::unique_ptr<BufferBlock> &block = mBufferBlocks.back();
-    ANGLE_VK_CHECK(context,
-                   block->allocate(alignedSize, alignment, &allocation, &offset) == VK_SUCCESS,
-                   VK_ERROR_OUT_OF_DEVICE_MEMORY);
+    VK_RESULT_CHECK(block->allocate(alignedSize, alignment, &allocation, &offset) == VK_SUCCESS,
+                    VK_ERROR_OUT_OF_DEVICE_MEMORY);
     suballocation->init(block.get(), allocation, offset, alignedSize);
     mNumberOfNewBuffersNeededSinceLastPrune++;
 
-    return angle::Result::Continue;
+    return VK_SUCCESS;
 }
 
 void BufferPool::destroy(RendererVk *renderer, bool orphanNonEmptyBufferBlock)
@@ -3546,18 +3568,34 @@ void BufferPool::addStats(std::ostringstream *out) const
 {
     VkDeviceSize totalUnusedBytes = 0;
     VkDeviceSize totalMemorySize  = 0;
-    *out << "[ ";
-    for (const std::unique_ptr<BufferBlock> &block : mBufferBlocks)
+    for (size_t i = 0; i < mBufferBlocks.size(); i++)
     {
+        const std::unique_ptr<BufferBlock> &block = mBufferBlocks[i];
         vma::StatInfo statInfo;
         block->calculateStats(&statInfo);
-        *out << statInfo.unusedBytes / 1024 << "/" << block->getMemorySize() / 1024 << " ";
-        totalUnusedBytes += statInfo.unusedBytes;
+#if ANGLE_VMA_VERSION < 3000000
+        VkDeviceSize unusedBytes = statInfo.unusedBytes;
+#else
+        ASSERT(statInfo.basicInfo.blockCount == 1);
+        INFO() << "[" << i << "]={"
+               << " allocationCount:" << statInfo.basicInfo.allocationCount
+               << " blockBytes:" << statInfo.basicInfo.blockBytes
+               << " allocationBytes:" << statInfo.basicInfo.allocationBytes
+               << " unusedRangeCount:" << statInfo.unusedRangeCount
+               << " allocationSizeMin:" << statInfo.allocationSizeMin
+               << " allocationSizeMax:" << statInfo.allocationSizeMax
+               << " unusedRangeSizeMin:" << statInfo.unusedRangeSizeMin
+               << " unusedRangeSizeMax:" << statInfo.unusedRangeSizeMax << " }";
+        VkDeviceSize unusedBytes =
+            statInfo.basicInfo.blockBytes - statInfo.basicInfo.allocationBytes;
+#endif
+        totalUnusedBytes += unusedBytes;
         totalMemorySize += block->getMemorySize();
     }
-    *out << "]"
-         << " total: " << totalUnusedBytes << "/" << totalMemorySize;
-    *out << " emptyBuffers [memorySize:" << getTotalEmptyMemorySize()
+    *out << "mBufferBlocks.size():" << mBufferBlocks.size()
+         << " totalUnusedBytes:" << totalUnusedBytes / 1024
+         << "KB / totalMemorySize:" << totalMemorySize / 1024 << "KB";
+    *out << " emptyBuffers [memorySize:" << getTotalEmptyMemorySize() / 1024 << "KB "
          << " count:" << mEmptyBufferBlocks.size()
          << " needed: " << mNumberOfNewBuffersNeededSinceLastPrune << "]";
 }
@@ -4435,8 +4473,8 @@ angle::Result LineLoopHelper::getIndexBufferForDrawArrays(ContextVk *contextVk,
                                                           BufferHelper **bufferOut)
 {
     size_t allocateBytes = sizeof(uint32_t) * (static_cast<size_t>(clampedVertexCount) + 1);
-    ANGLE_TRY(mDynamicIndexBuffer.allocateForVertexConversion(contextVk, allocateBytes,
-                                                              MemoryHostVisibility::Visible));
+    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mDynamicIndexBuffer, allocateBytes,
+                                                       MemoryHostVisibility::Visible));
     uint32_t *indices = reinterpret_cast<uint32_t *>(mDynamicIndexBuffer.getMappedMemory());
 
     // Note: there could be an overflow in this addition.
@@ -4485,8 +4523,8 @@ angle::Result LineLoopHelper::getIndexBufferForElementArrayBuffer(ContextVk *con
     size_t unitSize = contextVk->getVkIndexTypeSize(glIndexType);
 
     size_t allocateBytes = unitSize * (indexCount + 1) + 1;
-    ANGLE_TRY(mDynamicIndexBuffer.allocateForVertexConversion(contextVk, allocateBytes,
-                                                              MemoryHostVisibility::Visible));
+    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mDynamicIndexBuffer, allocateBytes,
+                                                       MemoryHostVisibility::Visible));
 
     BufferHelper *sourceBuffer = &elementArrayBufferVk->getBuffer();
     VkDeviceSize sourceOffset =
@@ -4530,8 +4568,8 @@ angle::Result LineLoopHelper::streamIndices(ContextVk *contextVk,
     }
     *indexCountOut = numOutIndices;
 
-    ANGLE_TRY(mDynamicIndexBuffer.allocateForVertexConversion(contextVk, unitSize * numOutIndices,
-                                                              MemoryHostVisibility::Visible));
+    ANGLE_TRY(contextVk->initBufferForVertexConversion(
+        &mDynamicIndexBuffer, unitSize * numOutIndices, MemoryHostVisibility::Visible));
     uint8_t *indices = mDynamicIndexBuffer.getMappedMemory();
 
     if (contextVk->getState().isPrimitiveRestartEnabled())
@@ -4593,10 +4631,11 @@ angle::Result LineLoopHelper::streamIndicesIndirect(ContextVk *contextVk,
     }
 
     // Allocate buffer for results
-    ANGLE_TRY(mDynamicIndexBuffer.allocateForVertexConversion(contextVk, allocateBytes,
-                                                              MemoryHostVisibility::Visible));
-    ANGLE_TRY(mDynamicIndirectBuffer.allocateForVertexConversion(
-        contextVk, sizeof(VkDrawIndexedIndirectCommand), MemoryHostVisibility::Visible));
+    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mDynamicIndexBuffer, allocateBytes,
+                                                       MemoryHostVisibility::Visible));
+    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mDynamicIndirectBuffer,
+                                                       sizeof(VkDrawIndexedIndirectCommand),
+                                                       MemoryHostVisibility::Visible));
 
     *indexBufferOut    = &mDynamicIndexBuffer;
     *indirectBufferOut = &mDynamicIndirectBuffer;
@@ -4627,10 +4666,11 @@ angle::Result LineLoopHelper::streamArrayIndirect(ContextVk *contextVk,
     auto unitSize        = sizeof(uint32_t);
     size_t allocateBytes = static_cast<size_t>((vertexCount + 1) * unitSize);
 
-    ANGLE_TRY(mDynamicIndexBuffer.allocateForVertexConversion(contextVk, allocateBytes,
-                                                              MemoryHostVisibility::Visible));
-    ANGLE_TRY(mDynamicIndirectBuffer.allocateForVertexConversion(
-        contextVk, sizeof(VkDrawIndexedIndirectCommand), MemoryHostVisibility::Visible));
+    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mDynamicIndexBuffer, allocateBytes,
+                                                       MemoryHostVisibility::Visible));
+    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mDynamicIndirectBuffer,
+                                                       sizeof(VkDrawIndexedIndirectCommand),
+                                                       MemoryHostVisibility::Visible));
 
     *indexBufferOut         = &mDynamicIndexBuffer;
     *indexIndirectBufferOut = &mDynamicIndirectBuffer;
@@ -4712,8 +4752,8 @@ BufferHelper &BufferHelper::operator=(BufferHelper &&other)
 {
     ReadWriteResource::operator=(std::move(other));
 
-    mSuballocation        = std::move(other.mSuballocation);
-    mBufferForVertexArray = std::move(other.mBufferForVertexArray);
+    mSuballocation      = std::move(other.mSuballocation);
+    mBufferWithUserSize = std::move(other.mBufferWithUserSize);
 
     mCurrentQueueFamilyIndex = other.mCurrentQueueFamilyIndex;
     mCurrentWriteAccess      = other.mCurrentWriteAccess;
@@ -4772,9 +4812,10 @@ angle::Result BufferHelper::init(Context *context,
     VkMemoryPropertyFlags memoryPropertyFlagsOut;
     VkDeviceSize sizeOut;
     uint32_t bufferMemoryTypeIndex;
-    ANGLE_TRY(AllocateBufferMemory(context, MemoryAllocationType::Buffer, requiredFlags,
-                                   &memoryPropertyFlagsOut, nullptr, &buffer.get(),
-                                   &bufferMemoryTypeIndex, &deviceMemory.get(), &sizeOut));
+    ANGLE_VK_TRY(context,
+                 AllocateBufferMemory(context, MemoryAllocationType::Buffer, requiredFlags,
+                                      &memoryPropertyFlagsOut, nullptr, &buffer.get(),
+                                      &bufferMemoryTypeIndex, &deviceMemory.get(), &sizeOut));
     ASSERT(sizeOut >= createInfo->size);
 
     mSuballocation.initWithEntireBuffer(context, buffer.get(), MemoryAllocationType::Buffer,
@@ -4836,11 +4877,11 @@ angle::Result BufferHelper::initExternal(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
-angle::Result BufferHelper::initSuballocation(ContextVk *contextVk,
-                                              uint32_t memoryTypeIndex,
-                                              size_t size,
-                                              size_t alignment,
-                                              BufferUsageType usageType)
+VkResult BufferHelper::initSuballocation(ContextVk *contextVk,
+                                         uint32_t memoryTypeIndex,
+                                         size_t size,
+                                         size_t alignment,
+                                         BufferUsageType usageType)
 {
     RendererVk *renderer = contextVk->getRenderer();
 
@@ -4856,98 +4897,14 @@ angle::Result BufferHelper::initSuballocation(ContextVk *contextVk,
     }
 
     vk::BufferPool *pool = contextVk->getDefaultBufferPool(size, memoryTypeIndex, usageType);
-    ANGLE_TRY(pool->allocateBuffer(contextVk, size, alignment, &mSuballocation));
-
-    if (renderer->getFeatures().allocateNonZeroMemory.enabled)
-    {
-        ANGLE_TRY(initializeNonZeroMemory(contextVk, GetDefaultBufferUsageFlags(renderer), size));
-    }
+    VK_RESULT_TRY(pool->allocateBuffer(contextVk, size, alignment, &mSuballocation));
 
     contextVk->getPerfCounters().bufferSuballocationCalls++;
 
-    return angle::Result::Continue;
+    return VK_SUCCESS;
 }
 
-angle::Result BufferHelper::allocateForCopyBuffer(ContextVk *contextVk,
-                                                  size_t size,
-                                                  MemoryCoherency coherency)
-{
-    RendererVk *renderer     = contextVk->getRenderer();
-    uint32_t memoryTypeIndex = renderer->getStagingBufferMemoryTypeIndex(coherency);
-    size_t alignment         = renderer->getStagingBufferAlignment();
-    return initSuballocation(contextVk, memoryTypeIndex, size, alignment, BufferUsageType::Dynamic);
-}
-
-angle::Result BufferHelper::allocateForVertexConversion(ContextVk *contextVk,
-                                                        size_t size,
-                                                        MemoryHostVisibility hostVisibility)
-{
-    RendererVk *renderer = contextVk->getRenderer();
-
-    if (valid())
-    {
-        // If size is big enough and it is idle, then just reuse the existing buffer.
-        if (size <= getSize() &&
-            (hostVisibility == MemoryHostVisibility::Visible) == isHostVisible())
-        {
-            if (renderer->hasResourceUseFinished(getResourceUse()))
-            {
-                initializeBarrierTracker(contextVk);
-                return angle::Result::Continue;
-            }
-            else if (hostVisibility == MemoryHostVisibility::NonVisible)
-            {
-                // For device local buffer, we can reuse the buffer even if it is still GPU busy.
-                // The memory barrier should take care of this.
-                return angle::Result::Continue;
-            }
-        }
-
-        release(renderer);
-    }
-
-    uint32_t memoryTypeIndex = renderer->getVertexConversionBufferMemoryTypeIndex(hostVisibility);
-    size_t alignment         = static_cast<size_t>(renderer->getVertexConversionBufferAlignment());
-
-    // The size is retrieved and used in descriptor set. The descriptor set wants aligned size,
-    // otherwise there are test failures. Note that underline VMA allocation always allocate aligned
-    // size anyway.
-    size_t sizeToAllocate = roundUp(size, alignment);
-
-    return initSuballocation(contextVk, memoryTypeIndex, sizeToAllocate, alignment,
-                             BufferUsageType::Static);
-}
-
-angle::Result BufferHelper::allocateForCopyImage(ContextVk *contextVk,
-                                                 size_t size,
-                                                 MemoryCoherency coherency,
-                                                 angle::FormatID formatId,
-                                                 VkDeviceSize *offset,
-                                                 uint8_t **dataPtr)
-{
-    RendererVk *renderer = contextVk->getRenderer();
-
-    // When a buffer is used in copyImage, the offset must be multiple of pixel bytes. This may
-    // result in non-power of two alignment. VMA's virtual allocator can not handle non-power of two
-    // alignment. We have to adjust offset manually.
-    uint32_t memoryTypeIndex  = renderer->getStagingBufferMemoryTypeIndex(coherency);
-    size_t imageCopyAlignment = GetImageCopyBufferAlignment(formatId);
-
-    // Add extra padding for potential offset alignment
-    size_t allocationSize   = size + imageCopyAlignment;
-    allocationSize          = roundUp(allocationSize, imageCopyAlignment);
-    size_t stagingAlignment = static_cast<size_t>(renderer->getStagingBufferAlignment());
-
-    ANGLE_TRY(initSuballocation(contextVk, memoryTypeIndex, allocationSize, stagingAlignment,
-                                BufferUsageType::Static));
-
-    *offset  = roundUp(getOffset(), static_cast<VkDeviceSize>(imageCopyAlignment));
-    *dataPtr = getMappedMemory() + (*offset) - getOffset();
-
-    return angle::Result::Continue;
-}
-
-ANGLE_INLINE void BufferHelper::initializeBarrierTracker(Context *context)
+void BufferHelper::initializeBarrierTracker(Context *context)
 {
     RendererVk *renderer     = context->getRenderer();
     mCurrentQueueFamilyIndex = renderer->getQueueFamilyIndex();
@@ -5022,13 +4979,14 @@ const Buffer &BufferHelper::getBufferForVertexArray(ContextVk *contextVk,
     ASSERT(mSuballocation.valid());
     ASSERT(actualDataSize <= mSuballocation.getSize());
 
-    if (!contextVk->isRobustResourceInitEnabled() || !mSuballocation.isSuballocated())
+    if (!contextVk->hasRobustAccess() || !mSuballocation.isSuballocated() ||
+        actualDataSize == mSuballocation.getSize())
     {
         *offsetOut = mSuballocation.getOffset();
         return mSuballocation.getBuffer();
     }
 
-    if (!mBufferForVertexArray.valid())
+    if (!mBufferWithUserSize.valid())
     {
         // Allocate buffer that is backed by sub-range of the memory for vertex array usage. This is
         // only needed when robust resource init is enabled so that vulkan driver will know the
@@ -5041,27 +4999,41 @@ const Buffer &BufferHelper::getBufferForVertexArray(ContextVk *contextVk,
         createInfo.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
         createInfo.queueFamilyIndexCount = 0;
         createInfo.pQueueFamilyIndices   = nullptr;
-        mBufferForVertexArray.init(contextVk->getDevice(), createInfo);
+        mBufferWithUserSize.init(contextVk->getDevice(), createInfo);
 
         VkMemoryRequirements memoryRequirements;
-        mBufferForVertexArray.getMemoryRequirements(contextVk->getDevice(), &memoryRequirements);
+        mBufferWithUserSize.getMemoryRequirements(contextVk->getDevice(), &memoryRequirements);
         ASSERT(contextVk->getRenderer()->isMockICDEnabled() ||
                mSuballocation.getSize() >= memoryRequirements.size);
         ASSERT(!contextVk->getRenderer()->isMockICDEnabled() ||
                mSuballocation.getOffset() % memoryRequirements.alignment == 0);
 
-        mBufferForVertexArray.bindMemory(contextVk->getDevice(), mSuballocation.getDeviceMemory(),
-                                         mSuballocation.getOffset());
+        mBufferWithUserSize.bindMemory(contextVk->getDevice(), mSuballocation.getDeviceMemory(),
+                                       mSuballocation.getOffset());
     }
     *offsetOut = 0;
-    return mBufferForVertexArray;
+    return mBufferWithUserSize;
+}
+
+void BufferHelper::onBufferUserSizeChange(RendererVk *renderer)
+{
+    // Buffer's user size and allocation size may be different due to alignment requirement. In
+    // normal usage we just use the actual allocation size and it is good enough. But when
+    // robustResourceInit is enabled, mBufferWithUserSize is created to mjatch the exact user
+    // size. Thus when user size changes, we must clear and recreate this mBufferWithUserSize.
+    if (mBufferWithUserSize.valid())
+    {
+        BufferSuballocation unusedSuballocation;
+        renderer->collectSuballocationGarbage(mUse, std::move(unusedSuballocation),
+                                              std::move(mBufferWithUserSize));
+    }
 }
 
 void BufferHelper::destroy(RendererVk *renderer)
 {
     mDescriptorSetCacheManager.destroyKeys(renderer);
     unmap(renderer);
-    mBufferForVertexArray.destroy(renderer->getDevice());
+    mBufferWithUserSize.destroy(renderer->getDevice());
     mSuballocation.destroy(renderer);
 }
 
@@ -5079,11 +5051,11 @@ void BufferHelper::release(RendererVk *renderer)
             mSuballocation.getBufferBlock()->releaseAllCachedDescriptorSetCacheKeys(renderer);
         }
         renderer->collectSuballocationGarbage(mUse, std::move(mSuballocation),
-                                              std::move(mBufferForVertexArray));
+                                              std::move(mBufferWithUserSize));
     }
     mUse.reset();
     mWriteUse.reset();
-    ASSERT(!mBufferForVertexArray.valid());
+    ASSERT(!mBufferWithUserSize.valid());
 }
 
 void BufferHelper::releaseBufferAndDescriptorSetCache(RendererVk *renderer)
@@ -5662,6 +5634,7 @@ angle::Result ImageHelper::initExternal(Context *context,
     return angle::Result::Continue;
 }
 
+// static
 const void *ImageHelper::DeriveCreateInfoPNext(
     Context *context,
     angle::FormatID actualFormatID,
@@ -5697,6 +5670,33 @@ const void *ImageHelper::DeriveCreateInfoPNext(
     }
 
     return pNext;
+}
+
+// static
+bool ImageHelper::FormatSupportsUsage(RendererVk *renderer,
+                                      VkFormat format,
+                                      VkImageType imageType,
+                                      VkImageTiling tilingMode,
+                                      VkImageUsageFlags usageFlags,
+                                      VkImageCreateFlags createFlags,
+                                      void *propertiesPNext)
+{
+    VkPhysicalDeviceImageFormatInfo2 imageFormatInfo = {};
+    imageFormatInfo.sType  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
+    imageFormatInfo.format = format;
+    imageFormatInfo.type   = imageType;
+    imageFormatInfo.tiling = tilingMode;
+    imageFormatInfo.usage  = usageFlags;
+    imageFormatInfo.flags  = createFlags;
+
+    VkImageFormatProperties2 imageFormatProperties2 = {};
+    imageFormatProperties2.sType                    = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
+    imageFormatProperties2.pNext                    = propertiesPNext;
+
+    VkResult result = vkGetPhysicalDeviceImageFormatProperties2(
+        renderer->getPhysicalDevice(), &imageFormatInfo, &imageFormatProperties2);
+
+    return result == VK_SUCCESS;
 }
 
 void ImageHelper::setImageFormatsFromActualFormat(VkFormat actualFormat,
@@ -5778,6 +5778,7 @@ void ImageHelper::releaseImageFromShareContexts(RendererVk *renderer,
                                                 UniqueSerial imageSiblingSerial)
 {
     finalizeImageLayoutInShareContexts(renderer, contextVk, imageSiblingSerial);
+    contextVk->addToPendingImageGarbage(mUse, mAllocationSize);
     releaseImage(renderer);
 }
 
@@ -5963,45 +5964,76 @@ angle::Result ImageHelper::initializeNonZeroMemory(Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result ImageHelper::initMemory(Context *context,
-                                      bool hasProtectedContent,
-                                      const MemoryProperties &memoryProperties,
-                                      VkMemoryPropertyFlags flags,
-                                      MemoryAllocationType allocationType)
+VkResult ImageHelper::initMemory(Context *context,
+                                 const MemoryProperties &memoryProperties,
+                                 VkMemoryPropertyFlags flags,
+                                 VkMemoryPropertyFlags excludedFlags,
+                                 const VkMemoryRequirements *memoryRequirements,
+                                 const bool allocateDedicatedMemory,
+                                 MemoryAllocationType allocationType,
+                                 VkMemoryPropertyFlags *flagsOut,
+                                 VkDeviceSize *sizeOut)
 {
     // TODO(jmadill): Memory sub-allocation. http://anglebug.com/2162
-    if (hasProtectedContent)
-    {
-        flags |= VK_MEMORY_PROPERTY_PROTECTED_BIT;
-    }
     mMemoryAllocationType = allocationType;
 
     // To allocate memory here, if possible, we use the image memory suballocator which uses VMA.
+    ASSERT(excludedFlags < VK_MEMORY_PROPERTY_FLAG_BITS_MAX_ENUM);
     RendererVk *renderer = context->getRenderer();
     if (renderer->getFeatures().useVmaForImageSuballocation.enabled)
     {
         // While it may be preferable to allocate the image on the device, it should also be
         // possible to allocate on other memory types if the device is out of memory.
-        VkMemoryPropertyFlags requiredFlags  = flags & (~VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        VkMemoryPropertyFlags requiredFlags  = flags & (~excludedFlags);
         VkMemoryPropertyFlags preferredFlags = flags;
-        ANGLE_VK_TRY(context, renderer->getImageMemorySuballocator().allocateAndBindMemory(
-                                  context, &mImage, &mVkImageCreateInfo, requiredFlags,
-                                  preferredFlags, mMemoryAllocationType, &mVmaAllocation, &flags,
-                                  &mMemoryTypeIndex, &mAllocationSize));
+        VK_RESULT_TRY(renderer->getImageMemorySuballocator().allocateAndBindMemory(
+            context, &mImage, &mVkImageCreateInfo, requiredFlags, preferredFlags,
+            memoryRequirements, allocateDedicatedMemory, mMemoryAllocationType, &mVmaAllocation,
+            flagsOut, &mMemoryTypeIndex, &mAllocationSize));
     }
     else
     {
-        ANGLE_TRY(AllocateImageMemory(context, mMemoryAllocationType, flags, &flags, nullptr,
-                                      &mImage, &mMemoryTypeIndex, &mDeviceMemory,
-                                      &mAllocationSize));
+        VK_RESULT_TRY(AllocateImageMemory(context, mMemoryAllocationType, flags, flagsOut, nullptr,
+                                          &mImage, &mMemoryTypeIndex, &mDeviceMemory,
+                                          &mAllocationSize));
     }
+
     mCurrentQueueFamilyIndex = renderer->getQueueFamilyIndex();
+    *sizeOut                 = mAllocationSize;
+
+    return VK_SUCCESS;
+}
+
+angle::Result ImageHelper::initMemoryAndNonZeroFillIfNeeded(
+    Context *context,
+    bool hasProtectedContent,
+    const MemoryProperties &memoryProperties,
+    VkMemoryPropertyFlags flags,
+    MemoryAllocationType allocationType)
+{
+    RendererVk *renderer = context->getRenderer();
+    VkMemoryPropertyFlags outputFlags;
+    VkDeviceSize outputSize;
+
+    if (hasProtectedContent)
+    {
+        flags |= VK_MEMORY_PROPERTY_PROTECTED_BIT;
+    }
+
+    // Get memory requirements for the allocation.
+    VkMemoryRequirements memoryRequirements;
+    mImage.getMemoryRequirements(renderer->getDevice(), &memoryRequirements);
+    bool allocateDedicatedMemory =
+        renderer->getImageMemorySuballocator().needsDedicatedMemory(memoryRequirements.size);
+
+    ANGLE_VK_TRY(context,
+                 initMemory(context, memoryProperties, flags, 0, &memoryRequirements,
+                            allocateDedicatedMemory, allocationType, &outputFlags, &outputSize));
 
     if (renderer->getFeatures().allocateNonZeroMemory.enabled)
     {
-        ANGLE_TRY(initializeNonZeroMemory(context, hasProtectedContent, flags, mAllocationSize));
+        ANGLE_TRY(initializeNonZeroMemory(context, hasProtectedContent, outputFlags, outputSize));
     }
-
     return angle::Result::Continue;
 }
 
@@ -6036,10 +6068,10 @@ angle::Result ImageHelper::initExternalMemory(Context *context,
     {
         bindImagePlaneMemoryInfo.planeAspect = kMemoryPlaneAspects[memoryPlane];
 
-        ANGLE_TRY(AllocateImageMemoryWithRequirements(
-            context, mMemoryAllocationType, flags, memoryRequirements,
-            extraAllocationInfo[memoryPlane], bindImagePlaneMemoryInfoPtr, &mImage,
-            &mMemoryTypeIndex, &mDeviceMemory));
+        ANGLE_VK_TRY(context, AllocateImageMemoryWithRequirements(
+                                  context, mMemoryAllocationType, flags, memoryRequirements,
+                                  extraAllocationInfo[memoryPlane], bindImagePlaneMemoryInfoPtr,
+                                  &mImage, &mMemoryTypeIndex, &mDeviceMemory));
     }
     mCurrentQueueFamilyIndex = currentQueueFamilyIndex;
 
@@ -6330,9 +6362,10 @@ angle::Result ImageHelper::initStaging(Context *context,
     {
         memoryPropertyFlags |= VK_MEMORY_PROPERTY_PROTECTED_BIT;
     }
-    ANGLE_TRY(initMemory(context, hasProtectedContent, memoryProperties, memoryPropertyFlags,
-                         vk::MemoryAllocationType::StagingImage));
 
+    ANGLE_TRY(initMemoryAndNonZeroFillIfNeeded(context, hasProtectedContent, memoryProperties,
+                                               memoryPropertyFlags,
+                                               vk::MemoryAllocationType::StagingImage));
     return angle::Result::Continue;
 }
 
@@ -6394,8 +6427,10 @@ angle::Result ImageHelper::initImplicitMultisampledRenderToTexture(
     // If this ever fails, it can be retried without the LAZILY_ALLOCATED flag (which will probably
     // still fail), but ideally that means GL_EXT_multisampled_render_to_texture should not be
     // advertized on this platform in the first place.
-    return initMemory(context, hasProtectedContent, memoryProperties, kMultisampledMemoryFlags,
-                      vk::MemoryAllocationType::ImplicitMultisampledRenderToTextureImage);
+    ANGLE_TRY(initMemoryAndNonZeroFillIfNeeded(
+        context, hasProtectedContent, memoryProperties, kMultisampledMemoryFlags,
+        vk::MemoryAllocationType::ImplicitMultisampledRenderToTextureImage));
+    return angle::Result::Continue;
 }
 
 VkImageAspectFlags ImageHelper::getAspectFlags() const
@@ -7268,8 +7303,12 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
                                                       ImageAccess access,
                                                       const GLuint inputRowPitch,
                                                       const GLuint inputDepthPitch,
-                                                      const GLuint inputSkipBytes)
+                                                      const GLuint inputSkipBytes,
+                                                      ApplyImageUpdate applyUpdate,
+                                                      bool *updateAppliedImmediatelyOut)
 {
+    *updateAppliedImmediatelyOut = false;
+
     const angle::Format &storageFormat = vkFormat.getActualImageFormat(access);
 
     size_t outputRowPitch;
@@ -7381,17 +7420,33 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
         }
     }
 
+    const uint8_t *source = pixels + static_cast<ptrdiff_t>(inputSkipBytes);
+
+    // If possible, copy the buffer to the image directly on the host, to avoid having to use a temp
+    // image (and do a double copy).
+    if (applyUpdate == ApplyImageUpdate::ImmediatelyIfPossible &&
+        !loadFunctionInfo.requiresConversion && inputRowPitch == outputRowPitch &&
+        inputDepthPitch == outputDepthPitch)
+    {
+        bool copied = false;
+        ANGLE_TRY(updateSubresourceOnHost(contextVk, index, glExtents, offset, source,
+                                          bufferRowLength, bufferImageHeight, &copied));
+        if (copied)
+        {
+            *updateAppliedImmediatelyOut = true;
+            return angle::Result::Continue;
+        }
+    }
+
     std::unique_ptr<RefCounted<BufferHelper>> stagingBuffer =
         std::make_unique<RefCounted<BufferHelper>>();
     BufferHelper *currentBuffer = &stagingBuffer->get();
 
     uint8_t *stagingPointer;
     VkDeviceSize stagingOffset;
-    ANGLE_TRY(currentBuffer->allocateForCopyImage(contextVk, allocationSize,
-                                                  MemoryCoherency::NonCoherent, storageFormat.id,
-                                                  &stagingOffset, &stagingPointer));
-
-    const uint8_t *source = pixels + static_cast<ptrdiff_t>(inputSkipBytes);
+    ANGLE_TRY(contextVk->initBufferForImageCopy(currentBuffer, allocationSize,
+                                                MemoryCoherency::NonCoherent, storageFormat.id,
+                                                &stagingOffset, &stagingPointer));
 
     loadFunctionInfo.loadFunction(
         contextVk->getImageLoadContext(), glExtents.width, glExtents.height, glExtents.depth,
@@ -7517,6 +7572,110 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
+angle::Result ImageHelper::updateSubresourceOnHost(ContextVk *contextVk,
+                                                   const gl::ImageIndex &index,
+                                                   const gl::Extents &glExtents,
+                                                   const gl::Offset &offset,
+                                                   const uint8_t *source,
+                                                   const GLuint memoryRowLength,
+                                                   const GLuint memoryImageHeight,
+                                                   bool *copiedOut)
+{
+    // If the image is not set up for host copy, it can't be done.
+    if (!valid() || (mUsage & VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT) == 0)
+    {
+        return angle::Result::Continue;
+    }
+
+    RendererVk *renderer = contextVk->getRenderer();
+    const VkPhysicalDeviceHostImageCopyPropertiesEXT &hostImageCopyProperties =
+        renderer->getPhysicalDeviceHostImageCopyProperties();
+
+    // The image should be unused by the GPU.
+    if (!renderer->hasResourceUseFinished(getResourceUse()))
+    {
+        return angle::Result::Continue;
+    }
+
+    // The image should not have any pending updates to this subresource.
+    //
+    // TODO: if there are any pending updates, see if they can be pruned given the incoming update.
+    // This would most likely be the case where a clear is automatically staged for robustness or
+    // other reasons, which would now be superseded by the data upload.  http://anglebug.com/8341
+    const gl::LevelIndex updateLevelGL(index.getLevelIndex());
+    const uint32_t layerIndex = index.hasLayer() ? index.getLayerIndex() : 0;
+    const uint32_t layerCount = index.getLayerCount();
+    if (hasStagedUpdatesForSubresource(updateLevelGL, layerIndex, layerCount))
+    {
+        return angle::Result::Continue;
+    }
+
+    // The image should be in a layout this is copiable.  If UNDEFINED, it can be transitioned to a
+    // layout that is copyable.
+    const VkImageAspectFlags aspectMask = getAspectFlags();
+    if (mCurrentLayout == ImageLayout::Undefined)
+    {
+        VkHostImageLayoutTransitionInfoEXT transition = {};
+        transition.sType     = VK_STRUCTURE_TYPE_HOST_IMAGE_LAYOUT_TRANSITION_INFO_EXT;
+        transition.image     = mImage.getHandle();
+        transition.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        // The GENERAL layout is always guaranteed to be in
+        // VkPhysicalDeviceHostImageCopyPropertiesEXT::pCopyDstLayouts
+        transition.newLayout                       = VK_IMAGE_LAYOUT_GENERAL;
+        transition.subresourceRange.aspectMask     = aspectMask;
+        transition.subresourceRange.baseMipLevel   = 0;
+        transition.subresourceRange.levelCount     = mLevelCount;
+        transition.subresourceRange.baseArrayLayer = 0;
+        transition.subresourceRange.layerCount     = mLayerCount;
+
+        ANGLE_VK_TRY(contextVk, vkTransitionImageLayoutEXT(renderer->getDevice(), 1, &transition));
+        mCurrentLayout = ImageLayout::HostCopy;
+    }
+    else if (mCurrentLayout != ImageLayout::HostCopy &&
+             !IsAnyLayout(getCurrentLayout(contextVk), hostImageCopyProperties.pCopyDstLayouts,
+                          hostImageCopyProperties.copyDstLayoutCount))
+    {
+        return angle::Result::Continue;
+    }
+
+    VkMemoryToImageCopyEXT copyRegion      = {};
+    copyRegion.sType                       = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT;
+    copyRegion.pHostPointer                = source;
+    copyRegion.memoryRowLength             = memoryRowLength;
+    copyRegion.memoryImageHeight           = memoryImageHeight;
+    copyRegion.imageSubresource.aspectMask = aspectMask;
+    copyRegion.imageSubresource.mipLevel   = toVkLevel(updateLevelGL).get();
+    copyRegion.imageSubresource.layerCount = layerCount;
+    gl_vk::GetOffset(offset, &copyRegion.imageOffset);
+    gl_vk::GetExtent(glExtents, &copyRegion.imageExtent);
+
+    if (gl::IsArrayTextureType(index.getType()))
+    {
+        copyRegion.imageSubresource.baseArrayLayer = offset.z;
+        copyRegion.imageOffset.z                   = 0;
+        copyRegion.imageExtent.depth               = 1;
+    }
+    else
+    {
+        copyRegion.imageSubresource.baseArrayLayer = layerIndex;
+    }
+
+    VkCopyMemoryToImageInfoEXT copyInfo = {};
+    copyInfo.sType                      = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT;
+    copyInfo.dstImage                   = mImage.getHandle();
+    copyInfo.dstImageLayout             = getCurrentLayout(contextVk);
+    copyInfo.regionCount                = 1;
+    copyInfo.pRegions                   = &copyRegion;
+
+    ANGLE_VK_TRY(contextVk, vkCopyMemoryToImageEXT(renderer->getDevice(), &copyInfo));
+
+    onWrite(updateLevelGL, 1, copyRegion.imageSubresource.baseArrayLayer,
+            copyRegion.imageSubresource.layerCount, copyRegion.imageSubresource.aspectMask);
+
+    *copiedOut = true;
+    return angle::Result::Continue;
+}
+
 angle::Result ImageHelper::reformatStagedBufferUpdates(ContextVk *contextVk,
                                                        angle::FormatID srcFormatID,
                                                        angle::FormatID dstFormatID)
@@ -7562,9 +7721,9 @@ angle::Result ImageHelper::reformatStagedBufferUpdates(ContextVk *contextVk,
                 uint8_t *dstData;
                 VkDeviceSize dstBufferOffset;
                 size_t dstBufferSize = dstDataDepthPitch * copy.imageExtent.depth;
-                ANGLE_TRY(dstBuffer->allocateForCopyImage(contextVk, dstBufferSize,
-                                                          MemoryCoherency::NonCoherent, dstFormatID,
-                                                          &dstBufferOffset, &dstData));
+                ANGLE_TRY(contextVk->initBufferForImageCopy(
+                    dstBuffer, dstBufferSize, MemoryCoherency::NonCoherent, dstFormatID,
+                    &dstBufferOffset, &dstData));
 
                 rx::PixelReadFunction pixelReadFunction   = srcFormat.pixelReadFunction;
                 rx::PixelWriteFunction pixelWriteFunction = dstFormat.pixelWriteFunction;
@@ -7874,7 +8033,9 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
                                                   GLenum type,
                                                   const uint8_t *pixels,
                                                   const Format &vkFormat,
-                                                  ImageAccess access)
+                                                  ImageAccess access,
+                                                  ApplyImageUpdate applyUpdate,
+                                                  bool *updateAppliedImmediatelyOut)
 {
     GLuint inputRowPitch   = 0;
     GLuint inputDepthPitch = 0;
@@ -7882,9 +8043,9 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
     ANGLE_TRY(CalculateBufferInfo(contextVk, glExtents, formatInfo, unpack, type, index.usesTex3D(),
                                   &inputRowPitch, &inputDepthPitch, &inputSkipBytes));
 
-    ANGLE_TRY(stageSubresourceUpdateImpl(contextVk, index, glExtents, offset, formatInfo, unpack,
-                                         type, pixels, vkFormat, access, inputRowPitch,
-                                         inputDepthPitch, inputSkipBytes));
+    ANGLE_TRY(stageSubresourceUpdateImpl(
+        contextVk, index, glExtents, offset, formatInfo, unpack, type, pixels, vkFormat, access,
+        inputRowPitch, inputDepthPitch, inputSkipBytes, applyUpdate, updateAppliedImmediatelyOut));
 
     return angle::Result::Continue;
 }
@@ -7902,9 +8063,9 @@ angle::Result ImageHelper::stageSubresourceUpdateAndGetData(ContextVk *contextVk
     BufferHelper *currentBuffer = &stagingBuffer->get();
 
     VkDeviceSize stagingOffset;
-    ANGLE_TRY(currentBuffer->allocateForCopyImage(contextVk, allocationSize,
-                                                  MemoryCoherency::NonCoherent, formatID,
-                                                  &stagingOffset, dstData));
+    ANGLE_TRY(contextVk->initBufferForImageCopy(currentBuffer, allocationSize,
+                                                MemoryCoherency::NonCoherent, formatID,
+                                                &stagingOffset, dstData));
 
     gl::LevelIndex updateLevelGL(imageIndex.getLevelIndex());
 
@@ -7976,9 +8137,9 @@ angle::Result ImageHelper::stageSubresourceUpdateFromFramebuffer(
 
     // The destination is only one layer deep.
     size_t allocationSize = outputDepthPitch;
-    ANGLE_TRY(currentBuffer->allocateForCopyImage(contextVk, allocationSize,
-                                                  MemoryCoherency::NonCoherent, storageFormat.id,
-                                                  &stagingOffset, &stagingPointer));
+    ANGLE_TRY(contextVk->initBufferForImageCopy(currentBuffer, allocationSize,
+                                                MemoryCoherency::NonCoherent, storageFormat.id,
+                                                &stagingOffset, &stagingPointer));
 
     const angle::Format &copyFormat =
         GetFormatFromFormatType(formatInfo.internalFormat, formatInfo.type);
@@ -8146,9 +8307,9 @@ angle::Result ImageHelper::stageResourceClearWithFormat(ContextVk *contextVk,
 
         uint8_t *stagingPointer;
         VkDeviceSize stagingOffset;
-        ANGLE_TRY(currentBuffer->allocateForCopyImage(contextVk, totalSize,
-                                                      MemoryCoherency::NonCoherent, imageFormat.id,
-                                                      &stagingOffset, &stagingPointer));
+        ANGLE_TRY(contextVk->initBufferForImageCopy(currentBuffer, totalSize,
+                                                    MemoryCoherency::NonCoherent, imageFormat.id,
+                                                    &stagingOffset, &stagingPointer));
         memset(stagingPointer, 0, totalSize);
 
         VkBufferImageCopy copyRegion               = {};
@@ -9076,8 +9237,8 @@ angle::Result ImageHelper::copyImageDataToBuffer(ContextVk *contextVk,
     // Allocate coherent staging buffer
     ASSERT(dstBuffer != nullptr && !dstBuffer->valid());
     VkDeviceSize dstOffset;
-    ANGLE_TRY(dstBuffer->allocateForCopyImage(contextVk, bufferSize, MemoryCoherency::Coherent,
-                                              imageFormat.id, &dstOffset, outDataPtr));
+    ANGLE_TRY(contextVk->initBufferForImageCopy(dstBuffer, bufferSize, MemoryCoherency::Coherent,
+                                                imageFormat.id, &dstOffset, outDataPtr));
     VkBuffer bufferHandle = dstBuffer->getBuffer().getHandle();
 
     LevelIndex sourceLevelVk = toVkLevel(sourceLevelGL);
@@ -9678,9 +9839,9 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
     VkDeviceSize stagingOffset = 0;
     size_t allocationSize      = readFormat->pixelBytes * area.width * area.height;
 
-    ANGLE_TRY(stagingBuffer->allocateForCopyImage(contextVk, allocationSize,
-                                                  MemoryCoherency::Coherent, mActualFormatID,
-                                                  &stagingOffset, &readPixelBuffer));
+    ANGLE_TRY(contextVk->initBufferForImageCopy(stagingBuffer, allocationSize,
+                                                MemoryCoherency::Coherent, mActualFormatID,
+                                                &stagingOffset, &readPixelBuffer));
     VkBuffer bufferHandle = stagingBuffer->getBuffer().getHandle();
 
     VkBufferImageCopy region = {};

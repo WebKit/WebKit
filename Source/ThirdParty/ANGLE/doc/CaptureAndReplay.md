@@ -227,10 +227,9 @@ replay run stage of multiple tests together.
 From the command line, navigate to the ANGLE root folder [angle][angle_folder] then run the
 command below:
 ```
-python3 src/tests/capture_replay_tests.py --use-goma --gtest_filter=*/ES2_Vulkan --keep-temp-files --output-to-file --batch-count=8
+python3 src/tests/capture_replay_tests.py --gtest_filter=*/ES2_Vulkan --keep-temp-files --output-to-file --batch-count=8
 ```
 
-* `--use-goma` to turn on/off building with goma
 * `--gtest_filter` to run only specific tests
 * `--keep-temp-files` to keep the trace files
 * `--output-to-file` to write the log to results.txt at
