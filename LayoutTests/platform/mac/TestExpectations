@@ -2699,13 +2699,14 @@ webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html 
 [ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
 
 # webkit.org/b/255427 [ Ventura ] 4/13 batch mark expectations and branch bugs
-[ Ventura ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Pass Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Pass Failure ]
-[ Ventura ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Pass Failure ]
-[ Ventura ] svg/custom/use-on-symbol-inside-pattern.svg [ Pass Failure ]
-[ Ventura ] webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Pass Failure ]
-[ Ventura ] imported/mozilla/svg/smil/style/anim-css-fontsize-1-from-by-pct-pct.svg [ Pass ImageOnlyFailure ]
-[ Ventura ] imported/mozilla/svg/smil/style/anim-css-fontsize-1-from-to-pct-pct.svg [ Pass ImageOnlyFailure ]
+[ Ventura+ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Failure ]
+[ Ventura+ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Failure ]
+[ Ventura+ arm64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
+[ Ventura+ arm64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
+[ Ventura+ arm64 ] webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
+[ Ventura+ arm64 ] imported/mozilla/svg/smil/style/anim-css-fontsize-1-from-by-pct-pct.svg [ ImageOnlyFailure ]
+[ Ventura+ arm64 ] imported/mozilla/svg/smil/style/anim-css-fontsize-1-from-to-pct-pct.svg [ ImageOnlyFailure ]
+[ Ventura+ x86_64 ] fast/shrink-wrap/rect-shrink-wrap.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/255788 [ Ventura+ Debug ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow.html [ Skip ]
 
@@ -2734,25 +2735,12 @@ webkit.org/b/259712 [ Monterey+ ] media/media-source/media-source-paint-after-di
 webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/259373 Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels
-[ Monterey ] css1/box_properties/acid_test.html [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] css2.1/t09-c5526c-display-00-e.html [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] fast/block/basic/011.html [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] fast/block/basic/minheight.html [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] fast/block/margin-collapse/103.html [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] fast/css/002.html [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] fast/invalid/008.html [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] fast/overflow/003.xml [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] fast/text/basic/generic-family-reset.html [ Pass Failure ImageOnlyFailure ]
-[ Monterey ] imported/w3c/web-platform-tests/fetch/content-length/api-and-duplicate-headers.any.html [ Pass Failure ]
-[ Monterey ] imported/w3c/web-platform-tests/fetch/content-length/api-and-duplicate-headers.any.worker.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/mrow-fallback.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-003.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/width-height-001.html [ Pass Failure ]
 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Pass Failure ]
-[ Monterey ] scrollbars/overflow-scrollbar-combinations.html  [ Pass ImageOnlyFailure ]
-[ Monterey ] svg/custom/svg-fonts-in-html.html [ Pass ImageOnlyFailure ]
 
 # Sonoma has one extra whitespace for some reason.
 [ Sonoma+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
@@ -2771,7 +2759,7 @@ webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Timeout Cra
 
 webkit.org/b/260529 [ Ventura+ x86_64 ] animations/suspend-resume-animation-events.html [ Pass Failure ]
 # rdar://102494267 ([ New Test ] (248203@main): [ Sonoma ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html is a consistent failure)
-http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
+[ Ventura+ ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Failure ]
 
 # rdar://103047570 (REGRESSION (Sonoma): fast/speechsynthesis/speech-synthesis-real-client-version.html is a consistent timeout)
 fast/speechsynthesis/speech-synthesis-real-client-version.html [ Timeout ]
@@ -2802,8 +2790,8 @@ fast/forms/caps-lock-indicator-width.html [ Skip ]
 editing/input/composition-underline-color.html [ ImageOnlyFailure ]
 
 # rdar://111233922 (REGRESSION ( Sonoma ): [ Sonoma ] Two imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior tests are a consistent image failure)
-imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ ImageOnlyFailure ]
 
 # rdar://106116937 ([UI-side compositing] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html times out)
 fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ ImageOnlyFailure Timeout ]
