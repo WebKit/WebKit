@@ -503,6 +503,7 @@ UIProcess/ios/WKTouchActionGestureRecognizer.mm
 UIProcess/ios/WKTouchEventsGestureRecognizer.mm
 UIProcess/ios/WKTextSelectionRect.mm
 UIProcess/ios/WKUSDPreviewView.mm
+UIProcess/ios/WKVelocityTrackingScrollView.mm
 UIProcess/ios/WKVideoView.mm
 UIProcess/ios/WKWebEvent.mm
 UIProcess/ios/WKWebGeolocationPolicyDeciderIOS.mm

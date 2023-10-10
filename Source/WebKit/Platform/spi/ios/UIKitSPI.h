@@ -432,8 +432,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;
-- (double)_horizontalVelocity;
-- (double)_verticalVelocity;
 - (void)_flashScrollIndicatorsForAxes:(UIAxis)axes persistingPreviousFlashes:(BOOL)persisting;
 @property (nonatomic, getter=isZoomEnabled) BOOL zoomEnabled;
 @property (nonatomic, readonly, getter=_isAnimatingZoom) BOOL isAnimatingZoom;

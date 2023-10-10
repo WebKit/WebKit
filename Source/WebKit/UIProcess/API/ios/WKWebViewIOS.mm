@@ -2042,6 +2042,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    if (scrollView == _scrollView)
+        [_scrollView updateInteractiveScrollVelocity];
+
     if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_scrollViewDidScroll:)])
         [_customContentView web_scrollViewDidScroll:(UIScrollView *)scrollView];
 
@@ -2363,6 +2366,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _inputViewBoundsInWindow.size.height);
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, obscuredInsets);
     return [self convertRect:unobscuredRect toView:self._currentContentView];
+}
+
+- (WKVelocityTrackingScrollView *)_scrollViewInternal
+{
+    return _scrollView.get();
 }
 
 // Ideally UIScrollView would expose this for us: <rdar://problem/21394567>.

@@ -30,6 +30,7 @@
 
 #import "AccessibilitySupportSPI.h"
 #import "UIKitSPI.h"
+#import "WKVelocityTrackingScrollView.h"
 #import <QuartzCore/CADisplayLink.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/KeyEventCodesIOS.h>
@@ -40,7 +41,6 @@
 #import <algorithm>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
-
 
 @protocol WKKeyboardScrollableInternal <NSObject>
 @required
@@ -465,7 +465,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 @end
 
 @implementation WKKeyboardScrollViewAnimator {
-    WeakObjCPtr<UIScrollView> _scrollView;
+    __weak WKVelocityTrackingScrollView *_scrollView;
     RetainPtr<WKKeyboardScrollingAnimator> _animator;
 
     BOOL _delegateRespondsToIsKeyboardScrollable;
@@ -479,7 +479,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     return nil;
 }
 
-- (instancetype)initWithScrollView:(UIScrollView *)scrollView
+- (instancetype)initWithScrollView:(WKVelocityTrackingScrollView *)scrollView
 {
     self = [super init];
     if (!self)
@@ -549,8 +549,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
 - (CGFloat)distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction
 {
-    auto scrollView = _scrollView.getAutoreleased();
-    if (!scrollView)
+    if (!_scrollView)
         return 0;
 
     const CGFloat defaultPageScrollFraction = 0.8;
@@ -561,11 +560,11 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     if (!_delegateRespondsToDistanceForIncrement) {
         switch (increment) {
         case WebCore::ScrollGranularity::Document:
-            return directionIsHorizontal ? scrollView.contentSize.width : scrollView.contentSize.height;
+            return directionIsHorizontal ? _scrollView.contentSize.width : _scrollView.contentSize.height;
         case WebCore::ScrollGranularity::Page:
-            return (directionIsHorizontal ? scrollView.frame.size.width : scrollView.frame.size.height) * defaultPageScrollFraction;
+            return (directionIsHorizontal ? _scrollView.frame.size.width : _scrollView.frame.size.height) * defaultPageScrollFraction;
         case WebCore::ScrollGranularity::Line:
-            return defaultLineScrollHeight * scrollView.zoomScale;
+            return defaultLineScrollHeight * _scrollView.zoomScale;
         case WebCore::ScrollGranularity::Pixel:
             return 0;
         }
@@ -588,60 +587,50 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
 
 - (void)scrollToContentOffset:(WebCore::FloatPoint)contentOffset animated:(BOOL)animated
 {
-    auto scrollView = _scrollView.getAutoreleased();
-    if (!scrollView)
+    if (!_scrollView)
         return;
     if (_delegateRespondsToWillScroll)
         [_delegate keyboardScrollViewAnimatorWillScroll:self];
-    [scrollView setContentOffset:contentOffset animated:animated];
-    [scrollView _flashScrollIndicatorsForAxes:axesForDelta(WebCore::FloatPoint(scrollView.contentOffset) - contentOffset) persistingPreviousFlashes:YES];
+    [_scrollView setContentOffset:contentOffset animated:animated];
+    [_scrollView _flashScrollIndicatorsForAxes:axesForDelta(WebCore::FloatPoint(_scrollView.contentOffset) - contentOffset) persistingPreviousFlashes:YES];
 }
 
 - (void)scrollWithScrollToExtentAnimationTo:(CGPoint)offset
 {
-    auto scrollView = _scrollView.getAutoreleased();
-    [scrollView _setContentOffsetWithDecelerationAnimation:offset];
-    [scrollView flashScrollIndicators];
+    [_scrollView _setContentOffsetWithDecelerationAnimation:offset];
+    [_scrollView flashScrollIndicators];
 }
 
 - (CGPoint)contentOffset
 {
-    auto scrollView = _scrollView.getAutoreleased();
-    if (!scrollView)
+    if (!_scrollView)
         return CGPointZero;
 
-    return [scrollView contentOffset];
+    return _scrollView.contentOffset;
 }
 
 - (CGPoint)boundedContentOffset:(CGPoint)offset
 {
-    auto scrollView = _scrollView.getAutoreleased();
-    if (!scrollView)
+    if (!_scrollView)
         return CGPointZero;
 
-    return [scrollView _adjustedContentOffsetForContentOffset:offset];
+    return [_scrollView _adjustedContentOffsetForContentOffset:offset];
 }
 
 - (CGSize)interactiveScrollVelocity
 {
-    auto scrollView = _scrollView.getAutoreleased();
-    if (!scrollView)
-        return CGSizeZero;
-
-    const NSTimeInterval millisecondsPerSecond = 1000;
-    return CGSizeMake(scrollView._horizontalVelocity * millisecondsPerSecond, scrollView._verticalVelocity * millisecondsPerSecond);
+    return _scrollView.interactiveScrollVelocityInPointsPerSecond;
 }
 
 - (WebCore::RectEdges<bool>)scrollableDirectionsFromOffset:(CGPoint)offset
 {
-    auto scrollView = _scrollView.getAutoreleased();
-    if (!scrollView)
+    if (!_scrollView)
         return { };
 
-    UIEdgeInsets contentInsets = scrollView.adjustedContentInset;
+    UIEdgeInsets contentInsets = _scrollView.adjustedContentInset;
 
-    CGSize contentSize = scrollView.contentSize;
-    CGSize scrollViewSize = scrollView.bounds.size;
+    CGSize contentSize = _scrollView.contentSize;
+    CGSize scrollViewSize = _scrollView.bounds.size;
 
     CGPoint minimumContentOffset = CGPointMake(-contentInsets.left, -contentInsets.top);
     CGPoint maximumContentOffset = CGPointMake(std::max(minimumContentOffset.x, contentSize.width + contentInsets.right - scrollViewSize.width), std::max(minimumContentOffset.y, contentSize.height + contentInsets.bottom - scrollViewSize.height));
@@ -658,15 +647,14 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
 
 - (WebCore::RectEdges<bool>)rubberbandableDirections
 {
-    auto scrollView = _scrollView.getAutoreleased();
-    if (!scrollView)
+    if (!_scrollView)
         return { };
 
     WebCore::RectEdges<bool> edges;
 
-    edges.setTop(scrollView._canScrollWithoutBouncingY);
+    edges.setTop(_scrollView._canScrollWithoutBouncingY);
     edges.setBottom(edges.top());
-    edges.setLeft(scrollView._canScrollWithoutBouncingX);
+    edges.setLeft(_scrollView._canScrollWithoutBouncingX);
     edges.setRight(edges.left());
 
     return edges;

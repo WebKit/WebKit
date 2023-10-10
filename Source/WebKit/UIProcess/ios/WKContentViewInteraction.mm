@@ -909,7 +909,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         [self.superview addSubview:_interactionViewsContainerView.get()];
     }
 
-    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:self.webView.scrollView]);
+    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:self.webView._scrollViewInternal]);
     [_keyboardScrollingAnimator setDelegate:self];
 
     [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:WKContentViewKVOTransformContext];
