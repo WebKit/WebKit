@@ -87,6 +87,11 @@ static NSURL *URLFromString(const WTF::String& urlString)
     return _hitTestResult->isContentEditable();
 }
 
+- (BOOL)isSelected
+{
+    return _hitTestResult->isSelected();
+}
+
 - (CGRect)elementBoundingBox
 {
     return _hitTestResult->elementBoundingBox();
