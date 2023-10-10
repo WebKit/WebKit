@@ -35,6 +35,10 @@
     { "name": "igalia9-wpe-ews", "platform": "wpe" },
     { "name": "igalia10-wpe-ews", "platform": "wpe" },
     { "name": "igalia11-wpe-ews", "platform": "wpe" },
+    { "name": "igalia12-wpe-ews", "platform": "wpe" },
+    { "name": "igalia13-wpe-ews", "platform": "wpe" },
+    { "name": "igalia14-wpe-ews", "platform": "wpe" },
+    { "name": "igalia15-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
     { "name": "wincairo-ews-001", "platform": "wincairo" },
     { "name": "wincairo-ews-002", "platform": "wincairo" },
@@ -279,7 +283,7 @@
       "name": "WPE-Build-EWS", "shortname": "wpe", "icon": "buildOnly",
       "factory": "WPEBuildFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggers": ["wpe-wk2-tests-ews"],
+      "triggers": ["wpe-wk2-tests-ews", "api-tests-wpe-ews"],
       "workernames": ["aperez-wpe-ews", "igalia-wpe-ews", "igalia2-wpe-ews", "igalia3-wpe-ews"]
     },
     {
@@ -369,6 +373,13 @@
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["gtk-build-ews"],
       "workernames": ["igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "igalia14-gtk-wk2-ews", "igalia15-gtk-wk2-ews"]
+    },
+    {
+      "name": "API-Tests-WPE-EWS", "shortname": "api-wpe", "icon": "testOnly",
+      "factory": "APITestsFactory", "platform": "wpe",
+      "configuration": "release", "architectures": ["x86_64"],
+      "triggered_by": ["wpe-build-ews"],
+      "workernames": ["igalia12-wpe-ews", "igalia13-wpe-ews", "igalia14-wpe-ews", "igalia15-wpe-ews"]
     },
     {
       "name": "Services-EWS", "shortname": "services", "icon": "testOnly",
@@ -499,6 +510,10 @@
     {
       "type": "Triggerable", "name": "wpe-wk2-tests-ews",
       "builderNames": ["WPE-WK2-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "api-tests-wpe-ews",
+      "builderNames": ["API-Tests-WPE-EWS"]
     },
     {
       "type": "Triggerable", "name": "jsc-tests-mipsel-tests-ews",

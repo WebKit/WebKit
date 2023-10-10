@@ -601,6 +601,23 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'run-api-tests'
         ],
+        'API-Tests-WPE-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'jhbuild',
+            'download-built-product',
+            'extract-built-product',
+            'kill-old-processes',
+            'run-api-tests'
+        ],
         'Services-EWS': [
             'configure-build',
             'check-change-relevance',
