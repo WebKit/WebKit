@@ -213,7 +213,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
         inlineStyleSheetCache().add(*cacheKey, &m_sheet->contents());
 
         // Prevent pathological growth.
-        const size_t maximumInlineStyleSheetCacheSize = 50;
+        static constexpr auto maximumInlineStyleSheetCacheSize = 256;
         if (inlineStyleSheetCache().size() > maximumInlineStyleSheetCacheSize) {
             auto toRemove = inlineStyleSheetCache().random();
             toRemove->value->removedFromMemoryCache();
