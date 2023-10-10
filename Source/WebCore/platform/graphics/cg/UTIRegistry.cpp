@@ -146,6 +146,20 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
+Vector<String> allowableImageTypes()
+{
+    auto allowableImageTypes = copyToVector(defaultSupportedImageTypes());
+    auto additionalImageTypes = copyToVector(additionalSupportedImageTypes());
+    allowableImageTypes.appendVector(additionalImageTypes);
+#if HAVE(AVIF)
+    // AVIF might be embedded in a HEIF container. So HEIF/HEIC decoding have
+    // to be allowed to get AVIF decoded.
+    allowableImageTypes.append("public.heif"_s);
+    allowableImageTypes.append("public.heic"_s);
+#endif
+    return allowableImageTypes;
 }
 
-#endif
+} // namespace WebCore
+
+#endif // USE(CG)
