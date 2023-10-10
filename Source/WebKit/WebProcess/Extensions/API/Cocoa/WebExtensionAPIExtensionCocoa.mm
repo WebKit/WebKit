@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,11 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "MessageSenderInlines.h"
+#import "WebExtensionContextMessages.h"
+#import "WebPage.h"
+#import "WebProcess.h"
+
 namespace WebKit {
 
 bool WebExtensionAPIExtension::isPropertyAllowed(ASCIILiteral name, WebPage*)
@@ -46,10 +51,34 @@ bool WebExtensionAPIExtension::isPropertyAllowed(ASCIILiteral name, WebPage*)
 
 NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **errorString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/extension/getURL
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/getURL
 
     URL baseURL = extensionContext().baseURL();
     return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
+}
+
+bool WebExtensionAPIExtension::isInIncognitoContext(WebPage* page)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/inIncognitoContext
+
+    return page->usesEphemeralSession();
+}
+
+void WebExtensionAPIExtension::isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/isAllowedFileSchemeAccess
+    // FIXME: rdar://problem/58428135 Consider allowing file URL access if the user opted in explicitly in some way.
+
+    callback->call(@NO);
+}
+
+void WebExtensionAPIExtension::isAllowedIncognitoAccess(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/isAllowedIncognitoAccess
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ExtensionIsAllowedIncognitoAccess(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](bool result) {
+        callback->call(@(result));
+    }, extensionContext().identifier());
 }
 
 } // namespace WebKit

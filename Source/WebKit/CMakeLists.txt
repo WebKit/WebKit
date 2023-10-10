@@ -374,6 +374,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/CallbackID.serialization.in
     Shared/DebuggableInfoData.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
+    Shared/DocumentEditingContext.serialization.in
     Shared/DrawingAreaInfo.serialization.in
     Shared/EditingRange.serialization.in
     Shared/EditorState.serialization.in
@@ -523,6 +524,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 
     WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
+
+    WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in
 
     WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 

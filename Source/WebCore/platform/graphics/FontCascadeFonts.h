@@ -154,9 +154,9 @@ inline const Font& FontCascadeFonts::primaryFont(FontCascadeDescription& descrip
 
         ASSERT(m_cachedPrimaryFont);
         auto fontSizeAdjust = description.fontSizeAdjust();
-        if (fontSizeAdjust.isFromFont) {
+        if (fontSizeAdjust.isFromFont()) {
             auto aspectValue = fontSizeAdjust.resolve(description.computedSize(), m_cachedPrimaryFont->fontMetrics());
-            description.setFontSizeAdjust({ fontSizeAdjust.metric, fontSizeAdjust.isFromFont, aspectValue });
+            description.setFontSizeAdjust({ fontSizeAdjust.metric, FontSizeAdjust::ValueType::FromFont, aspectValue });
         }
     }
     return *m_cachedPrimaryFont;

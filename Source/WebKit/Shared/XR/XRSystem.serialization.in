@@ -37,7 +37,6 @@ struct WebKit::XRDeviceInfo {
     bool supportsOrientationTracking;
     bool supportsStereoRendering;
     PlatformXR::Device::FeatureList vrFeatures;
-    PlatformXR::Device::FeatureList arFeatures;
     WebCore::IntSize recommendedResolution;
 };
 #endif

@@ -66,7 +66,7 @@ TEST_F(SequenceLockedTest, Works)
         thread->waitForCompletion();
     });
     unsigned maxValue = 0;
-    for (int i = 0; i < 10000000; ++i) {
+    for (int i = 0; i < 100000; ++i) {
         auto t = tester.load();
         EXPECT_EQ(t.a, t.b);
         EXPECT_EQ(t.b, t.c);

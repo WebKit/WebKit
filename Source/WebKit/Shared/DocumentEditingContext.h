@@ -88,44 +88,4 @@ struct DocumentEditingContext {
 
 }
 
-namespace IPC {
-template<> struct ArgumentCoder<WebKit::DocumentEditingContext::Range> {
-    static void encode(Encoder&, const WebKit::DocumentEditingContext::Range&);
-    static std::optional<WebKit::DocumentEditingContext::Range> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebKit::DocumentEditingContext::TextRectAndRange> {
-    static void encode(Encoder&, const WebKit::DocumentEditingContext::TextRectAndRange&);
-    static std::optional<WebKit::DocumentEditingContext::TextRectAndRange> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebKit::DocumentEditingContext> {
-    static void encode(Encoder&, const WebKit::DocumentEditingContext&);
-    static std::optional<WebKit::DocumentEditingContext> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebKit::DocumentEditingContextRequest> {
-    static void encode(Encoder&, const WebKit::DocumentEditingContextRequest&);
-    static std::optional<WebKit::DocumentEditingContextRequest> decode(Decoder&);
-};
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::DocumentEditingContextRequest::Options> {
-    using values = EnumValues<
-        WebKit::DocumentEditingContextRequest::Options,
-        WebKit::DocumentEditingContextRequest::Options::Text,
-        WebKit::DocumentEditingContextRequest::Options::AttributedText,
-        WebKit::DocumentEditingContextRequest::Options::Rects,
-        WebKit::DocumentEditingContextRequest::Options::Spatial,
-        WebKit::DocumentEditingContextRequest::Options::Annotation,
-        WebKit::DocumentEditingContextRequest::Options::MarkedTextRects,
-        WebKit::DocumentEditingContextRequest::Options::SpatialAndCurrentSelection,
-        WebKit::DocumentEditingContextRequest::Options::AutocorrectedRanges
-    >;
-};
-
-} // namespace WTF
-
 #endif // PLATFORM(IOS_FAMILY)

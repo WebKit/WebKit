@@ -323,7 +323,6 @@ protected:
                 if (m_workset.isEmpty())
                     continue;
 
-                liveAtHead.reserveCapacity(liveAtHead.size() + m_workset.size());
                 liveAtHead.appendRange(m_workset.begin(), m_workset.end());
                 
                 m_workset.sort();

@@ -157,9 +157,6 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 
     [commandBuffer commit];
     ++m_submittedCommandBufferCount;
-
-    if ([MTLCaptureManager sharedCaptureManager].isCapturing)
-        [[MTLCaptureManager sharedCaptureManager] stopCapture];
 }
 
 void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands)
@@ -175,6 +172,9 @@ void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& command
 
     for (auto commandBuffer : commands)
         commitMTLCommandBuffer(commandBuffer.get().commandBuffer());
+
+    if ([MTLCaptureManager sharedCaptureManager].isCapturing)
+        [[MTLCaptureManager sharedCaptureManager] stopCapture];
 }
 
 static bool validateWriteBufferInitial(size_t size)

@@ -567,7 +567,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter), mainFrameFileName)) {
                 auto subframeMainResource = subframeArchive->mainResource();
                 auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
-                if (!subframeMainResourceURL.isNull()) {
+                if (!subframeMainResourceURL.isEmpty()) {
                     if (subframeMainResourceURL.isAboutSrcDoc() || subframeMainResourceURL.isAboutBlank())
                         uniqueSubresources.add(childFrame->frameID().toString(), subframeMainResource->fileName());
                     else
@@ -634,6 +634,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
         auto* document = frame.document();
         if (!document)
             return nullptr;
+
+        if (responseURL.isEmpty())
+            return nullptr;
+
         auto fileNameWithExtension = frame.isMainFrame() ? mainFrameFileName : makeString(subresourcesDirectoryName, "/frame_", frame.frameID().toString());
         auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(mainResource->mimeType());
         if (!fileNameWithExtension.endsWith(extension))

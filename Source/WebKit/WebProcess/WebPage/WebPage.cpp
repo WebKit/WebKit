@@ -1064,14 +1064,14 @@ void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::F
     WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID);
 }
 
-void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<void(FrameInfoData&&)>&& completionHandler)
+void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<FrameInfoData>&&)>&& completionHandler)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        return completionHandler({ });
-    }
-    frame->getFrameInfo(WTFMove(completionHandler));
+    if (!frame)
+        return completionHandler(std::nullopt);
+    frame->getFrameInfo([completionHandler = WTFMove(completionHandler)](auto&& frameInfo) mutable {
+        completionHandler(WTFMove(frameInfo));
+    });
 }
 
 void WebPage::getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
@@ -7203,9 +7203,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
+    RefPtr coreFrame = frame->coreLocalFrame();
 #if ENABLE(META_VIEWPORT)
     resetViewportDefaultConfiguration(frame);
-    RefPtr coreFrame = frame->coreLocalFrame();
     
     bool viewportChanged = false;
 
@@ -7232,6 +7232,14 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
 #if USE(OS_STATE)
     m_loadCommitTime = WallTime::now();
+#endif
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (coreFrame->isMainFrame() && !usesEphemeralSession()) {
+        if (RefPtr loader = coreFrame->document()->loader(); loader
+            && loader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections))
+            WEBPAGE_RELEASE_LOG(AdvancedPrivacyProtections, "didCommitLoad: advanced privacy protections enabled in non-ephemeral session");
+    }
 #endif
 
     themeColorChanged();

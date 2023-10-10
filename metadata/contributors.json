@@ -250,6 +250,13 @@
    },
    {
       "emails" : [
+         "ajeet@apple.com"
+      ],
+      "github" : "ajjeet",
+      "name" : "Ajeet Dyondi"
+   },
+   {
+      "emails" : [
          "akiss@inf.u-szeged.hu"
       ],
       "name" : "Akos Kiss",
@@ -2536,6 +2543,7 @@
          "fantasai.bugs@inkedblade.net",
          "fantasai@apple.com"
       ],
+      "github" : "fantasai",
       "name" : "Elika Etemad",
       "nicks" : [
          "fantasai"

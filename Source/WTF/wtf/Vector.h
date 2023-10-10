@@ -1171,8 +1171,18 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename Iterator>
 void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendRange(Iterator start, Iterator end)
 {
-    for (Iterator it = start; it != end; ++it)
-        append(*it);
+    using category = typename std::iterator_traits<Iterator>::iterator_category;
+    static_assert(std::is_base_of_v<std::input_iterator_tag, category>);
+
+    if constexpr (std::is_base_of_v<std::random_access_iterator_tag, category>)
+        reserveCapacity(size() + (end - start));
+
+    for (Iterator it = start; it != end; ++it) {
+        if constexpr (std::is_base_of_v<std::random_access_iterator_tag, category>)
+            unsafeAppendWithoutCapacityCheck(*it);
+        else
+            append(*it);
+    }
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>

@@ -192,6 +192,7 @@ $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 $(PROJECT_DIR)/Shared/DebuggableInfoData.serialization.in
 $(PROJECT_DIR)/Shared/DisplayListArgumentCoders.serialization.in
+$(PROJECT_DIR)/Shared/DocumentEditingContext.serialization.in
 $(PROJECT_DIR)/Shared/DrawingAreaInfo.serialization.in
 $(PROJECT_DIR)/Shared/EditingRange.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
@@ -459,6 +460,7 @@ $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorInterruptDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUIExtensionController.messages.in
 $(PROJECT_DIR)/WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in
+$(PROJECT_DIR)/WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in

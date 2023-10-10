@@ -50,8 +50,6 @@ XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& x
     m_recommendedResolution = deviceInfo.recommendedResolution;
     if (!deviceInfo.vrFeatures.isEmpty())
         setSupportedFeatures(SessionMode::ImmersiveVr, deviceInfo.vrFeatures);
-    if (!deviceInfo.arFeatures.isEmpty())
-        setSupportedFeatures(SessionMode::ImmersiveAr, deviceInfo.arFeatures);
 }
 
 void XRDeviceProxy::sessionDidEnd()
@@ -68,7 +66,7 @@ void XRDeviceProxy::updateSessionVisibilityState(PlatformXR::VisibilityState vis
 
 void XRDeviceProxy::initializeTrackingAndRendering(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode sessionMode, const PlatformXR::Device::FeatureList& requestedFeatures)
 {
-    if (!isImmersive(sessionMode))
+    if (sessionMode != PlatformXR::SessionMode::ImmersiveVr)
         return;
 
     if (!m_xrSystem)

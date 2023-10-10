@@ -533,6 +533,10 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         }
     }
 
+    argumentBuffer[ShaderStage::Vertex].label = bindGroupLayout.vertexArgumentEncoder().label;
+    argumentBuffer[ShaderStage::Fragment].label = bindGroupLayout.fragmentArgumentEncoder().label;
+    argumentBuffer[ShaderStage::Compute].label = bindGroupLayout.computeArgumentEncoder().label;
+
     return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), *this);
 }
 

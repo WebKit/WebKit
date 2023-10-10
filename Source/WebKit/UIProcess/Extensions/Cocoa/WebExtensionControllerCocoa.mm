@@ -205,12 +205,18 @@ void WebExtensionController::addUserContentController(WebUserContentControllerPr
 {
     if (forPrivateBrowsing == ForPrivateBrowsing::No)
         m_allNonPrivateUserContentControllers.add(userContentController);
+    else
+        m_allPrivateUserContentControllers.add(userContentController);
 
     if (!m_allUserContentControllers.add(userContentController))
         return;
 
-    for (auto& context : m_extensionContexts)
+    for (auto& context : m_extensionContexts) {
+        if (!context->hasAccessInPrivateBrowsing() && forPrivateBrowsing == ForPrivateBrowsing::Yes)
+            continue;
+
         context->addInjectedContent(userContentController);
+    }
 }
 
 void WebExtensionController::removeUserContentController(WebUserContentControllerProxy& userContentController)
@@ -225,6 +231,7 @@ void WebExtensionController::removeUserContentController(WebUserContentControlle
         context->removeInjectedContent(userContentController);
 
     m_allNonPrivateUserContentControllers.remove(userContentController);
+    m_allPrivateUserContentControllers.remove(userContentController);
     m_allUserContentControllers.remove(userContentController);
 }
 

@@ -41,17 +41,18 @@ public:
     }
     MediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&) = default;
     MediaDeviceSandboxExtensions& operator=(MediaDeviceSandboxExtensions&&) = default;
-    
+
     MediaDeviceSandboxExtensions(Vector<String> ids, Vector<SandboxExtension::Handle>&& handles, SandboxExtension::Handle&& machBootstrapHandle);
-    
+
     std::pair<String, RefPtr<SandboxExtension>> operator[](size_t i);
     size_t size() const;
-    
+
+    const Vector<String>& ids() const { return m_ids; }
+    const Vector<SandboxExtension::Handle>& handles() const { return m_handles; }
+    const SandboxExtension::Handle& machBootstrapHandle() const { return m_machBootstrapHandle; }
+
     RefPtr<SandboxExtension> machBootstrapExtension() { return SandboxExtension::create(WTFMove(m_machBootstrapHandle)); }
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, MediaDeviceSandboxExtensions&);
-    
 private:
     Vector<String> m_ids;
     Vector<SandboxExtension::Handle> m_handles;

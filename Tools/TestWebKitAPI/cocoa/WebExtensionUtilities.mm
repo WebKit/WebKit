@@ -34,6 +34,7 @@
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKWebExtensionTabCreationOptions.h>
 #import <WebKit/_WKWebExtensionWindowCreationOptions.h>
 
@@ -50,6 +51,7 @@
     if (!(self = [super init]))
         return nil;
 
+    _yieldMessage = @"";
     _extension = extension;
     _context = [[_WKWebExtensionContext alloc] initForExtension:extension];
     _controller = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
@@ -186,8 +188,14 @@
 
 - (void)closeWindow:(TestWebExtensionWindow *)window
 {
+    for (TestWebExtensionTab *tab in window.tabs)
+        [window closeTab:tab windowIsClosing:YES];
+
     [_windows removeObject:window];
+    _defaultWindow = _windows.firstObject;
+
     [_controller didCloseWindow:window];
+    [_controller didFocusWindow:_defaultWindow];
 }
 
 - (void)load
@@ -200,6 +208,7 @@
 - (void)run
 {
     _done = false;
+    _yieldMessage = @"";
 
     TestWebKitAPI::Util::run(&_done);
 }
@@ -207,6 +216,7 @@
 - (void)runForTimeInterval:(NSTimeInterval)interval
 {
     _done = false;
+    _yieldMessage = @"";
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self->_done = true;
@@ -259,7 +269,7 @@
 - (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestYieldedWithMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
 {
     _done = true;
-    _yieldMessage = [message copy];
+    _yieldMessage = [message copy] ?: @"";
 }
 
 - (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestFinishedWithResult:(BOOL)result message:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
@@ -293,7 +303,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return [self initWithWindow:nil extensionController:nil];
 }
 
-- (instancetype)initWithWindow:(id<_WKWebExtensionWindow>)window extensionController:(_WKWebExtensionController *)extensionController
+- (instancetype)initWithWindow:(TestWebExtensionWindow *)window extensionController:(_WKWebExtensionController *)extensionController
 {
     if (!(self = [super init]))
         return nil;
@@ -301,7 +311,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     _window = window;
 
     if (extensionController) {
-        BOOL usingPrivateBrowsing = dynamic_objc_cast<TestWebExtensionWindow>(window).usingPrivateBrowsing;
+        BOOL usingPrivateBrowsing = _window.usingPrivateBrowsing;
 
         WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
         configuration._webExtensionController = extensionController;
@@ -458,11 +468,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)activateForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    id<_WKWebExtensionTab> previousActiveTab;
-    if (auto *window = dynamic_objc_cast<TestWebExtensionWindow>(_window)) {
-        previousActiveTab = window.activeTab;
-        window.activeTab = self;
-    }
+    auto *previousActiveTab = _window.activeTab;
+    _window.activeTab = self;
 
     _selected = YES;
 
@@ -473,7 +480,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (BOOL)isSelectedForWebExtensionContext:(_WKWebExtensionContext *)context
 {
-    return _selected || dynamic_objc_cast<TestWebExtensionWindow>(_window).activeTab == self;
+    return _selected || _window.activeTab == self;
 }
 
 - (void)selectForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
@@ -496,10 +503,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)closeForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    if (auto *window = dynamic_objc_cast<TestWebExtensionWindow>(_window))
-        [window closeTab:self];
-
-    [_extensionController didCloseTab:self windowIsClosing:NO];
+    [_window closeTab:self];
 
     completionHandler(nil);
 }
@@ -509,7 +513,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 @implementation TestWebExtensionWindow {
     __weak _WKWebExtensionController *_extensionController;
     CGRect _previousFrame;
-    NSMutableArray *_tabs;
+    NSMutableArray<TestWebExtensionTab *> *_tabs;
 }
 
 - (instancetype)init
@@ -544,15 +548,30 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return self;
 }
 
-- (NSArray<id<_WKWebExtensionTab>> *)tabs
+- (NSArray<TestWebExtensionTab *> *)tabs
 {
     return [_tabs copy];
 }
 
-- (void)setTabs:(NSArray<id<_WKWebExtensionTab>> *)tabs
+- (void)setTabs:(NSArray<TestWebExtensionTab *> *)tabs
 {
+    auto *previousActiveTab = _activeTab;
+
+    for (TestWebExtensionTab *tab in _tabs) {
+        [tab.mainWebView _close];
+        tab.mainWebView = nil;
+
+        [_extensionController didCloseTab:tab windowIsClosing:NO];
+    }
+
     _tabs = [tabs mutableCopy];
     _activeTab = _tabs.firstObject;
+
+    for (TestWebExtensionTab *tab in _tabs)
+        [_extensionController didOpenTab:tab];
+
+    if (_activeTab)
+        [_extensionController didActivateTab:_activeTab previousActiveTab:previousActiveTab];
 }
 
 - (TestWebExtensionTab *)openNewTab
@@ -568,7 +587,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
     __weak TestWebExtensionTab *weakTab = newTab;
 
-    newTab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+    newTab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
         auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(options.desiredWindow) ?: weakTab.window;
         auto *duplicatedTab = [desiredWindow openNewTabAtIndex:options.desiredIndex];
 
@@ -588,39 +607,56 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return newTab;
 }
 
-- (void)closeTab:(id<_WKWebExtensionTab>)tab
+- (void)closeTab:(TestWebExtensionTab *)tab
 {
-    [_tabs removeObject:tab];
-    [_extensionController didCloseTab:tab windowIsClosing:NO];
+    [self closeTab:tab windowIsClosing:NO];
 }
 
-- (void)replaceTab:(id<_WKWebExtensionTab>)oldTab withTab:(id<_WKWebExtensionTab>)newTab
+- (void)closeTab:(TestWebExtensionTab *)tab windowIsClosing:(BOOL)windowIsClosing
+{
+    [tab.mainWebView _close];
+    tab.mainWebView = nil;
+
+    [_tabs removeObject:tab];
+
+    if (tab == _activeTab) {
+        _activeTab = _tabs.firstObject;
+
+        if (_activeTab)
+            [_extensionController didActivateTab:_activeTab previousActiveTab:tab];
+    }
+
+    [_extensionController didCloseTab:tab windowIsClosing:windowIsClosing];
+}
+
+- (void)replaceTab:(TestWebExtensionTab *)oldTab withTab:(TestWebExtensionTab *)newTab
 {
     ASSERT([_tabs containsObject:oldTab]);
     ASSERT(![_tabs containsObject:newTab]);
+
+    [oldTab.mainWebView _close];
+    oldTab.mainWebView = nil;
 
     [_tabs replaceObjectAtIndex:[_tabs indexOfObject:oldTab] withObject:newTab];
     [_extensionController didReplaceTab:oldTab withTab:newTab];
 }
 
-- (void)moveTab:(id<_WKWebExtensionTab>)tab toIndex:(NSUInteger)newIndex
+- (void)moveTab:(TestWebExtensionTab *)tab toIndex:(NSUInteger)newIndex
 {
-    if (auto *testTab = dynamic_objc_cast<TestWebExtensionTab>(tab)) {
-        if (testTab.window != self) {
-            TestWebExtensionWindow *oldWindow = testTab.window;
+    if (tab.window != self) {
+        TestWebExtensionWindow *oldWindow = tab.window;
 
-            auto oldIndex = [oldWindow->_tabs indexOfObject:tab];
-            ASSERT(oldIndex != NSNotFound);
+        auto oldIndex = [oldWindow->_tabs indexOfObject:tab];
+        ASSERT(oldIndex != NSNotFound);
 
-            [oldWindow->_tabs removeObjectAtIndex:oldIndex];
-            [_tabs insertObject:tab atIndex:newIndex];
+        [oldWindow->_tabs removeObjectAtIndex:oldIndex];
+        [_tabs insertObject:tab atIndex:newIndex];
 
-            testTab.window = self;
+        tab.window = self;
 
-            [_extensionController didMoveTab:tab fromIndex:oldIndex inWindow:oldWindow];
+        [_extensionController didMoveTab:tab fromIndex:oldIndex inWindow:oldWindow];
 
-            return;
-        }
+        return;
     }
 
     auto oldIndex = [_tabs indexOfObject:tab];

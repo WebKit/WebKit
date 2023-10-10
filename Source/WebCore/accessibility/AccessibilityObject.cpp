@@ -3420,7 +3420,7 @@ double AccessibilityObject::loadingProgress() const
 bool AccessibilityObject::isExpanded() const
 {
     if (is<HTMLDetailsElement>(node()))
-        return downcast<HTMLDetailsElement>(node())->isOpen();
+        return downcast<HTMLDetailsElement>(node())->hasAttribute(openAttr);
     
     // Summary element should use its details parent's expanded status.
     if (isSummary()) {

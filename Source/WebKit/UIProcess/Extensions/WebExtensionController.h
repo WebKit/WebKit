@@ -99,11 +99,10 @@ public:
 
     WebPageProxySet allPages() const { return m_pages; }
 
-    // Includes both regular and private browsing content controllers.
+    // Includes both non-private and private browsing content controllers.
     UserContentControllerProxySet allUserContentControllers() const { return m_allUserContentControllers; }
-
-    // Excludes private browsing content controllers.
     UserContentControllerProxySet allNonPrivateUserContentControllers() const { return m_allNonPrivateUserContentControllers; }
+    UserContentControllerProxySet allPrivateUserContentControllers() const { return m_allPrivateUserContentControllers; }
 
     WebProcessPoolSet allProcessPools() const { return m_processPools; }
     WebProcessProxySet allProcesses() const;
@@ -147,6 +146,7 @@ private:
     WebProcessPoolSet m_processPools;
     UserContentControllerProxySet m_allUserContentControllers;
     UserContentControllerProxySet m_allNonPrivateUserContentControllers;
+    UserContentControllerProxySet m_allPrivateUserContentControllers;
     WebExtensionURLSchemeHandlerMap m_registeredSchemeHandlers;
     bool m_freshlyCreated { true };
 };

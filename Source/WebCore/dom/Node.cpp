@@ -2455,7 +2455,7 @@ void Node::dispatchEvent(Event& event)
 
 void Node::dispatchSubtreeModifiedEvent()
 {
-    if (isInShadowTree())
+    if (isInShadowTree() || document().shouldNotFireMutationEvents())
         return;
 
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(*this));

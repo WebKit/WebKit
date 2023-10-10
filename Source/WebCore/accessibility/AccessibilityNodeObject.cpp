@@ -2208,7 +2208,7 @@ void AccessibilityNodeObject::setIsExpanded(bool expand)
 {
     if (is<HTMLDetailsElement>(node())) {
         auto& details = downcast<HTMLDetailsElement>(*node());
-        if (expand != details.isOpen())
+        if (expand != details.hasAttribute(openAttr))
             details.toggleOpen();
     }
 }

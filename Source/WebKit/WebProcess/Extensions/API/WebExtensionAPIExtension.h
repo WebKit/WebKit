@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,10 @@ class WebExtensionAPIExtension : public WebExtensionAPIObject, public JSWebExten
 public:
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+
+    bool isInIncognitoContext(WebPage*);
+    void isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&&);
+    void isAllowedIncognitoAccess(Ref<WebExtensionCallbackHandler>&&);
 
     NSURL *getURL(NSString *resourcePath, NSString **errorString);
 #endif

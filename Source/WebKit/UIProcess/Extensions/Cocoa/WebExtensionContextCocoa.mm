@@ -398,6 +398,25 @@ bool WebExtensionContext::hasInjectedContentForURL(NSURL *url)
     return false;
 }
 
+void WebExtensionContext::setHasAccessInPrivateBrowsing(bool hasAccess)
+{
+    if (m_hasAccessInPrivateBrowsing == hasAccess)
+        return;
+
+    m_hasAccessInPrivateBrowsing = hasAccess;
+
+    if (!isLoaded())
+        return;
+
+    if (m_hasAccessInPrivateBrowsing) {
+        for (auto& controller : extensionController()->allPrivateUserContentControllers())
+            addInjectedContent(controller);
+    } else {
+        for (auto& controller : extensionController()->allPrivateUserContentControllers())
+            removeInjectedContent(controller);
+    }
+}
+
 const WebExtensionContext::PermissionsMap& WebExtensionContext::grantedPermissions()
 {
     return removeExpired(m_grantedPermissions, m_nextGrantedPermissionsExpirationDate, _WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
@@ -632,34 +651,40 @@ void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissi
     postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, permissionMatchPatterns);
 }
 
-void WebExtensionContext::removeGrantedPermissions(PermissionsSet& permissionsToRemove)
+bool WebExtensionContext::removeGrantedPermissions(PermissionsSet& permissionsToRemove)
 {
-    removePermissions(m_grantedPermissions, permissionsToRemove, m_nextGrantedPermissionsExpirationDate, _WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
+    return removePermissions(m_grantedPermissions, permissionsToRemove, m_nextGrantedPermissionsExpirationDate, _WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
 }
 
-void WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
+bool WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
 {
-    removePermissionMatchPatterns(m_grantedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextGrantedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification);
+    if (!removePermissionMatchPatterns(m_grantedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextGrantedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification))
+        return false;
 
     removeInjectedContent(matchPatternsToRemove);
+
+    return true;
 }
 
-void WebExtensionContext::removeDeniedPermissions(PermissionsSet& permissionsToRemove)
+bool WebExtensionContext::removeDeniedPermissions(PermissionsSet& permissionsToRemove)
 {
-    removePermissions(m_deniedPermissions, permissionsToRemove, m_nextDeniedPermissionsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
+    return removePermissions(m_deniedPermissions, permissionsToRemove, m_nextDeniedPermissionsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
 }
 
-void WebExtensionContext::removeDeniedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
+bool WebExtensionContext::removeDeniedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
 {
-    removePermissionMatchPatterns(m_deniedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextDeniedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
+    if (!removePermissionMatchPatterns(m_deniedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextDeniedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification))
+        return false;
 
     updateInjectedContent();
+
+    return true;
 }
 
-void WebExtensionContext::removePermissions(PermissionsMap& permissionMap, PermissionsSet& permissionsToRemove, WallTime& nextExpirationDate, NSNotificationName notificationName)
+bool WebExtensionContext::removePermissions(PermissionsMap& permissionMap, PermissionsSet& permissionsToRemove, WallTime& nextExpirationDate, NSNotificationName notificationName)
 {
     if (permissionsToRemove.isEmpty())
-        return;
+        return false;
 
     nextExpirationDate = WallTime::infinity();
 
@@ -677,15 +702,17 @@ void WebExtensionContext::removePermissions(PermissionsMap& permissionMap, Permi
     });
 
     if (removedPermissions.isEmpty() || !notificationName)
-        return;
+        return false;
 
     postAsyncNotification(notificationName, removedPermissions);
+
+    return true;
 }
 
-void WebExtensionContext::removePermissionMatchPatterns(PermissionMatchPatternsMap& matchPatternMap, MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly, WallTime& nextExpirationDate, NSNotificationName notificationName)
+bool WebExtensionContext::removePermissionMatchPatterns(PermissionMatchPatternsMap& matchPatternMap, MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly, WallTime& nextExpirationDate, NSNotificationName notificationName)
 {
     if (matchPatternsToRemove.isEmpty())
-        return;
+        return false;
 
     nextExpirationDate = WallTime::infinity();
 
@@ -718,11 +745,13 @@ void WebExtensionContext::removePermissionMatchPatterns(PermissionMatchPatternsM
     });
 
     if (removedMatchPatterns.isEmpty() || !notificationName)
-        return;
+        return false;
 
     clearCachedPermissionStates();
 
     postAsyncNotification(notificationName, removedMatchPatterns);
+
+    return true;
 }
 
 WebExtensionContext::PermissionsMap& WebExtensionContext::removeExpired(PermissionsMap& permissionMap, WallTime& nextExpirationDate, NSNotificationName notificationName)
@@ -783,6 +812,8 @@ WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::removeExpi
         return matchPatternMap;
 
     clearCachedPermissionStates();
+
+    updateInjectedContent();
 
     postAsyncNotification(notificationName, removedMatchPatterns);
 

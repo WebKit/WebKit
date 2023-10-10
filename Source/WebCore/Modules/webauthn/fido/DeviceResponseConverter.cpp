@@ -105,7 +105,6 @@ static Vector<uint8_t> getCredentialId(const Vector<uint8_t>& authenticatorData)
     if (authenticatorData.size() < credentialIdLengthOffset + credentialIdLengthLength + credentialIdLength)
         return { };
     Vector<uint8_t> credentialId;
-    credentialId.reserveInitialCapacity(credentialIdLength);
     auto beginIt = authenticatorData.begin() + credentialIdLengthOffset + credentialIdLengthLength;
     credentialId.appendRange(beginIt, beginIt + credentialIdLength);
     return credentialId;

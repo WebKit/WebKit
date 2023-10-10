@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -219,7 +219,7 @@ public:
     void setRequestedOptionalAccessToAllHosts(bool requested) { m_requestedOptionalAccessToAllHosts = requested; }
 
     bool hasAccessInPrivateBrowsing() const { return m_hasAccessInPrivateBrowsing; }
-    void setHasAccessInPrivateBrowsing(bool hasAccess) { m_hasAccessInPrivateBrowsing = hasAccess; }
+    void setHasAccessInPrivateBrowsing(bool);
 
     void grantPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
     void denyPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
@@ -227,11 +227,11 @@ public:
     void grantPermissionMatchPatterns(MatchPatternSet&&, WallTime expirationDate = WallTime::infinity());
     void denyPermissionMatchPatterns(MatchPatternSet&&, WallTime expirationDate = WallTime::infinity());
 
-    void removeGrantedPermissions(PermissionsSet&);
-    void removeGrantedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly);
+    bool removeGrantedPermissions(PermissionsSet&);
+    bool removeGrantedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly);
 
-    void removeDeniedPermissions(PermissionsSet&);
-    void removeDeniedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly);
+    bool removeDeniedPermissions(PermissionsSet&);
+    bool removeDeniedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly);
 
     PermissionsMap::KeysConstIteratorRange currentPermissions() { return grantedPermissions().keys(); }
     PermissionMatchPatternsMap::KeysConstIteratorRange currentPermissionMatchPatterns() { return grantedPermissionMatchPatterns().keys(); }
@@ -343,8 +343,8 @@ private:
     void postAsyncNotification(NSString *notificationName, PermissionsSet&);
     void postAsyncNotification(NSString *notificationName, MatchPatternSet&);
 
-    void removePermissions(PermissionsMap&, PermissionsSet&, WallTime& nextExpirationDate, NSString *notificationName);
-    void removePermissionMatchPatterns(PermissionMatchPatternsMap&, MatchPatternSet&, EqualityOnly, WallTime& nextExpirationDate, NSString *notificationName);
+    bool removePermissions(PermissionsMap&, PermissionsSet&, WallTime& nextExpirationDate, NSString *notificationName);
+    bool removePermissionMatchPatterns(PermissionMatchPatternsMap&, MatchPatternSet&, EqualityOnly, WallTime& nextExpirationDate, NSString *notificationName);
 
     PermissionsMap& removeExpired(PermissionsMap&, WallTime& nextExpirationDate, NSString *notificationName = nil);
     PermissionMatchPatternsMap& removeExpired(PermissionMatchPatternsMap&, WallTime& nextExpirationDate, NSString *notificationName = nil);
@@ -400,6 +400,9 @@ private:
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
     void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType, size_t removedCount);
+
+    // Extension APIs
+    void extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool)>&&);
 
     // Permissions APIs
     void permissionsGetAll(CompletionHandler<void(Vector<String> permissions, Vector<String> origins)>&&);

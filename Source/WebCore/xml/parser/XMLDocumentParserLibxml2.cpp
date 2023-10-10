@@ -66,6 +66,7 @@
 #include "TransformSource.h"
 #include "XMLNSNames.h"
 #include "XMLDocumentParserScope.h"
+#include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8Conversion.h>
@@ -448,6 +449,8 @@ static bool shouldAllowExternalLoad(const URL& url)
     // retrieved content.  If we had more context, we could potentially allow
     // the parser to load a DTD.  As things stand, we take the conservative
     // route and allow same-origin requests only.
+    if (!XMLDocumentParserScope::currentCachedResourceLoader || !XMLDocumentParserScope::currentCachedResourceLoader->document())
+        return false;
     if (!XMLDocumentParserScope::currentCachedResourceLoader->document()->securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton())) {
         XMLDocumentParserScope::currentCachedResourceLoader->printAccessDeniedMessage(url);
         return false;
@@ -535,6 +538,15 @@ static void errorFunc(void*, const char*, ...)
 }
 #endif
 
+static xmlExternalEntityLoader defaultEntityLoader { nullptr };
+
+static xmlParserInputPtr entityLoader(const char* url, const char* id, xmlParserCtxtPtr context)
+{
+    if (!shouldAllowExternalLoad(URL(String::fromUTF8(url))))
+        return nullptr;
+    return defaultEntityLoader(url, id, context);
+}
+
 static void initializeXMLParser()
 {
     static std::once_flag flag;
@@ -542,6 +554,8 @@ static void initializeXMLParser()
         xmlInitParser();
         xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
         xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
+        defaultEntityLoader = xmlGetExternalEntityLoader();
+        xmlSetExternalEntityLoader(entityLoader);
         libxmlLoaderThread = &Thread::current();
     });
 }

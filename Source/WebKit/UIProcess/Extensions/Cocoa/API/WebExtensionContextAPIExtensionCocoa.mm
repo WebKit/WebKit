@@ -23,30 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
 
-#if ENABLE(WEBXR) && USE(ARKITXR_IOS)
+#import "config.h"
+#import "WebExtensionContext.h"
 
-#import <ARKit/ARKit.h>
-#import <Metal/Metal.h>
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-NS_ASSUME_NONNULL_BEGIN
+namespace WebKit {
 
-@interface WKARPresentationSessionDescriptor : NSObject <NSCopying>
-@property (nonatomic, nullable, weak, readwrite) UIViewController *presentingViewController;
-@end
+void WebExtensionContext::extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(hasAccessInPrivateBrowsing());
+}
 
-@protocol WKARPresentationSession <NSObject>
-@property (nonatomic, retain, readonly) ARSession *session;
-- (NSUInteger)startFrame;
-- (void)present;
-- (void)terminate;
-@end
+} // namespace WebKit
 
-@interface ARSession(WKARPresentationSession)
-- (nullable id<WKARPresentationSession>)presentationSessionWithDescriptor:(WKARPresentationSessionDescriptor *)descriptor;
-@end
-
-NS_ASSUME_NONNULL_END
-
-#endif // ENABLE(WEBXR) && USE(ARKITXR_IOS)
+#endif // ENABLE(WK_WEB_EXTENSIONS)

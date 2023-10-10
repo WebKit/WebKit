@@ -137,7 +137,7 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
 
 void WebXRSystem::obtainCurrentDevice(XRSessionMode mode, const JSFeatureList& requiredFeatures, const JSFeatureList& optionalFeatures, CompletionHandler<void(ThreadSafeWeakPtr<PlatformXR::Device>)>&& callback)
 {
-    if (isImmersive(mode)) {
+    if (mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr) {
         ensureImmersiveXRDeviceIsSelected([this, callback = WTFMove(callback)]() mutable {
             callback(m_activeImmersiveDevice);
         });
@@ -311,7 +311,7 @@ std::optional<WebXRSystem::ResolvedRequestedFeatures> WebXRSystem::resolveReques
     // https://immersive-web.github.io/webxr/#default-features
     auto requiredFeaturesWithDefaultFeatures = init.requiredFeatures;
     requiredFeaturesWithDefaultFeatures.append(JSC::jsStringWithCache(globalObject.vm(), PlatformXR::sessionFeatureDescriptor(PlatformXR::SessionFeature::ReferenceSpaceTypeViewer)));
-    if (isImmersive(mode))
+    if (mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr)
         requiredFeaturesWithDefaultFeatures.append(JSC::jsStringWithCache(globalObject.vm(), PlatformXR::sessionFeatureDescriptor(PlatformXR::SessionFeature::ReferenceSpaceTypeLocal)));
 
     // 8. For each feature in requiredFeatures|optionalFeatures perform the following steps:
@@ -453,7 +453,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     // 1. Let promise be a new Promise.
     // 2. Let immersive be true if mode is an immersive session mode, and false otherwise.
     // 3. Let global object be the relevant Global object for the XRSystem on which this method was invoked.
-    bool immersive = isImmersive(mode);
+    bool immersive = mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr;
     Ref protectedDocument { document };
     RefPtr globalObject = protectedDocument->domWindow();
     if (!globalObject) {
