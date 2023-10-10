@@ -4,8 +4,8 @@ Test that window.onerror and "error" event listeners from main world are invoked
 User Script
 Main world window.onerror: SerializableError from (user script) at :5:59 SerializableError from (user script)
 Main world error event listener: SerializableError from (user script) at :5:59 SerializableError from (user script)
-Main world window.onerror: [object Window] at undefined:0:0 null
-Main world error event listener: [object Window] at undefined:0:0 null
+Main world window.onerror: [object Window] at :11:27 null
+Main world error event listener: [object Window] at :11:27 null
 
 Main World
 Main world window.onerror: SerializableError from (main world) at window-onerror-for-isolated-world-3.html:49:59 SerializableError from (main world)
