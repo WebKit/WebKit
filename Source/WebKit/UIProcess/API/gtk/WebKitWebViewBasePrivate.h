@@ -133,3 +133,7 @@ void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, const GdkEvent*, 
 void webkitWebViewBaseMakeBlank(WebKitWebViewBase*, bool);
 void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase*);
 void webkitWebViewBaseSetShouldNotifyFocusEvents(WebKitWebViewBase*, bool);
+
+void webkitWebViewBaseToplevelWindowIsActiveChanged(WebKitWebViewBase*, bool);
+void webkitWebViewBaseToplevelWindowStateChanged(WebKitWebViewBase*, uint32_t, uint32_t);
+void webkitWebViewBaseToplevelWindowMonitorChanged(WebKitWebViewBase*, GdkMonitor*);

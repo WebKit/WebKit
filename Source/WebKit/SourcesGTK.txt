@@ -207,6 +207,7 @@ UIProcess/API/gtk/DropTargetGtk3.cpp @no-unify
 UIProcess/API/gtk/DropTargetGtk4.cpp @no-unify
 UIProcess/API/gtk/InputMethodFilterGtk.cpp @no-unify
 UIProcess/API/gtk/PageClientImpl.cpp @no-unify
+UIProcess/API/gtk/ToplevelWindow.cpp @no-unify
 UIProcess/API/gtk/WebKitAuthenticationDialog.cpp @no-unify
 UIProcess/API/gtk/WebKitColorChooser.cpp @no-unify
 UIProcess/API/gtk/WebKitColorChooserRequest.cpp @no-unify
