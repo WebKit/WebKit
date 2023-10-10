@@ -102,6 +102,18 @@ bool ToplevelWindow::isFullscreen() const
     return false;
 }
 
+bool ToplevelWindow::isMinimized() const
+{
+#if USE(GTK4)
+    if (auto* surface = gtk_native_get_surface(GTK_NATIVE(m_window)))
+        return gdk_toplevel_get_state(GDK_TOPLEVEL(surface)) & GDK_TOPLEVEL_STATE_MINIMIZED;
+#else
+    if (auto* window = gtk_widget_get_window(GTK_WIDGET(m_window)))
+        return gdk_window_get_state(window) & GDK_WINDOW_STATE_ICONIFIED;
+#endif
+    return false;
+}
+
 GdkMonitor* ToplevelWindow::monitor() const
 {
     auto* display = gtk_widget_get_display(GTK_WIDGET(m_window));
@@ -113,6 +125,18 @@ GdkMonitor* ToplevelWindow::monitor() const
         return gdk_display_get_monitor_at_window(display, window);
 #endif
     return nullptr;
+}
+
+bool ToplevelWindow::isInMonitor() const
+{
+#if USE(GTK4)
+    // GTK4 always returns a valid monitor from gdk_display_get_monitor_at_surface() even after monitor-leave signal is emitted,
+    // so we keep track of the monitors.
+    return !m_monitors.isEmpty();
+#else
+    auto* widget = GTK_WIDGET(m_window);
+    return gtk_widget_get_realized(widget) && gdk_display_get_monitor_at_window(gtk_widget_get_display(widget), gtk_widget_get_window(widget));
+#endif
 }
 
 void ToplevelWindow::connectSignals()
@@ -182,11 +206,16 @@ void ToplevelWindow::connectSurfaceSignals()
         toplevelWindow->m_state = state;
         toplevelWindow->notifyState(changedMask, state);
     }), this);
-    notifyMonitorChanged(monitor());
+    if (auto* monitor = gdk_display_get_monitor_at_surface(gtk_widget_get_display(GTK_WIDGET(m_window)), surface)) {
+        m_monitors.add(monitor);
+        notifyMonitorChanged(monitor);
+    }
     g_signal_connect(surface, "enter-monitor", G_CALLBACK(+[](GdkSurface* surface, GdkMonitor* monitor, ToplevelWindow* toplevelWindow) {
+        toplevelWindow->m_monitors.add(monitor);
         toplevelWindow->notifyMonitorChanged(monitor);
     }), this);
-    g_signal_connect(surface, "leave-monitor", G_CALLBACK(+[](GdkSurface* surface, GdkMonitor*, ToplevelWindow* toplevelWindow) {
+    g_signal_connect(surface, "leave-monitor", G_CALLBACK(+[](GdkSurface* surface, GdkMonitor* monitor, ToplevelWindow* toplevelWindow) {
+        toplevelWindow->m_monitors.remove(monitor);
         toplevelWindow->notifyMonitorChanged(toplevelWindow->monitor());
     }), this);
 }

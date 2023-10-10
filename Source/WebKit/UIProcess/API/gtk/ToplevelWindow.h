@@ -47,7 +47,9 @@ public:
     GtkWindow* window() const { return m_window; }
     bool isActive() const;
     bool isFullscreen() const;
+    bool isMinimized() const;
     GdkMonitor* monitor() const;
+    bool isInMonitor() const;
 
 private:
     void connectSignals();
@@ -65,6 +67,7 @@ private:
     HashSet<WebKitWebViewBase*> m_webViews;
 #if USE(GTK4)
     GdkToplevelState m_state { static_cast<GdkToplevelState>(0) };
+    HashSet<GdkMonitor*> m_monitors;
 #endif
 };
 

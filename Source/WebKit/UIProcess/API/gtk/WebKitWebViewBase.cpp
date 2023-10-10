@@ -461,7 +461,7 @@ void webkitWebViewBaseToplevelWindowStateChanged(WebKitWebViewBase* webViewBase,
         return;
 
     if (visible) {
-        if (priv->activityState & ActivityState::IsVisible || !gtk_widget_get_mapped(GTK_WIDGET(webViewBase)))
+        if (priv->activityState & ActivityState::IsVisible || !gtk_widget_get_mapped(GTK_WIDGET(webViewBase)) || !priv->toplevelOnScreenWindow->isInMonitor())
             return;
         priv->activityState.add(ActivityState::IsVisible);
     } else {
@@ -474,6 +474,18 @@ void webkitWebViewBaseToplevelWindowStateChanged(WebKitWebViewBase* webViewBase,
 
 void webkitWebViewBaseToplevelWindowMonitorChanged(WebKitWebViewBase* webViewBase, GdkMonitor* monitor)
 {
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->toplevelOnScreenWindow->isInMonitor()) {
+        if (!(priv->activityState & ActivityState::IsVisible) && gtk_widget_get_mapped(GTK_WIDGET(webViewBase)) && !priv->toplevelOnScreenWindow->isMinimized()) {
+            priv->activityState.add(ActivityState::IsVisible);
+            webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
+        }
+    } else {
+        if (priv->activityState & ActivityState::IsVisible) {
+            priv->activityState.remove(ActivityState::IsVisible);
+            webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
+        }
+    }
     webkitWebViewBaseUpdateDisplayID(webViewBase, monitor);
 }
 
