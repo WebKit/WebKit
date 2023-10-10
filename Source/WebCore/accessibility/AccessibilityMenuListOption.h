@@ -41,7 +41,7 @@ private:
 
     bool isMenuListOption() const final { return true; }
 
-    AccessibilityRole roleValue() const final { return AccessibilityRole::MenuListOption; }
+    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::MenuListOption; }
     bool canHaveChildren() const final { return false; }
     AccessibilityObject* parentObject() const final { return m_parent.get(); }
 

@@ -137,7 +137,6 @@ public:
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
 
-    void updateRole() override;
     bool matchesTextAreaRole() const;
 
     void increment() override;
@@ -156,7 +155,7 @@ protected:
 
     bool isDetached() const override { return !m_node; }
 
-    virtual AccessibilityRole determineAccessibilityRole();
+    AccessibilityRole determineAccessibilityRole() override;
     enum class TreatStyleFormatGroupAsInline : bool { No, Yes };
     AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
     AccessibilityRole ariaRoleAttribute() const override { return m_ariaRole; }
