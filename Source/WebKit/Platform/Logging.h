@@ -40,7 +40,7 @@ extern "C" {
 
 #define WEBKIT2_LOG_CHANNELS(M) \
     M(ActivityState) \
-    M(PrivateClickMeasurement) \
+    M(AdvancedPrivacyProtections) \
     M(AppSSO) \
     M(Automation) \
     M(AutomationInteractions) \
@@ -86,6 +86,7 @@ extern "C" {
     M(PerformanceLogging) \
     M(Plugins) \
     M(Printing) \
+    M(PrivateClickMeasurement) \
     M(Process) \
     M(ProcessSuspension) \
     M(ProcessSwapping) \
