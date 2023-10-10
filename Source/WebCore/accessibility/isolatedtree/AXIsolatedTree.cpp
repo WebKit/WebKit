@@ -1120,7 +1120,7 @@ void AXIsolatedTree::applyPendingChanges()
     for (auto& update : m_pendingChildrenUpdates) {
         AXLOG(makeString("updating children for axID ", update.first.loggingString()));
         if (RefPtr object = objectForID(update.first))
-            object->m_childrenIDs = WTFMove(update.second);
+            object->setChildrenIDs(WTFMove(update.second));
     }
     m_pendingChildrenUpdates.clear();
 
