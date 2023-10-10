@@ -732,7 +732,8 @@ class Git(Scm):
                         ),
                     )
                 branch = parsed_branch
-                hash = self.cache.to_hash(identifier='{}@{}'.format(identifier, parsed_branch), branch=branch) if self.cache else None
+            if branch:
+                hash = self.cache.to_hash(identifier='{}@{}'.format(identifier, branch), branch=branch) if self.cache else None
 
             # If the cache managed to convert the identifier to a hash, we can skip some computation
             if hash:
