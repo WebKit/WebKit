@@ -250,6 +250,13 @@
    },
    {
       "emails" : [
+         "ajeet@apple.com"
+      ],
+      "github" : "ajjeet",
+      "name" : "Ajeet Dyondi"
+   },
+   {
+      "emails" : [
          "akiss@inf.u-szeged.hu"
       ],
       "name" : "Akos Kiss",
