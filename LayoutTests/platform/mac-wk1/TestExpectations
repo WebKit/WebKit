@@ -1552,8 +1552,6 @@ imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_values.ht
 
 webkit.org/b/244676 [ Debug ] imported/w3c/web-platform-tests/navigation-timing/dom_interactive_media_document.html [ Pass Crash ]
 
-webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
-
 # rdar://problem/27723718
 imported/blink/compositing/child-transform-with-anchor-point.html [ ImageOnlyFailure ]
 

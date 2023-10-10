@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -7097,11 +7097,11 @@
 		413A24371FE1991800373E99 /* RTCVideoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoRenderer.h; sourceTree = "<group>"; };
 		413A24381FE1991900373E99 /* RTCDataChannelConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelConfiguration.h; sourceTree = "<group>"; };
 		413A24391FE1991900373E99 /* RTCMTLVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCMTLVideoView.h; sourceTree = "<group>"; };
-		413AD1A121265B0F003F7263 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "algorithm.h"; sourceTree = "<group>"; };
-		413AD1A221265B0F003F7263 /* container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "container.h"; sourceTree = "<group>"; };
-		413AD1A721265B59003F7263 /* optimization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "optimization.h"; sourceTree = "<group>"; };
-		413AD1A921265B59003F7263 /* casts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "casts.h"; sourceTree = "<group>"; };
-		413AD1AA21265B59003F7263 /* macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "macros.h"; sourceTree = "<group>"; };
+		413AD1A121265B0F003F7263 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = algorithm.h; sourceTree = "<group>"; };
+		413AD1A221265B0F003F7263 /* container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = container.h; sourceTree = "<group>"; };
+		413AD1A721265B59003F7263 /* optimization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = optimization.h; sourceTree = "<group>"; };
+		413AD1A921265B59003F7263 /* casts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = casts.h; sourceTree = "<group>"; };
+		413AD1AA21265B59003F7263 /* macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
 		413E67642169854500EF37ED /* RTCVideoEncoderVP8.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCVideoEncoderVP8.mm; sourceTree = "<group>"; };
 		413E676E2169863A00EF37ED /* temporal_layers_checker.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = temporal_layers_checker.cc; sourceTree = "<group>"; };
 		413E677B216986AD00EF37ED /* rtp_header_extension_size.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_header_extension_size.cc; sourceTree = "<group>"; };
@@ -8925,13 +8925,13 @@
 		442459382ACB928500E105A1 /* ghash-ssse3-x86_64.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "ghash-ssse3-x86_64.pl"; sourceTree = "<group>"; };
 		442459392ACB933B00E105A1 /* celt_lpc_sse4_1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = celt_lpc_sse4_1.c; sourceTree = "<group>"; };
 		4424593A2ACB93B000E105A1 /* jnt_sad_sse2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jnt_sad_sse2.c; sourceTree = "<group>"; };
-		448D48342AB0BDB00065014C /* fuzz-libvpx-vp8 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fuzz-libvpx-vp8"; sourceTree = BUILT_PRODUCTS_DIR; };
+		448D48342AB0BDB00065014C /* vp8_decoder_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp8_decoder_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		448D48412AB0BEBA0065014C /* vpx_dec_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vpx_dec_fuzzer.cc; sourceTree = "<group>"; };
 		449187232AB3800D007266F2 /* Base-libvpx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Base-libvpx.xcconfig"; sourceTree = "<group>"; };
-		449187242AB380BE007266F2 /* fuzz-libvpx-vp8.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "fuzz-libvpx-vp8.xcconfig"; sourceTree = "<group>"; };
-		449187252AB380BE007266F2 /* fuzz-libvpx-vp9.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "fuzz-libvpx-vp9.xcconfig"; sourceTree = "<group>"; };
+		449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp8_dec_fuzzer.xcconfig; sourceTree = "<group>"; };
+		449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp9_dec_fuzzer.xcconfig; sourceTree = "<group>"; };
 		449187262AB38132007266F2 /* mem_ops_aligned.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mem_ops_aligned.h; sourceTree = "<group>"; };
-		44C20E942AB39FA80046C6A8 /* fuzz-libvpx-vp9 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fuzz-libvpx-vp9"; sourceTree = BUILT_PRODUCTS_DIR; };
+		44C20E942AB39FA80046C6A8 /* vp9_decoder_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp9_decoder_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		44C229C12A0AF4130008308E /* libwebrtc.testing.exp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.exports; path = libwebrtc.testing.exp; sourceTree = "<group>"; };
 		5C0073091E5513E70042215A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5C00730A1E5513E70042215A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -18950,8 +18950,6 @@
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
 				5C4B43B01E42877A002651C8 /* boringssl.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
-				449187242AB380BE007266F2 /* fuzz-libvpx-vp8.xcconfig */,
-				449187252AB380BE007266F2 /* fuzz-libvpx-vp9.xcconfig */,
 				DDF30D0B27C5C01A006A526F /* libabsl.xcconfig */,
 				DDEBB11E24C0189600ADBD44 /* libaom.xcconfig */,
 				5C0884891E4A978C00403995 /* libsrtp.xcconfig */,
@@ -18962,6 +18960,8 @@
 				5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */,
 				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
+				449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */,
+				449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */,
 				41F77D1E215BE4AD00E72967 /* yasm.xcconfig */,
 			);
 			path = Configurations;
@@ -19450,8 +19450,8 @@
 				CDEBB11924C0187400ADBD44 /* libwebm.a */,
 				FB39D0D11200F0E300088E69 /* libwebrtc.dylib */,
 				5C0884DE1E4A980100403995 /* libyuv.a */,
-				448D48342AB0BDB00065014C /* fuzz-libvpx-vp8 */,
-				44C20E942AB39FA80046C6A8 /* fuzz-libvpx-vp9 */,
+				448D48342AB0BDB00065014C /* vp8_decoder_fuzzer */,
+				44C20E942AB39FA80046C6A8 /* vp9_decoder_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -22153,9 +22153,9 @@
 			productReference = 41F77D16215BE45E00E72967 /* yasm */;
 			productType = "com.apple.product-type.tool";
 		};
-		448D48332AB0BDB00065014C /* fuzz-libvpx-vp8 */ = {
+		448D48332AB0BDB00065014C /* vp8_dec_fuzzer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "fuzz-libvpx-vp8" */;
+			buildConfigurationList = 448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "vp8_dec_fuzzer" */;
 			buildPhases = (
 				448D48302AB0BDB00065014C /* Sources */,
 				448D48312AB0BDB00065014C /* Frameworks */,
@@ -22165,14 +22165,14 @@
 			dependencies = (
 				448D483D2AB0BDB80065014C /* PBXTargetDependency */,
 			);
-			name = "fuzz-libvpx-vp8";
-			productName = "fuzz-libvpx";
-			productReference = 448D48342AB0BDB00065014C /* fuzz-libvpx-vp8 */;
+			name = vp8_dec_fuzzer;
+			productName = "vp8_dec_fuzzer";
+			productReference = 448D48342AB0BDB00065014C /* vp8_decoder_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
-		44C20E892AB39FA80046C6A8 /* fuzz-libvpx-vp9 */ = {
+		44C20E892AB39FA80046C6A8 /* vp9_dec_fuzzer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 44C20E902AB39FA80046C6A8 /* Build configuration list for PBXNativeTarget "fuzz-libvpx-vp9" */;
+			buildConfigurationList = 44C20E902AB39FA80046C6A8 /* Build configuration list for PBXNativeTarget "vp9_dec_fuzzer" */;
 			buildPhases = (
 				44C20E8C2AB39FA80046C6A8 /* Sources */,
 				44C20E8E2AB39FA80046C6A8 /* Frameworks */,
@@ -22182,9 +22182,9 @@
 			dependencies = (
 				44C20E8A2AB39FA80046C6A8 /* PBXTargetDependency */,
 			);
-			name = "fuzz-libvpx-vp9";
-			productName = "fuzz-libvpx";
-			productReference = 44C20E942AB39FA80046C6A8 /* fuzz-libvpx-vp9 */;
+			name = vp9_dec_fuzzer;
+			productName = "vp9_dec_fuzzer";
+			productReference = 44C20E942AB39FA80046C6A8 /* vp9_decoder_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
 		5C08848B1E4A97E300403995 /* srtp */ = {
@@ -22407,8 +22407,8 @@
 				CDEBB11824C0187400ADBD44 /* webm */,
 				DDEBB11824C0187400ADBD44 /* aom */,
 				DDF30D0527C5C003006A526F /* absl */,
-				448D48332AB0BDB00065014C /* fuzz-libvpx-vp8 */,
-				44C20E892AB39FA80046C6A8 /* fuzz-libvpx-vp9 */,
+				448D48332AB0BDB00065014C /* vp8_dec_fuzzer */,
+				44C20E892AB39FA80046C6A8 /* vp9_dec_fuzzer */,
 			);
 		};
 /* End PBXProject section */
@@ -25028,42 +25028,42 @@
 		};
 		448D48382AB0BDB10065014C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 449187242AB380BE007266F2 /* fuzz-libvpx-vp8.xcconfig */;
+			baseConfigurationReference = 449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		448D48392AB0BDB10065014C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 449187242AB380BE007266F2 /* fuzz-libvpx-vp8.xcconfig */;
+			baseConfigurationReference = 449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		448D483A2AB0BDB10065014C /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 449187242AB380BE007266F2 /* fuzz-libvpx-vp8.xcconfig */;
+			baseConfigurationReference = 449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
 		};
 		44C20E912AB39FA80046C6A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 449187252AB380BE007266F2 /* fuzz-libvpx-vp9.xcconfig */;
+			baseConfigurationReference = 449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		44C20E922AB39FA80046C6A8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 449187252AB380BE007266F2 /* fuzz-libvpx-vp9.xcconfig */;
+			baseConfigurationReference = 449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		44C20E932AB39FA80046C6A8 /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 449187252AB380BE007266F2 /* fuzz-libvpx-vp9.xcconfig */;
+			baseConfigurationReference = 449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -25296,7 +25296,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "fuzz-libvpx-vp8" */ = {
+		448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "vp8_dec_fuzzer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				448D48382AB0BDB10065014C /* Debug */,
@@ -25306,7 +25306,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		44C20E902AB39FA80046C6A8 /* Build configuration list for PBXNativeTarget "fuzz-libvpx-vp9" */ = {
+		44C20E902AB39FA80046C6A8 /* Build configuration list for PBXNativeTarget "vp9_dec_fuzzer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				44C20E912AB39FA80046C6A8 /* Debug */,

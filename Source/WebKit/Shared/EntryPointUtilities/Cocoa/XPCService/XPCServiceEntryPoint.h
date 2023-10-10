@@ -173,7 +173,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 }
 
 int XPCServiceMain(int, const char**);
-void XPCServiceEventHandler(xpc_connection_t peer);
+
 void XPCServiceExit();
 
 } // namespace WebKit

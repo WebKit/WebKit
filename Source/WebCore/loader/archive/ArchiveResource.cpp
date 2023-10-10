@@ -49,8 +49,11 @@ RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&&
     if (!data)
         return nullptr;
     if (response.isNull()) {
-        unsigned dataSize = data->size();
-        return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, ResourceResponse(url, mimeType, dataSize, textEncoding), fileName));
+        ResourceResponse syntheticResponse(url, mimeType, data->size(), textEncoding);
+        // Provide a valid HTTP status code for http URLs since we have logic in WebCore that validates it.
+        if (url.protocolIsInHTTPFamily())
+            syntheticResponse.setHTTPStatusCode(200);
+        return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, WTFMove(syntheticResponse), fileName));
     }
     return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, response, fileName));
 }

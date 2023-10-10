@@ -25,17 +25,11 @@
 
 #pragma once
 
-#if __has_include(<xpc/xpc.h>)
-#include <xpc/xpc.h>
-#else
-#include <wtf/spi/darwin/XPCSPI.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void handleNewConnection(xpc_connection_t);
+void extensionMain(int argc, char** argv);
 
 #ifdef __cplusplus
 }

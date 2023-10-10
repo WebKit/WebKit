@@ -454,7 +454,6 @@ function ios_family_process_webpushd_entitlements()
 
 function ios_family_process_network_entitlements()
 {
-    plistbuddy Add :com.apple.private.coreservices.canmaplsdatabase bool YES
     plistbuddy Add :com.apple.private.webkit.adattributiond bool YES
     plistbuddy Add :com.apple.private.webkit.webpush bool YES
     plistbuddy Add :com.apple.multitasking.systemappassertions bool YES
@@ -524,13 +523,10 @@ elif [[ "${WK_PLATFORM_NAME}" == iphoneos ||
 then
     if [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Development ]]; then true
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent ]]; then ios_family_process_webcontent_entitlements
-    elif [[ "${PRODUCT_NAME}" == WebContentExtension ]]; then ios_family_process_webcontent_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then ios_family_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Crashy ]]; then ios_family_process_webcontent_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then ios_family_process_network_entitlements
-    elif [[ "${PRODUCT_NAME}" == NetworkingExtension ]]; then ios_family_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then ios_family_process_gpu_entitlements
-    elif [[ "${PRODUCT_NAME}" == GPUExtension ]]; then ios_family_process_gpu_entitlements
     elif [[ "${PRODUCT_NAME}" == adattributiond ]]; then
         ios_family_process_adattributiond_entitlements
     elif [[ "${PRODUCT_NAME}" == webpushd ]]; then

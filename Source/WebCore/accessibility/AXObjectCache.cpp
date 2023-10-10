@@ -2679,6 +2679,9 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(const SimpleRange& range,
         behaviors.add(TextIteratorBehavior::EntersTextControls);
     TextIterator iterator(range, behaviors);
     
+    // Enable the cache here for accessibilityIsIgnored calls in replacedNodeNeedsCharacter
+    AXAttributeCacheEnabler enableCache(this);
+
     // When the range has zero length, there might be replaced node or brTag that we need to increment the characterOffset.
     if (iterator.atEnd()) {
         currentNode = range.start.container.ptr();
@@ -4268,11 +4271,8 @@ void AXObjectCache::updateIsolatedTree(AccessibilityObject* axObject, AXProperty
 
 void AXObjectCache::updateIsolatedTree(AccessibilityObject& axObject, AXPropertyName property) const
 {
-    RefPtr tree = AXIsolatedTree::treeForPageID(*m_pageID);
-    if (!tree)
-        return;
-
-    tree->updateNodeProperty(axObject, property);
+    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+        tree->updateNodeProperty(axObject, property);
 }
 
 void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) const

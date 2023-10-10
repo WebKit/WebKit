@@ -1439,7 +1439,7 @@ webkit.org/b/228528 [ BigSur Debug arm64 ] fast/text/emoji-overlap.html [ Pass I
 [ Monterey arm64 ] fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
 [ Monterey arm64 ] fast/text/canvas-color-fonts/stroke-gradient-COLR-5.html [ ImageOnlyFailure ]
 
-webkit.org/b/261922 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html [ Pass Failure Timeout ] # old: webkit.org/b/228591
+webkit.org/b/228591 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html [ Pass Failure ]
 
 webkit.org/b/229156 [ Monterey+ ] webrtc/video-addTrack.html [ Pass Failure ]
 
@@ -2209,3 +2209,7 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 [ Sonoma+ ] fast/attachment/cocoa/wide-attachment-rendering.html [ Failure ]
 
 webkit.org/b/262753 [ Sonoma+ ] fast/repaint/4776765.html [ Failure ]
+
+webkit.org/b/262915 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-rounded-border.html [ ImageOnlyFailure ]
+
+webkit.org/b/262917 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]

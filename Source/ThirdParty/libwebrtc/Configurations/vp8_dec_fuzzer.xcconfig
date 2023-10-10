@@ -1,5 +1,5 @@
 #include "Base-libvpx.xcconfig"
 
-PRODUCT_NAME = fuzz-libvpx-vp8;
+PRODUCT_NAME = vp8_dec_fuzzer;
 
 OTHER_CFLAGS = $(inherited) -DDECODER=vp8;

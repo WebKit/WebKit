@@ -85,6 +85,7 @@ class PlatformGestureEvent;
 class PlatformKeyboardEvent;
 class PlatformTouchEvent;
 class PlatformWheelEvent;
+class RemoteFrame;
 class RenderBox;
 class RenderElement;
 class RenderLayer;
@@ -99,6 +100,7 @@ class WheelEvent;
 class Widget;
 
 struct DragState;
+struct RemoteMouseEventData;
 
 enum class WheelEventProcessingSteps : uint8_t;
 enum class WheelScrollGestureState : uint8_t;
@@ -557,6 +559,8 @@ private:
 
     bool canMouseDownStartSelect(const MouseEventWithHitTestResults&);
     bool mouseDownMayStartSelect() const;
+
+    std::optional<RemoteMouseEventData> mouseEventDataForRemoteFrame(const RemoteFrame*, const IntPoint&);
     
     LocalFrame& m_frame;
     RefPtr<Node> m_mousePressNode;

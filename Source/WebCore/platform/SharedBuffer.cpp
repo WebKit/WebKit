@@ -215,11 +215,11 @@ RefPtr<ArrayBuffer> FragmentedSharedBuffer::tryCreateArrayBuffer() const
 void FragmentedSharedBuffer::append(const FragmentedSharedBuffer& data)
 {
     ASSERT(!m_contiguous);
-    m_segments.reserveCapacity(m_segments.size() + data.m_segments.size());
-    for (const auto& element : data.m_segments) {
-        m_segments.uncheckedAppend({ m_size, element.segment.copyRef() });
+    m_segments.appendContainerWithMapping(data.m_segments, [&](auto& element) {
+        DataSegmentVectorEntry entry { m_size, element.segment.copyRef() };
         m_size += element.segment->size();
-    }
+        return entry;
+    });
     ASSERT(internallyConsistent());
 }
 

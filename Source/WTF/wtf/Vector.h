@@ -899,6 +899,7 @@ public:
     void fill(const T& val) { fill(val, size()); }
 
     template<typename Iterator> void appendRange(Iterator start, Iterator end);
+    template<typename ContainerType, typename MapFunction> void appendContainerWithMapping(ContainerType&&, const MapFunction&);
 
     MallocPtr<T, Malloc> releaseBuffer();
 
@@ -1734,11 +1735,23 @@ inline auto Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map
     return result;
 }
 
+template <typename ContainerType>
+size_t containerSize(const ContainerType& container) { return std::size(container); }
+
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<typename MapFunction>
 inline auto Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map(MapFunction&& mapFunction) const -> std::enable_if_t<std::is_invocable_v<MapFunction, const T&>, Vector<typename std::invoke_result_t<MapFunction, const T&>>>
 {
     return map<Vector<typename std::invoke_result_t<MapFunction, const T&>>, MapFunction>(std::forward<MapFunction>(mapFunction));
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<typename ContainerType, typename MapFunction>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendContainerWithMapping(ContainerType&& container, const MapFunction& mapFunction)
+{
+    reserveCapacity(size() + containerSize(container));
+    for (auto&& item : container)
+        unsafeAppendWithoutCapacityCheck(mapFunction(std::forward<decltype(item)>(item)));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1823,8 +1836,7 @@ template<typename MapFunction, typename DestinationVectorType, typename SourceTy
 struct Mapper {
     static void map(DestinationVectorType& result, const SourceType& source, const MapFunction& mapFunction)
     {
-        // FIXME: Use std::size when available on all compilers.
-        result.reserveInitialCapacity(source.size());
+        result.reserveInitialCapacity(containerSize(source));
         for (auto&& item : source)
             result.unsafeAppendWithoutCapacityCheck(mapFunction(item));
     }
@@ -1834,8 +1846,7 @@ template<typename MapFunction, typename DestinationVectorType, typename SourceTy
 struct Mapper<MapFunction, DestinationVectorType, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
     static void map(DestinationVectorType& result, SourceType&& source, const MapFunction& mapFunction)
     {
-        // FIXME: Use std::size when available on all compilers.
-        result.reserveInitialCapacity(source.size());
+        result.reserveInitialCapacity(containerSize(source));
         for (auto&& item : source)
             result.unsafeAppendWithoutCapacityCheck(mapFunction(WTFMove(item)));
     }

@@ -344,6 +344,8 @@ private:
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_storeLock);
 
     void createEmptyContent(AccessibilityObject&);
+    constexpr bool isUpdatingSubtree() const { return m_rootOfSubtreeBeingUpdated; }
+    constexpr void updatingSubtree(AccessibilityObject* axObject) { m_rootOfSubtreeBeingUpdated = axObject; }
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
     std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, AttachWrapper = AttachWrapper::OnMainThread);
     void collectNodeChangesForSubtree(AXCoreObject&);
@@ -361,6 +363,7 @@ private:
     unsigned m_maxTreeDepth { 0 };
     WeakPtr<AXObjectCache> m_axObjectCache;
     OptionSet<ActivityState> m_pageActivityState;
+    RefPtr<AccessibilityObject> m_rootOfSubtreeBeingUpdated;
     RefPtr<AXGeometryManager> m_geometryManager;
 
     // Stores the parent ID and children IDS for a given IsolatedObject.

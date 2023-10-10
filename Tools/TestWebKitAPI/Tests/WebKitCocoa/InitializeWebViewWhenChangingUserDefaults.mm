@@ -23,16 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ServiceExtensions
-@_spi(Private) import ServiceExtensions
+#import "config.h"
 
-@main
-class WebContentProcessExtension {
-    required init() {}
+#import <WebKit/WebKit.h>
+#import <wtf/RetainPtr.h>
+
+@interface UserDefaultChangeObserver : NSObject
+@end
+
+@implementation UserDefaultChangeObserver {
+    RetainPtr<WKWebView> _webView;
 }
 
-extension WebContentProcessExtension: ContentServiceExtension {
-    func handle(xpcConnection: xpc_connection_t) {
-        handleNewConnection(xpcConnection)
-    }
+- (instancetype)init
+{
+    if (self = [super init])
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(defaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
+    return self;
 }
+
+- (void)defaultsChanged:(NSNotification *)notification
+{
+    _webView = adoptNS([WKWebView new]);
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+TEST(WebKit2, NoCrashWhenInitializeWebViewWhenChangingUserDefaults)
+{
+    auto observer = adoptNS([UserDefaultChangeObserver new]);
+    auto webView = adoptNS([WKWebView new]);
+}
+
+} // namespace TestWebKitAPI

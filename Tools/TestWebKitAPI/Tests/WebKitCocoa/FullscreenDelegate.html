@@ -8,6 +8,9 @@
         document.addEventListener('webkitfullscreenchange', function(event) {
             window.webkit.messageHandlers.fullscreenChangeHandler.postMessage('fullscreenchange');
         });
+        document.addEventListener('visibilitychange', function(event) {
+            window.webkit.messageHandlers.fullscreenChangeHandler.postMessage('visibilitychange');
+        });
         document.addEventListener('mousedown', function(event) {
             // Toggle fullscreen
             var target = document.getElementById('target');

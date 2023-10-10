@@ -82,9 +82,9 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
         for (auto& familyName : familyNames.get())
             m_fontFamilyNames.uncheckedConstructAndAppend(familyName);
     } else {
-        m_fontFamilyNames.reserveInitialCapacity(familyNamesData->size());
-        for (auto& familyName : familyNamesData.get())
-            m_fontFamilyNames.uncheckedAppend(familyName);
+        m_fontFamilyNames.appendContainerWithMapping(familyNamesData.get(), [](auto& familyName) {
+            return familyName;
+        });
     }
 
     FontCache::forCurrentThread().addClient(*this);

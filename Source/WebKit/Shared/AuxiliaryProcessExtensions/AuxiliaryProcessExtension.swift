@@ -23,49 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-NS_ASSUME_NONNULL_BEGIN
+import Foundation
 
-@interface _SEServiceConfiguration: NSObject
-typedef void(^_SEServiceInteruptionHandler)();
-@property (copy) NSString* serviceIdentifier;
-@property (copy) _SEServiceInteruptionHandler interuptionHandler;
-
--(instancetype)initWithServiceIdentifier:(NSString*)serviceIdentifier;
-
-@end
-
-NS_REFINED_FOR_SWIFT
-@interface _SEExtensionProcess: NSObject
-
--(nullable xpc_connection_t)makeLibXPCConnectionError:(NSError* _Nullable*)error;
-
--(void)invalidate;
-
-@end
-
-NS_REFINED_FOR_SWIFT
-@interface _SEContentProcess: _SEExtensionProcess
-@end
-
-NS_REFINED_FOR_SWIFT
-@interface _SEGPUProcess: _SEExtensionProcess
-@end
-
-NS_REFINED_FOR_SWIFT
-@interface _SENetworkProcess: _SEExtensionProcess
-@end
-
-
-@interface _SEServiceManager: NSObject
-
-+(instancetype)sharedInstance;
-
--(void)contentProcessWithConfiguration:(_SEServiceConfiguration*)configuration completion:(void(^)(_SEContentProcess* _Nullable process, NSError* _Nullable error))completion;
-
--(void)networkProcessWithConfiguration:(_SEServiceConfiguration*)configuration completion:(void(^)(_SENetworkProcess* _Nullable process, NSError* _Nullable error))completion;
-
--(void)gpuProcessWithConfiguration:(_SEServiceConfiguration*)configuration completion:(void(^)(_SEGPUProcess* _Nullable process, NSError* _Nullable error))completion;
-
-@end
-
-NS_ASSUME_NONNULL_END
+@main
+class AuxiliaryProcessExtension {
+    static func main() throws -> Void {
+        extensionMain(CommandLine.argc, CommandLine.unsafeArgv)
+    }
+}

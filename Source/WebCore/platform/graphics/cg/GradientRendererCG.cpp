@@ -595,8 +595,9 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
         if (!hasZero)
             convertedStops.uncheckedAppend({ 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } });
 
-        for (const auto& stop : stops)
-            convertedStops.uncheckedAppend({ stop.offset, convertColorToColorInterpolationSpace(stop.color, colorInterpolationMethod) });
+        convertedStops.appendContainerWithMapping(stops, [&](auto& stop) {
+            return ColorConvertedToInterpolationColorSpaceStop { stop.offset, convertColorToColorInterpolationSpace(stop.color, colorInterpolationMethod) };
+        });
 
         if (!hasOne)
             convertedStops.uncheckedAppend({ 1.0f, convertedStops.last().colorComponents });

@@ -142,7 +142,12 @@ void Scope::createOrFindSharedShadowTreeResolver()
     if (!result.isNewEntry) {
         m_resolver = result.iterator->value.ptr();
         m_resolver->setSharedBetweenShadowTrees();
+        return;
     }
+
+    static constexpr auto maximimumSharedResolverCount = 256;
+    if (documentScope().m_sharedShadowTreeResolvers.size() > maximimumSharedResolverCount)
+        documentScope().m_sharedShadowTreeResolvers.remove(documentScope().m_sharedShadowTreeResolvers.random());
 }
 
 void Scope::unshareShadowTreeResolverBeforeMutation()
