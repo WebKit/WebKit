@@ -2209,3 +2209,7 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 [ Sonoma+ ] fast/attachment/cocoa/wide-attachment-rendering.html [ Failure ]
 
 webkit.org/b/262753 [ Sonoma+ ] fast/repaint/4776765.html [ Failure ]
+
+webkit.org/b/262915 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-rounded-border.html [ ImageOnlyFailure ]
+
+webkit.org/b/262917 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
