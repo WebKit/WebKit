@@ -242,12 +242,14 @@ Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
     elements.reserveInitialCapacity((elementsWithId ? elementsWithId->size() : 0) + (elementsWithName ? elementsWithName->size() : 0));
 
     if (elementsWithId) {
-        for (auto& element : *elementsWithId)
-            elements.uncheckedAppend(*element);
+        elements.appendContainerWithMapping(*elementsWithId, [](auto& element) {
+            return Ref { *element };
+        });
     }
     if (elementsWithName) {
-        for (auto& element : *elementsWithName)
-            elements.uncheckedAppend(*element);
+        elements.appendContainerWithMapping(*elementsWithName, [](auto& element) {
+            return Ref { *element };
+        });
     }
 
     return elements;

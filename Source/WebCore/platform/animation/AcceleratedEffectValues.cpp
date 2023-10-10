@@ -142,9 +142,9 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
 
     auto& transformOperations = transform.operations();
     auto& srcTransformOperations = style.transform().operations();
-    transformOperations.reserveCapacity(srcTransformOperations.size());
-    for (auto& srcTransformOperation : srcTransformOperations)
-        transformOperations.uncheckedAppend(srcTransformOperation->selfOrCopyWithResolvedCalculatedValues(borderBoxSize));
+    transformOperations.appendContainerWithMapping(srcTransformOperations, [&](auto& srcTransformOperation) {
+        return srcTransformOperation->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
+    });
 
     if (auto* srcTranslate = style.translate())
         translate = srcTranslate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);

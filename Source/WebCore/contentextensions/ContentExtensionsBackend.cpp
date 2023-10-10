@@ -131,10 +131,12 @@ auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension
     if (auto totalActionCount = actionLocations.size() + universalActions.size()) {
         Vector<uint32_t> vector;
         vector.reserveInitialCapacity(totalActionCount);
-        for (uint64_t actionLocation : actionLocations)
-            vector.uncheckedAppend(static_cast<uint32_t>(actionLocation));
-        for (uint64_t actionLocation : universalActions)
-            vector.uncheckedAppend(static_cast<uint32_t>(actionLocation));
+        vector.appendContainerWithMapping(actionLocations, [](uint64_t actionLocation) {
+            return static_cast<uint32_t>(actionLocation);
+        });
+        vector.appendContainerWithMapping(universalActions, [](uint64_t actionLocation) {
+            return static_cast<uint32_t>(actionLocation);
+        });
         std::sort(vector.begin(), vector.end());
 
         // Add actions in reverse order to properly deal with IgnorePreviousRules.

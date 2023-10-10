@@ -289,10 +289,10 @@ std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
         bool hasSetCookie = !m_headers->m_setCookieValues.isEmpty();
         m_keys.resize(0);
         m_keys.reserveCapacity(m_headers->m_headers.size() + (hasSetCookie ? 1 : 0));
-        for (auto& header : m_headers->m_headers) {
+        m_keys.appendContainerWithMapping(m_headers->m_headers, [](auto& header) {
             ASSERT(!header.key.isNull());
-            m_keys.uncheckedAppend(header.key.convertToASCIILowercase());
-        }
+            return header.key.convertToASCIILowercase();
+        });
         if (hasSetCookie)
             m_keys.uncheckedAppend(String());
         std::sort(m_keys.begin(), m_keys.end(), compareIteratorKeys);

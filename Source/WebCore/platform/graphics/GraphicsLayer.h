@@ -170,9 +170,9 @@ public:
     TransformAnimationValue(const TransformAnimationValue& other)
         : AnimationValue(other)
     {
-        m_value.operations().reserveInitialCapacity(other.m_value.operations().size());
-        for (auto& operation : other.m_value.operations())
-            m_value.operations().uncheckedAppend(operation->clone());
+        m_value.operations().appendContainerWithMapping(other.m_value.operations(), [](auto& operation) {
+            return operation->clone();
+        });
     }
 
     TransformAnimationValue(TransformAnimationValue&&) = default;
@@ -201,9 +201,9 @@ public:
     FilterAnimationValue(const FilterAnimationValue& other)
         : AnimationValue(other)
     {
-        m_value.operations().reserveInitialCapacity(other.m_value.operations().size());
-        for (auto& operation : other.m_value.operations())
-            m_value.operations().uncheckedAppend(operation->clone());
+        m_value.operations().appendContainerWithMapping(other.m_value.operations(), [](auto& operation) {
+            return operation->clone();
+        });
     }
 
     FilterAnimationValue(FilterAnimationValue&&) = default;

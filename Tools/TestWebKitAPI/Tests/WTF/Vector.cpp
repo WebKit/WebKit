@@ -356,6 +356,25 @@ TEST(WTF_Vector, AppendList)
     EXPECT_EQ(vector[5], 6U);
 }
 
+TEST(WTF_Vector, AppendContainerWithMapping)
+{
+    Vector<size_t> vector({ 1, 2, 3 });
+    ListHashSet<std::pair<size_t, size_t>> set;
+    set.add({ 2, 2 });
+    set.add({ 2, 3 });
+    set.add({ 1, 5 });
+    vector.appendContainerWithMapping(set, [](auto& pair) {
+        return pair.first + pair.second;
+    });
+    EXPECT_EQ(vector.size(), 6U);
+    EXPECT_EQ(vector[0], 1U);
+    EXPECT_EQ(vector[1], 2U);
+    EXPECT_EQ(vector[2], 3U);
+    EXPECT_EQ(vector[3], 4U);
+    EXPECT_EQ(vector[4], 5U);
+    EXPECT_EQ(vector[5], 6U);
+}
+
 TEST(WTF_Vector, Reverse)
 {
     Vector<int> intVector;

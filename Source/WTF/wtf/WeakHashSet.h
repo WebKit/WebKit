@@ -230,19 +230,8 @@ private:
     mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
-template<typename MapFunction, typename DestinationVectorType, typename T, typename WeakMapImpl>
-struct Mapper<MapFunction, DestinationVectorType, const WeakHashSet<T, WeakMapImpl>&, void> {
-    static void map(DestinationVectorType& result, const WeakHashSet<T, WeakMapImpl>& source, const MapFunction& mapFunction)
-    {
-        result.reserveInitialCapacity(source.computeSize());
-        for (auto& item : source)
-            result.unsafeAppendWithoutCapacityCheck(mapFunction(item));
-    }
-};
-
-template<typename MapFunction, typename DestinationVectorType, typename T, typename WeakMapImpl>
-struct Mapper<MapFunction, DestinationVectorType, WeakHashSet<T, WeakMapImpl>&, void> : Mapper<MapFunction, DestinationVectorType, const WeakHashSet<T, WeakMapImpl> &, void> {
-};
+template<typename T, typename WeakMapImpl>
+size_t containerSize(const WeakHashSet<T, WeakMapImpl>& container) { return container.computeSize(); }
 
 template<typename T, typename WeakMapImpl>
 inline auto copyToVector(const WeakHashSet<T, WeakMapImpl>& collection) -> Vector<WeakPtr<T, WeakMapImpl>>
