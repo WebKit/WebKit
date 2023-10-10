@@ -269,19 +269,20 @@ class Publish(Command):
             push_env['{}_TOKEN'.format(tokenized_domain)] = credentials[1]
 
         return_code = 0
-        print('Pushing branches to {}...'.format(args.remote))
-        command = [repository.executable(), 'push', '--atomic', remote_arg] + [
-            '{}:refs/heads/{}'.format(commit.hash[:commit.HASH_LABEL_SIZE], branch) for branch, commit in branches_to_publish.items()
-        ]
-        log.info("Invoking '{}'".format(' '.join(command)))
-        if run(
-            command,
-            cwd=repository.root_path,
-            encoding='utf-8',
-            env=push_env,
-        ).returncode:
-            sys.stderr.write('Failed to push branches to {}\n'.format(args.remote))
-            return_code += 1
+        if branches_to_publish:
+            print('Pushing branches to {}...'.format(args.remote))
+            command = [repository.executable(), 'push', '--atomic', remote_arg] + [
+                '{}:refs/heads/{}'.format(commit.hash[:commit.HASH_LABEL_SIZE], branch) for branch, commit in branches_to_publish.items()
+            ]
+            log.info("Invoking '{}'".format(' '.join(command)))
+            if run(
+                command,
+                cwd=repository.root_path,
+                encoding='utf-8',
+                env=push_env,
+            ).returncode:
+                sys.stderr.write('Failed to push branches to {}\n'.format(args.remote))
+                return_code += 1
 
         if not return_code and tags_to_publish:
             print('Pushing tags to {}...'.format(args.remote))
