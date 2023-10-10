@@ -2097,19 +2097,33 @@ std::optional<WGPUTextureViewDescriptor> Texture::resolveTextureViewDescriptorDe
     }
 
     if (resolved.dimension == WGPUTextureViewDimension_Undefined) {
-        switch (m_dimension) {
-        case WGPUTextureDimension_1D:
+        switch (m_texture.textureType) {
+        case MTLTextureType1D:
             resolved.dimension = WGPUTextureViewDimension_1D;
             break;
-        case WGPUTextureDimension_2D:
+        case MTLTextureType1DArray:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        case MTLTextureType2D:
+        case MTLTextureType2DMultisample:
             resolved.dimension = WGPUTextureViewDimension_2D;
             break;
-        case WGPUTextureDimension_3D:
+        case MTLTextureType2DArray:
+        case MTLTextureType2DMultisampleArray:
+            resolved.dimension = WGPUTextureViewDimension_2DArray;
+            break;
+        case MTLTextureTypeCube:
+            resolved.dimension = WGPUTextureViewDimension_Cube;
+            break;
+        case MTLTextureTypeCubeArray:
+            resolved.dimension = WGPUTextureViewDimension_CubeArray;
+            break;
+        case MTLTextureType3D:
             resolved.dimension = WGPUTextureViewDimension_3D;
             break;
-        case WGPUTextureDimension_Force32:
+        case MTLTextureTypeTextureBuffer:
             ASSERT_NOT_REACHED();
-            return resolved;
+            break;
         }
     }
 
