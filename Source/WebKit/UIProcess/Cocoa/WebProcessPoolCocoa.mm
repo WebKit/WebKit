@@ -302,8 +302,6 @@ static void logProcessPoolState(const WebProcessPool& pool)
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
 void WebProcessPool::initializeShouldCrashWhenCreatingWebProcess()
 {
-    ASSERT(!s_didGlobalStaticInitialization);
-
     // Do the check on a background queue to avoid an app launch time regression. Note that this means we're racing with the
     // construction of the first WebProcess. However, the race is OK, we just want to make sure a WebProcess will crash in
     // the future, it doesn't have to be the very first one.
@@ -321,11 +319,11 @@ void WebProcessPool::initializeShouldCrashWhenCreatingWebProcess()
 }
 #endif
 
-void WebProcessPool::platformInitialize()
+void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlobalStaticInitialization)
 {
     registerNotificationObservers();
 
-    if (s_didGlobalStaticInitialization)
+    if (needsGlobalStaticInitialization == NeedsGlobalStaticInitialization::No)
         return;
 
     registerUserDefaults();

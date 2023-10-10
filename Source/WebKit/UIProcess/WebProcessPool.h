@@ -532,7 +532,8 @@ public:
     bool operator==(const WebProcessPool& other) const { return (this == &other); }
 
 private:
-    void platformInitialize();
+    enum class NeedsGlobalStaticInitialization : bool { No, Yes };
+    void platformInitialize(NeedsGlobalStaticInitialization);
 
     void platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
     void platformInvalidateContext();
@@ -819,7 +820,6 @@ private:
     bool m_delaysWebProcessLaunchDefaultValue { globalDelaysWebProcessLaunchDefaultValue() };
 
     static bool s_useSeparateServiceWorkerProcess;
-    static bool s_didGlobalStaticInitialization;
 
 #if ENABLE(TRACKING_PREVENTION)
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
