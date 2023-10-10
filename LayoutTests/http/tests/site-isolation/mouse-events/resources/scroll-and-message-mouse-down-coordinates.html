@@ -1,0 +1,27 @@
+<style>
+#content {
+    width: 800px;
+    height: 800px;
+    overflow: auto;
+}
+</style>
+<div id="content">
+<script>
+addEventListener("mousedown", (event) => {
+    window.parent.postMessage(event.pageX + "," + event.pageY, "*");
+});
+
+addEventListener("load", (event) => {
+    window.scrollTo(50, 50);
+
+    function checkScrollPosition() {
+        if (window.scrollX === 50 && window.scrollY === 50)
+            window.parent.postMessage("scrolled", "*");
+        else
+            requestAnimationFrame(checkScrollPosition);
+    }
+
+    requestAnimationFrame(checkScrollPosition);
+});
+</script>
+</div>

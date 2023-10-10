@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+addEventListener("message", (event) => {
+    if (event.data == "scrolled") {
+        eventSender.mouseMoveTo(100, 100);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        return;
+    }
+
+    if (event.data == "140,95")
+        testPassed("Correct mouse coordinates");
+    else
+        testFailed("Unexpected mouse coordinates: " + event.data);
+    testRunner.notifyDone();
+});
+</script>
+<iframe src="http://localhost:8000/site-isolation/mouse-events/resources/scroll-and-message-mouse-down-coordinates.html"></iframe>

@@ -93,6 +93,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
 #include "RemoteFrame.h"
+#include "RemoteFrameView.h"
 #include "RenderFrameSet.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -1736,12 +1737,31 @@ void EventHandler::autoHideCursorTimerFired()
 }
 #endif
 
-static LayoutPoint documentPointForWindowPoint(Frame& frame, const IntPoint& windowPoint)
+static LayoutPoint documentPointForWindowPoint(LocalFrame& frame, const IntPoint& windowPoint)
 {
-    auto* view = frame.virtualView();
+    auto* view = frame.view();
     // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
     // Historically the code would just crash; this is clearly no worse than that.
     return view ? view->windowToContents(windowPoint) : windowPoint;
+}
+
+std::optional<RemoteMouseEventData> EventHandler::mouseEventDataForRemoteFrame(const RemoteFrame* remoteFrame, const IntPoint& pointInFrame)
+{
+    if (!remoteFrame)
+        return std::nullopt;
+
+    auto* frameView = m_frame.view();
+    if (!frameView)
+        return std::nullopt;
+
+    auto* remoteFrameView = remoteFrame->view();
+    if (!remoteFrameView)
+        return std::nullopt;
+
+    return RemoteMouseEventData {
+        remoteFrame->frameID(),
+        remoteFrameView->rootViewToContents(frameView->contentsToRootView(pointInFrame))
+    };
 }
 
 static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mouseEvent, LocalFrameView* view)
@@ -1828,10 +1848,8 @@ HandleMouseEventResult EventHandler::handleMousePressEvent(const PlatformMouseEv
 
     if (!passedToScrollbar) {
         auto subframe = subframeForHitTestResult(mouseEvent);
-        if (is<RemoteFrame>(subframe)) {
-            auto transformedPoint = documentPointForWindowPoint(*subframe, mouseEvent.hitTestResult().roundedPointInInnerNodeFrame());
-            return RemoteMouseEventData { subframe->frameID(), roundedIntPoint(transformedPoint) };
-        }
+        if (auto remoteMouseEventData = mouseEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
+            return *remoteMouseEventData;
 
         RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
         if (localSubframe && passMousePressEventToSubframe(mouseEvent, *localSubframe)) {
@@ -2135,10 +2153,8 @@ HandleMouseEventResult EventHandler::handleMouseMoveEvent(const PlatformMouseEve
 
     bool swallowEvent = false;
     auto subframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
-    if (is<RemoteFrame>(subframe)) {
-        auto transformedPoint = documentPointForWindowPoint(*subframe, mouseEvent.hitTestResult().roundedPointInInnerNodeFrame());
-        return RemoteMouseEventData { subframe->frameID(), roundedIntPoint(transformedPoint) };
-    }
+    if (auto remoteMouseEventData = mouseEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
+        return *remoteMouseEventData;
 
     RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
  
@@ -2276,10 +2292,8 @@ HandleMouseEventResult EventHandler::handleMouseReleaseEvent(const PlatformMouse
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
         m_capturingMouseEventsElement = nullptr;
 
-    if (is<RemoteFrame>(subframe)) {
-        auto transformedPoint = documentPointForWindowPoint(*subframe, mouseEvent.hitTestResult().roundedPointInInnerNodeFrame());
-        return RemoteMouseEventData { subframe->frameID(), roundedIntPoint(transformedPoint) };
-    }
+    if (auto remoteMouseEventData = mouseEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
+        return *remoteMouseEventData;
 
     RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
     if (localSubframe && passMouseReleaseEventToSubframe(mouseEvent, *localSubframe))
