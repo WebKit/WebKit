@@ -41,6 +41,9 @@ class GitHub(Scm):
     URL_RE = re.compile(r'\Ahttps?://github.(?P<domain>\S+)/(?P<owner>\S+)/(?P<repository>\S+)\Z')
     EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
     ACCEPT_HEADER = Tracker.ACCEPT_HEADER
+    KNOWN_400_MESSAGES = [
+        'No commit found for SHA',
+    ]
 
     class PRGenerator(Scm.PRGenerator):
         SUPPORTS_DRAFTS = True
@@ -436,6 +439,9 @@ class GitHub(Scm):
         if response.status_code not in [200, 201]:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
             message = response.json().get('message') if is_json_response else ''
+            message_header = message.split(':')[0]
+            if message_header in self.KNOWN_400_MESSAGES:
+                return None
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
             if auth:
