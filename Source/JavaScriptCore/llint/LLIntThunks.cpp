@@ -496,7 +496,11 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, Pt
     jit.move(GPRInfo::regT5, MacroAssembler::stackPointerRegister);
     jit.move(CCallHelpers::TrustedImm64(bitwise_cast<uint64_t>(pointer)), GPRInfo::regT5);
     jit.move(GPRInfo::regT5, MacroAssembler::linkRegister);
+#if ENABLE(JIT_CAGE)
     jit.m_assembler.retaa();
+#else
+    jit.m_assembler.retab();
+#endif
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt %s call gate thunk", name);
