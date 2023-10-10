@@ -62,6 +62,12 @@ void Worklist::dump(PrintStream& out) const
 class Worklist::Thread final : public AutomaticThread {
 public:
     using Base = AutomaticThread;
+    static Ref<Thread> create(const AbstractLocker& locker, Worklist& work)
+    {
+        return adoptRef(*new Thread(locker, work));
+    }
+
+private:
     Thread(const AbstractLocker& locker, Worklist& work)
         : Base(locker, work.m_lock, work.m_planEnqueued.copyRef())
         , worklist(work)
@@ -69,7 +75,6 @@ public:
 
     }
 
-private:
     PollResult poll(const AbstractLocker&) final
     {
         auto& queue = worklist.m_queue;
