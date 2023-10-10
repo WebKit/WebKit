@@ -444,7 +444,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
     _prefersHomeIndicatorAutoHidden = value;
+#if !PLATFORM(APPLETV)
     [self setNeedsUpdateOfHomeIndicatorAutoHidden];
+#endif
 }
 
 - (void)setPlaying:(BOOL)isPlaying
@@ -578,8 +580,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
         
         RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
+#if PLATFORM(APPLETV)
+        [stackView addArrangedSubviewForTV:_cancelButton.get()];
+#else
         [stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
         [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+#endif
         _stackView = WTFMove(stackView);
     }
 
@@ -596,7 +602,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_bannerLabel setText:[NSString stringWithFormat:WEB_UI_NSSTRING(@"”%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), (NSString *)self.location]];
 
     auto banner = adoptNS([[WKFullscreenStackView alloc] init]);
+#if PLATFORM(APPLETV)
+    [banner addArrangedSubviewForTV:_bannerLabel.get()];
+#else
     [banner addArrangedSubview:_bannerLabel.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+#endif
     _banner = WTFMove(banner);
     [_banner setTranslatesAutoresizingMaskIntoConstraints:NO];
 

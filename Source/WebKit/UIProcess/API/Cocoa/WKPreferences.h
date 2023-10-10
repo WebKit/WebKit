@@ -78,7 +78,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract A Boolean value indicating whether Fullscreen API is enabled.
  @discussion The default value is NO. We can set it to YES to enable support for the fullscreen API.
  */
-@property (nonatomic, getter=isElementFullscreenEnabled) BOOL elementFullscreenEnabled WK_API_AVAILABLE(macos(12.3), ios(15.4));
+@property (nonatomic, getter=isElementFullscreenEnabled) BOOL elementFullscreenEnabled WK_API_AVAILABLE(macos(12.3), ios(15.4), tvos(17.0));
 
 /*
 @enum WKInactiveSchedulingPolicy

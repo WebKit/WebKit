@@ -106,7 +106,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 // FIXME: This should be configured on the WKWebsiteDataStore.
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
-@property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenEnabled WK_API_AVAILABLE(macos(10.11), ios(9.0));
+@property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenEnabled WK_API_AVAILABLE(macos(10.11), ios(9.0), tvos(17.0));
 @property (nonatomic, setter=_setShouldSuppressKeyboardInputDuringProvisionalNavigation:) BOOL _shouldSuppressKeyboardInputDuringProvisionalNavigation WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
 @property (nonatomic, setter=_setAllowsPictureInPictureMediaPlayback:) BOOL _allowsPictureInPictureMediaPlayback WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
