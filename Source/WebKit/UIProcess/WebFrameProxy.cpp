@@ -469,20 +469,25 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
     };
 
     auto aggregator = FrameInfoCallbackAggregator::create(WTFMove(completionHandler), m_childFrames.size());
-    m_process->sendWithAsyncReply(Messages::WebPage::GetFrameInfo(m_frameID), [aggregator] (FrameInfoData&& info) {
-        aggregator->setCurrentFrameData(WTFMove(info));
+    m_process->sendWithAsyncReply(Messages::WebPage::GetFrameInfo(m_frameID), [aggregator] (std::optional<FrameInfoData>&& info) {
+        if (info)
+            aggregator->setCurrentFrameData(WTFMove(*info));
     }, m_page->webPageID());
 
     bool isSiteIsolationEnabled = page() && page()->preferences().siteIsolationEnabled();
     size_t index = 0;
     for (auto& childFrame : m_childFrames) {
         childFrame->getFrameInfo([aggregator, index = index++, frameID = this->frameID(), isSiteIsolationEnabled] (FrameTreeNodeData&& data) {
+            if (!data.info.frameID)
+                return; // No WebFrame with the requested frameID in the WebProcess.
+
             // FIXME: m_childFrames currently contains iframes that are in the back/forward cache, not currently
             // connected to this parent frame. They should really not be part of m_childFrames anymore.
             // FIXME: With site isolation enabled, remote frames currently don't have a parentFrameID so we temporarily
             // ignore this check.
             if (data.info.parentFrameID != frameID && !isSiteIsolationEnabled)
                 return;
+
             aggregator->addChildFrameData(index, WTFMove(data));
         });
     }
