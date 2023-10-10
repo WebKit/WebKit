@@ -2286,17 +2286,17 @@ DeprecationReportingEnabled:
 
 DetailsNameAttributeEnabled:
   type: bool
-  status: preview
+  status: stable
   category: html
   humanReadableName: "HTML <details name> attribute"
   humanReadableDescription: "Enable HTML <details name> attribute"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 DeveloperExtrasEnabled:
   type: bool
