@@ -4208,11 +4208,18 @@ sub GenerateRuntimeEnableConditionalString
         my $exposedToWindowOnly = $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} eq "Window";
         AddToImplIncludes($exposedToWindowOnly ? "Document.h" : "ScriptExecutionContext.h");
         foreach my $flag (@flags) {
-            if ($exposedToWindowOnly) {
-                push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($flag));
-            } else {
-                push(@conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->settingsValues()." . ToMethodName($flag));
+            my @orflags = split(/\|/, $flag);
+            my @orconjuncts;
+            foreach my $orflag (@orflags) {
+                if ($exposedToWindowOnly) {
+                    push(@orconjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($orflag));
+                } else {
+                    push(@orconjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->settingsValues()." . ToMethodName($orflag));
+                }
             }
+            my $result = join(" || ", @orconjuncts);
+            $result = "($result)" if @orconjuncts > 1;
+            push(@conjuncts, $result);
         }
     }
 
@@ -4225,7 +4232,14 @@ sub GenerateRuntimeEnableConditionalString
 
         my @flags = split(/&/, $context->extendedAttributes->{EnabledConditionallyReadWriteBySetting});
         foreach my $flag (@flags) {
-            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($flag));
+            my @orflags = split(/\|/, $flag);
+            my @orconjuncts;
+            foreach my $orflag (@orflags) {
+                push(@orconjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($orflag));
+            }
+            my $result = join(" || ", @orconjuncts);
+            $result = "($result)" if @orconjuncts > 1;
+            push(@conjuncts, $result);
         }
     }
 
