@@ -88,10 +88,12 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     // FIXME: Other browsers have a lower limit for the cell's max width. 
                     const float cCellMaxWidth = 32760;
                     Length cellLogicalWidth = cell->styleOrColLogicalWidth();
-                    if (cellLogicalWidth.value() > cCellMaxWidth)
-                        cellLogicalWidth.setValue(LengthType::Fixed, cCellMaxWidth);
-                    if (cellLogicalWidth.isNegative())
-                        cellLogicalWidth.setValue(LengthType::Fixed, 0);
+                    if (cellLogicalWidth.isFixed()) {
+                        if (cellLogicalWidth.value() > cCellMaxWidth)
+                            cellLogicalWidth.setValue(LengthType::Fixed, cCellMaxWidth);
+                        if (cellLogicalWidth.isNegative())
+                            cellLogicalWidth.setValue(LengthType::Fixed, 0);
+                    }
                     switch (cellLogicalWidth.type()) {
                     case LengthType::Fixed:
                         // ignore width=0
@@ -114,6 +116,9 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                         m_hasPercent = true;
                         if (cellLogicalWidth.isPositive() && (!columnLayout.logicalWidth.isPercent() || cellLogicalWidth.percent() > columnLayout.logicalWidth.percent()))
                             columnLayout.logicalWidth = cellLogicalWidth;
+                        break;
+                    case LengthType::Calculated:
+                        columnLayout.logicalWidth = Length { };
                         break;
                     default:
                         break;
