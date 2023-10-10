@@ -31,7 +31,7 @@ import time
 
 from collections import defaultdict
 
-from webkitcorepy import run, decorators, NestedFuzzyDict, string_utils
+from webkitcorepy import run, decorators, NestedFuzzyDict, string_utils, Terminal
 from webkitscmpy.local import Scm
 from webkitscmpy import remote, Commit, Contributor, log
 
@@ -1038,7 +1038,7 @@ class Git(Scm):
             pass
         return argument
 
-    def checkout(self, argument, prune=None):
+    def checkout(self, argument, prune=None, prompt=False):
         self._branch = None
 
         if log.level > logging.WARNING:
@@ -1095,7 +1095,41 @@ class Git(Scm):
                 cwd=self.root_path,
             ).returncode else self.commit()
 
+        match = self.dev_branches.match(argument)
         branch_remote = self.remote_for(argument)
+
+        # Branch is not dev and exists on a remote.
+        if not match and branch_remote:
+            remote_path = '{}/{}'.format(branch_remote, argument)
+            local_head = self.commit(branch=argument, include_log=False, include_identifier=False)
+            remote_head = self.commit(branch=remote_path, include_log=False, include_identifier=False)
+            local_bp = self.branch_point(ref=local_head.hash)
+            merge_base_with_target_remote = run(
+                [self.executable(), 'merge-base', local_bp.hash, remote_head.hash],
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8',
+            ).stdout.strip()
+
+            # Resets branch if local is not tracking force pushed remote.
+            if merge_base_with_target_remote != local_bp.hash:
+                if local_bp.hash != local_head.hash:
+                    log.info(" You have unsaved changes on the local branch.")
+                    if prompt and Terminal.choose(
+                        "Local changes on {} will not be saved. Would you like to override the local version of this branch with the version from '{}'?".format(argument, path),
+                        default='No'
+                    ) == 'No':
+                        sys.stderr.write("Checkout aborted.\n")
+                        return None
+                log.info(" Resetting branch {} to remote {}. Checkout will erase all local changes on {}.\n".format(argument, remote_path, argument))
+                return None if run(
+                    [self.executable(), 'checkout'] + ['-B', argument, remote_path] + log_arg,
+                    cwd=self.root_path,
+                ).returncode else self.commit()
+            else:
+                log.info(" Local branch is tracking the remote branch.")
+
+        # Branch exists on a remote.
         if branch_remote:
             result = run([
                 self.executable(), 'branch',
@@ -1105,6 +1139,7 @@ class Git(Scm):
             if result.returncode:
                 sys.stderr.write(result.stderr)
 
+        # Branch is dev or local.
         return None if run(
             [self.executable(), 'checkout', self._to_git_ref(argument)] + log_arg + ['--'],
             cwd=self.root_path,
