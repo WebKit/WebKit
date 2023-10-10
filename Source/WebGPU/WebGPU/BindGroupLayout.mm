@@ -264,6 +264,13 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     for (size_t stage = 0; stage < stageCount; ++stage) {
         auto renderStage = stages[stage];
         if (auto bufferCountPerStage = bufferCounts[stage]) {
+            auto descriptor = [MTLArgumentDescriptor new];
+            descriptor.dataType = MTLDataTypeInt;
+            descriptor.access = BindGroupLayout::BindingAccessReadOnly;
+            const auto& addArgument = [&](unsigned index) {
+                addDescriptor(arguments[stage], descriptor, index);
+            };
+
             NSUInteger maxIndex = [arguments[stage] objectAtIndex:arguments[stage].count - 1].index;
             for (auto& entry : bindGroupLayoutEntries) {
                 if (entry.value.bufferSizeArgumentBufferIndices[renderStage]) {
@@ -271,18 +278,22 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
                         *entry.value.bufferSizeArgumentBufferIndices[renderStage] += maxIndex;
                     else if (auto it = slotForEntry.find(entry.value.binding); it != slotForEntry.end())
                         entry.value.bufferSizeArgumentBufferIndices[renderStage] = it->value;
-                    else
+                    else {
                         entry.value.bufferSizeArgumentBufferIndices[renderStage] = std::nullopt;
+                        continue;
+                    }
+                    addArgument(*entry.value.bufferSizeArgumentBufferIndices[renderStage]);
                 }
             }
-            for (size_t bufferLengthIndex = 0; bufferLengthIndex < bufferCountPerStage; ++bufferLengthIndex) {
-                auto descriptor = [MTLArgumentDescriptor new];
-                descriptor.dataType = MTLDataTypeInt;
-                descriptor.access = BindGroupLayout::BindingAccessReadOnly;
-                addDescriptor(arguments[stage], descriptor, maxIndex + bufferLengthIndex + 1);
-            }
         }
-        argumentEncoders[stage] = arguments[stage].count ? [m_device newArgumentEncoderWithArguments:arguments[stage]] : nil;
+        NSArray<MTLArgumentDescriptor *> *sortedArray = [arguments[stage] sortedArrayUsingComparator:^NSComparisonResult(MTLArgumentDescriptor *a, MTLArgumentDescriptor *b) {
+            if (a.index < b.index)
+                return NSOrderedAscending;
+            if (a.index == b.index)
+                return NSOrderedSame;
+            return NSOrderedDescending;
+        }];
+        argumentEncoders[stage] = arguments[stage].count ? [m_device newArgumentEncoderWithArguments:sortedArray] : nil;
         argumentEncoders[stage].label = label;
         if (arguments[stage].count && !argumentEncoders[stage])
             return BindGroupLayout::createInvalid(*this);
