@@ -460,6 +460,7 @@ $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorInterruptDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUIExtensionController.messages.in
 $(PROJECT_DIR)/WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in
+$(PROJECT_DIR)/WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in

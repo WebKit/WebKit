@@ -525,6 +525,8 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
 
+    WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in
+
     WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 
     WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
