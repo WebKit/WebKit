@@ -2,18 +2,25 @@
 <html>
 <head>
     <link rel="stylesheet" href="resources/filter-helpers.css">
-    <script src="resources/filter-helpers.js"></script>
 </head>
 <body>
-    <script>
-        const filters = [
-            'blur(0px)',
-            'blur(2px)',
-            'blur(3px)',
-            'blur(10px)',
-        ];
-
-        buildSVGFilteredBoxes(filters);
-    </script>
+    <img src="resources/reference.png" style="filter: url('#filter-1');">
+    <img src="resources/reference.png" style="filter: url('#filter-2');">
+    <img src="resources/reference.png" style="filter: url('#filter-3');">
+    <img src="resources/reference.png" style="filter: url('#filter-4');">
+    <svg>
+        <filter id="filter-1">
+            <feGaussianBlur stdDeviation="0"/>
+        </filter>
+        <filter id="filter-2">
+            <feGaussianBlur stdDeviation="2"/>
+        </filter>
+        <filter id="filter-3">
+            <feGaussianBlur stdDeviation="3"/>
+        </filter>
+        <filter id="filter-4" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="10"/>
+        </filter>
+    </svg>
 </body>
 </html>
