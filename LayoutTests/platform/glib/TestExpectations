@@ -3535,6 +3535,9 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restri
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?1-2 [ Slow ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?3-4 [ Slow ]
 
+// Flakily crashing on GTK and WPE bots
+webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

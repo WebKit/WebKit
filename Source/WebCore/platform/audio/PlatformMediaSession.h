@@ -108,6 +108,8 @@ public:
     State state() const { return m_state; }
     void setState(State);
 
+    State stateToRestore() const { return m_stateToRestore; }
+
     enum InterruptionType : uint8_t {
         NoInterruption,
         SystemSleep,
