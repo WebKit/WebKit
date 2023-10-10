@@ -431,8 +431,22 @@ void CacheStorageManager::dereference(IPC::Connection::UniqueID connection, WebC
     removeUnusedCache(cacheIdentifier);
 }
 
+void CacheStorageManager::lockStorage(IPC::Connection::UniqueID connection)
+{
+    ASSERT(!m_activeConnections.contains(connection));
+    m_activeConnections.add(connection);
+}
+
+void CacheStorageManager::unlockStorage(IPC::Connection::UniqueID connection)
+{
+    ASSERT(m_activeConnections.contains(connection));
+    m_activeConnections.remove(connection);
+}
+
 void CacheStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
+    m_activeConnections.remove(connection);
+
     HashSet<WebCore::DOMCacheIdentifier> unusedCacheIdentifiers;
     for (auto& [identifier, refConnections] : m_cacheRefConnections) {
         refConnections.removeAllMatching([&](auto refConnection) {
@@ -475,7 +489,7 @@ bool CacheStorageManager::hasDataInMemory()
 
 bool CacheStorageManager::isActive()
 {
-    return !m_cacheRefConnections.isEmpty();
+    return !m_cacheRefConnections.isEmpty() || !m_activeConnections.isEmpty();
 }
 
 String CacheStorageManager::representationString()

@@ -1631,6 +1631,16 @@ void NetworkStorageManager::cacheStorageDereference(IPC::Connection& connection,
     cacheStorageManager->dereference(connection.uniqueID(), cacheIdentifier);
 }
 
+void NetworkStorageManager::lockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
+{
+    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).lockStorage(connection.uniqueID());
+}
+
+void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
+{
+    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).unlockStorage(connection.uniqueID());
+}
+
 void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
 {
     auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
