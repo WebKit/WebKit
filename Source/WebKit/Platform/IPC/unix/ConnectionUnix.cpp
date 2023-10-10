@@ -188,10 +188,13 @@ bool Connection::processMessage()
             return false;
         }
 
-        WebKit::SharedMemory::Handle handle;
-        handle.m_size = messageInfo.bodySize();
-        handle.m_handle = UnixFileDescriptor { m_fileDescriptors[attachmentFileDescriptorCount - 1], UnixFileDescriptor::Adopt };
+        auto fd = UnixFileDescriptor { m_fileDescriptors[attachmentFileDescriptorCount - 1], UnixFileDescriptor::Adopt };
+        if (!fd) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
 
+        auto handle = WebKit::SharedMemory::Handle { WTFMove(fd), messageInfo.bodySize() };
         oolMessageBody = WebKit::SharedMemory::map(WTFMove(handle), WebKit::SharedMemory::Protection::ReadOnly);
         if (!oolMessageBody) {
             ASSERT_NOT_REACHED();

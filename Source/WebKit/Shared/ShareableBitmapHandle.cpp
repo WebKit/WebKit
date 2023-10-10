@@ -38,7 +38,6 @@ ShareableBitmapHandle::ShareableBitmapHandle(SharedMemory::Handle&& handle, cons
     : m_handle(WTFMove(handle))
     , m_configuration(config)
 {
-    ASSERT(!m_handle.isNull());
 }
 
 void ShareableBitmapHandle::takeOwnershipOfMemory(MemoryLedger ledger) const

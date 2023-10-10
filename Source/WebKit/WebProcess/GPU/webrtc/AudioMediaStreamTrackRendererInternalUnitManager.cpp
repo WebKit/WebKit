@@ -181,7 +181,9 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start()
     m_isPlaying = true;
 
     m_numberOfFrames = m_description->sampleRate() * 2;
-    auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(*m_description, m_numberOfFrames);
+    auto result = ProducerSharedCARingBuffer::allocate(*m_description, m_numberOfFrames);
+    RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
+    auto [ringBuffer, handle] = WTFMove(*result);
     m_ringBuffer = WTFMove(ringBuffer);
     WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), *m_semaphore }, 0);
 

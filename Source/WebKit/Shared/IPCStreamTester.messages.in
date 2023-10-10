@@ -23,7 +23,7 @@
 #if ENABLE(IPC_TESTING_API)
 
 messages -> IPCStreamTester NotRefCounted Stream {
-    SyncMessageReturningSharedMemory1(uint32_t byteCount) -> (WebKit::SharedMemory::Handle handle) Synchronous NotStreamEncodableReply
+    SyncMessageReturningSharedMemory1(uint32_t byteCount) -> (std::optional<WebKit::SharedMemory::Handle> handle) Synchronous NotStreamEncodableReply
     SyncCrashOnZero(int32_t value) -> (int32_t sameValue) Synchronous
 
     CheckAutoreleasePool() -> (int32_t previousUseCount) Synchronous

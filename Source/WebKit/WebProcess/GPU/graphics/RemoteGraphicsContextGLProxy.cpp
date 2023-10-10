@@ -388,7 +388,7 @@ void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCG
         if (!replyBuffer)
             goto inlineCase;
         auto handle = replyBuffer->createHandle(SharedMemory::Protection::ReadWrite);
-        if (!handle || handle->isNull())
+        if (!handle)
             goto inlineCase;
         auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsSharedMemory(rect, format, type, WTFMove(*handle)));
         if (!sendResult.succeeded()) {

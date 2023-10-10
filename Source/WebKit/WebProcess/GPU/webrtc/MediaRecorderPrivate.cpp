@@ -123,7 +123,9 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
         // Allocate a ring buffer large enough to contain 2 seconds of audio.
         m_numberOfFrames = m_description->sampleRate() * 2;
         auto& format = m_description->streamDescription();
-        auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
+        auto result = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
+        RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
+        auto [ringBuffer, handle] = WTFMove(*result);
         m_ringBuffer = WTFMove(ringBuffer);
         m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format }, m_identifier);
         m_silenceAudioBuffer = nullptr;

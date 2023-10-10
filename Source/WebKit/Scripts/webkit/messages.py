@@ -160,6 +160,7 @@ def types_that_must_be_moved():
         'std::optional<MachSendRight>',
         'std::optional<WebKit::ShareableBitmap::Handle>',
         'std::optional<WebKit::ShareableResource::Handle>',
+        'std::optional<WebKit::SharedMemory::Handle>',
         'std::optional<WebKit::SharedVideoFrame::Buffer>',
         'std::optional<Win32Handle>'
     ]

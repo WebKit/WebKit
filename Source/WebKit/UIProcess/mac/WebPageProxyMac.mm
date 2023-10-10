@@ -252,7 +252,6 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, SharedM
 {
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
-    MESSAGE_CHECK(!imageHandle.isNull());
     MESSAGE_CHECK(extension == FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension));
 
     auto sharedMemoryImage = SharedMemory::map(WTFMove(imageHandle), SharedMemory::Protection::ReadOnly);
@@ -261,12 +260,10 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, SharedM
     auto imageBuffer = sharedMemoryImage->createSharedBuffer(sharedMemoryImage->size());
 
     RefPtr<FragmentedSharedBuffer> archiveBuffer;
-    if (!archiveHandle.isNull()) {
-        auto sharedMemoryArchive = SharedMemory::map(WTFMove(archiveHandle), SharedMemory::Protection::ReadOnly);
-        if (!sharedMemoryArchive)
-            return;
-        archiveBuffer = sharedMemoryArchive->createSharedBuffer(sharedMemoryArchive->size());
-    }
+    auto sharedMemoryArchive = SharedMemory::map(WTFMove(archiveHandle), SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryArchive)
+        return;
+    archiveBuffer = sharedMemoryArchive->createSharedBuffer(sharedMemoryArchive->size());
     pageClient().setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), ResourceResponseBase::sanitizeSuggestedFilename(filename), extension, title, url, visibleURL, WTFMove(archiveBuffer), originIdentifier);
 }
 

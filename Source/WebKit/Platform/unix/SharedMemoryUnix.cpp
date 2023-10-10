@@ -139,7 +139,6 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 
 RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
 {
-    ASSERT(!handle.isNull());
     void* data = mmap(0, handle.size(), accessModeMMap(protection), MAP_SHARED, handle.m_handle.value(), 0);
     if (data == MAP_FAILED)
         return nullptr;
@@ -173,10 +172,6 @@ SharedMemory::~SharedMemory()
 
 auto SharedMemory::createHandle(Protection) -> std::optional<Handle>
 {
-    Handle handle;
-    ASSERT_ARG(handle, handle.isNull());
-    ASSERT(m_fileDescriptor);
-
     // FIXME: Handle the case where the passed Protection is ReadOnly.
     // See https://bugs.webkit.org/show_bug.cgi?id=131542.
 
@@ -185,9 +180,7 @@ auto SharedMemory::createHandle(Protection) -> std::optional<Handle>
         ASSERT_NOT_REACHED();
         return std::nullopt;
     }
-    handle.m_handle = WTFMove(duplicate);
-    handle.m_size = m_size;
-    return { WTFMove(handle) };
+    return { Handle(WTFMove(duplicate), m_size) };
 }
 
 } // namespace WebKit
