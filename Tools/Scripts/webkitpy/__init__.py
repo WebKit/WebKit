@@ -35,7 +35,7 @@ from webkitcorepy import AutoInstall, Package, Version
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
 if sys.version_info >= (3, 7):
-    AutoInstall.register(Package('pylint', Version(2, 6, 0)))
+    AutoInstall.register(Package('pylint', Version(2, 13, 9)))
     AutoInstall.register(
         Package("pytest", Version(7, 2, 0),
                 implicit_deps=["attr", "pluggy", "iniconfig"]
@@ -73,7 +73,6 @@ AutoInstall.register(Package('configparser', Version(4, 0, 2), implicit_deps=['p
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
-AutoInstall.register(Package('genshi', Version(0, 7, 3), pypi_name='Genshi'))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
 AutoInstall.register(Package('iniconfig', Version(1, 1, 1)))
 AutoInstall.register(Package('mechanize', Version(0, 4, 5)))
@@ -84,13 +83,24 @@ AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
 AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
 AutoInstall.register(Package('py', Version(1, 11, 0)))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
-AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
+
+if sys.version_info >= (3, 7):
+    AutoInstall.register(Package('pyfakefs', Version(5, 2, 4)))
+else:
+    AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
+
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
-AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
+
+if sys.version_info >= (3, 6):
+    AutoInstall.register(Package('soupsieve', Version(2, 2, 1)))
+else:
+    AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
+
 if sys.version_info < (3, 8):
     AutoInstall.register(Package('selenium', Version(3, 141, 0)))
 else:
     AutoInstall.register(Package('selenium', Version(4, 12, 0)))
+
 AutoInstall.register(Package('toml', Version(0, 10, 1), implicit_deps=['pyparsing']))
 AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))
 AutoInstall.register(Package('webencodings', Version(0, 5, 1)))
