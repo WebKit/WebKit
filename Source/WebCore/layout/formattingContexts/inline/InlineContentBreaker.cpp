@@ -258,6 +258,8 @@ std::optional<InlineContentBreaker::Result> InlineContentBreaker::simplifiedMini
         return Result { Result::Action::Keep, IsEndOfLine::No };
 
     if (!lineStatus.hasContent) {
+        if (leadingInlineTextItem.isEmpty())
+            return Result { Result::Action::Keep, IsEndOfLine::No };
         auto breakBehavior = wordBreakBehavior(style, { });
         if (breakBehavior.isEmpty())
             return Result { Result::Action::Keep, IsEndOfLine::No };
