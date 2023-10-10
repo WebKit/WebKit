@@ -278,7 +278,7 @@ class TestGit(testing.PathTestCase):
 
     def test_alternative_default_branch(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
-            with mock:
+            with mock, LoggerCapture():
                 self.assertEqual(str(local.Git(self.path).find('4@trunk')), '4@main')
                 self.assertEqual(str(local.Git(self.path).find('4@master')), '4@main')
 
