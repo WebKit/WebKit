@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test that highlights gets repainted properly when the underlying range is changed.</title>
+    <style>
+        html { 
+            font-size: 24pt;
+        }
+        ::highlight(yellowHighlight)  {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <title>When run, the first "this" should be highlighted, followed by the second "this", and the first highlight should be removed.</title>
+    <div id="highlight_area">Highlight this first and then this.</div>
+    <pre id="result"></pre>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+ 
+async function test() {   
+
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    let highlightRange = new Range();
+    let highlightOne = new Highlight(highlightRange);
+    CSS.highlights.set("yellowHighlight", highlightOne);
+    let highlightNode = highlight_area;
+
+    highlightRange.setStart(highlightNode.firstChild, 11);
+    highlightRange.setEnd(highlightNode.firstChild, 14);
+
+    setTimeout(() => {
+
+        highlightRange.setStart(highlightNode.firstChild, 25);
+        highlightRange.setEnd(highlightNode.firstChild, 29);
+        if (window.internals) {
+            let repaintRects = internals.repaintRectsAsText();
+            internals.stopTrackingRepaints();
+            result.textContent = repaintRects;
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+     }, 100);
+    
+};
+test();
+</script>
+</html>

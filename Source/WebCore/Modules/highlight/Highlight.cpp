@@ -36,14 +36,13 @@
 
 namespace WebCore {
 
-static void repaintRange(const AbstractRange& range)
+void Highlight::repaintRange(const AbstractRange& range)
 {
-    // FIXME: Unclear precisely why we need to handle out of order cases here, but not unordered cases.
-    SimpleRange sortedRange = makeSimpleRange(range);
+    auto sortedRange = makeSimpleRange(range);
     if (is_gt(treeOrder<ComposedTree>(sortedRange.start, sortedRange.end)))
         std::swap(sortedRange.start, sortedRange.end);
-    for (auto& node : intersectingNodes(sortedRange)) {
-        if (auto renderer = node.renderer())
+    for (Ref node : intersectingNodes(sortedRange)) {
+        if (auto renderer = node->renderer())
             renderer->repaint();
     }
 }
