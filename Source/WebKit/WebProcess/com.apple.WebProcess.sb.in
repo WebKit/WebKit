@@ -56,7 +56,7 @@
 (allow fs-quota-get)
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+(with-filter (require-not (webcontent-process-launched))
     (allow file-map-executable))
 (allow file-map-executable
     (subpath
@@ -667,7 +667,7 @@
     (sysctl-name "vm.task_no_footprint_for_debug"))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+(with-filter (require-not (webcontent-process-launched))
     (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
 #else
 (allow sysctl-read (sysctl-name "vm.malloc_ranges")) ;; <rdar://problem/105161083>
@@ -2006,9 +2006,9 @@
 
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+(with-filter (require-not (webcontent-process-launched))
     (allow syscall-unix (syscall-unix-only-in-use-before-launch)))
-(with-filter (state-flag "WebContentProcessLaunched")
+(with-filter (webcontent-process-launched)
     (allow syscall-unix (with report) (with telemetry) (with message "Syscall unexpectedly used after launch") (syscall-unix-only-in-use-before-launch)))
 (allow syscall-unix (syscall-unix-in-use-after-launch))
 (allow syscall-unix (with report) (with telemetry) (syscall-unix-possibly-in-use-after-launch))
@@ -2043,7 +2043,7 @@
     (allow syscall-unix (syscall-number SYS_gettid))) ;; Needed for base system, see <rdar://problem/48651255>
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+(with-filter (require-not (webcontent-process-launched))
     (allow syscall-unix (syscall-number SYS_quotactl)))
 #endif
 
@@ -2091,7 +2091,7 @@
 #else
         (allow mach-message-send (mach-bootstrap-message-numbers-post-launch))
 #endif
-        (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+        (with-filter (require-not (webcontent-process-launched))
             (allow mach-message-send (mach-bootstrap-message-numbers))))))
 #else
     (allow-mach-bootstrap-with-filter))
@@ -2206,7 +2206,7 @@
             (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-possibly-in-use))
                 
 #if HAVE(SANDBOX_STATE_FLAGS) && HAVE(MACH_RANGE_CREATE)
-            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+            (with-filter (require-not (webcontent-process-launched))
                 (allow mach-message-send (kernel-mig-routine-only-in-use-during-launch)))
 #endif
         )))
@@ -2426,7 +2426,7 @@
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
-(with-filter (state-flag "WebContentProcessLaunched")
+(with-filter (webcontent-process-launched)
     (deny mach-task-special-port-get (with telemetry))
     (deny mach-task-special-port-set (with telemetry)))
 #endif

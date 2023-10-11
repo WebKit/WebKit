@@ -493,7 +493,7 @@ Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& 
     static bool hasSetLaunchVariable = false;
     if (!hasSetLaunchVariable) {
         auto auditToken = WebProcess::singleton().auditTokenForSelf();
-        sandbox_enable_state_flag("WebContentProcessLaunched", *auditToken);
+        sandbox_enable_state_flag("local:WebContentProcessLaunched", *auditToken);
         hasSetLaunchVariable = true;
     };
 #endif
