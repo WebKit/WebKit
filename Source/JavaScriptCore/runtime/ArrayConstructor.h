@@ -30,6 +30,8 @@ class ArrayPrototype;
 class JSArray;
 class GetterSetter;
 
+extern const ASCIILiteral ArrayInvalidLengthError;
+
 class ArrayConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;

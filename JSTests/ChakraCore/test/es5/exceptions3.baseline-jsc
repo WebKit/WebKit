@@ -19,7 +19,7 @@ undefined.toString();   -expected: es3, es5 TypeError ::: TypeError: undefined i
  null.anchor();;   -expected: es3, es5 TypeError ::: TypeError: null is not an object (evaluating 'null.anchor')
  NaN.anchor();;   -expected: es3, es5 TypeError ::: TypeError: NaN.anchor is not a function. (In 'NaN.anchor()', 'NaN.anchor' is undefined)
  true.anchor();;   -expected: es3, es5 TypeError ::: TypeError: true.anchor is not a function. (In 'true.anchor()', 'true.anchor' is undefined)
-new Array(12.4) - RangeError exception:  expected in es3 and es5::: RangeError: Array size is not a small enough positive integer.
+new Array(12.4) - RangeError exception:  expected in es3 and es5::: RangeError: Array length must be a positive integer of safe magnitude.
 new Array(12.4); x.length = 12.5; - RangeError exception: es5-expected, ES3-not expected  ::: RangeError: Invalid array length
 (123.45).toFixed(25);  - no exception: not expected es3, es5
 (123.45).toExponential(-25); - RangeError exception : expected es3, es5 ::: RangeError: toExponential() argument must be between 0 and 100
