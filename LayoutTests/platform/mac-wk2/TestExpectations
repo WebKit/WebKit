@@ -2215,3 +2215,8 @@ webkit.org/b/262915 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-rounded-bor
 webkit.org/b/262917 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
 
 webkit.org/b/262978 [ Sonoma+ ] fast/attachment/attachment-icon-from-file-extension.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/262987 REGRESSION ( Sonoma): [ Sonoma ] 3 tests in fast/attachment/mac/ are consistently failing
+[ Sonoma+ ] fast/attachment/mac/attachment-keynote.html [ Pass ImageOnlyFailure ]
+[ Sonoma+ ] fast/attachment/mac/attachment-numbers.html [ Pass ImageOnlyFailure ]
+[ Sonoma+ ] fast/attachment/mac/attachment-pages.html [ Pass ImageOnlyFailure ]
