@@ -5084,7 +5084,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     EmitAwait emitAwaitInIteratorClose = parseMode() == SourceParseMode::AsyncGeneratorBodyMode ? EmitAwait::Yes : EmitAwait::No;
                     emitIteratorGenericClose(iterator.get(), node, emitAwaitInIteratorClose);
 
-                    emitThrowTypeError("Delegated generator does not have a 'throw' method."_s);
+                    emitThrowTypeError("The iterator, to which yield* delegated iteration, does not have a 'throw' method."_s);
 
                     emitLabel(throwMethodFound.get());
                     CallArguments throwArguments(*this, nullptr, 1);
