@@ -288,17 +288,17 @@ DFABytecodeCompiler::JumpTable DFABytecodeCompiler::extractJumpTable(Vector<DFAB
     jumpTable.caseSensitive = ranges[lastRange].caseSensitive;
 
     unsigned size = lastRange - firstRange + 1;
-    jumpTable.destinations.reserveInitialCapacity(size);
-    for (unsigned i = firstRange; i <= lastRange; ++i) {
-        const Range& range = ranges[i];
+    jumpTable.destinations = Vector<uint32_t>(size, [&](size_t i) {
+        size_t index = firstRange + i;
+        const Range& range = ranges[index];
 
         ASSERT(range.caseSensitive == jumpTable.caseSensitive);
         ASSERT(range.min == range.max);
         ASSERT(range.min >= jumpTable.min);
         ASSERT(range.min <= jumpTable.max);
 
-        jumpTable.destinations.uncheckedAppend(range.destination);
-    }
+        return range.destination;
+    });
 
     ranges.remove(firstRange, size);
 

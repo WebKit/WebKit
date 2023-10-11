@@ -53,9 +53,9 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
         CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), coreTextIndices.data());
         coreTextIndicesPtr = coreTextIndices.data();
     }
-    m_coreTextIndices.reserveInitialCapacity(m_glyphCount);
-    for (unsigned i = 0; i < m_glyphCount; ++i)
-        m_coreTextIndices.uncheckedAppend(coreTextIndicesPtr[i]);
+    m_coreTextIndices = CoreTextIndicesVector(m_glyphCount, [&](size_t i) {
+        return coreTextIndicesPtr[i];
+    });
 
     const CGGlyph* glyphsPtr = CTRunGetGlyphsPtr(ctRun);
     Vector<CGGlyph> glyphs;
@@ -64,9 +64,9 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
         CTRunGetGlyphs(ctRun, CFRangeMake(0, 0), glyphs.data());
         glyphsPtr = glyphs.data();
     }
-    m_glyphs.reserveInitialCapacity(m_glyphCount);
-    for (unsigned i = 0; i < m_glyphCount; ++i)
-        m_glyphs.uncheckedAppend(glyphsPtr[i]);
+    m_glyphs = GlyphVector(m_glyphCount, [&](size_t i) {
+        return glyphsPtr[i];
+    });
 
     if (CTRunGetStatus(ctRun) & kCTRunStatusHasOrigins) {
         Vector<CGSize> baseAdvances(m_glyphCount);
@@ -86,9 +86,9 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
             CTRunGetAdvances(ctRun, CFRangeMake(0, 0), baseAdvancesVector.data());
             baseAdvances = baseAdvancesVector.data();
         }
-        m_baseAdvances.reserveInitialCapacity(m_glyphCount);
-        for (unsigned i = 0; i < m_glyphCount; ++i)
-            m_baseAdvances.uncheckedAppend(baseAdvances[i]);
+        m_baseAdvances = BaseAdvancesVector(m_glyphCount, [&](size_t i) {
+            return baseAdvances[i];
+        });
     }
 
     LOG_WITH_STREAM(TextShaping,

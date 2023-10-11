@@ -69,12 +69,9 @@ const FontDatabase::InstalledFontFamily& FontDatabase::collectionForFamily(const
         auto mandatoryAttributes = installedFontMandatoryAttributes(m_allowUserInstalledFonts);
         if (auto matches = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptorToMatch.get(), mandatoryAttributes.get()))) {
             auto count = CFArrayGetCount(matches.get());
-            Vector<InstalledFont> result;
-            result.reserveInitialCapacity(count);
-            for (CFIndex i = 0; i < count; ++i) {
-                InstalledFont installedFont(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i)));
-                result.uncheckedAppend(WTFMove(installedFont));
-            }
+            Vector<InstalledFont> result(count, [&](size_t i) {
+                return InstalledFont(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i)));
+            });
             return makeUnique<InstalledFontFamily>(WTFMove(result));
         }
         return makeUnique<InstalledFontFamily>();

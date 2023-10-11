@@ -182,10 +182,10 @@ void ArgumentCoder<GRefPtr<GUnixFDList>>::encode(Encoder& encoder, const GRefPtr
 
     Vector<UnixFileDescriptor> attachments;
     unsigned length = std::max(0, g_unix_fd_list_get_length(fdList.get()));
-    if (!!length) {
-        attachments.reserveInitialCapacity(length);
-        for (unsigned i = 0; i < length; ++i)
-            attachments.uncheckedAppend(UnixFileDescriptor { g_unix_fd_list_get(fdList.get(), i, nullptr), UnixFileDescriptor::Adopt });
+    if (length) {
+        attachments = Vector<UnixFileDescriptor>(length, [&](size_t i) {
+            return UnixFileDescriptor { g_unix_fd_list_get(fdList.get(), i, nullptr), UnixFileDescriptor::Adopt };
+        });
     }
     encoder << true << WTFMove(attachments);
 }

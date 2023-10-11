@@ -647,18 +647,14 @@ void LocalAuthenticator::getAssertion()
     }
     m_existingCredentials = WTFMove(*existingCredentials);
 
-    Vector<Ref<WebCore::AuthenticatorAssertionResponse>> assertionResponses;
-    assertionResponses.reserveInitialCapacity(m_existingCredentials.size());
-    for (auto& credential : m_existingCredentials) {
-        if (allowCredentialIds.isEmpty()) {
-            assertionResponses.uncheckedAppend(credential.copyRef());
-            continue;
-        }
-
+    auto assertionResponses = WTF::compactMap(m_existingCredentials, [&](auto& credential) -> RefPtr<WebCore::AuthenticatorAssertionResponse> {
+        if (allowCredentialIds.isEmpty())
+            return credential.copyRef();
         auto* rawId = credential->rawId();
         if (allowCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength())))
-            assertionResponses.uncheckedAppend(credential.copyRef());
-    }
+            return credential.copyRef();
+        return nullptr;
+    });
     if (assertionResponses.isEmpty()) {
         receiveException({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
         RELEASE_LOG_ERROR(WebAuthn, "No matched credentials are found in the platform attached authenticator.");

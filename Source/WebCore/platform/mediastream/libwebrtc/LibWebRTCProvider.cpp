@@ -452,8 +452,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
 {
     RTCRtpCapabilities capabilities;
 
-    capabilities.codecs.reserveInitialCapacity(rtpCapabilities.codecs.size());
-    for (auto& codec : rtpCapabilities.codecs) {
+    capabilities.codecs = WTF::map(rtpCapabilities.codecs, [](auto& codec) {
         StringBuilder sdpFmtpLineBuilder;
         bool hasParameter = false;
         for (auto& parameter : codec.parameters) {
@@ -463,12 +462,13 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
         String sdpFmtpLine;
         if (sdpFmtpLineBuilder.length())
             sdpFmtpLine = sdpFmtpLineBuilder.toString();
-        capabilities.codecs.uncheckedAppend(RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), WTFMove(sdpFmtpLine) });
-    }
+        return RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), WTFMove(sdpFmtpLine) };
 
-    capabilities.headerExtensions.reserveInitialCapacity(rtpCapabilities.header_extensions.size());
-    for (auto& header : rtpCapabilities.header_extensions)
-        capabilities.headerExtensions.uncheckedAppend(RTCRtpCapabilities::HeaderExtensionCapability { fromStdString(header.uri) });
+    });
+
+    capabilities.headerExtensions = WTF::map(rtpCapabilities.header_extensions, [](auto& header) {
+        return RTCRtpCapabilities::HeaderExtensionCapability { fromStdString(header.uri) };
+    });
 
     return capabilities;
 }

@@ -350,10 +350,9 @@ public:
         m_timestamp = webEvent.timestamp();
 
 #if PLATFORM(IOS_FAMILY)
-        unsigned touchCount = webEvent.touchPoints().size();
-        m_touchPoints.reserveInitialCapacity(touchCount);
-        for (unsigned i = 0; i < touchCount; ++i)
-            m_touchPoints.uncheckedAppend(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
+        m_touchPoints = WTF::map(webEvent.touchPoints(), [&](auto& touchPoint) -> PlatformTouchPoint {
+            return WebKit2PlatformTouchPoint(touchPoint);
+        });
 
         m_gestureScale = webEvent.gestureScale();
         m_gestureRotation = webEvent.gestureRotation();

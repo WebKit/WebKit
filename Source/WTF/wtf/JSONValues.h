@@ -529,6 +529,8 @@ inline RefPtr<Array> Value::asArray()
 
 } // namespace JSONImpl
 
+inline size_t containerSize(const JSONImpl::Array& array) { return array.length(); }
+
 } // namespace WTF
 
 namespace JSON {

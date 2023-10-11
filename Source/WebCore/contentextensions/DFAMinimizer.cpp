@@ -260,10 +260,9 @@ public:
         m_flattenedTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
         memset(m_flattenedTransitionsStartOffsetPerNode.data(), 0, m_flattenedTransitionsStartOffsetPerNode.size() * sizeof(unsigned));
 
-        Vector<char, 0, ContentExtensionsOverflowHandler> singularTransitionsFirsts;
-        singularTransitionsFirsts.reserveInitialCapacity(singularTransitions.m_ranges.size());
-        for (const auto& transition : singularTransitions)
-            singularTransitionsFirsts.uncheckedAppend(transition.first);
+        auto singularTransitionsFirsts = WTF::map<0, ContentExtensionsOverflowHandler>(singularTransitions, [&](auto& transition) {
+            return transition.first;
+        });
 
         for (const DFANode& node : dfa.nodes) {
             if (node.isKilled())

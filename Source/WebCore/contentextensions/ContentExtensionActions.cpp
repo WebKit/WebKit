@@ -600,10 +600,8 @@ void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) cons
         uncheckedAppendLengthAndString(usernameUTF8);
     if (hasPort) {
         vector.uncheckedAppend(!!*port);
-        if (*port) {
-            vector.uncheckedAppend(**port >> 0);
-            vector.uncheckedAppend(**port >> 8);
-        }
+        if (*port)
+            vector.appendList({ **port >> 0, **port >> 8 });
     }
     if (hasQuery) {
         vector.uncheckedAppend(queryTransform.index());

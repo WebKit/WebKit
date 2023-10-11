@@ -2609,10 +2609,9 @@ JSValueRef JSIPC::serializedEnumInfo(JSContextRef context, JSObjectRef thisObjec
         if (*exception)
             return JSValueMakeUndefined(context);
 
-        Vector<JSValueRef> validValuesArray;
-        validValuesArray.reserveInitialCapacity(enumeration.validValues.size());
-        for (auto& validValue : enumeration.validValues)
-            validValuesArray.uncheckedAppend(JSValueMakeNumber(context, validValue));
+        auto validValuesArray = WTF::map(enumeration.validValues, [&](auto& validValue) -> JSValueRef {
+            return JSValueMakeNumber(context, validValue);
+        });
         JSObjectRef jsValidValues = JSObjectMakeArray(context, enumeration.validValues.size(), validValuesArray.data(), exception);
         if (*exception)
             return JSValueMakeUndefined(context);

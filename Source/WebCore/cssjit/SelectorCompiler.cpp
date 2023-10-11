@@ -4328,18 +4328,16 @@ void SelectorCodeGenerator::generateElementIsNthLastChildOf(Assembler::JumpList&
 {
     generateNthLastChildParentCheckAndRelationUpdate(failureCases, fragment);
 
-    Vector<const NthChildOfSelectorInfo*> validSubsetFilters;
-    validSubsetFilters.reserveInitialCapacity(fragment.nthLastChildOfFilters.size());
-
     // The initial element must match the selector list.
     for (const NthChildOfSelectorInfo& nthLastChildOfSelectorInfo : fragment.nthLastChildOfFilters)
         generateElementMatchesSelectorList(failureCases, elementAddressRegister, nthLastChildOfSelectorInfo.selectorList);
     
-    for (const NthChildOfSelectorInfo& nthLastChildOfSelectorInfo : fragment.nthLastChildOfFilters) {
+    auto validSubsetFilters = WTF::compactMap(fragment.nthLastChildOfFilters, [](auto& nthLastChildOfSelectorInfo) -> std::optional<const NthChildOfSelectorInfo*> {
         if (nthFilterIsAlwaysSatisified(nthLastChildOfSelectorInfo.a, nthLastChildOfSelectorInfo.b))
-            continue;
-        validSubsetFilters.uncheckedAppend(&nthLastChildOfSelectorInfo);
-    }
+            return std::nullopt;
+        return &nthLastChildOfSelectorInfo;
+    });
+
     if (validSubsetFilters.isEmpty())
         return;
 

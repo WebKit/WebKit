@@ -961,11 +961,9 @@ void WebAutomationSession::evaluateJavaScriptFunction(const Inspector::Protocol:
     if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    Vector<String> argumentsVector;
-    argumentsVector.reserveCapacity(arguments->length());
-
-    for (const auto& argument : arguments.get())
-        argumentsVector.uncheckedAppend(argument->asString());
+    auto argumentsVector = WTF::map(arguments.get(), [](auto& argument) {
+        return argument->asString();
+    });
 
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));

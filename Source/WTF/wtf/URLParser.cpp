@@ -999,11 +999,10 @@ void URLParser::syntaxViolation(const CodePointIterator<CharacterType>& iterator
     ASSERT(m_asciiBuffer.isEmpty());
     size_t codeUnitsToCopy = iterator.codeUnitsSince(reinterpret_cast<const CharacterType*>(m_inputBegin));
     RELEASE_ASSERT(codeUnitsToCopy <= m_inputString.length());
-    m_asciiBuffer.reserveCapacity(m_inputString.length());
-    for (size_t i = 0; i < codeUnitsToCopy; ++i) {
-        ASSERT(isASCII(m_inputString[i]));
-        m_asciiBuffer.uncheckedAppend(m_inputString[i]);
-    }
+    if (m_inputString.is8Bit())
+        m_asciiBuffer.append(m_inputString.characters8(), codeUnitsToCopy);
+    else
+        m_asciiBuffer.append(m_inputString.characters16(), codeUnitsToCopy);
 }
 
 void URLParser::failure()
