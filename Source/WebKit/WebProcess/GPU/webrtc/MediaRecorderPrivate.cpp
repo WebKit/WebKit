@@ -48,6 +48,11 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+Ref<MediaRecorderPrivate> MediaRecorderPrivate::create(WebCore::MediaStreamPrivate& stream, const WebCore::MediaRecorderPrivateOptions& options)
+{
+    return adoptRef(*new MediaRecorderPrivate(stream, options));
+}
+
 MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
     : m_identifier(MediaRecorderIdentifier::generate())
     , m_stream(stream)

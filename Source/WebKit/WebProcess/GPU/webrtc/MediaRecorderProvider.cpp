@@ -37,14 +37,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
+RefPtr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
 #if ENABLE(GPU_PROCESS)
     auto* page = m_webPage.corePage();
-    if (page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled()) {
-        // FIXME: It seems wrong to return a refcounted object in a unique_ptr.
-        return makeUniqueWithoutRefCountedCheck<MediaRecorderPrivate>(stream, options);
-    }
+    if (page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled())
+        return MediaRecorderPrivate::create(stream, options);
 #endif
     return WebCore::MediaRecorderProvider::createMediaRecorderPrivate(stream, options);
 }
