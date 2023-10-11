@@ -54,8 +54,9 @@ MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const Med
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
     , m_options(options)
     , m_hasVideo(stream.hasVideo())
+    , m_gpuProcessDidCloseObserver(GPUProcessDidCloseObserver::create(*this))
 {
-    WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
+    WebProcess::singleton().ensureGPUProcessConnection().addClient(m_gpuProcessDidCloseObserver.get());
 }
 
 void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
@@ -64,9 +65,8 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
     // Currently we only choose the first track as the recorded track.
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = ThreadSafeWeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis) {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [weakThis = WeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
+        if (!weakThis) {
             callback(Exception { InvalidStateError }, 0, 0);
             return;
         }
@@ -74,11 +74,11 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
             callback(Exception { exception->code, WTFMove(exception->message) }, 0, 0);
             return;
         }
-        if (!m_isStopped) {
+        if (!weakThis->m_isStopped) {
             if (audioTrack)
-                setAudioSource(&audioTrack->source());
+                weakThis->setAudioSource(&audioTrack->source());
             if (videoTrack)
-                setVideoSource(&videoTrack->source());
+                weakThis->setVideoSource(&videoTrack->source());
         }
         callback(WTFMove(mimeType), audioBitRate, videoBitRate);
     }, 0);
@@ -179,7 +179,7 @@ const String& MediaRecorderPrivate::mimeType() const
     return m_hasVideo ? videoMP4 : audioMP4;
 }
 
-void MediaRecorderPrivate::gpuProcessConnectionDidClose(GPUProcessConnection&)
+void MediaRecorderPrivate::gpuProcessConnectionDidClose()
 {
     m_sharedVideoFrameWriter.disable();
 }
