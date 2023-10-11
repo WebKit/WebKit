@@ -191,7 +191,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
         auto* sharing = backend->toBackendSharing();
         if (is<ImageBufferBackendHandleSharing>(sharing))
-            return downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle();
+            return downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle(SharedMemory::Protection::ReadOnly);
 
         return std::nullopt;
     };
@@ -204,9 +204,9 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     std::optional<ImageBufferBackendHandle> handle;
     if (m_contentsBufferHandle) {
         ASSERT(m_parameters.type == Type::IOSurface);
-        handle = MachSendRight { *m_contentsBufferHandle };
-    } else if (m_frontBuffer.imageBuffer)
-        handle = handleFromBuffer(*m_frontBuffer.imageBuffer);
+        handle = ImageBufferBackendHandle { *m_contentsBufferHandle };
+    } else if (RefPtr protectedBuffer = m_frontBuffer.imageBuffer)
+        handle = handleFromBuffer(*protectedBuffer);
 
     // It would be nice to ASSERT(handle && hasValue(*handle)) here, but when we hit the timeout in RemoteImageBufferProxy::ensureBackendCreated(), we don't have a handle.
 #if !LOG_DISABLED
@@ -403,9 +403,9 @@ bool RemoteLayerBackingStore::supportsPartialRepaint() const
 #endif
 }
 
-void RemoteLayerBackingStore::setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents& contents)
+void RemoteLayerBackingStore::setDelegatedContents(const PlatformCALayerRemoteDelegatedContents& contents)
 {
-    m_contentsBufferHandle = MachSendRight { contents.surface };
+    m_contentsBufferHandle = ImageBufferBackendHandle { contents.surface };
     if (contents.finishedFence)
         m_frontBufferFlushers.append(DelegatedContentsFenceFlusher::create(Ref { *contents.finishedFence }));
     m_contentsRenderingResourceIdentifier = contents.surfaceIdentifier;
@@ -706,7 +706,7 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
     RetainPtr<id> contents;
     WTF::switchOn(backendHandle,
         [&] (ShareableBitmap::Handle& handle) {
-            if (auto bitmap = ShareableBitmap::create(WTFMove(handle)))
+            if (auto bitmap = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly))
                 contents = bridge_id_cast(bitmap->makeCGImageCopy());
         },
         [&] (MachSendRight& machSendRight) {

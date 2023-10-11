@@ -50,6 +50,7 @@ class PlatformCALayerRemote;
 class RemoteLayerBackingStoreCollection;
 class RemoteLayerTreeNode;
 enum class SwapBuffersDisplayRequirement : uint8_t;
+struct PlatformCALayerRemoteDelegatedContents;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 using UseCGDisplayListImageCache = WebCore::ImageBufferCreationContext::UseCGDisplayListImageCache;
@@ -131,7 +132,7 @@ public:
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
-    void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&);
+    void setDelegatedContents(const PlatformCALayerRemoteDelegatedContents&);
 
     // Returns true if we need to encode the buffer.
     bool layerWillBeDisplayed();
@@ -230,7 +231,7 @@ private:
 
     // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmap::Handle
     // can be encoded multiple times. http://webkit.org/b/234169
-    std::optional<MachSendRight> m_contentsBufferHandle;
+    std::optional<ImageBufferBackendHandle> m_contentsBufferHandle;
     std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)

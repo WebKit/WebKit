@@ -29,6 +29,7 @@
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/PlatformCALayer.h>
+#include <WebCore/PlatformCALayerDelegatedContents.h>
 #include <WebCore/PlatformLayer.h>
 
 namespace WebCore {
@@ -42,6 +43,12 @@ struct AcceleratedEffectValues;
 namespace WebKit {
 
 class RemoteLayerTreeContext;
+
+struct PlatformCALayerRemoteDelegatedContents {
+    ImageBufferBackendHandle surface;
+    RefPtr<WebCore::PlatformCALayerDelegatedContentsFence> finishedFence;
+    std::optional<WebCore::RenderingResourceIdentifier> surfaceIdentifier;
+};
 
 class PlatformCALayerRemote : public WebCore::PlatformCALayer {
 public:
@@ -143,6 +150,7 @@ public:
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
     void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&) override;
+    void setRemoteDelegatedContents(const PlatformCALayerRemoteDelegatedContents&);
     void setContentsRect(const WebCore::FloatRect&) override;
 
     void setMinificationFilter(WebCore::PlatformCALayer::FilterType) override;

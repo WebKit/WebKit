@@ -138,11 +138,10 @@ public:
             return false;
 
         auto backendHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
-        ASSERT(std::holds_alternative<MachSendRight>(backendHandle));
 
         {
             Locker locker { m_surfaceLock };
-            m_surfaceSendRight = MachSendRight { std::get<MachSendRight>(backendHandle) };
+            m_surfaceBackendHandle = ImageBufferBackendHandle { backendHandle };
             m_surfaceIdentifier = clone->renderingResourceIdentifier();
         }
 
@@ -154,8 +153,8 @@ public:
     void display(PlatformCALayer& layer) final
     {
         Locker locker { m_surfaceLock };
-        if (m_surfaceSendRight)
-            layer.setDelegatedContents({ MachSendRight { *m_surfaceSendRight }, { }, std::optional<RenderingResourceIdentifier>(m_surfaceIdentifier) });
+        if (m_surfaceBackendHandle)
+            downcast<PlatformCALayerRemote>(layer).setRemoteDelegatedContents({ ImageBufferBackendHandle { *m_surfaceBackendHandle }, { }, std::optional<RenderingResourceIdentifier>(m_surfaceIdentifier) });
     }
 
     void setDestinationLayerID(WebCore::PlatformLayerIdentifier layerID)
@@ -170,7 +169,7 @@ private:
     DrawingAreaIdentifier m_drawingArea;
     WebCore::PlatformLayerIdentifier m_layerID;
     Lock m_surfaceLock;
-    std::optional<MachSendRight> m_surfaceSendRight WTF_GUARDED_BY_LOCK(m_surfaceLock);
+    std::optional<ImageBufferBackendHandle> m_surfaceBackendHandle WTF_GUARDED_BY_LOCK(m_surfaceLock);
     WebCore::RenderingResourceIdentifier m_surfaceIdentifier WTF_GUARDED_BY_LOCK(m_surfaceLock);
 };
 

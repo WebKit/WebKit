@@ -43,6 +43,8 @@ GraphicsLayerAsyncContentsDisplayDelegateCocoa::GraphicsLayerAsyncContentsDispla
 bool GraphicsLayerAsyncContentsDisplayDelegateCocoa::tryCopyToLayer(ImageBuffer& image)
 {
     m_image = image.clone()->sinkIntoNativeImage();
+    if (!m_image)
+        return false;
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
