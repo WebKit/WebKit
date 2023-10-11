@@ -247,6 +247,7 @@ interface TestRunner {
     unsigned long userMediaPermissionRequestCountForOrigin(DOMString origin, DOMString parentOrigin);
     undefined resetUserMediaPermissionRequestCountForOrigin(DOMString origin, DOMString parentOrigin);
     readonly attribute boolean isDoingMediaCapture;
+    readonly attribute boolean isEnumeratingAudioUnitActive;
 
     // Audio testing.
     [PassContext] undefined setAudioResult(object data);

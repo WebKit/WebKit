@@ -36,6 +36,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKUserMediaPermissionCheckGetTypeID();
 
 WK_EXPORT void WKUserMediaPermissionCheckSetUserMediaAccessInfo(WKUserMediaPermissionCheckRef, WKStringRef, bool);
+WK_EXPORT bool WKUserMediaIsEnumeratingAudioUnitActive();
 
 #ifdef __cplusplus
 }

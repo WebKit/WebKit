@@ -1132,7 +1132,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsDoingMediaCapture"))
         return adoptWK(WKBooleanCreate(TestController::singleton().isDoingMediaCapture()));
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "IsEnumeratingAudioUnitActive"))
+        return adoptWK(WKBooleanCreate(TestController::singleton().isEnumeratingAudioUnitActive()));
+
     if (WKStringIsEqualToUTF8CString(messageName, "ClearStatisticsDataForDomain")) {
         TestController::singleton().clearStatisticsDataForDomain(stringValue(messageBody));
         return nullptr;

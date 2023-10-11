@@ -48,6 +48,10 @@
 #include "MockRealtimeVideoSourceMac.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "CoreAudioCaptureSourceIOS.h"
+#endif
+
 #if USE(GSTREAMER)
 #include "MockDisplayCaptureSourceGStreamer.h"
 #include "MockRealtimeVideoSourceGStreamer.h"
@@ -221,7 +225,13 @@ private:
     DisplayCaptureManager& displayCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().displayCaptureDeviceManager(); }
 };
 
-class MockRealtimeAudioSourceFactory final : public AudioCaptureFactory {
+class MockRealtimeAudioSourceFactory final
+#if PLATFORM(IOS_FAMILY)
+    : public CoreAudioCaptureSourceFactoryIOS
+#else
+    : public AudioCaptureFactory
+#endif
+{
 public:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
