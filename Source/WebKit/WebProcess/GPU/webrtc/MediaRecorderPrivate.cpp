@@ -48,13 +48,41 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+class MediaRecorderPrivateGPUProcessDidCloseObserver final
+    : public GPUProcessConnection::Client
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateGPUProcessDidCloseObserver> {
+public:
+    static Ref<MediaRecorderPrivateGPUProcessDidCloseObserver> create(MediaRecorderPrivate& recorder) { return adoptRef(*new MediaRecorderPrivateGPUProcessDidCloseObserver(recorder)); }
+
+    // GPUProcessConnection::Client
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+
+private:
+    explicit MediaRecorderPrivateGPUProcessDidCloseObserver(MediaRecorderPrivate& recorder)
+        : m_recorder(recorder)
+    {
+    }
+
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final
+    {
+        callOnMainRunLoop([recorder = m_recorder] {
+            if (recorder)
+                recorder->gpuProcessConnectionDidClose();
+        });
+    }
+
+    WeakPtr<MediaRecorderPrivate> m_recorder;
+};
+
 MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
     : m_identifier(MediaRecorderIdentifier::generate())
     , m_stream(stream)
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
     , m_options(options)
     , m_hasVideo(stream.hasVideo())
-    , m_gpuProcessDidCloseObserver(GPUProcessDidCloseObserver::create(*this))
+    , m_gpuProcessDidCloseObserver(MediaRecorderPrivateGPUProcessDidCloseObserver::create(*this))
 {
     WebProcess::singleton().ensureGPUProcessConnection().addClient(m_gpuProcessDidCloseObserver.get());
 }
