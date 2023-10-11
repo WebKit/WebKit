@@ -400,7 +400,6 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     RELEASE_ASSERT(viewSize.width);
     RELEASE_ASSERT(viewSize.height);
 
-    // FIXME: Do we still require this workaround?
 #if !HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     UIView *selectionView = [platformView().contentView valueForKeyPath:@"interactionAssistant.selectionView"];
     UIView *startGrabberView = [selectionView valueForKeyPath:@"rangeView.startGrabber"];
@@ -420,6 +419,9 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
         [endGrabberView setHidden:YES];
         viewsToUnhide.uncheckedAppend(endGrabberView);
     }
+#else
+    UITextSelectionDisplayInteraction *interaction = [platformView().contentView valueForKeyPath:@"interactionAssistant._selectionViewManager"];
+    interaction.activated = NO;
 #endif
 
     __block bool isDone = false;
@@ -444,6 +446,8 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 #if !HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     for (auto view : viewsToUnhide)
         [view setHidden:NO];
+#else
+    interaction.activated = YES;
 #endif
 
     return result;
