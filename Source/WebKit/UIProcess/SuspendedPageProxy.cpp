@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SuspendedPageProxy.h"
 
+#include "APIPageConfiguration.h"
 #include "DrawingAreaProxy.h"
 #include "HandleMessage.h"
 #include "Logging.h"
@@ -52,12 +53,19 @@ static WeakHashSet<SuspendedPageProxy>& allSuspendedPages()
     return map;
 }
 
-RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode)
+RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {
     for (auto& suspendedPage : allSuspendedPages()) {
         Ref process = suspendedPage.process();
-        if (&process->processPool() == &processPool && process->registrableDomain() == registrableDomain && process->websiteDataStore() == &dataStore && process->crossOriginMode() != CrossOriginMode::Isolated && process->lockdownMode() == lockdownMode && !process->wasTerminated())
+        if (&process->processPool() == &processPool
+            && process->registrableDomain() == registrableDomain
+            && process->websiteDataStore() == &dataStore
+            && process->crossOriginMode() != CrossOriginMode::Isolated
+            && process->lockdownMode() == lockdownMode
+            && !process->wasTerminated()
+            && process->hasSameGPUProcessPreferencesAs(pageConfiguration)) {
             return process;
+        }
     }
     return nullptr;
 }
