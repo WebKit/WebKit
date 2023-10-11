@@ -272,6 +272,14 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
 String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
 {
     if (!m_replacementURLStrings.isEmpty()) {
+        if (auto frame = frameForAttributeReplacement(element)) {
+            if (frame->loader().documentLoader()->response().url().protocolIsData()) {
+                auto replacementString = m_replacementURLStrings.get(frame->frameID().toString());
+                if (!replacementString.isEmpty())
+                    return replacementString;
+            }
+        }
+
         auto resolvedURLString = element.resolveURLStringIfNeeded(urlString);
         auto replacementURLString = m_replacementURLStrings.get(resolvedURLString);
         if (!replacementURLString.isEmpty())
@@ -553,7 +561,7 @@ QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attr
     return prefixedName;
 }
 
-LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& element)
+LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& element) const
 {
     if (inXMLFragmentSerialization() || m_replacementURLStrings.isEmpty())
         return nullptr;

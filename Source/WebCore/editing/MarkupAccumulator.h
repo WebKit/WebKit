@@ -107,7 +107,7 @@ private:
     bool inXMLFragmentSerialization() const { return m_serializationSyntax == SerializationSyntax::XML; }
     void generateUniquePrefix(QualifiedName&, const Namespaces&);
     QualifiedName xmlAttributeSerialization(const Attribute&, Namespaces*);
-    LocalFrame* frameForAttributeReplacement(const Element&);
+    LocalFrame* frameForAttributeReplacement(const Element&) const;
     Attribute replaceAttributeIfNecessary(const Element&, const Attribute&);
     void appendURLAttributeIfNecessary(StringBuilder&, const Element&, Namespaces*);
 
