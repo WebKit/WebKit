@@ -2912,11 +2912,11 @@ bool RenderBox::hasStretchedLogicalHeight() const
         return false;
     }
     if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode()) {
-        if (is<RenderGrid>(this) && downcast<RenderGrid>(this)->isSubgridInParentDirection(ForColumns))
+        if (is<RenderGrid>(this) && downcast<RenderGrid>(this)->isSubgridInParentDirection(GridTrackSizingDirection::ForColumns))
             return true;
         return style.resolvedJustifySelf(&containingBlock->style(), containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPosition::Stretch;
     }
-    if (is<RenderGrid>(this) && downcast<RenderGrid>(this)->isSubgridInParentDirection(ForRows))
+    if (is<RenderGrid>(this) && downcast<RenderGrid>(this)->isSubgridInParentDirection(GridTrackSizingDirection::ForRows))
         return true;
     return style.resolvedAlignSelf(&containingBlock->style(), containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPosition::Stretch;
 }
@@ -2935,11 +2935,11 @@ bool RenderBox::hasStretchedLogicalWidth(StretchingMode stretchingMode) const
     }
     auto normalItemPosition = stretchingMode == StretchingMode::Any ? containingBlock->selfAlignmentNormalBehavior(this) : ItemPosition::Normal;
     if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode()) {
-        if (is<RenderGrid>(this) && downcast<RenderGrid>(this)->isSubgridInParentDirection(ForRows))
+        if (is<RenderGrid>(this) && downcast<RenderGrid>(this)->isSubgridInParentDirection(GridTrackSizingDirection::ForRows))
             return true;
         return style.resolvedAlignSelf(&containingBlock->style(), normalItemPosition).position() == ItemPosition::Stretch;
     }
-    if (is<RenderGrid>(this) && downcast<RenderGrid>(this)->isSubgridInParentDirection(ForColumns))
+    if (is<RenderGrid>(this) && downcast<RenderGrid>(this)->isSubgridInParentDirection(GridTrackSizingDirection::ForColumns))
         return true;
     return style.resolvedJustifySelf(&containingBlock->style(), normalItemPosition).position() == ItemPosition::Stretch;
 }

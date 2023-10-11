@@ -1289,7 +1289,7 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
 inline void BuilderConverter::createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap& namedGridAreas, NamedGridLinesMap& namedGridLines, GridTrackSizingDirection direction)
 {
     for (auto& area : namedGridAreas.map) {
-        GridSpan areaSpan = direction == ForRows ? area.value.rows : area.value.columns;
+        GridSpan areaSpan = direction == GridTrackSizingDirection::ForRows ? area.value.rows : area.value.columns;
         {
             auto& startVector = namedGridLines.map.add(area.key + "-start"_s, Vector<unsigned>()).iterator->value;
             startVector.append(areaSpan.startLine());

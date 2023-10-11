@@ -117,7 +117,7 @@ bool GridBaselineAlignment::isDescentBaselineForChild(const RenderBox& child, Gr
 
 bool GridBaselineAlignment::isHorizontalBaselineAxis(GridAxis axis) const
 {
-    return axis == GridRowAxis ? isHorizontalWritingMode(m_blockFlow) : !isHorizontalWritingMode(m_blockFlow);
+    return axis == GridAxis::GridRowAxis ? isHorizontalWritingMode(m_blockFlow) : !isHorizontalWritingMode(m_blockFlow);
 }
 
 bool GridBaselineAlignment::isOrthogonalChildForBaseline(const RenderBox& child) const
@@ -127,13 +127,13 @@ bool GridBaselineAlignment::isOrthogonalChildForBaseline(const RenderBox& child)
 
 bool GridBaselineAlignment::isParallelToBaselineAxisForChild(const RenderBox& child, GridAxis axis) const
 {
-    return axis == GridColumnAxis ? !isOrthogonalChildForBaseline(child) : isOrthogonalChildForBaseline(child);
+    return axis == GridAxis::GridColumnAxis ? !isOrthogonalChildForBaseline(child) : isOrthogonalChildForBaseline(child);
 }
 
 const BaselineGroup& GridBaselineAlignment::baselineGroupForChild(ItemPosition preference, unsigned sharedContext, const RenderBox& child, GridAxis baselineAxis) const
 {
     ASSERT(isBaselinePosition(preference));
-    bool isRowAxisContext = baselineAxis == GridColumnAxis;
+    bool isRowAxisContext = baselineAxis == GridAxis::GridColumnAxis;
     auto& baselineAlignmentStateMap = isRowAxisContext ? m_rowAxisBaselineAlignmentStates : m_colAxisBaselineAlignmentStates;
     auto* baselineAlignmentState = baselineAlignmentStateMap.get(sharedContext);
     ASSERT(baselineAlignmentState);
@@ -150,7 +150,7 @@ void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preferen
     LayoutUnit ascent = logicalAscentForChild(child, baselineAxis, preference);
     // Looking up for a shared alignment context perpendicular to the
     // baseline axis.
-    bool isRowAxisContext = baselineAxis == GridColumnAxis;
+    bool isRowAxisContext = baselineAxis == GridAxis::GridColumnAxis;
     auto& baselineAlignmentStateMap = isRowAxisContext ? m_rowAxisBaselineAlignmentStates : m_colAxisBaselineAlignmentStates;
     // Looking for a compatible baseline-sharing group.
     if (auto* baselineAlignmentStateSearch = baselineAlignmentStateMap.get(sharedContext))
@@ -170,7 +170,7 @@ LayoutUnit GridBaselineAlignment::baselineOffsetForChild(ItemPosition preference
 
 void GridBaselineAlignment::clear(GridAxis baselineAxis)
 {
-    if (baselineAxis == GridColumnAxis)
+    if (baselineAxis == GridAxis::GridColumnAxis)
         m_rowAxisBaselineAlignmentStates.clear();
     else
         m_colAxisBaselineAlignmentStates.clear();

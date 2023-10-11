@@ -39,18 +39,18 @@ namespace GridLayoutFunctions {
 
 static inline bool marginStartIsAuto(const RenderBox& child, GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? child.style().marginStart().isAuto() : child.style().marginBefore().isAuto();
+    return direction == GridTrackSizingDirection::ForColumns ? child.style().marginStart().isAuto() : child.style().marginBefore().isAuto();
 }
 
 static inline bool marginEndIsAuto(const RenderBox& child, GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? child.style().marginEnd().isAuto() : child.style().marginAfter().isAuto();
+    return direction == GridTrackSizingDirection::ForColumns ? child.style().marginEnd().isAuto() : child.style().marginAfter().isAuto();
 }
 
 static bool childHasMargin(const RenderBox& child, GridTrackSizingDirection direction)
 {
     // Length::IsZero returns true for 'auto' margins, which is aligned with the purpose of this function.
-    if (direction == ForColumns)
+    if (direction == GridTrackSizingDirection::ForColumns)
         return !child.style().marginStart().isZero() || !child.style().marginEnd().isZero();
     return !child.style().marginBefore().isZero() || !child.style().marginAfter().isZero();
 }
@@ -63,7 +63,7 @@ LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid& grid, GridTrackSiz
 
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
-    if (direction == ForColumns)
+    if (direction == GridTrackSizingDirection::ForColumns)
         child.computeInlineDirectionMargins(grid, child.containingBlockLogicalWidthForContentInFragment(nullptr), { }, child.logicalWidth(), marginStart, marginEnd);
     else
         child.computeBlockDirectionMargins(grid, marginStart, marginEnd);
@@ -72,7 +72,7 @@ LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid& grid, GridTrackSiz
 
 static bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
-    if (direction == ForColumns)
+    if (direction == GridTrackSizingDirection::ForColumns)
         return child.hasRelativeLogicalWidth() || child.style().logicalWidth().isIntrinsicOrAuto();
     return child.hasRelativeLogicalHeight() || child.style().logicalHeight().isIntrinsicOrAuto();
 }
@@ -90,12 +90,12 @@ static LayoutUnit extraMarginForSubgrid(const RenderGrid& parent, unsigned start
     RenderGrid& grandParent = downcast<RenderGrid>(*parent.parent());
     LayoutUnit mbp;
     if (!startLine)
-        mbp += (direction == ForColumns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore();
+        mbp += (direction == GridTrackSizingDirection::ForColumns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore();
     else
         mbp += (parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2;
 
     if (endLine == numTracks)
-        mbp += (direction == ForColumns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter();
+        mbp += (direction == GridTrackSizingDirection::ForColumns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter();
     else
         mbp += (parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2;
 
@@ -132,7 +132,7 @@ LayoutUnit marginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDire
         margin = computeMarginLogicalSizeForChild(grid, direction, child);
     else {
         GridTrackSizingDirection flowAwareDirection = flowAwareDirectionForChild(grid, child, direction);
-        bool isRowAxis = flowAwareDirection == ForColumns;
+        bool isRowAxis = flowAwareDirection == GridTrackSizingDirection::ForColumns;
         LayoutUnit marginStart = marginStartIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginStart() : child.marginBefore();
         LayoutUnit marginEnd = marginEndIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginEnd() : child.marginAfter();
         margin = marginStart + marginEnd;
@@ -163,27 +163,27 @@ bool isAspectRatioBlockSizeDependentChild(const RenderBox& child)
 
 GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid& grid, const RenderBox& child, GridTrackSizingDirection direction)
 {
-    return !isOrthogonalChild(grid, child) ? direction : (direction == ForColumns ? ForRows : ForColumns);
+    return !isOrthogonalChild(grid, child) ? direction : (direction == GridTrackSizingDirection::ForColumns ? GridTrackSizingDirection::ForRows : GridTrackSizingDirection::ForColumns);
 }
 
 GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid& grid, const RenderElement& parent, GridTrackSizingDirection direction)
 {
-    return isOrthogonalParent(grid, parent) ? (direction == ForColumns ? ForRows : ForColumns) : direction;
+    return isOrthogonalParent(grid, parent) ? (direction == GridTrackSizingDirection::ForColumns ? GridTrackSizingDirection::ForRows : GridTrackSizingDirection::ForColumns) : direction;
 }
 
 bool hasOverridingContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? child.hasOverridingContainingBlockContentLogicalWidth() : child.hasOverridingContainingBlockContentLogicalHeight();
+    return direction == GridTrackSizingDirection::ForColumns ? child.hasOverridingContainingBlockContentLogicalWidth() : child.hasOverridingContainingBlockContentLogicalHeight();
 }
 
 std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? child.overridingContainingBlockContentLogicalWidth() : child.overridingContainingBlockContentLogicalHeight();
+    return direction == GridTrackSizingDirection::ForColumns ? child.overridingContainingBlockContentLogicalWidth() : child.overridingContainingBlockContentLogicalHeight();
 }
 
 bool isFlippedDirection(const RenderGrid& grid, GridTrackSizingDirection direction)
 {
-    if (direction == ForColumns)
+    if (direction == GridTrackSizingDirection::ForColumns)
         return !grid.style().isLeftToRightDirection();
     return grid.style().isFlippedBlocksWritingMode();
 }
