@@ -51,6 +51,7 @@ GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid&, const Ren
 GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid&, const RenderElement& parent, GridTrackSizingDirection);
 bool hasOverridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
 std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
+bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingDirection);
 
 bool isFlippedDirection(const RenderGrid&, GridTrackSizingDirection);
 bool isSubgridReversedDirection(const RenderGrid&, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid);
