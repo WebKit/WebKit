@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-class RenderSelectionInfoBase {
-    WTF_MAKE_NONCOPYABLE(RenderSelectionInfoBase); WTF_MAKE_FAST_ALLOCATED;
+class RenderSelectionGeometryBase {
+    WTF_MAKE_NONCOPYABLE(RenderSelectionGeometryBase); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RenderSelectionInfoBase(RenderObject& renderer);
+    explicit RenderSelectionGeometryBase(RenderObject& renderer);
     const RenderLayerModelObject* repaintContainer() const { return m_repaintContainer; }
     RenderObject::HighlightState state() const { return m_state; }
 
@@ -48,9 +48,9 @@ private:
 };
 
 // This struct is used when the selection changes to cache the old and new state of the selection for each RenderObject.
-class RenderSelectionInfo : public RenderSelectionInfoBase {
+class RenderSelectionGeometry : public RenderSelectionGeometryBase {
 public:
-    RenderSelectionInfo(RenderObject& renderer, bool clipToVisibleContent);
+    RenderSelectionGeometry(RenderObject& renderer, bool clipToVisibleContent);
 
     void repaint();
     const Vector<FloatQuad>& collectedSelectionQuads() const { return m_collectedSelectionQuads; }
@@ -63,9 +63,9 @@ private:
 
 
 // This struct is used when the selection changes to cache the old and new state of the selection for each RenderBlock.
-class RenderBlockSelectionInfo : public RenderSelectionInfoBase {
+class RenderBlockSelectionGeometry : public RenderSelectionGeometryBase {
 public:
-    explicit RenderBlockSelectionInfo(RenderBlock& renderer);
+    explicit RenderBlockSelectionGeometry(RenderBlock& renderer);
 
     void repaint();
     GapRects rects() const { return m_rects; }

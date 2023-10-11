@@ -2311,7 +2311,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderOverflow.h
     rendering/RenderPtr.h
     rendering/RenderReplaced.h
-    rendering/RenderSelectionInfo.h
+    rendering/RenderSelectionGeometry.h
     rendering/RenderText.h
     rendering/RenderTextControl.h
     rendering/RenderTextLineBoxes.h

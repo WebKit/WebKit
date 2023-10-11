@@ -30,7 +30,7 @@
 #pragma once
 
 #include "HighlightData.h"
-#include "RenderSelectionInfo.h"
+#include "RenderSelectionGeometry.h"
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "SelectionGeometryGatherer.h"
