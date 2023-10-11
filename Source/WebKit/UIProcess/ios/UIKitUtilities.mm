@@ -37,6 +37,18 @@
     return self.decelerating && self.tracking;
 }
 
+- (CGFloat)_wk_contentWidthIncludingInsets
+{
+    auto inset = self.adjustedContentInset;
+    return self.contentSize.width + inset.left + inset.right;
+}
+
+- (CGFloat)_wk_contentHeightIncludingInsets
+{
+    auto inset = self.adjustedContentInset;
+    return self.contentSize.height + inset.top + inset.bottom;
+}
+
 - (BOOL)_wk_isScrolledBeyondExtents
 {
     auto contentOffset = self.contentOffset;
@@ -47,10 +59,51 @@
     auto contentSize = self.contentSize;
     auto boundsSize = self.bounds.size;
     auto maxScrollExtent = CGPointMake(
-        contentSize.width + inset.right - std::min<CGFloat>(boundsSize.width, contentSize.width + inset.left + inset.right),
-        contentSize.height + inset.bottom - std::min<CGFloat>(boundsSize.height, contentSize.height + inset.top + inset.bottom)
+        contentSize.width + inset.right - std::min<CGFloat>(boundsSize.width, self._wk_contentWidthIncludingInsets),
+        contentSize.height + inset.bottom - std::min<CGFloat>(boundsSize.height, self._wk_contentHeightIncludingInsets)
     );
     return contentOffset.x > maxScrollExtent.x || contentOffset.y > maxScrollExtent.y;
+}
+
+- (CGPoint)_wk_clampToScrollExtents:(CGPoint)contentOffset
+{
+    // See also: -[UIScrollView _adjustedContentOffsetForContentOffset:].
+    auto bounds = CGRect { contentOffset, self.bounds.size };
+    auto effectiveInset = self.adjustedContentInset;
+
+    if (!self.zoomBouncing && self.zooming)
+        return contentOffset;
+
+    auto contentMinX = -effectiveInset.left;
+    auto contentMinY = -effectiveInset.top;
+    auto contentSize = self.contentSize;
+    auto contentMaxX = contentSize.width + effectiveInset.right;
+    auto contentMaxY = contentSize.height + effectiveInset.bottom;
+
+    if (CGRectGetWidth(bounds) >= self._wk_contentWidthIncludingInsets || CGRectGetMinX(bounds) < contentMinX)
+        contentOffset.x = contentMinX;
+    else if (CGRectGetMaxX(bounds) > contentMaxX)
+        contentOffset.x = contentMaxX - CGRectGetWidth(bounds);
+
+    if (CGRectGetHeight(bounds) >= self._wk_contentHeightIncludingInsets || CGRectGetMinY(bounds) < contentMinY)
+        contentOffset.y = contentMinY;
+    else if (CGRectGetMaxY(bounds) > contentMaxY)
+        contentOffset.y = contentMaxY - CGRectGetHeight(bounds);
+
+    return contentOffset;
+}
+
+// Consistent with the value of `_UISmartEpsilon` in UIKit.
+static constexpr auto epsilonForComputingScrollability = 0.0001;
+
+- (BOOL)_wk_canScrollHorizontallyWithoutBouncing
+{
+    return self._wk_contentWidthIncludingInsets - CGRectGetWidth(self.bounds) > epsilonForComputingScrollability;
+}
+
+- (BOOL)_wk_canScrollVerticallyWithoutBouncing
+{
+    return self._wk_contentHeightIncludingInsets - CGRectGetHeight(self.bounds) > epsilonForComputingScrollability;
 }
 
 @end

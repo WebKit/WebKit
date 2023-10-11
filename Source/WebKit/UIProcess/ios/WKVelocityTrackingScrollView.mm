@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <wtf/ApproximateTime.h>
-#import <wtf/FixedVector.h>
 
 template <size_t windowSize>
 struct ScrollingDeltaWindow {

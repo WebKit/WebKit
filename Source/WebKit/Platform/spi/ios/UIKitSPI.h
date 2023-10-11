@@ -1112,10 +1112,7 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @interface UIScrollView (IPI)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary *)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 - (BOOL)_isScrollingToTop;
-- (BOOL)_canScrollWithoutBouncingX;
-- (BOOL)_canScrollWithoutBouncingY;
 - (void)_setContentOffsetWithDecelerationAnimation:(CGPoint)contentOffset;
-- (CGPoint)_adjustedContentOffsetForContentOffset:(CGPoint)contentOffset;
 
 @property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
 @property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;

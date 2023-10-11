@@ -30,6 +30,7 @@
 
 #import "AccessibilitySupportSPI.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WKVelocityTrackingScrollView.h"
 #import <QuartzCore/CADisplayLink.h>
 #import <WebCore/FloatPoint.h>
@@ -611,10 +612,7 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
 
 - (CGPoint)boundedContentOffset:(CGPoint)offset
 {
-    if (!_scrollView)
-        return CGPointZero;
-
-    return [_scrollView _adjustedContentOffsetForContentOffset:offset];
+    return [_scrollView _wk_clampToScrollExtents:offset];
 }
 
 - (CGSize)interactiveScrollVelocity
@@ -652,9 +650,9 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
 
     WebCore::RectEdges<bool> edges;
 
-    edges.setTop(_scrollView._canScrollWithoutBouncingY);
+    edges.setTop(_scrollView._wk_canScrollVerticallyWithoutBouncing);
     edges.setBottom(edges.top());
-    edges.setLeft(_scrollView._canScrollWithoutBouncingX);
+    edges.setLeft(_scrollView._wk_canScrollHorizontallyWithoutBouncing);
     edges.setRight(edges.left());
 
     return edges;
