@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (285,0) size 1x19
         RenderMenuList {SELECT} at (0,20) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 88x14
-            RenderText at (27,0) size 61x14
-              text run at (27,0) width 42 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+            RenderText at (28,0) size 60x14
+              text run at (28,0) width 41 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
               text run at (68,0) width 20: "abc"
         RenderBR {BR} at (100,19) size 0x19
       RenderBlock {DIV} at (0,116) size 100x20
@@ -31,9 +31,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (117,20) size 1x19
         RenderMenuList {SELECT} at (0,40) size 200x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 188x14
-            RenderText at (0,0) size 61x14
+            RenderText at (0,0) size 60x14
               text run at (0,0) width 20: "abc"
-              text run at (19,0) width 42 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+              text run at (19,0) width 41 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
         RenderBR {BR} at (200,39) size 0x19
       RenderBlock {DIV} at (0,196) size 200x20
         RenderText {#text} at (0,0) size 69x19
@@ -46,9 +46,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (71,20) size 1x19
         RenderMenuList {SELECT} at (0,40) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 88x14
-            RenderText at (0,0) size 61x14
+            RenderText at (0,0) size 60x14
               text run at (0,0) width 20: "abc"
-              text run at (19,0) width 42 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+              text run at (19,0) width 41 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
         RenderBR {BR} at (100,39) size 0x19
       RenderBlock {DIV} at (0,276) size 100x20
         RenderText {#text} at (0,0) size 69x19
