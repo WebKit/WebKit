@@ -108,6 +108,7 @@ enum class WebsiteDataFetchOption : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 struct NetworkProcessConnectionInfo;
+struct NetworkProcessConnectionParameters;
 struct WebPushMessage;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
@@ -154,7 +155,7 @@ public:
     const WeakHashSet<WebProcessProxy>& processes() const { return m_processes; }
 
     enum class ShouldRetryOnFailure : bool { No, Yes };
-    void getNetworkProcessConnection(WebProcessProxy&, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&, ShouldRetryOnFailure = ShouldRetryOnFailure::Yes);
+    void getNetworkProcessConnection(WebProcessProxy&, NetworkProcessConnectionParameters&&, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&, ShouldRetryOnFailure = ShouldRetryOnFailure::Yes);
     void terminateNetworkProcess();
     void sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&&);
     void sendNetworkProcessWillSuspendImminentlyForTesting();

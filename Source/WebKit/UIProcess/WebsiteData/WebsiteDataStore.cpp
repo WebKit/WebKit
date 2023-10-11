@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "MockAuthenticatorManager.h"
 #include "NetworkProcessConnectionInfo.h"
+#include "NetworkProcessConnectionParameters.h"
 #include "NetworkProcessMessages.h"
 #include "PageLoadState.h"
 #include "ShouldGrandfatherStatistics.h"
@@ -1653,10 +1654,10 @@ void WebsiteDataStore::removeMediaKeysStorage(const String& mediaKeysStorageDire
     }
 }
 
-void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply, ShouldRetryOnFailure shouldRetryOnFailure)
+void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, NetworkProcessConnectionParameters&& parameters, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply, ShouldRetryOnFailure shouldRetryOnFailure)
 {
     Ref networkProcessProxy = networkProcess();
-    networkProcessProxy->getNetworkProcessConnection(webProcessProxy, [weakThis = WeakPtr { *this }, networkProcessProxy = WeakPtr { networkProcessProxy }, webProcessProxy = WeakPtr { webProcessProxy }, reply = WTFMove(reply), shouldRetryOnFailure] (NetworkProcessConnectionInfo&& connectionInfo) mutable {
+    networkProcessProxy->getNetworkProcessConnection(webProcessProxy,  NetworkProcessConnectionParameters { parameters }, [weakThis = WeakPtr { *this }, networkProcessProxy = WeakPtr { networkProcessProxy }, webProcessProxy = WeakPtr { webProcessProxy }, parameters = WTFMove(parameters), reply = WTFMove(reply), shouldRetryOnFailure] (NetworkProcessConnectionInfo&& connectionInfo) mutable {
         if (UNLIKELY(!connectionInfo.connection)) {
             if (shouldRetryOnFailure == ShouldRetryOnFailure::No || !webProcessProxy) {
                 RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will reply invalid identifier ...");
@@ -1665,13 +1666,13 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
             }
 
             // Retry on the next RunLoop iteration because we may be inside the WebsiteDataStore destructor.
-            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), networkProcessProxy = WTFMove(networkProcessProxy), webProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
+            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), networkProcessProxy = WTFMove(networkProcessProxy), webProcessProxy = WTFMove(webProcessProxy), parameters = WTFMove(parameters), reply = WTFMove(reply)] () mutable {
                 if (RefPtr<WebsiteDataStore> strongThis = weakThis.get(); strongThis && webProcessProxy) {
                     // Terminate if it is the same network process.
                     if (networkProcessProxy && strongThis->m_networkProcess == networkProcessProxy.get())
                         strongThis->terminateNetworkProcess();
                     RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will retry ...");
-                    strongThis->getNetworkProcessConnection(*webProcessProxy, WTFMove(reply), ShouldRetryOnFailure::No);
+                    strongThis->getNetworkProcessConnection(*webProcessProxy, WTFMove(parameters), WTFMove(reply), ShouldRetryOnFailure::No);
                     return;
                 }
 

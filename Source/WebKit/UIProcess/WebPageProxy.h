@@ -539,13 +539,6 @@ public:
     bool isLockdownModeExplicitlySet() const { return m_isLockdownModeExplicitlySet; }
     bool shouldEnableLockdownMode() const;
 
-#if ENABLE(GPU_PROCESS)
-    GPUProcessPreferencesForWebProcess preferencesForGPUProcess() const;
-#endif
-
-    bool hasSameGPUProcessPreferencesAs(const API::PageConfiguration&) const;
-    bool hasSameGPUProcessPreferencesAs(const WebPageProxy& page) const { return hasSameGPUProcessPreferencesAs(page.configuration()); }
-
     void processIsNoLongerAssociatedWithPage(WebProcessProxy&);
 
 #if ENABLE(DATA_DETECTION)

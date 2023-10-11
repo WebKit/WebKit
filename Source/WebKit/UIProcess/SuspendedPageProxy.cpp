@@ -53,7 +53,7 @@ static WeakHashSet<SuspendedPageProxy>& allSuspendedPages()
     return map;
 }
 
-RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::PageConfigurationKey pageKey)
 {
     for (auto& suspendedPage : allSuspendedPages()) {
         Ref process = suspendedPage.process();
@@ -61,9 +61,8 @@ RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(Web
             && process->registrableDomain() == registrableDomain
             && process->websiteDataStore() == &dataStore
             && process->crossOriginMode() != CrossOriginMode::Isolated
-            && process->lockdownMode() == lockdownMode
-            && !process->wasTerminated()
-            && process->hasSameGPUProcessPreferencesAs(pageConfiguration)) {
+            && process->pageConfigurationKey() == pageKey
+            && !process->wasTerminated()) {
             return process;
         }
     }

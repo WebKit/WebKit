@@ -147,7 +147,7 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     return true;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::PageConfigurationKey pageKey)
 {
     auto it = m_processesPerRegistrableDomain.find(registrableDomain);
     if (it == m_processesPerRegistrableDomain.end())
@@ -156,10 +156,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
     if (it->value->process().websiteDataStore() != &dataStore)
         return nullptr;
 
-    if (it->value->process().lockdownMode() != lockdownMode)
-        return nullptr;
-
-    if (!it->value->process().hasSameGPUProcessPreferencesAs(pageConfiguration))
+    if (it->value->process().pageConfigurationKey() != pageKey)
         return nullptr;
 
     auto process = it->value->takeProcess();

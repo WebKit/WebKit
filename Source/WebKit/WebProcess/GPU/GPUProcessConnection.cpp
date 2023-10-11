@@ -103,23 +103,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-static GPUProcessConnectionParameters getGPUProcessConnectionParameters()
-{
-    GPUProcessConnectionParameters parameters;
-#if PLATFORM(COCOA)
-    parameters.webProcessIdentity = ProcessIdentity { ProcessIdentity::CurrentProcess };
-#endif
-    return parameters;
-}
-
 RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& parentConnection)
 {
     auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
     if (!connectionIdentifiers)
         return nullptr;
 
-    RELEASE_ASSERT_WITH_MESSAGE(WebProcess::singleton().hasWebPages(), "GPUProcess preferences come from the pages");
-    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(WTFMove(connectionIdentifiers->client), getGPUProcessConnectionParameters()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    ProcessIdentity webProcessIdentity { ProcessIdentity::CurrentProcess };
+    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(WTFMove(connectionIdentifiers->client), WTFMove(webProcessIdentity)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
     auto instance = adoptRef(*new GPUProcessConnection(WTFMove(connectionIdentifiers->server)));
 #if ENABLE(IPC_TESTING_API)

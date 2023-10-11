@@ -4368,6 +4368,7 @@ bool WebPage::isParentProcessAWebBrowser() const
     return false;
 }
 
+// Keep in sync with WebProcessProxy.cpp adjustPageConfigurationKeyForLockdownMode.
 static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferencesStore& store)
 {
     // Disable unstable Experimental settings, even if the user enabled them for local use.

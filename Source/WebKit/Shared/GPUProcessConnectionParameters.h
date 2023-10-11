@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "GPUProcessPreferencesForWebProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
@@ -36,8 +35,11 @@ namespace WebKit {
 
 struct GPUProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
-    GPUProcessPreferencesForWebProcess preferences;
     bool isLockdownModeEnabled { false };
+    bool allowTestOnlyIPC { false };
+    bool isWebGLEnabled { false };
+    bool isWebGPUEnabled { false };
+    bool isDOMRenderingEnabled { false };
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif
