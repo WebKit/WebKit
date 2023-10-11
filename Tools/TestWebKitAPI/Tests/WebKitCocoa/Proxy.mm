@@ -43,9 +43,11 @@
 #if HAVE(NW_PROXY_CONFIG)
 // FIXME: Soft link libnetwork on the simulator after rdar://110076935 is resolved
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if USE(APPLE_INTERNAL_SDK) // FIXME: <rdar://116703485> investigate why this times out on non-internal builds.
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_http_connect, nw_proxy_config_t, __cdecl, (nw_endpoint_t, nw_protocol_options_t))
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_socksv5, nw_proxy_config_t, __cdecl, (nw_endpoint_t))
+#endif
 #endif
 #endif
 
