@@ -226,10 +226,16 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
         return is<InlineTextItem>(inlineItem) ? downcast<InlineTextItem>(inlineItem).start() : downcast<InlineSoftLineBreakItem>(inlineItem).position();
     };
 
-    if (startPosition(candidateInlineItem) + candidatePosition.offset <= *damagedContent.offset)
+    auto contentOffset = startPosition(candidateInlineItem) + candidatePosition.offset;
+    if (contentOffset < *damagedContent.offset) {
+        // The damaged content is after the start of this inline item.
+        return candidatePosition;
+    }
+    // When the inline item's entire content is being removed, we need to find the previous inline item that belongs to this damaged layout box.
+    if (contentOffset == *damagedContent.offset && damagedContent.type != DamagedContent::Type::Removal)
         return candidatePosition;
 
-    // The damage offset is in front of the first display box we managed to find for this layout box.
+    // The damage offset is before the first display box we managed to find for this layout box.
     // Let's adjust the candidate position by moving it over to the damaged offset.
     for (auto index = candidatePosition.index; index--;) {
         auto& previousInlineItem = inlineItemList[index];

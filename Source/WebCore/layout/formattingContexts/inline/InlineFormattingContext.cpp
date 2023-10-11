@@ -93,6 +93,10 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
 
     auto& inlineItemList = inlineContentCache.inlineItems().content();
     auto needsLayoutRange = InlineItemRange { needsLayoutStartPosition, { inlineItemList.size(), 0 } };
+    if (needsLayoutRange.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 
     auto previousLine = [&]() -> std::optional<PreviousLine> {
         if (!needsLayoutStartPosition)
