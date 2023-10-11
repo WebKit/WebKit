@@ -333,8 +333,24 @@ static NSString * const scrollToExtentWithAnimationKey = @"ScrollToExtentAnimati
 
     [self startDisplayLinkIfNeeded];
 
+    auto initialVelocity = WebCore::FloatSize([_scrollable interactiveScrollVelocity]);
+    switch (scroll->direction) {
+    case WebCore::ScrollDirection::ScrollUp:
+        initialVelocity.setHeight(std::min<CGFloat>(0, initialVelocity.height()));
+        break;
+    case WebCore::ScrollDirection::ScrollDown:
+        initialVelocity.setHeight(std::max<CGFloat>(0, initialVelocity.height()));
+        break;
+    case WebCore::ScrollDirection::ScrollLeft:
+        initialVelocity.setWidth(std::min<CGFloat>(0, initialVelocity.width()));
+        break;
+    case WebCore::ScrollDirection::ScrollRight:
+        initialVelocity.setWidth(std::max<CGFloat>(0, initialVelocity.width()));
+        break;
+    }
+
     _currentPosition = WebCore::FloatPoint([_scrollable contentOffset]);
-    _velocity += WebCore::FloatSize([_scrollable interactiveScrollVelocity]);
+    _velocity += initialVelocity;
     _idealPositionForMinimumTravel = _currentPosition + _currentScroll->offset;
 
     return YES;
