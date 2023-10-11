@@ -1729,8 +1729,11 @@ static StringView listMarkerText(RenderListItem& listItem, const VisiblePosition
 StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Position&& startPosition)
 {
     auto* listItem = renderListItemContainerForNode(node);
-    // Constructing a VisiblePosition from a Position can be expensive, so only do it if we have a list item.
-    return listItem ? listMarkerText(*listItem, WTFMove(startPosition)) : StringView();
+    // Constructing a VisiblePosition from a Position can be extraordinarily expensive, so only do it if there's actually marker text.
+    if (!listItem || listItem->markerTextWithSuffix().isEmpty())
+        return { };
+
+    return listMarkerText(*listItem, WTFMove(startPosition));
 }
 
 StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& startVisiblePosition)
