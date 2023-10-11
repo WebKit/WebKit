@@ -175,7 +175,7 @@ bool LegacyRenderSVGPath::isRenderingDisabled() const
 {
     // For a polygon, polyline or path, rendering is disabled if there is no path data.
     // No path data is possible in the case of a missing or empty 'd' or 'points' attribute.
-    return path().isEmpty();
+    return !hasPath() || path().isEmpty();
 }
 
 }
