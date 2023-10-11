@@ -385,7 +385,8 @@ class Package(object):
                 else:
                     # We might not need setup.py at all, check if we have dist-info and the library in the temporary location
                     to_be_moved = os.listdir(temp_location)
-                    if self.name not in to_be_moved and any(element.endswith('.dist-info') for element in to_be_moved):
+                    has_module_or_package = self.name in to_be_moved or '{}.py'.format(self.name) in to_be_moved
+                    if not has_module_or_package or not any(element.endswith('.dist-info') for element in to_be_moved):
                         raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
                     for directory in to_be_moved:
                         shutil.rmtree(os.path.join(AutoInstall.directory, directory), ignore_errors=True)
