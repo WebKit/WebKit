@@ -2531,7 +2531,6 @@ rendering/GridLayoutFunctions.cpp
 rendering/GridMasonryLayout.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/GlyphDisplayListCache.cpp
-rendering/HighlightData.cpp
 rendering/HitTestLocation.cpp
 rendering/HitTestResult.cpp
 rendering/HitTestingTransformState.cpp
@@ -2579,6 +2578,7 @@ rendering/RenderFrameSet.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderGrid.cpp
 rendering/RenderHTMLCanvas.cpp
+rendering/RenderHighlight.cpp
 rendering/RenderIFrame.cpp
 rendering/RenderImage.cpp
 rendering/RenderImageResource.cpp
@@ -2617,6 +2617,7 @@ rendering/RenderScrollbar.cpp
 rendering/RenderScrollbarPart.cpp
 rendering/RenderScrollbarTheme.cpp
 rendering/RenderSearchField.cpp
+rendering/RenderSelection.cpp
 rendering/RenderSelectionGeometry.cpp
 rendering/RenderSlider.cpp
 rendering/RenderTable.cpp
@@ -2638,7 +2639,6 @@ rendering/RenderVTTCue.cpp
 rendering/RenderVideo.cpp
 rendering/RenderView.cpp
 rendering/RenderWidget.cpp
-rendering/SelectionRangeData.cpp
 rendering/StyledMarkedText.cpp
 rendering/TableLayout.cpp
 rendering/TextBoxPainter.cpp

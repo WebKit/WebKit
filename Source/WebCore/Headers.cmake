@@ -2258,7 +2258,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/EventRegion.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
-    rendering/HighlightData.h
     rendering/HitTestLocation.h
     rendering/HitTestRequest.h
     rendering/HitTestResult.h
@@ -2294,6 +2293,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderFlexibleBox.h
     rendering/RenderFrame.h
     rendering/RenderFrameBase.h
+    rendering/RenderHighlight.h
     rendering/RenderImage.h
     rendering/RenderImageResource.h
     rendering/RenderInline.h
@@ -2311,6 +2311,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderOverflow.h
     rendering/RenderPtr.h
     rendering/RenderReplaced.h
+    rendering/RenderSelection.h
     rendering/RenderSelectionGeometry.h
     rendering/RenderText.h
     rendering/RenderTextControl.h
@@ -2322,7 +2323,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderVideo.h
     rendering/RenderView.h
     rendering/RenderWidget.h
-    rendering/SelectionRangeData.h
     rendering/TextBoxSelectableRange.h
 
     rendering/line/LineWidth.h

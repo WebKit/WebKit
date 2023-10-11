@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "SelectionRangeData.h"
+#include "RenderSelection.h"
 
 #include "Document.h"
 #include "FrameSelection.h"
@@ -107,8 +107,8 @@ static SelectionContext collectSelectionData(const RenderRange& selection, bool 
     return oldSelectionData;
 }
 
-SelectionRangeData::SelectionRangeData(RenderView& view)
-    : HighlightData(IsSelection)
+RenderSelection::RenderSelection(RenderView& view)
+    : RenderHighlight(IsSelection)
     , m_renderView(view)
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionGeometryGatherer(view)
@@ -116,7 +116,7 @@ SelectionRangeData::SelectionRangeData(RenderView& view)
 {
 }
 
-void SelectionRangeData::set(const RenderRange& selection, RepaintMode blockRepaintMode)
+void RenderSelection::set(const RenderRange& selection, RepaintMode blockRepaintMode)
 {
     if ((selection.start() && !selection.end()) || (selection.end() && !selection.start()))
         return;
@@ -133,13 +133,13 @@ void SelectionRangeData::set(const RenderRange& selection, RepaintMode blockRepa
     apply(selection, blockRepaintMode);
 }
 
-void SelectionRangeData::clear()
+void RenderSelection::clear()
 {
     m_renderView.layer()->repaintBlockSelectionGaps();
-    set({ }, SelectionRangeData::RepaintMode::NewMinusOld);
+    set({ }, RenderSelection::RepaintMode::NewMinusOld);
 }
 
-void SelectionRangeData::repaint() const
+void RenderSelection::repaint() const
 {
     HashSet<RenderBlock*> processedBlocks;
     RenderObject* end = nullptr;
@@ -161,7 +161,7 @@ void SelectionRangeData::repaint() const
     }
 }
 
-IntRect SelectionRangeData::collectBounds(ClipToVisibleContent clipToVisibleContent) const
+IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent) const
 {
     LOG_WITH_STREAM(Selection, stream << "SelectionData::collectBounds (clip to visible " << (clipToVisibleContent == ClipToVisibleContent::Yes ? "yes" : "no"));
     
@@ -214,7 +214,7 @@ IntRect SelectionRangeData::collectBounds(ClipToVisibleContent clipToVisibleCont
     return snappedIntRect(selectionRect);
 }
 
-void SelectionRangeData::apply(const RenderRange& newSelection, RepaintMode blockRepaintMode)
+void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRepaintMode)
 {
     auto oldSelectionData = collectSelectionData(m_renderRange, blockRepaintMode == RepaintMode::NewXOROld);
     // Remove current selection.

@@ -29,18 +29,17 @@
 
 #pragma once
 
-#include "HighlightData.h"
+#include "RenderHighlight.h"
 #include "RenderSelectionGeometry.h"
-
 #if ENABLE(SERVICE_CONTROLS)
 #include "SelectionGeometryGatherer.h"
 #endif
 
 namespace WebCore {
 
-class SelectionRangeData : public HighlightData {
+class RenderSelection : public RenderHighlight {
 public:
-    SelectionRangeData(RenderView&);
+    RenderSelection(RenderView&);
     
     enum class RepaintMode { NewXOROld, NewMinusOld, Nothing };
     void set(const RenderRange&, RepaintMode = RepaintMode::NewXOROld);

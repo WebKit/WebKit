@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "HighlightData.h"
+#include "RenderHighlight.h"
 
 #include "Document.h"
 #include "FrameSelection.h"
@@ -89,13 +89,13 @@ static RenderObject* rendererAfterOffset(const RenderObject& renderer, unsigned 
     return child ? child : renderer.nextInPreOrderAfterChildren();
 }
 
-void HighlightData::setRenderRange(const RenderRange& renderRange)
+void RenderHighlight::setRenderRange(const RenderRange& renderRange)
 {
     ASSERT(renderRange.start() && renderRange.end());
     m_renderRange = renderRange;
 }
 
-bool HighlightData::setRenderRange(const HighlightRange& highlightRange)
+bool RenderHighlight::setRenderRange(const HighlightRange& highlightRange)
 {
     if (highlightRange.startPosition().isNull() || highlightRange.endPosition().isNull())
         return false;
@@ -119,7 +119,7 @@ bool HighlightData::setRenderRange(const HighlightRange& highlightRange)
     return true;
 }
 
-RenderObject::HighlightState HighlightData::highlightStateForRenderer(const RenderObject& renderer)
+RenderObject::HighlightState RenderHighlight::highlightStateForRenderer(const RenderObject& renderer)
 {
     if (m_isSelection)
         return renderer.selectionState();
@@ -147,7 +147,7 @@ RenderObject::HighlightState HighlightData::highlightStateForRenderer(const Rend
     return RenderObject::HighlightState::None;
 }
 
-RenderObject::HighlightState HighlightData::highlightStateForTextBox(const RenderText& renderer, const TextBoxSelectableRange& textBoxRange)
+RenderObject::HighlightState RenderHighlight::highlightStateForTextBox(const RenderText& renderer, const TextBoxSelectableRange& textBoxRange)
 {
     auto state = highlightStateForRenderer(renderer);
 
@@ -175,7 +175,7 @@ RenderObject::HighlightState HighlightData::highlightStateForTextBox(const Rende
     return RenderObject::HighlightState::None;
 }
 
-std::pair<unsigned, unsigned> HighlightData::rangeForTextBox(const RenderText& renderer, const TextBoxSelectableRange& textBoxRange)
+std::pair<unsigned, unsigned> RenderHighlight::rangeForTextBox(const RenderText& renderer, const TextBoxSelectableRange& textBoxRange)
 {
     auto state = highlightStateForTextBox(renderer, textBoxRange);
 

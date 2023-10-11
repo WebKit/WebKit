@@ -78,11 +78,11 @@ private:
     Vector<RenderMultiColumnSpannerPlaceholder*> m_spannerStack;
 };
 
-class HighlightData {
+class RenderHighlight {
 public:
     enum IsSelectionTag { IsSelection };
-    HighlightData() = default;
-    HighlightData(IsSelectionTag)
+    RenderHighlight() = default;
+    RenderHighlight(IsSelectionTag)
         : m_isSelection(true)
     { }
 

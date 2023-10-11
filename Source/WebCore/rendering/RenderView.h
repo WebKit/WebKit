@@ -24,8 +24,8 @@
 #include "LocalFrameView.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
+#include "RenderSelection.h"
 #include "RenderWidget.h"
-#include "SelectionRangeData.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -96,7 +96,7 @@ public:
     // Return the renderer whose background style is used to paint the root background.
     RenderElement* rendererForRootBackground() const;
 
-    SelectionRangeData& selection() { return m_selection; }
+    RenderSelection& selection() { return m_selection; }
 
     bool printing() const;
 
@@ -241,7 +241,7 @@ private:
     UniqueRef<Layout::LayoutState> m_layoutState;
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
-    SelectionRangeData m_selection;
+    RenderSelection m_selection;
 
     WeakPtr<RenderLayer> m_styleChangeLayerMutationRoot;
 
