@@ -115,6 +115,19 @@ TEST(UIPasteboardTests, CopyPlainTextWritesConcreteTypes)
     EXPECT_WK_STREQ("Hello world", [utf8Result UTF8String]);
 }
 
+TEST(UIPasteboardTests, CopyPlainTextRetainsEscapeCharactersInURLRepresentation)
+{
+    auto webView = setUpWebViewForPasteboardTests(@"rich-and-plain-text");
+    [webView stringByEvaluatingJavaScript:@"plain.value = 'hello:<'"];
+    [webView stringByEvaluatingJavaScript:@"selectPlainText()"];
+    [webView stringByEvaluatingJavaScript:@"document.execCommand('copy')"];
+
+    EXPECT_FALSE(UIPasteboard.generalPasteboard.URL);
+
+    auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF8PlainText) encoding:NSUTF8StringEncoding]);
+    EXPECT_WK_STREQ("hello:<", [utf8Result UTF8String]);
+}
+
 TEST(UIPasteboardTests, CopyRichTextWritesConcreteTypes)
 {
     auto webView = setUpWebViewForPasteboardTests(@"rich-and-plain-text");
