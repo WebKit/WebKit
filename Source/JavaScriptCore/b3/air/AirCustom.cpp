@@ -75,7 +75,7 @@ bool CCallCustom::isValidForm(Inst& inst)
     size_t resultCount = cCallResultCount(code, value);
     size_t expectedArgCount = resultCount + 1; // first Arg is always CCallSpecial.
     for (Value* child : value->children()) {
-        ASSERT(child->type() != Tuple);
+        ASSERT(!child->type().isTuple());
         expectedArgCount += cCallArgumentRegisterCount(child);
     }
 
