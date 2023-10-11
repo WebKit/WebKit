@@ -2082,7 +2082,7 @@ webkit.org/b/227761 imported/w3c/web-platform-tests/beacon/beacon-cors.https.win
 
 webkit.org/b/261215 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout Failure ]
 
-webkit.org/b/261226 fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Timeout ]
+webkit.org/b/261226 [ Sonoma+ ] fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Pass ] # backing functionality only in Sonoma+
 
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
 [ Monterey+ ] media/media-source/media-source-evict-codedframe-large-currenttime.html [ Pass Failure ]
