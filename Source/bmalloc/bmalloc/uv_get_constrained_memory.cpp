@@ -211,7 +211,15 @@ static uint64_t uv__get_cgroup_constrained_memory(char buf[1024])
     if (high == 0 || max == 0)
         return 0;
 
-    return high < max ? high : max;
+    uint64_t result = high < max ? high : max;
+
+#if BCPU(X86_64) || BCPU(ARM64)
+    // max 52 bit integer, which is the most addressible space between arm64 and x64
+    if (result >= 9007199254740991)
+        return 0;
+#endif
+
+    return result;
 }
 
 // TODO: should we cache this? can we?
