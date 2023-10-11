@@ -159,8 +159,8 @@ Color RenderReplaced::calculateHighlightColor() const
     if (auto appHighlightRegister = document().appHighlightRegisterIfExists()) {
         if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
             for (auto& highlight : appHighlightRegister->map()) {
-                for (auto& rangeData : highlight.value->rangesData()) {
-                    if (!highlightData.setRenderRange(rangeData))
+                for (auto& highlightRange : highlight.value->highlightRanges()) {
+                    if (!highlightData.setRenderRange(highlightRange))
                         continue;
 
                     auto state = highlightData.highlightStateForRenderer(*this);
@@ -177,8 +177,8 @@ Color RenderReplaced::calculateHighlightColor() const
     if (DeprecatedGlobalSettings::highlightAPIEnabled()) {
         if (auto highlightRegister = document().highlightRegisterIfExists()) {
             for (auto& highlight : highlightRegister->map()) {
-                for (auto& rangeData : highlight.value->rangesData()) {
-                    if (!highlightData.setRenderRange(rangeData))
+                for (auto& highlightRange : highlight.value->highlightRanges()) {
+                    if (!highlightData.setRenderRange(highlightRange))
                         continue;
 
                     auto state = highlightData.highlightStateForRenderer(*this);
@@ -194,8 +194,8 @@ Color RenderReplaced::calculateHighlightColor() const
     if (document().settings().scrollToTextFragmentEnabled()) {
         if (auto highlightRegister = document().fragmentHighlightRegisterIfExists()) {
             for (auto& highlight : highlightRegister->map()) {
-                for (auto& rangeData : highlight.value->rangesData()) {
-                    if (!highlightData.setRenderRange(rangeData))
+                for (auto& highlightRange : highlight.value->highlightRanges()) {
+                    if (!highlightData.setRenderRange(highlightRange))
                         continue;
 
                     auto state = highlightData.highlightStateForRenderer(*this);

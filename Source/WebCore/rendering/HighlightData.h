@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct TextBoxSelectableRange;
 
-class HighlightRangeData;
+class HighlightRange;
 class RenderMultiColumnSpannerPlaceholder;
 class RenderText;
 
@@ -87,7 +87,7 @@ public:
     { }
 
     void setRenderRange(const RenderRange&);
-    bool setRenderRange(const HighlightRangeData&); // Returns true if successful.
+    bool setRenderRange(const HighlightRange&); // Returns true if successful.
     const RenderRange& get() const { return m_renderRange; }
 
     RenderObject* start() const { return m_renderRange.start(); }
