@@ -81,8 +81,8 @@ class Events(service.BuildbotService):
         self.master_hostname = master_hostname
 
     def sendDataToEWS(self, data):
-        if os.getenv('EWS_API_KEY', None):
-            data['EWS_API_KEY'] = os.getenv('EWS_API_KEY')
+        if load_password('EWS_API_KEY'):
+            data['EWS_API_KEY'] = load_password('EWS_API_KEY')
 
         TwistedAdditions.request(
             url=self.EVENT_SERVER_ENDPOINT,

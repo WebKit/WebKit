@@ -27,7 +27,9 @@ import socket
 
 from email.mime.text import MIMEText
 
-custom_suffix = '-uat' if os.getenv('BUILDBOT_UAT') else ''
+from .utils import load_password
+
+custom_suffix = '-uat' if load_password('BUILDBOT_UAT') else ''
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
