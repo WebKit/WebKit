@@ -32,6 +32,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLPictureElement.h"
+#include "HTMLSrcsetParser.h"
 #include "Logging.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
@@ -200,6 +201,22 @@ const MQ::MediaQueryList& HTMLSourceElement::parsedMediaAttribute(Document& docu
         m_cachedParsedMediaAttribute = MQ::MediaQueryParser::parse(value, MediaQueryParserContext { document });
     }
     return m_cachedParsedMediaAttribute.value();
+}
+
+Attribute HTMLSourceElement::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>& replacementURLStrings) const
+{
+    if (attribute.name() != srcsetAttr)
+        return attribute;
+
+    if (replacementURLStrings.isEmpty())
+        return attribute;
+
+    return Attribute { srcsetAttr, AtomString { replaceURLsInSrcsetAttribute(*this, StringView(attribute.value()), replacementURLStrings) } };
+}
+
+void HTMLSourceElement::addCandidateSubresourceURLs(ListHashSet<URL>& urls) const
+{
+    getURLsFromSrcsetAttribute(*this, attributeWithoutSynchronization(srcsetAttr), urls);
 }
 
 }

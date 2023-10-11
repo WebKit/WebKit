@@ -3596,7 +3596,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 // API that AppKit uses for faster access
-- (NSUInteger)accessibilityIndexOfChild:(id)child
+- (NSUInteger)accessibilityIndexOfChild:(id)targetChild
 {
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
@@ -3605,29 +3605,27 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // Tree objects return their rows as their children. We can use the original method
     // here, because we won't gain any speed up.
     if (backingObject->isTree())
-        return [super accessibilityIndexOfChild:child];
+        return [super accessibilityIndexOfChild:targetChild];
 
-    NSArray *children = self.childrenVectorArray;
-    if (!children.count) {
+    const auto& children = backingObject->children();
+    if (!children.size()) {
         if (auto *renderWidgetChildren = [self renderWidgetChildren])
-            return [renderWidgetChildren indexOfObject:child];
+            return [renderWidgetChildren indexOfObject:targetChild];
 #if ENABLE(MODEL_ELEMENT)
         if (backingObject->isModel())
-            return backingObject->modelElementChildren().find(child);
+            return backingObject->modelElementChildren().find(targetChild);
 #endif
     }
 
-    NSUInteger count = [children count];
-    for (NSUInteger i = 0; i < count; ++i) {
-        WebAccessibilityObjectWrapper *wrapper = children[i];
-        auto* object = wrapper.axBackingObject;
-        if (!object)
+    size_t childCount = children.size();
+    for (size_t i = 0; i < childCount; i++) {
+        const auto& child = children[i];
+        if (!child)
             continue;
-
-        if (wrapper == child || (object->isAttachment() && [wrapper attachmentView] == child))
+        WebAccessibilityObjectWrapper *childWrapper = child->wrapper();
+        if (childWrapper == targetChild || (child->isAttachment() && [childWrapper attachmentView] == targetChild))
             return i;
     }
-
     return NSNotFound;
 }
 

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async (test) => {
+    if (!window.testRunner)
+        return;
+
+    assert_false(testRunner.isEnumeratingAudioUnitActive, "test1");
+
+    await navigator.mediaDevices.enumerateDevices();
+    assert_false(testRunner.isEnumeratingAudioUnitActive, "test2");
+
+    await navigator.mediaDevices.getUserMedia({ video:true });
+    assert_false(testRunner.isEnumeratingAudioUnitActive, "test3");
+
+    await navigator.mediaDevices.getUserMedia({ audio:true });
+    assert_true(testRunner.isEnumeratingAudioUnitActive, "test4");
+}, "Validate auxiliary unit activation");
+        </script>
+    </body>
+</html>

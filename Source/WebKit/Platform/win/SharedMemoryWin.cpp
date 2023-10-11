@@ -64,7 +64,6 @@ static DWORD accessRights(SharedMemory::Protection protection)
 
 RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
 {
-    ASSERT(!handle.isNull());
     void* data = ::MapViewOfFile(handle.m_handle.get(), accessRights(protection), 0, 0, handle.size());
     ASSERT_WITH_MESSAGE(data, "::MapViewOfFile failed with error %lu %p", ::GetLastError(), handle.m_handle.get());
     if (!data)
@@ -87,19 +86,13 @@ SharedMemory::~SharedMemory()
 
 auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
 {
-    Handle handle;
-    ASSERT_ARG(handle, !handle.m_handle);
-    ASSERT_ARG(handle, !handle.m_size);
-
     HANDLE processHandle = ::GetCurrentProcess();
 
     HANDLE duplicatedHandle;
     if (!::DuplicateHandle(processHandle, m_handle.get(), processHandle, &duplicatedHandle, accessRights(protection), FALSE, 0))
         return std::nullopt;
 
-    handle.m_handle = Win32Handle::adopt(duplicatedHandle);
-    handle.m_size = m_size;
-    return WTFMove(handle);
+    return { Handle(Win32Handle::adopt(duplicatedHandle), m_size) };
 }
 
 } // namespace WebKit

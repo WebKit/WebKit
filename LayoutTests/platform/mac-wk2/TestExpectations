@@ -2213,3 +2213,12 @@ webkit.org/b/262753 [ Sonoma+ ] fast/repaint/4776765.html [ Failure ]
 webkit.org/b/262915 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-rounded-border.html [ ImageOnlyFailure ]
 
 webkit.org/b/262917 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
+
+webkit.org/b/262978 [ Sonoma+ ] fast/attachment/attachment-icon-from-file-extension.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/262987 REGRESSION ( Sonoma): [ Sonoma ] 3 tests in fast/attachment/mac/ are consistently failing
+[ Sonoma+ ] fast/attachment/mac/attachment-keynote.html [ Pass ImageOnlyFailure ]
+[ Sonoma+ ] fast/attachment/mac/attachment-numbers.html [ Pass ImageOnlyFailure ]
+[ Sonoma+ ] fast/attachment/mac/attachment-pages.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/177397 [ Sonoma+ Release ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]

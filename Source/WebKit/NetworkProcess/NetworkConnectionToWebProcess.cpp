@@ -1313,7 +1313,7 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
         return;
 
     auto& server = session->ensureSWServer();
-    auto connection = makeUnique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier);
+    auto connection = makeUnique<WebSWServerConnection>(*this, server, m_connection.get(), m_webProcessIdentifier);
 
     m_swConnection = *connection;
     server.addConnection(WTFMove(connection));

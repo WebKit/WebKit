@@ -121,18 +121,20 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         m_destinationID = RemoteAudioDestinationIdentifier::generate();
 
         m_lastFrameCount = 0;
-        SharedMemory::Handle frameCountHandle;
+        std::optional<SharedMemory::Handle> frameCountHandle;
         if ((m_frameCount = SharedMemory::allocate(sizeof(std::atomic<uint32_t>)))) {
-            if (auto localFrameHandle = m_frameCount->createHandle(SharedMemory::Protection::ReadWrite))
-                frameCountHandle = WTFMove(*localFrameHandle);
+            frameCountHandle = m_frameCount->createHandle(SharedMemory::Protection::ReadWrite);
         }
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(frameCountHandle)), 0);
+        RELEASE_ASSERT(frameCountHandle.has_value());
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), 0);
 
 #if PLATFORM(COCOA)
         m_currentFrame = 0;
         auto streamFormat = audioStreamBasicDescriptionForAudioBus(m_outputBus);
         size_t numberOfFrames = m_remoteSampleRate * ringBufferSizeInSecond;
-        auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(streamFormat, numberOfFrames);
+        auto result = ProducerSharedCARingBuffer::allocate(streamFormat, numberOfFrames);
+        RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
+        auto [ringBuffer, handle] = WTFMove(*result);
         m_ringBuffer = WTFMove(ringBuffer);
         gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle) }, 0);
         m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);

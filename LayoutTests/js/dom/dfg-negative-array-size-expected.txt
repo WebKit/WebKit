@@ -3,7 +3,7 @@ Tests that creating an array with a negative size throws an exception.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS foo() threw exception RangeError: Array size is not a small enough positive integer..
+PASS foo() threw exception RangeError: Array length must be a positive integer of safe magnitude..
 PASS successfullyParsed is true
 
 TEST COMPLETE

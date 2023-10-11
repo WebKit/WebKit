@@ -1064,7 +1064,7 @@ static void addValuesForNamedGridLinesAtIndex(OrderedNamedLinesCollector& collec
 
 static Ref<CSSValueList> valueForGridTrackSizeList(GridTrackSizingDirection direction, const RenderStyle& style)
 {
-    auto& autoTrackSizes = direction == ForColumns ? style.gridAutoColumns() : style.gridAutoRows();
+    auto& autoTrackSizes = direction == GridTrackSizingDirection::ForColumns ? style.gridAutoColumns() : style.gridAutoRows();
 
     CSSValueListBuilder list;
     for (auto& trackSize : autoTrackSizes)
@@ -1096,10 +1096,10 @@ static void populateSubgridLineNameList(CSSValueListBuilder& list, OrderedNamedL
 
 static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, RenderObject* renderer, const RenderStyle& style)
 {
-    bool isRowAxis = direction == ForColumns;
+    bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
     bool isRenderGrid = is<RenderGrid>(renderer);
     bool isSubgrid = isRowAxis ? style.gridSubgridColumns() : style.gridSubgridRows();
-    bool isMasonry = (direction == ForRows) ? style.gridMasonryRows() : style.gridMasonryColumns();
+    bool isMasonry = (direction == GridTrackSizingDirection::ForRows) ? style.gridMasonryRows() : style.gridMasonryColumns();
     auto& trackSizes = isRowAxis ? style.gridColumnTrackSizes() : style.gridRowTrackSizes();
     auto& autoRepeatTrackSizes = isRowAxis ? style.gridAutoRepeatColumns() : style.gridAutoRepeatRows();
 
@@ -3372,14 +3372,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     // depending on the size of the explicit grid or the number of implicit tracks added to the grid. See
     // http://lists.w3.org/Archives/Public/www-style/2013Nov/0014.html
     case CSSPropertyGridAutoColumns:
-        return valueForGridTrackSizeList(ForColumns, style);
+        return valueForGridTrackSizeList(GridTrackSizingDirection::ForColumns, style);
     case CSSPropertyGridAutoRows:
-        return valueForGridTrackSizeList(ForRows, style);
+        return valueForGridTrackSizeList(GridTrackSizingDirection::ForRows, style);
 
     case CSSPropertyGridTemplateColumns:
-        return valueForGridTrackList(ForColumns, renderer, style);
+        return valueForGridTrackList(GridTrackSizingDirection::ForColumns, renderer, style);
     case CSSPropertyGridTemplateRows:
-        return valueForGridTrackList(ForRows, renderer, style);
+        return valueForGridTrackList(GridTrackSizingDirection::ForRows, renderer, style);
 
     case CSSPropertyGridColumnStart:
         return valueForGridPosition(style.gridItemColumnStart());

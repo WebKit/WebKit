@@ -25,13 +25,15 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || (USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.h>)))
+#if PLATFORM(COCOA) && ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || (ENABLE(WEBXR) && USE(ARKITXR_IOS)) || (USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.h>)))
 
+#import <ARKit/ARKit.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, ARKit)
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ARQuickLookPreviewItem);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ARWorldTrackingConfiguration)
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.h>)
 #import <WebKitAdditions/ARKitSoftLinkAdditions.h>

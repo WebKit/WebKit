@@ -442,6 +442,7 @@ void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType)
             child->detachFromParent();
     }
     m_childrenIDs.clear();
+    m_childrenDirty = true;
 }
 
 #if !PLATFORM(MAC)
@@ -455,6 +456,12 @@ bool AXIsolatedObject::isDetached() const
 void AXIsolatedObject::detachFromParent()
 {
     m_parentID = { };
+}
+
+void AXIsolatedObject::setChildrenIDs(Vector<AXID>&& ids)
+{
+    m_childrenIDs = WTFMove(ids);
+    m_childrenDirty = true;
 }
 
 const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool updateChildrenIfNeeded)
@@ -471,11 +478,14 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
         protectedThis = this;
         updateBackingStore();
 
-        m_children = WTF::compactMap(m_childrenIDs, [&](auto& childID) -> std::optional<RefPtr<AXCoreObject>> {
-            if (RefPtr child = tree()->objectForID(childID))
-                return child;
-            return std::nullopt;
-        });
+        if (m_childrenDirty) {
+            m_children = WTF::compactMap(m_childrenIDs, [&](auto& childID) -> std::optional<RefPtr<AXCoreObject>> {
+                if (RefPtr child = tree()->objectForID(childID))
+                    return child;
+                return std::nullopt;
+            });
+            m_childrenDirty = false;
+        }
         ASSERT(m_children.size() == m_childrenIDs.size());
     }
     return m_children;

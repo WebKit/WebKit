@@ -157,23 +157,25 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     
     auto imageBuffer = image->image()->data();
 
-    SharedMemory::Handle imageHandle;
+    std::optional<SharedMemory::Handle> imageHandle;
     {
         auto sharedMemoryBuffer = SharedMemory::copyBuffer(*imageBuffer);
         if (!sharedMemoryBuffer)
             return;
-        if (auto handle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
-            imageHandle = WTFMove(*handle);
+        imageHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+        if (!imageHandle)
+            return;
     }
     RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
-    SharedMemory::Handle archiveHandle;
+    std::optional<SharedMemory::Handle> archiveHandle;
     if (data) {
         auto archiveBuffer = SharedBuffer::create((__bridge NSData *)data.get());
         auto archiveSharedMemoryBuffer = SharedMemory::copyBuffer(archiveBuffer.get());
         if (!archiveSharedMemoryBuffer)
             return;
-        if (auto handle = archiveSharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
-            archiveHandle = WTFMove(*handle);
+        archiveHandle = archiveSharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+        if (!archiveHandle)
+            return;
     }
 
     String filename = String([response suggestedFilename]);
@@ -183,7 +185,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
             filename = downloadFilename;
     }
 
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTFMove(imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url), WTFMove(archiveHandle), element.document().originIdentifierForPasteboard()));
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTFMove(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url), WTFMove(*archiveHandle), element.document().originIdentifierForPasteboard()));
 }
 
 #else

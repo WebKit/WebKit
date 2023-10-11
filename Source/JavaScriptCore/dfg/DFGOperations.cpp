@@ -1959,7 +1959,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSize, char*, (JSGlobalObject* glob
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(size < 0)) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s));
+        throwException(globalObject, scope, createRangeError(globalObject, ArrayInvalidLengthError));
         return nullptr;
     }
 
@@ -1984,7 +1984,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSizeAndHint, char*, (JSGlobalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(size < 0)) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s));
+        throwException(globalObject, scope, createRangeError(globalObject, ArrayInvalidLengthError));
         return nullptr;
     }
 
@@ -3720,7 +3720,7 @@ static ALWAYS_INLINE JSObject* newArrayWithSpeciesImpl(JSGlobalObject* globalObj
 
     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
         if (UNLIKELY(length > std::numeric_limits<unsigned>::max())) {
-            throwRangeError(globalObject, scope, "Array size is not a small enough positive integer."_s);
+            throwRangeError(globalObject, scope, ArrayInvalidLengthError);
             return nullptr;
         }
 

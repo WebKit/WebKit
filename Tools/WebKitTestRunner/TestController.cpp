@@ -3514,6 +3514,10 @@ bool TestController::isDoingMediaCapture() const
     return false;
 }
 
+bool TestController::isEnumeratingAudioUnitActive() const
+{
+    return false;
+}
 #endif
 
 struct ResourceStatisticsCallbackContext {

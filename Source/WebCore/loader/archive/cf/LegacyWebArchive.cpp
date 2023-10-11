@@ -580,6 +580,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
         } else {
             ListHashSet<URL> subresourceURLs;
             node->getSubresourceURLs(subresourceURLs);
+            node->getCandidateSubresourceURLs(subresourceURLs);
 
             ASSERT(frame.loader().documentLoader());
             auto& documentLoader = *frame.loader().documentLoader();

@@ -33,6 +33,12 @@
 @interface UIScrollView (WebKitInternal)
 @property (readonly, nonatomic) BOOL _wk_isInterruptingDeceleration;
 @property (readonly, nonatomic) BOOL _wk_isScrolledBeyondExtents;
+@property (readonly, nonatomic) BOOL _wk_canScrollHorizontallyWithoutBouncing;
+@property (readonly, nonatomic) BOOL _wk_canScrollVerticallyWithoutBouncing;
+@property (readonly, nonatomic) CGFloat _wk_contentWidthIncludingInsets;
+@property (readonly, nonatomic) CGFloat _wk_contentHeightIncludingInsets;
+
+- (CGPoint)_wk_clampToScrollExtents:(CGPoint)contentOffset;
 @end
 
 @interface UIView (WebKitInternal)

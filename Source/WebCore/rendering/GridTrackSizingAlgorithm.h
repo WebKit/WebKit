@@ -34,14 +34,14 @@ namespace WebCore {
 
 static const int infinity = -1;
 
-enum SizingOperation { TrackSizing, IntrinsicSizeComputation };
+enum class SizingOperation : uint8_t { TrackSizing, IntrinsicSizeComputation };
 
 enum class TrackSizeComputationVariant : uint8_t {
     NotCrossingFlexibleTracks,
     CrossingFlexibleTracks,
 };
 
-enum TrackSizeComputationPhase {
+enum class TrackSizeComputationPhase : uint8_t {
     ResolveIntrinsicMinimums,
     ResolveContentBasedMinimums,
     ResolveMaxContentMinimums,
@@ -110,7 +110,7 @@ public:
     GridTrackSizingAlgorithm(const RenderGrid* renderGrid, Grid& grid)
         : m_grid(grid)
         , m_renderGrid(renderGrid)
-        , m_sizingState(ColumnSizingFirstIteration)
+        , m_sizingState(SizingState::ColumnSizingFirstIteration)
     {
     }
 
@@ -137,13 +137,13 @@ public:
     void copyBaselineItemsCache(const GridTrackSizingAlgorithm&, GridAxis);
     void clearBaselineItemsCache();
 
-    Vector<GridTrack>& tracks(GridTrackSizingDirection direction) { return direction == ForColumns ? m_columns : m_rows; }
-    const Vector<GridTrack>& tracks(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_columns : m_rows; }
+    Vector<GridTrack>& tracks(GridTrackSizingDirection direction) { return direction == GridTrackSizingDirection::ForColumns ? m_columns : m_rows; }
+    const Vector<GridTrack>& tracks(GridTrackSizingDirection direction) const { return direction == GridTrackSizingDirection::ForColumns ? m_columns : m_rows; }
 
-    std::optional<LayoutUnit> freeSpace(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_freeSpaceColumns : m_freeSpaceRows; }
+    std::optional<LayoutUnit> freeSpace(GridTrackSizingDirection direction) const { return direction == GridTrackSizingDirection::ForColumns ? m_freeSpaceColumns : m_freeSpaceRows; }
     void setFreeSpace(GridTrackSizingDirection, std::optional<LayoutUnit>);
 
-    std::optional<LayoutUnit> availableSpace(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_availableSpaceColumns : m_availableSpaceRows; }
+    std::optional<LayoutUnit> availableSpace(GridTrackSizingDirection direction) const { return direction == GridTrackSizingDirection::ForColumns ? m_availableSpaceColumns : m_availableSpaceRows; }
     void setAvailableSpace(GridTrackSizingDirection, std::optional<LayoutUnit>);
 
     LayoutUnit computeTrackBasedSize() const;
@@ -242,7 +242,7 @@ private:
     LayoutUnit m_minContentSize;
     LayoutUnit m_maxContentSize;
 
-    enum SizingState {
+    enum class SizingState : uint8_t {
         ColumnSizingFirstIteration,
         RowSizingFirstIteration,
         RowSizingExtraIterationForSizeContainment,
@@ -301,7 +301,7 @@ protected:
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
     GridTrackSizingDirection direction() const { return m_algorithm.m_direction; }
     double findFrUnitSize(const GridSpan& tracksSpan, LayoutUnit leftOverSpace) const { return m_algorithm.findFrUnitSize(tracksSpan, leftOverSpace); }
-    void distributeSpaceToTracks(Vector<WeakPtr<GridTrack>>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<TrackSizeComputationVariant::NotCrossingFlexibleTracks, MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
+    void distributeSpaceToTracks(Vector<WeakPtr<GridTrack>>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<TrackSizeComputationVariant::NotCrossingFlexibleTracks, TrackSizeComputationPhase::MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
     const RenderGrid* renderGrid() const { return m_algorithm.m_renderGrid; }
     std::optional<LayoutUnit> availableSpace() const { return m_algorithm.availableSpace(); }
 

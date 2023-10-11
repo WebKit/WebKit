@@ -71,13 +71,10 @@ public:
         Win32Handle;
 #endif
 
-    SharedMemoryHandle() = default;
     SharedMemoryHandle(SharedMemoryHandle&&) = default;
     SharedMemoryHandle(SharedMemoryHandle::Type&&, size_t);
 
     SharedMemoryHandle& operator=(SharedMemoryHandle&&) = default;
-
-    bool isNull() const;
 
     size_t size() const { return m_size; }
 

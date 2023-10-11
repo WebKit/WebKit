@@ -5117,6 +5117,11 @@ String Element::completeURLsInAttributeValue(const URL& base, const Attribute& a
     return resolveURLStringIfNeeded(attribute.value(), resolveURLs, base);
 }
 
+Attribute Element::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>&) const
+{
+    return attribute;
+}
+
 ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newChild)
 {
     // In Internet Explorer if the element has no parent and where is "beforeBegin" or "afterEnd",

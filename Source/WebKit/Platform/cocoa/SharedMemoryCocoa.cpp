@@ -181,9 +181,6 @@ RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection p
 
 RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
 {
-    if (handle.isNull())
-        return nullptr;
-
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
 
@@ -214,18 +211,10 @@ SharedMemory::~SharedMemory()
     
 auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
 {
-    Handle handle;
-    ASSERT(!handle.m_handle);
-    ASSERT(!handle.m_size);
-
     auto sendRight = createSendRight(protection);
     if (!sendRight)
         return std::nullopt;
-
-    handle.m_handle = WTFMove(sendRight);
-    handle.m_size = m_size;
-
-    return WTFMove(handle);
+    return { Handle(WTFMove(sendRight), m_size) };
 }
 
 WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const

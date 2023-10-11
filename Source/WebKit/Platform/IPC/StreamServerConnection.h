@@ -41,7 +41,6 @@ class StreamConnectionWorkQueue;
 
 struct StreamServerConnectionHandle {
     WTF_MAKE_NONCOPYABLE(StreamServerConnectionHandle);
-    StreamServerConnectionHandle() = default;
     StreamServerConnectionHandle(Connection::Handle&& connection, StreamConnectionBuffer::Handle&& bufferHandle)
         : outOfStreamConnection(WTFMove(connection))
         , buffer(WTFMove(bufferHandle))

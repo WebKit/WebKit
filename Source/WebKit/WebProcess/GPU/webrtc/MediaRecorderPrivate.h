@@ -49,16 +49,11 @@ namespace WebKit {
 
 class MediaRecorderPrivate final
     : public WebCore::MediaRecorderPrivate
-    , public GPUProcessConnection::Client
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate> {
+    , public CanMakeWeakPtr<MediaRecorderPrivate> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivate();
-
-    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate>::ref(); }
-    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate>::deref(); }
-    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate>::controlBlock(); }
 
 private:
     // WebCore::MediaRecorderPrivate
@@ -71,8 +66,35 @@ private:
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
 
-    // GPUProcessConnection::Client
-    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
+    void gpuProcessConnectionDidClose();
+
+    class GPUProcessDidCloseObserver final
+        : public GPUProcessConnection::Client
+        , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUProcessDidCloseObserver> {
+    public:
+        static Ref<GPUProcessDidCloseObserver> create(MediaRecorderPrivate& recorder) { return adoptRef(*new GPUProcessDidCloseObserver(recorder)); }
+
+        // GPUProcessConnection::Client
+        void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUProcessDidCloseObserver>::ref(); }
+        void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUProcessDidCloseObserver>::deref(); }
+        ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUProcessDidCloseObserver>::controlBlock(); }
+
+    private:
+        explicit GPUProcessDidCloseObserver(MediaRecorderPrivate& recorder)
+            : m_recorder(recorder)
+        {
+        }
+
+        void gpuProcessConnectionDidClose(GPUProcessConnection&) final
+        {
+            callOnMainRunLoop([recorder = m_recorder] {
+                if (recorder)
+                    recorder->gpuProcessConnectionDidClose();
+            });
+        }
+
+        WeakPtr<MediaRecorderPrivate> m_recorder;
+    };
 
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaStreamPrivate> m_stream;
@@ -87,6 +109,7 @@ private:
     bool m_isStopped { false };
     std::optional<WebCore::IntSize> m_blackFrameSize;
 
+    Ref<GPUProcessDidCloseObserver> m_gpuProcessDidCloseObserver;
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 };
 

@@ -54,6 +54,29 @@ UserContentURLPattern::UserContentURLPattern(StringView scheme, StringView host,
         return;
     }
 
+    // No username or password is allowed in patterns.
+    if (m_host.find('@') != notFound) {
+        m_error = Error::InvalidHost;
+        return;
+    }
+
+    // No port is allowed in patterns.
+    if (m_host.startsWith('[')) {
+        auto ipv6End = m_host.find(']');
+        if (ipv6End == notFound) {
+            m_error = Error::InvalidHost;
+            return;
+        }
+
+        if (m_host.find(':', ipv6End) != notFound) {
+            m_error = Error::InvalidHost;
+            return;
+        }
+    } else if (m_host.find(':') != notFound) {
+        m_error = Error::InvalidHost;
+        return;
+    }
+
     m_path = path.toString();
     if (!m_path.startsWith("/"_s)) {
         m_error = Error::MissingPath;
@@ -142,6 +165,21 @@ UserContentURLPattern::Error UserContentURLPattern::parse(StringView pattern)
 
     // No other '*' can occur in the host after it is normalized.
     if (m_host.find('*') != notFound)
+        return Error::InvalidHost;
+
+    // No username or password is allowed in patterns.
+    if (m_host.find('@') != notFound)
+        return Error::InvalidHost;
+
+    // No port is allowed in patterns.
+    if (m_host.startsWith('[')) {
+        auto ipv6End = m_host.find(']');
+        if (ipv6End == notFound)
+            return Error::InvalidHost;
+
+        if (m_host.find(':', ipv6End) != notFound)
+            return Error::InvalidHost;
+    } else if (m_host.find(':') != notFound)
         return Error::InvalidHost;
 
     m_path = pattern.right(pattern.length() - pathStartPos).toString();

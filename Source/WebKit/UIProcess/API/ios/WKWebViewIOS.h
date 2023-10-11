@@ -198,6 +198,7 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
 #endif
 
+@property (nonatomic, readonly) WKVelocityTrackingScrollView *_scrollViewInternal;
 @property (nonatomic, readonly) CGRect _contentRectForUserInteraction;
 
 @end

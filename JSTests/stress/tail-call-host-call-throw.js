@@ -29,7 +29,7 @@ var result = null;
 try {
     result = foo(Array, -1);
 } catch (e) {
-    if (e.toString() != "RangeError: Array size is not a small enough positive integer.")
+    if (e.toString() != "RangeError: Array length must be a positive integer of safe magnitude.")
         throw "Error: bad exception at end: " + e;
 }
 if (result != null)

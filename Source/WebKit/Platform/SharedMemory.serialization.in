@@ -33,13 +33,13 @@ webkit_platform_header: <wtf/win/Win32Handle.h> "ArgumentCodersWin.h"
 
 [CustomHeader, RValue, WebKitPlatform] class WebKit::SharedMemoryHandle {
 #if USE(UNIX_DOMAIN_SOCKETS)
-    UnixFileDescriptor m_handle;
+    [Validator='!!m_handle'] UnixFileDescriptor m_handle;
 #endif
 #if OS(DARWIN)
-    MachSendRight m_handle;
+    [Validator='!!m_handle'] MachSendRight m_handle;
 #endif
 #if OS(WINDOWS)
-    Win32Handle m_handle;
+    [Validator='!!m_handle'] Win32Handle m_handle;
 #endif
     size_t m_size;
 };

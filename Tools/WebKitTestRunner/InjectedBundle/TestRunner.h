@@ -346,6 +346,7 @@ public:
     unsigned userMediaPermissionRequestCountForOrigin(JSStringRef origin, JSStringRef parentOrigin) const;
     void resetUserMediaPermissionRequestCountForOrigin(JSStringRef origin, JSStringRef parentOrigin);
     bool isDoingMediaCapture() const;
+    bool isEnumeratingAudioUnitActive() const;
 
     void setPageVisibility(JSStringRef state);
     void resetPageVisibility();

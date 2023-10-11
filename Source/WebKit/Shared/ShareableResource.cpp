@@ -40,7 +40,6 @@ ShareableResourceHandle::ShareableResourceHandle(SharedMemory::Handle&& handle, 
     , m_offset(offset)
     , m_size(size)
 {
-    ASSERT(!m_handle.isNull());
 }
 
 RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()

@@ -440,11 +440,10 @@ void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder& encoder, const We
     const auto& creationData = platformData.creationData();
     encoder << static_cast<bool>(creationData);
     if (creationData) {
-        WebKit::SharedMemory::Handle handle;
+        std::optional<WebKit::SharedMemory::Handle> handle;
         {
             auto sharedMemoryBuffer = WebKit::SharedMemory::copyBuffer(creationData->fontFaceData);
-            if (auto memoryHandle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly))
-                handle = WTFMove(*memoryHandle);
+            handle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly);
         }
         encoder << creationData->fontFaceData->size();
         encoder << WTFMove(handle);
@@ -507,12 +506,14 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
         if (!bufferSize)
             return std::nullopt;
 
-        std::optional<WebKit::SharedMemory::Handle> handle;
-        decoder >> handle;
-        if (!handle)
+        auto handle = decoder.decode<std::optional<WebKit::SharedMemory::Handle>>();
+        if (UNLIKELY(!decoder.isValid()))
             return std::nullopt;
 
-        auto sharedMemoryBuffer = WebKit::SharedMemory::map(WTFMove(*handle), WebKit::SharedMemory::Protection::ReadOnly);
+        if (!*handle)
+            return std::nullopt;
+
+        auto sharedMemoryBuffer = WebKit::SharedMemory::map(WTFMove(**handle), WebKit::SharedMemory::Protection::ReadOnly);
         if (!sharedMemoryBuffer)
             return std::nullopt;
 

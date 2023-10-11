@@ -69,7 +69,7 @@ public:
         std::unique_ptr<ProducerSharedCARingBuffer> producer;
         ConsumerSharedCARingBuffer::Handle consumer;
     };
-    static Pair allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount);
+    static std::optional<Pair> allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount);
 protected:
     using SharedCARingBufferBase::SharedCARingBufferBase;
 };

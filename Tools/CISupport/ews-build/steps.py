@@ -2090,10 +2090,17 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         builder_name = self.getProperty('buildername', '')
         pr_number = self.getProperty('github.number', '')
         if builder_name == 'Safe-Merge-Queue':
+            # Get PR and set up properties from safe-merge-queue.
             list_of_prs = self.getProperty('list_of_prs', [])
             pr_number = list_of_prs.pop()
+            all_pr_data = self.getProperty('all_pr_data', [])
+            pr_data = [i for i in all_pr_data if i['node']['number'] == pr_number][0]
+            pr_title = pr_data['node']['title']
+            commit_hash = pr_data['node']['commits']['nodes'][0]['commit']['commitUrl'][40:]
             self.setProperty('github.number', pr_number)
             self.setProperty('list_of_prs', list_of_prs)
+            self.setProperty('github.title', pr_title)
+            self.setProperty('github.head.sha', commit_hash)
 
         if not pr_number:
             yield self._addToLog('stdio', 'Unable to fetch PR number.\n')
@@ -2130,6 +2137,7 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             self.setProperty('owners', [owner])
             if builder_name == 'Safe-Merge-Queue':
                 self.build.addStepsAfterCurrentStep([ValidateCommitterAndReviewer()])
+                yield ConfigureBuild.add_pr_details(self)
             defer.returnValue(SUCCESS)
         else:
             yield self._addToLog('stdio', f'Did not change owner because owner not found from labels.\n')
@@ -2368,7 +2376,8 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         self.setProperty('pending_prs', [])
 
         retrieved_pr_data = yield self.getAllPRData(num_prs, self.label)
-        self.build.addStepsAfterCurrentStep([DetermineLabelOwner()])
+        if retrieved_pr_data:
+            self.build.addStepsAfterCurrentStep([DetermineLabelOwner()])
 
         defer.returnValue(SUCCESS if retrieved_pr_data else FAILURE)
 

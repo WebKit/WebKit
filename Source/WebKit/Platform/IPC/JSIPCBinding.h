@@ -122,6 +122,14 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, O
     return result;
 }
 
+template<typename U>
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, std::optional<U>&& value)
+{
+    if (!value)
+        return JSC::JSValue();
+    return jsValueForDecodedArgumentValue(globalObject, std::forward<U>(*value));
+}
+
 bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject*, JSC::JSArray*, unsigned index, JSC::JSValue, DataReference buffer);
 
 template<typename... Elements>

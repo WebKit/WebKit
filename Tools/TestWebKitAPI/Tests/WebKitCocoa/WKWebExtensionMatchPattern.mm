@@ -69,6 +69,30 @@ TEST(WKWebExtensionMatchPattern, PatternValidity)
 
     {
         NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"http://www.example.com:8080/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://www.example.com:8080/\" cannot be parsed because the host \"www.example.com:8080\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"http://[::1]:8080/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://[::1]:8080/\" cannot be parsed because the host \"[::1]:8080\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"http://user@www.example.com/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://user@www.example.com/\" cannot be parsed because the host \"user@www.example.com\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"http://user:password@www.example.com/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://user:password@www.example.com/\" cannot be parsed because the host \"user:password@www.example.com\" is invalid.");
+    }
+
+    {
+        NSError *error;
         EXPECT_NULL(toPatternAlloc(@"file://localhost", &error));
         EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"file://localhost\" cannot be parsed because it doesn't have a path.");
     }
@@ -113,6 +137,36 @@ TEST(WKWebExtensionMatchPattern, PatternValidity)
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"https", @"example.*", @"/", &error));
         EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"example.*\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"https", @"*.example.com:8080", @"/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"*.example.com:8080\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"https", @"[::1]:8080", @"/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"[::1]:8080\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"https", @"user@example.*", @"/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"user@example.*\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"https", @"user@example.*", @"/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"user@example.*\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"https", @"user:password@example.*", @"/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"user:password@example.*\" is invalid.");
     }
 
     {
@@ -174,6 +228,10 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesPattern)
     // Matches any URL that uses the http scheme and is on the host 127.0.0.1.
     EXPECT_TRUE([toPattern(@"http://127.0.0.1/*") matchesPattern:toPattern(@"http://127.0.0.1/")]);
     EXPECT_TRUE([toPattern(@"http://127.0.0.1/*") matchesPattern:toPattern(@"http://127.0.0.1/foo/bar.html")]);
+
+    // Matches any URL that uses the http scheme and is on the host [::1].
+    EXPECT_TRUE([toPattern(@"http://[::1]/*") matchesPattern:toPattern(@"http://[::1]/")]);
+    EXPECT_TRUE([toPattern(@"http://[::1]/*") matchesPattern:toPattern(@"http://[::1]/foo/bar.html")]);
 
     // Matches any URL that starts with http://foo.example.com or https://foo.example.com.
     EXPECT_TRUE([toPattern(@"*://foo.example.com/*") matchesPattern:toPattern(@"http://foo.example.com/foo/baz/bar")]);
@@ -308,6 +366,16 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesURL)
     // Matches any URL that uses the http scheme and is on the host 127.0.0.1.
     EXPECT_TRUE([toPattern(@"http://127.0.0.1/*") matchesURL:[NSURL URLWithString:@"http://127.0.0.1/"]]);
     EXPECT_TRUE([toPattern(@"http://127.0.0.1/*") matchesURL:[NSURL URLWithString:@"http://127.0.0.1/foo/bar.html"]]);
+    EXPECT_TRUE([toPattern(@"http://127.0.0.1/*") matchesURL:[NSURL URLWithString:@"http://127.0.0.1:8080/foo/bar.html"]]);
+
+    // Matches any URL that uses the http scheme and is on the host [::1].
+    EXPECT_TRUE([toPattern(@"http://[::1]/*") matchesURL:[NSURL URLWithString:@"http://[::1]/"]]);
+    EXPECT_TRUE([toPattern(@"http://[::1]/*") matchesURL:[NSURL URLWithString:@"http://[::1]/foo/bar.html"]]);
+    EXPECT_TRUE([toPattern(@"http://[::1]/*") matchesURL:[NSURL URLWithString:@"http://[::1]:8080/foo/bar.html"]]);
+
+    // Matches with username and password
+    EXPECT_TRUE([toPattern(@"https://*.example.com/*") matchesURL:[NSURL URLWithString:@"https://user@example.com/"] options:0]);
+    EXPECT_TRUE([toPattern(@"https://*.example.com/*") matchesURL:[NSURL URLWithString:@"https://user:password@example.com/"] options:0]);
 
     // Matches any URL that starts with http://foo.example.com or https://foo.example.com.
     EXPECT_TRUE([toPattern(@"*://foo.example.com/*") matchesURL:[NSURL URLWithString:@"http://foo.example.com/foo/baz/bar"]]);

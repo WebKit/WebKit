@@ -26,10 +26,11 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "WKVelocityTrackingScrollView.h"
 
 @class WKWebView;
 
-@interface WKScrollView : UIScrollView
+@interface WKScrollView : WKVelocityTrackingScrollView
 
 @property (nonatomic, assign) WKWebView <UIScrollViewDelegate> *internalDelegate;
 

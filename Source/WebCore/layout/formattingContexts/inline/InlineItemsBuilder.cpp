@@ -130,6 +130,11 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 #endif
 }
 
+static inline bool isTextOrLineBreak(const Box& layoutBox)
+{
+    return layoutBox.isInlineTextBox() || (layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity());
+}
+
 static bool requiresVisualReordering(const Box& layoutBox)
 {
     if (is<InlineTextBox>(layoutBox))
@@ -147,7 +152,7 @@ bool InlineItemsBuilder::traverseUntilDamaged(LayoutQueue& layoutQueue, const Bo
         return true;
 
     m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(subtreeRoot);
-    m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering && (subtreeRoot.isInlineTextBox() || subtreeRoot.isLineBreakBox());
+    m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering && isTextOrLineBreak(subtreeRoot);
 
     auto shouldSkipSubtree = subtreeRoot.establishesFormattingContext();
     if (!shouldSkipSubtree && is<ElementBox>(subtreeRoot) && downcast<ElementBox>(subtreeRoot).hasChild()) {
@@ -773,7 +778,7 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemLi
     }
 
     if (layoutBox.isLineBreakBox()) {
-        m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !layoutBox.isWordBreakOpportunity();
+        m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && isTextOrLineBreak(layoutBox);
         return inlineItemList.append({ layoutBox, layoutBox.isWordBreakOpportunity() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
     }
 

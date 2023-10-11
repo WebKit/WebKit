@@ -42,17 +42,17 @@ namespace WebCore {
 
 static inline bool isColumnSide(GridPositionSide side)
 {
-    return side == ColumnStartSide || side == ColumnEndSide;
+    return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide;
 }
 
 static inline bool isStartSide(GridPositionSide side)
 {
-    return side == ColumnStartSide || side == RowStartSide;
+    return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::RowStartSide;
 }
 
 static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
 {
-    return side == ColumnStartSide || side == ColumnEndSide ? ForColumns : ForRows;
+    return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide ? GridTrackSizingDirection::ForColumns : GridTrackSizingDirection::ForRows;
 }
 
 static const String implicitNamedGridLineForSide(const String& lineName, GridPositionSide side)
@@ -68,10 +68,10 @@ static unsigned explicitGridSizeForSide(const RenderGrid& gridContainer, GridPos
 static inline GridPositionSide transposedSide(GridPositionSide side)
 {
     switch (side) {
-    case ColumnStartSide: return RowStartSide;
-    case ColumnEndSide: return RowEndSide;
-    case RowStartSide: return ColumnStartSide;
-    default: return ColumnEndSide;
+    case GridPositionSide::ColumnStartSide: return GridPositionSide::RowStartSide;
+    case GridPositionSide::ColumnEndSide: return GridPositionSide::RowEndSide;
+    case GridPositionSide::RowStartSide: return GridPositionSide::ColumnStartSide;
+    default: return GridPositionSide::ColumnEndSide;
     }
 }
 
@@ -94,7 +94,7 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
     auto direction = directionFromSide(side);
     const auto* grid = &initialGrid;
     const auto* gridContainerStyle = &grid->style();
-    bool isRowAxis = direction == ForColumns;
+    bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
 
     m_lastLine = explicitGridSizeForSide(*grid, side);
 
@@ -234,7 +234,7 @@ NamedLineCollection::NamedLineCollection(const RenderGrid& initialGrid, const St
     auto direction = directionFromSide(currentSide);
     bool initialFlipped = GridLayoutFunctions::isFlippedDirection(initialGrid, direction);
     const RenderGrid* grid = &initialGrid;
-    bool isRowAxis = direction == ForColumns;
+    bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
 
     // If we're a subgrid, we want to inherit the line names from any ancestor grids.
     while (isRowAxis ? grid->isSubgridColumns() : grid->isSubgridRows()) {
@@ -360,7 +360,7 @@ static bool isIndefiniteSpan(GridPosition& initialPosition, GridPosition& finalP
 
 static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSizingDirection direction, GridPosition& initialPosition, GridPosition& finalPosition)
 {
-    bool isForColumns = direction == ForColumns;
+    bool isForColumns = direction == GridTrackSizingDirection::ForColumns;
     initialPosition = isForColumns ? gridItem.style().gridItemColumnStart() : gridItem.style().gridItemRowStart();
     finalPosition = isForColumns ? gridItem.style().gridItemColumnEnd() : gridItem.style().gridItemRowEnd();
 
@@ -393,20 +393,20 @@ unsigned GridPositionsResolver::explicitGridColumnCount(const RenderGrid& gridCo
 {
     if (gridContainer.isSubgridColumns()) {
         const RenderGrid& parent = *downcast<RenderGrid>(gridContainer.parent());
-        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, ForColumns);
+        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, GridTrackSizingDirection::ForColumns);
         return parent.gridSpanForChild(gridContainer, direction).integerSpan();
     }
-    return std::min<unsigned>(std::max(gridContainer.style().gridColumnTrackSizes().size() + gridContainer.autoRepeatCountForDirection(ForColumns), gridContainer.style().namedGridAreaColumnCount()), GridPosition::max());
+    return std::min<unsigned>(std::max(gridContainer.style().gridColumnTrackSizes().size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForColumns), gridContainer.style().namedGridAreaColumnCount()), GridPosition::max());
 }
 
 unsigned GridPositionsResolver::explicitGridRowCount(const RenderGrid& gridContainer)
 {
     if (gridContainer.isSubgridRows()) {
         const RenderGrid& parent = *downcast<RenderGrid>(gridContainer.parent());
-        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, ForRows);
+        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, GridTrackSizingDirection::ForRows);
         return parent.gridSpanForChild(gridContainer, direction).integerSpan();
     }
-    return std::min<unsigned>(std::max(gridContainer.style().gridRowTrackSizes().size() + gridContainer.autoRepeatCountForDirection(ForRows), gridContainer.style().namedGridAreaRowCount()), GridPosition::max());
+    return std::min<unsigned>(std::max(gridContainer.style().gridRowTrackSizes().size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForRows), gridContainer.style().namedGridAreaRowCount()), GridPosition::max());
 }
 
 static unsigned lookAheadForNamedGridLine(int start, unsigned numberOfLines, NamedLineCollection& linesCollection)
@@ -463,7 +463,7 @@ static int resolveNamedGridLinePositionFromStyle(const RenderGrid& gridContainer
 static GridSpan definiteGridSpanWithNamedLineSpanAgainstOpposite(int oppositeLine, const GridPosition& position, GridPositionSide side, NamedLineCollection& linesCollection)
 {
     int start, end;
-    if (side == RowStartSide || side == ColumnStartSide) {
+    if (side == GridPositionSide::RowStartSide || side == GridPositionSide::ColumnStartSide) {
         start = lookBackForNamedGridLine(oppositeLine - 1, position.spanPosition(), linesCollection);
         end = oppositeLine;
     } else {
@@ -512,12 +512,12 @@ static GridSpan resolveGridPositionAgainstOppositePosition(const RenderGrid& gri
 
 GridPositionSide GridPositionsResolver::initialPositionSide(GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? ColumnStartSide : RowStartSide;
+    return direction == GridTrackSizingDirection::ForColumns ? GridPositionSide::ColumnStartSide : GridPositionSide::RowStartSide;
 }
 
 GridPositionSide GridPositionsResolver::finalPositionSide(GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? ColumnEndSide : RowEndSide;
+    return direction == GridTrackSizingDirection::ForColumns ? GridPositionSide::ColumnEndSide : GridPositionSide::RowEndSide;
 }
 
 unsigned GridPositionsResolver::spanSizeForAutoPlacedItem(const RenderBox& gridItem, GridTrackSizingDirection direction)
@@ -541,7 +541,7 @@ unsigned GridPositionsResolver::spanSizeForAutoPlacedItem(const RenderBox& gridI
 static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const GridPosition& position, GridPositionSide side)
 {
     switch (position.type()) {
-    case ExplicitPosition: {
+    case GridPositionType::ExplicitPosition: {
         ASSERT(position.integerPosition());
 
         if (!position.namedGridLine().isNull())
@@ -556,7 +556,7 @@ static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const G
 
         return endOfTrack - resolvedPosition;
     }
-    case NamedGridAreaPosition:
+    case GridPositionType::NamedGridAreaPosition:
     {
         // First attempt to match the grid area's edge to a named grid area: if there is a named line with the name
         // ''<custom-ident>-start (for grid-*-start) / <custom-ident>-end'' (for grid-*-end), contributes the first such
@@ -577,8 +577,8 @@ static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const G
         // If none of the above works specs mandate to assume that all the lines in the implicit grid have this name.
         return explicitGridSizeForSide(gridContainer, side) + 1;
     }
-    case AutoPosition:
-    case SpanPosition:
+    case GridPositionType::AutoPosition:
+    case GridPositionType::SpanPosition:
         // 'auto' and span depend on the opposite position for resolution (e.g. grid-row: auto / 1 or grid-column: span 3 / "myHeader").
         ASSERT_NOT_REACHED();
         return 0;

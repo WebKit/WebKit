@@ -213,11 +213,6 @@ struct PerWebProcessState {
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
-
-    // Only used with UI-side compositing.
-    RetainPtr<WKScrollView> _scrollView;
-    RetainPtr<WKContentView> _contentView;
-
 #if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
     BlockPtr<void()> _windowSnapshotReadinessHandler;
 #endif

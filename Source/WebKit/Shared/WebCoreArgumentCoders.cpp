@@ -517,11 +517,10 @@ std::optional<Font::Attributes> ArgumentCoder<Font::Attributes>::decode(Decoder&
 
 void ArgumentCoder<WebCore::FontCustomPlatformData>::encode(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
 {
-    WebKit::SharedMemory::Handle handle;
+    std::optional<WebKit::SharedMemory::Handle> handle;
     {
         auto sharedMemoryBuffer = WebKit::SharedMemory::copyBuffer(customPlatformData.creationData.fontFaceData);
-        if (auto memoryHandle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly))
-            handle = WTFMove(*memoryHandle);
+        handle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly);
     }
     encoder << customPlatformData.creationData.fontFaceData->size();
     encoder << WTFMove(handle);
@@ -536,12 +535,14 @@ std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>
     if (!bufferSize)
         return std::nullopt;
 
-    std::optional<WebKit::SharedMemory::Handle> handle;
-    decoder >> handle;
-    if (!handle)
+    auto handle = decoder.decode<std::optional<WebKit::SharedMemory::Handle>>();
+    if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
 
-    auto sharedMemoryBuffer = WebKit::SharedMemory::map(WTFMove(*handle), WebKit::SharedMemory::Protection::ReadOnly);
+    if (!*handle)
+        return std::nullopt;
+
+    auto sharedMemoryBuffer = WebKit::SharedMemory::map(WTFMove(**handle), WebKit::SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return std::nullopt;
 
@@ -1016,11 +1017,10 @@ void ArgumentCoder<WebCore::FragmentedSharedBuffer>::encode(Encoder& encoder, co
         for (const auto& element : buffer)
             encoder.encodeSpan(std::span(element.segment->data(), element.segment->size()));
     } else {
-        SharedMemory::Handle handle;
+        std::optional<SharedMemory::Handle> handle;
         {
             auto sharedMemoryBuffer = SharedMemory::copyBuffer(buffer);
-            if (auto memoryHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
-                handle = WTFMove(*memoryHandle);
+            handle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
         }
         encoder << WTFMove(handle);
     }
@@ -1042,11 +1042,14 @@ std::optional<Ref<WebCore::FragmentedSharedBuffer>> ArgumentCoder<WebCore::Fragm
         return SharedBuffer::create(data);
     }
 
-    SharedMemory::Handle handle;
-    if (!decoder.decode(handle))
+    auto handle = decoder.decode<std::optional<SharedMemory::Handle>>();
+    if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
 
-    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    if (!*handle)
+        return std::nullopt;
+
+    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(**handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return std::nullopt;
 

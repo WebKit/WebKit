@@ -1373,7 +1373,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_species)
 
     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
         if (UNLIKELY(length > std::numeric_limits<unsigned>::max()))
-            THROW(createRangeError(globalObject, "Array size is not a small enough positive integer."_s));
+            THROW(createRangeError(globalObject, ArrayInvalidLengthError));
 
         JSArray* result = constructEmptyArray(globalObject, &arrayAllocationProfile, static_cast<unsigned>(length));
         CHECK_EXCEPTION();

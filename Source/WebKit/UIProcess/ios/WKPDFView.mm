@@ -192,7 +192,7 @@
     if (!(self = [super initWithFrame:frame webView:webView]))
         return nil;
 
-    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:webView.scrollView]);
+    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:webView._scrollViewInternal]);
     _webView = webView;
 
     [self updateBackgroundColor];
