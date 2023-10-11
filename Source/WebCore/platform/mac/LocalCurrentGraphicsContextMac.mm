@@ -26,18 +26,14 @@
 
 namespace WebCore {
 
-LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphicsContext, bool isFlipped)
-    : m_savedGraphicsContext(graphicsContext)
+LocalCurrentContextSaver::LocalCurrentContextSaver(CGContextRef cgContext, bool isFlipped)
 {
-    m_savedGraphicsContext.save();
-
-    if (!m_savedGraphicsContext.hasPlatformContext()) {
-        WTFLogAlways("LocalCurrentGraphicsContext is setting the global context to nil because the provided GraphicsContext does not have a platform context (likely display list recording)");
+    if (!cgContext) {
+        ASSERT_NOT_REACHED();
         [NSGraphicsContext setCurrentContext:nil];
         return;
     }
 
-    CGContextRef cgContext = this->cgContext();
     if (cgContext == [[NSGraphicsContext currentContext] CGContext])
         return;
 
@@ -47,12 +43,10 @@ LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphi
     m_didSetGraphicsContext = true;
 }
 
-LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext()
+LocalCurrentContextSaver::~LocalCurrentContextSaver()
 {
     if (m_didSetGraphicsContext)
         [NSGraphicsContext setCurrentContext:m_savedNSGraphicsContext.get()];
-
-    m_savedGraphicsContext.restore();
 }
 
 }

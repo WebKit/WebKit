@@ -19,7 +19,9 @@
 
 #pragma once
 
-#include "GraphicsContext.h"
+#include "CGContextStateSaver.h"
+#include "GraphicsContextCG.h"
+#include "GraphicsContextStateSaver.h"
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(COCOA)
@@ -30,20 +32,59 @@ OBJC_CLASS NSGraphicsContext;
 
 namespace WebCore {
 
-// This class automatically saves and restores the current NSGraphicsContext for
-// functions which call out into AppKit and rely on the currentContext being set
-class LocalCurrentGraphicsContext {
-    WTF_MAKE_NONCOPYABLE(LocalCurrentGraphicsContext);
+// Scoped setter for the current NSGraphicsContext for functions which call out into AppKit and rely on the
+// currentContext being set.
+class LocalCurrentContextSaver {
+    WTF_MAKE_NONCOPYABLE(LocalCurrentContextSaver);
 public:
-    WEBCORE_EXPORT LocalCurrentGraphicsContext(GraphicsContext&, bool isFlipped = true);
-    WEBCORE_EXPORT ~LocalCurrentGraphicsContext();
-    CGContextRef cgContext() { return m_savedGraphicsContext.platformContext(); }
+    WEBCORE_EXPORT LocalCurrentContextSaver(CGContextRef, bool isFlipped = true);
+    WEBCORE_EXPORT ~LocalCurrentContextSaver();
+
 private:
-    GraphicsContext& m_savedGraphicsContext;
 #if USE(APPKIT)
     RetainPtr<NSGraphicsContext> m_savedNSGraphicsContext;
 #endif
     bool m_didSetGraphicsContext { false };
+};
+
+// Scoped setter for the current NSGraphicsContext for functions which call out into AppKit and rely on the
+// currentContext being set.
+// Preserves the CGContext state.
+class LocalCurrentCGContext {
+    WTF_MAKE_NONCOPYABLE(LocalCurrentCGContext);
+public:
+    LocalCurrentCGContext(CGContextRef context)
+        : m_stateSaver(context)
+        , m_globalSaver(context)
+    {
+    }
+
+    ~LocalCurrentCGContext() = default;
+
+private:
+    CGContextStateSaver m_stateSaver;
+    LocalCurrentContextSaver m_globalSaver;
+};
+
+// Scoped setter for the current NSGraphicsContext for functions which call out into AppKit and rely on the
+// currentContext being set.
+// Preserves the GraphicsContext state.
+class LocalCurrentGraphicsContext {
+    WTF_MAKE_NONCOPYABLE(LocalCurrentGraphicsContext);
+public:
+    LocalCurrentGraphicsContext(GraphicsContext& context, bool isFlipped = true)
+        : m_stateSaver(context)
+        , m_globalSaver(context.platformContext(), isFlipped)
+    {
+    }
+
+    ~LocalCurrentGraphicsContext() = default;
+
+    CGContextRef cgContext() { return m_stateSaver.context()->platformContext(); }
+
+private:
+    GraphicsContextStateSaver m_stateSaver;
+    LocalCurrentContextSaver m_globalSaver;
 };
 
 }
