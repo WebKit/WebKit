@@ -799,8 +799,23 @@ static const HashSet<CFTypeRef> alwaysAllowedClasses()
         (__bridge CFTypeRef)NSUUID.class,
         (__bridge CFTypeRef)NSError.class,
         (__bridge CFTypeRef)NSURLError.class,
+        (__bridge CFTypeRef)NSDate.class,
+        (__bridge CFTypeRef)NSDecimalNumber.class,
+        (__bridge CFTypeRef)NSClassFromString(@"NSDecimalNumberPlaceholder"),
     } };
     return classes.get();
+}
+
+NO_RETURN static void crashWithClassName(const char* className)
+{
+    std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
+    strncpy(reinterpret_cast<char*>(values.data()), className, sizeof(values));
+    CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
+}
+
+NO_RETURN static void crashWithClassName(Class objectClass)
+{
+    crashWithClassName(NSStringFromClass(objectClass).UTF8String);
 }
 
 static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
@@ -815,10 +830,7 @@ static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectCl
     if (alwaysAllowedClasses().contains((__bridge CFTypeRef)objectClass))
         return;
 
-    NSString *message = [NSString stringWithFormat:@"%@,%@", NSStringFromClass(objectClass), decoder.allowedClasses];
-    std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
-    strncpy(reinterpret_cast<char*>(values.data()), message.UTF8String, sizeof(values));
-    CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
+    crashWithClassName(objectClass);
 }
 
 static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
@@ -831,8 +843,12 @@ static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
     if (objectClass == [NSInvocation class] || objectClass == [NSBlockInvocation class])
         return;
 
-    if (![decoder validateClassSupportsSecureCoding:objectClass])
-        [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" does not support NSSecureCoding.", objectClass];
+    @try {
+        if (![decoder validateClassSupportsSecureCoding:objectClass])
+            [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" does not support NSSecureCoding.", objectClass];
+    } @catch(NSException *exception) {
+        crashWithClassName(objectClass);
+    }
 }
 
 static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<HashSet<CFTypeRef>>& allowedArgumentClasses, NSUInteger firstArgument)
@@ -1034,7 +1050,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder)
 
     Class objectClass = objc_lookUpClass(className.data());
     if (!objectClass)
-        [NSException raise:NSInvalidUnarchiveOperationException format:@"Class \"%s\" does not exist", className.data()];
+        crashWithClassName(className.data());
 
     validateClass(decoder, objectClass);
 
