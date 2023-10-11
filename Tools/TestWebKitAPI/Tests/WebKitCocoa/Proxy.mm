@@ -169,6 +169,7 @@ TEST(WebKit, SOCKS5)
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 #if HAVE(NW_PROXY_CONFIG)
+#if USE(APPLE_INTERNAL_SDK) // FIXME: <rdar://116703485> investigate why this times out on non-internal builds.
 TEST(WebKit, HTTPSProxyAPI)
 {
     auto* createProxyConfig = nw_proxy_config_create_http_connectPtr();
@@ -294,6 +295,7 @@ TEST(WebKit, SOCKS5API)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
+#endif // USE(APPLE_INTERNAL_SDK)
 #endif // HAVE(NW_PROXY_CONFIG)
 #endif // !PLATFORM(IOS_FAMILY_SIMULATOR)
 
