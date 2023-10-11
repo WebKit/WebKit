@@ -101,11 +101,7 @@ void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTim
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_add_proxy, void, __cdecl, (nw_context_t, nw_proxy_config_t))
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_clear_proxies, void, __cdecl, (nw_context_t))
-#if HAVE(PROXY_CONFIG_CREATE_WITH_AGENT_DATA_WITH_RETURN_IS_COMPLETE)
-SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_with_agent_data, nw_proxy_config_t, __cdecl, (const uint8_t*, size_t, const uuid_t, bool*))
-#else
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_with_agent_data, nw_proxy_config_t, __cdecl, (const uint8_t*, size_t, const uuid_t))
-#endif
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_stack_requires_http_protocols, bool, __cdecl, (nw_proxy_config_t))
 #endif
 
@@ -2220,11 +2216,7 @@ void NetworkSessionCocoa::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, W
         memcpy(identifier, config.second.toSpan().data(), sizeof(uuid_t));
 
 #if __has_include(<Network/proxy_config_private.h>)
-        auto nwProxyConfig = adoptNS(createProxyConfig(config.first.data(), config.first.size(), identifier
-#if HAVE(PROXY_CONFIG_CREATE_WITH_AGENT_DATA_WITH_RETURN_IS_COMPLETE)
-            , nullptr
-#endif
-        ));
+        auto nwProxyConfig = adoptNS(createProxyConfig(config.first.data(), config.first.size(), identifier));
 
         if (requiresHTTPProtocols(nwProxyConfig.get()))
             recreateSessions = true;
