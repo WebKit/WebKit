@@ -108,11 +108,6 @@ const WebXRInputSourceArray& WebXRSession::inputSources() const
     return m_inputSources;
 }
 
-static bool isImmersive(XRSessionMode mode)
-{
-    return mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr;
-}
-
 // https://immersive-web.github.io/webxr/#dom-xrsession-updaterenderstate
 ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newState)
 {
@@ -320,7 +315,7 @@ bool WebXRSession::supportsViewportScaling() const
     auto device = m_device.get();
     ASSERT(device);
     // Only immersive sessions support viewport scaling.
-    return m_mode == XRSessionMode::ImmersiveVr && device && device->supportsViewportScaling();
+    return isImmersive(m_mode) && device && device->supportsViewportScaling();
 }
 
 bool WebXRSession::isPositionEmulated() const
@@ -591,7 +586,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
         // 6. If the frame should be rendered for session:
         if (frameShouldBeRendered() && m_frameData.shouldRender) {
             // Prepare all layers for render
-            if (m_mode == XRSessionMode::ImmersiveVr && m_activeRenderState->baseLayer())
+            if (isImmersive(m_mode) && m_activeRenderState->baseLayer())
                 m_activeRenderState->baseLayer()->startFrame(m_frameData);
 
             // 6.1.Set session’s list of currently running animation frame callbacks to be session’s list of animation frame callbacks.
@@ -628,7 +623,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
 
             // Submit current frame layers to the device.
             Vector<PlatformXR::Device::Layer> frameLayers;
-            if (m_mode == XRSessionMode::ImmersiveVr && m_activeRenderState->baseLayer())
+            if (isImmersive(m_mode) && m_activeRenderState->baseLayer())
                 frameLayers.append(m_activeRenderState->baseLayer()->endFrame());
 
             if (auto device = m_device.get())

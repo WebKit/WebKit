@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PlatformXRCocoa.h"
 
-#if ENABLE(WEBXR) && !USE(OPENXR)
+#pragma once
 
-#import "PlatformXR.h"
-#import <wtf/NeverDestroyed.h>
+#if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
-using namespace WebCore;
+#import "PlatformXRCoordinator.h"
 
-namespace PlatformXR {
+@class ARSession;
 
-struct Instance::Impl {
+namespace WebKit {
+
+class ARKitCoordinator final : public PlatformXRCoordinator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Impl() = default;
-    ~Impl() = default;
+    ARKitCoordinator();
+    virtual ~ARKitCoordinator() = default;
+
+    void getPrimaryDeviceInfo(DeviceInfoCallback&&) override;
+    void requestPermissionOnSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, FeatureListCallback&&) override;
+
+    void startSession(WebPageProxy&, WeakPtr<SessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) override;
+    void endSessionIfExists(WebPageProxy&) override;
+
+    void scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&&) override;
+    void submitFrame(WebPageProxy&) override;
+
+private:
+    XRDeviceIdentifier m_deviceIdentifier = XRDeviceIdentifier::generate();
 };
 
-Instance& Instance::singleton()
-{
-    static LazyNeverDestroyed<Instance> s_instance;
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag,
-        [&] {
-            s_instance.construct();
-        });
-    return s_instance.get();
-}
+} // namespace WebKit
 
-Instance::Instance()
-    : m_impl(makeUniqueRef<Impl>())
-{
-}
-
-void Instance::enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList& devices)>&& callback)
-{
-    callback({ });
-}
-
-}
-
-#endif
+#endif // ENABLE(WEBXR) && USE(ARKITXR_IOS)

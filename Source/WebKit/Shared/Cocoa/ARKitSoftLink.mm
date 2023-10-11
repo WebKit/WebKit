@@ -32,6 +32,7 @@
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ARKit);
 
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARQuickLookPreviewItem);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARWorldTrackingConfiguration);
 
 #if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)
 #import <WebKitAdditions/ARKitSoftLinkAdditions.mm>
