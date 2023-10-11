@@ -461,6 +461,7 @@ struct ImageAnalysisContextMenuActionData {
     WebCore::PointerID _commitPotentialTapPointerId;
 
     BOOL _keyboardDidRequestDismissal;
+    BOOL _isKeyboardScrollingAnimationRunning;
 
     BOOL _candidateViewNeedsUpdate;
     BOOL _seenHardwareKeyDownInNonEditableElement;
@@ -603,6 +604,7 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly) WebKit::GestureRecognizerConsistencyEnforcer& gestureRecognizerConsistencyEnforcer;
 @property (nonatomic, readonly) CGRect tapHighlightViewRect;
 @property (nonatomic, readonly) UIGestureRecognizer *imageAnalysisGestureRecognizer;
+@property (nonatomic, readonly, getter=isKeyboardScrollingAnimationRunning) BOOL keyboardScrollingAnimationRunning;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;

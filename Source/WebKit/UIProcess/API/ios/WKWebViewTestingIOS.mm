@@ -436,6 +436,11 @@ static void dumpUIView(TextStream& ts, UIView *view)
     return [_contentView singleTapGestureRecognizer];
 }
 
+- (BOOL)_isKeyboardScrollingAnimationRunning
+{
+    return [_contentView isKeyboardScrollingAnimationRunning];
+}
+
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
     [_contentView _simulateElementAction:actionType atLocation:location];

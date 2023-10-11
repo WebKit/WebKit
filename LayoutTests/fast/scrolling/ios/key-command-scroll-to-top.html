@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ CSSScrollAnchoringEnabled=false ] -->
+<!-- webkit-test-runner [ CSSScrollAnchoringEnabled=false showsScrollIndicators=false ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,9 +26,6 @@ body {
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-//  UIKit hides the scroll indicator after 1 second.
-const ScrollIndicatorFlashHideDelay = 1000; // milliseconds
-
 function done()
 {
     if (window.testRunner)
@@ -49,8 +46,7 @@ function swapRedGreenBackground(element)
 function didEndScroll()
 {
     window.onscroll = null;
-    // FIXME: Disable flashing of scroll indicator or find a way know when the flash has finished.
-    window.setTimeout(done, ScrollIndicatorFlashHideDelay);
+    UIHelper.waitForZoomingOrScrollingToEnd().then(done);
 }
 
 function handleScroll(event)
@@ -89,7 +85,7 @@ window.onload = function ()
 </script>
 </head>
 <body>
-<p id="description">Tests that pressing <key>Command</key> + <key>&#x2191;</key> scrolls to the bottom of the page. This test PASSED if you see a green square. Otherwise, it FAILED.</p>
+<p id="description">Tests that pressing <key>Command</key> + <key>&#x2191;</key> scrolls to the top of the page. This test PASSED if you see a green square. Otherwise, it FAILED.</p>
 <p id="manual-instructions" class="hidden">To run this test by hand, click <button onclick="runTest()">Run test</button> to first scroll to the bottom of the page. Then press <key>Command</key> + <key>&#x2191;</key>.</p>
 <div id="firstSquare" style="width: 256px; height: 256px" class="red"></div>
 <div style="height: 2000px"></div>

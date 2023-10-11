@@ -48,7 +48,7 @@
 - (BOOL)isKeyboardScrollable;
 - (CGFloat)distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction;
 - (void)scrollToContentOffset:(WebCore::FloatPoint)offset animated:(BOOL)animated;
-- (void)scrollWithScrollToExtentAnimationTo:(CGPoint)offset;
+- (void)willBeginScrollingToExtentWithAnimationInTrackingView:(UIView *)view;
 - (CGPoint)contentOffset;
 - (CGSize)interactiveScrollVelocity;
 - (CGPoint)boundedContentOffset:(CGPoint)offset;
@@ -77,6 +77,7 @@
 @implementation WKKeyboardScrollingAnimator {
     id <WKKeyboardScrollableInternal> _scrollable;
     RetainPtr<CADisplayLink> _displayLink;
+    RetainPtr<UIView> _viewForTrackingScrollToExtentAnimation;
 
     std::optional<WebCore::KeyboardScroll> _currentScroll;
 
@@ -107,6 +108,7 @@
 
 - (void)invalidate
 {
+    [self resetViewForScrollToExtentAnimation];
     [self stopAnimatedScroll];
     [self stopDisplayLink];
     _scrollable = nil;
@@ -275,6 +277,8 @@ static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
     return scroll;
 }
 
+static NSString * const scrollToExtentWithAnimationKey = @"ScrollToExtentAnimation";
+
 - (BOOL)beginWithEvent:(::WebEvent *)event
 {
     if (event.type != WebEventKeyDown)
@@ -293,11 +297,37 @@ static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
     _scrollTriggeringKeyIsPressed = YES;
     _currentScroll = scroll;
 
+    [self resetViewForScrollToExtentAnimation];
+
     if (scroll->granularity == WebCore::ScrollGranularity::Document) {
         _velocity = { };
         [self stopAnimatedScroll];
-        [self stopDisplayLink];
-        [_scrollable scrollWithScrollToExtentAnimationTo:[_scrollable boundedContentOffset:_currentPosition + scroll->offset]];
+        auto currentOffset = _scrollable.contentOffset;
+        auto targetOffset = [_scrollable boundedContentOffset:_currentPosition + scroll->offset];
+        _viewForTrackingScrollToExtentAnimation = adoptNS([UIView new]);
+        [_viewForTrackingScrollToExtentAnimation setHidden:YES];
+        [_viewForTrackingScrollToExtentAnimation setUserInteractionEnabled:NO];
+        [_scrollable willBeginScrollingToExtentWithAnimationInTrackingView:_viewForTrackingScrollToExtentAnimation.get()];
+
+        // See also: _smoothDecelerationAnimation() in UIKit.
+        auto animation = [CASpringAnimation animationWithKeyPath:@"position"];
+        static constexpr auto angularFrequency = 2 * M_PI / 0.6;
+        animation.mass = 1;
+        animation.stiffness = angularFrequency * angularFrequency;
+        animation.damping = 2 * angularFrequency;
+        animation.duration = 1.6;
+        animation.timingFunction = [CAMediaTimingFunction functionWithControlPoints:0.0 :0.2 :1.0 :1.0];
+        animation.fromValue = [NSValue valueWithCGPoint:currentOffset];
+        animation.toValue = [NSValue valueWithCGPoint:targetOffset];
+
+        auto layer = [_viewForTrackingScrollToExtentAnimation layer];
+        layer.position = currentOffset;
+        [layer removeAllAnimations];
+        [layer addAnimation:animation forKey:scrollToExtentWithAnimationKey];
+        layer.position = targetOffset;
+
+        [self startDisplayLinkIfNeeded];
+
         return YES;
     }
 
@@ -377,6 +407,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 {
     // If the user touches the screen to start an interactive scroll, stop everything.
     _velocity = { };
+    [self resetViewForScrollToExtentAnimation];
     [self stopAnimatedScroll];
     [self stopDisplayLink];
 }
@@ -390,6 +421,13 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
 }
 
+- (void)resetViewForScrollToExtentAnimation
+{
+    [[_viewForTrackingScrollToExtentAnimation layer] removeAllAnimations];
+    [_viewForTrackingScrollToExtentAnimation removeFromSuperview];
+    _viewForTrackingScrollToExtentAnimation = nil;
+}
+
 - (void)stopDisplayLink
 {
     [_displayLink invalidate];
@@ -398,6 +436,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
 - (void)stopScrollingImmediately
 {
+    [self resetViewForScrollToExtentAnimation];
     [_scrollable didFinishScrolling];
     [self stopDisplayLink];
     _velocity = { };
@@ -405,6 +444,16 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
 - (void)displayLinkFired:(CADisplayLink *)sender
 {
+    if (_viewForTrackingScrollToExtentAnimation) {
+        if (![[_viewForTrackingScrollToExtentAnimation layer].animationKeys containsObject:scrollToExtentWithAnimationKey]) {
+            [_scrollable didFinishScrolling];
+            [self resetViewForScrollToExtentAnimation];
+            [self stopDisplayLink];
+        } else if (auto presentationLayer = [_viewForTrackingScrollToExtentAnimation layer].presentationLayer)
+            [_scrollable scrollToContentOffset:presentationLayer.position animated:NO];
+        return;
+    }
+
     WebCore::FloatSize force;
     WebCore::FloatSize axesToApplySpring = { 1, 1 };
 
@@ -596,9 +645,9 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
     [_scrollView _flashScrollIndicatorsForAxes:axesForDelta(WebCore::FloatPoint(_scrollView.contentOffset) - contentOffset) persistingPreviousFlashes:YES];
 }
 
-- (void)scrollWithScrollToExtentAnimationTo:(CGPoint)offset
+- (void)willBeginScrollingToExtentWithAnimationInTrackingView:(UIView *)view
 {
-    [_scrollView _setContentOffsetWithDecelerationAnimation:offset];
+    [_scrollView addSubview:view];
     [_scrollView flashScrollIndicators];
 }
 

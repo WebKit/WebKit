@@ -189,6 +189,7 @@ const TestFeatures& TestOptions::defaults()
             { "noUseRemoteLayerTree", false },
             { "useThreadedScrolling", false },
             { "suppressInputAccessoryView", false },
+            { "showsScrollIndicators", true },
             { "enhancedWindowingEnabled", false },
         };
         features.doubleTestRunnerFeatures = {
@@ -251,6 +252,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "useRemoteLayerTree", TestHeaderKeyType::BoolTestRunner },
         { "useThreadedScrolling", TestHeaderKeyType::BoolTestRunner },
         { "suppressInputAccessoryView", TestHeaderKeyType::BoolTestRunner },
+        { "showsScrollIndicators", TestHeaderKeyType::BoolTestRunner },
         { "enhancedWindowingEnabled", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },

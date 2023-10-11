@@ -444,6 +444,8 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @property (nonatomic) BOOL bouncesVertically;
 @property (nonatomic, setter=_setAllowsParentToBeginHorizontally:) BOOL _allowsParentToBeginHorizontally;
 @property (nonatomic, setter=_setAllowsParentToBeginVertically:) BOOL _allowsParentToBeginVertically;
+@property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
+@property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;
 @end
 
 typedef NS_ENUM(NSUInteger, UIScrollPhase) {
@@ -1112,10 +1114,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @interface UIScrollView (IPI)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary *)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 - (BOOL)_isScrollingToTop;
-- (void)_setContentOffsetWithDecelerationAnimation:(CGPoint)contentOffset;
-
-@property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
-@property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;
 @end
 
 @interface UIPeripheralHost (IPI)
