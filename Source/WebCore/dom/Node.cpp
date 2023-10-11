@@ -2065,6 +2065,11 @@ void Node::getSubresourceURLs(ListHashSet<URL>& urls) const
     addSubresourceAttributeURLs(urls);
 }
 
+void Node::getCandidateSubresourceURLs(ListHashSet<URL>& urls) const
+{
+    addCandidateSubresourceURLs(urls);
+}
+
 Element* Node::enclosingLinkEventParentOrSelf()
 {
     for (Node* node = this; node; node = node->parentInComposedTree()) {

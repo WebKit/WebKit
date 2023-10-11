@@ -457,6 +457,7 @@ public:
     virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
     String resolveURLStringIfNeeded(const String& urlString, ResolveURLs = ResolveURLs::Yes, const URL& base = URL()) const;
     virtual String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const;
+    virtual Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const;
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
     WEBCORE_EXPORT URL getURLAttribute(const QualifiedName&) const;

@@ -568,18 +568,19 @@ LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& eleme
 
 Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element, const Attribute& attribute)
 {
-    if (!element.isHTMLContentAttribute(attribute))
-        return attribute;
+    if (element.isHTMLContentAttribute(attribute)) {
+        auto frame = frameForAttributeReplacement(element);
+        if (!frame || !frame->loader().documentLoader()->response().url().isAboutSrcDoc())
+            return attribute;
 
-    auto frame = frameForAttributeReplacement(element);
-    if (!frame || !frame->loader().documentLoader()->response().url().isAboutSrcDoc())
-        return attribute;
+        auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
+        if (replacementURLString.isNull())
+            return attribute;
 
-    auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
-    if (replacementURLString.isNull())
-        return attribute;
+        return { srcAttr, AtomString { replacementURLString } };
+    }
 
-    return { srcAttr, AtomString { replacementURLString } };
+    return element.replaceURLsInAttributeValue(attribute, m_replacementURLStrings);
 }
 
 void MarkupAccumulator::appendURLAttributeIfNecessary(StringBuilder& result, const Element& element, Namespaces* namespaces)

@@ -658,6 +658,17 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
     return HTMLElement::completeURLsInAttributeValue(base, attribute, resolveURLs);
 }
 
+Attribute HTMLImageElement::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>& replacementURLStrings) const
+{
+    if (attribute.name() != srcsetAttr)
+        return attribute;
+
+    if (replacementURLStrings.isEmpty())
+        return attribute;
+
+    return Attribute { srcsetAttr, AtomString { replaceURLsInSrcsetAttribute(*this, StringView(attribute.value()), replacementURLStrings) } };
+}
+
 bool HTMLImageElement::matchesUsemap(const AtomStringImpl& name) const
 {
     return m_parsedUsemap.impl() == &name;
@@ -760,6 +771,18 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     addSubresourceURL(urls, document().completeURL(imageSourceURL()));
     // FIXME: What about when the usemap attribute begins with "#"?
     addSubresourceURL(urls, document().completeURL(attributeWithoutSynchronization(usemapAttr)));
+}
+
+void HTMLImageElement::addCandidateSubresourceURLs(ListHashSet<URL>& urls) const
+{
+    auto src = attributeWithoutSynchronization(srcAttr);
+    if (!src.isEmpty()) {
+        URL url { resolveURLStringIfNeeded(src) };
+        if (!url.isNull())
+            urls.add(url);
+    }
+
+    getURLsFromSrcsetAttribute(*this, attributeWithoutSynchronization(srcsetAttr), urls);
 }
 
 void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)

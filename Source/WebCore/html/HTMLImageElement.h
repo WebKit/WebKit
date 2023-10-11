@@ -209,10 +209,12 @@ private:
     bool isURLAttribute(const Attribute&) const override;
     bool attributeContainsURL(const Attribute&) const override;
     String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const override;
+    Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const override;
 
     bool isDraggableIgnoringAttributes() const final { return true; }
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    void addCandidateSubresourceURLs(ListHashSet<URL>&) const override;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
