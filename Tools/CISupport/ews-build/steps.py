@@ -2417,7 +2417,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'check-status-of-pr'
     flunkOnFailure = False
     haltOnFailure = False
-    EMBEDDED_CHECKS = ['ios', 'mac', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
+    EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
     QUEUES_FOR_SAFE_MERGE_QUEUE = EMBEDDED_CHECKS + MACOS_CHECKS
 
