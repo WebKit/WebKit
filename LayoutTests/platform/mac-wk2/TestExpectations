@@ -2227,3 +2227,5 @@ webkit.org/b/177397 [ Sonoma+ Release ] compositing/masks/compositing-clip-path-
 [ Sonoma+ Release arm64 ] webrtc/video.html [ Failure ]
 
 webkit.org/b/263049 [ Sonoma+ ] fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
+
+webkit.org/b/263085 [ Sonoma+ Release ] fast/attachment/attachment-uti.html [ Pass ImageOnlyFailure ]
