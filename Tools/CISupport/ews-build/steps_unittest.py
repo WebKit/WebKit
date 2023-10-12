@@ -4741,6 +4741,39 @@ Ran 1316 tests of 1318 with 1316 successful
         self.expectOutcome(result=SUCCESS, state_string='run-api-tests')
         return self.runStep()
 
+    def test_success_wpe(self):
+        self.setupStep(RunAPITests())
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/run-wpe-tests', '--release', f'--json-output={self.jsonFileName}'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='''...
+**PASS** TransformationMatrix.Blend
+**PASS** TransformationMatrix.Blend2
+**PASS** TransformationMatrix.Blend4
+**PASS** TransformationMatrix.Equality
+**PASS** TransformationMatrix.Casting
+**PASS** TransformationMatrix.MakeMapBetweenRects
+**PASS** URLParserTextEncodingTest.QueryEncoding
+**PASS** GStreamerTest.mappedBufferBasics
+**PASS** GStreamerTest.mappedBufferReadSanity
+**PASS** GStreamerTest.mappedBufferWriteSanity
+**PASS** GStreamerTest.mappedBufferCachesSharedBuffers
+**PASS** GStreamerTest.mappedBufferDoesNotAddExtraRefs
+
+Ran 1316 tests of 1318 with 1316 successful
+''')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='run-api-tests')
+        return self.runStep()
+
     def test_one_failure(self):
         self.setupStep(RunAPITests())
         self.setProperty('fullPlatform', 'mac-catalina')
@@ -5026,6 +5059,49 @@ Ran 1296 tests of 1298 with 1293 successful
         self.expectOutcome(result=FAILURE, state_string='3 api tests failed or timed out')
         return self.runStep()
 
+    def test_multiple_failures_wpe(self):
+        self.setupStep(RunAPITestsWithoutChange())
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('buildername', 'API-Tests-WPE-EWS')
+        self.setProperty('buildnumber', '11529')
+        self.setProperty('workername', 'igalia14-wpe-ews')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3',
+                                 'Tools/Scripts/run-wpe-tests',
+                                 '--debug',
+                                 f'--json-output={self.jsonFileName}'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='''
+**PASS** GStreamerTest.mappedBufferBasics
+**PASS** GStreamerTest.mappedBufferReadSanity
+**PASS** GStreamerTest.mappedBufferWriteSanity
+**PASS** GStreamerTest.mappedBufferCachesSharedBuffers
+**PASS** GStreamerTest.mappedBufferDoesNotAddExtraRefs
+
+Unexpected failures (3)
+    /TestWTF
+        WTF_DateMath.calculateLocalTimeOffset
+    /WebKit2WPE/TestPrinting
+        /webkit/WebKitPrintOperation/close-after-print
+    /WebKit2WPE/TestWebsiteData
+        /webkit/WebKitWebsiteData/databases
+
+Unexpected passes (1)
+    /WebKit2WPE/TestUIClient
+        /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check
+
+Ran 1296 tests of 1298 with 1293 successful
+''')
+            + 3,
+        )
+        self.expectOutcome(result=FAILURE, state_string='3 api tests failed or timed out')
+        return self.runStep()
 
 class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
