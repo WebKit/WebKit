@@ -129,12 +129,10 @@ using GenericNonExclusivePromise = NativePromise<void, void, 1>;
 template<typename T> class NativePromiseRequest;
 }
 
-namespace std {
-namespace experimental {
-inline namespace fundamentals_v3 {
+namespace WTF::detail_from_clang_libstdcpp {
 template<class, class> class expected;
 template<class> class unexpected;
-}}} // namespace std::experimental::fundamentals_v3
+} // namespace WTF::detail_from_clang_libstdcpp
 
 using WTF::ASCIILiteral;
 using WTF::AbstractLocker;
@@ -190,8 +188,8 @@ using WTF::Vector;
 using WTF::WeakPtr;
 using WTF::WeakRef;
 
-template<class T, class E> using Expected = std::experimental::expected<T, E>;
-template<class E> using Unexpected = std::experimental::unexpected<E>;
+template<class T, class E> using Expected = WTF::detail_from_clang_libstdcpp::expected<T, E>;
+template<class E> using Unexpected = WTF::detail_from_clang_libstdcpp::unexpected<E>;
 
 // Sometimes an inline method simply forwards to another one and does nothing else. If it were
 // just a forward declaration of that method then you would only need a forward declaration of
