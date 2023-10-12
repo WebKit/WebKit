@@ -350,7 +350,7 @@ public:
         m_timestamp = webEvent.timestamp();
 
 #if PLATFORM(IOS_FAMILY)
-        m_touchPoints = WTF::map(webEvent.touchPoints(), [&](auto& touchPoint) -> PlatformTouchPoint {
+        m_touchPoints = WTF::map(webEvent.touchPoints(), [&](auto& touchPoint) -> WebCore::PlatformTouchPoint {
             return WebKit2PlatformTouchPoint(touchPoint);
         });
 
