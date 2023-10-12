@@ -2221,10 +2221,14 @@ webkit.org/b/262978 [ Sonoma+ ] fast/attachment/attachment-icon-from-file-extens
 
 webkit.org/b/177397 [ Sonoma+ Release ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
 
+<<<<<<< Updated upstream
 # webkit.org/b/263027 REGRESSION ( Sonoma ): [ Sonoma wk2 ] 3 tests in webrtc are consistent failure
 [ Sonoma+ Release arm64 ] webrtc/video-replace-track.html [ Failure ]
 [ Sonoma+ Release arm64 ] webrtc/video-stats.html [ Failure ]
 [ Sonoma+ Release arm64 ] webrtc/video.html [ Failure ]
+=======
+webkit.org/b/263049 [ Sonoma+ ] fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
+>>>>>>> Stashed changes
 
 webkit.org/b/263049 [ Sonoma+ ] fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
 
