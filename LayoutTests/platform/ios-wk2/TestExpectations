@@ -2495,3 +2495,4 @@ css3/scroll-snap/ios/scroll-snap-mainframe-pinch-out.html [ Skip ]
 
 webkit.org/b/263048 accessibility/ios-simulator/input-type-time.html [ Failure ]
 webkit.org/b/263050 fast/dom/collection-iterators.html [ Failure ]
+webkit.org/b/263052 fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Failure ]
