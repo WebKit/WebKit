@@ -47,6 +47,16 @@ class SVGGraphicsElement;
 class RenderSVGShape : public RenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGShape);
 public:
+    enum class ShapeType : uint8_t {
+        Empty,
+        Path,
+        Line,
+        Rectangle,
+        RoundedRectangle,
+        Ellipse,
+        Circle,
+    };
+
     enum PointCoordinateSpace {
         GlobalCoordinateSpace,
         LocalCoordinateSpace
@@ -76,11 +86,11 @@ public:
     }
     void clearPath() { m_path = nullptr; }
 
+    ShapeType shapeType() const { return m_shapeType; }
+
     FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
     FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
-
-    FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
 
     bool needsHasSVGTransformFlags() const final;
 
@@ -88,6 +98,8 @@ public:
 
 protected:
     void element() const = delete;
+
+    void ensurePath();
 
     virtual void updateShapeFromElement();
     virtual bool isEmpty() const;
@@ -122,24 +134,23 @@ private:
 
     bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
 
-    bool shouldGenerateMarkerPositions() const;
     
     std::unique_ptr<Path> createPath() const;
-    void processMarkerPositions();
 
     void fillShape(const RenderStyle&, GraphicsContext&);
     void strokeShapeInternal(const RenderStyle&, GraphicsContext&);
     void strokeShape(const RenderStyle&, GraphicsContext&);
     void fillStrokeMarkers(PaintInfo&);
-    void drawMarkers(PaintInfo&);
+    virtual void drawMarkers(PaintInfo&) { }
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
 
 private:
     bool m_needsShapeUpdate { true };
-
+protected:
+    ShapeType m_shapeType : 3 { ShapeType::Empty };
+private:
     std::unique_ptr<Path> m_path;
-    Vector<MarkerPosition> m_markerPositions;
 };
 
 } // namespace WebCore

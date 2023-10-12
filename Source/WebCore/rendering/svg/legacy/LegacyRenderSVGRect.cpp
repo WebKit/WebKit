@@ -52,6 +52,7 @@ void LegacyRenderSVGRect::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
+    m_shapeType = ShapeType::Empty;
     m_fillBoundingBox = FloatRect();
     m_innerStrokeRect = FloatRect();
     m_outerStrokeRect = FloatRect();
@@ -64,9 +65,10 @@ void LegacyRenderSVGRect::updateShapeFromElement()
     if (boundingBoxSize.isEmpty())
         return;
 
-    m_shapeType = ShapeType::Rectangle;
     if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0)
         m_shapeType = ShapeType::RoundedRectangle;
+    else
+        m_shapeType = ShapeType::Rectangle;
 
     if (m_shapeType != ShapeType::Rectangle || hasNonScalingStroke()) {
         // Fall back to LegacyRenderSVGShape
@@ -138,8 +140,8 @@ bool LegacyRenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, 
 {
     // The optimized code below does not support non-smooth strokes so we need to
     // fall back to LegacyRenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (!hasSmoothStroke() && !hasPath())
-        LegacyRenderSVGShape::updateShapeFromElement();
+    if (!hasSmoothStroke())
+        ensurePath();
 
     if (hasPath())
         return LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
