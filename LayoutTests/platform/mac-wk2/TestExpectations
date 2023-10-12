@@ -2229,3 +2229,5 @@ webkit.org/b/177397 [ Sonoma+ Release ] compositing/masks/compositing-clip-path-
 webkit.org/b/263049 [ Sonoma+ ] fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
 
 webkit.org/b/263085 [ Sonoma+ Release ] fast/attachment/attachment-uti.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/263095 [ Sonoma+ ] svg/clip-path/clip-path-objectboundingbox-003.svg [ Pass ImageOnlyFailure ]
