@@ -144,6 +144,7 @@ public:
     WEBCORE_EXPORT bool isPasswordField() const;
     bool isSecureField() const { return isPasswordField() || isAutoFilledAndObscured(); }
     bool isCheckbox() const;
+    bool isSwitch() const;
     bool isRangeControl() const;
 #if ENABLE(INPUT_TYPE_COLOR)
     WEBCORE_EXPORT bool isColorControl() const;

@@ -3159,7 +3159,8 @@ enum class WebCore::StyleAppearance : uint8_t {
     SearchFieldResultsButton,
     SearchFieldCancelButton,
     SliderThumbHorizontal,
-    SliderThumbVertical
+    SliderThumbVertical,
+    Switch
 };
 
 #if ENABLE(APPLE_PAY)

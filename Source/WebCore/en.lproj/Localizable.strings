@@ -235,7 +235,7 @@
 /* Menu item label for automatic track selection behavior. */
 "Auto (Recommended) (text track)" = "Auto (Recommended)";
 
-/* Menu item label to toggle automatic scene dimming in fullscreen (visionOS only). */
+/* Menu item label to toggle automatic scene dimming in fullscreen (visionOS only) */
 "Auto Dimming" = "Auto Dimming";
 
 /* Automatically Resize context menu item */
@@ -598,9 +598,6 @@
 /* WebKitErrorHTTPSUpgradeRedirectLoop description */
 "HTTPS Upgrade redirect loop detected" = "HTTPS Upgrade redirect loop detected";
 
-/* WebKitErrorHTTPNavigationWithHTTPSOnly description */
-"Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
-
 /* Title of the Hide button for zoomed form controls. */
 "Hide" = "Hide";
 
@@ -798,6 +795,9 @@
 
 /* Media Mute context menu item */
 "Mute" = "Mute";
+
+/* WebKitErrorHTTPSOnlyHTTPURL description */
+"Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
 
 /* New Quick Note context menu item. */
 "New Quick Note" = "New Quick Note";
@@ -1012,7 +1012,7 @@
 /* Validation message for required radio boxes that have no selection */
 "Select one of these options" = "Select one of these options";
 
-/* Validation message for required checkboxes that have not be selected */
+/* Validation message for required checkboxes that have not been selected */
 "Select this checkbox" = "Select this checkbox";
 
 /* Selection direction context sub-menu item */
@@ -1173,6 +1173,9 @@
 
 /* File Upload alert sheet camera button string for taking only videos */
 "Take Video (file upload action sheet)" = "Take Video";
+
+/* Validation message for required switches that are not on */
+"Tap this switch" = "Tap this switch";
 
 /* Tencent Safe Browsing */
 "Tencent Safe Browsing" = "Tencent Safe Browsing";

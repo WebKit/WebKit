@@ -1147,7 +1147,7 @@ String validationMessageValueMissingText()
 
 String validationMessageValueMissingForCheckboxText()
 {
-    return WEB_UI_STRING("Select this checkbox", "Validation message for required checkboxes that have not be selected");
+    return WEB_UI_STRING("Select this checkbox", "Validation message for required checkboxes that have not been selected");
 }
 
 String validationMessageValueMissingForFileText()
@@ -1168,6 +1168,11 @@ String validationMessageValueMissingForRadioText()
 String validationMessageValueMissingForSelectText()
 {
     return WEB_UI_STRING("Select an item in the list", "Validation message for required menu list controls that have no selection");
+}
+
+String validationMessageValueMissingForSwitchText()
+{
+    return WEB_UI_STRING("Tap this switch", "Validation message for required switches that are not on");
 }
 
 String validationMessageTypeMismatchText()

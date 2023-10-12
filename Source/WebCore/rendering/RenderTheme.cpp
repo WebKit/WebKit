@@ -393,6 +393,9 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
         if (input.isTextButton() || input.isUploadButton())
             return StyleAppearance::Button;
 
+        if (input.isSwitch())
+            return StyleAppearance::Switch;
+
         if (input.isCheckbox())
             return StyleAppearance::Checkbox;
 
@@ -671,6 +674,9 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case StyleAppearance::SliderThumbHorizontal:
     case StyleAppearance::SliderThumbVertical:
         return SliderThumbPart::create(appearance);
+
+    case StyleAppearance::Switch:
+        break;
     }
 
     ASSERT_NOT_REACHED();
