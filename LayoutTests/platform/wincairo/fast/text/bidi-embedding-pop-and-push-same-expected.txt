@@ -95,12 +95,12 @@ layer at (0,0) size 800x600
               text run at (0,0) width 19: "a b"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (5,23) size 758x18
-          RenderInline {SPAN} at (0,0) size 7x17
-            RenderText {#text} at (0,0) size 7x17
-              text run at (0,0) width 7: "a"
-          RenderInline {SPAN} at (0,0) size 12x17
-            RenderText {#text} at (7,0) size 12x17
-              text run at (7,0) width 12: " b"
+          RenderInline {SPAN} at (0,0) size 8x17
+            RenderText {#text} at (0,0) size 8x17
+              text run at (0,0) width 8: "a"
+          RenderInline {SPAN} at (0,0) size 13x17
+            RenderText {#text} at (7,0) size 13x17
+              text run at (7,0) width 13: " b"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (8,232) size 768x64 [border: (1px solid #ADD8E6)]
         RenderBlock {DIV} at (5,5) size 758x18

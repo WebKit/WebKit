@@ -32,6 +32,6 @@ layer at (0,0) size 800x493
           text run at (0,0) width 73: "This is bad:"
       RenderBlock {DIV} at (0,411) size 100x53
         RenderBlock {P} at (0,0) size 100x52 [border: (1px solid #FF0000)]
-          RenderText {#text} at (37,1) size 62x49
-            text run at (37,1) width 62: "Lorem "
+          RenderText {#text} at (36,1) size 63x49
+            text run at (36,1) width 63: "Lorem "
             text run at (46,26) width 53: "ipsum"

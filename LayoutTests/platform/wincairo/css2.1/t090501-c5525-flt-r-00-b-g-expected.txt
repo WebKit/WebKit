@@ -5,11 +5,11 @@ layer at (0,0) size 800x291
     RenderBody {BODY} at (8,16) size 784x259
       RenderBlock {P} at (0,0) size 784x259 [color=#000080]
         RenderImage {IMG} at (734,0) size 50x50
-        RenderText {#text} at (0,4) size 336x17
-          text run at (0,4) width 336: "This text should flow around the box on the right. \x{21E8} "
+        RenderText {#text} at (0,4) size 337x17
+          text run at (0,4) width 337: "This text should flow around the box on the right. \x{21E8} "
         RenderInline {SPAN} at (0,0) size 759x254 [color=#C0C0C0]
           RenderText {#text} at (336,4) size 759x254
-            text run at (336,4) width 391: "dummy text dummy text dummy text dummy text dummy text"
+            text run at (336,4) width 392: "dummy text dummy text dummy text dummy text dummy text"
             text run at (0,25) width 52: "dummy "
             text run at (52,25) width 474: "text dummy text dummy text dummy text dummy text dummy text dummy "
             text run at (526,25) width 181: "text dummy text dummy text"

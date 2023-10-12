@@ -12,17 +12,17 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 27x17 [color=#0000EE]
           RenderText {#text} at (735,0) size 27x17
             text run at (735,0) width 27: "way"
-        RenderText {#text} at (0,18) size 365x17
+        RenderText {#text} at (0,18) size 366x17
           text run at (0,18) width 120: "one would expect. "
-          text run at (120,18) width 245: "Hopefully it does render the way we w"
-        RenderInline {I} at (0,0) size 8x17
-          RenderText {#text} at (365,18) size 8x17
-            text run at (365,18) width 8: "a"
-        RenderInline {B} at (0,0) size 8x17
-          RenderText {#text} at (373,18) size 8x17
-            text run at (373,18) width 8: "n"
-        RenderText {#text} at (381,18) size 280x17
-          text run at (381,18) width 40: "t it to. "
-          text run at (421,18) width 83: "If it does not "
-          text run at (504,18) width 90: "that would be "
-          text run at (594,18) width 67: "a problem."
+          text run at (120,18) width 246: "Hopefully it does render the way we w"
+        RenderInline {I} at (0,0) size 9x17
+          RenderText {#text} at (365,18) size 9x17
+            text run at (365,18) width 9: "a"
+        RenderInline {B} at (0,0) size 10x17
+          RenderText {#text} at (373,18) size 10x17
+            text run at (373,18) width 10: "n"
+        RenderText {#text} at (382,18) size 281x17
+          text run at (382,18) width 41: "t it to. "
+          text run at (422,18) width 84: "If it does not "
+          text run at (505,18) width 91: "that would be "
+          text run at (595,18) width 68: "a problem."

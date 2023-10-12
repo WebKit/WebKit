@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,34) size 784x75
         RenderText {#text} at (0,0) size 224x75
           text run at (0,0) width 192: ".one {text-align: left;}"
-          text run at (192,0) width 0: " "
+          text run at (191,0) width 1: " "
           text run at (0,15) width 200: ".two {text-align: right;}"
-          text run at (200,15) width 0: " "
+          text run at (199,15) width 1: " "
           text run at (0,30) width 224: ".three {text-align: center;}"
-          text run at (224,30) width 0: " "
+          text run at (223,30) width 1: " "
           text run at (0,45) width 224: ".four {text-align: justify;}"
-          text run at (224,45) width 0: " "
+          text run at (223,45) width 1: " "
           text run at (0,60) width 0: " "
       RenderBlock {P} at (0,140) size 784x18
         RenderText {#text} at (0,0) size 234x17

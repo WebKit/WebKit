@@ -27,36 +27,36 @@ layer at (0,0) size 800x600
         RenderText {#text} at (3,3) size 76x17
           text run at (3,3) width 11: "A"
           text run at (64,3) width 15: " B"
-      RenderBlock (floating) {DIV} at (0,134) size 81x24 [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 11x17
-          RenderText {#text} at (3,3) size 11x17
-            text run at (3,3) width 11: "A"
-        RenderText {#text} at (64,3) size 14x17
-          text run at (64,3) width 14: " B"
-      RenderBlock (floating) {DIV} at (0,158) size 81x24 [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 11x17
-          RenderText {#text} at (3,3) size 11x17
-            text run at (3,3) width 11: "A"
-        RenderText {#text} at (64,3) size 14x17
-          text run at (64,3) width 14: " B"
-      RenderBlock (floating) {DIV} at (0,182) size 81x24 [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 11x17
-          RenderText {#text} at (3,3) size 11x17
-            text run at (3,3) width 11: "A"
-        RenderText {#text} at (64,3) size 14x17
-          text run at (64,3) width 14: " B"
-      RenderBlock (floating) {DIV} at (0,206) size 81x24 [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 11x17
-          RenderText {#text} at (3,3) size 11x17
-            text run at (3,3) width 11: "A"
-        RenderText {#text} at (64,3) size 4x17
-          text run at (64,3) width 4: " "
-        RenderInline {SPAN} at (0,0) size 10x17
-          RenderText {#text} at (68,3) size 10x17
-            text run at (68,3) width 10: "B"
-      RenderBlock (floating) {DIV} at (0,230) size 81x24 [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 11x17
-          RenderText {#text} at (3,3) size 11x17
-            text run at (3,3) width 11: "A"
-        RenderText {#text} at (64,3) size 14x17
-          text run at (64,3) width 14: " B"
+      RenderBlock (floating) {DIV} at (0,134) size 83x24 [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 12x17
+          RenderText {#text} at (3,3) size 12x17
+            text run at (3,3) width 12: "A"
+        RenderText {#text} at (64,3) size 16x17
+          text run at (64,3) width 16: " B"
+      RenderBlock (floating) {DIV} at (0,158) size 83x24 [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 12x17
+          RenderText {#text} at (3,3) size 12x17
+            text run at (3,3) width 12: "A"
+        RenderText {#text} at (64,3) size 16x17
+          text run at (64,3) width 16: " B"
+      RenderBlock (floating) {DIV} at (0,182) size 83x24 [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 12x17
+          RenderText {#text} at (3,3) size 12x17
+            text run at (3,3) width 12: "A"
+        RenderText {#text} at (64,3) size 16x17
+          text run at (64,3) width 16: " B"
+      RenderBlock (floating) {DIV} at (0,206) size 83x24 [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 12x17
+          RenderText {#text} at (3,3) size 12x17
+            text run at (3,3) width 12: "A"
+        RenderText {#text} at (64,3) size 5x17
+          text run at (64,3) width 5: " "
+        RenderInline {SPAN} at (0,0) size 12x17
+          RenderText {#text} at (68,3) size 12x17
+            text run at (68,3) width 12: "B"
+      RenderBlock (floating) {DIV} at (0,230) size 83x24 [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 12x17
+          RenderText {#text} at (3,3) size 12x17
+            text run at (3,3) width 12: "A"
+        RenderText {#text} at (64,3) size 16x17
+          text run at (64,3) width 16: " B"

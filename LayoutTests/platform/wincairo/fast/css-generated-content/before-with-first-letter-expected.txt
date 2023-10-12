@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderInline (generated) at (0,0) size 18x32 [color=#008000]
             RenderText at (0,0) size 18x32
               text run at (0,0) width 18: "T"
-          RenderText at (18,5) size 29x26
-            text run at (18,5) width 29: "he "
-        RenderText {#text} at (47,5) size 413x26
-          text run at (47,5) width 413: "first letter is green and larger than the rest."
+          RenderText at (17,5) size 30x26
+            text run at (17,5) width 30: "he "
+        RenderText {#text} at (46,5) size 414x26
+          text run at (46,5) width 414: "first letter is green and larger than the rest."

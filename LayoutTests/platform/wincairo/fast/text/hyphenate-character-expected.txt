@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
           RenderInline {TT} at (0,0) size 32x15
             RenderText {#text} at (203,3) size 32x15
               text run at (203,3) width 32: "auto"
-          RenderText {#text} at (235,0) size 5x17
-            text run at (235,0) width 5: ")"
+          RenderText {#text} at (235,0) size 6x17
+            text run at (235,0) width 6: ")"
         RenderBlock {DIV} at (0,50) size 344x224 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
           RenderText {#text} at (7,7) size 330x209
@@ -25,18 +25,18 @@ layer at (0,0) size 800x600
             text run at (7,133) width 330: "generally, just as she had got its neck nicely"
             text run at (7,154) width 96: "straightened "
             text run at (102,154) width 235: "out, and was going to give the"
-            text run at (7,175) width 285: "hedgehog a blow with its head, it "
-            text run at (292,175) width 45: "would"
-            text run at (7,196) width 314: "twist itself round and look up in her face\x{2026}"
+            text run at (7,175) width 246: "hedgehog a blow with its head, it "
+            text run at (252,175) width 85: "would twist"
+            text run at (7,196) width 271: "itself round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (356,0) size 344x274
         RenderBlock {P} at (0,16) size 344x18
-          RenderText {#text} at (0,0) size 81x17
-            text run at (0,0) width 81: "The default ("
-          RenderInline {TT} at (0,0) size 200x15
-            RenderText {#text} at (81,3) size 200x15
-              text run at (81,3) width 200: "hyphenate-character: auto"
-          RenderText {#text} at (281,0) size 5x17
-            text run at (281,0) width 5: ")"
+          RenderText {#text} at (0,0) size 82x17
+            text run at (0,0) width 82: "The default ("
+          RenderInline {TT} at (0,0) size 201x15
+            RenderText {#text} at (81,3) size 201x15
+              text run at (81,3) width 201: "hyphenate-character: auto"
+          RenderText {#text} at (281,0) size 6x17
+            text run at (281,0) width 6: ")"
         RenderBlock {DIV} at (0,50) size 344x224 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
           RenderText {#text} at (7,7) size 330x209
@@ -50,18 +50,18 @@ layer at (0,0) size 800x600
             text run at (7,133) width 330: "generally, just as she had got its neck nicely"
             text run at (7,154) width 96: "straightened "
             text run at (102,154) width 235: "out, and was going to give the"
-            text run at (7,175) width 285: "hedgehog a blow with its head, it "
-            text run at (292,175) width 45: "would"
-            text run at (7,196) width 314: "twist itself round and look up in her face\x{2026}"
+            text run at (7,175) width 246: "hedgehog a blow with its head, it "
+            text run at (252,175) width 85: "would twist"
+            text run at (7,196) width 271: "itself round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (4,274) size 344x274
         RenderBlock {P} at (0,16) size 344x18
-          RenderText {#text} at (0,0) size 47x17
-            text run at (0,0) width 47: "Bullet ("
-          RenderInline {TT} at (0,0) size 224x15
-            RenderText {#text} at (47,3) size 224x15
-              text run at (47,3) width 224: "hyphenate-character: \"\\2022\""
-          RenderText {#text} at (271,0) size 5x17
-            text run at (271,0) width 5: ")"
+          RenderText {#text} at (0,0) size 48x17
+            text run at (0,0) width 48: "Bullet ("
+          RenderInline {TT} at (0,0) size 225x15
+            RenderText {#text} at (47,3) size 225x15
+              text run at (47,3) width 225: "hyphenate-character: \"\\2022\""
+          RenderText {#text} at (271,0) size 6x17
+            text run at (271,0) width 6: ")"
         RenderBlock {DIV} at (0,50) size 344x224 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
           RenderText {#text} at (7,7) size 330x209
@@ -75,18 +75,18 @@ layer at (0,0) size 800x600
             text run at (7,133) width 330: "generally, just as she had got its neck nicely"
             text run at (7,154) width 96: "straightened "
             text run at (102,154) width 235: "out, and was going to give the"
-            text run at (7,175) width 285: "hedgehog a blow with its head, it "
-            text run at (292,175) width 45: "would"
-            text run at (7,196) width 314: "twist itself round and look up in her face\x{2026}"
-      RenderBlock (floating) {DIV} at (356,274) size 357x274
-        RenderBlock {P} at (0,16) size 357x18
-          RenderText {#text} at (0,0) size 136x17
-            text run at (0,0) width 136: "Middle dot and tilde ("
-          RenderInline {TT} at (0,0) size 216x15
-            RenderText {#text} at (136,3) size 216x15
-              text run at (136,3) width 216: "hyphenate-character: \"\\B7~\""
-          RenderText {#text} at (352,0) size 5x17
-            text run at (352,0) width 5: ")"
+            text run at (7,175) width 246: "hedgehog a blow with its head, it "
+            text run at (252,175) width 85: "would twist"
+            text run at (7,196) width 271: "itself round and look up in her face\x{2026}"
+      RenderBlock (floating) {DIV} at (356,274) size 358x274
+        RenderBlock {P} at (0,16) size 358x18
+          RenderText {#text} at (0,0) size 137x17
+            text run at (0,0) width 137: "Middle dot and tilde ("
+          RenderInline {TT} at (0,0) size 217x15
+            RenderText {#text} at (136,3) size 217x15
+              text run at (136,3) width 217: "hyphenate-character: \"\\B7~\""
+          RenderText {#text} at (352,0) size 6x17
+            text run at (352,0) width 6: ")"
         RenderBlock {DIV} at (0,50) size 344x224 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
           RenderText {#text} at (7,7) size 330x209
@@ -100,6 +100,6 @@ layer at (0,0) size 800x600
             text run at (7,133) width 330: "generally, just as she had got its neck nicely"
             text run at (7,154) width 96: "straightened "
             text run at (102,154) width 235: "out, and was going to give the"
-            text run at (7,175) width 285: "hedgehog a blow with its head, it "
-            text run at (292,175) width 45: "would"
-            text run at (7,196) width 314: "twist itself round and look up in her face\x{2026}"
+            text run at (7,175) width 246: "hedgehog a blow with its head, it "
+            text run at (252,175) width 85: "would twist"
+            text run at (7,196) width 271: "itself round and look up in her face\x{2026}"

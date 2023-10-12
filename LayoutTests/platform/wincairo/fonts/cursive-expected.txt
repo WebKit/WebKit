@@ -50,9 +50,9 @@ layer at (0,0) size 785x5184
           RenderText {#text} at (0,234) size 16x17
             text run at (0,234) width 16: ",,,,"
           RenderBR {BR} at (16,234) size 0x17
-          RenderText {#text} at (0,252) size 24x17
-            text run at (0,252) width 24: "----"
-          RenderBR {BR} at (24,252) size 0x17
+          RenderText {#text} at (0,252) size 22x17
+            text run at (0,252) width 22: "----"
+          RenderBR {BR} at (21,252) size 1x17
           RenderText {#text} at (0,270) size 16x17
             text run at (0,270) width 16: "...."
           RenderBR {BR} at (16,270) size 0x17
@@ -336,9 +336,9 @@ layer at (0,0) size 785x5184
             RenderText {#text} at (0,216) size 16x17
               text run at (0,216) width 16: ",,,,"
             RenderBR {BR} at (16,216) size 0x17
-            RenderText {#text} at (0,234) size 20x17
-              text run at (0,234) width 20: "----"
-            RenderBR {BR} at (20,234) size 0x17
+            RenderText {#text} at (0,234) size 22x17
+              text run at (0,234) width 22: "----"
+            RenderBR {BR} at (21,234) size 1x17
             RenderText {#text} at (0,252) size 16x17
               text run at (0,252) width 16: "...."
             RenderBR {BR} at (16,252) size 0x17
@@ -623,9 +623,9 @@ layer at (0,0) size 785x5184
             RenderText {#text} at (0,216) size 16x17
               text run at (0,216) width 16: ",,,,"
             RenderBR {BR} at (16,216) size 0x17
-            RenderText {#text} at (0,234) size 20x17
-              text run at (0,234) width 20: "----"
-            RenderBR {BR} at (20,234) size 0x17
+            RenderText {#text} at (0,234) size 22x17
+              text run at (0,234) width 22: "----"
+            RenderBR {BR} at (21,234) size 1x17
             RenderText {#text} at (0,252) size 16x17
               text run at (0,252) width 16: "...."
             RenderBR {BR} at (16,252) size 0x17

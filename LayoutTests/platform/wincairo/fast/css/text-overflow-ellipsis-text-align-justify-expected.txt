@@ -20,8 +20,8 @@ layer at (0,0) size 785x894
         RenderText {#text} at (0,0) size 220x21
           text run at (0,0) width 220: "Containing replaced content"
       RenderBlock {H3} at (0,395) size 769x23
-        RenderText {#text} at (0,0) size 377x21
-          text run at (0,0) width 377: "Containing replaced content blocking the ellipsis"
+        RenderText {#text} at (0,0) size 376x21
+          text run at (0,0) width 376: "Containing replaced content blocking the ellipsis"
       RenderBlock {H3} at (0,487) size 769x23
         RenderText {#text} at (0,0) size 191x21
           text run at (0,0) width 191: "Right-To-Left single line"
@@ -32,8 +32,8 @@ layer at (0,0) size 785x894
         RenderText {#text} at (0,0) size 328x21
           text run at (0,0) width 328: "Right-To-Left containing replaced content"
       RenderBlock {H3} at (0,794) size 769x23
-        RenderText {#text} at (0,0) size 485x21
-          text run at (0,0) width 485: "Right-To-Left containing replaced content blocking the ellipsis"
+        RenderText {#text} at (0,0) size 484x21
+          text run at (0,0) width 484: "Right-To-Left containing replaced content blocking the ellipsis"
 layer at (8,137) size 310x20 clip at (9,138) size 308x18 scrollWidth 718
   RenderBlock {DIV} at (0,129) size 310x21 [border: (1px solid #000000)]
     RenderText {#text} at (1,1) size 718x17

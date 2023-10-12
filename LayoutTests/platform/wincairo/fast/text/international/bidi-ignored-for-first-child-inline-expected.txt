@@ -41,32 +41,32 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 22x17
             RenderText {#text} at (34,0) size 22x17
               text run at (34,0) width 22 RTL: "ED"
-        RenderText {#text} at (65,0) size 29x17
-          text run at (65,0) width 29: "GHI"
+        RenderText {#text} at (64,0) size 30x17
+          text run at (64,0) width 30: "GHI"
       RenderBlock {P} at (0,206) size 784x18
         RenderText {#text} at (0,0) size 34x17
           text run at (0,0) width 34: "ABC"
-        RenderInline {SPAN} at (0,0) size 29x17
-          RenderText {#text} at (54,0) size 9x17
-            text run at (54,0) width 9 RTL: "F"
-          RenderInline {SPAN} at (0,0) size 9x17
-            RenderText {#text} at (45,0) size 9x17
-              text run at (45,0) width 9 RTL: "E"
-          RenderText {#text} at (34,0) size 11x17
-            text run at (34,0) width 11 RTL: "D"
-        RenderText {#text} at (63,0) size 29x17
-          text run at (63,0) width 29: "GHI"
+        RenderInline {SPAN} at (0,0) size 31x17
+          RenderText {#text} at (55,0) size 10x17
+            text run at (55,0) width 10 RTL: "F"
+          RenderInline {SPAN} at (0,0) size 11x17
+            RenderText {#text} at (45,0) size 11x17
+              text run at (45,0) width 11 RTL: "E"
+          RenderText {#text} at (34,0) size 12x17
+            text run at (34,0) width 12 RTL: "D"
+        RenderText {#text} at (64,0) size 30x17
+          text run at (64,0) width 30: "GHI"
       RenderBlock {P} at (0,240) size 784x18
         RenderText {#text} at (0,0) size 34x17
           text run at (0,0) width 34: "ABC"
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline {SPAN} at (0,0) size 19x17
-            RenderText {#text} at (45,0) size 19x17
-              text run at (45,0) width 19 RTL: "FE"
-          RenderText {#text} at (34,0) size 11x17
-            text run at (34,0) width 11 RTL: "D"
-        RenderText {#text} at (64,0) size 29x17
-          text run at (64,0) width 29: "GHI"
+        RenderInline {SPAN} at (0,0) size 31x17
+          RenderInline {SPAN} at (0,0) size 20x17
+            RenderText {#text} at (45,0) size 20x17
+              text run at (45,0) width 20 RTL: "FE"
+          RenderText {#text} at (34,0) size 12x17
+            text run at (34,0) width 12 RTL: "D"
+        RenderText {#text} at (64,0) size 30x17
+          text run at (64,0) width 30: "GHI"
       RenderBlock {P} at (0,274) size 784x18
         RenderInline {SPAN} at (0,0) size 94x17
           RenderText {#text} at (0,0) size 94x17

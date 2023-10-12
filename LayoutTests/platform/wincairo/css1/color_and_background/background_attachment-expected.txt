@@ -1,4 +1,4 @@
-layer at (0,0) size 880x1194
+layer at (0,0) size 879x1194
   RenderView at (0,0) size 785x585
 layer at (0,0) size 785x1194
   RenderBlock {HTML} at (0,0) size 785x1195
@@ -7,9 +7,9 @@ layer at (0,0) size 785x1194
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x30
-        RenderText {#text} at (0,0) size 872x30
-          text run at (0,0) width 872: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
-          text run at (872,0) width 0: " "
+        RenderText {#text} at (0,0) size 871x30
+          text run at (0,0) width 871: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
+          text run at (870,0) width 1: " "
           text run at (0,15) width 0: " "
       RenderBlock {P} at (0,95) size 769x90
         RenderText {#text} at (0,0) size 763x89
@@ -67,17 +67,17 @@ layer at (0,0) size 785x1194
           text run at (0,0) width 765: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas"
           text run at (0,18) width 230: "or if it scrolls along with the content."
       RenderBlock {PRE} at (0,465) size 769x76
-        RenderText {#text} at (0,0) size 296x75
+        RenderText {#text} at (0,0) size 295x75
           text run at (0,0) width 72: "  BODY { "
-          text run at (72,0) width 0: " "
-          text run at (0,15) width 296: "    background: red url(pendant.gif);"
-          text run at (296,15) width 0: " "
+          text run at (71,0) width 1: " "
+          text run at (0,15) width 295: "    background: red url(pendant.gif);"
+          text run at (294,15) width 1: " "
           text run at (0,30) width 256: "    background-repeat: repeat-y;"
-          text run at (256,30) width 0: " "
+          text run at (255,30) width 1: " "
           text run at (0,45) width 264: "    background-attachment: fixed;"
-          text run at (264,45) width 0: " "
+          text run at (263,45) width 1: " "
           text run at (0,60) width 24: "  }"
-          text run at (24,60) width 0: " "
+          text run at (23,60) width 1: " "
       RenderBlock {P} at (0,556) size 769x55
         RenderInline {EM} at (0,0) size 72x17
           RenderText {#text} at (0,0) size 72x17
@@ -154,17 +154,17 @@ layer at (0,0) size 785x1194
                   text run at (0,0) width 718: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the"
                   text run at (0,18) width 277: "canvas or if it scrolls along with the content."
               RenderBlock {PRE} at (4,374) size 747x76
-                RenderText {#text} at (0,0) size 296x75
+                RenderText {#text} at (0,0) size 295x75
                   text run at (0,0) width 72: "  BODY { "
-                  text run at (72,0) width 0: " "
-                  text run at (0,15) width 296: "    background: red url(pendant.gif);"
-                  text run at (296,15) width 0: " "
+                  text run at (71,0) width 1: " "
+                  text run at (0,15) width 295: "    background: red url(pendant.gif);"
+                  text run at (294,15) width 1: " "
                   text run at (0,30) width 256: "    background-repeat: repeat-y;"
-                  text run at (256,30) width 0: " "
+                  text run at (255,30) width 1: " "
                   text run at (0,45) width 264: "    background-attachment: fixed;"
-                  text run at (264,45) width 0: " "
+                  text run at (263,45) width 1: " "
                   text run at (0,60) width 24: "  }"
-                  text run at (24,60) width 0: " "
+                  text run at (23,60) width 1: " "
               RenderBlock {P} at (4,465) size 747x55
                 RenderInline {EM} at (0,0) size 72x17
                   RenderText {#text} at (0,0) size 72x17

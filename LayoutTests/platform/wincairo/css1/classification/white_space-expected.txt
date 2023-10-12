@@ -9,11 +9,11 @@ layer at (0,0) size 800x585
       RenderBlock {PRE} at (0,34) size 784x60
         RenderText {#text} at (0,0) size 232x60
           text run at (0,0) width 192: ".one {white-space: pre;}"
-          text run at (192,0) width 0: " "
+          text run at (191,0) width 1: " "
           text run at (0,15) width 216: ".two {white-space: nowrap;}"
-          text run at (216,15) width 0: " "
+          text run at (215,15) width 1: " "
           text run at (0,30) width 232: ".three {white-space: normal;}"
-          text run at (232,30) width 0: " "
+          text run at (231,30) width 1: " "
           text run at (0,45) width 0: " "
       RenderBlock {P} at (0,125) size 784x90
         RenderText {#text} at (0,0) size 568x89

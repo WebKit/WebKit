@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (85,0) size 768x35
             text run at (85,0) width 683: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6014 Bidi algorithm: incorrect resolved levels for neutrals"
             text run at (0,18) width 157: "between R and ET ON L"
-        RenderText {#text} at (157,18) size 4x17
-          text run at (157,18) width 4: "."
+        RenderText {#text} at (156,18) size 5x17
+          text run at (156,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x36
         RenderText {#text} at (0,0) size 759x35
           text run at (0,0) width 96: "The characters "
@@ -21,17 +21,17 @@ layer at (0,0) size 800x600
           text run at (142,0) width 617: " are of type R; ^ and @ are of type ON; $ and % are of type ET; a is of type L; 1 is of type EN. In"
           text run at (0,18) width 466: "each of the following pairs, the two lines should be identical to each other."
       RenderBlock {P} at (0,122) size 784x18
-        RenderText {#text} at (0,0) size 75x17
+        RenderText {#text} at (0,0) size 76x17
           text run at (0,0) width 8 RTL: "\x{5D0}"
-          text run at (8,0) width 67: " ^ @ $% a"
+          text run at (8,0) width 68: " ^ @ $% a"
       RenderBlock (anonymous) at (0,156) size 784x18
-        RenderInline {BDO} at (0,0) size 75x17
-          RenderText {#text} at (0,0) size 75x17
-            text run at (0,0) width 75: "\x{5D0} ^ @ $% a"
+        RenderInline {BDO} at (0,0) size 76x17
+          RenderText {#text} at (0,0) size 76x17
+            text run at (0,0) width 76: "\x{5D0} ^ @ $% a"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,200) size 784x18
-        RenderText {#text} at (0,0) size 75x17
-          text run at (0,0) width 75 RTL: "\x{5D0} ^ @ $% \x{5D1}"
+        RenderText {#text} at (0,0) size 76x17
+          text run at (0,0) width 76 RTL: "\x{5D0} ^ @ $% \x{5D1}"
       RenderBlock (anonymous) at (0,234) size 784x18
         RenderInline {BDO} at (0,0) size 75x17
           RenderText {#text} at (0,0) size 75x17
@@ -47,17 +47,17 @@ layer at (0,0) size 800x600
             text run at (0,0) width 72: "$%1 @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,356) size 784x18
-        RenderText {#text} at (0,0) size 75x17
-          text run at (0,0) width 7: "a"
-          text run at (7,0) width 68 RTL: "\x{5D0} ^ @ $% "
+        RenderText {#text} at (0,0) size 76x17
+          text run at (0,0) width 8: "a"
+          text run at (7,0) width 69 RTL: "\x{5D0} ^ @ $% "
       RenderBlock (anonymous) at (0,390) size 784x18
         RenderInline {BDO} at (0,0) size 75x17
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "a %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,434) size 784x18
-        RenderText {#text} at (0,0) size 75x17
-          text run at (0,0) width 75 RTL: "\x{5D0} ^ @ $% \x{5D1}"
+        RenderText {#text} at (0,0) size 76x17
+          text run at (0,0) width 76 RTL: "\x{5D0} ^ @ $% \x{5D1}"
       RenderBlock (anonymous) at (0,468) size 784x18
         RenderInline {BDO} at (0,0) size 75x17
           RenderText {#text} at (0,0) size 75x17

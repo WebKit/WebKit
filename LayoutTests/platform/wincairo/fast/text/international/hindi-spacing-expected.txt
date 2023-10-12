@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         text run at (0,0) width 777: "This tests the width of a breaking space after a Hindi character to ensure that it's measured properly and enough space is left"
         text run at (0,18) width 752: "for it. Neither the Hindi on the button below nor the same text on two lines below that should be truncated at either end."
       RenderBR {BR} at (752,18) size 0x17
-      RenderButton {INPUT} at (0,36) size 118x26 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,4) size 102x17
-          RenderText at (0,2) size 102x15
-            text run at (0,2) width 102: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderBR {BR} at (118,40) size 0x17
+      RenderButton {INPUT} at (0,36) size 120x26 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (8,4) size 104x17
+          RenderText at (0,2) size 104x15
+            text run at (0,2) width 104: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderBR {BR} at (119,40) size 1x17
       RenderInline {SPAN} at (0,0) size 130x17
         RenderText {#text} at (0,65) size 130x17
           text run at (0,65) width 130: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"

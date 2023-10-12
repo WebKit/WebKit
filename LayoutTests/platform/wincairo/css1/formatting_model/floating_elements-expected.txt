@@ -7,23 +7,23 @@ layer at (0,0) size 785x6281
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x135
-        RenderText {#text} at (0,0) size 480x135
+        RenderText {#text} at (0,0) size 479x135
           text run at (0,0) width 272: "HR.minor {clear: both; width: 5%;}"
-          text run at (272,0) width 0: " "
-          text run at (0,15) width 400: "HR.major {clear: both; width: 75%; margin: 1.5em;}"
-          text run at (400,15) width 0: " "
-          text run at (0,30) width 480: "DIV {border: 5px solid purple; padding: 0; margin: 0.125em;}"
-          text run at (480,30) width 0: " "
-          text run at (0,45) width 432: "P.left, P.right {width: 10em; padding: 1em; margin: 0;"
-          text run at (432,45) width 0: " "
-          text run at (0,60) width 424: "   border: 1px solid lime; background-color: silver;}"
-          text run at (424,60) width 0: " "
-          text run at (0,75) width 456: "IMG.left, IMG.right {margin: 0; border: 3px solid black;}"
-          text run at (456,75) width 0: " "
+          text run at (271,0) width 1: " "
+          text run at (0,15) width 399: "HR.major {clear: both; width: 75%; margin: 1.5em;}"
+          text run at (398,15) width 1: " "
+          text run at (0,30) width 479: "DIV {border: 5px solid purple; padding: 0; margin: 0.125em;}"
+          text run at (478,30) width 1: " "
+          text run at (0,45) width 431: "P.left, P.right {width: 10em; padding: 1em; margin: 0;"
+          text run at (430,45) width 1: " "
+          text run at (0,60) width 423: "   border: 1px solid lime; background-color: silver;}"
+          text run at (422,60) width 1: " "
+          text run at (0,75) width 455: "IMG.left, IMG.right {margin: 0; border: 3px solid black;}"
+          text run at (454,75) width 1: " "
           text run at (0,90) width 160: ".left {float: left;}"
-          text run at (160,90) width 0: " "
+          text run at (159,90) width 1: " "
           text run at (0,105) width 176: ".right {float: right;}"
-          text run at (176,105) width 0: " "
+          text run at (175,105) width 1: " "
           text run at (0,120) width 0: " "
       RenderBlock {P} at (0,200) size 769x36
         RenderText {#text} at (0,0) size 751x35

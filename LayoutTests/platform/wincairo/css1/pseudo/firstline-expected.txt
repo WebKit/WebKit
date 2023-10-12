@@ -9,11 +9,11 @@ layer at (0,0) size 785x655
       RenderBlock {PRE} at (0,34) size 769x60
         RenderText {#text} at (0,0) size 360x60
           text run at (0,0) width 224: "P:first-line {color: green;}"
-          text run at (224,0) width 0: " "
+          text run at (223,0) width 1: " "
           text run at (0,15) width 272: ".two:first-line {font-size: 200%;}"
-          text run at (272,15) width 0: " "
+          text run at (271,15) width 1: " "
           text run at (0,30) width 360: ".three:first-line {font-variant: small-caps;}"
-          text run at (360,30) width 0: " "
+          text run at (359,30) width 1: " "
           text run at (0,45) width 0: " "
       RenderBlock {P} at (0,125) size 769x54
         RenderText {#text} at (0,0) size 761x53

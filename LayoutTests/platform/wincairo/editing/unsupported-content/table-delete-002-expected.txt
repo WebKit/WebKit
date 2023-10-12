@@ -31,31 +31,31 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 59x26
             text run at (0,0) width 59: "Tests:"
           RenderBR {BR} at (59,0) size 0x26
-          RenderText {#text} at (0,27) size 657x20
-            text run at (0,27) width 657: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well."
-          RenderBR {BR} at (657,27) size 0x20
-          RenderInline {I} at (0,0) size 99x20
-            RenderText {#text} at (0,48) size 99x20
-              text run at (0,48) width 99: "For this test: "
-          RenderText {#text} at (99,48) size 405x20
-            text run at (99,48) width 405: "Select and delete a table and some surrounding content."
+          RenderText {#text} at (0,27) size 650x20
+            text run at (0,27) width 650: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well."
+          RenderBR {BR} at (649,27) size 1x20
+          RenderInline {I} at (0,0) size 98x20
+            RenderText {#text} at (0,48) size 98x20
+              text run at (0,48) width 98: "For this test: "
+          RenderText {#text} at (97,48) size 402x20
+            text run at (97,48) width 402: "Select and delete a table and some surrounding content."
         RenderBlock (anonymous) at (20,89) size 744x21
           RenderBR {BR} at (0,0) size 0x20
         RenderBlock {DIV} at (20,110) size 744x111
           RenderText {#text} at (0,0) size 183x26
             text run at (0,0) width 183: "Expected Results:"
           RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 709x41
-            text run at (0,27) width 709: "The content in the red box must exactly match the content in the green box (except for the border"
+          RenderText {#text} at (0,27) size 700x41
+            text run at (0,27) width 700: "The content in the red box must exactly match the content in the green box (except for the border"
             text run at (0,48) width 48: "color)."
           RenderBR {BR} at (48,48) size 0x20
-          RenderInline {I} at (0,0) size 99x20
-            RenderText {#text} at (0,69) size 99x20
-              text run at (0,69) width 99: "For this test: "
-          RenderText {#text} at (99,69) size 744x41
-            text run at (99,69) width 304: "Only selected content should get deleted. "
-            text run at (403,69) width 341: "Surrounding content that is not selected should"
-            text run at (0,90) width 201: "(obviously) not be affected."
+          RenderInline {I} at (0,0) size 98x20
+            RenderText {#text} at (0,69) size 98x20
+              text run at (0,69) width 98: "For this test: "
+          RenderText {#text} at (97,69) size 737x41
+            text run at (97,69) width 302: "Only selected content should get deleted. "
+            text run at (398,69) width 339: "Surrounding content that is not selected should"
+            text run at (0,90) width 200: "(obviously) not be affected."
       RenderBlock {DIV} at (0,251) size 784x31 [border: (2px solid #008000)]
         RenderText {#text} at (2,2) size 62x26
           text run at (2,2) width 62: "before"

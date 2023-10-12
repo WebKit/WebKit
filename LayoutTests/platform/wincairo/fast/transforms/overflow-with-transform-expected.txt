@@ -14,8 +14,8 @@ layer at (9,67) size 200x500 backgroundClip at (9,51) size 200x200 clip at (9,51
       RenderText {#text} at (0,0) size 200x107
         text run at (0,0) width 189: "ihasdkas sdkha sjdkahk dahsd"
         text run at (0,18) width 197: "jashd kashd kasdh aksd haskdh"
-        text run at (0,36) width 44: "aksd h "
-        text run at (44,36) width 138: "asfadjaskdh akdhaskd"
+        text run at (0,36) width 45: "aksd h "
+        text run at (45,36) width 138: "asfadjaskdh akdhaskd"
         text run at (0,54) width 183: "haskd haskd haskd haskdhka"
         text run at (0,72) width 116: "shdkasdh kas hdk "
         text run at (116,72) width 84: "asd asd asdas"
@@ -24,8 +24,8 @@ layer at (9,67) size 200x500 backgroundClip at (9,51) size 200x200 clip at (9,51
       RenderText {#text} at (0,0) size 200x107
         text run at (0,0) width 189: "ihasdkas sdkha sjdkahk dahsd"
         text run at (0,18) width 197: "jashd kashd kasdh aksd haskdh"
-        text run at (0,36) width 44: "aksd h "
-        text run at (44,36) width 138: "asfadjaskdh akdhaskd"
+        text run at (0,36) width 45: "aksd h "
+        text run at (45,36) width 138: "asfadjaskdh akdhaskd"
         text run at (0,54) width 183: "haskd haskd haskd haskdhka"
         text run at (0,72) width 116: "shdkasdh kas hdk "
         text run at (116,72) width 84: "asd asd asdas"
@@ -34,8 +34,8 @@ layer at (9,67) size 200x500 backgroundClip at (9,51) size 200x200 clip at (9,51
       RenderText {#text} at (0,0) size 200x107
         text run at (0,0) width 189: "ihasdkas sdkha sjdkahk dahsd"
         text run at (0,18) width 197: "jashd kashd kasdh aksd haskdh"
-        text run at (0,36) width 44: "aksd h "
-        text run at (44,36) width 138: "asfadjaskdh akdhaskd"
+        text run at (0,36) width 45: "aksd h "
+        text run at (45,36) width 138: "asfadjaskdh akdhaskd"
         text run at (0,54) width 183: "haskd haskd haskd haskdhka"
         text run at (0,72) width 116: "shdkasdh kas hdk "
         text run at (116,72) width 84: "asd asd asdas"

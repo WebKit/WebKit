@@ -4,37 +4,37 @@ layer at (0,0) size 785x711
   RenderBlock {HTML} at (0,0) size 785x711
     RenderBody {BODY} at (8,8) size 769x695 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
-        RenderInline (generated) at (0,0) size 9x17 [color=#800000]
-          RenderText at (0,0) size 9x17
-            text run at (0,0) width 9: "T"
-        RenderText {#text} at (9,0) size 345x17
-          text run at (9,0) width 345: "he style declarations which apply to the text below are:"
+        RenderInline (generated) at (0,0) size 10x17 [color=#800000]
+          RenderText at (0,0) size 10x17
+            text run at (0,0) width 10: "T"
+        RenderText {#text} at (9,0) size 346x17
+          text run at (9,0) width 346: "he style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x60
         RenderText {#text} at (0,0) size 312x60
           text run at (0,0) width 248: "P:first-letter {color: maroon;}"
-          text run at (248,0) width 0: " "
+          text run at (247,0) width 1: " "
           text run at (0,15) width 288: ".two:first-letter {font-size: 200%;}"
-          text run at (288,15) width 0: " "
+          text run at (287,15) width 1: " "
           text run at (0,30) width 312: "P.three:first-letter {font-size: 350%;}"
-          text run at (312,30) width 0: " "
+          text run at (311,30) width 1: " "
           text run at (0,45) width 0: " "
       RenderBlock {P} at (0,125) size 769x54
-        RenderInline (generated) at (0,0) size 9x17 [color=#800000]
-          RenderText at (0,0) size 9x17
-            text run at (0,0) width 9: "T"
-        RenderText {#text} at (9,0) size 763x53
-          text run at (9,0) width 434: "he first letter of this paragraph, and only that one, should be maroon. "
-          text run at (443,0) width 320: "If this precise combination does not occur, then the"
+        RenderInline (generated) at (0,0) size 10x17 [color=#800000]
+          RenderText at (0,0) size 10x17
+            text run at (0,0) width 10: "T"
+        RenderText {#text} at (9,0) size 764x53
+          text run at (9,0) width 435: "he first letter of this paragraph, and only that one, should be maroon. "
+          text run at (443,0) width 321: "If this precise combination does not occur, then the"
           text run at (0,18) width 187: "user agent has failed this test. "
           text run at (187,18) width 574: "Remember that in order to ensure a complete test, the paragraph must be displayed on more"
           text run at (0,36) width 85: "than one line."
       RenderBlock {P} at (0,195) size 769x73
-        RenderInline (generated) at (0,0) size 19x36 [color=#800000]
-          RenderText at (0,0) size 19x36
-            text run at (0,0) width 19: "T"
+        RenderInline (generated) at (0,0) size 20x36 [color=#800000]
+          RenderText at (0,0) size 20x36
+            text run at (0,0) width 20: "T"
         RenderText {#text} at (19,15) size 757x57
-          text run at (19,15) width 611: "he first letter of this paragraph, and only that one, should be a larger font size, as well as maroon. "
-          text run at (630,15) width 84: "If this precise"
+          text run at (19,15) width 612: "he first letter of this paragraph, and only that one, should be a larger font size, as well as maroon. "
+          text run at (630,15) width 85: "If this precise"
           text run at (0,37) width 423: "combination does not occur, then the user agent has failed this test. "
           text run at (423,37) width 334: "Remember that in order to ensure a complete test, the"
           text run at (0,55) width 325: "paragraph must be displayed on more than one line."
@@ -61,22 +61,22 @@ layer at (0,0) size 785x711
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x267 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x54
-                RenderInline (generated) at (0,0) size 9x17 [color=#800000]
-                  RenderText at (0,0) size 9x17
-                    text run at (0,0) width 9: "T"
-                RenderText {#text} at (9,0) size 740x53
-                  text run at (9,0) width 434: "he first letter of this paragraph, and only that one, should be maroon. "
-                  text run at (443,0) width 297: "If this precise combination does not occur, then"
+                RenderInline (generated) at (0,0) size 10x17 [color=#800000]
+                  RenderText at (0,0) size 10x17
+                    text run at (0,0) width 10: "T"
+                RenderText {#text} at (9,0) size 741x53
+                  text run at (9,0) width 435: "he first letter of this paragraph, and only that one, should be maroon. "
+                  text run at (443,0) width 298: "If this precise combination does not occur, then"
                   text run at (0,18) width 210: "the user agent has failed this test. "
                   text run at (210,18) width 518: "Remember that in order to ensure a complete test, the paragraph must be displayed"
                   text run at (0,36) width 141: "on more than one line."
               RenderBlock {P} at (4,74) size 747x73
-                RenderInline (generated) at (0,0) size 19x36 [color=#800000]
-                  RenderText at (0,0) size 19x36
-                    text run at (0,0) width 19: "T"
+                RenderInline (generated) at (0,0) size 20x36 [color=#800000]
+                  RenderText at (0,0) size 20x36
+                    text run at (0,0) width 20: "T"
                 RenderText {#text} at (19,15) size 734x57
-                  text run at (19,15) width 611: "he first letter of this paragraph, and only that one, should be a larger font size, as well as maroon. "
-                  text run at (630,15) width 84: "If this precise"
+                  text run at (19,15) width 612: "he first letter of this paragraph, and only that one, should be a larger font size, as well as maroon. "
+                  text run at (630,15) width 85: "If this precise"
                   text run at (0,37) width 423: "combination does not occur, then the user agent has failed this test. "
                   text run at (423,37) width 311: "Remember that in order to ensure a complete test,"
                   text run at (0,55) width 348: "the paragraph must be displayed on more than one line."
