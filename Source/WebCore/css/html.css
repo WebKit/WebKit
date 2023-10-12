@@ -834,9 +834,9 @@ input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-au
 
 input:is([type="radio"], [type="checkbox"]) {
     margin: 3px 2px;
+    box-sizing: border-box;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: initial;
-    box-sizing: border-box;
 #else
     padding: initial;
     background-color: initial;
@@ -986,20 +986,16 @@ select:disabled {
 
 #endif
 
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 input[type="checkbox"] {
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    box-sizing: border-box;
-#else
     border-radius: 5px;
     width: 16px;
     height: 16px;
     padding: 0px;
     /* We want to be as close to background:transparent as possible without actually being transparent */
     background-color: rgba(255, 255, 255, 0.01);
-#endif
 }
 
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 input[type="radio"] {
     appearance: auto;
     border-radius: 50%;
@@ -1030,12 +1026,6 @@ input:is([type="checkbox"], [type="radio"]):disabled {
 input:is([type="checkbox"], [type="radio"]):checked:disabled {
     opacity: initial;
     background: rgba(0, 0, 0, 0.8);
-}
-#endif
-
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-input[type="radio"] {
-    box-sizing: border-box;
 }
 #endif
 
