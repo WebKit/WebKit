@@ -2615,7 +2615,8 @@ webkit.org/b/260360 inspector/timeline/timeline-event-TimerFire.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerInstall.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerRemove.html [ Failure ]
 
-webkit.org/b/260883 [ Monterey+ ] inspector/timeline/timeline-recording.html [ Failure ]
+webkit.org/b/260883 [ Monterey+ ] inspector/timeline/timeline-recording.html [ Skip ]
+
 # rdar://105177062 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/filters/backdrop/add-remove-add-backdrop-filter.html is a consistent image failure)
 css3/filters/backdrop/add-remove-add-backdrop-filter.html [ Pass ImageOnlyFailure ]
 
