@@ -1800,9 +1800,6 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Ti
 # This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
 fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
 
-# No auxiliary unit in glib.
-fast/mediastream/enumerateDevices-active-auxiliary-unit.html [ Skip ]
-
 fast/mediastream/video-rotation2.html [ Failure Pass Timeout ]
 
 # Missing/broken pageIsFocused notification.

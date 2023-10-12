@@ -103,43 +103,9 @@ CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()
     return factory.get();
 }
 
-void CoreAudioCaptureSourceFactoryIOS::addExtensiveObserver(ExtensiveObserver& observer)
-{
-    m_observers.add(observer);
-    AVAudioSessionCaptureDeviceManager::singleton().enableAllDevicesQuery();
-}
-
-void CoreAudioCaptureSourceFactoryIOS::removeExtensiveObserver(ExtensiveObserver& observer)
-{
-    m_observers.remove(observer);
-    if (m_observers.isEmptyIgnoringNullReferences()) {
-        AVAudioSessionCaptureDeviceManager::singleton().disableAllDevicesQuery();
-        m_hasForcedDeviceQuery = false;
-    }
-}
-
 CaptureSourceOrError CoreAudioCaptureSourceFactoryIOS::createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
-    bool hasForcedDeviceQuery = false;
-    // We enable exhaustive query to be sure to start capture with the right device.
-    if (m_observers.isEmptyIgnoringNullReferences() && !m_hasForcedDeviceQuery) {
-        hasForcedDeviceQuery = m_hasForcedDeviceQuery = true;
-        AVAudioSessionCaptureDeviceManager::singleton().enableAllDevicesQuery();
-    }
-    auto result = CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints, pageIdentifier);
-
-    if (hasForcedDeviceQuery) {
-        // We disable exhaustive querying asynchronously as device enumeration may trigger this code path synchronously several times.
-        callOnMainRunLoop([this] {
-            if (!m_hasForcedDeviceQuery)
-                return;
-            m_hasForcedDeviceQuery = false;
-            if (m_observers.isEmptyIgnoringNullReferences())
-                AVAudioSessionCaptureDeviceManager::singleton().disableAllDevicesQuery();
-        });
-    }
-
-    return result;
+    return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints, pageIdentifier);
 }
 
 }

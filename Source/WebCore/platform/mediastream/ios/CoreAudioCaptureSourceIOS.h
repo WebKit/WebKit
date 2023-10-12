@@ -35,19 +35,15 @@ OBJC_CLASS WebCoreAudioCaptureSourceIOSListener;
 
 namespace WebCore {
 
-class CoreAudioCaptureSourceFactoryIOS : public CoreAudioCaptureSourceFactory  {
+class CoreAudioCaptureSourceFactoryIOS final : public CoreAudioCaptureSourceFactory  {
 public:
     CoreAudioCaptureSourceFactoryIOS();
     ~CoreAudioCaptureSourceFactoryIOS();
 
 private:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) override;
-    void addExtensiveObserver(ExtensiveObserver&) final;
-    void removeExtensiveObserver(ExtensiveObserver&) final;
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) final;
 
     RetainPtr<WebCoreAudioCaptureSourceIOSListener> m_listener;
-    WeakHashSet<ExtensiveObserver> m_observers;
-    bool m_hasForcedDeviceQuery { false };
 };
 
 } // namespace WebCore

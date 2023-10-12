@@ -584,15 +584,6 @@ bool TestController::isDoingMediaCapture() const
     return m_mainWebView->platformView().microphoneCaptureState != WKMediaCaptureStateNone || m_mainWebView->platformView().cameraCaptureState != WKMediaCaptureStateNone;
 }
 
-bool TestController::isEnumeratingAudioUnitActive() const
-{
-#if PLATFORM(IOS_FAMILY) && ENABLE(MEDIA_STREAM)
-    return WKUserMediaIsEnumeratingAudioUnitActive();
-#else
-    return m_mainWebView->platformView().microphoneCaptureState == WKMediaCaptureStateActive;
-#endif
-}
-
 #if PLATFORM(IOS_FAMILY)
 
 static WKContentMode contentMode(const TestOptions& options)
