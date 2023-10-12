@@ -22,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/form-get-blank.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/form-post-blank-reload.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/form-post-blank.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/get_all_cookies-default-samesite.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/get_named_cookie-default-samesite.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/iframe-reload.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/samesite/iframe.https.html

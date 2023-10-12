@@ -1,7 +1,7 @@
 
 PASS Test cookie ordering
-FAIL Cookies with longer path attribute values are ordered before shorter ones assert_equals: The cookie was set as expected. expected "testF=1; testB=1; testC=1; testE=1" but got "testB=1; testC=1"
-FAIL Cookies with longer path attribute values are ordered before shorter ones (2) assert_equals: The cookie was set as expected. expected "testG=2; testB=2; testF=2; testH=2; testC=2" but got "testB=2; testH=2; testC=2"
+PASS Cookies with longer path attribute values are ordered before shorter ones
+PASS Cookies with longer path attribute values are ordered before shorter ones (2)
 PASS Cookies with longer paths are listed before cookies with shorter paths
 PASS For equal length paths, list the cookie with an earlier creation time first
 

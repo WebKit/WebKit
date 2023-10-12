@@ -2,20 +2,36 @@
 PASS No prefix, root path, no special behavior
 PASS No prefix, domain, no special behavior
 PASS __Secure: Non-secure origin: 'Path=/;'
+FAIL __SeCuRe: Non-secure origin: 'Path=/;' assert_equals: `__SeCuRe-prefixtestcookie=0.005325374948119466` in `document.cookie` expected false but got true
 PASS __Secure: Non-secure origin: 'Secure; Path=/;'
+PASS __SeCuRe: Non-secure origin: 'Secure; Path=/;'
 PASS __Secure: Non-secure origin: 'Path=/;domain=localhost'
+FAIL __SeCuRe: Non-secure origin: 'Path=/;domain=localhost' assert_equals: `__SeCuRe-prefixtestcookie=0.8867462006902057` in `document.cookie` expected false but got true
 PASS __Secure: Non-secure origin: 'Secure; Path=/;domain=localhost'
+PASS __SeCuRe: Non-secure origin: 'Secure; Path=/;domain=localhost'
 PASS __Secure: Non-secure origin: 'Path=/;MaxAge=10'
+FAIL __SeCuRe: Non-secure origin: 'Path=/;MaxAge=10' assert_equals: `__SeCuRe-prefixtestcookie=0.38454208788099975` in `document.cookie` expected false but got true
 PASS __Secure: Non-secure origin: 'Secure; Path=/;MaxAge=10'
+PASS __SeCuRe: Non-secure origin: 'Secure; Path=/;MaxAge=10'
 PASS __Secure: Non-secure origin: 'Path=/;HttpOnly'
+PASS __SeCuRe: Non-secure origin: 'Path=/;HttpOnly'
 PASS __Secure: Non-secure origin: 'Secure; Path=/;HttpOnly'
+PASS __SeCuRe: Non-secure origin: 'Secure; Path=/;HttpOnly'
 PASS __Host: Non-secure origin: 'Path=/; '
+FAIL __HoSt: Non-secure origin: 'Path=/; ' assert_equals: `__HoSt-prefixtestcookie=0.5135088255724102` in `document.cookie` expected false but got true
 PASS __Host: Non-secure origin: 'Secure; Path=/; '
+PASS __HoSt: Non-secure origin: 'Secure; Path=/; '
 PASS __Host: Non-secure origin: 'Path=/; domain=localhost'
+FAIL __HoSt: Non-secure origin: 'Path=/; domain=localhost' assert_equals: `__HoSt-prefixtestcookie=0.012086452101628065` in `document.cookie` expected false but got true
 PASS __Host: Non-secure origin: 'Secure; Path=/; domain=localhost'
+PASS __HoSt: Non-secure origin: 'Secure; Path=/; domain=localhost'
 PASS __Host: Non-secure origin: 'Path=/; MaxAge=10'
+FAIL __HoSt: Non-secure origin: 'Path=/; MaxAge=10' assert_equals: `__HoSt-prefixtestcookie=0.9115626420460605` in `document.cookie` expected false but got true
 PASS __Host: Non-secure origin: 'Secure; Path=/; MaxAge=10'
+PASS __HoSt: Non-secure origin: 'Secure; Path=/; MaxAge=10'
 PASS __Host: Non-secure origin: 'Path=/; HttpOnly'
+PASS __HoSt: Non-secure origin: 'Path=/; HttpOnly'
 PASS __Host: Non-secure origin: 'Secure; Path=/; HttpOnly'
+PASS __HoSt: Non-secure origin: 'Secure; Path=/; HttpOnly'
 PASS __Host: Non-secure origin: 'Path=/cookies/resources/list.py;Secure'
 

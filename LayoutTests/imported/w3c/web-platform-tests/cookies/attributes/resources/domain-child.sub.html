@@ -15,7 +15,7 @@
       const path        = "path=/cookies/attributes"
       const port        = "{{ports[http][0]}}";
       const host        = "{{host}}";              // example.org
-      const wwwHost     = "{{hosts[alt][]}}";      // home.example.org
+      const wwwHost     = "{{domains[www]}}";      // home.example.org
       const www1Host    = "{{domains[www1]}}";     // sibling.example.org
       const www2wwwHost = "{{domains[www2.www]}}"; // subdomain.home.example.org
 
