@@ -58,12 +58,15 @@ else:
 
 if sys.version_info >= (3, 6):
     AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
-    AutoInstall.register(Package('typing_extensions', Version(3, 10, 0)))
+    if sys.version_info >= (3, 9):
+        AutoInstall.register(Package('typing_extensions', Version(4, 8, 0)))
+    else:
+        AutoInstall.register(Package('typing_extensions', Version(3, 10, 0)))
 else:
     AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
 
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
-AutoInstall.register(Package('attr', Version(20, 3, 0), pypi_name='attrs'))
+AutoInstall.register(Package('attr', Version(21, 3, 0), pypi_name='attrs'))
 
 if sys.version_info >= (3, 6):
     AutoInstall.register(Package('bs4', Version(4, 12, 0), pypi_name='beautifulsoup4'))
