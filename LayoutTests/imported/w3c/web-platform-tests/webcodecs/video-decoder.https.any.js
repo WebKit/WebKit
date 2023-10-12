@@ -106,12 +106,13 @@ validButUnsupportedConfigs.forEach(entry => {
         });
         let codec = new VideoDecoder(callbacks);
         codec.configure(entry.config);
-        let e = await error;
-        assert_true(e instanceof DOMException);
-        assert_equals(e.name, 'NotSupportedError');
-        assert_equals(codec.state, 'closed', 'state');
-
-        t.done();
+        codec.flush()
+            .then(t.unreached_func('flush succeeded unexpectedly'))
+            .catch(t.step_func(e => {
+              assert_true(e instanceof DOMException);
+              assert_equals(e.name, 'NotSupportedError');
+              assert_equals(codec.state, 'closed', 'state');
+            }));
       },
       'Test that VideoDecoder.configure() doesn\'t support config: ' +
           entry.comment);

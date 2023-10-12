@@ -219,7 +219,14 @@ validButUnsupportedConfigs.forEach(entry => {
         assert_throws_dom('NotSupportedError', () => {
           codec.configure(entry.config);
         });
-        t.done();
+        codec.configure(entry.config);
+        codec.flush()
+            .then(t.unreached_func('flush succeeded unexpectedly'))
+            .catch(t.step_func(e => {
+              assert_true(e instanceof DOMException);
+              assert_equals(e.name, 'NotSupportedError');
+              assert_equals(codec.state, 'closed', 'state');
+            }));
       },
       'Test that AudioEncoder.configure() doesn\'t support config: ' +
           entry.comment);
