@@ -307,11 +307,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writetexture
 
-    auto dataByteSize = dataSize;
-
     const auto& texture = fromAPI(destination.texture);
 
-    if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture)) {
+    if (!validateWriteTexture(destination, dataLayout, size, dataSize, texture)) {
         m_device.generateAValidationError("Validation failure."_s);
         return;
     }
@@ -355,7 +353,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 case WGPUTextureDimension_1D: {
                     auto region = MTLRegionMake1D(destination.origin.x, size.width);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
-                        auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset + layer * bytesPerImage);
+                        auto sourceOffset = static_cast<NSUInteger>(layer * bytesPerImage);
                         NSUInteger destinationSlice = destination.origin.z + layer;
                         [fromAPI(destination.texture).texture()
                             replaceRegion:region
@@ -370,7 +368,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 case WGPUTextureDimension_2D: {
                     auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, size.width, size.height);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
-                        auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset + layer * bytesPerImage);
+                        auto sourceOffset = static_cast<NSUInteger>(layer * bytesPerImage);
                         NSUInteger destinationSlice = destination.origin.z + layer;
                         [fromAPI(destination.texture).texture()
                             replaceRegion:region
@@ -384,12 +382,11 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 }
                 case WGPUTextureDimension_3D: {
                     auto region = MTLRegionMake3D(destination.origin.x, destination.origin.y, destination.origin.z, size.width, size.height, size.depthOrArrayLayers);
-                    auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset);
                     [fromAPI(destination.texture).texture()
                         replaceRegion:region
                         mipmapLevel:destination.mipLevel
                         slice:0
-                        withBytes:static_cast<const char*>(data) + sourceOffset
+                        withBytes:static_cast<const char*>(data)
                         bytesPerRow:bytesPerRow
                         bytesPerImage:bytesPerImage];
                     break;
@@ -409,13 +406,13 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         }
     }
 
-    ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
-    id<MTLBuffer> temporaryBuffer = [m_device.device() newBufferWithBytes:static_cast<const char*>(data) + dataLayout.offset length:static_cast<NSUInteger>(dataByteSize) options:MTLResourceStorageModeShared];
+    id<MTLBuffer> temporaryBuffer = [m_device.device() newBufferWithBytes:static_cast<const char*>(data) length:static_cast<NSUInteger>(dataSize) options:MTLResourceStorageModeShared];
     if (!temporaryBuffer)
         return;
 
+    ensureBlitCommandEncoder();
     auto logicalSize = fromAPI(destination.texture).logicalMiplevelSpecificTextureExtent(destination.mipLevel);
     auto widthForMetal = std::min(size.width, logicalSize.width);
     auto heightForMetal = std::min(size.height, logicalSize.height);

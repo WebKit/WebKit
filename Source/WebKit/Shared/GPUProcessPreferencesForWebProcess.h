@@ -33,6 +33,7 @@ struct GPUProcessPreferencesForWebProcess {
     bool isWebGLEnabled { false };
     bool isWebGPUEnabled { false };
     bool isDOMRenderingEnabled { false };
+    bool allowTestOnlyIPC { false };
 
     friend bool operator==(const GPUProcessPreferencesForWebProcess&, const GPUProcessPreferencesForWebProcess&) = default;
 };

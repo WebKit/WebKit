@@ -1322,8 +1322,9 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
-    m_videoLayerManager->updateVideoFullscreenInlineImage(m_lastImage ? m_lastImage->platformImage() : nullptr);
+    updateLastImage([&] {
+        m_videoLayerManager->updateVideoFullscreenInlineImage(m_lastImage ? m_lastImage->platformImage() : nullptr);
+    });
 }
 
 RetainPtr<PlatformLayer> MediaPlayerPrivateAVFoundationObjC::createVideoFullscreenLayer()
@@ -1333,11 +1334,15 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateAVFoundationObjC::createVideoFullscre
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
 {
+    auto completion = [&] {
+        m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
+        updateVideoLayerGravity(ShouldAnimate::Yes);
+        updateDisableExternalPlayback();
+    };
     if (videoFullscreenLayer)
-        updateLastImage(UpdateType::UpdateSynchronously);
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
-    updateVideoLayerGravity(ShouldAnimate::Yes);
-    updateDisableExternalPlayback();
+        updateLastImage(WTFMove(completion));
+    else
+        completion();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame)
@@ -2731,23 +2736,35 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
     return m_videoOutput->hasImageForTime(PAL::toMediaTime([m_avPlayerItem currentTime]));
 }
 
-void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
+void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateCompletion&& completion)
 {
-    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
+    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData) {
+        completion();
         return;
+    }
 
     auto* firstEnabledVideoTrack = firstEnabledVisibleTrack();
-    if (!firstEnabledVideoTrack)
+    if (!firstEnabledVideoTrack) {
+        completion();
         return;
+    }
 
-    if (type == UpdateType::UpdateSynchronously && !m_lastImage && !videoOutputHasAvailableFrame())
-        waitForVideoOutputMediaDataWillChange();
+    if (!m_lastImage && !videoOutputHasAvailableFrame()) {
+        if (waitForVideoOutputMediaDataWillChange() == UpdateResult::ObjectDestroyed) {
+            // NOTE: Do not call the completion handler here, as the `this` pointer is now invalid.
+            // This will cause an ASSERT that the completion handler was not called before destruction.
+            // This is intentional; this is a ASSERT-able behavior, and should not occur.
+            return;
+        }
+    }
 
     // Calls to copyPixelBufferForItemTime:itemTimeForDisplay: may return nil if the pixel buffer
     // for the requested time has already been retrieved. In this case, the last valid image (if any)
     // should be displayed.
-    if (!updateLastPixelBuffer() && (m_lastImage || !m_lastPixelBuffer))
+    if (!updateLastPixelBuffer() && (m_lastImage || !m_lastPixelBuffer)) {
+        completion();
         return;
+    }
 
     if (!m_pixelBufferConformer) {
         NSDictionary *attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
@@ -2759,24 +2776,26 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
     m_lastImage = NativeImage::create(m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get()));
 
     INFO_LOG(LOGIDENTIFIER, "creating buffer took ", (MonotonicTime::now() - start).seconds());
+
+    completion();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& context, const FloatRect& outputRect)
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
-    if (!m_lastImage)
-        return;
+    updateLastImage([&, logIdentifier = LOGIDENTIFIER] {
+        if (!m_lastImage)
+            return;
 
-    INFO_LOG(LOGIDENTIFIER);
+        INFO_LOG(logIdentifier);
 
-    FloatRect imageRect { FloatPoint::zero(), m_lastImage->size() };
-    context.drawNativeImage(Ref { *m_lastImage }, imageRect.size(), outputRect, imageRect);
+        FloatRect imageRect { FloatPoint::zero(), m_lastImage->size() };
+        context.drawNativeImage(*m_lastImage, imageRect.size(), outputRect, imageRect);
 
-    // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
-    // video frame, destroy it now that it is no longer needed.
-    if (m_imageGenerator)
-        destroyImageGenerator();
-
+        // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
+        // video frame, destroy it now that it is no longer needed.
+        if (m_imageGenerator)
+            destroyImageGenerator();
+    });
 }
 
 RefPtr<VideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime()
@@ -2795,23 +2814,27 @@ RefPtr<VideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime(
 
 RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
-    return m_lastImage;
+    RefPtr<NativeImage> returnValue = nullptr;
+    updateLastImage([&] {
+        returnValue = m_lastImage;
+    });
+    return returnValue;
 }
 
 DestinationColorSpace MediaPlayerPrivateAVFoundationObjC::colorSpace()
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
-    if (!m_lastPixelBuffer)
-        return DestinationColorSpace::SRGB();
-
-    return DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get()));
+    DestinationColorSpace colorSpace = DestinationColorSpace::SRGB();
+    updateLastImage([&] {
+        if (m_lastPixelBuffer)
+            colorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get()));
+    });
+    return colorSpace;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
+auto MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange() -> UpdateResult
 {
     if (m_waitForVideoOutputMediaDataWillChangeTimedOut)
-        return;
+        return UpdateResult::Failed;
 
     // Wait for 1 second.
     MonotonicTime start = MonotonicTime::now();
@@ -2819,8 +2842,8 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
     std::optional<RunLoop::Timer> timeoutTimer;
 
     if (!m_runLoopNestingLevel) {
-        m_waitForVideoOutputMediaDataWillChangeObserver = WTF::makeUnique<Observer<void()>>([this, logIdentifier = LOGIDENTIFIER] () mutable {
-            if (m_runLoopNestingLevel)
+        m_waitForVideoOutputMediaDataWillChangeObserver = WTF::makeUnique<Observer<void()>>([weakThis = WeakPtr { this }] () mutable {
+            if (weakThis && weakThis->m_runLoopNestingLevel)
                 RunLoop::main().stop();
         });
         m_videoOutput->addCurrentImageChangedObserver(*m_waitForVideoOutputMediaDataWillChangeObserver);
@@ -2831,21 +2854,28 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
         timeoutTimer->startOneShot(1_s);
     }
 
+    auto weakThis = WeakPtr { this };
     ++m_runLoopNestingLevel;
     RunLoop::run();
+    if (!weakThis)
+        return UpdateResult::ObjectDestroyed;
+
     --m_runLoopNestingLevel;
 
     if (m_runLoopNestingLevel) {
         RunLoop::main().stop();
-        return;
+        return UpdateResult::Failed;
     }
 
     bool satisfied = timeoutTimer->isActive();
     if (!satisfied) {
         ERROR_LOG(LOGIDENTIFIER, "timed out");
         m_waitForVideoOutputMediaDataWillChangeTimedOut = true;
-    } else
-        INFO_LOG(LOGIDENTIFIER, "waiting for videoOutput took ", (MonotonicTime::now() - start).seconds());
+        return UpdateResult::TimedOut;
+    }
+
+    INFO_LOG(LOGIDENTIFIER, "waiting for videoOutput took ", (MonotonicTime::now() - start).seconds());
+    return UpdateResult::Succeeded;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange()

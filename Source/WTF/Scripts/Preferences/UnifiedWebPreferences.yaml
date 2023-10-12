@@ -6533,6 +6533,19 @@ SuppressesIncrementalRendering:
     WebCore:
       default: false
 
+SwitchControlEnabled:
+  type: bool
+  status: unstable
+  humanReadableName: "HTML switch control"
+  humanReadableDescription: "Enable HTML switch control"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SyntheticEditingCommandsEnabled:
   type: bool
   status: mature

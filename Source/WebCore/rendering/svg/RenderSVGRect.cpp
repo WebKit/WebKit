@@ -55,6 +55,7 @@ void RenderSVGRect::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
+    m_shapeType = ShapeType::Empty;
     m_fillBoundingBox = FloatRect();
     m_innerStrokeRect = FloatRect();
     m_outerStrokeRect = FloatRect();
@@ -67,7 +68,12 @@ void RenderSVGRect::updateShapeFromElement()
     if (boundingBoxSize.isEmpty())
         return;
 
-    if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0 || hasNonScalingStroke()) {
+    if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0)
+        m_shapeType = ShapeType::RoundedRectangle;
+    else
+        m_shapeType = ShapeType::Rectangle;
+
+    if (m_shapeType != ShapeType::Rectangle || hasNonScalingStroke()) {
         // Fall back to RenderSVGShape
         RenderSVGShape::updateShapeFromElement();
         return;
@@ -137,8 +143,8 @@ bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, PointC
 {
     // The optimized code below does not support non-smooth strokes so we need
     // to fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (!hasSmoothStroke() && !hasPath())
-        RenderSVGShape::updateShapeFromElement();
+    if (!hasSmoothStroke())
+        ensurePath();
 
     if (hasPath())
         return RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);

@@ -548,11 +548,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         fetchOptions.add(WebKit::WebsiteDataFetchOption::ComputeSizes);
 
     _websiteDataStore->fetchData(WebKit::toWebsiteDataTypes(dataTypes), fetchOptions, [completionHandlerCopy = WTFMove(completionHandlerCopy)](auto websiteDataRecords) {
-        Vector<RefPtr<API::Object>> elements;
-        elements.reserveInitialCapacity(websiteDataRecords.size());
-
-        for (auto& websiteDataRecord : websiteDataRecords)
-            elements.uncheckedAppend(API::WebsiteDataRecord::create(WTFMove(websiteDataRecord)));
+        auto elements = WTF::map(websiteDataRecords, [](auto& websiteDataRecord) -> RefPtr<API::Object> {
+            return API::WebsiteDataRecord::create(WTFMove(websiteDataRecord));
+        });
 
         completionHandlerCopy(wrapper(API::Array::create(WTFMove(elements))));
     });

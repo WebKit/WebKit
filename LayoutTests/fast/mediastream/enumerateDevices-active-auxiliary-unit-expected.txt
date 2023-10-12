@@ -1,3 +1,0 @@
-
-PASS Validate auxiliary unit activation
-

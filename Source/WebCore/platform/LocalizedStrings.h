@@ -310,6 +310,7 @@ namespace WebCore {
     String validationMessageValueMissingForMultipleFileText();
     String validationMessageValueMissingForRadioText();
     String validationMessageValueMissingForSelectText();
+    String validationMessageValueMissingForSwitchText();
     String validationMessageTypeMismatchText();
     String validationMessageTypeMismatchForEmailText();
     String validationMessageTypeMismatchForMultipleEmailText();

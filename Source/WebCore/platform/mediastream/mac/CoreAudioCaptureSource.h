@@ -152,8 +152,8 @@ private:
 
     // AudioCaptureFactory
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) override;
-    CaptureDeviceManager& audioCaptureDeviceManager() override;
-    const Vector<CaptureDevice>& speakerDevices() const override;
+    CaptureDeviceManager& audioCaptureDeviceManager() final;
+    const Vector<CaptureDevice>& speakerDevices() const final;
 
     void beginInterruption();
     void endInterruption();

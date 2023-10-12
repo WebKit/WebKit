@@ -420,19 +420,27 @@ void RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
                 { 11.5f / size.width, 2.5f / size.height }
             };
 
-            line.uncheckedAppend(CGPointMake(clip.x() + width * pathRatios[0].x, clip.y() + height * pathRatios[0].y));
-            line.uncheckedAppend(CGPointMake(clip.x() + width * pathRatios[1].x, clip.y() + height * pathRatios[1].y));
-            line.uncheckedAppend(CGPointMake(clip.x() + width * pathRatios[2].x, clip.y() + height * pathRatios[2].y));
+            line.appendList({
+                CGPointMake(clip.x() + width * pathRatios[0].x, clip.y() + height * pathRatios[0].y),
+                CGPointMake(clip.x() + width * pathRatios[1].x, clip.y() + height * pathRatios[1].y),
+                CGPointMake(clip.x() + width * pathRatios[2].x, clip.y() + height * pathRatios[2].y)
+            });
 
-            shadow.uncheckedAppend(shortened(line[0], line[1], lineWidth / 4.0f));
-            shadow.uncheckedAppend(line[1]);
-            shadow.uncheckedAppend(shortened(line[2], line[1], lineWidth / 4.0f));
+            shadow.appendList({
+                shortened(line[0], line[1], lineWidth / 4.0f),
+                line[1],
+                shortened(line[2], line[1], lineWidth / 4.0f)
+            });
         } else {
-            line.uncheckedAppend(CGPointMake(clip.x() + 3.5, clip.center().y()));
-            line.uncheckedAppend(CGPointMake(clip.maxX() - 3.5, clip.center().y()));
+            line.appendList({
+                CGPointMake(clip.x() + 3.5, clip.center().y()),
+                CGPointMake(clip.maxX() - 3.5, clip.center().y())
+            });
 
-            shadow.uncheckedAppend(shortened(line[0], line[1], lineWidth / 4.0f));
-            shadow.uncheckedAppend(shortened(line[1], line[0], lineWidth / 4.0f));
+            shadow.appendList({
+                shortened(line[0], line[1], lineWidth / 4.0f),
+                shortened(line[1], line[0], lineWidth / 4.0f)
+            });
         }
 
         lineWidth = std::max<float>(lineWidth, 1);

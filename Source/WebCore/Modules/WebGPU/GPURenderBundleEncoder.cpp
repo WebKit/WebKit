@@ -95,6 +95,10 @@ void GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& 
     GPUSize64 dynamicOffsetsDataStart,
     GPUSize32 dynamicOffsetsDataLength)
 {
+    auto offset = checkedSum<uint64_t>(dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
+        return;
+
     m_backing->setBindGroup(index, bindGroup.backing(), dynamicOffsetsData.data(), dynamicOffsetsData.length(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
 }
 

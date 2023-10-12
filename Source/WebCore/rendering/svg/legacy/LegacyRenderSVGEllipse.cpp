@@ -49,6 +49,7 @@ void LegacyRenderSVGEllipse::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
+    m_shapeType = ShapeType::Empty;
     m_fillBoundingBox = FloatRect();
     m_strokeBoundingBox = FloatRect();
     m_center = FloatPoint();
@@ -123,8 +124,8 @@ bool LegacyRenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& poin
 {
     // The optimized code below does not support non-smooth strokes so we need to
     // fall back to LegacyRenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (!hasSmoothStroke() && !hasPath())
-        LegacyRenderSVGShape::updateShapeFromElement();
+    if (!hasSmoothStroke())
+        ensurePath();
 
     if (hasPath())
         return LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);

@@ -568,7 +568,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
                 auto subframeMainResource = subframeArchive->mainResource();
                 auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
                 if (!subframeMainResourceURL.isEmpty()) {
-                    if (subframeMainResourceURL.isAboutSrcDoc() || subframeMainResourceURL.isAboutBlank())
+                    if (subframeMainResourceURL.isAboutSrcDoc() || subframeMainResourceURL.isAboutBlank() || subframeMainResourceURL.protocolIsData())
                         uniqueSubresources.add(childFrame->frameID().toString(), subframeMainResource->fileName());
                     else
                         uniqueSubresources.add(subframeMainResourceURL.string(), subframeMainResource->fileName());
@@ -587,6 +587,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
 
             for (auto& subresourceURL : subresourceURLs) {
                 if (uniqueSubresources.contains(subresourceURL.string()))
+                    continue;
+
+                // WebArchive is created for saving, and we don't need to store resources for data URLs.
+                if (!subresourcesDirectoryName.isNull() && subresourceURL.protocolIsData())
                     continue;
 
                 auto addResult = uniqueSubresources.add(subresourceURL.string(), emptyString());
@@ -639,11 +643,11 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
         if (responseURL.isEmpty())
             return nullptr;
 
-        auto fileNameWithExtension = frame.isMainFrame() ? mainFrameFileName : makeString(subresourcesDirectoryName, "/frame_", frame.frameID().toString());
-        auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(mainResource->mimeType());
-        if (!fileNameWithExtension.endsWith(extension))
-            fileNameWithExtension = makeString(fileNameWithExtension, ".", extension);
-        uniqueSubresources.add(responseURL.string(), fileNameWithExtension);
+        auto extension = MIMETypeRegistry::preferredExtensionForMIMEType("text/html"_s);
+        if (!extension.isEmpty())
+            extension = makeString(".", extension);
+        auto mainFrameFileNameWithExtension = mainFrameFileName.endsWith(extension) ? mainFrameFileName : makeString(mainFrameFileName, extension);
+        auto fileNameWithExtension = frame.isMainFrame() ? mainFrameFileNameWithExtension : makeString(subresourcesDirectoryName, "/frame_"_s, frame.frameID().toString(), extension);
         String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::No, nullptr, std::nullopt, WTFMove(uniqueSubresources));
         mainResource = ArchiveResource::create(utf8Buffer(updatedMarkupString), responseURL, response.mimeType(), "UTF-8"_s, frame.tree().uniqueName(), ResourceResponse(), fileNameWithExtension);
     }

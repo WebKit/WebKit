@@ -132,10 +132,6 @@ void UserMediaPermissionRequestManagerProxy::invalidatePendingRequests()
         request->invalidate();
 
     m_pendingDeviceRequests.clear();
-
-#if ENABLE(MEDIA_STREAM)
-    RealtimeMediaSourceCenter::singleton().audioCaptureFactory().removeExtensiveObserver(*this);
-#endif
 }
 
 void UserMediaPermissionRequestManagerProxy::stopCapture()
@@ -226,9 +222,6 @@ void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequ
     }
 
 #if ENABLE(MEDIA_STREAM)
-    if (m_pregrantedRequests.isEmpty() && request.userRequest().audioConstraints.isValid)
-        RealtimeMediaSourceCenter::singleton().audioCaptureFactory().removeExtensiveObserver(*this);
-
     m_page.send(Messages::WebPage::UserMediaAccessWasDenied(request.userMediaID(), toWebCore(reason), invalidConstraint));
 #else
     UNUSED_PARAM(reason);
@@ -341,9 +334,6 @@ void UserMediaPermissionRequestManagerProxy::resetAccess(std::optional<FrameIden
     m_pregrantedRequests.clear();
     m_deniedRequests.clear();
     m_hasFilteredDeviceList = false;
-#if ENABLE(MEDIA_STREAM)
-    RealtimeMediaSourceCenter::singleton().audioCaptureFactory().removeExtensiveObserver(*this);
-#endif
 }
 
 const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(FrameIdentifier frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
@@ -507,9 +497,6 @@ void UserMediaPermissionRequestManagerProxy::processNextUserMediaRequestIfNeeded
 #if ENABLE(MEDIA_STREAM)
 void UserMediaPermissionRequestManagerProxy::startProcessingUserMediaPermissionRequest(Ref<UserMediaPermissionRequestProxy>&& request)
 {
-    if (request->userRequest().audioConstraints.isValid)
-        RealtimeMediaSourceCenter::singleton().audioCaptureFactory().addExtensiveObserver(*this);
-
     m_currentUserMediaRequest = WTFMove(request);
 
     auto& userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();

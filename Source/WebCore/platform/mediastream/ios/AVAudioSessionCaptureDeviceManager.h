@@ -62,14 +62,11 @@ public:
     String preferredAudioSessionDeviceUID() const { return m_preferredAudioDeviceUID; }
     void configurePreferredAudioCaptureDevice();
 
-    bool isActive() const { return m_audioSessionState == AudioSessionState::Active; }
-
 private:
     AVAudioSessionCaptureDeviceManager();
     ~AVAudioSessionCaptureDeviceManager();
 
     void createAudioSession();
-    void activateAudioSession();
     void refreshAudioCaptureDevices();
     Vector<AVAudioSessionCaptureDevice> retrieveAudioSessionCaptureDevices() const;
     void setAudioCaptureDevices(Vector<AVAudioSessionCaptureDevice>&&);
@@ -84,7 +81,6 @@ private:
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
     RetainPtr<AVAudioSession> m_audioSession;
     Ref<WorkQueue> m_dispatchQueue;
-    AudioSessionState m_audioSessionState { AudioSessionState::NotNeeded };
     String m_preferredAudioDeviceUID;
     bool m_recomputeDevices { true };
     mutable RetainPtr<AVAudioSessionPortDescription> m_lastDefaultMicrophone;

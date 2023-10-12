@@ -365,6 +365,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Button;
     if (is<HTMLInputElement>(node())) {
         HTMLInputElement& input = downcast<HTMLInputElement>(*node());
+        if (input.isSwitch())
+            return AccessibilityRole::Switch;
         if (input.isCheckbox())
             return AccessibilityRole::CheckBox;
         if (input.isRadioButton())
@@ -1118,7 +1120,7 @@ bool AccessibilityNodeObject::isFieldset() const
 AccessibilityButtonState AccessibilityNodeObject::checkboxOrRadioValue() const
 {
     if (auto* input = dynamicDowncast<HTMLInputElement>(node()); input && (input->isCheckbox() || input->isRadioButton()))
-        return input->indeterminate() ? AccessibilityButtonState::Mixed : isChecked() ? AccessibilityButtonState::On : AccessibilityButtonState::Off;
+        return input->indeterminate() && !input->isSwitch() ? AccessibilityButtonState::Mixed : isChecked() ? AccessibilityButtonState::On : AccessibilityButtonState::Off;
 
     return AccessibilityObject::checkboxOrRadioValue();
 }

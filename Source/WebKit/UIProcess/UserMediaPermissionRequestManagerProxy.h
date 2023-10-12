@@ -55,11 +55,7 @@ enum class MediaDevicePermissionRequestIdentifierType { };
 using MediaDevicePermissionRequestIdentifier = ObjectIdentifier<MediaDevicePermissionRequestIdentifierType>;
 
 class UserMediaPermissionRequestManagerProxy
-#if ENABLE(MEDIA_STREAM)
-    : public WebCore::AudioCaptureFactory::ExtensiveObserver
-#else
     : public CanMakeWeakPtr<UserMediaPermissionRequestManagerProxy>
-#endif
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif

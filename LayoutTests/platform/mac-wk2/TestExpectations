@@ -2082,7 +2082,7 @@ webkit.org/b/227761 imported/w3c/web-platform-tests/beacon/beacon-cors.https.win
 
 webkit.org/b/261215 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout Failure ]
 
-webkit.org/b/261226 fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Timeout ]
+webkit.org/b/261226 [ Sonoma+ ] fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Pass ] # backing functionality only in Sonoma+
 
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
 [ Monterey+ ] media/media-source/media-source-evict-codedframe-large-currenttime.html [ Pass Failure ]
@@ -2149,8 +2149,6 @@ http/tests/contentextensions/main-resource-redirect-error.html [ Pass Failure ]
 http/tests/contentextensions/block-everything-unless-domain.html [ Pass Failure ] # Switch back to [ Pass Timeout ] when resolved: webkit.org/b/167653
 http/tests/contentextensions/block-everything-unless-domain-iframe.html [ Pass Failure ]
 http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass Failure ]
-
-webkit.org/b/262401 [ Sonoma+ ] fast/canvas/webgl/canvas-zero-size.html [ Pass Crash ]
 
 webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.html [ Pass Crash ]
 
@@ -2222,3 +2220,9 @@ webkit.org/b/262978 [ Sonoma+ ] fast/attachment/attachment-icon-from-file-extens
 [ Sonoma+ ] fast/attachment/mac/attachment-pages.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/177397 [ Sonoma+ Release ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
+
+# webkit.org/b/263027 REGRESSION ( Sonoma ): [ Sonoma wk2 ] 3 tests in webrtc are consistent failure
+[ Sonoma+ Release arm64 ] webrtc/video-replace-track.html [ Failure ]
+[ Sonoma+ Release arm64 ] webrtc/video-stats.html [ Failure ]
+[ Sonoma+ Release arm64 ] webrtc/video.html [ Failure ]
+

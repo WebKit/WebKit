@@ -124,11 +124,15 @@ public:
         ComplexTextRun(const Font&, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr);
         WEBCORE_EXPORT ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font&, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr);
 
-        Vector<FloatSize, 64> m_baseAdvances;
+        using BaseAdvancesVector = Vector<FloatSize, 64>;
+        using GlyphVector = Vector<CGGlyph, 64>;
+        using CoreTextIndicesVector = Vector<unsigned, 64>;
+
+        BaseAdvancesVector m_baseAdvances;
         Vector<FloatPoint, 64> m_glyphOrigins;
-        Vector<CGGlyph, 64> m_glyphs;
+        GlyphVector m_glyphs;
         Vector<unsigned, 64> m_glyphEndOffsets;
-        Vector<unsigned, 64> m_coreTextIndices;
+        CoreTextIndicesVector m_coreTextIndices;
         FloatSize m_initialAdvance;
         const Font& m_font;
         const UChar* m_characters;

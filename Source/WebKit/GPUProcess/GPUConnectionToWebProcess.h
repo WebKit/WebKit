@@ -135,8 +135,6 @@ public:
     bool isWebGPUEnabled() const { return m_preferences.isWebGPUEnabled; }
     bool isWebGLEnabled() const { return m_preferences.isWebGLEnabled; }
 
-    void updatePreferences(const GPUProcessPreferencesForWebProcess& preferences) { m_preferences = preferences; }
-
     using WebCore::NowPlayingManager::Client::weakPtrFactory;
     using WebCore::NowPlayingManager::Client::WeakValueType;
     using WebCore::NowPlayingManager::Client::WeakPtrImplType;
@@ -154,7 +152,7 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
-    bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
+    bool allowTestOnlyIPC() const { return m_preferences.allowTestOnlyIPC; }
 
     Logger& logger();
 
@@ -407,7 +405,6 @@ private:
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
     bool m_isActiveNowPlayingProcess { false };
     const bool m_isLockdownModeEnabled { false };
-    const bool m_allowTestOnlyIPC { false };
 #if ENABLE(MEDIA_SOURCE)
     bool m_mockMediaSourceEnabled { false };
 #endif
@@ -418,7 +415,9 @@ private:
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif
-    GPUProcessPreferencesForWebProcess m_preferences;
+    // GPU preferences don't change for a given WebProcess. Pages that use different GPUProcessPreferences
+    // cannot be in the same WebProcess.
+    const GPUProcessPreferencesForWebProcess m_preferences;
 };
 
 } // namespace WebKit

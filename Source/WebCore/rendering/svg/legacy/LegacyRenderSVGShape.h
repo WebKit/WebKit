@@ -88,6 +88,8 @@ public:
 protected:
     void element() const = delete;
 
+    void ensurePath();
+
     virtual void updateShapeFromElement();
     virtual bool isEmpty() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace);
@@ -128,18 +130,15 @@ private:
     void updateRepaintBoundingBox();
 
     bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
-
-    bool shouldGenerateMarkerPositions() const;
-    FloatRect markerRect(float strokeWidth) const;
     
     std::unique_ptr<Path> createPath() const;
-    void processMarkerPositions();
 
     void fillShape(const RenderStyle&, GraphicsContext&);
     void strokeShapeInternal(const RenderStyle&, GraphicsContext&);
     void strokeShape(const RenderStyle&, GraphicsContext&);
     void fillStrokeMarkers(PaintInfo&);
-    void drawMarkers(PaintInfo&);
+
+    virtual void drawMarkers(PaintInfo&) { }
 
 private:
     FloatRect m_repaintBoundingBox;
@@ -153,7 +152,6 @@ protected:
 private:
     AffineTransform m_localTransform;
     std::unique_ptr<Path> m_path;
-    Vector<MarkerPosition> m_markerPositions;
 };
 
 } // namespace WebCore

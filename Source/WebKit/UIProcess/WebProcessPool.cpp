@@ -513,7 +513,6 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 #endif
 
     parameters.isLockdownModeEnabled = webProcessProxy.lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
-    parameters.allowTestOnlyIPC = webProcessProxy.allowTestOnlyIPC();
 
     ensureGPUProcess().createGPUProcessConnection(webProcessProxy, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
@@ -1049,17 +1048,17 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
     removeProcessFromOriginCacheSet(process);
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, const RegistrableDomain& registrableDomain, WebProcessProxy::LockdownMode lockdownMode)
+Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, const RegistrableDomain& registrableDomain, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {
     if (!registrableDomain.isEmpty()) {
-        if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore, lockdownMode)) {
+        if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore, lockdownMode, pageConfiguration)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
-        if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore, lockdownMode)) {
+        if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore, lockdownMode, pageConfiguration)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
@@ -1124,7 +1123,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     RefPtr<WebProcessProxy> process;
     auto lockdownMode = pageConfiguration->lockdownModeEnabled() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
     auto* relatedPage = pageConfiguration->relatedPage();
-    if (relatedPage && !relatedPage->isClosed()) {
+    if (relatedPage && !relatedPage->isClosed() && relatedPage->hasSameGPUProcessPreferencesAs(pageConfiguration)) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->ensureRunningProcess();
         // We do not support several WebsiteDataStores sharing a single process.
@@ -1141,7 +1140,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         }
     } else {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: Not delaying WebProcess launch");
-        process = processForRegistrableDomain(*pageConfiguration->websiteDataStore(), { }, lockdownMode);
+        process = processForRegistrableDomain(*pageConfiguration->websiteDataStore(), { }, lockdownMode, pageConfiguration);
     }
 
     RefPtr<WebUserContentControllerProxy> userContentController = pageConfiguration->userContentController();
@@ -1922,8 +1921,8 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     auto& targetURL = navigation.currentRequest().url();
     auto targetRegistrableDomain = WebCore::RegistrableDomain { targetURL };
 
-    auto createNewProcess = [this, protectedThis = Ref { *this }, targetRegistrableDomain, dataStore, lockdownMode] () -> Ref<WebProcessProxy> {
-        return processForRegistrableDomain(dataStore, targetRegistrableDomain, lockdownMode);
+    auto createNewProcess = [&] () -> Ref<WebProcessProxy> {
+        return processForRegistrableDomain(dataStore, targetRegistrableDomain, lockdownMode, page.configuration());
     };
 
     if (usesSingleWebProcess())
@@ -1961,7 +1960,7 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
             return { suspendedPage->process(), suspendedPage, "Using target back/forward item's process and suspended page"_s };
 
         if (auto process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
-            if (process->state() != WebProcessProxy::State::Terminated) {
+            if (process->state() != WebProcessProxy::State::Terminated && process->hasSameGPUProcessPreferencesAs(page.configuration())) {
                 // Make sure we remove the process from the cache if it is in there since we're about to use it.
                 if (process->isInProcessCache()) {
                     webProcessCache().removeProcess(*process, WebProcessCache::ShouldShutDownProcess::No);

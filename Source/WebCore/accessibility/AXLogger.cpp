@@ -79,13 +79,18 @@ AXLogger::AXLogger(const String& methodName)
         if (!m_methodName.isEmpty())
             LOG_WITH_STREAM(Accessibility, stream << m_methodName << " {");
     }
+    m_startTime = MonotonicTime::now();
 }
 
 AXLogger::~AXLogger()
 {
-    if (shouldLog()) {
-        if (!m_methodName.isEmpty())
-            LOG_WITH_STREAM(Accessibility, stream << "} " << m_methodName);
+    static const Seconds ExecutionTimeThreshold { 1_s };
+    auto elapsedTime = MonotonicTime::now() - m_startTime;
+    if (shouldLog() && !m_methodName.isEmpty()) {
+        if (elapsedTime > ExecutionTimeThreshold)
+            LOG_WITH_STREAM(Accessibility, stream << "} " << m_methodName << " exceeded ExecutionTimeThreshold " << elapsedTime);
+        else
+            LOG_WITH_STREAM(Accessibility, stream << "} " << m_methodName << " took " << elapsedTime);
     }
 }
 

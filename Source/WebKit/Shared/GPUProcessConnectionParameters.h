@@ -41,7 +41,6 @@ struct GPUProcessConnectionParameters {
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif
-    bool allowTestOnlyIPC { false };
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> presentingApplicationAuditToken;
 #endif

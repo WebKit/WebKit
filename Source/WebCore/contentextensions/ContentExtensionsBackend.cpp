@@ -165,15 +165,15 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
     const String& urlString = resourceLoadInfo.resourceURL.string();
     ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
 
-    Vector<ActionsFromContentRuleList> actionsVector;
-    actionsVector.reserveInitialCapacity(m_contentExtensions.size());
     ASSERT(!(resourceLoadInfo.getResourceFlags() & ActionConditionMask));
     const ResourceFlags flags = resourceLoadInfo.getResourceFlags() | ActionConditionMask;
-    for (auto& [identifier, contentExtension] : m_contentExtensions) {
+    Vector<ActionsFromContentRuleList> actionsVector = WTF::compactMap(m_contentExtensions, [&](auto& entry) -> std::optional<ActionsFromContentRuleList> {
+        auto& [identifier, contentExtension] = entry;
         if (ruleListFilter(identifier) == ShouldSkipRuleList::Yes)
-            continue;
-        actionsVector.uncheckedAppend(actionsFromContentRuleList(contentExtension.get(), urlString, resourceLoadInfo, flags));
-    }
+            return std::nullopt;
+        return actionsFromContentRuleList(contentExtension.get(), urlString, resourceLoadInfo, flags);
+    });
+
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime addedTimeEnd = MonotonicTime::now();
     dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart).microseconds(), resourceLoadInfo.resourceURL.string().utf8().data());

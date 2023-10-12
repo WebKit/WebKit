@@ -48,12 +48,3 @@ void WKUserMediaPermissionCheckSetUserMediaAccessInfo(WKUserMediaPermissionCheck
 {
     toImpl(userMediaPermissionRequestRef)->setUserMediaAccessInfo(allowed);
 }
-
-bool WKUserMediaIsEnumeratingAudioUnitActive()
-{
-#if PLATFORM(IOS_FAMILY) && ENABLE(MEDIA_STREAM)
-    return WebCore::AVAudioSessionCaptureDeviceManager::singleton().isActive();
-#else
-    return false;
-#endif
-}

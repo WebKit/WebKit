@@ -174,6 +174,10 @@ public:
     WebProcessPool* processPoolIfExists() const;
     WebProcessPool& processPool() const;
 
+#if ENABLE(GPU_PROCESS)
+    const std::optional<GPUProcessPreferencesForWebProcess>& preferencesForGPUProcess() const { return m_preferencesForGPUProcess; }
+#endif
+
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
     WebCore::RegistrableDomain registrableDomain() const { return valueOrDefault(m_registrableDomain); }
     const std::optional<WebCore::RegistrableDomain>& optionalRegistrableDomain() const { return m_registrableDomain; }
@@ -391,6 +395,8 @@ public:
     void sendAudioComponentRegistrations();
 #endif
 
+    bool hasSameGPUProcessPreferencesAs(const API::PageConfiguration&) const;
+
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     void enableRemoteInspectorIfNeeded();
 #endif
@@ -532,6 +538,8 @@ private:
     static WebPageProxyMap& globalPageMap();
     static Vector<RefPtr<WebPageProxy>> globalPages();
 
+    void initializePreferencesForGPUProcess(const WebPageProxy&);
+
     void reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier);
     bool isAssociatedWithPage(WebPageProxyIdentifier) const;
 
@@ -564,11 +572,6 @@ private:
     void updateBackgroundResponsivenessTimer();
 
     void updateBlobRegistryPartitioningState() const;
-
-#if ENABLE(GPU_PROCESS)
-    GPUProcessPreferencesForWebProcess computePreferencesForGPUProcess() const;
-#endif
-    void updatePreferencesForGPUProcess();
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
@@ -771,7 +774,7 @@ private:
 #endif
     mutable String m_environmentIdentifier;
 #if ENABLE(GPU_PROCESS)
-    std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
+    mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
 #endif
 };
 

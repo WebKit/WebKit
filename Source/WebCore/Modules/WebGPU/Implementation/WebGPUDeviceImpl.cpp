@@ -319,16 +319,14 @@ static auto convertToBacking(const ComputePipelineDescriptor& descriptor, Conver
         return constant.key.utf8();
     });
 
-    Vector<WGPUConstantEntry> backingConstantEntries;
-    backingConstantEntries.reserveInitialCapacity(descriptor.compute.constants.size());
-    for (size_t i = 0; i < descriptor.compute.constants.size(); ++i) {
+    Vector<WGPUConstantEntry> backingConstantEntries(descriptor.compute.constants.size(), [&](size_t i) {
         const auto& constant = descriptor.compute.constants[i];
-        backingConstantEntries.uncheckedAppend(WGPUConstantEntry {
+        return WGPUConstantEntry {
             nullptr,
             constantNames[i].data(),
             constant.value
-        });
-    }
+        };
+    });
 
     WGPUComputePipelineDescriptor backingDescriptor {
         nullptr,
@@ -363,16 +361,14 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
         return constant.key.utf8();
     });
 
-    Vector<WGPUConstantEntry> vertexConstantEntries;
-    vertexConstantEntries.reserveInitialCapacity(descriptor.vertex.constants.size());
-    for (size_t i = 0; i < descriptor.vertex.constants.size(); ++i) {
+    Vector<WGPUConstantEntry> vertexConstantEntries(descriptor.vertex.constants.size(), [&](size_t i) {
         const auto& constant = descriptor.vertex.constants[i];
-        vertexConstantEntries.uncheckedAppend(WGPUConstantEntry {
+        return WGPUConstantEntry {
             nullptr,
             vertexConstantNames[i].data(),
-            constant.value,
-        });
-    }
+            constant.value
+        };
+    });
 
     auto backingAttributes = descriptor.vertex.buffers.map([&convertToBackingContext](const auto& buffer) -> Vector<WGPUVertexAttribute> {
         if (buffer) {
@@ -387,17 +383,15 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
             return { };
     });
 
-    Vector<WGPUVertexBufferLayout> backingBuffers;
-    backingBuffers.reserveInitialCapacity(descriptor.vertex.buffers.size());
-    for (size_t i = 0; i < descriptor.vertex.buffers.size(); ++i) {
+    Vector<WGPUVertexBufferLayout> backingBuffers(descriptor.vertex.buffers.size(), [&](size_t i) {
         const auto& buffer = descriptor.vertex.buffers[i];
-        backingBuffers.uncheckedAppend(WGPUVertexBufferLayout {
+        return WGPUVertexBufferLayout {
             buffer ? buffer->arrayStride : WGPU_COPY_STRIDE_UNDEFINED,
             buffer ? convertToBackingContext.convertToBacking(buffer->stepMode) : WGPUVertexStepMode_Vertex,
             static_cast<uint32_t>(backingAttributes[i].size()),
             backingAttributes[i].data(),
-        });
-    }
+        };
+    });
 
     WGPUDepthStencilState depthStencilState {
         nullptr,
@@ -432,15 +426,14 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
 
     Vector<WGPUConstantEntry> fragmentConstantEntries;
     if (descriptor.fragment) {
-        fragmentConstantEntries.reserveInitialCapacity(descriptor.fragment->constants.size());
-        for (size_t i = 0; i < descriptor.fragment->constants.size(); ++i) {
+        fragmentConstantEntries = Vector<WGPUConstantEntry>(descriptor.fragment->constants.size(), [&](size_t i) {
             const auto& constant = descriptor.fragment->constants[i];
-            fragmentConstantEntries.uncheckedAppend(WGPUConstantEntry {
+            return WGPUConstantEntry {
                 nullptr,
                 fragmentConstantNames[i].data(),
                 constant.value,
-            });
-        }
+            };
+        });
     }
 
     Vector<std::optional<WGPUBlendState>> blendStates;

@@ -49,8 +49,25 @@ public:
     void scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&&) override;
     void submitFrame(WebPageProxy&) override;
 
+protected:
+    void currentSessionHasEnded();
+
 private:
     XRDeviceIdentifier m_deviceIdentifier = XRDeviceIdentifier::generate();
+
+    struct Idle {
+    };
+    struct Active {
+        WebCore::PageIdentifier pageIdentifier;
+        WeakPtr<PlatformXRCoordinator::SessionEventClient> sessionEventClient;
+        PlatformXR::Device::RequestFrameCallback onFrameUpdate;
+    };
+    struct Terminating {
+        WeakPtr<PlatformXRCoordinator::SessionEventClient> sessionEventClient;
+    };
+
+    using State = std::variant<Idle, Active, Terminating>;
+    State m_state;
 };
 
 } // namespace WebKit

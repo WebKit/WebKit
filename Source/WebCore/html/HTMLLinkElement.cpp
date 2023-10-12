@@ -156,8 +156,6 @@ void HTMLLinkElement::setDisabledState(bool disabled)
         process();
     else {
         ASSERT(m_styleScope);
-        if (m_sheet)
-            m_sheet->clearOwnerNode();
         m_styleScope->didChangeActiveStyleSheetCandidates();
     }
 }

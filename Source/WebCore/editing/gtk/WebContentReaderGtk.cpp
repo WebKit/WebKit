@@ -73,7 +73,7 @@ bool WebContentReader::readPlainText(const String& text)
 
 bool WebContentReader::readImage(Ref<FragmentedSharedBuffer>&& buffer, const String& type, PresentationSize preferredPresentationSize)
 {
-    ASSERT(frame()->document());
+    ASSERT(frame().document());
     Ref document = *frame().document();
     addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(document.ptr(), buffer->extractData(), type)), preferredPresentationSize));
 

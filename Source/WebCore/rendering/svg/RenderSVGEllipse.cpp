@@ -50,6 +50,7 @@ void RenderSVGEllipse::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
+    m_shapeType = ShapeType::Empty;
     m_fillBoundingBox = FloatRect();
     m_strokeBoundingBox = FloatRect();
     m_center = FloatPoint();
@@ -61,6 +62,11 @@ void RenderSVGEllipse::updateShapeFromElement()
     // Spec: "A negative value is illegal. A value of zero disables rendering of the element."
     if (m_radii.isEmpty())
         return;
+
+    if (m_radii.width() == m_radii.height())
+        m_shapeType = ShapeType::Circle;
+    else
+        m_shapeType = ShapeType::Ellipse;
 
     if (hasNonScalingStroke()) {
         // Fallback to RenderSVGShape if shape has a non-scaling stroke.
@@ -119,8 +125,8 @@ bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, Poi
 {
     // The optimized code below does not support non-smooth strokes so we need to
     // fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (!hasSmoothStroke() && !hasPath())
-        RenderSVGShape::updateShapeFromElement();
+    if (!hasSmoothStroke())
+        ensurePath();
 
     if (hasPath())
         return RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);

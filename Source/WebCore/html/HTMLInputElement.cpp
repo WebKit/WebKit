@@ -1853,6 +1853,11 @@ bool HTMLInputElement::isCheckbox() const
     return m_inputType->isCheckbox();
 }
 
+bool HTMLInputElement::isSwitch() const
+{
+    return document().settings().switchControlEnabled() && isCheckbox() && hasAttributeWithoutSynchronization(switchAttr);
+}
+
 bool HTMLInputElement::isRangeControl() const
 {
     return m_inputType->isRangeControl();

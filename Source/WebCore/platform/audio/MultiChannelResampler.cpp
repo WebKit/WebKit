@@ -46,11 +46,12 @@ MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned number
     // As an optimization, we will use the buffer passed to provideInputForChannel() as channel memory for the first channel so we
     // only need to allocate memory if there is more than one channel.
     if (numberOfChannels > 1) {
-        m_channelsMemory.reserveInitialCapacity(numberOfChannels - 1);
-        for (unsigned channelIndex = 1; channelIndex < numberOfChannels; ++channelIndex) {
-            m_channelsMemory.uncheckedAppend(makeUnique<AudioFloatArray>(requestFrames));
-            m_multiChannelBus->setChannelMemory(channelIndex, m_channelsMemory.last()->data(), requestFrames);
-        }
+        m_channelsMemory = Vector<std::unique_ptr<AudioFloatArray>>(numberOfChannels - 1, [&](size_t i) {
+            size_t channelIndex = i + 1;
+            auto floatArray = makeUnique<AudioFloatArray>(requestFrames);
+            m_multiChannelBus->setChannelMemory(channelIndex, floatArray->data(), requestFrames);
+            return floatArray;
+        });
     }
 
     // Create each channel's resampler.

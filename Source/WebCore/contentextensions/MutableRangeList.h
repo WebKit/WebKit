@@ -44,6 +44,12 @@ public:
         uint32_t index;
         bool atEnd;
 
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = TypedMutableRange;
+        using difference_type = ptrdiff_t;
+        using pointer = const value_type*;
+        using reference = const value_type&;
+
         const TypedMutableRange& operator*() const { return rangeList.m_ranges[index]; }
         const TypedMutableRange* operator->() const { return &rangeList.m_ranges[index]; }
 

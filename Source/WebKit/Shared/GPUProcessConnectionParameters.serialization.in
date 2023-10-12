@@ -29,7 +29,6 @@
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting;
 #endif
-    bool allowTestOnlyIPC;
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> presentingApplicationAuditToken;
 #endif

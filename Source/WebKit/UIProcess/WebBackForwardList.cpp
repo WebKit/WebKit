@@ -306,12 +306,11 @@ Ref<API::Array> WebBackForwardList::backListAsAPIArrayWithLimit(unsigned limit) 
     if (!size)
         return API::Array::create();
 
-    Vector<RefPtr<API::Object>> vector;
-    vector.reserveInitialCapacity(size);
-
     ASSERT(backListSize >= size);
-    for (unsigned i = backListSize - size; i < backListSize; ++i)
-        vector.uncheckedAppend(m_entries[i].ptr());
+    size_t startIndex = backListSize - size;
+    Vector<RefPtr<API::Object>> vector(size, [&](size_t i) -> RefPtr<API::Object> {
+        return m_entries[startIndex + i].ptr();
+    });
 
     return API::Array::create(WTFMove(vector));
 }
@@ -327,13 +326,10 @@ Ref<API::Array> WebBackForwardList::forwardListAsAPIArrayWithLimit(unsigned limi
     if (!size)
         return API::Array::create();
 
-    Vector<RefPtr<API::Object>> vector;
-    vector.reserveInitialCapacity(size);
-
-    size_t last = *m_currentIndex + size;
-    ASSERT(last < m_entries.size());
-    for (size_t i = *m_currentIndex + 1; i <= last; ++i)
-        vector.uncheckedAppend(m_entries[i].ptr());
+    size_t startIndex = *m_currentIndex + 1;
+    Vector<RefPtr<API::Object>> vector(size, [&](size_t i) -> RefPtr<API::Object> {
+        return m_entries[startIndex + i].ptr();
+    });
 
     return API::Array::create(WTFMove(vector));
 }

@@ -27,12 +27,13 @@
 
   // Deliberately avoiding mouseup here because the last selectionchange
   // may be fired before or after the mouseup.
-  ["mousedown", "mousemove", "selectionchange", "dragstart"].forEach(ename => {
-    document.addEventListener(ename, logEvents);
-  });
+  document.addEventListener("mousedown", logEvents);
+  document.addEventListener("mousemove", logEvents);
   document.addEventListener("mousemove", e => e.preventDefault());
 
-  promise_test(async () => {
+  promise_test(async test => {
+    document.addEventListener("selectionchange", logEvents);
+    test.add_cleanup(() => { document.removeEventListener("selectionchange", logEvents); });
     event_log = [];
 
     const a = document.getElementById("a");
@@ -60,7 +61,9 @@
         "received events");
   }, "selectionchange event firing when mousemove event is prevented");
 
-  promise_test(async () => {
+  promise_test(async test => {
+    document.addEventListener("dragstart", logEvents);
+    test.add_cleanup(() => { document.removeEventListener("dragstart", logEvents); });
     event_log = [];
 
     const b = document.getElementById("b");

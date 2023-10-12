@@ -1259,6 +1259,7 @@ void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& par
     case WebCore::StyleAppearance::SearchFieldCancelButton:
     case WebCore::StyleAppearance::SliderThumbHorizontal:
     case WebCore::StyleAppearance::SliderThumbVertical:
+    case WebCore::StyleAppearance::Switch:
         break;
     }
 }
@@ -1380,6 +1381,9 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::StyleAppearance::SliderThumbHorizontal:
     case WebCore::StyleAppearance::SliderThumbVertical:
         return WebCore::SliderThumbPart::create(*type);
+
+    case WebCore::StyleAppearance::Switch:
+        break;
     }
 
     ASSERT_NOT_REACHED();

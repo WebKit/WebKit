@@ -52,7 +52,20 @@ bool CheckboxInputType::valueMissing(const String&) const
 
 String CheckboxInputType::valueMissingText() const
 {
+    ASSERT(element());
+    if (element()->isSwitch())
+        return validationMessageValueMissingForSwitchText();
     return validationMessageValueMissingForCheckboxText();
+}
+
+void CheckboxInputType::attributeChanged(const QualifiedName& name)
+{
+    ASSERT(element());
+    if (element()->document().settings().switchControlEnabled() && name == HTMLNames::switchAttr) {
+        if (element()->renderer())
+            element()->invalidateStyleAndRenderersForSubtree();
+    }
+    InputType::attributeChanged(name);
 }
 
 void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)
@@ -100,7 +113,7 @@ bool CheckboxInputType::matchesIndeterminatePseudoClass() const
 bool CheckboxInputType::shouldAppearIndeterminate() const
 {
     ASSERT(element());
-    return element()->indeterminate();
+    return element()->indeterminate() && !element()->isSwitch();
 }
 
 } // namespace WebCore

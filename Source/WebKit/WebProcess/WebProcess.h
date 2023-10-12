@@ -200,6 +200,7 @@ public:
     void createWebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
     void removeWebPage(WebCore::PageIdentifier);
     WebPage* focusedWebPage() const;
+    bool hasWebPages() const { return !m_pageMap.isEmpty(); }
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
     

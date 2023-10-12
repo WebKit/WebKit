@@ -112,6 +112,12 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
         if (!damagedContent->offset)
             return candidateLineIndex(leadingIndexForDisplayBox);
 
+        if (damagedContent->offset > displayBoxes[leadingIndexForDisplayBox].text().end()) {
+            // Protect against text updater providing bogus damage offset (offset is _after_ the last display box here).
+            // Let's just fallback to full invalidation.
+            return { };
+        }
+
         for (auto index = leadingIndexForDisplayBox; index > 0; --index) {
             auto& displayBox = displayBoxes[index];
             if (displayBox.isRootInlineBox() || (displayBox.isInlineBox() && !displayBox.isFirstForLayoutBox())) {
@@ -226,10 +232,16 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
         return is<InlineTextItem>(inlineItem) ? downcast<InlineTextItem>(inlineItem).start() : downcast<InlineSoftLineBreakItem>(inlineItem).position();
     };
 
-    if (startPosition(candidateInlineItem) + candidatePosition.offset <= *damagedContent.offset)
+    auto contentOffset = startPosition(candidateInlineItem) + candidatePosition.offset;
+    if (contentOffset < *damagedContent.offset) {
+        // The damaged content is after the start of this inline item.
+        return candidatePosition;
+    }
+    // When the inline item's entire content is being removed, we need to find the previous inline item that belongs to this damaged layout box.
+    if (contentOffset == *damagedContent.offset && damagedContent.type != DamagedContent::Type::Removal)
         return candidatePosition;
 
-    // The damage offset is in front of the first display box we managed to find for this layout box.
+    // The damage offset is before the first display box we managed to find for this layout box.
     // Let's adjust the candidate position by moving it over to the damaged offset.
     for (auto index = candidatePosition.index; index--;) {
         auto& previousInlineItem = inlineItemList[index];

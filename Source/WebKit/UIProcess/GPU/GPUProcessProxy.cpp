@@ -448,11 +448,6 @@ std::optional<bool> GPUProcessProxy::s_hasVP9HardwareDecoder;
 std::optional<bool> GPUProcessProxy::s_hasVP9ExtensionSupport;
 #endif
 
-void GPUProcessProxy::updatePreferencesForWebProcess(WebProcessProxy& webProcessProxy, const GPUProcessPreferencesForWebProcess& preferences)
-{
-    send(Messages::GPUProcess::UpdatePreferencesForWebProcess(webProcessProxy.coreProcessIdentifier(), preferences), 0);
-}
-
 void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, GPUProcessConnectionParameters&& parameters)
 {
 #if ENABLE(VP9)

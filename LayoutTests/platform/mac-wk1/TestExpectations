@@ -2690,3 +2690,6 @@ webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/compositing-iframe-wi
 
 # rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
 [ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ ImageOnlyFailure ]
+
+fast/events/cancel-mousedown-and-drag-from-frame-to-other-frame.html [ Failure ]
+fast/events/cancel-mousedown-and-drag-to-frame.html [ Failure ]

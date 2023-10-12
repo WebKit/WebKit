@@ -245,4 +245,19 @@ void PageConfiguration::setApplicationManifest(ApplicationManifest* applicationM
 }
 #endif
 
+#if ENABLE(GPU_PROCESS)
+WebKit::GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess() const
+{
+    RefPtr preferences = m_data.preferences;
+    RELEASE_ASSERT(preferences);
+
+    return {
+        preferences->webGLEnabled(),
+        preferences->webGPUEnabled(),
+        preferences->useGPUProcessForDOMRenderingEnabled(),
+        allowTestOnlyIPC()
+    };
+}
+#endif
+
 } // namespace API

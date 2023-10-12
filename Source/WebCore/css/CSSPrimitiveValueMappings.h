@@ -383,6 +383,7 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
     case StyleAppearance::SearchFieldCancelButton:
     case StyleAppearance::SliderThumbHorizontal:
     case StyleAppearance::SliderThumbVertical:
+    case StyleAppearance::Switch:
         ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
         return CSSValueNone;
     }

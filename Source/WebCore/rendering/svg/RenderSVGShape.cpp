@@ -64,8 +64,6 @@ RenderSVGShape::~RenderSVGShape() = default;
 void RenderSVGShape::updateShapeFromElement()
 {
     m_path = createPath();
-    processMarkerPositions();
-
     m_fillBoundingBox = calculateObjectBoundingBox();
     m_strokeBoundingBox = calculateStrokeBoundingBox();
 }
@@ -191,21 +189,6 @@ AffineTransform RenderSVGShape::nonScalingStrokeTransform() const
     return graphicsElement().getScreenCTM(SVGLocatable::DisallowStyleUpdate);
 }
 
-bool RenderSVGShape::shouldGenerateMarkerPositions() const
-{
-    if (!style().svgStyle().hasMarkers())
-        return false;
-
-    if (!graphicsElement().supportsMarkers())
-        return false;
-
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    if (!resources)
-        return false;
-
-    return resources->markerStart() || resources->markerMid() || resources->markerEnd();
-}
-
 void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)
 {
     GraphicsContext* context = &originalContext;
@@ -263,8 +246,7 @@ void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
             strokeShape(style(), childPaintInfo.context());
             break;
         case PaintType::Markers:
-            if (!m_markerPositions.isEmpty())
-                drawMarkers(childPaintInfo);
+            drawMarkers(childPaintInfo);
             break;
         }
     }
@@ -378,47 +360,6 @@ bool RenderSVGShape::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
-static inline RenderSVGResourceMarker* markerForType(SVGMarkerType type, RenderSVGResourceMarker* markerStart, RenderSVGResourceMarker* markerMid, RenderSVGResourceMarker* markerEnd)
-{
-    switch (type) {
-    case StartMarker:
-        return markerStart;
-    case MidMarker:
-        return markerMid;
-    case EndMarker:
-        return markerEnd;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-FloatRect RenderSVGShape::computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const
-{
-    if (m_markerPositions.isEmpty())
-        return FloatRect();
-
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    ASSERT(resources);
-
-    auto* markerStart = resources->markerStart();
-    auto* markerMid = resources->markerMid();
-    auto* markerEnd = resources->markerEnd();
-    if (!markerStart && !markerMid && !markerEnd)
-        return FloatRect();
-
-    FloatRect boundaries;
-    unsigned size = m_markerPositions.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
-            // FIXME: [LBSE] Upstream RenderSVGResourceMarker changes
-            // boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
-            boundaries.unite(marker->markerBoundaries(marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
-        }
-    }
-    return boundaries;
-}
-
 FloatRect RenderSVGShape::calculateObjectBoundingBox() const
 {
     return path().boundingRect();
@@ -465,55 +406,15 @@ bool RenderSVGShape::hasSmoothStroke() const
         && style().capStyle() == LineCap::Butt;
 }
 
-void RenderSVGShape::drawMarkers(PaintInfo&)
+void RenderSVGShape::ensurePath()
 {
-    ASSERT(!m_markerPositions.isEmpty());
-
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    if (!resources)
-        return;
-
-    auto* markerStart = resources->markerStart();
-    auto* markerMid = resources->markerMid();
-    auto* markerEnd = resources->markerEnd();
-    if (!markerStart && !markerMid && !markerEnd)
-        return;
-
-    float strokeWidth = this->strokeWidth();
-    unsigned size = m_markerPositions.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
-            UNUSED_PARAM(marker);
-            UNUSED_PARAM(strokeWidth);
-
-            // FIXME: [LBSE] Upstream RenderLayer changes
-            // ASSERT(marker->hasLayer());
-            // GraphicsContextStateSaver stateSaver(paintInfo.context());
-            // auto contentTransform = marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth);
-            // marker->layer()->paintSVGResourceLayer(paintInfo.context(), LayoutRect::infiniteRect(), contentTransform);
-        }
-    }
+    if (!hasPath())
+        m_path = createPath();
 }
 
 std::unique_ptr<Path> RenderSVGShape::createPath() const
 {
     return makeUnique<Path>(pathFromGraphicsElement(&graphicsElement()));
-}
-
-void RenderSVGShape::processMarkerPositions()
-{
-    m_markerPositions.clear();
-
-    if (!shouldGenerateMarkerPositions())
-        return;
-
-    ASSERT(m_path);
-
-    SVGMarkerData markerData(m_markerPositions, SVGResourcesCache::cachedResourcesForRenderer(*this)->markerReverseStart());
-    m_path->applyElements([&markerData](const PathElement& pathElement) {
-        SVGMarkerData::updateFromPathElement(markerData, pathElement);
-    });
-    markerData.pathIsDone();
 }
 
 void RenderSVGShape::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)

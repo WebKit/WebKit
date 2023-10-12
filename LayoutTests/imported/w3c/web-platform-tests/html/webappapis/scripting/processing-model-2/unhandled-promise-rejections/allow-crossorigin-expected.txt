@@ -1,6 +1,4 @@
-Blocked access to external URL http://www1.localhost:8800/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/support/promise-access-control.py?allow=true
+CONSOLE MESSAGE: Unhandled Promise Rejection: 42
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Promise rejection event should be received for the cross-origin CORS script Test timed out
+PASS Promise rejection event should be received for the cross-origin CORS script
 

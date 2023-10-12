@@ -30,6 +30,7 @@
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGInline.h"
+#include "RenderSVGPath.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
@@ -107,11 +108,11 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
     //     or is not an "a", "g", "svg" or "switch" element, then continue to the next descendant graphics element.
     //   - Otherwise, set box to be the union of box and the result of invoking the algorithm to compute a bounding box with child as
     //     the element, space as the target coordinate space, true for fill, stroke and markers, and clipped for clipped.
-    if (options.contains(DecorationOption::IncludeMarkers) && is<RenderSVGShape>(m_renderer)) {
+    if (options.contains(DecorationOption::IncludeMarkers) && is<RenderSVGPath>(m_renderer)) {
         DecorationOptions optionsForMarker = { DecorationOption::IncludeFillShape, DecorationOption::IncludeStrokeShape, DecorationOption::IncludeMarkers };
         if (options.contains(DecorationOption::IncludeClippers))
             optionsForMarker.add(DecorationOption::IncludeClippers);
-        box.unite(downcast<RenderSVGShape>(m_renderer).computeMarkerBoundingBox(options));
+        box.unite(downcast<RenderSVGPath>(m_renderer).computeMarkerBoundingBox(options));
     }
 
     // 6. If clipped is true and the value of clip-path on element is not none, then set box to be the tightest rectangle

@@ -6723,12 +6723,19 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)keyboardScrollViewAnimatorWillScroll:(WKKeyboardScrollViewAnimator *)animator
 {
+    _isKeyboardScrollingAnimationRunning = YES;
     [self willStartZoomOrScroll];
 }
 
 - (void)keyboardScrollViewAnimatorDidFinishScrolling:(WKKeyboardScrollViewAnimator *)animator
 {
     [_webView _didFinishScrolling:self.webView.scrollView];
+    _isKeyboardScrollingAnimationRunning = NO;
+}
+
+- (BOOL)isKeyboardScrollingAnimationRunning
+{
+    return _isKeyboardScrollingAnimationRunning;
 }
 
 - (void)executeEditCommandWithCallback:(NSString *)commandName

@@ -368,18 +368,26 @@ public:
 
 private:
     friend class Producer;
+
+    template<typename SettleValueType>
+    inline void settleImpl(SettleValueType&& result, Locker<Lock>& lock)
+    {
+        assertIsHeld(m_lock);
+        ASSERT(isNothing());
+        m_result.emplace(std::forward<SettleValueType>(result));
+        dispatchAll(lock);
+    }
+
     template<typename ResolveValueType_, typename = std::enable_if<!std::is_void_v<ResolveValueT>>>
     void resolve(ResolveValueType_&& resolveValue, const Logger::LogSiteIdentifier& resolveSite)
     {
         static_assert(std::is_convertible_v<ResolveValueType_, ResolveValueT>, "resolve() argument must be implicitly convertible to NativePromise's ResolveValueT");
         Locker lock { m_lock };
         PROMISE_LOG(resolveSite, " resolving ", *this);
-        ASSERT(isNothing());
         if constexpr (WithCrossThreadCopy || WithAutomaticCrossThreadCopy)
-            m_result = crossThreadCopy(std::forward<ResolveValueType_>(resolveValue));
+            settleImpl(crossThreadCopy(std::forward<ResolveValueType_>(resolveValue)), lock);
         else
-            m_result = std::forward<ResolveValueType_>(resolveValue);
-        dispatchAll(lock);
+            settleImpl(std::forward<ResolveValueType_>(resolveValue), lock);
     }
 
     template<typename = std::enable_if<std::is_void_v<ResolveValueT>>>
@@ -387,9 +395,7 @@ private:
     {
         Locker lock { m_lock };
         PROMISE_LOG(resolveSite, " resolving ", *this);
-        ASSERT(isNothing());
-        m_result = Result { };
-        dispatchAll(lock);
+        settleImpl(Result { }, lock);
     }
 
     template<typename RejectValueType_>
@@ -398,12 +404,10 @@ private:
         static_assert(std::is_convertible_v<RejectValueType_, RejectValueT>, "reject() argument must be implicitly convertible to NativePromise's RejectValueT");
         Locker lock { m_lock };
         PROMISE_LOG(rejectSite, " rejecting ", *this);
-        ASSERT(isNothing());
         if constexpr (WithCrossThreadCopy || WithAutomaticCrossThreadCopy)
-            m_result = Unexpected<RejectValueT>(crossThreadCopy(std::forward<RejectValueType_>(rejectValue)));
+            settleImpl(Unexpected<RejectValueT>(crossThreadCopy(std::forward<RejectValueType_>(rejectValue))), lock);
         else
-            m_result = Unexpected<RejectValueT>(std::forward<RejectValueType_>(rejectValue));
-        dispatchAll(lock);
+            settleImpl(Unexpected<RejectValueT>(std::forward<RejectValueType_>(rejectValue)), lock);
     }
 
     template<typename SettleValueType>
@@ -411,22 +415,20 @@ private:
     {
         static_assert(std::is_convertible_v<SettleValueType, Result>, "settle() argument must be implicitly convertible to NativePromise's Result");
         Locker lock { m_lock };
-        ASSERT(isNothing());
         PROMISE_LOG(site, " settling ", *this);
         if constexpr (WithCrossThreadCopy || WithAutomaticCrossThreadCopy)
-            m_result = crossThreadCopy(std::forward<SettleValueType>(result));
+            settleImpl(crossThreadCopy(std::forward<SettleValueType>(result)), lock);
         else
-            m_result = std::forward<SettleValueType>(result);
-        dispatchAll(lock);
+            settleImpl(std::forward<SettleValueType>(result), lock);
     }
 
-    template<typename SettleValueType>
-    void settleAsChainedPromise(SettleValueType&& result, const Logger::LogSiteIdentifier& site)
+    template<typename StorageType>
+    void settleAsChainedPromise(StorageType&& storage, const Logger::LogSiteIdentifier& site)
     {
         Locker lock { m_lock };
         ASSERT(isNothing());
         PROMISE_LOG(site, " settling chained promise ", *this);
-        m_result = std::forward<SettleValueType>(result);
+        m_result = std::forward<StorageType>(storage);
         dispatchAll(lock);
     }
 
@@ -513,14 +515,12 @@ private:
 
             m_results[index].emplace(maybeMove(result));
             if (!--m_outstandingPromises) {
-                Vector<Result> results;
-                results.reserveInitialCapacity(m_results.size());
-                for (auto&& result : m_results)
-                    results.append(WTFMove(result.value()));
-
+                Vector<Result> results(m_results.size(), [&](size_t index) {
+                    return WTFMove(*m_results[index]);
+                });
+                m_results.clear();
                 m_producer->resolve(WTFMove(results));
                 m_producer = nullptr;
-                m_results.clear();
             }
         }
 
@@ -604,7 +604,7 @@ private:
             ASSERT(!promise.isNothing());
 
             if (UNLIKELY(promise.m_dispatchMode == PromiseDispatchMode::RunSynchronouslyOnTarget) && m_targetQueue->isCurrent()) {
-                PROMISE_LOG(promise.m_result ? "Resolving" : "Rejecting", " synchronous then() call made from ", m_logSiteIdentifier, "[", promise, " callback:", (const void*)this, "]");
+                PROMISE_LOG(*promise.m_result ? "Resolving" : "Rejecting", " synchronous then() call made from ", m_logSiteIdentifier, "[", promise, " callback:", (const void*)this, "]");
                 if (m_disconnected) {
                     PROMISE_LOG("ThenCallback disconnected aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
                     return;
@@ -1000,12 +1000,75 @@ private:
         assertIsHeld(m_lock);
         ASSERT(!isNothing());
         auto producer = WTFMove(other);
-        producer.promise().settleAsChainedPromise(maybeMove(*m_result), { "<chained promise>", nullptr });
+        producer.promise().settleAsChainedPromise(maybeMove(m_result), { "<chained promise>", nullptr });
     }
 
+    // Replicate either std::optional<Result> if Exclusive or Ref<std::optional<Result>> otherwise.
+    class Storage {
+        struct RefCountedResult : ThreadSafeRefCounted<RefCountedResult> {
+            std::optional<Result> result;
+        };
+        using ResultType = std::conditional_t<IsExclusive, std::optional<Result>, Ref<RefCountedResult>>;
+        ResultType m_result;
+        std::optional<Result>& optionalResult()
+        {
+            if constexpr (IsExclusive)
+                return m_result;
+            else
+                return m_result->result;
+        }
+        const std::optional<Result>& optionalResult() const
+        {
+            if constexpr (IsExclusive)
+                return m_result;
+            else
+                return m_result->result;
+        }
+    public:
+        Storage()
+            : m_result([] {
+                if constexpr(IsExclusive)
+                    return std::nullopt;
+                else
+                    return adoptRef(*new RefCountedResult);
+            }())
+        {
+        }
+        bool has_value() const
+        {
+            if constexpr (IsExclusive)
+                return m_result.has_value();
+            else
+                return m_result->result.has_value();
+        }
+        explicit operator bool() const { return has_value(); }
+        Storage& operator=(Storage&&) = default;
+        Storage& operator=(const Storage&) = default;
+        const Result& operator*() const
+        {
+            ASSERT(has_value());
+            return *optionalResult();
+        }
+        Result& operator*()
+        {
+            ASSERT(has_value());
+            return *optionalResult();
+        }
+        const Result* operator->() const
+        {
+            if (!has_value())
+                return nullptr;
+            return &(this->operator*());
+        }
+        template <typename... Args>
+        void emplace(Args&&... args)
+        {
+            optionalResult().emplace(std::forward<Args>(args)...);
+        }
+    };
     const Logger::LogSiteIdentifier m_logSiteIdentifier; // For logging
     mutable Lock m_lock;
-    std::optional<Result> m_result WTF_GUARDED_BY_LOCK(m_lock); // Set on any threads when the promise is resolved, only read on the promise's target queue.
+    Storage m_result WTF_GUARDED_BY_LOCK(m_lock); // Set on any threads when the promise is resolved, only read on the promise's target queue.
     // Experiments show that we never have more than 3 elements when IsExclusive is false.
     // So '3' is a good value to avoid heap allocation in most cases.
     Vector<Ref<ThenCallbackBase>, IsExclusive ? 1 : 3> m_thenCallbacks WTF_GUARDED_BY_LOCK(m_lock);

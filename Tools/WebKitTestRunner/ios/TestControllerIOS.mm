@@ -353,6 +353,8 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         webView._dragInteractionPolicy = dragInteractionPolicy(options);
         webView.focusStartsInputSessionPolicy = focusStartsInputSessionPolicy(options);
         webView.suppressInputAccessoryView = options.suppressInputAccessoryView();
+        webView.scrollView.showsVerticalScrollIndicator = options.showsScrollIndicators();
+        webView.scrollView.showsHorizontalScrollIndicator = options.showsScrollIndicators();
 
 #if HAVE(UIFINDINTERACTION)
         webView.findInteractionEnabled = options.findInteractionEnabled();

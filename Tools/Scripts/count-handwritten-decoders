@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# This script scans Source for certain types of handwritten serialization logic and provides a count
+#
+
+cd "$(dirname "$0")/../../Source/"
+
+enumtraits=$(grep -ri "struct EnumTraits<" | wc -l | xargs);
+optionals=$(grep -riE "> decode\((Decoder|IPC::Decoder)" . | grep -v "Scripts/webkit/tests" | grep -v generate-serializers.py | grep -v "WTF/wtf/ArgumentCoder.h" | grep -vi gtk | grep -vi glib | wc -l | xargs);
+bools=$(grep -riE "bool decode\((Decoder|IPC::Decoder)" . | grep -v "Scripts/webkit/tests" | grep -v generate-serializers.py | grep -v "WTF/wtf/ArgumentCoder.h" | grep -vi gtk | grep -vi glib | wc -l | xargs);
+
+echo "EnumTraits remaining: $enumtraits"
+echo "Decoders that return std::optional<>: $optionals"
+echo "Legacy decoders that return bool: $bools"
+sum=$(($optionals+$bools))
+echo "Total decoders remaining: $sum"

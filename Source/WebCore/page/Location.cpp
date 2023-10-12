@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
+#include "LocalDOMWindowProperty.h"
 #include "LocalFrame.h"
 #include "NavigationScheduler.h"
 #include "SecurityOrigin.h"
@@ -64,11 +65,13 @@ const Frame* Location::frame() const
 
 const URL& Location::url() const
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
-    if (!localFrame)
-        return aboutBlankURL();
+    RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(*m_window);
+    if (!localWindow) {
+        static NeverDestroyed<URL> nullURL;
+        return nullURL.get();
+    }
 
-    const URL& url = localFrame->document()->urlForBindings();
+    const URL& url = localWindow->document()->urlForBindings();
     if (!url.isValid())
         return aboutBlankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
 

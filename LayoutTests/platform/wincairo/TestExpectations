@@ -1172,10 +1172,6 @@ editing/selection/regional-indicators.html [ Skip ]
 [ Debug ] editing/selection/move-by-character-brute-force.html [ Skip ]
 [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Skip ]
 
-webkit.org/b/262460 editing/selection/caret-rtl-right.html [ Failure Pass ]
-webkit.org/b/262460 editing/selection/caret-ltr-right.html [ Failure Pass ]
-webkit.org/b/262460 editing/selection/5057506.html [ Failure Pass ]
-
 ###### Command enabling
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
@@ -2393,7 +2389,6 @@ fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 
 editing/selection/shift-click-live-range.html [ Failure ]
 
-animations/no-style-recalc-during-accelerated-animation.html [ Failure ]
 editing/deleting/delete-ligature-003.html [ Failure ]
 editing/deleting/smart-delete-paragraph-001.html [ Failure ]
 editing/deleting/smart-delete-paragraph-002.html [ Failure ]
@@ -2586,3 +2581,12 @@ fast/text/synthetic-oblique.html [ ImageOnlyFailure ]
 webkit.org/b/245080 fast/text/whitespace/nowrap-clear-float.html [ Skip ] # Skip a failing dump render tree test
 
 webkit.org/b/262817 fast/canvas/canvas-pattern-modify.html [ Pass Failure ]
+
+# Needs layer animation support
+animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
+
+webkit.org/b/133151 js/cached-window-properties.html [ Skip ] # Slow
+
+# Regressed by 269016@main
+fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
+fast/forms/listbox-zero-item-height.html [ Failure ]

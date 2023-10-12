@@ -3044,7 +3044,7 @@ void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>
             if (highlightRange->startPosition().isNotNull() && highlightRange->endPosition().isNotNull() && !highlightRange->range().isLiveRange())
                 continue;
 
-            if (auto liveRange = RefPtr { dynamicDowncast<Range>(highlightRange->range()) }; liveRange && !liveRange->didChangeForHighlight())
+            if (RefPtr liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && !liveRange->didChangeForHighlight())
                 continue;
 
             auto simpleRange = makeSimpleRange(highlightRange->range());
@@ -3057,7 +3057,7 @@ void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>
     // One range can belong to multiple highlights so resetting a range's flag cannot be done in the loops above.
     for (auto& highlight : highlightRegistry.map()) {
         for (auto& highlightRange : highlight.value->highlightRanges()) {
-            if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && liveRange->didChangeForHighlight())
+            if (RefPtr liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && liveRange->didChangeForHighlight())
                 liveRange->resetDidChangeForHighlight();
         }
     }
@@ -3240,7 +3240,7 @@ void Document::implicitOpen()
 std::unique_ptr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     auto* cachedFont = m_fontLoader->cachedFont(completeURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
-    return cachedFont ? makeUnique<CachedFontLoadRequest>(*cachedFont) : nullptr;
+    return cachedFont ? makeUnique<CachedFontLoadRequest>(*cachedFont, *this) : nullptr;
 }
 
 void Document::beginLoadingFontSoon(FontLoadRequest& request)

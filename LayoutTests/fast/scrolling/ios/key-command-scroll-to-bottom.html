@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ CSSScrollAnchoringEnabled=false ] -->
+<!-- webkit-test-runner [ CSSScrollAnchoringEnabled=false showsScrollIndicators=false ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,9 +14,6 @@ body {
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-//  UIKit hides the scroll indicator after 1 second.
-const ScrollIndicatorFlashHideDelay = 1000; // milliseconds
-
 let secondSquareMaxY;
 
 function done()
@@ -28,8 +25,7 @@ function done()
 function didEndScroll()
 {
     window.onscroll = null;
-    // FIXME: Disable flashing of scroll indicator or find a way know when the flash has finished.
-    window.setTimeout(done, ScrollIndicatorFlashHideDelay);
+    UIHelper.waitForZoomingOrScrollingToEnd().then(done);
 }
 
 window.onscroll = function (event) {

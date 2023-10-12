@@ -5519,6 +5519,9 @@
     "imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-3.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/unset/fetch.https.html": [
         "slow"
     ],

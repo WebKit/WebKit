@@ -50,6 +50,7 @@
 @property (nonatomic, readonly) CGRect _tapHighlightViewRect;
 @property (nonatomic, readonly) UIGestureRecognizer *_imageAnalysisGestureRecognizer;
 @property (nonatomic, readonly) UITapGestureRecognizer *_singleTapGestureRecognizer;
+@property (nonatomic, readonly, getter=_isKeyboardScrollingAnimationRunning) BOOL _keyboardScrollingAnimationRunning;
 
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;

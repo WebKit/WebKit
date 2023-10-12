@@ -51,6 +51,7 @@ private:
 
     const AtomString& formControlType() const final;
     String valueMissingText() const final;
+    void attributeChanged(const QualifiedName&) final;
     void handleKeyupEvent(KeyboardEvent&) final;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;

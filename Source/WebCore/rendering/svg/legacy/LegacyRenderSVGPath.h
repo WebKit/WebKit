@@ -35,11 +35,13 @@ public:
     LegacyRenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGPath();
 
+    void drawMarkers(PaintInfo&) final;
+
 private:
     ASCIILiteral renderName() const override { return "RenderSVGPath"_s; }
 
     void updateShapeFromElement() override;
-    FloatRect calculateUpdatedStrokeBoundingBox() const;
+    FloatRect adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(FloatRect strokeBoundingBox) const;
 
     void strokeShape(GraphicsContext&) const override;
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
@@ -50,9 +52,14 @@ private:
     void updateZeroLengthSubpaths();
     void strokeZeroLengthSubpaths(GraphicsContext&) const;
 
+    bool shouldGenerateMarkerPositions() const;
+    void processMarkerPositions();
+    FloatRect markerRect(float strokeWidth) const;
+
     bool isRenderingDisabled() const override;
 
     Vector<FloatPoint> m_zeroLengthLinecapLocations;
+    Vector<MarkerPosition> m_markerPositions;
 };
 
 } // namespace WebCore

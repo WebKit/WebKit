@@ -1021,11 +1021,6 @@ bool TestRunner::isDoingMediaCapture() const
     return postSynchronousPageMessageReturningBoolean("IsDoingMediaCapture");
 }
 
-bool TestRunner::isEnumeratingAudioUnitActive() const
-{
-    return postSynchronousPageMessageReturningBoolean("IsEnumeratingAudioUnitActive");
-}
-
 void TestRunner::setUserMediaPersistentPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin)
 {
     InjectedBundle::singleton().setUserMediaPersistentPermissionForOrigin(permission, toWK(origin).get(), toWK(parentOrigin).get());

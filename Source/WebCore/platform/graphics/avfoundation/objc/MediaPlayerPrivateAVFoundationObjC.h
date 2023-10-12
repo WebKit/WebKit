@@ -30,6 +30,7 @@
 #include "MediaPlayerPrivateAVFoundation.h"
 #include "VideoFrameMetadata.h"
 #include <CoreMedia/CMTime.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -260,8 +261,8 @@ private:
     void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const FloatRect&);
 
-    enum class UpdateType { UpdateSynchronously, UpdateAsynchronously };
-    void updateLastImage(UpdateType type = UpdateType::UpdateAsynchronously);
+    using UpdateCompletion = CompletionHandler<void()>;
+    void updateLastImage(UpdateCompletion&&);
 
     void createVideoOutput();
     void destroyVideoOutput();
@@ -271,7 +272,9 @@ private:
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
-    void waitForVideoOutputMediaDataWillChange();
+
+    enum class UpdateResult { Succeeded, Failed, TimedOut, ObjectDestroyed };
+    UpdateResult waitForVideoOutputMediaDataWillChange();
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void keyAdded() final;

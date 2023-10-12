@@ -59,11 +59,13 @@ public:
     constexpr Type(const Type&) = default;
     constexpr Type(TypeKind kind)
         : m_kind(kind)
-    { }
+    {
+        ASSERT(kind != Tuple);
+    }
 
     ~Type() = default;
 
-    static Type tupleFromIndex(unsigned index) { ASSERT(!(index & tupleFlag)); return static_cast<TypeKind>(index | tupleFlag); }
+    static Type tupleFromIndex(unsigned index) { ASSERT(!(index & tupleFlag)); return bitwise_cast<Type>(index | tupleFlag); }
 
     TypeKind kind() const { return m_kind & tupleFlag ? Tuple : m_kind; }
     uint32_t tupleIndex() const { ASSERT(m_kind & tupleFlag); return m_kind & tupleIndexMask; }
