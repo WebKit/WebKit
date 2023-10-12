@@ -4232,7 +4232,7 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
         if (!list.renderer())
             continue;
         auto style = list.renderer()->style().listStyleType();
-        textLists.uncheckedAppend({ style, ordered ? downcast<HTMLOListElement>(list).start() : 1, ordered });
+        textLists.append({ style, ordered ? downcast<HTMLOListElement>(list).start() : 1, ordered });
     }
 
     return textLists;

@@ -113,7 +113,7 @@ TEST(WTF_Packed, HashMap)
     HashMap<PackedPtr<PackingTarget>, unsigned> map;
     vector.reserveCapacity(10000);
     for (unsigned i = 0; i < 10000; ++i)
-        vector.uncheckedAppend(PackingTarget { i });
+        vector.append(PackingTarget { i });
 
     for (auto& target : vector)
         map.add(&target, target.m_value);

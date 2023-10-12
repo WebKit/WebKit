@@ -97,7 +97,7 @@ void FaceDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<
     Vector<DetectedFace> results;
     results.reserveInitialCapacity(std::min<size_t>(m_maxDetectedFaces, request.get().results.count));
     for (VNFaceObservation *observation in request.get().results) {
-        results.uncheckedAppend({
+        results.append({
             convertRectFromVisionToWeb(nativeImage->size(), observation.boundingBox),
             { convertLandmarks(observation.landmarks, nativeImage->size()) },
         });

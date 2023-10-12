@@ -61,12 +61,12 @@ TEST(WebSocket, LongMessageNoDeflate)
 
                 Vector<uint8_t> bytesToSend;
                 bytesToSend.reserveInitialCapacity(twoMegabytes + headerSizeWithLargePayloadLength);
-                bytesToSend.uncheckedAppend(fin | textFrame);
-                bytesToSend.uncheckedAppend(payloadLengthIndicatingLargeExtendedPayloadLength);
+                bytesToSend.append(fin | textFrame);
+                bytesToSend.append(payloadLengthIndicatingLargeExtendedPayloadLength);
                 for (size_t i = 0; i < 8; i++)
-                    bytesToSend.uncheckedAppend((twoMegabytes >> (8 * (7 - i))) & 0xFF);
+                    bytesToSend.append((twoMegabytes >> (8 * (7 - i))) & 0xFF);
                 for (size_t i = 0; i < twoMegabytes; i++)
-                    bytesToSend.uncheckedAppend('x');
+                    bytesToSend.append('x');
 
                 connection.send(WTFMove(bytesToSend));
             }, expectedReceiveSize);

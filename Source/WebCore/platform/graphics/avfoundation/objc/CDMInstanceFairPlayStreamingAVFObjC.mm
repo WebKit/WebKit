@@ -114,7 +114,7 @@ static const NSInteger SecurityLevelError = -42811;
     Vector<RetainPtr<AVContentKeyRequest>> requests;
     requests.reserveInitialCapacity(keyRequests.count);
     [keyRequests enumerateObjectsUsingBlock:[&](AVContentKeyRequest* request, NSUInteger, BOOL*) {
-        requests.uncheckedAppend(request);
+        requests.append(request);
     }];
     _parent->didProvideRequests(WTFMove(requests));
 }

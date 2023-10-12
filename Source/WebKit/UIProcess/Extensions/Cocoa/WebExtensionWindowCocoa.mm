@@ -174,7 +174,7 @@ WebExtensionWindow::TabVector WebExtensionWindow::tabs() const
 
     for (id<_WKWebExtensionTab> tab in tabs) {
         THROW_UNLESS([tab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object in array returned by tabsForWebExtensionContext: does not conform to the _WKWebExtensionTab protocol");
-        result.uncheckedAppend(m_extensionContext->getOrCreateTab(tab));
+        result.append(m_extensionContext->getOrCreateTab(tab));
     }
 
     if (auto activeTab = [m_delegate activeTabForWebExtensionContext:m_extensionContext->wrapper()]) {

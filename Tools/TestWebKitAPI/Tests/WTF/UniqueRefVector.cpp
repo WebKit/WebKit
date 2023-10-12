@@ -133,7 +133,7 @@ TEST(WTF_UniqueRefVector, UncheckedAppend)
     intRefVector.reserveInitialCapacity(100);
     for (int i = 0; i < 100; ++i) {
         auto moveOnly = MAKE(i);
-        intRefVector.uncheckedAppend(WTFMove(moveOnly));
+        intRefVector.append(WTFMove(moveOnly));
         EXPECT_EQ(moveOnly.moveToUniquePtr(), nullptr);
     }
 

@@ -132,7 +132,7 @@ template<typename VectorElementType, typename CFType> Vector<VectorElementType> 
         constexpr const VectorElementType* typedNull = nullptr;
         if (CFType element = dynamic_cf_cast<CFType>(CFArrayGetValueAtIndex(array, i))) {
             if (auto vectorElement = makeVectorElement(typedNull, element))
-                vector.uncheckedAppend(WTFMove(*vectorElement));
+                vector.append(WTFMove(*vectorElement));
         }
     }
     vector.shrinkToFit();
@@ -153,7 +153,7 @@ template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>
     for (CFIndex i = 0; i < count; ++i) {
         if (CFType element = dynamic_cf_cast<CFType>(CFArrayGetValueAtIndex(array, i))) {
             if (auto vectorElement = std::invoke(std::forward<MapLambdaType>(lambda), element))
-                vector.uncheckedAppend(WTFMove(*vectorElement));
+                vector.append(WTFMove(*vectorElement));
         }
     }
     vector.shrinkToFit();

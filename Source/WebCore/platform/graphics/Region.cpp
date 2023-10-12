@@ -90,7 +90,7 @@ Vector<IntRect, 1> Region::rects() const
 
     if (!m_shape) {
         if (!m_bounds.isEmpty())
-            rects.uncheckedAppend(m_bounds);
+            rects.append(m_bounds);
         return rects;
     }
 

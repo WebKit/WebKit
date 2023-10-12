@@ -260,9 +260,9 @@ static AdvancesAndInitialPosition computeHorizontalAdvancesFromPositions(const C
         auto nextPosition = positions[i + 1];
         auto currentPosition = positions[i];
         auto advance = CGSizeMake(nextPosition.x - currentPosition.x, nextPosition.y - currentPosition.y);
-        result.advances.uncheckedAppend(CGSizeApplyAffineTransform(advance, textMatrix));
+        result.advances.append(CGSizeApplyAffineTransform(advance, textMatrix));
     }
-    result.advances.uncheckedConstructAndAppend(CGSizeZero);
+    result.advances.constructAndAppend(CGSizeZero);
     return result;
 }
 
@@ -288,10 +288,10 @@ static AdvancesAndInitialPosition computeVerticalAdvancesFromPositions(const CGS
 
     for (size_t i = 1; i < count; ++i) {
         auto currentPosition = transformPoint(positions[i], translations[i]);
-        result.advances.uncheckedConstructAndAppend(CGSizeMake(currentPosition.x - previousPosition.x, currentPosition.y - previousPosition.y));
+        result.advances.constructAndAppend(CGSizeMake(currentPosition.x - previousPosition.x, currentPosition.y - previousPosition.y));
         previousPosition = currentPosition;
     }
-    result.advances.uncheckedAppend(CGSizeZero);
+    result.advances.append(CGSizeZero);
     return result;
 }
 

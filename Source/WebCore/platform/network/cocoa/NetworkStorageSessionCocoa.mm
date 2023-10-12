@@ -100,7 +100,7 @@ static Vector<Cookie> nsCookiesToCookieVector(NSArray<NSHTTPCookie *> *nsCookies
     cookies.reserveInitialCapacity(nsCookies.count);
     for (NSHTTPCookie *nsCookie in nsCookies) {
         if (!filter || filter(nsCookie))
-            cookies.uncheckedAppend(nsCookie);
+            cookies.append(nsCookie);
     }
     if (filter)
         cookies.shrinkToFit();

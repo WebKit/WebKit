@@ -189,13 +189,13 @@ void SharedStringHashStore::processPendingOperations()
         switch (operation.type) {
         case Operation::Add:
             if (m_table.add(operation.sharedStringHash)) {
-                addedSharedStringHashes.uncheckedAppend(operation.sharedStringHash);
+                addedSharedStringHashes.append(operation.sharedStringHash);
                 ++m_keyCount;
             }
             break;
         case Operation::Remove:
             if (m_table.remove(operation.sharedStringHash)) {
-                removedSharedStringHashes.uncheckedAppend(operation.sharedStringHash);
+                removedSharedStringHashes.append(operation.sharedStringHash);
                 --m_keyCount;
             }
             break;

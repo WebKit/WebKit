@@ -780,7 +780,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
         }
 
         // 5.2. Append validated capabilities to validated first match capabilities.
-        validatedFirstMatchCapabilitiesList.uncheckedAppend(WTFMove(firstMatchCapabilities));
+        validatedFirstMatchCapabilitiesList.append(WTFMove(firstMatchCapabilities));
     }
 
     // 6. For each first match capabilities corresponding to an indexed property in validated first match capabilities.
@@ -795,7 +795,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
             // 6.3. If matched capabilities is not null return matched capabilities.
             Capabilities capabilities;
             parseCapabilities(*matchedCapabilities, capabilities);
-            matchedCapabilitiesList.uncheckedAppend(WTFMove(capabilities));
+            matchedCapabilitiesList.append(WTFMove(capabilities));
         }
     }
 

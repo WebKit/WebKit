@@ -147,7 +147,7 @@ ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vec
         auto resolvedSrc = context.completeURL(image.src);
         if (!resolvedSrc.isValid())
             return Exception { TypeError };
-        resolvedArtwork.uncheckedAppend(MediaImage { resolvedSrc.string(), image.sizes, image.type });
+        resolvedArtwork.append(MediaImage { resolvedSrc.string(), image.sizes, image.type });
     }
 
     m_metadata.artwork = WTFMove(resolvedArtwork);

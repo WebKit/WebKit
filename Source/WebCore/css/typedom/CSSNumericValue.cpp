@@ -111,7 +111,7 @@ static ExceptionOr<Vector<Ref<CSSNumericValue>>> reifyMathExpressions(const Vect
     values.reserveInitialCapacity(nodes.size());
     for (auto& node : nodes) {
         CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(node));
-        values.uncheckedAppend(WTFMove(value));
+        values.append(WTFMove(value));
     }
     return values;
 }
@@ -135,7 +135,7 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcOperat
     values.reserveInitialCapacity(root.children().size());
     for (auto& child : root.children()) {
         CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(child.get()));
-        values.uncheckedAppend(negateOrInvertIfRequired(root.calcOperator(), WTFMove(value)));
+        values.append(negateOrInvertIfRequired(root.calcOperator(), WTFMove(value)));
     }
     if (root.calcOperator() == CalcOperator::Add || root.calcOperator() == CalcOperator::Subtract)
         return convertToExceptionOrNumericValue(CSSMathSum::create(WTFMove(values)));
@@ -282,7 +282,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::div(FixedVector<CSSNumberish>
     invertedValues.reserveInitialCapacity(values.size());
     for (auto&& value : WTFMove(values)) {
         CSS_NUMERIC_RETURN_IF_EXCEPTION(inverted, invert(rectifyNumberish(WTFMove(value))));
-        invertedValues.uncheckedAppend(WTFMove(inverted));
+        invertedValues.append(WTFMove(inverted));
     }
     return multiplyInternal(WTFMove(invertedValues));
 }
@@ -379,7 +379,7 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
         auto parsedUnit = CSSUnitValue::parseUnit(unit);
         if (parsedUnit == CSSUnitType::CSS_UNKNOWN)
             return Exception { SyntaxError, "Invalid unit parameter"_s };
-        parsedUnits.uncheckedAppend(parsedUnit);
+        parsedUnits.append(parsedUnit);
     }
     auto sumValue = toSumValue();
     if (!sumValue)
@@ -391,7 +391,7 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
         auto cssUnitValue = createCSSUnitValueFromAddend(addend);
         if (!cssUnitValue)
             return Exception { TypeError, "Could not create CSSUnitValue"_s };
-        values.uncheckedAppend(cssUnitValue.releaseNonNull());
+        values.append(cssUnitValue.releaseNonNull());
     }
 
     if (parsedUnits.isEmpty()) {

@@ -52,7 +52,7 @@ FilterImageVector FilterEffect::takeImageInputs(FilterImageVector& stack) const
     inputs.reserveInitialCapacity(inputsSize);
 
     for (; inputsSize; --inputsSize)
-        inputs.uncheckedAppend(stack.takeLast());
+        inputs.append(stack.takeLast());
 
     return inputs;
 }

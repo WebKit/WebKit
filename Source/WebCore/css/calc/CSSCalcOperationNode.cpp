@@ -690,7 +690,7 @@ void CSSCalcOperationNode::combineChildren()
             remainingChildren.add(child.ptr());
 
         while (!remainingChildren.isEmpty()) {
-            newChildren.uncheckedAppend(Ref { *remainingChildren.takeFirst() });
+            newChildren.append(Ref { *remainingChildren.takeFirst() });
             CSSUnitType previousType = primitiveTypeForCombination(newChildren.last());
             for (auto it = remainingChildren.begin(); it != remainingChildren.end();) {
                 auto currentIterator = it;
@@ -738,7 +738,7 @@ void CSSCalcOperationNode::combineChildren()
             ASSERT(lastNonNumberNode);
             auto multiplicandCategory = calcUnitCategory(primitiveTypeForCombination(*lastNonNumberNode));
             if (multiplicandCategory != CalculationCategory::Other) {
-                newChildren.uncheckedAppend(Ref { *lastNonNumberNode });
+                newChildren.append(Ref { *lastNonNumberNode });
                 downcast<CSSCalcPrimitiveValueNode>(newChildren[0].get()).multiply(multiplier);
                 didMultiply = true;
             } else if (auto* sumNode = dynamicDowncast<CSSCalcOperationNode>(*lastNonNumberNode); sumNode && sumNode->calcOperator() == CalcOperator::Add) {
@@ -768,12 +768,12 @@ void CSSCalcOperationNode::combineChildren()
         if (!didMultiply) {
             if (numberNodeCount) {
                 auto multiplierNode = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(multiplier));
-                newChildren.uncheckedAppend(WTFMove(multiplierNode));
+                newChildren.append(WTFMove(multiplierNode));
             }
 
             for (auto& child : m_children) {
                 if (primitiveTypeForCombination(child) != CSSUnitType::CSS_NUMBER)
-                    newChildren.uncheckedAppend(child.copyRef());
+                    newChildren.append(child.copyRef());
             }
         }
 
@@ -1020,7 +1020,7 @@ std::unique_ptr<CalcExpressionNode> CSSCalcOperationNode::createCalcExpression(c
         auto node = child->createCalcExpression(conversionData);
         if (!node)
             return nullptr;
-        nodes.uncheckedAppend(WTFMove(node));
+        nodes.append(WTFMove(node));
     }
 
     // Reverse the operation we did when creating this node, recovering a suitable destination category for otherwise-ambiguous min/max/clamp nodes.

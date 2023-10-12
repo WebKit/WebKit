@@ -202,10 +202,10 @@ static String decodeEscapeSequencesFromParsedURL(StringView input)
     percentDecoded.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ) {
         if (auto decodedCharacter = decodeEscapeSequence(input, i, length)) {
-            percentDecoded.uncheckedAppend(*decodedCharacter);
+            percentDecoded.append(*decodedCharacter);
             i += 3;
         } else {
-            percentDecoded.uncheckedAppend(input[i]);
+            percentDecoded.append(input[i]);
             ++i;
         }
     }

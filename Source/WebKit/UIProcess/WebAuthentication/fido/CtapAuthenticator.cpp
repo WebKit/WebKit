@@ -207,7 +207,7 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
 
     m_remainingAssertionResponses = response->numberOfCredentials() - 1;
     m_assertionResponses.reserveInitialCapacity(response->numberOfCredentials());
-    m_assertionResponses.uncheckedAppend(response.releaseNonNull());
+    m_assertionResponses.append(response.releaseNonNull());
     driver().transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
@@ -225,7 +225,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
         return;
     }
     m_remainingAssertionResponses--;
-    m_assertionResponses.uncheckedAppend(response.releaseNonNull());
+    m_assertionResponses.append(response.releaseNonNull());
 
     if (!m_remainingAssertionResponses) {
         if (auto* observer = this->observer()) {

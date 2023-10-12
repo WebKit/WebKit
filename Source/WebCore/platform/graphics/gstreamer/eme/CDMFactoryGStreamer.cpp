@@ -53,7 +53,7 @@ Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
     Vector<CDMProxyFactory*> factories;
 #if ENABLE(THUNDER)
     factories.reserveInitialCapacity(1);
-    factories.uncheckedAppend(&CDMFactoryThunder::singleton());
+    factories.append(&CDMFactoryThunder::singleton());
 #endif
     return factories;
 }

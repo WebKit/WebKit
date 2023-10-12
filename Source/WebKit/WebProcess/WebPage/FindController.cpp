@@ -116,7 +116,7 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
     rangesToReplace.reserveInitialCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
     for (auto index : matchIndices) {
         if (index < m_findMatches.size())
-            rangesToReplace.uncheckedAppend(m_findMatches[index]);
+            rangesToReplace.append(m_findMatches[index]);
         if (rangesToReplace.size() >= maximumNumberOfMatchesToReplace)
             break;
     }

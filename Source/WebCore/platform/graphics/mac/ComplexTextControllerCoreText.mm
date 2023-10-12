@@ -75,8 +75,8 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
         m_baseAdvances.reserveInitialCapacity(m_glyphCount);
         m_glyphOrigins.reserveInitialCapacity(m_glyphCount);
         for (unsigned i = 0; i < m_glyphCount; ++i) {
-            m_baseAdvances.uncheckedAppend(baseAdvances[i]);
-            m_glyphOrigins.uncheckedAppend(glyphOrigins[i]);
+            m_baseAdvances.append(baseAdvances[i]);
+            m_glyphOrigins.append(glyphOrigins[i]);
         }
     } else {
         const CGSize* baseAdvances = CTRunGetAdvancesPtr(ctRun);

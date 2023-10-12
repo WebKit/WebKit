@@ -149,13 +149,9 @@ static GstAudioChannelPosition webKitWebAudioGStreamerChannelPosition(int channe
 static GstCaps* getGStreamerAudioCaps(float sampleRate, unsigned numberOfChannels)
 {
     guint64 channelMask = 0;
-    Vector<GstAudioChannelPosition> positions;
-    positions.reserveInitialCapacity(numberOfChannels);
-
-    for (unsigned channelIndex = 0; channelIndex < numberOfChannels; channelIndex++) {
-        GstAudioChannelPosition position = webKitWebAudioGStreamerChannelPosition(channelIndex);
-        positions.uncheckedAppend(WTFMove(position));
-    }
+    Vector<GstAudioChannelPosition> positions(numberOfChannels, [&](size_t channelIndex) -> GstAudioChannelPosition {
+        return webKitWebAudioGStreamerChannelPosition(channelIndex);
+    });
 
     gst_audio_channel_positions_to_mask(reinterpret_cast<GstAudioChannelPosition*>(positions.data()),
         numberOfChannels, FALSE, &channelMask);

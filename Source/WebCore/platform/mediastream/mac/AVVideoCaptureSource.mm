@@ -339,11 +339,11 @@ static Vector<MeteringMode> supportedWhiteBalanceModes(AVCaptureDevice* device)
     whiteBalanceModes.reserveInitialCapacity(3);
 
     if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeLocked])
-        whiteBalanceModes.uncheckedAppend(MeteringMode::Manual);
+        whiteBalanceModes.append(MeteringMode::Manual);
     if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeAutoWhiteBalance])
-        whiteBalanceModes.uncheckedAppend(MeteringMode::SingleShot);
+        whiteBalanceModes.append(MeteringMode::SingleShot);
     if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance])
-        whiteBalanceModes.uncheckedAppend(MeteringMode::Continuous);
+        whiteBalanceModes.append(MeteringMode::Continuous);
 
     return whiteBalanceModes;
 }

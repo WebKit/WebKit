@@ -125,7 +125,7 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBK
             isFirst = false;
             continue;
         }
-        prefetchedRecords.uncheckedAppend(record.record);
+        prefetchedRecords.append(record.record);
     }
     prefetchedRecords.shrinkToFit();
 

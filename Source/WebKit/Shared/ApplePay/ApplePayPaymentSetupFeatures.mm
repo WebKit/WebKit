@@ -63,7 +63,7 @@ PaymentSetupFeatures::operator Vector<Ref<WebCore::ApplePaySetupFeature>>() cons
     features.reserveInitialCapacity([m_platformFeatures count]);
     for (PKPaymentSetupFeature *platformFeature in m_platformFeatures.get()) {
         if (WebCore::ApplePaySetupFeature::supportsFeature(platformFeature))
-            features.uncheckedAppend(WebCore::ApplePaySetupFeature::create(platformFeature));
+            features.append(WebCore::ApplePaySetupFeature::create(platformFeature));
     }
     return features;
 }

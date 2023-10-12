@@ -193,7 +193,7 @@ void ResourceRequest::doUpdateResourceRequest()
     for (NSNumber *encodingFallback in [m_nsRequest contentDispositionEncodingFallbackArray]) {
         CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([encodingFallback unsignedLongValue]);
         if (encoding != kCFStringEncodingInvalidId)
-            m_requestData.m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(CFStringConvertEncodingToIANACharSetName(encoding));
+            m_requestData.m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
     }
 
     if (m_nsRequest) {

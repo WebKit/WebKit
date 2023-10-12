@@ -320,7 +320,7 @@ public:
         auto pasteboardClass = UIPasteboard.generalPasteboard.class;
         m_swizzlers.reserveInitialCapacity(pasteboardAccessSelectors.size());
         for (SEL selector : pasteboardAccessSelectors)
-            m_swizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(pasteboardClass, selector, reinterpret_cast<IMP>(returnNil)));
+            m_swizzlers.append(makeUnique<InstanceMethodSwizzler>(pasteboardClass, selector, reinterpret_cast<IMP>(returnNil)));
     }
 
     bool didAccessPasteboard() const

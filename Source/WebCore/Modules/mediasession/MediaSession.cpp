@@ -218,7 +218,7 @@ ExceptionOr<void> MediaSession::setPlaylist(ScriptExecutionContext& context, Vec
         if (resolvedEntry.hasException())
             return resolvedEntry.releaseException();
         
-        resolvedPlaylist.uncheckedAppend(resolvedEntry.releaseReturnValue());
+        resolvedPlaylist.append(resolvedEntry.releaseReturnValue());
     }
 
     m_playlist = WTFMove(resolvedPlaylist);

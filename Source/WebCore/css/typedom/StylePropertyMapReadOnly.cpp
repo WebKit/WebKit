@@ -67,7 +67,7 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(RefPt
                 auto styleValue = CSSStyleValueFactory::constructStyleValueForCustomPropertySyntaxValue(listValue);
                 if (!styleValue)
                     return { };
-                result.uncheckedAppend(WTFMove(styleValue));
+                result.append(WTFMove(styleValue));
             }
             return result;
         }

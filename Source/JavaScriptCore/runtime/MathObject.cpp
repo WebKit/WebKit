@@ -195,7 +195,7 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncHypot, (JSGlobalObject* globalObject, Call
     for (unsigned i = 0; i < argsCount; ++i) {
         double argument = callFrame->uncheckedArgument(i).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        args.uncheckedAppend(argument);
+        args.append(argument);
     }
 
     double max = 0;

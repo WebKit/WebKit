@@ -193,7 +193,7 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& a
     for (auto& axID : axIDs) {
         RefPtr object = objectForID(axID);
         if (object) {
-            result.uncheckedAppend(object);
+            result.append(object);
             continue;
         }
 
@@ -215,7 +215,7 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& a
         });
         if (object) {
             m_readerThreadNodeMap.add(axID, *object);
-            result.uncheckedAppend(object);
+            result.append(object);
         }
     }
     result.shrinkToFit();
@@ -392,7 +392,7 @@ void AXIsolatedTree::collectNodeChangesForChildrenMatching(AccessibilityObject& 
         if (!matches(*axChild))
             continue;
 
-        axChildrenIDs.uncheckedAppend(axChild->objectID());
+        axChildrenIDs.append(axChild->objectID());
         m_unresolvedPendingAppends.set(axChild->objectID(), AttachWrapper::OnMainThread);
     }
     axChildrenIDs.shrinkToFit();
@@ -442,7 +442,7 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
             continue;
         }
 
-        axChildrenIDs.uncheckedAppend(axChild->objectID());
+        axChildrenIDs.append(axChild->objectID());
         collectNodeChangesForSubtree(*axChild);
     }
     axChildrenIDs.shrinkToFit();

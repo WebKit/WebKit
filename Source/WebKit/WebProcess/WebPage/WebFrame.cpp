@@ -270,7 +270,7 @@ FrameTreeNodeData WebFrame::frameTreeData() const
             ASSERT_NOT_REACHED();
             continue;
         }
-        data.children.uncheckedAppend(childWebFrame->frameTreeData());
+        data.children.append(childWebFrame->frameTreeData());
     }
 
     return data;
@@ -726,7 +726,7 @@ Ref<API::Array> WebFrame::childFrames()
         ASSERT(webFrame);
         if (!webFrame)
             continue;
-        vector.uncheckedAppend(webFrame);
+        vector.append(webFrame);
     }
 
     return API::Array::create(WTFMove(vector));

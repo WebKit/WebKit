@@ -41,8 +41,8 @@ void serializeString(Vector<uint8_t>& actions, const String& string)
     auto utf8 = string.utf8();
     uint32_t serializedLength = sizeof(uint32_t) + utf8.length();
     actions.reserveCapacity(actions.size() + serializedLength);
-    actions.uncheckedAppend(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(&serializedLength), sizeof(serializedLength) });
-    actions.uncheckedAppend(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() });
+    actions.append(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(&serializedLength), sizeof(serializedLength) });
+    actions.append(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() });
 }
 
 size_t stringSerializedLength(std::span<const uint8_t> span)

@@ -795,7 +795,7 @@ Vector<BoundaryPoint> AccessibilityObject::previousLineStartBoundaryPoints(const
         if (!boundaryPoint || !contains(targetRange, *boundaryPoint))
             break;
 
-        boundaryPoints.uncheckedAppend(WTFMove(*boundaryPoint));
+        boundaryPoints.append(WTFMove(*boundaryPoint));
     }
     boundaryPoints.shrinkToFit();
     return boundaryPoints;
@@ -2914,7 +2914,7 @@ bool AccessibilityObject::supportsPressAction() const
 
     Vector<RefPtr<AXCoreObject>> candidates;
     candidates.reserveInitialCapacity(std::min(static_cast<size_t>(searchLimit), axObject->children().size() + 1));
-    candidates.uncheckedAppend(axObject);
+    candidates.append(axObject);
 
     while (!candidates.isEmpty()) {
         RefPtr candidate = candidates.takeLast();

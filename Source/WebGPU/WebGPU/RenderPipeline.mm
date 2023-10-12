@@ -514,8 +514,8 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindG
         bindGroupLayoutDescriptor.label = "getBindGroup() generated layout";
         bindGroupLayoutDescriptor.entryCount = entries.size();
         bindGroupLayoutDescriptor.entries = entries.size() ? &entries[0] : nullptr;
-        bindGroupLayoutsRefs.uncheckedAppend(createBindGroupLayout(bindGroupLayoutDescriptor));
-        bindGroupLayouts.uncheckedAppend(&bindGroupLayoutsRefs[bindGroupLayoutsRefs.size() - 1].get());
+        bindGroupLayoutsRefs.append(createBindGroupLayout(bindGroupLayoutDescriptor));
+        bindGroupLayouts.append(&bindGroupLayoutsRefs[bindGroupLayoutsRefs.size() - 1].get());
     }
 
     auto generatedPipelineLayout = createPipelineLayout(WGPUPipelineLayoutDescriptor {

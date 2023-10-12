@@ -781,7 +781,7 @@ void DatabaseTracker::deleteDatabasesModifiedSince(WallTime time)
                     continue;
             }
 
-            databaseNamesToDelete.uncheckedAppend(databaseName);
+            databaseNamesToDelete.append(databaseName);
         }
 
         if (databaseNames.size() == databaseNamesToDelete.size())

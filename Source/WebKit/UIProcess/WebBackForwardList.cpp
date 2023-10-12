@@ -109,7 +109,7 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
         removedItems.reserveInitialCapacity(m_entries.size() - targetSize);
         while (m_entries.size() > targetSize) {
             didRemoveItem(m_entries.last());
-            removedItems.uncheckedAppend(WTFMove(m_entries.last()));
+            removedItems.append(WTFMove(m_entries.last()));
             m_entries.removeLast();
         }
 
@@ -382,7 +382,7 @@ void WebBackForwardList::clear()
     removedItems.reserveInitialCapacity(size - 1);
     for (size_t i = 0; i < size; ++i) {
         if (m_currentIndex && i != *m_currentIndex)
-            removedItems.uncheckedAppend(WTFMove(m_entries[i]));
+            removedItems.append(WTFMove(m_entries[i]));
     }
 
     m_currentIndex = 0;

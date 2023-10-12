@@ -1001,12 +1001,9 @@ JSCValue* jsc_value_object_invoke_methodv(JSCValue* value, const char* name, uns
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    Vector<JSValueRef> arguments;
-    if (parametersCount) {
-        arguments.reserveInitialCapacity(parametersCount);
-        for (unsigned i = 0; i < parametersCount; ++i)
-            arguments.uncheckedAppend(jscValueGetJSValue(parameters[i]));
-    }
+    Vector<JSValueRef> arguments(parametersCount, [&](size_t i) {
+        return jscValueGetJSValue(parameters[i]);
+    });
 
     auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Method, object, arguments, &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
@@ -1206,12 +1203,9 @@ JSCValue* jsc_value_new_function(JSCContext* context, const char* name, GCallbac
 
     va_list args;
     va_start(args, paramCount);
-    Vector<GType> parameters;
-    if (paramCount) {
-        parameters.reserveInitialCapacity(paramCount);
-        for (unsigned i = 0; i < paramCount; ++i)
-            parameters.uncheckedAppend(va_arg(args, GType));
-    }
+    Vector<GType> parameters(paramCount, [&](size_t) -> GType {
+        return va_arg(args, GType);
+    });
     va_end(args);
 
     return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
@@ -1246,12 +1240,9 @@ JSCValue* jsc_value_new_functionv(JSCContext* context, const char* name, GCallba
     g_return_val_if_fail(callback, nullptr);
     g_return_val_if_fail(!parametersCount || parameterTypes, nullptr);
 
-    Vector<GType> parameters;
-    if (parametersCount) {
-        parameters.reserveInitialCapacity(parametersCount);
-        for (unsigned i = 0; i < parametersCount; ++i)
-            parameters.uncheckedAppend(parameterTypes[i]);
-    }
+    Vector<GType> parameters(parametersCount, [&](size_t i) -> GType {
+        return parameterTypes[i];
+    });
 
     return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
 }
@@ -1363,12 +1354,9 @@ JSCValue* jsc_value_function_callv(JSCValue* value, unsigned parametersCount, JS
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    Vector<JSValueRef> arguments;
-    if (parametersCount) {
-        arguments.reserveInitialCapacity(parametersCount);
-        for (unsigned i = 0; i < parametersCount; ++i)
-            arguments.uncheckedAppend(jscValueGetJSValue(parameters[i]));
-    }
+    Vector<JSValueRef> arguments(parametersCount, [&](size_t i) {
+        return jscValueGetJSValue(parameters[i]);
+    });
 
     auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Function, nullptr, arguments, &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
@@ -1449,12 +1437,9 @@ JSCValue* jsc_value_constructor_callv(JSCValue* value, unsigned parametersCount,
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    Vector<JSValueRef> arguments;
-    if (parametersCount) {
-        arguments.reserveInitialCapacity(parametersCount);
-        for (unsigned i = 0; i < parametersCount; ++i)
-            arguments.uncheckedAppend(jscValueGetJSValue(parameters[i]));
-    }
+    Vector<JSValueRef> arguments(parametersCount, [&](size_t i) {
+        return jscValueGetJSValue(parameters[i]);
+    });
 
     auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Constructor, nullptr, arguments, &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))

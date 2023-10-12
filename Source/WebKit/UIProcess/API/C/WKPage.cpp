@@ -1016,7 +1016,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
                     continue;
                 }
 
-                customMenu.uncheckedAppend(*item);
+                customMenu.append(*item);
             }
 
             contextMenuListener.useContextMenuItems(WTFMove(customMenu));

@@ -373,7 +373,7 @@ static Vector<WebCore::AuthenticatorTransport> toAuthenticatorTransports(NSArray
     transports.reserveInitialCapacity(ascTransports.count);
     for (NSNumber *ascTransport : ascTransports) {
         if (WTF::isValidEnum<WebCore::AuthenticatorTransport>(ascTransport.intValue))
-            transports.uncheckedAppend(static_cast<WebCore::AuthenticatorTransport>(ascTransport.intValue));
+            transports.append(static_cast<WebCore::AuthenticatorTransport>(ascTransport.intValue));
     }
     return transports;
 }

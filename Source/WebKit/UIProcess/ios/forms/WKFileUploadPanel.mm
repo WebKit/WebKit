@@ -476,7 +476,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     Vector<String> filenames;
     filenames.reserveInitialCapacity(count);
     for (NSURL *fileURL in fileURLs)
-        filenames.uncheckedAppend(String::fromUTF8(fileURL.fileSystemRepresentation));
+        filenames.append(String::fromUTF8(fileURL.fileSystemRepresentation));
 
     NSData *png = UIImagePNGRepresentation(iconImage);
     RefPtr<API::Data> iconImageDataRef = adoptRef(WebKit::toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([png bytes]), [png length])));

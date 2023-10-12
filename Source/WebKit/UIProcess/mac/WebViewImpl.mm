@@ -4524,7 +4524,7 @@ void WebViewImpl::setCustomSwipeViews(NSArray *customSwipeViews)
     Vector<RetainPtr<NSView>> views;
     views.reserveInitialCapacity(customSwipeViews.count);
     for (NSView *view in customSwipeViews)
-        views.uncheckedAppend(view);
+        views.append(view);
 
     ensureGestureController().setCustomSwipeViews(views);
 }
@@ -5026,7 +5026,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     mergedHighlights.reserveInitialCapacity(highlights.size());
     for (auto& highlight : highlights) {
         if (mergedHighlights.isEmpty() || mergedHighlights.last().backgroundColor != highlight.backgroundColor || mergedHighlights.last().foregroundColor != highlight.foregroundColor)
-            mergedHighlights.uncheckedAppend(highlight);
+            mergedHighlights.append(highlight);
         else
             mergedHighlights.last().endOffset = highlight.endOffset;
     }

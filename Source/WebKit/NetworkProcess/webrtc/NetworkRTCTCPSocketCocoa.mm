@@ -63,7 +63,6 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
     nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), buffer = WTFMove(buffer)](dispatch_data_t content, nw_content_context_t context, bool isComplete, nw_error_t error) mutable {
         if (content) {
             dispatch_data_apply(content, makeBlockPtr([&](dispatch_data_t, size_t, const void* data, size_t size) {
-                // FIXME: Introduce uncheckedAppend version.
                 buffer.append(static_cast<const uint8_t*>(data), size);
                 return true;
             }).get());
@@ -188,7 +187,7 @@ Vector<uint8_t> NetworkRTCTCPSocketCocoa::createMessageBuffer(const uint8_t* dat
         buffer.reserveInitialCapacity(messageLengths->messageLengthWithPadding);
         buffer.append(data, size);
         for (size_t cptr = 0 ; cptr < messageLengths->messageLengthWithPadding - size; ++cptr)
-            buffer.uncheckedAppend(0);
+            buffer.append(0);
         return buffer;
     }
 

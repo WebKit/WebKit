@@ -614,11 +614,9 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 
     TraitsInFamilyProcData procData(familyName);
     EnumFontFamiliesEx(hdc, &logFont, traitsInFamilyEnumProc, reinterpret_cast<LPARAM>(&procData), 0);
-    Vector<FontSelectionCapabilities> result;
-    result.reserveInitialCapacity(procData.m_capabilities.size());
-    for (auto capabilities : procData.m_capabilities)
-        result.uncheckedAppend(capabilities);
-    return result;
+    return WTF::map(procData.m_capabilities, [](auto& capabilities) -> FontSelectionCapabilities {
+        return capabilities;
+    });
 }
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext&)

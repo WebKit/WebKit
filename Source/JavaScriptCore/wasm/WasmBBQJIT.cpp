@@ -7516,7 +7516,7 @@ public:
 
             for (unsigned index = 0; index < targets.size(); ++index) {
                 Box<CCallHelpers::Label> label = Box<CCallHelpers::Label>::create(m_jit.label());
-                labels.uncheckedAppend(label);
+                labels.append(label);
                 bool isCodeEmitted = currentControlData().addExit(*this, targets[index]->targetLocations(), results);
                 if (isCodeEmitted)
                     targets[index]->addBranch(m_jit.jump());

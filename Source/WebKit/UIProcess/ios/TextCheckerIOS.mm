@@ -261,7 +261,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                     detail.range = detailNSRange;
                     detail.userDescription = [incomingDetail objectForKey:@"NSGrammarUserDescription"];
                     detail.guesses = makeVector<String>([incomingDetail objectForKey:@"NSGrammarCorrections"]);
-                    result.details.uncheckedAppend(WTFMove(detail));
+                    result.details.append(WTFMove(detail));
                 }
                 results.append(WTFMove(result));
             } else if (resultType == NSTextCheckingTypeCorrection && checkingTypes.contains(TextCheckingType::Correction)) {
@@ -285,7 +285,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                         detail.range = detailNSRange;
                         detail.userDescription = [incomingDetail objectForKey:@"NSGrammarUserDescription"];
                         detail.guesses = makeVector<String>([incomingDetail objectForKey:@"NSGrammarCorrections"]);
-                        result.details.uncheckedAppend(WTFMove(detail));
+                        result.details.append(WTFMove(detail));
                     }
                 }
                 results.append(WTFMove(result));

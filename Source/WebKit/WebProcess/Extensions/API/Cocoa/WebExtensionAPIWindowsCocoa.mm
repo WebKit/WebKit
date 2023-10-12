@@ -293,7 +293,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
                 return false;
             }
 
-            tabs.uncheckedAppend(WTFMove(tabParameters));
+            tabs.append(WTFMove(tabParameters));
         }
 
         parameters.tabs = WTFMove(tabs);

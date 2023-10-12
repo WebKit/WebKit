@@ -143,7 +143,7 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
 
                 action.emulateUserGesture = actionObject->getBoolean(Protocol::Debugger::BreakpointAction::emulateUserGestureKey).value_or(false);
 
-                actions.uncheckedAppend(WTFMove(action));
+                actions.append(WTFMove(action));
             }
         }
 

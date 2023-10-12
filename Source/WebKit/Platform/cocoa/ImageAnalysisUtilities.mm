@@ -117,13 +117,13 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
             })();
 
             searchLocation = matchLocation + childText.length();
-            children.uncheckedAppend({ WTFMove(childText), floatQuad(child.quad), hasLeadingWhitespace });
+            children.append({ WTFMove(childText), floatQuad(child.quad), hasLeadingWhitespace });
         }
         VKWKLineInfo *nextLine = nextLineIndex < allLines.count ? allLines[nextLineIndex] : nil;
         // The `shouldWrap` property indicates whether or not a line should wrap, relative to the previous line.
         bool hasTrailingNewline = nextLine && (![nextLine respondsToSelector:@selector(shouldWrap)] || ![nextLine shouldWrap]);
         bool isVertical = [line respondsToSelector:@selector(layoutDirection)] && [line layoutDirection] == CRLayoutDirectionTopToBottom;
-        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline, isVertical });
+        result.lines.append({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline, isVertical });
         isFirstLine = false;
         nextLineIndex++;
     }
@@ -133,7 +133,7 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
         auto dataDetectors = RetainPtr { analysis.textDataDetectors };
         result.dataDetectors.reserveInitialCapacity([dataDetectors count]);
         for (VKWKDataDetectorInfo *info in dataDetectors.get())
-            result.dataDetectors.uncheckedAppend({ info.result, floatQuads(info.boundingQuads) });
+            result.dataDetectors.append({ info.result, floatQuads(info.boundingQuads) });
     }
 #endif // ENABLE(DATA_DETECTION)
 
@@ -204,7 +204,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
             quad.setP3({ quad.p3().x(), 1 - quad.p3().y() });
             quad.setP4({ quad.p4().x(), 1 - quad.p4().y() });
         }
-        result.blocks.uncheckedAppend({ paragraph.text, WTFMove(quad) });
+        result.blocks.append({ paragraph.text, WTFMove(quad) });
     }
 
     return result;

@@ -267,7 +267,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
             promise.reject(requestOrException.releaseException());
             return;
         }
-        requests.uncheckedAppend(requestOrException.releaseReturnValue());
+        requests.append(requestOrException.releaseReturnValue());
     }
 
     auto taskHandler = FetchTasksHandler::create(*this, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)](ExceptionOr<Vector<Record>>&& result) mutable {

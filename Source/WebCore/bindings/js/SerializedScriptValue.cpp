@@ -4032,7 +4032,7 @@ private:
             CachedStringRef value;
             if (!readStringData(value))
                 return JSValue();
-            fingerprints.uncheckedAppend(RTCCertificate::DtlsFingerprint { algorithm->string(), value->string() });
+            fingerprints.append(RTCCertificate::DtlsFingerprint { algorithm->string(), value->string() });
         }
 
         if (!m_canCreateDOMObject)

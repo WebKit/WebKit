@@ -77,7 +77,7 @@ static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(Scrip
             if (result.returnValue()->isReadableStreamBody())
                 return Exception { NotSupportedError, "ReadableStream uploading is not supported"_s };
             
-            requests.uncheckedAppend(result.releaseReturnValue());
+            requests.append(result.releaseReturnValue());
         }
         return requests;
     });

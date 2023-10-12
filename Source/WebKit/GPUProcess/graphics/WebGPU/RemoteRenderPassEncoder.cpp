@@ -193,7 +193,7 @@ void RemoteRenderPassEncoder::executeBundles(Vector<WebGPUIdentifier>&& renderBu
         ASSERT(convertedBundle);
         if (!convertedBundle)
             return;
-        convertedBundles.uncheckedAppend(*convertedBundle);
+        convertedBundles.append(*convertedBundle);
     }
     m_backing->executeBundles(WTFMove(convertedBundles));
 }

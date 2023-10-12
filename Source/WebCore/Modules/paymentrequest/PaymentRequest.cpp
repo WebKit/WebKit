@@ -268,7 +268,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 
                 serializedData = dataResult.releaseReturnValue();
             }
-            serializedModifierData.uncheckedAppend(WTFMove(serializedData));
+            serializedModifierData.append(WTFMove(serializedData));
         }
     } else if (isUpdate == IsUpdate::No)
         details.modifiers = { { } };
@@ -333,7 +333,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
             if (exception.hasException())
                 return exception.releaseException();
         }
-        serializedMethodData.uncheckedAppend({ WTFMove(*identifier), WTFMove(serializedData) });
+        serializedMethodData.append({ WTFMove(*identifier), WTFMove(serializedData) });
     }
 
     auto totalResult = checkAndCanonicalizeTotal(details.total);

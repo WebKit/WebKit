@@ -194,7 +194,7 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
 {
     Vector<uint8_t> rawKey;
     rawKey.reserveInitialCapacity(1 + x.size() + y.size());
-    rawKey.uncheckedAppend(0x04);
+    rawKey.append(0x04);
     rawKey.appendVector(x);
     rawKey.appendVector(y);
     return rawKey;

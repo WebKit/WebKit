@@ -114,14 +114,14 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             if (needsAudioSandboxExtension) {
                 if (auto handle = SandboxExtension::createHandleForGenericExtension(audioExtensionPath)) {
                     handles[--extensionCount] = WTFMove(*handle);
-                    ids.uncheckedAppend(audioExtensionPath);
+                    ids.append(audioExtensionPath);
                 }
             }
 
             if (needsVideoSandboxExtension) {
                 if (auto handle = SandboxExtension::createHandleForGenericExtension(videoExtensionPath)) {
                     handles[--extensionCount] = WTFMove(*handle);
-                    ids.uncheckedAppend(videoExtensionPath);
+                    ids.append(videoExtensionPath);
                 }
             }
 
@@ -130,28 +130,28 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
                 machBootstrapExtension = SandboxExtension::createHandleForMachBootstrapExtension();
                 if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraServicePath, auditToken)) {
                     handles[--extensionCount] = WTFMove(*handle);
-                    ids.uncheckedAppend(appleCameraServicePath);
+                    ids.append(appleCameraServicePath);
                 }
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
                 if (auto handle = SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, auditToken)) {
                     handles[--extensionCount] = WTFMove(*handle);
-                    ids.uncheckedAppend(additionalAppleCameraServicePath);
+                    ids.append(additionalAppleCameraServicePath);
                 }
 #endif
 #if HAVE(APPLE_CAMERA_USER_CLIENT)
                 if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraUserClientPath, auditToken)) {
                     handles[--extensionCount] = WTFMove(*handle);
-                    ids.uncheckedAppend(appleCameraUserClientPath);
+                    ids.append(appleCameraUserClientPath);
                 }
 
                 if (auto handle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitClientClass, auditToken)) {
                     handles[--extensionCount] = WTFMove(*handle);
-                    ids.uncheckedAppend(appleCameraUserClientIOKitClientClass);
+                    ids.append(appleCameraUserClientIOKitClientClass);
                 }
 
                 if (auto handle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitServiceClass, auditToken)) {
                     handles[--extensionCount] = WTFMove(*handle);
-                    ids.uncheckedAppend(appleCameraUserClientIOKitServiceClass);
+                    ids.append(appleCameraUserClientIOKitServiceClass);
                 }
 #endif
             }

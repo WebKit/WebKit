@@ -119,7 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
             double confidence = [segment confidence];
             maxConfidence = maxConfidence < confidence ? confidence : maxConfidence;
         }
-        alternatives.uncheckedAppend(WebCore::SpeechRecognitionAlternativeData { [transcription formattedString], maxConfidence });
+        alternatives.append(WebCore::SpeechRecognitionAlternativeData { [transcription formattedString], maxConfidence });
         if (alternatives.size() == _maxAlternatives)
             break;
     }

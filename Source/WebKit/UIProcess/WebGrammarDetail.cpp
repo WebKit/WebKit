@@ -49,7 +49,7 @@ WebGrammarDetail::WebGrammarDetail(int location, int length, API::Array* guesses
     size_t numGuesses = guesses->size();
     m_grammarDetail.guesses.reserveCapacity(numGuesses);
     for (size_t i = 0; i < numGuesses; ++i)
-        m_grammarDetail.guesses.uncheckedAppend(guesses->at<API::String>(i)->string());
+        m_grammarDetail.guesses.append(guesses->at<API::String>(i)->string());
 
     m_grammarDetail.userDescription = userDescription;
 }

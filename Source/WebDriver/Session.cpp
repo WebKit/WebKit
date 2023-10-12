@@ -2295,7 +2295,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
                             }
                         } else
                             interaction.text = String(&key, 1);
-                        interactions.uncheckedAppend(WTFMove(interaction));
+                        interactions.append(WTFMove(interaction));
                     }
 
                     // Reset sticky modifiers if needed.

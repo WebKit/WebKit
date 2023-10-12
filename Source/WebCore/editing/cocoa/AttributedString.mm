@@ -235,7 +235,7 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
         result.reserveInitialCapacity(arrayLength);
         for (id element in array) {
             if ([element isKindOfClass:NSString.class])
-                result.uncheckedAppend((NSString *)element);
+                result.append((NSString *)element);
             else
                 RELEASE_LOG_ERROR(Editing, "NSAttributedString extraction failed with array containing <%@>", NSStringFromClass([element class]));
         }
@@ -246,7 +246,7 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
         result.reserveInitialCapacity(arrayLength);
         for (id element in array) {
             if ([element isKindOfClass:NSNumber.class])
-                result.uncheckedAppend([(NSNumber *)element doubleValue]);
+                result.append([(NSNumber *)element doubleValue]);
             else
                 RELEASE_LOG_ERROR(Editing, "NSAttributedString extraction failed with array containing <%@>", NSStringFromClass([element class]));
         }

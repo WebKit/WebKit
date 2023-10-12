@@ -95,7 +95,7 @@ SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
 
     m_selectors.reserveInitialCapacity(selectorCount);
     for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
-        m_selectors.uncheckedAppend({ selector });
+        m_selectors.append({ selector });
 
     if (selectorCount == 1) {
         const CSSSelector& selector = *m_selectors.first().selector;

@@ -606,7 +606,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
 
             for (auto& rect : rects) {
                 if (FloatRect localRect { rect }; !localRect.isZero())
-                    quads.uncheckedAppend(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
+                    quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
             }
             continue;
         }

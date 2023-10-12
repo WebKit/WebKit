@@ -1860,7 +1860,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::ensurePrevalentResourcesF
     }
 
     setPrevalentResource(debugStaticPrevalentResource(), ResourceLoadPrevalence::High);
-    primaryDomainsToBlock.uncheckedAppend(debugStaticPrevalentResource());
+    primaryDomainsToBlock.append(debugStaticPrevalentResource());
 
     if (!debugManualPrevalentResource().isEmpty()) {
         auto result = ensureResourceStatisticsForRegistrableDomain(debugManualPrevalentResource());
@@ -1869,7 +1869,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::ensurePrevalentResourcesF
             return { };
         }
         setPrevalentResource(debugManualPrevalentResource(), ResourceLoadPrevalence::High);
-        primaryDomainsToBlock.uncheckedAppend(debugManualPrevalentResource());
+        primaryDomainsToBlock.append(debugManualPrevalentResource());
 
         if (debugLoggingEnabled()) {
             RELEASE_LOG_INFO(ITPDebug, "Did set %" PRIVATE_LOG_STRING " as prevalent resource for the purposes of ITP Debug Mode.", debugManualPrevalentResource().string().utf8().data());

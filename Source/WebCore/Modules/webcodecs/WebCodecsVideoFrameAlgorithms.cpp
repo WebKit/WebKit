@@ -232,7 +232,7 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
         if (!WTF::safeAdd(planeSize, computedLayout.destinationOffset, planeEnd) || planeEnd > std::numeric_limits<uint32_t>::max())
             return Exception { TypeError, "planeEnd is too big"_s };
 
-        endOffsets.uncheckedAppend(planeEnd);
+        endOffsets.append(planeEnd);
         minAllocationSize = std::max(minAllocationSize, planeEnd);
 
         for (size_t j = 0; j < i; ++j) {
@@ -240,7 +240,7 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
                 return Exception { TypeError, "planes are overlapping"_s };
         }
 
-        computedLayouts.uncheckedAppend(computedLayout);
+        computedLayouts.append(computedLayout);
     }
 
     return CombinedPlaneLayout { minAllocationSize, WTFMove(computedLayouts) };

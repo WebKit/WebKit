@@ -45,7 +45,7 @@ static bool extractEDDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t
     } else {
         // If not, prefix the binary data with zero bytes.
         for (size_t paddingSize = keySizeInBytes - dataSize; paddingSize > 0; --paddingSize)
-            signature.uncheckedAppend(0x00);
+            signature.append(0x00);
         signature.appendVector(*integerData);
     }
 

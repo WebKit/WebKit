@@ -62,7 +62,7 @@ private:
             int8_t character = 0;
             if (!checkedRead<int8_t>(character, view, localOffset, BigEndian))
                 return false;
-            characters.uncheckedAppend(character);
+            characters.append(character);
         }
 
         m_contents = String::fromUTF8(characters);

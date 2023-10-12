@@ -85,7 +85,7 @@ inline ExceptionOr<void> DOMTokenList::addInternal(const AtomString* newTokens, 
         if (result.hasException())
             return result;
         if (!tokens.contains(newTokens[i]) && !uniqueNewTokens.contains(newTokens[i]))
-            uniqueNewTokens.uncheckedAppend(newTokens[i]);
+            uniqueNewTokens.append(newTokens[i]);
     }
 
     if (!uniqueNewTokens.isEmpty())

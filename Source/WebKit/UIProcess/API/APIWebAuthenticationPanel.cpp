@@ -58,11 +58,11 @@ WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manag
 {
     m_transports.reserveInitialCapacity(AuthenticatorManager::maxTransportNumber);
     if (transports.contains(AuthenticatorTransport::Usb))
-        m_transports.uncheckedAppend(AuthenticatorTransport::Usb);
+        m_transports.append(AuthenticatorTransport::Usb);
     if (transports.contains(AuthenticatorTransport::Nfc))
-        m_transports.uncheckedAppend(AuthenticatorTransport::Nfc);
+        m_transports.append(AuthenticatorTransport::Nfc);
     if (transports.contains(AuthenticatorTransport::Internal))
-        m_transports.uncheckedAppend(AuthenticatorTransport::Internal);
+        m_transports.append(AuthenticatorTransport::Internal);
 }
 
 WebAuthenticationPanel::~WebAuthenticationPanel() = default;

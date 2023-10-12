@@ -48,7 +48,7 @@ Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool ena
     submenu.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i) {
         if (auto* item = submenuItems->at<WebContextMenuItem>(i))
-            submenu.uncheckedAppend(item->data());
+            submenu.append(item->data());
     }
     submenu.shrinkToFit();
 

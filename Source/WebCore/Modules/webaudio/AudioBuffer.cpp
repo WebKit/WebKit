@@ -108,7 +108,7 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
         if (preventDetaching == LegacyPreventDetaching::Yes)
             channelDataArray->setDetachable(false);
 
-        channels.uncheckedAppend(WTFMove(channelDataArray));
+        channels.append(WTFMove(channelDataArray));
     }
 
     m_channels = WTFMove(channels);
@@ -137,7 +137,7 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
         }
 
         channelDataArray->setRange(bus.channel(i)->data(), m_originalLength, 0);
-        channels.uncheckedAppend(WTFMove(channelDataArray));
+        channels.append(WTFMove(channelDataArray));
     }
 
     m_channels = WTFMove(channels);

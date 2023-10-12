@@ -130,7 +130,7 @@ std::pair<Vector<FileChooserFileInfo>, String> FileInputType::filesFromFormContr
     size_t size = state.size() - 1;
     files.reserveInitialCapacity(size / 2);
     for (size_t i = 0; i < size; i += 2)
-        files.uncheckedAppend({ state[i], { }, state[i + 1] });
+        files.append({ state[i], { }, state[i + 1] });
 
     return { files, state[size] };
 }
@@ -150,10 +150,10 @@ FormControlState FileInputType::saveFormControlState() const
     Vector<AtomString> stateVector;
     stateVector.reserveInitialCapacity(length);
     for (auto& file : m_fileList->files()) {
-        stateVector.uncheckedAppend(AtomString { file->path() });
-        stateVector.uncheckedAppend(AtomString { file->name() });
+        stateVector.append(AtomString { file->path() });
+        stateVector.append(AtomString { file->name() });
     }
-    stateVector.uncheckedAppend(AtomString { m_displayString });
+    stateVector.append(AtomString { m_displayString });
     return FormControlState { WTFMove(stateVector) };
 }
 

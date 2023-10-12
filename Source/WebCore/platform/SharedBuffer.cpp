@@ -126,7 +126,7 @@ Vector<uint8_t> FragmentedSharedBuffer::copyData() const
     Vector<uint8_t> data;
     data.reserveInitialCapacity(size());
     forEachSegment([&data](auto& span) {
-        data.uncheckedAppend(span);
+        data.append(span);
     });
     return data;
 }

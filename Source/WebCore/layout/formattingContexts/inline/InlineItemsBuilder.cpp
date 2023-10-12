@@ -393,9 +393,9 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
 
         if (inlineItem.isText()) {
             appendTextBasedContent();
-            inlineItemOffsetList.uncheckedAppend({ inlineTextBoxOffset + downcast<InlineTextItem>(inlineItem).start() });
+            inlineItemOffsetList.append({ inlineTextBoxOffset + downcast<InlineTextItem>(inlineItem).start() });
         } else if (inlineItem.isBox()) {
-            inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
+            inlineItemOffsetList.append({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(objectReplacementCharacter);
         } else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
@@ -403,10 +403,10 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal;
             if (!initiatesControlCharacter) {
                 // Opaque items do not have position in the bidi paragraph. They inherit their bidi level from the next inline item.
-                inlineItemOffsetList.uncheckedAppend({ });
+                inlineItemOffsetList.append({ });
                 continue;
             }
-            inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
+            inlineItemOffsetList.append({ paragraphContentBuilder.length() });
             auto isEnteringBidi = inlineItem.isInlineBoxStart();
             handleEnterExitBidiContext(paragraphContentBuilder
                 , style.unicodeBidi()
@@ -417,7 +417,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
         } else if (inlineItem.isSoftLineBreak()) {
             // FIXME: Unwind the bidi stack for soft line break too.
             appendTextBasedContent();
-            inlineItemOffsetList.uncheckedAppend({ inlineTextBoxOffset + downcast<InlineSoftLineBreakItem>(inlineItem).position() });
+            inlineItemOffsetList.append({ inlineTextBoxOffset + downcast<InlineSoftLineBreakItem>(inlineItem).position() });
         } else if (inlineItem.isHardLineBreak()) {
             // Bidi handling requires us to close all the nested bidi contexts at the end of the line triggered by forced line breaks
             // and re-open it for the content on the next line (i.e. paragraph handling).
@@ -451,7 +451,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             };
             unwindBidiContextStack();
 
-            inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
+            inlineItemOffsetList.append({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(newlineCharacter);
 
             auto rewindBidiContextStack = [&] {
@@ -476,13 +476,13 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             rewindBidiContextStack();
         } else if (inlineItem.isWordBreakOpportunity()) {
             // Soft wrap opportunity markers are opaque to bidi. 
-            inlineItemOffsetList.uncheckedAppend({ });            
+            inlineItemOffsetList.append({ });
         } else if (inlineItem.isFloat()) {
             // Floats are not part of the inline content which make them opaque to bidi.
-            inlineItemOffsetList.uncheckedAppend({ });
+            inlineItemOffsetList.append({ });
         } else if (inlineItem.isOpaque()) {
             // opaque items are also opaque to bidi.
-            inlineItemOffsetList.uncheckedAppend({ });
+            inlineItemOffsetList.append({ });
         } else
             ASSERT_NOT_IMPLEMENTED_YET();
 

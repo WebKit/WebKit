@@ -207,7 +207,7 @@ void BarcodeDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandl
     Vector<DetectedBarcode> results;
     results.reserveInitialCapacity(request.get().results.count);
     for (VNBarcodeObservation *observation in request.get().results) {
-        results.uncheckedAppend({
+        results.append({
             convertRectFromVisionToWeb(nativeImage->size(), observation.boundingBox),
             observation.payloadStringValue,
             convertSymbology(observation.symbology),

@@ -560,7 +560,7 @@ RefPtr<API::Object> Object::fromNSObject(NSObject<NSSecureCoding> *object)
         result.reserveInitialCapacity(array.count);
         for (id member in array) {
             if (auto memberObject = fromNSObject(member))
-                result.uncheckedAppend(WTFMove(memberObject));
+                result.append(WTFMove(memberObject));
         }
         return API::Array::create(WTFMove(result));
     }

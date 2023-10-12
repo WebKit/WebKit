@@ -114,7 +114,7 @@ static Vector<SubresourceInfo> makeSubresourceInfoVector(const Vector<std::uniqu
                 previousInfo = &(*previousSubresources)[it->value];
         }
         
-        result.uncheckedAppend({ load->key, load->request, previousInfo });
+        result.append({ load->key, load->request, previousInfo });
         
         // FIXME: We should really consider all resources seen for the first time transient.
         if (!previousSubresources)

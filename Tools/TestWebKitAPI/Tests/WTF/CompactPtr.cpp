@@ -205,7 +205,7 @@ TEST(WTF_CompactPtr, HashMap)
     HashMap<PackedPtr<AlignedPackingTarget>, unsigned> map;
     vector.reserveCapacity(10000);
     for (unsigned i = 0; i < 10000; ++i)
-        vector.uncheckedAppend(AlignedPackingTarget { i });
+        vector.append(AlignedPackingTarget { i });
 
     for (auto& target : vector)
         map.add(&target, target.m_value);
@@ -222,7 +222,7 @@ TEST(WTF_CompactPtr, HashMapRemoveAndAdd)
     HashMap<PackedPtr<AlignedPackingTarget>, unsigned> map;
     vector.reserveCapacity(10000);
     for (unsigned i = 0; i < 10000; ++i)
-        vector.uncheckedAppend(AlignedPackingTarget { i });
+        vector.append(AlignedPackingTarget { i });
 
     for (auto& target : vector)
         map.add(&target, target.m_value);
@@ -249,7 +249,7 @@ TEST(WTF_CompactPtr, StringHashSet)
     HashSet<CompactPtr<StringImpl>> set;
     vector.reserveCapacity(10000);
     for (unsigned i = 0; i < 10000; ++i)
-        vector.uncheckedAppend(String::number(i));
+        vector.append(String::number(i));
 
     for (auto& target : vector)
         set.add(target.impl());

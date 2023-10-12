@@ -3282,7 +3282,7 @@ static void loadedSubresourceDomainsCallback(WKArrayRef domains, void* userData)
         auto size = WKArrayGetSize(domains);
         context->result.reserveInitialCapacity(size);
         for (size_t index = 0; index < size; ++index)
-            context->result.uncheckedAppend(toWTFString(static_cast<WKStringRef>(WKArrayGetItemAtIndex(domains, index))));
+            context->result.append(toWTFString(static_cast<WKStringRef>(WKArrayGetItemAtIndex(domains, index))));
     }
 
     context->testController.notifyDone();

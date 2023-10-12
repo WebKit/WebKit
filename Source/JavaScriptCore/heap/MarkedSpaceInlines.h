@@ -98,7 +98,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
                     m_current = m_current->next();
                     if (block->isEmpty())
                         continue;
-                    results.uncheckedAppend(block);
+                    results.append(block);
                     if (results.size() == batchSize)
                         return;
                     continue;

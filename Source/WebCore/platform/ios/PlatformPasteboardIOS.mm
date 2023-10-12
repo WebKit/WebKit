@@ -209,18 +209,18 @@ std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(
 
         info.pathsForFileUpload.reserveInitialCapacity(urls.count);
         for (NSURL *url in urls)
-            info.pathsForFileUpload.uncheckedAppend(url.path);
+            info.pathsForFileUpload.append(url.path);
 
         info.platformTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
         for (NSString *fileType in fileTypes)
-            info.platformTypesForFileUpload.uncheckedAppend(fileType);
+            info.platformTypesForFileUpload.append(fileType);
     } else {
         NSArray *fileTypes = itemProvider.web_fileUploadContentTypes;
         info.platformTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
         info.pathsForFileUpload.reserveInitialCapacity(fileTypes.count);
         for (NSString *fileType in fileTypes) {
-            info.platformTypesForFileUpload.uncheckedAppend(fileType);
-            info.pathsForFileUpload.uncheckedAppend({ });
+            info.platformTypesForFileUpload.append(fileType);
+            info.pathsForFileUpload.append({ });
         }
     }
 
@@ -241,7 +241,7 @@ std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(
     NSArray<NSString *> *registeredTypeIdentifiers = itemProvider.registeredTypeIdentifiers;
     info.platformTypesByFidelity.reserveInitialCapacity(registeredTypeIdentifiers.count);
     for (NSString *typeIdentifier in registeredTypeIdentifiers) {
-        info.platformTypesByFidelity.uncheckedAppend(typeIdentifier);
+        info.platformTypesByFidelity.append(typeIdentifier);
         CFStringRef cfTypeIdentifier = (CFStringRef)typeIdentifier;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (!UTTypeIsDeclared(cfTypeIdentifier))
@@ -739,7 +739,7 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
     for (int index = 0; index < numberOfItems; ++index) {
         String value = readString(index, type);
         if (!value.isEmpty())
-            strings.uncheckedAppend(WTFMove(value));
+            strings.append(WTFMove(value));
     }
     return strings;
 }

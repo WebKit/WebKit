@@ -2477,16 +2477,16 @@ URLParser::LCharBuffer URLParser::percentDecode(const LChar* input, size_t lengt
     for (size_t i = 0; i < length; ++i) {
         uint8_t byte = input[i];
         if (byte != '%')
-            output.uncheckedAppend(byte);
+            output.append(byte);
         else if (length > 2 && i < length - 2) {
             if (isASCIIHexDigit(input[i + 1]) && isASCIIHexDigit(input[i + 2])) {
                 syntaxViolation(iteratorForSyntaxViolationPosition);
-                output.uncheckedAppend(toASCIIHexValue(input[i + 1], input[i + 2]));
+                output.append(toASCIIHexValue(input[i + 1], input[i + 2]));
                 i += 2;
             } else
-                output.uncheckedAppend(byte);
+                output.append(byte);
         } else
-            output.uncheckedAppend(byte);
+            output.append(byte);
     }
     return output;
 }
@@ -2499,15 +2499,15 @@ URLParser::LCharBuffer URLParser::percentDecode(const LChar* input, size_t lengt
     for (size_t i = 0; i < length; ++i) {
         uint8_t byte = input[i];
         if (byte != '%')
-            output.uncheckedAppend(byte);
+            output.append(byte);
         else if (length > 2 && i < length - 2) {
             if (isASCIIHexDigit(input[i + 1]) && isASCIIHexDigit(input[i + 2])) {
-                output.uncheckedAppend(toASCIIHexValue(input[i + 1], input[i + 2]));
+                output.append(toASCIIHexValue(input[i + 1], input[i + 2]));
                 i += 2;
             } else
-                output.uncheckedAppend(byte);
+                output.append(byte);
         } else
-            output.uncheckedAppend(byte);
+            output.append(byte);
     }
     return output;
 }
@@ -2543,7 +2543,7 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
             for (size_t i = 0; i < length; ++i) {
                 if (UNLIKELY(isASCIIUpper(characters[i])))
                     syntaxViolation(iteratorForSyntaxViolationPosition);
-                ascii.uncheckedAppend(toASCIILower(characters[i]));
+                ascii.append(toASCIILower(characters[i]));
             }
         } else {
             const UChar* characters = domain.characters16();
@@ -2551,7 +2551,7 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
             for (size_t i = 0; i < length; ++i) {
                 if (UNLIKELY(isASCIIUpper(characters[i])))
                     syntaxViolation(iteratorForSyntaxViolationPosition);
-                ascii.uncheckedAppend(toASCIILower(characters[i]));
+                ascii.append(toASCIILower(characters[i]));
             }
         }
         return ascii;

@@ -47,7 +47,7 @@ static inline Vector<EGLAttrib> constructEGLCreateImageAttributes(const DMABufOb
     Vector<EGLAttrib> attributes;
     attributes.reserveInitialCapacity(12 + 4 + 1);
 
-    attributes.uncheckedAppend(std::span<const EGLAttrib>({
+    attributes.append(std::span<const EGLAttrib>({
         EGL_WIDTH, EGLint(object.format.planeWidth(planeIndex, object.width)),
         EGL_HEIGHT, EGLint(object.format.planeHeight(planeIndex, object.height)),
         EGL_LINUX_DRM_FOURCC_EXT, EGLint(object.format.planes[planeIndex].fourcc),
@@ -57,13 +57,13 @@ static inline Vector<EGLAttrib> constructEGLCreateImageAttributes(const DMABufOb
     }));
 
     if (planeModifiersUsage == PlaneModifiersUsage::Use && object.modifierPresent[planeIndex]) {
-        attributes.uncheckedAppend(std::span<const EGLAttrib>({
+        attributes.append(std::span<const EGLAttrib>({
             EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, EGLint(object.modifierValue[planeIndex] >> 32),
             EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, EGLint(object.modifierValue[planeIndex] & 0xffffffff),
         }));
     }
 
-    attributes.uncheckedAppend(EGL_NONE);
+    attributes.append(EGL_NONE);
     return attributes;
 }
 

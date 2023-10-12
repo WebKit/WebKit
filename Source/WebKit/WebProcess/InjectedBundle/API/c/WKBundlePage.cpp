@@ -503,7 +503,7 @@ void WKBundlePageReplaceStringMatches(WKBundlePageRef pageRef, WKArrayRef matchI
     auto numberOfMatchIndices = matchIndices->size();
     for (size_t i = 0; i < numberOfMatchIndices; ++i) {
         if (auto* indexAsObject = matchIndices->at<API::UInt64>(i))
-            indices.uncheckedAppend(indexAsObject->value());
+            indices.append(indexAsObject->value());
     }
     WebKit::toImpl(pageRef)->replaceStringMatchesFromInjectedBundle(indices, WebKit::toWTFString(replacementText), selectionOnly);
 }
@@ -630,7 +630,7 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
             if (auto foregroundColor = dictionary->get("foregroundColor"_s))
                 foregroundHighlightColor = WebCore::CSSParser::parseColorWithoutContext(static_cast<API::String*>(foregroundColor)->string());
 
-            highlights.uncheckedAppend({
+            highlights.append({
                 static_cast<unsigned>(startOffset),
                 static_cast<unsigned>(startOffset + static_cast<API::UInt64*>(dictionary->get("length"_s))->value()),
                 backgroundHighlightColor,

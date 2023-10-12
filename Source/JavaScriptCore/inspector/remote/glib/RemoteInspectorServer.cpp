@@ -57,7 +57,7 @@ static RemoteInspector::Client::SessionCapabilities processSessionCapabilities(G
         const char* host;
         const char* certificateFile;
         while (g_variant_iter_loop(&iter, "(&s&s)", &host, &certificateFile))
-            capabilities.certificates.uncheckedAppend({ String::fromUTF8(host), String::fromUTF8(certificateFile) });
+            capabilities.certificates.append({ String::fromUTF8(host), String::fromUTF8(certificateFile) });
     }
 
     if (GRefPtr<GVariant> proxy = g_variant_lookup_value(sessionCapabilities, "proxy", G_VARIANT_TYPE("a{sv}"))) {

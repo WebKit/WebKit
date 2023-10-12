@@ -605,13 +605,11 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::childAt(unsigned index) cons
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::wrapperVector(const Vector<RefPtr<AXCoreObject>>& elements) const
 {
-    Vector<RefPtr<AccessibilityObjectAtspi>> wrappers;
-    wrappers.reserveInitialCapacity(elements.size());
-    for (const auto& element : elements) {
-        if (auto* wrapper = element->wrapper())
-            wrappers.uncheckedAppend(wrapper);
-    }
-    return wrappers;
+    return WTF::compactMap(elements, [&](auto& element) -> std::optional<RefPtr<AccessibilityObjectAtspi>> {
+        if (RefPtr wrapper = element->wrapper())
+            return wrapper;
+        return std::nullopt;
+    });
 }
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::children() const

@@ -47,9 +47,9 @@ std::optional<VertexState> ConvertToBackingContext::convertToBacking(const WebCo
             auto convertedBuffer = convertToBacking(*buffer);
             if (!convertedBuffer)
                 return std::nullopt;
-            buffers.uncheckedAppend(WTFMove(convertedBuffer));
+            buffers.append(WTFMove(convertedBuffer));
         } else
-            buffers.uncheckedAppend(std::nullopt);
+            buffers.append(std::nullopt);
     }
 
     return { { WTFMove(*base), WTFMove(buffers) } };
@@ -68,9 +68,9 @@ std::optional<WebCore::WebGPU::VertexState> ConvertFromBackingContext::convertFr
             auto buffer = convertFromBacking(*backingBuffer);
             if (!buffer)
                 return std::nullopt;
-            buffers.uncheckedAppend(WTFMove(*buffer));
+            buffers.append(WTFMove(*buffer));
         } else
-            buffers.uncheckedAppend(std::nullopt);
+            buffers.append(std::nullopt);
     }
 
     return { { WTFMove(*base), WTFMove(buffers) } };

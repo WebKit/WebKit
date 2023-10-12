@@ -351,7 +351,7 @@ static Vector<RefPtr<AccessibilityUIElement>> elementsVector(const Vector<RefPtr
     Vector<RefPtr<AccessibilityUIElement>> elements;
     elements.reserveInitialCapacity(wrappers.size());
     for (auto& wrapper : wrappers)
-        elements.uncheckedAppend(AccessibilityUIElement::create(wrapper.get()));
+        elements.append(AccessibilityUIElement::create(wrapper.get()));
     return elements;
 }
 

@@ -490,11 +490,11 @@ void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(con
     m_requestData.m_responseContentDispositionEncodingFallbackArray.clear();
     m_requestData.m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(!encoding1.isNull() + !encoding2.isNull() + !encoding3.isNull());
     if (!encoding1.isNull())
-        m_requestData.m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(encoding1);
+        m_requestData.m_responseContentDispositionEncodingFallbackArray.append(encoding1);
     if (!encoding2.isNull())
-        m_requestData.m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(encoding2);
+        m_requestData.m_responseContentDispositionEncodingFallbackArray.append(encoding2);
     if (!encoding3.isNull())
-        m_requestData.m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(encoding3);
+        m_requestData.m_responseContentDispositionEncodingFallbackArray.append(encoding3);
     
     m_platformRequestUpdated = false;
 }

@@ -599,12 +599,9 @@ JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallb
 
     va_list args;
     va_start(args, paramCount);
-    Vector<GType> parameters;
-    if (paramCount) {
-        parameters.reserveInitialCapacity(paramCount);
-        for (unsigned i = 0; i < paramCount; ++i)
-            parameters.uncheckedAppend(va_arg(args, GType));
-    }
+    Vector<GType> parameters(paramCount, [&](size_t) -> GType {
+        return va_arg(args, GType);
+    });
     va_end(args);
 
     return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
@@ -647,12 +644,9 @@ JSCValue* jsc_class_add_constructorv(JSCClass* jscClass, const char* name, GCall
     if (!name)
         name = priv->name.data();
 
-    Vector<GType> parameters;
-    if (parametersCount) {
-        parameters.reserveInitialCapacity(parametersCount);
-        for (unsigned i = 0; i < parametersCount; ++i)
-            parameters.uncheckedAppend(parameterTypes[i]);
-    }
+    Vector<GType> parameters(parametersCount, [&](size_t i) -> GType {
+        return parameterTypes[i];
+    });
 
     return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
 }
@@ -739,12 +733,9 @@ void jsc_class_add_method(JSCClass* jscClass, const char* name, GCallback callba
 
     va_list args;
     va_start(args, paramCount);
-    Vector<GType> parameters;
-    if (paramCount) {
-        parameters.reserveInitialCapacity(paramCount);
-        for (unsigned i = 0; i < paramCount; ++i)
-            parameters.uncheckedAppend(va_arg(args, GType));
-    }
+    Vector<GType> parameters(paramCount, [&](size_t) -> GType {
+            return va_arg(args, GType);
+    });
     va_end(args);
 
     jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTFMove(parameters));
@@ -779,12 +770,9 @@ void jsc_class_add_methodv(JSCClass* jscClass, const char* name, GCallback callb
     g_return_if_fail(!parametersCount || parameterTypes);
     g_return_if_fail(jscClass->priv->context);
 
-    Vector<GType> parameters;
-    if (parametersCount) {
-        parameters.reserveInitialCapacity(parametersCount);
-        for (unsigned i = 0; i < parametersCount; ++i)
-            parameters.uncheckedAppend(parameterTypes[i]);
-    }
+    Vector<GType> parameters(parametersCount, [&](size_t i) -> GType {
+        return parameterTypes[i];
+    });
 
     jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTFMove(parameters));
 }

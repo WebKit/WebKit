@@ -223,7 +223,7 @@ private:
         Vector<String> vector;
         vector.reserveInitialCapacity(value.count);
         for (NSString *pattern in value)
-            vector.uncheckedAppend(pattern);
+            vector.append(pattern);
         map.add(key, WTFMove(vector));
     }];
     _websitePolicies->setActiveContentRuleListActionPatterns(WTFMove(map));
