@@ -1088,7 +1088,7 @@ bool AccessibilityObject::hasAttributesRequiredForInclusion() const
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
 {
     switch (ariaRole) {
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::SearchField:
     case AccessibilityRole::Switch:
@@ -1908,7 +1908,7 @@ bool AccessibilityObject::supportsReadOnly() const
 {
     AccessibilityRole role = roleValue();
 
-    return role == AccessibilityRole::CheckBox
+    return role == AccessibilityRole::Checkbox
         || role == AccessibilityRole::ColumnHeader
         || role == AccessibilityRole::ComboBox
         || role == AccessibilityRole::Grid
@@ -2275,8 +2275,8 @@ String AccessibilityObject::localizedActionVerb() const
     static NeverDestroyed<const String> buttonAction(AXButtonActionVerb());
     static NeverDestroyed<const String> textFieldAction(AXTextFieldActionVerb());
     static NeverDestroyed<const String> radioButtonAction(AXRadioButtonActionVerb());
-    static NeverDestroyed<const String> checkedCheckBoxAction(AXCheckedCheckBoxActionVerb());
-    static NeverDestroyed<const String> uncheckedCheckBoxAction(AXUncheckedCheckBoxActionVerb());
+    static NeverDestroyed<const String> checkedCheckboxAction(AXCheckedCheckboxActionVerb());
+    static NeverDestroyed<const String> uncheckedCheckboxAction(AXUncheckedCheckboxActionVerb());
     static NeverDestroyed<const String> linkAction(AXLinkActionVerb());
     static NeverDestroyed<const String> menuListAction(AXMenuListActionVerb());
     static NeverDestroyed<const String> menuListPopupAction(AXMenuListPopupActionVerb());
@@ -2291,9 +2291,9 @@ String AccessibilityObject::localizedActionVerb() const
         return textFieldAction;
     case AccessibilityRole::RadioButton:
         return radioButtonAction;
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::Switch:
-        return isChecked() ? checkedCheckBoxAction : uncheckedCheckBoxAction;
+        return isChecked() ? checkedCheckboxAction : uncheckedCheckboxAction;
     case AccessibilityRole::Link:
     case AccessibilityRole::WebCoreLink:
         return linkAction;
@@ -2324,7 +2324,7 @@ String AccessibilityObject::actionVerb() const
         return "activate"_s;
     case AccessibilityRole::RadioButton:
         return "select"_s;
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::Switch:
         return isChecked() ? "uncheck"_s : "check"_s;
     case AccessibilityRole::Link:
@@ -2595,7 +2595,7 @@ static void initializeRoleMap()
         { "button"_s, AccessibilityRole::Button },
         { "caption"_s, AccessibilityRole::Caption },
         { "code"_s, AccessibilityRole::Code },
-        { "checkbox"_s, AccessibilityRole::CheckBox },
+        { "checkbox"_s, AccessibilityRole::Checkbox },
         { "complementary"_s, AccessibilityRole::LandmarkComplementary },
         { "contentinfo"_s, AccessibilityRole::LandmarkContentInfo },
         { "deletion"_s, AccessibilityRole::Deletion },
@@ -3388,7 +3388,7 @@ bool AccessibilityObject::supportsExpanded() const
     case AccessibilityRole::Details:
         return true;
     case AccessibilityRole::Button:
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::DisclosureTriangle:
@@ -3450,7 +3450,7 @@ bool AccessibilityObject::isExpanded() const
 bool AccessibilityObject::supportsChecked() const
 {
     switch (roleValue()) {
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
     case AccessibilityRole::RadioButton:
@@ -4416,7 +4416,7 @@ static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObjec
         return axObject->hasBoldFont();
     case AccessibilitySearchKey::Button:
         return axObject->isButton();
-    case AccessibilitySearchKey::CheckBox:
+    case AccessibilitySearchKey::Checkbox:
         return axObject->isCheckbox();
     case AccessibilitySearchKey::Control:
         return axObject->isControl();

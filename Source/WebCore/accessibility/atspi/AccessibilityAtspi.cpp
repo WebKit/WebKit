@@ -599,7 +599,7 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::Canvas, { "canvas", N_("canvas") } },
     { AccessibilityRole::Caption, { "caption", N_("caption") } },
     { AccessibilityRole::Cell, { "table cell", N_("table cell") } },
-    { AccessibilityRole::CheckBox, { "check box", N_("check box") } },
+    { AccessibilityRole::Checkbox, { "check box", N_("check box") } },
     { AccessibilityRole::ColorWell, { "push button", N_("push button") } },
     { AccessibilityRole::ColumnHeader, { "column header", N_("column header") } },
     { AccessibilityRole::ComboBox, { "combo box", N_("combo box") } },

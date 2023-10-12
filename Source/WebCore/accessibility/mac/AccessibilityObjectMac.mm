@@ -764,7 +764,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Unknown, NSAccessibilityUnknownRole },
         { AccessibilityRole::Button, NSAccessibilityButtonRole },
         { AccessibilityRole::RadioButton, NSAccessibilityRadioButtonRole },
-        { AccessibilityRole::CheckBox, NSAccessibilityCheckBoxRole },
+        { AccessibilityRole::Checkbox, NSAccessibilityCheckBoxRole },
         { AccessibilityRole::Slider, NSAccessibilitySliderRole },
         { AccessibilityRole::TabGroup, NSAccessibilityTabGroupRole },
         { AccessibilityRole::TextField, NSAccessibilityTextFieldRole },

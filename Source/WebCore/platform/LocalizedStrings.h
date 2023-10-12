@@ -231,8 +231,8 @@ namespace WebCore {
     String AXButtonActionVerb();
     String AXRadioButtonActionVerb();
     String AXTextFieldActionVerb();
-    String AXCheckedCheckBoxActionVerb();
-    String AXUncheckedCheckBoxActionVerb();
+    String AXCheckedCheckboxActionVerb();
+    String AXUncheckedCheckboxActionVerb();
     String AXMenuListActionVerb();
     String AXMenuListPopupActionVerb();
     String AXLinkActionVerb();

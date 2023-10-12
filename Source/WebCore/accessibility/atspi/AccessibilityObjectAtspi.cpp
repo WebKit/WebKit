@@ -174,7 +174,7 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::ToggleButton;
     case AccessibilityRole::RadioButton:
         return Atspi::Role::RadioButton;
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
         return Atspi::Role::CheckBox;
     case AccessibilityRole::Slider:
         return Atspi::Role::Slider;

@@ -262,8 +262,8 @@ TextStream& operator<<(TextStream& stream, AccessibilitySearchKey searchKey)
     case AccessibilitySearchKey::Button:
         stream << "Button";
         break;
-    case AccessibilitySearchKey::CheckBox:
-        stream << "CheckBox";
+    case AccessibilitySearchKey::Checkbox:
+        stream << "Checkbox";
         break;
     case AccessibilitySearchKey::Control:
         stream << "Control";

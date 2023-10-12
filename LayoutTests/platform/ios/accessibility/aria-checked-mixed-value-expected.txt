@@ -13,11 +13,11 @@ Role: MenuItemCheckbox
 Mixed: true
 
 <div id="element4" role="checkbox"></div>
-Role: CheckBox
+Role: Checkbox
 Mixed: false
 
 <div id="element5" role="checkbox" aria-checked="mixed"></div>
-Role: CheckBox
+Role: Checkbox
 Mixed: true
 
 

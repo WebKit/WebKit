@@ -827,7 +827,7 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
         { NSAccessibilityBlockquoteSearchKey, AccessibilitySearchKey::Blockquote },
         { NSAccessibilityBoldFontSearchKey, AccessibilitySearchKey::BoldFont },
         { NSAccessibilityButtonSearchKey, AccessibilitySearchKey::Button },
-        { NSAccessibilityCheckBoxSearchKey, AccessibilitySearchKey::CheckBox },
+        { NSAccessibilityCheckBoxSearchKey, AccessibilitySearchKey::Checkbox },
         { NSAccessibilityControlSearchKey, AccessibilitySearchKey::Control },
         { NSAccessibilityDifferentTypeSearchKey, AccessibilitySearchKey::DifferentType },
         { NSAccessibilityFontChangeSearchKey, AccessibilitySearchKey::FontChange },
