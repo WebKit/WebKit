@@ -312,6 +312,8 @@ fast/history/page-cache-notification-suspendable.html
 # UI pickers are not implemented for date and time inputs.
 webkit.org/b/224924 fast/forms/date/date-show-hide-picker.html [ Skip ]
 webkit.org/b/224924 fast/forms/datetimelocal/datetimelocal-show-hide-picker.html [ Skip ]
+webkit.org/b/224924 fast/forms/date/date-show-picker.html [ Skip ]
+webkit.org/b/224924 fast/forms/datetimelocal/datetimelocal-show-picker.html [ Skip ]
 
 # Requires WebP support.
 webkit.org/b/98939 fast/canvas/canvas-toDataURL-webp.html [ Skip ]

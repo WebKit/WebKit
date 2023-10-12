@@ -107,6 +107,10 @@ void TimeInputType::handleDOMActivateEvent(Event&)
 {
 }
 
+void TimeInputType::showPicker()
+{
+}
+
 bool TimeInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
 {
     return results.containsAll({ DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute, DateTimeFormatValidationResults::HasMeridiem });

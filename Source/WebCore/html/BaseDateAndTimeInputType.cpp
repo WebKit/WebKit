@@ -302,6 +302,15 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
 
     if (m_dateTimeChooser)
         return;
+
+    showPicker();
+}
+
+void BaseDateAndTimeInputType::showPicker()
+{
+    if (!element()->renderer())
+        return;
+
     if (!element()->document().page())
         return;
 
@@ -309,7 +318,7 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
     if (!setupDateTimeChooserParameters(parameters))
         return;
 
-    if (auto chrome = this->chrome()) {
+    if (auto* chrome = this->chrome()) {
         m_dateTimeChooser = chrome->createDateTimeChooser(*this);
         if (m_dateTimeChooser)
             m_dateTimeChooser->showChooser(parameters);
