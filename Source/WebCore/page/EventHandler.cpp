@@ -2891,11 +2891,10 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     bool isMouseDownEvent = eventType == eventNames().mousedownEvent;
 
     if (auto elementUnderMouse = m_elementUnderMouse) {
-        bool isEventDefaultPrevented = false;
-        bool dispatchedMouseEvent = elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount, nullptr, IsSyntheticClick::No, &isEventDefaultPrevented);
-        auto dragCaptureInabilityReason = isEventDefaultPrevented && isMouseDownEvent ? CapturesDragging::InabilityReason::MousePressIsCancelled : CapturesDragging::InabilityReason::Unknown;
+        auto [eventIsDispatched, eventIsDefaultPrevented] = elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount, nullptr, IsSyntheticClick::No);
+        auto dragCaptureInabilityReason = eventIsDefaultPrevented == Element::EventIsDefaultPrevented::Yes && isMouseDownEvent ? CapturesDragging::InabilityReason::MousePressIsCancelled : CapturesDragging::InabilityReason::Unknown;
         m_capturesDragging = dragCaptureInabilityReason;
-        if (!dispatchedMouseEvent)
+        if (eventIsDispatched == Element::EventIsDispatched::No)
             return false;
     }
 
