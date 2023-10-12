@@ -3376,6 +3376,10 @@ webkit.org/b/221466 imported/w3c/web-platform-tests/uievents/keyboard/modifier-k
 webkit.org/b/221465 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-combinations.html [ Skip ]
 webkit.org/b/262723 imported/w3c/web-platform-tests/uievents/mouse/cancel-mousedown-in-subframe.html [ Skip ]
 
+# https://webkit.org/b/263067 ([iOS] uievents/mouse/synthetic-mouse-enter-leave-over-out-button-state-after-target-removed.tentative.html WPT consistently times out in iOS 16 open source config)
+imported/w3c/web-platform-tests/uievents/mouse/synthetic-mouse-enter-leave-over-out-button-state-after-target-removed.tentative.html?buttonType=LEFT&button=0&buttons=1 [ Skip ]
+imported/w3c/web-platform-tests/uievents/mouse/synthetic-mouse-enter-leave-over-out-button-state-after-target-removed.tentative.html?buttonType=MIDDLE&button=1&buttons=4 [ Skip ]
+
 # iOS15 supports this emoji.
 fast/text/mending-heart.html [ Pass ]
 
