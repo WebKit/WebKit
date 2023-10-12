@@ -1,0 +1,7 @@
+
+PASS Setup event listeners and wait for load
+FAIL Removing an element at mousedown assert_true: Removing an element at mousedown: Some events should've been fired after mousedown expected true got false
+FAIL Removing an element at mouseup assert_true: Removing an element at mouseup: Some events should've been fired after mousedown expected true got false
+FAIL Removing an element at mousedown: mousedown should've been fired assert_equals: expected "{ 'mousedown' on 'child': button=1, buttons=4 }" but got "{ 'mousedown' on 'child': button=1, buttons=2 }"
+FAIL Removing an element at mouseup: mousedown should've been fired assert_equals: expected "{ 'mousedown' on 'child': button=1, buttons=4 }" but got "{ 'mousedown' on 'parent': button=1, buttons=2 }"
+
