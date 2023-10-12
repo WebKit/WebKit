@@ -2494,3 +2494,4 @@ webkit.org/b/261957 media/audio-play-with-video-element-interrupted.html [ Pass 
 css3/scroll-snap/ios/scroll-snap-mainframe-pinch-out.html [ Skip ]
 
 webkit.org/b/263048 accessibility/ios-simulator/input-type-time.html [ Failure ]
+webkit.org/b/263050 fast/dom/collection-iterators.html [ Failure ]
