@@ -180,6 +180,7 @@ if (ENABLE_VIDEO AND USE_MEDIA_FOUNDATION)
     target_link_libraries(MediaFoundation INTERFACE
         d3d9
         delayimp
+        dwrite
         dxva2
         evr
         mf

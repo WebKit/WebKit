@@ -453,9 +453,7 @@ streams/readable-stream-byob-request-worker.html [ Skip ]
 # image diffs off by 0.0x%
 css3/unicode-bidi-isolate-aharon.html [ ImageOnlyFailure ]
 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
-fast/css/content-counter-010.htm [ ImageOnlyFailure ]
 fast/css/counters/counter-list-item.html [ ImageOnlyFailure ]
-fast/css/multiple-tabs.html [ ImageOnlyFailure ]
 fast/css/unexpected-word-wrapping-with-non-empty-spans.html [ ImageOnlyFailure ]
 fast/css-generated-content/close-quote-negative-depth.html [ ImageOnlyFailure Pass ]
 fast/css-generated-content/content-property-change.html [ ImageOnlyFailure Pass ]
@@ -1255,8 +1253,6 @@ webkit.org/b/159755 fast/text/emoji-gender-6.html [ Pass ]
 webkit.org/b/159755 fast/text/emoji-gender-8.html [ Pass ]
 webkit.org/b/159755 fast/text/emoji-gender-9.html [ Pass ]
 
-webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
-
 webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
 
@@ -1812,7 +1808,6 @@ editing/selection/move-by-word-visually-across-object-element-2.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure ]
 editing/selection/select-out-of-floated-non-editable-13.html [ Failure ]
 fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Timeout ]
-fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 fast/canvas/canvas-blend-image.html [ Failure ]
 fast/canvas/canvas-blend-solid.html [ Failure ]
@@ -1911,7 +1906,6 @@ fast/text/font-collection-2.html [ ImageOnlyFailure ]
 fast/text/font-collection.html [ ImageOnlyFailure ]
 fast/text/font-cursive-italic-cjk.html [ ImageOnlyFailure ]
 fast/text/font-kerning.html [ ImageOnlyFailure ]
-fast/text/font-variant-ligatures.html [ ImageOnlyFailure ]
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 fast/text/hyphenate-avoid-orphaned-word.html [ Failure ]
 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
@@ -1920,9 +1914,6 @@ fast/text/international/bdi-dir-default-to-auto.html [ ImageOnlyFailure ]
 fast/text/international/bdi-neutral-wrapped.html [ ImageOnlyFailure ]
 fast/text/international/cjk-segmentation.html [ Failure ]
 fast/text/international/inline-plaintext-is-isolated.html [ ImageOnlyFailure ]
-fast/text/international/kana-voiced-sound-marks-1.html [ ImageOnlyFailure ]
-fast/text/international/kana-voiced-sound-marks-2.html [ ImageOnlyFailure ]
-fast/text/international/spaces-combined-in-vertical-text.html [ Failure ]
 fast/text/international/system-language/declarative-language.html [ Failure ]
 fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
 fast/text/international/vertical-text-glyph-test.html [ Failure ]
@@ -1951,13 +1942,10 @@ fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]
 fast/text/pua-charactersTreatedAsSpace.html [ ImageOnlyFailure ]
 fast/text/small-caps-web-font.html [ ImageOnlyFailure ]
-fast/text/small-line-height.html [ ImageOnlyFailure ]
-fast/text/soft-hyphen-as-first-breaking-opportunity.html [ ImageOnlyFailure ]
 fast/text/svg-font-face-with-kerning.html [ Failure ]
 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
 fast/text/system-font-fallback-emoji.html [ Failure ]
 fast/text/system-font-japanese-synthetic-italic.html [ ImageOnlyFailure ]
-fast/text/system-font-weight-italic.html [ Failure ]
 fast/text/system-font-weight.html [ Failure ]
 fast/text/text-transform-turkish-and-azeri.html [ ImageOnlyFailure ]
 fast/text/trak-optimizeLegibility.html [ ImageOnlyFailure ]
@@ -2017,7 +2005,6 @@ fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ Image
 fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
 fast/gradients/conic-gradient-alpha-unpremultiplied.html [ ImageOnlyFailure ]
 
-fast/text/kerning-with-TextLayout.html [ ImageOnlyFailure ]
 fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
 
 # Not applicable.
@@ -2025,7 +2012,6 @@ webgl/webgl-via-metal-flag-on.html [ Skip ]
 webgl/webgl-via-metal-flag-off.html [ Skip ]
 webgl/webgl-backend-type.html [ Skip ]
 
-fast/text/synthetic-bold-percentage-word-spacing.html [ ImageOnlyFailure ]
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
 
 webgl/lose-context-after-context-lost.html [ Failure ]
@@ -2036,7 +2022,6 @@ webgl/multiple-context-losses.html [ Failure ]
 fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure ]
-fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure ]
 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
 
@@ -2334,7 +2319,6 @@ css3/filters/filtered-compositing-descendant.html [ Skip ]
 
 compositing/animation/repaint-after-clearing-shared-backing.html [ ImageOnlyFailure ]
 compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
-compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html [ ImageOnlyFailure ]
 compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 compositing/hidpi-subpixel-transform-origin.html [ ImageOnlyFailure ]
@@ -2342,7 +2326,6 @@ compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ I
 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
-compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html [ ImageOnlyFailure ]
 compositing/clipping/cached-cliprect-with-compositing-boundary.html [ ImageOnlyFailure ]
 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure ]
 compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
@@ -2492,7 +2475,6 @@ fast/text/backslash-to-yen-sign.html [ Pass Failure ]
 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
 fast/text/isolate-ignore.html [ ImageOnlyFailure ]
 fast/text/multiple-renderers-with-hypen-on-boundary.html [ ImageOnlyFailure ]
-fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 fast/text/whitespace/inline-whitespace-wrapping-8.html [ ImageOnlyFailure ]
 
 # Depends on the system fonts
@@ -2518,8 +2500,6 @@ webkit.org/b/230413 fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failu
 
 # Doesn't support variable fonts
 fast/text/variations [ Skip ]
-
-fast/text/bidi-with-non-preserved-tab.html [ ImageOnlyFailure ]
 
 webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Skip ] # Crash Timeout only on Buildbot
 
@@ -2575,7 +2555,6 @@ fast/reflections/reflection-masks-opacity.html [ Failure ]
 fast/reflections/reflection-masks.html [ Failure ]
 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
 fast/text/simple-line-hyphens-with-word-letter-spacing.html [ ImageOnlyFailure ]
-fast/text/softHyphen.html [ ImageOnlyFailure ]
 fast/text/synthetic-oblique.html [ ImageOnlyFailure ]
 
 webkit.org/b/245080 fast/text/whitespace/nowrap-clear-float.html [ Skip ] # Skip a failing dump render tree test
@@ -2590,3 +2569,17 @@ webkit.org/b/133151 js/cached-window-properties.html [ Skip ] # Slow
 # Regressed by 269016@main
 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
 fast/forms/listbox-zero-item-height.html [ Failure ]
+
+fast/css/unicode-escape-in-8bit-string.html [ ImageOnlyFailure ]
+fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
+fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
+fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
+fast/text/font-face-fall-off-end.html [ ImageOnlyFailure ]
+fast/text/ipa-tone-letters.html [ Failure ]
+fast/text/newline-width.html [ ImageOnlyFailure ]
+fast/text/otsvg-spacing.html [ ImageOnlyFailure ]
+fast/text/ruby-justify-tatechuyoko.html [ ImageOnlyFailure ]
+fast/text/simple-line-layout-fallback-space-glyph.html [ ImageOnlyFailure ]
+fast/text/simple-line-layout-line-box-contain-glyphs.html [ ImageOnlyFailure ]
+fast/text/tab-stops-with-offset-from-parent.html [ ImageOnlyFailure ]
+fast/text/word-break-keep-all-with-zero-width-space.html [ ImageOnlyFailure ]
