@@ -2261,12 +2261,10 @@ Vector<IntRect> RenderObject::absoluteTextRects(const SimpleRange& range, Option
     });
 }
 
-static RefPtr<Node> nodeBefore(const BoundaryPoint& point)
+static RefPtr<Node> nodeAfter(const BoundaryPoint& point)
 {
-    if (point.offset) {
-        if (auto node = point.container->traverseToChildAt(point.offset - 1))
-            return node;
-    }
+    if (auto node = point.container->traverseToChildAt(point.offset + 1))
+        return node;
     return point.container.ptr();
 }
 
@@ -2288,8 +2286,8 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
 
     // Don't include elements at the end of the range that are only partially selected.
     // FIXME: What about the start of the range? The asymmetry here does not make sense. Seems likely this logic is not quite right in other respects, too.
-    if (auto lastNode = nodeBefore(range.end)) {
-        for (auto& ancestor : ancestorsOfType<Element>(*lastNode))
+    if (auto lastNode = nodeAfter(range.end)) {
+        for (auto& ancestor : lineageOfType<Element>(*lastNode))
             selectedElementsSet.remove(&ancestor);
     }
 
