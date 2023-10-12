@@ -1708,7 +1708,7 @@ Vector<RetainPtr<id>> AccessibilityObject::modelElementChildren()
 #endif
 
 // Finds a RenderListItem parent give a node.
-static RenderListItem* renderListItemContainerForNode(Node* node)
+static RenderListItem* renderListItemContainer(Node* node)
 {
     for (; node; node = node->parentNode()) {
         if (auto* listItem = dynamicDowncast<RenderListItem>(node->renderBoxModelObject()))
@@ -1717,29 +1717,34 @@ static RenderListItem* renderListItemContainerForNode(Node* node)
     return nullptr;
 }
 
-// Returns the text representing a list marker.
-static StringView listMarkerText(RenderListItem& listItem, const VisiblePosition& startVisiblePosition)
+// Returns the text representing a list marker taking into account the position of the text in the line of text.
+static StringView listMarkerText(RenderListItem* listItem, const VisiblePosition& startVisiblePosition, std::optional<StringView> markerText = std::nullopt)
 {
-    // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
-    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(&listItem.element())))
+    if (!listItem)
         return { };
-    return listItem.markerTextWithSuffix();
+
+    if (!markerText)
+        markerText = listItem->markerTextWithSuffix();
+    if (markerText->isEmpty())
+        return { };
+
+    // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
+    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(&listItem->element())))
+        return { };
+    return *markerText;
 }
 
 StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Position&& startPosition)
 {
-    auto* listItem = renderListItemContainerForNode(node);
-    // Constructing a VisiblePosition from a Position can be extraordinarily expensive, so only do it if there's actually marker text.
-    if (!listItem || listItem->markerTextWithSuffix().isEmpty())
+    auto* listItem = renderListItemContainer(node);
+    if (!listItem)
         return { };
-
-    return listMarkerText(*listItem, WTFMove(startPosition));
-}
-
-StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& startVisiblePosition)
-{
-    auto* listItem = renderListItemContainerForNode(node);
-    return listItem ? listMarkerText(*listItem, startVisiblePosition) : StringView();
+    // Creating a VisiblePosition and determining its relationship to a line of text can be expensive.
+    // Thus perform that determination only if we have some text to return.
+    auto markerText = listItem->markerTextWithSuffix();
+    if (markerText.isEmpty())
+        return { };
+    return listMarkerText(listItem, startPosition, markerText);
 }
 
 String AccessibilityObject::stringForRange(const SimpleRange& range) const
@@ -1779,7 +1784,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // Add a textual representation for list marker text.
-            builder.append(listMarkerTextForNodeAndPosition(it.node(), visiblePositionRange.start));
+            builder.append(listMarkerText(renderListItemContainer(it.node()), visiblePositionRange.start));
             it.appendTextToStringBuilder(builder);
         } else {
             // locate the node and starting offset for this replaced range
