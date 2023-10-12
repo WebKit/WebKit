@@ -78,6 +78,9 @@ class Font;
 struct AttributedStringTextTableIDType;
 using AttributedStringTextTableID = ObjectIdentifier<AttributedStringTextTableIDType>;
 
+struct AttributedStringTextTableBlockIDType;
+using AttributedStringTextTableBlockID = ObjectIdentifier<AttributedStringTextTableBlockIDType>;
+
 struct AttributedStringTextListIDType;
 using AttributedStringTextListID = ObjectIdentifier<AttributedStringTextListIDType>;
 
@@ -88,11 +91,13 @@ struct WEBCORE_EXPORT AttributedString {
     };
 
     using TextTableID = AttributedStringTextTableID;
+    using TextTableBlockID = AttributedStringTextTableBlockID;
     using TextListID = AttributedStringTextListID;
+    using TableBlockAndTableIDPair = std::pair<TextTableBlockID, TextTableID>;
 
     struct ParagraphStyleWithTableAndListIDs {
         RetainPtr<NSParagraphStyle> style;
-        Vector<std::optional<TextTableID>> tableIDs; // Same length as `-textBlocks`.
+        Vector<std::optional<TableBlockAndTableIDPair>> tableBlockAndTableIDs; // Same length as `-textBlocks`.
         Vector<TextListID> listIDs; // Same length as `-textLists`.
     };
 
