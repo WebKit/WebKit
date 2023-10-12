@@ -542,8 +542,8 @@ fast/events/mouse-cursor-multiframecur.html [ Skip ]
 fast/events/mouse-cursor-no-mousemove.html [ Skip ]
 fast/events/mouse-cursor-udpate-during-raf.html [ Skip ]
 fast/events/mouse-cursor.html [ Skip ]
-fast/events/mouse-drag-from-frame-to-other-frame.html [ Skip ]
-fast/events/mouse-drag-from-frame.html [ Skip ]
+fast/events/cancel-mousedown-and-drag-from-frame-to-other-frame.html [ Skip ]
+fast/events/cancel-mousedown-and-drag-to-frame.html [ Skip ]
 fast/events/mouse-focus-imagemap.html [ Skip ]
 fast/events/mouse-moved-remove-frame-crash.html [ Skip ]
 fast/events/mouse-relative-position.html [ Skip ]
@@ -3374,6 +3374,7 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode
 
 webkit.org/b/221466 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys.html [ Skip ]
 webkit.org/b/221465 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-combinations.html [ Skip ]
+webkit.org/b/262723 imported/w3c/web-platform-tests/uievents/mouse/cancel-mousedown-in-subframe.html [ Skip ]
 
 # iOS15 supports this emoji.
 fast/text/mending-heart.html [ Pass ]

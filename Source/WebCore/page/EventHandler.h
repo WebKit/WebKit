@@ -532,7 +532,44 @@ private:
     
     void setFrameWasScrolledByUser();
 
-    bool capturesDragging() const { return m_capturesDragging; }
+    struct CapturesDragging {
+        enum class InabilityReason : bool {
+            MousePressIsCancelled,
+            Unknown,
+        };
+
+        CapturesDragging(bool capturesDragging)
+        {
+            *this = capturesDragging;
+        }
+
+        CapturesDragging(InabilityReason inabilityReason)
+            : m_state { unexpect, inabilityReason }
+        {
+        }
+
+        CapturesDragging& operator=(bool capturesDragging)
+        {
+            if (capturesDragging)
+                m_state = std::monostate { };
+            else
+                m_state = makeUnexpected(InabilityReason::Unknown);
+            return *this;
+        }
+
+        CapturesDragging& operator=(InabilityReason inabilityReason)
+        {
+            m_state = makeUnexpected(inabilityReason);
+            return *this;
+        }
+
+        operator bool() const { return m_state.has_value(); }
+        InabilityReason inabilityReason() const { return m_state.error(); }
+
+    private:
+        Expected<std::monostate, InabilityReason> m_state;
+    };
+    CapturesDragging capturesDragging() const { return m_capturesDragging; }
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
     NSView *mouseDownViewIfStillGood();
@@ -561,7 +598,14 @@ private:
     bool mouseDownMayStartSelect() const;
 
     std::optional<RemoteMouseEventData> mouseEventDataForRemoteFrame(const RemoteFrame*, const IntPoint&);
-    
+
+    bool isCapturingMouseEventsElement() const { return m_capturingMouseEventsElement || m_isCapturingRootElementForMouseEvents; }
+    void resetCapturingMouseEventsElement()
+    {
+        m_capturingMouseEventsElement = nullptr;
+        m_isCapturingRootElementForMouseEvents = false;
+    }
+
     LocalFrame& m_frame;
     RefPtr<Node> m_mousePressNode;
     Timer m_hoverTimer;
@@ -574,7 +618,7 @@ private:
     double m_maxMouseMovedDuration { 0 };
 
     bool m_mousePressed { false };
-    bool m_capturesDragging { false };
+    CapturesDragging m_capturesDragging { false };
     bool m_mouseDownMayStartSelect { false };
     bool m_mouseDownDelegatedFocus { false };
     bool m_mouseDownWasSingleClickInSelection { false };
@@ -592,6 +636,7 @@ private:
     SelectionInitiationState m_selectionInitiationState { HaveNotStartedSelection };
     ImmediateActionStage m_immediateActionStage { ImmediateActionStage::None };
 
+    bool m_isCapturingRootElementForMouseEvents { false };
     RefPtr<Element> m_capturingMouseEventsElement;
     RefPtr<Element> m_elementUnderMouse;
     RefPtr<Element> m_lastElementUnderMouse;

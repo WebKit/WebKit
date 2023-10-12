@@ -466,7 +466,7 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
     return ShouldIgnoreMouseEvent::No;
 }
 
-bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, IsSyntheticClick isSyntheticClick)
+bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, IsSyntheticClick isSyntheticClick, bool* isEventDefaultPrevented)
 {
     if (isDisabledFormControl() && !document().settings().sendMouseEventsToDisabledFormControlsEnabled())
         return false;
@@ -497,6 +497,8 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
     ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
     dispatchEvent(mouseEvent);
+    if (mouseEvent->defaultPrevented() && isEventDefaultPrevented)
+        *isEventDefaultPrevented = true;
     if (mouseEvent->defaultPrevented() || mouseEvent->defaultHandled())
         didNotSwallowEvent = false;
 
